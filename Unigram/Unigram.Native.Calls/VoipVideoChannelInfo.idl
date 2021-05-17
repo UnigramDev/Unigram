@@ -1,0 +1,19 @@
+namespace Unigram.Native.Calls
+{
+    enum VoipVideoChannelQuality {
+        Thumbnail = 0,
+        Medium = 1,
+        Full = 2
+    };
+
+    [default_interface]
+    runtimeclass VoipVideoChannelInfo
+    {
+        VoipVideoChannelInfo();
+        VoipVideoChannelInfo(Int32 audioSource, String description, VoipVideoChannelQuality quality);
+
+        Int32 AudioSource;
+        String Description;
+        VoipVideoChannelQuality Quality;
+    }
+}

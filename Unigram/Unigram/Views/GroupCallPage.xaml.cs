@@ -3,12 +3,15 @@ using Microsoft.Graphics.Canvas.Brushes;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using Telegram.Td.Api;
+using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Controls.Cells;
 using Unigram.Converters;
 using Unigram.Native.Calls;
 using Unigram.Services;
@@ -40,12 +43,10 @@ namespace Unigram.Views
         private VoipGroupManager _manager;
         private bool _disposed;
 
-        private readonly Dictionary<int, VoipVideoRendererToken> _userTokens = new Dictionary<int, VoipVideoRendererToken>();
-        private readonly Dictionary<long, VoipVideoRendererToken> _chatTokens = new Dictionary<long, VoipVideoRendererToken>();
+        private readonly Dictionary<MessageSender, VoipVideoRendererToken> _listTokens = new(new MessageSenderEqualityComparer());
+        private readonly Dictionary<MessageSender, VoipVideoRendererToken> _gridTokens = new(new MessageSenderEqualityComparer());
 
-        private GroupCallParticipant _pinnedParticipant;
-        private VoipVideoRendererToken _pinnedVideoToken;
-        private VoipVideoRendererToken _pinnedScreenToken;
+        private readonly List<GroupCallParticipant> _gridParticipants = new();
 
         private readonly ButtonWavesDrawable _drawable = new ButtonWavesDrawable();
 
@@ -96,9 +97,9 @@ namespace Unigram.Views
             }
 
             ElementCompositionPreview.SetIsTranslationEnabled(Viewport, true);
-            ElementCompositionPreview.SetIsTranslationEnabled(PinnedInfo, true);
-            ElementCompositionPreview.SetIsTranslationEnabled(PinnedGlyph, true);
-            ViewportAspect.Constraint = new Size(16, 9);
+            //ElementCompositionPreview.SetIsTranslationEnabled(PinnedInfo, true);
+            //ElementCompositionPreview.SetIsTranslationEnabled(PinnedGlyph, true);
+            //ViewportAspect.Constraint = new Size(16, 9);
         }
 
         enum ButtonState
@@ -215,8 +216,8 @@ namespace Unigram.Views
 
             var aspect = ElementCompositionPreview.GetElementVisual(ViewportAspect);
             var visual = ElementCompositionPreview.GetElementVisual(Viewport);
-            var pinned = ElementCompositionPreview.GetElementVisual(PinnedInfo);
-            var glyph = ElementCompositionPreview.GetElementVisual(PinnedGlyph);
+            //var pinned = ElementCompositionPreview.GetElementVisual(PinnedInfo);
+            //var glyph = ElementCompositionPreview.GetElementVisual(PinnedGlyph);
 
             var rectangle = Window.Current.Compositor.CreateRoundedRectangleGeometry();
             rectangle.CornerRadius = new Vector2(8);
@@ -234,7 +235,7 @@ namespace Unigram.Views
             Viewport.Height = ActualHeight - BottomPanel.ActualHeight;
             Viewport.Margin = new Thickness(-12, 0, -12, -(ActualHeight - BottomPanel.ActualHeight - ViewportAspect.ActualHeight));
 
-            pinned.CenterPoint = new Vector3(PinnedInfo.ActualSize.X / 2, PinnedInfo.ActualSize.Y, 0);
+            //pinned.CenterPoint = new Vector3(PinnedInfo.ActualSize.X / 2, PinnedInfo.ActualSize.Y, 0);
 
             aspect.Clip = Window.Current.Compositor.CreateGeometricClip(rectangle);
 
@@ -247,8 +248,8 @@ namespace Unigram.Views
                 rectangle.Offset = new Vector2(12, 0);
                 visual.Properties.InsertVector3("Translation", new Vector3(12, -(Viewport.ActualSize.Y - ViewportAspect.ActualSize.Y) / 2, 0));
                 visual.Scale = new Vector3((ViewportAspect.ActualSize.X - 24) / Viewport.ActualSize.X);
-                pinned.Properties.InsertVector3("Translation", new Vector3(12, 0, 0));
-                glyph.Properties.InsertVector3("Translation", new Vector3(-24, 0, 0));
+                //pinned.Properties.InsertVector3("Translation", new Vector3(12, 0, 0));
+                //glyph.Properties.InsertVector3("Translation", new Vector3(-24, 0, 0));
             }
         }
 
@@ -302,55 +303,192 @@ namespace Unigram.Views
             //var expand = !_pinnedExpanded;
             var prevSize = ActualSize;
 
+            var call = _service.Call;
+
             var aspect = ElementCompositionPreview.GetElementVisual(ViewportAspect);
             var visual = ElementCompositionPreview.GetElementVisual(Viewport);
-            var pinned = ElementCompositionPreview.GetElementVisual(PinnedInfo);
-            var glyph = ElementCompositionPreview.GetElementVisual(PinnedGlyph);
+            //var pinned = ElementCompositionPreview.GetElementVisual(PinnedInfo);
+            //var glyph = ElementCompositionPreview.GetElementVisual(PinnedGlyph);
 
             var transform = ParticipantsArea.TransformToVisual(this);
             var point = transform.TransformPoint(new Point()).ToVector2();
 
             if (_pinnedExpanded)
             {
-                ApplicationView.GetForCurrentView().TryResizeView(new Size(380, 580));
+                ApplicationView.GetForCurrentView().TryResizeView(new Size(380, 580 + 33));
             }
             else
             {
-                ApplicationView.GetForCurrentView().TryResizeView(new Size(780, 580));
+                ApplicationView.GetForCurrentView().TryResizeView(new Size(780, 580 + 33));
             }
 
             await this.UpdateLayoutAsync();
             var nextSize = ActualSize;
 
+            _pinnedExpanded = nextSize.X >= prevSize.X;
+
             if (nextSize.X >= prevSize.X)
             {
-                Grid.SetRow(ParticipantsPanel, 0);
-                Grid.SetRowSpan(ParticipantsPanel, 4);
+                Menu.Visibility = Visibility.Collapsed;
+                TitlePanel.Margin = new Thickness(0, 0, 0, 0);
+                SubtitleInfo.Visibility = Visibility.Collapsed;
 
-                ViewportAspect.Constraint = null;
+                Grid.SetRow(ParticipantsPanel, 1);
+                Grid.SetRowSpan(ParticipantsPanel, 3);
+
+                Grid.SetRow(ListPanel, 0);
+                Grid.SetColumn(ListPanel, 0);
+
+                Grid.SetColumn(ViewportAspect, 0);
+                Grid.SetColumnSpan(ViewportAspect, 2);
+
+                Viewport.IsCompact = false;
+                ViewportAspect.Padding = new Thickness(0, 0, 8, 0);
                 ParticipantsPanel.RowDefinitions[0].Height = new GridLength(1, GridUnitType.Star);
                 ParticipantsPanel.RowDefinitions[1].Height = new GridLength(1, GridUnitType.Auto);
+                ParticipantsPanel.ColumnDefinitions[0].Width = new GridLength(224, GridUnitType.Pixel);
                 ParticipantsPanel.VerticalAlignment = VerticalAlignment.Stretch;
+                ParticipantsPanel.Margin = new Thickness();
+                ListPanel.Margin = new Thickness(12, 4, 8, 12);
+
+                List.Header = null;
+                ParticipantsPanel.Children.Add(ViewportAspect);
+
+                BottomPanel.Padding = new Thickness(224, 8, 8, 8);
+                BottomRoot.Padding = new Thickness(4, 8, 4, 8);
+                //BottomRoot.CornerRadius = new CornerRadius(8);
+                BottomRoot.Background = new AcrylicBrush { TintColor = Colors.Black, TintOpacity = 0, TintLuminosityOpacity = 0.5 }; //new SolidColorBrush(Color.FromArgb(0x99, 0x33, 0x33, 0x33));
+                BottomRoot.RowDefinitions[0].Height = new GridLength(1, GridUnitType.Auto);
+
+                foreach (var column in BottomRoot.ColumnDefinitions)
+                {
+                    column.Width = new GridLength(48 + 12 + 12, GridUnitType.Pixel);
+                }
+
+                _drawable.SetSize(true);
+                AudioCanvas.Margin = new Thickness(-126, -126, -126, -126);
+
+                Audio.Width = Lottie.Width = 48;
+                Audio.Height = Lottie.Height = 48;
+                Audio.Margin = Lottie.Margin = new Thickness(12, 0, 12, 0);
+                Audio.CornerRadius = new CornerRadius(24);
+
+                AudioInfo.Margin = new Thickness(0, 4, 0, 0);
+
+                Grid.SetColumn(AudioCanvas, 0);
+                Grid.SetRow(AudioCanvas, 1);
+                Grid.SetRowSpan(AudioCanvas, 1);
+
+                Grid.SetColumn(Audio, 0);
+                Grid.SetRow(Audio, 1);
+                Grid.SetRowSpan(Audio, 1);
+
+                Grid.SetColumn(Lottie, 0);
+                Grid.SetRow(Lottie, 1);
+                Grid.SetRowSpan(Lottie, 1);
+
+                Grid.SetColumn(AudioInfo, 0);
+                Grid.SetRow(AudioInfo, 2);
+
+                Grid.SetColumn(Video, 1);
+                Grid.SetColumn(VideoInfo, 1);
+
+                Grid.SetColumn(Screen, 2);
+                Grid.SetColumn(ScreenInfo, 2);
+
+                Grid.SetColumn(Settings, 3);
+                Grid.SetColumn(SettingsInfo, 3);
+
+                UpdateVideo();
+                UpdateScreen();
+                Settings.Visibility = SettingsInfo.Visibility = Visibility.Visible;
             }
             else
             {
+                Menu.Visibility = call.CanStartVideo ? Visibility.Visible : Visibility.Collapsed;
+                TitlePanel.Margin = new Thickness(call.CanStartVideo ? 32 : 0, 0, 0, 0);
+                SubtitleInfo.Margin = new Thickness(call.CanStartVideo ? 44 : 12, -8, 0, 16);
+                SubtitleInfo.Visibility = Visibility.Visible;
+
                 Grid.SetRow(ParticipantsPanel, 2);
                 Grid.SetRowSpan(ParticipantsPanel, 1);
 
-                ViewportAspect.Constraint = new Size(16, 9);
+                Grid.SetRow(ListPanel, 1);
+                Grid.SetColumn(ListPanel, 1);
+
+                Viewport.IsCompact = true;
+                ViewportAspect.Padding = new Thickness(0, 0, 0, 0);
                 ParticipantsPanel.RowDefinitions[0].Height = new GridLength(1, GridUnitType.Auto);
                 ParticipantsPanel.RowDefinitions[1].Height = new GridLength(1, GridUnitType.Star);
+                ParticipantsPanel.ColumnDefinitions[0].Width = new GridLength(1, GridUnitType.Auto);
                 ParticipantsPanel.VerticalAlignment = VerticalAlignment.Top;
+                ParticipantsPanel.Margin = new Thickness(0, 0, 0, 16);
+                ListPanel.Margin = new Thickness(12, 0, 12, 0);
+
+                ParticipantsPanel.Children.Remove(ViewportAspect);
+                List.Header = ViewportAspect;
+
+                BottomPanel.Padding = new Thickness(0, 0, 0, 0);
+                BottomRoot.Padding = new Thickness(0, 0, 0, 0);
+                BottomRoot.CornerRadius = new CornerRadius(0);
+                BottomRoot.Background = null;
+                BottomRoot.RowDefinitions[0].Height = new GridLength(24, GridUnitType.Pixel);
+
+                foreach (var column in BottomRoot.ColumnDefinitions)
+                {
+                    column.Width = new GridLength(1, GridUnitType.Auto);
+                }
+
+                _drawable.SetSize(false);
+                AudioCanvas.Margin = new Thickness(-102, -102, -102, -102);
+
+                Audio.Width = Lottie.Width = 96;
+                Audio.Height = Lottie.Height = 96;
+                Audio.Margin = Lottie.Margin = new Thickness(48, 0, 48, 0);
+                Audio.CornerRadius = new CornerRadius(48);
+
+                AudioInfo.Margin = new Thickness(0, 8, 0, 24);
+
+                Grid.SetColumn(AudioCanvas, 1);
+                Grid.SetRow(AudioCanvas, 0);
+                Grid.SetRowSpan(AudioCanvas, 3);
+
+                Grid.SetColumn(Audio, 1);
+                Grid.SetRow(Audio, 0);
+                Grid.SetRowSpan(Audio, 3);
+
+                Grid.SetColumn(Lottie, 1);
+                Grid.SetRow(Lottie, 0);
+                Grid.SetRowSpan(Lottie, 3);
+
+                Grid.SetColumn(AudioInfo, 1);
+                Grid.SetRow(AudioInfo, 3);
+
+                Grid.SetColumn(Video, 0);
+                Grid.SetColumn(VideoInfo, 0);
+
+                Grid.SetColumn(Screen, 0);
+                Grid.SetColumn(ScreenInfo, 0);
+
+                Grid.SetColumn(Settings, 0);
+                Grid.SetColumn(SettingsInfo, 0);
+
+                UpdateVideo();
+                UpdateScreen();
+                Settings.Visibility = SettingsInfo.Visibility = call.CanStartVideo ? Visibility.Collapsed : Visibility.Visible;
             }
 
-            _pinnedExpanded = !_pinnedExpanded;
+            await this.UpdateLayoutAsync();
+            TranslateBottomPanel();
+
+            UpdateVisibleParticipants(false);
 
             return;
 
             Viewport.Height = ActualHeight - BottomPanel.ActualHeight;
             Viewport.Margin = new Thickness(-12, 0, -12, -(ActualHeight - BottomPanel.ActualHeight - ViewportAspect.ActualHeight));
 
-            pinned.CenterPoint = new Vector3(PinnedInfo.ActualSize.X / 2, PinnedInfo.ActualSize.Y, 0);
+            //pinned.CenterPoint = new Vector3(PinnedInfo.ActualSize.X / 2, PinnedInfo.ActualSize.Y, 0);
 
             var clip = aspect.Clip as CompositionGeometricClip;
             var rectangle = clip.Geometry as CompositionRoundedRectangleGeometry;
@@ -392,12 +530,185 @@ namespace Unigram.Views
             rectangle.StartAnimation("Offset", clipOffset);
             visual.StartAnimation("Translation", offset);
             visual.StartAnimation("Scale", scale);
-            pinned.StartAnimation("Translation", translateInfo);
-            glyph.StartAnimation("Translation", translateGlyph);
+            //pinned.StartAnimation("Translation", translateInfo);
+            //glyph.StartAnimation("Translation", translateGlyph);
 
             batch.End();
 
             _pinnedExpanded = !_pinnedExpanded;
+        }
+
+        private void TranslateBottomPanel()
+        {
+            var root = ElementCompositionPreview.GetElementVisual(BottomRoot);
+            var audio1 = ElementCompositionPreview.GetElementVisual(AudioCanvas);
+            var audio2 = ElementCompositionPreview.GetElementVisual(Lottie);
+            var audioInfo = ElementCompositionPreview.GetElementVisual(AudioInfo);
+            var video = ElementCompositionPreview.GetElementVisual(Video);
+            var videoInfo = ElementCompositionPreview.GetElementVisual(VideoInfo);
+            var screen = ElementCompositionPreview.GetElementVisual(Screen);
+            var screenInfo = ElementCompositionPreview.GetElementVisual(ScreenInfo);
+            var settings = ElementCompositionPreview.GetElementVisual(Settings);
+            var settingsInfo = ElementCompositionPreview.GetElementVisual(SettingsInfo);
+            var leave = ElementCompositionPreview.GetElementVisual(Leave);
+            var leaveInfo = ElementCompositionPreview.GetElementVisual(LeaveInfo);
+
+            audio1.CenterPoint = new Vector3(150, 150, 0);
+            audio2.CenterPoint = new Vector3(_pinnedExpanded ? 24 : 48, _pinnedExpanded ? 24 : 48, 0);
+
+            screen.CenterPoint = new Vector3(24, 24, 0);
+            screenInfo.CenterPoint = new Vector3(ScreenInfo.ActualSize.X / 2, ScreenInfo.ActualSize.Y / 2, 0);
+
+            settings.CenterPoint = new Vector3(24, 24, 0);
+            settingsInfo.CenterPoint = new Vector3(SettingsInfo.ActualSize.X / 2, SettingsInfo.ActualSize.Y / 2, 0);
+
+            ElementCompositionPreview.SetIsTranslationEnabled(BottomRoot, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(AudioCanvas, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(Lottie, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(AudioInfo, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(Video, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(VideoInfo, true);
+            //ElementCompositionPreview.SetIsTranslationEnabled(Screen, true);
+            //ElementCompositionPreview.SetIsTranslationEnabled(ScreenInfo, true);
+            //ElementCompositionPreview.SetIsTranslationEnabled(Settings, true);
+            //ElementCompositionPreview.SetIsTranslationEnabled(SettingsInfo, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(Leave, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(LeaveInfo, true);
+
+            // Root
+            var rootOffset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+
+            if (_pinnedExpanded)
+            {
+                rootOffset.InsertKeyFrame(0, new Vector3(-224 - 12, -34, 0));
+            }
+            else
+            {
+                rootOffset.InsertKeyFrame(0, new Vector3(224 + 12, 34, 0));
+            }
+
+            rootOffset.InsertKeyFrame(1, Vector3.Zero);
+
+            // Audio scale
+            var audioScale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+
+            if (_pinnedExpanded)
+            {
+                audioScale.InsertKeyFrame(0, new Vector3(2, 2, 1));
+            }
+            else
+            {
+                audioScale.InsertKeyFrame(0, new Vector3(0.5f, 0.5f, 0));
+            }
+
+            audioScale.InsertKeyFrame(1, Vector3.One);
+
+            // Audio offset
+            var audioOffset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+
+            if (_pinnedExpanded)
+            {
+                audioOffset.InsertKeyFrame(0, new Vector3(72, 0, 0));
+            }
+            else
+            {
+                audioOffset.InsertKeyFrame(0, new Vector3(-72, 0, 0));
+            }
+
+            audioOffset.InsertKeyFrame(1, Vector3.Zero);
+
+            // Audio info offset
+            var audioInfoOffset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+
+            if (_pinnedExpanded)
+            {
+                audioInfoOffset.InsertKeyFrame(0, new Vector3(72, 26, 0));
+            }
+            else
+            {
+                audioInfoOffset.InsertKeyFrame(0, new Vector3(-72, -26, 0));
+            }
+
+            audioInfoOffset.InsertKeyFrame(1, Vector3.Zero);
+
+            // Video offset
+            var videoOffset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+
+            if (_pinnedExpanded)
+            {
+                videoOffset.InsertKeyFrame(0, new Vector3(-120, 0, 0));
+            }
+            else
+            {
+                videoOffset.InsertKeyFrame(0, new Vector3(120, 0, 0));
+            }
+
+            videoOffset.InsertKeyFrame(1, Vector3.Zero);
+
+            // Other scales
+            var otherScale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+
+            if (_pinnedExpanded)
+            {
+                otherScale.InsertKeyFrame(0, Vector3.Zero);
+                otherScale.InsertKeyFrame(1, Vector3.One);
+            }
+            else
+            {
+                otherScale.InsertKeyFrame(0, Vector3.One);
+                otherScale.InsertKeyFrame(1, Vector3.Zero);
+            }
+
+            // Leave offset
+            var leaveOffset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+
+            if (_pinnedExpanded)
+            {
+                leaveOffset.InsertKeyFrame(0, new Vector3(-96, 0, 0));
+            }
+            else
+            {
+                leaveOffset.InsertKeyFrame(0, new Vector3(96, 0, 0));
+            }
+
+            leaveOffset.InsertKeyFrame(1, Vector3.Zero);
+
+            rootOffset.Duration =
+                audioScale.Duration =
+                leaveOffset.Duration =
+                otherScale.Duration =
+                videoOffset.Duration =
+                audioInfoOffset.Duration =
+                audioOffset.Duration = TimeSpan.FromSeconds(.4);
+            //rootOffset.DelayTime =
+            //    audioScale.DelayTime =
+            //    leaveOffset.DelayTime =
+            //    otherScale.DelayTime =
+            //    videoOffset.DelayTime =
+            //    audioInfoOffset.DelayTime =
+            //    audioOffset.DelayTime = TimeSpan.FromSeconds(4);
+            //rootOffset.DelayBehavior =
+            //    audioScale.DelayBehavior =
+            //    leaveOffset.DelayBehavior =
+            //    otherScale.DelayBehavior =
+            //    videoOffset.DelayBehavior =
+            //    audioInfoOffset.DelayBehavior =
+            //    audioOffset.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
+
+            root.StartAnimation("Translation", rootOffset);
+            audio1.StartAnimation("Scale", audioScale);
+            audio2.StartAnimation("Scale", audioScale);
+            audio1.StartAnimation("Translation", audioOffset);
+            audio2.StartAnimation("Translation", audioOffset);
+            audioInfo.StartAnimation("Translation", audioInfoOffset);
+            video.StartAnimation("Translation", videoOffset);
+            videoInfo.StartAnimation("Translation", videoOffset);
+            screen.StartAnimation("Scale", otherScale);
+            screenInfo.StartAnimation("Scale", otherScale);
+            settings.StartAnimation("Scale", otherScale);
+            settingsInfo.StartAnimation("Scale", otherScale);
+            leave.StartAnimation("Translation", leaveOffset);
+            leaveInfo.StartAnimation("Translation", leaveOffset);
         }
 
         public void Update(GroupCall call, GroupCallParticipant currentUser)
@@ -433,6 +744,12 @@ namespace Unigram.Views
                     ScheduledInfo.Text = duration < TimeSpan.Zero ? Strings.Resources.VoipChatLateBy : Strings.Resources.VoipChatStartsIn;
                     StartsAt.Text = call.GetStartsAt();
                     StartsIn.Text = call.GetStartsIn();
+
+                    Menu.Visibility = Visibility.Collapsed;
+                    TitlePanel.Margin = new Thickness(0, 0, 0, 0);
+                    SubtitleInfo.Margin = new Thickness(12, -8, 0, 16);
+                    Settings.Visibility = SettingsInfo.Visibility = Visibility.Visible;
+                    Video.Visibility = VideoInfo.Visibility = Visibility.Collapsed;
                 }
                 else
                 {
@@ -443,11 +760,11 @@ namespace Unigram.Views
                         UnloadObject(ScheduledPanel);
                     }
 
-                    Menu.Visibility = call.CanStartVideo ? Visibility.Visible : Visibility.Collapsed;
-                    TitlePanel.Margin = new Thickness(call.CanStartVideo ? 32 : 0, 0, 0, 0);
-                    SubtitleInfo.Margin = new Thickness(call.CanStartVideo ? 44 : 12, -8, 0, 0);
-                    Settings.Visibility = SettingsInfo.Visibility = call.CanStartVideo ? Visibility.Collapsed : Visibility.Visible;
-                    Video.Visibility = VideoInfo.Visibility = call.CanStartVideo ? Visibility.Visible : Visibility.Collapsed;
+                    //Menu.Visibility = call.CanStartVideo ? Visibility.Visible : Visibility.Collapsed;
+                    //TitlePanel.Margin = new Thickness(call.CanStartVideo ? 32 : 0, 0, 0, 0);
+                    //SubtitleInfo.Margin = new Thickness(call.CanStartVideo ? 44 : 12, -8, 0, 16);
+                    //Settings.Visibility = SettingsInfo.Visibility = call.CanStartVideo ? Visibility.Collapsed : Visibility.Visible;
+                    //Video.Visibility = VideoInfo.Visibility = call.CanStartVideo ? Visibility.Visible : Visibility.Collapsed;
 
                     SubtitleInfo.Text = Locale.Declension("Participants", call.ParticipantCount);
                     ParticipantsPanel.Visibility = Visibility.Visible;
@@ -593,6 +910,21 @@ namespace Unigram.Views
             }
 
             _protoService.Send(new ToggleGroupCallIsMyVideoEnabled(_service.Call.Id, _capturer != null));
+            UpdateVideo();
+        }
+
+        private void Screen_Click(object sender, RoutedEventArgs e)
+        {
+            if (_service.IsScreenSharing)
+            {
+                _service.EndScreenSharing();
+            }
+            else
+            {
+                _service.StartScreenSharing();
+            }
+
+            UpdateScreen();
         }
 
         private void UpdateNetworkState(GroupCall call, GroupCallParticipant currentUser, bool? connected = null)
@@ -737,19 +1069,74 @@ namespace Unigram.Views
             {
                 case ButtonColors.Disabled:
                     _drawable.SetColors(0xff57A4FE, 0xffF05459, 0xff766EE9);
-                    Settings.Background = Video.Background = new SolidColorBrush { Color = Color.FromArgb(0x66, 0x76, 0x6E, 0xE9) };
+                    Settings.Background = new SolidColorBrush { Color = Color.FromArgb(0x66, 0x76, 0x6E, 0xE9) };
                     break;
                 case ButtonColors.Unmute:
                     _drawable.SetColors(0xFF0078ff, 0xFF33c659);
-                    Settings.Background = Video.Background = new SolidColorBrush { Color = Color.FromArgb(0x66, 0x33, 0xc6, 0x59) };
+                    Settings.Background = new SolidColorBrush { Color = Color.FromArgb(0x66, 0x33, 0xc6, 0x59) };
                     break;
                 case ButtonColors.Mute:
                     _drawable.SetColors(0xFF59c7f8, 0xFF0078ff);
-                    Settings.Background = Video.Background = new SolidColorBrush { Color = Color.FromArgb(0x66, 0x00, 0x78, 0xff) };
+                    Settings.Background = new SolidColorBrush { Color = Color.FromArgb(0x66, 0x00, 0x78, 0xff) };
                     break;
             }
 
             _prevColors = colors;
+
+            UpdateVideo();
+            UpdateScreen();
+        }
+
+        private void UpdateVideo()
+        {
+            if (_service.Call.CanStartVideo)
+            {
+                switch (_prevColors)
+                {
+                    case ButtonColors.Disabled:
+                        Video.Background = new SolidColorBrush { Color = Color.FromArgb(0x66, 0x76, 0x6E, 0xE9) };
+                        break;
+                    case ButtonColors.Unmute:
+                        Video.Background = new SolidColorBrush { Color = Color.FromArgb((byte)(_capturer != null ? 0xFF : 0x66), 0x33, 0xc6, 0x59) };
+                        break;
+                    case ButtonColors.Mute:
+                        Video.Background = new SolidColorBrush { Color = Color.FromArgb((byte)(_capturer != null ? 0xFF : 0x66), 0x00, 0x78, 0xff) };
+                        break;
+                }
+
+                Video.Glyph = _capturer != null ? Icons.VideoOffFilled : Icons.VideoFilled;
+                Video.Visibility = VideoInfo.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                Video.Visibility = VideoInfo.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void UpdateScreen()
+        {
+            if (_pinnedExpanded && _service.Call.CanStartVideo && GraphicsCaptureSession.IsSupported())
+            {
+                switch (_prevColors)
+                {
+                    case ButtonColors.Disabled:
+                        Screen.Background = new SolidColorBrush { Color = Color.FromArgb(0x66, 0x76, 0x6E, 0xE9) };
+                        break;
+                    case ButtonColors.Unmute:
+                        Screen.Background = new SolidColorBrush { Color = Color.FromArgb((byte)(_service.IsScreenSharing ? 0xBB : 0x66), 0x33, 0xc6, 0x59) };
+                        break;
+                    case ButtonColors.Mute:
+                        Screen.Background = new SolidColorBrush { Color = Color.FromArgb((byte)(_service.IsScreenSharing ? 0xBB : 0x66), 0x00, 0x78, 0xff) };
+                        break;
+                }
+
+                Screen.Glyph = _service.IsScreenSharing ? Icons.ShareScreenStopFilled : Icons.ShareScreenFilled;
+                Screen.Visibility = ScreenInfo.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                Screen.Visibility = ScreenInfo.Visibility = Visibility.Collapsed;
+            }
         }
 
         private VoipVideoCapture _capturer;
@@ -829,10 +1216,10 @@ namespace Unigram.Views
                 }
             }
 
-            flyout.CreateFlyoutSeparator();
-
             if (call.ScheduledStartDate == 0)
             {
+                flyout.CreateFlyoutSeparator();
+
                 var inputId = _service.CurrentAudioInput;
                 var outputId = _service.CurrentAudioOutput;
 
@@ -892,14 +1279,14 @@ namespace Unigram.Views
 
                 flyout.Items.Add(input);
                 flyout.Items.Add(output);
-
-                flyout.CreateFlyoutSeparator();
             }
 
             //flyout.CreateFlyoutItem(ShareInviteLink, Strings.Resources.VoipGroupShareInviteLink, new FontIcon { Glyph = Icons.Link });
 
             if (call.CanBeManaged)
             {
+                flyout.CreateFlyoutSeparator();
+
                 var discard = flyout.CreateFlyoutItem(Discard, Strings.Resources.VoipGroupEndChat, new FontIcon { Glyph = Icons.Dismiss });
                 discard.Foreground = new SolidColorBrush(Colors.IndianRed);
             }
@@ -1040,15 +1427,6 @@ namespace Unigram.Views
         {
             this.BeginOnUIThread(() =>
             {
-                if (participant.ParticipantId.IsEqual(_pinnedParticipant?.ParticipantId))
-                {
-                    UpdatePinnedParticipant(participant);
-                }
-                else if (_pinnedParticipant == null && participant.HasVideoInfo())
-                {
-                    UpdatePinnedParticipant(participant);
-                }
-
                 var container = List.ContainerFromItem(participant) as SelectorItem;
                 var content = container?.ContentTemplateRoot as Grid;
 
@@ -1083,9 +1461,9 @@ namespace Unigram.Views
                 title.Text = _protoService.GetTitle(chat);
             }
 
-            void SetIncomingVideoOutput(string endpointId, bool screencast, string glyph)
+            void SetIncomingVideoOutput(GroupCallParticipantVideoInfo videoInfo, bool screencast, string glyph)
             {
-                if (HasIncomingVideoOutput(participant.ParticipantId, endpointId, viewport.Child as CanvasControl))
+                if (HasIncomingVideoOutput(participant.ParticipantId, videoInfo, viewport.Child as CanvasControl))
                 {
                     return;
                 }
@@ -1093,24 +1471,24 @@ namespace Unigram.Views
                 status.Text = glyph;
                 status.Margin = new Thickness(0, 0, 4, 0);
 
-                viewport.Child = new CanvasControl();
-                AddIncomingVideoOutput(participant, endpointId, viewport.Child as CanvasControl, screencast);
+                //viewport.Child = new CanvasControl();
+                //AddIncomingVideoOutput(participant, videoInfo, viewport.Child as CanvasControl, screencast);
             }
 
             if (participant.ScreenSharingVideoInfo != null)
             {
                 if (participant.VideoInfo != null)
                 {
-                    SetIncomingVideoOutput(participant.ScreenSharingVideoInfo.EndpointId, true, Icons.ScreencastFilled + Icons.VideoFilled);
+                    SetIncomingVideoOutput(participant.ScreenSharingVideoInfo, true, Icons.SmallScreencastFilled + Icons.SmallVideoFilled);
                 }
                 else
                 {
-                    SetIncomingVideoOutput(participant.ScreenSharingVideoInfo.EndpointId, true, Icons.ScreencastFilled);
+                    SetIncomingVideoOutput(participant.ScreenSharingVideoInfo, true, Icons.SmallScreencastFilled);
                 }
             }
             else if (participant.VideoInfo != null)
             {
-                SetIncomingVideoOutput(participant.VideoInfo.EndpointId, false, Icons.VideoFilled);
+                SetIncomingVideoOutput(participant.VideoInfo, false, Icons.SmallVideoFilled);
             }
             else
             {
@@ -1161,111 +1539,46 @@ namespace Unigram.Views
                 glyph.Text = muted ? Icons.MicOff : Icons.MicOn;
                 glyph.Foreground = new SolidColorBrush { Color = muted && !participant.CanUnmuteSelf ? Colors.Red : Color.FromArgb(0xFF, 0x85, 0x85, 0x85) };
             }
+
+            if (_gridTokens.ContainsKey(participant.ParticipantId))
+            {
+                UpdateGridParticipant(participant);
+            }
+            else if (participant.HasVideoInfo())
+            {
+                UpdateGridParticipant(participant);
+            }
         }
 
-        private void UpdatePinnedParticipant(GroupCallParticipant participant)
+        private void UpdateRequestedVideos()
         {
-            _pinnedParticipant = participant;
+            // TODO: grid quality depending on layout
 
-            if (participant == null || !participant.HasVideoInfo())
-            {
-                _pinnedVideoToken = null;
-                ShowHidePinnedParticipant(false);
-                return;
-            }
+            var list = _listTokens.Values.Select(x => new VoipVideoChannelInfo(x.AudioSource, x.Description, VoipVideoChannelQuality.Thumbnail));
+            var grid = _gridTokens.Values.Select(x => new VoipVideoChannelInfo(x.AudioSource, x.Description, VoipVideoChannelQuality.Medium));
 
-            //ShowHidePinnedParticipant(true);
+            _manager.SetRequestedVideoChannels(list.Union(grid).ToArray());
+        }
 
-            if (_cacheService.TryGetUser(participant.ParticipantId, out User user))
+        private void UpdateGridParticipant(GroupCallParticipant participant)
+        {
+            if (_gridTokens.ContainsKey(participant.ParticipantId))
             {
-                PinnedTitle.Text = user.GetFullName();
-            }
-            else if (_cacheService.TryGetChat(participant.ParticipantId, out Chat chat))
-            {
-                PinnedTitle.Text = _protoService.GetTitle(chat);
-            }
-
-            bool HasIncomingVideoOutput(Border target, string endpointId)
-            {
-                return _pinnedVideoToken?.IsMatch(endpointId, target.Child as CanvasControl) ?? false;
-            }
-
-            void SetIncomingVideoOutput(Border target, string endpointId, bool screencast)
-            {
-                if (HasIncomingVideoOutput(target, endpointId))
+                var canvas = Viewport.Children.FirstOrDefault(x => x is GroupCallParticipantGridCell canvas && canvas.ParticipantId.IsEqual(participant.ParticipantId)) as GroupCallParticipantGridCell;
+                if (canvas != null && participant.HasVideoInfo())
                 {
-                    return;
+                    canvas.UpdateGroupCallParticipant(_cacheService, participant);
                 }
-
-                target.Child = new CanvasControl();
-
-                if (screencast && participant.IsCurrentUser && _service.IsScreenSharing)
+                else if (canvas != null)
                 {
-                    _pinnedScreenToken = _service.ScreenSharing.SetFullSizeVideoEndpointId(endpointId, target.Child as CanvasControl);
-                }
-                else
-                {
-                    _pinnedVideoToken = _manager.SetFullSizeVideoEndpointId(endpointId, target.Child as CanvasControl);
+                    canvas.RemoveFromVisualTree();
+                    UpdateVisibleParticipants(false);
                 }
             }
-
-            if (participant.ScreenSharingVideoInfo != null)
+            else if (participant.HasVideoInfo())
             {
-                SetIncomingVideoOutput(ViewportScreenSharing, participant.ScreenSharingVideoInfo.EndpointId, true);
-
-                if (participant.VideoInfo != null)
-                {
-                    SetIncomingVideoOutput(ViewportVideo, participant.VideoInfo.EndpointId, false);
-                }
-                else
-                {
-                    _pinnedVideoToken = null;
-                    ViewportVideo.Child = null;
-                }
-            }
-            else if (participant.VideoInfo != null)
-            {
-                SetIncomingVideoOutput(ViewportVideo, participant.VideoInfo.EndpointId, false);
-            }
-            else
-            {
-                _pinnedVideoToken = null;
-                _pinnedScreenToken = null;
-                ViewportVideo.Child = null;
-                ViewportScreenSharing.Child = null;
-            }
-
-            if (participant.IsHandRaised)
-            {
-                PinnedSpeaking.Text = Strings.Resources.WantsToSpeak;
-                PinnedGlyph.Text = Icons.EmojiHand;
-            }
-            else if (participant.IsSpeaking)
-            {
-                if (participant.VolumeLevel != 10000)
-                {
-                    PinnedSpeaking.Text = string.Format("{0:N0}% {1}", participant.VolumeLevel / 100d, Strings.Resources.Speaking);
-                }
-                else
-                {
-                    PinnedSpeaking.Text = Strings.Resources.Speaking;
-                }
-
-                PinnedGlyph.Text = Icons.MicOn;
-            }
-            else if (participant.IsCurrentUser)
-            {
-                var muted = participant.IsMutedForAllUsers || participant.IsMutedForCurrentUser;
-
-                PinnedSpeaking.Text = Strings.Resources.ThisIsYou;
-                PinnedGlyph.Text = muted ? Icons.MicOff : Icons.MicOn;
-            }
-            else
-            {
-                var muted = participant.IsMutedForAllUsers || participant.IsMutedForCurrentUser;
-
-                PinnedSpeaking.Text = participant.Bio.Length > 0 ? participant.Bio : Strings.Resources.Listening;
-                PinnedGlyph.Text = muted ? Icons.MicOff : Icons.MicOn;
+                Viewport.Children.Add(new GroupCallParticipantGridCell(_cacheService, participant));
+                UpdateVisibleParticipants(false);
             }
         }
 
@@ -1293,8 +1606,8 @@ namespace Unigram.Views
 
             var aspect = ElementCompositionPreview.GetElementVisual(ViewportAspect);
             var visual = ElementCompositionPreview.GetElementVisual(Viewport);
-            var pinned = ElementCompositionPreview.GetElementVisual(PinnedInfo);
-            var glyph = ElementCompositionPreview.GetElementVisual(PinnedGlyph);
+            //var pinned = ElementCompositionPreview.GetElementVisual(PinnedInfo);
+            //var glyph = ElementCompositionPreview.GetElementVisual(PinnedGlyph);
 
             var clip = aspect.Clip as CompositionGeometricClip;
             var rectangle = clip.Geometry as CompositionRoundedRectangleGeometry;
@@ -1351,8 +1664,8 @@ namespace Unigram.Views
                 rectangle.StartAnimation("Offset", clipOffset);
                 visual.StartAnimation("Translation", offset);
                 visual.StartAnimation("Scale", scale);
-                pinned.StartAnimation("Translation", translateInfo);
-                glyph.StartAnimation("Translation", translateGlyph);
+                //pinned.StartAnimation("Translation", translateInfo);
+                //glyph.StartAnimation("Translation", translateGlyph);
 
                 _pinnedExpanded = false;
             }
@@ -1368,15 +1681,11 @@ namespace Unigram.Views
             batch.End();
         }
 
-        public bool HasIncomingVideoOutput(MessageSender sender, string endpointId, CanvasControl canvas)
+        public bool HasIncomingVideoOutput(MessageSender sender, GroupCallParticipantVideoInfo videoInfo, CanvasControl canvas)
         {
-            if (sender is MessageSenderUser user && _userTokens.TryGetValue(user.UserId, out var userToken))
+            if (_listTokens.TryGetValue(sender, out var token))
             {
-                return userToken.IsMatch(endpointId, canvas);
-            }
-            else if (sender is MessageSenderChat chat && _chatTokens.TryGetValue(chat.ChatId, out var chatToken))
-            {
-                return chatToken.IsMatch(endpointId, canvas);
+                return token.IsMatch(videoInfo.EndpointId, canvas);
             }
 
             return false;
@@ -1387,37 +1696,19 @@ namespace Unigram.Views
             AddIncomingVideoOutput(participant, null, null, false);
         }
 
-        private void AddIncomingVideoOutput(GroupCallParticipant participant, string endpointId, CanvasControl canvas, bool screencast)
+        private void AddIncomingVideoOutput(GroupCallParticipant participant, GroupCallParticipantVideoInfo videoInfo, CanvasControl canvas, bool screencast)
         {
-            if (participant.ParticipantId is MessageSenderUser user)
+            if (videoInfo == null || canvas == null)
             {
-                if (canvas == null)
-                {
-                    _userTokens.Remove(user.UserId);
-                }
-                else if (screencast && participant.IsCurrentUser && _service.IsScreenSharing)
-                {
-                    _userTokens[user.UserId] = _service.ScreenSharing.AddIncomingVideoOutput(endpointId, canvas);
-                }
-                else
-                {
-                    _userTokens[user.UserId] = _manager.AddIncomingVideoOutput(endpointId, canvas);
-                }
+                _listTokens.Remove(participant.ParticipantId);
             }
-            else if (participant.ParticipantId is MessageSenderChat chat)
+            else if (screencast && participant.IsCurrentUser && _service.IsScreenSharing)
             {
-                if (canvas == null)
-                {
-                    _chatTokens.Remove(chat.ChatId);
-                }
-                else if (screencast && participant.IsCurrentUser && _service.IsScreenSharing)
-                {
-                    _chatTokens[chat.ChatId] = _service.ScreenSharing.AddIncomingVideoOutput(endpointId, canvas);
-                }
-                else
-                {
-                    _chatTokens[chat.ChatId] = _manager.AddIncomingVideoOutput(endpointId, canvas);
-                }
+                _listTokens[participant.ParticipantId] = _service.ScreenSharing.AddIncomingVideoOutput(participant.AudioSourceId, videoInfo, canvas);
+            }
+            else
+            {
+                _listTokens[participant.ParticipantId] = _manager.AddIncomingVideoOutput(participant.AudioSourceId, videoInfo, canvas);
             }
         }
 
@@ -1439,14 +1730,14 @@ namespace Unigram.Views
 
                 if (participant.HasVideoInfo())
                 {
-                    if (participant.ParticipantId.IsEqual(_pinnedParticipant?.ParticipantId))
-                    {
-                        flyout.CreateFlyoutItem(() => UpdatePinnedParticipant(null), "Unpin Video", new FontIcon { Glyph = Icons.PinOff });
-                    }
-                    else
-                    {
-                        flyout.CreateFlyoutItem(() => UpdatePinnedParticipant(participant), "Pin Video", new FontIcon { Glyph = Icons.Pin });
-                    }
+                    //if (participant.ParticipantId.IsEqual(_pinnedParticipant?.ParticipantId))
+                    //{
+                    //    flyout.CreateFlyoutItem(() => UpdateGridParticipant(null), "Unpin Video", new FontIcon { Glyph = Icons.PinOff });
+                    //}
+                    //else
+                    //{
+                    //    flyout.CreateFlyoutItem(() => UpdateGridParticipant(participant), "Pin Video", new FontIcon { Glyph = Icons.Pin });
+                    //}
                 }
             }
             else
@@ -1471,14 +1762,14 @@ namespace Unigram.Views
 
                 if (participant.HasVideoInfo())
                 {
-                    if (participant.ParticipantId.IsEqual(_pinnedParticipant?.ParticipantId))
-                    {
-                        flyout.CreateFlyoutItem(() => UpdatePinnedParticipant(null), "Unpin Video", new FontIcon { Glyph = Icons.PinOff });
-                    }
-                    else
-                    {
-                        flyout.CreateFlyoutItem(() => UpdatePinnedParticipant(participant), "Pin Video", new FontIcon { Glyph = Icons.Pin });
-                    }
+                    //if (participant.ParticipantId.IsEqual(_pinnedParticipant?.ParticipantId))
+                    //{
+                    //    flyout.CreateFlyoutItem(() => UpdateGridParticipant(null), "Unpin Video", new FontIcon { Glyph = Icons.PinOff });
+                    //}
+                    //else
+                    //{
+                    //    flyout.CreateFlyoutItem(() => UpdateGridParticipant(participant), "Pin Video", new FontIcon { Glyph = Icons.Pin });
+                    //}
                 }
 
                 if (participant.CanBeUnmutedForAllUsers && participant.IsMutedForAllUsers)
@@ -1517,6 +1808,105 @@ namespace Unigram.Views
 
             args.ShowAt(flyout, element);
         }
+
+        private ScrollViewer _scrollingHost;
+        private Dictionary<MessageSender, GroupCallParticipantGridCell> _prev = new(new MessageSenderEqualityComparer());
+
+        private void List_Loaded(object sender, RoutedEventArgs e)
+        {
+            var scrollingHost = List.GetScrollViewer();
+            if (scrollingHost != null)
+            {
+                _scrollingHost = scrollingHost;
+                _scrollingHost.ViewChanged += OnViewChanged;
+            }
+        }
+
+        private void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        {
+            UpdateVisibleParticipants(e.IsIntermediate);
+        }
+
+        private void UpdateVisibleParticipants(bool intermediate)
+        {
+            int first;
+            int last;
+
+            if (Viewport.IsCompact)
+            {
+                first = (int)Math.Truncate(_scrollingHost.VerticalOffset / (Viewport.ActualWidth / 2));
+                last = (int)Math.Ceiling((_scrollingHost.VerticalOffset + _scrollingHost.ViewportHeight) / (Viewport.ActualWidth / 2));
+
+                last *= 2;
+                last = Math.Min(last, Viewport.Children.Count - 1);
+            }
+            else
+            {
+                first = 0;
+                last = Viewport.Children.Count - 1;
+            }
+
+            if (last < Viewport.Children.Count && first < last && first >= 0)
+            {
+                var next = new Dictionary<MessageSender, GroupCallParticipantGridCell>(new MessageSenderEqualityComparer());
+
+                for (int i = first; i <= last; i++)
+                {
+                    var child = Viewport.Children[i] as GroupCallParticipantGridCell;
+                    var participant = child.Participant;
+
+                    next[child.ParticipantId] = child;
+
+                    // Check if already playing
+                    if (_gridTokens.TryGetValue(child.ParticipantId, out var token))
+                    {
+                        if (participant.ScreenSharingVideoInfo != null && token.IsMatch(participant.ScreenSharingVideoInfo.EndpointId, child.Surface))
+                        {
+                            continue;
+                        }
+                        else if (participant.VideoInfo != null && token.IsMatch(participant.VideoInfo.EndpointId, child.Surface))
+                        {
+                            continue;
+                        }
+                    }
+
+                    child.Surface = new CanvasControl();
+
+                    if (participant.ScreenSharingVideoInfo != null && participant.IsCurrentUser && _service.IsScreenSharing)
+                    {
+                        _gridTokens[participant.ParticipantId] = _service.ScreenSharing.AddIncomingVideoOutput(participant.AudioSourceId, participant.ScreenSharingVideoInfo, child.Surface);
+                    }
+                    else if (participant.ScreenSharingVideoInfo != null)
+                    {
+                        _gridTokens[participant.ParticipantId] = _manager.AddIncomingVideoOutput(participant.AudioSourceId, participant.ScreenSharingVideoInfo, child.Surface);
+                    }
+                    else if (participant.VideoInfo != null)
+                    {
+                        _gridTokens[participant.ParticipantId] = _manager.AddIncomingVideoOutput(participant.AudioSourceId, participant.VideoInfo, child.Surface);
+                    }
+                }
+
+                foreach (var item in _prev.Keys.ToImmutableArray())
+                {
+                    if (next.ContainsKey(item))
+                    {
+                        continue;
+                    }
+
+                    _prev[item].Surface = null;
+                    _prev.Remove(item);
+
+                    _gridTokens.Remove(item);
+                }
+
+                foreach (var item in next)
+                {
+                    _prev[item.Key] = item.Value;
+                }
+            }
+
+            UpdateRequestedVideos();
+        }
     }
 
     public class ButtonWavesDrawable
@@ -1532,6 +1922,8 @@ namespace Unigram.Views
         private float _amplitude;
         private float _animateAmplitudeDiff;
         private float _animateToAmplitude;
+
+        private bool _small;
 
         private uint[] _stops;
 
@@ -1557,6 +1949,20 @@ namespace Unigram.Views
             _bigWaveDrawable.GenerateBlob();
             _tinyWaveDrawable.paint.A = 38;
             _bigWaveDrawable.paint.A = 76;
+        }
+
+        public void SetSize(bool small)
+        {
+            _small = small;
+            _buttonWaveDrawable.minRadius = small ? 24 : 48.0f;
+            _buttonWaveDrawable.maxRadius = small ? 24 : 48.0f;
+            _buttonWaveDrawable.GenerateBlob();
+            _tinyWaveDrawable.minRadius = small ? 25 : 50.0f;
+            _tinyWaveDrawable.maxRadius = small ? 25 : 50.0f;
+            _tinyWaveDrawable.GenerateBlob();
+            _bigWaveDrawable.minRadius = small ? 26 : 52.0f;
+            _bigWaveDrawable.maxRadius = small ? 26 : 52.0f;
+            _bigWaveDrawable.GenerateBlob();
         }
 
         public void SetAmplitude(float amplitude)
@@ -1606,6 +2012,15 @@ namespace Unigram.Views
             _buttonWaveDrawable.minRadius = 48.0f;
             _buttonWaveDrawable.maxRadius = 48.0f + (12.0f * BlobDrawable.FORM_BUTTON_MAX);
 
+            if (_small)
+            {
+                _tinyWaveDrawable.minRadius /= 2;
+                _tinyWaveDrawable.maxRadius /= 2;
+                _bigWaveDrawable.minRadius /= 2;
+                _bigWaveDrawable.maxRadius /= 2;
+                _buttonWaveDrawable.minRadius /= 2;
+                _buttonWaveDrawable.maxRadius /= 2;
+            }
 
             if (_animateToAmplitude != _amplitude)
             {
@@ -1649,8 +2064,14 @@ namespace Unigram.Views
                 _maskGradient.RadiusX = 84 * glowScale;
                 _maskGradient.RadiusY = 84 * glowScale;
 
+                if (_small)
+                {
+                    _maskGradient.RadiusX /= 2;
+                    _maskGradient.RadiusY /= 2;
+                }
+
                 session.Clear(Colors.Transparent);
-                session.FillEllipse(new Vector2(150, 150), 84 * glowScale, 84 * glowScale, _maskGradient);
+                session.FillEllipse(new Vector2(150, 150), _maskGradient.RadiusX, _maskGradient.RadiusY, _maskGradient);
                 session.Transform = Matrix3x2.CreateScale(bigScale, new Vector2(150, 150));
                 _bigWaveDrawable.Draw(session, 150, 150);
                 session.Transform = Matrix3x2.CreateScale(tinyScale, new Vector2(150, 150));
@@ -1689,6 +2110,261 @@ namespace Unigram.Views
             }
 
             view.Invalidate();
+        }
+    }
+
+    public class ParticipantId
+    {
+        public MessageSender Sender { get; set; }
+        public bool IsScreenSharing { get; set; }
+
+        public ParticipantId(MessageSender sender, bool screen)
+        {
+            Sender = sender;
+            IsScreenSharing = screen;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is ParticipantId y)
+            {
+                return Sender.IsEqual(y.Sender) && IsScreenSharing == y.IsScreenSharing;
+            }
+
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            if (Sender is MessageSenderUser user)
+            {
+                return user.UserId.GetHashCode() ^ IsScreenSharing.GetHashCode();
+            }
+            else if (Sender is MessageSenderChat chat)
+            {
+                return chat.ChatId.GetHashCode() ^ IsScreenSharing.GetHashCode();
+            }
+
+            return base.GetHashCode();
+        }
+    }
+
+    public class MessageSenderEqualityComparer : IEqualityComparer<MessageSender>
+    {
+        public bool Equals(MessageSender x, MessageSender y)
+        {
+            return x.IsEqual(y);
+        }
+
+        public int GetHashCode(MessageSender obj)
+        {
+            if (obj is MessageSenderUser user)
+            {
+                return user.UserId.GetHashCode();
+            }
+            else if (obj is MessageSenderChat chat)
+            {
+                return chat.ChatId.GetHashCode();
+            }
+
+            return obj.GetHashCode();
+        }
+    }
+
+    public class ParticipantsGrid : Windows.UI.Xaml.Controls.Panel
+    {
+        private bool _compact = true;
+        public bool IsCompact
+        {
+            get => _compact;
+            set
+            {
+                if (_compact != value)
+                {
+                    _compact = value;
+                    InvalidateMeasure();
+                }
+            }
+        }
+
+        private readonly List<Rect> _prev = new();
+        private bool _prevCompact = true;
+
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            var index = 0;
+            var count = Children.Count;
+
+            var rows = Math.Ceiling(Math.Sqrt(count));
+            var columns = Math.Ceiling(count / rows);
+
+            var finalWidth = availableSize.Width;
+            var finalHeight = availableSize.Height;
+
+            if (_compact)
+            {
+                rows = Math.Ceiling(count / 2d);
+                columns = 2;
+
+                finalHeight = finalWidth / 2 * rows;
+            }
+            else
+            {
+                var tail = columns - (rows * columns - count);
+                if (tail > 0 && rows >= columns + tail)
+                {
+                    columns++;
+                    rows--;
+                }
+                else if (tail > 0 && columns >= columns - 1 + tail)
+                {
+                    columns--;
+                }
+
+                finalWidth -= 224;
+            }
+
+            for (int row = 0; row < rows; row++)
+            {
+                var rowColumns = columns;
+                if (row == rows - 1)
+                {
+                    rowColumns = count - index;
+                }
+
+                for (int column = 0; column < rowColumns; column++)
+                {
+                    Children[index].Measure(new Size(finalWidth / (_compact ? rowColumns : columns), finalHeight / rows));
+                    index++;
+                }
+            }
+
+            availableSize.Height = finalHeight;
+            return availableSize;
+        }
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            var index = 0;
+            var count = Children.Count;
+
+            var rows = Math.Ceiling(Math.Sqrt(count));
+            var columns = Math.Ceiling(count / rows);
+
+            var finalWidth = finalSize.Width;
+            var finalHeight = finalSize.Height;
+
+            if (_compact)
+            {
+                rows = Math.Ceiling(count / 2d);
+                columns = 2;
+            }
+            else
+            {
+                var tail = columns - (rows * columns - count);
+                if (tail > 0 && rows >= columns + tail)
+                {
+                    columns++;
+                    rows--;
+                }
+                else if (tail > 0 && columns >= columns - 1 + tail)
+                {
+                    columns--;
+                }
+
+                finalWidth -= 224;
+            }
+
+            for (int row = 0; row < rows; row++)
+            {
+                var rowColumns = columns;
+                if (row == rows - 1)
+                {
+                    rowColumns = count - index;
+                }
+
+                var rowWidth = rowColumns * (finalWidth / columns);
+                var x = (finalWidth - rowWidth) / 2;
+
+                if (_compact)
+                {
+                    x = 0;
+                }
+                else
+                {
+                    x += 224;
+                }
+
+                for (int column = 0; column < rowColumns; column++)
+                {
+                    var size = new Size(finalWidth / (_compact ? rowColumns : columns), finalHeight / rows);
+                    var point = new Point(x + column * size.Width, row * size.Height);
+
+                    Children[index].Arrange(new Rect(point, size));
+
+                    Rect prev;
+                    if (index < _prev.Count)
+                    {
+                        prev = _prev[index];
+                    }
+                    else
+                    {
+                        prev = new Rect(point, new Size(0, 0));
+                    }
+
+                    if (_prevCompact != _compact)
+                    {
+                        if (_prevCompact)
+                        {
+                            prev.Y += 16;
+                        }
+                        else
+                        {
+                            prev.Y -= 16;
+                        }
+                    }
+
+                    if (prev.X != point.X || prev.Y != point.Y)
+                    {
+                        ElementCompositionPreview.SetIsTranslationEnabled(Children[index], true);
+
+                        var visual = ElementCompositionPreview.GetElementVisual(Children[index]);
+                        var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                        offset.InsertKeyFrame(0, new Vector3((float)(prev.X - point.X), (float)(prev.Y - point.Y), 0));
+                        offset.InsertKeyFrame(1, Vector3.Zero);
+                        offset.Duration = TimeSpan.FromMilliseconds(400);
+                        visual.StartAnimation("Translation", offset);
+                    }
+
+                    if (prev.Width != size.Width || prev.Height != size.Height)
+                    {
+                        var visual = ElementCompositionPreview.GetElementVisual(Children[index]);
+                        var scale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                        scale.InsertKeyFrame(0, new Vector3((float)(prev.Width / size.Width), (float)(prev.Height / size.Height), 0));
+                        scale.InsertKeyFrame(1, Vector3.One);
+                        scale.Duration = TimeSpan.FromMilliseconds(400);
+                        visual.StartAnimation("Scale", scale);
+                    }
+
+                    if (index < _prev.Count)
+                    {
+                        _prev[index] = new Rect(point, size);
+                    }
+                    else
+                    {
+                        _prev.Add(new Rect(point, size));
+                    }
+
+                    index++;
+                }
+            }
+
+            for (int i = _prev.Count - 1; i >= Children.Count; i--)
+            {
+                _prev.RemoveAt(i);
+            }
+
+            return finalSize;
         }
     }
 }

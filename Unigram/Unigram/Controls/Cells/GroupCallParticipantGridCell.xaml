@@ -1,0 +1,52 @@
+﻿<UserControl
+    x:Class="Unigram.Controls.Cells.GroupCallParticipantGridCell"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Controls.Cells"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:xaml="using:Microsoft.Graphics.Canvas.UI.Xaml"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+
+    <Grid x:Name="LayoutRoot" Background="{ThemeResource PageHeaderBorderBrush}" Margin="2" BorderThickness="2" CornerRadius="8">
+        <Border x:Name="CanvasRoot" CornerRadius="8">
+            
+        </Border>
+
+        <Grid x:Name="PinnedInfo" VerticalAlignment="Bottom" Opacity="0.8" Padding="12,6">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Border CornerRadius="0,0,8,8" 
+                    VerticalAlignment="Stretch"
+                    Margin="-12,-6"
+                    Grid.ColumnSpan="3">
+                <Rectangle>
+                    <Rectangle.Fill>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                            <GradientStop Color="#00000000" Offset="0"/>
+                            <GradientStop Color="#FF000000" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Border>
+
+            <TextBlock
+                x:Name="Title"
+                FontFamily="{StaticResource EmojiThemeFontFamily}"
+                TextWrapping="NoWrap"
+                TextTrimming="CharacterEllipsis"
+                VerticalAlignment="Center" />
+
+            <TextBlock
+                x:Name="Glyph"
+                VerticalAlignment="Center"
+                FontFamily="{StaticResource SymbolThemeFontFamily}"
+                FontSize="20"
+                Grid.Column="1"/>
+        </Grid>
+    </Grid>
+</UserControl>

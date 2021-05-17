@@ -125,25 +125,17 @@ namespace winrt::Unigram::Native::Calls::implementation
 		}
 	}
 
-	winrt::Unigram::Native::Calls::VoipVideoRendererToken VoipGroupManager::AddIncomingVideoOutput(hstring endpointId, CanvasControl canvas) {
+	winrt::Unigram::Native::Calls::VoipVideoRendererToken VoipGroupManager::AddIncomingVideoOutput(int32_t audioSource, GroupCallParticipantVideoInfo videoInfo, CanvasControl canvas) {
 		if (m_impl) {
 			auto renderer = std::make_shared<VoipVideoRenderer>(canvas, true);
-			m_impl->addIncomingVideoOutput(string_to_unmanaged(endpointId), renderer);
+			m_impl->addIncomingVideoOutput(string_to_unmanaged(videoInfo.EndpointId()), renderer);
 
-			return *winrt::make_self<VoipVideoRendererToken>(renderer, endpointId, canvas);
+			return *winrt::make_self<VoipVideoRendererToken>(renderer, audioSource, videoInfo.EndpointId(), videoInfo.Description(), canvas);
 		}
 
 		return nullptr;
 	}
 
-	winrt::Unigram::Native::Calls::VoipVideoRendererToken VoipGroupManager::SetFullSizeVideoEndpointId(hstring endpointId, CanvasControl canvas) {
-		if (m_impl) {
-			//m_impl->setFullSizeVideoEndpointId(string_to_unmanaged(endpointId));
-			return AddIncomingVideoOutput(endpointId, canvas);
-		}
-
-		return nullptr;
-	}
 
 
 	bool VoipGroupManager::IsMuted() {
@@ -184,6 +176,23 @@ namespace winrt::Unigram::Native::Calls::implementation
 	void VoipGroupManager::SetVolume(int32_t ssrc, double volume) {
 		if (m_impl) {
 			m_impl->setVolume(ssrc, volume);
+		}
+	}
+
+	void VoipGroupManager::SetRequestedVideoChannels(IVector<VoipVideoChannelInfo> descriptions) {
+		if (m_impl) {
+			auto impl = std::vector<tgcalls::VideoChannelDescription>();
+
+			for (const VoipVideoChannelInfo& x : descriptions) {
+				tgcalls::VideoChannelDescription item;
+				item.audioSsrc = x.AudioSource();
+				item.videoInformation = string_to_unmanaged(x.Description());
+				item.quality = (tgcalls::VideoChannelDescription::Quality)x.Quality();
+
+				impl.push_back(item);
+			}
+
+			m_impl->setRequestedVideoChannels(std::move(impl));
 		}
 	}
 

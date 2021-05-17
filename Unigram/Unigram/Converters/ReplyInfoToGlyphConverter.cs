@@ -105,8 +105,12 @@ namespace Unigram.Converters
         public const string Settings = "\uE713"; 
         public const string Phone = "\uE717"; 
         public const string Video = "\uE714";
-        public const string VideoFilled = "\uE915";
-        public const string ScreencastFilled = "\uE910";
+        public const string SmallVideoFilled = "\uE915";
+        public const string VideoFilled = "\uE964";
+        public const string VideoOffFilled = "\uE963";
+        public const string SmallScreencastFilled = "\uE910";
+        public const string ShareScreenFilled = "\uE956";
+        public const string ShareScreenStopFilled = "\uE955";
         public const string Camera = "\uE722"; 
         public const string MusicNote = "\uE8D6"; 
         public const string MicOn = "\uE720"; 

@@ -11,13 +11,19 @@ namespace winrt::Unigram::Native::Calls::implementation
 {
     struct VoipVideoRendererToken : VoipVideoRendererTokenT<VoipVideoRendererToken>
     {
-        VoipVideoRendererToken(std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> sink, hstring endpointId, CanvasControl canvasControl);
+        VoipVideoRendererToken(std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> sink, int32_t audioSource, hstring endpointId, hstring description, CanvasControl canvasControl);
+
+        int32_t AudioSource();
+        hstring EndpointId();
+        hstring Description();
 
         bool IsMatch(hstring endpointId, CanvasControl canvasControl);
 
     private:
         std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> m_sink;
+        int32_t m_audioSource;
         hstring m_endpointId;
+        hstring m_description;
         CanvasControl m_canvasControl{ nullptr };
     };
 }

@@ -1,6 +1,7 @@
 import "Unigram.Native.Calls.idl";
 import "VoipGroupDescriptor.idl";
 import "VoipVideoCapture.idl";
+import "VoipVideoChannelInfo.idl";
 import "VoipVideoRendererToken.idl";
 import "GroupNetworkStateChangedEventArgs.idl";
 import "BroadcastPartRequestedEventArgs.idl";
@@ -21,8 +22,7 @@ namespace Unigram.Native.Calls
         void SetJoinResponsePayload(String payload);
         void RemoveSsrcs(Windows.Foundation.Collections.IVector<Int32> ssrcs);
 
-        VoipVideoRendererToken AddIncomingVideoOutput(String endpointId, Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas);
-        VoipVideoRendererToken SetFullSizeVideoEndpointId(String endpointId, Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas);
+        VoipVideoRendererToken AddIncomingVideoOutput(Int32 audioSource, Telegram.Td.Api.GroupCallParticipantVideoInfo videoInfo, Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas);
 
         Boolean IsMuted;
 
@@ -31,6 +31,7 @@ namespace Unigram.Native.Calls
         void SetVideoCapture(IVoipVideoCapture videoCapture);
 
         void SetVolume(Int32 ssrc, Double volume);
+        void SetRequestedVideoChannels(Windows.Foundation.Collections.IVector<VoipVideoChannelInfo> descriptions);
 
         event Windows.Foundation.TypedEventHandler<VoipGroupManager, GroupNetworkStateChangedEventArgs> NetworkStateUpdated;
         event Windows.Foundation.TypedEventHandler<VoipGroupManager, Windows.Foundation.Collections.IMapView<Int32, Windows.Foundation.Collections.IKeyValuePair<Single, Boolean> > > AudioLevelsUpdated;

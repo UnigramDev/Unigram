@@ -234,6 +234,9 @@
     <Compile Include="Controls\Cells\ChatShareCell.xaml.cs">
       <DependentUpon>ChatShareCell.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Cells\GroupCallParticipantGridCell.xaml.cs">
+      <DependentUpon>GroupCallParticipantGridCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Cells\SessionCell.xaml.cs">
       <DependentUpon>SessionCell.xaml</DependentUpon>
     </Compile>
@@ -1430,6 +1433,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Cells\GroupCallParticipantGridCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Cells\SessionCell.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2261,7 +2268,7 @@
     </Reference>
     <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\rlottie\$(Platform)\RLottie.dll" />
     <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\rlottie\$(Platform)\RLottie.pri" />
-    <ReferenceCopyLocalPaths Condition=" '$(Configuration)' == 'Debug' " Include="$(ProjectDir)\..\Libraries\rlottie\$(Platform)\zlib1.dll" />
+    <!--<ReferenceCopyLocalPaths Condition=" '$(Configuration)' == 'Debug' " Include="$(ProjectDir)\..\Libraries\rlottie\$(Platform)\zlib1.dll" />-->
   </ItemGroup>
   <ItemGroup />
   <!--<ItemGroup>

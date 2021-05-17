@@ -1,8 +1,12 @@
 namespace Unigram.Native.Calls
 {
     [default_interface]
-    runtimeclass VoipVideoRendererToken 
+    runtimeclass VoipVideoRendererToken
     {
+        Int32 AudioSource{ get; };
+        String EndpointId{ get; };
+        String Description{ get; };
+
         Boolean IsMatch(String endpointId, Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvasControl);
     }
 }

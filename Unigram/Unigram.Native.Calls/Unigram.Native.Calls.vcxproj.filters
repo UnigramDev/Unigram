@@ -282,6 +282,7 @@
     <Midl Include="MediaChannelDescriptionsRequestedEventArgs.idl" />
     <Midl Include="VoipVideoRendererToken.idl" />
     <Midl Include="VoipScreenCapture.idl" />
+    <Midl Include="VoipVideoChannelInfo.idl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -25,8 +25,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 		void SetJoinResponsePayload(hstring payload);
 		void RemoveSsrcs(IVector<int32_t> ssrcs);
 
-		winrt::Unigram::Native::Calls::VoipVideoRendererToken AddIncomingVideoOutput(hstring endpointId, CanvasControl canvas);
-		winrt::Unigram::Native::Calls::VoipVideoRendererToken SetFullSizeVideoEndpointId(hstring endpointId, CanvasControl canvas);
+		winrt::Unigram::Native::Calls::VoipVideoRendererToken AddIncomingVideoOutput(int32_t audioSource, GroupCallParticipantVideoInfo videoInfo, CanvasControl canvas);
 
 		bool IsMuted();
 		void IsMuted(bool value);
@@ -36,6 +35,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 		void SetVideoCapture(Unigram::Native::Calls::IVoipVideoCapture videoCapture);
 
 		void SetVolume(int32_t ssrc, double volume);
+		void SetRequestedVideoChannels(IVector<VoipVideoChannelInfo> descriptions);
 
 		winrt::event_token NetworkStateUpdated(Windows::Foundation::TypedEventHandler<
 			winrt::Unigram::Native::Calls::VoipGroupManager,
