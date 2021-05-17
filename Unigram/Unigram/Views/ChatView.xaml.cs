@@ -1576,7 +1576,7 @@ namespace Unigram.Views
                     return;
                 }
 
-                _stickersMode = StickersPanelMode.Sidebar;
+                _stickersMode = _stickersModeWide = StickersPanelMode.Sidebar;
                 ButtonStickers.IsChecked = true;
                 SettingsService.Current.IsSidebarOpen = true;
 
@@ -2917,7 +2917,7 @@ namespace Unigram.Views
             }
             else
             {
-                _stickersMode = StickersPanelMode.Collapsed;
+                _stickersMode = _stickersModeWide = StickersPanelMode.Collapsed;
                 SettingsService.Current.IsSidebarOpen = false;
 
                 StickersPanel.Deactivate();
