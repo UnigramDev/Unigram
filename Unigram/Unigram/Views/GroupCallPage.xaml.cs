@@ -760,14 +760,26 @@ namespace Unigram.Views
                         UnloadObject(ScheduledPanel);
                     }
 
-                    //Menu.Visibility = call.CanStartVideo ? Visibility.Visible : Visibility.Collapsed;
-                    //TitlePanel.Margin = new Thickness(call.CanStartVideo ? 32 : 0, 0, 0, 0);
-                    //SubtitleInfo.Margin = new Thickness(call.CanStartVideo ? 44 : 12, -8, 0, 16);
-                    //Settings.Visibility = SettingsInfo.Visibility = call.CanStartVideo ? Visibility.Collapsed : Visibility.Visible;
-                    //Video.Visibility = VideoInfo.Visibility = call.CanStartVideo ? Visibility.Visible : Visibility.Collapsed;
+                    if (_pinnedExpanded)
+                    {
+                        Menu.Visibility = Visibility.Collapsed;
+                        TitlePanel.Margin = new Thickness(0, 0, 0, 0);
+                        SubtitleInfo.Visibility = Visibility.Collapsed;
+                        Settings.Visibility = SettingsInfo.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        Menu.Visibility = call.CanStartVideo ? Visibility.Visible : Visibility.Collapsed;
+                        TitlePanel.Margin = new Thickness(call.CanStartVideo ? 32 : 0, 0, 0, 0);
+                        SubtitleInfo.Margin = new Thickness(call.CanStartVideo ? 44 : 12, -8, 0, 16);
+                        Settings.Visibility = SettingsInfo.Visibility = call.CanStartVideo ? Visibility.Collapsed : Visibility.Visible;
+                    }
 
                     SubtitleInfo.Text = Locale.Declension("Participants", call.ParticipantCount);
                     ParticipantsPanel.Visibility = Visibility.Visible;
+
+                    UpdateVideo();
+                    UpdateScreen();
                 }
 
                 UpdateNetworkState(call, currentUser, _service.IsConnected);
