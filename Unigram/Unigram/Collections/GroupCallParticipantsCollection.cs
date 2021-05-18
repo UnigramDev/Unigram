@@ -3,15 +3,18 @@ using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
+using Windows.Foundation;
 using Windows.System;
+using Windows.UI.Xaml.Data;
 
 namespace Unigram.Collections
 {
-    public class GroupCallParticipantsCollection : ObservableCollection<GroupCallParticipant>, IDelegable<IGroupCallDelegate>, IHandle<UpdateGroupCall>, IHandle<UpdateGroupCallParticipant>
+    public class GroupCallParticipantsCollection : ObservableCollection<GroupCallParticipant>, IDelegable<IGroupCallDelegate>, IHandle<UpdateGroupCall>, IHandle<UpdateGroupCallParticipant>, ISupportIncrementalLoading
     {
         private readonly IProtoService _protoService;
         private readonly IEventAggregator _aggregator;
@@ -55,6 +58,7 @@ namespace Unigram.Collections
                 }
 
                 _groupCall = update.GroupCall;
+                OnPropertyChanged(new System.ComponentModel.PropertyChangedEventArgs("Count"));
             }
         }
 
@@ -143,6 +147,31 @@ namespace Unigram.Collections
             return index < int.MaxValue ? index : Count;
         }
 
+
+        public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+        {
+            return AsyncInfo.Run(async token =>
+            {
+                count = (uint)Count;
+
+                var response = await _protoService.SendAsync(new LoadGroupCallParticipants(_groupCall.Id, 100));
+                if (response is Ok)
+                {
+                    count = (uint)Count - count;
+                }
+                else
+                {
+                    count = 0;
+                }
+
+                return new LoadMoreItemsResult { Count = count };
+            });
+        }
+
+        public bool HasMoreItems => !_groupCall.LoadedAllParticipants;
+
+        #region Dispatcher queue
+
         private readonly ConcurrentDictionary<DispatcherQueue, NotifyCollectionChangedEventHandler> _handlers
             = new ConcurrentDictionary<DispatcherQueue, NotifyCollectionChangedEventHandler>();
 
@@ -150,7 +179,14 @@ namespace Unigram.Collections
         {
             foreach (var dispatcher in _handlers)
             {
-                dispatcher.Key.TryEnqueue(() => dispatcher.Value?.Invoke(this, e));
+                dispatcher.Key.TryEnqueue(() =>
+                {
+                    try
+                    {
+                        dispatcher.Value?.Invoke(this, e);
+                    }
+                    catch { }
+                });
             }
         }
 
@@ -187,5 +223,7 @@ namespace Unigram.Collections
                 }
             }
         }
+
+        #endregion
     }
 }
