@@ -813,7 +813,7 @@ namespace Unigram.Views
             if (SettingsService.Current.Diagnostics.IsLastErrorDiskFull)
             {
                 SettingsService.Current.Diagnostics.IsLastErrorDiskFull = false;
-                
+
                 var confirm = await MessagePopup.ShowAsync("Unigram has previously failed to launch because the device storage was full.\r\n\r\nMake sure there's enough storage space available and press **OK** to continue.", "Disk storage is full", Strings.Resources.OK, Strings.Resources.StorageUsage);
                 if (confirm == ContentDialogResult.Secondary)
                 {
@@ -3021,6 +3021,11 @@ namespace Unigram.Views
                 await items.LoadMoreItemsAsync(3);
                 await items.LoadMoreItemsAsync(4);
             }
+        }
+
+        private void ArchivedChats_ActualThemeChanged(FrameworkElement sender, object args)
+        {
+            ArchivedChats.UpdateChatList(ViewModel.ProtoService, new ChatListArchive());
         }
     }
 
