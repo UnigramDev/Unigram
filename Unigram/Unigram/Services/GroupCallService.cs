@@ -573,6 +573,7 @@ namespace Unigram.Services
             _availableAliases = null;
             _availableAliasesTask = null;
 
+            Participants?.Dispose();
             Participants = null;
 
             return Task.Run(() =>

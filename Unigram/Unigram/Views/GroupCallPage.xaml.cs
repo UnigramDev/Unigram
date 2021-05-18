@@ -49,6 +49,7 @@ namespace Unigram.Views
         private readonly ButtonWavesDrawable _drawable = new ButtonWavesDrawable();
 
         private readonly DispatcherTimer _scheduledTimer;
+        private readonly DispatcherTimer _debouncerTimer;
 
         public GroupCallPage(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator, IGroupCallService voipService)
         {
@@ -61,6 +62,14 @@ namespace Unigram.Views
             _scheduledTimer = new DispatcherTimer();
             _scheduledTimer.Interval = TimeSpan.FromSeconds(1);
             _scheduledTimer.Tick += OnTick;
+
+            _debouncerTimer = new DispatcherTimer();
+            _debouncerTimer.Interval = TimeSpan.FromMilliseconds(Constants.AnimatedThrottle);
+            _debouncerTimer.Tick += (s, args) =>
+            {
+                _debouncerTimer.Stop();
+                UpdateVisibleParticipants(false);
+            };
 
             _service = voipService;
             _service.PropertyChanged += OnParticipantsChanged;
@@ -100,41 +109,56 @@ namespace Unigram.Views
             //ViewportAspect.Constraint = new Size(16, 9);
         }
 
-        public void UpdateGroupCallParticipants()
+        public void VideoInfoAdded(GroupCallParticipant participant, GroupCallParticipantVideoInfo[] videoInfos)
         {
-            this.BeginOnUIThread(UpdateGroupCallParticipantsInternal);
+            this.BeginOnUIThread(() => VideoInfoAddedInternal(participant, videoInfos));
         }
 
-        public void UpdateGroupCallParticipantsInternal()
+        public void VideoInfoRemoved(GroupCallParticipant participant, string[] endpointIds)
         {
-            if (_service.Participants == null)
+            this.BeginOnUIThread(() => VideoInfoRemovedInternal(participant, endpointIds));
+        }
+
+        public void VideoInfoAddedInternal(GroupCallParticipant participant, GroupCallParticipantVideoInfo[] videoInfos)
+        {
+            foreach (var item in videoInfos)
             {
-                return;
-            }
-
-            var alive = new HashSet<string>();
-
-            foreach (var participant in _service.Participants)
-            {
-                foreach (var videoInfo in participant.GetVideoInfo())
-                {
-                    alive.Add(videoInfo.EndpointId);
-                }
-
-                UpdateGridParticipant(participant);
-            }
-
-            foreach (var canvas in Viewport.Cells.ToArray())
-            {
-                if (alive.Contains(canvas.EndpointId))
+                if (item == null)
                 {
                     continue;
                 }
 
-                RemoveCell(canvas);
+                if (_gridCells.TryGetValue(item.EndpointId, out var cell))
+                {
+                    cell.UpdateGroupCallParticipant(_cacheService, participant, item);
+                }
+                else
+                {
+                    AddCell(_cacheService, participant, item);
+                }
             }
 
-            UpdateVisibleParticipants(false);
+            _debouncerTimer.Stop();
+            _debouncerTimer.Start();
+        }
+
+        public void VideoInfoRemovedInternal(GroupCallParticipant participant, string[] endpointIds)
+        {
+            foreach (var item in endpointIds)
+            {
+                if (item == null)
+                {
+                    continue;
+                }
+
+                if (_gridCells.TryGetValue(item, out var cell))
+                {
+                    RemoveCell(cell);
+                }
+            }
+
+            _debouncerTimer.Stop();
+            _debouncerTimer.Start();
         }
 
         enum ButtonState
@@ -193,6 +217,22 @@ namespace Unigram.Views
         {
             Dispose();
             AudioCanvas.RemoveFromVisualTree();
+
+            _prev.Clear();
+            
+            _listTokens.Clear();
+            _gridTokens.Clear();
+
+            _gridCells.Clear();
+
+            for (int i = 0; i < Viewport.Children.Count; i++)
+            {
+                if (Viewport.Children[i] is GroupCallParticipantGridCell cell)
+                {
+                    cell.RemoveFromVisualTree();
+                    i--;
+                }
+            }
         }
 
         public void Dispose()
@@ -1480,15 +1520,6 @@ namespace Unigram.Views
                 glyph.Text = muted ? Icons.MicOff : Icons.MicOn;
                 glyph.Foreground = new SolidColorBrush { Color = muted && !participant.CanUnmuteSelf ? Colors.Red : Color.FromArgb(0xFF, 0x85, 0x85, 0x85) };
             }
-
-            //if (_gridTokens.ContainsKey(participant.ParticipantId))
-            //{
-            //    UpdateGridParticipant(participant);
-            //}
-            //else if (participant.HasVideoInfo())
-            //{
-            //    UpdateGridParticipant(participant);
-            //}
         }
 
         private void UpdateRequestedVideos()
@@ -1521,29 +1552,6 @@ namespace Unigram.Views
             }
 
             _manager.SetRequestedVideoChannels(descriptions.Values.ToArray());
-        }
-
-        private void UpdateGridParticipant(GroupCallParticipant participant)
-        {
-            var update = false;
-
-            foreach (var videoInfo in participant.GetVideoInfo())
-            {
-                if (_gridCells.TryGetValue(videoInfo.EndpointId, out var canvas))
-                {
-                    canvas.UpdateGroupCallParticipant(_cacheService, participant, videoInfo);
-                }
-                else
-                {
-                    AddCell(_cacheService, participant, videoInfo);
-                    update = true;
-                }
-            }
-
-            if (update)
-            {
-                //UpdateVisibleParticipants(false);
-            }
         }
 
         private void AddCell(ICacheService cacheService, GroupCallParticipant participant, GroupCallParticipantVideoInfo videoInfo)
@@ -2298,6 +2306,12 @@ namespace Unigram.Views
             }
             else
             {
+                if (count == 2)
+                {
+                    rows = 1;
+                    columns = 2;
+                }
+
                 var tail = columns - (rows * columns - count);
                 if (tail > 0 && rows >= columns + tail && rows > 1)
                 {
@@ -2306,7 +2320,7 @@ namespace Unigram.Views
                 }
                 else if (tail > 0 && columns >= columns - 1 + tail && columns > 1)
                 {
-                    columns--;
+                    //columns--;
                 }
 
                 finalWidth -= 224;
@@ -2357,6 +2371,12 @@ namespace Unigram.Views
             }
             else
             {
+                if (count == 2)
+                {
+                    rows = 1;
+                    columns = 2;
+                }
+
                 var tail = columns - (rows * columns - count);
                 if (tail > 0 && rows >= columns + tail && rows > 1)
                 {
@@ -2365,7 +2385,7 @@ namespace Unigram.Views
                 }
                 else if (tail > 0 && columns >= columns - 1 + tail && columns > 1)
                 {
-                    columns--;
+                    //columns--;
                 }
 
                 finalWidth -= 224;

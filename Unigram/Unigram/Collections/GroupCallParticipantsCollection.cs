@@ -42,6 +42,8 @@ namespace Unigram.Collections
         {
             _aggregator.Unsubscribe(this);
             _handlers.Clear();
+
+            Delegate = null;
         }
 
         public void Handle(UpdateGroupCall update)
@@ -68,7 +70,7 @@ namespace Unigram.Collections
             {
                 if (update.Participant.Order.Length > 0)
                 {
-                    var nextIndex = NextIndexOf(update.Participant, out var updated, out int prevIndex, out bool videoChanged);
+                    var nextIndex = NextIndexOf(update.Participant, out var updated, out int prevIndex);
                     if (nextIndex >= 0)
                     {
                         if (prevIndex >= 0)
@@ -82,28 +84,26 @@ namespace Unigram.Collections
                     {
                         Delegate?.UpdateGroupCallParticipant(updated);
                     }
-
-                    if (videoChanged)
-                    {
-                        Delegate?.UpdateGroupCallParticipants();
-                    }
                 }
                 else
                 {
                     var already = this.FirstOrDefault(x => x.ParticipantId.IsEqual(update.Participant.ParticipantId));
                     if (already != null)
                     {
+                        if (already.HasVideoInfo())
+                        {
+                            Delegate?.VideoInfoRemoved(already, already.ScreenSharingVideoInfo?.EndpointId, already.VideoInfo?.EndpointId);
+                        }
+
                         Remove(already);
-                        Delegate?.UpdateGroupCallParticipants();
                     }
                 }
             }
         }
 
-        private int NextIndexOf(GroupCallParticipant participant, out GroupCallParticipant update, out int prev, out bool videoChanged)
+        private int NextIndexOf(GroupCallParticipant participant, out GroupCallParticipant update, out int prev)
         {
             update = null;
-            videoChanged = false;
 
             prev = -1;
             var next = 0;
@@ -130,10 +130,40 @@ namespace Unigram.Collections
                 next++;
             }
 
+            string[] removedVideoInfo = null;
+            GroupCallParticipantVideoInfo[] addedVideoInfo = null;
+
             if (update != null)
             {
-                videoChanged = update.ScreenSharingVideoInfo?.EndpointId != participant.ScreenSharingVideoInfo?.EndpointId
-                    || update.VideoInfo?.EndpointId != participant.VideoInfo?.EndpointId;
+                if (update.ScreenSharingVideoInfo?.EndpointId != participant.ScreenSharingVideoInfo?.EndpointId)
+                {
+                    if (update.ScreenSharingVideoInfo?.EndpointId != null)
+                    {
+                        removedVideoInfo ??= new string[2];
+                        removedVideoInfo[0] = update.ScreenSharingVideoInfo.EndpointId;
+                    }
+
+                    if (participant.ScreenSharingVideoInfo?.EndpointId != null)
+                    {
+                        addedVideoInfo ??= new GroupCallParticipantVideoInfo[2];
+                        addedVideoInfo[0] = participant.ScreenSharingVideoInfo;
+                    }
+                }
+
+                if (update.VideoInfo?.EndpointId != participant.VideoInfo?.EndpointId)
+                {
+                    if (update.VideoInfo?.EndpointId != null)
+                    {
+                        removedVideoInfo ??= new string[2];
+                        removedVideoInfo[1] = update.VideoInfo.EndpointId;
+                    }
+
+                    if (participant.VideoInfo?.EndpointId != null)
+                    {
+                        addedVideoInfo ??= new GroupCallParticipantVideoInfo[2];
+                        addedVideoInfo[1] = participant.VideoInfo;
+                    }
+                }
 
                 update.CanUnmuteSelf = participant.CanUnmuteSelf;
                 update.CanBeMutedForAllUsers = participant.CanBeMutedForAllUsers;
@@ -153,10 +183,19 @@ namespace Unigram.Collections
                 update.AudioSourceId = participant.AudioSourceId;
                 update.ParticipantId = participant.ParticipantId;
             }
-            else
+            else if (index >= 0)
             {
-                var nextIndex = index < int.MaxValue ? index : Count;
-                videoChanged = nextIndex >= 0;
+                addedVideoInfo = new GroupCallParticipantVideoInfo[] { participant.ScreenSharingVideoInfo, participant.VideoInfo };
+            }
+
+            if (removedVideoInfo != null)
+            {
+                Delegate?.VideoInfoRemoved(participant, removedVideoInfo);
+            }
+
+            if (addedVideoInfo != null)
+            {
+                Delegate?.VideoInfoAdded(participant, addedVideoInfo);
             }
 
             return index < int.MaxValue ? index : Count;
