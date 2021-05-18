@@ -7,6 +7,9 @@ namespace Unigram.Converters
 {
     public class Icons
     {
+        public const string ArrowMinimize = "\uE965";
+        public const string ArrowMaximize = "\uE966";
+
         public const string Globe = "\uE774"; 
         public const string Loading = "\uE1CD";
 

@@ -284,7 +284,6 @@ namespace Unigram.Views
             var nextSize = e.NewSize.ToVector2();
 
             UpdateLayout(prevSize, nextSize, true);
-
         }
 
         private async void UpdateLayout(Vector2 prevSize, Vector2 nextSize, bool animated)
@@ -306,8 +305,7 @@ namespace Unigram.Views
             if (expanded)
             {
                 Menu.Visibility = Visibility.Collapsed;
-                TitlePanel.Margin = new Thickness(0, 0, 0, 0);
-                SubtitleInfo.Visibility = Visibility.Collapsed;
+                Resize.Glyph = Icons.ArrowMinimize;
 
                 Grid.SetRowSpan(ParticipantsPanel, 2);
 
@@ -378,9 +376,7 @@ namespace Unigram.Views
             else
             {
                 Menu.Visibility = call.CanStartVideo ? Visibility.Visible : Visibility.Collapsed;
-                TitlePanel.Margin = new Thickness(call.CanStartVideo ? 32 : 0, 0, 0, 0);
-                SubtitleInfo.Margin = new Thickness(call.CanStartVideo ? 44 : 12, -8, 0, 16);
-                SubtitleInfo.Visibility = Visibility.Visible;
+                Resize.Glyph = Icons.ArrowMaximize;
 
                 Grid.SetRowSpan(ParticipantsPanel, 1);
 
@@ -446,6 +442,24 @@ namespace Unigram.Views
                 Settings.Visibility = SettingsInfo.Visibility = call.CanStartVideo ? Visibility.Collapsed : Visibility.Visible;
             }
 
+            var padding = 0;
+
+            foreach (var item in TopButtons.Children)
+            {
+                if (item.Visibility == Visibility.Visible)
+                {
+                    if (padding > 0)
+                    {
+                        padding -= 8;
+                    }
+
+                    padding += 40;
+                }
+            }
+
+            TitlePanel.Margin = new Thickness(padding > 0 ? padding - 8 : 0, 0, 0, 0);
+            SubtitleInfo.Margin = new Thickness(padding > 0 ? padding + 4 : 12, -8, 0, 12);
+
             await this.UpdateLayoutAsync();
 
             ShowHideBottomRoot(true);
@@ -491,7 +505,7 @@ namespace Unigram.Views
         [DllImport("user32.dll", SetLastError = true)]
         internal static extern bool MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
 
-        private void Viewport_Click(object sender, RoutedEventArgs e)
+        private void Resize_Click(object sender, RoutedEventArgs e)
         {
             //object corewin = Windows.UI.Core.CoreWindow.GetForCurrentThread();
             //var interop = (ICoreWindowInterop)corewin;
@@ -505,13 +519,16 @@ namespace Unigram.Views
             //    var a = MoveWindow(handle, lpRect.Left -100, lpRect.Top, width, height, true);
             //}
 
-            if (_pinnedExpanded)
+            var view = ApplicationView.GetForCurrentView();
+            var size = view.VisibleBounds;
+
+            if (size.Width >= 500)
             {
-                ApplicationView.GetForCurrentView().TryResizeView(new Size(380, 580 + 33));
+                view.TryResizeView(new Size(380, size.Height));
             }
             else
             {
-                ApplicationView.GetForCurrentView().TryResizeView(new Size(780, 580 + 33));
+                view.TryResizeView(new Size(780, size.Height));
             }
         }
 
@@ -656,7 +673,7 @@ namespace Unigram.Views
                 otherScale.Duration =
                 videoOffset.Duration =
                 audioInfoOffset.Duration =
-                audioOffset.Duration = TimeSpan.FromSeconds(.4);
+                audioOffset.Duration = TimeSpan.FromMilliseconds(300);
             //rootOffset.DelayTime =
             //    audioScale.DelayTime =
             //    leaveOffset.DelayTime =
@@ -724,7 +741,7 @@ namespace Unigram.Views
 
                     Menu.Visibility = Visibility.Collapsed;
                     TitlePanel.Margin = new Thickness(0, 0, 0, 0);
-                    SubtitleInfo.Margin = new Thickness(12, -8, 0, 16);
+                    SubtitleInfo.Margin = new Thickness(12, -8, 0, 12);
                     Settings.Visibility = SettingsInfo.Visibility = Visibility.Visible;
                     Video.Visibility = VideoInfo.Visibility = Visibility.Collapsed;
                 }
@@ -740,17 +757,31 @@ namespace Unigram.Views
                     if (_pinnedExpanded)
                     {
                         Menu.Visibility = Visibility.Collapsed;
-                        TitlePanel.Margin = new Thickness(0, 0, 0, 0);
-                        SubtitleInfo.Visibility = Visibility.Collapsed;
                         Settings.Visibility = SettingsInfo.Visibility = Visibility.Visible;
                     }
                     else
                     {
                         Menu.Visibility = call.CanStartVideo ? Visibility.Visible : Visibility.Collapsed;
-                        TitlePanel.Margin = new Thickness(call.CanStartVideo ? 32 : 0, 0, 0, 0);
-                        SubtitleInfo.Margin = new Thickness(call.CanStartVideo ? 44 : 12, -8, 0, 16);
                         Settings.Visibility = SettingsInfo.Visibility = call.CanStartVideo ? Visibility.Collapsed : Visibility.Visible;
                     }
+
+                    var padding = 0;
+
+                    foreach (var item in TopButtons.Children)
+                    {
+                        if (item.Visibility == Visibility.Visible)
+                        {
+                            if (padding > 0)
+                            {
+                                padding -= 8;
+                            }
+
+                            padding += 40;
+                        }
+                    }
+
+                    TitlePanel.Margin = new Thickness(padding > 0 ? padding - 8 : 0, 0, 0, 0);
+                    SubtitleInfo.Margin = new Thickness(padding > 0 ? padding + 4 : 12, -8, 0, 12);
 
                     SubtitleInfo.Text = Locale.Declension("Participants", call.ParticipantCount);
                     ParticipantsPanel.Visibility = Visibility.Visible;
@@ -2438,18 +2469,6 @@ namespace Unigram.Views
                         prev = new Rect(point, new Size(0, 0));
                     }
 
-                    if (_prevCompact != _compact)
-                    {
-                        if (_prevCompact)
-                        {
-                            prev.Y += 16;
-                        }
-                        else
-                        {
-                            prev.Y -= 16;
-                        }
-                    }
-
                     if (animate || _prevPinned != pinned)
                     {
                         if (prev.X != point.X || prev.Y != point.Y)
@@ -2460,7 +2479,7 @@ namespace Unigram.Views
                             var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
                             offset.InsertKeyFrame(0, new Vector3((float)(prev.X - point.X), (float)(prev.Y - point.Y), 0));
                             offset.InsertKeyFrame(1, Vector3.Zero);
-                            offset.Duration = TimeSpan.FromMilliseconds(400);
+                            offset.Duration = TimeSpan.FromMilliseconds(300);
                             visual.StartAnimation("Translation", offset);
                         }
 
@@ -2470,18 +2489,21 @@ namespace Unigram.Views
                             var scale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
                             scale.InsertKeyFrame(0, new Vector3((float)(prev.Width / size.Width), (float)(prev.Height / size.Height), 0));
                             scale.InsertKeyFrame(1, Vector3.One);
-                            scale.Duration = TimeSpan.FromMilliseconds(400);
+                            scale.Duration = TimeSpan.FromMilliseconds(300);
                             visual.StartAnimation("Scale", scale);
                         }
-                    }
 
-                    if (index < _prev.Count)
-                    {
-                        _prev[index] = new Rect(point, size);
-                    }
-                    else
-                    {
-                        _prev.Add(new Rect(point, size));
+                        // Save previous position only when there's an animation-
+                        // This is needed because the page state is updated on SizeChanged,
+                        // and this causes layout measure/arrange to be invalidated.
+                        if (index < _prev.Count)
+                        {
+                            _prev[index] = new Rect(point, size);
+                        }
+                        else
+                        {
+                            _prev.Add(new Rect(point, size));
+                        }
                     }
 
                     index++;

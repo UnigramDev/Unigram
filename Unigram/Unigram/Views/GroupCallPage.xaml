@@ -99,15 +99,27 @@
         </Grid.RowDefinitions>
         <Border x:Name="TitleArea" Background="Transparent"/>
 
-        <controls:GlyphButton
-            x:Name="Menu"
-            Click="Menu_ContextRequested"
-            Glyph="&#xE930;"
+        <StackPanel
+            x:Name="TopButtons"
             VerticalAlignment="Top"
-            Width="40"
-            Height="48"
+            Orientation="Horizontal"
             Margin="0,0,0,-8"
-            Grid.RowSpan="2"/>
+            Grid.RowSpan="2">
+            <controls:AnimatedGlyphButton
+                x:Name="Resize"
+                Click="Resize_Click"
+                Glyph="&#xE965;"
+                Width="40"
+                Height="48"
+                FontSize="16"/>
+            <controls:GlyphButton
+                x:Name="Menu"
+                Click="Menu_ContextRequested"
+                Glyph="&#xE930;"
+                Margin="-8,0,0,0"
+                Width="40"
+                Height="48"/>
+        </StackPanel>
 
         <Border x:Name="TitlePanel" IsHitTestVisible="False" Margin="32,0,0,0">
             <Grid HorizontalAlignment="Left">
@@ -142,14 +154,8 @@
             TextWrapping="NoWrap"
             TextTrimming="CharacterEllipsis"
             IsHitTestVisible="False"
-            Margin="44,-8,0,16"
+            Margin="44,-8,0,12"
             Grid.Row="1"/>
-
-        <HyperlinkButton
-            Click="Viewport_Click"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch"
-            Opacity="0"/>
 
         <Border
             x:Name="PointerListener"
