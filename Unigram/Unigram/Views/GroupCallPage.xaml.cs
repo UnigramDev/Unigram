@@ -44,9 +44,7 @@ namespace Unigram.Views
         private bool _disposed;
 
         private readonly ConcurrentDictionary<MessageSender, VoipVideoRendererToken> _listTokens = new(new MessageSenderEqualityComparer());
-        private readonly ConcurrentDictionary<MessageSender, VoipVideoRendererToken> _gridTokens = new(new MessageSenderEqualityComparer());
-
-        private readonly List<GroupCallParticipant> _gridParticipants = new();
+        private readonly ConcurrentDictionary<string, VoipVideoRendererToken> _gridTokens = new();
 
         private readonly ButtonWavesDrawable _drawable = new ButtonWavesDrawable();
 
@@ -100,6 +98,43 @@ namespace Unigram.Views
             //ElementCompositionPreview.SetIsTranslationEnabled(PinnedInfo, true);
             //ElementCompositionPreview.SetIsTranslationEnabled(PinnedGlyph, true);
             //ViewportAspect.Constraint = new Size(16, 9);
+        }
+
+        public void UpdateGroupCallParticipants()
+        {
+            this.BeginOnUIThread(UpdateGroupCallParticipantsInternal);
+        }
+
+        public void UpdateGroupCallParticipantsInternal()
+        {
+            if (_service.Participants == null)
+            {
+                return;
+            }
+
+            var alive = new HashSet<string>();
+
+            foreach (var participant in _service.Participants)
+            {
+                foreach (var videoInfo in participant.GetVideoInfo())
+                {
+                    alive.Add(videoInfo.EndpointId);
+                }
+
+                UpdateGridParticipant(participant);
+            }
+
+            foreach (var canvas in Viewport.Cells.ToArray())
+            {
+                if (alive.Contains(canvas.EndpointId))
+                {
+                    continue;
+                }
+
+                RemoveCell(canvas);
+            }
+
+            UpdateVisibleParticipants(false);
         }
 
         enum ButtonState
@@ -384,7 +419,7 @@ namespace Unigram.Views
         }
 
         private bool _pinnedExpanded = false;
-        private GroupCallParticipant _pinnedParticipant;
+        private string _pinnedEndpointId;
 
         [ComImport, Guid("45D64A29-A63E-4CB6-B498-5781D298CB4F")]
         [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -1446,30 +1481,23 @@ namespace Unigram.Views
                 glyph.Foreground = new SolidColorBrush { Color = muted && !participant.CanUnmuteSelf ? Colors.Red : Color.FromArgb(0xFF, 0x85, 0x85, 0x85) };
             }
 
-            if (_gridTokens.ContainsKey(participant.ParticipantId))
-            {
-                UpdateGridParticipant(participant);
-            }
-            else if (participant.HasVideoInfo())
-            {
-                UpdateGridParticipant(participant);
-            }
+            //if (_gridTokens.ContainsKey(participant.ParticipantId))
+            //{
+            //    UpdateGridParticipant(participant);
+            //}
+            //else if (participant.HasVideoInfo())
+            //{
+            //    UpdateGridParticipant(participant);
+            //}
         }
 
         private void UpdateRequestedVideos()
         {
-            var descriptions = new Dictionary<MessageSender, VoipVideoChannelInfo>();
+            var descriptions = new Dictionary<string, VoipVideoChannelInfo>();
 
-            if (_pinnedParticipant != null)
+            if (_pinnedEndpointId != null && _gridTokens.TryGetValue(_pinnedEndpointId, out var token))
             {
-                if (_pinnedParticipant.ScreenSharingVideoInfo != null)
-                {
-                    descriptions[_pinnedParticipant.ParticipantId] = new VoipVideoChannelInfo(_pinnedParticipant.AudioSourceId, _pinnedParticipant.ScreenSharingVideoInfo.Description, VoipVideoChannelQuality.Full);
-                }
-                else if (_pinnedParticipant.VideoInfo != null)
-                {
-                    descriptions[_pinnedParticipant.ParticipantId] = new VoipVideoChannelInfo(_pinnedParticipant.AudioSourceId, _pinnedParticipant.VideoInfo.Description, VoipVideoChannelQuality.Full);
-                }
+                descriptions[token.EndpointId] = new VoipVideoChannelInfo(token.AudioSource, token.Description, VoipVideoChannelQuality.Full);
             }
 
             foreach (var item in _gridTokens)
@@ -1479,17 +1507,17 @@ namespace Unigram.Views
                     continue;
                 }
 
-                descriptions[item.Key] = new VoipVideoChannelInfo(item.Value.AudioSource, item.Value.Description, VoipVideoChannelQuality.Medium);
+                descriptions[item.Value.EndpointId] = new VoipVideoChannelInfo(item.Value.AudioSource, item.Value.Description, VoipVideoChannelQuality.Medium);
             }
 
             foreach (var item in _listTokens)
             {
-                if (descriptions.ContainsKey(item.Key))
+                if (descriptions.ContainsKey(item.Value.EndpointId))
                 {
                     continue;
                 }
 
-                descriptions[item.Key] = new VoipVideoChannelInfo(item.Value.AudioSource, item.Value.Description, VoipVideoChannelQuality.Thumbnail);
+                descriptions[item.Value.EndpointId] = new VoipVideoChannelInfo(item.Value.AudioSource, item.Value.Description, VoipVideoChannelQuality.Thumbnail);
             }
 
             _manager.SetRequestedVideoChannels(descriptions.Values.ToArray());
@@ -1497,34 +1525,54 @@ namespace Unigram.Views
 
         private void UpdateGridParticipant(GroupCallParticipant participant)
         {
-            if (_gridTokens.ContainsKey(participant.ParticipantId))
-            {
-                var canvas = Viewport.Children.FirstOrDefault(x => x is GroupCallParticipantGridCell canvas && canvas.ParticipantId.IsEqual(participant.ParticipantId)) as GroupCallParticipantGridCell;
-                if (canvas != null && participant.HasVideoInfo())
-                {
-                    canvas.UpdateGroupCallParticipant(_cacheService, participant);
-                }
-                else if (canvas != null)
-                {
-                    canvas.RemoveFromVisualTree();
-                    UpdateVisibleParticipants(false);
-                }
-            }
-            else if (participant.HasVideoInfo())
-            {
-                var canvas = new GroupCallParticipantGridCell(_cacheService, participant);
-                canvas.TogglePinned += Canvas_TogglePinned;
+            var update = false;
 
-                Viewport.Children.Add(canvas);
-                UpdateVisibleParticipants(false);
+            foreach (var videoInfo in participant.GetVideoInfo())
+            {
+                if (_gridCells.TryGetValue(videoInfo.EndpointId, out var canvas))
+                {
+                    canvas.UpdateGroupCallParticipant(_cacheService, participant, videoInfo);
+                }
+                else
+                {
+                    AddCell(_cacheService, participant, videoInfo);
+                    update = true;
+                }
             }
+
+            if (update)
+            {
+                //UpdateVisibleParticipants(false);
+            }
+        }
+
+        private void AddCell(ICacheService cacheService, GroupCallParticipant participant, GroupCallParticipantVideoInfo videoInfo)
+        {
+            var child = new GroupCallParticipantGridCell(_cacheService, participant, videoInfo);
+            child.TogglePinned += Canvas_TogglePinned;
+
+            _gridCells[videoInfo.EndpointId] = child;
+            Viewport.Children.Add(child);
+        }
+
+        private void RemoveCell(GroupCallParticipantGridCell cell)
+        {
+            if (_gridTokens.TryRemove(cell.EndpointId, out var token))
+            {
+                token.Stop();
+            }
+
+            _prev.Remove(cell.EndpointId);
+            _gridCells.Remove(cell.EndpointId);
+
+            cell.RemoveFromVisualTree();
         }
 
         private void Canvas_TogglePinned(object sender, EventArgs e)
         {
             if (sender is GroupCallParticipantGridCell cell)
             {
-                foreach (var child in Viewport.Children.OfType<GroupCallParticipantGridCell>())
+                foreach (var child in Viewport.Cells)
                 {
                     if (child == cell)
                     {
@@ -1536,7 +1584,7 @@ namespace Unigram.Views
                     child.IsPinned = false;
                 }
 
-                _pinnedParticipant = cell.IsPinned ? cell.Participant : null;
+                _pinnedEndpointId = cell.IsPinned ? cell.EndpointId : null;
                 UpdateVisibleParticipants(false);
 
                 Viewport.InvalidateMeasure();
@@ -1771,7 +1819,8 @@ namespace Unigram.Views
         }
 
         private ScrollViewer _scrollingHost;
-        private Dictionary<MessageSender, GroupCallParticipantGridCell> _prev = new(new MessageSenderEqualityComparer());
+        private Dictionary<string, GroupCallParticipantGridCell> _prev = new();
+        private Dictionary<string, GroupCallParticipantGridCell> _gridCells = new();
 
         private void List_Loaded(object sender, RoutedEventArgs e)
         {
@@ -1779,13 +1828,24 @@ namespace Unigram.Views
             if (scrollingHost != null)
             {
                 _scrollingHost = scrollingHost;
-                _scrollingHost.ViewChanged += OnViewChanged;
+                _scrollingHost.ViewChanged += OnParticipantsViewChanged;
+            }
+
+            var panel = List.ItemsPanelRoot;
+            if (panel != null)
+            {
+                panel.SizeChanged += OnParticipantsSizeChanged;
             }
         }
 
-        private void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        private void OnParticipantsViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
             UpdateVisibleParticipants(e.IsIntermediate);
+        }
+
+        private void OnParticipantsSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            UpdateVisibleParticipants(false);
         }
 
         private void UpdateVisibleParticipants(bool intermediate)
@@ -1793,7 +1853,7 @@ namespace Unigram.Views
             int first = 0;
             int last = -1;
 
-            if (_pinnedParticipant != null || !Viewport.IsCompact)
+            if (_pinnedEndpointId != null || !Viewport.IsCompact)
             {
                 first = 0;
                 last = Viewport.Children.Count - 1;
@@ -1804,10 +1864,10 @@ namespace Unigram.Views
                 last = (int)Math.Ceiling((_scrollingHost.VerticalOffset + _scrollingHost.ViewportHeight) / (Viewport.ActualWidth / 2));
 
                 last *= 2;
-                last = Math.Min(last, Viewport.Children.Count - 1);
+                last = Math.Min(last - 1, Viewport.Children.Count - 1);
             }
 
-            var next = new Dictionary<MessageSender, GroupCallParticipantGridCell>(new MessageSenderEqualityComparer());
+            var next = new Dictionary<string, GroupCallParticipantGridCell>();
 
             if (last < Viewport.Children.Count && first <= last && first >= 0)
             {
@@ -1816,21 +1876,17 @@ namespace Unigram.Views
                     var child = Viewport.Children[i] as GroupCallParticipantGridCell;
                     var participant = child.Participant;
 
-                    if (_pinnedParticipant != null && !_pinnedParticipant.ParticipantId.IsEqual(child.ParticipantId))
+                    if (_pinnedEndpointId != null && _pinnedEndpointId != child.EndpointId)
                     {
                         continue;
                     }
 
-                    next[child.ParticipantId] = child;
+                    next[child.EndpointId] = child;
 
                     // Check if already playing
-                    if (_gridTokens.TryGetValue(child.ParticipantId, out var token))
+                    if (_gridTokens.TryGetValue(child.EndpointId, out var token))
                     {
-                        if (participant.ScreenSharingVideoInfo != null && token.IsMatch(participant.ScreenSharingVideoInfo.EndpointId, child.Surface))
-                        {
-                            continue;
-                        }
-                        else if (participant.VideoInfo != null && token.IsMatch(participant.VideoInfo.EndpointId, child.Surface))
+                        if (token.IsMatch(child.EndpointId, child.Surface))
                         {
                             continue;
                         }
@@ -1838,17 +1894,13 @@ namespace Unigram.Views
 
                     child.Surface = new CanvasControl();
 
-                    if (participant.ScreenSharingVideoInfo != null && participant.IsCurrentUser && _service.IsScreenSharing)
+                    if (participant.ScreenSharingVideoInfo?.EndpointId == child.EndpointId && participant.IsCurrentUser && _service.IsScreenSharing)
                     {
-                        _gridTokens[participant.ParticipantId] = _service.ScreenSharing.AddIncomingVideoOutput(participant.AudioSourceId, participant.ScreenSharingVideoInfo, child.Surface);
+                        _gridTokens[child.EndpointId] = _service.ScreenSharing.AddIncomingVideoOutput(participant.AudioSourceId, participant.ScreenSharingVideoInfo, child.Surface);
                     }
-                    else if (participant.ScreenSharingVideoInfo != null)
+                    else
                     {
-                        _gridTokens[participant.ParticipantId] = _manager.AddIncomingVideoOutput(participant.AudioSourceId, participant.ScreenSharingVideoInfo, child.Surface);
-                    }
-                    else if (participant.VideoInfo != null)
-                    {
-                        _gridTokens[participant.ParticipantId] = _manager.AddIncomingVideoOutput(participant.AudioSourceId, participant.VideoInfo, child.Surface);
+                        _gridTokens[child.EndpointId] = _manager.AddIncomingVideoOutput(participant.AudioSourceId, child.VideoInfo, child.Surface);
                     }
                 }
             }
@@ -1912,7 +1964,7 @@ namespace Unigram.Views
 
             _infoCollapsed = !show;
 
-            foreach (var child in Viewport.Children.OfType<GroupCallParticipantGridCell>())
+            foreach (var child in Viewport.Cells)
             {
                 child.ShowHideInfo(show);
             }
@@ -2218,6 +2270,8 @@ namespace Unigram.Views
                 }
             }
         }
+
+        public IEnumerable<GroupCallParticipantGridCell> Cells => Children.OfType<GroupCallParticipantGridCell>();
 
         private readonly List<Rect> _prev = new();
         private bool _prevCompact = true;

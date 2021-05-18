@@ -68,7 +68,7 @@ namespace Unigram.Collections
             {
                 if (update.Participant.Order.Length > 0)
                 {
-                    var nextIndex = NextIndexOf(update.Participant, out var updated, out int prevIndex);
+                    var nextIndex = NextIndexOf(update.Participant, out var updated, out int prevIndex, out bool videoChanged);
                     if (nextIndex >= 0)
                     {
                         if (prevIndex >= 0)
@@ -82,6 +82,11 @@ namespace Unigram.Collections
                     {
                         Delegate?.UpdateGroupCallParticipant(updated);
                     }
+
+                    if (videoChanged)
+                    {
+                        Delegate?.UpdateGroupCallParticipants();
+                    }
                 }
                 else
                 {
@@ -89,14 +94,16 @@ namespace Unigram.Collections
                     if (already != null)
                     {
                         Remove(already);
+                        Delegate?.UpdateGroupCallParticipants();
                     }
                 }
             }
         }
 
-        private int NextIndexOf(GroupCallParticipant participant, out GroupCallParticipant update, out int prev)
+        private int NextIndexOf(GroupCallParticipant participant, out GroupCallParticipant update, out int prev, out bool videoChanged)
         {
             update = null;
+            videoChanged = false;
 
             prev = -1;
             var next = 0;
@@ -125,6 +132,9 @@ namespace Unigram.Collections
 
             if (update != null)
             {
+                videoChanged = update.ScreenSharingVideoInfo?.EndpointId != participant.ScreenSharingVideoInfo?.EndpointId
+                    || update.VideoInfo?.EndpointId != participant.VideoInfo?.EndpointId;
+
                 update.CanUnmuteSelf = participant.CanUnmuteSelf;
                 update.CanBeMutedForAllUsers = participant.CanBeMutedForAllUsers;
                 update.CanBeMutedForCurrentUser = participant.CanBeMutedForCurrentUser;
@@ -142,6 +152,11 @@ namespace Unigram.Collections
                 update.VideoInfo = participant.VideoInfo;
                 update.AudioSourceId = participant.AudioSourceId;
                 update.ParticipantId = participant.ParticipantId;
+            }
+            else
+            {
+                var nextIndex = index < int.MaxValue ? index : Count;
+                videoChanged = nextIndex >= 0;
             }
 
             return index < int.MaxValue ? index : Count;

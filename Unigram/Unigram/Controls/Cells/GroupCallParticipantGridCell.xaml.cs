@@ -15,11 +15,17 @@ namespace Unigram.Controls.Cells
     public sealed partial class GroupCallParticipantGridCell : UserControl
     {
         private GroupCallParticipant _participant;
+        private GroupCallParticipantVideoInfo _videoInfo;
 
-        public GroupCallParticipantGridCell(ICacheService cacheService, GroupCallParticipant participant)
+        public GroupCallParticipantGridCell(ICacheService cacheService, GroupCallParticipant participant, GroupCallParticipantVideoInfo videoInfo)
         {
             InitializeComponent();
-            UpdateGroupCallParticipant(cacheService, participant);
+            UpdateGroupCallParticipant(cacheService, participant, videoInfo);
+        }
+
+        public bool IsMatch(GroupCallParticipant participant, GroupCallParticipantVideoInfo videoInfo)
+        {
+            return participant != null && participant.ParticipantId.IsEqual(ParticipantId) && _videoInfo.EndpointId == _videoInfo.EndpointId;
         }
 
         public CanvasControl Surface
@@ -31,6 +37,9 @@ namespace Unigram.Controls.Cells
         public GroupCallParticipant Participant => _participant;
         public MessageSender ParticipantId => _participant.ParticipantId;
 
+        public GroupCallParticipantVideoInfo VideoInfo => _videoInfo;
+        public string EndpointId => _videoInfo.EndpointId;
+
         public bool IsPinned
         {
             get => Pin.IsChecked == true;
@@ -39,9 +48,10 @@ namespace Unigram.Controls.Cells
 
         public event EventHandler TogglePinned;
 
-        public void UpdateGroupCallParticipant(ICacheService cacheService, GroupCallParticipant participant)
+        public void UpdateGroupCallParticipant(ICacheService cacheService, GroupCallParticipant participant, GroupCallParticipantVideoInfo videoInfo)
         {
             _participant = participant;
+            _videoInfo = videoInfo;
 
             if (cacheService.TryGetUser(participant.ParticipantId, out User user))
             {

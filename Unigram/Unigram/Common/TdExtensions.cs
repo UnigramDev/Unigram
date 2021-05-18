@@ -216,6 +216,19 @@ namespace Unigram.Common
             return participant.ScreenSharingVideoInfo != null || participant.VideoInfo != null;
         }
 
+        public static IEnumerable<GroupCallParticipantVideoInfo> GetVideoInfo(this GroupCallParticipant participant)
+        {
+            if (participant.ScreenSharingVideoInfo != null)
+            {
+                yield return participant.ScreenSharingVideoInfo;
+            }
+            
+            if (participant.VideoInfo != null)
+            {
+                yield return participant.VideoInfo;
+            }
+        }
+
         public static InputThumbnail ToInputThumbnail(this PhotoSize photo)
         {
             if (photo == null)
