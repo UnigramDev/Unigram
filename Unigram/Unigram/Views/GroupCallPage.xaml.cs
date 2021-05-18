@@ -204,138 +204,37 @@ namespace Unigram.Views
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
+            var prevSize = e.PreviousSize.ToVector2();
+            var nextSize = e.NewSize.ToVector2();
+
+            UpdateLayout(prevSize, nextSize, true);
+
         }
 
-        private void Viewport_SizeChanged(object sender, SizeChangedEventArgs e)
+        private async void UpdateLayout(Vector2 prevSize, Vector2 nextSize, bool animated)
         {
-            //if (ParticipantsPanel == null)
+            var expanded = nextSize.X >= 500;
+            if (expanded == _pinnedExpanded)
             {
                 return;
             }
 
-            var aspect = ElementCompositionPreview.GetElementVisual(ViewportAspect);
-            var visual = ElementCompositionPreview.GetElementVisual(Viewport);
-            //var pinned = ElementCompositionPreview.GetElementVisual(PinnedInfo);
-            //var glyph = ElementCompositionPreview.GetElementVisual(PinnedGlyph);
-
-            var rectangle = Window.Current.Compositor.CreateRoundedRectangleGeometry();
-            rectangle.CornerRadius = new Vector2(8);
-
-            if (ViewportAspect.ActualSize.X > 0)
-            {
-                rectangle.Size = new Vector2(ViewportAspect.ActualSize.X - 24, ViewportAspect.ActualSize.Y);
-            }
-
-            if (aspect.Clip != null)
-            {
-                return;
-            }
-
-            Viewport.Height = ActualHeight - BottomPanel.ActualHeight;
-            Viewport.Margin = new Thickness(-12, 0, -12, -(ActualHeight - BottomPanel.ActualHeight - ViewportAspect.ActualHeight));
-
-            //pinned.CenterPoint = new Vector3(PinnedInfo.ActualSize.X / 2, PinnedInfo.ActualSize.Y, 0);
-
-            aspect.Clip = Window.Current.Compositor.CreateGeometricClip(rectangle);
-
-            if (_pinnedExpanded)
-            {
-
-            }
-            else
-            {
-                rectangle.Offset = new Vector2(12, 0);
-                visual.Properties.InsertVector3("Translation", new Vector3(12, -(Viewport.ActualSize.Y - ViewportAspect.ActualSize.Y) / 2, 0));
-                visual.Scale = new Vector3((ViewportAspect.ActualSize.X - 24) / Viewport.ActualSize.X);
-                //pinned.Properties.InsertVector3("Translation", new Vector3(12, 0, 0));
-                //glyph.Properties.InsertVector3("Translation", new Vector3(-24, 0, 0));
-            }
-        }
-
-        private bool _pinnedExpanded = false;
-
-        [ComImport, Guid("45D64A29-A63E-4CB6-B498-5781D298CB4F")]
-        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-        interface ICoreWindowInterop
-        {
-            IntPtr WindowHandle { get; }
-            bool MessageHandled { set; }
-        }
-
-        [DllImport("user32.dll", ExactSpelling = true, CharSet = CharSet.Auto)]
-        public static extern IntPtr GetParent(IntPtr hWnd);
-
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct RECT
-        {
-            public int Left;        // x position of upper-left corner
-            public int Top;         // y position of upper-left corner
-            public int Right;       // x position of lower-right corner
-            public int Bottom;      // y position of lower-right corner
-        }
-
-        [DllImport("user32.dll", SetLastError = true)]
-        static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, int uFlags);
-
-        [DllImport("user32.dll", SetLastError = true)]
-        internal static extern bool MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
-
-        private async void Viewport_Click(object sender, RoutedEventArgs e)
-        {
-            //object corewin = Windows.UI.Core.CoreWindow.GetForCurrentThread();
-            //var interop = (ICoreWindowInterop)corewin;
-            //var handle = GetParent(interop.WindowHandle);
-
-            //if (GetWindowRect(handle, out RECT lpRect))
-            //{
-            //    var width = lpRect.Right - lpRect.Left;
-            //    var height = lpRect.Bottom - lpRect.Top;
-
-            //    var a = MoveWindow(handle, lpRect.Left -100, lpRect.Top, width, height, true);
-            //}
-
-            //return;
-            //var expand = !_pinnedExpanded;
-            var prevSize = ActualSize;
+            _pinnedExpanded = expanded;
 
             var call = _service.Call;
-
-            var aspect = ElementCompositionPreview.GetElementVisual(ViewportAspect);
-            var visual = ElementCompositionPreview.GetElementVisual(Viewport);
-            //var pinned = ElementCompositionPreview.GetElementVisual(PinnedInfo);
-            //var glyph = ElementCompositionPreview.GetElementVisual(PinnedGlyph);
-
-            var transform = ParticipantsArea.TransformToVisual(this);
-            var point = transform.TransformPoint(new Point()).ToVector2();
-
-            if (_pinnedExpanded)
+            if (call == null)
             {
-                ApplicationView.GetForCurrentView().TryResizeView(new Size(380, 580 + 33));
-            }
-            else
-            {
-                ApplicationView.GetForCurrentView().TryResizeView(new Size(780, 580 + 33));
+                return;
             }
 
-            await this.UpdateLayoutAsync();
-            var nextSize = ActualSize;
-
-            _pinnedExpanded = nextSize.X >= prevSize.X;
-
-            if (nextSize.X >= prevSize.X)
+            if (expanded)
             {
                 Menu.Visibility = Visibility.Collapsed;
                 TitlePanel.Margin = new Thickness(0, 0, 0, 0);
                 SubtitleInfo.Visibility = Visibility.Collapsed;
 
-                Grid.SetRow(ParticipantsPanel, 1);
-                Grid.SetRowSpan(ParticipantsPanel, 3);
+                Grid.SetRowSpan(ParticipantsPanel, 2);
 
-                Grid.SetRow(ListPanel, 0);
                 Grid.SetColumn(ListPanel, 0);
 
                 Grid.SetColumn(ViewportAspect, 0);
@@ -343,8 +242,6 @@ namespace Unigram.Views
 
                 Viewport.IsCompact = false;
                 ViewportAspect.Padding = new Thickness(0, 0, 8, 0);
-                ParticipantsPanel.RowDefinitions[0].Height = new GridLength(1, GridUnitType.Star);
-                ParticipantsPanel.RowDefinitions[1].Height = new GridLength(1, GridUnitType.Auto);
                 ParticipantsPanel.ColumnDefinitions[0].Width = new GridLength(224, GridUnitType.Pixel);
                 ParticipantsPanel.VerticalAlignment = VerticalAlignment.Stretch;
                 ParticipantsPanel.Margin = new Thickness();
@@ -409,16 +306,12 @@ namespace Unigram.Views
                 SubtitleInfo.Margin = new Thickness(call.CanStartVideo ? 44 : 12, -8, 0, 16);
                 SubtitleInfo.Visibility = Visibility.Visible;
 
-                Grid.SetRow(ParticipantsPanel, 2);
                 Grid.SetRowSpan(ParticipantsPanel, 1);
 
-                Grid.SetRow(ListPanel, 1);
                 Grid.SetColumn(ListPanel, 1);
 
                 Viewport.IsCompact = true;
                 ViewportAspect.Padding = new Thickness(0, 0, 0, 0);
-                ParticipantsPanel.RowDefinitions[0].Height = new GridLength(1, GridUnitType.Auto);
-                ParticipantsPanel.RowDefinitions[1].Height = new GridLength(1, GridUnitType.Star);
                 ParticipantsPanel.ColumnDefinitions[0].Width = new GridLength(1, GridUnitType.Auto);
                 ParticipantsPanel.VerticalAlignment = VerticalAlignment.Top;
                 ParticipantsPanel.Margin = new Thickness(0, 0, 0, 16);
@@ -478,66 +371,75 @@ namespace Unigram.Views
             }
 
             await this.UpdateLayoutAsync();
-            TranslateBottomPanel();
+
+            ShowHideBottomRoot(true);
+
+            if (animated)
+            {
+                TransformBottomRoot();
+            }
 
             UpdateVisibleParticipants(false);
-
-            return;
-
-            Viewport.Height = ActualHeight - BottomPanel.ActualHeight;
-            Viewport.Margin = new Thickness(-12, 0, -12, -(ActualHeight - BottomPanel.ActualHeight - ViewportAspect.ActualHeight));
-
-            //pinned.CenterPoint = new Vector3(PinnedInfo.ActualSize.X / 2, PinnedInfo.ActualSize.Y, 0);
-
-            var clip = aspect.Clip as CompositionGeometricClip;
-            var rectangle = clip.Geometry as CompositionRoundedRectangleGeometry;
-
-            var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-            var duration = TimeSpan.FromSeconds(0.5);
-
-            var clipSize = Window.Current.Compositor.CreateVector2KeyFrameAnimation();
-            clipSize.InsertKeyFrame(_pinnedExpanded ? 1 : 0, new Vector2(ViewportAspect.ActualSize.X - 24, ViewportAspect.ActualSize.Y));
-            clipSize.InsertKeyFrame(_pinnedExpanded ? 0 : 1, Viewport.ActualSize);
-            clipSize.Duration = duration;
-
-            var clipOffset = Window.Current.Compositor.CreateVector2KeyFrameAnimation();
-            clipOffset.InsertKeyFrame(_pinnedExpanded ? 1 : 0, new Vector2(12, 0));
-            clipOffset.InsertKeyFrame(_pinnedExpanded ? 0 : 1, new Vector2(0, -point.Y));
-            clipOffset.Duration = duration;
-
-            var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-            offset.InsertKeyFrame(_pinnedExpanded ? 1 : 0, new Vector3(12, -(Viewport.ActualSize.Y - ViewportAspect.ActualSize.Y) / 2, 0));
-            offset.InsertKeyFrame(_pinnedExpanded ? 0 : 1, new Vector3(0, -point.Y, 0));
-            offset.Duration = duration;
-
-            var scale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-            scale.InsertKeyFrame(_pinnedExpanded ? 1 : 0, new Vector3((ViewportAspect.ActualSize.X - 24) / Viewport.ActualSize.X));
-            scale.InsertKeyFrame(_pinnedExpanded ? 0 : 1, Vector3.One);
-            scale.Duration = duration;
-
-            var translateInfo = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-            translateInfo.InsertKeyFrame(_pinnedExpanded ? 1 : 0, new Vector3(12, 0, 0));
-            translateInfo.InsertKeyFrame(_pinnedExpanded ? 0 : 1, new Vector3(0, Viewport.ActualSize.Y - ViewportAspect.ActualSize.Y - point.Y, 0));
-            translateInfo.Duration = duration;
-
-            var translateGlyph = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-            translateGlyph.InsertKeyFrame(_pinnedExpanded ? 1 : 0, new Vector3(-24, 0, 0));
-            translateGlyph.InsertKeyFrame(_pinnedExpanded ? 0 : 1, Vector3.Zero);
-            translateGlyph.Duration = duration;
-
-            rectangle.StartAnimation("Size", clipSize);
-            rectangle.StartAnimation("Offset", clipOffset);
-            visual.StartAnimation("Translation", offset);
-            visual.StartAnimation("Scale", scale);
-            //pinned.StartAnimation("Translation", translateInfo);
-            //glyph.StartAnimation("Translation", translateGlyph);
-
-            batch.End();
-
-            _pinnedExpanded = !_pinnedExpanded;
         }
 
-        private void TranslateBottomPanel()
+        private bool _pinnedExpanded = false;
+        private GroupCallParticipant _pinnedParticipant;
+
+        [ComImport, Guid("45D64A29-A63E-4CB6-B498-5781D298CB4F")]
+        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        interface ICoreWindowInterop
+        {
+            IntPtr WindowHandle { get; }
+            bool MessageHandled { set; }
+        }
+
+        [DllImport("user32.dll", ExactSpelling = true, CharSet = CharSet.Auto)]
+        public static extern IntPtr GetParent(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct RECT
+        {
+            public int Left;        // x position of upper-left corner
+            public int Top;         // y position of upper-left corner
+            public int Right;       // x position of lower-right corner
+            public int Bottom;      // y position of lower-right corner
+        }
+
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, int uFlags);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        internal static extern bool MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
+
+        private void Viewport_Click(object sender, RoutedEventArgs e)
+        {
+            //object corewin = Windows.UI.Core.CoreWindow.GetForCurrentThread();
+            //var interop = (ICoreWindowInterop)corewin;
+            //var handle = GetParent(interop.WindowHandle);
+
+            //if (GetWindowRect(handle, out RECT lpRect))
+            //{
+            //    var width = lpRect.Right - lpRect.Left;
+            //    var height = lpRect.Bottom - lpRect.Top;
+
+            //    var a = MoveWindow(handle, lpRect.Left -100, lpRect.Top, width, height, true);
+            //}
+
+            if (_pinnedExpanded)
+            {
+                ApplicationView.GetForCurrentView().TryResizeView(new Size(380, 580 + 33));
+            }
+            else
+            {
+                ApplicationView.GetForCurrentView().TryResizeView(new Size(780, 580 + 33));
+            }
+        }
+
+        private void TransformBottomRoot()
         {
             var root = ElementCompositionPreview.GetElementVisual(BottomRoot);
             var audio1 = ElementCompositionPreview.GetElementVisual(AudioCanvas);
@@ -1555,12 +1457,41 @@ namespace Unigram.Views
 
         private void UpdateRequestedVideos()
         {
-            // TODO: grid quality depending on layout
+            var descriptions = new Dictionary<MessageSender, VoipVideoChannelInfo>();
 
-            var list = _listTokens.Values.Select(x => new VoipVideoChannelInfo(x.AudioSource, x.Description, VoipVideoChannelQuality.Thumbnail));
-            var grid = _gridTokens.Values.Select(x => new VoipVideoChannelInfo(x.AudioSource, x.Description, VoipVideoChannelQuality.Medium));
+            if (_pinnedParticipant != null)
+            {
+                if (_pinnedParticipant.ScreenSharingVideoInfo != null)
+                {
+                    descriptions[_pinnedParticipant.ParticipantId] = new VoipVideoChannelInfo(_pinnedParticipant.AudioSourceId, _pinnedParticipant.ScreenSharingVideoInfo.Description, VoipVideoChannelQuality.Full);
+                }
+                else if (_pinnedParticipant.VideoInfo != null)
+                {
+                    descriptions[_pinnedParticipant.ParticipantId] = new VoipVideoChannelInfo(_pinnedParticipant.AudioSourceId, _pinnedParticipant.VideoInfo.Description, VoipVideoChannelQuality.Full);
+                }
+            }
 
-            _manager.SetRequestedVideoChannels(list.Union(grid).ToArray());
+            foreach (var item in _gridTokens)
+            {
+                if (descriptions.ContainsKey(item.Key))
+                {
+                    continue;
+                }
+
+                descriptions[item.Key] = new VoipVideoChannelInfo(item.Value.AudioSource, item.Value.Description, VoipVideoChannelQuality.Medium);
+            }
+
+            foreach (var item in _listTokens)
+            {
+                if (descriptions.ContainsKey(item.Key))
+                {
+                    continue;
+                }
+
+                descriptions[item.Key] = new VoipVideoChannelInfo(item.Value.AudioSource, item.Value.Description, VoipVideoChannelQuality.Thumbnail);
+            }
+
+            _manager.SetRequestedVideoChannels(descriptions.Values.ToArray());
         }
 
         private void UpdateGridParticipant(GroupCallParticipant participant)
@@ -1580,8 +1511,34 @@ namespace Unigram.Views
             }
             else if (participant.HasVideoInfo())
             {
-                Viewport.Children.Add(new GroupCallParticipantGridCell(_cacheService, participant));
+                var canvas = new GroupCallParticipantGridCell(_cacheService, participant);
+                canvas.TogglePinned += Canvas_TogglePinned;
+
+                Viewport.Children.Add(canvas);
                 UpdateVisibleParticipants(false);
+            }
+        }
+
+        private void Canvas_TogglePinned(object sender, EventArgs e)
+        {
+            if (sender is GroupCallParticipantGridCell cell)
+            {
+                foreach (var child in Viewport.Children.OfType<GroupCallParticipantGridCell>())
+                {
+                    if (child == cell)
+                    {
+                        Canvas.SetZIndex(child, 1);
+                        continue;
+                    }
+
+                    Canvas.SetZIndex(child, 0);
+                    child.IsPinned = false;
+                }
+
+                _pinnedParticipant = cell.IsPinned ? cell.Participant : null;
+                UpdateVisibleParticipants(false);
+
+                Viewport.InvalidateMeasure();
             }
         }
 
@@ -1832,21 +1789,21 @@ namespace Unigram.Views
 
         private void UpdateVisibleParticipants(bool intermediate)
         {
-            int first;
-            int last;
+            int first = 0;
+            int last = -1;
 
-            if (Viewport.IsCompact)
+            if (_pinnedParticipant != null || !Viewport.IsCompact)
+            {
+                first = 0;
+                last = Viewport.Children.Count - 1;
+            }
+            else if (Viewport.IsCompact)
             {
                 first = (int)Math.Truncate(_scrollingHost.VerticalOffset / (Viewport.ActualWidth / 2));
                 last = (int)Math.Ceiling((_scrollingHost.VerticalOffset + _scrollingHost.ViewportHeight) / (Viewport.ActualWidth / 2));
 
                 last *= 2;
                 last = Math.Min(last, Viewport.Children.Count - 1);
-            }
-            else
-            {
-                first = 0;
-                last = Viewport.Children.Count - 1;
             }
 
             var next = new Dictionary<MessageSender, GroupCallParticipantGridCell>(new MessageSenderEqualityComparer());
@@ -1857,6 +1814,11 @@ namespace Unigram.Views
                 {
                     var child = Viewport.Children[i] as GroupCallParticipantGridCell;
                     var participant = child.Participant;
+
+                    if (_pinnedParticipant != null && !_pinnedParticipant.ParticipantId.IsEqual(child.ParticipantId))
+                    {
+                        continue;
+                    }
 
                     next[child.ParticipantId] = child;
 
@@ -1897,10 +1859,10 @@ namespace Unigram.Views
                     continue;
                 }
 
+                _gridTokens.Remove(item);
+
                 _prev[item].Surface = null;
                 _prev.Remove(item);
-
-                _gridTokens.Remove(item);
             }
 
             foreach (var item in next)
@@ -1909,6 +1871,67 @@ namespace Unigram.Views
             }
 
             UpdateRequestedVideos();
+        }
+
+        private void Viewport_PointerEntered(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+        {
+            var point = e.GetCurrentPoint(PointerListener);
+            if (point.Position.X < 224 && !Viewport.IsCompact)
+            {
+                ShowHideInfo(false);
+            }
+            else if (point.Position.Y > PointerListener.ActualHeight - BottomPanel.ActualHeight && Viewport.IsCompact)
+            {
+                ShowHideInfo(false);
+            }
+            else
+            {
+                ShowHideInfo(point.Position.Y >= 0);
+            }
+        }
+
+        private void Viewport_PointerExited(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+        {
+            ShowHideInfo(false);
+        }
+
+        private bool _infoCollapsed;
+
+        private void ShowHideInfo(bool show)
+        {
+            if (_infoCollapsed == !show)
+            {
+                return;
+            }
+
+            _infoCollapsed = !show;
+
+            foreach (var child in Viewport.Children.OfType<GroupCallParticipantGridCell>())
+            {
+                child.ShowHideInfo(show);
+            }
+
+            ShowHideBottomRoot(show ? true : Viewport.IsCompact);
+        }
+
+        private bool _bottomRootCollapsed;
+
+        private void ShowHideBottomRoot(bool show)
+        {
+            if (_bottomRootCollapsed == !show)
+            {
+                return;
+            }
+
+            _bottomRootCollapsed = !show;
+
+            var anim = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            anim.InsertKeyFrame(0, show ? 0 : 1);
+            anim.InsertKeyFrame(1, show ? 1 : 0);
+
+            var root = ElementCompositionPreview.GetElementVisual(BottomRoot);
+
+            root.StartAnimation("Opacity", anim);
         }
     }
 
@@ -2192,6 +2215,8 @@ namespace Unigram.Views
 
         private readonly List<Rect> _prev = new();
         private bool _prevCompact = true;
+        private bool _prevPinned;
+        private int _prevCount;
 
         protected override Size MeasureOverride(Size availableSize)
         {
@@ -2237,7 +2262,15 @@ namespace Unigram.Views
 
                 for (int column = 0; column < rowColumns; column++)
                 {
-                    Children[index].Measure(new Size(finalWidth / (_compact ? rowColumns : columns), finalHeight / rows));
+                    if (Children[index] is GroupCallParticipantGridCell cell && cell.IsPinned)
+                    {
+                        Children[index].Measure(new Size(finalWidth, finalHeight));
+                    }
+                    else
+                    {
+                        Children[index].Measure(new Size(finalWidth / (_compact ? rowColumns : columns), finalHeight / rows));
+                    }
+
                     index++;
                 }
             }
@@ -2278,6 +2311,9 @@ namespace Unigram.Views
                 finalWidth -= 224;
             }
 
+            var animate = _prevCompact != _compact || _prevCount != Children.Count;
+            var pinned = false;
+
             for (int row = 0; row < rows; row++)
             {
                 var rowColumns = columns;
@@ -2303,6 +2339,13 @@ namespace Unigram.Views
                     var size = new Size(finalWidth / (_compact ? rowColumns : columns), finalHeight / rows);
                     var point = new Point(x + column * size.Width, row * size.Height);
 
+                    if (Children[index] is GroupCallParticipantGridCell cell && cell.IsPinned)
+                    {
+                        size = new Size(finalWidth, finalHeight);
+                        point = new Point(_compact ? 0 : 224, 0);
+                        pinned = true;
+                    }
+
                     Children[index].Arrange(new Rect(point, size));
 
                     Rect prev;
@@ -2327,26 +2370,29 @@ namespace Unigram.Views
                         }
                     }
 
-                    if (prev.X != point.X || prev.Y != point.Y)
+                    if (animate || _prevPinned != pinned)
                     {
-                        ElementCompositionPreview.SetIsTranslationEnabled(Children[index], true);
+                        if (prev.X != point.X || prev.Y != point.Y)
+                        {
+                            ElementCompositionPreview.SetIsTranslationEnabled(Children[index], true);
 
-                        var visual = ElementCompositionPreview.GetElementVisual(Children[index]);
-                        var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-                        offset.InsertKeyFrame(0, new Vector3((float)(prev.X - point.X), (float)(prev.Y - point.Y), 0));
-                        offset.InsertKeyFrame(1, Vector3.Zero);
-                        offset.Duration = TimeSpan.FromMilliseconds(400);
-                        visual.StartAnimation("Translation", offset);
-                    }
+                            var visual = ElementCompositionPreview.GetElementVisual(Children[index]);
+                            var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                            offset.InsertKeyFrame(0, new Vector3((float)(prev.X - point.X), (float)(prev.Y - point.Y), 0));
+                            offset.InsertKeyFrame(1, Vector3.Zero);
+                            offset.Duration = TimeSpan.FromMilliseconds(400);
+                            visual.StartAnimation("Translation", offset);
+                        }
 
-                    if (prev.Width != size.Width || prev.Height != size.Height)
-                    {
-                        var visual = ElementCompositionPreview.GetElementVisual(Children[index]);
-                        var scale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-                        scale.InsertKeyFrame(0, new Vector3((float)(prev.Width / size.Width), (float)(prev.Height / size.Height), 0));
-                        scale.InsertKeyFrame(1, Vector3.One);
-                        scale.Duration = TimeSpan.FromMilliseconds(400);
-                        visual.StartAnimation("Scale", scale);
+                        if (prev.Width != size.Width || prev.Height != size.Height)
+                        {
+                            var visual = ElementCompositionPreview.GetElementVisual(Children[index]);
+                            var scale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                            scale.InsertKeyFrame(0, new Vector3((float)(prev.Width / size.Width), (float)(prev.Height / size.Height), 0));
+                            scale.InsertKeyFrame(1, Vector3.One);
+                            scale.Duration = TimeSpan.FromMilliseconds(400);
+                            visual.StartAnimation("Scale", scale);
+                        }
                     }
 
                     if (index < _prev.Count)
@@ -2366,6 +2412,10 @@ namespace Unigram.Views
             {
                 _prev.RemoveAt(i);
             }
+
+            _prevCompact = _compact;
+            _prevPinned = pinned;
+            _prevCount = Children.Count;
 
             return finalSize;
         }

@@ -90,7 +90,7 @@
         </Style>
     </Page.Resources>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" RequestedTheme="Dark">
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" PointerMoved="Viewport_PointerEntered" PointerExited="Viewport_PointerExited" RequestedTheme="Dark">
         <Grid.RowDefinitions>
             <RowDefinition Height="32"/>
             <RowDefinition Height="Auto"/>
@@ -145,19 +145,27 @@
             Margin="44,-8,0,16"
             Grid.Row="1"/>
 
-        <Border x:Name="ParticipantsArea" Margin="0,0,0,16" Grid.Row="2"/>
+        <HyperlinkButton
+            Click="Viewport_Click"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Opacity="0"/>
 
-        <Grid x:Name="ParticipantsPanel" VerticalAlignment="Top" Margin="0,0,0,16" Grid.Row="2">
+        <Border
+            x:Name="PointerListener"
+            Background="Transparent"
+            Grid.Row="2"
+            Grid.RowSpan="2"/>
+
+        <Grid x:Name="ParticipantsPanel"
+              VerticalAlignment="Top"
+              Margin="0,0,0,16"
+              Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-
-            <Grid x:Name="ListPanel" VerticalAlignment="Top" Margin="12,0" Grid.Row="1" Grid.Column="1">
+            <Grid x:Name="ListPanel" Background="Transparent" VerticalAlignment="Top" Margin="12,0" Grid.Column="1" Canvas.ZIndex="1">
                 <Grid.RowDefinitions>
                     <RowDefinition/>
                     <RowDefinition Height="Auto"/>
@@ -171,16 +179,8 @@
                         ChoosingItemContainer="OnChoosingItemContainer"
                         ContainerContentChanging="OnContainerContentChanging">
                         <ListView.Header>
-                            <Grid x:Name="ViewportAspect" SizeChanged="Viewport_SizeChanged" Visibility="Visible" Margin="-4,0,-4,8" Canvas.ZIndex="1" Grid.Column="1">
-                                <local:ParticipantsGrid
-                                    x:Name="Viewport"
-                                    IsHitTestVisible="False">
-                                </local:ParticipantsGrid>
-                                <HyperlinkButton
-                                    Click="Viewport_Click"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Stretch"
-                                    Opacity="0"/>
+                            <Grid x:Name="ViewportAspect" Margin="-4,0,-4,8" Grid.Column="1">
+                                <local:ParticipantsGrid x:Name="Viewport"/>
                             </Grid>
                         </ListView.Header>
                         <ListView.ItemsPanel>

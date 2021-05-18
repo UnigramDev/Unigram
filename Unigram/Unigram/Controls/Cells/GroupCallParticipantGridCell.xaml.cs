@@ -1,10 +1,13 @@
 ﻿using Microsoft.Graphics.Canvas.UI.Xaml;
+using System;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Services;
 using Windows.UI;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Cells
@@ -27,6 +30,14 @@ namespace Unigram.Controls.Cells
 
         public GroupCallParticipant Participant => _participant;
         public MessageSender ParticipantId => _participant.ParticipantId;
+
+        public bool IsPinned
+        {
+            get => Pin.IsChecked == true;
+            set => Pin.IsChecked = value;
+        }
+
+        public event EventHandler TogglePinned;
 
         public void UpdateGroupCallParticipant(ICacheService cacheService, GroupCallParticipant participant)
         {
@@ -71,6 +82,33 @@ namespace Unigram.Controls.Cells
             }
 
             CanvasRoot.Child = null;
+        }
+
+        private bool _collapsed;
+
+        public void ShowHideInfo(bool show)
+        {
+            if (_collapsed == !show)
+            {
+                return;
+            }
+
+            _collapsed = !show;
+
+            var anim = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            anim.InsertKeyFrame(0, show ? 0 : 1);
+            anim.InsertKeyFrame(1, show ? 1 : 0);
+
+            var info = ElementCompositionPreview.GetElementVisual(Info);
+            var pin = ElementCompositionPreview.GetElementVisual(PinRoot);
+
+            info.StartAnimation("Opacity", anim);
+            pin.StartAnimation("Opacity", anim);
+        }
+
+        private void Pin_Click(object sender, RoutedEventArgs e)
+        {
+            TogglePinned?.Invoke(this, EventArgs.Empty);
         }
     }
 }
