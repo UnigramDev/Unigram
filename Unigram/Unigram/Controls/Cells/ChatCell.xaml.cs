@@ -155,7 +155,7 @@ namespace Unigram.Controls.Cells
                     var run = new Run { Text = chat.Title };
                     if (chat.IsUnread())
                     {
-                        run.Foreground = App.Current.Resources["ListViewItemForegroundSelected"] as Brush;
+                        run.Foreground = new SolidColorBrush(ActualTheme == ElementTheme.Dark ? Colors.White : Colors.Black);
                     }
 
                     BriefInfo.Inlines.Add(run);
