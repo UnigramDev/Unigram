@@ -49,6 +49,9 @@ namespace Unigram.Services
         Task CreateAsync(long chatId);
         void Discard();
 
+        bool IsCapturing { get; }
+        void ToggleCapturing();
+
         VoipGroupManager ScreenSharing { get; }
 
         bool IsScreenSharing { get; }
@@ -59,6 +62,8 @@ namespace Unigram.Services
     public class GroupCallService : TLViewModelBase, IGroupCallService, IHandle<UpdateGroupCall>, IHandle<UpdateGroupCallParticipant>
     {
         private readonly IViewService _viewService;
+
+        private readonly MediaDeviceWatcher _videoWatcher;
 
         private readonly MediaDeviceWatcher _inputWatcher;
         private readonly MediaDeviceWatcher _outputWatcher;
@@ -92,6 +97,7 @@ namespace Unigram.Services
         {
             _viewService = viewService;
 
+            _videoWatcher = new MediaDeviceWatcher(DeviceClass.VideoCapture, id => _capturer?.SwitchToDevice(id));
             _inputWatcher = new MediaDeviceWatcher(DeviceClass.AudioCapture, id => _manager?.SetAudioInputDevice(id));
             _outputWatcher = new MediaDeviceWatcher(DeviceClass.AudioRender, id => _manager?.SetAudioOutputDevice(id));
 
@@ -363,6 +369,37 @@ namespace Unigram.Services
             });
         }
 
+        #region Capturing
+
+        public bool IsCapturing => _capturer != null;
+
+        public async void ToggleCapturing()
+        {
+            var call = _call;
+            if (call == null || _manager == null)
+            {
+                return;
+            }
+
+            if (_capturer != null)
+            {
+                _capturer.SetOutput(null);
+                _manager.SetVideoCapture(null);
+
+                _capturer.Dispose();
+                _capturer = null;
+            }
+            else
+            {
+                _capturer = new VoipVideoCapture(await _videoWatcher.GetAndUpdateAsync());
+                _manager.SetVideoCapture(_capturer);
+            }
+
+            ProtoService.Send(new ToggleGroupCallIsMyVideoEnabled(call.Id, _capturer != null));
+        }
+
+        #endregion
+
         #region Screencast
 
         public VoipGroupManager ScreenSharing => _screenManager;
@@ -370,13 +407,8 @@ namespace Unigram.Services
 
         public async void StartScreenSharing()
         {
-            if (_manager == null || _screenManager != null || !GraphicsCaptureSession.IsSupported())
-            {
-                return;
-            }
-
             var call = _call;
-            if (call == null)
+            if (call == null || _manager == null || _screenManager != null || !GraphicsCaptureSession.IsSupported())
             {
                 return;
             }

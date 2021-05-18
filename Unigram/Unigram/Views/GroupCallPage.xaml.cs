@@ -907,20 +907,7 @@ namespace Unigram.Views
 
         private void Video_Click(object sender, RoutedEventArgs e)
         {
-            if (_capturer != null)
-            {
-                _capturer.SetOutput(null);
-                _manager.SetVideoCapture(null);
-
-                _capturer.Dispose();
-                _capturer = null;
-            }
-            else
-            {
-                _manager.SetVideoCapture(_capturer = new VoipVideoCapture(""));
-            }
-
-            _protoService.Send(new ToggleGroupCallIsMyVideoEnabled(_service.Call.Id, _capturer != null));
+            _service.ToggleCapturing();
             UpdateVideo();
         }
 
@@ -1108,14 +1095,14 @@ namespace Unigram.Views
                         Video.Background = new SolidColorBrush { Color = Color.FromArgb(0x66, 0x76, 0x6E, 0xE9) };
                         break;
                     case ButtonColors.Unmute:
-                        Video.Background = new SolidColorBrush { Color = Color.FromArgb((byte)(_capturer != null ? 0xFF : 0x66), 0x33, 0xc6, 0x59) };
+                        Video.Background = new SolidColorBrush { Color = Color.FromArgb((byte)(_service.IsCapturing ? 0xFF : 0x66), 0x33, 0xc6, 0x59) };
                         break;
                     case ButtonColors.Mute:
-                        Video.Background = new SolidColorBrush { Color = Color.FromArgb((byte)(_capturer != null ? 0xFF : 0x66), 0x00, 0x78, 0xff) };
+                        Video.Background = new SolidColorBrush { Color = Color.FromArgb((byte)(_service.IsCapturing ? 0xFF : 0x66), 0x00, 0x78, 0xff) };
                         break;
                 }
 
-                Video.Glyph = _capturer != null ? Icons.VideoOffFilled : Icons.VideoFilled;
+                Video.Glyph = _service.IsCapturing ? Icons.VideoOffFilled : Icons.VideoFilled;
                 Video.Visibility = VideoInfo.Visibility = Visibility.Visible;
             }
             else
@@ -1149,8 +1136,6 @@ namespace Unigram.Views
                 Screen.Visibility = ScreenInfo.Visibility = Visibility.Collapsed;
             }
         }
-
-        private VoipVideoCapture _capturer;
 
         private async void Menu_ContextRequested(object sender, RoutedEventArgs e)
         {
