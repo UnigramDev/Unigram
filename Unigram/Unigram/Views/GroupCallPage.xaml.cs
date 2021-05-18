@@ -2034,10 +2034,6 @@ namespace Unigram.Views
 
     public class ButtonWavesDrawable
     {
-        //private BlobDrawable buttonWaveDrawable = new BlobDrawable(6);
-        //private BlobDrawable tinyWaveDrawable = new BlobDrawable(9);
-        //private BlobDrawable bigWaveDrawable = new BlobDrawable(12);
-
         private readonly BlobDrawable _buttonWaveDrawable = new BlobDrawable(3);
         private readonly BlobDrawable _tinyWaveDrawable = new BlobDrawable(6);
         private readonly BlobDrawable _bigWaveDrawable = new BlobDrawable(9);
