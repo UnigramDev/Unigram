@@ -19,6 +19,8 @@ namespace winrt::Unigram::Native::Calls::implementation
 
         bool IsMatch(hstring endpointId, CanvasControl canvasControl);
 
+        void Stop();
+
     private:
         std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> m_sink;
         int32_t m_audioSource;

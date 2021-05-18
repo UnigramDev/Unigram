@@ -25,6 +25,7 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 	bool m_readyToDraw;
 
 	winrt::event_token m_eventToken;
+	winrt::slim_mutex m_lock;
 
 	CanvasControl m_canvasControl{ nullptr };
 	CanvasBitmap m_canvasBitmap{ nullptr };
@@ -64,6 +65,8 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 	}
 
 	~VoipVideoRenderer() {
+		winrt::slim_lock_guard const guard(m_lock);
+
 		m_disposed = true;
 
 		m_canvasControl.Draw(m_eventToken);
@@ -78,6 +81,8 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 
 	void OnFrame(const webrtc::VideoFrame& frame) override
 	{
+		winrt::slim_lock_guard const guard(m_lock);
+
 		if (m_disposed || !m_readyToDraw) {
 			return;
 		}

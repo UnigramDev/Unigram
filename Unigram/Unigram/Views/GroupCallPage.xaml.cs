@@ -2,6 +2,7 @@
 using Microsoft.Graphics.Canvas.Brushes;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -42,8 +43,8 @@ namespace Unigram.Views
         private VoipGroupManager _manager;
         private bool _disposed;
 
-        private readonly Dictionary<MessageSender, VoipVideoRendererToken> _listTokens = new(new MessageSenderEqualityComparer());
-        private readonly Dictionary<MessageSender, VoipVideoRendererToken> _gridTokens = new(new MessageSenderEqualityComparer());
+        private readonly ConcurrentDictionary<MessageSender, VoipVideoRendererToken> _listTokens = new(new MessageSenderEqualityComparer());
+        private readonly ConcurrentDictionary<MessageSender, VoipVideoRendererToken> _gridTokens = new(new MessageSenderEqualityComparer());
 
         private readonly List<GroupCallParticipant> _gridParticipants = new();
 
@@ -1660,7 +1661,7 @@ namespace Unigram.Views
         {
             if (videoInfo == null || canvas == null)
             {
-                _listTokens.Remove(participant.ParticipantId);
+                _listTokens.TryRemove(participant.ParticipantId, out _);
             }
             else if (screencast && participant.IsCurrentUser && _service.IsScreenSharing)
             {
@@ -1859,7 +1860,12 @@ namespace Unigram.Views
                     continue;
                 }
 
-                _gridTokens.Remove(item);
+                if (_gridTokens.TryRemove(item, out var token))
+                {
+                    // Wait for token to be disposed to avoid a
+                    // race condition in CanvasControl.
+                    token.Stop();
+                }
 
                 _prev[item].Surface = null;
                 _prev.Remove(item);

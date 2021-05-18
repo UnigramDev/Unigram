@@ -28,4 +28,9 @@ namespace winrt::Unigram::Native::Calls::implementation
 	{
 		return m_endpointId == endpointId && m_canvasControl == canvasControl;
 	}
+
+	void VoipVideoRendererToken::Stop() {
+		m_sink.reset();
+		m_sink = nullptr;
+	}
 }

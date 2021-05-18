@@ -8,5 +8,7 @@ namespace Unigram.Native.Calls
         String Description{ get; };
 
         Boolean IsMatch(String endpointId, Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvasControl);
+
+        void Stop();
     }
 }
