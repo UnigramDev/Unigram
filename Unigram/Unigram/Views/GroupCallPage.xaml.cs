@@ -1849,10 +1849,10 @@ namespace Unigram.Views
                 last = Viewport.Children.Count - 1;
             }
 
+            var next = new Dictionary<MessageSender, GroupCallParticipantGridCell>(new MessageSenderEqualityComparer());
+
             if (last < Viewport.Children.Count && first <= last && first >= 0)
             {
-                var next = new Dictionary<MessageSender, GroupCallParticipantGridCell>(new MessageSenderEqualityComparer());
-
                 for (int i = first; i <= last; i++)
                 {
                     var child = Viewport.Children[i] as GroupCallParticipantGridCell;
@@ -1888,24 +1888,24 @@ namespace Unigram.Views
                         _gridTokens[participant.ParticipantId] = _manager.AddIncomingVideoOutput(participant.AudioSourceId, participant.VideoInfo, child.Surface);
                     }
                 }
+            }
 
-                foreach (var item in _prev.Keys.ToImmutableArray())
+            foreach (var item in _prev.Keys.ToImmutableArray())
+            {
+                if (next.ContainsKey(item))
                 {
-                    if (next.ContainsKey(item))
-                    {
-                        continue;
-                    }
-
-                    _prev[item].Surface = null;
-                    _prev.Remove(item);
-
-                    _gridTokens.Remove(item);
+                    continue;
                 }
 
-                foreach (var item in next)
-                {
-                    _prev[item.Key] = item.Value;
-                }
+                _prev[item].Surface = null;
+                _prev.Remove(item);
+
+                _gridTokens.Remove(item);
+            }
+
+            foreach (var item in next)
+            {
+                _prev[item.Key] = item.Value;
             }
 
             UpdateRequestedVideos();
