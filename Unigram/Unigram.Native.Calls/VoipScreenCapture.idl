@@ -6,5 +6,7 @@ namespace Unigram.Native.Calls
     runtimeclass VoipScreenCapture : IVoipVideoCapture
     {
         VoipScreenCapture(Windows.Graphics.Capture.GraphicsCaptureItem item);
+
+        event Windows.Foundation.TypedEventHandler<VoipScreenCapture, IInspectable> FatalErrorOccurred;
     }
 }

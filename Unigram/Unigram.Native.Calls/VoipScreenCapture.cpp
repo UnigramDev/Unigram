@@ -15,5 +15,20 @@ namespace winrt::Unigram::Native::Calls::implementation
             tgcalls::StaticThreads::getThreads(),
             "GraphicsCaptureItem",
             std::make_shared<tgcalls::UwpContext>(item));
+		m_impl->setOnFatalError([this] {
+			m_fatalErrorOccurred(*this, nullptr);
+			});
     }
+
+	winrt::event_token VoipScreenCapture::FatalErrorOccurred(Windows::Foundation::TypedEventHandler<
+		winrt::Unigram::Native::Calls::VoipScreenCapture,
+		winrt::Windows::Foundation::IInspectable> const& value)
+	{
+		return m_fatalErrorOccurred.add(value);
+	}
+
+	void VoipScreenCapture::FatalErrorOccurred(winrt::event_token const& token)
+	{
+		m_fatalErrorOccurred.remove(token);
+	}
 }

@@ -421,10 +421,13 @@ namespace Unigram.Services
                 return;
             }
 
+            _screenCapturer = new VoipScreenCapture(item);
+            _screenCapturer.FatalErrorOccurred += OnFatalErrorOccurred;
+
             var descriptor = new VoipGroupDescriptor
             {
                 VideoContentType = VoipVideoContentType.Screencast,
-                VideoCapture = _screenCapturer = new VoipScreenCapture(item)
+                VideoCapture = _screenCapturer
             };
 
             _screenManager = new VoipGroupManager(descriptor);
@@ -436,10 +439,13 @@ namespace Unigram.Services
                     _screenSource = ssrc;
                     _screenManager.SetConnectionMode(VoipGroupConnectionMode.Rtc, true);
                     _screenManager.SetJoinResponsePayload(json.TextValue);
-
-                    //_screenManager.SetVideoCapture(_screenCapturer = new VoipVideoCapture(item, 0));
                 }
             });
+        }
+
+        private void OnFatalErrorOccurred(VoipScreenCapture sender, object args)
+        {
+            EndScreenSharing();
         }
 
         public void EndScreenSharing()
@@ -457,6 +463,7 @@ namespace Unigram.Services
             if (_screenCapturer != null)
             {
                 //_screenCapturer.SetOutput(null);
+                _screenCapturer.FatalErrorOccurred -= OnFatalErrorOccurred;
                 _screenCapturer.Dispose();
                 _screenCapturer = null;
             }
