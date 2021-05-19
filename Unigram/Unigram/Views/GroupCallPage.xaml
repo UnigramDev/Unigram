@@ -186,7 +186,7 @@
                         ContainerContentChanging="OnContainerContentChanging">
                         <ListView.Header>
                             <Grid x:Name="ViewportAspect" Margin="-4,0,-4,8" Grid.Column="1">
-                                <local:ParticipantsGrid x:Name="Viewport"/>
+                                <local:ParticipantsGrid x:Name="Viewport" SizeChanged="OnViewportSizeChanged"/>
                             </Grid>
                         </ListView.Header>
                         <ListView.ItemsPanel>

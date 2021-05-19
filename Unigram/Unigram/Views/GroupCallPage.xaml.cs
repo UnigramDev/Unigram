@@ -2040,6 +2040,38 @@ namespace Unigram.Views
 
             root.StartAnimation("Opacity", anim);
         }
+
+        private void OnViewportSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (List.Header != ViewportAspect || e.NewSize.Height == e.PreviousSize.Height)
+            {
+                return;
+            }
+
+            var scrollingHost = List.GetScrollViewer();
+            if (scrollingHost == null || scrollingHost.VerticalOffset > Math.Max(e.NewSize.Height, e.PreviousSize.Height))
+            {
+                return;
+            }
+
+            var panel = List.ItemsPanelRoot;
+            if (panel == null)
+            {
+                return;
+            }
+
+            var visual = ElementCompositionPreview.GetElementVisual(panel);
+            ElementCompositionPreview.SetIsTranslationEnabled(panel, true);
+
+            var prev = e.PreviousSize.ToVector2();
+            var next = e.NewSize.ToVector2();
+
+            var animation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            animation.InsertKeyFrame(0, new Vector3(0, prev.Y - next.Y, 0));
+            animation.InsertKeyFrame(1, Vector3.Zero);
+
+            visual.StartAnimation("Translation", animation);
+        }
     }
 
     public class ButtonWavesDrawable
