@@ -1483,6 +1483,8 @@ namespace Unigram.Controls.Messages
             scale.InsertKeyFrame(0, new Vector3(xScale, 1, 1));
             scale.InsertKeyFrame(1, new Vector3(1));
             scale.Duration = TimeSpan.FromMilliseconds(inner);
+            scale.DelayTime = TimeSpan.FromMilliseconds(delay);
+            scale.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
 
             var factor = Window.Current.Compositor.CreateExpressionAnimation("Vector3(1 / content.Scale.X, 1, 1)");
             factor.SetReferenceParameter("content", panel);
@@ -1566,6 +1568,8 @@ namespace Unigram.Controls.Messages
             textOffset.InsertKeyFrame(0, new Vector3(-textOffsetX, textOffsetY, 0));
             textOffset.InsertKeyFrame(1, new Vector3());
             textOffset.Duration = TimeSpan.FromMilliseconds(textOffsetY > 0 ? outer : inner);
+            textOffset.DelayTime = TimeSpan.FromMilliseconds(delay);
+            textOffset.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
 
             if (content is MessageSticker or MessageDice)
             {
