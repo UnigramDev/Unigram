@@ -640,6 +640,25 @@ namespace Unigram.Views.Popups
                 args.Handled = true;
             }
         }
+
+        private void Emoji_Click(object sender, RoutedEventArgs e)
+        {
+            EmojiPanel.SetView(StickersPanelMode.Overlay);
+
+            // We don't want to unfocus the text are when the context menu gets opened
+            EmojiFlyout.ShowAt(CaptionInput, new FlyoutShowOptions { ShowMode = FlyoutShowMode.Transient });
+        }
+
+        private void Emoji_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            if (e.ClickedItem is EmojiData emoji)
+            {
+                EmojiFlyout.Hide();
+
+                CaptionInput.InsertText(emoji.Value);
+                CaptionInput.Focus(FocusState.Programmatic);
+            }
+        }
     }
 
     public class SendFilesAlbumPanel : Grid

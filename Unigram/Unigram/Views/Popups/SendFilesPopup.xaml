@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views.Popups"
     xmlns:controls="using:Unigram.Controls"
+    xmlns:drawers="using:Unigram.Controls.Drawers"
     xmlns:entities="using:Unigram.Entities"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -369,7 +370,32 @@
                 FontFamily="{ThemeResource EmojiThemeFontFamily}"
                 PlaceholderText="{CustomResource AddCaption}"
                 Margin="12,8,12,0"
-                Grid.Row="1"/>
+                Grid.Row="1">
+                <FlyoutBase.AttachedFlyout>
+                    <Flyout x:Name="EmojiFlyout" Placement="Top" ShowMode="Transient">
+                        <Flyout.FlyoutPresenterStyle>
+                            <Style TargetType="FlyoutPresenter">
+                                <Setter Property="Padding" Value="0"/>
+                            </Style>
+                        </Flyout.FlyoutPresenterStyle>
+                        <drawers:EmojiDrawer
+                            ItemClick="Emoji_ItemClick"
+                            x:Name="EmojiPanel"
+                            Width="300"
+                            Height="360"/>
+                    </Flyout>
+                </FlyoutBase.AttachedFlyout>
+            </controls:CaptionTextBox>
+
+            <controls:GlyphButton
+                Click="Emoji_Click"
+                Glyph="&#xE76E;"
+                AllowFocusOnInteraction="False"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Width="40"
+                Height="40"
+                Margin="0,4,8,-4"/>
         </Grid>
     </Grid>
 

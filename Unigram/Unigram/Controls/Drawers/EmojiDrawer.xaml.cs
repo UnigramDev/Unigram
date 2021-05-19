@@ -61,12 +61,6 @@ namespace Unigram.Controls.Drawers
 
         public void SetView(StickersPanelMode mode)
         {
-            VisualStateManager.GoToState(this, mode == StickersPanelMode.Overlay
-                ? "FilledState"
-                : mode == StickersPanelMode.Sidebar
-                ? "SidebarState"
-                : "NarrowState", false);
-
             var microsoft = string.Equals(SettingsService.Current.Appearance.EmojiSet.Id, "microsoft");
             var tone = SettingsService.Current.Stickers.SkinTone;
 
