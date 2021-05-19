@@ -27,11 +27,11 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 	winrt::event_token m_eventToken;
 	winrt::slim_mutex m_lock;
 
-	CanvasControl m_canvasControl{ nullptr };
+	std::shared_ptr<CanvasControl> m_canvasControl;
 	CanvasBitmap m_canvasBitmap{ nullptr };
 
 	VoipVideoRenderer(CanvasControl canvas, bool fill) {
-		m_canvasControl = canvas;
+		m_canvasControl = std::make_shared<CanvasControl>(canvas);
 		m_readyToDraw = canvas.ReadyToDraw();
 
 		m_eventToken = canvas.Draw([this, fill](const CanvasControl sender, CanvasDrawEventArgs const args) {
@@ -69,8 +69,8 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 
 		m_disposed = true;
 
-		if (m_canvasControl != nullptr) {
-			m_canvasControl.Draw(m_eventToken);
+		if (m_canvasControl) {
+			m_canvasControl->Draw(m_eventToken);
 			m_canvasControl = nullptr;
 		}
 
@@ -84,7 +84,7 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 	{
 		winrt::slim_lock_guard const guard(m_lock);
 
-		if (m_disposed || !m_readyToDraw) {
+		if (!m_canvasControl || m_disposed || !m_readyToDraw) {
 			return;
 		}
 
@@ -112,7 +112,7 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 		{
 			auto view = winrt::array_view<uint8_t const>(raw, raw + size);
 			m_canvasBitmap = winrt::Microsoft::Graphics::Canvas::CanvasBitmap::CreateFromBytes(
-				m_canvasControl.Device(), view, width, height,
+				m_canvasControl->Device(), view, width, height,
 				winrt::Windows::Graphics::DirectX::DirectXPixelFormat::B8G8R8A8UIntNormalized);
 		}
 		else
@@ -121,9 +121,6 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 			bitmapAbi->SetPixelBytes(size, (BYTE*)raw);
 		}
 
-		if (m_canvasControl)
-		{
-			m_canvasControl.Invalidate();
-		}
+		m_canvasControl->Invalidate();
 	}
 };

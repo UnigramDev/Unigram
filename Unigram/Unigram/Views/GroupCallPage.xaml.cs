@@ -219,10 +219,10 @@ namespace Unigram.Views
             AudioCanvas.RemoveFromVisualTree();
 
             _prev.Clear();
-            
-            _listTokens.Clear();
-            _gridTokens.Clear();
 
+            _listTokens.Values.ForEach(x => x.Stop());
+            _gridTokens.Values.ForEach(x => x.Stop());
+            
             _gridCells.Clear();
 
             for (int i = 0; i < Viewport.Children.Count; i++)
