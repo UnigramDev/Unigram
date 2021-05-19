@@ -46,7 +46,7 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 				float ratioX = sender.Size().Width / width;
 				float ratioY = sender.Size().Height / height;
 
-				if (fill && ratioX > ratioY || !fill && ratioX < ratioY)
+				if (/*fill && ratioX > ratioY || !fill &&*/ ratioX < ratioY)
 				{
 					width = sender.Size().Width;
 					height *= ratioX;
@@ -69,11 +69,12 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 
 		m_disposed = true;
 
-		m_canvasControl.Draw(m_eventToken);
-		m_canvasControl = nullptr;
+		if (m_canvasControl != nullptr) {
+			m_canvasControl.Draw(m_eventToken);
+			m_canvasControl = nullptr;
+		}
 
-		if (m_canvasBitmap != nullptr)
-		{
+		if (m_canvasBitmap != nullptr) {
 			m_canvasBitmap.Close();
 			m_canvasBitmap = nullptr;
 		}
