@@ -229,8 +229,7 @@ namespace Unigram.Views
             {
                 if (Viewport.Children[i] is GroupCallParticipantGridCell cell)
                 {
-                    cell.RemoveFromVisualTree();
-                    i--;
+                    cell.Surface = null;
                 }
             }
         }
@@ -1604,7 +1603,8 @@ namespace Unigram.Views
             _prev.Remove(cell.EndpointId);
             _gridCells.Remove(cell.EndpointId);
 
-            cell.RemoveFromVisualTree();
+            cell.Surface = null;
+            Viewport.Children.Remove(cell);
         }
 
         private void Canvas_TogglePinned(object sender, EventArgs e)

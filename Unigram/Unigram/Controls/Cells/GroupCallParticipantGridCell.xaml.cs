@@ -84,16 +84,6 @@ namespace Unigram.Controls.Cells
             }
         }
 
-        public void RemoveFromVisualTree()
-        {
-            if (Parent is Panel panel)
-            {
-                panel.Children.Remove(this);
-            }
-
-            CanvasRoot.Child = null;
-        }
-
         private bool _collapsed;
 
         public void ShowHideInfo(bool show)
