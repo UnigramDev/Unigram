@@ -87,16 +87,16 @@ namespace Unigram.ViewModels.Settings
                 if (file != null)
                 {
                     var token = StorageApplicationPermissions.FutureAccessList.Enqueue(file);
-                    NavigationService.Navigate(typeof(BackgroundPage), Constants.WallpaperLocalFileName + $"#{token}");
+                    await new BackgroundPopup(Constants.WallpaperLocalFileName + $"#{token}").ShowQueuedAsync();
                 }
             }
             catch { }
         }
 
         public RelayCommand ColorCommand { get; }
-        private void ColorExecute()
+        private async void ColorExecute()
         {
-            NavigationService.Navigate(typeof(BackgroundPage), Constants.WallpaperColorFileName);
+            await new BackgroundPopup(Constants.WallpaperColorFileName).ShowQueuedAsync();
         }
 
         public RelayCommand ResetCommand { get; }

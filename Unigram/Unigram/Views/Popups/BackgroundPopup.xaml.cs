@@ -3,7 +3,9 @@ using System;
 using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Controls.Brushes;
+using Unigram.Converters;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
@@ -20,7 +22,7 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Views
 {
-    public sealed partial class BackgroundPage : HostedPage, IHandle<UpdateFile>, IBackgroundDelegate
+    public sealed partial class BackgroundPopup : ContentPopup, IHandle<UpdateFile>, IBackgroundDelegate
     {
         public BackgroundViewModel ViewModel => DataContext as BackgroundViewModel;
 
@@ -28,10 +30,26 @@ namespace Unigram.Views
         private CompositionEffectBrush _blurBrush;
         private Compositor _compositor;
 
-        public BackgroundPage()
+        public BackgroundPopup(Background background)
+            : this()
         {
+            _ = ViewModel.OnNavigatedToAsync(background, NavigationMode.New, null);
+        }
+
+        public BackgroundPopup(string slug)
+            : this()
+        {
+            _ = ViewModel.OnNavigatedToAsync(slug, NavigationMode.New, null);
+        }
+
+        private BackgroundPopup()
+        { 
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<BackgroundViewModel, IBackgroundDelegate>(this);
+
+            Title = Strings.Resources.BackgroundPreview;
+            PrimaryButtonText = Strings.Resources.Save;
+            SecondaryButtonText = Strings.Resources.Cancel;
 
             Message1.Mockup(Strings.Resources.BackgroundPreviewLine1, false, DateTime.Now.AddSeconds(-25));
             Message2.Mockup(Strings.Resources.BackgroundPreviewLine2, true, DateTime.Now);
@@ -68,12 +86,12 @@ namespace Unigram.Views
             ElementCompositionPreview.SetElementChildVisual(BlurPanel, _blurVisual);
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        private void OnLoaded(object sender, RoutedEventArgs e)
         {
             ViewModel.Aggregator.Subscribe(this);
         }
 
-        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             ViewModel.Aggregator.Unsubscribe(this);
         }
@@ -197,7 +215,7 @@ namespace Unigram.Views
                 return;
             }
 
-            Header.CommandVisibility = wallpaper.Id != Constants.WallpaperLocalId ? Visibility.Visible : Visibility.Collapsed;
+            //Header.CommandVisibility = wallpaper.Id != Constants.WallpaperLocalId ? Visibility.Visible : Visibility.Collapsed;
             
             if (wallpaper.Type is BackgroundTypeWallpaper)
             {
@@ -286,14 +304,14 @@ namespace Unigram.Views
             return null;
         }
 
-        private Visibility ConvertColor2(BackgroundColor color)
+        private string ConvertColor2Glyph(BackgroundColor color)
         {
-            AddColor.Visibility = color.IsEmpty ? Visibility.Visible : Visibility.Collapsed;
-            ChangeRotation.Visibility = !color.IsEmpty ? Visibility.Visible : Visibility.Collapsed;
-            RemoveColor1.Visibility = !color.IsEmpty ? Visibility.Visible : Visibility.Collapsed;
-            ColumnColor2.Width = !color.IsEmpty ? new GridLength(1, GridUnitType.Star) : new GridLength(0, GridUnitType.Pixel);
+            return color.IsEmpty ? Icons.Add : Icons.Dismiss;
+        }
 
-            return !color.IsEmpty ? Visibility.Visible : Visibility.Collapsed;
+        private Visibility ConvertColor2Visibility(BackgroundColor color)
+        {
+            return color.IsEmpty ? Visibility.Collapsed : Visibility.Visible;
         }
 
         private double ConvertIntensity(int intensity)
@@ -344,38 +362,26 @@ namespace Unigram.Views
             if (RadioColor1.IsChecked == true && ViewModel.Color1 is BackgroundColor color1)
             {
                 PickerColor.Color = color1;
-                TextColor1.SelectAll();
             }
             else if (RadioColor2.IsChecked == true && ViewModel.Color2 is BackgroundColor color2)
             {
                 PickerColor.Color = color2;
-                TextColor2.SelectAll();
             }
+
+            TextColor1.SelectAll();
         }
 
         private void PickerColor_ColorChanged(Unigram.Controls.ColorPicker sender, Unigram.Controls.ColorChangedEventArgs args)
         {
+            TextColor1.Color = args.NewColor;
+
             if (RadioColor1.IsChecked == true)
             {
-                TextColor1.Color = args.NewColor;
                 ViewModel.Color1 = args.NewColor;
             }
             else if (RadioColor2.IsChecked == true)
             {
-                TextColor2.Color = args.NewColor;
                 ViewModel.Color2 = args.NewColor;
-            }
-        }
-
-        private void TextColor_GotFocus(object sender, RoutedEventArgs e)
-        {
-            if (TextColor1 == sender)
-            {
-                RadioColor1.IsChecked = true;
-            }
-            else if (TextColor2 == sender)
-            {
-                RadioColor2.IsChecked = true;
             }
         }
 
@@ -423,15 +429,22 @@ namespace Unigram.Views
                 return;
             }
 
-            if (TextColor1 == sender)
+            PickerColor.Color = args.NewColor;
+        }
+
+        private void AddRemoveColor_Click(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel.Color2.IsEmpty)
             {
-                RadioColor1.IsChecked = true;
-                PickerColor.Color = args.NewColor;
+                ViewModel.AddColorCommand.Execute();
             }
-            else if (TextColor2 == sender)
+            else if (RadioColor1.IsChecked == true)
             {
-                RadioColor2.IsChecked = true;
-                PickerColor.Color = args.NewColor;
+                ViewModel.RemoveColor1Command.Execute();
+            }
+            else if (RadioColor2.IsChecked == true)
+            {
+                ViewModel.RemoveColor2Command.Execute();
             }
         }
     }

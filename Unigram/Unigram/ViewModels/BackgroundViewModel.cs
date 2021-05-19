@@ -35,7 +35,7 @@ namespace Unigram.ViewModels
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            Background background = null;
+            Background background = parameter as Background;
 
             if (parameter is string data)
             {
@@ -160,14 +160,14 @@ namespace Unigram.ViewModels
             set { Set(ref _isBlurEnabled, value); }
         }
 
-        private BackgroundColor _color1;
+        private BackgroundColor _color1 = BackgroundColor.Empty;
         public BackgroundColor Color1
         {
             get => _color1;
             set => SetColor(ref _color1, value);
         }
 
-        private BackgroundColor _color2;
+        private BackgroundColor _color2 = BackgroundColor.Empty;
         public BackgroundColor Color2
         {
             get => _color2;

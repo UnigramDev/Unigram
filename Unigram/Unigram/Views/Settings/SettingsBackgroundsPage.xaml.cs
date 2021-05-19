@@ -152,11 +152,11 @@ namespace Unigram.Views.Settings
             }
         }
 
-        private void List_ItemClick(object sender, ItemClickEventArgs e)
+        private async void List_ItemClick(object sender, ItemClickEventArgs e)
         {
             if (e.ClickedItem is Background wallpaper)
             {
-                ViewModel.NavigationService.Navigate(typeof(BackgroundPage), TdBackground.ToString(wallpaper));
+                await new BackgroundPopup(wallpaper).ShowQueuedAsync();
             }
         }
     }

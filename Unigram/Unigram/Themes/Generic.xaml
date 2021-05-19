@@ -636,7 +636,7 @@
                             x:Name="ValueSlider"
                             IsDirectionReversed="True"
                             IsThumbToolTipEnabled="False"
-                            Margin="12"
+                            Margin="12,0"
                             Grid.Row="1">
                             <Slider.Template>
                                 <ControlTemplate TargetType="Slider">
