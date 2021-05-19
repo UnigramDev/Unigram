@@ -3452,6 +3452,8 @@ namespace Unigram.Views
 
         public void UpdateComposerHeader(Chat chat, MessageComposerHeader header)
         {
+            CheckButtonsVisibility();
+
             if (header == null || (header.IsEmpty && header.WebPageDisabled))
             {
                 // Let's reset
