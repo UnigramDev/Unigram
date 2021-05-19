@@ -130,19 +130,19 @@ namespace Unigram.Services
 
             tsc = _availableAliasesTask = new TaskCompletionSource<MessageSenders>();
 
-            var result = await CanChooseAliasAsyncInternal(chatId);
+            var result = await CanChooseAliasAsyncInternal(tsc, chatId);
             tsc.TrySetResult(result);
 
             return result?.TotalCount > 1;
         }
 
-        private async Task<MessageSenders> CanChooseAliasAsyncInternal(long chatId)
+        private async Task<MessageSenders> CanChooseAliasAsyncInternal(TaskCompletionSource<MessageSenders> tsc, long chatId)
         {
             var response = await ProtoService.SendAsync(new GetVoiceChatAvailableParticipants(chatId));
             if (response is MessageSenders senders)
             {
                 _availableAliases = senders;
-                _availableAliasesTask.TrySetResult(senders);
+                tsc.TrySetResult(senders);
                 return senders;
             }
 
