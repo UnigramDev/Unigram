@@ -52,6 +52,17 @@ namespace Unigram.Controls
 
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
+            SizeChanged += OnSizeChanged;
+        }
+
+        private bool _resetSize;
+
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (_resetSize)
+            {
+                Height = double.NaN;
+            }
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -659,6 +670,13 @@ namespace Unigram.Controls
 
             if (clear)
             {
+                // This is needed to prevent resize animation, doh
+                if (ActualHeight > 48)
+                {
+                    _resetSize = true;
+                    Height = 48;
+                }
+
                 Document.LoadFromStream(TextSetOptions.None, new InMemoryRandomAccessStream());
             }
 

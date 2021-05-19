@@ -648,7 +648,7 @@ namespace Unigram.Views
                         {
                             MessageBigEmoji => 48,
                             MessageSticker or MessageDice => 48,
-                            _ => 48 - 10f
+                            _ => 48 - 12f
                         };
 
                         var yOffset = content switch
@@ -661,7 +661,7 @@ namespace Unigram.Views
                         var xScale = (TextArea.ActualSize.X - xOffset) / bubble.ActualSize.X;
                         var yScale = content switch
                         {
-                            MessageText => TextArea.ActualSize.Y / bubble.ActualSize.Y,
+                            MessageText => MathF.Min((float)TextField.MaxHeight, bubble.ActualSize.Y) / bubble.ActualSize.Y,
                             _ => 1
                         };
 
