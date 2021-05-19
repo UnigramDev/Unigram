@@ -2144,7 +2144,7 @@ namespace Unigram.Views
                     return ViewModel.Type == DialogType.Thread;
                 }
 
-                return supergroup.Status is ChatMemberStatusMember;
+                return supergroup.Status is not ChatMemberStatusLeft;
             }
             else if (chat != null && chat.Id == ViewModel.CacheService.Options.RepliesBotChatId)
             {
