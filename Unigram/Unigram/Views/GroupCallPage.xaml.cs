@@ -1933,13 +1933,23 @@ namespace Unigram.Views
 
                     child.Surface = new CanvasControl();
 
+                    VoipVideoRendererToken future = null;
                     if (participant.ScreenSharingVideoInfo?.EndpointId == child.EndpointId && participant.IsCurrentUser && _service.IsScreenSharing)
                     {
-                        _gridTokens[child.EndpointId] = _service.ScreenSharing.AddIncomingVideoOutput(participant.AudioSourceId, participant.ScreenSharingVideoInfo, child.Surface);
+                        future = _service.ScreenSharing.AddIncomingVideoOutput(participant.AudioSourceId, participant.ScreenSharingVideoInfo, child.Surface);
                     }
                     else
                     {
-                        _gridTokens[child.EndpointId] = _manager.AddIncomingVideoOutput(participant.AudioSourceId, child.VideoInfo, child.Surface);
+                        future = _manager.AddIncomingVideoOutput(participant.AudioSourceId, child.VideoInfo, child.Surface);
+                    }
+
+                    if (future != null)
+                    {
+                        _gridTokens[child.EndpointId] = future;
+                    }
+                    else
+                    {
+                        next.Remove(child.EndpointId);
                     }
                 }
             }
