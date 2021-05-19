@@ -339,12 +339,12 @@ namespace Unigram.Views
                 if (mode == ParticipantsGridMode.Docked)
                 {
                     ListPanel.Margin = new Thickness();
-                    BottomPanel.Padding = new Thickness(224, 8, 8, 8);
+                    BottomPanel.Padding = new Thickness(224, 8, 8, 42);
                 }
                 else
                 {
                     ListPanel.Margin = new Thickness(-216, 0, 216, 0);
-                    BottomPanel.Padding = new Thickness(8, 8, 8, 8);
+                    BottomPanel.Padding = new Thickness(8, 8, 8, 42);
                 }
 
                 BottomRoot.Padding = new Thickness(4, 8, 4, 8);
@@ -658,11 +658,11 @@ namespace Unigram.Views
 
             if (expanded)
             {
-                rootOffset.InsertKeyFrame(0, new Vector3(-224 - 12, -34, 0));
+                rootOffset.InsertKeyFrame(0, new Vector3(-224 - 12, 0, 0));
             }
             else
             {
-                rootOffset.InsertKeyFrame(0, new Vector3(224 + 12, 34, 0));
+                rootOffset.InsertKeyFrame(0, new Vector3(224 + 12, 0, 0));
             }
 
             rootOffset.InsertKeyFrame(1, Vector3.Zero);
