@@ -134,7 +134,7 @@ namespace Unigram.Views
                 }
                 else
                 {
-                    AddCell(_cacheService, participant, item);
+                    AddCell(participant, item);
                 }
             }
 
@@ -1653,7 +1653,14 @@ namespace Unigram.Views
                     continue;
                 }
 
-                descriptions[item.Value.EndpointId] = new VoipVideoChannelInfo(item.Value.AudioSource, item.Value.Description, VoipVideoChannelQuality.Medium);
+                if (_gridTokens.Count > 1)
+                {
+                    descriptions[item.Value.EndpointId] = new VoipVideoChannelInfo(item.Value.AudioSource, item.Value.Description, VoipVideoChannelQuality.Medium);
+                }
+                else
+                {
+                    descriptions[item.Value.EndpointId] = new VoipVideoChannelInfo(item.Value.AudioSource, item.Value.Description, VoipVideoChannelQuality.Full);
+                }
             }
 
             foreach (var item in _listTokens)
@@ -1669,7 +1676,7 @@ namespace Unigram.Views
             _manager.SetRequestedVideoChannels(descriptions.Values.ToArray());
         }
 
-        private void AddCell(ICacheService cacheService, GroupCallParticipant participant, GroupCallParticipantVideoInfo videoInfo)
+        private void AddCell(GroupCallParticipant participant, GroupCallParticipantVideoInfo videoInfo)
         {
             var child = new GroupCallParticipantGridCell(_cacheService, participant, videoInfo);
             child.TogglePinned += Canvas_TogglePinned;
