@@ -680,7 +680,14 @@ namespace Unigram.Services
                 return;
             }
 
-            manager.SetVolume(update.Participant.AudioSourceId, update.Participant.VolumeLevel / 10000d);
+            if (update.Participant.IsMutedForCurrentUser)
+            {
+                manager.SetVolume(update.Participant.AudioSourceId, 0);
+            }
+            else
+            {
+                manager.SetVolume(update.Participant.AudioSourceId, update.Participant.VolumeLevel / 10000d);
+            }
         }
 
         public Chat Chat => _chat;
