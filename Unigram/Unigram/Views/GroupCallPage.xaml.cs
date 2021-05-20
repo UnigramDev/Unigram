@@ -1195,7 +1195,7 @@ namespace Unigram.Views
                         break;
                 }
 
-                Video.Glyph = _service.IsCapturing ? Icons.VideoOffFilled : Icons.VideoFilled;
+                Video.Glyph = _service.IsCapturing ? Icons.VideoFilled : Icons.VideoOffFilled;
                 Video.Visibility = VideoInfo.Visibility = Visibility.Visible;
             }
             else

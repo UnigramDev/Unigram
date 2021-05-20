@@ -338,7 +338,7 @@
                 <controls:GlyphButton
                     x:Name="Video"
                     Click="Video_Click"
-                    Glyph="&#xE964;"
+                    Glyph="&#xE963;"
                     Background="#663e3f41"
                     Foreground="#FFFFFF"
                     Content="{CustomResource ChatVideo}"
