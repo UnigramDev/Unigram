@@ -37,6 +37,10 @@
                         Content="tgcalls.txt"
                         Click="Calls_Click"
                         Badge="{x:Bind ConvertSize(ViewModel.LogCallsSize), Mode=OneWay}"/>
+                    <controls:BadgeButton
+                        Content="tgcalls_group.txt"
+                        Click="GroupCalls_Click"
+                        Badge="{x:Bind ConvertSize(ViewModel.LogGroupCallsSize), Mode=OneWay}"/>
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl
