@@ -232,6 +232,11 @@ namespace Unigram.Controls.Chats
         {
             _background.UpdateLayout(Background as ImageBrush, e.NewSize.Width, e.NewSize.Height);
         }
+
+        public void Play()
+        {
+            _background.UpdateLayout(Background as ImageBrush, ActualWidth, ActualHeight, true);
+        }
     }
 
     public class ChatBackgroundDefault

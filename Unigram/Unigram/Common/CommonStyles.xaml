@@ -2862,7 +2862,7 @@
         </Setter>
     </Style>
 
-    <Thickness x:Key="ContentDialogContentScrollViewerMargin">0,0,0,12</Thickness>
+    <Thickness x:Key="ContentDialogContentScrollViewerMargin">0,0,0,8</Thickness>
     <Thickness x:Key="ContentDialogTitleMargin">0,0,0,0</Thickness>
     <Thickness x:Key="ContentDialogPadding">12,18,12,12</Thickness>
 

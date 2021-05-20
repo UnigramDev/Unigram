@@ -1060,7 +1060,7 @@
                                             <ColumnDefinition />
                                         </Grid.ColumnDefinitions>
                                         <Button x:Name="PrimaryButton"
-                                                contract7Present:CornerRadius="2,2,2,4"
+                                                CornerRadius="4"
                                                 Content="{TemplateBinding PrimaryButtonText}"
                                                 IsEnabled="{TemplateBinding IsPrimaryButtonEnabled}"
                                                 Style="{TemplateBinding PrimaryButtonStyle}"
@@ -1070,7 +1070,7 @@
                                                 Margin="0,0,2,0"
                                                 Grid.Column="0" />
                                         <Button x:Name="SecondaryButton"
-                                                contract7Present:CornerRadius="2,2,4,2"
+                                                CornerRadius="4"
                                                 Content="{TemplateBinding SecondaryButtonText}"
                                                 IsEnabled="{TemplateBinding IsSecondaryButtonEnabled}"
                                                 Style="{TemplateBinding SecondaryButtonStyle}"

@@ -311,7 +311,7 @@ namespace Unigram.Common
             {
                 return UriEx.ToBitmap(file.Local.Path, width, height);
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && protoService != null)
             {
                 protoService.DownloadFile(file.Id, 1);
             }

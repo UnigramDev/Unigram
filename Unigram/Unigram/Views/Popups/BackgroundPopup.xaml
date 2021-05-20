@@ -410,7 +410,7 @@
             Glyph="&#xE72D;"/>
     </local:HostedPage.Header>-->
     
-    <Grid Height="570" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Height="520" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.ChildrenTransitions>
             <TransitionCollection>
                 <RepositionThemeTransition/>
@@ -423,46 +423,15 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="0" />
         </Grid.RowDefinitions>
-        <Border Background="{x:Bind ConvertBackground(ViewModel.Color1, ViewModel.Color2, ViewModel.Rotation), Mode=OneWay}" Grid.RowSpan="3">
-            <ContentControl
-                x:Name="Presenter"
-                Content="{x:Bind ViewModel.Item, Mode=OneWay}"
-                Opacity="{x:Bind ConvertIntensity(ViewModel.Intensity), Mode=OneWay}"
-                HorizontalContentAlignment="Stretch"
-                VerticalContentAlignment="Stretch"
-                Canvas.ZIndex="-1"
-                Grid.RowSpan="2">
-                <ContentControl.ContentTemplateSelector>
-                    <selectors:WallPaperTemplateSelector>
-                        <selectors:WallPaperTemplateSelector.DefaultTemplate>
-                            <DataTemplate>
-                                <chats:ChatBackgroundDefaultPreview/>
-                            </DataTemplate>
-                        </selectors:WallPaperTemplateSelector.DefaultTemplate>
-                        <selectors:WallPaperTemplateSelector.ItemTemplate>
-                            <DataTemplate>
-                                <Rectangle DataContextChanged="Image_DataContextChanged">
-                                    <Rectangle.Fill>
-                                        <ImageBrush/>
-                                    </Rectangle.Fill>
-                                </Rectangle>
-                            </DataTemplate>
-                        </selectors:WallPaperTemplateSelector.ItemTemplate>
-                        <selectors:WallPaperTemplateSelector.SolidTemplate>
-                            <DataTemplate>
-                                <Rectangle DataContextChanged="Rectangle_DataContextChanged">
-                                    <Rectangle.Fill>
-                                        <SolidColorBrush/>
-                                    </Rectangle.Fill>
-                                </Rectangle>
-                            </DataTemplate>
-                        </selectors:WallPaperTemplateSelector.SolidTemplate>
-                    </selectors:WallPaperTemplateSelector>
-                </ContentControl.ContentTemplateSelector>
-            </ContentControl>
+        <Grid Background="{x:Bind ConvertBackground(ViewModel.Color1, ViewModel.Color2, ViewModel.Rotation), Mode=OneWay}" Grid.RowSpan="3">
+            <chats:ChatBackgroundDefaultPreview
+                x:Name="Freeform"
+                x:Load="False"/>
 
-            <!--<chats:ChatBackgroundPresenter x:Name="BackgroundPresenter" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>-->
-        </Border>
+            <Rectangle
+                x:Name="Presenter"
+                Opacity="{x:Bind ConvertIntensity(ViewModel.Intensity), Mode=OneWay}"/>
+        </Grid>
 
         <Grid x:Name="Preview" Grid.Row="1">
             <Border x:Name="BlurPanel" Background="Transparent" SizeChanged="BlurPanel_SizeChanged"/>
@@ -523,8 +492,7 @@
                             Checked="Blur_Click"
                             Unchecked="Blur_Click"/>
                     </Border>
-                    <Border x:Name="ChangeRotation"
-                            Visibility="{x:Bind ConvertColor2Visibility(ViewModel.Color2), Mode=OneWay}"
+                    <Border Visibility="{x:Bind ConvertColor2Visibility(ViewModel.Color2), Mode=OneWay}"
                             Background="{ThemeResource MessageServiceBackgroundBrush}"
                             Margin="4,8,4,4"
                             CornerRadius="20"
@@ -541,6 +509,21 @@
                                 <RotateTransform Angle="{x:Bind ViewModel.Rotation, Mode=OneWay}"/>
                             </controls:GlyphButton.RenderTransform>
                         </controls:GlyphButton>
+                    </Border>
+                    <Border x:Name="Play"
+                            Visibility="Collapsed"
+                            Background="{ThemeResource MessageServiceBackgroundBrush}"
+                            Margin="4,8,4,4"
+                            CornerRadius="20"
+                            Grid.Column="1">
+                        <controls:GlyphButton
+                            Click="Play_Click"
+                            Glyph="&#xE768;"
+                            RenderTransformOrigin="0.5,0.5"
+                            CornerRadius="20"
+                            Margin="-4"
+                            RequestedTheme="Dark"
+                            Grid.Column="1"/>
                     </Border>
                     <Border x:Name="Color"
                             Visibility="Collapsed"
