@@ -40,11 +40,7 @@ namespace Unigram.Controls.Messages
         {
             InitializeComponent();
 
-            var content = ElementCompositionPreview.GetElementVisual(ContentPanel);
-            //var shadow = ElementCompositionPreview.GetElementVisual(ShadowPanel);
-
-            _cornerRadius = CompositionDevice.CreateRectangleClip(content);
-            //CompositionDevice.SetClip(shadow, _cornerRadius);
+            _cornerRadius = CompositionDevice.CreateRectangleClip(ContentPanel);
 
             ElementCompositionPreview.SetIsTranslationEnabled(Header, true);
             ElementCompositionPreview.SetIsTranslationEnabled(Message, true);
