@@ -369,6 +369,7 @@
                 InputScope="Chat"
                 FontFamily="{ThemeResource EmojiThemeFontFamily}"
                 PlaceholderText="{CustomResource AddCaption}"
+                Padding="10,6,36,5"
                 Margin="12,8,12,0"
                 Grid.Row="1">
                 <FlyoutBase.AttachedFlyout>
@@ -395,7 +396,7 @@
                 VerticalAlignment="Top"
                 Width="40"
                 Height="40"
-                Margin="0,4,8,-4"/>
+                Margin="0,4,10,-4"/>
         </Grid>
     </Grid>
 
