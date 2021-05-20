@@ -21,7 +21,6 @@ using Windows.Devices.Enumeration;
 using Windows.Foundation;
 using Windows.Graphics.Capture;
 using Windows.UI;
-using Windows.UI.Composition;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -616,6 +615,12 @@ namespace Unigram.Views
 
         private void TransformBottomRoot(ParticipantsGridMode prev, ParticipantsGridMode next)
         {
+            var call = _service.Call;
+            if (call == null)
+            {
+                return;
+            }
+
             var root = ElementCompositionPreview.GetElementVisual(BottomRoot);
             var audio1 = ElementCompositionPreview.GetElementVisual(AudioCanvas);
             var audio2 = ElementCompositionPreview.GetElementVisual(Lottie);
@@ -779,14 +784,23 @@ namespace Unigram.Views
             audio1.StartAnimation("Translation", audioOffset);
             audio2.StartAnimation("Translation", audioOffset);
             audioInfo.StartAnimation("Translation", audioInfoOffset);
-            video.StartAnimation("Translation", videoOffset);
-            videoInfo.StartAnimation("Translation", videoOffset);
             screen.StartAnimation("Scale", otherScale);
             screenInfo.StartAnimation("Scale", otherScale);
-            settings.StartAnimation("Scale", otherScale);
-            settingsInfo.StartAnimation("Scale", otherScale);
             leave.StartAnimation("Translation", leaveOffset);
             leaveInfo.StartAnimation("Translation", leaveOffset);
+
+            if (call.CanStartVideo || next != ParticipantsGridMode.Compact)
+            {
+                video.StartAnimation("Translation", videoOffset);
+                videoInfo.StartAnimation("Translation", videoOffset);
+                settings.StartAnimation("Scale", otherScale);
+                settingsInfo.StartAnimation("Scale", otherScale);
+            }
+            else
+            {
+                settings.Scale = Vector3.One;
+                settingsInfo.Scale = Vector3.One;
+            }
         }
 
         public void Update(GroupCall call, GroupCallParticipant currentUser)
@@ -1602,38 +1616,39 @@ namespace Unigram.Views
                 glyph.Text = Icons.EmojiHand;
                 glyph.Foreground = new SolidColorBrush { Color = Color.FromArgb(0xFF, 0x00, 0x78, 0xff) };
             }
-            else if (participant.IsSpeaking)
+            else if (participant.IsMutedForAllUsers || participant.IsMutedForCurrentUser)
             {
-                if (participant.VolumeLevel != 10000)
+                if (participant.IsCurrentUser)
                 {
-                    speaking.Text = string.Format("{0:N0}% {1}", participant.VolumeLevel / 100d, Strings.Resources.Speaking);
+                    speaking.Text = Strings.Resources.ThisIsYou;
                 }
                 else
                 {
-                    speaking.Text = Strings.Resources.Speaking;
+                    speaking.Text = participant.Bio.Length > 0 ? participant.Bio : Strings.Resources.Listening;
                 }
 
-                speaking.Foreground = status.Foreground = new SolidColorBrush { Color = Color.FromArgb(0xFF, 0x33, 0xc6, 0x59) };
-                glyph.Text = Icons.MicOn;
-                glyph.Foreground = new SolidColorBrush { Color = Color.FromArgb(0xFF, 0x33, 0xc6, 0x59) };
-            }
-            else if (participant.IsCurrentUser)
-            {
-                var muted = participant.IsMutedForAllUsers || participant.IsMutedForCurrentUser;
-
-                speaking.Text = Strings.Resources.ThisIsYou;
-                speaking.Foreground = status.Foreground = new SolidColorBrush { Color = Color.FromArgb(0xFF, 0x00, 0x78, 0xff) };
-                glyph.Text = muted ? Icons.MicOff : Icons.MicOn;
-                glyph.Foreground = new SolidColorBrush { Color = muted && !participant.CanUnmuteSelf ? Colors.Red : Color.FromArgb(0xFF, 0x85, 0x85, 0x85) };
+                speaking.Foreground = status.Foreground = new SolidColorBrush { Color = Color.FromArgb(0xFF, 0x85, 0x85, 0x85) };
+                glyph.Text = Icons.MicOff;
+                glyph.Foreground = new SolidColorBrush { Color = !participant.CanUnmuteSelf ? Colors.Red : Color.FromArgb(0xFF, 0x85, 0x85, 0x85) };
             }
             else
             {
-                var muted = participant.IsMutedForAllUsers || participant.IsMutedForCurrentUser;
+                if (participant.IsSpeaking && participant.VolumeLevel != 10000)
+                {
+                    speaking.Text = string.Format(Strings.Resources.SpeakingWithVolume, (participant.VolumeLevel / 100d).ToString("N0"));
+                }
+                else if (participant.IsSpeaking)
+                {
+                    speaking.Text = Strings.Resources.Speaking;
+                }
+                else
+                {
+                    speaking.Text = Strings.Resources.Listening;
+                }
 
-                speaking.Text = participant.Bio.Length > 0 ? participant.Bio : Strings.Resources.Listening;
-                speaking.Foreground = status.Foreground = new SolidColorBrush { Color = Color.FromArgb(0xFF, 0x85, 0x85, 0x85) };
-                glyph.Text = muted ? Icons.MicOff : Icons.MicOn;
-                glyph.Foreground = new SolidColorBrush { Color = muted && !participant.CanUnmuteSelf ? Colors.Red : Color.FromArgb(0xFF, 0x85, 0x85, 0x85) };
+                speaking.Foreground = status.Foreground = new SolidColorBrush { Color = participant.IsSpeaking ? Color.FromArgb(0xFF, 0x33, 0xc6, 0x59) : Color.FromArgb(0xFF, 0x85, 0x85, 0x85) };
+                glyph.Text = Icons.MicOn;
+                glyph.Foreground = new SolidColorBrush { Color = participant.IsSpeaking ? Color.FromArgb(0xFF, 0x33, 0xc6, 0x59) : Color.FromArgb(0xFF, 0x85, 0x85, 0x85) };
             }
         }
 
@@ -1796,7 +1811,14 @@ namespace Unigram.Views
                 var debounder = new EventDebouncer<RangeBaseValueChangedEventArgs>(Constants.HoldingThrottle, handler => slider.ValueChanged += new RangeBaseValueChangedEventHandler(handler), handler => slider.ValueChanged -= new RangeBaseValueChangedEventHandler(handler));
                 debounder.Invoked += (s, args) =>
                 {
-                    _protoService.Send(new SetGroupCallParticipantVolumeLevel(call.Id, participant.ParticipantId, (int)(args.NewValue * 100)));
+                    if (args.NewValue > 0)
+                    {
+                        _protoService.Send(new SetGroupCallParticipantVolumeLevel(call.Id, participant.ParticipantId, (int)(args.NewValue * 100)));
+                    }
+                    else
+                    {
+                        _protoService.Send(new ToggleGroupCallParticipantIsMuted(call.Id, participant.ParticipantId, true));
+                    }
                 };
 
                 flyout.Items.Add(new ContentMenuFlyoutItem { Content = slider });
