@@ -40,9 +40,6 @@ namespace Unigram.Views.Supergroups
             Search_Click(null, null);
         }
 
-        public int Index { get => 0; }
-        public string Text { get => Strings.Resources.ChannelMembers; }
-
         public ListViewBase GetSelector()
         {
             return ScrollingHost;

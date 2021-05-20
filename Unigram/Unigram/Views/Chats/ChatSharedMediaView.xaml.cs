@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using Telegram.Td.Api;
@@ -29,8 +28,6 @@ namespace Unigram.Views.Chats
         public ChatSharedMediaView()
         {
             InitializeComponent();
-
-            Header.ItemsSource = _tabs = new ObservableCollection<ChatSharedMediaTab>();
         }
 
         public void OnNavigatedTo(NavigationEventArgs e)
@@ -42,8 +39,6 @@ namespace Unigram.Views.Chats
         {
             ViewModel.PropertyChanged -= OnPropertyChanged;
         }
-
-        private readonly ObservableCollection<ChatSharedMediaTab> _tabs;
 
         private bool _isLocked = false;
 
@@ -66,7 +61,6 @@ namespace Unigram.Views.Chats
                 if (_tab != null && _tab is UserControl prev)
                 {
                     prev.Loaded -= Tab_Loaded;
-                    _tabs.RemoveAt(_tab.Index);
                 }
 
                 _tab = value;
@@ -74,21 +68,6 @@ namespace Unigram.Views.Chats
                 if (value != null && value is UserControl next)
                 {
                     next.Loaded += Tab_Loaded;
-
-                    if (next is SupergroupMembersView)
-                    {
-                        _tabs.Insert(0, new ChatSharedMediaTab { Title = value.Text });
-                        FindName(nameof(PivotMembers));
-                        PivotMembers.Header = value.Text;
-                        PivotMembers.Content = next;
-                    }
-                    else if (next is UserCommonChatsView)
-                    {
-                        _tabs.Add(new ChatSharedMediaTab { Title = value.Text });
-                        FindName(nameof(PivotCommonChats));
-                        PivotCommonChats.Header = value.Text;
-                        PivotCommonChats.Content = next;
-                    }
                 }
             }
         }
@@ -144,31 +123,33 @@ namespace Unigram.Views.Chats
 
         public ScrollViewer GetScrollViewer()
         {
-            var tab = _tab;
-            var shift = 0;
-
-            if (tab?.Index < 1)
+            if (ScrollingHost.SelectedItem == PivotMembers && _tab != null)
             {
-                shift -= 1;
+                return _tab.GetScrollViewer();
             }
-
-            switch (ScrollingHost.SelectedIndex + shift)
+            else if (ScrollingHost.SelectedItem == PivotCommonChats && _tab != null)
             {
-                case 0:
-                    return ScrollingMedia.GetScrollViewer();
-                case 1:
-                    return ScrollingFiles.GetScrollViewer();
-                case 2:
-                    return ScrollingLinks.GetScrollViewer();
-                case 3:
-                    return ScrollingMusic.GetScrollViewer();
-                case 4:
-                    return ScrollingVoice.GetScrollViewer();
+                return _tab.GetScrollViewer();
             }
-
-            if (ScrollingHost.SelectedIndex == tab.Index)
+            else if (ScrollingHost.SelectedItem == PivotMedia)
             {
-                return tab.GetScrollViewer();
+                return ScrollingMedia.GetScrollViewer();
+            }
+            else if (ScrollingHost.SelectedItem == PivotFiles)
+            {
+                return ScrollingFiles.GetScrollViewer();
+            }
+            else if (ScrollingHost.SelectedItem == PivotLinks)
+            {
+                return ScrollingLinks.GetScrollViewer();
+            }
+            else if (ScrollingHost.SelectedItem == PivotMusic)
+            {
+                return ScrollingMusic.GetScrollViewer();
+            }
+            else if (ScrollingHost.SelectedItem == PivotVoice)
+            {
+                return ScrollingVoice.GetScrollViewer();
             }
 
             return null;
@@ -235,7 +216,6 @@ namespace Unigram.Views.Chats
         }
 
         public event EventHandler<ScrollViewerViewChangedEventArgs> ViewChanged;
-        public event EventHandler<ChatSharedMediaTab> ViewRequested;
 
         private void InitializeSearch(TextBox field, Func<SearchMessagesFilter> filter)
         {
@@ -250,97 +230,82 @@ namespace Unigram.Views.Chats
         {
             if (e.PropertyName.Equals("SelectedItems"))
             {
-                var tab = _tab;
-                var shift = 0;
-
-                if (tab?.Index < 1)
+                if (ScrollingHost.SelectedItem == PivotMedia)
                 {
-                    shift -= 1;
+                    ScrollingMedia.SelectedItems.AddRange(ViewModel.SelectedItems);
                 }
-
-                switch (ScrollingHost.SelectedIndex + shift)
+                else if (ScrollingHost.SelectedItem == PivotFiles)
                 {
-                    case 0:
-                        ScrollingMedia.SelectedItems.AddRange(ViewModel.SelectedItems);
-                        break;
-                    case 1:
-                        ScrollingFiles.SelectedItems.AddRange(ViewModel.SelectedItems);
-                        break;
-                    case 2:
-                        ScrollingLinks.SelectedItems.AddRange(ViewModel.SelectedItems);
-                        break;
-                    case 3:
-                        ScrollingMusic.SelectedItems.AddRange(ViewModel.SelectedItems);
-                        break;
-                    case 4:
-                        ScrollingVoice.SelectedItems.AddRange(ViewModel.SelectedItems);
-                        break;
+                    ScrollingFiles.SelectedItems.AddRange(ViewModel.SelectedItems);
+                }
+                else if (ScrollingHost.SelectedItem == PivotLinks)
+                {
+                    ScrollingLinks.SelectedItems.AddRange(ViewModel.SelectedItems);
+                }
+                else if (ScrollingHost.SelectedItem == PivotMusic)
+                {
+                    ScrollingMusic.SelectedItems.AddRange(ViewModel.SelectedItems);
+                }
+                else if (ScrollingHost.SelectedItem == PivotVoice)
+                {
+                    ScrollingVoice.SelectedItems.AddRange(ViewModel.SelectedItems);
                 }
             }
             else if (e.PropertyName.Equals("SharedCount"))
             {
-                for (int i = 0; i < ViewModel.SharedCount.Length; i++)
+                // This code relies on the fact that additional tab is always set before SharedCount is loaded
+                if (PivotMembers == null && _tab is SupergroupMembersView)
                 {
-                    if (ViewModel.SharedCount[i] < 1)
-                    {
-                        continue;
-                    }
-
-                    var insert = Math.Min(i, _tabs.Count);
-
-                    if (_tab?.Index <= insert)
-                    {
-                        insert = Math.Min(insert + 1, _tabs.Count);
-                    }
-
-                    switch (i)
-                    {
-                        case 0:
-                            if (PivotMedia == null)
-                            {
-                                _tabs.Insert(insert, new ChatSharedMediaTab { Title = Strings.Resources.SharedMediaTab2 });
-                                FindName(nameof(PivotMedia));
-                            }
-                            break;
-                        case 1:
-                            if (PivotFiles == null)
-                            {
-                                _tabs.Insert(insert, new ChatSharedMediaTab { Title = Strings.Resources.SharedFilesTab2 });
-                                FindName(nameof(PivotFiles));
-                                InitializeSearch(SearchFiles, () => new SearchMessagesFilterDocument());
-                            }
-                            break;
-                        case 2:
-                            if (PivotLinks == null)
-                            {
-                                _tabs.Insert(insert, new ChatSharedMediaTab { Title = Strings.Resources.SharedLinksTab2 });
-                                FindName(nameof(PivotLinks));
-                                InitializeSearch(SearchLinks, () => new SearchMessagesFilterUrl());
-                            }
-                            break;
-                        case 3:
-                            if (PivotMusic == null)
-                            {
-                                _tabs.Insert(insert, new ChatSharedMediaTab { Title = Strings.Resources.SharedMusicTab2 });
-                                FindName(nameof(PivotMusic));
-                                InitializeSearch(SearchMusic, () => new SearchMessagesFilterAudio());
-                            }
-                            break;
-                        case 4:
-                            if (PivotVoice == null)
-                            {
-                                _tabs.Insert(insert, new ChatSharedMediaTab { Title = Strings.Resources.SharedVoiceTab2 });
-                                FindName(nameof(PivotVoice));
-                                InitializeSearch(SearchVoice, () => new SearchMessagesFilterVoiceNote());
-                            }
-                            break;
-                    }
+                    FindName(nameof(TopNavMembers));
+                    FindName(nameof(PivotMembers));
+                    PivotMembers.Content = _tab;
                 }
 
-                if (_tabs.Count > 0)
+                if (PivotMedia == null && ViewModel.SharedCount[0] > 0)
+                {
+                    FindName(nameof(TopNavMedia));
+                    FindName(nameof(PivotMedia));
+                }
+
+                if (PivotFiles == null && ViewModel.SharedCount[1] > 0)
+                {
+                    FindName(nameof(TopNavFiles));
+                    FindName(nameof(PivotFiles));
+                    InitializeSearch(SearchFiles, () => new SearchMessagesFilterDocument());
+                }
+
+                if (PivotLinks == null && ViewModel.SharedCount[2] > 0)
+                {
+                    FindName(nameof(TopNavLinks));
+                    FindName(nameof(PivotLinks));
+                    InitializeSearch(SearchLinks, () => new SearchMessagesFilterUrl());
+                }
+
+                if (PivotMusic == null && ViewModel.SharedCount[3] > 0)
+                {
+                    FindName(nameof(TopNavMusic));
+                    FindName(nameof(PivotMusic));
+                    InitializeSearch(SearchMusic, () => new SearchMessagesFilterAudio());
+                }
+
+                if (PivotVoice == null && ViewModel.SharedCount[4] > 0)
+                {
+                    FindName(nameof(TopNavVoice));
+                    FindName(nameof(PivotVoice));
+                    InitializeSearch(SearchVoice, () => new SearchMessagesFilterVoiceNote());
+                }
+
+                else if (PivotCommonChats == null && Tab is UserCommonChatsView)
+                {
+                    FindName(nameof(TopNavCommonChats));
+                    FindName(nameof(PivotCommonChats));
+                    PivotCommonChats.Content = _tab;
+                }
+
+                if (Header.Items.Count > 0)
                 {
                     HeaderPanel.Visibility = Visibility.Visible;
-                    Header.SelectedItem = _tabs[0];
+                    Header.SelectedItem = Header.Items[0];
                 }
             }
         }
@@ -667,17 +632,14 @@ namespace Unigram.Views.Chats
             }
         }
 
-        private void Header_ItemClick(object sender, ItemClickEventArgs e)
+        private void Header_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (e.ClickedItem is ChatSharedMediaTab tab)
-            {
-                ScrollingHost.SelectedIndex = _tabs.IndexOf(tab);
-            }
+            ScrollingHost.SelectedIndex = Header.SelectedIndex;
         }
 
         private void ScrollingHost_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Header.SelectedItem = _tabs[ScrollingHost.SelectedIndex];
+            Header.SelectedIndex = ScrollingHost.SelectedIndex;
         }
 
         private void Scrolling_Loaded(object sender, RoutedEventArgs e)
@@ -833,18 +795,8 @@ namespace Unigram.Views.Chats
         }
     }
 
-    public class ChatSharedMediaTab
-    {
-        public string Title { get; set; }
-
-        public string Subtitle { get; set; }
-    }
-
     public interface IProfileTab
     {
-        int Index { get; }
-        string Text { get; }
-
         ListViewBase GetSelector();
         ScrollViewer GetScrollViewer();
 

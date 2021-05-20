@@ -18,9 +18,6 @@ namespace Unigram.Views.Users
             InitializeComponent();
         }
 
-        public int Index { get => 5; }
-        public string Text { get => Strings.Resources.SharedGroupsTab2; }
-
         public ListViewBase GetSelector()
         {
             return List;
