@@ -825,7 +825,6 @@
         </Grid>
 
         <!-- Input pane -->
-        <!--<Border x:Name="Separator" Visibility="{x:Bind ConvertShadowVisibility(ViewModel.InlineBotResultsVisibility, ViewModel.StickerPack, ViewModel.Autocomplete), Mode=OneWay}" Grid.Row="3"/>-->
         <Border x:Name="Separator" Margin="12,0" Grid.Row="3"/>
 
         <ContentControl x:Name="TextArea"

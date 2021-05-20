@@ -3839,6 +3839,7 @@ namespace Unigram.Views
             ComposerHeaderCancel.CornerRadius = new CornerRadius(4, min, 4, 4);
             TextRoot.CornerRadius = ChatFooter.CornerRadius = ChatRecord.CornerRadius = new CornerRadius(radius);
 
+            Separator.CornerRadius = new CornerRadius(radius);
             InlinePanel.CornerRadius = new CornerRadius(radius, radius, 0, 0);
             ListAutocomplete.Padding = new Thickness(0, 0, 0, radius);
             ListInline.UpdateCornerRadius(radius);
@@ -3847,14 +3848,14 @@ namespace Unigram.Views
             {
                 TextArea.MaxWidth = ChatRecord.MaxWidth = ChatFooter.MaxWidth = InlinePanel.MaxWidth = Separator.MaxWidth =
                     SettingsService.Current.IsAdaptiveWideEnabled ? 640 : double.PositiveInfinity;
-                TextArea.Margin = ChatRecord.Margin = ChatFooter.Margin = new Thickness(12, 0, 12, 8);
+                TextArea.Margin = ChatRecord.Margin = ChatFooter.Margin = Separator.Margin = new Thickness(12, 0, 12, 8);
                 InlinePanel.Margin = new Thickness(12, 0, 12, -radius);
             }
             else
             {
                 TextArea.MaxWidth = ChatRecord.MaxWidth = ChatFooter.MaxWidth = InlinePanel.MaxWidth = Separator.MaxWidth =
                     SettingsService.Current.IsAdaptiveWideEnabled ? 664 : double.PositiveInfinity;
-                TextArea.Margin = ChatRecord.Margin = ChatFooter.Margin = new Thickness();
+                TextArea.Margin = ChatRecord.Margin = ChatFooter.Margin = Separator.Margin = new Thickness();
                 InlinePanel.Margin = new Thickness();
             }
 

@@ -5,6 +5,8 @@
 #include "Composition/CompositionDevice.g.cpp"
 #endif
 
+#include <winrt/Windows.UI.Xaml.Hosting.h>
+
 namespace winrt::Unigram::Native::Composition::implementation
 {
 	winrt::slim_mutex CompositionDevice::s_lock;
@@ -26,6 +28,11 @@ namespace winrt::Unigram::Native::Composition::implementation
 				IID_IUIAnimationTransitionLibrary2,
 				reinterpret_cast<LPVOID*>(&_transitionLibrary));
 		}
+	}
+
+	winrt::Unigram::Native::Composition::DirectRectangleClip CompositionDevice::CreateRectangleClip(UIElement element)
+	{
+		return CreateRectangleClip(winrt::Windows::UI::Xaml::Hosting::ElementCompositionPreview::GetElementVisual(element));
 	}
 
 	winrt::Unigram::Native::Composition::DirectRectangleClip CompositionDevice::CreateRectangleClip(Visual visual)
