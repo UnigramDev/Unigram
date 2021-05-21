@@ -295,7 +295,7 @@ namespace Unigram.Views.Chats
                     InitializeSearch(SearchVoice, () => new SearchMessagesFilterVoiceNote());
                 }
 
-                else if (PivotCommonChats == null && Tab is UserCommonChatsView)
+                if (PivotCommonChats == null && Tab is UserCommonChatsView)
                 {
                     FindName(nameof(TopNavCommonChats));
                     FindName(nameof(PivotCommonChats));
