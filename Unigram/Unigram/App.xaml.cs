@@ -114,12 +114,15 @@ namespace Unigram
 
         private void FatalErrorCallback(int verbosityLevel, string message)
         {
-            message += Environment.NewLine;
-            message += "Application version: " + SettingsPage.GetVersion();
-            message += Environment.NewLine;
-            message += "Entered background: " + IsBackground;
+            if (verbosityLevel == 0)
+            {
+                message += Environment.NewLine;
+                message += "Application version: " + SettingsPage.GetVersion();
+                message += Environment.NewLine;
+                message += "Entered background: " + IsBackground;
 
-            SettingsService.Current.Diagnostics.LastErrorMessage = message;
+                SettingsService.Current.Diagnostics.LastErrorMessage = message;
+            }
         }
 
         private void OnEnteredBackground(object sender, EnteredBackgroundEventArgs e)
