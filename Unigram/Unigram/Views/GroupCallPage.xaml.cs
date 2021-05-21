@@ -324,10 +324,12 @@ namespace Unigram.Views
 
                 Viewport.Mode = mode;
                 ViewportAspect.Padding = new Thickness(0, 0, 8, 0);
+                ViewportAspect.Margin = new Thickness(-4, 0, -4, 0);
                 ParticipantsPanel.ColumnDefinitions[0].Width = new GridLength(224, GridUnitType.Pixel);
                 ParticipantsPanel.VerticalAlignment = VerticalAlignment.Stretch;
                 ParticipantsPanel.Margin = new Thickness();
                 ListPanel.Padding = new Thickness(12, 4, 8, 12);
+                List.Padding = new Thickness();
 
                 if (!ParticipantsPanel.Children.Contains(ViewportAspect))
                 {
@@ -406,6 +408,7 @@ namespace Unigram.Views
 
                 Viewport.Mode = mode;
                 ViewportAspect.Padding = new Thickness(0, 0, 0, 0);
+                ViewportAspect.Margin = new Thickness(-4, 0, -4, Viewport.Children.Count > 0 ? 8 : 0);
                 ParticipantsPanel.ColumnDefinitions[0].Width = new GridLength(1, GridUnitType.Auto);
                 ParticipantsPanel.VerticalAlignment = VerticalAlignment.Top;
                 ParticipantsPanel.Margin = new Thickness(0, 0, 0, 16);
@@ -1698,6 +1701,15 @@ namespace Unigram.Views
 
             _gridCells[videoInfo.EndpointId] = child;
             Viewport.Children.Add(child);
+
+            if (_mode == ParticipantsGridMode.Compact)
+            {
+                ViewportAspect.Margin = new Thickness(-4, 0, -4, Viewport.Children.Count > 0 ? 8 : 0);
+            }
+            else
+            {
+                ViewportAspect.Margin = new Thickness(-4, 0, -4, 0);
+            }
         }
 
         private void RemoveCell(GroupCallParticipantGridCell cell)
@@ -1707,11 +1719,25 @@ namespace Unigram.Views
                 token.Stop();
             }
 
+            if (_pinnedEndpointId == cell.EndpointId)
+            {
+                _pinnedEndpointId = null;
+            }
+
             _prev.Remove(cell.EndpointId);
             _gridCells.Remove(cell.EndpointId);
 
             cell.Surface = null;
             Viewport.Children.Remove(cell);
+
+            if (_mode == ParticipantsGridMode.Compact)
+            {
+                ViewportAspect.Margin = new Thickness(-4, 0, -4, Viewport.Children.Count > 0 ? 8 : 0);
+            }
+            else
+            {
+                ViewportAspect.Margin = new Thickness(-4, 0, -4 , 0);
+            }
         }
 
         private void Canvas_TogglePinned(object sender, EventArgs e)
