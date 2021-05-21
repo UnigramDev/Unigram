@@ -393,6 +393,10 @@ namespace Unigram.ViewModels
                 var fill = GetFill();
                 if (wallpaper.Type is BackgroundTypeFill && fill is BackgroundFillFreeformGradient freeform && freeform.Colors.SequenceEqual(new[] { 0x7FA381, 0xFFF5C5, 0x336F55, 0xFBE37D }))
                 {
+                    task = ProtoService.SendAsync(new SetBackground(null, null, Settings.Appearance.IsDarkTheme()));
+                }
+                else
+                {
                     BackgroundType type = null;
                     if (wallpaper.Type is BackgroundTypeFill)
                     {
@@ -413,10 +417,6 @@ namespace Unigram.ViewModels
                     }
 
                     task = ProtoService.SendAsync(new SetBackground(new InputBackgroundRemote(wallpaper.Id), type, Settings.Appearance.IsDarkTheme()));
-                }
-                else
-                {
-                    task = ProtoService.SendAsync(new SetBackground(null, null, Settings.Appearance.IsDarkTheme()));
                 }
             }
 
