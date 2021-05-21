@@ -179,10 +179,10 @@
               Margin="0,0,0,16"
               Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Grid x:Name="ListPanel" Background="Transparent" VerticalAlignment="Top" Margin="12,0" Grid.Column="1" Canvas.ZIndex="1">
+            <Grid x:Name="ListPanel" Background="Transparent" VerticalAlignment="Top" Margin="12,0" Canvas.ZIndex="1">
                 <Grid.RowDefinitions>
                     <RowDefinition/>
                     <RowDefinition Height="Auto"/>
@@ -196,7 +196,7 @@
                         ChoosingItemContainer="OnChoosingItemContainer"
                         ContainerContentChanging="OnContainerContentChanging">
                         <ListView.Header>
-                            <Grid x:Name="ViewportAspect" Margin="-4,0,-4,0" Grid.Column="1">
+                            <Grid x:Name="ViewportAspect" Margin="-4,0,-4,0" Grid.ColumnSpan="2">
                                 <local:ParticipantsGrid x:Name="Viewport" SizeChanged="OnViewportSizeChanged"/>
                             </Grid>
                         </ListView.Header>
@@ -360,13 +360,13 @@
                     Glyph="&#xE956;"
                     Background="#663e3f41"
                     Foreground="#FFFFFF"
-                    Content="{CustomResource ChatVideo}"
+                    Content="{CustomResource VoipChatShare}"
                     Style="{StaticResource CallGlyphButtonStyle}"
                     Grid.Row="1"/>
                 <TextBlock
                     x:Name="ScreenInfo"
                     Visibility="Collapsed"
-                    Text="{CustomResource ChatVideo}"
+                    Text="{CustomResource VoipChatShare}"
                     Style="{StaticResource CaptionTextBlockStyle}"
                     TextAlignment="Center"
                     VerticalAlignment="Top"

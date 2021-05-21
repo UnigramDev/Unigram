@@ -281,7 +281,7 @@ namespace Unigram.Views
             var prevSize = e.PreviousSize.ToVector2();
             var nextSize = e.NewSize.ToVector2();
 
-            UpdateLayout(prevSize, nextSize, true);
+            UpdateLayout(prevSize, nextSize, prevSize.X > 0 && prevSize.Y > 0);
         }
 
         private async void UpdateLayout(Vector2 prevSize, Vector2 nextSize, bool animated)
@@ -317,18 +317,15 @@ namespace Unigram.Views
 
                 Grid.SetRowSpan(ParticipantsPanel, 2);
 
-                Grid.SetColumn(ListPanel, 0);
-
-                Grid.SetColumn(ViewportAspect, 0);
-                Grid.SetColumnSpan(ViewportAspect, 2);
+                Grid.SetColumn(ListPanel, 1);
 
                 Viewport.Mode = mode;
                 ViewportAspect.Padding = new Thickness(0, 0, 8, 0);
-                ViewportAspect.Margin = new Thickness(-4, 0, -4, 0);
-                ParticipantsPanel.ColumnDefinitions[0].Width = new GridLength(224, GridUnitType.Pixel);
+                ViewportAspect.Margin = new Thickness(8, 0, -4, 4);
+                ParticipantsPanel.ColumnDefinitions[1].Width = new GridLength(224, GridUnitType.Pixel);
                 ParticipantsPanel.VerticalAlignment = VerticalAlignment.Stretch;
                 ParticipantsPanel.Margin = new Thickness();
-                ListPanel.Padding = new Thickness(12, 4, 8, 12);
+                ListPanel.Padding = new Thickness(8, 4, 12, 12);
                 List.Padding = new Thickness();
 
                 if (!ParticipantsPanel.Children.Contains(ViewportAspect))
@@ -340,11 +337,11 @@ namespace Unigram.Views
                 if (mode == ParticipantsGridMode.Docked)
                 {
                     ListPanel.Margin = new Thickness();
-                    BottomPanel.Padding = new Thickness(224, 8, 8, 42);
+                    BottomPanel.Padding = new Thickness(8, 8, 224, 42);
                 }
                 else
                 {
-                    ListPanel.Margin = new Thickness(-216, 0, 216, 0);
+                    ListPanel.Margin = new Thickness(216, 0, -216, 0);
                     BottomPanel.Padding = new Thickness(8, 8, 8, 42);
                 }
 
@@ -368,26 +365,26 @@ namespace Unigram.Views
 
                 AudioInfo.Margin = new Thickness(0, 4, 0, 0);
 
-                Grid.SetColumn(AudioCanvas, 0);
-                Grid.SetRow(AudioCanvas, 1);
-                Grid.SetRowSpan(AudioCanvas, 1);
-
-                Grid.SetColumn(Audio, 0);
-                Grid.SetRow(Audio, 1);
-                Grid.SetRowSpan(Audio, 1);
-
-                Grid.SetColumn(Lottie, 0);
-                Grid.SetRow(Lottie, 1);
-                Grid.SetRowSpan(Lottie, 1);
-
-                Grid.SetColumn(AudioInfo, 0);
-                Grid.SetRow(AudioInfo, 2);
+                Grid.SetColumn(Screen, 0);
+                Grid.SetColumn(ScreenInfo, 0);
 
                 Grid.SetColumn(Video, 1);
                 Grid.SetColumn(VideoInfo, 1);
 
-                Grid.SetColumn(Screen, 2);
-                Grid.SetColumn(ScreenInfo, 2);
+                Grid.SetColumn(AudioCanvas, 2);
+                Grid.SetRow(AudioCanvas, 1);
+                Grid.SetRowSpan(AudioCanvas, 1);
+
+                Grid.SetColumn(Audio, 2);
+                Grid.SetRow(Audio, 1);
+                Grid.SetRowSpan(Audio, 1);
+
+                Grid.SetColumn(Lottie, 2);
+                Grid.SetRow(Lottie, 1);
+                Grid.SetRowSpan(Lottie, 1);
+
+                Grid.SetColumn(AudioInfo, 2);
+                Grid.SetRow(AudioInfo, 2);
 
                 Grid.SetColumn(Settings, 3);
                 Grid.SetColumn(SettingsInfo, 3);
@@ -404,12 +401,12 @@ namespace Unigram.Views
 
                 Grid.SetRowSpan(ParticipantsPanel, 1);
 
-                Grid.SetColumn(ListPanel, 1);
+                Grid.SetColumn(ListPanel, 0);
 
                 Viewport.Mode = mode;
                 ViewportAspect.Padding = new Thickness(0, 0, 0, 0);
-                ViewportAspect.Margin = new Thickness(-4, 0, -4, Viewport.Children.Count > 0 ? 8 : 0);
-                ParticipantsPanel.ColumnDefinitions[0].Width = new GridLength(1, GridUnitType.Auto);
+                ViewportAspect.Margin = new Thickness(-4, 0, -4, Viewport.Children.Count > 0 ? 4 : 0);
+                ParticipantsPanel.ColumnDefinitions[1].Width = new GridLength(1, GridUnitType.Auto);
                 ParticipantsPanel.VerticalAlignment = VerticalAlignment.Top;
                 ParticipantsPanel.Margin = new Thickness(0, 0, 0, 16);
                 ListPanel.Padding = new Thickness(12, 0, 12, 0);
@@ -442,6 +439,12 @@ namespace Unigram.Views
 
                 AudioInfo.Margin = new Thickness(0, 8, 0, 24);
 
+                Grid.SetColumn(Screen, 0);
+                Grid.SetColumn(ScreenInfo, 0);
+
+                Grid.SetColumn(Video, 0);
+                Grid.SetColumn(VideoInfo, 0);
+
                 Grid.SetColumn(AudioCanvas, 1);
                 Grid.SetRow(AudioCanvas, 0);
                 Grid.SetRowSpan(AudioCanvas, 3);
@@ -456,12 +459,6 @@ namespace Unigram.Views
 
                 Grid.SetColumn(AudioInfo, 1);
                 Grid.SetRow(AudioInfo, 3);
-
-                Grid.SetColumn(Video, 0);
-                Grid.SetColumn(VideoInfo, 0);
-
-                Grid.SetColumn(Screen, 0);
-                Grid.SetColumn(ScreenInfo, 0);
 
                 Grid.SetColumn(Settings, 0);
                 Grid.SetColumn(SettingsInfo, 0);
@@ -497,7 +494,7 @@ namespace Unigram.Views
             {
                 if (prev == ParticipantsGridMode.Compact || mode == ParticipantsGridMode.Compact)
                 {
-                    TransformBottomRoot(prev, mode);
+                    TransformBottomRoot(prevSize, nextSize, prev, mode);
                 }
                 else
                 {
@@ -521,11 +518,11 @@ namespace Unigram.Views
 
             if (_mode == ParticipantsGridMode.Docked)
             {
-                rootOffset.InsertKeyFrame(0, new Vector3(-108, 0, 0));
+                rootOffset.InsertKeyFrame(0, new Vector3(108, 0, 0));
             }
             else
             {
-                rootOffset.InsertKeyFrame(0, new Vector3(108, 0, 0));
+                rootOffset.InsertKeyFrame(0, new Vector3(-108, 0, 0));
             }
 
             rootOffset.InsertKeyFrame(1, Vector3.Zero);
@@ -535,11 +532,11 @@ namespace Unigram.Views
 
             if (_mode == ParticipantsGridMode.Docked)
             {
-                listOffset.InsertKeyFrame(0, new Vector3(-224, 0, 0));
+                listOffset.InsertKeyFrame(0, new Vector3(224, 0, 0));
             }
             else
             {
-                listOffset.InsertKeyFrame(0, new Vector3(224, 0, 0));
+                listOffset.InsertKeyFrame(0, new Vector3(-224, 0, 0));
             }
 
             listOffset.InsertKeyFrame(1, Vector3.Zero);
@@ -554,60 +551,18 @@ namespace Unigram.Views
         private ParticipantsGridMode _mode = ParticipantsGridMode.Compact;
         private string _pinnedEndpointId;
 
-        [ComImport, Guid("45D64A29-A63E-4CB6-B498-5781D298CB4F")]
-        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-        interface ICoreWindowInterop
-        {
-            IntPtr WindowHandle { get; }
-            bool MessageHandled { set; }
-        }
-
-        [DllImport("user32.dll", ExactSpelling = true, CharSet = CharSet.Auto)]
-        public static extern IntPtr GetParent(IntPtr hWnd);
-
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct RECT
-        {
-            public int Left;        // x position of upper-left corner
-            public int Top;         // y position of upper-left corner
-            public int Right;       // x position of lower-right corner
-            public int Bottom;      // y position of lower-right corner
-        }
-
-        [DllImport("user32.dll", SetLastError = true)]
-        static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, int uFlags);
-
-        [DllImport("user32.dll", SetLastError = true)]
-        internal static extern bool MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
-
         private void Resize_Click(object sender, RoutedEventArgs e)
         {
-            //object corewin = Windows.UI.Core.CoreWindow.GetForCurrentThread();
-            //var interop = (ICoreWindowInterop)corewin;
-            //var handle = GetParent(interop.WindowHandle);
-
-            //if (GetWindowRect(handle, out RECT lpRect))
-            //{
-            //    var width = lpRect.Right - lpRect.Left;
-            //    var height = lpRect.Bottom - lpRect.Top;
-
-            //    var a = MoveWindow(handle, lpRect.Left -100, lpRect.Top, width, height, true);
-            //}
-
             var view = ApplicationView.GetForCurrentView();
             var size = view.VisibleBounds;
 
             if (size.Width >= 500)
             {
-                view.TryResizeView(new Size(380, size.Height));
+                view.TryResizeView(new Size(380, size.Height + 1));
             }
             else
             {
-                view.TryResizeView(new Size(780, size.Height));
+                view.TryResizeView(new Size(780, size.Height + 1));
             }
         }
 
@@ -616,7 +571,7 @@ namespace Unigram.Views
             UpdateLayout(this.GetActualSize(), this.GetActualSize(), true);
         }
 
-        private void TransformBottomRoot(ParticipantsGridMode prev, ParticipantsGridMode next)
+        private void TransformBottomRoot(Vector2 prevSize, Vector2 nextSize, ParticipantsGridMode prev, ParticipantsGridMode next)
         {
             var call = _service.Call;
             if (call == null)
@@ -625,6 +580,7 @@ namespace Unigram.Views
             }
 
             var root = ElementCompositionPreview.GetElementVisual(BottomRoot);
+            var list = ElementCompositionPreview.GetElementVisual(ListPanel);
             var audio1 = ElementCompositionPreview.GetElementVisual(AudioCanvas);
             var audio2 = ElementCompositionPreview.GetElementVisual(Lottie);
             var audioInfo = ElementCompositionPreview.GetElementVisual(AudioInfo);
@@ -643,37 +599,56 @@ namespace Unigram.Views
             audio2.CenterPoint = new Vector3(expanded ? 24 : 48, expanded ? 24 : 48, 0);
 
             screen.CenterPoint = new Vector3(24, 24, 0);
-            screenInfo.CenterPoint = new Vector3(ScreenInfo.ActualSize.X / 2, ScreenInfo.ActualSize.Y / 2, 0);
+            screenInfo.CenterPoint = new Vector3((float)ScreenInfo.ActualWidth / 2, (float)ScreenInfo.ActualHeight / 2, 0);
 
             settings.CenterPoint = new Vector3(24, 24, 0);
-            settingsInfo.CenterPoint = new Vector3(SettingsInfo.ActualSize.X / 2, SettingsInfo.ActualSize.Y / 2, 0);
+            settingsInfo.CenterPoint = new Vector3((float)SettingsInfo.ActualWidth / 2, (float)SettingsInfo.ActualHeight / 2, 0);
 
             ElementCompositionPreview.SetIsTranslationEnabled(BottomRoot, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(ListPanel, true);
             ElementCompositionPreview.SetIsTranslationEnabled(AudioCanvas, true);
             ElementCompositionPreview.SetIsTranslationEnabled(Lottie, true);
             ElementCompositionPreview.SetIsTranslationEnabled(AudioInfo, true);
             ElementCompositionPreview.SetIsTranslationEnabled(Video, true);
             ElementCompositionPreview.SetIsTranslationEnabled(VideoInfo, true);
-            //ElementCompositionPreview.SetIsTranslationEnabled(Screen, true);
-            //ElementCompositionPreview.SetIsTranslationEnabled(ScreenInfo, true);
-            //ElementCompositionPreview.SetIsTranslationEnabled(Settings, true);
-            //ElementCompositionPreview.SetIsTranslationEnabled(SettingsInfo, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(Screen, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(ScreenInfo, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(Settings, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(SettingsInfo, true);
             ElementCompositionPreview.SetIsTranslationEnabled(Leave, true);
             ElementCompositionPreview.SetIsTranslationEnabled(LeaveInfo, true);
 
             // Root
             var rootOffset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
 
-            if (expanded)
+            var prevCenter = prevSize.X / 2 - (float)BottomRoot.ActualWidth / 2;
+            var nextCenter = nextSize.X / 2 - (float)BottomRoot.ActualWidth / 2;
+
+            if (next == ParticipantsGridMode.Docked)
             {
-                rootOffset.InsertKeyFrame(0, new Vector3(-224 - 12, 0, 0));
+                nextCenter -= 112;
+            }
+            else if (prev == ParticipantsGridMode.Docked)
+            {
+                prevCenter -= 112;
+            }
+
+            rootOffset.InsertKeyFrame(0, new Vector3(prevCenter - nextCenter, 0, 0));
+            rootOffset.InsertKeyFrame(1, Vector3.Zero);
+
+            // List offset
+            var listOffset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+
+            if (next == ParticipantsGridMode.Docked)
+            {
+                listOffset.InsertKeyFrame(0, new Vector3(224, 0, 0));
             }
             else
             {
-                rootOffset.InsertKeyFrame(0, new Vector3(224 + 12, 0, 0));
+                //listOffset.InsertKeyFrame(0, new Vector3(-224, 0, 0));
             }
 
-            rootOffset.InsertKeyFrame(1, Vector3.Zero);
+            listOffset.InsertKeyFrame(1, Vector3.Zero);
 
             // Audio scale
             var audioScale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
@@ -689,47 +664,33 @@ namespace Unigram.Views
 
             audioScale.InsertKeyFrame(1, Vector3.One);
 
-            // Audio offset
-            var audioOffset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-
-            if (expanded)
-            {
-                audioOffset.InsertKeyFrame(0, new Vector3(72, 0, 0));
-            }
-            else
-            {
-                audioOffset.InsertKeyFrame(0, new Vector3(-72, 0, 0));
-            }
-
-            audioOffset.InsertKeyFrame(1, Vector3.Zero);
-
             // Audio info offset
             var audioInfoOffset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
 
             if (expanded)
             {
-                audioInfoOffset.InsertKeyFrame(0, new Vector3(72, 26, 0));
+                audioInfoOffset.InsertKeyFrame(0, new Vector3(0, 26, 0));
             }
             else
             {
-                audioInfoOffset.InsertKeyFrame(0, new Vector3(-72, -26, 0));
+                audioInfoOffset.InsertKeyFrame(0, new Vector3(0, -26, 0));
             }
 
             audioInfoOffset.InsertKeyFrame(1, Vector3.Zero);
 
-            // Video offset
-            var videoOffset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            // Other offset
+            var otherOffset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
 
             if (expanded)
             {
-                videoOffset.InsertKeyFrame(0, new Vector3(-120, 0, 0));
+                otherOffset.InsertKeyFrame(0, new Vector3(-24, 0, 0));
             }
             else
             {
-                videoOffset.InsertKeyFrame(0, new Vector3(120, 0, 0));
+                otherOffset.InsertKeyFrame(0, new Vector3(24, 0, 0));
             }
 
-            videoOffset.InsertKeyFrame(1, Vector3.Zero);
+            otherOffset.InsertKeyFrame(1, Vector3.Zero);
 
             // Other scales
             var otherScale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
@@ -745,27 +706,12 @@ namespace Unigram.Views
                 otherScale.InsertKeyFrame(1, Vector3.Zero);
             }
 
-            // Leave offset
-            var leaveOffset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-
-            if (expanded)
-            {
-                leaveOffset.InsertKeyFrame(0, new Vector3(-96, 0, 0));
-            }
-            else
-            {
-                leaveOffset.InsertKeyFrame(0, new Vector3(96, 0, 0));
-            }
-
-            leaveOffset.InsertKeyFrame(1, Vector3.Zero);
-
             rootOffset.Duration =
+                listOffset.Duration =
                 audioScale.Duration =
-                leaveOffset.Duration =
                 otherScale.Duration =
-                videoOffset.Duration =
-                audioInfoOffset.Duration =
-                audioOffset.Duration = TimeSpan.FromMilliseconds(300);
+                otherOffset.Duration =
+                audioInfoOffset.Duration = TimeSpan.FromMilliseconds(300);
             //rootOffset.DelayTime =
             //    audioScale.DelayTime =
             //    leaveOffset.DelayTime =
@@ -782,22 +728,25 @@ namespace Unigram.Views
             //    audioOffset.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
 
             root.StartAnimation("Translation", rootOffset);
+            list.StartAnimation("Translation", listOffset);
             audio1.StartAnimation("Scale", audioScale);
             audio2.StartAnimation("Scale", audioScale);
-            audio1.StartAnimation("Translation", audioOffset);
-            audio2.StartAnimation("Translation", audioOffset);
             audioInfo.StartAnimation("Translation", audioInfoOffset);
             screen.StartAnimation("Scale", otherScale);
             screenInfo.StartAnimation("Scale", otherScale);
-            leave.StartAnimation("Translation", leaveOffset);
-            leaveInfo.StartAnimation("Translation", leaveOffset);
+            screen.StartAnimation("Translation", otherOffset);
+            screenInfo.StartAnimation("Translation", otherOffset);
+            leave.StartAnimation("Translation", otherOffset);
+            leaveInfo.StartAnimation("Translation", otherOffset);
 
             if (call.CanStartVideo || next != ParticipantsGridMode.Compact)
             {
-                video.StartAnimation("Translation", videoOffset);
-                videoInfo.StartAnimation("Translation", videoOffset);
+                video.StartAnimation("Translation", otherOffset);
+                videoInfo.StartAnimation("Translation", otherOffset);
                 settings.StartAnimation("Scale", otherScale);
                 settingsInfo.StartAnimation("Scale", otherScale);
+                settings.StartAnimation("Translation", otherOffset);
+                settingsInfo.StartAnimation("Translation", otherOffset);
             }
             else
             {
@@ -1704,7 +1653,7 @@ namespace Unigram.Views
 
             if (_mode == ParticipantsGridMode.Compact)
             {
-                ViewportAspect.Margin = new Thickness(-4, 0, -4, Viewport.Children.Count > 0 ? 8 : 0);
+                ViewportAspect.Margin = new Thickness(-4, 0, -4, Viewport.Children.Count > 0 ? 4 : 0);
             }
             else
             {
@@ -1732,11 +1681,11 @@ namespace Unigram.Views
 
             if (_mode == ParticipantsGridMode.Compact)
             {
-                ViewportAspect.Margin = new Thickness(-4, 0, -4, Viewport.Children.Count > 0 ? 8 : 0);
+                ViewportAspect.Margin = new Thickness(-4, 0, -4, Viewport.Children.Count > 0 ? 4 : 0);
             }
             else
             {
-                ViewportAspect.Margin = new Thickness(-4, 0, -4 , 0);
+                ViewportAspect.Margin = new Thickness(-4, 0, -4, 0);
             }
         }
 
@@ -2033,7 +1982,7 @@ namespace Unigram.Views
         private void Viewport_PointerEntered(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
         {
             var point = e.GetCurrentPoint(PointerListener);
-            if (point.Position.X < 224 && Viewport.Mode == ParticipantsGridMode.Docked)
+            if (point.Position.X > PointerListener.ActualWidth - 224 && Viewport.Mode == ParticipantsGridMode.Docked)
             {
                 ShowHideInfo(false);
             }
@@ -2417,10 +2366,6 @@ namespace Unigram.Views
                 {
                     finalWidth -= 224;
                 }
-                else
-                {
-                    finalWidth -= 8;
-                }
             }
 
             for (int row = 0; row < rows; row++)
@@ -2496,10 +2441,6 @@ namespace Unigram.Views
                 {
                     finalWidth -= 224;
                 }
-                else
-                {
-                    finalWidth -= 8;
-                }
             }
 
             var animate = _prevMode != _mode || _prevCount != Children.Count;
@@ -2520,14 +2461,6 @@ namespace Unigram.Views
                 {
                     x = 0;
                 }
-                else if (_mode == ParticipantsGridMode.Docked)
-                {
-                    x += 224;
-                }
-                else
-                {
-                    x += 8;
-                }
 
                 for (int column = 0; column < rowColumns; column++)
                 {
@@ -2537,7 +2470,7 @@ namespace Unigram.Views
                     if (Children[index] is GroupCallParticipantGridCell cell && cell.IsPinned)
                     {
                         size = new Size(finalWidth, _mode == ParticipantsGridMode.Compact ? finalWidth / 4 * 2 : finalHeight);
-                        point = new Point(_mode == ParticipantsGridMode.Docked ? 224 : _mode == ParticipantsGridMode.Expanded ? 8 : 0, 0);
+                        point = new Point(0, 0);
                         pinned = true;
                     }
 

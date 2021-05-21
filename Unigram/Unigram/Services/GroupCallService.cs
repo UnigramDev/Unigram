@@ -353,6 +353,11 @@ namespace Unigram.Services
                 var response = await ProtoService.SendAsync(new JoinGroupCall(groupCall.Id, alias, ssrc, payload, true, false, string.Empty));
                 if (response is Text json)
                 {
+                    if (_manager == null)
+                    {
+                        return;
+                    }
+
                     bool broadcast;
                     if (JsonObject.TryParse(json.TextValue, out JsonObject data))
                     {
