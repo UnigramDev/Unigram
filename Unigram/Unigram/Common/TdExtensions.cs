@@ -182,11 +182,11 @@ namespace Unigram.Common
 
         public static bool IsFreeformGradient(this Background background)
         {
-            if (background.Type is BackgroundTypeFill typeFill)
+            if (background?.Type is BackgroundTypeFill typeFill)
             {
                 return typeFill.Fill is BackgroundFillFreeformGradient;
             }
-            else if (background.Type is BackgroundTypePattern typePattern)
+            else if (background?.Type is BackgroundTypePattern typePattern)
             {
                 return typePattern.Fill is BackgroundFillFreeformGradient;
             }
