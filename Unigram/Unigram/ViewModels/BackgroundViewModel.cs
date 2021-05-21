@@ -24,9 +24,6 @@ namespace Unigram.ViewModels
         {
             Patterns = new MvxObservableCollection<Background>();
 
-            RemoveColor1Command = new RelayCommand(RemoveColor1Execute);
-            RemoveColor2Command = new RelayCommand(RemoveColor2Execute);
-            AddColorCommand = new RelayCommand(AddColorExecute);
             ChangeRotationCommand = new RelayCommand(ChangeRotationExecute);
 
             ShareCommand = new RelayCommand(ShareExecute);
@@ -40,11 +37,7 @@ namespace Unigram.ViewModels
             if (parameter is string data)
             {
                 var split = data.Split('#');
-                if (split[0] == Constants.WallpaperDefaultFileName)
-                {
-                    background = new Background(Constants.WallpaperLocalId, false, false, Constants.WallpaperDefaultFileName, null, null);
-                }
-                else if (split[0] == Constants.WallpaperLocalFileName && split.Length == 2)
+                if (split[0] == Constants.WallpaperLocalFileName && split.Length == 2)
                 {
                     background = new Background(Constants.WallpaperLocalId, false, false, split[1], null, new BackgroundTypeWallpaper(false, false));
                 }
@@ -114,6 +107,17 @@ namespace Unigram.ViewModels
                 Color2 = fillGradient.BottomColor.ToColor();
                 Rotation = fillGradient.RotationAngle;
             }
+            else if (fill is BackgroundFillFreeformGradient freeformGradient)
+            {
+                Color1 = freeformGradient.Colors[0].ToColor();
+                Color2 = freeformGradient.Colors[1].ToColor();
+                Color3 = freeformGradient.Colors[2].ToColor();
+
+                if (freeformGradient.Colors.Count > 3)
+                {
+                    Color4 = freeformGradient.Colors[3].ToColor();
+                }
+            }
 
             Delegate?.UpdateBackground(_item);
 
@@ -174,6 +178,20 @@ namespace Unigram.ViewModels
             set => SetColor(ref _color2, value);
         }
 
+        private BackgroundColor _color3 = BackgroundColor.Empty;
+        public BackgroundColor Color3
+        {
+            get => _color3;
+            set => SetColor(ref _color3, value);
+        }
+
+        private BackgroundColor _color4 = BackgroundColor.Empty;
+        public BackgroundColor Color4
+        {
+            get => _color4;
+            set => SetColor(ref _color4, value);
+        }
+
         private void SetColor(ref BackgroundColor storage, BackgroundColor value, [CallerMemberName] string propertyName = null)
         {
             Set(ref storage, value, propertyName);
@@ -188,6 +206,15 @@ namespace Unigram.ViewModels
         {
             if (!_color1.IsEmpty && !_color2.IsEmpty)
             {
+                if (!_color3.IsEmpty && !_color4.IsEmpty)
+                {
+                    return new BackgroundFillFreeformGradient(new[] { _color1.Value, _color2.Value, _color3.Value, _color4.Value });
+                }
+                else if (!_color3.IsEmpty)
+                {
+                    return new BackgroundFillFreeformGradient(new[] { _color1.Value, _color2.Value, _color3.Value });
+                }
+
                 return new BackgroundFillGradient(_color1.Value, _color2.Value, _rotation);
             }
             else if (!_color1.IsEmpty)
@@ -234,6 +261,20 @@ namespace Unigram.ViewModels
             set => Set(ref _isColor2Checked, value);
         }
 
+        private bool _isColor3Checked;
+        public bool IsColor3Checked
+        {
+            get => _isColor3Checked;
+            set => Set(ref _isColor3Checked, value);
+        }
+
+        private bool _isColor4Checked;
+        public bool IsColor4Checked
+        {
+            get => _isColor4Checked;
+            set => Set(ref _isColor4Checked, value);
+        }
+
         private int _rotation;
         public int Rotation
         {
@@ -263,26 +304,48 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand RemoveColor1Command { get; }
-        private void RemoveColor1Execute()
+        public void RemoveColor(int index)
         {
-            Color1 = Color2;
-            Color2 = BackgroundColor.Empty;
+            if (index <= 0)
+            {
+                Color1 = Color2;
+            }
+
+            if (index <= 1)
+            {
+                Color2 = Color3;
+            }
+
+            if (index <= 2)
+            {
+                Color3 = Color4;
+            }
+
+            if (index <= 3)
+            {
+                Color4 = BackgroundColor.Empty;
+            }
+
             IsColor1Checked = true;
         }
 
-        public RelayCommand RemoveColor2Command { get; }
-        private void RemoveColor2Execute()
+        public void AddColor()
         {
-            Color2 = BackgroundColor.Empty;
-            IsColor1Checked = true;
-        }
-
-        public RelayCommand AddColorCommand { get; }
-        private void AddColorExecute()
-        {
-            Color2 = Color1;
-            IsColor2Checked = true;
+            if (Color2.IsEmpty)
+            {
+                Color2 = Color1;
+                IsColor2Checked = true;
+            }
+            else if (Color3.IsEmpty)
+            {
+                Color3 = Color2;
+                IsColor3Checked = true;
+            }
+            else if (Color4.IsEmpty)
+            {
+                Color4 = Color3;
+                IsColor4Checked = true;
+            }
         }
 
         public RelayCommand ChangeRotationCommand { get; }
@@ -318,11 +381,7 @@ namespace Unigram.ViewModels
 
             // This is a new background and it has to be uploaded to Telegram servers
             Task<BaseObject> task;
-            if (wallpaper.Id == Constants.WallpaperLocalId && wallpaper.Name == Constants.WallpaperDefaultFileName)
-            {
-                task = ProtoService.SendAsync(new SetBackground(null, null, Settings.Appearance.IsDarkTheme()));
-            }
-            else if (wallpaper.Id == Constants.WallpaperLocalId && StorageApplicationPermissions.FutureAccessList.ContainsItem(wallpaper.Name))
+            if (wallpaper.Id == Constants.WallpaperLocalId && StorageApplicationPermissions.FutureAccessList.ContainsItem(wallpaper.Name))
             {
                 var item = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(wallpaper.Name);
                 var generated = await item.ToGeneratedAsync(ConversionType.Copy, forceCopy: true);
@@ -331,40 +390,48 @@ namespace Unigram.ViewModels
             }
             else
             {
-                BackgroundType type = null;
-                if (wallpaper.Type is BackgroundTypeFill)
+                var fill = GetFill();
+                if (wallpaper.Type is BackgroundTypeFill && fill is BackgroundFillFreeformGradient freeform && freeform.Colors.SequenceEqual(new[] { 0x7FA381, 0xFFF5C5, 0x336F55, 0xFBE37D }))
                 {
-                    type = new BackgroundTypeFill(GetFill());
-                }
-                else if (wallpaper.Type is BackgroundTypePattern)
-                {
-                    type = new BackgroundTypePattern(GetFill(), _intensity, false);
-                }
-                else if (wallpaper.Type is BackgroundTypeWallpaper)
-                {
-                    type = new BackgroundTypeWallpaper(_isBlurEnabled, false);
-                }
+                    BackgroundType type = null;
+                    if (wallpaper.Type is BackgroundTypeFill)
+                    {
+                        type = new BackgroundTypeFill(fill);
+                    }
+                    else if (wallpaper.Type is BackgroundTypePattern)
+                    {
+                        type = new BackgroundTypePattern(fill, _intensity, false);
+                    }
+                    else if (wallpaper.Type is BackgroundTypeWallpaper)
+                    {
+                        type = new BackgroundTypeWallpaper(_isBlurEnabled, false);
+                    }
 
-                if (type == null)
-                {
-                    return;
-                }
+                    if (type == null)
+                    {
+                        return;
+                    }
 
-                task = ProtoService.SendAsync(new SetBackground(new InputBackgroundRemote(wallpaper.Id), type, Settings.Appearance.IsDarkTheme()));
+                    task = ProtoService.SendAsync(new SetBackground(new InputBackgroundRemote(wallpaper.Id), type, Settings.Appearance.IsDarkTheme()));
+                }
+                else
+                {
+                    task = ProtoService.SendAsync(new SetBackground(null, null, Settings.Appearance.IsDarkTheme()));
+                }
             }
 
             var response = await task;
-            if (response is Background)
-            {
-                NavigationService.GoBack();
-            }
-            if (response is Error error)
-            {
-                if (error.Code == 404)
-                {
-                    NavigationService.GoBack();
-                }
-            }
+            //if (response is Background)
+            //{
+            //    NavigationService.GoBack();
+            //}
+            //if (response is Error error)
+            //{
+            //    if (error.Code == 404)
+            //    {
+            //        NavigationService.GoBack();
+            //    }
+            //}
         }
     }
 

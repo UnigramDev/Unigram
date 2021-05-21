@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls.Chats;
 using Unigram.Services;
 using Unigram.ViewModels.Settings;
-using Windows.Storage.AccessCache;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
-using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Views.Settings
 {
@@ -36,7 +33,7 @@ namespace Unigram.Views.Settings
             ViewModel.Aggregator.Unsubscribe(this);
         }
 
-        private async void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             if (args.InRecycleQueue)
             {
@@ -46,37 +43,31 @@ namespace Unigram.Views.Settings
             var wallpaper = args.Item as Background;
             var root = args.ItemContainer.ContentTemplateRoot as Grid;
 
-            var check = root.Children[1];
+            var preview = root.Children[0] as ChatBackgroundPreview;
+            var content = root.Children[1] as Image;
+            var check = root.Children[2];
+
             check.Visibility = wallpaper == ViewModel.SelectedItem ? Visibility.Visible : Visibility.Collapsed;
 
-            if (wallpaper.Id == Constants.WallpaperLocalId && wallpaper.Name == Constants.WallpaperDefaultFileName)
+            if (wallpaper.Document != null)
             {
-                return;
-            }
-            else if (wallpaper.Id == Constants.WallpaperLocalId && StorageApplicationPermissions.FutureAccessList.ContainsItem(wallpaper.Name))
-            {
-                //var content = root.Children[0] as Image;
-                //content.Source = new BitmapImage(new Uri($"ms-appdata:///local/{ViewModel.SessionId}/{Constants.WallpaperLocalFileName}"));
-
-                var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(wallpaper.Name);
-                using (var stream = await file.OpenReadAsync())
+                if (wallpaper.Type is BackgroundTypePattern pattern)
                 {
-                    var bitmap = new BitmapImage();
-                    await bitmap.SetSourceAsync(stream);
-
-                    var content = root.Children[0] as Image;
-                    content.Source = bitmap;
+                    content.Opacity = pattern.Intensity / 100d;
+                    preview.Fill = pattern.Fill;
                 }
-            }
-            else if (wallpaper.Document != null)
-            {
+                else
+                {
+                    content.Opacity = 1;
+                    preview.Fill = null;
+                }
+
                 var small = wallpaper.Document.Thumbnail;
                 if (small == null)
                 {
                     return;
                 }
 
-                var content = root.Children[0] as Image;
                 var file = small.File;
                 if (file.Local.IsDownloadingCompleted)
                 {
@@ -87,22 +78,11 @@ namespace Unigram.Views.Settings
                     _backgrounds[file.Id].Add(wallpaper);
                     ViewModel.ProtoService.DownloadFile(file.Id, 1);
                 }
-
-                if (wallpaper.Type is BackgroundTypePattern pattern)
-                {
-                    content.Opacity = pattern.Intensity / 100d;
-                    root.Background = pattern.Fill.ToBrush();
-                }
-                else
-                {
-                    content.Opacity = 1;
-                    root.Background = null;
-                }
             }
             else if (wallpaper.Type is BackgroundTypeFill fill)
             {
-                var content = root.Children[0] as Rectangle;
-                content.Fill = fill.ToBrush();
+                content.Opacity = 1;
+                preview.Fill = fill.Fill;
             }
         }
 
@@ -122,26 +102,17 @@ namespace Unigram.Views.Settings
                     {
                         item.UpdateFile(update.File);
 
-                        var container = List.ContainerFromItem(item) as SelectorItem;
-                        if (container == null)
-                        {
-                            continue;
-                        }
-
-                        var root = container.ContentTemplateRoot as Grid;
-                        if (root == null)
-                        {
-                            continue;
-                        }
-
-                        var content = root.Children[0] as Image;
-                        if (content == null)
-                        {
-                            continue;
-                        }
-
                         var small = item.Document?.Thumbnail;
                         if (small == null)
+                        {
+                            continue;
+                        }
+
+                        var container = List.ContainerFromItem(item) as SelectorItem;
+                        var root = container?.ContentTemplateRoot as Grid;
+                        var content = root?.Children[1] as Image;
+
+                        if (content == null)
                         {
                             continue;
                         }

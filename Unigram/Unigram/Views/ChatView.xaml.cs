@@ -692,9 +692,9 @@ namespace Unigram.Views
                     var dark = ActualTheme == ElementTheme.Dark;
 
                     var background = ViewModel.ProtoService.GetSelectedBackground(dark);
-                    if (background == null && !dark)
+                    if (background == null && !dark || background.IsFreeformGradient())
                     {
-                        ViewModel.Aggregator.Publish(new UpdateSelectedBackground(dark, null));
+                        ViewModel.Aggregator.Publish(new UpdateSelectedBackground(dark, background));
                     }
                 }
             }

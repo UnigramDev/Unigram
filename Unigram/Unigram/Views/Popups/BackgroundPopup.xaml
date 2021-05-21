@@ -14,7 +14,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Loaded="OnLoaded"
-    Unloaded="OnUnloaded">
+    Unloaded="OnUnloaded"
+    PrimaryButtonCommand="{x:Bind ViewModel.DoneCommand}">
 
     <ContentDialog.Resources>
         <Style TargetType="CheckBox">
@@ -423,10 +424,10 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="0" />
         </Grid.RowDefinitions>
-        <Grid Background="{x:Bind ConvertBackground(ViewModel.Color1, ViewModel.Color2, ViewModel.Rotation), Mode=OneWay}" Grid.RowSpan="3">
-            <chats:ChatBackgroundDefaultPreview
+        <Grid Grid.RowSpan="3">
+            <chats:ChatBackgroundPreview
                 x:Name="Freeform"
-                x:Load="False"/>
+                Fill="{x:Bind ConvertBackground(ViewModel.Color1, ViewModel.Color2, ViewModel.Color3, ViewModel.Color4, ViewModel.Rotation), Mode=OneWay}"/>
 
             <Rectangle
                 x:Name="Presenter"
@@ -492,7 +493,7 @@
                             Checked="Blur_Click"
                             Unchecked="Blur_Click"/>
                     </Border>
-                    <Border Visibility="{x:Bind ConvertColor2Visibility(ViewModel.Color2), Mode=OneWay}"
+                    <Border Visibility="{x:Bind ConvertColor2Visibility(ViewModel.Color2, ViewModel.Color3), Mode=OneWay}"
                             Background="{ThemeResource MessageServiceBackgroundBrush}"
                             Margin="4,8,4,4"
                             CornerRadius="20"
@@ -510,8 +511,7 @@
                             </controls:GlyphButton.RenderTransform>
                         </controls:GlyphButton>
                     </Border>
-                    <Border x:Name="Play"
-                            Visibility="Collapsed"
+                    <Border Visibility="{x:Bind ConvertColor2Visibility(ViewModel.Color3), Mode=OneWay}"
                             Background="{ThemeResource MessageServiceBackgroundBrush}"
                             Margin="4,8,4,4"
                             CornerRadius="20"
@@ -558,6 +558,8 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <controls:ColorTextBox
                 x:Name="TextColor1"
@@ -598,18 +600,58 @@
                 </RadioButton.Background>
             </RadioButton>
 
+            <RadioButton
+                x:Name="RadioColor3"
+                Style="{StaticResource AccentRadioButtonStyle}"
+                IsChecked="{x:Bind ViewModel.IsColor3Checked, Mode=TwoWay}"
+                Visibility="{x:Bind ConvertColor2Visibility(ViewModel.Color3), Mode=OneWay}"
+                Checked="RadioColor_Toggled"
+                Unchecked="RadioColor_Toggled"
+                HorizontalContentAlignment="Stretch"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center"
+                Margin="12,0,0,0"
+                Grid.Column="3">
+                <RadioButton.Background>
+                    <SolidColorBrush Color="{x:Bind ViewModel.Color3, Mode=OneWay}"/>
+                </RadioButton.Background>
+            </RadioButton>
+
+            <RadioButton
+                x:Name="RadioColor4"
+                Style="{StaticResource AccentRadioButtonStyle}"
+                IsChecked="{x:Bind ViewModel.IsColor4Checked, Mode=TwoWay}"
+                Visibility="{x:Bind ConvertColor2Visibility(ViewModel.Color4), Mode=OneWay}"
+                Checked="RadioColor_Toggled"
+                Unchecked="RadioColor_Toggled"
+                HorizontalContentAlignment="Stretch"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center"
+                Margin="12,0,0,0"
+                Grid.Column="4">
+                <RadioButton.Background>
+                    <SolidColorBrush Color="{x:Bind ViewModel.Color4, Mode=OneWay}"/>
+                </RadioButton.Background>
+            </RadioButton>
+
+            <controls:GlyphButton
+                Click="RemoveColor_Click"
+                Glyph="&#xE711;"
+                Visibility="{x:Bind ConvertColor2Visibility(ViewModel.Color2, ViewModel.Color3, ViewModel.Color4), Mode=OneWay}"
+                Grid.Column="4"/>
+
             <controls:AnimatedGlyphButton
                 x:Name="AddRemoveColor"
                 Click="AddRemoveColor_Click"
-                Glyph="{x:Bind ConvertColor2Glyph(ViewModel.Color2), Mode=OneWay}"
-                Grid.Column="3"/>
+                Glyph="{x:Bind ConvertColor2Glyph(ViewModel.Color4), Mode=OneWay}"
+                Grid.Column="5"/>
 
             <controls:ColorPicker
                 x:Name="PickerColor"
                 ColorChanged="PickerColor_ColorChanged"
                 HorizontalAlignment="Stretch"
                 Grid.Row="1"
-                Grid.ColumnSpan="4"/>
+                Grid.ColumnSpan="6"/>
         </Grid>
 
         <Grid x:Name="PatternPanel"

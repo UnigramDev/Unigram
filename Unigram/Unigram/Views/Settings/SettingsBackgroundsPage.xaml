@@ -76,82 +76,33 @@
                     <Setter Property="VerticalContentAlignment" Value="Stretch"/>
                 </Style>
             </GridView.ItemContainerStyle>
-            <GridView.ItemTemplateSelector>
-                <selectors:WallPaperTemplateSelector>
-                    <selectors:WallPaperTemplateSelector.DefaultTemplate>
-                        <DataTemplate x:DataType="td:Background">
-                            <controls:AspectView Constraint="{x:Bind}">
-                                <chats:ChatBackgroundDefaultPreview/>
+            <GridView.ItemTemplate>
+                <DataTemplate x:DataType="td:Background">
+                    <controls:AspectView Constraint="{x:Bind}">
+                        <chats:ChatBackgroundPreview/>
+                        <Image Stretch="UniformToFill"/>
 
-                                <Grid VerticalAlignment="Center">
-                                    <Rectangle x:Name="NormalRectangle"
-                                               Fill="{ThemeResource CheckBoxCheckBackgroundStrokeUnchecked}"
-                                               Stroke="{ThemeResource CheckBoxCheckBackgroundStrokeUnchecked}"
-                                               StrokeThickness="{ThemeResource CheckBoxBorderThemeThickness}"
-                                               RadiusX="16"
-                                               RadiusY="16"
-                                               UseLayoutRounding="False"
-                                               Height="32"
-                                               Width="32" />
-                                    <FontIcon x:Name="CheckGlyph"
-                                              FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                              Glyph="&#xE001;"
-                                              FontSize="24"
-                                              Foreground="{ThemeResource CheckBoxCheckBackgroundFillChecked}" />
-                                </Grid>
-                            </controls:AspectView>
-                        </DataTemplate>
-                    </selectors:WallPaperTemplateSelector.DefaultTemplate>
-                    <selectors:WallPaperTemplateSelector.ItemTemplate>
-                        <DataTemplate x:DataType="td:Background">
-                            <controls:AspectView Constraint="{x:Bind}">
-                                <Image Stretch="UniformToFill"/>
-                                
-                                <Grid VerticalAlignment="Center">
-                                    <Rectangle x:Name="NormalRectangle"
-                                               Fill="{ThemeResource CheckBoxCheckBackgroundStrokeUnchecked}"
-                                               Stroke="{ThemeResource CheckBoxCheckBackgroundStrokeUnchecked}"
-                                               StrokeThickness="{ThemeResource CheckBoxBorderThemeThickness}"
-                                               RadiusX="16"
-                                               RadiusY="16"
-                                               UseLayoutRounding="False"
-                                               Height="32"
-                                               Width="32" />
-                                    <FontIcon x:Name="CheckGlyph"
-                                              FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                              Glyph="&#xE001;"
-                                              FontSize="24"
-                                              Foreground="{ThemeResource CheckBoxCheckBackgroundFillChecked}" />
-                                </Grid>
-                            </controls:AspectView>
-                        </DataTemplate>
-                    </selectors:WallPaperTemplateSelector.ItemTemplate>
-                    <selectors:WallPaperTemplateSelector.SolidTemplate>
-                        <DataTemplate x:DataType="td:Background">
-                            <controls:AspectView Constraint="{x:Bind}">
-                                <Rectangle/>
-
-                                <Grid VerticalAlignment="Center">
-                                    <Rectangle x:Name="NormalRectangle"
-                                               Fill="{ThemeResource CheckBoxCheckBackgroundStrokeUnchecked}"
-                                               Stroke="{ThemeResource CheckBoxCheckBackgroundStrokeUnchecked}"
-                                               StrokeThickness="{ThemeResource CheckBoxBorderThemeThickness}"
-                                               RadiusX="16"
-                                               RadiusY="16"
-                                               UseLayoutRounding="False"
-                                               Height="32"
-                                               Width="32" />
-                                    <FontIcon x:Name="CheckGlyph"
-                                              FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                              Glyph="&#xE001;"
-                                              FontSize="24"
-                                              Foreground="{ThemeResource CheckBoxCheckBackgroundFillChecked}" />
-                                </Grid>
-                            </controls:AspectView>
-                        </DataTemplate>
-                    </selectors:WallPaperTemplateSelector.SolidTemplate>
-                </selectors:WallPaperTemplateSelector>
-            </GridView.ItemTemplateSelector>
+                        <Grid VerticalAlignment="Center">
+                            <Rectangle
+                                x:Name="NormalRectangle"
+                                Fill="{ThemeResource CheckBoxCheckBackgroundStrokeUnchecked}"
+                                Stroke="{ThemeResource CheckBoxCheckBackgroundStrokeUnchecked}"
+                                StrokeThickness="{ThemeResource CheckBoxBorderThemeThickness}"
+                                RadiusX="16"
+                                RadiusY="16"
+                                UseLayoutRounding="False"
+                                Height="32"
+                                Width="32" />
+                            <FontIcon
+                                x:Name="CheckGlyph"
+                                FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                Glyph="&#xE001;"
+                                FontSize="24"
+                                Foreground="{ThemeResource CheckBoxCheckBackgroundFillChecked}" />
+                        </Grid>
+                    </controls:AspectView>
+                </DataTemplate>
+            </GridView.ItemTemplate>
         </GridView>
     </Grid>
 </local:HostedPage>

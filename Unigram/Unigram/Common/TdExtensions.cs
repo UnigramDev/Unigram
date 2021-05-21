@@ -180,6 +180,25 @@ namespace Unigram.Common
             return null;
         }
 
+        public static bool IsFreeformGradient(this Background background)
+        {
+            if (background.Type is BackgroundTypeFill typeFill)
+            {
+                return typeFill.Fill is BackgroundFillFreeformGradient;
+            }
+            else if (background.Type is BackgroundTypePattern typePattern)
+            {
+                return typePattern.Fill is BackgroundFillFreeformGradient;
+            }
+
+            return false;
+        }
+
+        public static Color[] GetColors(this BackgroundFillFreeformGradient freeform)
+        {
+            return freeform.Colors.Select(x => x.ToColor()).ToArray();
+        }
+
         public static bool ListEquals(this ChatList x, ChatList y, bool allowNull = true)
         {
             if ((x is ChatListMain || x == null) && (y is ChatListMain || (y == null && allowNull)))

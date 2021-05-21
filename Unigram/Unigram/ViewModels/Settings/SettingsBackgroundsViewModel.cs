@@ -29,8 +29,9 @@ namespace Unigram.ViewModels.Settings
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            var predefined = new Background(Constants.WallpaperLocalId, true, false, Constants.WallpaperDefaultFileName, null, null);
             var background = CacheService.SelectedBackground;
+            var predefined = new Background(Constants.WallpaperLocalId, true, false, Constants.WallpaperDefaultFileName, null,
+                new BackgroundTypeFill(new BackgroundFillFreeformGradient(new[] { 0x7FA381, 0xFFF5C5, 0x336F55, 0xFBE37D })));
 
             var items = new List<Background>
             {
