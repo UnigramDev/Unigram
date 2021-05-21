@@ -638,12 +638,14 @@
                 Click="RemoveColor_Click"
                 Glyph="&#xE711;"
                 Visibility="{x:Bind ConvertColor2Visibility(ViewModel.Color2, ViewModel.Color3, ViewModel.Color4), Mode=OneWay}"
+                Margin="0,0,-18,0"
                 Grid.Column="4"/>
 
             <controls:AnimatedGlyphButton
                 x:Name="AddRemoveColor"
                 Click="AddRemoveColor_Click"
                 Glyph="{x:Bind ConvertColor2Glyph(ViewModel.Color4), Mode=OneWay}"
+                Margin="8,0,0,0"
                 Grid.Column="5"/>
 
             <controls:ColorPicker

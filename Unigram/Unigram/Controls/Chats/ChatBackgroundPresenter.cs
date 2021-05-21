@@ -268,7 +268,7 @@ namespace Unigram.Controls.Chats
 
         public ChatBackgroundPreview()
         {
-            _background = new ChatBackgroundFreeform();
+            _background = new ChatBackgroundFreeform(false);
 
             SizeChanged += OnSizeChanged;
         }
@@ -342,9 +342,12 @@ namespace Unigram.Controls.Chats
 
         private int _phase;
 
-        public ChatBackgroundFreeform()
+        public ChatBackgroundFreeform(bool random = true)
         {
-            _phase = new Random().Next(0, 7);
+            if (random)
+            {
+                _phase = new Random().Next(0, 7);
+            }
         }
 
         public void UpdateLayout(Rectangle target, BackgroundFillFreeformGradient freeform = null, bool animate = false)
