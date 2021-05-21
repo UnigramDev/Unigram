@@ -286,6 +286,12 @@ namespace Unigram.Views
 
         private async void UpdateLayout(Vector2 prevSize, Vector2 nextSize, bool animated)
         {
+            var call = _service?.Call;
+            if (call == null)
+            {
+                return;
+            }
+
             var expanded = nextSize.X >= 500;
             var docked = Mode.IsChecked == true;
 
@@ -302,12 +308,6 @@ namespace Unigram.Views
             }
 
             _mode = mode;
-
-            var call = _service.Call;
-            if (call == null)
-            {
-                return;
-            }
 
             if (mode != ParticipantsGridMode.Compact)
             {
@@ -1760,6 +1760,15 @@ namespace Unigram.Views
                 UpdateVisibleParticipants(false);
 
                 Viewport.InvalidateMeasure();
+            }
+
+            if (_mode == ParticipantsGridMode.Compact)
+            {
+                var scrollingHost = List.GetScrollViewer();
+                if (scrollingHost != null)
+                {
+                    scrollingHost.ChangeView(null, 0, null, false);
+                }
             }
         }
 

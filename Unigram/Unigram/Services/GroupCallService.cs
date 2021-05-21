@@ -16,6 +16,7 @@ using Unigram.Views.Popups;
 using Windows.Data.Json;
 using Windows.Devices.Enumeration;
 using Windows.Graphics.Capture;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -57,6 +58,8 @@ namespace Unigram.Services
         bool IsScreenSharing { get; }
         void StartScreenSharing();
         void EndScreenSharing();
+
+        Task ConsolidateAsync();
     }
 
     public class GroupCallService : TLViewModelBase, IGroupCallService, IHandle<UpdateGroupCall>, IHandle<UpdateGroupCallParticipant>
@@ -733,7 +736,7 @@ namespace Unigram.Services
             }
         }
 
-        private async void Hide()
+        public async Task ConsolidateAsync()
         {
             using (await _updateLock.WaitAsync())
             {
@@ -743,16 +746,7 @@ namespace Unigram.Services
                 if (lifetime != null)
                 {
                     _callLifetime = null;
-
-                    lifetime.Dispatcher.Dispatch(() =>
-                    {
-                        if (lifetime.Window.Content is GroupCallPage callPage)
-                        {
-                            callPage.Dispose();
-                        }
-
-                        lifetime.Window.Close();
-                    });
+                    await lifetime.Dispatcher.DispatchAsync(() => ApplicationView.GetForCurrentView().ConsolidateAsync());
                 }
             }
         }

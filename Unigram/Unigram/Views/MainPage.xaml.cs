@@ -518,7 +518,7 @@ namespace Unigram.Views
                 else if (update.GroupCall != null && (update.GroupCall.IsJoined || update.GroupCall.NeedRejoin))
                 {
                     FindName(nameof(GroupCallBanner));
-                    GroupCallBanner.Update(ViewModel.GroupCallService.Manager);
+                    GroupCallBanner.Update(ViewModel.GroupCallService);
                 }
                 else
                 {

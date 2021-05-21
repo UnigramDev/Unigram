@@ -21,5 +21,15 @@
             Foreground="#FFFFFF"
             Width="40"
             Height="40"/>
+
+        <controls:GlyphButton
+            Click="Dismiss_Click"
+            Glyph="&#xE711;"
+            Foreground="#FFFFFF"
+            Height="40"
+            Grid.Column="7"
+            HorizontalAlignment="Right"
+            AutomationProperties.Name="{CustomResource AccDescrClosePlayer}"
+            ToolTipService.ToolTip="{CustomResource AccDescrClosePlayer}"/>
     </Grid>
 </UserControl>

@@ -8,6 +8,7 @@ using System.Numerics;
 using Unigram.Charts;
 using Unigram.Common;
 using Unigram.Native.Calls;
+using Unigram.Services;
 using Unigram.Views;
 using Windows.UI;
 using Windows.UI.Xaml;
@@ -20,26 +21,26 @@ namespace Unigram.Controls
     {
         private FragmentContextViewWavesDrawable _drawable;
 
-        private VoipGroupManager _manager;
+        private IGroupCallService _service;
 
         public GroupCallActiveHeader()
         {
             InitializeComponent();
         }
 
-        public void Update(VoipGroupManager manager)
+        public void Update(IGroupCallService service)
         {
-            if (_manager != null)
+            if (_service?.Manager != null)
             {
-                _manager.AudioLevelsUpdated -= OnAudioLevelsUpdated;
+                _service.Manager.AudioLevelsUpdated -= OnAudioLevelsUpdated;
             }
 
-            if (manager != null)
+            if (service?.Manager != null)
             {
-                _manager = manager;
-                _manager.AudioLevelsUpdated += OnAudioLevelsUpdated;
+                _service = service;
+                _service.Manager.AudioLevelsUpdated += OnAudioLevelsUpdated;
 
-                Audio.IsChecked = !_manager.IsMuted;
+                Audio.IsChecked = !_service.Manager.IsMuted;
             }
         }
 
@@ -66,9 +67,9 @@ namespace Unigram.Controls
                 _drawable.addParent(sender);
             }
 
-            if (_manager != null)
+            if (_service?.Manager != null)
             {
-                _drawable.setState(_manager.IsMuted ? 1 : 0);
+                _drawable.setState(_service.Manager.IsMuted ? 1 : 0);
                 _drawable.draw(0, 48, (float)sender.Size.Width, 48 + 40, args.DrawingSession, sender, 1);
             }
             
@@ -77,7 +78,13 @@ namespace Unigram.Controls
 
         private void Audio_Click(object sender, RoutedEventArgs e)
         {
-            _manager.IsMuted = Audio.IsChecked == false;
+            _service.Manager.IsMuted = Audio.IsChecked == false;
+        }
+
+        private async void Dismiss_Click(object sender, RoutedEventArgs e)
+        {
+            await _service.ConsolidateAsync();
+            _service.Leave();
         }
     }
 
