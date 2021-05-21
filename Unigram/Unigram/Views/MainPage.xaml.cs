@@ -1654,7 +1654,6 @@ namespace Unigram.Views
 
 
             SearchField.Text = string.Empty;
-            SearchField.Margin = new Thickness(0, 0, rpMasterTitlebar.SelectedIndex == 3 ? 48 : 12, 0);
 
             UpdateBackButtonVisibility();
 
@@ -1766,7 +1765,6 @@ namespace Unigram.Views
         {
             Search_TextChanged(null, null);
 
-            MainHeader.Visibility = Visibility.Collapsed;
             UpdateBackButtonVisibility();
             UpdatePaneToggleButtonVisibility();
         }
@@ -1778,7 +1776,6 @@ namespace Unigram.Views
 
             SearchReset();
 
-            MainHeader.Visibility = Visibility.Visible;
             UpdateBackButtonVisibility();
             UpdatePaneToggleButtonVisibility();
         }
