@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Numerics;
-using System.Runtime.InteropServices;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
@@ -317,16 +316,14 @@ namespace Unigram.Views
 
                 Grid.SetRowSpan(ParticipantsPanel, 2);
 
-                Grid.SetColumn(ListPanel, 1);
+                Grid.SetColumn(List, 1);
 
                 Viewport.Mode = mode;
                 ViewportAspect.Padding = new Thickness(0, 0, 8, 0);
                 ViewportAspect.Margin = new Thickness(8, 0, -4, 4);
                 ParticipantsPanel.ColumnDefinitions[1].Width = new GridLength(224, GridUnitType.Pixel);
-                ParticipantsPanel.VerticalAlignment = VerticalAlignment.Stretch;
                 ParticipantsPanel.Margin = new Thickness();
-                ListPanel.Padding = new Thickness(8, 4, 12, 12);
-                List.Padding = new Thickness();
+                List.Padding = new Thickness(8, 4, 12, 12);
 
                 if (!ParticipantsPanel.Children.Contains(ViewportAspect))
                 {
@@ -336,12 +333,12 @@ namespace Unigram.Views
 
                 if (mode == ParticipantsGridMode.Docked)
                 {
-                    ListPanel.Margin = new Thickness();
+                    List.Margin = new Thickness();
                     BottomPanel.Padding = new Thickness(8, 8, 224, 42);
                 }
                 else
                 {
-                    ListPanel.Margin = new Thickness(216, 0, -216, 0);
+                    List.Margin = new Thickness(216, 0, -216, 0);
                     BottomPanel.Padding = new Thickness(8, 8, 8, 42);
                 }
 
@@ -401,16 +398,15 @@ namespace Unigram.Views
 
                 Grid.SetRowSpan(ParticipantsPanel, 1);
 
-                Grid.SetColumn(ListPanel, 0);
+                Grid.SetColumn(List, 0);
 
                 Viewport.Mode = mode;
                 ViewportAspect.Padding = new Thickness(0, 0, 0, 0);
                 ViewportAspect.Margin = new Thickness(-4, 0, -4, Viewport.Children.Count > 0 ? 4 : 0);
                 ParticipantsPanel.ColumnDefinitions[1].Width = new GridLength(1, GridUnitType.Auto);
-                ParticipantsPanel.VerticalAlignment = VerticalAlignment.Top;
-                ParticipantsPanel.Margin = new Thickness(0, 0, 0, 16);
-                ListPanel.Padding = new Thickness(12, 0, 12, 0);
-                ListPanel.Margin = new Thickness();
+                ParticipantsPanel.Margin = new Thickness(0, 0, 0, -24);
+                List.Padding = new Thickness(12, 0, 12, 36);
+                List.Margin = new Thickness();
 
                 if (ParticipantsPanel.Children.Contains(ViewportAspect))
                 {
@@ -508,10 +504,10 @@ namespace Unigram.Views
         private void TransformDocked()
         {
             var root = ElementCompositionPreview.GetElementVisual(BottomRoot);
-            var list = ElementCompositionPreview.GetElementVisual(ListPanel);
+            var list = ElementCompositionPreview.GetElementVisual(List);
 
             ElementCompositionPreview.SetIsTranslationEnabled(BottomRoot, true);
-            ElementCompositionPreview.SetIsTranslationEnabled(ListPanel, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(List, true);
 
             // Root offset
             var rootOffset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
@@ -580,7 +576,7 @@ namespace Unigram.Views
             }
 
             var root = ElementCompositionPreview.GetElementVisual(BottomRoot);
-            var list = ElementCompositionPreview.GetElementVisual(ListPanel);
+            var list = ElementCompositionPreview.GetElementVisual(List);
             var audio1 = ElementCompositionPreview.GetElementVisual(AudioCanvas);
             var audio2 = ElementCompositionPreview.GetElementVisual(Lottie);
             var audioInfo = ElementCompositionPreview.GetElementVisual(AudioInfo);
@@ -605,7 +601,7 @@ namespace Unigram.Views
             settingsInfo.CenterPoint = new Vector3((float)SettingsInfo.ActualWidth / 2, (float)SettingsInfo.ActualHeight / 2, 0);
 
             ElementCompositionPreview.SetIsTranslationEnabled(BottomRoot, true);
-            ElementCompositionPreview.SetIsTranslationEnabled(ListPanel, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(List, true);
             ElementCompositionPreview.SetIsTranslationEnabled(AudioCanvas, true);
             ElementCompositionPreview.SetIsTranslationEnabled(Lottie, true);
             ElementCompositionPreview.SetIsTranslationEnabled(AudioInfo, true);

@@ -175,111 +175,114 @@
             Grid.RowSpan="2"/>
 
         <Grid x:Name="ParticipantsPanel"
-              VerticalAlignment="Top"
-              Margin="0,0,0,16"
+              Margin="0,0,0,-24"
               Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Grid x:Name="ListPanel" Background="Transparent" VerticalAlignment="Top" Margin="12,0" Canvas.ZIndex="1">
-                <Grid.RowDefinitions>
-                    <RowDefinition/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
+            <controls:TableListView
+                x:Name="List"
+                Loaded="List_Loaded"
+                SelectionMode="None"
+                ChoosingItemContainer="OnChoosingItemContainer"
+                ContainerContentChanging="OnContainerContentChanging"
+                Canvas.ZIndex="1"
+                Padding="12,0,12,36">
+                <ListView.Header>
+                    <Grid x:Name="ViewportAspect" Margin="-4,0,-4,0" Grid.ColumnSpan="2">
+                        <local:ParticipantsGrid x:Name="Viewport" SizeChanged="OnViewportSizeChanged"/>
+                    </Grid>
+                </ListView.Header>
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <ItemsStackPanel
+                            Background="{ThemeResource PageHeaderBorderBrush}"
+                            VerticalAlignment="Top"/>
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="12,6">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <controls:ProfilePicture
+                                IsEnabled="False"
+                                Width="36"
+                                Height="36"
+                                Margin="0,0,12,0"
+                                Grid.RowSpan="2"/>
+                            <Border
+                                Width="36"
+                                Height="36"
+                                CornerRadius="18"
+                                Margin="0,0,12,0"
+                                Grid.RowSpan="2"/>
 
-                <Border x:Name="ListRoot" CornerRadius="8">
-                    <ListView
-                        x:Name="List"
-                        Loaded="List_Loaded"
-                        SelectionMode="None"
-                        ChoosingItemContainer="OnChoosingItemContainer"
-                        ContainerContentChanging="OnContainerContentChanging">
-                        <ListView.Header>
-                            <Grid x:Name="ViewportAspect" Margin="-4,0,-4,0" Grid.ColumnSpan="2">
-                                <local:ParticipantsGrid x:Name="Viewport" SizeChanged="OnViewportSizeChanged"/>
+                            <TextBlock
+                                FontFamily="{StaticResource EmojiThemeFontFamily}"
+                                TextWrapping="NoWrap"
+                                TextTrimming="CharacterEllipsis"
+                                VerticalAlignment="Bottom"
+                                Grid.Column="1" />
+                            <Grid VerticalAlignment="Top" Grid.Column="1" Grid.Row="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock
+                                    VerticalAlignment="Top"
+                                    FontSize="16"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                    Foreground="#33c659"
+                                    TextTrimming="CharacterEllipsis"
+                                    TextWrapping="NoWrap"
+                                    MaxLines="1"/>
+                                <TextBlock
+                                    VerticalAlignment="Top"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Foreground="#33c659"
+                                    TextTrimming="CharacterEllipsis"
+                                    TextWrapping="NoWrap"
+                                    Grid.Column="1"
+                                    MaxLines="1"/>
                             </Grid>
-                        </ListView.Header>
-                        <ListView.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <ItemsStackPanel Background="{ThemeResource PageHeaderBorderBrush}"/>
-                            </ItemsPanelTemplate>
-                        </ListView.ItemsPanel>
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <Grid Padding="12,6">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <controls:ProfilePicture
-                                        IsEnabled="False"
-                                        Width="36"
-                                        Height="36"
-                                        Margin="0,0,12,0"
-                                        Grid.RowSpan="2"/>
-                                    <Border
-                                        Width="36"
-                                        Height="36"
-                                        CornerRadius="18"
-                                        Margin="0,0,12,0"
-                                        Grid.RowSpan="2"/>
 
-                                    <TextBlock
-                                        FontFamily="{StaticResource EmojiThemeFontFamily}"
-                                        TextWrapping="NoWrap"
-                                        TextTrimming="CharacterEllipsis"
-                                        VerticalAlignment="Bottom"
-                                        Grid.Column="1" />
-                                    <Grid VerticalAlignment="Top" Grid.Column="1" Grid.Row="1">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition/>
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock
-                                            VerticalAlignment="Top"
-                                            FontSize="16"
-                                            Style="{StaticResource CaptionTextBlockStyle}"
-                                            FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                            Foreground="#33c659"
-                                            TextTrimming="CharacterEllipsis"
-                                            TextWrapping="NoWrap"
-                                            MaxLines="1"/>
-                                        <TextBlock
-                                            VerticalAlignment="Top"
-                                            Style="{StaticResource CaptionTextBlockStyle}"
-                                            Foreground="#33c659"
-                                            TextTrimming="CharacterEllipsis"
-                                            TextWrapping="NoWrap"
-                                            Grid.Column="1"
-                                            MaxLines="1"/>
-                                    </Grid>
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                FontSize="20"
+                                Grid.Column="2"
+                                Grid.RowSpan="2"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="MinHeight" Value="0"/>
+                        <Setter Property="Padding" Value="0"/>
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </controls:TableListView>
 
-                                    <TextBlock
-                                        VerticalAlignment="Center"
-                                        FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                        FontSize="20"
-                                        Grid.Column="2"
-                                        Grid.RowSpan="2"/>
-                                </Grid>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                        <ListView.ItemContainerStyle>
-                            <Style TargetType="ListViewItem">
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                <Setter Property="MinHeight" Value="0"/>
-                                <Setter Property="Padding" Value="0"/>
-                            </Style>
-                        </ListView.ItemContainerStyle>
-                    </ListView>
-                </Border>
-            </Grid>
+            <Rectangle Height="24" VerticalAlignment="Bottom" Canvas.ZIndex="2">
+                <Rectangle.Fill>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                        <GradientStop Color="#00171717" Offset="0"/>
+                        <GradientStop Color="#FF171717" Offset="1"/>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
         </Grid>
 
         <StackPanel x:Name="ScheduledPanel" x:Load="False" VerticalAlignment="Center" Grid.Row="2">
