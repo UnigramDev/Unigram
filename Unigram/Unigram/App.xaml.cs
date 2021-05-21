@@ -97,7 +97,7 @@ namespace Unigram
                     { "Architecture", Package.Current.Id.Architecture.ToString() }
                 });
 
-            Client.SetFatalErrorCallback(FatalErrorCallback);
+            Client.SetLogMessageCallback(0, FatalErrorCallback);
 
             var lastMessage = SettingsService.Current.Diagnostics.LastErrorMessage;
             if (lastMessage != null && lastMessage.Length > 0)
@@ -112,7 +112,7 @@ namespace Unigram
             LeavingBackground += OnLeavingBackground;
         }
 
-        private void FatalErrorCallback(string message)
+        private void FatalErrorCallback(int verbosityLevel, string message)
         {
             message += Environment.NewLine;
             message += "Application version: " + SettingsPage.GetVersion();
