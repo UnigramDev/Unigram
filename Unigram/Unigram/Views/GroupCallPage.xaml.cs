@@ -2426,6 +2426,11 @@ namespace Unigram.Views
                 {
                     if (Children[index] is GroupCallParticipantGridCell cell && cell.IsPinned)
                     {
+                        if (_mode == ParticipantsGridMode.Compact)
+                        {
+                            finalHeight = finalWidth / 4 * 2;
+                        }
+
                         Children[index].Measure(new Size(finalWidth, finalHeight));
                     }
                     else
@@ -2456,6 +2461,8 @@ namespace Unigram.Views
             {
                 rows = Math.Ceiling(count / 2d);
                 columns = 2;
+
+                finalHeight = finalWidth / 2 * rows;
             }
             else
             {
@@ -2520,7 +2527,7 @@ namespace Unigram.Views
 
                     if (Children[index] is GroupCallParticipantGridCell cell && cell.IsPinned)
                     {
-                        size = new Size(finalWidth, finalHeight);
+                        size = new Size(finalWidth, _mode == ParticipantsGridMode.Compact ? finalWidth / 4 * 2 : finalHeight);
                         point = new Point(_mode == ParticipantsGridMode.Docked ? 224 : _mode == ParticipantsGridMode.Expanded ? 8 : 0, 0);
                         pinned = true;
                     }
