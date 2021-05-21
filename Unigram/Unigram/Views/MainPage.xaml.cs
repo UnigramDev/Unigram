@@ -731,13 +731,7 @@ namespace Unigram.Views
 
         public void OnBackRequesting(HandledEventArgs args)
         {
-            /*if (SearchField.FocusState != FocusState.Unfocused && !string.IsNullOrEmpty(SearchField.Text))
-            {
-                SearchField.Text = string.Empty;
-                args.Handled = true;
-            }
-            else*/
-            if (SearchField.Visibility == Visibility.Visible)
+            if (!_searchCollapsed)
             {
                 Search_LostFocus(null, null);
                 args.Handled = true;
@@ -763,12 +757,6 @@ namespace Unigram.Views
                 rpMasterTitlebar.SelectedIndex = 0;
                 args.Handled = true;
             }
-            //else if (ViewModel.Chats.Items.ChatList is ChatListFilter || ViewModel.Chats.Items.ChatList is ChatListArchive)
-            //{
-            //    ViewModel.SelectedFilter = ChatFilterViewModel.Main;
-            //    ConvertFilter(ChatFilterViewModel.Main);
-            //    args.Handled = true;
-            //}
             else
             {
                 var scrollViewer = ChatsList.GetScrollViewer();
@@ -903,15 +891,6 @@ namespace Unigram.Views
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            //var viewModel = ViewModel;
-            //if (viewModel != null)
-            //{
-            //    viewModel.Chats.SelectedItems.CollectionChanged -= SelectedItems_CollectionChanged;
-            //    viewModel.ArchivedChats.SelectedItems.CollectionChanged -= SelectedItems_CollectionChanged;
-
-            //    viewModel.Aggregator.Unsubscribe(this);
-            //}
-
             Window.Current.CoreWindow.CharacterReceived -= OnCharacterReceived;
             WindowContext.GetForCurrentView().AcceleratorKeyActivated -= OnAcceleratorKeyActivated;
 
@@ -919,10 +898,6 @@ namespace Unigram.Views
             titleBar.IsVisibleChanged -= CoreTitleBar_LayoutMetricsChanged;
             titleBar.LayoutMetricsChanged -= CoreTitleBar_LayoutMetricsChanged;
 
-            //MasterDetail.Dispose();
-            //SettingsView.Dispose();
-
-            //DataContext = null;
             Bindings.StopTracking();
 
             _unloaded = true;
@@ -951,6 +926,7 @@ namespace Unigram.Views
                 }
 
                 Search_Click(null, null);
+                SearchField.Focus(FocusState.Keyboard);
                 SearchField.Text = character;
                 SearchField.SelectionStart = character.Length;
 
@@ -964,14 +940,7 @@ namespace Unigram.Views
             foreach (var command in invoked.Commands)
             {
 #if DEBUG
-                if (command == ShortcutCommand.Close)
-                {
-                    ViewModels.Drawers.StickerDrawerViewModel.GetForCurrentView(ViewModel.ProtoService.SessionId).Update(null);
-                    ViewModels.Drawers.AnimationDrawerViewModel.GetForCurrentView(ViewModel.ProtoService.SessionId).Update();
-                    return;
-
-                }
-                else if (command == ShortcutCommand.Quit)
+                if (command == ShortcutCommand.Quit)
                 {
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
@@ -1329,17 +1298,6 @@ namespace Unigram.Views
 
         private void OnNavigated(object sender, NavigatedEventArgs e)
         {
-            //if (e.SourcePageType == typeof(BlankPage))
-            //{
-            //    Grid.SetRow(Separator, 0);
-            //    Separator.Visibility = Visibility.Collapsed;
-            //}
-            //else
-            //{
-            //    Grid.SetRow(Separator, 1);
-            //    Separator.Visibility = Visibility.Visible;
-            //}
-
             if (MasterDetail.CurrentState == MasterDetailState.Minimal)
             {
                 SetTitleBarVisibility(Visibility.Visible);
@@ -1395,7 +1353,7 @@ namespace Unigram.Views
 
         private void UpdatePaneToggleButtonVisibility()
         {
-            if (BackButton.Visibility == Visibility.Visible || SearchField.Visibility == Visibility.Visible || ChatsList.SelectionMode == ListViewSelectionMode.Multiple)
+            if (BackButton.Visibility == Visibility.Visible || !_searchCollapsed || ChatsList.SelectionMode == ListViewSelectionMode.Multiple)
             {
                 Root?.SetPaneToggleButtonVisibility(Visibility.Collapsed);
             }
@@ -1411,7 +1369,7 @@ namespace Unigram.Views
 
         private void UpdateBackButtonVisibility()
         {
-            if (rpMasterTitlebar.SelectedIndex != 0 || ViewModel.Chats.Items.ChatList is ChatListArchive || SearchField.Visibility == Visibility.Visible)
+            if (rpMasterTitlebar.SelectedIndex != 0 || ViewModel.Chats.Items.ChatList is ChatListArchive || !_searchCollapsed)
             {
                 BackButton.Visibility = Visibility.Visible;
             }
@@ -1696,7 +1654,7 @@ namespace Unigram.Views
 
 
             SearchField.Text = string.Empty;
-            SearchField.Visibility = Visibility.Collapsed;
+            SearchField.Margin = new Thickness(0, 0, rpMasterTitlebar.SelectedIndex == 3 ? 48 : 12, 0);
 
             UpdateBackButtonVisibility();
 
@@ -1735,7 +1693,6 @@ namespace Unigram.Views
             SettingsOptions.Visibility = rpMasterTitlebar.SelectedIndex == 3 ? Visibility.Visible : Visibility.Collapsed;
 
             SearchField.PlaceholderText = rpMasterTitlebar.SelectedIndex == 3 ? Strings.Resources.SearchInSettings : Strings.Resources.Search;
-            ChatTabsSearch.Content = rpMasterTitlebar.SelectedIndex == 3 ? Strings.Resources.SearchInSettings : Strings.Resources.Search;
         }
 
         #region Search
@@ -1807,26 +1764,23 @@ namespace Unigram.Views
 
         private void Search_Click(object sender, RoutedEventArgs e)
         {
+            Search_TextChanged(null, null);
+
             MainHeader.Visibility = Visibility.Collapsed;
-            SearchField.Visibility = Visibility.Visible;
             UpdateBackButtonVisibility();
             UpdatePaneToggleButtonVisibility();
-
-            SearchField.Focus(FocusState.Keyboard);
-            Search_TextChanged(null, null);
         }
 
         private void Search_LostFocus(object sender, RoutedEventArgs e)
         {
-            MainHeader.Visibility = Visibility.Visible;
-            SearchField.Visibility = Visibility.Collapsed;
-            UpdateBackButtonVisibility();
-            UpdatePaneToggleButtonVisibility();
-
             rpMasterTitlebar.IsLocked = false;
             MasterDetail.AllowCompact = MasterDetail.NavigationService.CurrentPageType != typeof(BlankPage) && rpMasterTitlebar.SelectedIndex == 0;
 
             SearchReset();
+
+            MainHeader.Visibility = Visibility.Visible;
+            UpdateBackButtonVisibility();
+            UpdatePaneToggleButtonVisibility();
         }
 
         private async void Search_TextChanged(object sender, TextChangedEventArgs e)
@@ -2693,7 +2647,7 @@ namespace Unigram.Views
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            if (SearchField.Visibility == Visibility.Visible)
+            if (!_searchCollapsed)
             {
                 Search_LostFocus(null, null);
             }

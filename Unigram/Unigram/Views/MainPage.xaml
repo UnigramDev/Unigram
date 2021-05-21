@@ -269,19 +269,6 @@
                                 <ColumnDefinition/>
                                 <ColumnDefinition Width="Auto" MinWidth="12"/>
                             </Grid.ColumnDefinitions>
-                            <Button
-                                x:Name="ChatTabsSearch"
-                                Click="Search_Click"
-                                AutomationProperties.LandmarkType="Search"
-                                Content="{CustomResource Search}"
-                                Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                                Background="{ThemeResource PageBackgroundDarkBrush}"
-                                BorderBrush="{ThemeResource PageBackgroundDarkBrush}"
-                                HorizontalContentAlignment="Left"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Center"
-                                Height="32"
-                                Padding="9,0,6,0"/>
 
                             <StackPanel x:Name="SettingsOptions" Orientation="Horizontal" Grid.Column="1">
                                 <controls:MoreButton>
@@ -416,17 +403,24 @@
                                 Style="{StaticResource HeaderGlyphButtonStyle}"
                                 Grid.Column="7"/>
                         </Grid>
-
+                        <Button
+                            x:Name="FocusTarget"
+                            Content="Nothing to see here, tab further"
+                            Width="12"
+                            Height="12"
+                            Opacity="0"
+                            Grid.Column="1"/>
                         <TextBox
                             x:Name="SearchField"
                             PlaceholderText="{CustomResource Search}"
                             Background="{ThemeResource PageBackgroundDarkBrush}"
                             BorderBrush="{ThemeResource PageBackgroundDarkBrush}"
                             PreventKeyboardDisplayOnProgrammaticFocus="True"
+                            AutomationProperties.LandmarkType="Search"
                             VerticalAlignment="Center"
+                            GotFocus="Search_Click"
                             TextChanged="Search_TextChanged"
                             KeyDown="Search_KeyDown"
-                            Visibility="Collapsed"
                             Margin="0,0,12,0"
                             Grid.Column="1">
                             <TextBox.Header>
