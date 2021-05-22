@@ -404,8 +404,8 @@ namespace Unigram.Views
                 ViewportAspect.Padding = new Thickness(0, 0, 0, 0);
                 ViewportAspect.Margin = new Thickness(-4, 0, -4, Viewport.Children.Count > 0 ? 4 : 0);
                 ParticipantsPanel.ColumnDefinitions[1].Width = new GridLength(1, GridUnitType.Auto);
-                ParticipantsPanel.Margin = new Thickness(0, 0, 0, -24);
-                List.Padding = new Thickness(12, 0, 12, 36);
+                ParticipantsPanel.Margin = new Thickness(0, 0, 0, -56);
+                List.Padding = new Thickness(12, 0, 12, 72);
                 List.Margin = new Thickness();
 
                 if (ParticipantsPanel.Children.Contains(ViewportAspect))

@@ -175,7 +175,7 @@
             Grid.RowSpan="2"/>
 
         <Grid x:Name="ParticipantsPanel"
-              Margin="0,0,0,-24"
+              Margin="0,0,0,-56"
               Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
@@ -188,7 +188,7 @@
                 ChoosingItemContainer="OnChoosingItemContainer"
                 ContainerContentChanging="OnContainerContentChanging"
                 Canvas.ZIndex="1"
-                Padding="12,0,12,36">
+                Padding="12,0,12,72">
                 <ListView.Header>
                     <Grid x:Name="ViewportAspect" Margin="-4,0,-4,0" Grid.ColumnSpan="2">
                         <local:ParticipantsGrid x:Name="Viewport" SizeChanged="OnViewportSizeChanged"/>
@@ -275,10 +275,24 @@
                 </ListView.ItemContainerStyle>
             </controls:TableListView>
 
-            <Rectangle Height="24" VerticalAlignment="Bottom" Canvas.ZIndex="2">
+            <Rectangle Height="72" VerticalAlignment="Bottom" Canvas.ZIndex="2">
                 <Rectangle.Fill>
                     <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
                         <GradientStop Color="#00171717" Offset="0"/>
+                        <GradientStop Color="#03171717" Offset="0.051"/>
+                        <GradientStop Color="#0C171717" Offset="0.104"/>
+                        <GradientStop Color="#1A171717" Offset="0.16"/>
+                        <GradientStop Color="#2C171717" Offset="0.217"/>
+                        <GradientStop Color="#42171717" Offset="0.277"/>
+                        <GradientStop Color="#59171717" Offset="0.339"/>
+                        <GradientStop Color="#72171717" Offset="0.403"/>
+                        <GradientStop Color="#8C171717" Offset="0.47"/>
+                        <GradientStop Color="#A5171717" Offset="0.539"/>
+                        <GradientStop Color="#BC171717" Offset="0.61"/>
+                        <GradientStop Color="#D2171717" Offset="0.683"/>
+                        <GradientStop Color="#E4171717" Offset="0.759"/>
+                        <GradientStop Color="#F2171717" Offset="0.837"/>
+                        <GradientStop Color="#FB171717" Offset="0.917"/>
                         <GradientStop Color="#FF171717" Offset="1"/>
                     </LinearGradientBrush>
                 </Rectangle.Fill>
