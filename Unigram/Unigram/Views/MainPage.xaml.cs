@@ -1763,6 +1763,11 @@ namespace Unigram.Views
 
         private void Search_Click(object sender, RoutedEventArgs e)
         {
+            if (SearchField.FocusState == FocusState.Keyboard && sender == SearchField)
+            {
+                return;
+            }
+
             Search_TextChanged(null, null);
 
             UpdateBackButtonVisibility();
@@ -1778,6 +1783,8 @@ namespace Unigram.Views
 
             UpdateBackButtonVisibility();
             UpdatePaneToggleButtonVisibility();
+
+            FocusTarget.Focus(FocusState.Programmatic);
         }
 
         private async void Search_TextChanged(object sender, TextChangedEventArgs e)
