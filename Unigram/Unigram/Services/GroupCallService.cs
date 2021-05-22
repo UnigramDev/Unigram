@@ -547,13 +547,13 @@ namespace Unigram.Services
 
         private void OnAudioLevelsUpdated(VoipGroupManager sender, IReadOnlyDictionary<int, KeyValuePair<float, bool>> levels)
         {
-            var now = DateTime.Now.ToTimestamp();
+            var now = Environment.TickCount;
 
             foreach (var level in levels)
             {
                 if (_lastUpdates.TryGetValue(level.Key, out var data))
                 {
-                    if (data.Item1 == level.Value.Value || now < data.Item2 + 1)
+                    if (data.Item1 && !level.Value.Value && now < data.Item2 + 2000)
                     {
                         continue;
                     }
