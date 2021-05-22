@@ -497,8 +497,6 @@ namespace Unigram.Views
                     TransformDocked();
                 }
             }
-
-            UpdateVisibleParticipants(false);
         }
 
         private void TransformDocked()
@@ -1624,23 +1622,29 @@ namespace Unigram.Views
         {
             var descriptions = new Dictionary<string, VoipVideoChannelInfo>();
 
-            foreach (var cell in _gridCells)
+            if (_pinnedEndpointId != null)
             {
-                if (descriptions.ContainsKey(cell.Key))
+                if (_gridCells.TryGetValue(_pinnedEndpointId, out var cell))
                 {
-                    continue;
-                }
-
-                if (_gridTokens.TryGetValue(cell.Key, out var token))
-                {
-                    var quality = cell.Value.ActualHeight switch
+                    if (_gridTokens.TryGetValue(_pinnedEndpointId, out var token))
                     {
-                        double h when h >= 720 => VoipVideoChannelQuality.Full,
-                        double h when h >= 360 => VoipVideoChannelQuality.Medium,
-                        _ => VoipVideoChannelQuality.Thumbnail
-                    };
+                        descriptions[token.EndpointId] = new VoipVideoChannelInfo(token.AudioSource, token.Description, cell.Quality);
+                    }
+                }
+            }
+            else
+            {
+                foreach (var item in _gridTokens)
+                {
+                    if (descriptions.ContainsKey(item.Value.EndpointId))
+                    {
+                        continue;
+                    }
 
-                    descriptions[token.EndpointId] = new VoipVideoChannelInfo(token.AudioSource, token.Description, quality);
+                    if (_gridCells.TryGetValue(item.Value.EndpointId, out var cell))
+                    {
+                        descriptions[item.Value.EndpointId] = new VoipVideoChannelInfo(item.Value.AudioSource, item.Value.Description, cell.Quality);
+                    }
                 }
             }
 
@@ -1902,6 +1906,11 @@ namespace Unigram.Views
 
         private void UpdateVisibleParticipants(bool intermediate)
         {
+            if (_scrollingHost == null || _disposed)
+            {
+                return;
+            }
+
             int first = 0;
             int last = -1;
 
@@ -1946,7 +1955,7 @@ namespace Unigram.Views
 
                     child.Surface = new CanvasControl();
 
-                    VoipVideoRendererToken future = null;
+                    VoipVideoRendererToken future;
                     if (participant.ScreenSharingVideoInfo?.EndpointId == child.EndpointId && participant.IsCurrentUser && _service.IsScreenSharing)
                     {
                         future = _service.ScreenSharing.AddIncomingVideoOutput(participant.AudioSourceId, participant.ScreenSharingVideoInfo, child.Surface);
@@ -2084,6 +2093,8 @@ namespace Unigram.Views
             animation.InsertKeyFrame(1, Vector3.Zero);
 
             visual.StartAnimation("Translation", animation);
+
+            UpdateVisibleParticipants(false);
         }
     }
 

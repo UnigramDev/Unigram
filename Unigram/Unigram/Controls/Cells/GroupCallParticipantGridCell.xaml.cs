@@ -3,6 +3,7 @@ using System;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Converters;
+using Unigram.Native.Calls;
 using Unigram.Services;
 using Windows.UI;
 using Windows.UI.Xaml;
@@ -33,6 +34,13 @@ namespace Unigram.Controls.Cells
             get => CanvasRoot.Child as CanvasControl;
             set => CanvasRoot.Child = value;
         }
+
+        public VoipVideoChannelQuality Quality => ActualHeight switch
+        {
+            double h when h >= 720 => VoipVideoChannelQuality.Full,
+            double h when h >= 360 => VoipVideoChannelQuality.Medium,
+            _ => VoipVideoChannelQuality.Thumbnail
+        };
 
         public GroupCallParticipant Participant => _participant;
         public MessageSender ParticipantId => _participant.ParticipantId;
