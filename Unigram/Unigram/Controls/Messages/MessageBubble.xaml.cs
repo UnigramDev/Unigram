@@ -112,7 +112,14 @@ namespace Unigram.Controls.Messages
                 }
                 else if (message.ProtoService.TryGetChat(message.Sender, out Chat senderChat))
                 {
-                    title = message.ProtoService.GetTitle(senderChat);
+                    if (senderChat.Type is ChatTypeSupergroup super && super.IsChannel)
+                    {
+                        title = null;
+                    }
+                    else
+                    {
+                        title = message.ProtoService.GetTitle(senderChat);
+                    }
                 }
             }
 
