@@ -1624,25 +1624,23 @@ namespace Unigram.Views
         {
             var descriptions = new Dictionary<string, VoipVideoChannelInfo>();
 
-            if (_pinnedEndpointId != null && _gridTokens.TryGetValue(_pinnedEndpointId, out var token))
+            foreach (var cell in _gridCells)
             {
-                descriptions[token.EndpointId] = new VoipVideoChannelInfo(token.AudioSource, token.Description, VoipVideoChannelQuality.Full);
-            }
-
-            foreach (var item in _gridTokens)
-            {
-                if (descriptions.ContainsKey(item.Key))
+                if (descriptions.ContainsKey(cell.Key))
                 {
                     continue;
                 }
 
-                if (_gridTokens.Count > 1)
+                if (_gridTokens.TryGetValue(cell.Key, out var token))
                 {
-                    descriptions[item.Value.EndpointId] = new VoipVideoChannelInfo(item.Value.AudioSource, item.Value.Description, VoipVideoChannelQuality.Medium);
-                }
-                else
-                {
-                    descriptions[item.Value.EndpointId] = new VoipVideoChannelInfo(item.Value.AudioSource, item.Value.Description, VoipVideoChannelQuality.Full);
+                    var quality = cell.Value.ActualHeight switch
+                    {
+                        double h when h >= 720 => VoipVideoChannelQuality.Full,
+                        double h when h >= 360 => VoipVideoChannelQuality.Medium,
+                        _ => VoipVideoChannelQuality.Thumbnail
+                    };
+
+                    descriptions[token.EndpointId] = new VoipVideoChannelInfo(token.AudioSource, token.Description, quality);
                 }
             }
 
