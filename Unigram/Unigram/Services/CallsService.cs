@@ -144,13 +144,13 @@ namespace Unigram.Services
             }
         }
 
-        public string CurrentAudioInput
+        public string CurrentVideoInput
         {
             get => _videoWatcher.Get();
             set => _videoWatcher.Set(value);
         }
 
-        public string CurrentVideoInput
+        public string CurrentAudioInput
         {
             get => _inputWatcher.Get();
             set => _inputWatcher.Set(value);

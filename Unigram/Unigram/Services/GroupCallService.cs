@@ -24,6 +24,7 @@ namespace Unigram.Services
 {
     public interface IGroupCallService : INotifyPropertyChanged
     {
+        string CurrentVideoInput { get; set; }
         string CurrentAudioInput { get; set; }
         string CurrentAudioOutput { get; set; }
 
@@ -617,6 +618,12 @@ namespace Unigram.Services
 
                 EndScreenSharing();
             });
+        }
+
+        public string CurrentVideoInput
+        {
+            get => _videoWatcher.Get();
+            set => _videoWatcher.Set(value);
         }
 
         public string CurrentAudioInput

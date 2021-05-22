@@ -1271,8 +1271,27 @@ namespace Unigram.Views
             {
                 flyout.CreateFlyoutSeparator();
 
+                var videoId = _service.CurrentVideoInput;
                 var inputId = _service.CurrentAudioInput;
                 var outputId = _service.CurrentAudioOutput;
+
+                var video = new MenuFlyoutSubItem();
+                video.Text = "Webcam";
+                video.Icon = new FontIcon { Glyph = Icons.MicOn, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
+
+                var videoDevices = await DeviceInformation.FindAllAsync(DeviceClass.VideoCapture);
+                foreach (var device in videoDevices)
+                {
+                    var deviceItem = new ToggleMenuFlyoutItem();
+                    deviceItem.Text = device.Name;
+                    deviceItem.IsChecked = videoId == device.Id;
+                    deviceItem.Click += (s, args) =>
+                    {
+                        _service.CurrentVideoInput = device.Id;
+                    };
+
+                    video.Items.Add(deviceItem);
+                }
 
                 var defaultInput = new ToggleMenuFlyoutItem();
                 defaultInput.Text = Strings.Resources.Default;
@@ -1328,6 +1347,7 @@ namespace Unigram.Views
                     output.Items.Add(deviceItem);
                 }
 
+                flyout.Items.Add(video);
                 flyout.Items.Add(input);
                 flyout.Items.Add(output);
             }
