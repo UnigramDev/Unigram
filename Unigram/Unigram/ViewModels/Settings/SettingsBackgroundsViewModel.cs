@@ -11,6 +11,7 @@ using Unigram.Services;
 using Unigram.Views;
 using Windows.Storage.AccessCache;
 using Windows.Storage.Pickers;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
@@ -111,14 +112,18 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand ColorCommand { get; }
         private async void ColorExecute()
         {
-            await new BackgroundPopup(Constants.WallpaperColorFileName).ShowQueuedAsync();
+            var confirm = await new BackgroundPopup(Constants.WallpaperColorFileName).ShowQueuedAsync();
+            if (confirm == ContentDialogResult.Primary)
+            {
+                await OnNavigatedToAsync(null, NavigationMode.Refresh, null);
+            }
         }
 
         public RelayCommand ResetCommand { get; }
         private async void ResetExecute()
         {
             var confirm = await MessagePopup.ShowAsync(Strings.Resources.ResetChatBackgroundsAlert, Strings.Resources.ResetChatBackgroundsAlertTitle, Strings.Resources.Reset, Strings.Resources.Cancel);
-            if (confirm != Windows.UI.Xaml.Controls.ContentDialogResult.Primary)
+            if (confirm != ContentDialogResult.Primary)
             {
                 return;
             }

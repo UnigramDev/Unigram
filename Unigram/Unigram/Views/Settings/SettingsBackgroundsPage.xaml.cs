@@ -127,7 +127,11 @@ namespace Unigram.Views.Settings
         {
             if (e.ClickedItem is Background wallpaper)
             {
-                await new BackgroundPopup(wallpaper).ShowQueuedAsync();
+                var confirm = await new BackgroundPopup(wallpaper).ShowQueuedAsync();
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    await ViewModel.OnNavigatedToAsync(null, NavigationMode.Refresh, null);
+                }
             }
         }
     }
