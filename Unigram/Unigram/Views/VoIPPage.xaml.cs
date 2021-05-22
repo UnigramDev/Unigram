@@ -796,7 +796,7 @@ namespace Unigram.Views
 
             var video = new MenuFlyoutSubItem();
             video.Text = "Webcam";
-            video.Icon = new FontIcon { Glyph = Icons.MicOn, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
+            video.Icon = new FontIcon { Glyph = Icons.Camera, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
 
             var videoDevices = await DeviceInformation.FindAllAsync(DeviceClass.VideoCapture);
             foreach (var device in videoDevices)
