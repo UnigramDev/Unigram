@@ -311,7 +311,8 @@ namespace Unigram.ViewModels
             else if (MessageHelper.TryCreateUri(webPage.Url, out Uri uri) &&
                     (string.Equals(webPage.Type, "telegram_megagroup", StringComparison.OrdinalIgnoreCase) ||
                      string.Equals(webPage.Type, "telegram_channel", StringComparison.OrdinalIgnoreCase) ||
-                     string.Equals(webPage.Type, "telegram_message", StringComparison.OrdinalIgnoreCase)))
+                     string.Equals(webPage.Type, "telegram_message", StringComparison.OrdinalIgnoreCase) ||
+                     string.Equals(webPage.Type, "telegram_background", StringComparison.OrdinalIgnoreCase)))
             {
                 MessageHelper.OpenTelegramUrl(ProtoService, NavigationService, uri);
             }

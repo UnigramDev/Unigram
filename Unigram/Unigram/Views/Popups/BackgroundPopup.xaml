@@ -426,7 +426,7 @@
         </Grid.RowDefinitions>
         <Grid Grid.RowSpan="3">
             <chats:ChatBackgroundPreview
-                x:Name="Freeform"
+                x:Name="Preview"
                 Fill="{x:Bind ConvertBackground(ViewModel.Color1, ViewModel.Color2, ViewModel.Color3, ViewModel.Color4, ViewModel.Rotation), Mode=OneWay}"/>
 
             <Rectangle
@@ -434,11 +434,11 @@
                 Opacity="{x:Bind ConvertIntensity(ViewModel.Intensity), Mode=OneWay}"/>
         </Grid>
 
-        <Grid x:Name="Preview" Grid.Row="1">
+        <Grid Grid.Row="1">
             <Border x:Name="BlurPanel" Background="Transparent" SizeChanged="BlurPanel_SizeChanged"/>
 
             <StackPanel Padding="0,2" VerticalAlignment="Bottom">
-                <messages:MessageService>
+                <messages:MessageService Margin="0,8,0,4">
                     <TextBlock
                         Text="{CustomResource MessageScheduleToday}"
                         Foreground="White"

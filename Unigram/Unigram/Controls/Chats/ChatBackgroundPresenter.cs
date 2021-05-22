@@ -262,7 +262,7 @@ namespace Unigram.Controls.Chats
         }
     }
 
-    public class ChatBackgroundPreview : Panel
+    public class ChatBackgroundPreview : Grid
     {
         private readonly ChatBackgroundFreeform _background;
 

@@ -300,6 +300,7 @@ namespace Unigram.ViewModels
                 if (value != null && _item?.Type is BackgroundTypeFill || _item?.Type is BackgroundTypePattern)
                 {
                     Set(ref _item, value, nameof(Item));
+                    Delegate?.UpdateBackground(value);
                 }
             }
         }

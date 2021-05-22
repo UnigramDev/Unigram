@@ -468,7 +468,7 @@ namespace Unigram.Views
                 }
 
                 content.Opacity = ViewModel.Intensity / 100d;
-                root.Background = ViewModel.GetFill().ToBrush();
+                root.Background = Preview.Background;
             }
             else
             {
@@ -476,7 +476,7 @@ namespace Unigram.Views
                 content.Source = null;
 
                 content.Opacity = 1;
-                root.Background = ViewModel.GetFill().ToBrush();
+                root.Background = Preview.Background;
             }
         }
 
@@ -536,7 +536,7 @@ namespace Unigram.Views
 
         private void Play_Click(object sender, RoutedEventArgs e)
         {
-            Freeform?.Play();
+            Preview.Play();
         }
     }
 }
