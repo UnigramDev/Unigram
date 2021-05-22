@@ -338,7 +338,7 @@ namespace Unigram.Controls.Cells
 
         public void UpdateNotificationSettings(Chat chat)
         {
-            var muted = _protoService.GetNotificationSettingsMuteFor(chat) > 0;
+            var muted = _protoService.Notifications.GetMutedFor(chat) > 0;
             VisualStateManager.GoToState(this, muted ? "Muted" : "Unmuted", false);
             MutedIcon.Visibility = muted ? Visibility.Visible : Visibility.Collapsed;
         }

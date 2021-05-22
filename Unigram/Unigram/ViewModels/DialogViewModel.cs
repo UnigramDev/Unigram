@@ -3526,7 +3526,7 @@ namespace Unigram.ViewModels
 
                 if (CacheService.IsRepliesChat(chat))
                 {
-                    ToggleMuteExecute(CacheService.GetNotificationSettingsMuteFor(chat) > 0);
+                    ToggleMuteExecute(CacheService.Notifications.GetMutedFor(chat) > 0);
                 }
                 else if (chat.IsBlocked)
                 {
@@ -3571,7 +3571,7 @@ namespace Unigram.ViewModels
                     }
                     else
                     {
-                        ToggleMuteExecute(CacheService.GetNotificationSettingsMuteFor(chat) > 0);
+                        ToggleMuteExecute(CacheService.Notifications.GetMutedFor(chat) > 0);
                     }
                 }
                 else

@@ -1814,7 +1814,7 @@ namespace Unigram.Views
             }
             if ((user != null && user.Id != ViewModel.CacheService.Options.MyId) || basicGroup != null || (supergroup != null && !supergroup.IsChannel))
             {
-                var muted = ViewModel.CacheService.GetNotificationSettingsMuteFor(chat) > 0;
+                var muted = ViewModel.CacheService.Notifications.GetMutedFor(chat) > 0;
                 flyout.CreateFlyoutItem(
                     muted ? ViewModel.UnmuteCommand : ViewModel.MuteCommand,
                     muted ? Strings.Resources.UnmuteNotifications : Strings.Resources.MuteNotifications,
@@ -3387,7 +3387,7 @@ namespace Unigram.Views
                 }
                 else
                 {
-                    ShowAction(ViewModel.CacheService.GetNotificationSettingsMuteFor(chat) > 0 ? Strings.Resources.ChannelUnmute : Strings.Resources.ChannelMute, true);
+                    ShowAction(ViewModel.CacheService.Notifications.GetMutedFor(chat) > 0 ? Strings.Resources.ChannelUnmute : Strings.Resources.ChannelMute, true);
                 }
             }
         }
@@ -3924,7 +3924,7 @@ namespace Unigram.Views
             }
             else if (ViewModel.ProtoService.IsRepliesChat(chat))
             {
-                ShowAction(ViewModel.CacheService.GetNotificationSettingsMuteFor(chat) > 0 ? Strings.Resources.ChannelUnmute : Strings.Resources.ChannelMute, true);
+                ShowAction(ViewModel.CacheService.Notifications.GetMutedFor(chat) > 0 ? Strings.Resources.ChannelUnmute : Strings.Resources.ChannelMute, true);
             }
             else if (chat.IsBlocked)
             {
@@ -4089,7 +4089,7 @@ namespace Unigram.Views
                 }
                 else
                 {
-                    ShowAction(ViewModel.CacheService.GetNotificationSettingsMuteFor(chat) > 0 ? Strings.Resources.ChannelUnmute : Strings.Resources.ChannelMute, true);
+                    ShowAction(ViewModel.CacheService.Notifications.GetMutedFor(chat) > 0 ? Strings.Resources.ChannelUnmute : Strings.Resources.ChannelMute, true);
                 }
             }
             else

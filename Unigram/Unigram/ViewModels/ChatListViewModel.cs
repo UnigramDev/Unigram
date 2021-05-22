@@ -262,7 +262,7 @@ namespace Unigram.ViewModels
         public RelayCommand<Chat> ChatNotifyCommand { get; }
         private void ChatNotifyExecute(Chat chat)
         {
-            _notificationsService.SetMuteFor(chat, CacheService.GetNotificationSettingsMuteFor(chat) > 0 ? 0 : 632053052);
+            _notificationsService.SetMuteFor(chat, CacheService.Notifications.GetMutedFor(chat) > 0 ? 0 : 632053052);
         }
 
         #endregion
@@ -273,7 +273,7 @@ namespace Unigram.ViewModels
         private void ChatsNotifyExecute()
         {
             var chats = SelectedItems.ToList();
-            var muted = chats.Any(x => CacheService.GetNotificationSettingsMuteFor(x) > 0);
+            var muted = chats.Any(x => CacheService.Notifications.GetMutedFor(x) > 0);
 
             foreach (var chat in chats)
             {

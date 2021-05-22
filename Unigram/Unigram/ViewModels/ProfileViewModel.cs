@@ -790,7 +790,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            _notificationsService.SetMuteFor(chat, CacheService.GetNotificationSettingsMuteFor(chat) > 0 ? 0 : 632053052);
+            _notificationsService.SetMuteFor(chat, CacheService.Notifications.GetMutedFor(chat) > 0 ? 0 : 632053052);
         }
 
         #region Call

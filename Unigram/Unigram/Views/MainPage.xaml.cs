@@ -2822,7 +2822,7 @@ namespace Unigram.Views
         {
             if (ViewModel.Chats.SelectedItems.Count > 0)
             {
-                var muted = ViewModel.Chats.SelectedItems.Any(x => ViewModel.CacheService.GetNotificationSettingsMuteFor(x) > 0);
+                var muted = ViewModel.Chats.SelectedItems.Any(x => ViewModel.CacheService.Notifications.GetMutedFor(x) > 0);
                 ManageMute.Glyph = muted ? Icons.Alert : Icons.AlertOff;
                 Automation.SetToolTip(ManageMute, muted ? Strings.Resources.UnmuteNotifications : Strings.Resources.MuteNotifications);
 
