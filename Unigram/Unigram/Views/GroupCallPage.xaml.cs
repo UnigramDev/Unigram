@@ -343,8 +343,7 @@ namespace Unigram.Views
                 }
 
                 BottomRoot.Padding = new Thickness(4, 8, 4, 8);
-                //BottomRoot.CornerRadius = new CornerRadius(8);
-                BottomRoot.Background = new AcrylicBrush { TintColor = Colors.Black, TintOpacity = 0, TintLuminosityOpacity = 0.5 }; //new SolidColorBrush(Color.FromArgb(0x99, 0x33, 0x33, 0x33));
+                BottomBackground.Background = new AcrylicBrush { TintColor = Colors.Black, TintOpacity = 0, /*TintLuminosityOpacity = 0.5*/ }; //new SolidColorBrush(Color.FromArgb(0x99, 0x33, 0x33, 0x33));
                 BottomRoot.RowDefinitions[0].Height = new GridLength(1, GridUnitType.Auto);
 
                 foreach (var column in BottomRoot.ColumnDefinitions)
@@ -416,8 +415,7 @@ namespace Unigram.Views
 
                 BottomPanel.Padding = new Thickness(0, 0, 0, 0);
                 BottomRoot.Padding = new Thickness(0, 0, 0, 0);
-                BottomRoot.CornerRadius = new CornerRadius(0);
-                BottomRoot.Background = null;
+                BottomBackground.Background = null;
                 BottomRoot.RowDefinitions[0].Height = new GridLength(24, GridUnitType.Pixel);
 
                 foreach (var column in BottomRoot.ColumnDefinitions)
@@ -918,7 +916,7 @@ namespace Unigram.Views
             }
         }
 
-        private void Audio_Click(object sender, RoutedEventArgs e)
+        private async void Audio_Click(object sender, RoutedEventArgs e)
         {
             var call = _service.Call;
             var currentUser = _service.CurrentUser;
@@ -944,6 +942,12 @@ namespace Unigram.Views
             //}
             else if (currentUser != null && currentUser.CanUnmuteSelf && _service.Manager.IsMuted)
             {
+                var permissions = await MediaDeviceWatcher.CheckAccessAsync(false);
+                if (permissions == false)
+                {
+                    return;
+                }
+
                 _service.Manager.IsMuted = false;
                 _protoService.Send(new ToggleGroupCallParticipantIsMuted(call.Id, currentUser.ParticipantId, false));
             }
@@ -958,8 +962,17 @@ namespace Unigram.Views
             }
         }
 
-        private void Video_Click(object sender, RoutedEventArgs e)
+        private async void Video_Click(object sender, RoutedEventArgs e)
         {
+            if (_service.IsCapturing == false)
+            {
+                var permissions = await MediaDeviceWatcher.CheckAccessAsync(true);
+                if (permissions == false)
+                {
+                    return;
+                }
+            }
+
             _service.ToggleCapturing();
             UpdateVideo();
         }

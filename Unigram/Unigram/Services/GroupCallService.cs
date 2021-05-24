@@ -156,12 +156,6 @@ namespace Unigram.Services
 
         public async Task JoinAsync(long chatId)
         {
-            var permissions = await MediaDeviceWatcher.CheckAccessAsync(false);
-            if (permissions == false)
-            {
-                return;
-            }
-
             var chat = CacheService.GetChat(chatId);
             if (chat == null || chat.VoiceChat.GroupCallId == 0)
             {
@@ -198,12 +192,6 @@ namespace Unigram.Services
 
         public async Task CreateAsync(long chatId)
         {
-            var permissions = await MediaDeviceWatcher.CheckAccessAsync(false);
-            if (permissions == false)
-            {
-                return;
-            }
-
             var chat = CacheService.GetChat(chatId);
             if (chat == null || chat.VoiceChat.GroupCallId != 0)
             {
