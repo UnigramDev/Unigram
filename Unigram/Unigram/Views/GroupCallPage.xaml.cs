@@ -1584,6 +1584,8 @@ namespace Unigram.Views
             }
             else if (participant.IsMutedForAllUsers || participant.IsMutedForCurrentUser)
             {
+                var permanent = participant.IsMutedForCurrentUser || (participant.IsMutedForAllUsers && !participant.CanUnmuteSelf);
+
                 if (participant.IsCurrentUser)
                 {
                     speaking.Text = Strings.Resources.ThisIsYou;
@@ -1595,7 +1597,7 @@ namespace Unigram.Views
 
                 speaking.Foreground = status.Foreground = new SolidColorBrush { Color = Color.FromArgb(0xFF, 0x85, 0x85, 0x85) };
                 glyph.Text = Icons.MicOff;
-                glyph.Foreground = new SolidColorBrush { Color = !participant.CanUnmuteSelf ? Colors.Red : Color.FromArgb(0xFF, 0x85, 0x85, 0x85) };
+                glyph.Foreground = new SolidColorBrush { Color = permanent ? Colors.Red : Color.FromArgb(0xFF, 0x85, 0x85, 0x85) };
             }
             else
             {
