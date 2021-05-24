@@ -1841,19 +1841,19 @@ namespace Unigram.Views
                     //}
                 }
 
-                if (participant.CanBeUnmutedForAllUsers && participant.IsMutedForAllUsers)
+                if (participant.CanBeUnmutedForAllUsers)
                 {
                     flyout.CreateFlyoutItem(() => _protoService.Send(new ToggleGroupCallParticipantIsMuted(_service.Call.Id, participant.ParticipantId, false)), Strings.Resources.VoipGroupAllowToSpeak, new FontIcon { Glyph = Icons.MicOn });
                 }
-                else if (participant.CanBeMutedForAllUsers && !participant.IsMutedForAllUsers)
-                {
-                    flyout.CreateFlyoutItem(() => _protoService.Send(new ToggleGroupCallParticipantIsMuted(_service.Call.Id, participant.ParticipantId, true)), Strings.Resources.VoipGroupMute, new FontIcon { Glyph = Icons.MicOff });
-                }
-                else if (participant.CanBeUnmutedForCurrentUser && participant.IsMutedForCurrentUser)
+                else if (participant.CanBeUnmutedForCurrentUser)
                 {
                     flyout.CreateFlyoutItem(() => _protoService.Send(new ToggleGroupCallParticipantIsMuted(_service.Call.Id, participant.ParticipantId, false)), Strings.Resources.VoipGroupUnmuteForMe, new FontIcon { Glyph = Icons.MicOn });
                 }
-                else if (participant.CanBeMutedForCurrentUser && !participant.IsMutedForCurrentUser)
+                else if (participant.CanBeMutedForAllUsers)
+                {
+                    flyout.CreateFlyoutItem(() => _protoService.Send(new ToggleGroupCallParticipantIsMuted(_service.Call.Id, participant.ParticipantId, true)), Strings.Resources.VoipGroupMute, new FontIcon { Glyph = Icons.MicOff });
+                }
+                else if (participant.CanBeMutedForCurrentUser)
                 {
                     flyout.CreateFlyoutItem(() => _protoService.Send(new ToggleGroupCallParticipantIsMuted(_service.Call.Id, participant.ParticipantId, true)), Strings.Resources.VoipGroupMuteForMe, new FontIcon { Glyph = Icons.MicOff });
                 }
