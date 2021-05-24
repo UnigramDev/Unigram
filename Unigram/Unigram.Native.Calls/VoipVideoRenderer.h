@@ -108,11 +108,30 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 			m_canvasControl = nullptr;
 		}
 
-		m_target = nullptr;
-		m_shader = nullptr;
-		m_bitmapY = nullptr;
-		m_bitmapU = nullptr;
-		m_bitmapV = nullptr;
+		if (m_target != nullptr) {
+			m_target.Close();
+			m_target = nullptr;
+		}
+
+		if (m_shader != nullptr) {
+			m_shader.Close();
+			m_shader = nullptr;
+		}
+
+		if (m_bitmapY != nullptr) {
+			m_bitmapY.Close();
+			m_bitmapY = nullptr;
+		}
+
+		if (m_bitmapU != nullptr) {
+			m_bitmapU.Close();
+			m_bitmapU = nullptr;
+		}
+
+		if (m_bitmapV != nullptr) {
+			m_bitmapV.Close();
+			m_bitmapV = nullptr;
+		}
 	}
 
 	void OnFrame(const webrtc::VideoFrame& frame) override
