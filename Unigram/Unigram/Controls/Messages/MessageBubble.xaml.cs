@@ -103,7 +103,7 @@ namespace Unigram.Controls.Messages
             {
                 title = message.ProtoService.GetTitle(message.ForwardInfo);
             }
-            else
+            else if (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup supergroup && !supergroup.IsChannel)
             {
                 if (message.ProtoService.TryGetUser(message.Sender, out User senderUser))
                 {
@@ -112,14 +112,7 @@ namespace Unigram.Controls.Messages
                 }
                 else if (message.ProtoService.TryGetChat(message.Sender, out Chat senderChat))
                 {
-                    if (senderChat.Type is ChatTypeSupergroup super && super.IsChannel)
-                    {
-                        title = null;
-                    }
-                    else
-                    {
-                        title = message.ProtoService.GetTitle(senderChat);
-                    }
+                    title = message.ProtoService.GetTitle(senderChat);
                 }
             }
 
