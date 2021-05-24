@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 04/16/2021 20:19:28
+// 	Generated: 05/24/2021 12:36:50
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -47058,6 +47058,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Share screen"
+        /// </summary>
+        public static string VoipChatStartScreenCapture
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChatStartScreenCapture");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Starts in"
         /// </summary>
         public static string VoipChatStartsIn
@@ -47065,6 +47076,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("VoipChatStartsIn");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Stop screen sharing"
+        /// </summary>
+        public static string VoipChatStopScreenCapture
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChatStopScreenCapture");
             }
         }
         

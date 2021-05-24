@@ -1257,11 +1257,11 @@ namespace Unigram.Views
             {
                 if (_service.IsScreenSharing)
                 {
-                    flyout.CreateFlyoutItem(_service.EndScreenSharing, "Stop screen sharing", new FontIcon { Glyph = Icons.ShareScreenStop });
+                    flyout.CreateFlyoutItem(_service.EndScreenSharing, Strings.Resources.VoipChatStopScreenCapture, new FontIcon { Glyph = Icons.ShareScreenStop });
                 }
                 else
                 {
-                    flyout.CreateFlyoutItem(_service.StartScreenSharing, "Share screen", new FontIcon { Glyph = Icons.ShareScreenStart });
+                    flyout.CreateFlyoutItem(_service.StartScreenSharing, Strings.Resources.VoipChatStartScreenCapture, new FontIcon { Glyph = Icons.ShareScreenStart });
                 }
             }
 
