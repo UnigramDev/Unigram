@@ -144,6 +144,7 @@ namespace Unigram.Views
             }
 
             Messages.ViewVisibleMessages = ViewVisibleMessages;
+            Messages.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
 
             ViewModel.TextField = TextField;
             ViewModel.ListField = Messages;
@@ -1745,14 +1746,13 @@ namespace Unigram.Views
 
         private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ViewModel.ExpandSelection(Messages.SelectedItems.Cast<MessageViewModel>());
-
             if (_selectionFromItemClick && Messages.SelectedItems.Count < 1)
             {
                 ViewModel.SelectionMode = ListViewSelectionMode.None;
             }
 
             _selectionFromItemClick = false;
+            ViewModel.ExpandSelection(Messages.SelectedItems.Cast<MessageViewModel>());
         }
 
         #region Context menu
@@ -2856,7 +2856,110 @@ namespace Unigram.Views
             ViewModel.Autocomplete = null;
         }
 
+        private void List_SelectionModeChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            if (ViewModel.SelectionMode == ListViewSelectionMode.None)
+            {
+                ShowHideManagePanel(false);
+            }
+            else
+            {
+                ShowHideManagePanel(true);
+            }
+        }
+
+        private bool _manageCollapsed;
+
+        private void ShowHideManagePanel(bool show)
+        {
+            if ((show && ManagePanel.Visibility == Visibility.Visible && !_manageCollapsed) || (!show && (ManagePanel.Visibility == Visibility.Collapsed || _manageCollapsed)))
+            {
+                return;
+            }
+
+            if (show)
+            {
+                _manageCollapsed = false;
+            }
+            else
+            {
+                _manageCollapsed = true;
+            }
+
+            var manage = ElementCompositionPreview.GetElementVisual(ManagePanel);
+            manage.StopAnimation("Opacity");
+
+            ManagePanel.Visibility = Visibility.Visible;
+
+            var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
+                if (show)
+                {
+                    _manageCollapsed = false;
+                    ManagePanel.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    ManagePanel.Visibility = Visibility.Collapsed;
+                }
+            };
+
+            var opacity = manage.Compositor.CreateScalarKeyFrameAnimation();
+            opacity.InsertKeyFrame(show ? 0 : 1, 0);
+            opacity.InsertKeyFrame(show ? 1 : 0, 1);
+
+            manage.StartAnimation("Opacity", opacity);
+
+            batch.End();
+
+            if (show)
+            {
+                ShowHideComposerHeader(false);
+            }
+            else
+            {
+                UpdateComposerHeader(ViewModel.Chat, ViewModel.ComposerHeader);
+            }
+        }
+
         #region Binding
+
+        private int ConvertSelection(int count)
+        {
+            if (Messages.SelectionMode == ListViewSelectionMode.None)
+            {
+                return ManageCount.Value;
+            }
+
+            var text = Locale.Declension("messages", count);
+            var split = text.Split(' ');
+
+            var index = int.MaxValue;
+            var before = string.Empty;
+            var after = string.Empty;
+
+            for (int i = 0; i < split.Length; i++)
+            {
+                if (int.TryParse(split[i], out _))
+                {
+                    index = i;
+                }
+                else if (i < index)
+                {
+                    before += split[i] + " ";
+                }
+                else if (i > index)
+                {
+                    after += " " + split[i];
+                }
+            }
+
+            ManageCountBefore.Text = before;
+            ManageCountAfter.Text = after;
+
+            return count;
+        }
 
         public Visibility ConvertIsEmpty(bool empty, bool self, bool bot, bool should)
         {
@@ -3855,9 +3958,11 @@ namespace Unigram.Views
             btnVoiceMessage.CornerRadius = new CornerRadius(4, max, min, 4);
             btnSendMessage.CornerRadius = new CornerRadius(4, max, min, 4);
             btnEdit.CornerRadius = new CornerRadius(4, max, min, 4);
+            ButtonManage.CornerRadius = new CornerRadius(4, min, min, 4);
+            ButtonForward.CornerRadius = new CornerRadius(min, 4, 4, min);
 
             ComposerHeaderCancel.CornerRadius = new CornerRadius(4, min, 4, 4);
-            TextRoot.CornerRadius = ChatFooter.CornerRadius = ChatRecord.CornerRadius = new CornerRadius(radius);
+            TextRoot.CornerRadius = ChatFooter.CornerRadius = ChatRecord.CornerRadius = ManagePanel.CornerRadius = new CornerRadius(radius);
 
             Separator.CornerRadius = new CornerRadius(radius);
             InlinePanel.CornerRadius = new CornerRadius(radius, radius, 0, 0);
@@ -3866,16 +3971,16 @@ namespace Unigram.Views
 
             if (radius > 0)
             {
-                TextArea.MaxWidth = ChatRecord.MaxWidth = ChatFooter.MaxWidth = InlinePanel.MaxWidth = Separator.MaxWidth =
+                TextArea.MaxWidth = ChatRecord.MaxWidth = ChatFooter.MaxWidth = ManagePanel.MaxWidth = InlinePanel.MaxWidth = Separator.MaxWidth =
                     SettingsService.Current.IsAdaptiveWideEnabled ? 640 : double.PositiveInfinity;
-                TextArea.Margin = ChatRecord.Margin = ChatFooter.Margin = Separator.Margin = new Thickness(12, 0, 12, 8);
+                TextArea.Margin = ChatRecord.Margin = ChatFooter.Margin = ManagePanel.Margin = Separator.Margin = new Thickness(12, 0, 12, 8);
                 InlinePanel.Margin = new Thickness(12, 0, 12, -radius);
             }
             else
             {
-                TextArea.MaxWidth = ChatRecord.MaxWidth = ChatFooter.MaxWidth = InlinePanel.MaxWidth = Separator.MaxWidth =
+                TextArea.MaxWidth = ChatRecord.MaxWidth = ChatFooter.MaxWidth = ManagePanel.MaxWidth = InlinePanel.MaxWidth = Separator.MaxWidth =
                     SettingsService.Current.IsAdaptiveWideEnabled ? 664 : double.PositiveInfinity;
-                TextArea.Margin = ChatRecord.Margin = ChatFooter.Margin = Separator.Margin = new Thickness();
+                TextArea.Margin = ChatRecord.Margin = ChatFooter.Margin = ManagePanel.Margin = Separator.Margin = new Thickness();
                 InlinePanel.Margin = new Thickness();
             }
 

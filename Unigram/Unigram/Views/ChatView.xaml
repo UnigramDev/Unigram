@@ -1242,6 +1242,69 @@
             </chats:ChatBottomButton>
         </Grid>
 
+        <Grid
+            x:Name="ManagePanel"
+            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+            VerticalAlignment="Bottom"
+            Visibility="Collapsed"
+            Margin="12,0,12,8"
+            CornerRadius="15"
+            Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <controls:GlyphButton
+                x:Name="ButtonForward"
+                Glyph="&#xE72D;"
+                Command="{x:Bind ViewModel.MessagesForwardCommand}"/>
+            <TextBlock
+                Text="{CustomResource Forward}"
+                VerticalAlignment="Center"
+                Margin="0,-3,12,0"
+                Grid.Column="1"/>
+
+            <controls:GlyphButton
+                x:Name="ButtonDelete"
+                Glyph="&#xE74D;"
+                Foreground="#df3f40"
+                Command="{x:Bind ViewModel.MessagesDeleteCommand}"
+                Grid.Column="2"/>
+            <TextBlock
+                Text="{CustomResource Delete}"
+                Foreground="#df3f40"
+                VerticalAlignment="Center"
+                Margin="0,-3,0,0"
+                Grid.Column="3"/>
+
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,-3,0,0" Grid.Column="5">
+                <TextBlock
+                    x:Name="ManageCountBefore"
+                    FontWeight="SemiBold"/>
+                <controls:NumericTextBlock
+                    x:Name="ManageCount"
+                    Value="{x:Bind ConvertSelection(ViewModel.SelectedItems.Count), Mode=OneWay}"
+                    VerticalAlignment="Top"
+                    FontWeight="SemiBold"
+                    Margin="0,1,0,0"
+                    FontSize="14"/>
+                <TextBlock
+                    x:Name="ManageCountAfter"
+                    FontWeight="SemiBold"/>
+            </StackPanel>
+
+            <controls:GlyphButton
+                x:Name="ButtonManage"
+                Glyph="&#xE711;"
+                Command="{x:Bind ViewModel.MessagesUnselectCommand}"
+                Grid.Column="6"/>
+        </Grid>
+
         <chats:ChatSearchBar
             x:Name="SearchMask"
             Visibility="Collapsed"
