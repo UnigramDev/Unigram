@@ -1371,6 +1371,7 @@
     <Content Include="Assets\Animations\VoiceSetReminderToRaiseHand.tgs" />
     <Content Include="Assets\Animations\VoiceStart.tgs" />
     <Content Include="Assets\Animations\VoiceUnmuteToRaiseHand.tgs" />
+    <Content Include="Assets\i420.bin" />
     <None Include="Unigram_StoreKey.pfx" />
     <None Include="Unigram_TemporaryKey.pfx" />
   </ItemGroup>

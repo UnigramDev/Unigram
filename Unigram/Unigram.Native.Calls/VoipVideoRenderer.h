@@ -12,12 +12,23 @@
 #include "media/base/video_broadcaster.h"
 
 #include <winrt/Microsoft.Graphics.Canvas.h>
+#include <winrt/Microsoft.Graphics.Canvas.Effects.h>
+#include <winrt/Windows.Storage.h>
 
 #include <Microsoft.Graphics.Canvas.h>
 #include <Microsoft.Graphics.Canvas.native.h>
 
+#include <d3d11.h>
+
+namespace ABI {
+	using namespace Microsoft::Graphics::Canvas;
+}
+
 using namespace winrt::Microsoft::Graphics::Canvas;
+using namespace winrt::Microsoft::Graphics::Canvas::Effects;
 using namespace winrt::Microsoft::Graphics::Canvas::UI::Xaml;
+using namespace winrt::Windows::Foundation::Numerics;
+using namespace winrt::Windows::Graphics::DirectX;
 
 struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 {
@@ -28,7 +39,12 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 	winrt::slim_mutex m_lock;
 
 	std::shared_ptr<CanvasControl> m_canvasControl;
-	CanvasBitmap m_canvasBitmap{ nullptr };
+	webrtc::VideoRotation m_rotation{ webrtc::kVideoRotation_0 };
+	CanvasRenderTarget m_target{ nullptr };
+	PixelShaderEffect m_shader{ nullptr };
+	CanvasBitmap m_bitmapY{ nullptr };
+	CanvasBitmap m_bitmapU{ nullptr };
+	CanvasBitmap m_bitmapV{ nullptr };
 
 	VoipVideoRenderer(CanvasControl canvas, bool fill) {
 		m_canvasControl = std::make_shared<CanvasControl>(canvas);
@@ -37,11 +53,13 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 		m_eventToken = canvas.Draw([this, fill](const CanvasControl sender, CanvasDrawEventArgs const args) {
 			m_readyToDraw = true;
 
-			if (m_canvasBitmap != nullptr) {
-				float width = m_canvasBitmap.SizeInPixels().Width;
-				float height = m_canvasBitmap.SizeInPixels().Height;
+			if (m_bitmapY != nullptr) {
+				float width = m_bitmapY.SizeInPixels().Width;
+				float height = m_bitmapY.SizeInPixels().Height;
 				float x = 0;
 				float y = 0;
+
+				float2 center(sender.Size().Width / 2, sender.Size().Height / 2);
 
 				float ratioX = sender.Size().Width / width;
 				float ratioY = sender.Size().Height / height;
@@ -59,7 +77,23 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 					x = (sender.Size().Width - width) / 2;
 				}
 
-				args.DrawingSession().DrawImage(m_canvasBitmap, winrt::Windows::Foundation::Rect(x, y, width, height));
+				switch (m_rotation) {
+				case webrtc::kVideoRotation_180:
+					args.DrawingSession().Transform(make_float3x2_rotation(180 * (M_PI / 180), center));
+					break;
+				case webrtc::kVideoRotation_90:
+					args.DrawingSession().Transform(make_float3x2_rotation(90 * (M_PI / 180), center) * make_float3x2_scale(sender.Size().Height / width, center));
+					break;
+				case webrtc::kVideoRotation_270:
+					args.DrawingSession().Transform(make_float3x2_rotation(270 * (M_PI / 180), center) * make_float3x2_scale(sender.Size().Height / width, center));
+					break;
+				}
+
+				auto session = m_target.CreateDrawingSession();
+				session.DrawImage(m_shader);
+				session.Close();
+
+				args.DrawingSession().DrawImage(m_target, winrt::Windows::Foundation::Rect(x, y, width, height));
 			}
 			});
 	}
@@ -74,10 +108,11 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 			m_canvasControl = nullptr;
 		}
 
-		if (m_canvasBitmap != nullptr) {
-			m_canvasBitmap.Close();
-			m_canvasBitmap = nullptr;
-		}
+		m_target = nullptr;
+		m_shader = nullptr;
+		m_bitmapY = nullptr;
+		m_bitmapU = nullptr;
+		m_bitmapV = nullptr;
 	}
 
 	void OnFrame(const webrtc::VideoFrame& frame) override
@@ -90,35 +125,57 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 
 		rtc::scoped_refptr<webrtc::I420BufferInterface> buffer(frame.video_frame_buffer()->ToI420());
 
-		webrtc::VideoRotation rotation = frame.rotation();
-		if (rotation != webrtc::kVideoRotation_0)
-		{
-			buffer = webrtc::I420Buffer::Rotate(*buffer, rotation);
-		}
+		m_rotation = frame.rotation();
 
 		int32_t width = buffer->width();
 		int32_t height = buffer->height();
 
-		size_t bits = 32;
-		size_t size = width * height * (bits >> 3);
+		auto sizeY = buffer->StrideY() * height;
+		auto sizeUV = sizeY / 2;
 
-		std::unique_ptr<uint8_t[]> data(new uint8_t[size]);
-		libyuv::I420ToARGB(buffer->DataY(), buffer->StrideY(), buffer->DataU(), buffer->StrideU(), buffer->DataV(),
-			buffer->StrideV(), data.get(), width * bits / 8, width, height);
 
-		auto raw = data.get();
-
-		if (m_canvasBitmap == nullptr || m_canvasBitmap.SizeInPixels().Width != width || m_canvasBitmap.SizeInPixels().Height != height)
+		if (m_bitmapY == nullptr || m_bitmapY.SizeInPixels().Width != width || m_bitmapY.SizeInPixels().Height != height)
 		{
-			auto view = winrt::array_view<uint8_t const>(raw, raw + size);
-			m_canvasBitmap = winrt::Microsoft::Graphics::Canvas::CanvasBitmap::CreateFromBytes(
-				m_canvasControl->Device(), view, width, height,
-				winrt::Windows::Graphics::DirectX::DirectXPixelFormat::B8G8R8A8UIntNormalized);
+			auto creator = m_canvasControl->as<ICanvasResourceCreatorWithDpi>();
+			auto format = DirectXPixelFormat::R8UIntNormalized;
+
+			m_target = CanvasRenderTarget(creator, width, height);
+
+			auto yView = winrt::array_view<uint8_t const>(buffer->DataY(), sizeY);
+			m_bitmapY = CanvasBitmap::CreateFromBytes(creator, yView, width, height, format);
+			auto uView = winrt::array_view<uint8_t const>(buffer->DataU(), sizeUV);
+			m_bitmapU = CanvasBitmap::CreateFromBytes(creator, uView, width / 2, height / 2, format);
+			auto vView = winrt::array_view<uint8_t const>(buffer->DataV(), sizeUV);
+			m_bitmapV = CanvasBitmap::CreateFromBytes(creator, vView, width / 2, height / 2, format);
+
+			if (m_shader == nullptr)
+			{
+				FILE* file = _wfopen(L"Assets\\i420.bin", L"rb");
+				fseek(file, 0, SEEK_END);
+				size_t length = ftell(file);
+				fseek(file, 0, SEEK_SET);
+				uint8_t* buffer = new uint8_t[length];
+				fread(buffer, 1, length, file);
+				fclose(file);
+
+				auto shaderView = winrt::array_view<uint8_t const>(buffer, buffer + length);
+				m_shader = winrt::Microsoft::Graphics::Canvas::Effects::PixelShaderEffect(shaderView);
+				m_shader.Source1BorderMode(EffectBorderMode::Hard);
+				m_shader.Source2BorderMode(EffectBorderMode::Hard);
+				m_shader.Source3BorderMode(EffectBorderMode::Hard);
+
+				delete[] buffer;
+			}
+
+			m_shader.Source1(m_bitmapY);
+			m_shader.Source2(m_bitmapU);
+			m_shader.Source3(m_bitmapV);
 		}
 		else
 		{
-			auto bitmapAbi = m_canvasBitmap.as<ABI::Microsoft::Graphics::Canvas::ICanvasBitmap>();
-			bitmapAbi->SetPixelBytes(size, (BYTE*)raw);
+			m_bitmapY.as<ABI::ICanvasBitmap>()->SetPixelBytes(sizeY, (BYTE*)buffer->DataY());
+			m_bitmapU.as<ABI::ICanvasBitmap>()->SetPixelBytes(sizeUV, (BYTE*)buffer->DataU());
+			m_bitmapV.as<ABI::ICanvasBitmap>()->SetPixelBytes(sizeUV, (BYTE*)buffer->DataV());
 		}
 
 		m_canvasControl->Invalidate();
