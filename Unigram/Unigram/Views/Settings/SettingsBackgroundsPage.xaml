@@ -38,6 +38,7 @@
                   ItemClick="List_ItemClick"
                   IsItemClickEnabled="True"
                   SelectionMode="None"
+                  ChoosingItemContainer="OnChoosingItemContainer"
                   ContainerContentChanging="OnContainerContentChanging"
                   Padding="8,0,8,8">
             <common:FluidGridView.Triggers>

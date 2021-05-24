@@ -9,6 +9,7 @@ using Unigram.Controls;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views;
+using Unigram.Views.Popups;
 using Windows.Storage.AccessCache;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml.Controls;
@@ -26,6 +27,9 @@ namespace Unigram.ViewModels.Settings
             LocalCommand = new RelayCommand(LocalExecute);
             ColorCommand = new RelayCommand(ColorExecute);
             ResetCommand = new RelayCommand(ResetExecute);
+
+            ShareCommand = new RelayCommand<Background>(ShareExecute);
+            DeleteCommand = new RelayCommand<Background>(DeleteExecute);
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -129,6 +133,46 @@ namespace Unigram.ViewModels.Settings
             }
 
             var response = await ProtoService.SendAsync(new ResetBackgrounds());
+            if (response is Ok)
+            {
+                await OnNavigatedToAsync(null, NavigationMode.Refresh, null);
+            }
+            else if (response is Error error)
+            {
+
+            }
+        }
+
+        public RelayCommand<Background> ShareCommand { get; }
+        private async void ShareExecute(Background background)
+        {
+            if (background == null)
+            {
+                return;
+            }
+
+            var response = await ProtoService.SendAsync(new GetBackgroundUrl(background.Name, background.Type));
+            if (response is HttpUrl url)
+            {
+                await SharePopup.GetForCurrentView().ShowAsync(new Uri(url.Url), null);
+            }
+        }
+
+        public RelayCommand<Background> DeleteCommand { get; }
+        private async void DeleteExecute(Background background)
+        {
+            if (background == null)
+            {
+                return;
+            }
+
+            var confirm = await MessagePopup.ShowAsync(Strings.Resources.DeleteChatBackgroundsAlert, Locale.Declension("DeleteBackground", 1), Strings.Resources.Delete, Strings.Resources.Cancel);
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            var response = await ProtoService.SendAsync(new RemoveBackground(background.Id));
             if (response is Ok)
             {
                 await OnNavigatedToAsync(null, NavigationMode.Refresh, null);

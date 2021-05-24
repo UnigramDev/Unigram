@@ -2,11 +2,13 @@
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls.Chats;
+using Unigram.Converters;
 using Unigram.Services;
 using Unigram.ViewModels.Settings;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Settings
@@ -31,6 +33,37 @@ namespace Unigram.Views.Settings
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             ViewModel.Aggregator.Unsubscribe(this);
+        }
+
+        private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+        {
+            if (args.ItemContainer == null)
+            {
+                args.ItemContainer = new GridViewItem();
+                args.ItemContainer.Style = sender.ItemContainerStyle;
+                args.ItemContainer.ContentTemplate = sender.ItemTemplate;
+                args.ItemContainer.ContextRequested += OnContextRequested;
+            }
+
+            args.IsContainerPrepared = true;
+        }
+
+        private void OnContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+            var element = sender as FrameworkElement;
+            var background = List.ItemFromContainer(sender) as Background;
+
+            if (background == null || background.Id == Constants.WallpaperLocalId)
+            {
+                return;
+            }
+
+            var flyout = new MenuFlyout();
+
+            flyout.CreateFlyoutItem(ViewModel.ShareCommand, background, Strings.Resources.ShareFile, new FontIcon { Glyph = Icons.Share });
+            flyout.CreateFlyoutItem(ViewModel.DeleteCommand, background, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
+
+            args.ShowAt(flyout, element);
         }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
