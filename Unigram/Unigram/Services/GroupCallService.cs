@@ -543,25 +543,71 @@ namespace Unigram.Services
             _isConnected = args.IsConnected;
         }
 
-        private readonly Dictionary<int, (bool, int)> _lastUpdates = new Dictionary<int, (bool, int)>();
+        private Dictionary<int, SpeakingParticipant> _speakingParticipants = new();
+
+        private readonly struct SpeakingParticipant
+        {
+            public readonly int Timestamp;
+            public readonly float Level;
+
+            public SpeakingParticipant(int timestamp, float level)
+            {
+                Timestamp = timestamp;
+                Level = level;
+            }
+        }
 
         private void OnAudioLevelsUpdated(VoipGroupManager sender, IReadOnlyDictionary<int, KeyValuePair<float, bool>> levels)
         {
-            var now = Environment.TickCount;
+            const float speakingLevelThreshold = 0.1f;
+            const int cutoffTimeout = 3000;
+            const int silentTimeout = 2000;
+
+            var timestamp = Environment.TickCount;
+
+            var validSpeakers = new Dictionary<int, SpeakingParticipant>();
+            var silentParticipants = new HashSet<int>();
 
             foreach (var level in levels)
             {
-                if (_lastUpdates.TryGetValue(level.Key, out var data))
+                if (level.Value.Key > speakingLevelThreshold && level.Value.Value)
                 {
-                    if (data.Item1 && !level.Value.Value && now < data.Item2 + 2000)
-                    {
-                        continue;
-                    }
+                    validSpeakers[level.Key] = new SpeakingParticipant(timestamp, level.Value.Key);
+                }
+                else
+                {
+                    silentParticipants.Add(level.Key);
+                }
+            }
+
+            foreach (var item in _speakingParticipants)
+            {
+                if (validSpeakers.ContainsKey(item.Key))
+                {
+                    continue;
                 }
 
-                _lastUpdates[level.Key] = (level.Value.Value, now);
-                ProtoService.Send(new SetGroupCallParticipantIsSpeaking(_call.Id, level.Key == 0 ? _source : level.Key, level.Value.Value));
+                var delta = timestamp - item.Value.Timestamp;
+
+                if (silentParticipants.Contains(item.Key))
+                {
+                    if (delta < silentTimeout)
+                    {
+                        validSpeakers[item.Key] = item.Value;
+                    }
+                }
+                else if (delta < cutoffTimeout)
+                {
+                    validSpeakers[item.Key] = item.Value;
+                }
             }
+
+            foreach (var item in levels)
+            {
+                ProtoService.Send(new SetGroupCallParticipantIsSpeaking(_call.Id, item.Key, validSpeakers.ContainsKey(item.Key)));
+            }
+
+            _speakingParticipants = validSpeakers;
         }
 
         public async void Discard()
