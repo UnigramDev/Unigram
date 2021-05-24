@@ -1014,6 +1014,18 @@ namespace winrt::Unigram::Native::implementation
 		return textLayout->GetMetrics(textMetrics);
 	}
 
+	void PlaceholderImageHelper::WriteBytes(IVector<byte> hash, IRandomAccessStream randomAccessStream)
+	{
+		HRESULT result;
+		winrt::com_ptr<IStream> stream;
+		winrt::check_hresult(CreateStreamOverRandomAccessStream(winrt::get_unknown(randomAccessStream), IID_PPV_ARGS(&stream)));
+
+		auto yolo = std::vector<byte>(hash.begin(), hash.end());
+
+		ULONG size;
+		winrt::check_hresult(stream->Write(yolo.data(), hash.Size(), &size));
+	}
+
 	HRESULT PlaceholderImageHelper::SaveImageToStream(ID2D1Image* image, REFGUID wicFormat, IRandomAccessStream randomAccessStream)
 	{
 		HRESULT result;

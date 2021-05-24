@@ -4,11 +4,14 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Native;
 using Unigram.ViewModels;
+using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Controls.Messages
 {
@@ -131,7 +134,7 @@ namespace Unigram.Controls.Messages
             UpdateMessageReply(message);
         }
 
-        private void UpdateThumbnail(MessageViewModel message, PhotoSize photoSize)
+        private void UpdateThumbnail(MessageViewModel message, PhotoSize photoSize, Minithumbnail minithumbnail)
         {
             if (photoSize != null && photoSize.Photo.Local.IsDownloadingCompleted)
             {
@@ -147,8 +150,7 @@ namespace Unigram.Controls.Messages
             }
             else
             {
-                HideThumbnail();
-                SetThumbnail(null);
+                UpdateThumbnail(message, minithumbnail);
 
                 if (photoSize != null && photoSize.Photo.Local.CanBeDownloaded && !photoSize.Photo.Local.IsDownloadingActive)
                 {
@@ -157,7 +159,7 @@ namespace Unigram.Controls.Messages
             }
         }
 
-        private void UpdateThumbnail(MessageViewModel message, Thumbnail thumbnail, CornerRadius radius = default)
+        private void UpdateThumbnail(MessageViewModel message, Thumbnail thumbnail, Minithumbnail minithumbnail, CornerRadius radius = default)
         {
             if (thumbnail != null && thumbnail.File.Local.IsDownloadingCompleted && thumbnail.Format is ThumbnailFormatJpeg)
             {
@@ -173,13 +175,42 @@ namespace Unigram.Controls.Messages
             }
             else
             {
-                HideThumbnail();
-                SetThumbnail(null);
+                UpdateThumbnail(message, minithumbnail);
 
                 if (thumbnail != null && thumbnail.File.Local.CanBeDownloaded && !thumbnail.File.Local.IsDownloadingActive)
                 {
                     message.ProtoService.DownloadFile(thumbnail.File.Id, 1);
                 }
+            }
+        }
+
+
+        private void UpdateThumbnail(MessageViewModel message, Minithumbnail thumbnail, CornerRadius radius = default)
+        {
+            if (thumbnail != null)
+            {
+                double ratioX = (double)36 / thumbnail.Width;
+                double ratioY = (double)36 / thumbnail.Height;
+                double ratio = Math.Max(ratioX, ratioY);
+
+                var width = (int)(thumbnail.Width * ratio);
+                var height = (int)(thumbnail.Height * ratio);
+
+                var bitmap = new BitmapImage { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical };
+
+                using (var stream = new InMemoryRandomAccessStream())
+                {
+                    PlaceholderImageHelper.Current.WriteBytes(thumbnail.Data, stream);
+                    bitmap.SetSource(stream);
+                }
+
+                ShowThumbnail(radius);
+                SetThumbnail(bitmap);
+            }
+            else
+            {
+                HideThumbnail();
+                SetThumbnail(null);
             }
         }
 
@@ -302,7 +333,7 @@ namespace Unigram.Controls.Messages
             }
             else
             {
-                UpdateThumbnail(message, photo.Photo.GetSmall());
+                UpdateThumbnail(message, photo.Photo.GetSmall(), photo.Photo.Minithumbnail);
             }
 
             if (photo.Caption != null && !string.IsNullOrWhiteSpace(photo.Caption.Text))
@@ -373,7 +404,7 @@ namespace Unigram.Controls.Messages
                 $"\uD83C\uDFAE {game.Game.Title}",
                 string.Empty);
 
-            UpdateThumbnail(message, game.Game.Photo?.GetSmall());
+            UpdateThumbnail(message, game.Game.Photo?.GetSmall(), game.Game.Photo?.Minithumbnail);
 
             return true;
         }
@@ -467,7 +498,7 @@ namespace Unigram.Controls.Messages
             }
             else
             {
-                UpdateThumbnail(message, video.Video.Thumbnail);
+                UpdateThumbnail(message, video.Video.Thumbnail, video.Video.Minithumbnail);
             }
 
             if (video.Caption != null && !string.IsNullOrWhiteSpace(video.Caption.Text))
@@ -486,7 +517,7 @@ namespace Unigram.Controls.Messages
                 Strings.Resources.AttachRound,
                 string.Empty);
 
-            UpdateThumbnail(message, videoNote.VideoNote.Thumbnail, new CornerRadius(18));
+            UpdateThumbnail(message, videoNote.VideoNote.Thumbnail, videoNote.VideoNote.Minithumbnail, new CornerRadius(18));
 
             return true;
         }
@@ -504,7 +535,7 @@ namespace Unigram.Controls.Messages
                 AppendText(", ", animation.Caption.Text.Replace("\r\n", "\n").Replace('\n', ' '));
             }
 
-            UpdateThumbnail(message, animation.Animation.Thumbnail);
+            UpdateThumbnail(message, animation.Animation.Thumbnail, animation.Animation.Minithumbnail);
 
             return true;
         }

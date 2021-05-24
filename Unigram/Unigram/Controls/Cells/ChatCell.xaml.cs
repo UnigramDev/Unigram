@@ -1,19 +1,19 @@
 ﻿using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Common.Chats;
 using Unigram.Controls.Messages;
 using Unigram.Converters;
+using Unigram.Native;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Windows.Foundation;
+using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -646,7 +646,7 @@ namespace Unigram.Controls.Cells
             VisualStateManager.GoToState(this, compact ? "Compact" : "Expanded", false);
         }
 
-        private async void UpdateMinithumbnail(Message message)
+        private void UpdateMinithumbnail(Message message)
         {
             var thumbnail = message?.GetMinithumbnail(false);
             if (thumbnail != null && SettingsService.Current.Diagnostics.Minithumbnails)
@@ -659,12 +659,11 @@ namespace Unigram.Controls.Cells
                 var height = (int)(thumbnail.Height * ratio);
 
                 var bitmap = new BitmapImage { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical };
-                var bytes = thumbnail.Data.ToArray();
 
-                using (var stream = new System.IO.MemoryStream(bytes))
+                using (var stream = new InMemoryRandomAccessStream())
                 {
-                    var random = System.IO.WindowsRuntimeStreamExtensions.AsRandomAccessStream(stream);
-                    await bitmap.SetSourceAsync(random);
+                    PlaceholderImageHelper.Current.WriteBytes(thumbnail.Data, stream);
+                    bitmap.SetSource(stream);
                 }
 
                 Minithumbnail.Source = bitmap;
