@@ -1775,6 +1775,26 @@ namespace Unigram.Views
 
             flyout.CreateFlyoutItem(ViewModel.SearchCommand, Strings.Resources.Search, new FontIcon { Glyph = Icons.Search }, Windows.System.VirtualKey.F);
 
+            if (AdditionalButtons.Visibility == Visibility.Collapsed)
+            {
+                if (VideoCall.Visibility == Visibility.Visible)
+                {
+                    flyout.CreateFlyoutItem(ViewModel.CallCommand, true, Strings.Resources.VideoCall, new FontIcon { Glyph = Icons.Video });
+                }
+
+                if (Call.Visibility == Visibility.Visible)
+                {
+                    if (user != null)
+                    {
+                        flyout.CreateFlyoutItem(ViewModel.CallCommand, false, Strings.Resources.Call, new FontIcon { Glyph = Icons.Phone });
+                    }
+                    else
+                    {
+                        flyout.CreateFlyoutItem(ViewModel.GroupCallJoinCommand, Strings.Resources.VoipGroupJoinCall, new FontIcon { Glyph = Icons.VoiceChat });
+                    }
+                }
+            }
+
             if (supergroup != null && supergroup.Status is not ChatMemberStatusCreator && (supergroup.IsChannel || !string.IsNullOrEmpty(supergroup.Username)))
             {
                 flyout.CreateFlyoutItem(ViewModel.ReportCommand, Strings.Resources.ReportChat, new FontIcon { Glyph = Icons.ShieldError });
@@ -4521,6 +4541,75 @@ namespace Unigram.Views
         private void ChatRecordLocked_Click(object sender, RoutedEventArgs e)
         {
             btnVoiceMessage.Release();
+        }
+
+        private bool _additionalCollapsed = false;
+
+        private void Title_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            Title.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+
+            var profile = ProfileRoot.ActualWidth;
+            var title = Title.ActualWidth;
+
+            var additional = 0;
+
+            foreach (var child in AdditionalButtons.Children)
+            {
+                additional += child.Visibility == Visibility.Visible ? 48 : 0;
+            }
+
+            if (title > profile && profile + additional >= title)
+            {
+                ShowHideAdditionalButtons(false);
+            }
+            else if (title + additional < profile)
+            {
+                ShowHideAdditionalButtons(true);
+            }
+        }
+
+        private void ShowHideAdditionalButtons(bool show)
+        {
+            if ((show && AdditionalButtons.Visibility == Visibility.Visible) || (!show && (AdditionalButtons.Visibility == Visibility.Collapsed || _additionalCollapsed)))
+            {
+                return;
+            }
+
+            if (show)
+            {
+                _additionalCollapsed = false;
+            }
+            else
+            {
+                _additionalCollapsed = true;
+            }
+
+            AdditionalButtons.Visibility = Visibility.Visible;
+
+            var visual = ElementCompositionPreview.GetElementVisual(AdditionalButtons);
+
+            var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
+                if (show)
+                {
+                    _additionalCollapsed = false;
+                }
+                else
+                {
+                    AdditionalButtons.Visibility = Visibility.Collapsed;
+                }
+            };
+
+            var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            opacity.InsertKeyFrame(show ? 0 : 1, 0);
+            opacity.InsertKeyFrame(show ? 1 : 0, 1);
+            opacity.Duration = TimeSpan.FromMilliseconds(150);
+
+            visual.StartAnimation("Opacity", opacity);
+
+            batch.End();
         }
     }
 
