@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -43,9 +44,6 @@ namespace Unigram.Controls.Chats
                 return;
             }
 
-            ClipboardCopyFormat = RichEditClipboardFormat.PlainText;
-
-            Paste += OnPaste;
             //Clipboard.ContentChanged += Clipboard_ContentChanged;
 
             SelectionChanged += OnSelectionChanged;
@@ -68,12 +66,7 @@ namespace Unigram.Controls.Chats
             base.OnTapped(e);
         }
 
-        protected override void OnPaste()
-        {
-            OnPaste(null, null);
-        }
-
-        private async void OnPaste(object sender, TextControlPasteEventArgs e)
+        protected override async void OnPaste(HandledEventArgs e)
         {
             try
             {
@@ -82,19 +75,12 @@ namespace Unigram.Controls.Chats
                 var package = Clipboard.GetContent();
                 if (package.AvailableFormats.Contains(StandardDataFormats.Bitmap) || package.AvailableFormats.Contains(StandardDataFormats.StorageItems))
                 {
-                    if (e != null)
-                    {
-                        e.Handled = true;
-                    }
-
+                    e.Handled = true;
                     await ViewModel.HandlePackageAsync(package);
                 }
                 else if (package.AvailableFormats.Contains(StandardDataFormats.Text) && package.AvailableFormats.Contains("application/x-tl-field-tags"))
                 {
-                    if (e != null)
-                    {
-                        e.Handled = true;
-                    }
+                    e.Handled = true;
 
                     // This is our field format
                     var text = await package.GetTextAsync();
@@ -134,22 +120,9 @@ namespace Unigram.Controls.Chats
 
                     InsertText(text, entities);
                 }
-                else if (package.AvailableFormats.Contains(StandardDataFormats.Text) && package.AvailableFormats.Contains("application/x-td-field-tags"))
+                else
                 {
-                    // This is Telegram Desktop mentions format
-                }
-                else if (package.AvailableFormats.Contains(StandardDataFormats.Text) /*&& package.Contains("Rich Text Format")*/)
-                {
-                    if (e != null)
-                    {
-                        e.Handled = true;
-                    }
-
-                    var text = await package.GetTextAsync();
-                    var start = Document.Selection.StartPosition;
-
-                    Document.Selection.SetText(TextSetOptions.None, text);
-                    Document.Selection.SetRange(start + text.Length, start + text.Length);
+                    Document.Selection.Paste(0);
                 }
             }
             catch { }

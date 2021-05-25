@@ -342,7 +342,7 @@ namespace Unigram.Views.Popups
             var content = Clipboard.GetContent();
             if (content.AvailableFormats.Contains(StandardDataFormats.Text))
             {
-                e.Handled = false;
+                e.Handled = true;
             }
             else
             {
