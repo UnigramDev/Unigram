@@ -40,7 +40,6 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 
 	std::shared_ptr<CanvasControl> m_canvasControl;
 	webrtc::VideoRotation m_rotation{ webrtc::kVideoRotation_0 };
-	CanvasRenderTarget m_target{ nullptr };
 	PixelShaderEffect m_shader{ nullptr };
 	CanvasBitmap m_bitmapY{ nullptr };
 	CanvasBitmap m_bitmapU{ nullptr };
@@ -54,46 +53,35 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 			m_readyToDraw = true;
 
 			if (m_bitmapY != nullptr) {
-				float width = m_bitmapY.SizeInPixels().Width;
-				float height = m_bitmapY.SizeInPixels().Height;
-				float x = 0;
-				float y = 0;
+				float width = sender.Size().Width;
+				float height = sender.Size().Height;
+				float bitmapWidth = m_bitmapY.SizeInPixels().Width;
+				float bitmapHeight = m_bitmapY.SizeInPixels().Height;
 
-				float2 center(sender.Size().Width / 2, sender.Size().Height / 2);
+				bool rotate = m_rotation == webrtc::kVideoRotation_90 || m_rotation == webrtc::kVideoRotation_270;
+				float ratioX = width / (rotate ? bitmapHeight : bitmapWidth);
+				float ratioY = height / (rotate ? bitmapWidth : bitmapHeight);
+				float x = (width - bitmapWidth) / 2;
+				float y = (height - bitmapHeight) / 2;
 
-				float ratioX = sender.Size().Width / width;
-				float ratioY = sender.Size().Height / height;
-
-				if (/*fill && ratioX > ratioY || !fill &&*/ ratioX < ratioY)
-				{
-					width = sender.Size().Width;
-					height *= ratioX;
-					y = (sender.Size().Height - height) / 2;
-				}
-				else
-				{
-					width *= ratioY;
-					height = sender.Size().Height;
-					x = (sender.Size().Width - width) / 2;
-				}
-
+				float3x2 matrix;
 				switch (m_rotation) {
+				case webrtc::kVideoRotation_0:
+					matrix = float3x2::identity();
+					break;
 				case webrtc::kVideoRotation_180:
-					args.DrawingSession().Transform(make_float3x2_rotation(180 * (M_PI / 180), center));
+					matrix = make_float3x2_rotation(180 * (M_PI / 180), float2(width / 2, height / 2));
 					break;
 				case webrtc::kVideoRotation_90:
-					args.DrawingSession().Transform(make_float3x2_rotation(90 * (M_PI / 180), center) * make_float3x2_scale(sender.Size().Height / width, center));
+					matrix = make_float3x2_rotation(90 * (M_PI / 180), float2(width / 2, height / 2));
 					break;
 				case webrtc::kVideoRotation_270:
-					args.DrawingSession().Transform(make_float3x2_rotation(270 * (M_PI / 180), center) * make_float3x2_scale(sender.Size().Height / width, center));
+					matrix = make_float3x2_rotation(270 * (M_PI / 180), float2(width / 2, height / 2));
 					break;
 				}
 
-				auto session = m_target.CreateDrawingSession();
-				session.DrawImage(m_shader);
-				session.Close();
-
-				args.DrawingSession().DrawImage(m_target, winrt::Windows::Foundation::Rect(x, y, width, height));
+				args.DrawingSession().Transform(matrix * make_float3x2_scale(std::min(ratioX, ratioY), float2(width / 2, height / 2)));
+				args.DrawingSession().DrawImage(m_shader, x, y);
 			}
 			});
 	}
@@ -106,11 +94,6 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 		if (m_canvasControl) {
 			m_canvasControl->Draw(m_eventToken);
 			m_canvasControl = nullptr;
-		}
-
-		if (m_target != nullptr) {
-			m_target.Close();
-			m_target = nullptr;
 		}
 
 		if (m_shader != nullptr) {
@@ -145,20 +128,21 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 		rtc::scoped_refptr<webrtc::I420BufferInterface> buffer(frame.video_frame_buffer()->ToI420());
 
 		m_rotation = frame.rotation();
-
 		int32_t width = buffer->width();
 		int32_t height = buffer->height();
 
 		auto sizeY = buffer->StrideY() * height;
 		auto sizeUV = sizeY / 2;
 
-
 		if (m_bitmapY == nullptr || m_bitmapY.SizeInPixels().Width != width || m_bitmapY.SizeInPixels().Height != height)
 		{
 			auto creator = m_canvasControl->as<ICanvasResourceCreatorWithDpi>();
 			auto format = DirectXPixelFormat::R8UIntNormalized;
 
-			m_target = CanvasRenderTarget(creator, width, height);
+			// This is needed to force BGRA rendering
+			uint8_t* fill = new uint8_t[width * height * 4];
+			std::fill_n(fill, width * height * 4, 0xFFFFFFFF);
+			auto bgra = winrt::array_view<uint8_t const>(fill, width * height * 4);
 
 			auto yView = winrt::array_view<uint8_t const>(buffer->DataY(), sizeY);
 			m_bitmapY = CanvasBitmap::CreateFromBytes(creator, yView, width, height, format);
@@ -189,6 +173,9 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 			m_shader.Source1(m_bitmapY);
 			m_shader.Source2(m_bitmapU);
 			m_shader.Source3(m_bitmapV);
+			m_shader.Source4(CanvasBitmap::CreateFromBytes(creator, bgra, width, height, DirectXPixelFormat::R8G8B8A8UIntNormalized));
+
+			delete[] fill;
 		}
 		else
 		{
