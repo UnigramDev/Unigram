@@ -276,7 +276,7 @@
                 </ListView.ItemContainerStyle>
             </controls:TableListView>
 
-            <Rectangle Height="72" VerticalAlignment="Bottom" Canvas.ZIndex="2">
+            <Rectangle x:Name="BottomShadow" Height="72" VerticalAlignment="Bottom" Canvas.ZIndex="2">
                 <Rectangle.Fill>
                     <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
                         <common:Scrim.Gradient>

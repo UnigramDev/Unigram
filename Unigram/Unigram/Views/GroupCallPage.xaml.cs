@@ -342,6 +342,7 @@ namespace Unigram.Views
                     BottomPanel.Padding = new Thickness(8, 8, 8, 42);
                 }
 
+                BottomShadow.Visibility = Visibility.Collapsed;
                 BottomRoot.Padding = new Thickness(4, 8, 4, 8);
                 BottomBackground.Background = new AcrylicBrush { TintColor = Colors.Black, TintOpacity = 0, /*TintLuminosityOpacity = 0.5*/ }; //new SolidColorBrush(Color.FromArgb(0x99, 0x33, 0x33, 0x33));
                 BottomRoot.RowDefinitions[0].Height = new GridLength(1, GridUnitType.Auto);
@@ -413,6 +414,7 @@ namespace Unigram.Views
                     List.Header = ViewportAspect;
                 }
 
+                BottomShadow.Visibility = Visibility.Visible;
                 BottomPanel.Padding = new Thickness(0, 0, 0, 0);
                 BottomRoot.Padding = new Thickness(0, 0, 0, 0);
                 BottomBackground.Background = null;
@@ -1516,6 +1518,14 @@ namespace Unigram.Views
         {
             this.BeginOnUIThread(() =>
             {
+                foreach (var videoInfo in participant.GetVideoInfo())
+                {
+                    if (_gridCells.TryGetValue(videoInfo.EndpointId, out var cell))
+                    {
+                        cell.UpdateGroupCallParticipant(_cacheService, participant, videoInfo);
+                    }
+                }
+
                 var container = List.ContainerFromItem(participant) as SelectorItem;
                 var content = container?.ContentTemplateRoot as Grid;
 
@@ -1673,7 +1683,7 @@ namespace Unigram.Views
                 descriptions[item.Value.EndpointId] = new VoipVideoChannelInfo(item.Value.AudioSource, item.Value.Description, VoipVideoChannelQuality.Thumbnail);
             }
 
-            _manager.SetRequestedVideoChannels(descriptions.Values.ToArray());
+            _manager?.SetRequestedVideoChannels(descriptions.Values.ToArray());
         }
 
         private void AddCell(GroupCallParticipant participant, GroupCallParticipantVideoInfo videoInfo)
