@@ -41,81 +41,53 @@ namespace Unigram.Services
 
         public bool IsEnabled
         {
-            get
-            {
-                return _settingsService.Hash.Length > 0;
-            }
+            get => _settingsService.Hash.Length > 0;
         }
 
         public bool IsSimple
         {
-            get
-            {
-                return _settingsService.IsSimple;
-            }
+            get => _settingsService.IsSimple;
         }
 
         public bool IsLocked
         {
-            get
-            {
-                return _settingsService.IsLocked;
-            }
+            get => _settingsService.IsLocked;
         }
 
         public bool IsBiometricsEnabled
         {
-            get
-            {
-                return _settingsService.IsHelloEnabled;
-            }
-            set
-            {
-                _settingsService.IsHelloEnabled = value;
-            }
+            get => _settingsService.IsHelloEnabled;
+            set =>_settingsService.IsHelloEnabled = value;
         }
 
         public DateTime CloseTime
         {
-            get
-            {
-                return _settingsService.CloseTime;
-            }
-            set
-            {
-                _settingsService.CloseTime = value;
-            }
+            get => _settingsService.CloseTime;
+            set => _settingsService.CloseTime = value;
         }
 
         public int AutolockTimeout
         {
-            get
-            {
-                return _settingsService.AutolockTimeout;
-            }
-            set
-            {
-                _settingsService.AutolockTimeout = value;
-            }
+            get => _settingsService.AutolockTimeout;
+            set => _settingsService.AutolockTimeout = value;
         }
 
         public bool IsLockscreenRequired
         {
-            get
-            {
-                return IsEnabled && ((AutolockTimeout > 0 && CloseTime < DateTime.MaxValue && DateTime.Now > CloseTime.AddSeconds(AutolockTimeout)) || IsLocked);
-            }
+            get => IsEnabled && ((AutolockTimeout > 0 && CloseTime < DateTime.MaxValue && DateTime.Now > CloseTime.AddSeconds(AutolockTimeout)) || IsLocked);
         }
 
         public void Lock()
         {
             _settingsService.IsLocked = true;
+            _settingsService.CloseTime = DateTime.MaxValue;
             Publish(true);
         }
 
         public void Unlock()
         {
             _settingsService.IsLocked = false;
+            _settingsService.CloseTime = DateTime.MaxValue;
             Publish(true);
         }
 
