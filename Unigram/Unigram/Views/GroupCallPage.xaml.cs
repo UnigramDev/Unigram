@@ -30,7 +30,7 @@ using Point = Windows.Foundation.Point;
 
 namespace Unigram.Views
 {
-    public sealed partial class GroupCallPage : Page, IDisposable, IGroupCallDelegate
+    public sealed partial class GroupCallPage : Page, IGroupCallDelegate
     {
         private readonly IProtoService _protoService;
         private readonly ICacheService _cacheService;
@@ -215,26 +215,19 @@ namespace Unigram.Views
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             Dispose();
-            AudioCanvas.RemoveFromVisualTree();
-
-            _prev.Clear();
-
-            _listTokens.Values.ForEach(x => x.Stop());
-            _gridTokens.Values.ForEach(x => x.Stop());
-
-            _gridCells.Clear();
-
-            for (int i = 0; i < Viewport.Children.Count; i++)
-            {
-                if (Viewport.Children[i] is GroupCallParticipantGridCell cell)
-                {
-                    cell.Surface = null;
-                }
-            }
         }
 
-        public void Dispose()
+        public void Dispose(bool? discard = null)
         {
+            if (discard == true && _service != null)
+            {
+                _service.Discard();
+            }
+            else if (discard == false && _service != null)
+            {
+                _service.Leave();
+            }
+
             if (_disposed)
             {
                 return;
@@ -254,6 +247,25 @@ namespace Unigram.Views
                 _service.PropertyChanged -= OnParticipantsChanged;
                 _service = null;
             }
+
+            _prev.Clear();
+
+            _listTokens.Values.ForEach(x => x.Stop());
+            _gridTokens.Values.ForEach(x => x.Stop());
+
+            _listTokens.Clear();
+            _gridTokens.Clear();
+            _gridCells.Clear();
+
+            for (int i = 0; i < Viewport.Children.Count; i++)
+            {
+                if (Viewport.Children[i] is GroupCallParticipantGridCell cell)
+                {
+                    cell.Surface = null;
+                }
+            }
+
+            AudioCanvas.RemoveFromVisualTree();
         }
 
         public void Connect(VoipGroupManager controller)
@@ -930,21 +942,13 @@ namespace Unigram.Views
                 var confirm = await popup.ShowQueuedAsync();
                 if (confirm == ContentDialogResult.Primary)
                 {
-                    if (popup.IsChecked == true)
-                    {
-                        _service.Discard();
-                    }
-                    else
-                    {
-                        _service.Leave();
-                    }
-
+                    Dispose(popup.IsChecked == true);
                     await ApplicationView.GetForCurrentView().ConsolidateAsync();
                 }
             }
             else
             {
-                _service.Leave();
+                Dispose(false);
                 await ApplicationView.GetForCurrentView().ConsolidateAsync();
             }
         }
@@ -969,7 +973,7 @@ namespace Unigram.Views
             var confirm = await popup.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
-                _service.Discard();
+                Dispose(true);
                 await ApplicationView.GetForCurrentView().ConsolidateAsync();
             }
         }

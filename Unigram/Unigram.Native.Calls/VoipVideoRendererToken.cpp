@@ -8,7 +8,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 	m_audioSource(audioSource),
 	m_endpointId(endpointId),
 	m_description(description),
-	m_canvasControl(canvasControl)
+	m_canvasControl(std::make_shared<CanvasControl>(canvasControl))
 	{
 	}
 
@@ -26,10 +26,13 @@ namespace winrt::Unigram::Native::Calls::implementation
 
 	bool VoipVideoRendererToken::IsMatch(hstring endpointId, CanvasControl canvasControl)
 	{
-		return m_endpointId == endpointId && m_canvasControl == canvasControl;
+		return m_endpointId == endpointId && *m_canvasControl == canvasControl;
 	}
 
 	void VoipVideoRendererToken::Stop() {
+		m_canvasControl.reset();
+		m_canvasControl = nullptr;
+
 		m_sink.reset();
 		m_sink = nullptr;
 	}
