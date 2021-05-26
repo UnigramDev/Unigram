@@ -120,9 +120,15 @@ namespace Unigram.Controls.Chats
 
                     InsertText(text, entities);
                 }
-                else
+                else if (package.AvailableFormats.Contains(StandardDataFormats.Text) /*&& package.Contains("Rich Text Format")*/)
                 {
-                    Document.Selection.Paste(0);
+                    e.Handled = true;
+
+                    var text = await package.GetTextAsync();
+                    var start = Document.Selection.StartPosition;
+
+                    Document.Selection.SetText(TextSetOptions.None, text);
+                    Document.Selection.SetRange(start + text.Length, start + text.Length);
                 }
             }
             catch { }
