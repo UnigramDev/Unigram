@@ -1,3 +1,6 @@
+import "Unigram.Native.Calls.idl";
+import "VoipVideoCapture.idl";
+
 namespace Unigram.Native.Calls
 {
     [default_interface]
@@ -7,5 +10,7 @@ namespace Unigram.Native.Calls
 
         String AudioInputId;
         String AudioOutputId;
+        VoipVideoContentType VideoContentType;
+        IVoipVideoCapture VideoCapture;
     }
 }

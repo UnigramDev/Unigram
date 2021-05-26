@@ -1,0 +1,11 @@
+namespace Unigram.Native.Calls
+{
+    delegate void MediaChannelDescriptionsRequestedDeferral(Telegram.Td.Api.GroupCallMediaChannelDescriptions descriptions);
+
+    [default_interface]
+    runtimeclass MediaChannelDescriptionsRequestedEventArgs 
+    {
+        Windows.Foundation.Collections.IVector<Int32> Ssrcs{ get; };
+        MediaChannelDescriptionsRequestedDeferral Deferral{ get; };
+    }
+}

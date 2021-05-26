@@ -1,8 +1,5 @@
 ﻿#include "pch.h"
 #include "GroupNetworkStateChangedEventArgs.h"
-#if __has_include("GroupNetworkStateChangedEventArgs.g.cpp")
-#include "GroupNetworkStateChangedEventArgs.g.cpp"
-#endif
 
 namespace winrt::Unigram::Native::Calls::implementation
 {

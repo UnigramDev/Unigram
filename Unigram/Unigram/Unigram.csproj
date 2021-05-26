@@ -21,7 +21,7 @@
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
     <AppxBundle>Always</AppxBundle>
-    <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
+    <AppxBundlePlatforms>x64</AppxBundlePlatforms>
     <PackageCertificateThumbprint>B87C6AEEAAB0BCB6EC3EBC452C77E47086B56D4E</PackageCertificateThumbprint>
     <BuildAppxSideloadPackageForUap>False</BuildAppxSideloadPackageForUap>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
@@ -176,6 +176,7 @@
     <Compile Include="Common\ConcurrentQueueWorker.cs" />
     <Compile Include="Common\CurrencyNumberFormatter.cs" />
     <Compile Include="Common\DateTimeParser.cs" />
+    <Compile Include="Common\DiffUtil.cs" />
     <Compile Include="Common\MediaDeviceWatcher.cs" />
     <Compile Include="Common\DisposableMutex.cs" />
     <Compile Include="Common\DropShadowEx.cs" />
@@ -185,6 +186,7 @@
     <Compile Include="Common\LoopThreadPool.cs" />
     <Compile Include="Common\MenuFlyoutHelper.cs" />
     <Compile Include="Common\RemoteFileStream.cs" />
+    <Compile Include="Common\Scrim.cs" />
     <Compile Include="Common\SoundEffects.cs" />
     <Compile Include="Common\SunDate.cs" />
     <Compile Include="Common\TdException.cs" />
@@ -233,6 +235,9 @@
     </Compile>
     <Compile Include="Controls\Cells\ChatShareCell.xaml.cs">
       <DependentUpon>ChatShareCell.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Cells\GroupCallParticipantGridCell.xaml.cs">
+      <DependentUpon>GroupCallParticipantGridCell.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Cells\SessionCell.xaml.cs">
       <DependentUpon>SessionCell.xaml</DependentUpon>
@@ -525,6 +530,9 @@
     <Compile Include="Views\Payments\PaymentFormPage.xaml.cs">
       <DependentUpon>PaymentFormPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Popups\BackgroundPopup.xaml.cs">
+      <DependentUpon>BackgroundPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Popups\InputPopup.xaml.cs">
       <DependentUpon>InputPopup.xaml</DependentUpon>
     </Compile>
@@ -574,7 +582,6 @@
     <Compile Include="Selectors\StickerSetTemplateSelector.cs" />
     <Compile Include="Selectors\StorageMediaTemplateSelector.cs" />
     <Compile Include="Selectors\StorageStatisticsTemplateSelector.cs" />
-    <Compile Include="Selectors\WallPaperTemplateSelector.cs" />
     <Compile Include="Services\AlertsService.cs" />
     <Compile Include="Services\EmojiSetService.cs" />
     <Compile Include="Services\Keyboard\KeyboardEventArgs.cs" />
@@ -752,9 +759,6 @@
     <Compile Include="ViewModels\TLViewModelBase.cs" />
     <Compile Include="ViewModels\Users\UserCommonChatsViewModel.cs" />
     <Compile Include="ViewModels\Users\UserCreateViewModel.cs" />
-    <Compile Include="Views\BackgroundPage.xaml.cs">
-      <DependentUpon>BackgroundPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\BasicGroups\BasicGroupCreateStep1Page.xaml.cs">
       <DependentUpon>BasicGroupCreateStep1Page.xaml</DependentUpon>
     </Compile>
@@ -1367,6 +1371,7 @@
     <Content Include="Assets\Animations\VoiceSetReminderToRaiseHand.tgs" />
     <Content Include="Assets\Animations\VoiceStart.tgs" />
     <Content Include="Assets\Animations\VoiceUnmuteToRaiseHand.tgs" />
+    <Content Include="Assets\i420.bin" />
     <None Include="Unigram_StoreKey.pfx" />
     <None Include="Unigram_TemporaryKey.pfx" />
   </ItemGroup>
@@ -1427,6 +1432,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Cells\ChatShareCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Cells\GroupCallParticipantGridCell.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1690,6 +1699,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Popups\BackgroundPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Popups\InputPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1737,10 +1750,6 @@
     <Page Include="Themes\ThemeTemplates.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\BackgroundPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\BasicGroups\BasicGroupCreateStep1Page.xaml">
       <Generator>MSBuild:Compile</Generator>

@@ -1,23 +1,28 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
+using Windows.Foundation;
 using Windows.System;
+using Windows.UI.Xaml.Data;
 
 namespace Unigram.Collections
 {
-    public class GroupCallParticipantsCollection : ObservableCollection<GroupCallParticipant>, IDelegable<IGroupCallDelegate>, IHandle<UpdateGroupCall>, IHandle<UpdateGroupCallParticipant>
+    public class GroupCallParticipantsCollection : ObservableCollection<GroupCallParticipant>, IDelegable<IGroupCallDelegate>, IHandle<UpdateGroupCall>, IHandle<UpdateGroupCallParticipant>, ISupportIncrementalLoading
     {
         private readonly IProtoService _protoService;
         private readonly IEventAggregator _aggregator;
 
-        private readonly int _groupCallId;
-        private bool _loadedAllParticipants;
+        private readonly Dictionary<int, GroupCallParticipant> _audioSources = new();
+
+        private GroupCall _groupCall;
 
         public IGroupCallDelegate Delegate { get; set; }
 
@@ -26,39 +31,50 @@ namespace Unigram.Collections
             _protoService = protoService;
             _aggregator = aggregator;
 
-            _groupCallId = groupCall.Id;
-            _loadedAllParticipants = groupCall.LoadedAllParticipants;
+            _groupCall = groupCall;
 
             _aggregator.Subscribe(this);
         }
 
         public void Load()
         {
-            _protoService.Send(new LoadGroupCallParticipants(_groupCallId, 100));
+            _protoService.Send(new LoadGroupCallParticipants(_groupCall.Id, 100));
         }
 
         public void Dispose()
         {
             _aggregator.Unsubscribe(this);
             _handlers.Clear();
+
+            Delegate = null;
+        }
+
+        public bool TryGetFromAudioSourceId(int audioSourceId, out GroupCallParticipant participant)
+        {
+            return _audioSources.TryGetValue(audioSourceId, out participant);
         }
 
         public void Handle(UpdateGroupCall update)
         {
-            if (_groupCallId == update.GroupCall.Id)
+            if (_groupCall.Id == update.GroupCall.Id)
             {
-                if (_loadedAllParticipants && _loadedAllParticipants != update.GroupCall.LoadedAllParticipants)
+                if (_groupCall.LoadedAllParticipants && _groupCall.LoadedAllParticipants != update.GroupCall.LoadedAllParticipants)
+                {
+                    Load();
+                }
+                else if (_groupCall.ParticipantCount == Items.Count && _groupCall.ParticipantCount < update.GroupCall.ParticipantCount)
                 {
                     Load();
                 }
 
-                _loadedAllParticipants = update.GroupCall.LoadedAllParticipants;
+                _groupCall = update.GroupCall;
+                OnPropertyChanged(new System.ComponentModel.PropertyChangedEventArgs("Count"));
             }
         }
 
         public void Handle(UpdateGroupCallParticipant update)
         {
-            if (_groupCallId == update.GroupCallId)
+            if (_groupCall.Id == update.GroupCallId)
             {
                 if (update.Participant.Order.Length > 0)
                 {
@@ -70,6 +86,7 @@ namespace Unigram.Collections
                             RemoveAt(prevIndex);
                         }
 
+                        _audioSources[update.Participant.IsCurrentUser ? 0 : update.Participant.AudioSourceId] = update.Participant;
                         Insert(Math.Min(Count, nextIndex), update.Participant);
                     }
                     else if (updated != null)
@@ -82,6 +99,12 @@ namespace Unigram.Collections
                     var already = this.FirstOrDefault(x => x.ParticipantId.IsEqual(update.Participant.ParticipantId));
                     if (already != null)
                     {
+                        if (already.HasVideoInfo())
+                        {
+                            Delegate?.VideoInfoRemoved(already, already.ScreenSharingVideoInfo?.EndpointId, already.VideoInfo?.EndpointId);
+                        }
+
+                        _audioSources.Remove(update.Participant.IsCurrentUser ? 0 : update.Participant.AudioSourceId);
                         Remove(already);
                     }
                 }
@@ -117,8 +140,41 @@ namespace Unigram.Collections
                 next++;
             }
 
+            string[] removedVideoInfo = null;
+            GroupCallParticipantVideoInfo[] addedVideoInfo = null;
+
             if (update != null)
             {
+                if (update.ScreenSharingVideoInfo?.EndpointId != participant.ScreenSharingVideoInfo?.EndpointId)
+                {
+                    if (update.ScreenSharingVideoInfo?.EndpointId != null)
+                    {
+                        removedVideoInfo ??= new string[2];
+                        removedVideoInfo[0] = update.ScreenSharingVideoInfo.EndpointId;
+                    }
+
+                    if (participant.ScreenSharingVideoInfo?.EndpointId != null)
+                    {
+                        addedVideoInfo ??= new GroupCallParticipantVideoInfo[2];
+                        addedVideoInfo[0] = participant.ScreenSharingVideoInfo;
+                    }
+                }
+
+                if (update.VideoInfo?.EndpointId != participant.VideoInfo?.EndpointId)
+                {
+                    if (update.VideoInfo?.EndpointId != null)
+                    {
+                        removedVideoInfo ??= new string[2];
+                        removedVideoInfo[1] = update.VideoInfo.EndpointId;
+                    }
+
+                    if (participant.VideoInfo?.EndpointId != null)
+                    {
+                        addedVideoInfo ??= new GroupCallParticipantVideoInfo[2];
+                        addedVideoInfo[1] = participant.VideoInfo;
+                    }
+                }
+
                 update.CanUnmuteSelf = participant.CanUnmuteSelf;
                 update.CanBeMutedForAllUsers = participant.CanBeMutedForAllUsers;
                 update.CanBeMutedForCurrentUser = participant.CanBeMutedForCurrentUser;
@@ -132,12 +188,63 @@ namespace Unigram.Collections
                 update.VolumeLevel = participant.VolumeLevel;
                 update.Bio = participant.Bio;
                 update.Order = participant.Order;
-                update.Source = participant.Source;
+                update.ScreenSharingVideoInfo = participant.ScreenSharingVideoInfo;
+                update.VideoInfo = participant.VideoInfo;
+                update.AudioSourceId = participant.AudioSourceId;
                 update.ParticipantId = participant.ParticipantId;
+            }
+            else if (index >= 0 && (participant.ScreenSharingVideoInfo != null || participant.VideoInfo != null))
+            {
+                addedVideoInfo = new[] { participant.ScreenSharingVideoInfo, participant.VideoInfo };
+            }
+
+            if (removedVideoInfo != null)
+            {
+                Delegate?.VideoInfoRemoved(participant, removedVideoInfo);
+            }
+
+            if (addedVideoInfo != null)
+            {
+                Delegate?.VideoInfoAdded(participant, addedVideoInfo);
             }
 
             return index < int.MaxValue ? index : Count;
         }
+
+        public void LoadVideoInfo()
+        {
+            foreach (var participant in this)
+            {
+                if (participant.ScreenSharingVideoInfo != null || participant.VideoInfo != null)
+                {
+                    Delegate?.VideoInfoAdded(participant, new[] { participant.ScreenSharingVideoInfo, participant.VideoInfo });
+                }
+            }
+        }
+
+        public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+        {
+            return AsyncInfo.Run(async token =>
+            {
+                count = (uint)Count;
+
+                var response = await _protoService.SendAsync(new LoadGroupCallParticipants(_groupCall.Id, 100));
+                if (response is Ok)
+                {
+                    count = (uint)Count - count;
+                }
+                else
+                {
+                    count = 0;
+                }
+
+                return new LoadMoreItemsResult { Count = count };
+            });
+        }
+
+        public bool HasMoreItems => !_groupCall.LoadedAllParticipants;
+
+        #region Dispatcher queue
 
         private readonly ConcurrentDictionary<DispatcherQueue, NotifyCollectionChangedEventHandler> _handlers
             = new ConcurrentDictionary<DispatcherQueue, NotifyCollectionChangedEventHandler>();
@@ -146,7 +253,14 @@ namespace Unigram.Collections
         {
             foreach (var dispatcher in _handlers)
             {
-                dispatcher.Key.TryEnqueue(() => dispatcher.Value?.Invoke(this, e));
+                dispatcher.Key.TryEnqueue(() =>
+                {
+                    try
+                    {
+                        dispatcher.Value?.Invoke(this, e);
+                    }
+                    catch { }
+                });
             }
         }
 
@@ -183,5 +297,7 @@ namespace Unigram.Collections
                 }
             }
         }
+
+        #endregion
     }
 }

@@ -154,6 +154,11 @@ namespace Unigram.Collections
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
 
+        public void Change(int index)
+        {
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, this[index], index));
+        }
+
         public void Clear(bool suppress)
         {
             using (SuppressEvents())

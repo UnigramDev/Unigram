@@ -36,5 +36,12 @@ namespace Unigram.Native.Calls
 		Broadcast = 2,
 	};
 
+	enum VoipVideoContentType
+	{
+		None = 0,
+		Screencast = 1,
+		Generic = 2
+	};
+
 } // namespace Unigram.Native.Calls
 

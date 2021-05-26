@@ -2410,6 +2410,15 @@ namespace Unigram.ViewModels
             }
         }
 
+        public void ShowDraft()
+        {
+            var chat = _chat;
+            if (chat != null)
+            {
+                ShowDraftMessage(chat);
+            }
+        }
+
         private async void ShowDraftMessage(Chat chat)
         {
             DraftMessage draft;
@@ -2497,7 +2506,17 @@ namespace Unigram.ViewModels
 
         public void SaveDraft()
         {
+            SaveDraft(false);
+        }
+
+        public void SaveDraft(bool clear = false)
+        {
             if (_currentInlineBot != null || (_type != DialogType.History && _type != DialogType.Thread))
+            {
+                return;
+            }
+
+            if (_selectionMode != ListViewSelectionMode.None && !clear)
             {
                 return;
             }
@@ -2523,7 +2542,7 @@ namespace Unigram.ViewModels
                 }
             }
 
-            var formattedText = GetFormattedText();
+            var formattedText = GetFormattedText(clear);
             if (formattedText == null)
             {
                 return;
@@ -3526,7 +3545,7 @@ namespace Unigram.ViewModels
 
                 if (CacheService.IsRepliesChat(chat))
                 {
-                    ToggleMuteExecute(CacheService.GetNotificationSettingsMuteFor(chat) > 0);
+                    ToggleMuteExecute(CacheService.Notifications.GetMutedFor(chat) > 0);
                 }
                 else if (chat.IsBlocked)
                 {
@@ -3571,7 +3590,7 @@ namespace Unigram.ViewModels
                     }
                     else
                     {
-                        ToggleMuteExecute(CacheService.GetNotificationSettingsMuteFor(chat) > 0);
+                        ToggleMuteExecute(CacheService.Notifications.GetMutedFor(chat) > 0);
                     }
                 }
                 else

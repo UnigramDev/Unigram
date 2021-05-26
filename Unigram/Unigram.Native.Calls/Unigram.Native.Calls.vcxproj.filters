@@ -80,6 +80,39 @@
     <ClCompile Include="C:\tgcalls\tgcalls\StaticThreads.cpp">
       <Filter>tgcalls</Filter>
     </ClCompile>
+    <ClCompile Include="C:\tgcalls\tgcalls\FakeVideoTrackSource.cpp">
+      <Filter>tgcalls</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\tgcalls\tgcalls\third-party\json11.cpp">
+      <Filter>tgcalls\third-party</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\tgcalls\tgcalls\group\GroupJoinPayloadInternal.cpp">
+      <Filter>tgcalls\group</Filter>
+    </ClCompile>
+    <ClCompile Include="rnnoise\src\denoise.c">
+      <Filter>rnnoise\src</Filter>
+    </ClCompile>
+    <ClCompile Include="rnnoise\src\kiss_fft.c">
+      <Filter>rnnoise\src</Filter>
+    </ClCompile>
+    <ClCompile Include="rnnoise\src\rnn.c">
+      <Filter>rnnoise\src</Filter>
+    </ClCompile>
+    <ClCompile Include="rnnoise\src\rnn_data.c">
+      <Filter>rnnoise\src</Filter>
+    </ClCompile>
+    <ClCompile Include="rnnoise\src\rnn_reader.c">
+      <Filter>rnnoise\src</Filter>
+    </ClCompile>
+    <ClCompile Include="rnnoise\src\celt_lpc.c">
+      <Filter>rnnoise\src</Filter>
+    </ClCompile>
+    <ClCompile Include="rnnoise\src\pitch.c">
+      <Filter>rnnoise\src</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\tgcalls\tgcalls\platform\uwp\UwpScreenCapturer.cpp">
+      <Filter>tgcalls\platform\uwp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -177,6 +210,60 @@
     <ClInclude Include="C:\tgcalls\tgcalls\StaticThreads.h">
       <Filter>tgcalls</Filter>
     </ClInclude>
+    <ClInclude Include="C:\tgcalls\tgcalls\AudioFrame.h">
+      <Filter>tgcalls</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\tgcalls\tgcalls\FakeVideoTrackSource.h">
+      <Filter>tgcalls</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\tgcalls\tgcalls\third-party\json11.hpp">
+      <Filter>tgcalls\third-party</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\tgcalls\tgcalls\group\GroupJoinPayload.h">
+      <Filter>tgcalls\group</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\tgcalls\tgcalls\group\GroupJoinPayloadInternal.h">
+      <Filter>tgcalls\group</Filter>
+    </ClInclude>
+    <ClInclude Include="rnnoise\src\_kiss_fft_guts.h">
+      <Filter>rnnoise\src</Filter>
+    </ClInclude>
+    <ClInclude Include="rnnoise\src\arch.h">
+      <Filter>rnnoise\src</Filter>
+    </ClInclude>
+    <ClInclude Include="rnnoise\src\celt_lpc.h">
+      <Filter>rnnoise\src</Filter>
+    </ClInclude>
+    <ClInclude Include="rnnoise\src\common.h">
+      <Filter>rnnoise\src</Filter>
+    </ClInclude>
+    <ClInclude Include="rnnoise\src\kiss_fft.h">
+      <Filter>rnnoise\src</Filter>
+    </ClInclude>
+    <ClInclude Include="rnnoise\src\opus_types.h">
+      <Filter>rnnoise\src</Filter>
+    </ClInclude>
+    <ClInclude Include="rnnoise\src\pitch.h">
+      <Filter>rnnoise\src</Filter>
+    </ClInclude>
+    <ClInclude Include="rnnoise\src\rnn.h">
+      <Filter>rnnoise\src</Filter>
+    </ClInclude>
+    <ClInclude Include="rnnoise\src\rnn_data.h">
+      <Filter>rnnoise\src</Filter>
+    </ClInclude>
+    <ClInclude Include="rnnoise\src\tansig_table.h">
+      <Filter>rnnoise\src</Filter>
+    </ClInclude>
+    <ClInclude Include="rnnoise\include\rnnoise.h">
+      <Filter>rnnoise\include</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\tgcalls\tgcalls\platform\uwp\UwpScreenCapturer.h">
+      <Filter>tgcalls\platform\uwp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\tgcalls\tgcalls\platform\uwp\UwpContext.h">
+      <Filter>tgcalls\platform\uwp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="VoipManager.rc" />
@@ -191,7 +278,11 @@
     <Midl Include="VoipGroupManager.idl" />
     <Midl Include="VoipGroupDescriptor.idl" />
     <Midl Include="GroupNetworkStateChangedEventArgs.idl" />
-    <Midl Include="FrameRequestedEventArgs.idl" />
+    <Midl Include="BroadcastPartRequestedEventArgs.idl" />
+    <Midl Include="MediaChannelDescriptionsRequestedEventArgs.idl" />
+    <Midl Include="VoipVideoRendererToken.idl" />
+    <Midl Include="VoipScreenCapture.idl" />
+    <Midl Include="VoipVideoChannelInfo.idl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -213,6 +304,21 @@
     </Filter>
     <Filter Include="tgcalls\group">
       <UniqueIdentifier>{c5de79dc-c96f-4804-97e3-f15f0e2f6d31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tgcalls\third-party">
+      <UniqueIdentifier>{4de2d334-104d-477b-ae41-5cd1c09ee0c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rnnoise">
+      <UniqueIdentifier>{d0d669a5-778d-4def-88fe-8f6685e8f873}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rnnoise\src">
+      <UniqueIdentifier>{e51ba1b0-7593-45a8-a3b6-65659762c83d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rnnoise\include">
+      <UniqueIdentifier>{8228177f-ca00-4b59-a34f-d090a1d1b769}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tgcalls\platform\uwp">
+      <UniqueIdentifier>{eee909dd-ec13-4c3c-b8dc-250a4267947f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

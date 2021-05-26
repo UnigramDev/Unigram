@@ -7,6 +7,9 @@ namespace Unigram.Converters
 {
     public class Icons
     {
+        public const string ArrowMinimize = "\uE965";
+        public const string ArrowMaximize = "\uE966";
+
         public const string Globe = "\uE774"; 
         public const string Loading = "\uE1CD";
 
@@ -94,6 +97,9 @@ namespace Unigram.Converters
         public const string FolderOpen = "\uE838"; 
         public const string OpenIn = "\uE7AC";
 
+        public const string ShareScreenStart = "\uE92F";
+        public const string ShareScreenStop = "\uE92E";
+
         public const string Person = "\uE77B"; 
         public const string PersonAdd = "\uE8FA"; 
 
@@ -101,7 +107,13 @@ namespace Unigram.Converters
         public const string Search = "\uE721"; 
         public const string Settings = "\uE713"; 
         public const string Phone = "\uE717"; 
-        public const string Video = "\uE714"; 
+        public const string Video = "\uE714";
+        public const string SmallVideoFilled = "\uE915";
+        public const string VideoFilled = "\uE964";
+        public const string VideoOffFilled = "\uE963";
+        public const string SmallScreencastFilled = "\uE910";
+        public const string ShareScreenFilled = "\uE956";
+        public const string ShareScreenStopFilled = "\uE955";
         public const string Camera = "\uE722"; 
         public const string MusicNote = "\uE8D6"; 
         public const string MicOn = "\uE720"; 

@@ -130,13 +130,12 @@ namespace Unigram.Services
         ChatListUnreadCount GetUnreadCount(ChatList chatList);
         void SetUnreadCount(ChatList chatList, UpdateUnreadChatCount chatCount = null, UpdateUnreadMessageCount messageCount = null);
 
-        int GetNotificationSettingsMuteFor(Chat chat);
-        ScopeNotificationSettings GetScopeNotificationSettings(Chat chat);
-
         Task<StickerSet> GetAnimatedSetAsync(AnimatedSetType type);
         bool IsDiceEmoji(string text, out string dice);
 
         File GetEmojiSound(string emoji);
+
+        Settings.NotificationsSettings Notifications { get; }
     }
 
     public partial class ProtoService : IProtoService, ClientResultHandler
@@ -164,8 +163,6 @@ namespace Unigram.Services
 
         private readonly Dictionary<int, Supergroup> _supergroups = new Dictionary<int, Supergroup>();
         private readonly Dictionary<int, SupergroupFullInfo> _supergroupsFull = new Dictionary<int, SupergroupFullInfo>();
-
-        private readonly Dictionary<Type, ScopeNotificationSettings> _scopeNotificationSettings = new Dictionary<Type, ScopeNotificationSettings>();
 
         private readonly Dictionary<int, ChatListUnreadCount> _unreadCounts = new Dictionary<int, ChatListUnreadCount>();
 
@@ -624,7 +621,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             _supergroups.Clear();
             _supergroupsFull.Clear();
 
-            _scopeNotificationSettings.Clear();
+            _settings.Notifications.Scope.Clear();
 
             _unreadCounts.Clear();
 
@@ -926,6 +923,8 @@ Read more about how to update your device [here](https://support.microsoft.com/h
         }
 
         public AuthorizationState AuthorizationState => _authorizationState;
+
+        public Settings.NotificationsSettings Notifications => _settings.Notifications;
 
         public ConnectionState GetConnectionState()
         {
@@ -1438,61 +1437,6 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 
 
 
-        public int GetNotificationSettingsMuteFor(Chat chat)
-        {
-            if (chat.NotificationSettings.UseDefaultMuteFor)
-            {
-                Type scope = null;
-                switch (chat.Type)
-                {
-                    case ChatTypePrivate:
-                    case ChatTypeSecret:
-                        scope = typeof(NotificationSettingsScopePrivateChats);
-                        break;
-                    case ChatTypeBasicGroup:
-                        scope = typeof(NotificationSettingsScopeGroupChats);
-                        break;
-                    case ChatTypeSupergroup supergroup:
-                        scope = supergroup.IsChannel ? typeof(NotificationSettingsScopeChannelChats) : typeof(NotificationSettingsScopeGroupChats);
-                        break;
-                }
-
-                if (scope != null && _scopeNotificationSettings.TryGetValue(scope, out ScopeNotificationSettings value))
-                {
-                    return value.MuteFor;
-                }
-            }
-
-            return chat.NotificationSettings.MuteFor;
-        }
-
-        public ScopeNotificationSettings GetScopeNotificationSettings(Chat chat)
-        {
-            Type scope = null;
-            switch (chat.Type)
-            {
-                case ChatTypePrivate:
-                case ChatTypeSecret:
-                    scope = typeof(NotificationSettingsScopePrivateChats);
-                    break;
-                case ChatTypeBasicGroup:
-                    scope = typeof(NotificationSettingsScopeGroupChats);
-                    break;
-                case ChatTypeSupergroup supergroup:
-                    scope = supergroup.IsChannel ? typeof(NotificationSettingsScopeChannelChats) : typeof(NotificationSettingsScopeGroupChats);
-                    break;
-            }
-
-            if (scope != null && _scopeNotificationSettings.TryGetValue(scope, out ScopeNotificationSettings value))
-            {
-                return value;
-            }
-
-            return null;
-        }
-
-
-
         public bool IsStickerFavorite(int id)
         {
             if (_favoriteStickers != null)
@@ -1957,7 +1901,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             }
             else if (update is UpdateScopeNotificationSettings updateScopeNotificationSettings)
             {
-                _scopeNotificationSettings[updateScopeNotificationSettings.Scope.GetType()] = updateScopeNotificationSettings.NotificationSettings;
+                _settings.Notifications.Scope[updateScopeNotificationSettings.Scope.GetType()] = updateScopeNotificationSettings.NotificationSettings;
             }
             else if (update is UpdateSecretChat updateSecretChat)
             {

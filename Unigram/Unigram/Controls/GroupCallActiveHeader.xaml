@@ -13,6 +13,21 @@
     <Grid Height="40">
         <xaml:CanvasControl x:Name="Canvas" Draw="CanvasControl_Draw" Margin="0,-48,0,0" Height="88" VerticalAlignment="Top" IsHitTestVisible="False"/>
 
+        <HyperlinkButton
+            Click="Title_Click"
+            Style="{StaticResource EmptyHyperlinkButtonStyle}"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch">
+            <Border>
+                <TextBlock
+                    x:Name="TitleInfo"
+                    Style="{StaticResource BaseTextBlockStyle}"
+                    TextAlignment="Center"
+                    VerticalAlignment="Center"
+                    Foreground="#FFFFFF"/>
+            </Border>
+        </HyperlinkButton>
+
         <controls:AnimatedGlyphToggleButton
             x:Name="Audio"
             Click="Audio_Click"
@@ -21,5 +36,15 @@
             Foreground="#FFFFFF"
             Width="40"
             Height="40"/>
+
+        <controls:GlyphButton
+            Click="Dismiss_Click"
+            Glyph="&#xE711;"
+            Foreground="#FFFFFF"
+            Height="40"
+            Grid.Column="7"
+            HorizontalAlignment="Right"
+            AutomationProperties.Name="{CustomResource AccDescrClosePlayer}"
+            ToolTipService.ToolTip="{CustomResource AccDescrClosePlayer}"/>
     </Grid>
 </UserControl>

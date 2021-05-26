@@ -13,7 +13,10 @@ using Unigram.Services.ViewService;
 using Unigram.ViewModels;
 using Unigram.Views;
 using Unigram.Views.Popups;
+using Windows.Data.Json;
 using Windows.Devices.Enumeration;
+using Windows.Graphics.Capture;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -21,6 +24,9 @@ namespace Unigram.Services
 {
     public interface IGroupCallService : INotifyPropertyChanged
     {
+        ICacheService CacheService { get; }
+
+        string CurrentVideoInput { get; set; }
         string CurrentAudioInput { get; set; }
         string CurrentAudioOutput { get; set; }
 
@@ -29,14 +35,14 @@ namespace Unigram.Services
         GroupCallParticipantsCollection Participants { get; }
 
         Chat Chat { get; }
-        
+
         GroupCall Call { get; }
         GroupCallParticipant CurrentUser { get; }
 
         int Source { get; }
         bool IsConnected { get; }
 
-        void Show();
+        Task ShowAsync();
 
         Task<bool> CanChooseAliasAsync(long chatId);
 
@@ -46,11 +52,24 @@ namespace Unigram.Services
 
         Task CreateAsync(long chatId);
         void Discard();
+
+        bool IsCapturing { get; }
+        void ToggleCapturing();
+
+        VoipGroupManager ScreenSharing { get; }
+
+        bool IsScreenSharing { get; }
+        void StartScreenSharing();
+        void EndScreenSharing();
+
+        Task ConsolidateAsync();
     }
 
     public class GroupCallService : TLViewModelBase, IGroupCallService, IHandle<UpdateGroupCall>, IHandle<UpdateGroupCallParticipant>
     {
         private readonly IViewService _viewService;
+
+        private readonly MediaDeviceWatcher _videoWatcher;
 
         private readonly MediaDeviceWatcher _inputWatcher;
         private readonly MediaDeviceWatcher _outputWatcher;
@@ -65,8 +84,14 @@ namespace Unigram.Services
 
         private GroupCall _call;
         private GroupCallParticipant _currentUser;
+
         private VoipGroupManager _manager;
+        private VoipVideoCapture _capturer;
         private int _source;
+
+        private VoipGroupManager _screenManager;
+        private VoipScreenCapture _screenCapturer;
+        private int _screenSource;
 
         private bool _isScheduled;
         private bool _isConnected;
@@ -78,6 +103,7 @@ namespace Unigram.Services
         {
             _viewService = viewService;
 
+            _videoWatcher = new MediaDeviceWatcher(DeviceClass.VideoCapture, id => _capturer?.SwitchToDevice(id));
             _inputWatcher = new MediaDeviceWatcher(DeviceClass.AudioCapture, id => _manager?.SetAudioInputDevice(id));
             _outputWatcher = new MediaDeviceWatcher(DeviceClass.AudioRender, id => _manager?.SetAudioOutputDevice(id));
 
@@ -110,19 +136,19 @@ namespace Unigram.Services
 
             tsc = _availableAliasesTask = new TaskCompletionSource<MessageSenders>();
 
-            var result = await CanChooseAliasAsyncInternal(chatId);
+            var result = await CanChooseAliasAsyncInternal(tsc, chatId);
             tsc.TrySetResult(result);
 
             return result?.TotalCount > 1;
         }
 
-        private async Task<MessageSenders> CanChooseAliasAsyncInternal(long chatId)
+        private async Task<MessageSenders> CanChooseAliasAsyncInternal(TaskCompletionSource<MessageSenders> tsc, long chatId)
         {
             var response = await ProtoService.SendAsync(new GetVoiceChatAvailableParticipants(chatId));
             if (response is MessageSenders senders)
             {
                 _availableAliases = senders;
-                _availableAliasesTask.TrySetResult(senders);
+                tsc.TrySetResult(senders);
                 return senders;
             }
 
@@ -132,12 +158,6 @@ namespace Unigram.Services
 
         public async Task JoinAsync(long chatId)
         {
-            var permissions = await MediaDeviceWatcher.CheckAccessAsync(false);
-            if (permissions == false)
-            {
-                return;
-            }
-
             var chat = CacheService.GetChat(chatId);
             if (chat == null || chat.VoiceChat.GroupCallId == 0)
             {
@@ -174,12 +194,6 @@ namespace Unigram.Services
 
         public async Task CreateAsync(long chatId)
         {
-            var permissions = await MediaDeviceWatcher.CheckAccessAsync(false);
-            if (permissions == false)
-            {
-                return;
-            }
-
             var chat = CacheService.GetChat(chatId);
             if (chat == null || chat.VoiceChat.GroupCallId != 0)
             {
@@ -199,7 +213,7 @@ namespace Unigram.Services
                 if (popup.IsScheduleSelected)
                 {
                     var schedule = new ScheduleVoiceChatPopup(chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel);
-                    
+
                     var again = await schedule.ShowQueuedAsync();
                     if (again != ContentDialogResult.Primary)
                     {
@@ -266,7 +280,8 @@ namespace Unigram.Services
                 _manager = new VoipGroupManager(descriptor);
                 _manager.NetworkStateUpdated += OnNetworkStateUpdated;
                 _manager.AudioLevelsUpdated += OnAudioLevelsUpdated;
-                _manager.FrameRequested += OnFrameRequested;
+                _manager.BroadcastPartRequested += OnBroadcastPartRequested;
+                _manager.MediaChannelDescriptionsRequested += OnMediaChannelDescriptionsRequested;
 
                 await ShowAsync(groupCall, _manager);
 
@@ -326,26 +341,142 @@ namespace Unigram.Services
                 Participants?.Dispose();
                 Participants = new GroupCallParticipantsCollection(ProtoService, Aggregator, groupCall);
 
-                var response = await ProtoService.SendAsync(new JoinGroupCall(groupCall.Id, alias, payload, ssrc, true, string.Empty));
-                if (response is GroupCallJoinResponseWebrtc data)
+                var response = await ProtoService.SendAsync(new JoinGroupCall(groupCall.Id, alias, ssrc, payload, true, false, string.Empty));
+                if (response is Text json)
                 {
-                    _source = ssrc;
-                    _manager.SetConnectionMode(VoipGroupConnectionMode.Rtc, true);
-                    _manager.SetJoinResponsePayload(data);
+                    if (_manager == null)
+                    {
+                        return;
+                    }
 
-                    Participants?.Load();
-                }
-                else if (response is GroupCallJoinResponseStream)
-                {
+                    bool broadcast;
+                    if (JsonObject.TryParse(json.TextValue, out JsonObject data))
+                    {
+                        broadcast = data.GetNamedBoolean("stream", false);
+                    }
+                    else
+                    {
+                        broadcast = false;
+                    }
+
                     _source = ssrc;
-                    _manager.SetConnectionMode(VoipGroupConnectionMode.Broadcast, true);
+                    _manager.SetConnectionMode(broadcast ? VoipGroupConnectionMode.Broadcast : VoipGroupConnectionMode.Rtc, true);
+                    _manager.SetJoinResponsePayload(json.TextValue);
 
                     Participants?.Load();
                 }
             });
         }
 
-        private async void OnFrameRequested(VoipGroupManager sender, FrameRequestedEventArgs args)
+        #region Capturing
+
+        public bool IsCapturing => _capturer != null;
+
+        public async void ToggleCapturing()
+        {
+            var call = _call;
+            if (call == null || _manager == null)
+            {
+                return;
+            }
+
+            if (_capturer != null)
+            {
+                _capturer.SetOutput(null);
+                _manager.SetVideoCapture(null);
+
+                _capturer.Dispose();
+                _capturer = null;
+            }
+            else
+            {
+                _capturer = new VoipVideoCapture(await _videoWatcher.GetAndUpdateAsync());
+                _manager.SetVideoCapture(_capturer);
+            }
+
+            ProtoService.Send(new ToggleGroupCallIsMyVideoEnabled(call.Id, _capturer != null));
+        }
+
+        #endregion
+
+        #region Screencast
+
+        public VoipGroupManager ScreenSharing => _screenManager;
+        public bool IsScreenSharing => _screenManager != null && _screenCapturer != null;
+
+        public async void StartScreenSharing()
+        {
+            var call = _call;
+            if (call == null || _manager == null || _screenManager != null || !GraphicsCaptureSession.IsSupported())
+            {
+                return;
+            }
+
+            var picker = new GraphicsCapturePicker();
+            var item = await picker.PickSingleItemAsync();
+
+            if (item == null)
+            {
+                return;
+            }
+
+            _screenCapturer = new VoipScreenCapture(item);
+            _screenCapturer.FatalErrorOccurred += OnFatalErrorOccurred;
+
+            var descriptor = new VoipGroupDescriptor
+            {
+                VideoContentType = VoipVideoContentType.Screencast,
+                VideoCapture = _screenCapturer
+            };
+
+            _screenManager = new VoipGroupManager(descriptor);
+            _screenManager.EmitJoinPayload(async (ssrc, payload) =>
+            {
+                var response = await ProtoService.SendAsync(new StartGroupCallScreenSharing(call.Id, payload));
+                if (response is Text json)
+                {
+                    _screenSource = ssrc;
+                    _screenManager.SetConnectionMode(VoipGroupConnectionMode.Rtc, true);
+                    _screenManager.SetJoinResponsePayload(json.TextValue);
+                }
+            });
+        }
+
+        private void OnFatalErrorOccurred(VoipScreenCapture sender, object args)
+        {
+            EndScreenSharing();
+        }
+
+        public void EndScreenSharing()
+        {
+            if (_screenManager != null)
+            {
+                _screenManager.SetVideoCapture(null);
+
+                _screenManager.Dispose();
+                _screenManager = null;
+
+                _screenSource = 0;
+            }
+
+            if (_screenCapturer != null)
+            {
+                //_screenCapturer.SetOutput(null);
+                _screenCapturer.FatalErrorOccurred -= OnFatalErrorOccurred;
+                _screenCapturer.Dispose();
+                _screenCapturer = null;
+            }
+
+            var call = _call;
+            if (call != null)
+            {
+                ProtoService.Send(new EndGroupCallScreenSharing(call.Id));
+            }
+        }
+
+        #endregion
+
+        private async void OnBroadcastPartRequested(VoipGroupManager sender, BroadcastPartRequestedEventArgs args)
         {
             var call = _call;
             if (call == null)
@@ -370,7 +501,21 @@ namespace Unigram.Services
             ProtoService.Send(new GetGroupCallStreamSegment(call.Id, time, args.Scale), result =>
             {
                 stamp = DateTime.Now.ToTimestamp() - stamp;
-                args.Ready(time, response.Value + stamp, result as FilePart);
+                args.Deferral(time, response.Value + stamp, result as FilePart);
+            });
+        }
+
+        private void OnMediaChannelDescriptionsRequested(VoipGroupManager sender, MediaChannelDescriptionsRequestedEventArgs args)
+        {
+            var call = _call;
+            if (call == null)
+            {
+                return;
+            }
+
+            ProtoService.Send(new GetGroupCallMediaChannelDescriptions(call.Id, args.Ssrcs), result =>
+            {
+                args.Deferral(result as GroupCallMediaChannelDescriptions);
             });
         }
 
@@ -388,25 +533,77 @@ namespace Unigram.Services
             _isConnected = args.IsConnected;
         }
 
-        private readonly Dictionary<int, (bool, int)> _lastUpdates = new Dictionary<int, (bool, int)>();
+        private Dictionary<int, SpeakingParticipant> _speakingParticipants = new();
+
+        private readonly struct SpeakingParticipant
+        {
+            public readonly int Timestamp;
+            public readonly float Level;
+
+            public SpeakingParticipant(int timestamp, float level)
+            {
+                Timestamp = timestamp;
+                Level = level;
+            }
+        }
 
         private void OnAudioLevelsUpdated(VoipGroupManager sender, IReadOnlyDictionary<int, KeyValuePair<float, bool>> levels)
         {
-            var now = DateTime.Now.ToTimestamp();
+            var call = _call;
+            if (call == null)
+            {
+                return;
+            }
+
+            const float speakingLevelThreshold = 0.1f;
+            const int cutoffTimeout = 3000;
+            const int silentTimeout = 2000;
+
+            var timestamp = Environment.TickCount;
+
+            var validSpeakers = new Dictionary<int, SpeakingParticipant>();
+            var silentParticipants = new HashSet<int>();
 
             foreach (var level in levels)
             {
-                if (_lastUpdates.TryGetValue(level.Key, out var data))
+                if (level.Value.Key > speakingLevelThreshold && level.Value.Value)
                 {
-                    if (data.Item1 == level.Value.Value || now < data.Item2 + 1)
-                    {
-                        continue;
-                    }
+                    validSpeakers[level.Key] = new SpeakingParticipant(timestamp, level.Value.Key);
+                }
+                else
+                {
+                    silentParticipants.Add(level.Key);
+                }
+            }
+
+            foreach (var item in _speakingParticipants)
+            {
+                if (validSpeakers.ContainsKey(item.Key))
+                {
+                    continue;
                 }
 
-                _lastUpdates[level.Key] = (level.Value.Value, now);
-                ProtoService.Send(new SetGroupCallParticipantIsSpeaking(_call.Id, level.Key == 0 ? _source : level.Key, level.Value.Value));
+                var delta = timestamp - item.Value.Timestamp;
+
+                if (silentParticipants.Contains(item.Key))
+                {
+                    if (delta < silentTimeout)
+                    {
+                        validSpeakers[item.Key] = item.Value;
+                    }
+                }
+                else if (delta < cutoffTimeout)
+                {
+                    validSpeakers[item.Key] = item.Value;
+                }
             }
+
+            foreach (var item in levels)
+            {
+                ProtoService.Send(new SetGroupCallParticipantIsSpeaking(call.Id, item.Key, validSpeakers.ContainsKey(item.Key)));
+            }
+
+            _speakingParticipants = validSpeakers;
         }
 
         public async void Discard()
@@ -434,6 +631,7 @@ namespace Unigram.Services
             _availableAliases = null;
             _availableAliasesTask = null;
 
+            Participants?.Dispose();
             Participants = null;
 
             return Task.Run(() =>
@@ -442,13 +640,32 @@ namespace Unigram.Services
                 {
                     _manager.NetworkStateUpdated -= OnNetworkStateUpdated;
                     _manager.AudioLevelsUpdated -= OnAudioLevelsUpdated;
+                    _manager.BroadcastPartRequested -= OnBroadcastPartRequested;
+                    _manager.MediaChannelDescriptionsRequested -= OnMediaChannelDescriptionsRequested;
+
+                    _manager.SetVideoCapture(null);
 
                     _manager.Dispose();
                     _manager = null;
 
                     _source = 0;
                 }
+
+                if (_capturer != null)
+                {
+                    _capturer.SetOutput(null);
+                    _capturer.Dispose();
+                    _capturer = null;
+                }
+
+                EndScreenSharing();
             });
+        }
+
+        public string CurrentVideoInput
+        {
+            get => _videoWatcher.Get();
+            set => _videoWatcher.Set(value);
         }
 
         public string CurrentAudioInput
@@ -520,7 +737,14 @@ namespace Unigram.Services
                 return;
             }
 
-            manager.SetVolume(update.Participant.Source, update.Participant.VolumeLevel / 10000d);
+            if (update.Participant.IsMutedForCurrentUser)
+            {
+                manager.SetVolume(update.Participant.AudioSourceId, 0);
+            }
+            else
+            {
+                manager.SetVolume(update.Participant.AudioSourceId, update.Participant.VolumeLevel / 10000d);
+            }
         }
 
         public Chat Chat => _chat;
@@ -530,16 +754,14 @@ namespace Unigram.Services
 
         public bool IsConnected => _isConnected;
 
-        public void Show()
+        public Task ShowAsync()
         {
             if (_call != null)
             {
-                ShowAsync(_call, _manager);
+                return ShowAsync(_call, _manager);
             }
-            else
-            {
-                //Aggregator.Publish(new UpdateCallDialog(null, false));
-            }
+
+            return Task.CompletedTask;
         }
 
         private async Task ShowAsync(GroupCall call, VoipGroupManager controller)
@@ -563,10 +785,14 @@ namespace Unigram.Services
 
                     //Aggregator.Publish(new UpdateCallDialog(call, true));
                 }
+                else
+                {
+                    await ApplicationViewSwitcher.SwitchAsync(_callLifetime.Id);
+                }
             }
         }
 
-        private async void Hide()
+        public async Task ConsolidateAsync()
         {
             using (await _updateLock.WaitAsync())
             {
@@ -576,16 +802,7 @@ namespace Unigram.Services
                 if (lifetime != null)
                 {
                     _callLifetime = null;
-
-                    lifetime.Dispatcher.Dispatch(() =>
-                    {
-                        if (lifetime.Window.Content is GroupCallPage callPage)
-                        {
-                            callPage.Dispose();
-                        }
-
-                        lifetime.Window.Close();
-                    });
+                    await lifetime.Dispatcher.DispatchAsync(() => ApplicationView.GetForCurrentView().ConsolidateAsync());
                 }
             }
         }

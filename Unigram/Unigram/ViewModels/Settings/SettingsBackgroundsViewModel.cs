@@ -1,13 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views;
+using Unigram.Views.Popups;
 using Windows.Storage.AccessCache;
 using Windows.Storage.Pickers;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
@@ -18,44 +24,58 @@ namespace Unigram.ViewModels.Settings
         {
             Items = new MvxObservableCollection<Background>();
 
-            RefreshItems();
-
             LocalCommand = new RelayCommand(LocalExecute);
             ColorCommand = new RelayCommand(ColorExecute);
             ResetCommand = new RelayCommand(ResetExecute);
+
+            ShareCommand = new RelayCommand<Background>(ShareExecute);
+            DeleteCommand = new RelayCommand<Background>(DeleteExecute);
         }
 
-        private void RefreshItems()
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            ProtoService.Send(new GetBackgrounds(Settings.Appearance.IsDarkTheme()), result =>
+            var background = CacheService.SelectedBackground;
+            var predefined = new Background(Constants.WallpaperLocalId, true, false, Constants.WallpaperDefaultFileName, null,
+                new BackgroundTypeFill(new BackgroundFillFreeformGradient(new[] { 0x7FA381, 0xFFF5C5, 0x336F55, 0xFBE37D })));
+
+            var items = new List<Background>
             {
-                if (result is Backgrounds wallpapers)
+                predefined
+            };
+
+            var response = await ProtoService.SendAsync(new GetBackgrounds(Settings.Appearance.IsDarkTheme()));
+            if (response is Backgrounds wallpapers)
+            {
+                items.AddRange(wallpapers.BackgroundsValue);
+
+                var selected = items.FirstOrDefault(x => x.Id == background?.Id);
+                if (selected != null)
                 {
-                    var items = wallpapers.BackgroundsValue.ToList();
-                    var background = CacheService.SelectedBackground;
-
-                    var predefined = new Background(Constants.WallpaperLocalId, true, false, Constants.WallpaperDefaultFileName, null, null);
-
-                    var selected = items.FirstOrDefault(x => x.Id == background?.Id);
-                    if (selected != null)
-                    {
-                        items.Remove(selected);
-                        items.Insert(0, selected);
-                    }
-                    else if (background == null)
-                    {
-                        selected = predefined;
-                    }
-
-                    items.Insert(0, predefined);
-
-                    BeginOnUIThread(() =>
-                    {
-                        SelectedItem = selected;
-                        Items.ReplaceWith(items);
-                    });
+                    items.Remove(selected);
+                    items.Insert(1, selected);
                 }
-            });
+                else if (background == null)
+                {
+                    selected = predefined;
+                }
+
+                SelectedItem = selected;
+                Items.ReplaceWith(items);
+            }
+            else
+            {
+                if (background != null)
+                {
+                    items.Add(background);
+                    SelectedItem = background;
+                }
+                else
+                {
+                    SelectedItem = predefined;
+                }
+
+                Items.ReplaceWith(items);
+            }
         }
 
         private Background _selectedItem;
@@ -87,23 +107,27 @@ namespace Unigram.ViewModels.Settings
                 if (file != null)
                 {
                     var token = StorageApplicationPermissions.FutureAccessList.Enqueue(file);
-                    NavigationService.Navigate(typeof(BackgroundPage), Constants.WallpaperLocalFileName + $"#{token}");
+                    await new BackgroundPopup(Constants.WallpaperLocalFileName + $"#{token}").ShowQueuedAsync();
                 }
             }
             catch { }
         }
 
         public RelayCommand ColorCommand { get; }
-        private void ColorExecute()
+        private async void ColorExecute()
         {
-            NavigationService.Navigate(typeof(BackgroundPage), Constants.WallpaperColorFileName);
+            var confirm = await new BackgroundPopup(Constants.WallpaperColorFileName).ShowQueuedAsync();
+            if (confirm == ContentDialogResult.Primary)
+            {
+                await OnNavigatedToAsync(null, NavigationMode.Refresh, null);
+            }
         }
 
         public RelayCommand ResetCommand { get; }
         private async void ResetExecute()
         {
             var confirm = await MessagePopup.ShowAsync(Strings.Resources.ResetChatBackgroundsAlert, Strings.Resources.ResetChatBackgroundsAlertTitle, Strings.Resources.Reset, Strings.Resources.Cancel);
-            if (confirm != Windows.UI.Xaml.Controls.ContentDialogResult.Primary)
+            if (confirm != ContentDialogResult.Primary)
             {
                 return;
             }
@@ -111,7 +135,47 @@ namespace Unigram.ViewModels.Settings
             var response = await ProtoService.SendAsync(new ResetBackgrounds());
             if (response is Ok)
             {
-                RefreshItems();
+                await OnNavigatedToAsync(null, NavigationMode.Refresh, null);
+            }
+            else if (response is Error error)
+            {
+
+            }
+        }
+
+        public RelayCommand<Background> ShareCommand { get; }
+        private async void ShareExecute(Background background)
+        {
+            if (background == null)
+            {
+                return;
+            }
+
+            var response = await ProtoService.SendAsync(new GetBackgroundUrl(background.Name, background.Type));
+            if (response is HttpUrl url)
+            {
+                await SharePopup.GetForCurrentView().ShowAsync(new Uri(url.Url), null);
+            }
+        }
+
+        public RelayCommand<Background> DeleteCommand { get; }
+        private async void DeleteExecute(Background background)
+        {
+            if (background == null)
+            {
+                return;
+            }
+
+            var confirm = await MessagePopup.ShowAsync(Strings.Resources.DeleteChatBackgroundsAlert, Locale.Declension("DeleteBackground", 1), Strings.Resources.Delete, Strings.Resources.Cancel);
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            var response = await ProtoService.SendAsync(new RemoveBackground(background.Id));
+            if (response is Ok)
+            {
+                await OnNavigatedToAsync(null, NavigationMode.Refresh, null);
             }
             else if (response is Error error)
             {

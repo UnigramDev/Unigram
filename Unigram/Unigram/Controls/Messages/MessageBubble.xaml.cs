@@ -40,11 +40,7 @@ namespace Unigram.Controls.Messages
         {
             InitializeComponent();
 
-            var content = ElementCompositionPreview.GetElementVisual(ContentPanel);
-            //var shadow = ElementCompositionPreview.GetElementVisual(ShadowPanel);
-
-            _cornerRadius = CompositionDevice.CreateRectangleClip(content);
-            //CompositionDevice.SetClip(shadow, _cornerRadius);
+            _cornerRadius = CompositionDevice.CreateRectangleClip(ContentPanel);
 
             ElementCompositionPreview.SetIsTranslationEnabled(Header, true);
             ElementCompositionPreview.SetIsTranslationEnabled(Message, true);
@@ -107,9 +103,13 @@ namespace Unigram.Controls.Messages
             {
                 title = message.ProtoService.GetTitle(message.ForwardInfo);
             }
-            else
+            else if (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup supergroup && !supergroup.IsChannel)
             {
-                if (message.ProtoService.TryGetUser(message.Sender, out User senderUser))
+                if (message.IsOutgoing)
+                {
+                    title = null;
+                }
+                else if (message.ProtoService.TryGetUser(message.Sender, out User senderUser))
                 {
                     senderBot = senderUser.Type is UserTypeBot;
                     title = senderUser.GetFullName();
@@ -1483,6 +1483,8 @@ namespace Unigram.Controls.Messages
             scale.InsertKeyFrame(0, new Vector3(xScale, 1, 1));
             scale.InsertKeyFrame(1, new Vector3(1));
             scale.Duration = TimeSpan.FromMilliseconds(inner);
+            scale.DelayTime = TimeSpan.FromMilliseconds(delay);
+            scale.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
 
             var factor = Window.Current.Compositor.CreateExpressionAnimation("Vector3(1 / content.Scale.X, 1, 1)");
             factor.SetReferenceParameter("content", panel);
@@ -1566,6 +1568,8 @@ namespace Unigram.Controls.Messages
             textOffset.InsertKeyFrame(0, new Vector3(-textOffsetX, textOffsetY, 0));
             textOffset.InsertKeyFrame(1, new Vector3());
             textOffset.Duration = TimeSpan.FromMilliseconds(textOffsetY > 0 ? outer : inner);
+            textOffset.DelayTime = TimeSpan.FromMilliseconds(delay);
+            textOffset.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
 
             if (content is MessageSticker or MessageDice)
             {

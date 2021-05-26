@@ -144,6 +144,7 @@ namespace Unigram.Views
             }
 
             Messages.ViewVisibleMessages = ViewVisibleMessages;
+            Messages.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
 
             ViewModel.TextField = TextField;
             ViewModel.ListField = Messages;
@@ -648,7 +649,7 @@ namespace Unigram.Views
                         {
                             MessageBigEmoji => 48,
                             MessageSticker or MessageDice => 48,
-                            _ => 48 - 10f
+                            _ => 48 - 12f
                         };
 
                         var yOffset = content switch
@@ -661,7 +662,7 @@ namespace Unigram.Views
                         var xScale = (TextArea.ActualSize.X - xOffset) / bubble.ActualSize.X;
                         var yScale = content switch
                         {
-                            MessageText => TextArea.ActualSize.Y / bubble.ActualSize.Y,
+                            MessageText => MathF.Min((float)TextField.MaxHeight, bubble.ActualSize.Y) / bubble.ActualSize.Y,
                             _ => 1
                         };
 
@@ -692,9 +693,9 @@ namespace Unigram.Views
                     var dark = ActualTheme == ElementTheme.Dark;
 
                     var background = ViewModel.ProtoService.GetSelectedBackground(dark);
-                    if (background == null && !dark)
+                    if (background == null && !dark || background.IsFreeformGradient())
                     {
-                        ViewModel.Aggregator.Publish(new UpdateSelectedBackground(dark, null));
+                        ViewModel.Aggregator.Publish(new UpdateSelectedBackground(dark, background));
                     }
                 }
             }
@@ -1576,7 +1577,7 @@ namespace Unigram.Views
                     return;
                 }
 
-                _stickersMode = StickersPanelMode.Sidebar;
+                _stickersMode = _stickersModeWide = StickersPanelMode.Sidebar;
                 ButtonStickers.IsChecked = true;
                 SettingsService.Current.IsSidebarOpen = true;
 
@@ -1745,14 +1746,13 @@ namespace Unigram.Views
 
         private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ViewModel.ExpandSelection(Messages.SelectedItems.Cast<MessageViewModel>());
-
             if (_selectionFromItemClick && Messages.SelectedItems.Count < 1)
             {
                 ViewModel.SelectionMode = ListViewSelectionMode.None;
             }
 
             _selectionFromItemClick = false;
+            ViewModel.ExpandSelection(Messages.SelectedItems.Cast<MessageViewModel>());
         }
 
         #region Context menu
@@ -1774,6 +1774,26 @@ namespace Unigram.Views
             var supergroup = chat.Type is ChatTypeSupergroup supergroupType ? ViewModel.ProtoService.GetSupergroup(supergroupType.SupergroupId) : null;
 
             flyout.CreateFlyoutItem(ViewModel.SearchCommand, Strings.Resources.Search, new FontIcon { Glyph = Icons.Search }, Windows.System.VirtualKey.F);
+
+            if (AdditionalButtons.Visibility == Visibility.Collapsed)
+            {
+                if (VideoCall.Visibility == Visibility.Visible)
+                {
+                    flyout.CreateFlyoutItem(ViewModel.CallCommand, true, Strings.Resources.VideoCall, new FontIcon { Glyph = Icons.Video });
+                }
+
+                if (Call.Visibility == Visibility.Visible)
+                {
+                    if (user != null)
+                    {
+                        flyout.CreateFlyoutItem(ViewModel.CallCommand, false, Strings.Resources.Call, new FontIcon { Glyph = Icons.Phone });
+                    }
+                    else
+                    {
+                        flyout.CreateFlyoutItem(ViewModel.GroupCallJoinCommand, Strings.Resources.VoipGroupJoinCall, new FontIcon { Glyph = Icons.VoiceChat });
+                    }
+                }
+            }
 
             if (supergroup != null && supergroup.Status is not ChatMemberStatusCreator && (supergroup.IsChannel || !string.IsNullOrEmpty(supergroup.Username)))
             {
@@ -1814,7 +1834,7 @@ namespace Unigram.Views
             }
             if ((user != null && user.Id != ViewModel.CacheService.Options.MyId) || basicGroup != null || (supergroup != null && !supergroup.IsChannel))
             {
-                var muted = ViewModel.CacheService.GetNotificationSettingsMuteFor(chat) > 0;
+                var muted = ViewModel.CacheService.Notifications.GetMutedFor(chat) > 0;
                 flyout.CreateFlyoutItem(
                     muted ? ViewModel.UnmuteCommand : ViewModel.MuteCommand,
                     muted ? Strings.Resources.UnmuteNotifications : Strings.Resources.MuteNotifications,
@@ -2143,6 +2163,8 @@ namespace Unigram.Views
                 {
                     return ViewModel.Type == DialogType.Thread;
                 }
+
+                return supergroup.Status is not ChatMemberStatusLeft;
             }
             else if (chat != null && chat.Id == ViewModel.CacheService.Options.RepliesBotChatId)
             {
@@ -2834,7 +2856,112 @@ namespace Unigram.Views
             ViewModel.Autocomplete = null;
         }
 
+        private void List_SelectionModeChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            if (ViewModel.SelectionMode == ListViewSelectionMode.None)
+            {
+                ShowHideManagePanel(false);
+            }
+            else
+            {
+                ShowHideManagePanel(true);
+            }
+        }
+
+        private bool _manageCollapsed;
+
+        private void ShowHideManagePanel(bool show)
+        {
+            if ((show && ManagePanel.Visibility == Visibility.Visible && !_manageCollapsed) || (!show && (ManagePanel.Visibility == Visibility.Collapsed || _manageCollapsed)))
+            {
+                return;
+            }
+
+            if (show)
+            {
+                _manageCollapsed = false;
+            }
+            else
+            {
+                _manageCollapsed = true;
+            }
+
+            var manage = ElementCompositionPreview.GetElementVisual(ManagePanel);
+            manage.StopAnimation("Opacity");
+
+            ManagePanel.Visibility = Visibility.Visible;
+
+            var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
+                if (show)
+                {
+                    _manageCollapsed = false;
+                    ManagePanel.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    ManagePanel.Visibility = Visibility.Collapsed;
+                }
+            };
+
+            var opacity = manage.Compositor.CreateScalarKeyFrameAnimation();
+            opacity.InsertKeyFrame(show ? 0 : 1, 0);
+            opacity.InsertKeyFrame(show ? 1 : 0, 1);
+
+            manage.StartAnimation("Opacity", opacity);
+
+            batch.End();
+
+            if (show)
+            {
+                ViewModel.SaveDraft(true);
+                ShowHideComposerHeader(false);
+            }
+            else
+            {
+                ViewModel.ShowDraft();
+                UpdateComposerHeader(ViewModel.Chat, ViewModel.ComposerHeader);
+            }
+        }
+
         #region Binding
+
+        private int ConvertSelection(int count)
+        {
+            if (Messages.SelectionMode == ListViewSelectionMode.None)
+            {
+                return ManageCount.Value;
+            }
+
+            var text = Locale.Declension("messages", count);
+            var split = text.Split(' ');
+
+            var index = int.MaxValue;
+            var before = string.Empty;
+            var after = string.Empty;
+
+            for (int i = 0; i < split.Length; i++)
+            {
+                if (int.TryParse(split[i], out _))
+                {
+                    index = i;
+                }
+                else if (i < index)
+                {
+                    before += split[i] + " ";
+                }
+                else if (i > index)
+                {
+                    after += " " + split[i];
+                }
+            }
+
+            ManageCountBefore.Text = before;
+            ManageCountAfter.Text = after;
+
+            return count;
+        }
 
         public Visibility ConvertIsEmpty(bool empty, bool self, bool bot, bool should)
         {
@@ -2915,7 +3042,7 @@ namespace Unigram.Views
             }
             else
             {
-                _stickersMode = StickersPanelMode.Collapsed;
+                _stickersMode = _stickersModeWide = StickersPanelMode.Collapsed;
                 SettingsService.Current.IsSidebarOpen = false;
 
                 StickersPanel.Deactivate();
@@ -3385,7 +3512,7 @@ namespace Unigram.Views
                 }
                 else
                 {
-                    ShowAction(ViewModel.CacheService.GetNotificationSettingsMuteFor(chat) > 0 ? Strings.Resources.ChannelUnmute : Strings.Resources.ChannelMute, true);
+                    ShowAction(ViewModel.CacheService.Notifications.GetMutedFor(chat) > 0 ? Strings.Resources.ChannelUnmute : Strings.Resources.ChannelMute, true);
                 }
             }
         }
@@ -3450,6 +3577,8 @@ namespace Unigram.Views
 
         public void UpdateComposerHeader(Chat chat, MessageComposerHeader header)
         {
+            CheckButtonsVisibility();
+
             if (header == null || (header.IsEmpty && header.WebPageDisabled))
             {
                 // Let's reset
@@ -3831,26 +3960,29 @@ namespace Unigram.Views
             btnVoiceMessage.CornerRadius = new CornerRadius(4, max, min, 4);
             btnSendMessage.CornerRadius = new CornerRadius(4, max, min, 4);
             btnEdit.CornerRadius = new CornerRadius(4, max, min, 4);
+            ButtonManage.CornerRadius = new CornerRadius(4, min, min, 4);
+            ButtonForward.CornerRadius = new CornerRadius(min, 4, 4, min);
 
             ComposerHeaderCancel.CornerRadius = new CornerRadius(4, min, 4, 4);
-            TextRoot.CornerRadius = ChatFooter.CornerRadius = ChatRecord.CornerRadius = new CornerRadius(radius);
+            TextRoot.CornerRadius = ChatFooter.CornerRadius = ChatRecord.CornerRadius = ManagePanel.CornerRadius = new CornerRadius(radius);
 
+            Separator.CornerRadius = new CornerRadius(radius);
             InlinePanel.CornerRadius = new CornerRadius(radius, radius, 0, 0);
             ListAutocomplete.Padding = new Thickness(0, 0, 0, radius);
             ListInline.UpdateCornerRadius(radius);
 
             if (radius > 0)
             {
-                TextArea.MaxWidth = ChatRecord.MaxWidth = ChatFooter.MaxWidth = InlinePanel.MaxWidth = Separator.MaxWidth =
+                TextArea.MaxWidth = ChatRecord.MaxWidth = ChatFooter.MaxWidth = ManagePanel.MaxWidth = InlinePanel.MaxWidth = Separator.MaxWidth =
                     SettingsService.Current.IsAdaptiveWideEnabled ? 640 : double.PositiveInfinity;
-                TextArea.Margin = ChatRecord.Margin = ChatFooter.Margin = new Thickness(12, 0, 12, 8);
+                TextArea.Margin = ChatRecord.Margin = ChatFooter.Margin = ManagePanel.Margin = Separator.Margin = new Thickness(12, 0, 12, 8);
                 InlinePanel.Margin = new Thickness(12, 0, 12, -radius);
             }
             else
             {
-                TextArea.MaxWidth = ChatRecord.MaxWidth = ChatFooter.MaxWidth = InlinePanel.MaxWidth = Separator.MaxWidth =
+                TextArea.MaxWidth = ChatRecord.MaxWidth = ChatFooter.MaxWidth = ManagePanel.MaxWidth = InlinePanel.MaxWidth = Separator.MaxWidth =
                     SettingsService.Current.IsAdaptiveWideEnabled ? 664 : double.PositiveInfinity;
-                TextArea.Margin = ChatRecord.Margin = ChatFooter.Margin = new Thickness();
+                TextArea.Margin = ChatRecord.Margin = ChatFooter.Margin = ManagePanel.Margin = Separator.Margin = new Thickness();
                 InlinePanel.Margin = new Thickness();
             }
 
@@ -3919,7 +4051,7 @@ namespace Unigram.Views
             }
             else if (ViewModel.ProtoService.IsRepliesChat(chat))
             {
-                ShowAction(ViewModel.CacheService.GetNotificationSettingsMuteFor(chat) > 0 ? Strings.Resources.ChannelUnmute : Strings.Resources.ChannelMute, true);
+                ShowAction(ViewModel.CacheService.Notifications.GetMutedFor(chat) > 0 ? Strings.Resources.ChannelUnmute : Strings.Resources.ChannelMute, true);
             }
             else if (chat.IsBlocked)
             {
@@ -4084,7 +4216,7 @@ namespace Unigram.Views
                 }
                 else
                 {
-                    ShowAction(ViewModel.CacheService.GetNotificationSettingsMuteFor(chat) > 0 ? Strings.Resources.ChannelUnmute : Strings.Resources.ChannelMute, true);
+                    ShowAction(ViewModel.CacheService.Notifications.GetMutedFor(chat) > 0 ? Strings.Resources.ChannelUnmute : Strings.Resources.ChannelMute, true);
                 }
             }
             else
@@ -4516,6 +4648,75 @@ namespace Unigram.Views
         private void ChatRecordLocked_Click(object sender, RoutedEventArgs e)
         {
             btnVoiceMessage.Release();
+        }
+
+        private bool _additionalCollapsed = false;
+
+        private void Title_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            Title.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+
+            var profile = ProfileRoot.ActualWidth;
+            var title = Title.ActualWidth;
+
+            var additional = 0;
+
+            foreach (var child in AdditionalButtons.Children)
+            {
+                additional += child.Visibility == Visibility.Visible ? 48 : 0;
+            }
+
+            if (title > profile && profile + additional >= title)
+            {
+                ShowHideAdditionalButtons(false);
+            }
+            else if (title + additional < profile)
+            {
+                ShowHideAdditionalButtons(true);
+            }
+        }
+
+        private void ShowHideAdditionalButtons(bool show)
+        {
+            if ((show && AdditionalButtons.Visibility == Visibility.Visible) || (!show && (AdditionalButtons.Visibility == Visibility.Collapsed || _additionalCollapsed)))
+            {
+                return;
+            }
+
+            if (show)
+            {
+                _additionalCollapsed = false;
+            }
+            else
+            {
+                _additionalCollapsed = true;
+            }
+
+            AdditionalButtons.Visibility = Visibility.Visible;
+
+            var visual = ElementCompositionPreview.GetElementVisual(AdditionalButtons);
+
+            var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
+                if (show)
+                {
+                    _additionalCollapsed = false;
+                }
+                else
+                {
+                    AdditionalButtons.Visibility = Visibility.Collapsed;
+                }
+            };
+
+            var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            opacity.InsertKeyFrame(show ? 0 : 1, 0);
+            opacity.InsertKeyFrame(show ? 1 : 0, 1);
+            opacity.Duration = TimeSpan.FromMilliseconds(150);
+
+            visual.StartAnimation("Opacity", opacity);
+
+            batch.End();
         }
     }
 

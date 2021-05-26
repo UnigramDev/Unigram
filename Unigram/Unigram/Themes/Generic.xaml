@@ -84,12 +84,14 @@
         <Setter Property="BorderBrush" Value="{ThemeResource NavigationViewItemBorderBrush}" />
         <Setter Property="BorderThickness" Value="{StaticResource NavigationViewItemBorderThickness}" />
         <Setter Property="FontFamily" Value="{StaticResource SymbolThemeFontFamily}" />
+        <Setter Property="CornerRadius" Value="4"/>
+        <Setter Property="Padding" Value="4,2,4,2"/>
         <Setter Property="UseSystemFocusVisuals" Value="True" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:NavigationViewItem">
-                    <Grid x:Name="LayoutRoot" Height="40" Background="{TemplateBinding Background}" Control.IsTemplateFocusTarget="True">
+                    <Grid x:Name="LayoutRoot" Height="36" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}"  Margin="{TemplateBinding Padding}" Control.IsTemplateFocusTarget="True">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="PointerStates">
                                 <VisualState x:Name="Normal" />
@@ -159,9 +161,9 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Grid HorizontalAlignment="Left" VerticalAlignment="Center">
-                            <Rectangle x:Name="SelectionIndicator" Width="2" Height="24" Fill="{ThemeResource NavigationViewSelectionIndicatorForeground}" Margin="4,0,0,0" Opacity="0" />
+                            <Rectangle x:Name="SelectionIndicator" Width="3" Height="16" Fill="{ThemeResource NavigationViewSelectionIndicatorForeground}" RadiusX="2" RadiusY="2" Opacity="0" />
                         </Grid>
-                        <Grid Height="40" HorizontalAlignment="Left">
+                        <Grid Height="36" Margin="-4,0,0,0" HorizontalAlignment="Left">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition x:Name="IconColumn" Width="48" />
                                 <ColumnDefinition Width="*" />
@@ -196,7 +198,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate>
-                    <Grid Height="20" />
+                    <Grid Height="16" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -636,7 +638,7 @@
                             x:Name="ValueSlider"
                             IsDirectionReversed="True"
                             IsThumbToolTipEnabled="False"
-                            Margin="12"
+                            Margin="12,0"
                             Grid.Row="1">
                             <Slider.Template>
                                 <ControlTemplate TargetType="Slider">
@@ -1060,7 +1062,7 @@
                                             <ColumnDefinition />
                                         </Grid.ColumnDefinitions>
                                         <Button x:Name="PrimaryButton"
-                                                contract7Present:CornerRadius="2,2,2,4"
+                                                CornerRadius="4"
                                                 Content="{TemplateBinding PrimaryButtonText}"
                                                 IsEnabled="{TemplateBinding IsPrimaryButtonEnabled}"
                                                 Style="{TemplateBinding PrimaryButtonStyle}"
@@ -1070,7 +1072,7 @@
                                                 Margin="0,0,2,0"
                                                 Grid.Column="0" />
                                         <Button x:Name="SecondaryButton"
-                                                contract7Present:CornerRadius="2,2,4,2"
+                                                CornerRadius="4"
                                                 Content="{TemplateBinding SecondaryButtonText}"
                                                 IsEnabled="{TemplateBinding IsSecondaryButtonEnabled}"
                                                 Style="{TemplateBinding SecondaryButtonStyle}"

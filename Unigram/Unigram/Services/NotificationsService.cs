@@ -431,7 +431,9 @@ namespace Unigram.Services
             var user = _protoService.GetUser(_protoService.Options.MyId);
             var attribution = user?.GetFullName() ?? string.Empty;
 
-            if (chat.Type is ChatTypeSecret || TLContainer.Current.Passcode.IsLockscreenRequired)
+            var showPreview = _settings.Notifications.GetShowPreview(chat);
+
+            if (chat.Type is ChatTypeSecret || !showPreview || TLContainer.Current.Passcode.IsLockscreenRequired)
             {
                 caption = Strings.Resources.AppName;
                 content = Strings.Resources.YouHaveNewMessage;
@@ -465,7 +467,9 @@ namespace Unigram.Services
             var user = _protoService.GetUser(_protoService.Options.MyId);
             var attribution = user?.GetFullName() ?? string.Empty;
 
-            if (chat.Type is ChatTypeSecret || TLContainer.Current.Passcode.IsLockscreenRequired)
+            var showPreview = _settings.Notifications.GetShowPreview(chat);
+
+            if (chat.Type is ChatTypeSecret || !showPreview || TLContainer.Current.Passcode.IsLockscreenRequired)
             {
                 caption = Strings.Resources.AppName;
                 content = Strings.Resources.YouHaveNewMessage;
@@ -1452,7 +1456,7 @@ namespace Unigram.Services
         public void SetMuteFor(Chat chat, int muteFor)
         {
             var settings = chat.NotificationSettings;
-            var scope = _protoService.GetScopeNotificationSettings(chat);
+            var scope = _settings.Notifications.GetScope(chat);
 
             var useDefault = muteFor == scope.MuteFor || muteFor > 366 * 24 * 60 * 60 && scope.MuteFor > 366 * 24 * 60 * 60;
             if (useDefault)

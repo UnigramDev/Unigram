@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using Telegram.Td;
@@ -32,6 +33,8 @@ namespace Unigram.Controls
 
             ClipboardCopyFormat = RichEditClipboardFormat.PlainText;
 
+            Paste += OnPaste;
+
             _proofingMenu = new MenuFlyoutSubItem();
             _proofingMenu.Text = "Spelling";
 
@@ -52,6 +55,17 @@ namespace Unigram.Controls
 
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
+            SizeChanged += OnSizeChanged;
+        }
+
+        private bool _resetSize;
+
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (_resetSize)
+            {
+                Height = double.NaN;
+            }
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -494,12 +508,78 @@ namespace Unigram.Controls
 
         private void ContextPaste_Click()
         {
-            OnPaste();
+            OnPaste(new HandledEventArgs(false));
         }
 
-        protected virtual void OnPaste()
+        private void OnPaste(object sender, TextControlPasteEventArgs e)
         {
-            Document.Selection.Paste(0);
+            var args = new HandledEventArgs(false);
+            OnPaste(args);
+
+            e.Handled = args.Handled;
+        }
+
+        protected virtual async void OnPaste(HandledEventArgs e)
+        {
+            try
+            {
+                // If the user tries to paste RTF content from any TOM control (Visual Studio, Word, Wordpad, browsers)
+                // we have to handle the pasting operation manually to allow plaintext only.
+                var package = Clipboard.GetContent();
+                if (package.AvailableFormats.Contains(StandardDataFormats.Text) && package.AvailableFormats.Contains("application/x-tl-field-tags"))
+                {
+                    e.Handled = true;
+
+                    // This is our field format
+                    var text = await package.GetTextAsync();
+                    var data = await package.GetDataAsync("application/x-tl-field-tags") as IRandomAccessStream;
+                    var reader = new DataReader(data.GetInputStreamAt(0));
+                    var length = await reader.LoadAsync((uint)data.Size);
+
+                    var count = reader.ReadInt32();
+                    var entities = new List<TextEntity>(count);
+
+                    for (int i = 0; i < count; i++)
+                    {
+                        var entity = new TextEntity { Offset = reader.ReadInt32(), Length = reader.ReadInt32() };
+                        var type = reader.ReadByte();
+
+                        switch (type)
+                        {
+                            case 1:
+                                entity.Type = new TextEntityTypeBold();
+                                break;
+                            case 2:
+                                entity.Type = new TextEntityTypeItalic();
+                                break;
+                            case 3:
+                                entity.Type = new TextEntityTypePreCode();
+                                break;
+                            case 4:
+                                entity.Type = new TextEntityTypeTextUrl { Url = reader.ReadString(reader.ReadUInt32()) };
+                                break;
+                            case 5:
+                                entity.Type = new TextEntityTypeMentionName { UserId = reader.ReadInt32() };
+                                break;
+                        }
+
+                        entities.Add(entity);
+                    }
+
+                    InsertText(text, entities);
+                }
+                else if (package.AvailableFormats.Contains(StandardDataFormats.Text) /*&& package.Contains("Rich Text Format")*/)
+                {
+                    e.Handled = true;
+
+                    var text = await package.GetTextAsync();
+                    var start = Document.Selection.StartPosition;
+
+                    Document.Selection.SetText(TextSetOptions.None, text);
+                    Document.Selection.SetRange(start + text.Length, start + text.Length);
+                }
+            }
+            catch { }
         }
 
         private void ContextDelete_Click()
@@ -659,6 +739,13 @@ namespace Unigram.Controls
 
             if (clear)
             {
+                // This is needed to prevent resize animation, doh
+                if (ActualHeight > 48)
+                {
+                    _resetSize = true;
+                    Height = 48;
+                }
+
                 Document.LoadFromStream(TextSetOptions.None, new InMemoryRandomAccessStream());
             }
 

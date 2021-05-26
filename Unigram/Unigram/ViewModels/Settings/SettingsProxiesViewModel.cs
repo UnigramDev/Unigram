@@ -297,7 +297,7 @@ namespace Unigram.ViewModels.Settings
         private async void ShareExecute(ProxyViewModel proxy)
         {
             var response = await ProtoService.SendAsync(new GetProxyLink(proxy.Id));
-            if (response is Text text && Uri.TryCreate(text.TextValue, UriKind.Absolute, out Uri uri))
+            if (response is HttpUrl httpUrl && Uri.TryCreate(httpUrl.Url, UriKind.Absolute, out Uri uri))
             {
                 await SharePopup.GetForCurrentView().ShowAsync(uri, Strings.Resources.Proxy);
             }

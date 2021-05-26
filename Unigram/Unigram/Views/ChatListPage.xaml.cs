@@ -55,7 +55,7 @@ namespace Unigram.Views
                 return;
             }
 
-            var muted = ViewModel.CacheService.GetNotificationSettingsMuteFor(chat) > 0;
+            var muted = ViewModel.CacheService.Notifications.GetMutedFor(chat) > 0;
             flyout.CreateFlyoutItem(DialogArchive_Loaded, viewModel.ChatArchiveCommand, chat, chat.Positions.Any(x => x.List is ChatListArchive) ? Strings.Resources.Unarchive : Strings.Resources.Archive, new FontIcon { Glyph = Icons.Archive });
             flyout.CreateFlyoutItem(DialogPin_Loaded, viewModel.ChatPinCommand, chat, position.IsPinned ? Strings.Resources.UnpinFromTop : Strings.Resources.PinToTop, new FontIcon { Glyph = position.IsPinned ? Icons.PinOff : Icons.Pin });
 

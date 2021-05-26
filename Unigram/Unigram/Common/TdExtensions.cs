@@ -180,6 +180,25 @@ namespace Unigram.Common
             return null;
         }
 
+        public static bool IsFreeformGradient(this Background background)
+        {
+            if (background?.Type is BackgroundTypeFill typeFill)
+            {
+                return typeFill.Fill is BackgroundFillFreeformGradient;
+            }
+            else if (background?.Type is BackgroundTypePattern typePattern)
+            {
+                return typePattern.Fill is BackgroundFillFreeformGradient;
+            }
+
+            return false;
+        }
+
+        public static Color[] GetColors(this BackgroundFillFreeformGradient freeform)
+        {
+            return freeform.Colors.Select(x => x.ToColor()).ToArray();
+        }
+
         public static bool ListEquals(this ChatList x, ChatList y, bool allowNull = true)
         {
             if ((x is ChatListMain || x == null) && (y is ChatListMain || (y == null && allowNull)))
@@ -209,6 +228,24 @@ namespace Unigram.Common
         public static bool NeedInfo(this Invoice invoice)
         {
             return invoice.NeedShippingAddress || invoice.NeedPhoneNumber || invoice.NeedName || invoice.NeedEmailAddress;
+        }
+
+        public static bool HasVideoInfo(this GroupCallParticipant participant)
+        {
+            return participant.ScreenSharingVideoInfo != null || participant.VideoInfo != null;
+        }
+
+        public static IEnumerable<GroupCallParticipantVideoInfo> GetVideoInfo(this GroupCallParticipant participant)
+        {
+            if (participant.ScreenSharingVideoInfo != null)
+            {
+                yield return participant.ScreenSharingVideoInfo;
+            }
+            
+            if (participant.VideoInfo != null)
+            {
+                yield return participant.VideoInfo;
+            }
         }
 
         public static InputThumbnail ToInputThumbnail(this PhotoSize photo)
@@ -863,6 +900,11 @@ namespace Unigram.Common
 
         public static bool IsMedia(this WebPage webPage)
         {
+            if (string.Equals(webPage.Type, "telegram_background", StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
             return webPage.Animation != null || webPage.Audio != null || webPage.Document != null || webPage.Sticker != null || webPage.Video != null || webPage.VideoNote != null || webPage.VoiceNote != null || webPage.IsPhoto();
         }
 
@@ -2302,18 +2344,21 @@ namespace Unigram.Common
             var slug = uri.Segments.Last();
             var query = uri.Query.ParseQueryString();
 
-            var split = slug.Split('-');
-            if (split.Length > 0 && split[0].Length == 6 && int.TryParse(split[0], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int topColor))
+            if (TryGetColors(slug, '-', 1, 2, out int[] linear))
             {
-                if (split.Length > 1 && split[1].Length == 6 && int.TryParse(split[1], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int bottomColor))
+                if (linear.Length > 1)
                 {
                     query.TryGetValue("rotation", out string rotationKey);
                     int.TryParse(rotationKey ?? string.Empty, out int rotation);
 
-                    return new BackgroundTypeFill(new BackgroundFillGradient(topColor, bottomColor, rotation));
+                    return new BackgroundTypeFill(new BackgroundFillGradient(linear[0], linear[1], rotation));
                 }
 
-                return new BackgroundTypeFill(new BackgroundFillSolid(topColor));
+                return new BackgroundTypeFill(new BackgroundFillSolid(linear[0]));
+            }
+            else if (TryGetColors(slug, '~', 3, 4, out int[] freeform))
+            {
+                return new BackgroundTypeFill(new BackgroundFillFreeformGradient(freeform));
             }
             else
             {
@@ -2350,73 +2395,30 @@ namespace Unigram.Common
             }
         }
 
-        public static string ToString(Background background)
+        private static bool TryGetColors(string slug, char separator, int minimum, int maximum, out int[] colors)
         {
-            if (background.Type is BackgroundTypeFill typeFill)
+            var split = slug.Split(separator);
+            if (split.Length >= minimum && split.Length >= maximum)
             {
-                if (typeFill.Fill is BackgroundFillSolid fillSolid)
-                {
-                    var color = fillSolid.Color.ToColor();
-                    return string.Format("{0:X2}{1:X2}{2:X2}", color.R, color.G, color.B);
-                }
-                else if (typeFill.Fill is BackgroundFillGradient fillGradient)
-                {
-                    var topColor = fillGradient.TopColor.ToColor();
-                    var bottomColor = fillGradient.BottomColor.ToColor();
+                colors = new int[split.Length];
 
-                    return string.Format("{0:X2}{1:X2}{2:X2}-{3:X2}{4:X2}{5:X2}?rotation={6}", topColor.R, topColor.G, topColor.B, bottomColor.R, bottomColor.G, bottomColor.B, fillGradient.RotationAngle);
-                }
-            }
-            else if (background.Type is BackgroundTypePattern typePattern)
-            {
-                string builder = "?";
-                if (typePattern.Fill is BackgroundFillSolid fillSolid)
+                for (int i = 0; i < split.Length; i++)
                 {
-                    var color = fillSolid.Color.ToColor();
-                    builder += string.Format("bg_color={0:X2}{1:X2}{2:X2}&", color.R, color.G, color.B);
-                }
-                else if (typePattern.Fill is BackgroundFillGradient fillGradient)
-                {
-                    var topColor = fillGradient.TopColor.ToColor();
-                    var bottomColor = fillGradient.BottomColor.ToColor();
-
-                    builder += string.Format("bg_color={0:X2}{1:X2}{2:X2}-{3:X2}{4:X2}{5:X2}&rotation={6}&", topColor.R, topColor.G, topColor.B, bottomColor.R, bottomColor.G, bottomColor.B, fillGradient.RotationAngle);
-                }
-
-                builder += $"intensity={typePattern.Intensity}&";
-
-                if (typePattern.IsMoving)
-                {
-                    builder += "mode=motion";
-                }
-
-                return background.Name + builder.TrimEnd('&');
-            }
-            else if (background.Type is BackgroundTypeWallpaper typeWallpaper)
-            {
-                string builder = string.Empty;
-
-                if (typeWallpaper.IsMoving)
-                {
-                    builder += "?mode=motion";
-                }
-
-                if (typeWallpaper.IsBlurred)
-                {
-                    if (builder.Length > 0)
+                    if (int.TryParse(split[i], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int color))
                     {
-                        builder += "+blur";
+                        colors[i] = color;
                     }
                     else
                     {
-                        builder += "?mode=blur";
+                        return false;
                     }
                 }
 
-                return background.Name + builder;
+                return true;
             }
 
-            return background.Name;
+            colors = null;
+            return false;
         }
 
         public static LinearGradientBrush GetGradient(int topColor, int bottomColor, int angle)

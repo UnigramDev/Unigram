@@ -35,6 +35,13 @@ namespace Unigram.ViewModels
                 LogCallsSize = basic.Size;
             }
 
+            var group = await ApplicationData.Current.LocalFolder.TryGetItemAsync("tgcalls_group.txt") as StorageFile;
+            if (group != null)
+            {
+                var basic = await group.GetBasicPropertiesAsync();
+                LogGroupCallsSize = basic.Size;
+            }
+
             var log = await ApplicationData.Current.LocalFolder.TryGetItemAsync("tdlib_log.txt") as StorageFile;
             if (log != null)
             {
@@ -150,6 +157,13 @@ namespace Unigram.ViewModels
         {
             get => _logCallsSize;
             set => Set(ref _logCallsSize, value);
+        }
+
+        private ulong _logGroupCallsSize;
+        public ulong LogGroupCallsSize
+        {
+            get => _logGroupCallsSize;
+            set => Set(ref _logGroupCallsSize, value);
         }
 
         private ulong _logSize;

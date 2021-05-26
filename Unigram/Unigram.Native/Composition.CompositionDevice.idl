@@ -1,0 +1,10 @@
+import "Composition.DirectRectangleClip.idl";
+
+namespace Unigram.Native.Composition
+{
+    [default_interface]
+    static runtimeclass CompositionDevice 
+    {
+        static DirectRectangleClip CreateRectangleClip(Windows.UI.Composition.Visual visual);
+    }
+}

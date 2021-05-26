@@ -305,6 +305,8 @@ namespace winrt::Unigram::Native::implementation
 				sink->EndFigure(path->closed ? D2D1_FIGURE_END_CLOSED : D2D1_FIGURE_END_OPEN);
 			}
 
+			ReturnIfFailed(result, sink->Close());
+
 			if (shape->fill.type != NSVG_PAINT_NONE)
 			{
 				switch (shape->fillRule)
@@ -317,7 +319,6 @@ namespace winrt::Unigram::Native::implementation
 					break;
 				}
 
-				ReturnIfFailed(result, sink->Close());
 				m_d2dContext->FillGeometry(geometry.get(), blackBrush.get());
 			}
 
@@ -359,8 +360,6 @@ namespace winrt::Unigram::Native::implementation
 				winrt::com_ptr<ID2D1StrokeStyle1> strokeStyle;
 				ReturnIfFailed(result, m_d2dFactory->CreateStrokeStyle(strokeProperties, NULL, 0, strokeStyle.put()));
 
-
-				ReturnIfFailed(result, sink->Close());
 				m_d2dContext->DrawGeometry(geometry.get(), blackBrush.get(), shape->strokeWidth, strokeStyle.get());
 			}
 		}
@@ -1013,6 +1012,18 @@ namespace winrt::Unigram::Native::implementation
 		));
 
 		return textLayout->GetMetrics(textMetrics);
+	}
+
+	void PlaceholderImageHelper::WriteBytes(IVector<byte> hash, IRandomAccessStream randomAccessStream)
+	{
+		HRESULT result;
+		winrt::com_ptr<IStream> stream;
+		winrt::check_hresult(CreateStreamOverRandomAccessStream(winrt::get_unknown(randomAccessStream), IID_PPV_ARGS(&stream)));
+
+		auto yolo = std::vector<byte>(hash.begin(), hash.end());
+
+		ULONG size;
+		winrt::check_hresult(stream->Write(yolo.data(), hash.Size(), &size));
 	}
 
 	HRESULT PlaceholderImageHelper::SaveImageToStream(ID2D1Image* image, REFGUID wicFormat, IRandomAccessStream randomAccessStream)

@@ -79,7 +79,8 @@
                     x:Name="Number"
                     Foreground="{ThemeResource MessageHeaderForegroundBrush}"
                     VerticalAlignment="Top"
-                    IsTabStop="False"/>
+                    IsTabStop="False"
+                    FontSize="12"/>
             </StackPanel>
 
             <Grid Grid.Row="1">

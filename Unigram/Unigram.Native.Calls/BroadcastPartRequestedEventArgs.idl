@@ -1,0 +1,12 @@
+namespace Unigram.Native.Calls
+{
+    delegate void BroadcastPartRequestedDeferral(Int64 time, Int64 response, Telegram.Td.Api.FilePart filePart);
+
+    [default_interface]
+    runtimeclass BroadcastPartRequestedEventArgs
+    {
+        Int32 Scale{ get; };
+        Int64 Time{ get; };
+        BroadcastPartRequestedDeferral Deferral{ get; };
+    }
+}

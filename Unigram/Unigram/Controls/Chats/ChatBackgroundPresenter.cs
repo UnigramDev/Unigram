@@ -1,5 +1,6 @@
 ﻿using Microsoft.Graphics.Canvas.Effects;
 using System;
+using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using Telegram.Td.Api;
@@ -30,7 +31,7 @@ namespace Unigram.Controls.Chats
         private readonly Rectangle _imageBackground;
         private readonly Rectangle _colorBackground;
 
-        private readonly ChatBackgroundDefault _defaultBackground;
+        private readonly ChatBackgroundFreeform _defaultBackground;
 
         private readonly Compositor _compositor;
 
@@ -42,7 +43,7 @@ namespace Unigram.Controls.Chats
             _imageBackground = new Rectangle();
             _colorBackground = new Rectangle();
 
-            _defaultBackground = new ChatBackgroundDefault();
+            _defaultBackground = new ChatBackgroundFreeform();
 
             Children.Add(_colorBackground);
             Children.Add(_imageBackground);
@@ -55,16 +56,23 @@ namespace Unigram.Controls.Chats
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            _defaultBackground.UpdateLayout(_colorBackground);
+            if (_oldBackground?.Type is BackgroundTypeFill typeFill && typeFill.Fill is BackgroundFillFreeformGradient freeform1)
+            {
+                _defaultBackground.UpdateLayout(_colorBackground, freeform1);
+            }
+            else if (_oldBackground?.Type is BackgroundTypePattern typePattern && typePattern.Fill is BackgroundFillFreeformGradient freeform2)
+            {
+                _defaultBackground.UpdateLayout(_colorBackground, freeform2);
+            }
         }
 
         public void Handle(UpdateSelectedBackground update)
         {
             this.BeginOnUIThread(() =>
             {
-                if (update.ForDarkTheme == (ActualTheme == ElementTheme.Dark)) //SettingsService.Current.Appearance.IsDarkTheme())
+                if (update.ForDarkTheme == (ActualTheme == ElementTheme.Dark))
                 {
-                    Update(_session, update.Background /*_protoService.SelectedBackground*/, update.ForDarkTheme);
+                    Update(update.Background, update.ForDarkTheme);
                 }
             });
         }
@@ -77,16 +85,26 @@ namespace Unigram.Controls.Chats
 
             aggregator.Subscribe(this);
             //Update(session, settings.Wallpaper);
-            Update(session, protoService.SelectedBackground, SettingsService.Current.Appearance.IsDarkTheme());
+            Update(protoService.SelectedBackground, SettingsService.Current.Appearance.IsDarkTheme());
         }
 
-        private void Update(int session, Background background, bool dark)
+        private void Update(Background background, bool dark)
         {
-            if (BackgroundEquals(_oldBackground, background) && _oldDark == dark)
+            if (background == null && ActualTheme == ElementTheme.Light)
             {
-                if (background == null && ActualTheme == ElementTheme.Light)
+                background = new Background(0, false, false, string.Empty, null,
+                    new BackgroundTypeFill(new BackgroundFillFreeformGradient(new[] { 0x7FA381 , 0xFFF5C5, 0x336F55, 0xFBE37D })));
+            }
+
+            if (_oldDark == dark && BackgroundEquals(_oldBackground, background))
+            {
+                if (background?.Type is BackgroundTypeFill typeFill && typeFill.Fill is BackgroundFillFreeformGradient freeform1)
                 {
-                    _defaultBackground.UpdateLayout(_colorBackground, true);
+                    _defaultBackground.UpdateLayout(_colorBackground, freeform1, true);
+                }
+                else if (background?.Type is BackgroundTypePattern typePattern && typePattern.Fill is BackgroundFillFreeformGradient freeform2)
+                {
+                    _defaultBackground.UpdateLayout(_colorBackground, freeform2, true);
                 }
 
                 return;
@@ -97,35 +115,43 @@ namespace Unigram.Controls.Chats
 
             if (background == null)
             {
-                UpdateBlurred(ActualTheme == ElementTheme.Light, 20);
+                UpdateBlurred(false);
 
+                _colorBackground.Fill = null;
+                _imageBackground.Fill = new TiledBrush { Source = new Uri("ms-appx:///Assets/Images/DefaultBackground.theme-dark.png") };
                 _imageBackground.Opacity = 1;
-
-                if (ActualTheme == ElementTheme.Light)
-                {
-                    _colorBackground.Fill = new ImageBrush { AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
-                    _imageBackground.Fill = null;
-                    _defaultBackground.UpdateLayout(_colorBackground);
-                }
-                else
-                {
-                    _colorBackground.Fill = null;
-                    _imageBackground.Fill = new TiledBrush { Source = new Uri("ms-appx:///Assets/Images/DefaultBackground.theme-dark.png") };
-                }
             }
             else if (background.Type is BackgroundTypeFill typeFill)
             {
                 UpdateBlurred(false);
 
-                _colorBackground.Fill = typeFill.ToBrush();
-                _imageBackground.Opacity = 1;
                 _imageBackground.Fill = null;
+                _imageBackground.Opacity = 1;
+
+                if (typeFill.Fill is BackgroundFillFreeformGradient freeform)
+                {
+                    _colorBackground.Fill = new ImageBrush { AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
+                    _defaultBackground.UpdateLayout(_colorBackground, freeform);
+                }
+                else
+                {
+                    _colorBackground.Fill = typeFill.ToBrush();
+                }
             }
             else if (background.Type is BackgroundTypePattern typePattern)
             {
                 UpdateBlurred(false);
 
-                _colorBackground.Fill = typePattern.ToBrush();
+                if (typePattern.Fill is BackgroundFillFreeformGradient freeform)
+                {
+                    _colorBackground.Fill = new ImageBrush { AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
+                    _defaultBackground.UpdateLayout(_colorBackground, freeform);
+                }
+                else
+                {
+                    _colorBackground.Fill = typePattern.Fill.ToBrush();
+                }
+
                 _imageBackground.Opacity = typePattern.Intensity / 100d;
 
                 var document = background.Document.DocumentValue;
@@ -158,16 +184,14 @@ namespace Unigram.Controls.Chats
 
         private bool BackgroundEquals(Background prev, Background next)
         {
-            return Equals(prev, next);
-
             if (prev == null)
             {
-                return false;
+                return next == null;
             }
 
             if (prev.Type is BackgroundTypeFill prevFill && next.Type is BackgroundTypeFill nextFill)
             {
-
+                return FillEquals(prevFill.Fill, nextFill.Fill);
             }
             else if (prev.Type is BackgroundTypePattern prevPattern && next.Type is BackgroundTypePattern nextPattern)
             {
@@ -177,6 +201,28 @@ namespace Unigram.Controls.Chats
             {
 
             }
+
+            return Equals(prev, next);
+        }
+
+        private bool FillEquals(BackgroundFill prev, BackgroundFill next)
+        {
+            if (prev is BackgroundFillSolid prevSolid && next is BackgroundFillSolid nextSolid)
+            {
+                return prevSolid.Color == nextSolid.Color;
+            }
+            else if (prev is BackgroundFillGradient prevGradient && next is BackgroundFillGradient nextGradient)
+            {
+                return prevGradient.TopColor == nextGradient.TopColor
+                    && prevGradient.BottomColor == nextGradient.BottomColor
+                    && prevGradient.RotationAngle == nextGradient.RotationAngle;
+            }
+            else if (prev is BackgroundFillFreeformGradient prevFreeform && next is BackgroundFillFreeformGradient nextFreeform)
+            {
+                return prevFreeform.Colors.SequenceEqual(nextFreeform.Colors);
+            }
+
+            return false;
         }
 
         private void UpdateBlurred(bool enabled, float amount = 12)
@@ -216,27 +262,57 @@ namespace Unigram.Controls.Chats
         }
     }
 
-    public class ChatBackgroundDefaultPreview : Panel
+    public class ChatBackgroundPreview : Grid
     {
-        private readonly ChatBackgroundDefault _background;
+        private readonly ChatBackgroundFreeform _background;
 
-        public ChatBackgroundDefaultPreview()
+        public ChatBackgroundPreview()
         {
-            _background = new ChatBackgroundDefault();
-            Background = new ImageBrush { AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
+            _background = new ChatBackgroundFreeform(false);
 
             SizeChanged += OnSizeChanged;
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            _background.UpdateLayout(Background as ImageBrush, e.NewSize.Width, e.NewSize.Height);
+            if (_fill is BackgroundFillFreeformGradient freeform)
+            {
+                _background.UpdateLayout(Background as ImageBrush, e.NewSize.Width, e.NewSize.Height, freeform);
+            }
+        }
+
+        public void Play()
+        {
+            if (_fill is BackgroundFillFreeformGradient freeform)
+            {
+                _background.UpdateLayout(Background as ImageBrush, ActualWidth, ActualHeight, freeform, true);
+            }
+        }
+
+        private BackgroundFill _fill;
+        public BackgroundFill Fill
+        {
+            get => _fill;
+            set
+            {
+                _fill = value;
+
+                if (value is BackgroundFillFreeformGradient freeform)
+                {
+                    Background = new ImageBrush { AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
+                    _background.UpdateLayout(Background as ImageBrush, ActualWidth, ActualHeight, freeform);
+                }
+                else
+                {
+                    Background = value?.ToBrush();
+                }
+            }
         }
     }
 
-    public class ChatBackgroundDefault
+    public class ChatBackgroundFreeform
     {
-        private readonly Color[] _colors = new Color[]
+        private static readonly Color[] _colors = new Color[]
         {
             Color.FromArgb(0xFF, 0x7F, 0xA3, 0x81),
             Color.FromArgb(0xFF, 0xFF, 0xF5, 0xC5),
@@ -244,7 +320,7 @@ namespace Unigram.Controls.Chats
             Color.FromArgb(0xFF, 0xFB, 0xE3, 0x7D)
         };
 
-        private readonly Vector2[] _positions = new Vector2[]
+        private static readonly Vector2[] _positions = new Vector2[]
         {
             new Vector2(0.80f, 0.10f),
             new Vector2(0.60f, 0.20f),
@@ -256,7 +332,7 @@ namespace Unigram.Controls.Chats
             new Vector2(0.75f, 0.40f),
         };
 
-        private readonly float[] _curve = new float[]
+        private static readonly float[] _curve = new float[]
         {
             0f, 0.25f, 0.50f, 0.75f, 1f, 1.5f, 2f, 2.5f, 3f, 3.5f, 4f, 5f, 6f, 7f, 8f, 9f, 10f, 11f, 12f,
             13f, 14f, 15f, 16f, 17f, 18f, 18.3f, 18.6f, 18.9f, 19.2f, 19.5f, 19.8f, 20.1f, 20.4f, 20.7f,
@@ -266,20 +342,23 @@ namespace Unigram.Controls.Chats
 
         private int _phase;
 
-        public ChatBackgroundDefault()
+        public ChatBackgroundFreeform(bool random = true)
         {
-            _phase = new Random().Next(0, 7);
-        }
-
-        public void UpdateLayout(Rectangle target, bool animate = false)
-        {
-            if (target.Fill is ImageBrush brush)
+            if (random)
             {
-                UpdateLayout(brush, target.ActualWidth, target.ActualHeight, animate);
+                _phase = new Random().Next(0, 7);
             }
         }
 
-        public void UpdateLayout(ImageBrush target, double actualWidth, double actualHeight, bool animate = false)
+        public void UpdateLayout(Rectangle target, BackgroundFillFreeformGradient freeform = null, bool animate = false)
+        {
+            if (target.Fill is ImageBrush brush)
+            {
+                UpdateLayout(brush, target.ActualWidth, target.ActualHeight, freeform, animate);
+            }
+        }
+
+        public void UpdateLayout(ImageBrush target, double actualWidth, double actualHeight, BackgroundFillFreeformGradient freeform = null, bool animate = false)
         {
             if (target == null || actualWidth == 0 || actualHeight == 0)
             {
@@ -290,6 +369,8 @@ namespace Unigram.Controls.Chats
             {
                 _phase++;
             }
+
+            var colors = freeform?.GetColors() ?? _colors;
 
             double ratioX = 50 / actualWidth;
             double ratioY = 50 / actualHeight;
@@ -327,7 +408,7 @@ namespace Unigram.Controls.Chats
 
                     animation.KeyFrames.Add(new DiscreteObjectKeyFrame
                     {
-                        Value = GenerateGradient(width, height, _colors, current),
+                        Value = GenerateGradient(width, height, colors, current),
                         KeyTime = TimeSpan.FromMilliseconds(500 / 30f * i),
                     });
                 }
@@ -341,11 +422,11 @@ namespace Unigram.Controls.Chats
             }
             else
             {
-                target.ImageSource = GenerateGradient(width, height, _colors, next);
+                target.ImageSource = GenerateGradient(width, height, colors, next);
             }
         }
 
-        private Vector2[] Gather(Vector2[] list, int offset)
+        private static Vector2[] Gather(Vector2[] list, int offset)
         {
             if (offset > 0)
             {
@@ -368,7 +449,7 @@ namespace Unigram.Controls.Chats
             unsafe void Buffer(out byte* value);
         }
 
-        private unsafe WriteableBitmap GenerateGradient(int width, int height, Color[] colors, Vector2[] positions)
+        private static unsafe WriteableBitmap GenerateGradient(int width, int height, Color[] colors, Vector2[] positions)
         {
             var context = new WriteableBitmap(width, height);
             var buffer = (IBufferByteAccess)context.PixelBuffer;

@@ -103,7 +103,7 @@ namespace Unigram.Common
 
         public string Get()
         {
-            return GetStored();
+            return _currentDevice ?? GetStored();
         }
 
         public async Task<string> GetAndUpdateAsync()
@@ -118,21 +118,6 @@ namespace Unigram.Common
             var selected = devices.FirstOrDefault(x => x.IsEnabled && x.Id == deviceId);
             if (selected == null)
             {
-                //string defaultRole = null;
-                //if (deviceClass == DeviceClass.AudioCapture)
-                //{
-                //    defaultRole = MediaDevice.GetDefaultAudioCaptureId(AudioDeviceRole.Communications);
-                //}
-                //else if (deviceClass == DeviceClass.AudioRender)
-                //{
-                //    defaultRole = MediaDevice.GetDefaultAudioRenderId(AudioDeviceRole.Communications);
-                //}
-
-                //if (defaultRole != null)
-                //{
-                //    selected = devices.FirstOrDefault(x => x.IsEnabled && x.Id == defaultRole);
-                //}
-
                 return GetDefault();
             }
 

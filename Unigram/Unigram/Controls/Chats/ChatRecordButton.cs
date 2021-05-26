@@ -105,16 +105,10 @@ namespace Unigram.Controls.Chats
             _recorder.QuantumProcessed = null;
         }
 
-        private async void RecordAudioVideoRunnable()
+        private void RecordAudioVideoRunnable()
         {
             _calledRecordRunnable = true;
             _recordAudioVideoRunnableStarted = false;
-
-            var permissions = await CheckAccessAsync(Mode);
-            if (permissions == false)
-            {
-                return;
-            }
 
             Logger.Debug(LogTarget.Recording, "Permissions granted, mode: " + Mode);
 
@@ -253,6 +247,12 @@ namespace Unigram.Controls.Chats
         {
             if (ClickMode == ClickMode.Press)
             {
+                var permissions = await CheckAccessAsync(Mode);
+                if (permissions == false)
+                {
+                    return;
+                }
+
                 Logger.Debug(LogTarget.Recording, "Click mode: Press");
 
                 if (_recordingLocked)

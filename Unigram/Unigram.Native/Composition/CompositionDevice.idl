@@ -5,6 +5,8 @@ namespace Unigram.Native.Composition
     [default_interface]
     static runtimeclass CompositionDevice 
     {
+        static DirectRectangleClip CreateRectangleClip(Windows.UI.Xaml.UIElement element);
+        [default_overload]
         static DirectRectangleClip CreateRectangleClip(Windows.UI.Composition.Visual visual);
         static void SetClip(Windows.UI.Composition.Visual visual, DirectRectangleClip clip);
     }

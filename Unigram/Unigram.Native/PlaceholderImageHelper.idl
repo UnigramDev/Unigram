@@ -5,6 +5,8 @@ namespace Unigram.Native
 	{
 		static PlaceholderImageHelper Current{ get; };
 
+		void WriteBytes(Windows.Foundation.Collections.IVector<byte> hash, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
+
 		void DrawWebP(String fileName, Int32 maxWidth, Windows.Storage.Streams.IRandomAccessStream randomAccessStream, out Windows.Foundation.Size size);
 
 		void DrawSvg(String path, Windows.UI.Color foreground, Windows.Storage.Streams.IRandomAccessStream randomAccessStream, out Windows.Foundation.Size size);

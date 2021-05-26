@@ -13024,8 +13024,14 @@ You can use **a–z**, **0–9** and underscores. Minimum length is **5** charac
   <data name="VoipChatShare" xml:space="preserve">
     <value>Share</value>
   </data>
+  <data name="VoipChatStartScreenCapture" xml:space="preserve">
+    <value>Share screen</value>
+  </data>
   <data name="VoipChatStartsIn" xml:space="preserve">
     <value>Starts in</value>
+  </data>
+  <data name="VoipChatStopScreenCapture" xml:space="preserve">
+    <value>Stop screen sharing</value>
   </data>
   <data name="VoipConnecting" xml:space="preserve">
     <value>Connecting</value>

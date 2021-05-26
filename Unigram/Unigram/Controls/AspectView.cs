@@ -273,7 +273,7 @@ namespace Unigram.Controls
             }
 
             Calculate:
-            if (width > availableWidth || height > availableHeight)
+            if (width > availableWidth || height > availableHeight || Constraint is Size)
             {
                 var ratioX = availableWidth / width;
                 var ratioY = availableHeight / height;

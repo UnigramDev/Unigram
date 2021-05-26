@@ -116,7 +116,7 @@ namespace Unigram.Views
             UpdateChatTitle(chat);
             UpdateChatPhoto(chat);
 
-            var unmuted = ViewModel.CacheService.GetNotificationSettingsMuteFor(chat) == 0;
+            var unmuted = ViewModel.CacheService.Notifications.GetMutedFor(chat) == 0;
             Notifications.IsOn = unmuted;
             NotificationGlyph.Text = unmuted ? Icons.Alert : Icons.AlertOff;
 
@@ -138,7 +138,7 @@ namespace Unigram.Views
 
         public void UpdateChatNotificationSettings(Chat chat)
         {
-            var unmuted = ViewModel.CacheService.GetNotificationSettingsMuteFor(chat) == 0;
+            var unmuted = ViewModel.CacheService.Notifications.GetMutedFor(chat) == 0;
             NotificationGlyph.Text = unmuted ? Icons.Alert : Icons.AlertOff;
         }
 

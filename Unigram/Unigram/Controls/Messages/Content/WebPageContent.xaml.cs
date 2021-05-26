@@ -2,7 +2,9 @@
 using System.Threading;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls.Chats;
 using Unigram.ViewModels;
+using Windows.Foundation;
 using Windows.UI.Xaml;
 
 namespace Unigram.Controls.Messages.Content
@@ -70,7 +72,42 @@ namespace Unigram.Controls.Messages.Content
                 var maxWidth = (double)App.Current.Resources["MessageMaxWidth"];
                 maxWidth -= (10 + 8 + 2 + 10);
 
-                if (webPage.Animation != null)
+                if (string.Equals(webPage.Type, "telegram_background", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (Uri.TryCreate(webPage.Url, UriKind.Absolute, out Uri result))
+                    {
+                        var background = TdBackground.FromUri(result);
+                        if (background is BackgroundTypeFill typeFill)
+                        {
+                            var aspect = new AspectView { MaxWidth = 320, Constraint = new Size(1, 1) };
+                            aspect.Children.Add(new ChatBackgroundPreview { Fill = typeFill.Fill });
+
+                            Media.Child = aspect;
+                        }
+                        else if (background is BackgroundTypePattern typePattern)
+                        {
+                            if (webPage.Document != null)
+                            {
+                                var preview = new ChatBackgroundPreview { Fill = typePattern.Fill };
+                                preview.Children.Add(new DocumentPhotoContent(message));
+
+                                Media.Child = preview;
+                            }
+                            else
+                            {
+                                var aspect = new AspectView { MaxWidth = 320, Constraint = new Size(1, 1) };
+                                aspect.Children.Add(new ChatBackgroundPreview { Fill = typePattern.Fill });
+
+                                Media.Child = aspect;
+                            }
+                        }
+                        else if (webPage.Document != null)
+                        {
+                            Media.Child = new DocumentPhotoContent(message);
+                        }
+                    }
+                }
+                else if (webPage.Animation != null)
                 {
                     Media.Child = new AnimationContent(message) { MaxWidth = maxWidth };
                 }
@@ -80,14 +117,7 @@ namespace Unigram.Controls.Messages.Content
                 }
                 else if (webPage.Document != null)
                 {
-                    if (string.Equals(webPage.Type, "telegram_background", StringComparison.OrdinalIgnoreCase))
-                    {
-                        Media.Child = new DocumentPhotoContent(message);
-                    }
-                    else
-                    {
-                        Media.Child = new DocumentContent(message);
-                    }
+                    Media.Child = new DocumentContent(message);
                 }
                 else if (webPage.Sticker != null)
                 {

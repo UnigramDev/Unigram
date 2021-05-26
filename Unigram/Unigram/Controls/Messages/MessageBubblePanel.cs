@@ -178,7 +178,9 @@ namespace Unigram.Controls.Messages
                 return _layout;
             }
 
-            _format ??= new CanvasTextFormat { FontFamily = "Assets\\Emoji\\apple.ttf#Segoe UI Emoji", FontSize = Theme.Current.MessageFontSize };
+            var fontSize = (float)(Theme.Current.MessageFontSize * App.Current.UISettings.TextScaleFactor);
+
+            _format ??= new CanvasTextFormat { FontFamily = "Assets\\Emoji\\apple.ttf#Segoe UI Emoji", FontSize = fontSize };
             _layout = new CanvasTextLayout(CanvasDevice.GetSharedDevice(), caption.Text, _format, width, float.PositiveInfinity);
 
             foreach (var entity in caption.Entities)

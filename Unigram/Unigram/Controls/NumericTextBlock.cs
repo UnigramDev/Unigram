@@ -198,17 +198,15 @@ namespace Unigram.Controls
 
         CanvasGeometry GetPart(char value)
         {
-            using (var textFormat = new CanvasTextFormat
+            using var textFormat = new CanvasTextFormat
             {
                 FontFamily = "Segoe UI",
-                FontWeight = FontWeights.Normal,
-                FontSize = 12,
-            })
-            using (var layout = new CanvasTextLayout(CanvasDevice.GetSharedDevice(), $"{value}", textFormat, 1000, 1000))
-            {
-                var text = CanvasGeometry.CreateText(layout);
-                return text;
-            }
+                FontWeight = FontWeight,
+                FontSize = (float)FontSize,
+            };
+            using var layout = new CanvasTextLayout(CanvasDevice.GetSharedDevice(), $"{value}", textFormat, 1000, 1000);
+            var text = CanvasGeometry.CreateText(layout);
+            return text;
         }
     }
 }

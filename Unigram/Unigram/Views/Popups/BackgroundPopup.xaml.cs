@@ -3,7 +3,9 @@ using System;
 using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Controls.Brushes;
+using Unigram.Converters;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
@@ -20,18 +22,36 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Views
 {
-    public sealed partial class BackgroundPage : HostedPage, IHandle<UpdateFile>, IBackgroundDelegate
+    public sealed partial class BackgroundPopup : ContentPopup, IHandle<UpdateFile>, IBackgroundDelegate
     {
         public BackgroundViewModel ViewModel => DataContext as BackgroundViewModel;
+
+        private readonly FlatFileContext<Background> _backgrounds = new();
 
         private SpriteVisual _blurVisual;
         private CompositionEffectBrush _blurBrush;
         private Compositor _compositor;
 
-        public BackgroundPage()
+        public BackgroundPopup(Background background)
+            : this()
         {
+            _ = ViewModel.OnNavigatedToAsync(background, NavigationMode.New, null);
+        }
+
+        public BackgroundPopup(string slug)
+            : this()
+        {
+            _ = ViewModel.OnNavigatedToAsync(slug, NavigationMode.New, null);
+        }
+
+        private BackgroundPopup()
+        { 
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<BackgroundViewModel, IBackgroundDelegate>(this);
+
+            Title = Strings.Resources.BackgroundPreview;
+            PrimaryButtonText = Strings.Resources.Set;
+            SecondaryButtonText = Strings.Resources.Cancel;
 
             Message1.Mockup(Strings.Resources.BackgroundPreviewLine1, false, DateTime.Now.AddSeconds(-25));
             Message2.Mockup(Strings.Resources.BackgroundPreviewLine2, true, DateTime.Now);
@@ -68,12 +88,12 @@ namespace Unigram.Views
             ElementCompositionPreview.SetElementChildVisual(BlurPanel, _blurVisual);
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        private void OnLoaded(object sender, RoutedEventArgs e)
         {
             ViewModel.Aggregator.Subscribe(this);
         }
 
-        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             ViewModel.Aggregator.Unsubscribe(this);
         }
@@ -108,6 +128,8 @@ namespace Unigram.Views
             {
                 PatternRadio.IsChecked = false;
             }
+
+            RadioColor_Toggled(null, null);
         }
 
         private void Pattern_Click(object sender, RoutedEventArgs e)
@@ -120,14 +142,8 @@ namespace Unigram.Views
             }
         }
 
-        private async void Image_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+        private async void UpdatePresenter(Background wallpaper)
         {
-            var wallpaper = args.NewValue as Background;
-            if (wallpaper == null)
-            {
-                return;
-            }
-
             if (wallpaper.Id == Constants.WallpaperLocalId && StorageApplicationPermissions.FutureAccessList.ContainsItem(wallpaper.Name))
             {
                 var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(wallpaper.Name);
@@ -136,8 +152,7 @@ namespace Unigram.Views
                     var bitmap = new BitmapImage();
                     await bitmap.SetSourceAsync(stream);
 
-                    var rectangle = sender as Rectangle;
-                    rectangle.Fill = new ImageBrush { ImageSource = bitmap, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
+                    Presenter.Fill = new ImageBrush { ImageSource = bitmap, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
                 }
             }
             else
@@ -148,23 +163,19 @@ namespace Unigram.Views
                     return;
                 }
 
-                var rectangle = sender as Rectangle;
                 if (wallpaper.Type is BackgroundTypeWallpaper)
                 {
-                    rectangle.Opacity = 1;
-                    rectangle.Fill = new ImageBrush { ImageSource = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, big.DocumentValue, 0, 0), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
+                    Presenter.Fill = new ImageBrush { ImageSource = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, big.DocumentValue, 0, 0), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
                 }
                 else if (wallpaper.Type is BackgroundTypePattern)
                 {
-                    //content.Background = pattern.Fill.ToBrush();
-                    //rectangle.Opacity = pattern.Intensity / 100d
                     if (string.Equals(wallpaper.Document.MimeType, "application/x-tgwallpattern", StringComparison.OrdinalIgnoreCase))
                     {
-                        rectangle.Fill = new TiledBrush { SvgSource = PlaceholderHelper.GetVectorSurface(ViewModel.ProtoService, big.DocumentValue, ViewModel.GetPatternForeground()) };
+                        Presenter.Fill = new TiledBrush { SvgSource = PlaceholderHelper.GetVectorSurface(ViewModel.ProtoService, big.DocumentValue, ViewModel.GetPatternForeground()) };
                     }
                     else
                     {
-                        rectangle.Fill = new ImageBrush { ImageSource = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, big.DocumentValue, 0, 0), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
+                        Presenter.Fill = new ImageBrush { ImageSource = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, big.DocumentValue, 0, 0), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
                     }
                 }
             }
@@ -197,7 +208,7 @@ namespace Unigram.Views
                 return;
             }
 
-            Header.CommandVisibility = wallpaper.Id != Constants.WallpaperLocalId ? Visibility.Visible : Visibility.Collapsed;
+            //Header.CommandVisibility = wallpaper.Id != Constants.WallpaperLocalId ? Visibility.Visible : Visibility.Collapsed;
             
             if (wallpaper.Type is BackgroundTypeWallpaper)
             {
@@ -205,6 +216,8 @@ namespace Unigram.Views
 
                 Message1.Mockup(Strings.Resources.BackgroundPreviewLine1, false, DateTime.Now.AddSeconds(-25));
                 Message2.Mockup(Strings.Resources.BackgroundPreviewLine2, true, DateTime.Now);
+
+                UpdatePresenter(wallpaper);
             }
             else
             {
@@ -212,6 +225,8 @@ namespace Unigram.Views
 
                 if (wallpaper.Type is BackgroundTypeFill || wallpaper.Type is BackgroundTypePattern)
                 {
+                    UpdatePresenter(wallpaper);
+
                     Pattern.Visibility = Visibility.Visible;
                     Color.Visibility = Visibility.Visible;
                 }
@@ -230,7 +245,7 @@ namespace Unigram.Views
             return wallpaper;
         }
 
-        private Brush ConvertBackground(BackgroundColor color1, BackgroundColor color2, int rotation)
+        private BackgroundFill ConvertBackground(BackgroundColor color1, BackgroundColor color2, BackgroundColor color3, BackgroundColor color4, int rotation)
         {
             var panel = PatternList.ItemsPanelRoot as ItemsStackPanel;
             if (panel != null)
@@ -270,30 +285,32 @@ namespace Unigram.Views
                 }
             }
 
-            if (!color1.IsEmpty && !color2.IsEmpty)
-            {
-                return TdBackground.GetGradient(color1, color2, rotation);
-            }
-            else if (!color1.IsEmpty)
-            {
-                return new SolidColorBrush(color1);
-            }
-            else if (!color2.IsEmpty)
-            {
-                return new SolidColorBrush(color2);
-            }
-
-            return null;
+            return ViewModel.GetFill();
         }
 
-        private Visibility ConvertColor2(BackgroundColor color)
+        private string ConvertColor2Glyph(BackgroundColor color)
         {
-            AddColor.Visibility = color.IsEmpty ? Visibility.Visible : Visibility.Collapsed;
-            ChangeRotation.Visibility = !color.IsEmpty ? Visibility.Visible : Visibility.Collapsed;
-            RemoveColor1.Visibility = !color.IsEmpty ? Visibility.Visible : Visibility.Collapsed;
-            ColumnColor2.Width = !color.IsEmpty ? new GridLength(1, GridUnitType.Star) : new GridLength(0, GridUnitType.Pixel);
+            return color.IsEmpty ? Icons.Add : Icons.Dismiss;
+        }
 
-            return !color.IsEmpty ? Visibility.Visible : Visibility.Collapsed;
+        private Visibility ConvertColor2Visibility(BackgroundColor color)
+        {
+            return color.IsEmpty ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        private Visibility ConvertColor2Visibility(BackgroundColor color2, BackgroundColor color3)
+        {
+            return !color2.IsEmpty && color3.IsEmpty ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private Visibility ConvertColor2Visibility(BackgroundColor color2, BackgroundColor color3, BackgroundColor color4)
+        {
+            if (!color2.IsEmpty && color3.IsEmpty)
+            {
+                return Visibility.Visible;
+            }
+
+            return !color3.IsEmpty && color4.IsEmpty ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private double ConvertIntensity(int intensity)
@@ -307,7 +324,7 @@ namespace Unigram.Views
         {
             this.BeginOnUIThread(() =>
             {
-                if (Presenter.Content is Background wallpaper && wallpaper.UpdateFile(update.File))
+                if (ViewModel.Item is Background wallpaper && wallpaper.UpdateFile(update.File))
                 {
                     var big = wallpaper.Document;
                     if (big == null)
@@ -315,12 +332,9 @@ namespace Unigram.Views
                         return;
                     }
 
-                    var rectangle = Presenter.ContentTemplateRoot as Rectangle;
-
                     if (wallpaper.Type is BackgroundTypeWallpaper)
                     {
-                        rectangle.Opacity = 1;
-                        rectangle.Fill = new ImageBrush { ImageSource = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, big.DocumentValue, 0, 0), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
+                        Presenter.Fill = new ImageBrush { ImageSource = PlaceholderHelper.GetBitmap(null, big.DocumentValue, 0, 0), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
                     }
                     else if (wallpaper.Type is BackgroundTypePattern pattern)
                     {
@@ -328,12 +342,37 @@ namespace Unigram.Views
                         //rectangle.Opacity = pattern.Intensity / 100d;
                         if (string.Equals(wallpaper.Document.MimeType, "application/x-tgwallpattern", StringComparison.OrdinalIgnoreCase))
                         {
-                            rectangle.Fill = new TiledBrush { SvgSource = PlaceholderHelper.GetVectorSurface(ViewModel.ProtoService, big.DocumentValue, ViewModel.GetPatternForeground()) };
+                            Presenter.Fill = new TiledBrush { SvgSource = PlaceholderHelper.GetVectorSurface(null, big.DocumentValue, ViewModel.GetPatternForeground()) };
                         }
                         else
                         {
-                            rectangle.Fill = new ImageBrush { ImageSource = new BitmapImage(UriEx.ToLocal(big.DocumentValue.Local.Path)), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
+                            Presenter.Fill = new ImageBrush { ImageSource = new BitmapImage(UriEx.ToLocal(big.DocumentValue.Local.Path)), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
                         }
+                    }
+                }
+
+                if (_backgrounds.TryGetValue(update.File.Id, out Background background))
+                {
+                    background.UpdateFile(update.File);
+
+                    var small = background.Document.Thumbnail;
+                    if (small == null)
+                    {
+                        return;
+                    }
+
+                    var container = PatternList.ContainerFromItem(background) as SelectorItem;
+                    if (container == null)
+                    {
+                        return;
+                    }
+
+                    var content = container.ContentTemplateRoot as Grid;
+                    var photo = content?.Children[0] as Image;
+
+                    if (photo != null)
+                    {
+                        photo.Source = PlaceholderHelper.GetBitmap(null, small.File, background.Document.Thumbnail.Width, background.Document.Thumbnail.Height);
                     }
                 }
             });
@@ -341,41 +380,57 @@ namespace Unigram.Views
 
         private void RadioColor_Toggled(object sender, RoutedEventArgs e)
         {
-            if (RadioColor1.IsChecked == true && ViewModel.Color1 is BackgroundColor color1)
+            var row = Grid.GetRow(ColorPanel);
+            if (row != 2)
             {
-                PickerColor.Color = color1;
-                TextColor1.SelectAll();
+                return;
             }
-            else if (RadioColor2.IsChecked == true && ViewModel.Color2 is BackgroundColor color2)
+
+            if (RadioColor1.IsChecked == true)
             {
-                PickerColor.Color = color2;
-                TextColor2.SelectAll();
+                PickerColor.Color = ViewModel.Color1;
             }
+            else if (RadioColor2.IsChecked == true)
+            {
+                PickerColor.Color = ViewModel.Color2;
+            }
+            else if (RadioColor3.IsChecked == true)
+            {
+                PickerColor.Color = ViewModel.Color3;
+            }
+            else if (RadioColor4.IsChecked == true)
+            {
+                PickerColor.Color = ViewModel.Color4;
+            }
+
+            TextColor1.SelectAll();
         }
 
         private void PickerColor_ColorChanged(Unigram.Controls.ColorPicker sender, Unigram.Controls.ColorChangedEventArgs args)
         {
+            var row = Grid.GetRow(ColorPanel);
+            if (row != 2)
+            {
+                return;
+            }
+
+            TextColor1.Color = args.NewColor;
+
             if (RadioColor1.IsChecked == true)
             {
-                TextColor1.Color = args.NewColor;
                 ViewModel.Color1 = args.NewColor;
             }
             else if (RadioColor2.IsChecked == true)
             {
-                TextColor2.Color = args.NewColor;
                 ViewModel.Color2 = args.NewColor;
             }
-        }
-
-        private void TextColor_GotFocus(object sender, RoutedEventArgs e)
-        {
-            if (TextColor1 == sender)
+            else if (RadioColor3.IsChecked == true)
             {
-                RadioColor1.IsChecked = true;
+                ViewModel.Color3 = args.NewColor;
             }
-            else if (TextColor2 == sender)
+            else if (RadioColor4.IsChecked == true)
             {
-                RadioColor2.IsChecked = true;
+                ViewModel.Color4 = args.NewColor;
             }
         }
 
@@ -401,10 +456,19 @@ namespace Unigram.Views
                 }
 
                 var content = root.Children[0] as Image;
-                content.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, small.File, wallpaper.Document.Thumbnail.Width, wallpaper.Document.Thumbnail.Height);
+                var file = small.File;
+                if (file.Local.IsDownloadingCompleted)
+                {
+                    content.Source = PlaceholderHelper.GetBitmap(null, small.File, wallpaper.Document.Thumbnail.Width, wallpaper.Document.Thumbnail.Height);
+                }
+                else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                {
+                    _backgrounds[file.Id] = wallpaper;
+                    ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                }
 
                 content.Opacity = ViewModel.Intensity / 100d;
-                root.Background = ViewModel.GetFill().ToBrush();
+                root.Background = Preview.Background;
             }
             else
             {
@@ -412,7 +476,7 @@ namespace Unigram.Views
                 content.Source = null;
 
                 content.Opacity = 1;
-                root.Background = ViewModel.GetFill().ToBrush();
+                root.Background = Preview.Background;
             }
         }
 
@@ -423,16 +487,56 @@ namespace Unigram.Views
                 return;
             }
 
-            if (TextColor1 == sender)
+            PickerColor.Color = args.NewColor;
+        }
+
+        private void RemoveColor_Click(object sender, RoutedEventArgs e)
+        {
+            if (RadioColor1.IsChecked == true)
             {
-                RadioColor1.IsChecked = true;
-                PickerColor.Color = args.NewColor;
+                ViewModel.RemoveColor(0);
             }
-            else if (TextColor2 == sender)
+            else if (RadioColor2.IsChecked == true)
             {
-                RadioColor2.IsChecked = true;
-                PickerColor.Color = args.NewColor;
+                ViewModel.RemoveColor(1);
             }
+            else if (RadioColor3.IsChecked == true)
+            {
+                ViewModel.RemoveColor(2);
+            }
+            else if (RadioColor4.IsChecked == true)
+            {
+                ViewModel.RemoveColor(3);
+            }
+        }
+
+        private void AddRemoveColor_Click(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel.Color2.IsEmpty || ViewModel.Color3.IsEmpty || ViewModel.Color4.IsEmpty)
+            {
+                ViewModel.AddColor();
+            }
+            else if (RadioColor1.IsChecked == true)
+            {
+                ViewModel.RemoveColor(0);
+            }
+            else if (RadioColor2.IsChecked == true)
+            {
+                ViewModel.RemoveColor(1);
+            }
+            else if (RadioColor3.IsChecked == true)
+            {
+                ViewModel.RemoveColor(2);
+            }
+            else if (RadioColor4.IsChecked == true)
+            {
+                ViewModel.RemoveColor(3);
+            }
+        }
+
+        private void Play_Click(object sender, RoutedEventArgs e)
+        {
+            Preview.Play();
         }
     }
 }

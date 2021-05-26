@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views"
+    xmlns:common="using:Unigram.Common"
     xmlns:controls="using:Unigram.Controls"
     xmlns:settings="using:Unigram.Views.Settings"
     xmlns:xaml="using:Microsoft.Graphics.Canvas.UI.Xaml"
@@ -25,7 +26,7 @@
             <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
             <Setter Property="BorderThickness" Value="0" />
             <Setter Property="Padding" Value="0" />
-            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
             <Setter Property="HorizontalContentAlignment" Value="Center" />
             <Setter Property="VerticalAlignment" Value="Top" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
@@ -90,14 +91,50 @@
         </Style>
     </Page.Resources>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" RequestedTheme="Dark">
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" PointerMoved="Viewport_PointerEntered" PointerExited="Viewport_PointerExited" RequestedTheme="Dark">
         <Grid.RowDefinitions>
             <RowDefinition Height="32"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Border>
+        <Border x:Name="TitleArea" Background="Transparent"/>
+
+        <StackPanel
+            x:Name="TopButtons"
+            VerticalAlignment="Top"
+            Orientation="Horizontal"
+            Margin="0,0,0,-8"
+            Grid.RowSpan="2">
+            <controls:AnimatedGlyphButton
+                x:Name="Resize"
+                Click="Resize_Click"
+                Glyph="&#xE965;"
+                Width="40"
+                Height="48"
+                FontSize="16"/>
+            <controls:AnimatedGlyphToggleButton
+                x:Name="Mode"
+                Click="Mode_Click"
+                Visibility="Collapsed"
+                Glyph="&#xE968;"
+                CheckedGlyph="&#xE967;"
+                IsChecked="True"
+                Margin="-8,0,0,0"
+                Width="40"
+                Height="48"
+                FontSize="16"
+                IsOneWay="False"/>
+            <controls:GlyphButton
+                x:Name="Menu"
+                Click="Menu_ContextRequested"
+                Glyph="&#xE930;"
+                Margin="-8,0,0,0"
+                Width="40"
+                Height="48"/>
+        </StackPanel>
+
+        <Border x:Name="TitlePanel" IsHitTestVisible="False" Margin="32,0,0,0">
             <Grid HorizontalAlignment="Left">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
@@ -123,111 +160,141 @@
             </Grid>
         </Border>
 
-        <!--<controls:ContentPageHeader Background="#000000" BackVisibility="Collapsed" Grid.Row="1">
-            <Grid Margin="12,0,0,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <controls:ProfilePicture
-                    x:Name="PhotoInfo"
-                    AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"
-                    Width="{ThemeResource ChatPhotoSize}"
-                    Height="{ThemeResource ChatPhotoSize}"
-                    Margin="0,0,12,0"/>
-
-                <Grid VerticalAlignment="Center" Margin="0,-2,0,2" Grid.Column="1">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                </Grid>
-
-                <controls:GlyphButton
-                    x:Name="GroupInvite"
-                    Glyph="&#xE8FA;"
-                    AutomationProperties.Name="{CustomResource AddMember}"
-                    ToolTipService.ToolTip="{CustomResource AddMember}"
-                    Style="{StaticResource HeaderGlyphButtonStyle}"
-                    Grid.Column="2"/>
-            </Grid>
-        </controls:ContentPageHeader>-->
         <TextBlock
             x:Name="SubtitleInfo"
             Foreground="{ThemeResource PageHeaderDisabledBrush}"
             Style="{StaticResource CaptionTextBlockStyle}"
             TextWrapping="NoWrap"
             TextTrimming="CharacterEllipsis"
-            Margin="12,-8,0,0"
+            IsHitTestVisible="False"
+            Margin="44,-8,0,12"
             Grid.Row="1"/>
 
-        <Grid x:Name="ParticipantsPanel" VerticalAlignment="Top" Grid.Row="2">
-            <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
+        <Border
+            x:Name="PointerListener"
+            Background="Transparent"
+            Grid.Row="2"
+            Grid.RowSpan="2"/>
 
-            <Border Background="{ThemeResource PageHeaderBorderBrush}" Margin="12,16" CornerRadius="8">
-                <ListView
-                    x:Name="List"
-                    SelectionMode="None"
-                    ChoosingItemContainer="OnChoosingItemContainer"
-                    ContainerContentChanging="OnContainerContentChanging">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Padding="12,6">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
+        <Grid x:Name="ParticipantsPanel"
+              Margin="0,0,0,-56"
+              Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <controls:TableListView
+                x:Name="List"
+                Loaded="List_Loaded"
+                SelectionMode="None"
+                ChoosingItemContainer="OnChoosingItemContainer"
+                ContainerContentChanging="OnContainerContentChanging"
+                Canvas.ZIndex="1"
+                Padding="12,0,12,72">
+                <ListView.Header>
+                    <Grid x:Name="ViewportAspect" Margin="-4,0,-4,0" Grid.ColumnSpan="2">
+                        <local:ParticipantsGrid x:Name="Viewport" SizeChanged="OnViewportSizeChanged"/>
+                    </Grid>
+                </ListView.Header>
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <ItemsStackPanel
+                            Background="{ThemeResource PageHeaderBorderBrush}"
+                            VerticalAlignment="Top"/>
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="12,6">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Border
+                                Background="#33c659"
+                                Width="36"
+                                Height="36"
+                                CornerRadius="18"
+                                Margin="0,0,12,0"
+                                Grid.RowSpan="2"/>
+                            <controls:ProfilePicture
+                                IsEnabled="False"
+                                Width="36"
+                                Height="36"
+                                Margin="0,0,12,0"
+                                Grid.RowSpan="2"/>
+                            <Border
+                                Width="36"
+                                Height="36"
+                                CornerRadius="18"
+                                Margin="0,0,12,0"
+                                Grid.RowSpan="2"/>
+
+                            <TextBlock
+                                FontFamily="{StaticResource EmojiThemeFontFamily}"
+                                TextWrapping="NoWrap"
+                                TextTrimming="CharacterEllipsis"
+                                VerticalAlignment="Bottom"
+                                Grid.Column="1" />
+                            <Grid VerticalAlignment="Top" Grid.Column="1" Grid.Row="1">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition/>
-                                    <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <controls:ProfilePicture
-                                    IsEnabled="False"
-                                    Width="36" Height="36"
-                                    Margin="0,0,12,0"
-                                    Grid.RowSpan="2"/>
-
-                                <TextBlock
-                                    FontFamily="{StaticResource EmojiThemeFontFamily}"
-                                    TextWrapping="NoWrap"
-                                    TextTrimming="CharacterEllipsis"
-                                    VerticalAlignment="Bottom"
-                                    Grid.Column="1" />
                                 <TextBlock
                                     VerticalAlignment="Top"
-                                    Text="{CustomResource Speaking}"
+                                    FontSize="16"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                    Foreground="#33c659"
+                                    TextTrimming="CharacterEllipsis"
+                                    TextWrapping="NoWrap"
+                                    MaxLines="1"/>
+                                <TextBlock
+                                    VerticalAlignment="Top"
                                     Style="{StaticResource CaptionTextBlockStyle}"
                                     Foreground="#33c659"
                                     TextTrimming="CharacterEllipsis"
                                     TextWrapping="NoWrap"
                                     Grid.Column="1"
-                                    Grid.Row="1"
                                     MaxLines="1"/>
-
-                                <TextBlock
-                                    VerticalAlignment="Center"
-                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                    Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                    FontSize="20"
-                                    Grid.Column="2"
-                                    Grid.RowSpan="2"/>
                             </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                            <Setter Property="MinHeight" Value="0"/>
-                            <Setter Property="Padding" Value="0"/>
-                        </Style>
-                    </ListView.ItemContainerStyle>
-                </ListView>
-            </Border>
+
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                FontSize="20"
+                                Grid.Column="2"
+                                Grid.RowSpan="2"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="MinHeight" Value="0"/>
+                        <Setter Property="Padding" Value="0"/>
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </controls:TableListView>
+
+            <Rectangle x:Name="BottomShadow" Height="72" VerticalAlignment="Bottom" Canvas.ZIndex="2">
+                <Rectangle.Fill>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                        <common:Scrim.Gradient>
+                            <common:CubicBezierGradient
+                                TopColor="#00171717"
+                                BottomColor="#FF171717"/>
+                        </common:Scrim.Gradient>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
         </Grid>
 
         <StackPanel x:Name="ScheduledPanel" x:Load="False" VerticalAlignment="Center" Grid.Row="2">
@@ -251,61 +318,10 @@
         </StackPanel>
 
         <StackPanel x:Name="BottomPanel" Grid.Row="3">
-            <StackPanel.ChildrenTransitions>
-                <TransitionCollection>
-                    <RepositionThemeTransition/>
-                    <AddDeleteThemeTransition/>
-                </TransitionCollection>
-            </StackPanel.ChildrenTransitions>
-
-            <Grid
-                x:Name="AudioOff"
-                Background="{ThemeResource MessageServiceBackgroundBrush}"
-                CornerRadius="{ThemeResource MessageServiceCornerRadius}"
-                Padding="12,2,12,4"
-                Margin="0,0,0,12"
-                HorizontalAlignment="Center"
-                Visibility="Collapsed">
+            <Grid x:Name="BottomRoot" HorizontalAlignment="Center">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <TextBlock
-                    Text="&#xE610;"
-                    FontSize="{StaticResource GlyphMediumFontSize}"
-                    FontFamily="{StaticResource TelegramThemeFontFamily}"
-                    VerticalAlignment="Bottom"
-                    Margin="0,0,8,0"/>
-                <TextBlock
-                    x:Name="AudioOffText"
-                    Grid.Column="1"/>
-            </Grid>
-
-            <Grid
-                x:Name="VideoOff"
-                Background="{ThemeResource MessageServiceBackgroundBrush}"
-                CornerRadius="{ThemeResource MessageServiceCornerRadius}"
-                Padding="12,2,12,4"
-                Margin="0,0,0,12"
-                HorizontalAlignment="Center"
-                Visibility="Collapsed">
-                <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <TextBlock
-                    Text="&#xE714;"
-                    FontSize="{StaticResource GlyphMediumFontSize}"
-                    FontFamily="{StaticResource SymbolThemeFontFamily}"
-                    VerticalAlignment="Bottom"
-                    Margin="0,-2,8,-2"/>
-                <TextBlock
-                    x:Name="VideoOffText"
-                    Grid.Column="1"/>
-            </Grid>
-
-            <Grid HorizontalAlignment="Center">
-                <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
@@ -316,6 +332,8 @@
                     <RowDefinition/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
+                <Border x:Name="BottomBackground" CornerRadius="8" Margin="-4,-8" Grid.ColumnSpan="5" Grid.RowSpan="4"/>
+
                 <controls:GlyphButton
                     x:Name="Settings"
                     Click="Menu_ContextRequested"
@@ -326,7 +344,47 @@
                     Style="{StaticResource CallGlyphButtonStyle}"
                     Grid.Row="1"/>
                 <TextBlock
+                    x:Name="SettingsInfo"
                     Text="{CustomResource Settings}"
+                    Style="{StaticResource CaptionTextBlockStyle}"
+                    TextAlignment="Center"
+                    VerticalAlignment="Top"
+                    Margin="0,4,0,0"
+                    Grid.Row="2"/>
+
+                <controls:GlyphButton
+                    x:Name="Video"
+                    Click="Video_Click"
+                    Glyph="&#xE963;"
+                    Background="#663e3f41"
+                    Foreground="#FFFFFF"
+                    Content="{CustomResource ChatVideo}"
+                    Style="{StaticResource CallGlyphButtonStyle}"
+                    Grid.Row="1"/>
+                <TextBlock
+                    x:Name="VideoInfo"
+                    Text="{CustomResource ChatVideo}"
+                    Style="{StaticResource CaptionTextBlockStyle}"
+                    TextAlignment="Center"
+                    VerticalAlignment="Top"
+                    Margin="0,4,0,0"
+                    Grid.Row="2"/>
+
+                <controls:GlyphButton
+                    x:Name="Screen"
+                    Visibility="Collapsed"
+                    Click="Screen_Click"
+                    Glyph="&#xE956;"
+                    Background="#663e3f41"
+                    Foreground="#FFFFFF"
+                    Content="{CustomResource VoipChatShare}"
+                    Style="{StaticResource CallGlyphButtonStyle}"
+                    Grid.Row="1"/>
+                <TextBlock
+                    x:Name="ScreenInfo"
+                    Visibility="Collapsed"
+                    Text="{CustomResource VoipChatShare}"
+                    Style="{StaticResource CaptionTextBlockStyle}"
                     TextAlignment="Center"
                     VerticalAlignment="Top"
                     Margin="0,4,0,0"
@@ -375,6 +433,7 @@
                 <TextBlock
                     x:Name="AudioInfo"
                     Text="{CustomResource VoipGroupLeave}"
+                    Style="{StaticResource CaptionTextBlockStyle}"
                     TextAlignment="Center"
                     VerticalAlignment="Top"
                     Margin="0,8,0,24"
@@ -390,14 +449,16 @@
                     Foreground="#FFFFFF"
                     Content="{CustomResource VoipGroupLeave}"
                     Style="{StaticResource CallGlyphButtonStyle}"
-                    Grid.Column="2"
+                    Grid.Column="4"
                     Grid.Row="1"/>
                 <TextBlock
+                    x:Name="LeaveInfo"
                     Text="{CustomResource VoipGroupLeave}"
+                    Style="{StaticResource CaptionTextBlockStyle}"
                     TextAlignment="Center"
                     VerticalAlignment="Top"
                     Margin="0,4,0,0"
-                    Grid.Column="2"
+                    Grid.Column="4"
                     Grid.Row="2"/>
 
             </Grid>
