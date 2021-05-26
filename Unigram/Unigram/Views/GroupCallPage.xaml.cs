@@ -75,6 +75,7 @@ namespace Unigram.Views
             if (_service.Participants != null)
             {
                 _service.Participants.Delegate = this;
+                _service.Participants.LoadVideoInfo();
                 List.ItemsSource = _service.Participants;
             }
 

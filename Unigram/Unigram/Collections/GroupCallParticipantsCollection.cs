@@ -183,9 +183,9 @@ namespace Unigram.Collections
                 update.AudioSourceId = participant.AudioSourceId;
                 update.ParticipantId = participant.ParticipantId;
             }
-            else if (index >= 0)
+            else if (index >= 0 && (participant.ScreenSharingVideoInfo != null || participant.VideoInfo != null))
             {
-                addedVideoInfo = new GroupCallParticipantVideoInfo[] { participant.ScreenSharingVideoInfo, participant.VideoInfo };
+                addedVideoInfo = new[] { participant.ScreenSharingVideoInfo, participant.VideoInfo };
             }
 
             if (removedVideoInfo != null)
@@ -201,6 +201,16 @@ namespace Unigram.Collections
             return index < int.MaxValue ? index : Count;
         }
 
+        public void LoadVideoInfo()
+        {
+            foreach (var participant in this)
+            {
+                if (participant.ScreenSharingVideoInfo != null || participant.VideoInfo != null)
+                {
+                    Delegate?.VideoInfoAdded(participant, new[] { participant.ScreenSharingVideoInfo, participant.VideoInfo });
+                }
+            }
+        }
 
         public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
