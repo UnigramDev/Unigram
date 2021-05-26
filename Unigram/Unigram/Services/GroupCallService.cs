@@ -547,6 +547,12 @@ namespace Unigram.Services
 
         private void OnAudioLevelsUpdated(VoipGroupManager sender, IReadOnlyDictionary<int, KeyValuePair<float, bool>> levels)
         {
+            var call = _call;
+            if (call == null)
+            {
+                return;
+            }
+
             const float speakingLevelThreshold = 0.1f;
             const int cutoffTimeout = 3000;
             const int silentTimeout = 2000;
@@ -592,7 +598,7 @@ namespace Unigram.Services
 
             foreach (var item in levels)
             {
-                ProtoService.Send(new SetGroupCallParticipantIsSpeaking(_call.Id, item.Key, validSpeakers.ContainsKey(item.Key)));
+                ProtoService.Send(new SetGroupCallParticipantIsSpeaking(call.Id, item.Key, validSpeakers.ContainsKey(item.Key)));
             }
 
             _speakingParticipants = validSpeakers;

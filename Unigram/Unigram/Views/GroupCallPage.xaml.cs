@@ -846,10 +846,65 @@ namespace Unigram.Views
 
         private void OnAudioLevelsUpdated(VoipGroupManager sender, IReadOnlyDictionary<int, KeyValuePair<float, bool>> levels)
         {
-            if (levels.TryGetValue(0, out var level))
+            var participants = _service?.Participants;
+            if (participants == null)
             {
-                _drawable.SetAmplitude(MathF.Max(0, MathF.Log(level.Key, short.MaxValue / 4000)));
+                return;
             }
+
+            var validLevels = new Dictionary<GroupCallParticipant, float>();
+
+            foreach (var level in levels)
+            {
+                if (level.Key == 0)
+                {
+                    _drawable.SetAmplitude(Math.Min(level.Value.Key, 1));
+                }
+
+                if (participants.TryGetFromAudioSourceId(level.Key, out var participant))
+                {
+                    validLevels[participant] = level.Value.Key;
+                }
+            }
+
+            this.BeginOnUIThread(() =>
+            {
+                foreach (var level in validLevels)
+                {
+                    var container = List.ContainerFromItem(level.Key) as SelectorItem;
+                    var content = container?.ContentTemplateRoot as Grid;
+
+                    if (content == null)
+                    {
+                        continue;
+                    }
+
+                    var wave = content.Children[0] as Border;
+                    var photo = content.Children[1] as ProfilePicture;
+
+                    UpdateGroupCallParticipantLevel(wave, photo, level.Value);
+                }
+            });
+        }
+
+        private void UpdateGroupCallParticipantLevel(Border waveElement, ProfilePicture photoElement, float value)
+        {
+            var wave = ElementCompositionPreview.GetElementVisual(waveElement);
+            var photo = ElementCompositionPreview.GetElementVisual(photoElement);
+
+            var amplitude = Math.Min(value, 1);
+
+            var outer = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            outer.InsertKeyFrame(1, new Vector3(0.9f + 0.5f * amplitude));
+
+            var inner = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            inner.InsertKeyFrame(1, new Vector3(1f + 0.15f * amplitude));
+
+            wave.CenterPoint = new Vector3(18, 18, 0);
+            wave.StartAnimation("Scale", outer);
+
+            photo.CenterPoint = new Vector3(18, 18, 0);
+            photo.StartAnimation("Scale", inner);
         }
 
         private async void Leave_Click(object sender, RoutedEventArgs e)
@@ -1541,11 +1596,12 @@ namespace Unigram.Views
 
         private void UpdateGroupCallParticipant(Grid content, GroupCallParticipant participant)
         {
-            var photo = content.Children[0] as ProfilePicture;
-            var viewport = content.Children[1] as Border;
-            var title = content.Children[2] as TextBlock;
-            var subtitle = content.Children[3] as Grid;
-            var glyph = content.Children[4] as TextBlock;
+            var wave = content.Children[0] as Border;
+            var photo = content.Children[1] as ProfilePicture;
+            var viewport = content.Children[2] as Border;
+            var title = content.Children[3] as TextBlock;
+            var subtitle = content.Children[4] as Grid;
+            var glyph = content.Children[5] as TextBlock;
 
             var status = subtitle.Children[0] as TextBlock;
             var speaking = subtitle.Children[1] as TextBlock;
@@ -1619,6 +1675,7 @@ namespace Unigram.Views
                     speaking.Text = participant.Bio.Length > 0 ? participant.Bio : Strings.Resources.Listening;
                 }
 
+                wave.Background = new SolidColorBrush { Color = permanent ? Color.FromArgb(0xDD, 0xFF, 0x00, 0x00) : Color.FromArgb(0xDD, 0x4D, 0xB8, 0xFF) };
                 speaking.Foreground = status.Foreground = new SolidColorBrush { Color = Color.FromArgb(0xFF, 0x85, 0x85, 0x85) };
                 glyph.Text = Icons.MicOff;
                 glyph.Foreground = new SolidColorBrush { Color = permanent ? Colors.Red : Color.FromArgb(0xFF, 0x85, 0x85, 0x85) };
@@ -1633,11 +1690,17 @@ namespace Unigram.Views
                 {
                     speaking.Text = Strings.Resources.Speaking;
                 }
+                else if (participant.IsCurrentUser)
+                {
+                    speaking.Text = Strings.Resources.ThisIsYou;
+                }
                 else
                 {
                     speaking.Text = Strings.Resources.Listening;
                 }
 
+
+                wave.Background = new SolidColorBrush { Color = participant.IsSpeaking ? Color.FromArgb(0xDD, 0x33, 0xc6, 0x59) : Color.FromArgb(0xDD, 0x4D, 0xB8, 0xFF) };
                 speaking.Foreground = status.Foreground = new SolidColorBrush { Color = participant.IsSpeaking ? Color.FromArgb(0xFF, 0x33, 0xc6, 0x59) : Color.FromArgb(0xFF, 0x85, 0x85, 0x85) };
                 glyph.Text = Icons.MicOn;
                 glyph.Foreground = new SolidColorBrush { Color = participant.IsSpeaking ? Color.FromArgb(0xFF, 0x33, 0xc6, 0x59) : Color.FromArgb(0xFF, 0x85, 0x85, 0x85) };

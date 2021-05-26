@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
@@ -18,6 +19,8 @@ namespace Unigram.Collections
     {
         private readonly IProtoService _protoService;
         private readonly IEventAggregator _aggregator;
+
+        private readonly Dictionary<int, GroupCallParticipant> _audioSources = new();
 
         private GroupCall _groupCall;
 
@@ -44,6 +47,11 @@ namespace Unigram.Collections
             _handlers.Clear();
 
             Delegate = null;
+        }
+
+        public bool TryGetFromAudioSourceId(int audioSourceId, out GroupCallParticipant participant)
+        {
+            return _audioSources.TryGetValue(audioSourceId, out participant);
         }
 
         public void Handle(UpdateGroupCall update)
@@ -78,6 +86,7 @@ namespace Unigram.Collections
                             RemoveAt(prevIndex);
                         }
 
+                        _audioSources[update.Participant.IsCurrentUser ? 0 : update.Participant.AudioSourceId] = update.Participant;
                         Insert(Math.Min(Count, nextIndex), update.Participant);
                     }
                     else if (updated != null)
@@ -95,6 +104,7 @@ namespace Unigram.Collections
                             Delegate?.VideoInfoRemoved(already, already.ScreenSharingVideoInfo?.EndpointId, already.VideoInfo?.EndpointId);
                         }
 
+                        _audioSources.Remove(update.Participant.IsCurrentUser ? 0 : update.Participant.AudioSourceId);
                         Remove(already);
                     }
                 }
