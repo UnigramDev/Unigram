@@ -2915,10 +2915,12 @@ namespace Unigram.Views
 
             if (show)
             {
+                ViewModel.SaveDraft(true);
                 ShowHideComposerHeader(false);
             }
             else
             {
+                ViewModel.ShowDraft();
                 UpdateComposerHeader(ViewModel.Chat, ViewModel.ComposerHeader);
             }
         }
