@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -66,9 +67,10 @@ namespace Unigram.Controls
 
         private readonly LoopThread _thread;
         private readonly LoopThread _threadUI;
+        private readonly object _subscribeLock = new object();
         private bool _subscribed;
+        private bool _unsubscribe;
 
-        private bool _loaded;
         private bool _unloaded;
 
         public DiceView()
@@ -130,13 +132,11 @@ namespace Unigram.Controls
 
         private void OnLoading(FrameworkElement sender, object args)
         {
-            _loaded = true;
             Load();
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            _loaded = true;
             Load();
         }
 
@@ -171,7 +171,11 @@ namespace Unigram.Controls
             }
             catch
             {
-                _ = Dispatcher.RunIdleAsync(idle => Subscribe(false));
+                lock (_subscribeLock)
+                {
+                    _unsubscribe = true;
+                    _thread.Tick -= OnTick;
+                }
             }
         }
 
@@ -212,6 +216,18 @@ namespace Unigram.Controls
                     _hideThumbnail = false;
                     FirstFrameRendered?.Invoke(this, EventArgs.Empty);
                 }
+            }
+
+            Monitor.Enter(_subscribeLock);
+            if (_unsubscribe)
+            {
+                _unsubscribe = false;
+                Monitor.Exit(_subscribeLock);
+                Subscribe(false);
+            }
+            else
+            {
+                Monitor.Exit(_subscribeLock);
             }
         }
 
@@ -279,8 +295,12 @@ namespace Unigram.Controls
                     }
                     else if (i == 1)
                     {
-                        _subscribed = false;
-                        _ = Dispatcher.RunIdleAsync(idle => Subscribe(false));
+                        lock (_subscribeLock)
+                        {
+                            _subscribed = false;
+                            _unsubscribe = true;
+                            _thread.Tick -= OnTick;
+                        }
                     }
                 }
             }
@@ -508,15 +528,22 @@ namespace Unigram.Controls
 
         private void Subscribe(bool subscribe)
         {
-            _subscribed = subscribe;
-
-            _thread.Tick -= OnTick;
-            _threadUI.Invalidate -= OnInvalidate;
-
-            if (subscribe)
+            lock (_subscribeLock)
             {
-                _thread.Tick += OnTick;
-                _threadUI.Invalidate += OnInvalidate;
+                if (subscribe)
+                {
+                    _unsubscribe = false;
+                }
+
+                _subscribed = subscribe;
+                _thread.Tick -= OnTick;
+                _threadUI.Invalidate -= OnInvalidate;
+
+                if (subscribe)
+                {
+                    _thread.Tick += OnTick;
+                    _threadUI.Invalidate += OnInvalidate;
+                }
             }
         }
 

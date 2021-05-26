@@ -39,7 +39,6 @@ namespace Unigram.Controls
         private readonly LoopThread _thread = LoopThreadPool.Animations.Get();
         private bool _subscribed;
 
-        private bool _loaded;
         private bool _unloaded;
 
         public AnimationView()
@@ -93,13 +92,11 @@ namespace Unigram.Controls
 
         private void OnLoading(FrameworkElement sender, object args)
         {
-            _loaded = true;
             Load();
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            _loaded = true;
             Load();
         }
 

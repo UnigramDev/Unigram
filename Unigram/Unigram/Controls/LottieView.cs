@@ -7,6 +7,7 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Unigram.Common;
 using Windows.ApplicationModel;
@@ -73,9 +74,10 @@ namespace Unigram.Controls
 
         private readonly LoopThread _thread;
         private readonly LoopThread _threadUI;
+        private readonly object _subscribeLock = new object();
         private bool _subscribed;
+        private bool _unsubscribe;
 
-        private bool _loaded;
         private bool _unloaded;
 
         public LottieView()
@@ -136,13 +138,11 @@ namespace Unigram.Controls
 
         private void OnLoading(FrameworkElement sender, object args)
         {
-            _loaded = true;
             Load();
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            _loaded = true;
             Load();
         }
 
@@ -177,7 +177,11 @@ namespace Unigram.Controls
             }
             catch
             {
-                _ = Dispatcher.RunIdleAsync(idle => Subscribe(false));
+                lock (_subscribeLock)
+                {
+                    _unsubscribe = true;
+                    _thread.Tick -= OnTick;
+                }
             }
         }
 
@@ -220,6 +224,18 @@ namespace Unigram.Controls
                 FirstFrameRendered?.Invoke(this, EventArgs.Empty);
                 ElementCompositionPreview.SetElementChildVisual(this, null);
             }
+
+            Monitor.Enter(_subscribeLock);
+            if (_unsubscribe)
+            {
+                _unsubscribe = false;
+                Monitor.Exit(_subscribeLock);
+                Subscribe(false);
+            }
+            else
+            {
+                Monitor.Exit(_subscribeLock);
+            }
         }
 
         public void Invalidate()
@@ -261,9 +277,11 @@ namespace Unigram.Controls
 
                     if (!_isLoopingEnabled)
                     {
-                        //sender.Paused = true;
-                        //sender.ResetElapsedTime();
-                        _ = Dispatcher.RunIdleAsync(idle => Subscribe(false));
+                        lock (_subscribeLock)
+                        {
+                            _unsubscribe = true;
+                            _thread.Tick -= OnTick;
+                        }
                     }
                 }
             }
@@ -281,9 +299,11 @@ namespace Unigram.Controls
 
                     if (!_isLoopingEnabled)
                     {
-                        //sender.Paused = true;
-                        //sender.ResetElapsedTime();
-                        _ = Dispatcher.RunIdleAsync(idle => Subscribe(false));
+                        lock (_subscribeLock)
+                        {
+                            _unsubscribe = true;
+                            _thread.Tick -= OnTick;
+                        }
                     }
 
                     PositionChanged?.Invoke(this, 1);
@@ -431,15 +451,22 @@ namespace Unigram.Controls
 
         private void Subscribe(bool subscribe)
         {
-            _subscribed = subscribe;
-
-            _thread.Tick -= OnTick;
-            _threadUI.Invalidate -= OnInvalidate;
-
-            if (subscribe)
+            lock (_subscribeLock)
             {
-                _thread.Tick += OnTick;
-                _threadUI.Invalidate += OnInvalidate;
+                if (subscribe)
+                {
+                    _unsubscribe = false;
+                }
+
+                _subscribed = subscribe;
+                _thread.Tick -= OnTick;
+                _threadUI.Invalidate -= OnInvalidate;
+
+                if (subscribe)
+                {
+                    _thread.Tick += OnTick;
+                    _threadUI.Invalidate += OnInvalidate;
+                }
             }
         }
 
