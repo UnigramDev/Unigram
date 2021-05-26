@@ -291,7 +291,7 @@ namespace Unigram.Views
                 return;
             }
 
-            var expanded = nextSize.X >= 500;
+            var expanded = nextSize.X >= 500 && Viewport.Children.Count > 0;
             var docked = Mode.IsChecked == true;
 
             var prev = _mode;
@@ -1700,8 +1700,10 @@ namespace Unigram.Views
             }
             else
             {
-                ViewportAspect.Margin = new Thickness(-4, 0, -4, 0);
+                ViewportAspect.Margin = new Thickness(8, 0, -4, 4);
             }
+
+            UpdateLayout(this.GetActualSize(), this.GetActualSize(), true);
         }
 
         private void RemoveCell(GroupCallParticipantGridCell cell)
@@ -1728,8 +1730,10 @@ namespace Unigram.Views
             }
             else
             {
-                ViewportAspect.Margin = new Thickness(-4, 0, -4, 0);
+                ViewportAspect.Margin = new Thickness(8, 0, -4, 4);
             }
+
+            UpdateLayout(this.GetActualSize(), this.GetActualSize(), true);
         }
 
         private async void Canvas_TogglePinned(object sender, EventArgs e)

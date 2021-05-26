@@ -116,6 +116,7 @@
             <controls:AnimatedGlyphToggleButton
                 x:Name="Mode"
                 Click="Mode_Click"
+                Visibility="Collapsed"
                 Glyph="&#xE968;"
                 CheckedGlyph="&#xE967;"
                 IsChecked="True"
