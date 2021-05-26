@@ -858,7 +858,7 @@ namespace Unigram.Views
             {
                 if (level.Key == 0)
                 {
-                    _drawable.SetAmplitude(Math.Min(level.Value.Key, 1));
+                    _drawable.SetAmplitude(MathF.Min(8500, level.Value.Key * 4000) / 8500);
                 }
 
                 if (participants.TryGetFromAudioSourceId(level.Key, out var participant))
@@ -2304,7 +2304,7 @@ namespace Unigram.Views
 
             if (_animateToAmplitude != _amplitude)
             {
-                _amplitude = _amplitude + (_animateAmplitudeDiff * j);
+                _amplitude += (_animateAmplitudeDiff * j);
 
                 if (_animateAmplitudeDiff > 0.0f)
                 {
