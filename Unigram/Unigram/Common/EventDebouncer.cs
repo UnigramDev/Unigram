@@ -41,6 +41,12 @@ namespace Unigram.Common
             _unsubscription = unsubscription;
         }
 
+        public void Cancel()
+        {
+            _timer?.Stop();
+            _backgroundTimer?.Change(Timeout.Infinite, Timeout.Infinite);
+        }
+
         public void Unsubscribe()
         {
             _unsubscription(OnInvoked);

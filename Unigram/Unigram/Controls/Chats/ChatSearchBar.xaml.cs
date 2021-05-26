@@ -18,12 +18,14 @@ namespace Unigram.Controls.Chats
     {
         public ChatSearchViewModel ViewModel => DataContext as ChatSearchViewModel;
 
+        private readonly EventDebouncer<TextChangedEventArgs> _debouncer;
+
         public ChatSearchBar()
         {
             InitializeComponent();
 
-            var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => Field.TextChanged += new TextChangedEventHandler(handler));
-            debouncer.Invoked += (s, args) =>
+            _debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => Field.TextChanged += new TextChangedEventHandler(handler));
+            _debouncer.Invoked += (s, args) =>
             {
                 if (Field.State != ChatSearchState.Members)
                 {
@@ -193,6 +195,7 @@ namespace Unigram.Controls.Chats
 
             if (e.Key == Windows.System.VirtualKey.Enter && !shift && Field.State != ChatSearchState.Members)
             {
+                _debouncer.Cancel();
                 ViewModel?.Search(Field.Text, Field.From, Field.Filter?.Filter);
                 e.Handled = true;
             }
@@ -210,6 +213,7 @@ namespace Unigram.Controls.Chats
 
         private void Search_Click(object sender, RoutedEventArgs e)
         {
+            _debouncer.Cancel();
             ViewModel?.Search(Field.Text, Field.From, Field.Filter?.Filter);
         }
 
