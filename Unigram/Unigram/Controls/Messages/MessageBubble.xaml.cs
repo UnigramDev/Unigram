@@ -105,7 +105,11 @@ namespace Unigram.Controls.Messages
             }
             else if (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup supergroup && !supergroup.IsChannel)
             {
-                if (message.ProtoService.TryGetUser(message.Sender, out User senderUser))
+                if (message.IsOutgoing)
+                {
+                    title = null;
+                }
+                else if (message.ProtoService.TryGetUser(message.Sender, out User senderUser))
                 {
                     senderBot = senderUser.Type is UserTypeBot;
                     title = senderUser.GetFullName();
