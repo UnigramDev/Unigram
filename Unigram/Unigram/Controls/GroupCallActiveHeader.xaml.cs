@@ -40,6 +40,7 @@ namespace Unigram.Controls
                 _service = service;
                 _service.Manager.AudioLevelsUpdated += OnAudioLevelsUpdated;
 
+                TitleInfo.Text = service.Call.Title.Length > 0 ? service.Call.Title : service.CacheService.GetTitle(_service.Chat);
                 Audio.IsChecked = !_service.Manager.IsMuted;
             }
         }
@@ -85,6 +86,11 @@ namespace Unigram.Controls
         {
             await _service.ConsolidateAsync();
             _service.Leave();
+        }
+
+        private async void Title_Click(object sender, RoutedEventArgs e)
+        {
+            await _service.ShowAsync();
         }
     }
 

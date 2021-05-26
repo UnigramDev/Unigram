@@ -24,6 +24,8 @@ namespace Unigram.Services
 {
     public interface IGroupCallService : INotifyPropertyChanged
     {
+        ICacheService CacheService { get; }
+
         string CurrentVideoInput { get; set; }
         string CurrentAudioInput { get; set; }
         string CurrentAudioOutput { get; set; }
@@ -40,7 +42,7 @@ namespace Unigram.Services
         int Source { get; }
         bool IsConnected { get; }
 
-        void Show();
+        Task ShowAsync();
 
         Task<bool> CanChooseAliasAsync(long chatId);
 
@@ -752,16 +754,14 @@ namespace Unigram.Services
 
         public bool IsConnected => _isConnected;
 
-        public void Show()
+        public Task ShowAsync()
         {
             if (_call != null)
             {
-                ShowAsync(_call, _manager);
+                return ShowAsync(_call, _manager);
             }
-            else
-            {
-                //Aggregator.Publish(new UpdateCallDialog(null, false));
-            }
+
+            return Task.CompletedTask;
         }
 
         private async Task ShowAsync(GroupCall call, VoipGroupManager controller)
@@ -784,6 +784,10 @@ namespace Unigram.Services
                     _callLifetime.Released += ApplicationView_Released;
 
                     //Aggregator.Publish(new UpdateCallDialog(call, true));
+                }
+                else
+                {
+                    await ApplicationViewSwitcher.SwitchAsync(_callLifetime.Id);
                 }
             }
         }
