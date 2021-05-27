@@ -927,6 +927,8 @@ namespace Unigram.ViewModels
         {
             using (await _loadMoreLock.WaitAsync())
             {
+                var outgoing = message.IsOutgoing && message.SendingState is MessageSendingStatePending;
+
                 //if (!IsFirstSliceLoaded)
                 //{
                 //    return;
@@ -963,6 +965,11 @@ namespace Unigram.ViewModels
                     {
                         ComposerHeader = null;
                     }
+                }
+
+                if (outgoing)
+                {
+                    await LoadMessageSliceAsync(null, message.Id, VerticalAlignment.Bottom);
                 }
             }
         }
