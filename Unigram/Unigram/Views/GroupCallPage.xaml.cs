@@ -1004,8 +1004,8 @@ namespace Unigram.Views
             //}
             else if (currentUser != null && currentUser.CanUnmuteSelf && _service.Manager.IsMuted)
             {
-                var permissions = await MediaDeviceWatcher.CheckAccessAsync(false);
-                if (permissions == false)
+                var permissions = await MediaDeviceWatcher.CheckAccessAsync(false, ElementTheme.Dark);
+                if (permissions == false || _service == null)
                 {
                     return;
                 }
@@ -1028,8 +1028,8 @@ namespace Unigram.Views
         {
             if (_service.IsCapturing == false)
             {
-                var permissions = await MediaDeviceWatcher.CheckAccessAsync(true);
-                if (permissions == false)
+                var permissions = await MediaDeviceWatcher.CheckAccessAsync(true, ElementTheme.Dark);
+                if (permissions == false || _service == null)
                 {
                     return;
                 }

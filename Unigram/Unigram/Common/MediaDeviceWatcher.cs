@@ -8,6 +8,7 @@ using Windows.Media.Capture;
 using Windows.Media.Devices;
 using Windows.System;
 using Windows.System.Profile;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Common
@@ -171,9 +172,9 @@ namespace Unigram.Common
 
         #region Device Access
 
-        public static async Task<bool> CheckAccessAsync(bool video)
+        public static async Task<bool> CheckAccessAsync(bool video, ElementTheme requestedTheme = ElementTheme.Default)
         {
-            var audioPermission = await CheckDeviceAccessAsync(true, video);
+            var audioPermission = await CheckDeviceAccessAsync(true, video, requestedTheme);
             if (audioPermission == false)
             {
                 return false;
@@ -181,7 +182,7 @@ namespace Unigram.Common
 
             if (video)
             {
-                var videoPermission = await CheckDeviceAccessAsync(false, true);
+                var videoPermission = await CheckDeviceAccessAsync(false, true, requestedTheme);
                 if (videoPermission == false)
                 {
                     return false;
@@ -191,7 +192,7 @@ namespace Unigram.Common
             return true;
         }
 
-        private static async Task<bool> CheckDeviceAccessAsync(bool audio, bool video)
+        private static async Task<bool> CheckDeviceAccessAsync(bool audio, bool video, ElementTheme requestedTheme = ElementTheme.Default)
         {
             // For some reason, as far as I understood, CurrentStatus is always Unspecified on Xbox
             if (string.Equals(AnalyticsInfo.VersionInfo.DeviceFamily, "Windows.Xbox"))
@@ -234,14 +235,20 @@ namespace Unigram.Common
                     : Strings.Resources.PermissionNoAudioVideo
                     : Strings.Resources.PermissionNoCamera;
 
-                //BeginOnUIThread(async () =>
-                //{
-                var confirm = await MessagePopup.ShowAsync(message, Strings.Resources.AppName, Strings.Resources.PermissionOpenSettings, Strings.Resources.OK);
+                var popup = new MessagePopup
+                {
+                    Title = Strings.Resources.AppName,
+                    Message = message,
+                    PrimaryButtonText = Strings.Resources.Settings,
+                    SecondaryButtonText = Strings.Resources.OK,
+                    RequestedTheme = requestedTheme
+                };
+
+                var confirm = await popup.ShowQueuedAsync();
                 if (confirm == ContentDialogResult.Primary)
                 {
                     await Launcher.LaunchUriAsync(new Uri("ms-settings:appsfeatures-app"));
                 }
-                //});
 
                 return false;
             }
