@@ -24,7 +24,6 @@
             <TextBox
                 x:Name="FieldAnimations"
                 PlaceholderText="{CustomResource SearchGifsTitle}"
-                TextChanged="FieldAnimations_TextChanged"
                 Margin="12,8"/>
         </Border>
 
@@ -38,6 +37,7 @@
 
         <GridView
             x:Name="List"
+            x:Load="False"
             ItemsSource="{x:Bind ConvertItems(ViewModel.Items), Mode=OneWay}"
             common:FluidGridView.OrientationOnly="False"
             ChoosingItemContainer="OnChoosingItemContainer"
