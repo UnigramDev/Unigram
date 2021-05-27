@@ -357,7 +357,7 @@ namespace Unigram.Views
 
                 BottomShadow.Visibility = Visibility.Collapsed;
                 BottomRoot.Padding = new Thickness(4, 8, 4, 8);
-                BottomBackground.Background = new AcrylicBrush { TintColor = Colors.Black, TintOpacity = 0, /*TintLuminosityOpacity = 0.5*/ }; //new SolidColorBrush(Color.FromArgb(0x99, 0x33, 0x33, 0x33));
+                BottomBackground.Background = new AcrylicBrush { TintColor = Colors.Black, TintOpacity = 0, FallbackColor = Color.FromArgb(0xDD, 0, 0, 0) /*TintLuminosityOpacity = 0.5*/ }; //new SolidColorBrush(Color.FromArgb(0x99, 0x33, 0x33, 0x33));
                 BottomRoot.RowDefinitions[0].Height = new GridLength(1, GridUnitType.Auto);
 
                 foreach (var column in BottomRoot.ColumnDefinitions)
@@ -1215,7 +1215,13 @@ namespace Unigram.Views
 
         private void UpdateVideo()
         {
-            if (_service.Call.CanStartVideo)
+            var call = _service?.Call;
+            if (call == null)
+            {
+                return;
+            }
+
+            if (call.CanStartVideo)
             {
                 switch (_prevColors)
                 {
@@ -1241,7 +1247,13 @@ namespace Unigram.Views
 
         private void UpdateScreen()
         {
-            if (_mode != ParticipantsGridMode.Compact && _service.Call.CanStartVideo && GraphicsCaptureSession.IsSupported())
+            var call = _service?.Call;
+            if (call == null)
+            {
+                return;
+            }
+
+            if (_mode != ParticipantsGridMode.Compact && call.CanStartVideo && GraphicsCaptureSession.IsSupported())
             {
                 switch (_prevColors)
                 {
