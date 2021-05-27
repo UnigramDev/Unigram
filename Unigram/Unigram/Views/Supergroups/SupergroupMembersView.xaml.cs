@@ -204,9 +204,18 @@ namespace Unigram.Views.Supergroups
                 args.ItemContainer = new TextListViewItem();
                 args.ItemContainer.Style = sender.ItemContainerStyle;
                 args.ItemContainer.ContextRequested += Member_ContextRequested;
+
+                if (sender.ItemTemplateSelector == null)
+                {
+                    args.ItemContainer.ContentTemplate = sender.ItemTemplate;
+                }
             }
 
-            args.ItemContainer.ContentTemplate = sender.ItemTemplateSelector.SelectTemplate(args.Item, args.ItemContainer);
+            if (sender.ItemTemplateSelector != null)
+            {
+                args.ItemContainer.ContentTemplate = sender.ItemTemplateSelector.SelectTemplate(args.Item, args.ItemContainer);
+            }
+
             args.IsContainerPrepared = true;
         }
 
