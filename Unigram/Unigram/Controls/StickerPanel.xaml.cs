@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls.Drawers;
@@ -78,8 +77,6 @@ namespace Unigram.Controls
         public void SetView(StickersPanelMode mode)
         {
             _widget = mode;
-
-            EmojisRoot?.SetView(mode);
             VisualStateManager.GoToState(this, mode == StickersPanelMode.Overlay
                 ? "FilledState"
                 : mode == StickersPanelMode.Sidebar
@@ -139,12 +136,6 @@ namespace Unigram.Controls
 
         private void Pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (Pivot.SelectedIndex == 0 && EmojisRoot == null)
-            {
-                FindName(nameof(Emojis));
-                EmojisRoot.SetView(_widget);
-            }
-
             var active = GetActiveDrawer();
 
             foreach (var drawer in GetDrawers())
@@ -162,13 +153,8 @@ namespace Unigram.Controls
             SettingsService.Current.Stickers.SelectedTab = active.Tab;
         }
 
-        public async void Refresh()
+        public void Activate()
         {
-            // TODO: memes
-            //StickersRoot.ViewModel.SyncStickers(null);
-            //AnimationsRoot.ViewModel.Update();
-
-            await Task.Delay(100);
             Pivot_SelectionChanged(null, null);
         }
 

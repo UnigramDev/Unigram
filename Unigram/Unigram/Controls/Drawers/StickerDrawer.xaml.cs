@@ -3,13 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Drawers;
-using Unigram.Views;
 using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -103,10 +101,6 @@ namespace Unigram.Controls.Drawers
         public void UnloadVisibleItems()
         {
             _handler.UnloadVisibleItems();
-        }
-
-        public void SetView(StickersPanelMode mode)
-        {
         }
 
         public async void UpdateFile(File file)
@@ -209,14 +203,6 @@ namespace Unigram.Controls.Drawers
             }
         }
 
-        public async void Refresh()
-        {
-            // TODO: memes
-
-            await Task.Delay(100);
-            //Pivot_SelectionChanged(null, null);
-        }
-
         private void ScrollingHost_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
             var scrollingHost = List.ItemsPanelRoot as ItemsWrapGrid;
@@ -235,30 +221,9 @@ namespace Unigram.Controls.Drawers
             }
         }
 
-        public bool ToggleActiveView()
-        {
-            //if (Pivot.SelectedIndex == 2 && !SemanticStickers.IsZoomedInViewActive && SemanticStickers.CanChangeViews)
-            //{
-            //    SemanticStickers.ToggleActiveView();
-            //    return true;
-            //}
-
-            return false;
-        }
-
-        private void GroupStickers_Click(object sender, RoutedEventArgs e)
-        {
-            //ViewModel.GroupStickersCommand.Execute(null);
-        }
-
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
             //ViewModel.NavigationService.Navigate(typeof(SettingsStickersPage));
-        }
-
-        private void Install_Click(object sender, RoutedEventArgs e)
-        {
-            //ViewModel.InstallCommand.Execute(((Button)sender).DataContext);
         }
 
         private async void OnChoosingGroupHeaderContainer(ListViewBase sender, ChoosingGroupHeaderContainerEventArgs args)

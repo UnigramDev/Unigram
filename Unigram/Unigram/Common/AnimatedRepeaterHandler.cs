@@ -36,9 +36,6 @@ namespace Unigram.Common
             };
         }
 
-        public Action<FrameworkElement, LottieView> LoadView { get; set; }
-        public Action<FrameworkElement, LottieView> UnloadView { get; set; }
-
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             UnloadVisibleItems();

@@ -5,7 +5,6 @@ using Unigram.Common;
 using Unigram.Services;
 using Unigram.Services.Settings;
 using Unigram.ViewModels;
-using Unigram.Views;
 using Windows.UI.Text.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -36,6 +35,8 @@ namespace Unigram.Controls.Drawers
 
             _typeToItemHashSetMapping["EmojiSkinTemplate"] = new HashSet<SelectorItem>();
             _typeToItemHashSetMapping["EmojiTemplate"] = new HashSet<SelectorItem>();
+
+            UpdateView();
         }
 
         public StickersTab Tab => StickersTab.Emoji;
@@ -59,7 +60,7 @@ namespace Unigram.Controls.Drawers
             }
         }
 
-        public void SetView(StickersPanelMode mode)
+        public void UpdateView()
         {
             var microsoft = string.Equals(SettingsService.Current.Appearance.EmojiSet.Id, "microsoft");
             var tone = SettingsService.Current.Stickers.SkinTone;

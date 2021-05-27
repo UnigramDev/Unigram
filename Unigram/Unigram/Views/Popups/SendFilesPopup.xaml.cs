@@ -643,8 +643,6 @@ namespace Unigram.Views.Popups
 
         private void Emoji_Click(object sender, RoutedEventArgs e)
         {
-            EmojiPanel.SetView(StickersPanelMode.Overlay);
-
             // We don't want to unfocus the text are when the context menu gets opened
             EmojiFlyout.ShowAt(CaptionInput, new FlyoutShowOptions { ShowMode = FlyoutShowMode.Transient });
         }

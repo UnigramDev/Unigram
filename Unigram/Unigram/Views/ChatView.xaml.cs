@@ -410,7 +410,7 @@ namespace Unigram.Views
             _stickersPanel.Clip = _compositor.CreateInsetClip(48, 48, 0, 0);
 
             StickersPanel.Visibility = Visibility.Visible;
-            StickersPanel.Refresh();
+            StickersPanel.Activate();
 
             ViewModel.OpenStickersCommand.Execute(null);
 
@@ -1528,8 +1528,7 @@ namespace Unigram.Views
 
         private void ReplyMarkup_ButtonClick(object sender, ReplyMarkupButtonClickEventArgs e)
         {
-            var panel = sender as ReplyMarkupPanel;
-            if (panel != null)
+            if (sender is ReplyMarkupPanel panel)
             {
                 ViewModel.KeyboardButtonExecute(panel.DataContext as MessageViewModel, e.Button);
             }
@@ -1587,7 +1586,7 @@ namespace Unigram.Views
                 InputPane.GetForCurrentView().TryHide();
 
                 StickersPanel.Visibility = Visibility.Visible;
-                StickersPanel.Refresh();
+                StickersPanel.Activate();
 
                 ViewModel.OpenStickersCommand.Execute(null);
 

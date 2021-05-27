@@ -35,9 +35,6 @@ namespace Unigram.Common
             };
         }
 
-        public Action<FrameworkElement, LottieView> LoadView { get; set; }
-        public Action<FrameworkElement, LottieView> UnloadView { get; set; }
-
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             _listView.Items.VectorChanged += OnVectorChanged;

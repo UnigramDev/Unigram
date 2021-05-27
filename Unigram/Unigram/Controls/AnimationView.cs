@@ -1,5 +1,4 @@
 ﻿using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Buffers;
@@ -55,7 +54,6 @@ namespace Unigram.Controls
             }
 
             _canvas = canvas;
-            _canvas.CreateResources += OnCreateResources;
             _canvas.Draw += OnDraw;
 
             _layoutRoot = GetTemplateChild("LayoutRoot") as Grid;
@@ -80,7 +78,6 @@ namespace Unigram.Controls
                 }
 
                 _canvas = new CanvasControl();
-                _canvas.CreateResources += OnCreateResources;
                 _canvas.Draw += OnDraw;
 
                 _layoutRoot.Children.Add(_canvas);
@@ -108,7 +105,6 @@ namespace Unigram.Controls
 
             if (_canvas != null)
             {
-                _canvas.CreateResources -= OnCreateResources;
                 _canvas.Draw -= OnDraw;
                 _canvas.RemoveFromVisualTree();
                 _canvas = null;
@@ -138,11 +134,6 @@ namespace Unigram.Controls
         private void OnInvalidate(object sender, EventArgs e)
         {
             _canvas?.Invalidate();
-        }
-
-        private void OnCreateResources(CanvasControl sender, CanvasCreateResourcesEventArgs args)
-        {
-
         }
 
         private void OnDraw(CanvasControl sender, CanvasDrawEventArgs args)
