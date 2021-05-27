@@ -172,69 +172,57 @@ namespace Unigram.ViewModels
 
         public bool IsShareable()
         {
-            var message = this;
-            if (message.SchedulingState != null)
+            if (SchedulingState != null)
             {
                 return false;
             }
-            //if (currentPosition != null && !currentPosition.last)
+            //else if (eventId != 0)
             //{
             //    return false;
             //}
-            //else if (messageObject.eventId != 0)
-            //{
-            //    return false;
-            //}
-            //else if (messageObject.messageOwner.fwd_from != null && !messageObject.isOutOwner() && messageObject.messageOwner.fwd_from.saved_from_peer != null && messageObject.getDialogId() == UserConfig.getInstance(currentAccount).getClientUserId())
-            //{
-            //    drwaShareGoIcon = true;
-            //    return true;
-            //}
-            //else 
-            if (message.Content is MessageSticker)
+            else if (IsSaved())
+            {
+                return true;
+            }
+            else if (Content is MessageSticker or MessageDice)
             {
                 return false;
             }
-            //else if (messageObject.messageOwner.fwd_from != null && messageObject.messageOwner.fwd_from.channel_id != 0 && !messageObject.isOutOwner())
-            //{
-            //    return true;
-            //}
-            else if (message.Sender is MessageSenderUser)
+            else if (ForwardInfo?.Origin is MessageForwardOriginChannel && !IsOutgoing)
             {
-                if (message.Content is MessageText)
+                return true;
+            }
+            else if (Sender is MessageSenderUser senderUser)
+            {
+                if (Content is MessageText text && text.WebPage == null)
                 {
                     return false;
                 }
 
-                if (ProtoService.TryGetUser(message.Sender, out User user) && user.Type is UserTypeBot)
+                var user = ProtoService.GetUser(senderUser.UserId);
+                if (user != null && user.Type is UserTypeBot)
                 {
                     return true;
                 }
-                if (!message.IsOutgoing)
+
+                if (!IsOutgoing)
                 {
-                    if (message.Content is MessageGame || message.Content is MessageInvoice)
+                    if (Content is MessageGame or MessageInvoice)
                     {
                         return true;
                     }
 
-                    var chat = message.ProtoService.GetChat(message.ChatId);
+                    var chat = ProtoService.GetChat(ChatId);
                     if (chat != null && chat.Type is ChatTypeSupergroup super && !super.IsChannel)
                     {
-                        var supergroup = message.ProtoService.GetSupergroup(super.SupergroupId);
-                        return supergroup != null && supergroup.Username.Length > 0 && message.Content is not MessageContact && message.Content is not MessageLocation;
+                        var supergroup = ProtoService.GetSupergroup(super.SupergroupId);
+                        return supergroup != null && supergroup.Username.Length > 0 && Content is not MessageContact and not MessageLocation;
                     }
                 }
             }
-            //else if (messageObject.messageOwner.from_id < 0 || messageObject.messageOwner.post)
-            //{
-            //    if (messageObject.messageOwner.to_id.channel_id != 0 && (messageObject.messageOwner.via_bot_id == 0 && messageObject.messageOwner.reply_to_msg_id == 0 || messageObject.type != 13))
-            //    {
-            //        return true;
-            //    }
-            //}
-            else if (message.IsChannelPost)
+            else if (IsChannelPost)
             {
-                if (message.ViaBotUserId == 0 && message.ReplyToMessageId == 0 || message.Content is not MessageSticker)
+                if (ViaBotUserId == 0 && ReplyToMessageId == 0 || Content is not MessageSticker)
                 {
                     return true;
                 }
