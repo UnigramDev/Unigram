@@ -5,7 +5,6 @@ using System;
 using System.Numerics;
 using Windows.UI;
 using Windows.UI.Composition;
-using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;

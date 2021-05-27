@@ -1,0 +1,10 @@
+﻿[*.cs]
+
+# IDE0005: Using directive is unnecessary.
+dotnet_diagnostic.IDE0005.severity = error
+
+# IDE0058: Expression value is never used
+dotnet_diagnostic.IDE0058.severity = none
+
+# IDE0008: Use explicit type
+dotnet_diagnostic.IDE0008.severity = none
