@@ -1261,10 +1261,10 @@ namespace Unigram.Views
                         Screen.Background = new SolidColorBrush { Color = Color.FromArgb(0x66, 0x76, 0x6E, 0xE9) };
                         break;
                     case ButtonColors.Unmute:
-                        Screen.Background = new SolidColorBrush { Color = Color.FromArgb((byte)(_service.IsScreenSharing ? 0xBB : 0x66), 0x33, 0xc6, 0x59) };
+                        Screen.Background = new SolidColorBrush { Color = Color.FromArgb((byte)(_service.IsScreenSharing ? 0xFF : 0x66), 0x33, 0xc6, 0x59) };
                         break;
                     case ButtonColors.Mute:
-                        Screen.Background = new SolidColorBrush { Color = Color.FromArgb((byte)(_service.IsScreenSharing ? 0xBB : 0x66), 0x00, 0x78, 0xff) };
+                        Screen.Background = new SolidColorBrush { Color = Color.FromArgb((byte)(_service.IsScreenSharing ? 0xFF : 0x66), 0x00, 0x78, 0xff) };
                         break;
                 }
 
