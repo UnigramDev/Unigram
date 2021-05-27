@@ -2945,6 +2945,14 @@ namespace Unigram.Views
             {
                 MasterDetail.NavigationService.GoBackAt(0);
             }
+            else
+            {
+                var scrollingHost = ChatsList.GetScrollViewer();
+                if (scrollingHost != null)
+                {
+                    scrollingHost.ChangeView(null, 0, null);
+                }
+            }
         }
 
         private void SearchFilters_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
