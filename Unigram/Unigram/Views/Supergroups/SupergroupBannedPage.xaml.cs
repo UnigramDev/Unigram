@@ -38,7 +38,7 @@ namespace Unigram.Views.Supergroups
 
         public void Search()
         {
-            Search_Click(null, null);
+            SearchField.Focus(FocusState.Keyboard);
         }
 
         public void OnBackRequested(HandledEventArgs args)
@@ -46,7 +46,6 @@ namespace Unigram.Views.Supergroups
             if (ContentPanel.Visibility == Visibility.Collapsed)
             {
                 SearchField.Text = string.Empty;
-                Search_LostFocus(null, null);
                 args.Handled = true;
             }
         }
@@ -158,25 +157,6 @@ namespace Unigram.Views.Supergroups
         }
 
         #endregion
-
-        private void Search_Click(object sender, RoutedEventArgs e)
-        {
-            MainHeader.Visibility = Visibility.Collapsed;
-            SearchField.Visibility = Visibility.Visible;
-
-            SearchField.Focus(FocusState.Keyboard);
-        }
-
-        private void Search_LostFocus(object sender, RoutedEventArgs e)
-        {
-            if (string.IsNullOrEmpty(SearchField.Text))
-            {
-                MainHeader.Visibility = Visibility.Visible;
-                SearchField.Visibility = Visibility.Collapsed;
-
-                Focus(FocusState.Programmatic);
-            }
-        }
 
         private void Search_TextChanged(object sender, TextChangedEventArgs e)
         {

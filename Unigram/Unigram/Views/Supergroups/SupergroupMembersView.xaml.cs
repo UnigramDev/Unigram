@@ -37,7 +37,7 @@ namespace Unigram.Views.Supergroups
 
         public void Search()
         {
-            Search_Click(null, null);
+            SearchField.Focus(FocusState.Keyboard);
         }
 
         public ListViewBase GetSelector()
@@ -84,7 +84,6 @@ namespace Unigram.Views.Supergroups
             if (ContentPanel.Visibility == Visibility.Collapsed)
             {
                 SearchField.Text = string.Empty;
-                Search_LostFocus(null, null);
                 args.Handled = true;
             }
         }
@@ -292,25 +291,6 @@ namespace Unigram.Views.Supergroups
 
         #endregion
 
-        private void Search_Click(object sender, RoutedEventArgs e)
-        {
-            MainHeader.Visibility = Visibility.Collapsed;
-            SearchField.Visibility = Visibility.Visible;
-
-            SearchField.Focus(FocusState.Keyboard);
-        }
-
-        private void Search_LostFocus(object sender, RoutedEventArgs e)
-        {
-            if (string.IsNullOrEmpty(SearchField.Text))
-            {
-                MainHeader.Visibility = Visibility.Visible;
-                SearchField.Visibility = Visibility.Collapsed;
-
-                Focus(FocusState.Programmatic);
-            }
-        }
-
         private void Search_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (string.IsNullOrEmpty(SearchField.Text))
@@ -327,7 +307,7 @@ namespace Unigram.Views.Supergroups
 
         public void UpdateSupergroup(Chat chat, Supergroup group)
         {
-            Title.Text = group.IsChannel ? Strings.Resources.ChannelSubscribers : Strings.Resources.ChannelMembers;
+            SearchField.PlaceholderText = group.IsChannel ? Strings.Resources.ChannelSubscribers : Strings.Resources.ChannelMembers;
 
             AddNew.Content = group.IsChannel ? Strings.Resources.AddSubscriber : Strings.Resources.AddMember;
             AddNewPanel.Visibility = group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
@@ -337,7 +317,7 @@ namespace Unigram.Views.Supergroups
 
         public void UpdateBasicGroup(Chat chat, BasicGroup group)
         {
-            Title.Text = Strings.Resources.ChannelMembers;
+            SearchField.PlaceholderText = Strings.Resources.ChannelMembers;
 
             AddNew.Content = Strings.Resources.AddMember;
             AddNewPanel.Visibility = group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
