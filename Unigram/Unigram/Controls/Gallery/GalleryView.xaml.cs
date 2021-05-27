@@ -53,6 +53,7 @@ namespace Unigram.Controls.Gallery
         private readonly Visual _bottom;
 
         private bool _wasFullScreen;
+        private bool _unloaded;
 
         private GalleryView()
         {
@@ -308,7 +309,7 @@ namespace Unigram.Controls.Gallery
 
         public IAsyncOperation<ContentDialogResult> ShowAsync(GalleryViewModelBase parameter, Func<FrameworkElement> closing = null)
         {
-            return AsyncInfo.Run(async (token) =>
+            return AsyncInfo.Run(async token =>
             {
                 _closing = closing;
 
@@ -336,6 +337,11 @@ namespace Unigram.Controls.Gallery
                 RoutedEventHandler handler = null;
                 handler = new RoutedEventHandler(async (s, args) =>
                 {
+                    if (_unloaded)
+                    {
+                        return;
+                    }
+
                     _wasFullScreen = ApplicationView.GetForCurrentView().IsFullScreenMode;
 
                     Transport.Focus(FocusState.Programmatic);
@@ -598,6 +604,11 @@ namespace Unigram.Controls.Gallery
 
         private void Play(Grid parent, GalleryContent item, File file)
         {
+            if (_unloaded)
+            {
+                return;
+            }
+
             try
             {
                 if (!file.Local.IsDownloadingCompleted && !SettingsService.Current.IsStreamingEnabled)
@@ -724,6 +735,8 @@ namespace Unigram.Controls.Gallery
 
         private void Unload()
         {
+            _unloaded = true;
+
             if (ViewModel != null)
             {
                 ViewModel.Aggregator.Unsubscribe(this);
