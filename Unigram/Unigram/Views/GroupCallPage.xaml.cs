@@ -1582,7 +1582,7 @@ namespace Unigram.Views
                 return;
             }
 
-            UpdateGroupCallParticipant(content, participant);
+            UpdateGroupCallParticipant(content, participant, true);
             args.Handled = true;
         }
 
@@ -1606,11 +1606,11 @@ namespace Unigram.Views
                     return;
                 }
 
-                UpdateGroupCallParticipant(content, participant);
+                UpdateGroupCallParticipant(content, participant, false);
             });
         }
 
-        private void UpdateGroupCallParticipant(Grid content, GroupCallParticipant participant)
+        private void UpdateGroupCallParticipant(Grid content, GroupCallParticipant participant, bool containerContentChanging)
         {
             var wave = content.Children[0] as Border;
             var photo = content.Children[1] as ProfilePicture;
@@ -1621,6 +1621,12 @@ namespace Unigram.Views
 
             var status = subtitle.Children[0] as TextBlock;
             var speaking = subtitle.Children[1] as TextBlock;
+
+            if (containerContentChanging)
+            {
+                var element = ElementCompositionPreview.GetElementVisual(wave);
+                element.Scale = new Vector3(0.9f);
+            }
 
             if (_cacheService.TryGetUser(participant.ParticipantId, out User user))
             {
