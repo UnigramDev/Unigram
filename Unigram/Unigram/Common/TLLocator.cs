@@ -180,15 +180,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator,
-                    _messageFactory ??= new Unigram.Services.Factories.MessageFactory(
-                        _protoService,
-                        _playbackService ??= new Unigram.Services.PlaybackService(
-                            _protoService,
-                            _cacheService,
-                            _settingsService,
-                            _eventAggregator),
-                        _eventAggregator));
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.SendLocationViewModel))
             {
