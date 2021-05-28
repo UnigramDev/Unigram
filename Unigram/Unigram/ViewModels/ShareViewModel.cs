@@ -28,27 +28,15 @@ namespace Unigram.ViewModels
         private SearchChatsCollection _search;
         public SearchChatsCollection Search
         {
-            get
-            {
-                return _search;
-            }
-            set
-            {
-                Set(ref _search, value);
-            }
+            get => _search;
+            set => Set(ref _search, value);
         }
 
         private TopChatsCollection _topChats;
         public TopChatsCollection TopChats
         {
-            get
-            {
-                return _topChats;
-            }
-            set
-            {
-                Set(ref _topChats, value);
-            }
+            get => _topChats;
+            set => Set(ref _topChats, value);
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, Navigation.Services.NavigationState state)
@@ -188,10 +176,7 @@ namespace Unigram.ViewModels
         private MvxObservableCollection<Chat> _selectedItems = new MvxObservableCollection<Chat>();
         public MvxObservableCollection<Chat> SelectedItems
         {
-            get
-            {
-                return _selectedItems;
-            }
+            get => _selectedItems;
             set
             {
                 Set(ref _selectedItems, value);
@@ -223,14 +208,8 @@ namespace Unigram.ViewModels
         private IList<Message> _messages;
         public IList<Message> Messages
         {
-            get
-            {
-                return _messages;
-            }
-            set
-            {
-                Set(ref _messages, value);
-            }
+            get => _messages;
+            set => Set(ref _messages, value);
         }
 
         private GroupCall _groupCall;
@@ -259,40 +238,22 @@ namespace Unigram.ViewModels
         private User _inviteBot;
         public User InviteBot
         {
-            get
-            {
-                return _inviteBot;
-            }
-            set
-            {
-                Set(ref _inviteBot, value);
-            }
+            get => _inviteBot;
+            set => Set(ref _inviteBot, value);
         }
 
         private string _inviteToken;
         public string InviteToken
         {
-            get
-            {
-                return _inviteToken;
-            }
-            set
-            {
-                Set(ref _inviteToken, value);
-            }
+            get => _inviteToken;
+            set => Set(ref _inviteToken, value);
         }
 
         private InputMessageContent _inputMedia;
         public InputMessageContent InputMedia
         {
-            get
-            {
-                return _inputMedia;
-            }
-            set
-            {
-                Set(ref _inputMedia, value);
-            }
+            get => _inputMedia;
+            set => Set(ref _inputMedia, value);
         }
 
         public bool IsWithMyScore { get; set; }
@@ -308,24 +269,21 @@ namespace Unigram.ViewModels
         private bool _sendAsCopy;
         public bool SendAsCopy
         {
-            get { return _sendAsCopy; }
-            set { Set(ref _sendAsCopy, value); }
+            get => _sendAsCopy;
+            set => Set(ref _sendAsCopy, value);
         }
 
         private bool _removeCaptions;
         public bool RemoveCaptions
         {
-            get { return _removeCaptions; }
-            set { Set(ref _removeCaptions, value); }
+            get => _removeCaptions;
+            set => Set(ref _removeCaptions, value);
         }
 
         private Uri _shareLink;
         public Uri ShareLink
         {
-            get
-            {
-                return _shareLink;
-            }
+            get => _shareLink;
             set
             {
                 Set(ref _shareLink, value);
@@ -336,68 +294,50 @@ namespace Unigram.ViewModels
         private string _shareTitle;
         public string ShareTitle
         {
-            get
-            {
-                return _shareTitle;
-            }
-            set
-            {
-                Set(ref _shareTitle, value);
-            }
+            get => _shareTitle;
+            set => Set(ref _shareTitle, value);
         }
 
         private bool _isCommentEnabled;
         public bool IsCommentEnabled
         {
-            get
-            {
-                return _isCommentEnabled;
-            }
-            set
-            {
-                Set(ref _isCommentEnabled, value);
-            }
+            get => _isCommentEnabled;
+            set => Set(ref _isCommentEnabled, value);
         }
 
         private bool _isSendCopyEnabled;
         public bool IsSendAsCopyEnabled
         {
-            get { return _isSendCopyEnabled; }
-            set { Set(ref _isSendCopyEnabled, value); }
+            get => _isSendCopyEnabled;
+            set => Set(ref _isSendCopyEnabled, value);
         }
 
         private SearchChatsType _searchType;
         public SearchChatsType SearchType
         {
-            get
-            {
-                return _searchType;
-            }
-            set
-            {
-                Set(ref _searchType, value);
-            }
+            get => _searchType;
+            set => Set(ref _searchType, value);
         }
 
         private InlineKeyboardButtonTypeSwitchInline _switchInline;
         public InlineKeyboardButtonTypeSwitchInline SwitchInline
         {
-            get { return _switchInline; }
-            set { _switchInline = value; }
+            get => _switchInline;
+            set => _switchInline = value;
         }
 
         private User _switchInlineBot;
         public User SwitchInlineBot
         {
-            get { return _switchInlineBot; }
-            set { _switchInlineBot = value; }
+            get => _switchInlineBot;
+            set => _switchInlineBot = value;
         }
 
         private DataPackageView _package;
         public DataPackageView Package
         {
-            get { return _package; }
-            set { _package = value; }
+            get => _package;
+            set => _package = value;
         }
 
         public string SendMessage { get; set; }
@@ -479,20 +419,21 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                var response = await ProtoService.SendAsync(new SetChatMemberStatus(chat.Id, new MessageSenderUser(_inviteBot.Id), new ChatMemberStatusMember()));
-                if (response is Ok)
+                var response = await ProtoService.SendAsync(new GetChatMember(chat.Id, new MessageSenderUser(_inviteBot.Id)));
+                if (response is ChatMember member && member.Status is ChatMemberStatusLeft)
                 {
-                    if (_inviteToken != null)
-                    {
-                        response = await ProtoService.SendAsync(new SendBotStartMessage(_inviteBot.Id, chat.Id, _inviteToken));
+                    await ProtoService.SendAsync(new SetChatMemberStatus(chat.Id, new MessageSenderUser(_inviteBot.Id), new ChatMemberStatusMember()));
+                }
 
-                        var service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId("Main" + ProtoService.SessionId);
-                        if (service != null)
-                        {
-                            service.NavigateToChat(chat, accessToken: _inviteToken);
-                        }
+                if (_inviteToken != null)
+                {
+                    response = await ProtoService.SendAsync(new SendBotStartMessage(_inviteBot.Id, chat.Id, _inviteToken));
+
+                    var service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId("Main" + ProtoService.SessionId);
+                    if (service != null)
+                    {
+                        service.NavigateToChat(chat, accessToken: _inviteToken);
                     }
-                    //NavigationService.GoBack();
                 }
             }
             else if (_switchInline != null && _switchInlineBot != null)
@@ -548,14 +489,8 @@ namespace Unigram.ViewModels
         private ListViewSelectionMode _selectionMode = ListViewSelectionMode.Multiple;
         public ListViewSelectionMode SelectionMode
         {
-            get
-            {
-                return _selectionMode;
-            }
-            set
-            {
-                Set(ref _selectionMode, value);
-            }
+            get => _selectionMode;
+            set => Set(ref _selectionMode, value);
         }
 
         #endregion
