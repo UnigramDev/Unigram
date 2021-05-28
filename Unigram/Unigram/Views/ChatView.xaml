@@ -1245,8 +1245,6 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
@@ -1254,27 +1252,20 @@
             <controls:GlyphButton
                 x:Name="ButtonForward"
                 Glyph="&#xE72D;"
-                Command="{x:Bind ViewModel.MessagesForwardCommand}"/>
-            <TextBlock
-                Text="{CustomResource Forward}"
-                VerticalAlignment="Center"
-                Margin="0,-3,12,0"
-                Grid.Column="1"/>
+                Content="{CustomResource Forward}"
+                Command="{x:Bind ViewModel.MessagesForwardCommand}"
+                Style="{StaticResource GlyphButtonWithLabelStyle}"/>
 
             <controls:GlyphButton
                 x:Name="ButtonDelete"
                 Glyph="&#xE74D;"
+                Content="{CustomResource Delete}"
                 Foreground="#df3f40"
                 Command="{x:Bind ViewModel.MessagesDeleteCommand}"
-                Grid.Column="2"/>
-            <TextBlock
-                Text="{CustomResource Delete}"
-                Foreground="#df3f40"
-                VerticalAlignment="Center"
-                Margin="0,-3,0,0"
-                Grid.Column="3"/>
+                Style="{StaticResource GlyphButtonWithLabelStyle}"
+                Grid.Column="1"/>
 
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,-3,0,0" Grid.Column="5">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,-2,0,2" Grid.Column="3">
                 <TextBlock
                     x:Name="ManageCountBefore"
                     FontWeight="SemiBold"/>
@@ -1294,7 +1285,7 @@
                 x:Name="ButtonManage"
                 Glyph="&#xE711;"
                 Command="{x:Bind ViewModel.MessagesUnselectCommand}"
-                Grid.Column="6"/>
+                Grid.Column="4"/>
         </Grid>
 
         <chats:ChatSearchBar
