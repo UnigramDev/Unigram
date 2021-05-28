@@ -854,7 +854,7 @@ namespace Unigram.Controls.Chats
             {
                 if (text[i] == c)
                 {
-                    if (i == 0 || text[i - 1] == ' ' || text[i - 1] == '\n' || text[i - 1] == '\r' || text[i - 1] == '\v')
+                    if (i == 0 || text[i - 1] == ' ' || text[i - 1] == '\n' || text[i - 1] == '\r' || text[i - 1] == '\v' || !char.IsLetterOrDigit(text[i - 1]))
                     {
                         index = i;
                         break;
