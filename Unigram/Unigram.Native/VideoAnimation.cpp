@@ -71,67 +71,25 @@ namespace winrt::Unigram::Native::implementation
 
 	void VideoAnimation::requestFd(VideoAnimation* info)
 	{
-		//JNIEnv* jniEnv = nullptr;
-
-		//JavaVMAttachArgs jvmArgs;
-		//jvmArgs.version = JNI_VERSION_1_6;
-
-		//bool attached;
-		//if (JNI_EDETACHED == javaVm->GetEnv((void**)&jniEnv, JNI_VERSION_1_6)) {
-		//    javaVm->AttachCurrentThread(&jniEnv, &jvmArgs);
-		//    attached = true;
-		//}
-		//else {
-		//    attached = false;
-		//}
-		//jniEnv->CallIntMethod(info->stream, jclass_AnimatedFileDrawableStream_read, (jint)0, (jint)1);
-		//if (attached) {
-		//    javaVm->DetachCurrentThread();
-		//}
-		//info->fd = open(info->src, O_RDONLY, S_IRUSR);
-		info->fd = CreateFile2FromAppW(info->src.data(), GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, OPEN_EXISTING, nullptr);
+		info->fd = CreateFile2FromAppW(info->file.FilePath().data(), GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, OPEN_EXISTING, nullptr);
 	}
 
 	int VideoAnimation::readCallback(void* opaque, uint8_t* buf, int buf_size)
 	{
 		VideoAnimation* info = reinterpret_cast<VideoAnimation*>(opaque);
 		if (!info->stopped) {
+			info->file.ReadCallback(buf_size);
+
 			if (info->fd == INVALID_HANDLE_VALUE) {
 				requestFd(info);
 			}
-			if (info->fd != INVALID_HANDLE_VALUE) {
-				if (info->last_seek_p + buf_size > info->file_size) {
-					buf_size = (int)(info->file_size - info->last_seek_p);
-				}
-				if (buf_size > 0) {
-					DWORD bytesRead;
-					BOOL result = ReadFile(info->fd, buf, buf_size, &bytesRead, NULL);
-					info->last_seek_p += buf_size;
 
-					return (int)bytesRead;
-				}
-				//    JNIEnv* jniEnv = nullptr;
+			DWORD bytesRead;
+			DWORD moved = SetFilePointer(info->fd, info->file.Offset(), NULL, FILE_BEGIN);
+			BOOL result = ReadFile(info->fd, buf, buf_size, &bytesRead, NULL);
 
-				//    JavaVMAttachArgs jvmArgs;
-				//    jvmArgs.version = JNI_VERSION_1_6;
-
-				//    bool attached;
-				//    if (JNI_EDETACHED == javaVm->GetEnv((void**)&jniEnv, JNI_VERSION_1_6)) {
-				//        javaVm->AttachCurrentThread(&jniEnv, &jvmArgs);
-				//        attached = true;
-				//    }
-				//    else {
-				//        attached = false;
-				//    }
-
-				//    buf_size = jniEnv->CallIntMethod(info->stream, jclass_AnimatedFileDrawableStream_read, (int)info->last_seek_p, (int)buf_size);
-				//    info->last_seek_p += buf_size;
-				//    if (attached) {
-				//        javaVm->DetachCurrentThread();
-				//    }
-				//    return (int)read(info->fd, buf, (size_t)buf_size);
-				//}
-			}
+			info->file.SeekCallback(bytesRead + info->file.Offset());
+			return bytesRead;
 		}
 		return 0;
 	}
@@ -140,37 +98,26 @@ namespace winrt::Unigram::Native::implementation
 	{
 		VideoAnimation* info = reinterpret_cast<VideoAnimation*>(opaque);
 		if (!info->stopped) {
-			if (info->fd < 0) {
-				requestFd(info);
+			if (whence & FFMPEG_AVSEEK_SIZE) {
+				return info->file.FileSize();
 			}
-			if (info->fd >= 0) {
-				if (whence & FFMPEG_AVSEEK_SIZE) {
-					return info->file_size;
-				}
-				else {
-					info->last_seek_p = offset;
-					//lseek(info->fd, off_t(offset), SEEK_SET);
-					SetFilePointer(info->fd, offset, NULL, FILE_BEGIN);
-					return offset;
-				}
+			else {
+				info->file.SeekCallback(offset);
+				return offset;
 			}
 		}
 		return 0;
 	}
 
-	winrt::Unigram::Native::VideoAnimation VideoAnimation::LoadFromFile(hstring filePath, bool preview, bool limitFps)
+	winrt::Unigram::Native::VideoAnimation VideoAnimation::LoadFromFile(IVideoAnimationSource file, bool preview, bool limitFps)
 	{
 		auto info = winrt::make_self<VideoAnimation>();
 
 		int ret;
-		info->src = filePath;
-		info->fd = CreateFile2FromAppW(info->src.data(), GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, OPEN_EXISTING, nullptr);
+		info->file = file;
+		info->fileEvent = CreateEvent(NULL, TRUE, TRUE, NULL);
 		info->limitFps = limitFps;
 
-		LARGE_INTEGER size;
-		GetFileSizeEx(info->fd, &size);
-
-		info->file_size = size.QuadPart;
 		info->ioBuffer = (unsigned char*)av_malloc(64 * 1024);
 		info->ioContext = avio_alloc_context(info->ioBuffer, 64 * 1024, 0, (void*)info.get(), readCallback, nullptr, seekCallback);
 		if (info->ioContext == nullptr) {
@@ -332,7 +279,7 @@ namespace winrt::Unigram::Native::implementation
 		}
 	}
 
-	int VideoAnimation::RenderSync(CanvasBitmap bitmap, bool preview)
+	int VideoAnimation::RenderSync(CanvasBitmap bitmap, bool preview, int32_t& seconds)
 	{
 		//int64_t time = ConnectionsManager::getInstance(0).getCurrentTimeMonotonicMillis();
 
@@ -443,6 +390,7 @@ namespace winrt::Unigram::Native::implementation
 					}
 
 					bitmap.SetPixelBytes(winrt::array_view(pixels, pixelWidth * pixelHeight * 4));
+					seconds = this->frame->best_effort_timestamp * av_q2d(this->video_stream->time_base);
 					//delete[] pixels;
 
 					this->prevFrame = timestamp;

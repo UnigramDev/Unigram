@@ -528,17 +528,17 @@ namespace Unigram.Services
             set => AddOrUpdateValue(ref _isSecretPreviewsEnabled, "IsSecretPreviewsEnabled", value);
         }
 
-        private bool? _isAutoPlayEnabled;
+        private bool? _isAutoPlayAnimationsEnabled;
         public bool IsAutoPlayAnimationsEnabled
         {
-            get => _isAutoPlayEnabled ??= GetValueOrDefault("IsAutoPlayEnabled", true);
-            set => AddOrUpdateValue(ref _isAutoPlayEnabled, "IsAutoPlayEnabled", value);
+            get => _isAutoPlayAnimationsEnabled ??= GetValueOrDefault("IsAutoPlayEnabled", true);
+            set => AddOrUpdateValue(ref _isAutoPlayAnimationsEnabled, "IsAutoPlayEnabled", value);
         }
 
         private bool? _isAutoPlayVideosEnabled;
         public bool IsAutoPlayVideosEnabled
         {
-            get => _isAutoPlayVideosEnabled ??= GetValueOrDefault("IsAutoPlayVideosEnabled", false);
+            get => _isAutoPlayVideosEnabled ??= GetValueOrDefault("IsAutoPlayVideosEnabled", true);
             set => AddOrUpdateValue(ref _isAutoPlayVideosEnabled, "IsAutoPlayVideosEnabled", value);
         }
 

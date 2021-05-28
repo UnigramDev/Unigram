@@ -121,7 +121,7 @@ namespace Unigram.Controls.Messages.Content
                     Button.SetGlyph(file.Id, MessageContentState.Play);
                     Button.Progress = 1;
 
-                    Player.Source = UriEx.ToLocal(file.Local.Path);
+                    Player.Source = new LocalVideoSource(file);
                 }
             }
         }

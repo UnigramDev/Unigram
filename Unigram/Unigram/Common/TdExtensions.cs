@@ -688,6 +688,9 @@ namespace Unigram.Common
                     }
 
                     return false;
+                case MessageVideo:
+                    // Videos are streamed
+                    return true;
                 default:
                     return false;
             }

@@ -656,7 +656,7 @@ namespace Unigram.Services
             var mime = GetMimeType(message);
             var duration = GetDuration(message);
 
-            var stream = new RemoteFileStream(_protoService, file, TimeSpan.FromSeconds(duration));
+            var stream = new RemoteFileStream(_protoService, file, duration);
             var source = MediaSource.CreateFromStream(stream, mime);
 
             _streams[file.Id].Add(stream);

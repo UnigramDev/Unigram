@@ -176,8 +176,7 @@
                     <ToggleSwitch
                         IsOn="{x:Bind ViewModel.IsAutoPlayVideosEnabled, Mode=TwoWay}"
                         Header="{CustomResource AutoplayVideo}"
-                        Style="{StaticResource CheckButtonStyle}"
-                        IsEnabled="False"/>
+                        Style="{StaticResource CheckButtonStyle}"/>
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl

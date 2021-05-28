@@ -173,7 +173,7 @@ namespace Unigram.Views.Popups
                 {
                     Thumbnail.Opacity = 0;
                     Texture.Source = null;
-                    Container.Child = new AnimationView { Source = UriEx.ToLocal(file.Local.Path) };
+                    Container.Child = new AnimationView { Source = new LocalVideoSource(file) };
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {

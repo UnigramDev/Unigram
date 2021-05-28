@@ -160,7 +160,7 @@ namespace Unigram.Controls.Drawers
 
             if (file.Local.IsDownloadingCompleted)
             {
-                view.Source = UriEx.ToLocal(file.Local.Path);
+                view.Source = new LocalVideoSource(file);
                 view.Thumbnail = null;
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
@@ -233,7 +233,7 @@ namespace Unigram.Controls.Drawers
 
                     if (content.Child is AnimationView view)
                     {
-                        view.Source = UriEx.ToLocal(file.Local.Path);
+                        view.Source = new LocalVideoSource(file);
                         _handler.ThrottleVisibleItems();
                     }
                 }

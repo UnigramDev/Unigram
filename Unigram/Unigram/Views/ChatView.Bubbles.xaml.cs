@@ -569,7 +569,6 @@ namespace Unigram.Views
                 if (test is MessageBubble bubbu)
                 {
                     bubbu.UnregisterEvents();
-                    bubbu.UpdateMessage(null);
                 }
 
                 if (_sizeChangedHandler != null)

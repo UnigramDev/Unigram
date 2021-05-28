@@ -19,6 +19,14 @@
 
     <controls:FileButton x:Name="Button" Click="Play_Click" Style="{StaticResource ImmersiveFileButtonStyle}"/>
 
+    <Border>
+        <controls:AnimationView
+            x:Name="Player"
+            AutoPlay="False"
+            IsHitTestVisible="False"
+            PositionChanged="Player_PositionChanged"/>
+    </Border>
+
     <controls:FileButton x:Name="Overlay" Click="Button_Click" Padding="8,4,8,4" Margin="4" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" Style="{StaticResource SmallImmersiveFileButtonStyle}">
         <TextBlock x:Name="Subtitle" Style="{StaticResource CaptionTextBlockStyle}" Foreground="White" TextWrapping="NoWrap"/>
     </controls:FileButton>

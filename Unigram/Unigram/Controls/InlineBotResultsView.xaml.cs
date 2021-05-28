@@ -170,7 +170,7 @@ namespace Unigram.Controls
                     }
                     else if (content.Children[0] is AnimationView animationView)
                     {
-                        animationView.Source = UriEx.ToLocal(file.Local.Path);
+                        animationView.Source = new LocalVideoSource(file);
                         animationView.Thumbnail = null;
                     }
 
@@ -319,7 +319,7 @@ namespace Unigram.Controls
 
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    animationView.Source = UriEx.ToLocal(file.Local.Path);
+                    animationView.Source = new LocalVideoSource(file);
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {

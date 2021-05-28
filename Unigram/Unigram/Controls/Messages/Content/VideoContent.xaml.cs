@@ -2,15 +2,18 @@
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Converters;
+using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.UI.Xaml;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed partial class VideoContent : AspectView, IContentWithFile
+    public sealed partial class VideoContent : AspectView, IContentWithFile, IContentWithPlayback
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
+
+        private RemoteVideoSource _source;
 
         public VideoContent(MessageViewModel message)
         {
@@ -119,17 +122,27 @@ namespace Unigram.Controls.Messages.Content
                 var size = Math.Max(file.Size, file.ExpectedSize);
                 if (file.Local.IsDownloadingActive)
                 {
+                    if (message.Delegate.CanBeDownloaded(message))
+                    {
+                        UpdateSource(message, file, video.Duration);
+                    }
+
                     Button.SetGlyph(file.Id, MessageContentState.Play);
                     Button.Progress = 0;
                     Overlay.SetGlyph(file.Id, MessageContentState.Downloading);
                     Overlay.Progress = (double)file.Local.DownloadedSize / size;
                     Overlay.ProgressVisibility = Visibility.Visible;
 
-                    Subtitle.Text = video.GetDuration() + Environment.NewLine + string.Format("{0} / {1}", FileSizeConverter.Convert(file.Local.DownloadedSize, size), FileSizeConverter.Convert(size));
+                    if (_source == null)
+                    {
+                        Subtitle.Text = video.GetDuration() + Environment.NewLine + string.Format("{0} / {1}", FileSizeConverter.Convert(file.Local.DownloadedSize, size), FileSizeConverter.Convert(size));
+                    }
                 }
                 else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed)
                 {
                     var generating = file.Local.DownloadedSize < size;
+
+                    UpdateSource(null, null, 0);
 
                     Button.SetGlyph(file.Id, MessageContentState.Uploading);
                     Button.Progress = (double)(generating ? file.Local.DownloadedSize : file.Remote.UploadedSize) / size;
@@ -157,10 +170,20 @@ namespace Unigram.Controls.Messages.Content
                     if (message.Delegate.CanBeDownloaded(message))
                     {
                         _message.ProtoService.DownloadFile(file.Id, 32);
+                        UpdateSource(message, file, video.Duration);
+                    }
+                    else
+                    {
+                        UpdateSource(null, null, 0);
                     }
                 }
                 else
                 {
+                    if (message.Delegate.CanBeDownloaded(message))
+                    {
+                        UpdateSource(message, file, video.Duration);
+                    }
+
                     Button.SetGlyph(file.Id, message.SendingState is MessageSendingStatePending && message.MediaAlbumId != 0 ? MessageContentState.Confirm : MessageContentState.Play);
                     Button.Progress = 0;
                     Overlay.Progress = 1;
@@ -181,6 +204,44 @@ namespace Unigram.Controls.Messages.Content
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
                 message.ProtoService.DownloadFile(file.Id, 1);
+            }
+        }
+
+        private void UpdateSource(MessageViewModel message, File file, int duration)
+        {
+            if (message == null || file == null || !SettingsService.Current.IsAutoPlayVideosEnabled)
+            {
+                Player.Source = _source = null;
+            }
+            else
+            {
+                if (_source?.Id != file.Id)
+                {
+                    Player.Source = _source = new RemoteVideoSource(message.ProtoService, file, duration);
+                }
+                else
+                {
+                    _source.UpdateFile(file);
+                }
+            }
+        }
+
+        private void Player_PositionChanged(object sender, int seconds)
+        {
+            var video = GetContent(_message?.Content);
+            if (video == null)
+            {
+                return;
+            }
+
+            var position = TimeSpan.FromSeconds(video.Duration - seconds);
+            if (position.TotalHours >= 1)
+            {
+                Subtitle.Text = position.ToString("h\\:mm\\:ss");
+            }
+            else
+            {
+                Subtitle.Text = position.ToString("mm\\:ss");
             }
         }
 
@@ -210,6 +271,11 @@ namespace Unigram.Controls.Messages.Content
             }
 
             return null;
+        }
+
+        public IPlayerView GetPlaybackElement()
+        {
+            return Player;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

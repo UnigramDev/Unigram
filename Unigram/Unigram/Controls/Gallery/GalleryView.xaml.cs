@@ -644,7 +644,7 @@ namespace Unigram.Controls.Gallery
                 var streamable = SettingsService.Current.IsStreamingEnabled && item.IsStreamable /*&& !file.Local.IsDownloadingCompleted*/;
                 if (streamable)
                 {
-                    _fileStream = new RemoteFileStream(item.ProtoService, file, TimeSpan.FromSeconds(item.Duration));
+                    _fileStream = new RemoteFileStream(item.ProtoService, file, item.Duration);
                     _mediaPlayer.Source = MediaSource.CreateFromStream(_fileStream, item.MimeType);
 
                     //Transport.DownloadMaximum = file.Size;

@@ -28,7 +28,7 @@ namespace Unigram.Controls
         private Image _thumbnail;
         private bool? _hideThumbnail;
 
-        private string _source;
+        private IVideoAnimationSource _source;
         private VideoAnimation _animation;
 
         private bool _shouldPlay;
@@ -39,6 +39,9 @@ namespace Unigram.Controls
         private bool _subscribed;
 
         private bool _unloaded;
+
+        private int _prevSeconds = int.MaxValue;
+        private int _nextSeconds;
 
         public AnimationView()
         {
@@ -63,7 +66,7 @@ namespace Unigram.Controls
 
             _thumbnail = (Image)GetTemplateChild("Thumbnail");
 
-            OnSourceChanged(UriToPath(Source), _source);
+            OnSourceChanged(Source, _source);
 
             base.OnApplyTemplate();
         }
@@ -83,7 +86,7 @@ namespace Unigram.Controls
                 _layoutRoot.Children.Add(_canvas);
 
                 _unloaded = false;
-                OnSourceChanged(UriToPath(Source), _source);
+                OnSourceChanged(Source, _source);
             }
         }
 
@@ -178,6 +181,12 @@ namespace Unigram.Controls
 
             args.DrawingSession.DrawImage(_bitmap, new Rect(x, y, width, height));
 
+            if (_prevSeconds != _nextSeconds)
+            {
+                _prevSeconds = _nextSeconds;
+                PositionChanged?.Invoke(this, _nextSeconds);
+            }
+
             if (_hideThumbnail == true && _thumbnail != null)
             {
                 _hideThumbnail = false;
@@ -194,7 +203,7 @@ namespace Unigram.Controls
             }
 
             //_bitmap = animation.RenderSync(_device, index, 256, 256);
-            animation.RenderSync(_bitmap, false);
+            animation.RenderSync(_bitmap, false, out _nextSeconds);
 
             if (_hideThumbnail == null)
             {
@@ -202,12 +211,7 @@ namespace Unigram.Controls
             }
         }
 
-        private void OnSourceChanged(Uri newValue, Uri oldValue)
-        {
-            OnSourceChanged(UriToPath(newValue), UriToPath(oldValue));
-        }
-
-        private  async void OnSourceChanged(string newValue, string oldValue)
+        private  async void OnSourceChanged(IVideoAnimationSource newValue, IVideoAnimationSource oldValue)
         {
             var canvas = _canvas;
             if (canvas == null)
@@ -222,8 +226,7 @@ namespace Unigram.Controls
                 return;
             }
 
-            if (string.Equals(newValue, oldValue, StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(newValue, _source, StringComparison.OrdinalIgnoreCase))
+            if (newValue?.Id == oldValue?.Id || newValue?.Id == _source?.Id)
             {
                 return;
             }
@@ -233,7 +236,7 @@ namespace Unigram.Controls
             var shouldPlay = _shouldPlay;
 
             var animation = await Task.Run(() => VideoAnimation.LoadFromFile(newValue, false, true));
-            if (animation == null || !string.Equals(newValue, _source, StringComparison.OrdinalIgnoreCase))
+            if (animation == null || newValue?.Id != _source?.Id)
             {
                 // The app can't access the file specified
                 return;
@@ -355,6 +358,8 @@ namespace Unigram.Controls
             return null;
         }
 
+        public event EventHandler<int> PositionChanged;
+
         #region IsLoopingEnabled
 
         public bool IsLoopingEnabled
@@ -388,18 +393,18 @@ namespace Unigram.Controls
 
         #region Source
 
-        public Uri Source
+        public IVideoAnimationSource Source
         {
-            get { return (Uri)GetValue(SourceProperty); }
+            get { return (IVideoAnimationSource)GetValue(SourceProperty); }
             set { SetValue(SourceProperty, value); }
         }
 
         public static readonly DependencyProperty SourceProperty =
-            DependencyProperty.Register("Source", typeof(Uri), typeof(AnimationView), new PropertyMetadata(null, OnSourceChanged));
+            DependencyProperty.Register("Source", typeof(IVideoAnimationSource), typeof(AnimationView), new PropertyMetadata(null, OnSourceChanged));
 
         private static void OnSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((AnimationView)d).OnSourceChanged((Uri)e.NewValue, (Uri)e.OldValue);
+            ((AnimationView)d).OnSourceChanged((IVideoAnimationSource)e.NewValue, (IVideoAnimationSource)e.OldValue);
         }
 
         #endregion
