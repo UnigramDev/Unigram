@@ -24,6 +24,7 @@ namespace Unigram.Controls
         public ContentPopup()
         {
             DefaultStyleKey = typeof(ContentPopup);
+            DefaultButton = ContentDialogButton.Primary;
 
             if (Window.Current.Content is FrameworkElement element)
             {
