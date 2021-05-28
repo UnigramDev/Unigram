@@ -91,7 +91,7 @@
         </Style>
     </Page.Resources>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" PointerMoved="Viewport_PointerEntered" PointerExited="Viewport_PointerExited" RequestedTheme="Dark">
+    <Grid Background="#FF171717" PointerMoved="Viewport_PointerEntered" PointerExited="Viewport_PointerExited" RequestedTheme="Dark">
         <Grid.RowDefinitions>
             <RowDefinition Height="32"/>
             <RowDefinition Height="Auto"/>
@@ -199,7 +199,7 @@
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <ItemsStackPanel
-                            Background="{ThemeResource PageHeaderBorderBrush}"
+                            Background="#FF1F1F1F"
                             VerticalAlignment="Top"/>
                     </ItemsPanelTemplate>
                 </ListView.ItemsPanel>

@@ -1408,15 +1408,6 @@ namespace Unigram.Common
         public static string GetStartsAt(this MessageVoiceChatScheduled messageVoiceChatScheduled)
         {
             var date = Converters.Converter.DateTime(messageVoiceChatScheduled.StartDate);
-            if (date.Date == DateTime.Today)
-            {
-                return string.Format(Strings.Resources.TodayAtFormattedWithToday, Converters.Converter.ShortTime.Format(date));
-            }
-            else if (date.Date.AddDays(1) == DateTime.Today)
-            {
-                return string.Format(Strings.Resources.YesterdayAtFormatted, Converters.Converter.ShortTime.Format(date));
-            }
-
             return string.Format(Strings.Resources.formatDateAtTime, Converters.Converter.ShortDate.Format(date), Converters.Converter.ShortTime.Format(date));
         }
 

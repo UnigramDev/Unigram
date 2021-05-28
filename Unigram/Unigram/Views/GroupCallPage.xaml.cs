@@ -797,8 +797,25 @@ namespace Unigram.Views
                     StartsIn.Text = call.GetStartsIn();
 
                     Menu.Visibility = Visibility.Collapsed;
-                    TitlePanel.Margin = new Thickness(0, 0, 0, 0);
-                    SubtitleInfo.Margin = new Thickness(12, -8, 0, 12);
+                    Resize.Visibility = Visibility.Collapsed;
+
+                    var padding = 0;
+
+                    foreach (var item in TopButtons.Children)
+                    {
+                        if (item.Visibility == Visibility.Visible)
+                        {
+                            if (padding > 0)
+                            {
+                                padding -= 8;
+                            }
+
+                            padding += 40;
+                        }
+                    }
+
+                    TitlePanel.Margin = new Thickness(padding > 0 ? padding - 8 : 0, 0, 0, 0);
+                    SubtitleInfo.Margin = new Thickness(padding > 0 ? padding + 4 : 12, -8, 0, 12);
                     Settings.Visibility = SettingsInfo.Visibility = Visibility.Visible;
                     Video.Visibility = VideoInfo.Visibility = Visibility.Collapsed;
                 }
@@ -821,6 +838,8 @@ namespace Unigram.Views
                         Menu.Visibility = call.CanStartVideo ? Visibility.Visible : Visibility.Collapsed;
                         Settings.Visibility = SettingsInfo.Visibility = call.CanStartVideo ? Visibility.Collapsed : Visibility.Visible;
                     }
+
+                    Resize.Visibility = Visibility.Visible;
 
                     var padding = 0;
 
@@ -1691,14 +1710,20 @@ namespace Unigram.Views
                 if (participant.IsCurrentUser)
                 {
                     speaking.Text = Strings.Resources.ThisIsYou;
+                    speaking.Foreground = status.Foreground = new SolidColorBrush { Color = Color.FromArgb(0xFF, 0x4D, 0xB8, 0xFF) };
+                }
+                else if (participant.IsMutedForCurrentUser)
+                {
+                    speaking.Text = Strings.Resources.VoipGroupMutedForMe;
+                    speaking.Foreground = status.Foreground = new SolidColorBrush { Color = Colors.Red };
                 }
                 else
                 {
                     speaking.Text = participant.Bio.Length > 0 ? participant.Bio : Strings.Resources.Listening;
+                    speaking.Foreground = status.Foreground = new SolidColorBrush { Color = Color.FromArgb(0xFF, 0x85, 0x85, 0x85) };
                 }
 
                 wave.Background = new SolidColorBrush { Color = permanent ? Color.FromArgb(0xDD, 0xFF, 0x00, 0x00) : Color.FromArgb(0xDD, 0x4D, 0xB8, 0xFF) };
-                speaking.Foreground = status.Foreground = new SolidColorBrush { Color = Color.FromArgb(0xFF, 0x85, 0x85, 0x85) };
                 glyph.Text = Icons.MicOff;
                 glyph.Foreground = new SolidColorBrush { Color = permanent ? Colors.Red : Color.FromArgb(0xFF, 0x85, 0x85, 0x85) };
             }
@@ -1707,23 +1732,26 @@ namespace Unigram.Views
                 if (participant.IsSpeaking && participant.VolumeLevel != 10000)
                 {
                     speaking.Text = string.Format(Strings.Resources.SpeakingWithVolume, (participant.VolumeLevel / 100d).ToString("N0"));
+                    speaking.Foreground = status.Foreground = new SolidColorBrush { Color = Color.FromArgb(0xFF, 0x33, 0xc6, 0x59) };
                 }
                 else if (participant.IsSpeaking)
                 {
                     speaking.Text = Strings.Resources.Speaking;
+                    speaking.Foreground = status.Foreground = new SolidColorBrush { Color = Color.FromArgb(0xFF, 0x33, 0xc6, 0x59) };
                 }
                 else if (participant.IsCurrentUser)
                 {
                     speaking.Text = Strings.Resources.ThisIsYou;
+                    speaking.Foreground = status.Foreground = new SolidColorBrush { Color = Colors.Red };
                 }
                 else
                 {
                     speaking.Text = Strings.Resources.Listening;
+                    speaking.Foreground = status.Foreground = new SolidColorBrush { Color = Color.FromArgb(0xFF, 0x85, 0x85, 0x85) };
                 }
 
 
                 wave.Background = new SolidColorBrush { Color = participant.IsSpeaking ? Color.FromArgb(0xDD, 0x33, 0xc6, 0x59) : Color.FromArgb(0xDD, 0x4D, 0xB8, 0xFF) };
-                speaking.Foreground = status.Foreground = new SolidColorBrush { Color = participant.IsSpeaking ? Color.FromArgb(0xFF, 0x33, 0xc6, 0x59) : Color.FromArgb(0xFF, 0x85, 0x85, 0x85) };
                 glyph.Text = Icons.MicOn;
                 glyph.Foreground = new SolidColorBrush { Color = participant.IsSpeaking ? Color.FromArgb(0xFF, 0x33, 0xc6, 0x59) : Color.FromArgb(0xFF, 0x85, 0x85, 0x85) };
             }
