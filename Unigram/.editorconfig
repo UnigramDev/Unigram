@@ -8,3 +8,6 @@ dotnet_diagnostic.IDE0058.severity = none
 
 # IDE0008: Use explicit type
 dotnet_diagnostic.IDE0008.severity = none
+
+# IDE0032: Use auto property
+dotnet_style_prefer_auto_properties = false:silent
