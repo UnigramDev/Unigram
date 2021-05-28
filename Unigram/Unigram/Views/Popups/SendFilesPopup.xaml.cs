@@ -622,10 +622,10 @@ namespace Unigram.Views.Popups
             var focused = FocusManager.GetFocusedElement();
             if (focused == null || (focused is TextBox == false && focused is RichEditBox == false))
             {
-                if (character == "\u0016" && CaptionInput.Document.Selection.CanPaste(0))
+                if (character == "\u0016" && CaptionInput.CanPasteClipboardContent)
                 {
                     CaptionInput.Focus(FocusState.Keyboard);
-                    CaptionInput.Document.Selection.Paste(0);
+                    CaptionInput.PasteFromClipboard();
                 }
                 else if (character == "\r")
                 {

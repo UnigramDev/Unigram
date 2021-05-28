@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
@@ -14,11 +15,11 @@ using Unigram.ViewModels.Folders;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI;
 using Windows.UI.Core;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
@@ -70,21 +71,9 @@ namespace Unigram.Views.Popups
 
         #region Show
 
-        private static readonly Dictionary<int, WeakReference<SharePopup>> _windowContext = new Dictionary<int, WeakReference<SharePopup>>();
         public static SharePopup GetForCurrentView()
         {
             return new SharePopup();
-
-            var id = ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow);
-            if (_windowContext.TryGetValue(id, out WeakReference<SharePopup> reference) && reference.TryGetTarget(out SharePopup value))
-            {
-                return value;
-            }
-
-            var context = new SharePopup();
-            _windowContext[id] = new WeakReference<SharePopup>(context);
-
-            return context;
         }
 
         public static async Task<Chat> PickChatAsync(string title)
@@ -133,7 +122,6 @@ namespace Unigram.Views.Popups
             ViewModel.IsSendAsCopyEnabled = false;
             ViewModel.IsChatSelection = false;
 
-            ViewModel.Clear();
             ViewModel.GroupCall = call;
 
             return ShowAsync();
@@ -147,7 +135,6 @@ namespace Unigram.Views.Popups
             ViewModel.IsSendAsCopyEnabled = false;
             ViewModel.IsChatSelection = false;
 
-            ViewModel.Clear();
             ViewModel.Package = package;
 
             return ShowAsync();
@@ -161,7 +148,6 @@ namespace Unigram.Views.Popups
             ViewModel.IsSendAsCopyEnabled = false;
             ViewModel.IsChatSelection = false;
 
-            ViewModel.Clear();
             ViewModel.SwitchInline = switchInline;
             ViewModel.SwitchInlineBot = bot;
 
@@ -176,7 +162,6 @@ namespace Unigram.Views.Popups
             ViewModel.IsSendAsCopyEnabled = false;
             ViewModel.IsChatSelection = false;
 
-            ViewModel.Clear();
             ViewModel.SendMessage = message;
             ViewModel.SendMessageUrl = hasUrl;
 
@@ -191,7 +176,6 @@ namespace Unigram.Views.Popups
             ViewModel.IsSendAsCopyEnabled = true;
             ViewModel.IsChatSelection = false;
 
-            ViewModel.Clear();
             ViewModel.Messages = new[] { message };
             ViewModel.IsWithMyScore = withMyScore;
 
@@ -239,7 +223,6 @@ namespace Unigram.Views.Popups
             ViewModel.IsSendAsCopyEnabled = true;
             ViewModel.IsChatSelection = false;
 
-            ViewModel.Clear();
             ViewModel.Messages = messages;
             ViewModel.IsWithMyScore = withMyScore;
 
@@ -254,7 +237,6 @@ namespace Unigram.Views.Popups
             ViewModel.IsSendAsCopyEnabled = false;
             ViewModel.IsChatSelection = false;
 
-            ViewModel.Clear();
             ViewModel.ShareLink = link;
             ViewModel.ShareTitle = title;
 
@@ -269,7 +251,6 @@ namespace Unigram.Views.Popups
             ViewModel.IsSendAsCopyEnabled = false;
             ViewModel.IsChatSelection = false;
 
-            ViewModel.Clear();
             ViewModel.InputMedia = inputMedia;
 
             //if (inputMedia is TLInputMediaGame gameMedia && gameMedia.Id is TLInputGameShortName shortName)
@@ -288,7 +269,6 @@ namespace Unigram.Views.Popups
             ViewModel.IsSendAsCopyEnabled = false;
             ViewModel.IsChatSelection = false;
 
-            ViewModel.Clear();
             ViewModel.InviteBot = bot;
             ViewModel.InviteToken = token;
 
@@ -303,7 +283,6 @@ namespace Unigram.Views.Popups
             ViewModel.IsSendAsCopyEnabled = false;
             ViewModel.IsChatSelection = true;
 
-            ViewModel.Clear();
             ViewModel.PreSelectedItems = selectedItems;
 
             return ShowAsync();
@@ -864,16 +843,16 @@ namespace Unigram.Views.Popups
 
         private void OnCharacterReceived(CoreWindow sender, CharacterReceivedEventArgs args)
         {
-            var character = System.Text.Encoding.UTF32.GetString(BitConverter.GetBytes(args.KeyCode));
+            var character = Encoding.UTF32.GetString(BitConverter.GetBytes(args.KeyCode));
             if (character.Length == 0)
             {
                 return;
             }
-            else if (/*character != "\r" &&*/ char.IsControl(character[0]))
+            else if (character != "\u0016" && character != "\r" && char.IsControl(character[0]))
             {
                 return;
             }
-            else if (/*character != "\r" &&*/ char.IsWhiteSpace(character[0]))
+            else if (character != "\u0016" && character != "\r" && char.IsWhiteSpace(character[0]))
             {
                 return;
             }
@@ -881,11 +860,16 @@ namespace Unigram.Views.Popups
             var focused = FocusManager.GetFocusedElement();
             if (focused == null || (focused is TextBox == false && focused is RichEditBox == false))
             {
-                //if (IsPrimaryButtonEnabled && character == "\r")
-                //{
-                //    ViewModel.SendCommand.Execute();
-                //}
-                //else
+                if (character == "\u0016" && CaptionInput.CanPasteClipboardContent)
+                {
+                    CaptionInput.Focus(FocusState.Keyboard);
+                    CaptionInput.PasteFromClipboard();
+                }
+                else if (character == "\r" && IsPrimaryButtonEnabled)
+                {
+                    Accept();
+                }
+                else
                 {
                     Search_Click(null, null);
                     SearchField.Text = character;
@@ -894,6 +878,57 @@ namespace Unigram.Views.Popups
 
                 args.Handled = true;
             }
+        }
+
+        private void Accept()
+        {
+            if (CaptionInput.HandwritingView.IsOpen)
+            {
+                RoutedEventHandler handler = null;
+                handler = (s, args) =>
+                {
+                    CaptionInput.HandwritingView.Unloaded -= handler;
+
+                    ViewModel.Caption = CaptionInput.GetFormattedText();
+                    Hide(ContentDialogResult.Primary);
+                };
+
+                CaptionInput.HandwritingView.Unloaded += handler;
+                CaptionInput.HandwritingView.TryClose();
+            }
+            else
+            {
+                ViewModel.Caption = CaptionInput.GetFormattedText();
+                Hide(ContentDialogResult.Primary);
+            }
+        }
+
+        private void Emoji_Click(object sender, RoutedEventArgs e)
+        {
+            // We don't want to unfocus the text are when the context menu gets opened
+            EmojiFlyout.ShowAt(CaptionInput, new FlyoutShowOptions { ShowMode = FlyoutShowMode.Transient });
+        }
+
+        private void Emoji_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            if (e.ClickedItem is EmojiData emoji)
+            {
+                EmojiFlyout.Hide();
+
+                CaptionInput.InsertText(emoji.Value);
+                CaptionInput.Focus(FocusState.Programmatic);
+            }
+        }
+
+        private void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            ViewModel.Caption = CaptionInput.GetFormattedText();
+            ViewModel.SendCommand.Execute();
+        }
+
+        private void CaptionInput_Accept(FormattedTextBox sender, EventArgs args)
+        {
+            Accept();
         }
     }
 }

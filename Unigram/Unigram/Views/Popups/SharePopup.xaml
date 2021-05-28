@@ -6,13 +6,14 @@
     xmlns:cells="using:Unigram.Controls.Cells"
     xmlns:controls="using:Unigram.Controls"
     xmlns:common="using:Unigram.Common"
+    xmlns:drawers="using:Unigram.Controls.Drawers"
     xmlns:selectors="using:Unigram.Selectors"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     TitleTemplate="{x:Null}"
     PrimaryButtonText="OK"
-    PrimaryButtonCommand="{x:Bind ViewModel.SendCommand}"
+    PrimaryButtonClick="OnPrimaryButtonClick"
     IsPrimaryButtonEnabled="False"
     SecondaryButtonText="Cancel"
     Opened="OnOpened"
@@ -74,7 +75,7 @@
             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False"/>
         </Grid>
     </ContentDialog.Title>
-    
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
@@ -263,12 +264,41 @@
             </controls:TextListView>
         </Grid>
 
-        <Grid Grid.Row="1">
+        <Grid x:Name="CommentPanel" Visibility="Collapsed" Grid.Row="1">
             <Border x:Name="LineBottom" BorderThickness="0,1,0,0" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
 
-            <Border x:Name="CommentPanel" Visibility="Collapsed" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="12,8,12,0" Grid.ColumnSpan="2">
-                <TextBox Text="{x:Bind ViewModel.Comment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="{CustomResource ShareComment}"/>
-            </Border>
+            <controls:FormattedTextBox
+                x:Name="CaptionInput"
+                Accept="CaptionInput_Accept"
+                Padding="10,6,36,5"
+                Margin="12,8,12,0"
+                FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                PlaceholderText="{CustomResource ShareComment}">
+                <FlyoutBase.AttachedFlyout>
+                    <Flyout x:Name="EmojiFlyout" Placement="Top" ShowMode="Transient">
+                        <Flyout.FlyoutPresenterStyle>
+                            <Style TargetType="FlyoutPresenter">
+                                <Setter Property="Padding" Value="0"/>
+                            </Style>
+                        </Flyout.FlyoutPresenterStyle>
+                        <drawers:EmojiDrawer
+                            ItemClick="Emoji_ItemClick"
+                            x:Name="EmojiPanel"
+                            Width="300"
+                            Height="360"/>
+                    </Flyout>
+                </FlyoutBase.AttachedFlyout>
+            </controls:FormattedTextBox>
+
+            <controls:GlyphButton
+                Click="Emoji_Click"
+                Glyph="&#xE76E;"
+                AllowFocusOnInteraction="False"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Width="40"
+                Height="40"
+                Margin="0,4,10,-4"/>
         </Grid>
     </Grid>
 </controls:ContentPopup>

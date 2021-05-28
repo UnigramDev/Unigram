@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Services;
-using Unigram.Services.Factories;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -18,13 +16,9 @@ namespace Unigram.ViewModels
 {
     public class ShareViewModel : TLViewModelBase
     {
-        private readonly IMessageFactory _messageFactory;
-
-        public ShareViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IMessageFactory messageFactory)
+        public ShareViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
-            _messageFactory = messageFactory;
-
             Items = new MvxObservableCollection<Chat>();
             SelectedItems = new MvxObservableCollection<Chat>();
 
@@ -219,17 +213,11 @@ namespace Unigram.ViewModels
             set => Set(ref _title, value);
         }
 
-        private string _comment;
-        public string Comment
+        private FormattedText _caption;
+        public FormattedText Caption
         {
-            get
-            {
-                return _comment;
-            }
-            set
-            {
-                Set(ref _comment, value);
-            }
+            get => _caption;
+            set => Set(ref _caption, value);
         }
 
         private IList<Message> _messages;
@@ -418,25 +406,6 @@ namespace Unigram.ViewModels
         public bool IsChatSelection { get; set; }
         public IList<long> PreSelectedItems { get; set; }
 
-        public void Clear()
-        {
-            Package = null;
-            SwitchInline = null;
-            SwitchInlineBot = null;
-            SendMessage = null;
-            SendMessageUrl = false;
-            Comment = null;
-            ShareLink = null;
-            ShareTitle = null;
-            Messages = null;
-            InviteBot = null;
-            InputMedia = null;
-            IsWithMyScore = false;
-            PreSelectedItems = null;
-        }
-
-
-
         public MvxObservableCollection<Chat> Items { get; private set; }
 
 
@@ -450,13 +419,11 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            if (!string.IsNullOrEmpty(_comment))
+            if (_isCommentEnabled && !string.IsNullOrEmpty(_caption?.Text))
             {
-                var formatted = GetFormattedText(_comment);
-
                 foreach (var chat in chats)
                 {
-                    var response = await ProtoService.SendAsync(new SendMessage(chat.Id, 0, 0, new MessageSendOptions(false, false, null), null, new InputMessageText(formatted, false, false)));
+                    var response = await ProtoService.SendAsync(new SendMessage(chat.Id, 0, 0, new MessageSendOptions(false, false, null), null, new InputMessageText(_caption, false, false)));
                 }
             }
 
@@ -574,17 +541,6 @@ namespace Unigram.ViewModels
 
             //App.InMemoryState.ForwardMessages = new List<TLMessage>(messages);
             //NavigationService.GoBackAt(0);
-        }
-
-        private FormattedText GetFormattedText(string text)
-        {
-            if (text == null)
-            {
-                return new FormattedText();
-            }
-
-            text = text.Format();
-            return Client.Execute(new ParseMarkdown(new FormattedText(text, new TextEntity[0]))) as FormattedText;
         }
 
         #region Search

@@ -8,6 +8,7 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls.Chats;
 using Unigram.Converters;
+using Unigram.Services;
 using Unigram.Views.Popups;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
@@ -135,9 +136,31 @@ namespace Unigram.Controls
                     return;
                 }
             }
+            else if (e.Key == VirtualKey.Enter)
+            {
+                var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
+                var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
 
-            base.OnKeyDown(e);
+                var send = SettingsService.Current.IsSendByEnterEnabled
+                    ? !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down)
+                    : ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
+                
+                AcceptsReturn = !send;
+                e.Handled = send;
+
+                if (send)
+                {
+                    Accept?.Invoke(this, EventArgs.Empty);
+                }
+            }
+
+            if (!e.Handled)
+            {
+                base.OnKeyDown(e);
+            }
         }
+
+        public event TypedEventHandler<FormattedTextBox, EventArgs> Accept;
 
         public event TypedEventHandler<FormattedTextBox, EventArgs> ShowFormatting;
         public event TypedEventHandler<FormattedTextBox, EventArgs> HideFormatting;
@@ -783,6 +806,13 @@ namespace Unigram.Controls
                 _wasEmpty = empty;
                 return empty;
             }
+        }
+
+        public bool CanPasteClipboardContent => Document.Selection.CanPaste(0);
+        
+        public void PasteFromClipboard()
+        {
+            Document.Selection.Paste(0);
         }
 
         public void SetText(FormattedText formattedText)

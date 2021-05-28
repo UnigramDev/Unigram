@@ -927,7 +927,7 @@ namespace Unigram.Views
                 // For some reason, this is paste
                 if (character == "\u0016")
                 {
-                    TextField.Document.Selection.Paste(0);
+                    TextField.PasteFromClipboard();
                 }
                 else
                 {
