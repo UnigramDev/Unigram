@@ -109,7 +109,7 @@
             <controls:AnimatedGlyphButton
                 x:Name="Resize"
                 Click="Resize_Click"
-                Glyph="&#xE965;"
+                Glyph="&#xE966;"
                 Width="40"
                 Height="48"
                 FontSize="16"/>
