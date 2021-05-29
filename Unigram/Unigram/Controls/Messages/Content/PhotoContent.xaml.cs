@@ -43,10 +43,7 @@ namespace Unigram.Controls.Messages.Content
             var small = photo.GetSmall();
             var big = photo.GetBig();
 
-            if (small != null /*&& !big.Photo.Local.IsDownloadingCompleted*/ /*&& small.Photo.Id != big.Photo.Id*/)
-            {
-                UpdateThumbnail(message, small.Photo, photo.Minithumbnail);
-            }
+            UpdateThumbnail(message, small, photo.Minithumbnail);
 
             if (big != null)
             {
@@ -88,7 +85,7 @@ namespace Unigram.Controls.Messages.Content
 
             if (small != null && small.Photo.Id != big.Photo.Id && small.Photo.Id == file.Id)
             {
-                UpdateThumbnail(message, file, null);
+                UpdateThumbnail(message, small, null);
                 return;
             }
             else if (big == null || big.Photo.Id != file.Id)
@@ -191,21 +188,23 @@ namespace Unigram.Controls.Messages.Content
             }
         }
 
-        private void UpdateThumbnail(MessageViewModel message, File file, Minithumbnail minithumbnail)
+        private void UpdateThumbnail(MessageViewModel message, PhotoSize small, Minithumbnail minithumbnail)
         {
-            if (file.Local.IsDownloadingCompleted)
+            if (minithumbnail != null)
             {
-                //Background = new ImageBrush { ImageSource = new BitmapImage(UriEx.GetLocal(file.Local.Path)), Stretch = Stretch.UniformToFill };
-                Background = new ImageBrush { ImageSource = PlaceholderHelper.GetBlurred(file.Local.Path, message.IsSecret() ? 15 : 3), Stretch = Stretch.UniformToFill };
+                Background = new ImageBrush { ImageSource = PlaceholderHelper.GetBlurred(minithumbnail.Data, message.IsSecret() ? 15 : 3), Stretch = Stretch.UniformToFill };
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+            else if (small != null)
             {
-                if (minithumbnail != null)
+                var file = small.Photo;
+                if (file.Local.IsDownloadingCompleted)
                 {
-                    Background = new ImageBrush { ImageSource = PlaceholderHelper.GetBlurred(minithumbnail.Data, message.IsSecret() ? 15 : 3), Stretch = Stretch.UniformToFill };
+                    Background = new ImageBrush { ImageSource = PlaceholderHelper.GetBlurred(file.Local.Path, message.IsSecret() ? 15 : 3), Stretch = Stretch.UniformToFill };
                 }
-
-                message.ProtoService.DownloadFile(file.Id, 1);
+                else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                {
+                    message.ProtoService.DownloadFile(file.Id, 1);
+                }
             }
         }
 
