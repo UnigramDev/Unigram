@@ -565,7 +565,7 @@ namespace Unigram.Views
                     Messages.ScrollingHost.ChangeView(null, Messages.ScrollingHost.ScrollableHeight, null);
                 }
 
-                var withinViewport = panel.FirstVisibleIndex <= args.NewStartingIndex && panel.LastVisibleIndex >= args.NewStartingIndex - 1;
+                var withinViewport = panel.FirstVisibleIndex <= args.NewStartingIndex && panel.LastVisibleIndex >= args.NewStartingIndex;
                 if (withinViewport is false)
                 {
                     if (animateSendout && ViewModel.ComposerHeader == null)
