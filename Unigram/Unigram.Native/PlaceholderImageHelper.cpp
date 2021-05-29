@@ -823,7 +823,7 @@ namespace winrt::Unigram::Native::implementation
 		ReturnIfFailed(result, m_wicFactory->CreateFormatConverter(wicFormatConverter.put()));
 		ReturnIfFailed(result, wicFormatConverter->Initialize(wicFrameDecode.get(), GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, nullptr, 0.f, WICBitmapPaletteTypeCustom));
 
-		ReturnIfFailed(result, InternalDrawThumbnailPlaceholder(wicFormatConverter.get(), blurAmount, randomAccessStream));
+		ReturnIfFailed(result, InternalDrawThumbnailPlaceholder(wicFormatConverter.get(), blurAmount, randomAccessStream, false));
 
 		CloseHandle(file);
 
@@ -834,11 +834,9 @@ namespace winrt::Unigram::Native::implementation
 	{
 		auto lock = critical_section::scoped_lock(m_criticalSection);
 
-		InMemoryRandomAccessStream inputAccessStream;
-
 		HRESULT result;
 		winrt::com_ptr<IStream> stream;
-		ReturnIfFailed(result, CreateStreamOverRandomAccessStream(winrt::get_unknown(inputAccessStream), IID_PPV_ARGS(&stream)));
+		ReturnIfFailed(result, CreateStreamOverRandomAccessStream(winrt::get_unknown(randomAccessStream), IID_PPV_ARGS(&stream)));
 
 		auto yolo = std::vector<byte>(bytes.begin(), bytes.end());
 
@@ -851,6 +849,8 @@ namespace winrt::Unigram::Native::implementation
 		winrt::com_ptr<IWICBitmapDecoder> wicBitmapDecoder;
 		ReturnIfFailed(result, m_wicFactory->CreateDecoderFromStream(stream.get(), nullptr, WICDecodeMetadataCacheOnLoad, wicBitmapDecoder.put()));
 
+		ReturnIfFailed(result, stream->SetSize({ 0 }));
+
 		winrt::com_ptr<IWICBitmapFrameDecode> wicFrameDecode;
 		ReturnIfFailed(result, wicBitmapDecoder->GetFrame(0, wicFrameDecode.put()));
 
@@ -858,14 +858,12 @@ namespace winrt::Unigram::Native::implementation
 		ReturnIfFailed(result, m_wicFactory->CreateFormatConverter(wicFormatConverter.put()));
 		ReturnIfFailed(result, wicFormatConverter->Initialize(wicFrameDecode.get(), GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, nullptr, 0.f, WICBitmapPaletteTypeCustom));
 
-		ReturnIfFailed(result, InternalDrawThumbnailPlaceholder(wicFormatConverter.get(), blurAmount, randomAccessStream));
-
-		inputAccessStream.Close();
+		ReturnIfFailed(result, InternalDrawThumbnailPlaceholder(wicFormatConverter.get(), blurAmount, randomAccessStream, true));
 
 		return result;
 	}
 
-	HRESULT PlaceholderImageHelper::InternalDrawThumbnailPlaceholder(IWICBitmapSource* wicBitmapSource, float blurAmount, IRandomAccessStream randomAccessStream)
+	HRESULT PlaceholderImageHelper::InternalDrawThumbnailPlaceholder(IWICBitmapSource* wicBitmapSource, float blurAmount, IRandomAccessStream randomAccessStream, bool minithumbnail)
 	{
 		HRESULT result;
 		winrt::com_ptr<ID2D1ImageSourceFromWic> imageSource;
@@ -874,12 +872,28 @@ namespace winrt::Unigram::Native::implementation
 		D2D1_SIZE_U size;
 		ReturnIfFailed(result, wicBitmapSource->GetSize(&size.width, &size.height));
 
+		//if (minithumbnail) {
+		//	size.width *= 2;
+		//	size.height *= 2;
+		//}
+
 		winrt::com_ptr<ID2D1Bitmap1> targetBitmap;
 		D2D1_BITMAP_PROPERTIES1 properties = { { DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED }, 96, 96, D2D1_BITMAP_OPTIONS_TARGET, 0 };
 		ReturnIfFailed(result, m_d2dContext->CreateBitmap(size, nullptr, 0, &properties, targetBitmap.put()));
 
+		//winrt::com_ptr<ID2D1Effect> scaleEffect;
+		//ReturnIfFailed(result, m_d2dContext->CreateEffect(CLSID_D2D1Scale, scaleEffect.put()));
+		//ReturnIfFailed(result, scaleEffect->SetValue(D2D1_SCALE_PROP_SCALE, D2D1_VECTOR_2F({ 2, 2 })));
+		//ReturnIfFailed(result, scaleEffect->SetValue(D2D1_SCALE_PROP_INTERPOLATION_MODE, D2D1_SCALE_INTERPOLATION_MODE_NEAREST_NEIGHBOR));
+		//scaleEffect->SetInput(0, imageSource.get());
+
+		//winrt::com_ptr<ID2D1Image> test;
+		//scaleEffect->SetInput(0, imageSource.get());
+		//scaleEffect->GetOutput(test.put());
+
 		ReturnIfFailed(result, m_gaussianBlurEffect->SetValue(D2D1_GAUSSIANBLUR_PROP_STANDARD_DEVIATION, blurAmount));
 
+		//m_gaussianBlurEffect->SetInput(0, test.get());
 		m_gaussianBlurEffect->SetInput(0, imageSource.get());
 
 		m_d2dContext->SetTarget(targetBitmap.get());
@@ -891,7 +905,7 @@ namespace winrt::Unigram::Native::implementation
 		if ((result = m_d2dContext->EndDraw()) == D2DERR_RECREATE_TARGET)
 		{
 			ReturnIfFailed(result, CreateDeviceResources());
-			return InternalDrawThumbnailPlaceholder(wicBitmapSource, blurAmount, randomAccessStream);
+			return InternalDrawThumbnailPlaceholder(wicBitmapSource, blurAmount, randomAccessStream, minithumbnail);
 		}
 
 		return SaveImageToStream(targetBitmap.get(), GUID_ContainerFormatPng, randomAccessStream);

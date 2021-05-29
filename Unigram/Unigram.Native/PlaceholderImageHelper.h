@@ -72,7 +72,7 @@ namespace winrt::Unigram::Native::implementation
 		HRESULT InternalDrawProfilePlaceholder(hstring text, Color top, _In_ Color bottom, _In_ IRandomAccessStream randomAccessStream);
 		HRESULT InternalDrawThumbnailPlaceholder(hstring fileName, float blurAmount, _In_ IRandomAccessStream randomAccessStream);
 		HRESULT InternalDrawThumbnailPlaceholder(IVector<uint8_t> bytes, float blurAmount, _In_ IRandomAccessStream randomAccessStream);
-		HRESULT InternalDrawThumbnailPlaceholder(_In_ IWICBitmapSource* wicBitmapSource, float blurAmount, _In_ IRandomAccessStream randomAccessStream);
+		HRESULT InternalDrawThumbnailPlaceholder(_In_ IWICBitmapSource* wicBitmapSource, float blurAmount, _In_ IRandomAccessStream randomAccessStream, bool minithumbnail);
 		HRESULT SaveImageToStream(_In_ ID2D1Image* image, _In_ REFGUID wicFormat, _In_ IRandomAccessStream randomAccessStream);
 		HRESULT MeasureText(_In_ const wchar_t* text, _In_ IDWriteTextFormat* format, _Out_ DWRITE_TEXT_METRICS* textMetrics);
 		HRESULT CreateDeviceIndependentResources();
