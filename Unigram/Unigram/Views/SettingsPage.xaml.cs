@@ -62,10 +62,7 @@ namespace Unigram.Views
         private MasterDetailView _masterDetail;
         public MasterDetailView MasterDetail
         {
-            get
-            {
-                return _masterDetail;
-            }
+            get => _masterDetail;
             set
             {
                 _masterDetail = value;

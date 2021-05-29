@@ -14,8 +14,8 @@ namespace Unigram.Controls
 
         public object Constraint
         {
-            get { return GetValue(ConstraintProperty); }
-            set { SetValue(ConstraintProperty, value); }
+            get => GetValue(ConstraintProperty);
+            set => SetValue(ConstraintProperty, value);
         }
 
         public static readonly DependencyProperty ConstraintProperty =

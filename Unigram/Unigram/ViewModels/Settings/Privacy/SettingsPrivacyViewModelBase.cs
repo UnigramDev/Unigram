@@ -191,27 +191,15 @@ namespace Unigram.ViewModels.Settings
         private string _badge;
         public string Badge
         {
-            get
-            {
-                return _badge;
-            }
-            set
-            {
-                Set(ref _badge, value);
-            }
+            get => _badge;
+            set => Set(ref _badge, value);
         }
 
         private PrivacyValue _selectedItem;
         public PrivacyValue SelectedItem
         {
-            get
-            {
-                return _selectedItem;
-            }
-            set
-            {
-                Set(ref _selectedItem, value);
-            }
+            get => _selectedItem;
+            set => Set(ref _selectedItem, value);
         }
 
         private string _allowedBadge;

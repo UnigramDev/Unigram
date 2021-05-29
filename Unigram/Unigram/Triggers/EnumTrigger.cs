@@ -8,15 +8,15 @@ namespace Unigram.Triggers
         private object _value;
         public object Value
         {
-            get { return _value; }
-            set { Set(ref _value, value); }
+            get => _value;
+            set => Set(ref _value, value);
         }
 
         private object _compareTo;
         public object CompareTo
         {
-            get { return _compareTo; }
-            set { Set(ref _compareTo, value); }
+            get => _compareTo;
+            set => Set(ref _compareTo, value);
         }
 
         private void Set(ref object prop, object value)

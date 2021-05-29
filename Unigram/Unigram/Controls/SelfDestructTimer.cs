@@ -75,8 +75,8 @@ namespace Unigram.Controls
 
         public DateTime? Value
         {
-            get { return (DateTime?)GetValue(ValueProperty); }
-            set { SetValue(ValueProperty, value); }
+            get => (DateTime?)GetValue(ValueProperty);
+            set => SetValue(ValueProperty, value);
         }
 
         public static readonly DependencyProperty ValueProperty =
@@ -93,8 +93,8 @@ namespace Unigram.Controls
 
         public int? Maximum
         {
-            get { return (int?)GetValue(MaximumProperty); }
-            set { SetValue(MaximumProperty, value); }
+            get => (int?)GetValue(MaximumProperty);
+            set => SetValue(MaximumProperty, value);
         }
 
         public static readonly DependencyProperty MaximumProperty =

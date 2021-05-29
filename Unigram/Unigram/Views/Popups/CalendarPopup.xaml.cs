@@ -22,26 +22,14 @@ namespace Unigram.Views.Popups
 
         public DateTimeOffset MinDate
         {
-            get
-            {
-                return View.MinDate;
-            }
-            set
-            {
-                View.MinDate = value;
-            }
+            get => View.MinDate;
+            set => View.MinDate = value;
         }
 
         public DateTimeOffset MaxDate
         {
-            get
-            {
-                return View.MaxDate;
-            }
-            set
-            {
-                View.MaxDate = value;
-            }
+            get => View.MaxDate;
+            set => View.MaxDate = value;
         }
 
         public IList<DateTimeOffset> SelectedDates

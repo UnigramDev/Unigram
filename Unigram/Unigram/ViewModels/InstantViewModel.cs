@@ -50,21 +50,15 @@ namespace Unigram.ViewModels
         private InstantGalleryViewModel _gallery;
         public InstantGalleryViewModel Gallery
         {
-            get
-            {
-                return _gallery;
-            }
-            set
-            {
-                Set(ref _gallery, value);
-            }
+            get => _gallery;
+            set => Set(ref _gallery, value);
         }
 
         private string _title;
         public string Title
         {
-            get { return _title; }
-            set { Set(ref _title, value); }
+            get => _title;
+            set => Set(ref _title, value);
         }
 
         public RelayCommand ShareCommand { get; }

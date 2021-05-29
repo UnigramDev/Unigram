@@ -21,26 +21,14 @@ namespace Unigram.Views.Popups
 
         public string Text
         {
-            get
-            {
-                return TextField.Text;
-            }
-            set
-            {
-                TextField.Text = value;
-            }
+            get => TextField.Text;
+            set => TextField.Text = value;
         }
 
         public string Link
         {
-            get
-            {
-                return LinkField.Text;
-            }
-            set
-            {
-                LinkField.Text = value;
-            }
+            get => LinkField.Text;
+            set => LinkField.Text = value;
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

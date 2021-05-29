@@ -56,10 +56,7 @@ namespace Unigram.Views.Supergroups
         public bool IsEmbedded
         {
             get => _isEmbedded;
-            set
-            {
-                Update(value, _isLocked);
-            }
+            set => Update(value, _isLocked);
         }
 
         public void Update(bool embedded, bool locked)

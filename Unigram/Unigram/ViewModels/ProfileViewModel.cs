@@ -106,15 +106,15 @@ namespace Unigram.ViewModels
         protected Chat _chat;
         public Chat Chat
         {
-            get { return _chat; }
-            set { Set(ref _chat, value); }
+            get => _chat;
+            set => Set(ref _chat, value);
         }
 
         protected ObservableCollection<ChatMember> _members;
         public ObservableCollection<ChatMember> Members
         {
-            get { return _members; }
-            set { Set(ref _members, value); }
+            get => _members;
+            set => Set(ref _members, value);
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -1074,14 +1074,8 @@ namespace Unigram.ViewModels
         private ChatMemberCollection _search;
         public ChatMemberCollection Search
         {
-            get
-            {
-                return _search;
-            }
-            set
-            {
-                Set(ref _search, value);
-            }
+            get => _search;
+            set => Set(ref _search, value);
         }
 
         #endregion

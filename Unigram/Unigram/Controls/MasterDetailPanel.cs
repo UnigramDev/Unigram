@@ -22,10 +22,7 @@ namespace Unigram.Controls
         private MasterDetailState _currentState;
         public MasterDetailState CurrentState
         {
-            get
-            {
-                return _currentState;
-            }
+            get => _currentState;
             set
             {
                 if (_currentState != value)
@@ -39,10 +36,7 @@ namespace Unigram.Controls
         private bool _allowCompact = true;
         public bool AllowCompact
         {
-            get
-            {
-                return _allowCompact;
-            }
+            get => _allowCompact;
             set
             {
                 if (_allowCompact != value)
@@ -57,8 +51,8 @@ namespace Unigram.Controls
         private bool _isBlank;
         public bool IsBlank
         {
-            get { return (bool)GetValue(IsBlankProperty); }
-            set { SetValue(IsBlankProperty, value); }
+            get => (bool)GetValue(IsBlankProperty);
+            set => SetValue(IsBlankProperty, value);
         }
 
         public static readonly DependencyProperty IsBlankProperty =

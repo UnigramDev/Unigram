@@ -65,8 +65,8 @@ namespace Unigram.Controls.Chats
 
         public SolidColorBrush Fill
         {
-            get { return (SolidColorBrush)GetValue(FillProperty); }
-            set { SetValue(FillProperty, value); }
+            get => (SolidColorBrush)GetValue(FillProperty);
+            set => SetValue(FillProperty, value);
         }
 
         public static readonly DependencyProperty FillProperty =

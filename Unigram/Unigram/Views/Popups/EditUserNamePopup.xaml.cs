@@ -43,10 +43,7 @@ namespace Unigram.Views.Popups
 
                 return TextFirstName.Text ?? string.Empty;
             }
-            private set
-            {
-                TextFirstName.Text = value ?? string.Empty;
-            }
+            private set => TextFirstName.Text = value ?? string.Empty;
         }
 
         public string LastName
@@ -60,10 +57,7 @@ namespace Unigram.Views.Popups
 
                 return TextLastName.Text ?? string.Empty;
             }
-            private set
-            {
-                TextLastName.Text = value ?? string.Empty;
-            }
+            private set => TextLastName.Text = value ?? string.Empty;
         }
 
         public bool SharePhoneNumber

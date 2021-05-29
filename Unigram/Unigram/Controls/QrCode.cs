@@ -87,8 +87,8 @@ namespace Unigram.Controls
 
         public string Text
         {
-            get { return (string)GetValue(TextProperty); }
-            set { SetValue(TextProperty, value); }
+            get => (string)GetValue(TextProperty);
+            set => SetValue(TextProperty, value);
         }
 
         public static readonly DependencyProperty TextProperty =

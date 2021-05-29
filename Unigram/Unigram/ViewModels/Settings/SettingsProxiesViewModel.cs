@@ -198,14 +198,8 @@ namespace Unigram.ViewModels.Settings
         private ConnectionViewModel _selectedItem;
         public ConnectionViewModel SelectedItem
         {
-            get
-            {
-                return _selectedItem;
-            }
-            set
-            {
-                Set(ref _selectedItem, value);
-            }
+            get => _selectedItem;
+            set => Set(ref _selectedItem, value);
         }
 
         public RelayCommand AddCommand { get; }

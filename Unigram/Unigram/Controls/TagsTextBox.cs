@@ -24,8 +24,8 @@ namespace Unigram.Controls
         #region Separator
         public char Separator
         {
-            get { return (char)GetValue(SeparatorProperty); }
-            set { SetValue(SeparatorProperty, value); }
+            get => (char)GetValue(SeparatorProperty);
+            set => SetValue(SeparatorProperty, value);
         }
 
         public static readonly DependencyProperty SeparatorProperty =
@@ -36,8 +36,8 @@ namespace Unigram.Controls
 
         public string PlaceholderText
         {
-            get { return (string)GetValue(PlaceholderTextProperty); }
-            set { SetValue(PlaceholderTextProperty, value); }
+            get => (string)GetValue(PlaceholderTextProperty);
+            set => SetValue(PlaceholderTextProperty, value);
         }
 
         public static readonly DependencyProperty PlaceholderTextProperty =
@@ -49,8 +49,8 @@ namespace Unigram.Controls
 
         internal bool CanShowPlaceholder
         {
-            get { return (bool)GetValue(CanShowPlaceholderProperty); }
-            set { SetValue(CanShowPlaceholderProperty, value); }
+            get => (bool)GetValue(CanShowPlaceholderProperty);
+            set => SetValue(CanShowPlaceholderProperty, value);
         }
 
         public static readonly DependencyProperty CanShowPlaceholderProperty =
@@ -62,8 +62,8 @@ namespace Unigram.Controls
 
         public string Text
         {
-            get { return (string)GetValue(TextProperty); }
-            set { SetValue(TextProperty, value); }
+            get => (string)GetValue(TextProperty);
+            set => SetValue(TextProperty, value);
         }
 
         public static readonly DependencyProperty TextProperty =
@@ -290,8 +290,8 @@ namespace Unigram.Controls
 
         public bool CanShowPlaceholder
         {
-            get { return (bool)GetValue(CanShowPlaceholderProperty); }
-            set { SetValue(CanShowPlaceholderProperty, value); }
+            get => (bool)GetValue(CanShowPlaceholderProperty);
+            set => SetValue(CanShowPlaceholderProperty, value);
         }
 
         public static readonly DependencyProperty CanShowPlaceholderProperty =
@@ -340,8 +340,8 @@ namespace Unigram.Controls
 
         public string PlaceholderText
         {
-            get { return (string)GetValue(PlaceholderTextProperty); }
-            set { SetValue(PlaceholderTextProperty, value); }
+            get => (string)GetValue(PlaceholderTextProperty);
+            set => SetValue(PlaceholderTextProperty, value);
         }
 
 

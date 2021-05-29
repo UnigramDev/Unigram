@@ -315,10 +315,7 @@ namespace Unigram.Services
         private PlaybackItem _currentPlayback;
         public PlaybackItem CurrentPlayback
         {
-            get
-            {
-                return _currentPlayback;
-            }
+            get => _currentPlayback;
             private set
             {
                 _currentItem = value?.Message;
@@ -385,7 +382,7 @@ namespace Unigram.Services
         private bool? _isRepeatEnabled = false;
         public bool? IsRepeatEnabled
         {
-            get { return _isRepeatEnabled; }
+            get => _isRepeatEnabled;
             set
             {
                 _isRepeatEnabled = value;
@@ -401,14 +398,14 @@ namespace Unigram.Services
         private bool _isReversed = false;
         public bool IsReversed
         {
-            get { return _isReversed; }
-            set { _isReversed = value; }
+            get => _isReversed;
+            set => _isReversed = value;
         }
 
         private bool _isShuffleEnabled;
         public bool IsShuffleEnabled
         {
-            get { return _isShuffleEnabled; }
+            get => _isShuffleEnabled;
             set
             {
                 _isShuffleEnabled = value;
@@ -419,10 +416,7 @@ namespace Unigram.Services
         private double _playbackRate = 1.0;
         public double PlaybackRate
         {
-            get
-            {
-                return _playbackRate;
-            }
+            get => _playbackRate;
             set
             {
                 _playbackRate = value;

@@ -99,23 +99,14 @@ namespace Unigram.Entities
         private int _compression;
         public int Compression
         {
-            get
-            {
-                return _compression;
-            }
-            set
-            {
-                Set(ref _compression, value);
-            }
+            get => _compression;
+            set => Set(ref _compression, value);
         }
 
         private int _maxCompression = 1;
         public int MaxCompression
         {
-            get
-            {
-                return _maxCompression;
-            }
+            get => _maxCompression;
             set
             {
                 Set(ref _maxCompression, value);
@@ -126,10 +117,7 @@ namespace Unigram.Entities
         private bool _isMuted;
         public bool IsMuted
         {
-            get
-            {
-                return _isMuted;
-            }
+            get => _isMuted;
             set
             {
                 Set(ref _isMuted, value);

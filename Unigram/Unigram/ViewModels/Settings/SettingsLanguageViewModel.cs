@@ -64,14 +64,8 @@ namespace Unigram.ViewModels.Settings
         private LanguagePackInfo _selectedItem;
         public LanguagePackInfo SelectedItem
         {
-            get
-            {
-                return _selectedItem;
-            }
-            set
-            {
-                Set(ref _selectedItem, value);
-            }
+            get => _selectedItem;
+            set => Set(ref _selectedItem, value);
         }
 
         public RelayCommand<LanguagePackInfo> ChangeCommand { get; }

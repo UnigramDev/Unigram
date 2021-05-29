@@ -51,36 +51,36 @@ namespace Unigram.ViewModels.Supergroups
         protected Chat _chat;
         public Chat Chat
         {
-            get { return _chat; }
-            set { Set(ref _chat, value); }
+            get => _chat;
+            set => Set(ref _chat, value);
         }
 
         private string _title;
         public string Title
         {
-            get { return _title; }
-            set { Set(ref _title, value); }
+            get => _title;
+            set => Set(ref _title, value);
         }
 
         private string _about;
         public string About
         {
-            get { return _about; }
-            set { Set(ref _about, value); }
+            get => _about;
+            set => Set(ref _about, value);
         }
 
         private bool _isSignatures;
         public bool IsSignatures
         {
-            get { return _isSignatures; }
-            set { Set(ref _isSignatures, value); }
+            get => _isSignatures;
+            set => Set(ref _isSignatures, value);
         }
 
         private bool _isAllHistoryAvailable;
         public bool IsAllHistoryAvailable
         {
-            get { return _isAllHistoryAvailable; }
-            set { Set(ref _isAllHistoryAvailable, value); }
+            get => _isAllHistoryAvailable;
+            set => Set(ref _isAllHistoryAvailable, value);
         }
 
         #region Initialize

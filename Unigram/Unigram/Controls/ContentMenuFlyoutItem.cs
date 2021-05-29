@@ -12,8 +12,8 @@ namespace Unigram.Controls
 
         public object Content
         {
-            get { return GetValue(ContentProperty); }
-            set { SetValue(ContentProperty, value); }
+            get => GetValue(ContentProperty);
+            set => SetValue(ContentProperty, value);
         }
 
         public static readonly DependencyProperty ContentProperty =

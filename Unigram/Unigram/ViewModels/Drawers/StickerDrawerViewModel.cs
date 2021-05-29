@@ -213,10 +213,7 @@ namespace Unigram.ViewModels.Drawers
         private SearchStickerSetsCollection _searchStickers;
         public SearchStickerSetsCollection SearchStickers
         {
-            get
-            {
-                return _searchStickers;
-            }
+            get => _searchStickers;
             set
             {
                 Set(ref _searchStickers, value);
@@ -389,14 +386,8 @@ namespace Unigram.ViewModels.Drawers
         private int _featuredUnreadCount;
         public int FeaturedUnreadCount
         {
-            get
-            {
-                return _featuredUnreadCount;
-            }
-            set
-            {
-                Set(ref _featuredUnreadCount, value);
-            }
+            get => _featuredUnreadCount;
+            set => Set(ref _featuredUnreadCount, value);
         }
     }
 

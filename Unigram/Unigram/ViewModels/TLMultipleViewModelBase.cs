@@ -20,10 +20,7 @@ namespace Unigram.ViewModels
 
         public override IDispatcherContext Dispatcher
         {
-            get
-            {
-                return base.Dispatcher;
-            }
+            get => base.Dispatcher;
             set
             {
                 base.Dispatcher = value;
@@ -37,10 +34,7 @@ namespace Unigram.ViewModels
 
         public override INavigationService NavigationService
         {
-            get
-            {
-                return base.NavigationService;
-            }
+            get => base.NavigationService;
             set
             {
                 base.NavigationService = value;
@@ -54,10 +48,7 @@ namespace Unigram.ViewModels
 
         public override IDictionary<string, object> SessionState
         {
-            get
-            {
-                return base.SessionState;
-            }
+            get => base.SessionState;
             set
             {
                 base.SessionState = value;

@@ -77,22 +77,22 @@ namespace Unigram.ViewModels.Settings
         private SettingsPasswordState _state;
         public SettingsPasswordState State
         {
-            get { return _state; }
-            set { Set(ref _state, value); }
+            get => _state;
+            set => Set(ref _state, value);
         }
 
         private string _passwordHint;
         public string PasswordHint
         {
-            get { return _passwordHint; }
-            set { Set(ref _passwordHint, value); }
+            get => _passwordHint;
+            set => Set(ref _passwordHint, value);
         }
 
         private string _password;
         public string Password
         {
-            get { return _password; }
-            set { Set(ref _password, value); }
+            get => _password;
+            set => Set(ref _password, value);
         }
 
         public RelayCommand SendCommand { get; }
@@ -226,29 +226,29 @@ namespace Unigram.ViewModels.Settings
             private string _password;
             public string Password
             {
-                get { return _password; }
-                set { Set(ref _password, value); }
+                get => _password;
+                set => Set(ref _password, value);
             }
 
             private string _passwordRetype;
             public string PasswordRetype
             {
-                get { return _passwordRetype; }
-                set { Set(ref _passwordRetype, value); }
+                get => _passwordRetype;
+                set => Set(ref _passwordRetype, value);
             }
 
             private string _passwordHint;
             public string PasswordHint
             {
-                get { return _passwordHint; }
-                set { Set(ref _passwordHint, value); }
+                get => _passwordHint;
+                set => Set(ref _passwordHint, value);
             }
 
             private string _emailAddress;
             public string EmailAddress
             {
-                get { return _emailAddress; }
-                set { Set(ref _emailAddress, value); }
+                get => _emailAddress;
+                set => Set(ref _emailAddress, value);
             }
 
             public RelayCommand SendCommand { get; }

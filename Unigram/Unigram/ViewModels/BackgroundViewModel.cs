@@ -153,15 +153,15 @@ namespace Unigram.ViewModels
         private Background _item;
         public Background Item
         {
-            get { return _item; }
-            set { Set(ref _item, value); }
+            get => _item;
+            set => Set(ref _item, value);
         }
 
         private bool _isBlurEnabled;
         public bool IsBlurEnabled
         {
-            get { return _isBlurEnabled; }
-            set { Set(ref _isBlurEnabled, value); }
+            get => _isBlurEnabled;
+            set => Set(ref _isBlurEnabled, value);
         }
 
         private BackgroundColor _color1 = BackgroundColor.Empty;

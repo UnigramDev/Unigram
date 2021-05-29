@@ -47,10 +47,7 @@ namespace Unigram.Controls.Chats
 
         public ChatRecordMode Mode
         {
-            get
-            {
-                return IsChecked.HasValue && IsChecked.Value ? ChatRecordMode.Video : ChatRecordMode.Voice;
-            }
+            get => IsChecked.HasValue && IsChecked.Value ? ChatRecordMode.Video : ChatRecordMode.Voice;
             set
             {
                 IsChecked = value == ChatRecordMode.Video;

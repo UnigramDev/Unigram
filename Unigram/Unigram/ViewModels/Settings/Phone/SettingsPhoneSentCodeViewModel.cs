@@ -48,23 +48,14 @@ namespace Unigram.ViewModels.Settings
         private AuthenticationCodeInfo _codeInfo;
         public AuthenticationCodeInfo CodeInfo
         {
-            get
-            {
-                return _codeInfo;
-            }
-            set
-            {
-                Set(ref _codeInfo, value);
-            }
+            get => _codeInfo;
+            set => Set(ref _codeInfo, value);
         }
 
         private string _phoneCode;
         public string PhoneCode
         {
-            get
-            {
-                return _phoneCode;
-            }
+            get => _phoneCode;
             set
             {
                 Set(ref _phoneCode, value);

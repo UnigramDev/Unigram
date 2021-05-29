@@ -276,8 +276,8 @@ namespace Unigram.Controls.Messages
 
         public Brush Stroke
         {
-            get { return (Brush)GetValue(StrokeProperty); }
-            set { SetValue(StrokeProperty, value); }
+            get => (Brush)GetValue(StrokeProperty);
+            set => SetValue(StrokeProperty, value);
         }
 
         public static readonly DependencyProperty StrokeProperty =

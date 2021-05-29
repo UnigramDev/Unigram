@@ -117,10 +117,7 @@ namespace Unigram.Controls
 
         public bool IsOpen
         {
-            get
-            {
-                return _popupHost?.IsOpen ?? false;
-            }
+            get => _popupHost?.IsOpen ?? false;
             set
             {
                 if (value)
@@ -411,8 +408,8 @@ namespace Unigram.Controls
 
         public Brush OverlayBrush
         {
-            get { return (Brush)GetValue(OverlayBrushProperty); }
-            set { SetValue(OverlayBrushProperty, value); }
+            get => (Brush)GetValue(OverlayBrushProperty);
+            set => SetValue(OverlayBrushProperty, value);
         }
 
         public static readonly DependencyProperty OverlayBrushProperty =

@@ -5,6 +5,7 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Services;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Popups
 {
@@ -12,6 +13,7 @@ namespace Unigram.Views.Popups
     {
         public DeleteMessagesPopup(ICacheService cacheService, IList<Message> messages)
         {
+            DefaultStyleKey = typeof(ContentDialog);
             InitializeComponent();
 
             Title = messages.Count == 1 ? Strings.Resources.DeleteSingleMessagesTitle : string.Format(Strings.Resources.DeleteMessagesTitle, Locale.Declension("messages", messages.Count));
@@ -105,26 +107,26 @@ namespace Unigram.Views.Popups
 
         public bool Revoke
         {
-            get { return RevokeCheck.IsChecked ?? false; }
-            set { RevokeCheck.IsChecked = value; }
+            get => RevokeCheck.IsChecked ?? false;
+            set => RevokeCheck.IsChecked = value;
         }
 
         public bool BanUser
         {
-            get { return BanUserCheck.IsChecked ?? false; }
-            set { BanUserCheck.IsChecked = value; }
+            get => BanUserCheck.IsChecked ?? false;
+            set => BanUserCheck.IsChecked = value;
         }
 
         public bool ReportSpam
         {
-            get { return ReportSpamCheck.IsChecked ?? false; }
-            set { ReportSpamCheck.IsChecked = value; }
+            get => ReportSpamCheck.IsChecked ?? false;
+            set => ReportSpamCheck.IsChecked = value;
         }
 
         public bool DeleteAll
         {
-            get { return DeleteAllCheck.IsChecked ?? false; }
-            set { DeleteAllCheck.IsChecked = value; }
+            get => DeleteAllCheck.IsChecked ?? false;
+            set => DeleteAllCheck.IsChecked = value;
         }
     }
 }

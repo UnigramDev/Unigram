@@ -37,8 +37,8 @@ namespace Unigram.ViewModels.Chats
         private ICollection _autocomplete;
         public ICollection Autocomplete
         {
-            get { return _autocomplete; }
-            set { Set(ref _autocomplete, value); }
+            get => _autocomplete;
+            set => Set(ref _autocomplete, value);
         }
 
         #region Filters
@@ -46,22 +46,22 @@ namespace Unigram.ViewModels.Chats
         private string _query;
         public string Query
         {
-            get { return _query; }
-            set { Set(ref _query, value); }
+            get => _query;
+            set => Set(ref _query, value);
         }
 
         private DateTimeOffset? _date;
         public DateTimeOffset? Date
         {
-            get { return _date; }
-            set { Set(ref _date, value); }
+            get => _date;
+            set => Set(ref _date, value);
         }
 
         private MessageSender _from;
         public MessageSender From
         {
-            get { return _from; }
-            set { Set(ref _from, value); }
+            get => _from;
+            set => Set(ref _from, value);
         }
 
         public bool IsFromEnabled
@@ -86,8 +86,8 @@ namespace Unigram.ViewModels.Chats
         private SearchMessagesFilter _filter;
         public SearchMessagesFilter Filter
         {
-            get { return _filter; }
-            set { Set(ref _filter, value); }
+            get => _filter;
+            set => Set(ref _filter, value);
         }
 
         public ICollection Filters
@@ -145,10 +145,7 @@ namespace Unigram.ViewModels.Chats
         protected Message _selectedItem;
         public Message SelectedItem
         {
-            get
-            {
-                return _selectedItem;
-            }
+            get => _selectedItem;
             set
             {
                 Set(ref _selectedItem, value);
@@ -161,14 +158,8 @@ namespace Unigram.ViewModels.Chats
         protected SearchChatMessagesCollection _items;
         public SearchChatMessagesCollection Items
         {
-            get
-            {
-                return _items;
-            }
-            set
-            {
-                Set(ref _items, value);
-            }
+            get => _items;
+            set => Set(ref _items, value);
         }
 
         #endregion

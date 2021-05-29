@@ -46,14 +46,8 @@ namespace Unigram.ViewModels
         private bool _isLoading;
         public virtual bool IsLoading
         {
-            get
-            {
-                return _isLoading;
-            }
-            set
-            {
-                Set(ref _isLoading, value);
-            }
+            get => _isLoading;
+            set => Set(ref _isLoading, value);
         }
 
         protected virtual void BeginOnUIThread(Windows.System.DispatcherQueueHandler action, Action fallback = null)

@@ -179,8 +179,8 @@ namespace Unigram.ViewModels.Settings
         private bool _areCustomThemesAvailable;
         public bool AreCustomThemesAvailable
         {
-            get { return _areCustomThemesAvailable; }
-            set { Set(ref _areCustomThemesAvailable, value); }
+            get => _areCustomThemesAvailable;
+            set => Set(ref _areCustomThemesAvailable, value);
         }
 
 

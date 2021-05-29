@@ -25,14 +25,8 @@ namespace Unigram.ViewModels.Supergroups
         protected Chat _chat;
         public Chat Chat
         {
-            get
-            {
-                return _chat;
-            }
-            set
-            {
-                Set(ref _chat, value);
-            }
+            get => _chat;
+            set => Set(ref _chat, value);
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -119,27 +113,15 @@ namespace Unigram.ViewModels.Supergroups
         protected ChatMemberCollection _members;
         public ChatMemberCollection Members
         {
-            get
-            {
-                return _members;
-            }
-            set
-            {
-                Set(ref _members, value);
-            }
+            get => _members;
+            set => Set(ref _members, value);
         }
 
         protected ChatMemberCollection _search;
         public ChatMemberCollection Search
         {
-            get
-            {
-                return _search;
-            }
-            set
-            {
-                Set(ref _search, value);
-            }
+            get => _search;
+            set => Set(ref _search, value);
         }
     }
 }

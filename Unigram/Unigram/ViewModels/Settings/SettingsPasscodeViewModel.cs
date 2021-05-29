@@ -55,10 +55,7 @@ namespace Unigram.ViewModels.Settings
 
         public int AutolockTimeout
         {
-            get
-            {
-                return _passcodeService.AutolockTimeout;
-            }
+            get => _passcodeService.AutolockTimeout;
             set
             {
                 _passcodeService.AutolockTimeout = value;
@@ -68,10 +65,7 @@ namespace Unigram.ViewModels.Settings
 
         public bool IsBiometricsEnabled
         {
-            get
-            {
-                return _passcodeService.IsBiometricsEnabled;
-            }
+            get => _passcodeService.IsBiometricsEnabled;
             set
             {
                 _passcodeService.IsBiometricsEnabled = value;

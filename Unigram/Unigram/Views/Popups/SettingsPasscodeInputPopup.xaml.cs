@@ -20,14 +20,8 @@ namespace Unigram.Views.Popups
 
         public bool IsSimple
         {
-            get
-            {
-                return Type.SelectedIndex == 0;
-            }
-            set
-            {
-                Type.SelectedIndex = value ? 0 : 1;
-            }
+            get => Type.SelectedIndex == 0;
+            set => Type.SelectedIndex = value ? 0 : 1;
         }
 
         public string Passcode { get; private set; }

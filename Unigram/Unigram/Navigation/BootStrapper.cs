@@ -609,7 +609,7 @@ namespace Unigram.Navigation
         private States _currentState = States.None;
         public States CurrentState
         {
-            get { return _currentState; }
+            get => _currentState;
             set
             {
                 Logger.Info($"CurrenstState changed to {value}");

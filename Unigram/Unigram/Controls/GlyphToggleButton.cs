@@ -16,8 +16,8 @@ namespace Unigram.Controls
 
         public string CheckedGlyph
         {
-            get { return (string)GetValue(CheckedGlyphProperty); }
-            set { SetValue(CheckedGlyphProperty, value); }
+            get => (string)GetValue(CheckedGlyphProperty);
+            set => SetValue(CheckedGlyphProperty, value);
         }
 
         public static readonly DependencyProperty CheckedGlyphProperty =
@@ -29,8 +29,8 @@ namespace Unigram.Controls
 
         public string Glyph
         {
-            get { return (string)GetValue(GlyphProperty); }
-            set { SetValue(GlyphProperty, value); }
+            get => (string)GetValue(GlyphProperty);
+            set => SetValue(GlyphProperty, value);
         }
 
         public static readonly DependencyProperty GlyphProperty =
@@ -42,8 +42,8 @@ namespace Unigram.Controls
 
         public string IndeterminateGlyph
         {
-            get { return (string)GetValue(IndeterminateGlyphProperty); }
-            set { SetValue(IndeterminateGlyphProperty, value); }
+            get => (string)GetValue(IndeterminateGlyphProperty);
+            set => SetValue(IndeterminateGlyphProperty, value);
         }
 
         public static readonly DependencyProperty IndeterminateGlyphProperty =
@@ -55,8 +55,8 @@ namespace Unigram.Controls
 
         public Brush CheckedForeground
         {
-            get { return (Brush)GetValue(CheckedForegroundProperty); }
-            set { SetValue(CheckedForegroundProperty, value); }
+            get => (Brush)GetValue(CheckedForegroundProperty);
+            set => SetValue(CheckedForegroundProperty, value);
         }
 
         public static readonly DependencyProperty CheckedForegroundProperty =
@@ -68,8 +68,8 @@ namespace Unigram.Controls
 
         public Brush UncheckedForeground
         {
-            get { return (Brush)GetValue(UncheckedForegroundProperty); }
-            set { SetValue(UncheckedForegroundProperty, value); }
+            get => (Brush)GetValue(UncheckedForegroundProperty);
+            set => SetValue(UncheckedForegroundProperty, value);
         }
 
         public static readonly DependencyProperty UncheckedForegroundProperty =
@@ -81,8 +81,8 @@ namespace Unigram.Controls
 
         public bool IsOneWay
         {
-            get { return (bool)GetValue(IsOneWayProperty); }
-            set { SetValue(IsOneWayProperty, value); }
+            get => (bool)GetValue(IsOneWayProperty);
+            set => SetValue(IsOneWayProperty, value);
         }
 
         public static readonly DependencyProperty IsOneWayProperty =

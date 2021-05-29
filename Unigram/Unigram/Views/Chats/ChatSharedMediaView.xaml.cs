@@ -46,10 +46,7 @@ namespace Unigram.Views.Chats
         public bool IsEmbedded
         {
             get => _isEmbedded;
-            set
-            {
-                Update(value, _isLocked);
-            }
+            set => Update(value, _isLocked);
         }
 
         private IProfileTab _tab;

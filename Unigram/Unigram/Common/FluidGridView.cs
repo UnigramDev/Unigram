@@ -317,8 +317,8 @@ namespace Unigram.Common
         #region MinLength
         public double MinLength
         {
-            get { return (double)GetValue(MinLengthProperty); }
-            set { SetValue(MinLengthProperty, value); }
+            get => (double)GetValue(MinLengthProperty);
+            set => SetValue(MinLengthProperty, value);
         }
 
         public static readonly DependencyProperty MinLengthProperty =
@@ -351,8 +351,8 @@ namespace Unigram.Common
         #region RowsOrColumns
         public int RowsOrColumns
         {
-            get { return (int)GetValue(RowsOrColumnsProperty); }
-            set { SetValue(RowsOrColumnsProperty, value); }
+            get => (int)GetValue(RowsOrColumnsProperty);
+            set => SetValue(RowsOrColumnsProperty, value);
         }
 
         public static readonly DependencyProperty RowsOrColumnsProperty =
@@ -362,8 +362,8 @@ namespace Unigram.Common
         #region MaxLength
         public double MaxLength
         {
-            get { return (double)GetValue(MaxLengthProperty); }
-            set { SetValue(MaxLengthProperty, value); }
+            get => (double)GetValue(MaxLengthProperty);
+            set => SetValue(MaxLengthProperty, value);
         }
 
         public static readonly DependencyProperty MaxLengthProperty =
@@ -399,8 +399,8 @@ namespace Unigram.Common
         #region ItemLength
         public double ItemLength
         {
-            get { return (double)GetValue(ItemLengthProperty); }
-            set { SetValue(ItemLengthProperty, value); }
+            get => (double)GetValue(ItemLengthProperty);
+            set => SetValue(ItemLengthProperty, value);
         }
 
         public static readonly DependencyProperty ItemLengthProperty =
@@ -431,8 +431,8 @@ namespace Unigram.Common
         #region ItemLength
         public double ItemLength
         {
-            get { return (double)GetValue(ItemLengthProperty); }
-            set { SetValue(ItemLengthProperty, value); }
+            get => (double)GetValue(ItemLengthProperty);
+            set => SetValue(ItemLengthProperty, value);
         }
 
         public static readonly DependencyProperty ItemLengthProperty =

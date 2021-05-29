@@ -28,10 +28,7 @@ namespace Unigram.ViewModels.BasicGroups
         private string _title;
         public string Title
         {
-            get
-            {
-                return _title;
-            }
+            get => _title;
             set
             {
                 Set(ref _title, value);
@@ -42,14 +39,8 @@ namespace Unigram.ViewModels.BasicGroups
         private BitmapImage _preview;
         public BitmapImage Preview
         {
-            get
-            {
-                return _preview;
-            }
-            set
-            {
-                Set(ref _preview, value);
-            }
+            get => _preview;
+            set => Set(ref _preview, value);
         }
 
         public MvxObservableCollection<Chat> Items { get; private set; }

@@ -25,49 +25,28 @@ namespace Unigram.ViewModels.Supergroups
         protected Chat _chat;
         public Chat Chat
         {
-            get
-            {
-                return _chat;
-            }
-            set
-            {
-                Set(ref _chat, value);
-            }
+            get => _chat;
+            set => Set(ref _chat, value);
         }
 
         private bool _isAvailable = true;
         public bool IsAvailable
         {
-            get
-            {
-                return _isAvailable;
-            }
-            set
-            {
-                Set(ref _isAvailable, value);
-            }
+            get => _isAvailable;
+            set => Set(ref _isAvailable, value);
         }
 
         private string _shortName;
         public string ShortName
         {
-            get
-            {
-                return _shortName;
-            }
-            set
-            {
-                Set(ref _shortName, value);
-            }
+            get => _shortName;
+            set => Set(ref _shortName, value);
         }
 
         private StickerSetInfo _selectedItem;
         public StickerSetInfo SelectedItem
         {
-            get
-            {
-                return _selectedItem;
-            }
+            get => _selectedItem;
             set
             {
                 if (value == _selectedItem)
@@ -91,10 +70,7 @@ namespace Unigram.ViewModels.Supergroups
         private StickerSetInfo _listSelectedItem;
         public StickerSetInfo ListSelectedItem
         {
-            get
-            {
-                return _listSelectedItem;
-            }
+            get => _listSelectedItem;
             set
             {
                 if (value == _listSelectedItem)

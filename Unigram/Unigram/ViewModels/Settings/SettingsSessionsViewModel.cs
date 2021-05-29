@@ -93,14 +93,8 @@ namespace Unigram.ViewModels.Settings
         private Session _current;
         public Session Current
         {
-            get
-            {
-                return _current;
-            }
-            set
-            {
-                Set(ref _current, value);
-            }
+            get => _current;
+            set => Set(ref _current, value);
         }
 
         public RelayCommand<Session> TerminateCommand { get; }

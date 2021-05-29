@@ -62,8 +62,8 @@ namespace Unigram.Controls
 
         public bool IsPaneOpen
         {
-            get { return (bool)GetValue(IsPaneOpenProperty); }
-            set { SetValue(IsPaneOpenProperty, value); }
+            get => (bool)GetValue(IsPaneOpenProperty);
+            set => SetValue(IsPaneOpenProperty, value);
         }
 
         public static readonly DependencyProperty IsPaneOpenProperty =
@@ -75,8 +75,8 @@ namespace Unigram.Controls
 
         public object PaneHeader
         {
-            get { return GetValue(PaneHeaderProperty); }
-            set { SetValue(PaneHeaderProperty, value); }
+            get => GetValue(PaneHeaderProperty);
+            set => SetValue(PaneHeaderProperty, value);
         }
 
         public static readonly DependencyProperty PaneHeaderProperty =
@@ -88,8 +88,8 @@ namespace Unigram.Controls
 
         public object PaneFooter
         {
-            get { return GetValue(PaneFooterProperty); }
-            set { SetValue(PaneFooterProperty, value); }
+            get => GetValue(PaneFooterProperty);
+            set => SetValue(PaneFooterProperty, value);
         }
 
         public static readonly DependencyProperty PaneFooterProperty =
@@ -101,8 +101,8 @@ namespace Unigram.Controls
 
         public Visibility PaneToggleButtonVisibility
         {
-            get { return (Visibility)GetValue(PaneToggleButtonVisibilityProperty); }
-            set { SetValue(PaneToggleButtonVisibilityProperty, value); }
+            get => (Visibility)GetValue(PaneToggleButtonVisibilityProperty);
+            set => SetValue(PaneToggleButtonVisibilityProperty, value);
         }
 
         public static readonly DependencyProperty PaneToggleButtonVisibilityProperty =
@@ -114,8 +114,8 @@ namespace Unigram.Controls
 
         public Thickness TopPadding
         {
-            get { return (Thickness)GetValue(TopPaddingProperty); }
-            set { SetValue(TopPaddingProperty, value); }
+            get => (Thickness)GetValue(TopPaddingProperty);
+            set => SetValue(TopPaddingProperty, value);
         }
 
         public static readonly DependencyProperty TopPaddingProperty =

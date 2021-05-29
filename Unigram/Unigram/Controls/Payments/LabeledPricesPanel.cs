@@ -17,10 +17,7 @@ namespace Unigram.Controls.Payments
         private string _currency;
         public string Currency
         {
-            get
-            {
-                return _currency;
-            }
+            get => _currency;
             set
             {
                 _currency = value;
@@ -31,10 +28,7 @@ namespace Unigram.Controls.Payments
         private IList<LabeledPricePart> _prices;
         public IList<LabeledPricePart> Prices
         {
-            get
-            {
-                return _prices;
-            }
+            get => _prices;
             set
             {
                 _prices = value;

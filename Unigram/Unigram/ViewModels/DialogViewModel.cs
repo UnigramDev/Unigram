@@ -33,10 +33,7 @@ namespace Unigram.ViewModels
         private List<MessageViewModel> _selectedItems = new List<MessageViewModel>();
         public List<MessageViewModel> SelectedItems
         {
-            get
-            {
-                return _selectedItems;
-            }
+            get => _selectedItems;
             set
             {
                 Set(ref _selectedItems, value);
@@ -275,14 +272,8 @@ namespace Unigram.ViewModels
         protected Chat _chat;
         public Chat Chat
         {
-            get
-            {
-                return _chat;
-            }
-            set
-            {
-                Set(ref _chat, value);
-            }
+            get => _chat;
+            set => Set(ref _chat, value);
         }
 
         private DialogType _type => Type;
@@ -291,14 +282,14 @@ namespace Unigram.ViewModels
         private string _lastSeen;
         public string LastSeen
         {
-            get { return _type == DialogType.EventLog ? Strings.Resources.EventLog : _lastSeen; }
+            get => _type == DialogType.EventLog ? Strings.Resources.EventLog : _lastSeen;
             set { Set(ref _lastSeen, value); RaisePropertyChanged(nameof(Subtitle)); }
         }
 
         private string _onlineCount;
         public string OnlineCount
         {
-            get { return _onlineCount; }
+            get => _onlineCount;
             set { Set(ref _onlineCount, value); RaisePropertyChanged(nameof(Subtitle)); }
         }
 
@@ -329,14 +320,8 @@ namespace Unigram.ViewModels
         private ChatSearchViewModel _search;
         public ChatSearchViewModel Search
         {
-            get
-            {
-                return _search;
-            }
-            set
-            {
-                Set(ref _search, value);
-            }
+            get => _search;
+            set => Set(ref _search, value);
         }
 
         public void DisposeSearch()
@@ -353,10 +338,7 @@ namespace Unigram.ViewModels
         private string _accessToken;
         public string AccessToken
         {
-            get
-            {
-                return _accessToken;
-            }
+            get => _accessToken;
             set
             {
                 Set(ref _accessToken, value);
@@ -377,10 +359,7 @@ namespace Unigram.ViewModels
         private MessageViewModel _informativeMessage;
         public MessageViewModel InformativeMessage
         {
-            get
-            {
-                return _informativeMessage;
-            }
+            get => _informativeMessage;
             set
             {
                 if (value != null)
@@ -436,10 +415,7 @@ namespace Unigram.ViewModels
         private ListViewSelectionMode _selectionMode = ListViewSelectionMode.None;
         public ListViewSelectionMode SelectionMode
         {
-            get
-            {
-                return _selectionMode;
-            }
+            get => _selectionMode;
             set
             {
                 Set(ref _selectionMode, value);
@@ -577,23 +553,14 @@ namespace Unigram.ViewModels
         private bool? _isLastSliceLoaded;
         public bool? IsLastSliceLoaded
         {
-            get
-            {
-                return _isLastSliceLoaded;
-            }
-            set
-            {
-                Set(ref _isLastSliceLoaded, value);
-            }
+            get => _isLastSliceLoaded;
+            set => Set(ref _isLastSliceLoaded, value);
         }
 
         private bool _isEmpty = true;
         public bool IsEmpty
         {
-            get
-            {
-                return _isEmpty && !_isLoadingNextSlice && !_isLoadingPreviousSlice;
-            }
+            get => _isEmpty && !_isLoadingNextSlice && !_isLoadingPreviousSlice;
             set
             {
                 Set(ref _isEmpty, value);
@@ -603,10 +570,7 @@ namespace Unigram.ViewModels
 
         public override bool IsLoading
         {
-            get
-            {
-                return _isLoadingNextSlice || _isLoadingPreviousSlice;
-            }
+            get => _isLoadingNextSlice || _isLoadingPreviousSlice;
             set
             {
                 base.IsLoading = value;
@@ -2467,10 +2431,7 @@ namespace Unigram.ViewModels
         private IAutocompleteCollection _autocomplete;
         public IAutocompleteCollection Autocomplete
         {
-            get
-            {
-                return _autocomplete;
-            }
+            get => _autocomplete;
             set
             {
                 Set(ref _autocomplete, value);
@@ -2481,27 +2442,15 @@ namespace Unigram.ViewModels
         private bool _hasBotCommands;
         public bool HasBotCommands
         {
-            get
-            {
-                return _hasBotCommands;
-            }
-            set
-            {
-                Set(ref _hasBotCommands, value);
-            }
+            get => _hasBotCommands;
+            set => Set(ref _hasBotCommands, value);
         }
 
         private List<UserCommand> _botCommands;
         public List<UserCommand> BotCommands
         {
-            get
-            {
-                return _botCommands;
-            }
-            set
-            {
-                Set(ref _botCommands, value);
-            }
+            get => _botCommands;
+            set => Set(ref _botCommands, value);
         }
 
         public void SaveDraft()
@@ -2574,10 +2523,7 @@ namespace Unigram.ViewModels
         private MessageComposerHeader _composerHeader;
         public MessageComposerHeader ComposerHeader
         {
-            get
-            {
-                return _composerHeader;
-            }
+            get => _composerHeader;
             set
             {
                 Set(ref _composerHeader, value);

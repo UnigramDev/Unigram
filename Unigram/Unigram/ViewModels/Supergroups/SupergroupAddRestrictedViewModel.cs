@@ -18,14 +18,8 @@ namespace Unigram.ViewModels.Supergroups
         private SearchMembersAndUsersCollection _search;
         public new SearchMembersAndUsersCollection Search
         {
-            get
-            {
-                return _search;
-            }
-            set
-            {
-                Set(ref _search, value);
-            }
+            get => _search;
+            set => Set(ref _search, value);
         }
 
         public RelayCommand<MessageSender> AddCommand { get; }

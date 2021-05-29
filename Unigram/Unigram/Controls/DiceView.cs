@@ -551,8 +551,8 @@ namespace Unigram.Controls
 
         public SizeInt32 FrameSize
         {
-            get { return (SizeInt32)GetValue(FrameSizeProperty); }
-            set { SetValue(FrameSizeProperty, value); }
+            get => (SizeInt32)GetValue(FrameSizeProperty);
+            set => SetValue(FrameSizeProperty, value);
         }
 
         public static readonly DependencyProperty FrameSizeProperty =
@@ -569,8 +569,8 @@ namespace Unigram.Controls
 
         public bool AutoPlay
         {
-            get { return (bool)GetValue(AutoPlayProperty); }
-            set { SetValue(AutoPlayProperty, value); }
+            get => (bool)GetValue(AutoPlayProperty);
+            set => SetValue(AutoPlayProperty, value);
         }
 
         public static readonly DependencyProperty AutoPlayProperty =
@@ -582,8 +582,8 @@ namespace Unigram.Controls
 
         public bool IsContentUnread
         {
-            get { return (bool)GetValue(IsContentUnreadProperty); }
-            set { SetValue(IsContentUnreadProperty, value); }
+            get => (bool)GetValue(IsContentUnreadProperty);
+            set => SetValue(IsContentUnreadProperty, value);
         }
 
         public static readonly DependencyProperty IsContentUnreadProperty =

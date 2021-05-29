@@ -35,10 +35,7 @@ namespace Unigram.Views.Popups
         private ICollection _autocomplete;
         public ICollection Autocomplete
         {
-            get
-            {
-                return _autocomplete;
-            }
+            get => _autocomplete;
             set
             {
                 if (_autocomplete != value)
@@ -67,7 +64,7 @@ namespace Unigram.Views.Popups
         private bool _isMediaSelected;
         public bool IsMediaSelected
         {
-            get { return _isMediaSelected; }
+            get => _isMediaSelected;
             set
             {
                 if (_isMediaSelected != value)
@@ -81,7 +78,7 @@ namespace Unigram.Views.Popups
         private bool _isFilesSelected;
         public bool IsFilesSelected
         {
-            get { return _isFilesSelected; }
+            get => _isFilesSelected;
             set
             {
                 if (_isFilesSelected != value)
@@ -97,7 +94,7 @@ namespace Unigram.Views.Popups
         private bool _isAlbum = true;
         public bool IsAlbum
         {
-            get { return _isAlbum; }
+            get => _isAlbum;
             set
             {
                 if (_isAlbum != value)

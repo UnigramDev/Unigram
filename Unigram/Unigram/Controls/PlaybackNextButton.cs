@@ -133,8 +133,8 @@ namespace Unigram.Controls
 
         public bool IsPrevious
         {
-            get { return (bool)GetValue(IsPreviousProperty); }
-            set { SetValue(IsPreviousProperty, value); }
+            get => (bool)GetValue(IsPreviousProperty);
+            set => SetValue(IsPreviousProperty, value);
         }
 
         public static readonly DependencyProperty IsPreviousProperty =

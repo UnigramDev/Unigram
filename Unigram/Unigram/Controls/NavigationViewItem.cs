@@ -20,8 +20,8 @@ namespace Unigram.Controls
 
         public string Text
         {
-            get { return (string)GetValue(TextProperty); }
-            set { SetValue(TextProperty, value); }
+            get => (string)GetValue(TextProperty);
+            set => SetValue(TextProperty, value);
         }
 
         public static readonly DependencyProperty TextProperty =
@@ -33,8 +33,8 @@ namespace Unigram.Controls
 
         public string Glyph
         {
-            get { return (string)GetValue(GlyphProperty); }
-            set { SetValue(GlyphProperty, value); }
+            get => (string)GetValue(GlyphProperty);
+            set => SetValue(GlyphProperty, value);
         }
 
         public static readonly DependencyProperty GlyphProperty =
@@ -46,8 +46,8 @@ namespace Unigram.Controls
 
         public bool IsChecked
         {
-            get { return (bool)GetValue(IsCheckedProperty); }
-            set { SetValue(IsCheckedProperty, value); }
+            get => (bool)GetValue(IsCheckedProperty);
+            set => SetValue(IsCheckedProperty, value);
         }
 
         public static readonly DependencyProperty IsCheckedProperty =

@@ -20,8 +20,8 @@ namespace Unigram.Controls
 
         public object Badge
         {
-            get { return GetValue(BadgeProperty); }
-            set { SetValue(BadgeProperty, value); }
+            get => GetValue(BadgeProperty);
+            set => SetValue(BadgeProperty, value);
         }
 
         public static readonly DependencyProperty BadgeProperty =
@@ -49,8 +49,8 @@ namespace Unigram.Controls
 
         public DataTemplate BadgeTemplate
         {
-            get { return (DataTemplate)GetValue(BadgeTemplateProperty); }
-            set { SetValue(BadgeTemplateProperty, value); }
+            get => (DataTemplate)GetValue(BadgeTemplateProperty);
+            set => SetValue(BadgeTemplateProperty, value);
         }
 
         public static readonly DependencyProperty BadgeTemplateProperty =
@@ -62,8 +62,8 @@ namespace Unigram.Controls
 
         public Visibility BadgeVisibility
         {
-            get { return (Visibility)GetValue(BadgeVisibilityProperty); }
-            set { SetValue(BadgeVisibilityProperty, value); }
+            get => (Visibility)GetValue(BadgeVisibilityProperty);
+            set => SetValue(BadgeVisibilityProperty, value);
         }
 
         public static readonly DependencyProperty BadgeVisibilityProperty =
@@ -75,8 +75,8 @@ namespace Unigram.Controls
 
         public string BadgeLabel
         {
-            get { return (string)GetValue(BadgeLabelProperty); }
-            set { SetValue(BadgeLabelProperty, value); }
+            get => (string)GetValue(BadgeLabelProperty);
+            set => SetValue(BadgeLabelProperty, value);
         }
 
         public static readonly DependencyProperty BadgeLabelProperty =
@@ -96,8 +96,8 @@ namespace Unigram.Controls
 
         public ImageSource ImageSource
         {
-            get { return (ImageSource)GetValue(ImageSourceProperty); }
-            set { SetValue(ImageSourceProperty, value); }
+            get => (ImageSource)GetValue(ImageSourceProperty);
+            set => SetValue(ImageSourceProperty, value);
         }
 
         // Using a DependencyProperty as the backing store for ImageSource.  This enables animation, styling, binding, etc...

@@ -2028,10 +2028,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 
                 return this[id] = new List<T>();
             }
-            set
-            {
-                base[id] = value;
-            }
+            set => base[id] = value;
         }
     }
 

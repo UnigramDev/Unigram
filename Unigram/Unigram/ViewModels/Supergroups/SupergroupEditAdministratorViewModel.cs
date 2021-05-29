@@ -30,27 +30,15 @@ namespace Unigram.ViewModels.Supergroups
         private Chat _chat;
         public Chat Chat
         {
-            get
-            {
-                return _chat;
-            }
-            set
-            {
-                Set(ref _chat, value);
-            }
+            get => _chat;
+            set => Set(ref _chat, value);
         }
 
         private ChatMember _member;
         public ChatMember Member
         {
-            get
-            {
-                return _member;
-            }
-            set
-            {
-                Set(ref _member, value);
-            }
+            get => _member;
+            set => Set(ref _member, value);
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -132,14 +120,8 @@ namespace Unigram.ViewModels.Supergroups
         private bool _isAdminAlready = true;
         public bool IsAdminAlready
         {
-            get
-            {
-                return _isAdminAlready;
-            }
-            set
-            {
-                Set(ref _isAdminAlready, value);
-            }
+            get => _isAdminAlready;
+            set => Set(ref _isAdminAlready, value);
         }
 
         public bool CanTransferOwnership
@@ -175,10 +157,7 @@ namespace Unigram.ViewModels.Supergroups
         private bool _canChangeInfo;
         public bool CanChangeInfo
         {
-            get
-            {
-                return _canChangeInfo;
-            }
+            get => _canChangeInfo;
             set
             {
                 Set(ref _canChangeInfo, value);
@@ -189,10 +168,7 @@ namespace Unigram.ViewModels.Supergroups
         private bool _canPostMessages;
         public bool CanPostMessages
         {
-            get
-            {
-                return _canPostMessages;
-            }
+            get => _canPostMessages;
             set
             {
                 Set(ref _canPostMessages, value);
@@ -203,10 +179,7 @@ namespace Unigram.ViewModels.Supergroups
         private bool _canEditMessages;
         public bool CanEditMessages
         {
-            get
-            {
-                return _canEditMessages;
-            }
+            get => _canEditMessages;
             set
             {
                 Set(ref _canEditMessages, value);
@@ -217,10 +190,7 @@ namespace Unigram.ViewModels.Supergroups
         private bool _canDeleteMessages;
         public bool CanDeleteMessages
         {
-            get
-            {
-                return _canDeleteMessages;
-            }
+            get => _canDeleteMessages;
             set
             {
                 Set(ref _canDeleteMessages, value);
@@ -231,10 +201,7 @@ namespace Unigram.ViewModels.Supergroups
         private bool _canRestrictMembers;
         public bool CanRestrictMembers
         {
-            get
-            {
-                return _canRestrictMembers;
-            }
+            get => _canRestrictMembers;
             set
             {
                 Set(ref _canRestrictMembers, value);
@@ -245,10 +212,7 @@ namespace Unigram.ViewModels.Supergroups
         private bool _canInviteUsers;
         public bool CanInviteUsers
         {
-            get
-            {
-                return _canInviteUsers;
-            }
+            get => _canInviteUsers;
             set
             {
                 Set(ref _canInviteUsers, value);
@@ -259,10 +223,7 @@ namespace Unigram.ViewModels.Supergroups
         private bool _canPinMessages;
         public bool CanPinMessages
         {
-            get
-            {
-                return _canPinMessages;
-            }
+            get => _canPinMessages;
             set
             {
                 Set(ref _canPinMessages, value);
@@ -273,10 +234,7 @@ namespace Unigram.ViewModels.Supergroups
         private bool _canManageVoiceChats;
         public bool CanManageVoiceChats
         {
-            get
-            {
-                return _canManageVoiceChats;
-            }
+            get => _canManageVoiceChats;
             set
             {
                 Set(ref _canManageVoiceChats, value);
@@ -287,24 +245,14 @@ namespace Unigram.ViewModels.Supergroups
         private bool _isAnonymous;
         public bool IsAnonymous
         {
-            get
-            {
-                return _isAnonymous;
-            }
-            set
-            {
-                Set(ref _isAnonymous, value);
-                // Is Anonymous isn't needed for transfer ownership.
-            }
+            get => _isAnonymous;
+            set => Set(ref _isAnonymous, value);// Is Anonymous isn't needed for transfer ownership.
         }
 
         private bool _canPromoteMembers;
         public bool CanPromoteMembers
         {
-            get
-            {
-                return _canPromoteMembers;
-            }
+            get => _canPromoteMembers;
             set
             {
                 Set(ref _canPromoteMembers, value);

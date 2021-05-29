@@ -50,8 +50,8 @@ namespace Unigram.Controls
 
         public ImageSource Source
         {
-            get { return (ImageSource)GetValue(SourceProperty); }
-            set { SetValue(SourceProperty, value); }
+            get => (ImageSource)GetValue(SourceProperty);
+            set => SetValue(SourceProperty, value);
         }
 
         public static readonly DependencyProperty SourceProperty =
@@ -76,8 +76,8 @@ namespace Unigram.Controls
 
         public Stretch Stretch
         {
-            get { return (Stretch)GetValue(StretchProperty); }
-            set { SetValue(StretchProperty, value); }
+            get => (Stretch)GetValue(StretchProperty);
+            set => SetValue(StretchProperty, value);
         }
 
         public static readonly DependencyProperty StretchProperty =
@@ -89,8 +89,8 @@ namespace Unigram.Controls
 
         public object Constraint
         {
-            get { return GetValue(ConstraintProperty); }
-            set { SetValue(ConstraintProperty, value); }
+            get => GetValue(ConstraintProperty);
+            set => SetValue(ConstraintProperty, value);
         }
 
         public static readonly DependencyProperty ConstraintProperty =

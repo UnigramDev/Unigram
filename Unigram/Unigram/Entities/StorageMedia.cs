@@ -74,10 +74,7 @@ namespace Unigram.Entities
         protected int _ttl;
         public int Ttl
         {
-            get
-            {
-                return _ttl;
-            }
+            get => _ttl;
             set
             {
                 Set(ref _ttl, value);

@@ -52,10 +52,7 @@ namespace Unigram.ViewModels.Settings
 
         public bool InAppFlash
         {
-            get
-            {
-                return Settings.Notifications.InAppFlash;
-            }
+            get => Settings.Notifications.InAppFlash;
             set
             {
                 Settings.Notifications.InAppFlash = value;
@@ -65,10 +62,7 @@ namespace Unigram.ViewModels.Settings
 
         public bool InAppSounds
         {
-            get
-            {
-                return Settings.Notifications.InAppSounds;
-            }
+            get => Settings.Notifications.InAppSounds;
             set
             {
                 Settings.Notifications.InAppSounds = value;
@@ -78,10 +72,7 @@ namespace Unigram.ViewModels.Settings
 
         public bool InAppPreview
         {
-            get
-            {
-                return Settings.Notifications.InAppPreview;
-            }
+            get => Settings.Notifications.InAppPreview;
             set
             {
                 Settings.Notifications.InAppPreview = value;
@@ -93,10 +84,7 @@ namespace Unigram.ViewModels.Settings
 
         public bool IsContactEnabled
         {
-            get
-            {
-                return !CacheService.Options.DisableContactRegisteredNotifications && Settings.Notifications.IsContactEnabled;
-            }
+            get => !CacheService.Options.DisableContactRegisteredNotifications && Settings.Notifications.IsContactEnabled;
             set
             {
                 CacheService.Options.DisableContactRegisteredNotifications = !(Settings.Notifications.IsContactEnabled = value);
@@ -106,10 +94,7 @@ namespace Unigram.ViewModels.Settings
 
         public bool IsPinnedEnabled
         {
-            get
-            {
-                return !CacheService.Options.DisablePinnedMessageNotifications && Settings.Notifications.IsPinnedEnabled;
-            }
+            get => !CacheService.Options.DisablePinnedMessageNotifications && Settings.Notifications.IsPinnedEnabled;
             set
             {
                 CacheService.Options.DisablePinnedMessageNotifications = !(Settings.Notifications.IsPinnedEnabled = value);
@@ -121,10 +106,7 @@ namespace Unigram.ViewModels.Settings
 
         public bool IsAllAccountsNotifications
         {
-            get
-            {
-                return SettingsService.Current.IsAllAccountsNotifications;
-            }
+            get => SettingsService.Current.IsAllAccountsNotifications;
             set
             {
                 SettingsService.Current.IsAllAccountsNotifications = value;
@@ -134,10 +116,7 @@ namespace Unigram.ViewModels.Settings
 
         public bool IncludeMutedChats
         {
-            get
-            {
-                return Settings.Notifications.IncludeMutedChats;
-            }
+            get => Settings.Notifications.IncludeMutedChats;
             set
             {
                 Settings.Notifications.IncludeMutedChats = value;
@@ -151,10 +130,7 @@ namespace Unigram.ViewModels.Settings
 
         public bool CountUnreadMessages
         {
-            get
-            {
-                return Settings.Notifications.CountUnreadMessages;
-            }
+            get => Settings.Notifications.CountUnreadMessages;
             set
             {
                 Settings.Notifications.CountUnreadMessages = value;
@@ -211,29 +187,29 @@ namespace Unigram.ViewModels.Settings
         private bool _alert;
         public bool Alert
         {
-            get { return _alert; }
-            set { Set(ref _alert, value); }
+            get => _alert;
+            set => Set(ref _alert, value);
         }
 
         private bool _preview;
         public bool Preview
         {
-            get { return _preview; }
-            set { Set(ref _preview, value); }
+            get => _preview;
+            set => Set(ref _preview, value);
         }
 
         private string _sound;
         public string Sound
         {
-            get { return _sound; }
-            set { Set(ref _sound, value); }
+            get => _sound;
+            set => Set(ref _sound, value);
         }
 
         private string _exceptionsCount;
         public string ExceptionsCount
         {
-            get { return _exceptionsCount; }
-            set { Set(ref _exceptionsCount, value); }
+            get => _exceptionsCount;
+            set => Set(ref _exceptionsCount, value);
         }
 
         private bool _disableMention;

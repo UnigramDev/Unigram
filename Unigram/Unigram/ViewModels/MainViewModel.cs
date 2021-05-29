@@ -134,10 +134,7 @@ namespace Unigram.ViewModels
 
         public bool CollapseArchivedChats
         {
-            get
-            {
-                return base.Settings.CollapseArchivedChats;
-            }
+            get => base.Settings.CollapseArchivedChats;
             set
             {
                 base.Settings.CollapseArchivedChats = value;
@@ -148,8 +145,8 @@ namespace Unigram.ViewModels
         private int _unreadCount;
         public int UnreadCount
         {
-            get { return _unreadCount; }
-            set { Set(ref _unreadCount, value); }
+            get => _unreadCount;
+            set => Set(ref _unreadCount, value);
         }
 
         private int _unreadMutedCount;

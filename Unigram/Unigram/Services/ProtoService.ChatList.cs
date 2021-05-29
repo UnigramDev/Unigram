@@ -158,10 +158,7 @@ namespace Unigram.Services
 
                 return value;
             }
-            set
-            {
-                base[key] = value;
-            }
+            set => base[key] = value;
         }
     }
 
@@ -181,10 +178,7 @@ namespace Unigram.Services
 
                 return value;
             }
-            set
-            {
-                base[key] = value;
-            }
+            set => base[key] = value;
         }
     }
 }

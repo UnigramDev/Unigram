@@ -478,10 +478,7 @@ namespace Unigram.Services
                 canReply = false;
             }
 
-            await UpdateAsync(chat, async () =>
-            {
-                await UpdateToast(caption, content, $"{_sessionService.Id}", sound, launch, $"{id}", $"{groupId}", picture, dateTime, canReply);
-            });
+            await UpdateAsync(chat, () => UpdateToast(caption, content, $"{_sessionService.Id}", sound, launch, $"{id}", $"{groupId}", picture, dateTime, canReply));
 
             if (App.Connection is AppServiceConnection connection && _settings.Notifications.InAppFlash)
             {

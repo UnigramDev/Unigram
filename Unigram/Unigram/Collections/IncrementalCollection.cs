@@ -16,23 +16,14 @@ namespace Unigram.Collections
         private bool _hasMoreItems = true;
         public bool HasMoreItems
         {
-            get
-            {
-                return _hasMoreItems;
-            }
-            set
-            {
-                _hasMoreItems = value;
-            }
+            get => _hasMoreItems;
+            set => _hasMoreItems = value;
         }
 
         private bool _isLoading;
         public bool IsLoading
         {
-            get
-            {
-                return _isLoading;
-            }
+            get => _isLoading;
             set
             {
                 if (value != _isLoading)

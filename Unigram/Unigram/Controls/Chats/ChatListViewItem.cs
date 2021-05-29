@@ -146,8 +146,8 @@ namespace Unigram.Controls.Chats
 
         public Thickness ContentMargin
         {
-            get { return (Thickness)GetValue(ContentMarginProperty); }
-            set { SetValue(ContentMarginProperty, value); }
+            get => (Thickness)GetValue(ContentMarginProperty);
+            set => SetValue(ContentMarginProperty, value);
         }
 
         public static readonly DependencyProperty ContentMarginProperty =

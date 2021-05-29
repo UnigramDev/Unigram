@@ -364,8 +364,8 @@ namespace Unigram.Controls
 
         public bool IsLoopingEnabled
         {
-            get { return (bool)GetValue(IsLoopingEnabledProperty); }
-            set { SetValue(IsLoopingEnabledProperty, value); }
+            get => (bool)GetValue(IsLoopingEnabledProperty);
+            set => SetValue(IsLoopingEnabledProperty, value);
         }
 
         public static readonly DependencyProperty IsLoopingEnabledProperty =
@@ -382,8 +382,8 @@ namespace Unigram.Controls
 
         public bool AutoPlay
         {
-            get { return (bool)GetValue(AutoPlayProperty); }
-            set { SetValue(AutoPlayProperty, value); }
+            get => (bool)GetValue(AutoPlayProperty);
+            set => SetValue(AutoPlayProperty, value);
         }
 
         public static readonly DependencyProperty AutoPlayProperty =
@@ -395,8 +395,8 @@ namespace Unigram.Controls
 
         public IVideoAnimationSource Source
         {
-            get { return (IVideoAnimationSource)GetValue(SourceProperty); }
-            set { SetValue(SourceProperty, value); }
+            get => (IVideoAnimationSource)GetValue(SourceProperty);
+            set => SetValue(SourceProperty, value);
         }
 
         public static readonly DependencyProperty SourceProperty =
@@ -413,8 +413,8 @@ namespace Unigram.Controls
 
         public ImageSource Thumbnail
         {
-            get { return (ImageSource)GetValue(ThumbnailProperty); }
-            set { SetValue(ThumbnailProperty, value); }
+            get => (ImageSource)GetValue(ThumbnailProperty);
+            set => SetValue(ThumbnailProperty, value);
         }
 
         public static readonly DependencyProperty ThumbnailProperty =

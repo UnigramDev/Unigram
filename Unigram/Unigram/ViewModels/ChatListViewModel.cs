@@ -71,22 +71,22 @@ namespace Unigram.ViewModels
         private long? _selectedItem;
         public long? SelectedItem
         {
-            get { return _selectedItem; }
-            set { Set(ref _selectedItem, value); }
+            get => _selectedItem;
+            set => Set(ref _selectedItem, value);
         }
 
         private MvxObservableCollection<Chat> _selectedItems;
         public MvxObservableCollection<Chat> SelectedItems
         {
-            get { return _selectedItems; }
-            set { Set(ref _selectedItems, value); }
+            get => _selectedItems;
+            set => Set(ref _selectedItems, value);
         }
 
         private ListViewSelectionMode _selectionMode = ListViewSelectionMode.None;
         public ListViewSelectionMode SelectionMode
         {
-            get { return _selectionMode; }
-            set { Set(ref _selectionMode, value); }
+            get => _selectionMode;
+            set => Set(ref _selectionMode, value);
         }
 
         #endregion
@@ -98,14 +98,8 @@ namespace Unigram.ViewModels
         private SearchChatsCollection _search;
         public SearchChatsCollection Search
         {
-            get
-            {
-                return _search;
-            }
-            set
-            {
-                Set(ref _search, value);
-            }
+            get => _search;
+            set => Set(ref _search, value);
         }
 
         public MvxObservableCollection<ISearchChatsFilter> SearchFilters { get; private set; }
@@ -113,14 +107,8 @@ namespace Unigram.ViewModels
         private TopChatsCollection _topChats;
         public TopChatsCollection TopChats
         {
-            get
-            {
-                return _topChats;
-            }
-            set
-            {
-                Set(ref _topChats, value);
-            }
+            get => _topChats;
+            set => Set(ref _topChats, value);
         }
 
         #region Pin

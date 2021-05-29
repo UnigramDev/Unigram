@@ -82,8 +82,8 @@ namespace Unigram.Navigation.Services
 
         public string NavigationState
         {
-            get { return Frame.GetNavigationState(); }
-            set { Frame.SetNavigationState(value); }
+            get => Frame.GetNavigationState();
+            set => Frame.SetNavigationState(value);
         }
 
         public int SessionId { get; private set; }

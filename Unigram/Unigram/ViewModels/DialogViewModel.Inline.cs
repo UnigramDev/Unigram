@@ -15,23 +15,14 @@ namespace Unigram.ViewModels
         private User _currentInlineBot;
         public User CurrentInlineBot
         {
-            get
-            {
-                return _currentInlineBot;
-            }
-            set
-            {
-                Set(ref _currentInlineBot, value);
-            }
+            get => _currentInlineBot;
+            set => Set(ref _currentInlineBot, value);
         }
 
         private BotResultsCollection _inlineBotResults;
         public BotResultsCollection InlineBotResults
         {
-            get
-            {
-                return _inlineBotResults;
-            }
+            get => _inlineBotResults;
             set
             {
                 Set(ref _inlineBotResults, value);

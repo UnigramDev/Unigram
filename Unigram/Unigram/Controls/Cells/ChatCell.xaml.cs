@@ -1250,8 +1250,8 @@ namespace Unigram.Controls.Cells
 
         public Color Accent
         {
-            get { return (Color)GetValue(AccentProperty); }
-            set { SetValue(AccentProperty, value); }
+            get => (Color)GetValue(AccentProperty);
+            set => SetValue(AccentProperty, value);
         }
 
         public static readonly DependencyProperty AccentProperty =
@@ -1278,8 +1278,8 @@ namespace Unigram.Controls.Cells
 
         public SolidColorBrush SelectionStroke
         {
-            get { return (SolidColorBrush)GetValue(SelectionStrokeProperty); }
-            set { SetValue(SelectionStrokeProperty, value); }
+            get => (SolidColorBrush)GetValue(SelectionStrokeProperty);
+            set => SetValue(SelectionStrokeProperty, value);
         }
 
         public static readonly DependencyProperty SelectionStrokeProperty =
@@ -1456,8 +1456,8 @@ namespace Unigram.Controls.Cells
 
         public Brush Stroke
         {
-            get { return (Brush)GetValue(StrokeProperty); }
-            set { SetValue(StrokeProperty, value); }
+            get => (Brush)GetValue(StrokeProperty);
+            set => SetValue(StrokeProperty, value);
         }
 
         public static readonly DependencyProperty StrokeProperty =

@@ -19,10 +19,7 @@ namespace Unigram.ViewModels.Channels
         private string _title;
         public string Title
         {
-            get
-            {
-                return _title;
-            }
+            get => _title;
             set
             {
                 Set(ref _title, value);
@@ -33,27 +30,15 @@ namespace Unigram.ViewModels.Channels
         private string _about;
         public string About
         {
-            get
-            {
-                return _about;
-            }
-            set
-            {
-                Set(ref _about, value);
-            }
+            get => _about;
+            set => Set(ref _about, value);
         }
 
         private BitmapImage _preview;
         public BitmapImage Preview
         {
-            get
-            {
-                return _preview;
-            }
-            set
-            {
-                Set(ref _preview, value);
-            }
+            get => _preview;
+            set => Set(ref _preview, value);
         }
 
         public RelayCommand SendCommand { get; }

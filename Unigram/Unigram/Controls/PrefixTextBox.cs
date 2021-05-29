@@ -46,8 +46,8 @@ namespace Unigram.Controls
 
         public string Prefix
         {
-            get { return (string)GetValue(PrefixProperty); }
-            set { SetValue(PrefixProperty, value); }
+            get => (string)GetValue(PrefixProperty);
+            set => SetValue(PrefixProperty, value);
         }
 
         public static readonly DependencyProperty PrefixProperty =
@@ -69,8 +69,8 @@ namespace Unigram.Controls
 
         public string Value
         {
-            get { return (string)GetValue(ValueProperty); }
-            set { SetValue(ValueProperty, value); }
+            get => (string)GetValue(ValueProperty);
+            set => SetValue(ValueProperty, value);
         }
 
         public static readonly DependencyProperty ValueProperty =

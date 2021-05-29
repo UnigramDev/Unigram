@@ -31,8 +31,8 @@ namespace Unigram.Controls
 
         public Uri HeaderSource
         {
-            get { return (Uri)GetValue(HeaderSourceProperty); }
-            set { SetValue(HeaderSourceProperty, value); }
+            get => (Uri)GetValue(HeaderSourceProperty);
+            set => SetValue(HeaderSourceProperty, value);
         }
 
         public static readonly DependencyProperty HeaderSourceProperty =
@@ -44,8 +44,8 @@ namespace Unigram.Controls
 
         public string Title
         {
-            get { return (string)GetValue(TitleProperty); }
-            set { SetValue(TitleProperty, value); }
+            get => (string)GetValue(TitleProperty);
+            set => SetValue(TitleProperty, value);
         }
 
         public static readonly DependencyProperty TitleProperty =
@@ -57,8 +57,8 @@ namespace Unigram.Controls
 
         public string Text
         {
-            get { return (string)GetValue(TextProperty); }
-            set { SetValue(TextProperty, value); }
+            get => (string)GetValue(TextProperty);
+            set => SetValue(TextProperty, value);
         }
 
         public static readonly DependencyProperty TextProperty =
@@ -70,8 +70,8 @@ namespace Unigram.Controls
 
         public string ButtonText
         {
-            get { return (string)GetValue(ButtonTextProperty); }
-            set { SetValue(ButtonTextProperty, value); }
+            get => (string)GetValue(ButtonTextProperty);
+            set => SetValue(ButtonTextProperty, value);
         }
 
         public static readonly DependencyProperty ButtonTextProperty =
@@ -83,8 +83,8 @@ namespace Unigram.Controls
 
         public ICommand ButtonCommand
         {
-            get { return (ICommand)GetValue(ButtonCommandProperty); }
-            set { SetValue(ButtonCommandProperty, value); }
+            get => (ICommand)GetValue(ButtonCommandProperty);
+            set => SetValue(ButtonCommandProperty, value);
         }
 
         public static readonly DependencyProperty ButtonCommandProperty =
@@ -96,8 +96,8 @@ namespace Unigram.Controls
 
         public Visibility ButtonVisibility
         {
-            get { return (Visibility)GetValue(ButtonVisibilityProperty); }
-            set { SetValue(ButtonVisibilityProperty, value); }
+            get => (Visibility)GetValue(ButtonVisibilityProperty);
+            set => SetValue(ButtonVisibilityProperty, value);
         }
 
         public static readonly DependencyProperty ButtonVisibilityProperty =
@@ -109,8 +109,8 @@ namespace Unigram.Controls
 
         public UIElement Footer
         {
-            get { return (UIElement)GetValue(FooterProperty); }
-            set { SetValue(FooterProperty, value); }
+            get => (UIElement)GetValue(FooterProperty);
+            set => SetValue(FooterProperty, value);
         }
 
         public static readonly DependencyProperty FooterProperty =

@@ -25,14 +25,8 @@ namespace Unigram.ViewModels.Settings
         private User _self;
         public User Self
         {
-            get
-            {
-                return _self;
-            }
-            set
-            {
-                Set(ref _self, value);
-            }
+            get => _self;
+            set => Set(ref _self, value);
         }
     }
 }

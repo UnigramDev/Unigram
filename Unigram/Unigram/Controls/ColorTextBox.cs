@@ -121,8 +121,8 @@ namespace Unigram.Controls
 
         public Color Color
         {
-            get { return (Color)GetValue(ColorProperty); }
-            set { SetValue(ColorProperty, value); }
+            get => (Color)GetValue(ColorProperty);
+            set => SetValue(ColorProperty, value);
         }
 
         public static readonly DependencyProperty ColorProperty =

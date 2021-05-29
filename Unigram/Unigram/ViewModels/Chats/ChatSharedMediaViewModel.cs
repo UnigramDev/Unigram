@@ -74,8 +74,8 @@ namespace Unigram.ViewModels.Chats
         private int[] _sharedCount = new int[] { 0, 0, 0, 0, 0, 0 };
         public int[] SharedCount
         {
-            get { return _sharedCount; }
-            set { Set(ref _sharedCount, value); }
+            get => _sharedCount;
+            set => Set(ref _sharedCount, value);
         }
 
         private async Task UpdateSharedCountAsync(long chatId)
@@ -145,15 +145,15 @@ namespace Unigram.ViewModels.Chats
         private Chat _chat;
         public Chat Chat
         {
-            get { return _chat; }
-            set { Set(ref _chat, value); }
+            get => _chat;
+            set => Set(ref _chat, value);
         }
 
         private int _selectedIndex;
         public int SelectedIndex
         {
-            get { return _selectedIndex; }
-            set { Set(ref _selectedIndex, value); }
+            get => _selectedIndex;
+            set => Set(ref _selectedIndex, value);
         }
 
         public MediaCollection Media { get; private set; }
@@ -192,23 +192,14 @@ namespace Unigram.ViewModels.Chats
         private ListViewSelectionMode _selectionMode = ListViewSelectionMode.None;
         public ListViewSelectionMode SelectionMode
         {
-            get
-            {
-                return _selectionMode;
-            }
-            set
-            {
-                Set(ref _selectionMode, value);
-            }
+            get => _selectionMode;
+            set => Set(ref _selectionMode, value);
         }
 
         private List<Message> _selectedItems = new List<Message>();
         public List<Message> SelectedItems
         {
-            get
-            {
-                return _selectedItems;
-            }
+            get => _selectedItems;
             set
             {
                 Set(ref _selectedItems, value);

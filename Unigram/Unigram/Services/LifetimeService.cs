@@ -68,17 +68,14 @@ namespace Unigram.Services
         private ISessionService _previousItem;
         public ISessionService PreviousItem
         {
-            get { return _previousItem; }
-            set { _previousItem = value; }
+            get => _previousItem;
+            set => _previousItem = value;
         }
 
         private ISessionService _activeItem;
         public ISessionService ActiveItem
         {
-            get
-            {
-                return _activeItem;
-            }
+            get => _activeItem;
             set
             {
                 if (_activeItem == value)

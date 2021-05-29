@@ -465,8 +465,8 @@ namespace Unigram.Controls
         #region BlankType
         public Type BlankPageType
         {
-            get { return (Type)GetValue(BlankPageTypeProperty); }
-            set { SetValue(BlankPageTypeProperty, value); }
+            get => (Type)GetValue(BlankPageTypeProperty);
+            set => SetValue(BlankPageTypeProperty, value);
         }
 
         public static readonly DependencyProperty BlankPageTypeProperty =
@@ -477,10 +477,7 @@ namespace Unigram.Controls
 
         public bool AllowCompact
         {
-            get
-            {
-                return AdaptivePanel?.AllowCompact ?? true;
-            }
+            get => AdaptivePanel?.AllowCompact ?? true;
             set
             {
                 if (AdaptivePanel != null)
@@ -496,8 +493,8 @@ namespace Unigram.Controls
 
         public UIElement Banner
         {
-            get { return (UIElement)GetValue(PageHeaderProperty); }
-            set { SetValue(PageHeaderProperty, value); }
+            get => (UIElement)GetValue(PageHeaderProperty);
+            set => SetValue(PageHeaderProperty, value);
         }
 
         public static readonly DependencyProperty PageHeaderProperty =
@@ -509,8 +506,8 @@ namespace Unigram.Controls
 
         public UIElement MasterHeader
         {
-            get { return (UIElement)GetValue(MasterHeaderProperty); }
-            set { SetValue(MasterHeaderProperty, value); }
+            get => (UIElement)GetValue(MasterHeaderProperty);
+            set => SetValue(MasterHeaderProperty, value);
         }
 
         public static readonly DependencyProperty MasterHeaderProperty =
@@ -522,8 +519,8 @@ namespace Unigram.Controls
 
         public UIElement DetailHeader
         {
-            get { return (UIElement)GetValue(DetailHeaderProperty); }
-            set { SetValue(DetailHeaderProperty, value); }
+            get => (UIElement)GetValue(DetailHeaderProperty);
+            set => SetValue(DetailHeaderProperty, value);
         }
 
         public static readonly DependencyProperty DetailHeaderProperty =
@@ -535,8 +532,8 @@ namespace Unigram.Controls
 
         public double BackgroundOpacity
         {
-            get { return (double)GetValue(BackgroundOpacityProperty); }
-            set { SetValue(BackgroundOpacityProperty, value); }
+            get => (double)GetValue(BackgroundOpacityProperty);
+            set => SetValue(BackgroundOpacityProperty, value);
         }
 
         public static readonly DependencyProperty BackgroundOpacityProperty =
@@ -548,8 +545,8 @@ namespace Unigram.Controls
 
         public bool IsBlank
         {
-            get { return (bool)GetValue(IsBlankProperty); }
-            set { SetValue(IsBlankProperty, value); }
+            get => (bool)GetValue(IsBlankProperty);
+            set => SetValue(IsBlankProperty, value);
         }
 
         public static readonly DependencyProperty IsBlankProperty =

@@ -379,8 +379,8 @@ namespace Unigram.Controls
         /// </summary>
         public double Direct
         {
-            get { return _direct; }
-            set { _direct = value; }
+            get => _direct;
+            set => _direct = value;
         }
 
         /// <summary>
@@ -395,8 +395,8 @@ namespace Unigram.Controls
         /// </summary>
         public double Indirect
         {
-            get { return _indirect; }
-            set { _indirect = value; }
+            get => _indirect;
+            set => _indirect = value;
         }
 
         /// <summary>
@@ -404,12 +404,9 @@ namespace Unigram.Controls
         /// </summary>
         public double Width
         {
-            get
-            {
-                return (Orientation == Orientation.Horizontal) ?
+            get => (Orientation == Orientation.Horizontal) ?
                     Direct :
                     Indirect;
-            }
             set
             {
                 if (Orientation == Orientation.Horizontal)
@@ -428,12 +425,9 @@ namespace Unigram.Controls
         /// </summary>
         public double Height
         {
-            get
-            {
-                return (Orientation != Orientation.Horizontal) ?
+            get => (Orientation != Orientation.Horizontal) ?
                     Direct :
                     Indirect;
-            }
             set
             {
                 if (Orientation != Orientation.Horizontal)

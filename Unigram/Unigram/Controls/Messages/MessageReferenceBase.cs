@@ -32,8 +32,8 @@ namespace Unigram.Controls.Messages
 
         public object Message
         {
-            get { return GetValue(MessageProperty); }
-            set { SetValue(MessageProperty, value); }
+            get => GetValue(MessageProperty);
+            set => SetValue(MessageProperty, value);
         }
 
         public static readonly DependencyProperty MessageProperty =

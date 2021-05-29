@@ -1031,8 +1031,8 @@ namespace Unigram.Controls.Chats
 
         public object Reply
         {
-            get { return GetValue(ReplyProperty); }
-            set { SetValue(ReplyProperty, value); }
+            get => GetValue(ReplyProperty);
+            set => SetValue(ReplyProperty, value);
         }
 
         // Using a DependencyProperty as the backing store for Reply.  This enables animation, styling, binding, etc...

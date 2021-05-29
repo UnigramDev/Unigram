@@ -77,8 +77,8 @@ namespace Unigram.Controls
 
         public CornerRadius ItemsPanelCornerRadius
         {
-            get { return (CornerRadius)GetValue(ItemsPanelCornerRadiusProperty); }
-            set { SetValue(ItemsPanelCornerRadiusProperty, value); }
+            get => (CornerRadius)GetValue(ItemsPanelCornerRadiusProperty);
+            set => SetValue(ItemsPanelCornerRadiusProperty, value);
         }
 
         public static readonly DependencyProperty ItemsPanelCornerRadiusProperty =

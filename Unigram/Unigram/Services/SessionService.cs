@@ -51,23 +51,14 @@ namespace Unigram.Services
         private int _unreadCount;
         public int UnreadCount
         {
-            get
-            {
-                return _unreadCount;
-            }
-            private set
-            {
-                Set(ref _unreadCount, value);
-            }
+            get => _unreadCount;
+            private set => Set(ref _unreadCount, value);
         }
 
         private bool _isActive;
         public bool IsActive
         {
-            get
-            {
-                return _isActive;
-            }
+            get => _isActive;
             set
             {
                 //Set(ref _isActive, value);

@@ -61,14 +61,8 @@ namespace Unigram.ViewModels
         private StickerSet _stickerSet = new StickerSet();
         public StickerSet StickerSet
         {
-            get
-            {
-                return _stickerSet;
-            }
-            set
-            {
-                Set(ref _stickerSet, value);
-            }
+            get => _stickerSet;
+            set => Set(ref _stickerSet, value);
         }
 
         public MvxObservableCollection<Sticker> Items { get; private set; }

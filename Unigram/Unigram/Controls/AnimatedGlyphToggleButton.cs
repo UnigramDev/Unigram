@@ -120,8 +120,8 @@ namespace Unigram.Controls
 
         public object CheckedContent
         {
-            get { return GetValue(CheckedContentProperty); }
-            set { SetValue(CheckedContentProperty, value); }
+            get => GetValue(CheckedContentProperty);
+            set => SetValue(CheckedContentProperty, value);
         }
 
         public static readonly DependencyProperty CheckedContentProperty =
@@ -133,8 +133,8 @@ namespace Unigram.Controls
 
         public string CheckedGlyph
         {
-            get { return (string)GetValue(CheckedGlyphProperty); }
-            set { SetValue(CheckedGlyphProperty, value); }
+            get => (string)GetValue(CheckedGlyphProperty);
+            set => SetValue(CheckedGlyphProperty, value);
         }
 
         public static readonly DependencyProperty CheckedGlyphProperty =
@@ -146,8 +146,8 @@ namespace Unigram.Controls
 
         public string Glyph
         {
-            get { return (string)GetValue(GlyphProperty); }
-            set { SetValue(GlyphProperty, value); }
+            get => (string)GetValue(GlyphProperty);
+            set => SetValue(GlyphProperty, value);
         }
 
         public static readonly DependencyProperty GlyphProperty =
@@ -159,8 +159,8 @@ namespace Unigram.Controls
 
         public bool IsOneWay
         {
-            get { return (bool)GetValue(IsOneWayProperty); }
-            set { SetValue(IsOneWayProperty, value); }
+            get => (bool)GetValue(IsOneWayProperty);
+            set => SetValue(IsOneWayProperty, value);
         }
 
         public static readonly DependencyProperty IsOneWayProperty =

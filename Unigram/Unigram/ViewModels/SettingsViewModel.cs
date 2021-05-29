@@ -45,8 +45,8 @@ namespace Unigram.ViewModels
         private Chat _chat;
         public Chat Chat
         {
-            get { return _chat; }
-            set { Set(ref _chat, value); }
+            get => _chat;
+            set => Set(ref _chat, value);
         }
 
         public MvxObservableCollection<SettingsSearchEntry> Results { get; private set; }

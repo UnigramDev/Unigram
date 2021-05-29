@@ -69,8 +69,8 @@ namespace Unigram.Controls
 
         public double Progress
         {
-            get { return (double)GetValue(ProgressProperty); }
-            set { SetValue(ProgressProperty, value); }
+            get => (double)GetValue(ProgressProperty);
+            set => SetValue(ProgressProperty, value);
         }
 
         // Using a DependencyProperty as the backing store for Progress.  This enables animation, styling, binding, etc...
@@ -85,8 +85,8 @@ namespace Unigram.Controls
 
         public Visibility ProgressVisibility
         {
-            get { return (Visibility)GetValue(ProgressVisibilityProperty); }
-            set { SetValue(ProgressVisibilityProperty, value); }
+            get => (Visibility)GetValue(ProgressVisibilityProperty);
+            set => SetValue(ProgressVisibilityProperty, value);
         }
 
         public static readonly DependencyProperty ProgressVisibilityProperty =

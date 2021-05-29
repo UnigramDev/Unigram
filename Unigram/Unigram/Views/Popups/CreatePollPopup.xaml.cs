@@ -250,8 +250,8 @@ namespace Unigram.Views.Popups
         private string _text;
         public string Text
         {
-            get { return _text; }
-            set { Set(ref _text, value); }
+            get => _text;
+            set => Set(ref _text, value);
         }
 
         private bool _isChecked;
@@ -271,8 +271,8 @@ namespace Unigram.Views.Popups
         private bool _focusOnLoaded;
         public bool FocusOnLoaded
         {
-            get { return _focusOnLoaded; }
-            set { Set(ref _focusOnLoaded, value); }
+            get => _focusOnLoaded;
+            set => Set(ref _focusOnLoaded, value);
         }
 
         public RelayCommand RemoveCommand { get; }

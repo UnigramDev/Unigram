@@ -15,8 +15,8 @@ namespace Unigram.Controls
 
         public Visibility BackVisibility
         {
-            get { return (Visibility)GetValue(BackVisibilityProperty); }
-            set { SetValue(BackVisibilityProperty, value); }
+            get => (Visibility)GetValue(BackVisibilityProperty);
+            set => SetValue(BackVisibilityProperty, value);
         }
 
         public static readonly DependencyProperty BackVisibilityProperty =
@@ -28,8 +28,8 @@ namespace Unigram.Controls
 
         public string Text
         {
-            get { return (string)GetValue(TextProperty); }
-            set { SetValue(TextProperty, value); }
+            get => (string)GetValue(TextProperty);
+            set => SetValue(TextProperty, value);
         }
 
         public static readonly DependencyProperty TextProperty =
@@ -41,8 +41,8 @@ namespace Unigram.Controls
 
         public bool IsLoading
         {
-            get { return (bool)GetValue(IsLoadingProperty); }
-            set { SetValue(IsLoadingProperty, value); }
+            get => (bool)GetValue(IsLoadingProperty);
+            set => SetValue(IsLoadingProperty, value);
         }
 
         public static readonly DependencyProperty IsLoadingProperty =
@@ -62,8 +62,8 @@ namespace Unigram.Controls
 
         public string Glyph
         {
-            get { return (string)GetValue(GlyphProperty); }
-            set { SetValue(GlyphProperty, value); }
+            get => (string)GetValue(GlyphProperty);
+            set => SetValue(GlyphProperty, value);
         }
 
         public static readonly DependencyProperty GlyphProperty =
@@ -75,8 +75,8 @@ namespace Unigram.Controls
 
         public ICommand Command
         {
-            get { return (ICommand)GetValue(CommandProperty); }
-            set { SetValue(CommandProperty, value); }
+            get => (ICommand)GetValue(CommandProperty);
+            set => SetValue(CommandProperty, value);
         }
 
         public static readonly DependencyProperty CommandProperty =
@@ -88,8 +88,8 @@ namespace Unigram.Controls
 
         public object CommandParameter
         {
-            get { return GetValue(CommandParameterProperty); }
-            set { SetValue(CommandParameterProperty, value); }
+            get => GetValue(CommandParameterProperty);
+            set => SetValue(CommandParameterProperty, value);
         }
 
         public static readonly DependencyProperty CommandParameterProperty =
@@ -101,8 +101,8 @@ namespace Unigram.Controls
 
         public Visibility CommandVisibility
         {
-            get { return (Visibility)GetValue(CommandVisibilityProperty); }
-            set { SetValue(CommandVisibilityProperty, value); }
+            get => (Visibility)GetValue(CommandVisibilityProperty);
+            set => SetValue(CommandVisibilityProperty, value);
         }
 
         public static readonly DependencyProperty CommandVisibilityProperty =
@@ -114,8 +114,8 @@ namespace Unigram.Controls
 
         public string CommandToolTip
         {
-            get { return (string)GetValue(CommandToolTipProperty); }
-            set { SetValue(CommandToolTipProperty, value); }
+            get => (string)GetValue(CommandToolTipProperty);
+            set => SetValue(CommandToolTipProperty, value);
         }
 
         public static readonly DependencyProperty CommandToolTipProperty =
@@ -135,8 +135,8 @@ namespace Unigram.Controls
 
         public Visibility BackVisibility
         {
-            get { return (Visibility)GetValue(BackVisibilityProperty); }
-            set { SetValue(BackVisibilityProperty, value); }
+            get => (Visibility)GetValue(BackVisibilityProperty);
+            set => SetValue(BackVisibilityProperty, value);
         }
 
         public static readonly DependencyProperty BackVisibilityProperty =
@@ -148,8 +148,8 @@ namespace Unigram.Controls
 
         public bool IsLoading
         {
-            get { return (bool)GetValue(IsLoadingProperty); }
-            set { SetValue(IsLoadingProperty, value); }
+            get => (bool)GetValue(IsLoadingProperty);
+            set => SetValue(IsLoadingProperty, value);
         }
 
         public static readonly DependencyProperty IsLoadingProperty =

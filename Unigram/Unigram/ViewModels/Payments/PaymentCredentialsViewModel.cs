@@ -80,79 +80,43 @@ namespace Unigram.ViewModels.Payments
         private string _card;
         public string Card
         {
-            get
-            {
-                return _card;
-            }
-            set
-            {
-                Set(ref _card, value);
-            }
+            get => _card;
+            set => Set(ref _card, value);
         }
 
         private string _date;
         public string Date
         {
-            get
-            {
-                return _date;
-            }
-            set
-            {
-                Set(ref _date, value);
-            }
+            get => _date;
+            set => Set(ref _date, value);
         }
 
         private string _cardName;
         public string CardName
         {
-            get
-            {
-                return _cardName;
-            }
-            set
-            {
-                Set(ref _cardName, value);
-            }
+            get => _cardName;
+            set => Set(ref _cardName, value);
         }
 
         private string _cvc;
         public string CVC
         {
-            get
-            {
-                return _cvc;
-            }
-            set
-            {
-                Set(ref _cvc, value);
-            }
+            get => _cvc;
+            set => Set(ref _cvc, value);
         }
 
         private string _postcode;
         public string Postcode
         {
-            get
-            {
-                return _postcode;
-            }
-            set
-            {
-                Set(ref _postcode, value);
-            }
+            get => _postcode;
+            set => Set(ref _postcode, value);
         }
 
         private Country _selectedCountry = Country.All[0];
         public Country SelectedCountry
         {
-            get
-            {
-                return _selectedCountry;
-            }
-            set
-            {
-                Set(ref _selectedCountry, value);
-            }
+            get => _selectedCountry;
+            set => Set(ref _selectedCountry, value);
         }
 
         #endregion
@@ -160,14 +124,8 @@ namespace Unigram.ViewModels.Payments
         private bool? _isSave = true;
         public bool? IsSave
         {
-            get
-            {
-                return _isSave;
-            }
-            set
-            {
-                Set(ref _isSave, value);
-            }
+            get => _isSave;
+            set => Set(ref _isSave, value);
         }
 
         public async Task<SavedCredentials> ValidateAsync()

@@ -151,10 +151,7 @@ namespace Unigram.ViewModels.Settings
 
         public bool IsContactsSyncEnabled
         {
-            get
-            {
-                return Settings.IsContactsSyncEnabled;
-            }
+            get => Settings.IsContactsSyncEnabled;
             set
             {
                 Settings.IsContactsSyncEnabled = value;
@@ -164,22 +161,13 @@ namespace Unigram.ViewModels.Settings
 
         public bool IsContactsSuggestEnabled
         {
-            get
-            {
-                return !CacheService.Options.DisableTopChats;
-            }
-            set
-            {
-                SetSuggestContacts(value);
-            }
+            get => !CacheService.Options.DisableTopChats;
+            set => SetSuggestContacts(value);
         }
 
         public bool IsArchiveAndMuteEnabled
         {
-            get
-            {
-                return ProtoService.Options.ArchiveAndMuteNewChatsFromUnknownUsers;
-            }
+            get => ProtoService.Options.ArchiveAndMuteNewChatsFromUnknownUsers;
             set
             {
                 ProtoService.Options.ArchiveAndMuteNewChatsFromUnknownUsers = value;
@@ -189,10 +177,7 @@ namespace Unigram.ViewModels.Settings
 
         public bool IsSecretPreviewsEnabled
         {
-            get
-            {
-                return Settings.IsSecretPreviewsEnabled;
-            }
+            get => Settings.IsSecretPreviewsEnabled;
             set
             {
                 Settings.IsSecretPreviewsEnabled = value;
@@ -202,10 +187,7 @@ namespace Unigram.ViewModels.Settings
 
         public bool IgnoreSensitiveContentRestrictions
         {
-            get
-            {
-                return CacheService.Options.IgnoreSensitiveContentRestrictions;
-            }
+            get => CacheService.Options.IgnoreSensitiveContentRestrictions;
             set
             {
                 if (CacheService.Options.CanIgnoreSensitiveContentRestrictions)

@@ -501,8 +501,8 @@ namespace Unigram.Controls
 
         public bool IsLoopingEnabled
         {
-            get { return (bool)GetValue(IsLoopingEnabledProperty); }
-            set { SetValue(IsLoopingEnabledProperty, value); }
+            get => (bool)GetValue(IsLoopingEnabledProperty);
+            set => SetValue(IsLoopingEnabledProperty, value);
         }
 
         public static readonly DependencyProperty IsLoopingEnabledProperty =
@@ -519,8 +519,8 @@ namespace Unigram.Controls
 
         public bool IsCachingEnabled
         {
-            get { return (bool)GetValue(IsCachingEnabledProperty); }
-            set { SetValue(IsCachingEnabledProperty, value); }
+            get => (bool)GetValue(IsCachingEnabledProperty);
+            set => SetValue(IsCachingEnabledProperty, value);
         }
 
         public static readonly DependencyProperty IsCachingEnabledProperty =
@@ -537,8 +537,8 @@ namespace Unigram.Controls
 
         public bool IsBackward
         {
-            get { return (bool)GetValue(IsBackwardProperty); }
-            set { SetValue(IsBackwardProperty, value); }
+            get => (bool)GetValue(IsBackwardProperty);
+            set => SetValue(IsBackwardProperty, value);
         }
 
         public static readonly DependencyProperty IsBackwardProperty =
@@ -555,8 +555,8 @@ namespace Unigram.Controls
 
         public SizeInt32 FrameSize
         {
-            get { return (SizeInt32)GetValue(FrameSizeProperty); }
-            set { SetValue(FrameSizeProperty, value); }
+            get => (SizeInt32)GetValue(FrameSizeProperty);
+            set => SetValue(FrameSizeProperty, value);
         }
 
         public static readonly DependencyProperty FrameSizeProperty =
@@ -573,8 +573,8 @@ namespace Unigram.Controls
 
         public bool AutoPlay
         {
-            get { return (bool)GetValue(AutoPlayProperty); }
-            set { SetValue(AutoPlayProperty, value); }
+            get => (bool)GetValue(AutoPlayProperty);
+            set => SetValue(AutoPlayProperty, value);
         }
 
         public static readonly DependencyProperty AutoPlayProperty =
@@ -586,8 +586,8 @@ namespace Unigram.Controls
 
         public Uri Source
         {
-            get { return (Uri)GetValue(SourceProperty); }
-            set { SetValue(SourceProperty, value); }
+            get => (Uri)GetValue(SourceProperty);
+            set => SetValue(SourceProperty, value);
         }
 
         public static readonly DependencyProperty SourceProperty =

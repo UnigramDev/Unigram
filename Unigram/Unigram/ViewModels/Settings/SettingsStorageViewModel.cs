@@ -65,53 +65,29 @@ namespace Unigram.ViewModels.Settings
         private StorageStatisticsFast _statisticsFast;
         public StorageStatisticsFast StatisticsFast
         {
-            get
-            {
-                return _statisticsFast;
-            }
-            set
-            {
-                Set(ref _statisticsFast, value);
-            }
+            get => _statisticsFast;
+            set => Set(ref _statisticsFast, value);
         }
 
         private StorageStatistics _statistics;
         public StorageStatistics Statistics
         {
-            get
-            {
-                return _statistics;
-            }
-            set
-            {
-                Set(ref _statistics, ProcessTotal(value));
-            }
+            get => _statistics;
+            set => Set(ref _statistics, ProcessTotal(value));
         }
 
         private StorageStatisticsByChat _totalStatistics;
         public StorageStatisticsByChat TotalStatistics
         {
-            get
-            {
-                return _totalStatistics;
-            }
-            set
-            {
-                Set(ref _totalStatistics, value);
-            }
+            get => _totalStatistics;
+            set => Set(ref _totalStatistics, value);
         }
 
         private bool _taskCompleted;
         public bool TaskCompleted
         {
-            get
-            {
-                return _taskCompleted;
-            }
-            set
-            {
-                Set(ref _taskCompleted, value);
-            }
+            get => _taskCompleted;
+            set => Set(ref _taskCompleted, value);
         }
 
         public RelayCommand ClearCacheCommand { get; }

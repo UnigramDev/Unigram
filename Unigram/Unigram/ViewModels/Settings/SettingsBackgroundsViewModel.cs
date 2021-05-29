@@ -81,14 +81,8 @@ namespace Unigram.ViewModels.Settings
         private Background _selectedItem;
         public Background SelectedItem
         {
-            get
-            {
-                return _selectedItem;
-            }
-            set
-            {
-                Set(ref _selectedItem, value);
-            }
+            get => _selectedItem;
+            set => Set(ref _selectedItem, value);
         }
 
         public MvxObservableCollection<Background> Items { get; private set; }

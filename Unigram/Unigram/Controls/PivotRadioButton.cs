@@ -22,8 +22,8 @@ namespace Unigram.Controls
         #region SelectedValue
         public int SelectedValue
         {
-            get { return (int)GetValue(SelectedValueProperty); }
-            set { SetValue(SelectedValueProperty, value); }
+            get => (int)GetValue(SelectedValueProperty);
+            set => SetValue(SelectedValueProperty, value);
         }
 
         public static readonly DependencyProperty SelectedValueProperty =
@@ -38,8 +38,8 @@ namespace Unigram.Controls
         #region Index
         public int Index
         {
-            get { return (int)GetValue(IndexProperty); }
-            set { SetValue(IndexProperty, value); }
+            get => (int)GetValue(IndexProperty);
+            set => SetValue(IndexProperty, value);
         }
 
         public static readonly DependencyProperty IndexProperty =

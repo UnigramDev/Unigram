@@ -67,10 +67,7 @@ namespace Unigram.ViewModels.Gallery
         protected int _totalItems;
         public int TotalItems
         {
-            get
-            {
-                return _totalItems;
-            }
+            get => _totalItems;
             set
             {
                 Set(ref _totalItems, value);
@@ -81,10 +78,7 @@ namespace Unigram.ViewModels.Gallery
         protected GalleryContent _selectedItem;
         public GalleryContent SelectedItem
         {
-            get
-            {
-                return _selectedItem;
-            }
+            get => _selectedItem;
             set
             {
                 Set(ref _selectedItem, value);
@@ -96,27 +90,15 @@ namespace Unigram.ViewModels.Gallery
         protected GalleryContent _firstItem;
         public GalleryContent FirstItem
         {
-            get
-            {
-                return _firstItem;
-            }
-            set
-            {
-                Set(ref _firstItem, value);
-            }
+            get => _firstItem;
+            set => Set(ref _firstItem, value);
         }
 
         protected object _poster;
         public object Poster
         {
-            get
-            {
-                return _poster;
-            }
-            set
-            {
-                Set(ref _poster, value);
-            }
+            get => _poster;
+            set => Set(ref _poster, value);
         }
 
         public MvxObservableCollection<GalleryContent> Items { get; protected set; }

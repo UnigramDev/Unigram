@@ -198,27 +198,15 @@ namespace Unigram.ViewModels.Settings
         private int _featuredStickersCount;
         public int FeaturedStickersCount
         {
-            get
-            {
-                return _featuredStickersCount;
-            }
-            set
-            {
-                Set(ref _featuredStickersCount, value);
-            }
+            get => _featuredStickersCount;
+            set => Set(ref _featuredStickersCount, value);
         }
 
         private int _archivedStickersCount;
         public int ArchivedStickersCount
         {
-            get
-            {
-                return _archivedStickersCount;
-            }
-            set
-            {
-                Set(ref _archivedStickersCount, value);
-            }
+            get => _archivedStickersCount;
+            set => Set(ref _archivedStickersCount, value);
         }
 
         public MvxObservableCollection<StickerSetInfo> Items { get; private set; }
@@ -232,10 +220,7 @@ namespace Unigram.ViewModels.Settings
 
         public StickersSuggestionMode SuggestStickers
         {
-            get
-            {
-                return Settings.Stickers.SuggestionMode;
-            }
+            get => Settings.Stickers.SuggestionMode;
             set
             {
                 Settings.Stickers.SuggestionMode = value;
@@ -245,10 +230,7 @@ namespace Unigram.ViewModels.Settings
 
         public bool IsLoopingEnabled
         {
-            get
-            {
-                return Settings.Stickers.IsLoopingEnabled;
-            }
+            get => Settings.Stickers.IsLoopingEnabled;
             set
             {
                 Settings.Stickers.IsLoopingEnabled = value;

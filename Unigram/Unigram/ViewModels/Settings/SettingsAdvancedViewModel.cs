@@ -142,10 +142,7 @@ namespace Unigram.ViewModels.Settings
 
         public bool IsAdaptiveWideEnabled
         {
-            get
-            {
-                return Settings.IsAdaptiveWideEnabled;
-            }
+            get => Settings.IsAdaptiveWideEnabled;
             set
             {
                 Settings.IsAdaptiveWideEnabled = value;
@@ -155,10 +152,7 @@ namespace Unigram.ViewModels.Settings
 
         public bool PreferIpv6
         {
-            get
-            {
-                return CacheService.Options.PreferIpv6;
-            }
+            get => CacheService.Options.PreferIpv6;
             set
             {
                 CacheService.Options.PreferIpv6 = value;
@@ -168,7 +162,7 @@ namespace Unigram.ViewModels.Settings
 
         public bool IsTrayVisible
         {
-            get { return Settings.IsTrayVisible; }
+            get => Settings.IsTrayVisible;
             set
             {
                 if (Settings.IsTrayVisible != value)

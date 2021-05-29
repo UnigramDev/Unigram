@@ -268,10 +268,7 @@ namespace Unigram.Services
         private AutoDownloadSettings _autoDownload;
         public AutoDownloadSettings AutoDownload
         {
-            get
-            {
-                return _autoDownload ??= new AutoDownloadSettings(_own.CreateContainer("AutoDownload", ApplicationDataCreateDisposition.Always));
-            }
+            get => _autoDownload ??= new AutoDownloadSettings(_own.CreateContainer("AutoDownload", ApplicationDataCreateDisposition.Always));
             set
             {
                 _autoDownload = value ?? AutoDownloadSettings.Default;

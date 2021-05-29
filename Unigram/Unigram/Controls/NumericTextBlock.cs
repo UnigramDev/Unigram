@@ -58,8 +58,8 @@ namespace Unigram.Controls
 
         public int Value
         {
-            get { return (int)GetValue(ValueProperty); }
-            set { SetValue(ValueProperty, value); }
+            get => (int)GetValue(ValueProperty);
+            set => SetValue(ValueProperty, value);
         }
 
         public static readonly DependencyProperty ValueProperty =

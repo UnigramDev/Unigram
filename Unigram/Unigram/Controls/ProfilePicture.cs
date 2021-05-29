@@ -15,8 +15,8 @@ namespace Unigram.Controls
 
         public ImageSource Source
         {
-            get { return (ImageSource)GetValue(SourceProperty); }
-            set { SetValue(SourceProperty, value); }
+            get => (ImageSource)GetValue(SourceProperty);
+            set => SetValue(SourceProperty, value);
         }
 
         public static readonly DependencyProperty SourceProperty =

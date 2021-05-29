@@ -2999,8 +2999,8 @@ namespace Unigram.Views
     {
         public UIElement Header
         {
-            get { return (UIElement)GetValue(HeaderProperty); }
-            set { SetValue(HeaderProperty, value); }
+            get => (UIElement)GetValue(HeaderProperty);
+            set => SetValue(HeaderProperty, value);
         }
 
         public static readonly DependencyProperty HeaderProperty =
@@ -3011,8 +3011,8 @@ namespace Unigram.Views
     {
         public UIElement Header
         {
-            get { return (UIElement)GetValue(HeaderProperty); }
-            set { SetValue(HeaderProperty, value); }
+            get => (UIElement)GetValue(HeaderProperty);
+            set => SetValue(HeaderProperty, value);
         }
 
         public static readonly DependencyProperty HeaderProperty =

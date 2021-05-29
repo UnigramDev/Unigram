@@ -14,8 +14,8 @@ namespace Unigram.Controls
 
         public string Header
         {
-            get { return (string)GetValue(HeaderProperty); }
-            set { SetValue(HeaderProperty, value); }
+            get => (string)GetValue(HeaderProperty);
+            set => SetValue(HeaderProperty, value);
         }
 
         public static readonly DependencyProperty HeaderProperty =
@@ -27,8 +27,8 @@ namespace Unigram.Controls
 
         public string Footer
         {
-            get { return (string)GetValue(FooterProperty); }
-            set { SetValue(FooterProperty, value); }
+            get => (string)GetValue(FooterProperty);
+            set => SetValue(FooterProperty, value);
         }
 
         public static readonly DependencyProperty FooterProperty =

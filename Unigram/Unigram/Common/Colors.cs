@@ -18,20 +18,20 @@ namespace Unigram.Common
 
         public byte R
         {
-            get { return _r; }
-            set { _r = value; }
+            get => _r;
+            set => _r = value;
         }
 
         public byte G
         {
-            get { return _g; }
-            set { _g = value; }
+            get => _g;
+            set => _g = value;
         }
 
         public byte B
         {
-            get { return _b; }
-            set { _b = value; }
+            get => _b;
+            set => _b = value;
         }
 
         public bool Equals(RGB rgb)
@@ -169,20 +169,20 @@ namespace Unigram.Common
 
         public double H
         {
-            get { return _h; }
-            set { _h = value; }
+            get => _h;
+            set => _h = value;
         }
 
         public double S
         {
-            get { return _s; }
-            set { _s = value; }
+            get => _s;
+            set => _s = value;
         }
 
         public double V
         {
-            get { return _v; }
-            set { _v = value; }
+            get => _v;
+            set => _v = value;
         }
 
         public bool Equals(HSV hsv)
@@ -282,20 +282,20 @@ namespace Unigram.Common
 
         public int H
         {
-            get { return _h; }
-            set { _h = value; }
+            get => _h;
+            set => _h = value;
         }
 
         public double S
         {
-            get { return _s; }
-            set { _s = value; }
+            get => _s;
+            set => _s = value;
         }
 
         public double L
         {
-            get { return _l; }
-            set { _l = value; }
+            get => _l;
+            set => _l = value;
         }
 
         public bool Equals(HSL hsl)

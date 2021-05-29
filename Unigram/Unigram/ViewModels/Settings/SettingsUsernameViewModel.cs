@@ -38,10 +38,7 @@ namespace Unigram.ViewModels.Settings
         private string _username = string.Empty;
         public string Username
         {
-            get
-            {
-                return _username;
-            }
+            get => _username;
             set
             {
                 Set(ref _username, value);
@@ -52,40 +49,22 @@ namespace Unigram.ViewModels.Settings
         private bool _isValid;
         public bool IsValid
         {
-            get
-            {
-                return _isValid;
-            }
-            set
-            {
-                Set(ref _isValid, value);
-            }
+            get => _isValid;
+            set => Set(ref _isValid, value);
         }
 
         private bool _isAvailable;
         public bool IsAvailable
         {
-            get
-            {
-                return _isAvailable;
-            }
-            set
-            {
-                Set(ref _isAvailable, value);
-            }
+            get => _isAvailable;
+            set => Set(ref _isAvailable, value);
         }
 
         private string _errorMessage;
         public string ErrorMessage
         {
-            get
-            {
-                return _errorMessage;
-            }
-            set
-            {
-                Set(ref _errorMessage, value);
-            }
+            get => _errorMessage;
+            set => Set(ref _errorMessage, value);
         }
 
         public async void CheckAvailability(string text)
