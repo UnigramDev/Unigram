@@ -927,15 +927,6 @@ namespace Unigram.ViewModels
         {
             using (await _loadMoreLock.WaitAsync())
             {
-                var outgoing = message.IsOutgoing && message.SendingState is MessageSendingStatePending;
-
-                //if (!IsFirstSliceLoaded)
-                //{
-                //    return;
-                //}
-
-                //if (IsEndReached())
-                //if (endReached || IsEndReached())
                 if (IsFirstSliceLoaded == true || Type == DialogType.ScheduledMessages)
                 {
                     var messageCommon = _messageFactory.Create(this, message);
@@ -965,13 +956,15 @@ namespace Unigram.ViewModels
                     {
                         ComposerHeader = null;
                     }
+
+                    goto LoadMessage;
                 }
 
-                if (outgoing)
-                {
-                    await LoadMessageSliceAsync(null, message.Id, VerticalAlignment.Bottom);
-                }
+                return;
             }
+
+            LoadMessage:
+            await LoadMessageSliceAsync(null, message.Id, VerticalAlignment.Bottom);
         }
 
         public static int InsertMessageInOrder(IList<MessageViewModel> messages, MessageViewModel message)

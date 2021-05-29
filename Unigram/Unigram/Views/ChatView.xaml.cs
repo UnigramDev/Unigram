@@ -558,6 +558,13 @@ namespace Unigram.Views
                     && message.GeneratedContent is MessageBigEmoji or MessageSticker or null
                     && ApiInfo.CanUseActualFloats;
 
+                await Messages.ItemsStack.UpdateLayoutAsync();
+
+                if (message.IsOutgoing && message.SendingState is MessageSendingStatePending && !Messages.IsBottomReached)
+                {
+                    Messages.ScrollingHost.ChangeView(null, Messages.ScrollingHost.ScrollableHeight, null);
+                }
+
                 var withinViewport = panel.FirstVisibleIndex <= args.NewStartingIndex && panel.LastVisibleIndex >= args.NewStartingIndex - 1;
                 if (withinViewport is false)
                 {
@@ -568,8 +575,6 @@ namespace Unigram.Views
 
                     return;
                 }
-
-                await Messages.ItemsStack.UpdateLayoutAsync();
 
                 if (animateSendout && ViewModel.ComposerHeader == null)
                 {

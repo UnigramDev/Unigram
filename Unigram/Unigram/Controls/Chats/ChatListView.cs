@@ -20,6 +20,8 @@ namespace Unigram.Controls.Chats
         public ScrollViewer ScrollingHost { get; private set; }
         public ItemsStackPanel ItemsStack { get; private set; }
 
+        public bool IsBottomReached => ScrollingHost?.VerticalOffset == ScrollingHost?.ScrollableHeight;
+
         public Action<bool> ViewVisibleMessages { get; set; }
 
         private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
