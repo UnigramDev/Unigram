@@ -18,6 +18,8 @@ namespace Unigram.Native
 		void DrawDeletedUser(Windows.UI.Color top, Windows.UI.Color bottom, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
 		void DrawProfilePlaceholder(String text, Windows.UI.Color top, Windows.UI.Color bottom, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
 
+		[default_overload]
 		void DrawThumbnailPlaceholder(String fileName, Single blurAmount, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
+		void DrawThumbnailPlaceholder(Windows.Foundation.Collections.IVector<byte> bytes, Single blurAmount, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
 	}
 } // namespace Unigram.Native

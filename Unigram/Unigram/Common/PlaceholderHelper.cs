@@ -460,6 +460,22 @@ namespace Unigram.Common
             return bitmap;
         }
 
+        public static ImageSource GetBlurred(IList<byte> bytes, float amount = 3)
+        {
+            var bitmap = new BitmapImage();
+            using (var stream = new InMemoryRandomAccessStream())
+            {
+                try
+                {
+                    PlaceholderImageHelper.Current.DrawThumbnailPlaceholder(bytes, amount, stream);
+                    bitmap.SetSource(stream);
+                }
+                catch { }
+            }
+
+            return bitmap;
+        }
+
         public static ImageSource GetQr(string data, Color foreground, Color background)
         {
             var bitmap = new BitmapImage();

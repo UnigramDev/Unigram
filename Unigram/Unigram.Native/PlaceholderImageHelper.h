@@ -55,6 +55,7 @@ namespace winrt::Unigram::Native::implementation
 		void DrawProfilePlaceholder(hstring text, _In_ Color top, _In_ Color bottom, _In_ IRandomAccessStream randomAccessStream);
 			
 		void DrawThumbnailPlaceholder(hstring fileName, float blurAmount, _In_ IRandomAccessStream randomAccessStream);
+		void DrawThumbnailPlaceholder(IVector<uint8_t> bytes, float blurAmount, _In_ IRandomAccessStream randomAccessStream);
 
 	//internal:
 	//	PlaceholderImageHelper();
@@ -70,6 +71,7 @@ namespace winrt::Unigram::Native::implementation
 		HRESULT InternalDrawDeletedUser(Color top, _In_ Color bottom, IRandomAccessStream randomAccessStream);
 		HRESULT InternalDrawProfilePlaceholder(hstring text, Color top, _In_ Color bottom, _In_ IRandomAccessStream randomAccessStream);
 		HRESULT InternalDrawThumbnailPlaceholder(hstring fileName, float blurAmount, _In_ IRandomAccessStream randomAccessStream);
+		HRESULT InternalDrawThumbnailPlaceholder(IVector<uint8_t> bytes, float blurAmount, _In_ IRandomAccessStream randomAccessStream);
 		HRESULT InternalDrawThumbnailPlaceholder(_In_ IWICBitmapSource* wicBitmapSource, float blurAmount, _In_ IRandomAccessStream randomAccessStream);
 		HRESULT SaveImageToStream(_In_ ID2D1Image* image, _In_ REFGUID wicFormat, _In_ IRandomAccessStream randomAccessStream);
 		HRESULT MeasureText(_In_ const wchar_t* text, _In_ IDWriteTextFormat* format, _Out_ DWRITE_TEXT_METRICS* textMetrics);

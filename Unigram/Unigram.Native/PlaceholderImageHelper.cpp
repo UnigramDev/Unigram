@@ -253,6 +253,11 @@ namespace winrt::Unigram::Native::implementation
 		winrt::check_hresult(InternalDrawThumbnailPlaceholder(fileName, blurAmount, randomAccessStream));
 	}
 
+	void PlaceholderImageHelper::DrawThumbnailPlaceholder(IVector<uint8_t> bytes, float blurAmount, IRandomAccessStream randomAccessStream)
+	{
+		winrt::check_hresult(InternalDrawThumbnailPlaceholder(bytes, blurAmount, randomAccessStream));
+	}
+
 	HRESULT PlaceholderImageHelper::InternalDrawSvg(hstring path, Color foreground, IRandomAccessStream randomAccessStream, Windows::Foundation::Size& size)
 	{
 		auto lock = critical_section::scoped_lock(m_criticalSection);
@@ -821,6 +826,41 @@ namespace winrt::Unigram::Native::implementation
 		ReturnIfFailed(result, InternalDrawThumbnailPlaceholder(wicFormatConverter.get(), blurAmount, randomAccessStream));
 
 		CloseHandle(file);
+
+		return result;
+	}
+
+	HRESULT PlaceholderImageHelper::InternalDrawThumbnailPlaceholder(IVector<uint8_t> bytes, float blurAmount, IRandomAccessStream randomAccessStream)
+	{
+		auto lock = critical_section::scoped_lock(m_criticalSection);
+
+		InMemoryRandomAccessStream inputAccessStream;
+
+		HRESULT result;
+		winrt::com_ptr<IStream> stream;
+		ReturnIfFailed(result, CreateStreamOverRandomAccessStream(winrt::get_unknown(inputAccessStream), IID_PPV_ARGS(&stream)));
+
+		auto yolo = std::vector<byte>(bytes.begin(), bytes.end());
+
+		ULONG size;
+		ReturnIfFailed(result, stream->Write(yolo.data(), bytes.Size(), &size));
+
+		ULARGE_INTEGER position;
+		ReturnIfFailed(result, stream->Seek({ 0 }, STREAM_SEEK_SET, &position));
+
+		winrt::com_ptr<IWICBitmapDecoder> wicBitmapDecoder;
+		ReturnIfFailed(result, m_wicFactory->CreateDecoderFromStream(stream.get(), nullptr, WICDecodeMetadataCacheOnLoad, wicBitmapDecoder.put()));
+
+		winrt::com_ptr<IWICBitmapFrameDecode> wicFrameDecode;
+		ReturnIfFailed(result, wicBitmapDecoder->GetFrame(0, wicFrameDecode.put()));
+
+		winrt::com_ptr<IWICFormatConverter> wicFormatConverter;
+		ReturnIfFailed(result, m_wicFactory->CreateFormatConverter(wicFormatConverter.put()));
+		ReturnIfFailed(result, wicFormatConverter->Initialize(wicFrameDecode.get(), GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, nullptr, 0.f, WICBitmapPaletteTypeCustom));
+
+		ReturnIfFailed(result, InternalDrawThumbnailPlaceholder(wicFormatConverter.get(), blurAmount, randomAccessStream));
+
+		inputAccessStream.Close();
 
 		return result;
 	}
