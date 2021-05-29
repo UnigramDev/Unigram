@@ -840,16 +840,11 @@ namespace winrt::Unigram::Native::implementation
 
 		auto yolo = std::vector<byte>(bytes.begin(), bytes.end());
 
-		ULONG size;
-		ReturnIfFailed(result, stream->Write(yolo.data(), bytes.Size(), &size));
-
-		ULARGE_INTEGER position;
-		ReturnIfFailed(result, stream->Seek({ 0 }, STREAM_SEEK_SET, &position));
+		ReturnIfFailed(result, stream->Write(yolo.data(), bytes.Size(), nullptr));
+		ReturnIfFailed(result, stream->Seek({ 0 }, STREAM_SEEK_SET, nullptr));
 
 		winrt::com_ptr<IWICBitmapDecoder> wicBitmapDecoder;
 		ReturnIfFailed(result, m_wicFactory->CreateDecoderFromStream(stream.get(), nullptr, WICDecodeMetadataCacheOnLoad, wicBitmapDecoder.put()));
-
-		ReturnIfFailed(result, stream->SetSize({ 0 }));
 
 		winrt::com_ptr<IWICBitmapFrameDecode> wicFrameDecode;
 		ReturnIfFailed(result, wicBitmapDecoder->GetFrame(0, wicFrameDecode.put()));
@@ -1070,14 +1065,13 @@ namespace winrt::Unigram::Native::implementation
 
 	void PlaceholderImageHelper::WriteBytes(IVector<byte> hash, IRandomAccessStream randomAccessStream)
 	{
-		HRESULT result;
 		winrt::com_ptr<IStream> stream;
 		winrt::check_hresult(CreateStreamOverRandomAccessStream(winrt::get_unknown(randomAccessStream), IID_PPV_ARGS(&stream)));
 
 		auto yolo = std::vector<byte>(hash.begin(), hash.end());
 
-		ULONG size;
-		winrt::check_hresult(stream->Write(yolo.data(), hash.Size(), &size));
+		winrt::check_hresult(stream->Write(yolo.data(), hash.Size(), nullptr));
+		winrt::check_hresult(stream->Seek({ 0 }, STREAM_SEEK_SET, nullptr));
 	}
 
 	HRESULT PlaceholderImageHelper::SaveImageToStream(ID2D1Image* image, REFGUID wicFormat, IRandomAccessStream randomAccessStream)
@@ -1085,6 +1079,10 @@ namespace winrt::Unigram::Native::implementation
 		HRESULT result;
 		winrt::com_ptr<IStream> stream;
 		ReturnIfFailed(result, CreateStreamOverRandomAccessStream(winrt::get_unknown(randomAccessStream), IID_PPV_ARGS(&stream)));
+
+		if (randomAccessStream.Size()) {
+			stream->SetSize({ 0 });
+		}
 
 		winrt::com_ptr<IWICBitmapEncoder> wicBitmapEncoder;
 		ReturnIfFailed(result, m_wicFactory->CreateEncoder(wicFormat, nullptr, wicBitmapEncoder.put()));
