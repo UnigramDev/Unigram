@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Numerics;
@@ -290,21 +289,9 @@ namespace Unigram.Controls.Gallery
             sender.Volume = SettingsService.Current.VolumeLevel;
         }
 
-        private static readonly Dictionary<int, WeakReference<GalleryView>> _windowContext = new Dictionary<int, WeakReference<GalleryView>>();
         public static GalleryView GetForCurrentView()
         {
             return new GalleryView();
-
-            var id = ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow);
-            if (_windowContext.TryGetValue(id, out WeakReference<GalleryView> reference) && reference.TryGetTarget(out GalleryView value))
-            {
-                return value;
-            }
-
-            var context = new GalleryView();
-            _windowContext[id] = new WeakReference<GalleryView>(context);
-
-            return context;
         }
 
         public IAsyncOperation<ContentDialogResult> ShowAsync(GalleryViewModelBase parameter, Func<FrameworkElement> closing = null)
@@ -757,17 +744,19 @@ namespace Unigram.Controls.Gallery
             var ctrl = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
             var shift = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
 
-            if (args.VirtualKey == Windows.System.VirtualKey.Left || args.VirtualKey == Windows.System.VirtualKey.GamepadLeftShoulder)
+            var keyCode = (int)args.VirtualKey;
+
+            if (args.VirtualKey is Windows.System.VirtualKey.Left or Windows.System.VirtualKey.GamepadLeftShoulder)
             {
                 ChangeView(0, false);
                 args.Handled = true;
             }
-            else if (args.VirtualKey == Windows.System.VirtualKey.Right || args.VirtualKey == Windows.System.VirtualKey.GamepadRightShoulder)
+            else if (args.VirtualKey is Windows.System.VirtualKey.Right or Windows.System.VirtualKey.GamepadRightShoulder)
             {
                 ChangeView(2, false);
                 args.Handled = true;
             }
-            else if (args.VirtualKey == Windows.System.VirtualKey.Space && !ctrl && !alt && !shift)
+            else if (args.VirtualKey is Windows.System.VirtualKey.Space && !ctrl && !alt && !shift)
             {
                 if (_mediaPlayer != null)
                 {
@@ -783,17 +772,22 @@ namespace Unigram.Controls.Gallery
                     args.Handled = true;
                 }
             }
-            else if (args.VirtualKey == Windows.System.VirtualKey.C && ctrl && !alt && !shift)
+            else if (args.VirtualKey is Windows.System.VirtualKey.C && ctrl && !alt && !shift)
             {
                 ViewModel?.CopyCommand.Execute();
                 args.Handled = true;
             }
-            else if (args.VirtualKey == Windows.System.VirtualKey.S && ctrl && !alt && !shift)
+            else if (args.VirtualKey is Windows.System.VirtualKey.S && ctrl && !alt && !shift)
             {
                 ViewModel?.SaveCommand.Execute();
                 args.Handled = true;
             }
-
+            else if (keyCode is 187 or 189 || args.VirtualKey is Windows.System.VirtualKey.Add or Windows.System.VirtualKey.Subtract)
+            {
+                var container = GetContainer(0);
+                container.Zoom(keyCode is 187 || args.VirtualKey is Windows.System.VirtualKey.Add);
+                args.Handled = true;
+            }
         }
 
         private void PrevButton_Click(object sender, RoutedEventArgs e)
@@ -1182,6 +1176,25 @@ namespace Unigram.Controls.Gallery
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
             OnBackRequestedOverride(this, new HandledEventArgs());
+        }
+
+        private void ZoomIn_Click(object sender, RoutedEventArgs e)
+        {
+            var container = GetContainer(0);
+            container.Zoom(true);
+        }
+
+        private void ZoomOut_Click(object sender, RoutedEventArgs e)
+        {
+            var container = GetContainer(0);
+            container.Zoom(false);
+        }
+
+        private void ImageView_InteractionsEnabledChanged(object sender, EventArgs e)
+        {
+            IsLightDismissEnabled = Element2.AreInteractionsEnabled
+                && Element0.AreInteractionsEnabled
+                && Element1.AreInteractionsEnabled;
         }
     }
 }

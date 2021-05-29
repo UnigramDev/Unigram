@@ -159,9 +159,9 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <local:GalleryContentView x:Name="Element2" ContextRequested="ImageView_ContextRequested"/>
-                    <local:GalleryContentView x:Name="Element0" ContextRequested="ImageView_ContextRequested" Grid.Column="1"/>
-                    <local:GalleryContentView x:Name="Element1" ContextRequested="ImageView_ContextRequested" Grid.Column="2"/>
+                    <local:GalleryContentView x:Name="Element2" InteractionsEnabledChanged="ImageView_InteractionsEnabledChanged" ContextRequested="ImageView_ContextRequested"/>
+                    <local:GalleryContentView x:Name="Element0" InteractionsEnabledChanged="ImageView_InteractionsEnabledChanged" ContextRequested="ImageView_ContextRequested" Grid.Column="1"/>
+                    <local:GalleryContentView x:Name="Element1" InteractionsEnabledChanged="ImageView_InteractionsEnabledChanged" ContextRequested="ImageView_ContextRequested" Grid.Column="2"/>
                 </local:GalleryPanel>
             </ScrollViewer>
         </Grid>
@@ -206,7 +206,17 @@
                     Height="{ThemeResource AppBarThemeCompactHeight}"
                     Glyph="&#xF4AA;"
                     FontSize="{StaticResource GlyphMediumFontSize}"/>
-                
+
+                <controls:GlyphButton
+                    Click="ZoomOut_Click"
+                    Height="{ThemeResource AppBarThemeCompactHeight}"
+                    Glyph="&#xE96A;"/>
+
+                <controls:GlyphButton
+                    Click="ZoomIn_Click"
+                    Height="{ThemeResource AppBarThemeCompactHeight}"
+                    Glyph="&#xE969;"/>
+
                 <controls:GlyphButton
                     Click="Compact_Click"
                     Visibility="{x:Bind ConvertCompactVisibility(ViewModel.SelectedItem), Mode=OneWay}"

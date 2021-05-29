@@ -28,8 +28,6 @@ namespace Unigram.Controls
 {
     public class OverlayPage : ContentControl, INavigablePage
     {
-        private int _lastHide;
-
         private ApplicationView _applicationView;
         private DisplayRegion _displayRegion;
 
@@ -42,7 +40,6 @@ namespace Unigram.Controls
 
         protected Border Container;
         protected Border BackgroundElement;
-        private readonly AppViewBackButtonVisibility BackButtonVisibility;
 
         public event EventHandler Closing;
 
@@ -337,7 +334,6 @@ namespace Unigram.Controls
                 return;
             }
 
-            _lastHide = Environment.TickCount;
             _result = result;
             _popupHost.IsOpen = false;
         }

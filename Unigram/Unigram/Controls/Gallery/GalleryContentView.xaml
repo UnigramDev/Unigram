@@ -21,7 +21,13 @@
                   VerticalScrollBarVisibility="Hidden"
                   HorizontalScrollBarVisibility="Hidden"
                   HorizontalScrollMode="Auto"
-                  ViewChanged="ScrollingHost_ViewChanged">
+                  ViewChanged="ScrollingHost_ViewChanged"
+                  PointerPressed="ScrollingHost_PointerPressed"
+                  PointerMoved="ScrollingHost_PointerMoved"
+                  PointerReleased="ScrollingHost_PointerReleased"
+                  PointerCanceled="ScrollingHost_PointerReleased"
+                  PointerCaptureLost="ScrollingHost_PointerReleased"
+                  Tapped="ScrollingHost_Tapped">
         <Border HorizontalAlignment="Center" VerticalAlignment="Center">
             <controls:AspectView x:Name="Panel" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <Image x:Name="Texture" Stretch="UniformToFill"/>

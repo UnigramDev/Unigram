@@ -11,6 +11,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
+using Point = Windows.Foundation.Point;
 
 namespace Unigram.Controls.Gallery
 {
@@ -21,6 +22,11 @@ namespace Unigram.Controls.Gallery
 
         public GalleryContent Item => _item;
         public Grid Presenter => Panel;
+
+        private bool _areInteractionsEnabled = true;
+        public bool AreInteractionsEnabled => ScrollingHost.ZoomFactor == 1;
+
+        public event EventHandler InteractionsEnabledChanged;
 
         public GalleryContentView()
         {
@@ -191,6 +197,36 @@ namespace Unigram.Controls.Gallery
             ScrollingHost.ChangeView(0, 0, 1, true);
         }
 
+        public void Zoom(bool zoomIn)
+        {
+            var factor = ScrollingHost.ZoomFactor + (zoomIn ? 0.25f : -0.25f);
+            if (factor <= ScrollingHost.MaxZoomFactor)
+            {
+                var horizontal = (Panel.ActualWidth * factor) - ScrollingHost.ActualWidth;
+                var vertical = (Panel.ActualHeight * factor) - ScrollingHost.ActualHeight;
+
+                if (ScrollingHost.ScrollableWidth > 0)
+                {
+                    horizontal *= ScrollingHost.HorizontalOffset / ScrollingHost.ScrollableWidth;
+                }
+                else
+                {
+                    horizontal /= 2;
+                }
+
+                if (ScrollingHost.ScrollableHeight > 0)
+                {
+                    vertical *= ScrollingHost.VerticalOffset / ScrollingHost.ScrollableHeight;
+                }
+                else
+                {
+                    vertical /= 2;
+                }
+
+                ScrollingHost.ChangeView(horizontal, vertical, factor);
+            }
+        }
+
         protected override Size MeasureOverride(Size availableSize)
         {
             Panel.MaxWidth = availableSize.Width;
@@ -201,7 +237,65 @@ namespace Unigram.Controls.Gallery
 
         private void ScrollingHost_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
+            if (ScrollingHost.ZoomFactor > 1 && _areInteractionsEnabled)
+            {
+                _areInteractionsEnabled = false;
+                InteractionsEnabledChanged?.Invoke(this, EventArgs.Empty);
+            }
+            else if (ScrollingHost.ZoomFactor == 1 && !_areInteractionsEnabled)
+            {
+                _areInteractionsEnabled = true;
+                InteractionsEnabledChanged?.Invoke(this, EventArgs.Empty);
+            }
+
+            Button.IsEnabled = ScrollingHost.ZoomFactor == 1;
             Panel.ManipulationMode = ScrollingHost.ZoomFactor == 1 ? ManipulationModes.TranslateY | ManipulationModes.TranslateRailsY | ManipulationModes.System : ManipulationModes.System;
+        }
+
+        private bool _pointerPressed;
+        private Point _pointerPosition;
+
+        private void ScrollingHost_PointerPressed(object sender, PointerRoutedEventArgs e)
+        {
+            ScrollingHost.CapturePointer(e.Pointer);
+
+            _pointerPressed = true;
+            _pointerPosition = e.GetCurrentPoint(ScrollingHost).Position;
+
+            _pointerPosition.X += ScrollingHost.HorizontalOffset;
+            _pointerPosition.Y += ScrollingHost.VerticalOffset;
+        }
+
+        private void ScrollingHost_PointerMoved(object sender, PointerRoutedEventArgs e)
+        {
+            if (_pointerPressed)
+            {
+                var point = e.GetCurrentPoint(ScrollingHost);
+
+                var diffX = _pointerPosition.X - point.Position.X;
+                var diffY = _pointerPosition.Y - point.Position.Y;
+
+                ScrollingHost.ChangeView(diffX, diffY, null, true);
+            }
+        }
+
+        private void ScrollingHost_PointerReleased(object sender, PointerRoutedEventArgs e)
+        {
+            if (ScrollingHost.PointerCaptures.Count > 0)
+            {
+                ScrollingHost.ReleasePointerCapture(e.Pointer);
+            }
+
+            _pointerPressed = false;
+            _pointerPosition = default;
+        }
+
+        private void ScrollingHost_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            if (ScrollingHost.ZoomFactor > 1)
+            {
+                _delegate?.OpenItem(null);
+            }
         }
     }
 }
