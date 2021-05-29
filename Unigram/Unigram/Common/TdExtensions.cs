@@ -241,7 +241,7 @@ namespace Unigram.Common
             {
                 yield return participant.ScreenSharingVideoInfo;
             }
-            
+
             if (participant.VideoInfo != null)
             {
                 yield return participant.VideoInfo;
@@ -647,7 +647,7 @@ namespace Unigram.Common
             }
         }
 
-        public static bool IsAnimatedStickerDownloadCompleted(this MessageViewModel message)
+        public static bool IsAnimatedContentDownloadCompleted(this MessageViewModel message)
         {
             var content = message.GeneratedContent ?? message.Content;
             switch (content)
@@ -663,13 +663,18 @@ namespace Unigram.Common
                     {
                         return text.WebPage.Animation.AnimationValue.Local.IsDownloadingCompleted;
                     }
-                    else if (text.WebPage?.Sticker  != null)
+                    else if (text.WebPage?.Sticker != null)
                     {
                         return text.WebPage.Sticker.IsAnimated && text.WebPage.Sticker.StickerValue.Local.IsDownloadingCompleted;
                     }
                     else if (text.WebPage?.VideoNote != null)
                     {
                         return text.WebPage.VideoNote.Video.Local.IsDownloadingCompleted;
+                    }
+                    else if (text.WebPage?.Video != null)
+                    {
+                        // Videos are streamed
+                        return true;
                     }
                     return false;
                 case MessageDice dice:

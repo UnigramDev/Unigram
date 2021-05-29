@@ -417,7 +417,7 @@ namespace Unigram.Views
                 var message = pair.Message;
                 var container = pair.Container;
 
-                var animation = message.IsAnimatedStickerDownloadCompleted();
+                var animation = message.IsAnimatedContentDownloadCompleted();
                 if (animation == false)
                 {
                     continue;
