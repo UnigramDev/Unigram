@@ -446,6 +446,7 @@
     <Compile Include="Controls\LottieView.cs" />
     <Compile Include="Controls\QrCode.cs" />
     <Compile Include="Controls\RecentUserHeads.cs" />
+    <Compile Include="Controls\ScrollViewerScrim.cs" />
     <Compile Include="Controls\SelectGridView.cs" />
     <Compile Include="Controls\SelectListView.cs" />
     <Compile Include="Controls\SelfDestructTimer.cs" />
@@ -467,7 +468,6 @@
     </Compile>
     <Compile Include="Controls\VideoRangeSlider.cs" />
     <Compile Include="Controls\RatingBar.cs" />
-    <Compile Include="Controls\ScrollViewerBackground.cs" />
     <Compile Include="Controls\TagsTextBox.cs" />
     <Compile Include="Controls\TagsWrapPanel.cs" />
     <Compile Include="Controls\WalkthroughControl.cs" />

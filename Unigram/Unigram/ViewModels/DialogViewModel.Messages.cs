@@ -449,53 +449,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var items = new[]
-            {
-                new SelectRadioItem(new ChatReportReasonSpam(), Strings.Resources.ReportChatSpam, true),
-                new SelectRadioItem(new ChatReportReasonViolence(), Strings.Resources.ReportChatViolence, false),
-                new SelectRadioItem(new ChatReportReasonPornography(), Strings.Resources.ReportChatPornography, false),
-                new SelectRadioItem(new ChatReportReasonChildAbuse(), Strings.Resources.ReportChatChild, false),
-                new SelectRadioItem(new ChatReportReasonCustom(), Strings.Resources.ReportChatOther, false)
-            };
-
-            var dialog = new SelectRadioPopup(items);
-            dialog.Title = Strings.Resources.ReportChat;
-            dialog.PrimaryButtonText = Strings.Resources.OK;
-            dialog.SecondaryButtonText = Strings.Resources.Cancel;
-
-            var confirm = await dialog.ShowQueuedAsync();
-            if (confirm != ContentDialogResult.Primary)
-            {
-                return;
-            }
-
-            var reason = dialog.SelectedIndex as ChatReportReason;
-            if (reason == null)
-            {
-                return;
-            }
-
-            var text = string.Empty;
-
-            var input = new InputPopup();
-            input.Title = Strings.Resources.ReportChat;
-            input.PlaceholderText = Strings.Resources.ReportChatDescription;
-            input.IsPrimaryButtonEnabled = true;
-            input.IsSecondaryButtonEnabled = true;
-            input.PrimaryButtonText = Strings.Resources.OK;
-            input.SecondaryButtonText = Strings.Resources.Cancel;
-
-            var inputResult = await input.ShowQueuedAsync();
-            if (inputResult == ContentDialogResult.Primary)
-            {
-                text = input.Text;
-            }
-            else
-            {
-                return;
-            }
-
-            ProtoService.Send(new ReportChat(chat.Id, messages, reason, text));
+            await ReportAsync(messages);
         }
 
         private bool MessagesReportCanExecute()
@@ -880,59 +834,7 @@ namespace Unigram.ViewModels
         public RelayCommand<MessageViewModel> MessageReportCommand { get; }
         private async void MessageReportExecute(MessageViewModel message)
         {
-            var chat = _chat;
-            if (chat == null)
-            {
-                return;
-            }
-
-            var items = new[]
-            {
-                new SelectRadioItem(new ChatReportReasonSpam(), Strings.Resources.ReportChatSpam, true),
-                new SelectRadioItem(new ChatReportReasonViolence(), Strings.Resources.ReportChatViolence, false),
-                new SelectRadioItem(new ChatReportReasonPornography(), Strings.Resources.ReportChatPornography, false),
-                new SelectRadioItem(new ChatReportReasonChildAbuse(), Strings.Resources.ReportChatChild, false),
-                new SelectRadioItem(new ChatReportReasonCustom(), Strings.Resources.ReportChatOther, false)
-            };
-
-            var dialog = new SelectRadioPopup(items);
-            dialog.Title = Strings.Resources.ReportChat;
-            dialog.PrimaryButtonText = Strings.Resources.OK;
-            dialog.SecondaryButtonText = Strings.Resources.Cancel;
-
-            var confirm = await dialog.ShowQueuedAsync();
-            if (confirm != ContentDialogResult.Primary)
-            {
-                return;
-            }
-
-            var reason = dialog.SelectedIndex as ChatReportReason;
-            if (reason == null)
-            {
-                return;
-            }
-
-            var text = string.Empty;
-
-            var input = new InputPopup();
-            input.Title = Strings.Resources.ReportChat;
-            input.PlaceholderText = Strings.Resources.ReportChatDescription;
-            input.IsPrimaryButtonEnabled = true;
-            input.IsSecondaryButtonEnabled = true;
-            input.PrimaryButtonText = Strings.Resources.OK;
-            input.SecondaryButtonText = Strings.Resources.Cancel;
-
-            var inputResult = await input.ShowQueuedAsync();
-            if (inputResult == ContentDialogResult.Primary)
-            {
-                text = input.Text;
-            }
-            else
-            {
-                return;
-            }
-
-            ProtoService.Send(new ReportChat(chat.Id, new[] { message.Id }, reason, text));
+            await ReportAsync(new[] { message.Id });
         }
 
         #endregion

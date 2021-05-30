@@ -23,7 +23,7 @@ namespace Unigram.Views.Popups
             _protoService = protoService;
             _delegate = delegato;
 
-            Title.Text = Strings.Resources.PollResults;
+            Title = Strings.Resources.PollResults;
             Subtitle.Text = Locale.Declension(poll.Type is PollTypeQuiz ? "Answer" : "Vote", poll.TotalVoterCount);
 
             PrimaryButtonText = Strings.Resources.OK;

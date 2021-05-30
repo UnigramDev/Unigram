@@ -10,6 +10,7 @@ using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
 using Windows.Storage.AccessCache;
+using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -45,7 +46,7 @@ namespace Unigram.Views
         }
 
         private BackgroundPopup()
-        { 
+        {
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<BackgroundViewModel, IBackgroundDelegate>(this);
 
@@ -57,6 +58,8 @@ namespace Unigram.Views
             Message2.Mockup(Strings.Resources.BackgroundPreviewLine2, true, DateTime.Now);
 
             //Presenter.Update(ViewModel.SessionId, ViewModel.Settings, ViewModel.Aggregator);
+
+            ElementCompositionPreview.GetElementVisual(LayoutRoot).Clip = Window.Current.Compositor.CreateInsetClip();
 
             InitializeBlur();
         }
@@ -209,7 +212,7 @@ namespace Unigram.Views
             }
 
             //Header.CommandVisibility = wallpaper.Id != Constants.WallpaperLocalId ? Visibility.Visible : Visibility.Collapsed;
-            
+
             if (wallpaper.Type is BackgroundTypeWallpaper)
             {
                 Blur.Visibility = Visibility.Visible;

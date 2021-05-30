@@ -7,17 +7,19 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
+    Background="{ThemeResource PageBackgroundDarkBrush}"
     Title="TITLE"
     PrimaryButtonText="Button1"
     SecondaryButtonText="Button2"
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
     SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+    <Grid Margin="-24,-8,-24,-24">
         <ScrollViewer
+            x:Name="ScrollingHost"
             VerticalScrollBarVisibility="Auto"
             VerticalScrollMode="Auto">
-            <StackPanel>
+            <StackPanel Margin="0,0,0,16">
                 <controls:HeaderedControl Header="{CustomResource Question}">
                     <TextBox
                         x:Name="QuestionText"
@@ -165,5 +167,9 @@
                 </controls:HeaderedControl>
             </StackPanel>
         </ScrollViewer>
+
+        <controls:ScrollViewerScrim
+            Background="{ThemeResource PageBackgroundDarkBrush}"
+            ScrollingHost="{x:Bind ScrollingHost}"/>
     </Grid>
 </controls:ContentPopup>

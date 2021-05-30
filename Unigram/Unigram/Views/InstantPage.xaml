@@ -252,28 +252,5 @@
                 <TransitionCollection/>
             </ListView.ItemContainerTransitions>
         </ListView>
-
-        <!--<ScrollViewer x:Name="ScrollingHost"
-             Background="{ThemeResource PageHeaderBackgroundBrush}"
-             VerticalScrollBarVisibility="Auto"
-             VerticalScrollMode="Auto"
-             Grid.Row="1">
-             <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-             <Grid.RowDefinitions>
-             <RowDefinition/>
-             <RowDefinition Height="Auto"/>
-             </Grid.RowDefinitions>
-             <StackPanel x:Name="LayoutRoot" Margin="0,0,0,20"/>
-             
-             <Border Background="{ThemeResource PageHeaderBackgroundBrush}" Grid.Row="1">
-             <Button Command="{x:Bind ViewModel.FeedbackCommand}" Content="Leave feedback about this preview" HorizontalContentAlignment="Center" VerticalAlignment="Center" Padding="8,6" Style="{StaticResource EmptyButtonStyle}"/>
-             </Border>
-             </Grid>
-             </ScrollViewer>-->
-        <controls:ScrollViewerBackground
-            Background="{ThemeResource PageBackgroundDarkBrush}"
-            ScrollingHost="{x:Bind ScrollingHost}"
-            VerticalAlignment="Top"
-            Grid.Row="1"/>
     </Grid>
 </local:HostedPage>

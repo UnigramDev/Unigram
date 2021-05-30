@@ -24,19 +24,20 @@
             x:Name="TextField"
             ColorChanged="TextField_ColorChanged"
             HorizontalAlignment="Stretch"
-            Margin="12,8"/>
+            Margin="0,0,0,12"/>
 
         <controls:ColorPicker
             x:Name="Picker"
             ColorChanged="Picker_ColorChanged"
             Height="240"
+            Margin="-24,0"
             Grid.Row="1"/>
 
         <HyperlinkButton
             Content="Use system accent color"
             Click="System_Click"
-            HorizontalAlignment="Center"
-            Margin="12,0,12,8"
+            HorizontalAlignment="Left"
+            Margin="0,0,0,-20"
             Grid.Row="2"/>
     </Grid>
 </local:ContentPopup>

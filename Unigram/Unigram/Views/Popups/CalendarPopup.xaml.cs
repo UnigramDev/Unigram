@@ -32,13 +32,7 @@ namespace Unigram.Views.Popups
             set => View.MaxDate = value;
         }
 
-        public IList<DateTimeOffset> SelectedDates
-        {
-            get
-            {
-                return View.SelectedDates;
-            }
-        }
+        public IList<DateTimeOffset> SelectedDates => View.SelectedDates;
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {

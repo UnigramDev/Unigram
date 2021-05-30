@@ -33,29 +33,11 @@ namespace Unigram.Views.Popups
             return rating < 3 ? Strings.Resources.CallReportIncludeLogs : Strings.Resources.VoipFeedbackCommentHint;
         }
 
-        public int Rating
-        {
-            get
-            {
-                return RatingBar.Value;
-            }
-        }
+        public int Rating => RatingBar.Value;
 
-        public string Comment
-        {
-            get
-            {
-                return CommentField.Text;
-            }
-        }
+        public string Comment => CommentField.Text;
 
-        public bool IncludeDebugLogs
-        {
-            get
-            {
-                return DebugLogs.IsChecked == true;
-            }
-        }
+        public bool IncludeDebugLogs => DebugLogs.IsChecked == true;
 
         private void RatingBar_ValueChanged(object sender, RatingBarValueChangedEventArgs e)
         {

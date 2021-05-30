@@ -45,13 +45,7 @@ namespace Unigram.Views.Popups
             }
         }
 
-        public string Server
-        {
-            get
-            {
-                return FieldServer.Text ?? string.Empty;
-            }
-        }
+        public string Server => FieldServer.Text ?? string.Empty;
 
         public int Port
         {
@@ -118,10 +112,9 @@ namespace Unigram.Views.Popups
             {
                 builder.Add("server=" + Server);
             }
-            if (Port != null)
-            {
-                builder.Add("port=" + Port);
-            }
+
+            builder.Add("port=" + Port);
+
             //if (Username != null)
             //{
             //    builder.Add("user=" + Username);

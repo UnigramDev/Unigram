@@ -3338,6 +3338,11 @@ namespace Unigram.ViewModels
         public RelayCommand ReportCommand { get; }
         private async void ReportExecute()
         {
+            await ReportAsync(new long[0]);
+        }
+
+        private async Task ReportAsync(IList<long> messages)
+        {
             var chat = _chat;
             if (chat == null)
             {
@@ -3390,7 +3395,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new ReportChat(chat.Id, new long[0], reason, text));
+            ProtoService.Send(new ReportChat(chat.Id, messages, reason, text));
         }
 
         #endregion

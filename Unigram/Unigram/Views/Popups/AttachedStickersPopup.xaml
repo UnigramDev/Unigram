@@ -17,7 +17,7 @@
         <CollectionViewSource x:Name="ViewSource" Source="{x:Bind ViewModel.Items}" ItemsPath="Covers" IsSourceGrouped="True"/>
     </ContentDialog.Resources>
 
-    <Grid>
+    <Grid Margin="-24,0">
         <GridView
             x:Name="List"
             ItemsSource="{x:Bind ViewSource.View}"
@@ -25,7 +25,6 @@
             IsItemClickEnabled="True"
             ContainerContentChanging="OnContainerContentChanging"
             SelectionMode="None"
-            Padding="12,0"
             common:FluidGridView.OrientationOnly="False">
             <common:FluidGridView.Triggers>
                 <common:FluidGridViewTrigger RowsOrColumns="5"/>
@@ -35,9 +34,6 @@
                     <Image Margin="2"/>
                 </DataTemplate>
             </GridView.ItemTemplate>
-            <GridView.Footer>
-                <Border Height="12"/>
-            </GridView.Footer>
             <GridView.GroupStyle>
                 <GroupStyle>
                     <GroupStyle.HeaderTemplate>

@@ -3,43 +3,35 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views.Popups"
+    xmlns:common="using:Unigram.Common"
     xmlns:controls="using:Unigram.Controls"
     xmlns:microsoft="using:Microsoft.UI.Xaml.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    TitleTemplate="{x:Null}"
+    Background="{ThemeResource PageBackgroundDarkBrush}"
     PrimaryButtonText="Button1"
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
     SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
 
-    <ContentDialog.Title>
-        <Grid Height="{ThemeResource AppBarThemeCompactHeight}">
-            <StackPanel Margin="12,0,0,0" Orientation="Vertical" VerticalAlignment="Center">
-                <TextBlock
-                    x:Name="Title"
-                    Style="{StaticResource BaseTextBlockStyle}"
-                    TextWrapping="NoWrap"
-                    TextTrimming="CharacterEllipsis"
-                    MaxLines="1"/>
-                <TextBlock
-                    x:Name="Subtitle"
-                    Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                    Style="{StaticResource CaptionTextBlockStyle}" />
-            </StackPanel>
-
-            <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="3"/>
-        </Grid>
-    </ContentDialog.Title>
-
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
-        <microsoft:ItemsRepeaterScrollHost>
-            <ScrollViewer>
+    <Grid Margin="-24,-12,-24,-24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <TextBlock
+            x:Name="Subtitle"
+            Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+            Style="{StaticResource CaptionTextBlockStyle}"
+            Margin="24,0,0,2"/>
+        
+        <microsoft:ItemsRepeaterScrollHost Grid.Row="1">
+            <ScrollViewer x:Name="ScrollingHost">
                 <microsoft:ItemsRepeater
                     x:Name="Repeater"
                     Layout="{StaticResource ThreadStackLayout}"
                     ElementPrepared="OnElementPrepared"
-                    Margin="0,0,0,16">
+                    Margin="0,0,0,24">
                     <microsoft:ItemsRepeater.ItemTemplate>
                         <DataTemplate x:DataType="local:PollResultViewModel">
                             <controls:HeaderedControl Style="{StaticResource FooteredControlStyle}">
@@ -81,5 +73,10 @@
                 </microsoft:ItemsRepeater>
             </ScrollViewer>
         </microsoft:ItemsRepeaterScrollHost>
+
+        <controls:ScrollViewerScrim
+            Background="{ThemeResource PageBackgroundDarkBrush}"
+            ScrollingHost="{x:Bind ScrollingHost}"
+            Grid.Row="1"/>
     </Grid>
 </controls:ContentPopup>

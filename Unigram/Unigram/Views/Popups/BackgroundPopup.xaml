@@ -411,7 +411,7 @@
             Glyph="&#xE72D;"/>
     </local:HostedPage.Header>-->
     
-    <Grid Height="520" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid x:Name="LayoutRoot" Height="520" Margin="-24,0,-24,-12" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.ChildrenTransitions>
             <TransitionCollection>
                 <RepositionThemeTransition/>

@@ -8,7 +8,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    TitleTemplate="{x:Null}"
     PrimaryButtonText="{x:Bind ConvertIsInstalled(ViewModel.StickerSet.IsInstalled, ViewModel.StickerSet.IsArchived, ViewModel.StickerSet.IsOfficial, ViewModel.StickerSet.IsMasks), Mode=OneWay}"
     PrimaryButtonCommand="{x:Bind ViewModel.SendCommand}"
     Closing="OnClosing"
@@ -21,11 +20,6 @@
                 <controls:LottieView30Fps
                     x:Name="Player"
                     AutoPlay="False"/>
-                <TextBlock
-                    FontSize="20"
-                    FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                    VerticalAlignment="Bottom"
-                    HorizontalAlignment="Right"/>
             </Grid>
         </DataTemplate>
         
@@ -34,36 +28,32 @@
                 <Border>
                     <Image/>
                 </Border>
-                <TextBlock
-                    FontSize="20"
-                    FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                    VerticalAlignment="Bottom"
-                    HorizontalAlignment="Right"/>
             </Grid>
         </DataTemplate>
     </ContentDialog.Resources>
-    
+
     <ContentDialog.Title>
-        <Grid x:Name="Header">
+        <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
+            <TextBlock
+                common:TextBlockHelper.Text="{x:Bind ViewModel.StickerSet.Title, Mode=OneWay}"
+                TextTrimming="CharacterEllipsis"/>
             <controls:GlyphButton
+                x:Name="ShareButton"
                 Click="Share_Click"
                 Glyph="&#xE72D;"
-                Style="{StaticResource HeaderGlyphButtonStyle}" 
                 AutomationProperties.Name="{CustomResource ShareSendTo}"
                 ToolTipService.ToolTip="{CustomResource ShareSendTo}"
+                Style="{StaticResource HeaderGlyphButtonStyle}"
+                Margin="0,-8,-12,-24"
                 Grid.Column="1"/>
-
-            <TextBlock common:TextBlockHelper.Text="{x:Bind ViewModel.StickerSet.Title, Mode=OneWay}" VerticalAlignment="Center" Margin="12,0" Style="{StaticResource BaseTextBlockStyle}"/>
-
-            <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
         </Grid>
     </ContentDialog.Title>
 
-    <Grid MaxHeight="420">
+    <Grid MaxHeight="420" Margin="-24,0,-24,-24">
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
@@ -80,20 +70,8 @@
             <common:FluidGridView.Triggers>
                 <common:FluidGridViewTrigger RowsOrColumns="5"/>
             </common:FluidGridView.Triggers>
-            <GridView.ItemTemplate>
-                <DataTemplate>
-                    <Grid Margin="2">
-                        <Image/>
-                        <TextBlock
-                            FontSize="20"
-                            FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                            VerticalAlignment="Bottom"
-                            HorizontalAlignment="Right"/>
-                    </Grid>
-                </DataTemplate>
-            </GridView.ItemTemplate>
             <GridView.Footer>
-                <Border Height="12"/>
+                <Border Height="24"/>
             </GridView.Footer>
             <GridView.ItemContainerStyle>
                 <Style TargetType="GridViewItem">
@@ -113,6 +91,8 @@
             </GridView.ItemsPanel>
         </GridView>
 
-        <Border x:Name="LineBottom" BorderThickness="0,1,0,0" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.Row="1"/>
+        <controls:ScrollViewerScrim
+            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+            ScrollingHost="{x:Bind List}"/>
     </Grid>
 </controls:ContentPopup>

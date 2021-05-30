@@ -36,7 +36,7 @@ namespace Unigram.Views.Popups
                 ? Visibility.Visible
                 : Visibility.Collapsed;
 
-            PrimaryButtonText = Strings.Resources.Save;
+            PrimaryButtonText = Strings.Resources.Start;
             SecondaryButtonText = Strings.Resources.Close;
         }
 
@@ -50,7 +50,7 @@ namespace Unigram.Views.Popups
         {
             if (args.ItemContainer == null)
             {
-                args.ItemContainer = new MultipleListViewItem();
+                args.ItemContainer = new MultipleListViewItem(false);
                 args.ItemContainer.Style = List.ItemContainerStyle;
                 args.ItemContainer.ContentTemplate = List.ItemTemplate;
             }

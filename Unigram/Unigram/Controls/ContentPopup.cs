@@ -63,7 +63,7 @@ namespace Unigram.Controls
         {
             if (Content is FrameworkElement element && !IsFullWindow)
             {
-                element.MaxHeight = sender.VisibleBounds.Height - 32 - 32 - 48 - 48;
+                element.MaxHeight = sender.VisibleBounds.Height - 32 - 32 - 48 - 48 - 48 - 48;
             }
         }
 

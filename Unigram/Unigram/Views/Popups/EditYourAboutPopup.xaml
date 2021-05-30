@@ -13,12 +13,17 @@
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
     SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <TextBox x:Name="FieldAbout" PlaceholderText="{CustomResource UserBio}" MaxLength="70" TextWrapping="Wrap" FontFamily="{ThemeResource EmojiThemeFontFamily}" Margin="12,12,12,8"/>
-        <TextBlock Text="{CustomResource UserBioInfo}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Margin="12,0,12,12" Style="{StaticResource CaptionTextBlockStyle}" Grid.Row="1"/>
-    </Grid>
+    <StackPanel>
+        <TextBlock
+            Text="{CustomResource UserBioInfo}"
+            Style="{StaticResource BodyTextBlockStyle}"/>
+
+        <TextBox
+            x:Name="FieldAbout"
+            PlaceholderText="{CustomResource UserBio}"
+            MaxLength="70"
+            TextWrapping="Wrap"
+            FontFamily="{ThemeResource EmojiThemeFontFamily}"
+            Margin="0,12,0,0"/>
+    </StackPanel>
 </controls:ContentPopup>

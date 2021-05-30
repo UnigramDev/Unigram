@@ -415,14 +415,6 @@ namespace Unigram.Views.Popups
                 IsMediaSelected = false;
                 IsFilesSelected = true;
             }
-
-            var state = IsMediaSelected ? 1 : 0;
-            if (state != _itemsState)
-            {
-                List.ItemTemplate = Resources[state == 1 ? "MediaItemTemplate" : "FileItemTemplate"] as DataTemplate;
-            }
-
-            _itemsState = state;
         }
 
         private void UpdatePanel()
@@ -439,24 +431,28 @@ namespace Unigram.Views.Popups
             var state = IsAlbum && IsAlbumAvailable && IsMediaSelected ? 1 : 0;
             if (state != _panelState)
             {
+                _panelState = state;
                 if (state == 1)
                 {
-                    FindName(nameof(Album));
-                    Album.Visibility = Visibility.Visible;
-                    List.Visibility = Visibility.Collapsed;
+                    FindName(nameof(AlbumPanel));
+                    AlbumPanel.Visibility = Visibility.Visible;
+
+                    if (ListPanel != null)
+                    {
+                        ListPanel.Visibility = Visibility.Collapsed;
+                    }
                 }
                 else
                 {
                     if (Album != null)
                     {
-                        Album.Visibility = Visibility.Collapsed;
+                        AlbumPanel.Visibility = Visibility.Collapsed;
                     }
 
-                    List.Visibility = Visibility.Visible;
+                    FindName(nameof(ListPanel));
+                    ListPanel.Visibility = Visibility.Visible;
                 }
             }
-
-            _panelState = state;
 
             if (Album?.ItemsPanelRoot is SendFilesAlbumPanel panel && IsAlbum)
             {
@@ -469,6 +465,13 @@ namespace Unigram.Views.Popups
 
                 panel.Sizes = layout;
                 panel.Invalidate();
+            }
+
+            var mediaState = IsMediaSelected ? 1 : 0;
+            if (mediaState != _itemsState && List != null)
+            {
+                _itemsState = mediaState;
+                List.ItemTemplate = Resources[mediaState == 1 ? "MediaItemTemplate" : "FileItemTemplate"] as DataTemplate;
             }
         }
 

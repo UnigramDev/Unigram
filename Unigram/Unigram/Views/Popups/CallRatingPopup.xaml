@@ -14,29 +14,33 @@
     SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
 
     <StackPanel>
-        <TextBlock Text="{CustomResource VoipRateCallAlert}"
-                   Margin="12,24,12,0"/>
-        <controls:RatingBar x:Name="RatingBar"
-                            FontSize="28"
-                            Padding="3,8"
-                            Margin="12"
-                            HorizontalAlignment="Center"
-                            ValueChanged="RatingBar_ValueChanged"/>
+        <TextBlock
+            Text="{CustomResource VoipRateCallAlert}"
+            Style="{StaticResource BodyTextBlockStyle}"/>
+        
+        <controls:RatingBar
+            x:Name="RatingBar"
+            FontSize="28"
+            Padding="3,8"
+            Margin="0,12"
+            HorizontalAlignment="Center"
+            ValueChanged="RatingBar_ValueChanged"/>
         
         <Border MinHeight="{ThemeResource TextControlThemeMinHeight}">
-            <TextBox x:Name="CommentField"
-                     Visibility="Collapsed"
-                     Margin="12,0"/>
+            <TextBox
+                x:Name="CommentField"
+                Visibility="Collapsed"/>
         </Border>
 
         <StackPanel x:Name="Debug" Visibility="Collapsed">
-            <CheckBox x:Name="DebugLogs"
-                      Content="{CustomResource CallReportIncludeLogs}"
-                      Margin="12,8,12,0"/>
+            <CheckBox
+                x:Name="DebugLogs"
+                Content="{CustomResource CallReportIncludeLogs}"
+                Margin="0,8,0,0"/>
             <TextBlock
                 Text="{CustomResource CallReportLogsExplain}" 
                 Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                Margin="12,8,12,12"
+                Margin="0,8,0,0"
                 Style="{StaticResource CaptionTextBlockStyle}"
                 Grid.Row="6"/>
         </StackPanel>

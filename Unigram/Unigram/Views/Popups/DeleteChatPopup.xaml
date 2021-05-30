@@ -7,10 +7,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    TitleTemplate="{x:Null}"
     FocusPrimaryButton="False">
 
-    <ContentDialog.Title>
+    <!--<ContentDialog.Title>
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -30,24 +29,16 @@
 
             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="3"/>
         </Grid>
-    </ContentDialog.Title>
+    </ContentDialog.Title>-->
 
-    <Grid Padding="0,16,0,0">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+    <StackPanel>
+        <TextBlock
+            x:Name="Subtitle"
+            TextWrapping="Wrap"
+            TextTrimming="CharacterEllipsis"
+            FontFamily="{ThemeResource EmojiThemeFontFamily}"
+            Style="{StaticResource BodyTextBlockStyle}"/>
 
-        <StackPanel Margin="12,0,12,12" Grid.Row="1">
-            <TextBlock
-                x:Name="Subtitle"
-                TextWrapping="Wrap"
-                TextTrimming="CharacterEllipsis"
-                FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                Style="{StaticResource BodyTextBlockStyle}"/>
-        </StackPanel>
-
-        <CheckBox x:Name="CheckBox" Margin="12,12,12,0" Visibility="Collapsed" Grid.Row="2"/>
-    </Grid>
+        <CheckBox x:Name="CheckBox" Margin="0,16,0,0" Visibility="Collapsed" Grid.Row="2"/>
+    </StackPanel>
 </controls:ContentPopup>

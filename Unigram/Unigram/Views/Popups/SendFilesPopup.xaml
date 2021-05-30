@@ -9,7 +9,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    TitleTemplate="{x:Null}"
     PrimaryButtonText="Button1"
     SecondaryButtonText="Button2"
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
@@ -112,7 +111,7 @@
         </Style>
 
         <DataTemplate x:Key="FileItemTemplate">
-            <Grid Padding="12,6">
+            <Grid Padding="0,6">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
@@ -235,7 +234,7 @@
     </ContentControl.Resources>
 
     <ContentDialog.Title>
-        <Grid Height="{ThemeResource AppBarThemeCompactHeight}">
+        <Grid Margin="-12,-8,-12,-12">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
@@ -275,58 +274,68 @@
                 IsChecked="{x:Bind IsAlbum, Mode=OneWay}"
                 IsOneWay="False"
                 Grid.Column="4"/>
-
-            <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="5"/>
         </Grid>
     </ContentDialog.Title>
 
-    <Grid>
+    <Grid Margin="0,0,-24,-16">
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <ListView x:Name="List"
-                  ItemsSource="{x:Bind Items}"
-                  ItemsPanel="{StaticResource FilesPanelTemplate}"
-                  ContainerContentChanging="OnContainerContentChanging"
-                  SelectionMode="None"
-                  DragEnter="ListView_DragEnter"
-                  Drop="ListView_Drop"
-                  CanReorderItems="True"
-                  CanDragItems="True"
-                  AllowDrop="True"
-                  Padding="0,6">
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                    <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-                    <Setter Property="MinWidth" Value="0"/>
-                    <Setter Property="MinHeight" Value="0"/>
-                    <Setter Property="Padding" Value="0"/>
-                </Style>
-            </ListView.ItemContainerStyle>
-        </ListView>
-        <ListView x:Name="Album"
-                  x:Load="False"
-                  ItemsSource="{x:Bind Items}"
-                  ItemTemplate="{StaticResource MediaItemTemplate}"
-                  ItemsPanel="{StaticResource AlbumPanelTemplate}"
-                  ContainerContentChanging="OnContainerContentChanging"
-                  SelectionMode="None"
-                  DragEnter="ListView_DragEnter"
-                  Drop="ListView_Drop"
-                  AllowDrop="True">
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                    <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-                    <Setter Property="MinWidth" Value="0"/>
-                    <Setter Property="MinHeight" Value="0"/>
-                    <Setter Property="Padding" Value="0"/>
-                    <Setter Property="Margin" Value="0,0,2,2"/>
-                </Style>
-            </ListView.ItemContainerStyle>
-        </ListView>
+        <Grid x:Name="ListPanel" x:Load="False">
+            <ListView x:Name="List"
+                      ItemsSource="{x:Bind Items}"
+                      ItemsPanel="{StaticResource FilesPanelTemplate}"
+                      ContainerContentChanging="OnContainerContentChanging"
+                      SelectionMode="None"
+                      DragEnter="ListView_DragEnter"
+                      Drop="ListView_Drop"
+                      CanReorderItems="True"
+                      CanDragItems="True"
+                      AllowDrop="True"
+                      Padding="0,0,24,16">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                        <Setter Property="MinWidth" Value="0"/>
+                        <Setter Property="MinHeight" Value="0"/>
+                        <Setter Property="Padding" Value="0"/>
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </ListView>
+            
+            <controls:ScrollViewerScrim
+                Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                ScrollingHost="{x:Bind List}"/>
+        </Grid>
+        <Grid x:Name="AlbumPanel" x:Load="False">
+            <ListView x:Name="Album"
+                      ItemsSource="{x:Bind Items}"
+                      ItemTemplate="{StaticResource MediaItemTemplate}"
+                      ItemsPanel="{StaticResource AlbumPanelTemplate}"
+                      ContainerContentChanging="OnContainerContentChanging"
+                      SelectionMode="None"
+                      DragEnter="ListView_DragEnter"
+                      Drop="ListView_Drop"
+                      AllowDrop="True"
+                      Padding="0,0,24,16">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                        <Setter Property="MinWidth" Value="0"/>
+                        <Setter Property="MinHeight" Value="0"/>
+                        <Setter Property="Padding" Value="0"/>
+                        <Setter Property="Margin" Value="0,0,2,2"/>
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </ListView>
+            
+            <controls:ScrollViewerScrim
+                Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                ScrollingHost="{x:Bind Album}"/>
+        </Grid>
 
         <ListView x:Name="ListAutocomplete"
                   VerticalAlignment="Bottom"
@@ -340,7 +349,8 @@
                   AllowFocusOnInteraction="False"
                   IsItemClickEnabled="True"
                   ItemClick="Autocomplete_ItemClick"
-                  ContainerContentChanging="Autocomplete_ContainerContentChanging">
+                  ContainerContentChanging="Autocomplete_ContainerContentChanging"
+                  Padding="0,0,24,0">
             <!--<ListView.Header>
                 <Border x:Name="AutocompleteHeader"
                             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -357,7 +367,7 @@
             </ListView.ItemContainerTransitions>
         </ListView>
 
-        <Grid x:Name="CaptionPanel" Grid.Row="2">
+        <Grid x:Name="CaptionPanel" Margin="0,0,24,0" Grid.Row="2">
             <controls:CaptionTextBox
                 x:Name="CaptionInput"
                 Loaded="OnLoaded"
@@ -370,7 +380,6 @@
                 FontFamily="{ThemeResource EmojiThemeFontFamily}"
                 PlaceholderText="{CustomResource AddCaption}"
                 Padding="10,6,36,5"
-                Margin="12,8,12,0"
                 Grid.Row="1">
                 <FlyoutBase.AttachedFlyout>
                     <Flyout x:Name="EmojiFlyout" Placement="Top" ShowMode="Transient">
@@ -396,7 +405,7 @@
                 VerticalAlignment="Top"
                 Width="40"
                 Height="40"
-                Margin="0,4,10,-4"/>
+                Margin="0,-4,-4,-4"/>
         </Grid>
     </Grid>
 

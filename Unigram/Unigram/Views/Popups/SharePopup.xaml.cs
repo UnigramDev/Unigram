@@ -54,6 +54,26 @@ namespace Unigram.Views.Popups
             };
         }
 
+        protected override void OnApplyTemplate()
+        {
+            var button = (Button)GetTemplateChild("PrimaryButton");
+            if (button != null && ViewModel.IsSendAsCopyEnabled)
+            {
+                button.ContextRequested += PrimaryButton_ContextRequested;
+            }
+
+            base.OnApplyTemplate();
+        }
+
+        private void PrimaryButton_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+            var flyout = new MenuFlyout();
+            flyout.CreateFlyoutItem(new RelayCommand(() => { ViewModel.SendAsCopy = true; Hide(ContentDialogResult.Primary); }), "Send as copy", new FontIcon { Glyph = Icons.DocumentCopy });
+            flyout.CreateFlyoutItem(new RelayCommand(() => { ViewModel.RemoveCaptions = true; Hide(ContentDialogResult.Primary); }), "Remove captions", new FontIcon { Glyph = Icons.Block });
+
+            flyout.ShowAt(sender, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft });
+        }
+
         private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (string.Equals(e.PropertyName, "PreSelectedItems", StringComparison.OrdinalIgnoreCase))
@@ -453,7 +473,7 @@ namespace Unigram.Views.Popups
         {
             if (args.ItemContainer == null)
             {
-                args.ItemContainer = new MultipleListViewItem();
+                args.ItemContainer = new MultipleListViewItem(false);
                 args.ItemContainer.Style = ChatsPanel.ItemContainerStyle;
                 args.ItemContainer.ContentTemplate = ChatsPanel.ItemTemplate;
             }
@@ -631,10 +651,11 @@ namespace Unigram.Views.Popups
 
         private void Search_Click(object sender, RoutedEventArgs e)
         {
-            MainHeader.Visibility = Visibility.Collapsed;
-            SearchField.Visibility = Visibility.Visible;
+            if (SearchField.FocusState == FocusState.Keyboard && sender == SearchField)
+            {
+                return;
+            }
 
-            SearchField.Focus(FocusState.Keyboard);
             Search_TextChanged(null, null);
         }
 
@@ -642,9 +663,6 @@ namespace Unigram.Views.Popups
         {
             if (string.IsNullOrEmpty(SearchField.Text))
             {
-                MainHeader.Visibility = Visibility.Visible;
-                SearchField.Visibility = Visibility.Collapsed;
-
                 Focus(FocusState.Programmatic);
             }
 
@@ -825,7 +843,6 @@ namespace Unigram.Views.Popups
 
         private void List_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Header2.Width = e.NewSize.Width;
             DialogsSearchListView.Width = e.NewSize.Width;
             DialogsSearchListView.Height = e.NewSize.Height;
         }

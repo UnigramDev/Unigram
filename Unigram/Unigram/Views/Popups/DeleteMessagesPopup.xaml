@@ -12,10 +12,23 @@
     SecondaryButtonText="Cancel">
 
     <StackPanel>
-        <TextBlock x:Name="Message" Margin="0,16,0,0" Style="{StaticResource BodyTextBlockStyle}"/>
-        <CheckBox x:Name="RevokeCheck" FontFamily="{ThemeResource EmojiThemeFontFamily}" Margin="0,16,0,0"/>
-        <CheckBox x:Name="BanUserCheck" Content="{CustomResource DeleteBanUser}" Margin="0,16,0,0"/>
-        <CheckBox x:Name="ReportSpamCheck" Content="{CustomResource DeleteReportSpam}"/>
-        <CheckBox x:Name="DeleteAllCheck"/>
+        <TextBlock
+            x:Name="Message"
+            Style="{StaticResource BodyTextBlockStyle}"/>
+        
+        <CheckBox
+            x:Name="RevokeCheck"
+            FontFamily="{ThemeResource EmojiThemeFontFamily}"
+            Margin="0,16,0,0"/>
+        
+        <CheckBox
+            x:Name="BanUserCheck"
+            Content="{CustomResource DeleteBanUser}"
+            Margin="0,16,0,0"/>
+        <CheckBox
+            x:Name="ReportSpamCheck"
+            Content="{CustomResource DeleteReportSpam}"/>
+        <CheckBox
+            x:Name="DeleteAllCheck"/>
     </StackPanel>
 </controls:ContentPopup>

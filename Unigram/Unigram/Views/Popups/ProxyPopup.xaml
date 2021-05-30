@@ -7,34 +7,33 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    TitleTemplate="{x:Null}"
+    Background="{ThemeResource PageBackgroundDarkBrush}"
     PrimaryButtonText="OK"
     SecondaryButtonText="Cancel"
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
     SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
 
     <ContentDialog.Title>
-        <Grid Height="{ThemeResource AppBarThemeCompactHeight}">
+        <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <TextBlock
-                Text="{CustomResource ProxyDetails}"
-                Style="{StaticResource BaseTextBlockStyle}"
-                VerticalAlignment="Center"
-                Margin="12,0"/>
+            <TextBlock Text="{CustomResource ProxyDetails}"/>
             <controls:GlyphButton
                 x:Name="ShareButton"
+                x:Load="False"
                 Click="Share_Click"
                 Glyph="&#xE72D;"
-                Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
-                Grid.Column="1"
-                Visibility="Collapsed"/>
+                AutomationProperties.Name="{CustomResource ShareSendTo}"
+                ToolTipService.ToolTip="{CustomResource ShareSendTo}"
+                Style="{StaticResource HeaderGlyphButtonStyle}"
+                Margin="0,-8,-12,-24"
+                Grid.Column="1"/>
         </Grid>
     </ContentDialog.Title>
     
-    <StackPanel Background="{ThemeResource PageBackgroundDarkBrush}" Width="320">
+    <StackPanel Margin="-12">
         <controls:HeaderedControl>
             <RadioButton
                 x:Name="TypeSocks"

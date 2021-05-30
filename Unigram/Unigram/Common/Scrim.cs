@@ -44,17 +44,52 @@ namespace Unigram.Common
         }
     }
 
-    public class CubicBezierGradient
+    public class CubicBezierGradient : DependencyObject
     {
-        public Color TopColor { get; set; }
-        public Color BottomColor { get; set; }
+        #region TopColor
+
+        public SolidColorBrush TopColor
+        {
+            get => (SolidColorBrush)GetValue(TopColorProperty);
+            set => SetValue(TopColorProperty, value);
+        }
+
+        public static readonly DependencyProperty TopColorProperty =
+            DependencyProperty.Register("TopColor", typeof(SolidColorBrush), typeof(CubicBezierGradient), new PropertyMetadata(null));
+
+        #endregion
+
+        #region BottomColor
+
+        public SolidColorBrush BottomColor
+        {
+            get => (SolidColorBrush)GetValue(BottomColorProperty);
+            set => SetValue(BottomColorProperty, value);
+        }
+
+        public static readonly DependencyProperty BottomColorProperty =
+            DependencyProperty.Register("BottomColor", typeof(SolidColorBrush), typeof(CubicBezierGradient), new PropertyMetadata(null));
+
+        #endregion
+
+        public double TopOpacity { get; set; } = 1;
+        public double BottomOpacity { get; set; } = 1;
 
         public Point ControlPoint1 { get; set; } = new Point(.42, 0);
         public Point ControlPoint2 { get; set; } = new Point(.58, 1);
 
         public GradientStop[] GetGradientStops()
         {
-            return GetGradientStops(new[] { TopColor, BottomColor }, GetCoordinates(ControlPoint1, ControlPoint2));
+            var top = TopColor.Color;
+            var bottom = BottomColor.Color;
+
+            if (top == bottom)
+            {
+                top.A = (byte)(255 * TopOpacity);
+                bottom.A = (byte)(255 * BottomOpacity);
+            }
+
+            return GetGradientStops(new[] { top, bottom }, GetCoordinates(ControlPoint1, ControlPoint2));
         }
 
         private GradientStop[] GetGradientStops(Color[] colors, Point[] coordinates)

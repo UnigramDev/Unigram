@@ -11,7 +11,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    TitleTemplate="{x:Null}"
+    Title="{x:Bind ViewModel.Title, Mode=OneWay}"
     PrimaryButtonText="OK"
     PrimaryButtonClick="OnPrimaryButtonClick"
     IsPrimaryButtonEnabled="False"
@@ -23,65 +23,31 @@
         <CollectionViewSource x:Name="ChatsResults" Source="{x:Bind ViewModel.Search, Mode=OneWay}" IsSourceGrouped="True"/>
     </ContentControl.Resources>
 
-    <ContentDialog.Title>
-        <Grid x:Name="Header2" Height="48">
-            <Grid x:Name="MainHeader">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="Auto" MinWidth="12"/>
-                </Grid.ColumnDefinitions>
-                <Button
-                    Click="Search_Click"
-                    AutomationProperties.LandmarkType="Search"
-                    Content="{x:Bind ViewModel.Title, Mode=OneWay}"
-                    Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                    Background="{ThemeResource PageBackgroundDarkBrush}"
-                    BorderBrush="{ThemeResource PageBackgroundDarkBrush}"
-                    HorizontalContentAlignment="Left"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Center"
-                    Height="32"
-                    Margin="12,0,0,0"
-                    Padding="9,0,6,0"/>
-
-                <controls:GlyphButton
-                        AutomationProperties.Name="{CustomResource AccDescrMoreOptions}"       
-                        ToolTipService.ToolTip="{CustomResource AccDescrMoreOptions}"                        
-                        Glyph="&#xF0E3;"
-                        Visibility="{x:Bind ViewModel.IsSendAsCopyEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                        Style="{StaticResource HeaderGlyphButtonStyle}"
-                        Grid.Column="1">
-                    <controls:GlyphButton.Flyout>
-                        <MenuFlyout Placement="BottomEdgeAlignedRight">
-                            <ToggleMenuFlyoutItem Text="Send as copy" IsChecked="{x:Bind ViewModel.SendAsCopy, Mode=TwoWay}"/>
-                            <ToggleMenuFlyoutItem Text="Remove captions in copies" IsChecked="{x:Bind ViewModel.RemoveCaptions, Mode=TwoWay}"/>
-                        </MenuFlyout>
-                    </controls:GlyphButton.Flyout>
-                </controls:GlyphButton>
-            </Grid>
-
-            <TextBox
-                x:Name="SearchField"
-                PlaceholderText="{x:Bind ViewModel.Title, Mode=OneWay}"
-                Background="{ThemeResource PageBackgroundDarkBrush}"
-                BorderBrush="{ThemeResource PageBackgroundDarkBrush}"
-                PreventKeyboardDisplayOnProgrammaticFocus="True"
-                VerticalAlignment="Center"
-                TextChanged="Search_TextChanged"
-                KeyDown="Search_KeyDown"
-                Visibility="Collapsed"
-                Margin="12,0"/>
-
-            <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False"/>
-        </Grid>
-    </ContentDialog.Title>
-
-    <Grid>
+    <Grid Margin="0,0,0,-24">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Grid>
+        <Button
+            x:Name="FocusTarget"
+            Content="Nothing to see here, tab further"
+            Width="12"
+            Height="12"
+            Opacity="0"/>
+
+        <TextBox
+            x:Name="SearchField"
+            PlaceholderText="{CustomResource Search}"
+            Background="{ThemeResource PageBackgroundDarkBrush}"
+            BorderBrush="{ThemeResource PageBackgroundDarkBrush}"
+            PreventKeyboardDisplayOnProgrammaticFocus="True"
+            VerticalAlignment="Center"
+            GotFocus="Search_Click"
+            TextChanged="Search_TextChanged"
+            KeyDown="Search_KeyDown"/>
+
+        <Grid Margin="-12,0" Grid.Row="1">
             <ListView
                 x:Name="ChatsPanel"
                 IsItemClickEnabled="True"
@@ -99,6 +65,14 @@
                             Accent="{ThemeResource SystemAccentColor}"/>
                     </DataTemplate>
                 </ListView.ItemTemplate>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}"/>
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.Header>
+                    <Border Height="12"/>
+                </ListView.Header>
                 <ListView.Footer>
                     <Border Height="12"/>
                 </ListView.Footer>
@@ -106,6 +80,10 @@
                     <TransitionCollection/>
                 </ListView.ItemContainerTransitions>
             </ListView>
+
+            <controls:ScrollViewerScrim
+                Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                ScrollingHost="{x:Bind ChatsPanel}"/>
 
             <controls:TextListView
                 x:Name="DialogsSearchListView"
@@ -264,14 +242,11 @@
             </controls:TextListView>
         </Grid>
 
-        <Grid x:Name="CommentPanel" Visibility="Collapsed" Grid.Row="1">
-            <Border x:Name="LineBottom" BorderThickness="0,1,0,0" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
-
+        <Grid x:Name="CommentPanel" Padding="0,0,0,8" Visibility="Collapsed" Grid.Row="2">
             <controls:FormattedTextBox
                 x:Name="CaptionInput"
                 Accept="CaptionInput_Accept"
                 Padding="10,6,36,5"
-                Margin="12,8,12,0"
                 FontFamily="{ThemeResource EmojiThemeFontFamily}"
                 PlaceholderText="{CustomResource ShareComment}">
                 <FlyoutBase.AttachedFlyout>
@@ -298,7 +273,7 @@
                 VerticalAlignment="Top"
                 Width="40"
                 Height="40"
-                Margin="0,4,10,-4"/>
+                Margin="0,-4,-4,-4"/>
         </Grid>
     </Grid>
 </controls:ContentPopup>

@@ -15,7 +15,7 @@
 
     <StackPanel>
         <ComboBox x:Name="Type"
-                  Margin="12,12,12,12"
+                  Margin="0,12,0,12"
                   HorizontalAlignment="Stretch"
                   SelectionChanged="Type_SelectionChanged">
             <ComboBoxItem Content="{CustomResource PasscodePIN}"/>
@@ -27,12 +27,11 @@
             PlaceholderText="{CustomResource EnterNewFirstPasscode}"
             PasswordChanged="First_Changed"
             KeyDown="Password_KeyDown"
-            Margin="12,0,12,12"/>
+            Margin="0,0,12,0"/>
         <PasswordBox
             x:Name="Confirm"
             PlaceholderText="{CustomResource ReEnterYourPasscode}"
             PasswordChanged="Confirm_Changed"
-            KeyDown="Password_KeyDown"
-            Margin="12,0,12,12"/>
+            KeyDown="Password_KeyDown"/>
     </StackPanel>
 </controls:ContentPopup>

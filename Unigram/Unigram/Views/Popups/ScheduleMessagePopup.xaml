@@ -13,9 +13,19 @@
     SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
 
     <StackPanel>
-        <CalendarDatePicker x:Name="Date" Margin="12,12,12,12" HorizontalAlignment="Stretch"/>
-        <TimePicker x:Name="Time" Margin="12,0,12,12" HorizontalAlignment="Stretch"/>
+        <CalendarDatePicker
+            x:Name="Date"
+            Margin="0,12,0,12"
+            HorizontalAlignment="Stretch"/>
+        <TimePicker
+            x:Name="Time"
+            Margin="0,0,0,12"
+            HorizontalAlignment="Stretch"/>
 
-        <HyperlinkButton x:Name="Online" Click="Online_Click" HorizontalAlignment="Center" Margin="12,8,12,8"/>
+        <HyperlinkButton
+            x:Name="Online"
+            Click="Online_Click"
+            HorizontalAlignment="Left"
+            Margin="0,0,0,-20"/>
     </StackPanel>
 </controls:ContentPopup>

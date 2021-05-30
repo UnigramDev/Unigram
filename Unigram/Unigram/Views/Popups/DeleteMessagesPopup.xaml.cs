@@ -5,7 +5,6 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Services;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Popups
 {
@@ -13,7 +12,6 @@ namespace Unigram.Views.Popups
     {
         public DeleteMessagesPopup(ICacheService cacheService, IList<Message> messages)
         {
-            DefaultStyleKey = typeof(ContentDialog);
             InitializeComponent();
 
             Title = messages.Count == 1 ? Strings.Resources.DeleteSingleMessagesTitle : string.Format(Strings.Resources.DeleteMessagesTitle, Locale.Declension("messages", messages.Count));

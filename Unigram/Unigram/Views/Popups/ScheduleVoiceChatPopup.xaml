@@ -15,16 +15,14 @@
     <StackPanel>
         <TextBlock
             x:Name="Message"
-            Margin="12,16,12,0"
             Style="{StaticResource BodyTextBlockStyle}"/>
 
         <CalendarDatePicker
             x:Name="Date"
-            Margin="12,12,12,12"
+            Margin="0,12,0,12"
             HorizontalAlignment="Stretch"/>
         <TimePicker
             x:Name="Time"
-            Margin="12,0,12,12"
             HorizontalAlignment="Stretch"/>
     </StackPanel>
 </controls:ContentPopup>
