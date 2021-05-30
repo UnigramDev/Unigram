@@ -287,6 +287,10 @@ namespace Unigram.Services
                 _manager.BroadcastPartRequested += OnBroadcastPartRequested;
                 _manager.MediaChannelDescriptionsRequested += OnMediaChannelDescriptionsRequested;
 
+                // This must be set before, as updates might come
+                // between ShowAsync and Rejoin.
+                _isJoining = true;
+
                 await ShowAsync();
 
                 if (groupCall.ScheduledStartDate > 0)
