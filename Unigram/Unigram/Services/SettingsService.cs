@@ -26,6 +26,7 @@ namespace Unigram.Services
         FiltersSettings Filters { get; }
         PasscodeLockSettings PasscodeLock { get; }
         PlaybackSettings Playback { get; }
+        VoIPSettings VoIP { get; }
 
         DiagnosticsSettings Diagnostics { get; }
 

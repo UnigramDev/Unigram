@@ -12,5 +12,7 @@ namespace Unigram.Native.Calls
         String AudioOutputId;
         VoipVideoContentType VideoContentType;
         IVoipVideoCapture VideoCapture;
+
+        Boolean IsNoiseSuppressionEnabled;
     }
 }

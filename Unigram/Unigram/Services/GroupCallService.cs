@@ -30,6 +30,8 @@ namespace Unigram.Services
         string CurrentAudioInput { get; set; }
         string CurrentAudioOutput { get; set; }
 
+        bool IsNoiseSuppressionEnabled { get; set; }
+
         VoipGroupManager Manager { get; }
 
         GroupCallParticipantsCollection Participants { get; }
@@ -271,7 +273,8 @@ namespace Unigram.Services
                 var descriptor = new VoipGroupDescriptor
                 {
                     AudioInputId = await _inputWatcher.GetAndUpdateAsync(),
-                    AudioOutputId = await _outputWatcher.GetAndUpdateAsync()
+                    AudioOutputId = await _outputWatcher.GetAndUpdateAsync(),
+                    IsNoiseSuppressionEnabled = Settings.VoIP.IsNoiseSuppressionEnabled
                 };
 
                 _inputWatcher.Start();
@@ -678,6 +681,12 @@ namespace Unigram.Services
         {
             get => _outputWatcher.Get();
             set => _outputWatcher.Set(value);
+        }
+
+        public bool IsNoiseSuppressionEnabled
+        {
+            get => _manager.IsNoiseSuppressionEnabled;
+            set => _manager.IsNoiseSuppressionEnabled = Settings.VoIP.IsNoiseSuppressionEnabled = value;
         }
 
         public void Handle(UpdateGroupCall update)

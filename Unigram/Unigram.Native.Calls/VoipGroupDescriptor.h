@@ -20,11 +20,15 @@ namespace winrt::Unigram::Native::Calls::implementation
         IVoipVideoCapture VideoCapture();
         void VideoCapture(IVoipVideoCapture value);
 
+        bool IsNoiseSuppressionEnabled();
+        void IsNoiseSuppressionEnabled(bool value);
+
     private:
         hstring m_audioInputId{ L"" };
         hstring m_audioOutputId{ L"" };
         VoipVideoContentType m_videoContentType{ VoipVideoContentType::Generic };
         IVoipVideoCapture m_videoCapture{ nullptr };
+        bool m_isNoiseSuppressionEnabled{ true };
 };
 }
 

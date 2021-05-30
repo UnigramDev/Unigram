@@ -42,6 +42,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 		};
 		impl.initialInputDeviceId = string_to_unmanaged(descriptor.AudioInputId());
 		impl.initialOutputDeviceId = string_to_unmanaged(descriptor.AudioOutputId());
+		impl.initialEnableNoiseSuppression = descriptor.IsNoiseSuppressionEnabled();
 		impl.videoContentType = (tgcalls::VideoContentType)descriptor.VideoContentType();
 
 		if (descriptor.VideoCapture()) {
@@ -145,6 +146,16 @@ namespace winrt::Unigram::Native::Calls::implementation
 	void VoipGroupManager::IsMuted(bool value) {
 		if (m_impl) {
 			m_impl->setIsMuted(m_isMuted = value);
+		}
+	}
+
+	bool VoipGroupManager::IsNoiseSuppressionEnabled() {
+		return m_isNoiseSuppressionEnabled;
+	}
+
+	void VoipGroupManager::IsNoiseSuppressionEnabled(bool value) {
+		if (m_impl) {
+			m_impl->setIsNoiseSuppressionEnabled(m_isNoiseSuppressionEnabled = value);
 		}
 	}
 

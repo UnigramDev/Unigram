@@ -30,6 +30,9 @@ namespace winrt::Unigram::Native::Calls::implementation
 		bool IsMuted();
 		void IsMuted(bool value);
 
+		bool IsNoiseSuppressionEnabled();
+		void IsNoiseSuppressionEnabled(bool value);
+
 		void SetAudioOutputDevice(hstring id);
 		void SetAudioInputDevice(hstring id);
 		void SetVideoCapture(Unigram::Native::Calls::IVoipVideoCapture videoCapture);
@@ -62,6 +65,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 		std::shared_ptr<tgcalls::VideoCaptureInterface> m_capturer = nullptr;
 
 		bool m_isMuted = true;
+		bool m_isNoiseSuppressionEnabled = true;
 
 		winrt::event<Windows::Foundation::TypedEventHandler<
 			winrt::Unigram::Native::Calls::VoipGroupManager,

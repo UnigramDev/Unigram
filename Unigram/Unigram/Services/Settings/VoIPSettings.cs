@@ -27,5 +27,12 @@
             get => _videoDevice ??= GetValueOrDefault("VideoDevice2", "");
             set => AddOrUpdateValue(ref _videoDevice, "VideoDevice2", value);
         }
+
+        private bool? _isNoiseSuppressionEnabled;
+        public bool IsNoiseSuppressionEnabled
+        {
+            get => _isNoiseSuppressionEnabled ??= GetValueOrDefault("IsNoiseSuppressionEnabled", true);
+            set => AddOrUpdateValue(ref _isNoiseSuppressionEnabled, "IsNoiseSuppressionEnabled", value);
+        }
     }
 }

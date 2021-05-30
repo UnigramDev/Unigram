@@ -37,4 +37,12 @@ namespace winrt::Unigram::Native::Calls::implementation
 	void VoipGroupDescriptor::VideoContentType(VoipVideoContentType value) {
 		m_videoContentType = value;
 	}
+
+	bool VoipGroupDescriptor::IsNoiseSuppressionEnabled() {
+		return m_isNoiseSuppressionEnabled;
+	}
+
+	void VoipGroupDescriptor::IsNoiseSuppressionEnabled(bool value) {
+		m_isNoiseSuppressionEnabled = value;
+	}
 }
