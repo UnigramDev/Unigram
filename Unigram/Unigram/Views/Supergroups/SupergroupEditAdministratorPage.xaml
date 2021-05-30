@@ -114,16 +114,6 @@
                 </UserControl>
 
                 <controls:HeaderedControl
-                    x:Name="Yolo"
-                    x:Load="False"
-                    Visibility="{x:Bind ViewModel.CanTransferOwnership, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <controls:BadgeButton
-                        x:Name="TransferOwnership"
-                        Command="{x:Bind ViewModel.TransferCommand}"
-                        Content="{CustomResource EditAdminGroupTransfer}"/>
-                </controls:HeaderedControl>
-
-                <controls:HeaderedControl
                     x:Name="EditRankPanel"
                     Header="{CustomResource EditAdminRank}"
                     Footer="{CustomResource EditAdminRankInfo}">
@@ -134,13 +124,19 @@
                         MaxLength="16"
                         Margin="12,8"/>
                 </controls:HeaderedControl>
-                
-                <controls:HeaderedControl
-                    x:Name="DismissPanel"
-                    Visibility="Collapsed">
+
+                <controls:HeaderedControl>
                     <controls:BadgeButton
+                        x:Name="TransferOwnership"
+                        Command="{x:Bind ViewModel.TransferCommand}"
+                        Content="{CustomResource EditAdminGroupTransfer}"
+                        Visibility="{x:Bind ViewModel.CanTransferOwnership, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    <controls:BadgeButton
+                        x:Name="Dismiss"
                         Command="{x:Bind ViewModel.DismissCommand}"
-                        Content="{CustomResource EditAdminRemoveAdmin}"/>
+                        Content="{CustomResource EditAdminRemoveAdmin}"
+                        Foreground="#df3f40"
+                        Visibility="Collapsed"/>
                 </controls:HeaderedControl>
             </StackPanel>
         </ScrollViewer>

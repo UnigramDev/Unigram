@@ -67,9 +67,18 @@ namespace Unigram.Views.Popups
 
         private void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
         {
+            if (string.IsNullOrEmpty(Header))
+            {
+                MessageLabel.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                MessageLabel.Text = Header;
+                MessageLabel.Visibility = Visibility.Visible;
+            }
+
             if (Label != null)
             {
-                Label.Header = Header;
                 Label.PlaceholderText = PlaceholderText;
                 Label.Text = Text;
                 Label.MaxLength = MaxLength;
@@ -84,7 +93,6 @@ namespace Unigram.Views.Popups
             }
             else if (Password != null)
             {
-                Password.Header = Header;
                 Password.PlaceholderText = PlaceholderText;
                 Password.Password = Text;
                 Password.MaxLength = MaxLength;

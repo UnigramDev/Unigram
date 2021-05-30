@@ -10,6 +10,7 @@ using Unigram.ViewModels.Delegates;
 using Unigram.Views.Popups;
 using Unigram.Views.Settings;
 using Unigram.Views.Supergroups;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Supergroups
@@ -362,7 +363,7 @@ namespace Unigram.ViewModels.Supergroups
             }
 
             var canTransfer = await ProtoService.SendAsync(new CanTransferOwnership());
-            if (canTransfer is CanTransferOwnershipResultPasswordNeeded || canTransfer is CanTransferOwnershipResultPasswordTooFresh || canTransfer is CanTransferOwnershipResultSessionTooFresh)
+            if (canTransfer is CanTransferOwnershipResultPasswordNeeded or CanTransferOwnershipResultPasswordTooFresh or CanTransferOwnershipResultSessionTooFresh)
             {
                 var primary = Strings.Resources.OK;
 
@@ -383,33 +384,34 @@ namespace Unigram.ViewModels.Supergroups
                 }
 
                 var confirm = await MessagePopup.ShowAsync(builder.ToString(), Strings.Resources.EditAdminTransferAlertTitle, primary, Strings.Resources.Cancel);
-                if (confirm == Windows.UI.Xaml.Controls.ContentDialogResult.Primary && canTransfer is CanTransferOwnershipResultPasswordNeeded)
+                if (confirm == ContentDialogResult.Primary && canTransfer is CanTransferOwnershipResultPasswordNeeded)
                 {
                     NavigationService.Navigate(typeof(SettingsPasswordPage));
                 }
             }
             else if (canTransfer is CanTransferOwnershipResultOk)
             {
-                var confirm = await MessagePopup.ShowAsync(Strings.Resources.EditAdminTransferReadyAlertText, supergroup.IsChannel ? Strings.Resources.EditAdminChannelTransfer : Strings.Resources.EditAdminGroupTransfer, Strings.Resources.EditAdminTransferChangeOwner, Strings.Resources.Cancel);
-                if (confirm != Windows.UI.Xaml.Controls.ContentDialogResult.Primary)
+                var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.EditAdminTransferReadyAlertText, chat.Title, user.GetFullName()), supergroup.IsChannel ? Strings.Resources.EditAdminChannelTransfer : Strings.Resources.EditAdminGroupTransfer, Strings.Resources.EditAdminTransferChangeOwner, Strings.Resources.Cancel);
+                if (confirm != ContentDialogResult.Primary)
                 {
                     return;
                 }
 
-                var input = new InputPopup();
-                input.Title = "YOLO";
-                input.Header = "Yolo";
-                input.PlaceholderText = "Yolo";
-                input.PrimaryButtonText = Strings.Resources.OK;
-                input.SecondaryButtonText = Strings.Resources.Cancel;
+                var popup = new InputPopup(InputPopupType.Password)
+                {
+                    Title = Strings.Resources.TwoStepVerification,
+                    Header = Strings.Resources.PleaseEnterCurrentPasswordTransfer,
+                    PrimaryButtonText = Strings.Resources.OK,
+                    SecondaryButtonText = Strings.Resources.Cancel
+                };
 
-                var result = await input.ShowQueuedAsync();
-                if (result != Windows.UI.Xaml.Controls.ContentDialogResult.Primary)
+                var result = await popup.ShowQueuedAsync();
+                if (result != ContentDialogResult.Primary)
                 {
                     return;
                 }
 
-                var response = await ProtoService.SendAsync(new TransferChatOwnership(chat.Id, user.Id, input.Text));
+                var response = await ProtoService.SendAsync(new TransferChatOwnership(chat.Id, user.Id, popup.Text));
                 if (response is Ok)
                 {
 

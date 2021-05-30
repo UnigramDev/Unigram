@@ -14,7 +14,12 @@
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
     SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
 
-    <Grid>
+    <StackPanel>
+        <TextBlock
+            x:Name="MessageLabel"
+            Margin="0,0,0,4"
+            Style="{StaticResource BodyTextBlockStyle}"/>
+
         <TextBox
             x:Name="Label"
             x:Load="False"
@@ -36,5 +41,5 @@
             VerticalAlignment="Top"
             ValueChanged="Number_ValueChanged"
             KeyDown="Label_KeyDown"/>
-    </Grid>
+    </StackPanel>
 </controls:ContentPopup>
