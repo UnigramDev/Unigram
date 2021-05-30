@@ -41,6 +41,8 @@ namespace Unigram.Controls.Messages
 
             _textVisual = _textVisual1;
 
+            _templateApplied = true;
+
             Unloaded += OnUnloaded;
         }
 

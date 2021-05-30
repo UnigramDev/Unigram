@@ -493,7 +493,6 @@
                     <messages:MessageReference
                         x:Name="CallbackQueryAnswer"
                         VerticalAlignment="Stretch"
-                        Margin="0"
                         Padding="12,6"
                         IsHitTestVisible="False"/>
                 </Grid>
@@ -856,7 +855,7 @@
                         <ColumnDefinition/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <messages:MessageReference x:Name="ComposerHeaderReference" Click="Reply_Click" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Margin="-10,0,0,0" BorderBrush="Transparent" Grid.Column="1"/>
+                    <messages:MessageReference x:Name="ComposerHeaderReference" Click="Reply_Click" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Margin="-10,0,0,0" Padding="0" BorderBrush="Transparent" Grid.Column="1"/>
                     <FontIcon x:Name="ComposerHeaderGlyph" Foreground="{ThemeResource MessageHeaderBorderBrush}" Style="{StaticResource DefaultFontIconStyle}"/>
 
                     <controls:ProgressBarRing x:Name="ComposerHeaderUpload" Background="Transparent" Foreground="{ThemeResource MessageHeaderBorderBrush}"/>

@@ -17,6 +17,14 @@ namespace Unigram.Controls.Messages
 {
     public abstract class MessageReferenceBase : HyperlinkButton
     {
+        protected MessageViewModel _messageReply;
+
+        protected MessageViewModel _message;
+        protected bool _loading;
+        protected string _title;
+
+        protected bool _templateApplied;
+
         public MessageReferenceBase()
         {
         }
@@ -44,7 +52,7 @@ namespace Unigram.Controls.Messages
             ((MessageReferenceBase)d).OnMessageChanged(e.NewValue as MessageComposerHeader);
         }
 
-        private void OnMessageChanged(MessageComposerHeader embedded)
+        protected void OnMessageChanged(MessageComposerHeader embedded)
         {
             if (embedded == null)
             {
@@ -97,6 +105,12 @@ namespace Unigram.Controls.Messages
 
         public void UpdateMessageReply(MessageViewModel message)
         {
+            if (!_templateApplied)
+            {
+                _messageReply = message;
+                return;
+            }
+
             if (message.ReplyToMessageState == ReplyToMessageState.Hidden || message.ReplyToMessageId == 0)
             {
                 Visibility = Visibility.Collapsed;
@@ -117,6 +131,14 @@ namespace Unigram.Controls.Messages
 
         public void UpdateMessage(MessageViewModel message, bool loading, string title)
         {
+            if (!_templateApplied)
+            {
+                _message = message;
+                _loading = loading;
+                _title = title;
+                return;
+            }
+
             if (loading)
             {
                 SetLoadingTemplate(null, title);

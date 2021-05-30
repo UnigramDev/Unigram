@@ -1,7 +1,6 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:contract6Present="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 6)"
     xmlns:contract7Present="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 7)"
     xmlns:contract8Present="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)"
     xmlns:contract7NotPresent="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractNotPresent(Windows.Foundation.UniversalApiContract, 7)"
@@ -12,6 +11,31 @@
     xmlns:common="using:Unigram.Common"
     xmlns:xaml="using:Microsoft.Graphics.Canvas.UI.Xaml"
     xmlns:microsoft="using:Microsoft.UI.Xaml.Controls">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/AnimatedStickerContent.xaml"/>
+        <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/AnimationContent.xaml"/>
+        <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/AudioContent.xaml"/>
+        <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/CallContent.xaml"/>
+        <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/ContactContent.xaml"/>
+        <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/DiceContent.xaml"/>
+        <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/DocumentContent.xaml"/>
+        <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/GameContent.xaml"/>
+        <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/InvoiceContent.xaml"/>
+        <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/InvoicePhotoContent.xaml"/>
+        <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/LocationContent.xaml"/>
+        <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/PhotoContent.xaml"/>
+        <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/PollContent.xaml"/>
+        <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/StickerContent.xaml"/>
+        <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/VenueContent.xaml"/>
+        <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/VideoContent.xaml"/>
+        <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/VideoNoteContent.xaml"/>
+        <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/VoiceNoteContent.xaml"/>
+        <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/WebPageContent.xaml"/>
+        <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/WebPageSmallPhotoContent.xaml"/>
+        <ResourceDictionary Source="ms-appx:///Controls/Messages/MessageFooter.xaml"/>
+        <ResourceDictionary Source="ms-appx:///Controls/Messages/MessageReference.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
 
     <Style TargetType="local:PhoneTextBox" BasedOn="{StaticResource DefaultTextBoxStyle}" />
     <Style TargetType="local:ColorTextBox" BasedOn="{StaticResource DefaultTextBoxStyle}" />

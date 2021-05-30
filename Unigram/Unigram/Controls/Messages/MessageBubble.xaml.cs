@@ -1360,7 +1360,7 @@ namespace Unigram.Controls.Messages
 
             if (Reply != null)
             {
-                VisualStateManager.GoToState(Reply.Content as UserControl, "LightState", false);
+                Reply.ToLightState();
             }
 
             if (BackgroundPanel != null)
@@ -1375,7 +1375,7 @@ namespace Unigram.Controls.Messages
 
             if (Reply != null)
             {
-                VisualStateManager.GoToState(Reply.Content as UserControl, "Normal", false);
+                Reply.ToNormalState();
             }
         }
 
@@ -1385,7 +1385,7 @@ namespace Unigram.Controls.Messages
 
             if (Reply != null)
             {
-                VisualStateManager.GoToState(Reply.Content as UserControl, "Normal", false);
+                Reply.ToNormalState();
             }
         }
 
@@ -1395,7 +1395,7 @@ namespace Unigram.Controls.Messages
 
             if (Reply != null)
             {
-                VisualStateManager.GoToState(Reply.Content as UserControl, "Normal", false);
+                Reply.ToNormalState();
             }
         }
 
