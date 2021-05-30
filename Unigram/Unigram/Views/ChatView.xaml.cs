@@ -727,7 +727,7 @@ namespace Unigram.Views
                     continue;
                 }
 
-                if (content is MessageBubble == false)
+                if (content is not MessageBubble)
                 {
                     var photo = content.FindName("Photo") as ProfilePicture;
                     if (photo != null)
@@ -737,7 +737,7 @@ namespace Unigram.Views
 
                     content = content.FindName("Bubble") as FrameworkElement;
                 }
-                else if (content is StackPanel panel and not MessageBubble)
+                else if (content is StackPanel panel)
                 {
                     content = panel.FindName("Service") as FrameworkElement;
                 }
@@ -1895,11 +1895,11 @@ namespace Unigram.Views
                 element = content;
                 message = content.Tag as MessageViewModel;
 
-                if (content is MessageBubble == false)
+                if (content is not MessageBubble)
                 {
                     element = content.FindName("Bubble") as FrameworkElement;
                 }
-                else if (content is StackPanel panel and not MessageBubble)
+                else if (content is StackPanel panel)
                 {
                     element = panel.FindName("Service") as FrameworkElement;
                 }
