@@ -658,6 +658,12 @@ namespace Unigram.Common
                     return sticker.Sticker.IsAnimated && sticker.Sticker.StickerValue.Local.IsDownloadingCompleted;
                 case MessageVideoNote videoNote:
                     return videoNote.VideoNote.Video.Local.IsDownloadingCompleted;
+                case MessageGame game:
+                    if (game.Game.Animation != null)
+                    {
+                        return game.Game.Animation.AnimationValue.Local.IsDownloadingCompleted;
+                    }
+                    return false;
                 case MessageText text:
                     if (text.WebPage?.Animation != null)
                     {
