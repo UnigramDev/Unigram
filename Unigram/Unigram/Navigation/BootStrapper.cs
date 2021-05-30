@@ -272,7 +272,7 @@ namespace Unigram.Navigation
                         */
 
 
-                        restored = await CallAutoRestoreAsync(e, restored);
+                        //restored = await CallAutoRestoreAsync(e, restored);
                         break;
                     }
                 case ApplicationExecutionState.ClosedByUser:
@@ -741,10 +741,10 @@ namespace Unigram.Navigation
             var deferral = e.SuspendingOperation.GetDeferral();
             try
             {
-                if (AutoSuspendAllFrames)
-                {
-                    await _LifecycleLogic.AutoSuspendAllFramesAsync(sender, e, AutoExtendExecutionSession);
-                }
+                //if (AutoSuspendAllFrames)
+                //{
+                //    await _LifecycleLogic.AutoSuspendAllFramesAsync(sender, e, AutoExtendExecutionSession);
+                //}
                 await OnSuspendingAsync(sender, e, PrelaunchActivated);
             }
             finally

@@ -137,6 +137,8 @@ namespace Unigram
 
         protected override void OnWindowCreated(WindowCreatedEventArgs args)
         {
+            args.Window.Activated += Window_Activated;
+
             //var flowDirectionSetting = Windows.ApplicationModel.Resources.Core.ResourceContext.GetForCurrentView().QualifierValues["LayoutDirection"];
 
             //args.Window.CoreWindow.FlowDirection = flowDirectionSetting == "RTL" ? CoreWindowFlowDirection.RightToLeft : CoreWindowFlowDirection.LeftToRight;
@@ -321,12 +323,6 @@ namespace Unigram
                 TLContainer.Current.Passcode.Lock();
                 InactivityHelper.Initialize(TLContainer.Current.Passcode.AutolockTimeout);
             }
-
-            if (Window.Current != null)
-            {
-                Window.Current.Activated -= Window_Activated;
-                Window.Current.Activated += Window_Activated;
-            }
         }
 
         public override void OnStart(StartKind startKind, IActivatedEventArgs args)
@@ -368,10 +364,6 @@ namespace Unigram
             }
 
             TLWindowContext.GetForCurrentView().SetActivatedArgs(args, navService);
-
-            Window.Current.Activated -= Window_Activated;
-            Window.Current.Activated += Window_Activated;
-
             ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(320, 500));
             //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 
@@ -422,6 +414,8 @@ namespace Unigram
 
         private async void OnStartSync()
         {
+            await RequestExtendedExecutionSessionAsync();
+
             //#if DEBUG
             //await VoIPConnection.Current.ConnectAsync();
             //#endif
@@ -455,12 +449,17 @@ namespace Unigram
 #endif
 
             Windows.ApplicationModel.Core.CoreApplication.EnablePrelaunch(true);
+        }
 
+        private async Task RequestExtendedExecutionSessionAsync()
+        {
             if (_extendedSession == null && AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Desktop")
             {
-                var session = new ExtendedExecutionSession { Reason = ExtendedExecutionReason.Unspecified };
-                var result = await session.RequestExtensionAsync();
+                var session = new ExtendedExecutionSession();
+                session.Reason = ExtendedExecutionReason.Unspecified;
+                session.Revoked += ExtendedExecutionSession_Revoked;
 
+                var result = await session.RequestExtensionAsync();
                 if (result == ExtendedExecutionResult.Allowed)
                 {
                     _extendedSession = session;
@@ -476,7 +475,18 @@ namespace Unigram
             }
         }
 
-        public override void OnResuming(object s, object e, AppExecutionState previousExecutionState)
+        private void ExtendedExecutionSession_Revoked(object sender, ExtendedExecutionRevokedEventArgs args)
+        {
+            Logs.Logger.Warning(Logs.LogTarget.Lifecycle, "ExtendedExecutionSession.Revoked");
+
+            if (_extendedSession != null)
+            {
+                _extendedSession.Dispose();
+                _extendedSession = null;
+            }
+        }
+
+        public override async void OnResuming(object s, object e, AppExecutionState previousExecutionState)
         {
             Logs.Logger.Info(Logs.LogTarget.Lifecycle, "OnResuming");
 
@@ -489,7 +499,7 @@ namespace Unigram
             // #2034: Will this work? No one knows.
             SettingsService.Current.Appearance.UpdateNightMode();
 
-            base.OnResuming(s, e, previousExecutionState);
+            await RequestExtendedExecutionSessionAsync();
         }
 
         public override Task OnSuspendingAsync(object s, SuspendingEventArgs e, bool prelaunchActivated)
@@ -498,7 +508,7 @@ namespace Unigram
 
             TLContainer.Current.Passcode.CloseTime = DateTime.Now;
 
-            return base.OnSuspendingAsync(s, e, prelaunchActivated);
+            return Task.CompletedTask;
         }
     }
 }
