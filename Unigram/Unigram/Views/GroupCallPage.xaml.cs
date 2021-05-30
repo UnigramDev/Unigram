@@ -1742,7 +1742,7 @@ namespace Unigram.Views
                 else if (participant.IsCurrentUser)
                 {
                     speaking.Text = Strings.Resources.ThisIsYou;
-                    speaking.Foreground = status.Foreground = new SolidColorBrush { Color = Colors.Red };
+                    speaking.Foreground = status.Foreground = new SolidColorBrush { Color = Color.FromArgb(0xFF, 0x4D, 0xB8, 0xFF) };
                 }
                 else
                 {
