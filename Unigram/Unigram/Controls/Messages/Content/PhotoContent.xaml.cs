@@ -105,7 +105,7 @@ namespace Unigram.Controls.Messages.Content
             }
         }
 
-        public async void UpdateFile(MessageViewModel message, File file)
+        public void UpdateFile(MessageViewModel message, File file)
         {
             var photo = GetContent(message.Content);
             if (photo == null || !_templateApplied)
@@ -144,6 +144,15 @@ namespace Unigram.Controls.Messages.Content
 
                 Button.Opacity = 1;
                 Overlay.Opacity = 0;
+
+                if (message.IsSecret())
+                {
+                    Texture.Source = null;
+                }
+                else
+                {
+                    UpdateTexture(message, big, file);
+                }
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
             {
@@ -170,6 +179,7 @@ namespace Unigram.Controls.Messages.Content
                     Button.Opacity = 1;
                     Overlay.Opacity = 1;
 
+                    Texture.Source = null;
                     Subtitle.Text = Locale.FormatTtl(message.Ttl, true);
                 }
                 else
@@ -189,35 +199,40 @@ namespace Unigram.Controls.Messages.Content
 
                     Overlay.Opacity = 0;
 
-                    var width = 0;
-                    var height = 0;
-
-                    if (width > MaxWidth || height > MaxHeight)
-                    {
-                        double ratioX = MaxWidth / big.Width;
-                        double ratioY = MaxHeight / big.Height;
-                        double ratio = Math.Max(ratioX, ratioY);
-
-                        width = (int)(big.Width * ratio);
-                        height = (int)(big.Height * ratio);
-                    }
-
-                    try
-                    {
-                        BitmapImage image;
-                        Texture.Source = image = new BitmapImage { DecodePixelWidth = width, DecodePixelHeight = height }; // UriEx.GetLocal(file.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height };
-
-                        var test = await message.ProtoService.GetFileAsync(file);
-                        using (var stream = await test.OpenReadAsync())
-                        {
-                            await image.SetSourceAsync(stream);
-                        }
-                    }
-                    catch
-                    {
-                        Texture.Source = null;
-                    }
+                    UpdateTexture(message, big, file);
                 }
+            }
+        }
+
+        private async void UpdateTexture(MessageViewModel message, PhotoSize big, File file)
+        {
+            var width = 0;
+            var height = 0;
+
+            if (width > MaxWidth || height > MaxHeight)
+            {
+                double ratioX = MaxWidth / big.Width;
+                double ratioY = MaxHeight / big.Height;
+                double ratio = Math.Max(ratioX, ratioY);
+
+                width = (int)(big.Width * ratio);
+                height = (int)(big.Height * ratio);
+            }
+
+            try
+            {
+                BitmapImage image;
+                Texture.Source = image = new BitmapImage { DecodePixelWidth = width, DecodePixelHeight = height }; // UriEx.GetLocal(file.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height };
+
+                var test = await message.ProtoService.GetFileAsync(file);
+                using (var stream = await test.OpenReadAsync())
+                {
+                    await image.SetSourceAsync(stream);
+                }
+            }
+            catch
+            {
+                Texture.Source = null;
             }
         }
 
