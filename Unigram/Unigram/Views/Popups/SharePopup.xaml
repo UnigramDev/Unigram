@@ -47,7 +47,7 @@
             TextChanged="Search_TextChanged"
             KeyDown="Search_KeyDown"/>
 
-        <Grid Margin="-12,0" Grid.Row="1">
+        <Grid Margin="-12,2,-12,0" Grid.Row="1">
             <ListView
                 x:Name="ChatsPanel"
                 IsItemClickEnabled="True"
@@ -71,7 +71,7 @@
                     </Style>
                 </ListView.ItemContainerStyle>
                 <ListView.Header>
-                    <Border Height="12"/>
+                    <Border Height="10"/>
                 </ListView.Header>
                 <ListView.Footer>
                     <Border Height="12"/>

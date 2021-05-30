@@ -7,7 +7,10 @@ dotnet_diagnostic.IDE0005.severity = error
 dotnet_diagnostic.IDE0058.severity = none
 
 # IDE0008: Use explicit type
-dotnet_diagnostic.IDE0008.severity = none
+csharp_style_var_elsewhere = false
 
 # IDE0032: Use auto property
 dotnet_style_prefer_auto_properties = false:silent
+
+# IDE0008: Use explicit type
+dotnet_diagnostic.IDE0008.severity = none
