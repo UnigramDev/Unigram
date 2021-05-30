@@ -600,7 +600,7 @@ namespace Unigram.Views
             var leave = ElementCompositionPreview.GetElementVisual(Leave);
             var leaveInfo = ElementCompositionPreview.GetElementVisual(LeaveInfo);
 
-            var expanded = next == ParticipantsGridMode.Expanded || next == ParticipantsGridMode.Docked;
+            var expanded = next is ParticipantsGridMode.Expanded or ParticipantsGridMode.Docked;
 
             audio1.CenterPoint = new Vector3(150, 150, 0);
             audio2.CenterPoint = new Vector3(expanded ? 24 : 48, expanded ? 24 : 48, 0);
@@ -950,13 +950,15 @@ namespace Unigram.Views
 
             if (call.CanBeManaged)
             {
-                var popup = new MessagePopup();
-                popup.RequestedTheme = ElementTheme.Dark;
-                popup.Title = Strings.Resources.VoipGroupLeaveAlertTitle;
-                popup.Message = Strings.Resources.VoipGroupLeaveAlertText;
-                popup.PrimaryButtonText = Strings.Resources.VoipGroupLeave;
-                popup.SecondaryButtonText = Strings.Resources.Cancel;
-                popup.CheckBoxLabel = Strings.Resources.VoipGroupLeaveAlertEndChat;
+                var popup = new MessagePopup
+                {
+                    RequestedTheme = ElementTheme.Dark,
+                    Title = Strings.Resources.VoipGroupLeaveAlertTitle,
+                    Message = Strings.Resources.VoipGroupLeaveAlertText,
+                    PrimaryButtonText = Strings.Resources.VoipGroupLeave,
+                    SecondaryButtonText = Strings.Resources.Cancel,
+                    CheckBoxLabel = Strings.Resources.VoipGroupLeaveAlertEndChat
+                };
 
                 var confirm = await popup.ShowQueuedAsync();
                 if (confirm == ContentDialogResult.Primary)

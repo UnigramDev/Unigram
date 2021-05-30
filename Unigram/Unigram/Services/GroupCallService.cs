@@ -741,6 +741,11 @@ namespace Unigram.Services
             {
                 _currentUser = update.Participant;
 
+                if (update.Participant.IsMutedForAllUsers || update.Participant.IsMutedForCurrentUser)
+                {
+                    _manager.IsMuted = true;
+                }
+
                 var lifetime = _callLifetime;
                 if (lifetime != null)
                 {
