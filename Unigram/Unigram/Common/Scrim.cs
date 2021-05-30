@@ -23,23 +23,18 @@ namespace Unigram.Common
 
         private static void OnGradientChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var linear = d as LinearGradientBrush;
-            if (linear == null)
+            if (d is not LinearGradientBrush linear)
             {
                 return;
             }
 
-            linear.GradientStops.Clear();
-
-            var gradient = e.NewValue as CubicBezierGradient;
-            if (gradient == null)
+            if (e.NewValue is CubicBezierGradient gradient)
             {
-                return;
+                gradient.Apply(linear);
             }
-
-            foreach (var stop in gradient.GetGradientStops())
+            else
             {
-                linear.GradientStops.Add(stop);
+                linear.GradientStops.Clear();
             }
         }
     }
@@ -55,7 +50,12 @@ namespace Unigram.Common
         }
 
         public static readonly DependencyProperty TopColorProperty =
-            DependencyProperty.Register("TopColor", typeof(SolidColorBrush), typeof(CubicBezierGradient), new PropertyMetadata(null));
+            DependencyProperty.Register("TopColor", typeof(Brush), typeof(CubicBezierGradient), new PropertyMetadata(null, OnColorChanged));
+
+        private static void OnColorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((CubicBezierGradient)d).Update();
+        }
 
         #endregion
 
@@ -68,18 +68,60 @@ namespace Unigram.Common
         }
 
         public static readonly DependencyProperty BottomColorProperty =
-            DependencyProperty.Register("BottomColor", typeof(SolidColorBrush), typeof(CubicBezierGradient), new PropertyMetadata(null));
+            DependencyProperty.Register("BottomColor", typeof(Brush), typeof(CubicBezierGradient), new PropertyMetadata(null, OnColorChanged));
 
         #endregion
 
         public double TopOpacity { get; set; } = 1;
         public double BottomOpacity { get; set; } = 1;
 
-        public Point ControlPoint1 { get; set; } = new Point(.42, 0);
+        public Point ControlPoint1 { get; set; } = new Point(.25, 0);
         public Point ControlPoint2 { get; set; } = new Point(.58, 1);
+
+        private LinearGradientBrush _target;
+
+        public CubicBezierGradient()
+        {
+
+        }
+
+        public CubicBezierGradient(SolidColorBrush top, double topOpacity, SolidColorBrush bottom, double bottomOpacity)
+        {
+            TopColor = top;
+            BottomColor = bottom;
+
+            TopOpacity = topOpacity;
+            BottomOpacity = bottomOpacity;
+        }
+
+        public void Apply(LinearGradientBrush target)
+        {
+            _target = target;
+            Update();
+        }
+
+        private void Update()
+        {
+            if (_target == null)
+            {
+                return;
+            }
+
+            _target.GradientStops.Clear();
+
+            foreach (var stop in GetGradientStops())
+            {
+                _target.GradientStops.Add(stop);
+            }
+        }
 
         public GradientStop[] GetGradientStops()
         {
+            if (TopColor == null || BottomColor == null)
+            {
+                return new GradientStop[0];
+            }
+
             var top = TopColor.Color;
             var bottom = BottomColor.Color;
 
