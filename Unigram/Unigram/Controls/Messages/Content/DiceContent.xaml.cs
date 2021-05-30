@@ -13,7 +13,7 @@ using Windows.UI.Xaml.Hosting;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed partial class DiceContent : HyperlinkButton, IContentWithFile, IContentWithPlayback
+    public sealed class DiceContent : HyperlinkButton, IContentWithFile, IContentWithPlayback
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
@@ -22,16 +22,39 @@ namespace Unigram.Controls.Messages.Content
 
         public DiceContent(MessageViewModel message)
         {
-            InitializeComponent();
-            UpdateMessage(message);
+            _message = message;
+
+            DefaultStyleKey = typeof(DiceContent);
+            Click += Button_Click;
         }
+
+        #region InitializeComponent
+
+        private DiceView Player;
+        private bool _templateApplied;
+
+        protected override void OnApplyTemplate()
+        {
+            Player = GetTemplateChild(nameof(Player)) as DiceView;
+
+            Player.FirstFrameRendered += Player_FirstFrameRendered;
+
+            _templateApplied = true;
+
+            if (_message != null)
+            {
+                UpdateMessage(_message);
+            }
+        }
+
+        #endregion
 
         public void UpdateMessage(MessageViewModel message)
         {
             _message = message;
 
             var dice = message.Content as MessageDice;
-            if (dice == null)
+            if (dice == null || !_templateApplied)
             {
                 return;
             }
@@ -56,7 +79,7 @@ namespace Unigram.Controls.Messages.Content
         public void UpdateFile(MessageViewModel message, File file)
         {
             var dice = _message?.Content as MessageDice;
-            if (dice == null)
+            if (dice == null || !_templateApplied)
             {
                 return;
             }

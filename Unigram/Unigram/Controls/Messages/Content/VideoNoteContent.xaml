@@ -1,5 +1,4 @@
-<controls:AspectView
-    x:Class="Unigram.Controls.Messages.Content.VideoNoteContent"
+<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Controls.Messages.Content"
@@ -8,31 +7,39 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     d:DesignHeight="200"
-    d:DesignWidth="200"
-    MinWidth="{ThemeResource TelegramMediaMinWidth}"
-    MinHeight="{ThemeResource TelegramMediaMinHeight}"
-    MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
-    MaxHeight="{ThemeResource TelegramMediaMaxHeight}">
+    d:DesignWidth="200">
 
-    <Ellipse x:Name="Holder">
-        <Ellipse.Fill>
-            <ImageBrush x:Name="Texture" Stretch="UniformToFill"/>
-        </Ellipse.Fill>
-    </Ellipse>
+    <Style TargetType="local:VideoNoteContent">
+        <Setter Property="MinWidth" Value="{ThemeResource TelegramMediaMinWidth}"/>
+        <Setter Property="MinHeight" Value="{ThemeResource TelegramMediaMinHeight}"/>
+        <Setter Property="MaxWidth" Value="{ThemeResource TelegramMediaMaxWidth}"/>
+        <Setter Property="MaxHeight" Value="{ThemeResource TelegramMediaMaxHeight}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:VideoNoteContent">
+                    <controls:AspectView x:Name="LayoutRoot">
+                        <Ellipse x:Name="Holder">
+                            <Ellipse.Fill>
+                                <ImageBrush x:Name="Texture" Stretch="UniformToFill"/>
+                            </Ellipse.Fill>
+                        </Ellipse>
 
-    <controls:FileButton x:Name="Button" Click="Button_Click" Style="{StaticResource ImmersiveFileButtonStyle}"/>
+                        <controls:FileButton x:Name="Button" Style="{StaticResource ImmersiveFileButtonStyle}"/>
 
-    <!-- Used to host the MediaPlayer -->
-    <!-- TODO: future, remove this and use CompositionGeometricClip
-         when most more desktop users will be on RS5 -->
-    <Border x:Name="Element" CornerRadius="100">
-        <controls:AnimationView
-            x:Name="Player"
-            AutoPlay="False"
-            IsHitTestVisible="False"/>
-    </Border>
+                        <Border x:Name="Element" CornerRadius="100">
+                            <controls:AnimationView
+                                x:Name="Player"
+                                AutoPlay="False"
+                                IsHitTestVisible="False"/>
+                        </Border>
 
-    <Border x:Name="Overlay" IsHitTestVisible="False" Background="{ThemeResource MessageServiceBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Padding="8,4,8,4" Margin="4">
-        <TextBlock x:Name="Subtitle" Style="{StaticResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
-    </Border>
-</controls:AspectView>
+                        <Border x:Name="Overlay" IsHitTestVisible="False" Background="{ThemeResource MessageServiceBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Padding="8,4,8,4" Margin="4">
+                            <TextBlock x:Name="Subtitle" Style="{StaticResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
+                        </Border>
+                    </controls:AspectView>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

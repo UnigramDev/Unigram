@@ -9,7 +9,7 @@ using Windows.UI.Xaml.Hosting;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed partial class StickerContent : ImageView, IContentWithFile, IContentWithMask
+    public sealed class StickerContent : ImageView, IContentWithFile, IContentWithMask
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
@@ -18,7 +18,10 @@ namespace Unigram.Controls.Messages.Content
 
         public StickerContent(MessageViewModel message)
         {
-            InitializeComponent();
+            DefaultStyleKey = typeof(StickerContent);
+
+            Click += Button_Click;
+
             UpdateMessage(message);
         }
 
@@ -33,8 +36,8 @@ namespace Unigram.Controls.Messages.Content
             }
 
             Background = null;
-            Texture.Source = null;
-            Texture.Constraint = message;
+            Source = null;
+            Constraint = message;
 
             if (!sticker.StickerValue.Local.IsDownloadingCompleted)
             {
@@ -61,7 +64,7 @@ namespace Unigram.Controls.Messages.Content
 
             if (file.Local.IsDownloadingCompleted)
             {
-                Texture.Source = await PlaceholderHelper.GetWebPFrameAsync(file.Local.Path);
+                Source = await PlaceholderHelper.GetWebPFrameAsync(file.Local.Path);
                 ElementCompositionPreview.SetElementChildVisual(this, null);
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)

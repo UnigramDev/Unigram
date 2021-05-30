@@ -3,39 +3,72 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.ViewModels;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed partial class PhotoContent : AspectView, IContentWithFile
+    public sealed class PhotoContent : Control, IContentWithFile
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
         public PhotoContent(MessageViewModel message)
         {
-            InitializeComponent();
-            UpdateMessage(message);
+            _message = message;
+
+            DefaultStyleKey = typeof(PhotoContent);
         }
 
         public PhotoContent()
         {
-            InitializeComponent();
+            DefaultStyleKey = typeof(PhotoContent);
         }
+
+        #region InitializeComponent
+
+        private AspectView LayoutRoot;
+        private Image Texture;
+        private Border Overlay;
+        private TextBlock Subtitle;
+        private FileButton Button;
+        private SelfDestructTimer Timer;
+        private bool _templateApplied;
+
+        protected override void OnApplyTemplate()
+        {
+            LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as AspectView;
+            Texture = GetTemplateChild(nameof(Texture)) as Image;
+            Overlay = GetTemplateChild(nameof(Overlay)) as Border;
+            Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
+            Button = GetTemplateChild(nameof(Button)) as FileButton;
+            Timer = GetTemplateChild(nameof(Timer)) as SelfDestructTimer;
+
+            Button.Click += Button_Click;
+
+            _templateApplied = true;
+
+            if (_message != null)
+            {
+                UpdateMessage(_message);
+            }
+        }
+
+        #endregion
 
         public void UpdateMessage(MessageViewModel message)
         {
             _message = message;
 
             var photo = GetContent(message.Content);
-            if (photo == null)
+            if (photo == null || !_templateApplied)
             {
                 return;
             }
 
-            Constraint = message;
-            Background = null;
+            LayoutRoot.Constraint = message;
+            LayoutRoot.Background = null;
             Texture.Source = null;
 
             //UpdateMessageContentOpened(message);
@@ -55,8 +88,8 @@ namespace Unigram.Controls.Messages.Content
         {
             var big = photo.Photo.GetBig();
 
-            Constraint = photo;
-            Background = null;
+            LayoutRoot.Constraint = photo;
+            LayoutRoot.Background = null;
             Texture.Source = new BitmapImage(new Uri(big.Photo.Local.Path));
 
             Overlay.Opacity = 0;
@@ -65,7 +98,7 @@ namespace Unigram.Controls.Messages.Content
 
         public void UpdateMessageContentOpened(MessageViewModel message)
         {
-            if (message.Ttl > 0)
+            if (message.Ttl > 0 && _templateApplied)
             {
                 Timer.Maximum = message.Ttl;
                 Timer.Value = DateTime.Now.AddSeconds(message.TtlExpiresIn);
@@ -75,7 +108,7 @@ namespace Unigram.Controls.Messages.Content
         public async void UpdateFile(MessageViewModel message, File file)
         {
             var photo = GetContent(message.Content);
-            if (photo == null)
+            if (photo == null || !_templateApplied)
             {
                 return;
             }
@@ -192,14 +225,14 @@ namespace Unigram.Controls.Messages.Content
         {
             if (minithumbnail != null)
             {
-                Background = new ImageBrush { ImageSource = PlaceholderHelper.GetBlurred(minithumbnail.Data, message.IsSecret() ? 15 : 3), Stretch = Stretch.UniformToFill };
+                LayoutRoot.Background = new ImageBrush { ImageSource = PlaceholderHelper.GetBlurred(minithumbnail.Data, message.IsSecret() ? 15 : 3), Stretch = Stretch.UniformToFill };
             }
             else if (small != null)
             {
                 var file = small.Photo;
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    Background = new ImageBrush { ImageSource = PlaceholderHelper.GetBlurred(file.Local.Path, message.IsSecret() ? 15 : 3), Stretch = Stretch.UniformToFill };
+                    LayoutRoot.Background = new ImageBrush { ImageSource = PlaceholderHelper.GetBlurred(file.Local.Path, message.IsSecret() ? 15 : 3), Stretch = Stretch.UniformToFill };
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {

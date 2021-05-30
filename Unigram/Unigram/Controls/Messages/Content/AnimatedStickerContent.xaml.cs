@@ -11,7 +11,7 @@ using Windows.UI.Xaml.Hosting;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed partial class AnimatedStickerContent : HyperlinkButton, IContentWithFile, IContentWithPlayback
+    public sealed class AnimatedStickerContent : HyperlinkButton, IContentWithFile, IContentWithPlayback
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
@@ -20,16 +20,39 @@ namespace Unigram.Controls.Messages.Content
 
         public AnimatedStickerContent(MessageViewModel message)
         {
-            InitializeComponent();
-            UpdateMessage(message);
+            _message = message;
+
+            DefaultStyleKey = typeof(AnimatedStickerContent);
+            Click += Button_Click;
         }
+
+        #region InitializeComponent
+
+        private LottieView Player;
+        private bool _templateApplied;
+
+        protected override void OnApplyTemplate()
+        {
+            Player = GetTemplateChild(nameof(Player)) as LottieView;
+
+            Player.FirstFrameRendered += Player_FirstFrameRendered;
+
+            _templateApplied = true;
+
+            if (_message != null)
+            {
+                UpdateMessage(_message);
+            }
+        }
+
+        #endregion
 
         public void UpdateMessage(MessageViewModel message)
         {
             _message = message;
 
             var sticker = GetContent(message);
-            if (sticker == null)
+            if (sticker == null || !_templateApplied)
             {
                 return;
             }
@@ -66,7 +89,7 @@ namespace Unigram.Controls.Messages.Content
         public void UpdateFile(MessageViewModel message, File file)
         {
             var sticker = GetContent(message);
-            if (sticker == null)
+            if (sticker == null || !_templateApplied)
             {
                 return;
             }

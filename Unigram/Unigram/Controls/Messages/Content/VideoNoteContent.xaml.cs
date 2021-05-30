@@ -4,32 +4,68 @@ using Unigram.Common;
 using Unigram.ViewModels;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed partial class VideoNoteContent : AspectView, IContentWithFile, IContentWithMask, IContentWithPlayback
+    public sealed class VideoNoteContent : Control, IContentWithFile, IContentWithMask, IContentWithPlayback
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
         public VideoNoteContent(MessageViewModel message)
         {
-            InitializeComponent();
-            UpdateMessage(message);
+            _message = message;
+
+            DefaultStyleKey = typeof(VideoNoteContent);
         }
+
+        #region InitializeComponent
+
+        private AspectView LayoutRoot;
+        private Ellipse Holder;
+        private ImageBrush Texture;
+        private FileButton Button;
+        private AnimationView Player;
+        private Border Overlay;
+        private TextBlock Subtitle;
+        private bool _templateApplied;
+
+        protected override void OnApplyTemplate()
+        {
+            LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as AspectView;
+            Holder = GetTemplateChild(nameof(Holder)) as Ellipse;
+            Texture = GetTemplateChild(nameof(Texture)) as ImageBrush;
+            Button = GetTemplateChild(nameof(Button)) as FileButton;
+            Player = GetTemplateChild(nameof(Player)) as AnimationView;
+            Overlay = GetTemplateChild(nameof(Overlay)) as Border;
+            Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
+
+            Button.Click += Button_Click;
+
+            _templateApplied = true;
+
+            if (_message != null)
+            {
+                UpdateMessage(_message);
+            }
+        }
+
+        #endregion
 
         public void UpdateMessage(MessageViewModel message)
         {
             _message = message;
 
             var videoNote = GetContent(message.Content);
-            if (videoNote == null)
+            if (videoNote == null || !_templateApplied)
             {
                 return;
             }
 
-            Constraint = message;
+            LayoutRoot.Constraint = message;
             Texture.ImageSource = null;
 
             if (message.Content is MessageVideoNote videoNoteMessage)
@@ -56,7 +92,7 @@ namespace Unigram.Controls.Messages.Content
         public void UpdateFile(MessageViewModel message, File file)
         {
             var videoNote = GetContent(message.Content);
-            if (videoNote == null)
+            if (videoNote == null || !_templateApplied)
             {
                 return;
             }

@@ -12,21 +12,55 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed partial class AudioContent : Grid, IContentWithFile
+    public sealed class AudioContent : Control, IContentWithFile
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
         public AudioContent(MessageViewModel message)
         {
-            InitializeComponent();
-            UpdateMessage(message);
+            _message = message;
+
+            DefaultStyleKey = typeof(AudioContent);
+            Unloaded += OnUnloaded;
         }
 
         public AudioContent()
         {
-            InitializeComponent();
+            DefaultStyleKey = typeof(AudioContent);
         }
+
+        #region InitializeComponent
+
+        private Border Texture;
+        private FileButton Button;
+        private Grid DownloadPanel;
+        private FileButton Download;
+        private TextBlock Title;
+        private TextBlock Subtitle;
+        private bool _templateApplied;
+
+        protected override void OnApplyTemplate()
+        {
+            Texture = GetTemplateChild(nameof(Texture)) as Border;
+            Button = GetTemplateChild(nameof(Button)) as FileButton;
+            DownloadPanel = GetTemplateChild(nameof(DownloadPanel)) as Grid;
+            Download = GetTemplateChild(nameof(Download)) as FileButton;
+            Title = GetTemplateChild(nameof(Title)) as TextBlock;
+            Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
+
+            Button.Click += Button_Click;
+            Download.Click += Download_Click;
+
+            _templateApplied = true;
+
+            if (_message != null)
+            {
+                UpdateMessage(_message);
+            }
+        }
+
+        #endregion
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
@@ -46,13 +80,14 @@ namespace Unigram.Controls.Messages.Content
             _message = message;
 
             message.PlaybackService.PropertyChanged -= OnCurrentItemChanged;
-            message.PlaybackService.PropertyChanged += OnCurrentItemChanged;
 
             var audio = GetContent(message.Content);
-            if (audio == null)
+            if (audio == null || !_templateApplied)
             {
                 return;
             }
+
+            message.PlaybackService.PropertyChanged += OnCurrentItemChanged;
 
             Title.Text = audio.GetTitle();
 
@@ -173,7 +208,7 @@ namespace Unigram.Controls.Messages.Content
             message.PlaybackService.PositionChanged -= OnPositionChanged;
 
             var audio = GetContent(message.Content);
-            if (audio == null)
+            if (audio == null || !_templateApplied)
             {
                 return;
             }

@@ -10,23 +10,52 @@ using Point = Windows.Foundation.Point;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed partial class ContactContent : Grid, IContent
+    public sealed class ContactContent : Control, IContent
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
         public ContactContent(MessageViewModel message)
         {
-            InitializeComponent();
-            UpdateMessage(message);
+            _message = message;
+
+            DefaultStyleKey = typeof(ContactContent);
         }
+
+        #region InitializeComponent
+
+        private ProfilePicture Photo;
+        private TextBlock Title;
+        private TextBlock Subtitle;
+        private Button Button;
+        private bool _templateApplied;
+
+        protected override void OnApplyTemplate()
+        {
+            Photo = GetTemplateChild(nameof(Photo)) as ProfilePicture;
+            Title = GetTemplateChild(nameof(Title)) as TextBlock;
+            Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
+            Button = GetTemplateChild(nameof(Button)) as Button;
+
+            Photo.Click += Photo_Click;
+            Button.Click += Button_Click;
+
+            _templateApplied = true;
+
+            if (_message != null)
+            {
+                UpdateMessage(_message);
+            }
+        }
+
+        #endregion
 
         public void UpdateMessage(MessageViewModel message)
         {
             _message = message;
 
             var contact = message.Content as MessageContact;
-            if (contact == null)
+            if (contact == null || !_templateApplied)
             {
                 return;
             }

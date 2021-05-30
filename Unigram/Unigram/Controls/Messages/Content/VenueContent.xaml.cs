@@ -6,28 +6,53 @@ using Unigram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
-
-// The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
+using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed partial class VenueContent : Grid, IContent
+    public sealed class VenueContent : Control, IContent
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
         public VenueContent(MessageViewModel message)
         {
-            InitializeComponent();
-            UpdateMessage(message);
+            _message = message;
+
+            DefaultStyleKey = typeof(VenueContent);
         }
+
+        #region InitializeComponent
+
+        private ImageView Texture;
+        private BitmapIcon VenueGlyph;
+        private Path VenueDot;
+        private bool _templateApplied;
+
+        protected override void OnApplyTemplate()
+        {
+            Texture = GetTemplateChild(nameof(Texture)) as ImageView;
+            VenueGlyph = GetTemplateChild(nameof(VenueGlyph)) as BitmapIcon;
+            VenueDot = GetTemplateChild(nameof(VenueDot)) as Path;
+
+            Texture.Click += Button_Click;
+
+            _templateApplied = true;
+
+            if (_message != null)
+            {
+                UpdateMessage(_message);
+            }
+        }
+
+        #endregion
 
         public void UpdateMessage(MessageViewModel message)
         {
             _message = message;
 
             var venue = message.Content as MessageVenue;
-            if (venue == null)
+            if (venue == null || !_templateApplied)
             {
                 return;
             }

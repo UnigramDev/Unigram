@@ -11,23 +11,47 @@ using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed partial class GameContent : StackPanel, IContentWithFile, IContentWithPlayback
+    public sealed class GameContent : Control, IContentWithFile, IContentWithPlayback
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
         public GameContent(MessageViewModel message)
         {
-            InitializeComponent();
-            UpdateMessage(message);
+            _message = message;
+
+            DefaultStyleKey = typeof(GameContent);
         }
+
+        #region InitializeComponent
+
+        private TextBlock TitleLabel;
+        private Span Span;
+        private Border Media;
+        private bool _templateApplied;
+
+        protected override void OnApplyTemplate()
+        {
+            TitleLabel = GetTemplateChild(nameof(TitleLabel)) as TextBlock;
+            Span = GetTemplateChild(nameof(Span)) as Span;
+            Media = GetTemplateChild(nameof(Media)) as Border;
+
+            _templateApplied = true;
+
+            if (_message != null)
+            {
+                UpdateMessage(_message);
+            }
+        }
+
+        #endregion
 
         public void UpdateMessage(MessageViewModel message)
         {
             _message = message;
 
             var game = message.Content as MessageGame;
-            if (game == null)
+            if (game == null || !_templateApplied)
             {
                 return;
             }
@@ -76,7 +100,7 @@ namespace Unigram.Controls.Messages.Content
 
         public void UpdateFile(MessageViewModel message, File file)
         {
-            if (Media.Child is IContentWithFile content && content.IsValid(message.Content, false))
+            if (Media?.Child is IContentWithFile content && content.IsValid(message.Content, false))
             {
                 content.UpdateFile(message, file);
             }

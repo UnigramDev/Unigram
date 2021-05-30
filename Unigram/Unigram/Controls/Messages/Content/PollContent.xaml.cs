@@ -10,7 +10,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed partial class PollContent : StackPanel, IContent
+    public sealed class PollContent : Control, IContent
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
@@ -20,13 +20,11 @@ namespace Unigram.Controls.Messages.Content
 
         public PollContent(MessageViewModel message)
         {
-            InitializeComponent();
-            UpdateMessage(message);
-        }
+            _message = message;
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
-        {
+            DefaultStyleKey = typeof(PollContent);
 
+            Unloaded += OnUnloaded;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -35,12 +33,55 @@ namespace Unigram.Controls.Messages.Content
             _timeoutTimer = null;
         }
 
+        #region InitializeComponent
+
+        private TextBlock Question;
+        private TextBlock Type;
+        private StackPanel RecentVoters;
+        private StackPanel TimeoutLabel;
+        private TextBlock Timeout;
+        private TextBlock TimeoutGlyph;
+        private GlyphButton Explanation;
+        private StackPanel Options;
+        private TextBlock Votes;
+        private Button Submit;
+        private Button View;
+        private bool _templateApplied;
+
+        protected override void OnApplyTemplate()
+        {
+            Question = GetTemplateChild(nameof(Question)) as TextBlock;
+            Type = GetTemplateChild(nameof(Type)) as TextBlock;
+            RecentVoters = GetTemplateChild(nameof(RecentVoters)) as StackPanel;
+            TimeoutLabel = GetTemplateChild(nameof(TimeoutLabel)) as StackPanel;
+            Timeout = GetTemplateChild(nameof(Timeout)) as TextBlock;
+            TimeoutGlyph = GetTemplateChild(nameof(TimeoutGlyph)) as TextBlock;
+            Explanation = GetTemplateChild(nameof(Explanation)) as GlyphButton;
+            Options = GetTemplateChild(nameof(Options)) as StackPanel;
+            Votes = GetTemplateChild(nameof(Votes)) as TextBlock;
+            Submit = GetTemplateChild(nameof(Submit)) as Button;
+            View = GetTemplateChild(nameof(View)) as Button;
+
+            Explanation.Click += Explanation_Click;
+            Submit.Click += Submit_Click;
+            View.Click += View_Click;
+
+            _templateApplied = true;
+
+            if (_message != null)
+            {
+                UpdateMessage(_message);
+            }
+        }
+
+        #endregion
+
         public void UpdateMessage(MessageViewModel message)
         {
             _message = message;
 
             var poll = message.Content as MessagePoll;
-            if (poll == null)
+            if (poll == null | !_templateApplied)
             {
                 return;
             }
@@ -209,12 +250,12 @@ namespace Unigram.Controls.Messages.Content
                 if (diff <= 5 && !_runningOut)
                 {
                     _runningOut = true;
-                    VisualStateManager.GoToState(LayoutRoot, "RunningOut", false);
+                    VisualStateManager.GoToState(this, "RunningOut", false);
                 }
                 else if (diff > 5 && _runningOut)
                 {
                     _runningOut = false;
-                    VisualStateManager.GoToState(LayoutRoot, "Default", false);
+                    VisualStateManager.GoToState(this, "Default", false);
                 }
             }
             else

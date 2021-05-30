@@ -1,28 +1,51 @@
 ﻿using Telegram.Td.Api;
 using Unigram.ViewModels;
 using Windows.UI.Xaml.Controls;
-
-// The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
+using Windows.UI.Xaml.Documents;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed partial class InvoiceContent : StackPanel, IContent
+    public sealed class InvoiceContent : Control, IContent
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
         public InvoiceContent(MessageViewModel message)
         {
-            InitializeComponent();
-            UpdateMessage(message);
+            _message = message;
+
+            DefaultStyleKey = typeof(InvoiceContent);
         }
+
+        #region InitializeComponent
+
+        private Run Title;
+        private Run Description;
+        private InvoiceFooter Footer;
+        private bool _templateApplied;
+
+        protected override void OnApplyTemplate()
+        {
+            Title = GetTemplateChild(nameof(Title)) as Run;
+            Description = GetTemplateChild(nameof(Description)) as Run;
+            Footer = GetTemplateChild(nameof(Footer)) as InvoiceFooter;
+
+            _templateApplied = true;
+
+            if (_message != null)
+            {
+                UpdateMessage(_message);
+            }
+        }
+
+        #endregion
 
         public void UpdateMessage(MessageViewModel message)
         {
             _message = message;
 
             var invoice = message.Content as MessageInvoice;
-            if (invoice == null)
+            if (invoice == null || !_templateApplied)
             {
                 return;
             }

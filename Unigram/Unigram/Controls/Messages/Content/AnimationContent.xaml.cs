@@ -4,31 +4,64 @@ using Unigram.Common;
 using Unigram.Converters;
 using Unigram.ViewModels;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed partial class AnimationContent : AspectView, IContentWithFile, IContentWithPlayback
+    public sealed class AnimationContent : Control, IContentWithFile, IContentWithPlayback
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
         public AnimationContent(MessageViewModel message)
         {
-            InitializeComponent();
-            UpdateMessage(message);
+            _message = message;
+
+            DefaultStyleKey = typeof(AnimationContent);
         }
+
+        #region InitializeComponent
+
+        private AspectView LayoutRoot;
+        private Image Texture;
+        private FileButton Button;
+        private AnimationView Player;
+        private Border Overlay;
+        private TextBlock Subtitle;
+        private bool _templateApplied;
+
+        protected override void OnApplyTemplate()
+        {
+            LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as AspectView;
+            Texture = GetTemplateChild(nameof(Texture)) as Image;
+            Button = GetTemplateChild(nameof(Button)) as FileButton;
+            Player = GetTemplateChild(nameof(Player)) as AnimationView;
+            Overlay = GetTemplateChild(nameof(Overlay)) as Border;
+            Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
+
+            Button.Click += Button_Click;
+
+            _templateApplied = true;
+
+            if (_message != null)
+            {
+                UpdateMessage(_message);
+            }
+        }
+
+        #endregion
 
         public void UpdateMessage(MessageViewModel message)
         {
             _message = message;
 
             var animation = GetContent(message.Content);
-            if (animation == null)
+            if (animation == null || !_templateApplied)
             {
                 return;
             }
 
-            Constraint = message;
+            LayoutRoot.Constraint = message;
             Texture.Source = null;
 
             UpdateThumbnail(message, animation.Thumbnail, animation.Minithumbnail);
@@ -47,7 +80,7 @@ namespace Unigram.Controls.Messages.Content
         public void UpdateFile(MessageViewModel message, File file)
         {
             var animation = GetContent(message.Content);
-            if (animation == null)
+            if (animation == null || !_templateApplied)
             {
                 return;
             }

@@ -9,20 +9,23 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed partial class VoiceNoteContent : Grid, IContentWithFile
+    public sealed class VoiceNoteContent : Control, IContentWithFile
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
         public VoiceNoteContent(MessageViewModel message)
         {
-            InitializeComponent();
-            UpdateMessage(message);
+            _message = message;
+
+            DefaultStyleKey = typeof(VoiceNoteContent);
+
+            Unloaded += OnUnloaded;
         }
 
         public VoiceNoteContent()
         {
-            InitializeComponent();
+            DefaultStyleKey = typeof(VoiceNoteContent);
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -38,18 +41,44 @@ namespace Unigram.Controls.Messages.Content
             message.PlaybackService.PositionChanged -= OnPositionChanged;
         }
 
+        #region InitializeComponent
+
+        private FileButton Button;
+        private ProgressVoice Progress;
+        private TextBlock Subtitle;
+        private bool _templateApplied;
+
+        protected override void OnApplyTemplate()
+        {
+            Button = GetTemplateChild(nameof(Button)) as FileButton;
+            Progress = GetTemplateChild(nameof(Progress)) as ProgressVoice;
+            Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
+
+            Button.Click += Button_Click;
+
+            _templateApplied = true;
+
+            if (_message != null)
+            {
+                UpdateMessage(_message);
+            }
+        }
+
+        #endregion
+
         public void UpdateMessage(MessageViewModel message)
         {
             _message = message;
 
             message.PlaybackService.PropertyChanged -= OnCurrentItemChanged;
-            message.PlaybackService.PropertyChanged += OnCurrentItemChanged;
 
             var voiceNote = GetContent(message.Content);
-            if (voiceNote == null)
+            if (voiceNote == null || !_templateApplied)
             {
                 return;
             }
+
+            message.PlaybackService.PropertyChanged += OnCurrentItemChanged;
 
             Progress.UpdateWaveform(voiceNote);
 
@@ -167,7 +196,7 @@ namespace Unigram.Controls.Messages.Content
             message.PlaybackService.PositionChanged -= OnPositionChanged;
 
             var voiceNote = GetContent(message.Content);
-            if (voiceNote == null)
+            if (voiceNote == null || !_templateApplied)
             {
                 return;
             }

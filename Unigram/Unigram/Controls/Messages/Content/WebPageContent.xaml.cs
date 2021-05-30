@@ -6,10 +6,12 @@ using Unigram.Controls.Chats;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Documents;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed partial class WebPageContent : WebPageContentBase, IContentWithFile, IContentWithPlayback
+    public sealed class WebPageContent : WebPageContentBase, IContentWithFile, IContentWithPlayback
     {
         private CancellationTokenSource _instantViewToken;
 
@@ -18,9 +20,51 @@ namespace Unigram.Controls.Messages.Content
 
         public WebPageContent(MessageViewModel message)
         {
-            InitializeComponent();
-            UpdateMessage(message);
+            _message = message;
+
+            DefaultStyleKey = typeof(WebPageContent);
         }
+
+        #region InitializeComponent
+
+        private RichTextBlock Label;
+        private Run TitleLabel;
+        private Run SubtitleLabel;
+        private Run ContentLabel;
+        private Border Media;
+        private Border Overlay;
+        private TextBlock Subtitle;
+        private Button Button;
+        private Run Run1;
+        private Run Run2;
+        private Run Run3;
+        private bool _templateApplied;
+
+        protected override void OnApplyTemplate()
+        {
+            Label = GetTemplateChild(nameof(Label)) as RichTextBlock;
+            TitleLabel = GetTemplateChild(nameof(TitleLabel)) as Run;
+            SubtitleLabel = GetTemplateChild(nameof(SubtitleLabel)) as Run;
+            ContentLabel = GetTemplateChild(nameof(ContentLabel)) as Run;
+            Media = GetTemplateChild(nameof(Media)) as Border;
+            Overlay = GetTemplateChild(nameof(Overlay)) as Border;
+            Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
+            Button = GetTemplateChild(nameof(Button)) as Button;
+            Run1 = GetTemplateChild(nameof(Run1)) as Run;
+            Run2 = GetTemplateChild(nameof(Run2)) as Run;
+            Run3 = GetTemplateChild(nameof(Run3)) as Run;
+
+            Button.Click += Button_Click;
+
+            _templateApplied = true;
+
+            if (_message != null)
+            {
+                UpdateMessage(_message);
+            }
+        }
+
+        #endregion
 
         public void UpdateMessage(MessageViewModel message)
         {
@@ -30,7 +74,7 @@ namespace Unigram.Controls.Messages.Content
             _message = message;
 
             var text = message.Content as MessageText;
-            if (text == null)
+            if (text == null || !_templateApplied)
             {
                 return;
             }
@@ -156,7 +200,7 @@ namespace Unigram.Controls.Messages.Content
 
         public void UpdateFile(MessageViewModel message, File file)
         {
-            if (Media.Child is IContentWithFile content && content.IsValid(message.Content, false))
+            if (Media?.Child is IContentWithFile content && content.IsValid(message.Content, false))
             {
                 content.UpdateFile(message, file);
             }

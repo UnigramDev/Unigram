@@ -5,10 +5,11 @@ using Unigram.Converters;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed partial class VideoContent : AspectView, IContentWithFile, IContentWithPlayback
+    public sealed class VideoContent : Control, IContentWithFile, IContentWithPlayback
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
@@ -17,21 +18,55 @@ namespace Unigram.Controls.Messages.Content
 
         public VideoContent(MessageViewModel message)
         {
-            InitializeComponent();
-            UpdateMessage(message);
+            _message = message;
+
+            DefaultStyleKey = typeof(VideoContent);
         }
+
+        #region InitializeComponent
+
+        private AspectView LayoutRoot;
+        private Image Texture;
+        private FileButton Button;
+        private AnimationView Player;
+        private FileButton Overlay;
+        private TextBlock Subtitle;
+        private bool _templateApplied;
+
+        protected override void OnApplyTemplate()
+        {
+            LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as AspectView;
+            Texture = GetTemplateChild(nameof(Texture)) as Image;
+            Button = GetTemplateChild(nameof(Button)) as FileButton;
+            Player = GetTemplateChild(nameof(Player)) as AnimationView;
+            Overlay = GetTemplateChild(nameof(Overlay)) as FileButton;
+            Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
+
+            Button.Click += Play_Click;
+            Player.PositionChanged += Player_PositionChanged;
+            Overlay.Click += Button_Click;
+
+            _templateApplied = true;
+
+            if (_message != null)
+            {
+                UpdateMessage(_message);
+            }
+        }
+
+        #endregion
 
         public void UpdateMessage(MessageViewModel message)
         {
             _message = message;
 
             var video = GetContent(message.Content);
-            if (video == null)
+            if (video == null || !_templateApplied)
             {
                 return;
             }
 
-            Constraint = message;
+            LayoutRoot.Constraint = message;
             Texture.Source = null;
 
             UpdateThumbnail(message, video.Thumbnail, video.Minithumbnail);
@@ -50,7 +85,7 @@ namespace Unigram.Controls.Messages.Content
         public void UpdateFile(MessageViewModel message, File file)
         {
             var video = GetContent(message.Content);
-            if (video == null)
+            if (video == null || !_templateApplied)
             {
                 return;
             }

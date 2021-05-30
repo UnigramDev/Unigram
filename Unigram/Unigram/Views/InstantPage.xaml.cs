@@ -42,7 +42,7 @@ namespace Unigram.Views
         private readonly FileContext<Tuple<IContentWithFile, MessageViewModel>> _filesMap = new FileContext<Tuple<IContentWithFile, MessageViewModel>>();
         private readonly FileContext<Image> _iconsMap = new FileContext<Image>();
 
-        private readonly List<(AnimationContent, AnimationView)> _animations = new List<(AnimationContent, AnimationView)>();
+        private readonly List<IPlayerView> _animations = new List<IPlayerView>();
 
         public InstantPage()
         {
@@ -72,7 +72,7 @@ namespace Unigram.Views
             {
                 try
                 {
-                    animation.Item1.Children.Remove(animation.Item2);
+                    animation.Pause();
                 }
                 catch { }
             }
@@ -105,15 +105,7 @@ namespace Unigram.Views
                         {
                             if (update.File.Local.IsDownloadingCompleted && update.File.Id == animation.Animation.AnimationValue.Id)
                             {
-                                var presenter = new AnimationView();
-                                presenter.AutoPlay = true;
-                                presenter.IsLoopingEnabled = true;
-                                presenter.IsHitTestVisible = false;
-                                presenter.Source = new LocalVideoSource(update.File);
-
-                                content.Children.Add(presenter);
-
-                                _animations.Add((content, presenter));
+                                _animations.Add(content.GetPlaybackElement());
                             }
                         }
                     }
@@ -974,15 +966,7 @@ namespace Unigram.Views
 
             if (block.Animation.AnimationValue.Local.IsDownloadingCompleted)
             {
-                var presenter = new AnimationView();
-                presenter.AutoPlay = true;
-                presenter.IsLoopingEnabled = true;
-                presenter.IsHitTestVisible = false;
-                presenter.Source = new LocalVideoSource(block.Animation.AnimationValue);
-
-                content.Children.Add(presenter);
-
-                _animations.Add((content, presenter));
+                _animations.Add(content.GetPlaybackElement());
             }
 
             if (block.Animation.Thumbnail != null)

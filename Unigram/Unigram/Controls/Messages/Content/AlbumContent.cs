@@ -15,14 +15,13 @@ using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed partial class AlbumContent : Grid, IContentWithFile
+    public sealed class AlbumContent : Grid, IContentWithFile
     {
         public MessageViewModel Message => _message;
         private MessageViewModel _message;
 
         public AlbumContent(MessageViewModel message)
         {
-            InitializeComponent();
             UpdateMessage(message);
 
             // I don't like this much, but it's the easier way to add margins between children
@@ -136,7 +135,7 @@ namespace Unigram.Controls.Messages.Content
 
             foreach (var pos in album.Messages)
             {
-                Grid element;
+                FrameworkElement element;
                 if (pos.Content is MessagePhoto)
                 {
                     element = new PhotoContent(pos);
@@ -166,7 +165,7 @@ namespace Unigram.Controls.Messages.Content
                     element.MinHeight = 0;
                     element.MaxWidth = MessageAlbum.MAX_WIDTH;
                     element.MaxHeight = MessageAlbum.MAX_HEIGHT;
-                    element.BorderThickness = new Thickness(0, 0, MessageAlbum.ITEM_MARGIN, MessageAlbum.ITEM_MARGIN);
+                    element.Margin = new Thickness(0, 0, MessageAlbum.ITEM_MARGIN, MessageAlbum.ITEM_MARGIN);
                     element.Tag = true;
 
                     continue;
@@ -176,7 +175,7 @@ namespace Unigram.Controls.Messages.Content
                     return;
                 }
 
-                element.BorderThickness = new Thickness(0, 0, 0, 8);
+                element.Margin = new Thickness(0, 0, 0, 8);
 
                 var caption = pos.Content?.GetCaption();
                 if (string.IsNullOrEmpty(caption?.Text))

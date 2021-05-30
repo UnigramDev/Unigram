@@ -27,23 +27,51 @@ namespace Unigram.Controls.Messages.Content
         Theme,
     }
 
-    public sealed partial class DocumentContent : Grid, IContentWithFile
+    public sealed class DocumentContent : Control, IContentWithFile
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
         public DocumentContent(MessageViewModel message)
         {
-            InitializeComponent();
-            UpdateMessage(message);
+            _message = message;
+
+            DefaultStyleKey = typeof(DocumentContent);
         }
+
+        #region InitializeComponent
+
+        private Border Texture;
+        private FileButton Button;
+        private TextBlock Title;
+        private TextBlock Subtitle;
+        private bool _templateApplied;
+
+        protected override void OnApplyTemplate()
+        {
+            Texture = GetTemplateChild(nameof(Texture)) as Border;
+            Button = GetTemplateChild(nameof(Button)) as FileButton;
+            Title = GetTemplateChild(nameof(Title)) as TextBlock;
+            Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
+
+            Button.Click += Button_Click;
+
+            _templateApplied = true;
+
+            if (_message != null)
+            {
+                UpdateMessage(_message);
+            }
+        }
+
+        #endregion
 
         public void UpdateMessage(MessageViewModel message)
         {
             _message = message;
 
             var document = GetContent(message.Content);
-            if (document == null)
+            if (document == null || !_templateApplied)
             {
                 return;
             }
@@ -75,7 +103,7 @@ namespace Unigram.Controls.Messages.Content
         public void UpdateFile(MessageViewModel message, File file)
         {
             var document = GetContent(message.Content);
-            if (document == null)
+            if (document == null || !_templateApplied)
             {
                 return;
             }

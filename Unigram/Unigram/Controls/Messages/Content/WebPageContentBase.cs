@@ -9,7 +9,7 @@ using Windows.UI.Xaml.Documents;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public abstract class WebPageContentBase : StackPanel
+    public abstract class WebPageContentBase : Control
     {
         public WebPageContentBase()
         {

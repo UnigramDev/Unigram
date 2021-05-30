@@ -6,27 +6,61 @@ using Unigram.Converters;
 using Unigram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media.Imaging;
+using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed partial class LocationContent : StackPanel, IContent
+    public sealed class LocationContent : Control, IContent
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
         public LocationContent(MessageViewModel message)
         {
-            InitializeComponent();
-            UpdateMessage(message);
+            _message = message;
+
+            DefaultStyleKey = typeof(LocationContent);
         }
+
+        #region InitializeComponent
+
+        private ImageView Texture;
+        private ProfilePicture PinPhoto;
+        private Path PinDot;
+        private Grid LivePanel;
+        private Run Title;
+        private Run Subtitle;
+        private bool _templateApplied;
+
+        protected override void OnApplyTemplate()
+        {
+            Texture = GetTemplateChild(nameof(Texture)) as ImageView;
+            PinPhoto = GetTemplateChild(nameof(PinPhoto)) as ProfilePicture;
+            PinDot = GetTemplateChild(nameof(PinDot)) as Path;
+            LivePanel = GetTemplateChild(nameof(LivePanel)) as Grid;
+            Title = GetTemplateChild(nameof(Title)) as Run;
+            Subtitle = GetTemplateChild(nameof(Subtitle)) as Run;
+
+            Texture.Click += Button_Click;
+
+            _templateApplied = true;
+
+            if (_message != null)
+            {
+                UpdateMessage(_message);
+            }
+        }
+
+        #endregion
 
         public void UpdateMessage(MessageViewModel message)
         {
             _message = message;
 
             var location = message.Content as MessageLocation;
-            if (location == null)
+            if (location == null || !_templateApplied)
             {
                 return;
             }
