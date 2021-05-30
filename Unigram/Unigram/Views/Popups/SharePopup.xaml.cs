@@ -673,14 +673,24 @@ namespace Unigram.Views.Popups
         {
             if (SearchField.FocusState == FocusState.Unfocused && string.IsNullOrEmpty(SearchField.Text))
             {
-                DialogsSearchListView.Visibility = Visibility.Collapsed;
+                if (SearchPanel != null)
+                {
+                    SearchPanel.Visibility = Visibility.Collapsed;
+                }
 
                 ViewModel.TopChats = null;
                 ViewModel.Search = null;
             }
             else if (SearchField.FocusState != FocusState.Unfocused)
             {
-                DialogsSearchListView.Visibility = Visibility.Visible;
+                if (SearchPanel == null)
+                {
+                    FindName(nameof(SearchPanel));
+                    SearchPanel.Width = ChatsPanel.ActualWidth;
+                    SearchPanel.Height = ChatsPanel.ActualHeight;
+                }
+
+                SearchPanel.Visibility = Visibility.Visible;
 
                 if (string.IsNullOrEmpty(SearchField.Text))
                 {
@@ -843,8 +853,11 @@ namespace Unigram.Views.Popups
 
         private void List_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            DialogsSearchListView.Width = e.NewSize.Width;
-            DialogsSearchListView.Height = e.NewSize.Height;
+            if (SearchPanel != null)
+            {
+                SearchPanel.Width = e.NewSize.Width;
+                SearchPanel.Height = e.NewSize.Height;
+            }
         }
 
         private void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
