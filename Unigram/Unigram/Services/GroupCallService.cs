@@ -97,6 +97,7 @@ namespace Unigram.Services
 
         private bool _isScheduled;
         private bool _isConnected;
+        private bool _isJoining;
 
         private ViewLifetimeControl _callLifetime;
 
@@ -240,7 +241,7 @@ namespace Unigram.Services
             {
                 if (activeCall.Id == groupCallId)
                 {
-                    await ShowAsync(activeCall, _manager);
+                    await ShowAsync();
                     return;
                 }
                 else
@@ -286,7 +287,7 @@ namespace Unigram.Services
                 _manager.BroadcastPartRequested += OnBroadcastPartRequested;
                 _manager.MediaChannelDescriptionsRequested += OnMediaChannelDescriptionsRequested;
 
-                await ShowAsync(groupCall, _manager);
+                await ShowAsync();
 
                 if (groupCall.ScheduledStartDate > 0)
                 {
@@ -336,6 +337,7 @@ namespace Unigram.Services
 
         private void Rejoin(GroupCall groupCall, MessageSender alias)
         {
+            _isJoining = true;
             _alias = alias;
 
             _manager?.SetConnectionMode(VoipGroupConnectionMode.None, false);
@@ -347,6 +349,8 @@ namespace Unigram.Services
                 var response = await ProtoService.SendAsync(new JoinGroupCall(groupCall.Id, alias, ssrc, payload, true, false, string.Empty));
                 if (response is Text json)
                 {
+                    _isJoining = false;
+
                     if (_manager == null)
                     {
                         return;
@@ -614,7 +618,7 @@ namespace Unigram.Services
             await DisposeAsync(true);
         }
 
-        private Task DisposeAsync(bool? discard)
+        private Task DisposeAsync(bool? discard = null)
         {
             if (_call != null && discard is true)
             {
@@ -629,6 +633,7 @@ namespace Unigram.Services
             _chat = null;
 
             _isScheduled = false;
+            _isJoining = false;
 
             _alias = null;
             _availableAliases = null;
@@ -689,11 +694,11 @@ namespace Unigram.Services
             set => _manager.IsNoiseSuppressionEnabled = Settings.VoIP.IsNoiseSuppressionEnabled = value;
         }
 
-        public void Handle(UpdateGroupCall update)
+        public async void Handle(UpdateGroupCall update)
         {
-            //using (_updateLock.WaitAsync())
+            if (_call?.Id == update.GroupCall.Id)
             {
-                if (_call?.Id == update.GroupCall.Id)
+                if (update.GroupCall.IsJoined || update.GroupCall.NeedRejoin || _isJoining)
                 {
                     _call = update.GroupCall;
 
@@ -715,6 +720,11 @@ namespace Unigram.Services
                     }
 
                     _isScheduled = update.GroupCall.ScheduledStartDate > 0;
+                }
+                else
+                {
+                    await ConsolidateAsync();
+                    await DisposeAsync();
                 }
             }
 
@@ -763,17 +773,7 @@ namespace Unigram.Services
 
         public bool IsConnected => _isConnected;
 
-        public Task ShowAsync()
-        {
-            if (_call != null)
-            {
-                return ShowAsync(_call, _manager);
-            }
-
-            return Task.CompletedTask;
-        }
-
-        private async Task ShowAsync(GroupCall call, VoipGroupManager controller)
+        public async Task ShowAsync()
         {
             using (await _updateLock.WaitAsync())
             {
