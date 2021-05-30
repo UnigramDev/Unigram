@@ -12,12 +12,9 @@ namespace Unigram.Entities
 {
     public class StorageVideo : StorageMedia
     {
-        private readonly BasicProperties _basic;
-
         public StorageVideo(StorageFile file, BasicProperties basic, VideoProperties props, MediaEncodingProfile profile)
             : base(file, basic)
         {
-            _basic = basic;
             Properties = props;
             Profile = profile;
 

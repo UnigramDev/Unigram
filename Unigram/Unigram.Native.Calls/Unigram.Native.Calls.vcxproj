@@ -126,9 +126,6 @@
       </DisableSpecificWarnings>
       <PreprocessorDefinitions>_WINRT_DLL;WIN32_LEAN_AND_MEAN;WINRT_LEAN_AND_MEAN;_SILENCE_CXX17_RESULT_OF_DEPRECATION_WARNING;_SILENCE_CXX20_IS_POD_DEPRECATION_WARNING;_USE_MATH_DEFINES;TGCALLS_UWP_DESKTOP_CAPTURE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalUsingDirectories>$(WindowsSDK_WindowsMetadata);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <GenerateXMLDocumentationFiles Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">true</GenerateXMLDocumentationFiles>
-      <GenerateXMLDocumentationFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</GenerateXMLDocumentationFiles>
-      <GenerateXMLDocumentationFiles Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</GenerateXMLDocumentationFiles>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\rnnoise\include;C:\tgcalls\tgcalls;C:\tgcalls;C:\webrtc\src;C:\webrtc\src\third_party\abseil-cpp;C:\webrtc\src\third_party\libyuv\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\rnnoise\include;C:\tgcalls\tgcalls;C:\tgcalls;C:\webrtc\src;C:\webrtc\src\third_party\abseil-cpp;C:\webrtc\src\third_party\libyuv\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAsWinRT Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</CompileAsWinRT>
@@ -148,7 +145,6 @@
     <ClCompile>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">_DEBUG;USE_AURA=1;_HAS_EXCEPTIONS=0;__STD_C;_CRT_RAND_S;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;_ATL_NO_OPENGL;_WINDOWS;CERT_CHAIN_PARA_HAS_EXTRA_FIELDS;PSAPI_VERSION=2;WIN32;_SECURE_ATL;_USING_V110_SDK71_;WINUWP;__WRL_NO_DEFAULT_LIB__;WINAPI_FAMILY=WINAPI_FAMILY_PC_APP;WIN10=_WIN32_WINNT_WIN10;WIN32_LEAN_AND_MEAN;NOMINMAX;_UNICODE;UNICODE;NTDDI_VERSION=NTDDI_WIN10_RS2;_WIN32_WINNT=0x0A00;WINVER=0x0A00;_DEBUG;DYNAMIC_ANNOTATIONS_ENABLED=1;_HAS_ITERATOR_DEBUGGING=0;WEBRTC_ENABLE_PROTOBUF=1;WEBRTC_INCLUDE_INTERNAL_AUDIO_DEVICE;RTC_ENABLE_VP9;HAVE_SCTP;WEBRTC_ARCH_ARM64;WEBRTC_HAS_NEON;WEBRTC_LIBRARY_IMPL;WEBRTC_NON_STATIC_TRACE_EVENT_HANDLERS=0;WEBRTC_WIN;ABSL_ALLOCATOR_NOTHROW=1;HAVE_SCTP;GOOGLE_PROTOBUF_NO_RTTI;GOOGLE_PROTOBUF_NO_STATIC_INITIALIZER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">$(WebRTC_Root);$(WebRTC_Output)\$(Platform)\$(Configuration)\gen;$(WebRTC_Root)\third_party\abseil-cpp;$(WebRTC_Root)\third_party\libyuv\include;$(WebRTC_Root)\third_party\protobuf\src;$(WebRTC_Output)\$(Platform)\$(Configuration)\gen\protoc_out;$(WebRTC_Root)\third_party\protobuf\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <GenerateXMLDocumentationFiles Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">true</GenerateXMLDocumentationFiles>
     </ClCompile>
     <Link>
       <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">ole32.lib;oleaut32.lib;Kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -159,7 +155,6 @@
     <ClCompile>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">NDEBUG;USE_AURA=1;_HAS_EXCEPTIONS=0;__STD_C;_CRT_RAND_S;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;_ATL_NO_OPENGL;_WINDOWS;CERT_CHAIN_PARA_HAS_EXTRA_FIELDS;PSAPI_VERSION=2;WIN32;_SECURE_ATL;_USING_V110_SDK71_;WINUWP;__WRL_NO_DEFAULT_LIB__;WINAPI_FAMILY=WINAPI_FAMILY_PC_APP;WIN10=_WIN32_WINNT_WIN10;WIN32_LEAN_AND_MEAN;NOMINMAX;_UNICODE;UNICODE;NTDDI_VERSION=NTDDI_WIN10_RS2;_WIN32_WINNT=0x0A00;WINVER=0x0A00;NDEBUG;NVALGRIND;DYNAMIC_ANNOTATIONS_ENABLED=0;WEBRTC_ENABLE_PROTOBUF=1;WEBRTC_INCLUDE_INTERNAL_AUDIO_DEVICE;RTC_ENABLE_VP9;HAVE_SCTP;WEBRTC_ARCH_ARM64;WEBRTC_HAS_NEON;WEBRTC_LIBRARY_IMPL;WEBRTC_NON_STATIC_TRACE_EVENT_HANDLERS=0;WEBRTC_WIN;ABSL_ALLOCATOR_NOTHROW=1;HAVE_SCTP;GOOGLE_PROTOBUF_NO_RTTI;GOOGLE_PROTOBUF_NO_STATIC_INITIALIZER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">$(WebRTC_Root);$(WebRTC_Output)\$(Platform)\$(Configuration)\gen;$(WebRTC_Root)\third_party\abseil-cpp;$(WebRTC_Root)\third_party\libyuv\include;$(WebRTC_Root)\third_party\protobuf\src;$(WebRTC_Output)\$(Platform)\$(Configuration)\gen\protoc_out;$(WebRTC_Root)\third_party\protobuf\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <GenerateXMLDocumentationFiles Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">true</GenerateXMLDocumentationFiles>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -173,13 +168,6 @@
       <IgnoreSpecificDefaultLibraries Condition="'$(Configuration)|$(Platform)'=='Release|x64'">libcmt</IgnoreSpecificDefaultLibraries>
     </Link>
     <ClCompile>
-      <GenerateXMLDocumentationFiles Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">true</GenerateXMLDocumentationFiles>
-    </ClCompile>
-    <ClCompile>
-      <GenerateXMLDocumentationFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</GenerateXMLDocumentationFiles>
-    </ClCompile>
-    <ClCompile>
-      <GenerateXMLDocumentationFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</GenerateXMLDocumentationFiles>
       <AdditionalIncludeDirectories>.\rnnoise\include;C:\tgcalls\tgcalls;C:\tgcalls;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
