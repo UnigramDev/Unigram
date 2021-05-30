@@ -281,7 +281,7 @@ namespace Unigram.Controls.Gallery
 
         private void ScrollingHost_PointerReleased(object sender, PointerRoutedEventArgs e)
         {
-            if (ScrollingHost.PointerCaptures.Count > 0)
+            if (ScrollingHost.PointerCaptures?.Count > 0)
             {
                 ScrollingHost.ReleasePointerCapture(e.Pointer);
             }
