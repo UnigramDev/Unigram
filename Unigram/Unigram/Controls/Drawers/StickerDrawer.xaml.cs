@@ -250,7 +250,7 @@ namespace Unigram.Controls.Drawers
 
                     foreach (var sticker in group.Stickers)
                     {
-                        var container = List.ContainerFromItem(sticker) as SelectorItem;
+                        var container = List?.ContainerFromItem(sticker) as SelectorItem;
                         if (container == null)
                         {
                             continue;

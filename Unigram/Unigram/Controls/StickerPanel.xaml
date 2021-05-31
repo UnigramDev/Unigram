@@ -165,7 +165,9 @@
                 <Pivot x:Name="Pivot" Style="{StaticResource HeaderlessPivotStyle}" SelectionChanged="Pivot_SelectionChanged" Grid.Row="1">
                     <PivotItem>
                         <Grid>
-                            <drawers:EmojiDrawer x:Name="EmojisRoot" ItemClick="Emojis_ItemClick"/>
+                            <Border x:Name="EmojisPanel">
+                                <drawers:EmojiDrawer x:Name="EmojisRoot" x:Load="False" ItemClick="Emojis_ItemClick"/>
+                            </Border>
                             <TextBlock
                                 x:Name="EmojisPermission"
                                 VerticalAlignment="Center"
@@ -177,7 +179,9 @@
                     </PivotItem>
                     <PivotItem>
                         <Grid>
-                            <drawers:AnimationDrawer x:Name="AnimationsRoot"/>
+                            <Border x:Name="AnimationsPanel">
+                                <drawers:AnimationDrawer x:Name="AnimationsRoot" x:Load="False"/>
+                            </Border>
                             <TextBlock
                                 x:Name="AnimationsPermission"
                                 VerticalAlignment="Center"
@@ -189,7 +193,9 @@
                     </PivotItem>
                     <PivotItem>
                         <Grid>
-                            <drawers:StickerDrawer x:Name="StickersRoot"/>
+                            <Border x:Name="StickersPanel">
+                                <drawers:StickerDrawer x:Name="StickersRoot" x:Load="False"/>
+                            </Border>
                             <TextBlock
                                 x:Name="StickersPermission"
                                 VerticalAlignment="Center"
