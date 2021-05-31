@@ -46,7 +46,6 @@
 
         <GridView
             x:Name="List"
-            x:Load="False"
             ItemsSource="{x:Bind StickersSource.View, Mode=OneWay}"
             common:FluidGridView.OrientationOnly="False"
             ChoosingGroupHeaderContainer="OnChoosingGroupHeaderContainer"

@@ -47,8 +47,8 @@ namespace Unigram.Controls.Drawers
         public Action<Animation> ItemClick { get; set; }
         public event TypedEventHandler<UIElement, ItemContextRequestedEventArgs<Animation>> ItemContextRequested;
 
-        private AnimatedListHandler<Animation> _handler;
-        private ZoomableListHandler _zoomer;
+        private readonly AnimatedListHandler<Animation> _handler;
+        private readonly ZoomableListHandler _zoomer;
 
         private readonly FileContext<Animation> _animations = new FileContext<Animation>();
 
@@ -58,7 +58,15 @@ namespace Unigram.Controls.Drawers
         {
             InitializeComponent();
 
+            _handler = new AnimatedListHandler<Animation>(List);
+
+            _zoomer = new ZoomableListHandler(List);
+            _zoomer.Opening = _handler.UnloadVisibleItems;
+            _zoomer.Closing = _handler.ThrottleVisibleItems;
+            _zoomer.DownloadFile = fileId => ViewModel.ProtoService.DownloadFile(fileId, 32);
+
             ElementCompositionPreview.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
+
             DropShadowEx.Attach(Separator);
 
             var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => FieldAnimations.TextChanged += new TextChangedEventHandler(handler));
@@ -72,18 +80,6 @@ namespace Unigram.Controls.Drawers
 
         public void Activate()
         {
-            if (List == null)
-            {
-                FindName(nameof(List));
-
-                _handler = new AnimatedListHandler<Animation>(List);
-
-                _zoomer = new ZoomableListHandler(List);
-                _zoomer.Opening = _handler.UnloadVisibleItems;
-                _zoomer.Closing = _handler.ThrottleVisibleItems;
-                _zoomer.DownloadFile = fileId => ViewModel.ProtoService.DownloadFile(fileId, 32);
-            }
-
             _isActive = true;
             _handler.ThrottleVisibleItems();
         }
@@ -91,25 +87,20 @@ namespace Unigram.Controls.Drawers
         public void Deactivate()
         {
             _isActive = false;
-            _handler?.UnloadVisibleItems();
-
-            if (List != null)
-            {
-                UnloadObject(List);
-            }
+            _handler.UnloadVisibleItems();
         }
 
         public void LoadVisibleItems()
         {
             if (_isActive)
             {
-                _handler?.LoadVisibleItems(false);
+                _handler.LoadVisibleItems(false);
             }
         }
 
         public void UnloadVisibleItems()
         {
-            _handler?.UnloadVisibleItems();
+            _handler.UnloadVisibleItems();
         }
 
         private void OnItemClick(object sender, ItemClickEventArgs e)
@@ -195,6 +186,11 @@ namespace Unigram.Controls.Drawers
             ItemContextRequested?.Invoke(sender, new ItemContextRequestedEventArgs<Animation>(animation, args));
         }
 
+        private void FieldAnimations_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            //ViewModel.Stickers.FindAnimations(FieldAnimations.Text);
+        }
+
         private object ConvertItems(object items)
         {
             _handler.ThrottleVisibleItems();
@@ -219,7 +215,7 @@ namespace Unigram.Controls.Drawers
                 {
                     item.UpdateFile(file);
 
-                    var container = List?.ContainerFromItem(item) as SelectorItem;
+                    var container = List.ContainerFromItem(item) as SelectorItem;
                     if (container == null)
                     {
                         continue;
@@ -239,7 +235,7 @@ namespace Unigram.Controls.Drawers
                 }
             }
 
-            _zoomer?.UpdateFile(file);
+            _zoomer.UpdateFile(file);
         }
     }
 }
