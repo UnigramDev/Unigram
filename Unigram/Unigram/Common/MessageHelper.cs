@@ -188,6 +188,7 @@ namespace Unigram.Common
             string lang = null;
             string channel = null;
             string voiceChat = null;
+            string slug = null;
             bool hasUrl = false;
 
             var query = scheme.Query.ParseQueryString();
@@ -231,6 +232,10 @@ namespace Unigram.Common
             else if (scheme.AbsoluteUri.StartsWith("tg:addstickers") || scheme.AbsoluteUri.StartsWith("tg://addstickers"))
             {
                 sticker = query.GetParameter("set");
+            }
+            else if (scheme.AbsoluteUri.StartsWith("tg:addtheme") || scheme.AbsoluteUri.StartsWith("tg://addtheme"))
+            {
+                slug = query.GetParameter("slug");
             }
             else if (scheme.AbsoluteUri.StartsWith("tg:msg") || scheme.AbsoluteUri.StartsWith("tg://msg") || scheme.AbsoluteUri.StartsWith("tg://share") || scheme.AbsoluteUri.StartsWith("tg:share"))
             {
@@ -362,6 +367,10 @@ namespace Unigram.Common
             else if (channel != null && post != null)
             {
                 NavigateToMessage(protoService, navigation, channel, post);
+            }
+            else if (slug != null)
+            {
+                NavigateToTheme(protoService, slug);
             }
             else
             {
@@ -503,6 +512,10 @@ namespace Unigram.Common
                             {
                                 NavigateToBackground(protoService, navigation, post + uri.Query);
                             }
+                            else if (username.Equals("addtheme", StringComparison.OrdinalIgnoreCase) && uri.Segments.Length == 3)
+                            {
+                                NavigateToTheme(protoService, uri.Segments[2].Replace("/", string.Empty));
+                            }
                             else if (username.StartsWith('+'))
                             {
                                 NavigateToInviteLink(protoService, navigation, url);
@@ -546,6 +559,11 @@ namespace Unigram.Common
             {
                 // TODO: error
             }
+        }
+
+        private static async void NavigateToTheme(IProtoService protoService, string slug)
+        {
+            await MessagePopup.ShowAsync(Strings.Resources.ThemeNotSupported, Strings.Resources.Theme, Strings.Resources.OK);
         }
 
         public static async void NavigateToLanguage(IProtoService protoService, INavigationService navigation, string languagePackId)
