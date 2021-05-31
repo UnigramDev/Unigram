@@ -3950,7 +3950,8 @@ namespace Unigram.Views
             ComposerHeaderCancel.CornerRadius = new CornerRadius(4, min, 4, 4);
             TextRoot.CornerRadius = ChatFooter.CornerRadius = ChatRecord.CornerRadius = ManagePanel.CornerRadius = new CornerRadius(radius);
 
-            Separator.CornerRadius = new CornerRadius(radius);
+            // It would be cool to have shadow to respect text field corner radius
+            //Separator.CornerRadius = new CornerRadius(radius);
             InlinePanel.CornerRadius = new CornerRadius(radius, radius, 0, 0);
             ListAutocomplete.Padding = new Thickness(0, 0, 0, radius);
             ListInline.UpdateCornerRadius(radius);
