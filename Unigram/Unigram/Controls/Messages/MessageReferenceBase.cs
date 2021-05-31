@@ -54,7 +54,7 @@ namespace Unigram.Controls.Messages
 
         protected void OnMessageChanged(MessageComposerHeader embedded)
         {
-            if (embedded == null)
+            if (embedded == null || !_templateApplied)
             {
                 return;
             }
