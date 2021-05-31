@@ -795,6 +795,8 @@ namespace Unigram.Controls.Messages
                     RecentRepliers = GetTemplateChild(nameof(RecentRepliers)) as StackPanel;
                     ThreadGlyph = GetTemplateChild(nameof(ThreadGlyph)) as TextBlock;
                     ThreadLabel = GetTemplateChild(nameof(ThreadLabel)) as TextBlock;
+
+                    Thread.Click += Thread_Click;
                 }
 
                 RecentRepliers.Children.Clear();

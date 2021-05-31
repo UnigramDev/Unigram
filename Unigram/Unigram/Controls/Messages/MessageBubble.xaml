@@ -221,7 +221,7 @@
                                         Text="&#xE0E3;"
                                         FontFamily="{StaticResource SymbolThemeFontFamily}"
                                         VerticalAlignment="Center"
-                                        FontSize="12"
+                                        FontSize="20"
                                         Grid.Column="2"/>
                                 </Grid>
                             </HyperlinkButton>
