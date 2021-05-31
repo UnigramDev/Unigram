@@ -701,7 +701,7 @@ namespace Unigram.Common
 
         public static async void NavigateToShare(string text, bool hasUrl)
         {
-            await SharePopup.GetForCurrentView().ShowAsync(text, hasUrl);
+            await SharePopup.GetForCurrentView().ShowAsync(text);
         }
 
         public static async void NavigateToProxy(IProtoService protoService, string server, int port, string username, string password, string secret)

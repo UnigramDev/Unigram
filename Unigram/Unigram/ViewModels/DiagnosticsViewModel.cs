@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td;
 using Telegram.Td.Api;
@@ -9,6 +10,10 @@ using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views.Popups;
+using Windows.ApplicationModel.DataTransfer;
+using Windows.Devices.Enumeration;
+using Windows.Media.Capture;
+using Windows.Media.MediaProperties;
 using Windows.Storage;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -24,6 +29,7 @@ namespace Unigram.ViewModels
             Tags = new MvxObservableCollection<DiagnosticsTag>();
 
             VerbosityCommand = new RelayCommand(VerbosityExecute);
+            VideoInfoCommand = new RelayCommand(VideoInfoExecute);
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -198,6 +204,81 @@ namespace Unigram.ViewModels
             {
                 Verbosity = index;
                 Client.Execute(new SetLogVerbosityLevel((int)index));
+            }
+        }
+
+        public RelayCommand VideoInfoCommand { get; }
+        public async void VideoInfoExecute()
+        {
+            var devices = await DeviceInformation.FindAllAsync(DeviceClass.VideoCapture);
+            var builder = new StringBuilder();
+
+            foreach (var device in devices)
+            {
+                builder.AppendLine(string.Format("- {0}:", device.Id));
+                builder.AppendLine(string.Format("    name: {0}", device.Name));
+
+                FillVideoCaptureCapabilityFromDeviceProfiles(builder, device.Id);
+                await FillVideoCaptureCapabilityFromDeviceWithoutProfiles(builder, device.Id);
+            }
+
+            var dataPackage = new DataPackage();
+            dataPackage.SetText(builder.ToString());
+            ClipboardEx.TrySetContent(dataPackage);
+
+            try
+            {
+                var file = await ApplicationData.Current.LocalFolder.CreateFileAsync("video_info.txt", CreationCollisionOption.ReplaceExisting);
+                
+                await FileIO.WriteTextAsync(file, builder.ToString());
+                await SharePopup.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(file.Path), null, true, null));
+            }
+            catch { }
+        }
+
+        private static void FillVideoCaptureCapabilityFromDeviceProfiles(StringBuilder builder, string deviceId)
+        {
+            builder.AppendLine("    video_profiles:");
+
+            foreach (var profile in MediaCapture.FindAllVideoProfiles(deviceId))
+            {
+                var profile_description_list = profile.SupportedRecordMediaDescription;
+                var profile_id = profile.Id;
+
+                foreach (var description in profile_description_list)
+                {
+                    var width = description.Width;
+                    var height = description.Height;
+                    var framerate = description.FrameRate;
+                    var sub_type = description.Subtype;
+
+                    builder.AppendLine(string.Format("    - size: {0}x{1}, fps: {2}, subtype: {3}", width, height, framerate, sub_type));
+                }
+            }
+        }
+
+        private static async Task FillVideoCaptureCapabilityFromDeviceWithoutProfiles(StringBuilder builder, string deviceId)
+        {
+            var settings = new MediaCaptureInitializationSettings();
+            settings.VideoDeviceId = deviceId;
+            settings.StreamingCaptureMode = StreamingCaptureMode.AudioAndVideo;
+            settings.MemoryPreference = MediaCaptureMemoryPreference.Cpu;
+
+            builder.AppendLine("    video_properties:");
+
+            var mediaCapture = new MediaCapture();
+            await mediaCapture.InitializeAsync(settings);
+
+            var availableProperties = mediaCapture.VideoDeviceController.GetAvailableMediaStreamProperties(MediaStreamType.VideoRecord);
+
+            foreach (var profile in availableProperties.OfType<VideoEncodingProperties>())
+            {
+                var width = profile.Width;
+                var height = profile.Height;
+                var framerate = (profile.FrameRate.Denominator != 0) ? profile.FrameRate.Numerator / profile.FrameRate.Denominator : 0;
+                var sub_type = profile.Subtype;
+
+                builder.AppendLine(string.Format("    - size: {0}x{1}, fps: {2}, subtype: {3}", width, height, framerate, sub_type));
             }
         }
     }

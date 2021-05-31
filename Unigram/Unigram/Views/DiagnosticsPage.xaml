@@ -41,6 +41,9 @@
                         Content="tgcalls_group.txt"
                         Click="GroupCalls_Click"
                         Badge="{x:Bind ConvertSize(ViewModel.LogGroupCallsSize), Mode=OneWay}"/>
+                    <controls:BadgeButton
+                        Content="Video informations"
+                        Command="{x:Bind ViewModel.VideoInfoCommand}"/>
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl

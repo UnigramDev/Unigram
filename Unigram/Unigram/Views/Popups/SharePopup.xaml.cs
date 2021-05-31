@@ -174,7 +174,7 @@ namespace Unigram.Views.Popups
             return ShowAsync();
         }
 
-        public Task<ContentDialogResult> ShowAsync(string message, bool hasUrl)
+        public Task<ContentDialogResult> ShowAsync(string message)
         {
             ChatsPanel.SelectionMode = ListViewSelectionMode.Single;
             ViewModel.SearchType = SearchChatsType.Post;
@@ -183,7 +183,6 @@ namespace Unigram.Views.Popups
             ViewModel.IsChatSelection = false;
 
             ViewModel.SendMessage = message;
-            ViewModel.SendMessageUrl = hasUrl;
 
             return ShowAsync();
         }

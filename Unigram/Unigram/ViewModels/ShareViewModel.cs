@@ -341,7 +341,6 @@ namespace Unigram.ViewModels
         }
 
         public string SendMessage { get; set; }
-        public bool SendMessageUrl { get; set; }
 
         public bool IsChatSelection { get; set; }
         public IList<long> PreSelectedItems { get; set; }
@@ -357,6 +356,12 @@ namespace Unigram.ViewModels
             if (chats.Count == 0 || IsChatSelection)
             {
                 return;
+            }
+
+            if (!string.IsNullOrEmpty(SendMessage))
+            {
+                _isCommentEnabled = true;
+                _caption = new FormattedText(SendMessage, new TextEntity[0]);
             }
 
             if (_isCommentEnabled && !string.IsNullOrEmpty(_caption?.Text))
