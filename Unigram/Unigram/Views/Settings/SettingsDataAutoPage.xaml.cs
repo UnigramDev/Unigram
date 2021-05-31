@@ -16,6 +16,8 @@ namespace Unigram.Views.Settings
 
         #region Binding
 
+        private const long MAX_FILE_SIZE = 1024L * 1024L * 2000L;
+
         private double ConvertLimit(int size)
         {
             var progress = 0.0d;
@@ -47,7 +49,7 @@ namespace Unigram.Views.Settings
                         progress += 0.25f;
                         size -= 90 * 1024 * 1024;
 
-                        progress += Math.Max(0, size / (double)(1436 * 1024 * 1024)) * 0.25f;
+                        progress += Math.Max(0, size / (double)(MAX_FILE_SIZE - 100 * 1024 * 1024)) * 0.25f;
                     }
                 }
             }
@@ -85,7 +87,7 @@ namespace Unigram.Views.Settings
                         progress -= 0.25f;
                         size += 90 * 1024 * 1024;
 
-                        size += (int)(1436 * 1024 * 1024 * (progress / 0.25f));
+                        size += (int)((MAX_FILE_SIZE - size) * (progress / 0.25f));
                     }
                 }
             }
