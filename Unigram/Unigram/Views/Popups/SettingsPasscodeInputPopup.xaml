@@ -27,7 +27,7 @@
             PlaceholderText="{CustomResource EnterNewFirstPasscode}"
             PasswordChanged="First_Changed"
             KeyDown="Password_KeyDown"
-            Margin="0,0,12,0"/>
+            Margin="0,0,0,12"/>
         <PasswordBox
             x:Name="Confirm"
             PlaceholderText="{CustomResource ReEnterYourPasscode}"
