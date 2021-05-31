@@ -98,12 +98,12 @@ namespace Unigram.Views.Popups
             Chat6.Mockup(new ChatTypePrivate(), 5, "Max Bright", string.Empty, "How about some coffee?", true, 0, false, false, DateTime.Now.AddHours(-5));
             Chat7.Mockup(new ChatTypePrivate(), 6, "Natalie Parker", string.Empty, "OK, great)", true, 0, false, false, DateTime.Now.AddHours(-6));
 
-            Photo.Source = PlaceholderHelper.GetNameForUser("Reinhardt", 30);
-            Title.Text = "Reinhardt";
+            Photo.Source = PlaceholderHelper.GetNameForUser(Strings.Resources.ThemePreviewTitle, 30);
+            Title.Text = Strings.Resources.ThemePreviewTitle;
             Subtitle.Text = string.Format("{0} {1} {2}", Strings.Resources.LastSeen, Strings.Resources.TodayAt, Converter.ShortTime.Format(DateTime.Now.AddHours(-1)));
 
-            Message1.Mockup(new MessagePhoto(new Photo(false, null, new[] { new PhotoSize("i", new File { Local = new LocalFile { Path = "ms-appx:///Assets/Mockup/theme_preview_image.jpg", IsDownloadingCompleted = true } }, 500, 302, new int[0]) }), new FormattedText(), false), "Bring it on! I LIVE for this!", false, DateTime.Now.AddSeconds(-25), true, true);
-            Message2.Mockup("Reinhardt, we need to find you some new tunes 🎶.", true, DateTime.Now, true, false);
+            Message1.Mockup(new MessagePhoto(new Photo(false, null, new[] { new PhotoSize("i", new File { Local = new LocalFile { Path = "ms-appx:///Assets/Mockup/theme_preview_image.jpg", IsDownloadingCompleted = true } }, 500, 302, new int[0]) }), new FormattedText(), false), Strings.Resources.ThemePreviewLine4, false, DateTime.Now.AddSeconds(-25), true, true);
+            Message2.Mockup(Strings.Resources.ThemePreviewLine1, true, DateTime.Now, true, false);
             //Message3.Mockup(Strings.Resources.FontSizePreviewLine1, Strings.Resources.FontSizePreviewName, Strings.Resources.FontSizePreviewReply, false, DateTime.Now.AddSeconds(-25));
             Message3.Mockup(new MessageVoiceNote(new VoiceNote(3, new byte[]
             {
@@ -111,14 +111,12 @@ namespace Unigram.Views.Popups
                 173, 66, 165, 69, 41, 251, 255, 242, 127, 223, 113, 133, 237, 148, 243, 30, 127, 184, 206, 183, 234,
                 108, 175, 168, 250, 207, 114, 229, 233, 154, 35, 254, 21, 66, 99, 134, 141, 92, 159, 2
             }, "audio/ogg", null), new FormattedText(), true), true, DateTime.Now.AddSeconds(-25), false, true);
-            Message4.Mockup("Ah, you kids today with techno music! You should enjoy the classics, like Hasselhoff!", "Lucio", "Reinhardt, we need to find you some new tunes 🎶.", false, DateTime.Now.AddSeconds(-25), true, false);
-            Message5.Mockup(new MessageAudio(new Audio(4 * 60 + 3, "True Survivor", "David Hasselhoff", "preview.mp3", "audio/mp3", null, null, null), new FormattedText()), false, DateTime.Now, false, true);
-            Message6.Mockup("I can't even take you seriously right now.", true, DateTime.Now, true, true);
+            Message4.Mockup(Strings.Resources.ThemePreviewLine3, Strings.Resources.ThemePreviewLine3Reply, Strings.Resources.ThemePreviewLine1, false, DateTime.Now.AddSeconds(-25), true, false);
+            Message5.Mockup(new MessageAudio(new Audio(4 * 60 + 3, Strings.Resources.ThemePreviewSongTitle, Strings.Resources.ThemePreviewSongPerformer, "preview.mp3", "audio/mp3", null, null, null), new FormattedText()), false, DateTime.Now, false, true);
+            Message6.Mockup(Strings.Resources.ThemePreviewLine2, true, DateTime.Now, true, true);
 
             PrimaryButtonText = Strings.Resources.ApplyTheme;
             SecondaryButtonText = Strings.Resources.Cancel;
-
-            DropShadowEx.Attach(Shadow);
         }
 
         private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

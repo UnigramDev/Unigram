@@ -1909,6 +1909,18 @@ namespace Unigram.Controls.Messages
 
         public void Mockup(string message, bool outgoing, DateTime date, bool first = true, bool last = true)
         {
+            if (!_templateApplied)
+            {
+                void loaded(object o, RoutedEventArgs e)
+                {
+                    Loaded -= loaded;
+                    Mockup(message, outgoing, date, first, last);
+                }
+
+                Loaded += loaded;
+                return;
+            }
+
             UpdateMockup(outgoing, first, last);
 
             Header.Visibility = Visibility.Collapsed;
@@ -1939,6 +1951,18 @@ namespace Unigram.Controls.Messages
 
         public void Mockup(string message, string forwarded, bool link, bool outgoing, DateTime date, bool first = true, bool last = true)
         {
+            if (!_templateApplied)
+            {
+                void loaded(object o, RoutedEventArgs e)
+                {
+                    Loaded -= loaded;
+                    Mockup(message, forwarded, link, outgoing, date, first, last);
+                }
+
+                Loaded += loaded;
+                return;
+            }
+
             UpdateMockup(outgoing, first, last);
 
             Header.Visibility = Visibility.Collapsed;
@@ -1984,16 +2008,40 @@ namespace Unigram.Controls.Messages
 
         public void Mockup(string message, string sender, string reply, bool outgoing, DateTime date, bool first = true, bool last = true)
         {
+            if (!_templateApplied)
+            {
+                void loaded(object o, RoutedEventArgs e)
+                {
+                    Loaded -= loaded;
+                    Mockup(message, sender, reply, outgoing, date, first, last);
+                }
+
+                Loaded += loaded;
+                return;
+            }
+
             UpdateMockup(outgoing, first, last);
 
             Header.Visibility = Visibility.Visible;
             HeaderLabel.Visibility = Visibility.Collapsed;
             AdminLabel.Visibility = Visibility.Collapsed;
 
-            FindName("Reply");
+            if (Reply == null)
+            {
+                void layoutUpdated(object o, object e)
+                {
+                    Reply.LayoutUpdated -= layoutUpdated;
+                    Reply.Mockup(sender, reply);
+                }
 
-            Reply.Visibility = Visibility.Visible;
-            Reply.Mockup(sender, reply);
+                Reply = GetTemplateChild(nameof(Reply)) as MessageReference;
+                Reply.LayoutUpdated += layoutUpdated;
+            }
+            else
+            {
+                Reply.Visibility = Visibility.Visible;
+                Reply.Mockup(sender, reply);
+            }
 
             Footer.Mockup(outgoing, date);
             Panel.Content = new MessageText { Text = new FormattedText(message, new TextEntity[0]) };
@@ -2021,6 +2069,18 @@ namespace Unigram.Controls.Messages
 
         public void Mockup(MessageContent content, bool outgoing, DateTime date, bool first = true, bool last = true)
         {
+            if (!_templateApplied)
+            {
+                void loaded(object o, RoutedEventArgs e)
+                {
+                    Loaded -= loaded;
+                    Mockup(content, outgoing, date, first, last);
+                }
+
+                Loaded += loaded;
+                return;
+            }
+
             UpdateMockup(outgoing, first, last);
 
             Header.Visibility = Visibility.Collapsed;
@@ -2029,7 +2089,7 @@ namespace Unigram.Controls.Messages
             Footer.Mockup(outgoing, date);
             Panel.Content = content;
 
-            Media.Margin = new Thickness(10, 4, 10, 2);
+            Media.Margin = new Thickness(10, 4, 10, 8);
             FooterToNormal();
             Grid.SetRow(Footer, 3);
             Grid.SetRow(Message, 2);
@@ -2038,15 +2098,27 @@ namespace Unigram.Controls.Messages
             if (content is MessageVoiceNote voiceNote)
             {
                 var presenter = new VoiceNoteContent();
-                presenter.Mockup(voiceNote);
 
+                void layoutUpdated(object o, object e)
+                {
+                    presenter.LayoutUpdated -= layoutUpdated;
+                    presenter.Mockup(voiceNote);
+                }
+
+                presenter.LayoutUpdated += layoutUpdated;
                 Media.Child = presenter;
             }
             else if (content is MessageAudio audio)
             {
                 var presenter = new AudioContent();
-                presenter.Mockup(audio);
 
+                void layoutUpdated(object o, object e)
+                {
+                    presenter.LayoutUpdated -= layoutUpdated;
+                    presenter.Mockup(audio);
+                }
+
+                presenter.LayoutUpdated += layoutUpdated;
                 Media.Child = presenter;
             }
 
@@ -2057,6 +2129,18 @@ namespace Unigram.Controls.Messages
 
         public void Mockup(MessageContent content, string caption, bool outgoing, DateTime date, bool first = true, bool last = true)
         {
+            if (!_templateApplied)
+            {
+                void loaded(object o, RoutedEventArgs e)
+                {
+                    Loaded -= loaded;
+                    Mockup(content, caption, outgoing, date, first, last);
+                }
+
+                Loaded += loaded;
+                return;
+            }
+
             UpdateMockup(outgoing, first, last);
 
             Header.Visibility = Visibility.Collapsed;
@@ -2073,8 +2157,14 @@ namespace Unigram.Controls.Messages
             if (content is MessagePhoto photo)
             {
                 var presenter = new PhotoContent();
-                presenter.Mockup(photo);
 
+                void layoutUpdated(object o, object e)
+                {
+                    presenter.LayoutUpdated -= layoutUpdated;
+                    presenter.Mockup(photo);
+                }
+
+                presenter.LayoutUpdated += layoutUpdated;
                 Media.Child = presenter;
             }
 

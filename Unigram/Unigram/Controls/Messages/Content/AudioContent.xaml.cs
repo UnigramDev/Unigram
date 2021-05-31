@@ -109,7 +109,8 @@ namespace Unigram.Controls.Messages.Content
             Title.Text = audio.Audio.GetTitle();
             Subtitle.Text = audio.Audio.GetDuration() + ", " + FileSizeConverter.Convert(4190000);
 
-            Button.SetGlyph(0, MessageContentState.Download);
+            Button.SetGlyph(0, MessageContentState.Play);
+            Download.SetGlyph(0, MessageContentState.Download);
         }
 
         #region Playback

@@ -1222,6 +1222,7 @@ namespace Unigram.Controls.Cells
             VisualStateManager.GoToState(this, muted ? "Muted" : "Unmuted", false);
 
             VerifiedIcon.Visibility = Visibility.Collapsed;
+            MinithumbnailPanel.Visibility = Visibility.Collapsed;
 
             PinnedIcon.Visibility = pinned ? Visibility.Visible : Visibility.Collapsed;
             UnreadBadge.Visibility = unread > 0 ? Visibility.Visible : Visibility.Collapsed;
