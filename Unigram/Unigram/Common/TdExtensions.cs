@@ -2371,23 +2371,29 @@ namespace Unigram.Common
                 query.TryGetValue("bg_color", out string bg_colorKey);
 
                 var modeSplit = modeKey?.ToLower().Split('+') ?? new string[0];
-                var bgSplit = bg_colorKey?.Split('-') ?? new string[0];
 
-                if (bgSplit.Length > 0 && int.TryParse(bgSplit[0], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int bgTopColor))
+                BackgroundFill fill = null;
+                if (TryGetColors(bg_colorKey, '-', 1, 2, out int[] patternLinear))
                 {
-                    BackgroundFill fill;
-                    if (bgSplit.Length > 1 && int.TryParse(bgSplit[1], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int bgBottomColor))
+                    if (linear.Length > 1)
                     {
-                        query.TryGetValue("rotation", out string rotationKey1);
-                        int.TryParse(rotationKey1 ?? string.Empty, out int rotation1);
+                        query.TryGetValue("rotation", out string rotationKey);
+                        int.TryParse(rotationKey ?? string.Empty, out int rotation);
 
-                        fill = new BackgroundFillGradient(bgTopColor, bgBottomColor, rotation1);
+                        fill = new BackgroundFillGradient(patternLinear[0], patternLinear[1], rotation);
                     }
                     else
                     {
-                        fill = new BackgroundFillSolid(bgTopColor);
+                        fill = new BackgroundFillSolid(linear[0]);
                     }
+                }
+                else if (TryGetColors(bg_colorKey, '~', 3, 4, out int[] patternFreeform))
+                {
+                    fill = new BackgroundFillFreeformGradient(patternFreeform);
+                }
 
+                if (fill != null)
+                {
                     query.TryGetValue("intensity", out string intensityKey);
                     int.TryParse(intensityKey, out int intensity);
 
