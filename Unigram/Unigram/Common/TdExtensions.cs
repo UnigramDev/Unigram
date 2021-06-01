@@ -2373,7 +2373,7 @@ namespace Unigram.Common
                 var modeSplit = modeKey?.ToLower().Split('+') ?? new string[0];
 
                 BackgroundFill fill = null;
-                if (TryGetColors(bg_colorKey, '-', 1, 2, out int[] patternLinear))
+                if (bg_colorKey != null && TryGetColors(bg_colorKey, '-', 1, 2, out int[] patternLinear))
                 {
                     if (linear.Length > 1)
                     {
@@ -2387,7 +2387,7 @@ namespace Unigram.Common
                         fill = new BackgroundFillSolid(linear[0]);
                     }
                 }
-                else if (TryGetColors(bg_colorKey, '~', 3, 4, out int[] patternFreeform))
+                else if (bg_colorKey != null && TryGetColors(bg_colorKey, '~', 3, 4, out int[] patternFreeform))
                 {
                     fill = new BackgroundFillFreeformGradient(patternFreeform);
                 }
@@ -2408,8 +2408,8 @@ namespace Unigram.Common
 
         private static bool TryGetColors(string slug, char separator, int minimum, int maximum, out int[] colors)
         {
-            var split = slug.Split(separator);
-            if (split.Length >= minimum && split.Length >= maximum)
+            var split = slug?.Split(separator);
+            if (split != null && split.Length >= minimum && split.Length >= maximum)
             {
                 colors = new int[split.Length];
 
