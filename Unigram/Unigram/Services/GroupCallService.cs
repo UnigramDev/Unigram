@@ -704,6 +704,8 @@ namespace Unigram.Services
             {
                 if (update.GroupCall.IsJoined || update.GroupCall.NeedRejoin || _isJoining)
                 {
+                    var canStartVideo = _call.CanStartVideo;
+
                     _call = update.GroupCall;
 
                     var lifetime = _callLifetime;
@@ -719,6 +721,10 @@ namespace Unigram.Services
                     }
 
                     if (update.GroupCall.NeedRejoin || _isScheduled != (update.GroupCall.ScheduledStartDate > 0))
+                    {
+                        Rejoin(update.GroupCall, _alias);
+                    }
+                    else if (update.GroupCall.CanStartVideo && !canStartVideo)
                     {
                         Rejoin(update.GroupCall, _alias);
                     }
