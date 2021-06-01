@@ -69,6 +69,7 @@ namespace Unigram.Views
 
         private DispatcherTimer _stickersTimer;
         private Visual _stickersPanel;
+        private Visual _stickersShadow;
         private StickersPanelMode _stickersMode = StickersPanelMode.Collapsed;
         private StickersPanelMode _stickersModeWide = StickersPanelMode.Sidebar;
 
@@ -85,8 +86,6 @@ namespace Unigram.Views
         private readonly DispatcherTimer _dateHeaderTimer;
         private readonly Visual _dateHeaderPanel;
         private readonly Visual _dateHeader;
-
-        private readonly Compositor _compositor;
 
         private readonly ZoomableListHandler _autocompleteZoomer;
         private readonly AnimatedListHandler<Sticker> _autocompleteHandler;
@@ -167,7 +166,6 @@ namespace Unigram.Views
             _slideVisual = ElementCompositionPreview.GetElementVisual(SlidePanel);
             _recordVisual = ElementCompositionPreview.GetElementVisual(ChatRecord);
             _rootVisual = ElementCompositionPreview.GetElementVisual(TextArea);
-            _compositor = _slideVisual.Compositor;
 
             _ellipseVisual.CenterPoint = new Vector3(60);
             _ellipseVisual.Scale = new Vector3(0);
@@ -185,7 +183,7 @@ namespace Unigram.Views
                 _dateHeaderPanel = ElementCompositionPreview.GetElementVisual(DateHeaderRelative);
                 _dateHeader = ElementCompositionPreview.GetElementVisual(DateHeader);
 
-                _dateHeaderPanel.Clip = _compositor.CreateInsetClip();
+                _dateHeaderPanel.Clip = Window.Current.Compositor.CreateInsetClip();
             }
 
             _elapsedTimer = new DispatcherTimer();
@@ -289,6 +287,7 @@ namespace Unigram.Views
                     : StickersPanelMode.Collapsed;
 
             _stickersPanel = ElementCompositionPreview.GetElementVisual(StickersPanel.Presenter);
+            _stickersShadow = ElementCompositionPreview.GetElementChildVisual(StickersPanel.Shadow);
 
             _stickersTimer = new DispatcherTimer();
             _stickersTimer.Interval = TimeSpan.FromMilliseconds(300);
@@ -407,28 +406,35 @@ namespace Unigram.Views
             InputPane.GetForCurrentView().TryHide();
 
             _stickersPanel.Opacity = 0;
-            _stickersPanel.Clip = _compositor.CreateInsetClip(48, 48, 0, 0);
+            _stickersPanel.Clip = Window.Current.Compositor.CreateInsetClip(48, 48, 0, 0);
+
+            _stickersShadow.Opacity = 0;
+            _stickersShadow.Clip = Window.Current.Compositor.CreateInsetClip(48, 48, -48, -4);
 
             StickersPanel.Visibility = Visibility.Visible;
             StickersPanel.Activate();
 
             ViewModel.OpenStickersCommand.Execute(null);
 
-            var opacity = _compositor.CreateScalarKeyFrameAnimation();
+            var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
             opacity.InsertKeyFrame(0, 0);
             opacity.InsertKeyFrame(1, 1);
 
-            var clip = _compositor.CreateScalarKeyFrameAnimation();
+            var clip = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
             clip.InsertKeyFrame(0, 48);
             clip.InsertKeyFrame(1, 0);
 
-            _stickersPanel.StopAnimation("Opacity");
-            _stickersPanel.Clip.StopAnimation("LeftInset");
-            _stickersPanel.Clip.StopAnimation("TopInset");
+            var clipShadow = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            clipShadow.InsertKeyFrame(0, 48);
+            clipShadow.InsertKeyFrame(1, -48);
 
             _stickersPanel.StartAnimation("Opacity", opacity);
             _stickersPanel.Clip.StartAnimation("LeftInset", clip);
             _stickersPanel.Clip.StartAnimation("TopInset", clip);
+
+            _stickersShadow.StartAnimation("Opacity", opacity);
+            _stickersShadow.Clip.StartAnimation("LeftInset", clipShadow);
+            _stickersShadow.Clip.StartAnimation("TopInset", clipShadow);
         }
 
 #pragma warning disable CA1063 // Implement IDisposable Correctly
@@ -1599,8 +1605,15 @@ namespace Unigram.Views
                 _stickersPanel.Clip?.StopAnimation("LeftInset");
                 _stickersPanel.Clip?.StopAnimation("TopInset");
 
+                _stickersShadow.StopAnimation("Opacity");
+                _stickersShadow.Clip?.StopAnimation("LeftInset");
+                _stickersShadow.Clip?.StopAnimation("TopInset");
+
                 _stickersPanel.Opacity = 1;
                 _stickersPanel.Clip = Window.Current.Compositor.CreateInsetClip();
+
+                _stickersShadow.Opacity = 1;
+                _stickersShadow.Clip = Window.Current.Compositor.CreateInsetClip(-48, -48, -48, -4);
             }
             else
             {
@@ -2554,28 +2567,28 @@ namespace Unigram.Views
 
             _slideVisual.Opacity = 1;
 
-            var batch = _compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
                 _elapsedTimer.Start();
                 AttachExpression();
             };
 
-            var slideAnimation = _compositor.CreateScalarKeyFrameAnimation();
+            var slideAnimation = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
             slideAnimation.InsertKeyFrame(0, slideWidth + 36);
             slideAnimation.InsertKeyFrame(1, 0);
             slideAnimation.Duration = TimeSpan.FromMilliseconds(300);
 
-            var elapsedAnimation = _compositor.CreateScalarKeyFrameAnimation();
+            var elapsedAnimation = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
             elapsedAnimation.InsertKeyFrame(0, -elapsedWidth);
             elapsedAnimation.InsertKeyFrame(1, 0);
             elapsedAnimation.Duration = TimeSpan.FromMilliseconds(300);
 
-            var visibleAnimation = _compositor.CreateScalarKeyFrameAnimation();
+            var visibleAnimation = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
             visibleAnimation.InsertKeyFrame(0, 0);
             visibleAnimation.InsertKeyFrame(1, 1);
 
-            var ellipseAnimation = _compositor.CreateVector3KeyFrameAnimation();
+            var ellipseAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
             ellipseAnimation.InsertKeyFrame(0, new Vector3(56f / 96f));
             ellipseAnimation.InsertKeyFrame(1, new Vector3(1));
             ellipseAnimation.Duration = TimeSpan.FromMilliseconds(200);
@@ -2604,7 +2617,7 @@ namespace Unigram.Views
             var slidePosition = (float)(LayoutRoot.ActualWidth - 48 - 36);
             var difference = (float)(slidePosition - ElapsedPanel.ActualWidth);
 
-            var batch = _compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
                 _elapsedTimer.Stop();
@@ -2634,12 +2647,12 @@ namespace Unigram.Views
                 _ellipseVisual.Properties.InsertVector3("Translation", point);
             };
 
-            var slideAnimation = _compositor.CreateScalarKeyFrameAnimation();
+            var slideAnimation = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
             slideAnimation.InsertKeyFrame(0, _slideVisual.Offset.X);
             slideAnimation.InsertKeyFrame(1, -slidePosition);
             slideAnimation.Duration = TimeSpan.FromMilliseconds(200);
 
-            var visibleAnimation = _compositor.CreateScalarKeyFrameAnimation();
+            var visibleAnimation = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
             visibleAnimation.InsertKeyFrame(0, 1);
             visibleAnimation.InsertKeyFrame(1, 0);
 
@@ -2659,7 +2672,7 @@ namespace Unigram.Views
 
             DetachExpression();
 
-            var ellipseAnimation = _compositor.CreateScalarKeyFrameAnimation();
+            var ellipseAnimation = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
             ellipseAnimation.InsertKeyFrame(0, -57);
             ellipseAnimation.InsertKeyFrame(1, 0);
 
@@ -2725,12 +2738,12 @@ namespace Unigram.Views
 
         private void AttachExpression()
         {
-            var elapsedExpression = _compositor.CreateExpressionAnimation("min(0, slide.Offset.X + ((root.Size.X - 48 - 36 - slide.Size.X) - elapsed.Size.X))");
+            var elapsedExpression = Window.Current.Compositor.CreateExpressionAnimation("min(0, slide.Offset.X + ((root.Size.X - 48 - 36 - slide.Size.X) - elapsed.Size.X))");
             elapsedExpression.SetReferenceParameter("slide", _slideVisual);
             elapsedExpression.SetReferenceParameter("elapsed", _elapsedVisual);
             elapsedExpression.SetReferenceParameter("root", _rootVisual);
 
-            var ellipseExpression = _compositor.CreateExpressionAnimation("Vector3(max(0, min(1, 1 + slide.Offset.X / (root.Size.X - 48 - 36))), max(0, min(1, 1 + slide.Offset.X / (root.Size.X - 48 - 36))), 1)");
+            var ellipseExpression = Window.Current.Compositor.CreateExpressionAnimation("Vector3(max(0, min(1, 1 + slide.Offset.X / (root.Size.X - 48 - 36))), max(0, min(1, 1 + slide.Offset.X / (root.Size.X - 48 - 36))), 1)");
             ellipseExpression.SetReferenceParameter("slide", _slideVisual);
             ellipseExpression.SetReferenceParameter("elapsed", _elapsedVisual);
             ellipseExpression.SetReferenceParameter("root", _rootVisual);
@@ -3003,24 +3016,32 @@ namespace Unigram.Views
                 _stickersMode = StickersPanelMode.Collapsed;
                 SettingsService.Current.IsSidebarOpen = false;
 
-                var batch = _compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+                var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
                 batch.Completed += (s, args) =>
                 {
                     StickersPanel.Visibility = Visibility.Collapsed;
                     StickersPanel.Deactivate();
                 };
 
-                var opacity = _compositor.CreateScalarKeyFrameAnimation();
+                var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
                 opacity.InsertKeyFrame(0, 1);
                 opacity.InsertKeyFrame(1, 0);
 
-                var clip = _compositor.CreateScalarKeyFrameAnimation();
+                var clip = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
                 clip.InsertKeyFrame(0, 0);
                 clip.InsertKeyFrame(1, 48);
+
+                var clipShadow = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                clipShadow.InsertKeyFrame(0, -48);
+                clipShadow.InsertKeyFrame(1, 48);
 
                 _stickersPanel.StartAnimation("Opacity", opacity);
                 _stickersPanel.Clip.StartAnimation("LeftInset", clip);
                 _stickersPanel.Clip.StartAnimation("TopInset", clip);
+
+                _stickersShadow.StartAnimation("Opacity", opacity);
+                _stickersShadow.Clip.StartAnimation("LeftInset", clip);
+                _stickersShadow.Clip.StartAnimation("TopInset", clip);
 
                 batch.End();
             }

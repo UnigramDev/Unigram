@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls.Drawers;
@@ -11,15 +10,14 @@ using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Drawers;
 using Unigram.Views;
 using Windows.Foundation;
-using Windows.Foundation.Metadata;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls
 {
     public sealed partial class StickerPanel : UserControl, IFileDelegate
     {
+        public new FrameworkElement Shadow => ShadowElement;
         public FrameworkElement Presenter => BackgroundElement;
 
         public Action<string> EmojiClick { get; set; }
@@ -38,6 +36,7 @@ namespace Unigram.Controls
             DataContext = new object();
 
             DropShadowEx.Attach(HeaderSeparator);
+            DropShadowEx.Attach(ShadowElement);
 
             switch (SettingsService.Current.Stickers.SelectedTab)
             {
@@ -50,15 +49,6 @@ namespace Unigram.Controls
                 case StickersTab.Stickers:
                     Pivot.SelectedIndex = 2;
                     break;
-            }
-
-            if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "Shadow"))
-            {
-                var themeShadow = new ThemeShadow();
-                BackgroundElement.Shadow = themeShadow;
-                BackgroundElement.Translation += new Vector3(0, 0, 32);
-
-                themeShadow.Receivers.Add(ShadowElement);
             }
         }
 
