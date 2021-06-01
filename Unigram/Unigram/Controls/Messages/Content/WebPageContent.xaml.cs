@@ -214,7 +214,7 @@ namespace Unigram.Controls.Messages.Content
 
         public IPlayerView GetPlaybackElement()
         {
-            if (Media.Child is IContentWithPlayback content)
+            if (Media?.Child is IContentWithPlayback content)
             {
                 return content.GetPlaybackElement();
             }
