@@ -669,6 +669,30 @@ namespace Unigram.ViewModels
         public RelayCommand<MessageViewModel> MessageEditCommand { get; }
         private void MessageEditExecute(MessageViewModel message)
         {
+            if (message.Content is MessageAlbum album)
+            {
+                if (album.IsMedia)
+                {
+                    message = null;
+
+                    foreach (var child in album.Messages)
+                    {
+                        var childCaption = child.Content?.GetCaption();
+                        if (childCaption != null && !string.IsNullOrEmpty(childCaption.Text))
+                        {
+                            message = child;
+                        }
+                    }
+                }
+
+                message ??= album.Messages.LastOrDefault();
+            }
+
+            if (message == null)
+            {
+                return;
+            }
+
             CurrentInlineBot = null;
             DisposeSearch();
             SaveDraft();
@@ -696,39 +720,6 @@ namespace Unigram.ViewModels
 
             ComposerHeader = container;
             SetText(input);
-
-            //if (message?.Media is TLMessageMediaGroup groupMedia)
-            //{
-            //    message = groupMedia.Layout.Messages.FirstOrDefault();
-            //}
-
-            //if (message == null)
-            //{
-            //    return;
-            //}
-
-            //var response = await LegacyService.GetMessageEditDataAsync(Peer, message.Id);
-            //if (response.IsSucceeded)
-            //{
-            //    BeginOnUIThread(() =>
-            //    {
-            //        var messageEditText = GetMessageEditText(response.Result, message);
-            //        StartEditMessage(messageEditText, message);
-            //    });
-            //}
-            //else
-            //{
-            //    BeginOnUIThread(() =>
-            //    {
-            //        //this.IsWorking = false;
-            //        //if (error.CodeEquals(ErrorCode.BAD_REQUEST) && error.TypeEquals(ErrorType.MESSAGE_ID_INVALID))
-            //        //{
-            //        //    MessageBox.Show(Strings.Additional.EditMessageError, Strings.Additional.Error, 0);
-            //        //    return;
-            //        //}
-            //        Logs.Log.Write("messages.getMessageEditData error " + response.Error);
-            //    });
-            //}
         }
 
         #endregion
