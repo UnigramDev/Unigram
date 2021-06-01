@@ -2521,8 +2521,8 @@ namespace Unigram.Views
             {
                 if (count == 2)
                 {
-                    rows = 1;
-                    columns = 2;
+                    rows = 2;
+                    columns = 1;
                 }
 
                 var tail = columns - (rows * columns - count);
@@ -2596,8 +2596,8 @@ namespace Unigram.Views
             {
                 if (count == 2)
                 {
-                    rows = 1;
-                    columns = 2;
+                    rows = 2;
+                    columns = 1;
                 }
 
                 var tail = columns - (rows * columns - count);
