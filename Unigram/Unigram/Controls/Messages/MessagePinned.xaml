@@ -70,14 +70,10 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <StackPanel Orientation="Horizontal">
-                <TextBlock
+                <controls:NumericTextBlock
                     x:Name="TitleLabel"
                     Foreground="{ThemeResource MessageHeaderForegroundBrush}"
-                    FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                    Style="{StaticResource ReplyBodyTextBlockStyle}"/>
-                <controls:NumericTextBlock
-                    x:Name="Number"
-                    Foreground="{ThemeResource MessageHeaderForegroundBrush}"
+                    TextStyle="{StaticResource ReplyBodyTextBlockStyle}"
                     VerticalAlignment="Top"
                     IsTabStop="False"
                     FontSize="12"/>

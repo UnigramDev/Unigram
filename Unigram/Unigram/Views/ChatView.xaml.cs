@@ -2924,40 +2924,14 @@ namespace Unigram.Views
 
         #region Binding
 
-        private int ConvertSelection(int count)
+        private string ConvertSelection(int count)
         {
             if (Messages.SelectionMode == ListViewSelectionMode.None)
             {
-                return ManageCount.Value;
+                return ManageCount.Text;
             }
 
-            var text = Locale.Declension("messages", count);
-            var split = text.Split(' ');
-
-            var index = int.MaxValue;
-            var before = string.Empty;
-            var after = string.Empty;
-
-            for (int i = 0; i < split.Length; i++)
-            {
-                if (int.TryParse(split[i], out _))
-                {
-                    index = i;
-                }
-                else if (i < index)
-                {
-                    before += split[i] + " ";
-                }
-                else if (i > index)
-                {
-                    after += " " + split[i];
-                }
-            }
-
-            ManageCountBefore.Text = before;
-            ManageCountAfter.Text = after;
-
-            return count;
+            return Locale.Declension("messages", count);
         }
 
         public Visibility ConvertIsEmpty(bool empty, bool self, bool bot, bool should)

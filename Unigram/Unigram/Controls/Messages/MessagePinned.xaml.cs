@@ -86,7 +86,7 @@ namespace Unigram.Controls.Messages
                 ShowHide(true);
             }
 
-            var title = Strings.Resources.PinnedMessage + (value >= 0 && maximum > 1 ? " #" : "");
+            var title = Strings.Resources.PinnedMessage + (value >= 0 && maximum > 1 ? $" #{value}" : "");
 
             if (_loading || (_chatId == chat.Id && _messageId == 0))
             {
@@ -94,7 +94,6 @@ namespace Unigram.Controls.Messages
                 UpdateMessage(message, message == null, title);
 
                 Line.UpdateIndex(value, maximum, 0);
-                Number.Value = maximum > 1 ? value + 1 : -1;
 
                 _chatId = chat.Id;
                 _messageId = message?.Id ?? 0;
@@ -131,7 +130,7 @@ namespace Unigram.Controls.Messages
             var prev = _messageId < message?.Id;
 
             Line.UpdateIndex(value, maximum, prev ? 1 : -1);
-            Number.Value = maximum > 1 ? value + 1 : -1;
+            TitleLabel.Text = title;
 
             _chatId = chat.Id;
             _messageId = message?.Id ?? 0;

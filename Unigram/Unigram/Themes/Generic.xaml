@@ -4113,5 +4113,30 @@
         <Setter Property="MinHeight" Value="0"/>
         <Setter Property="MinWidth" Value="0"/>
     </Style>
-    
+
+    <Style TargetType="local:NumericTextBlock">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:NumericTextBlock">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock
+                            x:Name="BeforePart"/>
+                        <Grid
+                            x:Name="LayoutRoot"
+                            Grid.Column="1"/>
+                        <TextBlock
+                            x:Name="AfterPart"
+                            Grid.Column="2"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 </ResourceDictionary>

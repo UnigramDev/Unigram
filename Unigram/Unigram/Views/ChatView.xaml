@@ -1264,21 +1264,13 @@
                 Style="{StaticResource GlyphButtonWithLabelStyle}"
                 Grid.Column="1"/>
 
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,-2,0,2" Grid.Column="3">
-                <TextBlock
-                    x:Name="ManageCountBefore"
-                    FontWeight="SemiBold"/>
-                <controls:NumericTextBlock
-                    x:Name="ManageCount"
-                    Value="{x:Bind ConvertSelection(ViewModel.SelectedItems.Count), Mode=OneWay}"
-                    VerticalAlignment="Top"
-                    FontWeight="SemiBold"
-                    Margin="0,1,0,0"
-                    FontSize="14"/>
-                <TextBlock
-                    x:Name="ManageCountAfter"
-                    FontWeight="SemiBold"/>
-            </StackPanel>
+            <controls:NumericTextBlock
+                x:Name="ManageCount"
+                Text="{x:Bind ConvertSelection(ViewModel.SelectedItems.Count), Mode=OneWay}"
+                TextStyle="{StaticResource BaseTextBlockStyle}"
+                VerticalAlignment="Center"
+                Margin="0,-2,0,0"
+                Grid.Column="3"/>
 
             <controls:GlyphButton
                 x:Name="ButtonManage"
