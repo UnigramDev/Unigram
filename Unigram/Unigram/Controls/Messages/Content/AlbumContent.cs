@@ -34,7 +34,7 @@ namespace Unigram.Controls.Messages.Content
         protected override Size MeasureOverride(Size availableSize)
         {
             var album = _message.Content as MessageAlbum;
-            if (album == null || album.Messages.Count == 1)
+            if (album == null || album.Messages.Count <= 1)
             {
                 return base.MeasureOverride(availableSize);
             }
@@ -67,7 +67,7 @@ namespace Unigram.Controls.Messages.Content
         protected override Size ArrangeOverride(Size finalSize)
         {
             var album = _message.Content as MessageAlbum;
-            if (album == null || album.Messages.Count == 1)
+            if (album == null || album.Messages.Count <= 1)
             {
                 return base.ArrangeOverride(finalSize);
             }
