@@ -160,11 +160,7 @@ namespace Unigram.Controls.Messages.Content
 
         private void UpdateThumbnail(MessageViewModel message, Thumbnail thumbnail, Minithumbnail minithumbnail)
         {
-            if (minithumbnail != null)
-            {
-                Texture.ImageSource = PlaceholderHelper.GetBlurred(minithumbnail.Data);
-            }
-            else if (thumbnail != null)
+            if (thumbnail != null)
             {
                 var file = thumbnail.File;
                 if (file.Local.IsDownloadingCompleted)
@@ -174,8 +170,17 @@ namespace Unigram.Controls.Messages.Content
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
+                    if (minithumbnail != null)
+                    {
+                        Texture.ImageSource = PlaceholderHelper.GetBlurred(minithumbnail.Data);
+                    }
+
                     message.ProtoService.DownloadFile(file.Id, 1);
                 }
+            }
+            else if (minithumbnail != null)
+            {
+                Texture.ImageSource = PlaceholderHelper.GetBlurred(minithumbnail.Data);
             }
         }
 
