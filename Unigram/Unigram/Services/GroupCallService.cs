@@ -426,7 +426,7 @@ namespace Unigram.Services
             var picker = new GraphicsCapturePicker();
             var item = await picker.PickSingleItemAsync();
 
-            if (item == null)
+            if (item == null || _manager == null || _screenManager != null)
             {
                 return;
             }
@@ -446,6 +446,11 @@ namespace Unigram.Services
                 var response = await ProtoService.SendAsync(new StartGroupCallScreenSharing(call.Id, payload));
                 if (response is Text json)
                 {
+                    if (_screenManager == null)
+                    {
+                        return;
+                    }
+
                     _screenSource = ssrc;
                     _screenManager.SetConnectionMode(VoipGroupConnectionMode.Rtc, true);
                     _screenManager.SetJoinResponsePayload(json.TextValue);

@@ -1048,7 +1048,7 @@ namespace Unigram.Views
 
         private async void Video_Click(object sender, RoutedEventArgs e)
         {
-            if (_service.IsCapturing == false)
+            if (_service?.IsCapturing == false)
             {
                 var permissions = await MediaDeviceWatcher.CheckAccessAsync(true, ElementTheme.Dark);
                 if (permissions == false || _service == null)
