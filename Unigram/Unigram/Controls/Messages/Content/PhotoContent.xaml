@@ -12,6 +12,7 @@
         <Setter Property="MinHeight" Value="{ThemeResource TelegramMediaMinHeight}"/>
         <Setter Property="MaxWidth" Value="{ThemeResource TelegramMediaMaxWidth}"/>
         <Setter Property="MaxHeight" Value="{ThemeResource TelegramMediaMaxHeight}"/>
+        <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:PhotoContent">

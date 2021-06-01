@@ -12,6 +12,7 @@
     <Style TargetType="local:MessageBubble">
         <Setter Property="Margin" Value="{StaticResource MessageContentMargin}" />
         <Setter Property="MaxWidth" Value="{StaticResource MessageMaxWidth}" />
+        <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:MessageBubble">

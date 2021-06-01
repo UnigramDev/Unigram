@@ -10,6 +10,7 @@
     d:DesignWidth="320">
 
     <Style TargetType="local:LocationContent">
+        <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:LocationContent">

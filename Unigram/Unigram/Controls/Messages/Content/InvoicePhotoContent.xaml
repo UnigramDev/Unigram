@@ -11,6 +11,7 @@
     d:DesignWidth="400">
 
     <Style TargetType="local:InvoicePhotoContent">
+        <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:InvoicePhotoContent">

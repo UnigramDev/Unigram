@@ -14,6 +14,7 @@
         <Setter Property="BorderThickness" Value="2,0,0,0" />
         <Setter Property="Padding" Value="8,0,0,0" />
         <Setter Property="Margin" Value="0,4,0,6" />
+        <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:GameContent">

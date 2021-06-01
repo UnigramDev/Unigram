@@ -21,6 +21,7 @@
         <!--<Setter Property="Width" Value="209"/>-->
         <Setter Property="MinWidth" Value="142"/>
         <Setter Property="Margin" Value="0,0,0,2"/>
+        <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:ProgressVoice">

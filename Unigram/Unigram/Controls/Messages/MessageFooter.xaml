@@ -13,6 +13,7 @@
         <Setter Property="VerticalAlignment" Value="Bottom" />
         <Setter Property="HorizontalAlignment" Value="Right" />
         <Setter Property="Padding" Value="6,0,6,0" />
+        <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:MessageFooter">

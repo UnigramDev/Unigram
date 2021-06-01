@@ -11,6 +11,7 @@
 
     <Style TargetType="local:AudioContent">
         <Setter Property="MinWidth" Value="220"/>
+        <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate>
