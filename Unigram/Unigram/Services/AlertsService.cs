@@ -326,7 +326,7 @@ namespace Unigram.Services
             await dialog.ShowQueuedAsync();
         }
 
-        public static void ShowSimpleToast(IDispatcherContext fragment, String text)
+        public static void ShowSimpleToast(IDispatcherContext fragment, string text)
         {
             if (text == null)
             {
@@ -341,7 +341,7 @@ namespace Unigram.Services
             ShowSimpleAlert(text);
         }
 
-        public static async void ShowSimpleAlert(String text)
+        public static async void ShowSimpleAlert(string text)
         {
             if (text == null)
             {
@@ -356,13 +356,13 @@ namespace Unigram.Services
             await dialog.ShowQueuedAsync();
         }
 
-        private static String GetFloodWaitString(String error)
+        private static string GetFloodWaitString(string error)
         {
             var time = error.ToInt32();
             return string.Format(Strings.Resources.FloodWaitTime, Locale.FormatCallDuration(time));
         }
 
-        public static void ShowFloodWaitAlert(String error)
+        public static void ShowFloodWaitAlert(string error)
         {
             if (error == null || !error.StartsWith("FLOOD_WAIT"))
             {

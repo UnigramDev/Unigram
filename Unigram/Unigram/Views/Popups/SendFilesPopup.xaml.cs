@@ -46,7 +46,7 @@ namespace Unigram.Views.Popups
             }
         }
 
-        public bool IsMediaOnly => Items.All(x => x is StoragePhoto || x is StorageVideo);
+        public bool IsMediaOnly => Items.All(x => x is StoragePhoto or StorageVideo);
         public bool IsAlbumAvailable
         {
             get
@@ -56,7 +56,7 @@ namespace Unigram.Views.Popups
                     return Items.Count > 1 && Items.Count <= 10 && Items.All(x => (x is StoragePhoto || x is StorageVideo) && x.Ttl == 0);
                 }
 
-                return Items.Count > 1 && Items.Count <= 10;
+                return Items.Count is > 1 and <= 10;
             }
         }
         public bool IsTtlAvailable { get; }
@@ -99,7 +99,7 @@ namespace Unigram.Views.Popups
             {
                 if (_isAlbum != value)
                 {
-                    _isAlbum = IsAlbumAvailable ? value : false;
+                    _isAlbum = IsAlbumAvailable && value;
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsAlbum"));
                 }
             }
@@ -174,9 +174,9 @@ namespace Unigram.Views.Popups
 
             if (e.ClickedItem is User user && ChatTextBox.SearchByUsername(text.Substring(0, Math.Min(CaptionInput.Document.Selection.EndPosition, text.Length)), out string username, out _))
             {
-                var insert = string.Empty;
                 var adjust = 0;
 
+                string insert;
                 if (string.IsNullOrEmpty(user.Username))
                 {
                     insert = string.IsNullOrEmpty(user.FirstName) ? user.LastName : user.FirstName;
@@ -237,7 +237,7 @@ namespace Unigram.Views.Popups
             }
         }
 
-        private async void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             if (args.InRecycleQueue)
             {
@@ -315,14 +315,13 @@ namespace Unigram.Views.Popups
         {
             if (CaptionInput.HandwritingView.IsOpen)
             {
-                RoutedEventHandler handler = null;
-                handler = (s, args) =>
+                void handler(object s, RoutedEventArgs args)
                 {
                     CaptionInput.HandwritingView.Unloaded -= handler;
 
                     Caption = CaptionInput.GetFormattedText();
                     Hide(ContentDialogResult.Primary);
-                };
+                }
 
                 CaptionInput.HandwritingView.Unloaded += handler;
                 CaptionInput.HandwritingView.TryClose();
@@ -519,7 +518,7 @@ namespace Unigram.Views.Popups
             };
 
             var text = new TextBlock();
-            text.Style = App.Current.Resources["InfoCaptionTextBlockStyle"] as Style;
+            text.Style = Navigation.BootStrapper.Current.Resources["InfoCaptionTextBlockStyle"] as Style;
             text.TextWrapping = TextWrapping.Wrap;
             text.Text = media is StoragePhoto
                 ? Strings.Resources.MessageLifetimePhoto
@@ -620,7 +619,7 @@ namespace Unigram.Views.Popups
             }
 
             var focused = FocusManager.GetFocusedElement();
-            if (focused == null || (focused is TextBox == false && focused is RichEditBox == false))
+            if (focused is null or (not TextBox and not RichEditBox))
             {
                 if (character == "\u0016" && CaptionInput.CanPasteClipboardContent)
                 {

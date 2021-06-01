@@ -19,12 +19,12 @@ namespace Unigram.Views.Settings.Privacy
 
         private Visibility ConvertNever(PrivacyValue value)
         {
-            return value == PrivacyValue.AllowAll || value == PrivacyValue.AllowContacts ? Visibility.Visible : Visibility.Collapsed;
+            return value is PrivacyValue.AllowAll or PrivacyValue.AllowContacts ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private Visibility ConvertAlways(PrivacyValue value)
         {
-            return value == PrivacyValue.AllowContacts || value == PrivacyValue.DisallowAll ? Visibility.Visible : Visibility.Collapsed;
+            return value is PrivacyValue.AllowContacts or PrivacyValue.DisallowAll ? Visibility.Visible : Visibility.Collapsed;
         }
 
         #endregion

@@ -122,7 +122,7 @@ namespace Unigram.Converters
             }
         }
 
-        private static String FormatDateOnline(long date)
+        private static string FormatDateOnline(long date)
         {
             try
             {

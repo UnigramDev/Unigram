@@ -3,6 +3,7 @@ using Microsoft.Graphics.Canvas.Text;
 using System;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Navigation;
 using Windows.Foundation;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
@@ -178,7 +179,7 @@ namespace Unigram.Controls.Messages
                 return _layout;
             }
 
-            var fontSize = (float)(Theme.Current.MessageFontSize * App.Current.UISettings.TextScaleFactor);
+            var fontSize = (float)(Theme.Current.MessageFontSize * BootStrapper.Current.UISettings.TextScaleFactor);
 
             _format ??= new CanvasTextFormat { FontFamily = "Assets\\Emoji\\apple.ttf#Segoe UI Emoji", FontSize = fontSize };
             _layout = new CanvasTextLayout(CanvasDevice.GetSharedDevice(), caption.Text, _format, width, float.PositiveInfinity);
@@ -193,7 +194,7 @@ namespace Unigram.Controls.Messages
                 {
                     _layout.SetFontStyle(entity.Offset, entity.Length, FontStyle.Italic);
                 }
-                else if (entity.Type is TextEntityTypeCode || entity.Type is TextEntityTypePre || entity.Type is TextEntityTypePreCode)
+                else if (entity.Type is TextEntityTypeCode or TextEntityTypePre or TextEntityTypePreCode)
                 {
                     _layout.SetFontFamily(entity.Offset, entity.Length, "Consolas");
                 }

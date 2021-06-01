@@ -157,7 +157,7 @@ namespace Unigram.Controls.Chats
 
         private void OnPointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            if (e.Pointer.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Touch || e.Pointer.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Pen)
+            if (e.Pointer.PointerDeviceType is Windows.Devices.Input.PointerDeviceType.Touch or Windows.Devices.Input.PointerDeviceType.Pen)
             {
                 try
                 {
@@ -224,7 +224,7 @@ namespace Unigram.Controls.Chats
                     var supergroup = _parent.ViewModel.ProtoService.GetSupergroup(supergroupType.SupergroupId);
                     if (supergroup.IsChannel)
                     {
-                        return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator;
+                        return supergroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator;
                     }
                     else if (supergroup.Status is ChatMemberStatusRestricted restricted)
                     {
@@ -270,7 +270,7 @@ namespace Unigram.Controls.Chats
                 ellipse.Radius = new Vector2(15);
 
                 var ellipseShape = _visual.Compositor.CreateSpriteShape(ellipse);
-                ellipseShape.FillBrush = _visual.Compositor.CreateColorBrush((Windows.UI.Color)App.Current.Resources["MessageServiceBackgroundColor"]);
+                ellipseShape.FillBrush = _visual.Compositor.CreateColorBrush((Windows.UI.Color)Navigation.BootStrapper.Current.Resources["MessageServiceBackgroundColor"]);
                 ellipseShape.Offset = new Vector2(15);
 
                 var shape = _visual.Compositor.CreateShapeVisual();

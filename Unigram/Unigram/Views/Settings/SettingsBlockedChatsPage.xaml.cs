@@ -63,10 +63,8 @@ namespace Unigram.Views.Settings
 
             content.Tag = messageSender;
 
-            User user = null;
-            Chat chat = null;
-            ViewModel.CacheService.TryGetUser(messageSender, out user);
-            ViewModel.CacheService.TryGetChat(messageSender, out chat);
+            ViewModel.CacheService.TryGetUser(messageSender, out User user);
+            ViewModel.CacheService.TryGetChat(messageSender, out Chat chat);
 
             if (args.Phase == 0)
             {
@@ -123,7 +121,7 @@ namespace Unigram.Views.Settings
             }
         }
 
-        public void UpdateFile(Telegram.Td.Api.File file)
+        public void UpdateFile(File file)
         {
             foreach (MessageSender sender in ScrollingHost.Items)
             {

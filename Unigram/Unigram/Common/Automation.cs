@@ -379,7 +379,7 @@ namespace Unigram.Common
             //    }
             //}
 
-            builder.Append(Automation.GetSummary(cacheService, message));
+            builder.Append(GetSummary(cacheService, message));
 
             var date = string.Format(Strings.Resources.TodayAtFormatted, Converter.ShortTime.Format(Utils.UnixTimestampToDateTime(message.Date)));
             if (message.IsOutgoing)

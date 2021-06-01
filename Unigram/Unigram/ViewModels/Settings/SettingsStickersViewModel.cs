@@ -67,7 +67,7 @@ namespace Unigram.ViewModels.Settings
                 _type = (StickersType)flags;
             }
 
-            if (_type == StickersType.Installed || _type == StickersType.Masks)
+            if (_type is StickersType.Installed or StickersType.Masks)
             {
                 Items = new ItemsCollection(ProtoService, _type == StickersType.Masks);
 
@@ -87,7 +87,7 @@ namespace Unigram.ViewModels.Settings
                     }
                 });
             }
-            else if (_type == StickersType.Archived || _type == StickersType.MasksArchived)
+            else if (_type is StickersType.Archived or StickersType.MasksArchived)
             {
                 Items = new ArchivedCollection(ProtoService, _type == StickersType.MasksArchived);
             }
@@ -102,7 +102,7 @@ namespace Unigram.ViewModels.Settings
 
         public override Task OnNavigatedFromAsync(NavigationState pageState, bool suspending)
         {
-            if (_type == StickersType.Installed || _type == StickersType.Masks)
+            if (_type is StickersType.Installed or StickersType.Masks)
             {
                 if (_needReorder && _newOrder.Count > 0)
                 {
@@ -125,7 +125,7 @@ namespace Unigram.ViewModels.Settings
 
         public void Handle(UpdateInstalledStickerSets update)
         {
-            if (_type != StickersType.Installed && _type != StickersType.Masks)
+            if (_type is not StickersType.Installed and not StickersType.Masks)
             {
                 return;
             }
@@ -166,7 +166,7 @@ namespace Unigram.ViewModels.Settings
 
         public void Handle(UpdateRecentStickers update)
         {
-            if (_type != StickersType.Installed && _type != StickersType.Masks)
+            if (_type is not StickersType.Installed and not StickersType.Masks)
             {
                 return;
             }

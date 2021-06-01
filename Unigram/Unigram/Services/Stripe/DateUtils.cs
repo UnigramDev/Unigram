@@ -36,11 +36,11 @@ namespace Unigram.Services.Stripe
         // Convert two-digit year to full year if necessary
         private static int NormalizeYear(int year)
         {
-            if (year < 100 && year >= 0)
+            if (year is < 100 and >= 0)
             {
                 var currentYear = DateTime.Now.Year.ToString();
                 var prefix = currentYear.Substring(0, currentYear.Length - 2);
-                year = int.Parse(String.Format("{0}{1}", prefix, year));
+                year = int.Parse(string.Format("{0}{1}", prefix, year));
             }
 
             return year;

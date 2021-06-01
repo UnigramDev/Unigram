@@ -248,7 +248,7 @@ namespace Unigram.Views.SignIn
                 TokenPanel.Visibility = Visibility.Collapsed;
                 PhonePanel.Visibility = Visibility.Collapsed;
             }
-            else if (mode == QrCodeMode.Disabled || mode == QrCodeMode.Secondary)
+            else if (mode is QrCodeMode.Disabled or QrCodeMode.Secondary)
             {
                 Loading.IsActive = false;
                 TokenPanel.Visibility = Visibility.Collapsed;

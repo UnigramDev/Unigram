@@ -31,7 +31,7 @@ namespace Unigram.Controls
 
         protected override void OnKeyDown(KeyRoutedEventArgs e)
         {
-            if (e.Key == VirtualKey.Up || e.Key == VirtualKey.Down)
+            if (e.Key is VirtualKey.Up or VirtualKey.Down)
             {
                 var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
                 var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
@@ -81,8 +81,7 @@ namespace Unigram.Controls
                 var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
                 var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
 
-                var send = false;
-
+                bool send;
                 if (ViewModel != null && ViewModel.Settings.IsSendByEnterEnabled)
                 {
                     send = !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
@@ -116,7 +115,7 @@ namespace Unigram.Controls
             }
 
             Document.GetText(TextGetOptions.NoHidden, out string text);
-            
+
             if (ChatTextBox.SearchByUsername(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string username, out _))
             {
                 var chat = viewModel.Chat;

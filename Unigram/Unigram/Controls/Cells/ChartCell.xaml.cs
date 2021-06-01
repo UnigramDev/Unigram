@@ -4,6 +4,7 @@ using Unigram.Charts;
 using Unigram.Charts.Data;
 using Unigram.Charts.DataView;
 using Unigram.Common;
+using Unigram.Navigation;
 using Unigram.ViewModels.Chats;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -85,12 +86,12 @@ namespace Unigram.Controls.Cells
             {
                 chartView.Tapped += (s, args) =>
                 {
-                    onZoomed();
+                    OnZoomed();
                 };
 
                 chartHeaderView.Click += (s, args) =>
                 {
-                    zoomOut(true);
+                    ZoomOut(true);
                 };
 
                 LayoutRoot.Children.Add(zoomedChartView);
@@ -110,7 +111,7 @@ namespace Unigram.Controls.Cells
                     foreach (var line in lines)
                     {
                         var check = new FauxCheckBox();
-                        check.Style = App.Current.Resources["LineCheckBoxStyle"] as Style;
+                        check.Style = BootStrapper.Current.Resources["LineCheckBoxStyle"] as Style;
                         check.Content = line.line.name;
                         check.IsChecked = line.enabled;
                         check.Background = new SolidColorBrush(line.lineColor);
@@ -136,11 +137,11 @@ namespace Unigram.Controls.Cells
                 if (data.activeZoom > 0)
                 {
                     chartView.SelectDate(data.activeZoom);
-                    zoomChart(true);
+                    ZoomChart(true);
                 }
                 else
                 {
-                    zoomOut(false);
+                    ZoomOut(false);
                     //chartView.invalidate();
                 }
             };
@@ -190,7 +191,7 @@ namespace Unigram.Controls.Cells
 
         }
 
-        public void onZoomed()
+        public void OnZoomed()
         {
             if (data.activeZoom > 0)
             {
@@ -205,7 +206,7 @@ namespace Unigram.Controls.Cells
             if (data.graphType == 4)
             {
                 data.childChartData = new StackLinearChartData(data.chartData, x);
-                zoomChart(false);
+                ZoomChart(false);
                 return;
             }
 
@@ -274,7 +275,7 @@ namespace Unigram.Controls.Cells
             //ConnectionsManager.getInstance(currentAccount).bindRequestToGuid(reqId, classGuid);
         }
 
-        private void zoomChart(bool skipTransition)
+        private void ZoomChart(bool skipTransition)
         {
             chartView.Visibility = Visibility.Visible;
 
@@ -367,7 +368,7 @@ namespace Unigram.Controls.Cells
             }
             else
             {
-                ValueAnimator animator = createTransitionAnimator(d, true);
+                ValueAnimator animator = CreateTransitionAnimator(d, true);
                 animator.AddListener(new AnimatorUpdateListener(null, animation =>
                 {
                     _ = chartView.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
@@ -386,7 +387,7 @@ namespace Unigram.Controls.Cells
             }
         }
 
-        private void zoomOut(bool animated)
+        private void ZoomOut(bool animated)
         {
             if (data.chartData.x == null)
             {
@@ -421,7 +422,7 @@ namespace Unigram.Controls.Cells
             }
             else
             {
-                ValueAnimator animator = createTransitionAnimator(d, false);
+                ValueAnimator animator = CreateTransitionAnimator(d, false);
                 animator.AddListener(new AnimatorUpdateListener(animator =>
                 {
                     _ = zoomedChartView.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
@@ -458,7 +459,7 @@ namespace Unigram.Controls.Cells
             }
         }
 
-        private ValueAnimator createTransitionAnimator(long d, bool inz)
+        private ValueAnimator CreateTransitionAnimator(long d, bool inz)
         {
             //((Activity)getContext()).getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
             //        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
@@ -500,7 +501,7 @@ namespace Unigram.Controls.Cells
                     min = data.chartData.lines[i].y[dateIndex];
                 }
             }
-            float pYPercentage = (((float)min + (max - min)) - chartView.currentMinHeight) / (chartView.currentMaxHeight - chartView.currentMinHeight);
+            float pYPercentage = ((float)min + (max - min) - chartView.currentMinHeight) / (chartView.currentMaxHeight - chartView.currentMinHeight);
 
 
             var hidden = chartView.Visibility == Visibility.Collapsed;
@@ -510,8 +511,8 @@ namespace Unigram.Controls.Cells
             ValueAnimator animator = ValueAnimator.OfFloat(inz ? 0f : 1f, inz ? 1f : 0f);
             animator.AddUpdateListener(new AnimatorUpdateListener(animation =>
             {
-                float fullWidth = (chartView.chartWidth / (chartView.pickerDelegate.pickerEnd - chartView.pickerDelegate.pickerStart));
-                float offset = fullWidth * (chartView.pickerDelegate.pickerStart) - BaseChartView.HORIZONTAL_PADDING;
+                float fullWidth = chartView.chartWidth / (chartView.pickerDelegate.pickerEnd - chartView.pickerDelegate.pickerStart);
+                float offset = fullWidth * chartView.pickerDelegate.pickerStart - BaseChartView.HORIZONTAL_PADDING;
 
                 param.pY = (float)chartView.chartArea.Top + (1f - pYPercentage) * (float)chartView.chartArea.Height;
                 param.pX = chartView.chartFullWidth * param.xPercentage - offset;

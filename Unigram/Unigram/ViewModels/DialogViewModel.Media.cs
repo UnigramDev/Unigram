@@ -201,7 +201,7 @@ namespace Unigram.ViewModels
 
                     return true;
                 }
-                else if (supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator)
+                else if (supergroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator)
                 {
                     label = null;
                     return false;
@@ -335,7 +335,7 @@ namespace Unigram.ViewModels
 
         private async Task SendStorageMediaAsync(Chat chat, StorageMedia storage, FormattedText caption, bool asFile, MessageSendOptions options)
         {
-            if (storage is StorageDocument || storage is StorageAudio)
+            if (storage is StorageDocument or StorageAudio)
             {
                 await SendDocumentAsync(chat, storage.File, caption, options);
             }
@@ -630,17 +630,6 @@ namespace Unigram.ViewModels
                 {
                     await MessagePopup.ShowAsync(Strings.Resources.MessageScheduledLimitReached, Strings.Resources.AppName, Strings.Resources.OK);
                 }
-            }
-
-            return response;
-        }
-
-        private async Task<BaseObject> EditMessageAsync(MessageViewModel message, InputFile inputFile, FileType type, Func<InputFile, InputMessageContent> inputMessageContent)
-        {
-            var response = await ProtoService.SendAsync(new UploadFile(inputFile, type, 32));
-            if (response is Telegram.Td.Api.File file)
-            {
-                ComposerHeader = new MessageComposerHeader { EditingMessage = message, EditingMessageMedia = null, EditingMessageFileId = file.Id };
             }
 
             return response;

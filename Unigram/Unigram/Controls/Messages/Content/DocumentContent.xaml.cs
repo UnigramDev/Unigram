@@ -2,6 +2,7 @@
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Converters;
+using Unigram.Navigation;
 using Unigram.ViewModels;
 using Windows.Storage;
 using Windows.UI.Xaml;
@@ -85,7 +86,7 @@ namespace Unigram.Controls.Messages.Content
             else
             {
                 Texture.Background = null;
-                Button.Style = App.Current.Resources["InlineFileButtonStyle"] as Style;
+                Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
             }
 
             UpdateFile(message, document.DocumentValue);
@@ -176,12 +177,12 @@ namespace Unigram.Controls.Messages.Content
                 try
                 {
                     Texture.Background = new ImageBrush { ImageSource = new BitmapImage(UriEx.ToLocal(file.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height }, Stretch = Stretch.UniformToFill, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
-                    Button.Style = App.Current.Resources["ImmersiveFileButtonStyle"] as Style;
+                    Button.Style = BootStrapper.Current.Resources["ImmersiveFileButtonStyle"] as Style;
                 }
                 catch
                 {
                     Texture.Background = null;
-                    Button.Style = App.Current.Resources["InlineFileButtonStyle"] as Style;
+                    Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
                 }
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
@@ -189,7 +190,7 @@ namespace Unigram.Controls.Messages.Content
                 message.ProtoService.DownloadFile(file.Id, 1);
 
                 Texture.Background = null;
-                Button.Style = App.Current.Resources["InlineFileButtonStyle"] as Style;
+                Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
             }
         }
 

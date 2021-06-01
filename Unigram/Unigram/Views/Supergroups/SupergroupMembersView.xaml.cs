@@ -136,7 +136,7 @@ namespace Unigram.Views.Supergroups
 
         private bool MemberPromote_Loaded(ChatType chatType, ChatMemberStatus status, ChatMember member)
         {
-            if (member.Status is ChatMemberStatusCreator || member.Status is ChatMemberStatusAdministrator)
+            if (member.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator)
             {
                 return false;
             }

@@ -317,7 +317,7 @@ namespace Unigram.ViewModels
                     {
                         await ProtoService.SendAsync(new CloseSecretChat(secret.SecretChatId));
                     }
-                    else if (delete.Type is ChatTypeBasicGroup || delete.Type is ChatTypeSupergroup)
+                    else if (delete.Type is ChatTypeBasicGroup or ChatTypeSupergroup)
                     {
                         await ProtoService.SendAsync(new LeaveChat(delete.Id));
                     }
@@ -373,7 +373,7 @@ namespace Unigram.ViewModels
                         {
                             await ProtoService.SendAsync(new CloseSecretChat(secret.SecretChatId));
                         }
-                        else if (delete.Type is ChatTypeBasicGroup || delete.Type is ChatTypeSupergroup)
+                        else if (delete.Type is ChatTypeBasicGroup or ChatTypeSupergroup)
                         {
                             await ProtoService.SendAsync(new LeaveChat(delete.Id));
                         }

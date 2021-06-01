@@ -218,14 +218,14 @@ namespace Unigram.Charts
             heightUpdateListener = new AnimatorUpdateListener(
                 animation =>
                 {
-                    currentMaxHeight = ((float)animation.GetAnimatedValue());
+                    currentMaxHeight = (float)animation.GetAnimatedValue();
                     Invalidate();
                 });
 
             minHeightUpdateListener = new AnimatorUpdateListener(
                 animation =>
                 {
-                    currentMinHeight = ((float)animation.GetAnimatedValue());
+                    currentMinHeight = (float)animation.GetAnimatedValue();
                     Invalidate();
                 });
 
@@ -330,7 +330,7 @@ namespace Unigram.Charts
             //    }
             //}), null, TimeSpan.Zero, TimeSpan.FromMilliseconds(1000 / 60));
 
-            canvas.Background = new Windows.UI.Xaml.Media.SolidColorBrush() { Color = Windows.UI.Colors.Transparent };
+            canvas.Background = new SolidColorBrush() { Color = Colors.Transparent };
             canvas.PointerPressed += OnPointerPressed;
             canvas.PointerMoved += OnPointerMoved;
             canvas.PointerReleased += OnPointerReleased;
@@ -427,7 +427,7 @@ namespace Unigram.Charts
 
         protected Color GetBackgroundColor()
         {
-            if (App.Current.Resources.TryGet("ApplicationPageBackgroundThemeBrush", out SolidColorBrush brush))
+            if (Navigation.BootStrapper.Current.Resources.TryGet("ApplicationPageBackgroundThemeBrush", out SolidColorBrush brush))
             {
                 return brush.Color;
             }
@@ -509,7 +509,7 @@ namespace Unigram.Charts
 
                 if (legendShowing)
                 {
-                    MoveLegend(chartFullWidth * (pickerDelegate.pickerStart) - HORIZONTAL_PADDING);
+                    MoveLegend(chartFullWidth * pickerDelegate.pickerStart - HORIZONTAL_PADDING);
                 }
 
                 OnPickerDataChanged(false, true, false);
@@ -523,11 +523,11 @@ namespace Unigram.Charts
             {
                 return;
             }
-            pickerWidth = MeasuredWidth - (HORIZONTAL_PADDING * 2);
+            pickerWidth = MeasuredWidth - HORIZONTAL_PADDING * 2;
             chartStart = HORIZONTAL_PADDING;
             chartEnd = MeasuredWidth - (landscape ? LANDSCAPE_END_PADDING : HORIZONTAL_PADDING);
             chartWidth = chartEnd - chartStart;
-            chartFullWidth = (chartWidth / (pickerDelegate.pickerEnd - pickerDelegate.pickerStart));
+            chartFullWidth = chartWidth / (pickerDelegate.pickerEnd - pickerDelegate.pickerStart);
 
             UpdateLineSignature();
             chartBottom = 100;
@@ -548,7 +548,7 @@ namespace Unigram.Charts
                 return;
             }
 
-            thresholdMaxHeight = (animateToMaxHeight / chartHeight) * SIGNATURE_TEXT_SIZE;
+            thresholdMaxHeight = animateToMaxHeight / chartHeight * SIGNATURE_TEXT_SIZE;
         }
 
 
@@ -683,7 +683,7 @@ namespace Unigram.Charts
                 end += bottomSignatureOffset;
 
 
-                float offset = chartFullWidth * (pickerDelegate.pickerStart) - HORIZONTAL_PADDING;
+                float offset = chartFullWidth * pickerDelegate.pickerStart - HORIZONTAL_PADDING;
                 float fullWidth = chartFullWidth;
                 for (int i = start; i < end; i += step)
                 {
@@ -693,7 +693,7 @@ namespace Unigram.Charts
                     }
 
                     float xPercentage = (chartData.x[i] - chartData.x[0]) /
-                            (float)((chartData.x[chartData.x.Length - 1] - chartData.x[0]));
+                            (float)(chartData.x[chartData.x.Length - 1] - chartData.x[0]);
                     float xPoint = xPercentage * fullWidth - offset;
                     float xPointOffset = xPoint - BOTTOM_SIGNATURE_OFFSET;
                     if (xPointOffset > 0 &&
@@ -751,7 +751,7 @@ namespace Unigram.Charts
             format.Dispose();
             layout.Dispose();
 
-            int y = (MeasuredHeight - chartBottom - 1);
+            int y = MeasuredHeight - chartBottom - 1;
             canvas.DrawLine(
                     chartStart,
                     y,
@@ -776,8 +776,8 @@ namespace Unigram.Charts
             byte alpha = (byte)(chartActiveLineAlpha * selectionA);
 
 
-            float fullWidth = (chartWidth / (pickerDelegate.pickerEnd - pickerDelegate.pickerStart));
-            float offset = fullWidth * (pickerDelegate.pickerStart) - HORIZONTAL_PADDING;
+            float fullWidth = chartWidth / (pickerDelegate.pickerEnd - pickerDelegate.pickerStart);
+            float offset = fullWidth * pickerDelegate.pickerStart - HORIZONTAL_PADDING;
 
             float xPoint;
             if (selectedIndex < chartData.xPercentage.Length)
@@ -804,7 +804,7 @@ namespace Unigram.Charts
                     }
 
                     float yPercentage = (line.line.y[selectedIndex] - currentMinHeight) / (currentMaxHeight - currentMinHeight);
-                    float yPoint = MeasuredHeight - chartBottom - (yPercentage) * (MeasuredHeight - chartBottom - SIGNATURE_TEXT_HEIGHT);
+                    float yPoint = MeasuredHeight - chartBottom - yPercentage * (MeasuredHeight - chartBottom - SIGNATURE_TEXT_HEIGHT);
 
                     line.selectionPaint.A = (byte)(255 * line.alpha * selectionA);
                     selectionBackgroundPaint.A = (byte)(255 * line.alpha * selectionA);
@@ -853,7 +853,7 @@ namespace Unigram.Charts
             int chartHeight = MeasuredHeight - chartBottom - SIGNATURE_TEXT_HEIGHT;
             for (int i = useMinHeight ? 0 : 1; i < n; i++)
             {
-                int y = (int)((MeasuredHeight - chartBottom) - chartHeight * ((a.values[i] - currentMinHeight) / (currentMaxHeight - currentMinHeight)));
+                int y = (int)(MeasuredHeight - chartBottom - chartHeight * ((a.values[i] - currentMinHeight) / (currentMaxHeight - currentMinHeight)));
                 //canvas.DrawRectangle(chartStart, y, chartEnd - chartStart, 2, linePaint, LINE_WIDTH);
                 canvas.DrawLine(chartStart, y, chartEnd, y, linePaint);
             }
@@ -900,7 +900,7 @@ namespace Unigram.Charts
             layout.Dispose();
             for (int i = useMinHeight ? 0 : 1; i < n; i++)
             {
-                float y = ((MeasuredHeight - chartBottom) - chartHeight * ((a.values[i] - currentMinHeight) / (currentMaxHeight - currentMinHeight)));
+                float y = MeasuredHeight - chartBottom - chartHeight * ((a.values[i] - currentMinHeight) / (currentMaxHeight - currentMinHeight));
                 canvas.DrawText(a.valuesStr[i], HORIZONTAL_PADDING, y - textOffset, signaturePaint);
             }
         }
@@ -1022,7 +1022,7 @@ namespace Unigram.Charts
                     }
                     else
                     {
-                        emptyPaint.A = (byte)((transitionAlpha) * 255);
+                        emptyPaint.A = (byte)(transitionAlpha * 255);
                         //canvas.drawBitmap(bottomChartBitmap, HORIZONTAL_PADDING, MeasuredHeight - PICKER_PADDING - pikerHeight, emptyPaint);
                         canvas.DrawImage(bottomChartCanvas, HORIZONTAL_PADDING, MeasuredHeight - PICKER_PADDING - pickerHeight);
                     }
@@ -1097,7 +1097,7 @@ namespace Unigram.Charts
 
                 ChartPickerDelegate.CapturesData middleCap = pickerDelegate.GetMiddleCaptured();
 
-                int r = ((int)(pickerRect.Bottom - pickerRect.Top) >> 1);
+                int r = (int)(pickerRect.Bottom - pickerRect.Top) >> 1;
                 int cY = (int)pickerRect.Top + r;
 
                 if (middleCap != null)
@@ -1269,12 +1269,12 @@ namespace Unigram.Charts
 
             alphaAnimator = CreateAnimator(0, 255, new AnimatorUpdateListener(animation =>
             {
-                newData.alpha = (int)((float)animation.GetAnimatedValue());
+                newData.alpha = (int)(float)animation.GetAnimatedValue();
                 foreach (ChartHorizontalLinesData a in horizontalLines)
                 {
                     if (a != newData)
                     {
-                        a.alpha = (int)((a.fixedAlpha / 255f) * (255 - newData.alpha));
+                        a.alpha = (int)(a.fixedAlpha / 255f * (255 - newData.alpha));
                     }
                 }
                 Invalidate();
@@ -1471,13 +1471,12 @@ namespace Unigram.Charts
 
         protected virtual void SelectXOnChart(int x, int y)
         {
-            int oldSelectedX = selectedIndex;
             if (chartData == null)
             {
                 return;
             }
 
-            float offset = chartFullWidth * (pickerDelegate.pickerStart) - HORIZONTAL_PADDING;
+            float offset = chartFullWidth * pickerDelegate.pickerStart - HORIZONTAL_PADDING;
             float xP = (offset + x) / chartFullWidth;
             selectedCoordinate = xP;
             if (xP < 0)
@@ -1564,7 +1563,7 @@ namespace Unigram.Charts
             double lXPoint = chartData.xPercentage[selectedIndex] * chartFullWidth - offset;
             if (lXPoint > (chartStart + chartWidth) >> 1)
             {
-                lXPoint -= (legendSignatureView.DesiredSize.Width + 5);
+                lXPoint -= legendSignatureView.DesiredSize.Width + 5;
             }
             else
             {
@@ -1767,7 +1766,7 @@ namespace Unigram.Charts
                 return;
             }
 
-            chartFullWidth = (chartWidth / (pickerDelegate.pickerEnd - pickerDelegate.pickerStart));
+            chartFullWidth = chartWidth / (pickerDelegate.pickerEnd - pickerDelegate.pickerStart);
 
             UpdateIndexes();
             int min = useMinHeight ? FindMinValue(startXIndex, endXIndex) : 0;
@@ -1776,7 +1775,7 @@ namespace Unigram.Charts
             if (legendShowing && !force)
             {
                 AnimateLegend(false);
-                MoveLegend(chartFullWidth * (pickerDelegate.pickerStart) - HORIZONTAL_PADDING);
+                MoveLegend(chartFullWidth * pickerDelegate.pickerStart - HORIZONTAL_PADDING);
             }
             Invalidate();
         }
@@ -1894,7 +1893,7 @@ namespace Unigram.Charts
                             }
                             else
                             {
-                                a.alpha = (int)((1f - alpha) * (a.fixedAlpha));
+                                a.alpha = (int)((1f - alpha) * a.fixedAlpha);
                             }
                         }
                         Invalidate();
@@ -1936,7 +1935,7 @@ namespace Unigram.Charts
                     }
                     lineViewData.animatorIn = CreateAnimator(lineViewData.alpha, 1f, new AnimatorUpdateListener(animation =>
                     {
-                        lineViewData.alpha = ((float)animation.GetAnimatedValue());
+                        lineViewData.alpha = (float)animation.GetAnimatedValue();
                         invalidatePickerChart = true;
                         Invalidate();
                     }));
@@ -1951,7 +1950,7 @@ namespace Unigram.Charts
                     }
                     lineViewData.animatorOut = CreateAnimator(lineViewData.alpha, 0f, new AnimatorUpdateListener(animation =>
                     {
-                        lineViewData.alpha = ((float)animation.GetAnimatedValue());
+                        lineViewData.alpha = (float)animation.GetAnimatedValue();
                         invalidatePickerChart = true;
                         Invalidate();
                     }));
@@ -2056,7 +2055,7 @@ namespace Unigram.Charts
             legendShowing = true;
             legendSignatureView.setVisibility(Visibility.Visible);
             selectionA = 1f;
-            MoveLegend(chartFullWidth * (pickerDelegate.pickerStart) - HORIZONTAL_PADDING);
+            MoveLegend(chartFullWidth * pickerDelegate.pickerStart - HORIZONTAL_PADDING);
         }
 
         public long GetStartDate()
@@ -2095,7 +2094,7 @@ namespace Unigram.Charts
 
         public override void MoveLegend()
         {
-            MoveLegend(chartFullWidth * (pickerDelegate.pickerStart) - HORIZONTAL_PADDING);
+            MoveLegend(chartFullWidth * pickerDelegate.pickerStart - HORIZONTAL_PADDING);
         }
 
         //@Override
@@ -2134,8 +2133,8 @@ namespace Unigram.Charts
                 ry = height / 2;
             }
 
-            float widthMinusCorners = (width - (2 * rx));
-            float heightMinusCorners = (height - (2 * ry));
+            float widthMinusCorners = width - 2 * rx;
+            float heightMinusCorners = height - 2 * ry;
 
             var last = new Vector2(right, top + ry);
             void AddRelativeLine(float x, float y)

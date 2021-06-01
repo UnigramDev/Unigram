@@ -482,8 +482,7 @@ namespace Unigram.Controls.Gallery
 
                 if (animation.TryStart(image.Presenter))
                 {
-                    TypedEventHandler<ConnectedAnimation, object> handler = null;
-                    handler = (s, args) =>
+                    void handler(ConnectedAnimation s, object args)
                     {
                         animation.Completed -= handler;
 
@@ -495,7 +494,7 @@ namespace Unigram.Controls.Gallery
                         {
                             Play(container.Presenter, item, item.GetFile());
                         }
-                    };
+                    }
 
                     animation.Completed += handler;
 
@@ -735,7 +734,7 @@ namespace Unigram.Controls.Gallery
 
         private void OnAcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
         {
-            if (args.EventType != CoreAcceleratorKeyEventType.KeyDown && args.EventType != CoreAcceleratorKeyEventType.SystemKeyDown)
+            if (args.EventType is not CoreAcceleratorKeyEventType.KeyDown and not CoreAcceleratorKeyEventType.SystemKeyDown)
             {
                 return;
             }
@@ -1026,7 +1025,7 @@ namespace Unigram.Controls.Gallery
 
         private bool TrySet(GalleryContentView element, GalleryContent content)
         {
-            if (object.Equals(element.Item, content))
+            if (Equals(element.Item, content))
             {
                 return false;
             }

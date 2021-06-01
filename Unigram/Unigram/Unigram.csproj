@@ -466,8 +466,6 @@
     </Compile>
     <Compile Include="Controls\VideoRangeSlider.cs" />
     <Compile Include="Controls\RatingBar.cs" />
-    <Compile Include="Controls\TagsTextBox.cs" />
-    <Compile Include="Controls\TagsWrapPanel.cs" />
     <Compile Include="Controls\WalkthroughControl.cs" />
     <Compile Include="Controls\WrapPanel.cs" />
     <Compile Include="Entities\StorageAudio.cs" />
@@ -1370,9 +1368,7 @@
     <Content Include="Assets\Animations\VoiceStart.tgs" />
     <Content Include="Assets\Animations\VoiceUnmuteToRaiseHand.tgs" />
     <Content Include="Assets\i420.bin" />
-    <None Include="..\.editorconfig">
-      <Link>.editorconfig</Link>
-    </None>
+    <None Include=".editorconfig" />
     <None Include="Unigram_StoreKey.pfx" />
     <None Include="Unigram_TemporaryKey.pfx" />
   </ItemGroup>

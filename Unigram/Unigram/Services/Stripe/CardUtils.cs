@@ -167,12 +167,12 @@ namespace Unigram.Services.Stripe
         /// <param name="brand">the {@link CardBrand} to use as a separating scheme</param>
         /// <returns>an array of strings with the number groups, in order. If the number is not complete,
         /// some of the array entries may be <see langword="null">.</returns>
-        public static String[] SeparateCardNumberGroups(string spacelessCardNumber, string brand)
+        public static string[] SeparateCardNumberGroups(string spacelessCardNumber, string brand)
         {
-            String[] numberGroups;
+            string[] numberGroups;
             if (brand.Equals(Card.AMERICAN_EXPRESS))
             {
-                numberGroups = new String[3];
+                numberGroups = new string[3];
 
                 int length = spacelessCardNumber.Length;
                 int lastUsedIndex = 0;
@@ -201,12 +201,12 @@ namespace Unigram.Services.Stripe
             }
             else
             {
-                numberGroups = new String[4];
+                numberGroups = new string[4];
                 int i = 0;
                 int previousStart = 0;
                 while ((i + 1) * 4 < spacelessCardNumber.Length)
                 {
-                    String group = spacelessCardNumber.Substring(previousStart, ((i + 1) * 4) - previousStart);
+                    string group = spacelessCardNumber.Substring(previousStart, (i + 1) * 4 - previousStart);
                     numberGroups[i] = group;
                     previousStart = (i + 1) * 4;
                     i++;

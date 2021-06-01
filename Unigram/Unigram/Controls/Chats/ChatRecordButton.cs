@@ -528,7 +528,7 @@ namespace Unigram.Controls.Chats
 
             [ThreadStatic]
             private static Recorder _current;
-            public static Recorder Current => _current = _current ?? new Recorder();
+            public static Recorder Current => _current ??= new Recorder();
 
             private readonly ConcurrentQueueWorker _recordQueue;
 
@@ -684,7 +684,7 @@ namespace Unigram.Controls.Chats
             [ComImport]
             [Guid("5B0D3235-4DBA-4D44-865E-8F1D0E4FD04D")]
             [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-            unsafe interface IMemoryBufferByteAccess
+            private unsafe interface IMemoryBufferByteAccess
             {
                 void GetBuffer(out byte* buffer, out uint capacity);
             }
@@ -800,7 +800,7 @@ namespace Unigram.Controls.Chats
                     uint sample = (ushort)scaledSamples[i];
                     var minPeak = Math.Min(sample, calculatedPeak);
                     var resultPeak = minPeak * 31 / calculatedPeak;
-                    scaledSamples[i] = (short)(/*clamping:*/ Math.Min(31, resultPeak));
+                    scaledSamples[i] = (short)/*clamping:*/ Math.Min(31, resultPeak);
                 }
 
                 var bitstreamLength = scaledSamples.Length * 5 / 8 + 1;
@@ -812,7 +812,7 @@ namespace Unigram.Controls.Chats
                     {
                         bytes += bitOffset / 8;
                         bitOffset %= 8;
-                        *((int*)bytes) |= (value << bitOffset);
+                        *(int*)bytes |= value << bitOffset;
                     }
 
                     for (int i = 0; i < scaledSamples.Length; i++)

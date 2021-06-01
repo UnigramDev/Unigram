@@ -303,7 +303,7 @@ namespace Unigram.ViewModels
                     return null;
                 }
 
-                if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
+                if (chat.Type is ChatTypePrivate or ChatTypeSecret)
                 {
                     return _lastSeen;
                 }
@@ -389,7 +389,7 @@ namespace Unigram.ViewModels
         {
             get
             {
-                return _chatActionManager = _chatActionManager ?? new OutputChatActionManager(ProtoService, _chat, _threadId);
+                return _chatActionManager ??= new OutputChatActionManager(ProtoService, _chat, _threadId);
             }
         }
 
@@ -586,9 +586,9 @@ namespace Unigram.ViewModels
 
         public Stack<long> RepliesStack => _repliesStack;
 
-        public async virtual Task LoadNextSliceAsync(bool force = false, bool init = false)
+        public virtual async Task LoadNextSliceAsync(bool force = false, bool init = false)
         {
-            if (_type != DialogType.History && _type != DialogType.Thread && _type != DialogType.Pinned)
+            if (_type is not DialogType.History and not DialogType.Thread and not DialogType.Pinned)
             {
                 return;
             }
@@ -708,7 +708,7 @@ namespace Unigram.ViewModels
 
         public async Task LoadPreviousSliceAsync(bool force = false, bool init = false)
         {
-            if (_type != DialogType.History && _type != DialogType.Thread && _type != DialogType.Pinned)
+            if (_type is not DialogType.History and not DialogType.Thread and not DialogType.Pinned)
             {
                 return;
             }
@@ -999,7 +999,7 @@ namespace Unigram.ViewModels
         public RelayCommand PreviousSliceCommand { get; }
         private async void PreviousSliceExecute()
         {
-            if (_type == DialogType.ScheduledMessages || _type == DialogType.EventLog)
+            if (_type is DialogType.ScheduledMessages or DialogType.EventLog)
             {
                 var already = Items.LastOrDefault();
                 if (already != null)
@@ -1154,7 +1154,7 @@ namespace Unigram.ViewModels
 
         public async Task LoadMessageSliceAsync(long? previousId, long maxId, VerticalAlignment alignment = VerticalAlignment.Center, double? pixel = null, ScrollIntoViewAlignment? direction = null, bool? disableAnimation = null, bool second = false)
         {
-            if (_type != DialogType.History && _type != DialogType.Thread && _type != DialogType.Pinned)
+            if (_type is not DialogType.History and not DialogType.Thread and not DialogType.Pinned)
             {
                 NotifyMessageSliceLoaded();
                 return;
@@ -1852,7 +1852,7 @@ namespace Unigram.ViewModels
 
                 if (group == null)
                 {
-                    var media = new MessageAlbum(message.Content is MessagePhoto || message.Content is MessageVideo);
+                    var media = new MessageAlbum(message.Content is MessagePhoto or MessageVideo);
 
                     var groupBase = new Message();
                     groupBase.Content = media;
@@ -2892,7 +2892,7 @@ namespace Unigram.ViewModels
 
             ProtoService.Send(new ReportChat(chat.Id, new long[0], reason, string.Empty));
 
-            if (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup)
+            if (chat.Type is ChatTypeBasicGroup or ChatTypeSupergroup)
             {
                 ProtoService.Send(new LeaveChat(chat.Id));
             }
@@ -2944,7 +2944,7 @@ namespace Unigram.ViewModels
                 {
                     await ProtoService.SendAsync(new CloseSecretChat(secret.SecretChatId));
                 }
-                else if (updated.Type is ChatTypeBasicGroup || updated.Type is ChatTypeSupergroup)
+                else if (updated.Type is ChatTypeBasicGroup or ChatTypeSupergroup)
                 {
                     await ProtoService.SendAsync(new LeaveChat(updated.Id));
                 }
@@ -3002,7 +3002,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
+            if (chat.Type is ChatTypePrivate or ChatTypeSecret)
             {
                 _voipService.Start(chat.Id, video);
             }
@@ -3375,8 +3375,6 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var text = string.Empty;
-
             var input = new InputPopup();
             input.Title = Strings.Resources.ReportChat;
             input.PlaceholderText = Strings.Resources.ReportChatDescription;
@@ -3386,6 +3384,8 @@ namespace Unigram.ViewModels
             input.SecondaryButtonText = Strings.Resources.Cancel;
 
             var inputResult = await input.ShowQueuedAsync();
+
+            string text;
             if (inputResult == ContentDialogResult.Primary)
             {
                 text = input.Text;
@@ -3515,7 +3515,7 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                if (group.Status is ChatMemberStatusLeft || group.Status is ChatMemberStatusBanned)
+                if (group.Status is ChatMemberStatusLeft or ChatMemberStatusBanned)
                 {
                     // Delete and exit
                     ChatDeleteExecute();

@@ -25,7 +25,7 @@ namespace Unigram.Views.Popups
 
         private Visibility ConvertVisibility(int rating)
         {
-            return rating >= 0 && rating <= 3 ? Visibility.Visible : Visibility.Collapsed;
+            return rating is >= 0 and <= 3 ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private string ConvertPlaceholder(int rating)

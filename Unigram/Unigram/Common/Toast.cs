@@ -19,7 +19,7 @@ namespace Unigram.Common
 
                 foreach (var t in BackgroundTaskRegistration.AllTasks)
                 {
-                    if (t.Value.Name == "NotificationTask" || t.Value.Name == "NewNotificationTask")
+                    if (t.Value.Name is "NotificationTask" or "NewNotificationTask")
                     {
                         t.Value.Unregister(false);
                     }
@@ -36,7 +36,7 @@ namespace Unigram.Common
                 }
 
                 var access = await BackgroundExecutionManager.RequestAccessAsync();
-                if (access == BackgroundAccessStatus.DeniedByUser || access == BackgroundAccessStatus.DeniedBySystemPolicy)
+                if (access is BackgroundAccessStatus.DeniedByUser or BackgroundAccessStatus.DeniedBySystemPolicy)
                 {
                     return;
                 }

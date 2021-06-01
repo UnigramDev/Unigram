@@ -2,6 +2,7 @@
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Entities;
+using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views.Settings;
@@ -186,7 +187,7 @@ namespace Unigram.ViewModels.Settings
             var response = await ProtoService.SendAsync(function);
             if (response is AuthenticationCodeInfo info)
             {
-                App.Current.SessionState["x_codeinfo"] = info;
+                BootStrapper.Current.SessionState["x_codeinfo"] = info;
                 NavigationService.Navigate(typeof(SettingsPhoneSentCodePage));
                 NavigationService.Refresh();
             }

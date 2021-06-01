@@ -6,6 +6,7 @@ using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
+using Unigram.Navigation;
 using Unigram.Services;
 using Windows.ApplicationModel;
 using Windows.Foundation;
@@ -142,24 +143,24 @@ namespace Unigram.Views.Popups
                 if (file.Local.IsDownloadingActive)
                 {
                     subtitle.Text = string.Format("{0} {1} / {2}", "Downloading", FileSizeConverter.Convert(file.Local.DownloadedSize, size), FileSizeConverter.Convert(size));
-                    subtitle.Foreground = App.Current.Resources["SystemControlDisabledChromeDisabledLowBrush"] as Brush;
+                    subtitle.Foreground = BootStrapper.Current.Resources["SystemControlDisabledChromeDisabledLowBrush"] as Brush;
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
                 {
                     subtitle.Text = string.Format("{0} {1}", Strings.Resources.AccActionDownload, FileSizeConverter.Convert(size));
-                    subtitle.Foreground = App.Current.Resources["SystemControlDisabledChromeDisabledLowBrush"] as Brush;
+                    subtitle.Foreground = BootStrapper.Current.Resources["SystemControlDisabledChromeDisabledLowBrush"] as Brush;
                 }
                 else
                 {
                     if (SettingsService.Current.Appearance.EmojiSet.Id == emojiPack.Id)
                     {
                         subtitle.Text = "Current Set";
-                        subtitle.Foreground = App.Current.Resources["SystemControlForegroundAccentBrush"] as Brush;
+                        subtitle.Foreground = BootStrapper.Current.Resources["SystemControlForegroundAccentBrush"] as Brush;
                     }
                     else
                     {
                         subtitle.Text = emojiPack.IsDefault ? Strings.Resources.Default : "Downloaded";
-                        subtitle.Foreground = App.Current.Resources["SystemControlDisabledChromeDisabledLowBrush"] as Brush;
+                        subtitle.Foreground = BootStrapper.Current.Resources["SystemControlDisabledChromeDisabledLowBrush"] as Brush;
                     }
                 }
             }
@@ -237,24 +238,24 @@ namespace Unigram.Views.Popups
                     if (file.Local.IsDownloadingActive)
                     {
                         subtitle.Text = string.Format("{0} {1} / {2}", "Downloading", FileSizeConverter.Convert(file.Local.DownloadedSize, size), FileSizeConverter.Convert(size));
-                        subtitle.Foreground = App.Current.Resources["SystemControlDisabledChromeDisabledLowBrush"] as Brush;
+                        subtitle.Foreground = BootStrapper.Current.Resources["SystemControlDisabledChromeDisabledLowBrush"] as Brush;
                     }
                     else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
                     {
                         subtitle.Text = string.Format("{0} {1}", Strings.Resources.AccActionDownload, FileSizeConverter.Convert(size));
-                        subtitle.Foreground = App.Current.Resources["SystemControlDisabledChromeDisabledLowBrush"] as Brush;
+                        subtitle.Foreground = BootStrapper.Current.Resources["SystemControlDisabledChromeDisabledLowBrush"] as Brush;
                     }
                     else
                     {
                         if (SettingsService.Current.Appearance.EmojiSet.Id == emojiSet.Id)
                         {
                             subtitle.Text = "Current Set";
-                            subtitle.Foreground = App.Current.Resources["SystemControlForegroundAccentBrush"] as Brush;
+                            subtitle.Foreground = BootStrapper.Current.Resources["SystemControlForegroundAccentBrush"] as Brush;
                         }
                         else
                         {
                             subtitle.Text = emojiSet.IsDefault ? Strings.Resources.Default : "Downloaded";
-                            subtitle.Foreground = App.Current.Resources["SystemControlDisabledChromeDisabledLowBrush"] as Brush;
+                            subtitle.Foreground = BootStrapper.Current.Resources["SystemControlDisabledChromeDisabledLowBrush"] as Brush;
                         }
                     }
                 }
@@ -276,7 +277,7 @@ namespace Unigram.Views.Popups
 
         #endregion
 
-        class ItemsCollection : MvxObservableCollection<EmojiSet>, ISupportIncrementalLoading
+        private class ItemsCollection : MvxObservableCollection<EmojiSet>, ISupportIncrementalLoading
         {
             private readonly IEmojiSetService _emojiSetService;
             private bool _hasMoreItems = true;

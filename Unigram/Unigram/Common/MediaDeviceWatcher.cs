@@ -221,7 +221,6 @@ namespace Unigram.Common
                     if (capture != null)
                     {
                         capture.Dispose();
-                        capture = null;
                     }
                 }
 

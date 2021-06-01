@@ -230,14 +230,14 @@ namespace Unigram.Charts
             if (_f2 > _f1)
             {
                 var maximum = _f2 - _f1;
-                var value = _f1 + (maximum * perc);
+                var value = _f1 + maximum * perc;
 
                 _result = Math.Min(_f2, value);
             }
             else
             {
                 var maximum = _f1 - _f2;
-                var value = _f2 + (maximum * (1 - perc));
+                var value = _f2 + maximum * (1 - perc);
 
                 _result = Math.Max(_f2, value);
             }

@@ -55,14 +55,14 @@ namespace Unigram.Views.Chats
             get => _tab;
             set
             {
-                if (_tab != null && _tab is UserControl prev)
+                if (_tab is not null and UserControl prev)
                 {
                     prev.Loaded -= Tab_Loaded;
                 }
 
                 _tab = value;
 
-                if (value != null && value is UserControl next)
+                if (value is not null and UserControl next)
                 {
                     next.Loaded += Tab_Loaded;
                 }
@@ -335,7 +335,7 @@ namespace Unigram.Views.Chats
 
         private bool ConvertSelectionMode(ListViewSelectionMode mode)
         {
-            return mode == ListViewSelectionMode.None ? false : true;
+            return mode != ListViewSelectionMode.None;
         }
 
         #region Context menu
@@ -494,7 +494,7 @@ namespace Unigram.Views.Chats
             }
         }
 
-        public void UpdateFile(Telegram.Td.Api.File file)
+        public void UpdateFile(File file)
         {
             var viewModel = ViewModel;
             if (viewModel == null)

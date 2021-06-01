@@ -459,9 +459,9 @@ namespace Unigram.Views
             {
                 switch (connectionState)
                 {
-                    case ConnectionStateWaitingForNetwork _:
-                    case ConnectionStateConnecting _:
-                    case ConnectionStateConnectingToProxy _:
+                    case ConnectionStateWaitingForNetwork:
+                    case ConnectionStateConnecting:
+                    case ConnectionStateConnectingToProxy:
                         Proxy.Visibility = Visibility.Visible;
                         break;
                     default:
@@ -765,7 +765,7 @@ namespace Unigram.Views
                     scrollViewer.ChangeView(null, 0, null);
                     args.Handled = true;
                 }
-                else if (ViewModel.Chats.Items.ChatList is ChatListFilter || ViewModel.Chats.Items.ChatList is ChatListArchive)
+                else if (ViewModel.Chats.Items.ChatList is ChatListFilter or ChatListArchive)
                 {
                     ViewModel.SelectedFilter = ChatFilterViewModel.Main;
                     ConvertFilter(ChatFilterViewModel.Main);
@@ -971,7 +971,7 @@ namespace Unigram.Views
 
                 args.Handled = true;
             }
-            else if (command == ShortcutCommand.Quit || command == ShortcutCommand.Close)
+            else if (command is ShortcutCommand.Quit or ShortcutCommand.Close)
             {
                 if (args.VirtualKey == Windows.System.VirtualKey.Q && App.Connection != null)
                 {
@@ -1029,7 +1029,7 @@ namespace Unigram.Views
                 args.Handled = true;
                 ArchivedChats_Click(null, null);
             }
-            else if (command >= ShortcutCommand.ShowFolder1 && command <= ShortcutCommand.ShowFolder6)
+            else if (command is >= ShortcutCommand.ShowFolder1 and <= ShortcutCommand.ShowFolder6)
             {
                 var index = command - ShortcutCommand.ShowAllChats;
                 if (folders.Count > index)
@@ -1072,7 +1072,7 @@ namespace Unigram.Views
                     MasterDetail.NavigationService.GoBackAt(0, false);
                 }
             }
-            else if (command >= ShortcutCommand.ChatPinned1 && command <= ShortcutCommand.ChatPinned5)
+            else if (command is >= ShortcutCommand.ChatPinned1 and <= ShortcutCommand.ChatPinned5)
             {
                 var folders = ViewModel.Filters;
                 if (folders.Count > 0)
@@ -1920,7 +1920,7 @@ namespace Unigram.Views
                 return;
             }
 
-            if (e.Key == Windows.System.VirtualKey.Up || e.Key == Windows.System.VirtualKey.Down)
+            if (e.Key is Windows.System.VirtualKey.Up or Windows.System.VirtualKey.Down)
             {
                 var index = e.Key == Windows.System.VirtualKey.Up ? -1 : 1;
                 var next = activeList.SelectedIndex + index;
@@ -1997,7 +1997,7 @@ namespace Unigram.Views
                     var grid = content.Children[1] as Grid;
 
                     var title = grid.Children[0] as TextBlock;
-                    title.Style = App.Current.Resources[result?.Chat?.Type is ChatTypeSecret ? "SecretBodyTextBlockStyle" : "BodyTextBlockStyle"] as Style;
+                    title.Style = BootStrapper.Current.Resources[result?.Chat?.Type is ChatTypeSecret ? "SecretBodyTextBlockStyle" : "BodyTextBlockStyle"] as Style;
 
                     if (result.Chat != null)
                     {
@@ -2148,7 +2148,7 @@ namespace Unigram.Views
             {
                 var subtitle = content.Children[2] as TextBlock;
                 subtitle.Text = LastSeenConverter.GetLabel(user, false);
-                subtitle.Foreground = App.Current.Resources[user.Status is UserStatusOnline ? "SystemControlForegroundAccentBrush" : "SystemControlDisabledChromeDisabledLowBrush"] as Brush;
+                subtitle.Foreground = BootStrapper.Current.Resources[user.Status is UserStatusOnline ? "SystemControlForegroundAccentBrush" : "SystemControlDisabledChromeDisabledLowBrush"] as Brush;
             }
             else if (args.Phase == 2)
             {

@@ -65,7 +65,7 @@ namespace Unigram.Controls.Messages.Content
             }
 
             var outgoing = message.IsOutgoing;
-            var missed = call.DiscardReason is CallDiscardReasonMissed || call.DiscardReason is CallDiscardReasonDeclined;
+            var missed = call.DiscardReason is CallDiscardReasonMissed or CallDiscardReasonDeclined;
 
             Button.Glyph = call.IsVideo ? Icons.Video : Icons.Phone;
             //Button.FontSize = call.IsVideo ? 24 : 20;

@@ -73,7 +73,7 @@ namespace Unigram.Controls
                 _drawable.setState(_service.Manager.IsMuted ? 1 : 0);
                 _drawable.draw(0, 48, (float)sender.Size.Width, 48 + 40, args.DrawingSession, sender, 1);
             }
-            
+
             sender.Invalidate();
         }
 
@@ -153,7 +153,7 @@ namespace Unigram.Controls
                     if (f7 != f8)
                     {
                         float f9 = animateAmplitudeDiff;
-                        float f10 = f8 + (j * f9);
+                        float f10 = f8 + j * f9;
                         amplitude = f10;
                         if (f9 > 0.0f)
                         {
@@ -173,7 +173,7 @@ namespace Unigram.Controls
                     if (f11 != f12)
                     {
                         float f13 = animateAmplitudeDiff2;
-                        float f14 = f12 + (j * f13);
+                        float f14 = f12 + j * f13;
                         amplitude2 = f14;
                         if (f13 > 0.0f)
                         {
@@ -190,7 +190,7 @@ namespace Unigram.Controls
                     }
                     if (previousState != null)
                     {
-                        float f15 = progressToState + (j / 250.0f);
+                        float f15 = progressToState + j / 250.0f;
                         progressToState = f15;
                         if (f15 > 1.0f)
                         {
@@ -269,8 +269,8 @@ namespace Unigram.Controls
 
                             lineBlobDrawable.Draw(x, y, width, height, session, paint, y, f5);
                             paint.A = (byte)(f16 * 76.0f);
-                            float dp = ((float)6.0f) * amplitude2;
-                            float dp2 = ((float)6.0f) * amplitude2;
+                            float dp = (float)6.0f * amplitude2;
+                            float dp2 = (float)6.0f * amplitude2;
                             float f22 = x;
                             lineBlobDrawable1.Draw(f22, y - dp, width, height, session, paint, y, f5);
                             lineBlobDrawable2.Draw(f22, y - dp2, width, height, session, paint, y, f5);
@@ -420,30 +420,30 @@ namespace Unigram.Controls
                     {
                         if (currentState == 0)
                         {
-                            targetX = ((random.Next(100) * 0.2f) / 100.0f) - 14.4f;
-                            targetY = ((random.Next(100) * 0.3f) / 100.0f) + 0.7f;
+                            targetX = random.Next(100) * 0.2f / 100.0f - 14.4f;
+                            targetY = random.Next(100) * 0.3f / 100.0f + 0.7f;
                         }
                         else
                         {
-                            targetX = ((random.Next(100) / 100.0f) * 0.2f) + 1.1f;
-                            targetY = (random.Next(100) * 4.0f) / 100.0f;
+                            targetX = random.Next(100) / 100.0f * 0.2f + 1.1f;
+                            targetY = random.Next(100) * 4.0f / 100.0f;
                         }
                     }
                     startX = targetX;
                     startY = targetY;
                     if (currentState == 0)
                     {
-                        targetX = ((random.Next(100) * 0.2f) / 100.0f) - 14.4f;
-                        targetY = ((random.Next(100) * 0.3f) / 100.0f) + 0.7f;
+                        targetX = random.Next(100) * 0.2f / 100.0f - 14.4f;
+                        targetY = random.Next(100) * 0.3f / 100.0f + 0.7f;
                     }
                     else
                     {
-                        targetX = ((random.Next(100) / 100.0f) * 0.2f) + 1.1f;
-                        targetY = (random.Next(100) * 2.0f) / 100.0f;
+                        targetX = random.Next(100) / 100.0f * 0.2f + 1.1f;
+                        targetY = random.Next(100) * 2.0f / 100.0f;
                     }
                 }
                 float f3 = j;
-                float f4 = time + ((BlobDrawable.GRADIENT_SPEED_MIN + 0.5f) * f3) + (f3 * BlobDrawable.GRADIENT_SPEED_MAX * 2.0f * f);
+                float f4 = time + (BlobDrawable.GRADIENT_SPEED_MIN + 0.5f) * f3 + f3 * BlobDrawable.GRADIENT_SPEED_MAX * 2.0f * f;
                 time = f4;
                 float f5 = duration;
                 if (f4 > f5)
@@ -453,10 +453,10 @@ namespace Unigram.Controls
                 float interpolation = CubicBezierInterpolator.EASE_OUT.getInterpolation(time / f5);
                 float f6 = i2;
                 float f7 = startX;
-                float f8 = ((f7 + ((targetX - f7) * interpolation)) * f6) - 200.0f;
+                float f8 = (f7 + (targetX - f7) * interpolation) * f6 - 200.0f;
                 float f9 = startY;
-                float f10 = (i * (f9 + ((targetY - f9) * interpolation))) - 200.0f;
-                float f11 = (f6 / 400.0f) * (currentState == 0 ? 3.0f : 1.5f);
+                float f10 = i * (f9 + (targetY - f9) * interpolation) - 200.0f;
+                float f11 = f6 / 400.0f * (currentState == 0 ? 3.0f : 1.5f);
                 //this.matrix.reset();
                 //this.matrix.postTranslate(f8, f10);
                 //this.matrix.postScale(f11, f11, f8 + 200.0f, f10 + 200.0f);
@@ -514,10 +514,10 @@ namespace Unigram.Controls
         {
             float f = maxRadius;
             float f2 = minRadius;
-            fArr[i] = f2 + (MathF.Abs((random.Next() % 100.0f) / 100.0f) * (f - f2));
+            fArr[i] = f2 + MathF.Abs(random.Next() % 100.0f / 100.0f) * (f - f2);
             float[] fArr2 = speed;
             double abs = MathF.Abs(random.Next() % 100.0f) / 100.0f;
-            fArr2[i] = (float)((abs * 0.003d) + 0.017d);
+            fArr2[i] = (float)(abs * 0.003d + 0.017d);
         }
 
         public void update(float f, float f2)
@@ -527,7 +527,7 @@ namespace Unigram.Controls
                 float[] fArr = progress;
                 float f3 = fArr[i];
                 float[] fArr2 = speed;
-                fArr[i] = f3 + (fArr2[i] * BlobDrawable.MIN_SPEED) + (fArr2[i] * f * BlobDrawable.MAX_SPEED * f2);
+                fArr[i] = f3 + fArr2[i] * BlobDrawable.MIN_SPEED + fArr2[i] * f * BlobDrawable.MAX_SPEED * f2;
                 if (fArr[i] >= 1.0f)
                 {
                     fArr[i] = 0.0f;
@@ -554,7 +554,7 @@ namespace Unigram.Controls
                     if (i == 0)
                     {
                         float f12 = progress[i];
-                        builder.AddLine(f, ((f2 - ((radius[i] * (1.0f - f12)) + (radiusNext[i] * f12))) * f6) + (f5 * (1.0f - f6)));
+                        builder.AddLine(f, (f2 - (radius[i] * (1.0f - f12) + radiusNext[i] * f12)) * f6 + f5 * (1.0f - f6));
                     }
                     else
                     {
@@ -565,14 +565,14 @@ namespace Unigram.Controls
                         float f14 = fArr2[i2] * (1.0f - f13);
                         float[] fArr3 = radiusNext;
                         float f15 = fArr[i];
-                        float f16 = (fArr2[i] * (1.0f - f15)) + (fArr3[i] * f15);
+                        float f16 = fArr2[i] * (1.0f - f15) + fArr3[i] * f15;
                         float f17 = f3 - f;
-                        float f18 = (f17 / f11) * i2;
-                        float f19 = (f17 / f11) * f10;
-                        float f20 = f18 + ((f19 - f18) / 2.0f);
+                        float f18 = f17 / f11 * i2;
+                        float f19 = f17 / f11 * f10;
+                        float f20 = f18 + (f19 - f18) / 2.0f;
                         float f21 = (1.0f - f6) * f5;
-                        float f22 = ((f2 - f16) * f6) + f21;
-                        builder.AddCubicBezier(new Vector2(f20, ((f2 - (f14 + (fArr3[i2] * f13))) * f6) + f21), new Vector2(f20, f22), new Vector2(f19, f22));
+                        float f22 = (f2 - f16) * f6 + f21;
+                        builder.AddCubicBezier(new Vector2(f20, (f2 - (f14 + fArr3[i2] * f13)) * f6 + f21), new Vector2(f20, f22), new Vector2(f19, f22));
                         if (f10 == N)
                         {
                             builder.AddLine(f3, f4);

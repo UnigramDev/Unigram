@@ -14,7 +14,7 @@ namespace Unigram.Charts.Data
     {
         public long[] x;
         public float[] xPercentage;
-        public String[] daysLookup;
+        public string[] daysLookup;
         public List<Line> lines = new List<Line>();
         public int maxValue = 0;
         public int minValue = int.MaxValue;
@@ -83,14 +83,14 @@ namespace Unigram.Charts.Data
             Regex colorPattern = new Regex("(.*)(#.*)", RegexOptions.Compiled);
             for (int i = 0; i < lines.Count; i++)
             {
-                ChartData.Line line = lines[i];
+                Line line = lines[i];
 
                 if (colors != null)
                 {
                     var matcher = colorPattern.Match(colors.GetNamedString(line.id));
                     if (matcher.Success)
                     {
-                        String key = matcher.Groups[1].Value;
+                        string key = matcher.Groups[1].Value;
                         if (key != null)
                         {
                             line.colorKey = "StatisticChartLine_" + matcher.Groups[1].Value;
@@ -149,7 +149,7 @@ namespace Unigram.Charts.Data
             }
 
 
-            daysLookup = new String[(int)((end - start) / timeStep) + 10];
+            daysLookup = new string[(int)((end - start) / timeStep) + 10];
             DateTimeFormatter formatter;
             if (timeStep == 1)
             {
@@ -175,14 +175,14 @@ namespace Unigram.Charts.Data
                 else
                 {
                     //daysLookup[i] = formatter.format(new Date(start + (i * timeStep)));
-                    daysLookup[i] = formatter.Format(Utils.UnixTimestampToDateTime((start + (i * timeStep)) / 1000));
+                    daysLookup[i] = formatter.Format(Utils.UnixTimestampToDateTime((start + i * timeStep) / 1000));
                 }
             }
 
             oneDayPercentage = timeStep / (float)(x[x.Length - 1] - x[0]);
         }
 
-        public String GetDayString(int i)
+        public string GetDayString(int i)
         {
             return daysLookup[(int)((x[i] - x[0]) / timeStep)];
         }
@@ -304,11 +304,11 @@ namespace Unigram.Charts.Data
             public int[] y;
 
             public SegmentTree segmentTree;
-            public String id;
-            public String name;
+            public string id;
+            public string name;
             public int maxValue = 0;
             public int minValue = int.MaxValue;
-            public String colorKey;
+            public string colorKey;
             public Color color = Colors.Black;
             public Color colorDark = Colors.White;
         }

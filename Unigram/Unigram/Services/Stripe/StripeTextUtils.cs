@@ -11,14 +11,14 @@ namespace Unigram.Services.Stripe
         /// <param name="number">the number to test</param>
         /// <param name="prefixes">the prefixes to test against</param>
         /// <returns><see langword="true"> if number begins with any of the input prefixes</returns>
-        public static bool HasAnyPrefix(String number, params String[] prefixes)
+        public static bool HasAnyPrefix(string number, params string[] prefixes)
         {
             if (number == null)
             {
                 return false;
             }
 
-            foreach (String prefix in prefixes)
+            foreach (string prefix in prefixes)
             {
                 if (number.StartsWith(prefix))
                 {
@@ -33,7 +33,7 @@ namespace Unigram.Services.Stripe
         /// </summary>
         /// <param name="value">the input string to test</param>
         /// <returns><see langword="true"> if the input value consists entirely of integers</returns>
-        public static bool IsWholePositiveNumber(String value)
+        public static bool IsWholePositiveNumber(string value)
         {
             if (value == null)
             {
@@ -57,7 +57,7 @@ namespace Unigram.Services.Stripe
         /// </summary>
         /// <param name="value">an input string that may or may not be entirely whitespace</param>
         /// <returns><see langword="null"> if the string is entirely whitespace, or the original value if not</returns>
-        public static string NullIfBlank(String value)
+        public static string NullIfBlank(string value)
         {
             if (string.IsNullOrWhiteSpace(value))
             {
@@ -73,7 +73,7 @@ namespace Unigram.Services.Stripe
         /// <param name="cardNumberWithSpaces">a card number, for instance "4242 4242 4242 4242"</param>
         /// <returns>the input number minus any spaces, for instance "4242424242424242".
         /// Returns <see langword="null"> if the input was <see langword="null"> or all spaces.</returns>
-        public static String RemoveSpacesAndHyphens(string cardNumberWithSpaces)
+        public static string RemoveSpacesAndHyphens(string cardNumberWithSpaces)
         {
             if (string.IsNullOrWhiteSpace(cardNumberWithSpaces))
             {

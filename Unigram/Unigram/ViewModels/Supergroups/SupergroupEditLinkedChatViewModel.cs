@@ -181,7 +181,7 @@ namespace Unigram.ViewModels.Supergroups
             }
             else
             {
-                String message;
+                string message;
                 bool history = false;
                 if (CacheService.TryGetSupergroup(linkedChat, out Supergroup linkedSupergroup))
                 {

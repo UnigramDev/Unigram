@@ -183,24 +183,6 @@ namespace Unigram.Views
             }
         }
 
-        private void Rectangle_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
-        {
-            var wallpaper = args.NewValue as Background;
-            if (wallpaper == null)
-            {
-                return;
-            }
-
-            var fill = wallpaper.Type as BackgroundTypeFill;
-            if (fill == null)
-            {
-                return;
-            }
-
-            var content = sender as Rectangle;
-            content.Fill = null; // fill.ToBrush();
-        }
-
         #region Delegates
 
         public void UpdateBackground(Background wallpaper)
@@ -225,7 +207,7 @@ namespace Unigram.Views
             {
                 Blur.Visibility = Visibility.Collapsed;
 
-                if (wallpaper.Type is BackgroundTypeFill || wallpaper.Type is BackgroundTypePattern)
+                if (wallpaper.Type is BackgroundTypeFill or BackgroundTypePattern)
                 {
                     UpdatePresenter(wallpaper);
 
@@ -241,11 +223,6 @@ namespace Unigram.Views
         #endregion
 
         #region Binding
-
-        private Background ConvertForeground(BackgroundColor color1, BackgroundColor color2, Background wallpaper)
-        {
-            return wallpaper;
-        }
 
         private BackgroundFill ConvertBackground(BackgroundColor color1, BackgroundColor color2, BackgroundColor color3, BackgroundColor color4, int rotation)
         {
@@ -408,7 +385,7 @@ namespace Unigram.Views
             TextColor1.SelectAll();
         }
 
-        private void PickerColor_ColorChanged(Unigram.Controls.ColorPicker sender, Unigram.Controls.ColorChangedEventArgs args)
+        private void PickerColor_ColorChanged(Controls.ColorPicker sender, Controls.ColorChangedEventArgs args)
         {
             var row = Grid.GetRow(ColorPanel);
             if (row != 2)
@@ -482,7 +459,7 @@ namespace Unigram.Views
             }
         }
 
-        private void TextColor_ColorChanged(Controls.ColorTextBox sender, Controls.ColorChangedEventArgs args)
+        private void TextColor_ColorChanged(ColorTextBox sender, Controls.ColorChangedEventArgs args)
         {
             if (sender.FocusState == FocusState.Unfocused)
             {

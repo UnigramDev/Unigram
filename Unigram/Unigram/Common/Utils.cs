@@ -68,7 +68,7 @@ namespace Unigram.Common
             {
                 return true;
             }
-            if (((a == null) || (b == null)) || (a.Length != b.Length))
+            if (a == null || b == null || a.Length != b.Length)
             {
                 return false;
             }
@@ -83,7 +83,7 @@ namespace Unigram.Common
         public static DateTime ToDateTime(int? date)
         {
             var ticks = date.Value;
-            return Utils.UnixTimestampToDateTime(ticks >> 32);
+            return UnixTimestampToDateTime(ticks >> 32);
         }
     }
 }

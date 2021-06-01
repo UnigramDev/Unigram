@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Numerics;
 using Unigram.Native.Calls;
 using Unigram.Services.Settings;
@@ -112,7 +111,7 @@ namespace Unigram.Services
 
 
 
-        public bool AddOrUpdateValue(string key, Object value)
+        public bool AddOrUpdateValue(string key, object value)
         {
             return AddOrUpdateValue(_container, key, value);
         }
@@ -129,7 +128,7 @@ namespace Unigram.Services
             return AddOrUpdateValue(container, key, value);
         }
 
-        protected bool AddOrUpdateValue(ApplicationDataContainer container, string key, Object value)
+        protected bool AddOrUpdateValue(ApplicationDataContainer container, string key, object value)
         {
             bool valueChanged = false;
 
@@ -152,7 +151,7 @@ namespace Unigram.Services
 
         public valueType GetValueOrDefault<valueType>(string key, valueType defaultValue)
         {
-            return GetValueOrDefault<valueType>(_container, key, defaultValue);
+            return GetValueOrDefault(_container, key, defaultValue);
         }
 
         protected valueType GetValueOrDefault<valueType>(ApplicationDataContainer container, string key, valueType defaultValue)

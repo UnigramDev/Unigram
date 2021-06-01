@@ -3,6 +3,7 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls.Messages.Content;
 using Unigram.Converters;
+using Unigram.Navigation;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Windows.UI.Xaml;
@@ -112,10 +113,10 @@ namespace Unigram.Controls.Cells
         {
             var brushes = new[]
             {
-                App.Current.Resources["Placeholder0Brush"],
-                App.Current.Resources["Placeholder1Brush"],
-                App.Current.Resources["Placeholder2Brush"],
-                App.Current.Resources["Placeholder3Brush"]
+                BootStrapper.Current.Resources["Placeholder0Brush"],
+                BootStrapper.Current.Resources["Placeholder1Brush"],
+                BootStrapper.Current.Resources["Placeholder2Brush"],
+                BootStrapper.Current.Resources["Placeholder3Brush"]
             };
 
             if (name == null)
@@ -125,7 +126,7 @@ namespace Unigram.Controls.Cells
 
             if (name.Length > 0)
             {
-                var color = -1;
+                int color;
                 if (name.EndsWith(".doc") || name.EndsWith(".txt") || name.EndsWith(".psd"))
                 {
                     color = 0;

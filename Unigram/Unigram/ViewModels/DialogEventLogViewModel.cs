@@ -169,7 +169,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public async override Task LoadNextSliceAsync(bool force = false, bool init = false)
+        public override async Task LoadNextSliceAsync(bool force = false, bool init = false)
         {
             using (await _loadMoreLock.WaitAsync())
             {
@@ -385,7 +385,6 @@ namespace Unigram.ViewModels
             }
             else if (item.Action is ChatEventPermissionsChanged permissionChanged)
             {
-                var text = string.Empty;
                 var entities = new List<TextEntity>();
 
                 ChatPermissions o = permissionChanged.OldPermissions;
@@ -452,13 +451,12 @@ namespace Unigram.ViewModels
                     AppendChange(n.CanPinMessages, Strings.Resources.EventLogRestrictedPinMessages);
                 }
 
-                text = rights.ToString();
+                string text = rights.ToString();
 
                 return new MessageText(new FormattedText(text, entities), null);
             }
             else if (item.Action is ChatEventMemberRestricted memberRestricted)
             {
-                var text = string.Empty;
                 var entities = new List<TextEntity>();
 
                 var whoUser = CacheService.GetMessageSender(memberRestricted.MemberId);
@@ -491,10 +489,11 @@ namespace Unigram.ViewModels
                     n = new ChatMemberStatusRestricted(true, 0, new ChatPermissions(true, true, true, true, true, true, true, true));
                 }
 
+                string text;
                 if (!channel && (n == null || n != null && o != null /*&& n.RestrictedUntilDate != o.RestrictedUntilDate*/))
                 {
                     StringBuilder rights;
-                    String bannedDuration;
+                    string bannedDuration;
                     if (n != null && !n.IsForever())
                     {
                         bannedDuration = "";
@@ -507,7 +506,7 @@ namespace Unigram.ViewModels
                         int count = 0;
                         for (int a = 0; a < 3; a++)
                         {
-                            String addStr = null;
+                            string addStr = null;
                             if (a == 0)
                             {
                                 if (days != 0)
@@ -552,7 +551,7 @@ namespace Unigram.ViewModels
                     }
 
                     var str = Strings.Resources.EventLogRestrictedUntil;
-                    rights = new StringBuilder(String.Format(str, GetUserName(whoUser, entities, str.IndexOf("{0}")), bannedDuration));
+                    rights = new StringBuilder(string.Format(str, GetUserName(whoUser, entities, str.IndexOf("{0}")), bannedDuration));
                     var added = false;
                     if (o == null)
                     {
@@ -616,7 +615,7 @@ namespace Unigram.ViewModels
                 }
                 else
                 {
-                    String str;
+                    string str;
                     if (o == null || memberRestricted.NewStatus is ChatMemberStatusBanned)
                     {
                         str = Strings.Resources.EventLogChannelRestricted;
@@ -626,7 +625,7 @@ namespace Unigram.ViewModels
                         str = Strings.Resources.EventLogChannelUnrestricted;
                     }
 
-                    text = String.Format(str, GetUserName(whoUser, entities, str.IndexOf("{0}")));
+                    text = string.Format(str, GetUserName(whoUser, entities, str.IndexOf("{0}")));
                 }
 
                 return new MessageText(new FormattedText(text, entities), null);

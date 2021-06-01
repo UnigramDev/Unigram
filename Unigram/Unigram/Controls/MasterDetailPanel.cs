@@ -164,7 +164,7 @@ namespace Unigram.Controls
             }
             else
             {
-                var result = 0d;
+                double result;
                 if (dialogsWidthRatio == 0 && _allowCompact)
                 {
                     result = columnCompactWidthLeft;
@@ -283,7 +283,7 @@ namespace Unigram.Controls
             e.Handled = true;
 
             var point = e.GetCurrentPoint(Children[6]);
-            if (point.Position.X < 0 || point.Position.X > 8)
+            if (point.Position.X is < 0 or > 8)
             {
                 Window.Current.CoreWindow.PointerCursor = _defaultCursor;
             }

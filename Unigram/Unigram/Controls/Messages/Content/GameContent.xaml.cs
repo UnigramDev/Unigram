@@ -162,7 +162,7 @@ namespace Unigram.Controls.Messages.Content
                     // TODO any additional
                     span.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontFamily = new FontFamily("Consolas") });
                 }
-                else if (entity.Type is TextEntityTypeUrl || entity.Type is TextEntityTypeEmailAddress || entity.Type is TextEntityTypePhoneNumber || entity.Type is TextEntityTypeMention || entity.Type is TextEntityTypeHashtag || entity.Type is TextEntityTypeCashtag || entity.Type is TextEntityTypeBotCommand)
+                else if (entity.Type is TextEntityTypeUrl or TextEntityTypeEmailAddress or TextEntityTypePhoneNumber or TextEntityTypeMention or TextEntityTypeHashtag or TextEntityTypeCashtag or TextEntityTypeBotCommand)
                 {
                     var hyperlink = new Hyperlink();
                     var data = text.Substring(entity.Offset, entity.Length);
@@ -177,7 +177,7 @@ namespace Unigram.Controls.Messages.Content
                         MessageHelper.SetEntityData(hyperlink, data);
                     }
                 }
-                else if (entity.Type is TextEntityTypeTextUrl || entity.Type is TextEntityTypeMentionName)
+                else if (entity.Type is TextEntityTypeTextUrl or TextEntityTypeMentionName)
                 {
                     var hyperlink = new Hyperlink();
                     object data;

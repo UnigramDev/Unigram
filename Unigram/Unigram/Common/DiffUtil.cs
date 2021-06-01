@@ -88,9 +88,9 @@ namespace Unigram.Common
          * @return A DiffResult that contains the information about the edit sequence to convert the
          * old list into the new list.
          */
-        public static DiffResult calculateDiff(Callback cb)
+        public static DiffResult CalculateDiff(Callback cb)
         {
-            return calculateDiff(cb, true);
+            return CalculateDiff(cb, true);
         }
 
         /**
@@ -106,10 +106,10 @@ namespace Unigram.Common
          * @return A DiffResult that contains the information about the edit sequence to convert the
          * old list into the new list.
          */
-        public static DiffResult calculateDiff(Callback cb, bool detectMoves)
+        public static DiffResult CalculateDiff(Callback cb, bool detectMoves)
         {
-            int oldSize = cb.getOldListSize();
-            int newSize = cb.getNewListSize();
+            int oldSize = cb.GetOldListSize();
+            int newSize = cb.GetNewListSize();
 
             List<Snake> snakes = new List<Snake>();
 
@@ -131,7 +131,7 @@ namespace Unigram.Common
             while (stack.Count > 0)
             {
                 Range range = stack.RemoveLast();
-                Snake snake = diffPartial(cb, range.oldListStart, range.oldListEnd,
+                Snake snake = DiffPartial(cb, range.oldListStart, range.oldListEnd,
                         range.newListStart, range.newListEnd, forward, backward, max);
                 if (snake != null)
                 {
@@ -202,7 +202,7 @@ namespace Unigram.Common
             return new DiffResult(cb, snakes, forward, backward, detectMoves);
         }
 
-        private static Snake diffPartial(Callback cb, int startOld, int endOld,
+        private static Snake DiffPartial(Callback cb, int startOld, int endOld,
                 int startNew, int endNew, int[] forward, int[] backward, int kOffset)
         {
             int oldSize = endOld - startOld;
@@ -215,8 +215,8 @@ namespace Unigram.Common
 
             int delta = oldSize - newSize;
             int dLimit = (oldSize + newSize + 1) / 2;
-            Array.Fill(forward, 0, kOffset - dLimit - 1, (kOffset + dLimit + 1) - (kOffset - dLimit - 1));
-            Array.Fill(backward, oldSize, kOffset - dLimit - 1 + delta, (kOffset + dLimit + 1 + delta) - (kOffset - dLimit - 1 + delta));
+            Array.Fill(forward, 0, kOffset - dLimit - 1, kOffset + dLimit + 1 - (kOffset - dLimit - 1));
+            Array.Fill(backward, oldSize, kOffset - dLimit - 1 + delta, kOffset + dLimit + 1 + delta - (kOffset - dLimit - 1 + delta));
             bool checkInFwd = delta % 2 != 0;
             for (int d = 0; d <= dLimit; d++)
             {
@@ -240,7 +240,7 @@ namespace Unigram.Common
                     int y = x - k;
                     // move diagonal as long as items match
                     while (x < oldSize && y < newSize
-                            && cb.areItemsTheSame(startOld + x, startNew + y))
+                            && cb.AreItemsTheSame(startOld + x, startNew + y))
                     {
                         x++;
                         y++;
@@ -282,7 +282,7 @@ namespace Unigram.Common
                     int y = x - backwardK;
                     // move diagonal as long as items match
                     while (x > 0 && y > 0
-                            && cb.areItemsTheSame(startOld + x - 1, startNew + y - 1))
+                            && cb.AreItemsTheSame(startOld + x - 1, startNew + y - 1))
                     {
                         x--;
                         y--;
@@ -319,14 +319,14 @@ namespace Unigram.Common
              *
              * @return The size of the old list.
              */
-            public abstract int getOldListSize();
+            public abstract int GetOldListSize();
 
             /**
              * Returns the size of the new list.
              *
              * @return The size of the new list.
              */
-            public abstract int getNewListSize();
+            public abstract int GetNewListSize();
 
             /**
              * Called by the DiffUtil to decide whether two object represent the same Item.
@@ -337,7 +337,7 @@ namespace Unigram.Common
              * @param newItemPosition The position of the item in the new list
              * @return True if the two items represent the same object or false if they are different.
              */
-            public abstract bool areItemsTheSame(int oldItemPosition, int newItemPosition);
+            public abstract bool AreItemsTheSame(int oldItemPosition, int newItemPosition);
 
             /**
              * Called by the DiffUtil when it wants to check whether two items have the same data.
@@ -357,7 +357,7 @@ namespace Unigram.Common
              *                        oldItem
              * @return True if the contents of the items are the same or false if they are different.
              */
-            public abstract bool areContentsTheSame(int oldItemPosition, int newItemPosition);
+            public abstract bool AreContentsTheSame(int oldItemPosition, int newItemPosition);
 
             /**
              * When {@link #areItemsTheSame(int, int)} returns {@code true} for two items and
@@ -376,7 +376,7 @@ namespace Unigram.Common
              *
              * @return A payload object that represents the change between the two items.
              */
-            public Object getChangePayload(int oldItemPosition, int newItemPosition)
+            public object GetChangePayload(int oldItemPosition, int newItemPosition)
             {
                 return null;
             }
@@ -408,7 +408,7 @@ namespace Unigram.Common
              *
              * @see Callback#areItemsTheSame(int, int)
              */
-            public abstract bool areItemsTheSame(T oldItem, T newItem);
+            public abstract bool AreItemsTheSame(T oldItem, T newItem);
 
             /**
              * Called to check whether two items have the same data.
@@ -434,7 +434,7 @@ namespace Unigram.Common
              *
              * @see Callback#areContentsTheSame(int, int)
              */
-            public abstract bool areContentsTheSame(T oldItem, T newItem);
+            public abstract bool AreContentsTheSame(T oldItem, T newItem);
 
             /**
              * When {@link #areItemsTheSame(T, T)} returns {@code true} for two items and
@@ -450,7 +450,7 @@ namespace Unigram.Common
              *
              * @see Callback#getChangePayload(int, int)
              */
-            public Object getChangePayload(T oldItem, T newItem)
+            public object GetChangePayload(T oldItem, T newItem)
             {
                 return null;
             }
@@ -495,7 +495,7 @@ namespace Unigram.Common
          * <p>
          * This internal class is used when running Myers' algorithm without recursion.
          */
-        class Range
+        private class Range
         {
 
             public int oldListStart, oldListEnd;
@@ -598,18 +598,18 @@ namespace Unigram.Common
                 Array.Fill(mOldItemStatuses, 0);
                 Array.Fill(mNewItemStatuses, 0);
                 mCallback = callback;
-                mOldListSize = callback.getOldListSize();
-                mNewListSize = callback.getNewListSize();
+                mOldListSize = callback.GetOldListSize();
+                mNewListSize = callback.GetNewListSize();
                 mDetectMoves = detectMoves;
-                addRootSnake();
-                findMatchingItems();
+                AddRootSnake();
+                FindMatchingItems();
             }
 
             /**
              * We always add a Snake to 0/0 so that we can run loops from end to beginning and be done
              * when we run out of snakes.
              */
-            private void addRootSnake()
+            private void AddRootSnake()
             {
                 Snake firstSnake = mSnakes.Count > 0 ? mSnakes[0] : null;
                 if (firstSnake == null || firstSnake.x != 0 || firstSnake.y != 0)
@@ -635,7 +635,7 @@ namespace Unigram.Common
              * the statuses maps. DiffResult uses this pre-calculated information while dispatching
              * the updates (which is probably being called on the main thread).
              */
-            private void findMatchingItems()
+            private void FindMatchingItems()
             {
                 int posOld = mOldListSize;
                 int posNew = mNewListSize;
@@ -650,14 +650,14 @@ namespace Unigram.Common
                         while (posOld > endX)
                         {
                             // this is a removal. Check remaining snakes to see if this was added before
-                            findAddition(posOld, posNew, i);
+                            FindAddition(posOld, posNew, i);
                             posOld--;
                         }
                         while (posNew > endY)
                         {
                             // this is an addition. Check remaining snakes to see if this was removed
                             // before
-                            findRemoval(posOld, posNew, i);
+                            FindRemoval(posOld, posNew, i);
                             posNew--;
                         }
                     }
@@ -667,7 +667,7 @@ namespace Unigram.Common
                         int oldItemPos = snake.x + j;
                         int newItemPos = snake.y + j;
                         bool theSame = mCallback
-                                .areContentsTheSame(oldItemPos, newItemPos);
+                                .AreContentsTheSame(oldItemPos, newItemPos);
                         int changeFlag = theSame ? FLAG_NOT_CHANGED : FLAG_CHANGED;
                         mOldItemStatuses[oldItemPos] = (newItemPos << FLAG_OFFSET) | changeFlag;
                         mNewItemStatuses[newItemPos] = (oldItemPos << FLAG_OFFSET) | changeFlag;
@@ -677,22 +677,22 @@ namespace Unigram.Common
                 }
             }
 
-            private void findAddition(int x, int y, int snakeIndex)
+            private void FindAddition(int x, int y, int snakeIndex)
             {
                 if (mOldItemStatuses[x - 1] != 0)
                 {
                     return; // already set by a latter item
                 }
-                findMatchingItem(x, y, snakeIndex, false);
+                FindMatchingItem(x, y, snakeIndex, false);
             }
 
-            private void findRemoval(int x, int y, int snakeIndex)
+            private void FindRemoval(int x, int y, int snakeIndex)
             {
                 if (mNewItemStatuses[y - 1] != 0)
                 {
                     return; // already set by a latter item
                 }
-                findMatchingItem(x, y, snakeIndex, true);
+                FindMatchingItem(x, y, snakeIndex, true);
             }
 
             /**
@@ -706,7 +706,7 @@ namespace Unigram.Common
              * @see #NO_POSITION
              * @see #convertNewPositionToOld(int)
              */
-            public int convertOldPositionToNew(int oldListPosition)
+            public int ConvertOldPositionToNew(int oldListPosition)
             {
                 if (oldListPosition < 0 || oldListPosition >= mOldListSize)
                 {
@@ -735,7 +735,7 @@ namespace Unigram.Common
              * @see #NO_POSITION
              * @see #convertOldPositionToNew(int)
              */
-            public int convertNewPositionToOld(int newListPosition)
+            public int ConvertNewPositionToOld(int newListPosition)
             {
                 if (newListPosition < 0 || newListPosition >= mNewListSize)
                 {
@@ -764,7 +764,7 @@ namespace Unigram.Common
              *
              * @return True if such item is found.
              */
-            private bool findMatchingItem(int x, int y, int snakeIndex, bool removal)
+            private bool FindMatchingItem(int x, int y, int snakeIndex, bool removal)
             {
                 int myItemPos;
                 int curX;
@@ -791,10 +791,10 @@ namespace Unigram.Common
                         // check removals for a match
                         for (int pos = curX - 1; pos >= endX; pos--)
                         {
-                            if (mCallback.areItemsTheSame(pos, myItemPos))
+                            if (mCallback.AreItemsTheSame(pos, myItemPos))
                             {
                                 // found!
-                                bool theSame = mCallback.areContentsTheSame(pos, myItemPos);
+                                bool theSame = mCallback.AreContentsTheSame(pos, myItemPos);
                                 int changeFlag = theSame ? FLAG_MOVED_NOT_CHANGED
                                         : FLAG_MOVED_CHANGED;
                                 mNewItemStatuses[myItemPos] = (pos << FLAG_OFFSET) | FLAG_IGNORE;
@@ -808,10 +808,10 @@ namespace Unigram.Common
                         // check for additions for a match
                         for (int pos = curY - 1; pos >= endY; pos--)
                         {
-                            if (mCallback.areItemsTheSame(myItemPos, pos))
+                            if (mCallback.AreItemsTheSame(myItemPos, pos))
                             {
                                 // found
-                                bool theSame = mCallback.areContentsTheSame(myItemPos, pos);
+                                bool theSame = mCallback.AreContentsTheSame(myItemPos, pos);
                                 int changeFlag = theSame ? FLAG_MOVED_NOT_CHANGED
                                         : FLAG_MOVED_CHANGED;
                                 mOldItemStatuses[x - 1] = (pos << FLAG_OFFSET) | FLAG_IGNORE;
@@ -872,7 +872,7 @@ namespace Unigram.Common
              * @param updateCallback The callback to receive the update operations.
              * @see #dispatchUpdatesTo(RecyclerView.Adapter)
              */
-            public void dispatchUpdatesTo<T>(MvxObservableCollection<T> updateCallback, IList<T> source)
+            public void DispatchUpdatesTo<T>(MvxObservableCollection<T> updateCallback, IList<T> source)
             {
                 // These are add/remove ops that are converted to moves. We track their positions until
                 // their respective update operations are processed.
@@ -887,12 +887,12 @@ namespace Unigram.Common
                     int endY = snake.y + snakeSize;
                     if (endX < posOld)
                     {
-                        dispatchRemovals(postponedUpdates, updateCallback, source, endX, posOld - endX, endX);
+                        DispatchRemovals(postponedUpdates, updateCallback, source, endX, posOld - endX, endX);
                     }
 
                     if (endY < posNew)
                     {
-                        dispatchAdditions(postponedUpdates, updateCallback, source, endX, posNew - endY,
+                        DispatchAdditions(postponedUpdates, updateCallback, source, endX, posNew - endY,
                                 endY);
                     }
                     for (int i = snakeSize - 1; i >= 0; i--)
@@ -910,7 +910,7 @@ namespace Unigram.Common
                 //batchingCallback.dispatchLastEvent();
             }
 
-            private static PostponedUpdate removePostponedUpdate(List<PostponedUpdate> updates,
+            private static PostponedUpdate RemovePostponedUpdate(List<PostponedUpdate> updates,
                     int pos, bool removal)
             {
                 for (int i = updates.Count - 1; i >= 0; i--)
@@ -930,7 +930,7 @@ namespace Unigram.Common
                 return null;
             }
 
-            private void dispatchAdditions<T>(List<PostponedUpdate> postponedUpdates,
+            private void DispatchAdditions<T>(List<PostponedUpdate> postponedUpdates,
                     MvxObservableCollection<T> updateCallback, IList<T> source, int start, int count, int globalIndex)
             {
                 if (!mDetectMoves)
@@ -955,7 +955,7 @@ namespace Unigram.Common
                         case FLAG_MOVED_CHANGED:
                         case FLAG_MOVED_NOT_CHANGED:
                             int pos = mNewItemStatuses[globalIndex + i] >> FLAG_OFFSET;
-                            PostponedUpdate update = removePostponedUpdate(postponedUpdates, pos,
+                            PostponedUpdate update = RemovePostponedUpdate(postponedUpdates, pos,
                                                             true);
                             // the item was moved from that position
                             //noinspection ConstantConditions
@@ -979,7 +979,7 @@ namespace Unigram.Common
                 }
             }
 
-            private void dispatchRemovals<T>(List<PostponedUpdate> postponedUpdates,
+            private void DispatchRemovals<T>(List<PostponedUpdate> postponedUpdates,
                     MvxObservableCollection<T> updateCallback, IList<T> source, int start, int count, int globalIndex)
             {
                 if (!mDetectMoves)
@@ -1004,7 +1004,7 @@ namespace Unigram.Common
                         case FLAG_MOVED_CHANGED:
                         case FLAG_MOVED_NOT_CHANGED:
                             int pos = mOldItemStatuses[globalIndex + i] >> FLAG_OFFSET;
-                            PostponedUpdate update = removePostponedUpdate(postponedUpdates, pos,
+                            PostponedUpdate update = RemovePostponedUpdate(postponedUpdates, pos,
                                                             false);
                             // the item was moved to that position. we do -1 because this is a move not
                             // add and removing current item offsets the target move by 1
@@ -1037,7 +1037,7 @@ namespace Unigram.Common
          * add/remove operation is found at which point the tracked position is used to dispatch the
          * update.
          */
-        class PostponedUpdate
+        private class PostponedUpdate
         {
             public int posInOwnerList;
 

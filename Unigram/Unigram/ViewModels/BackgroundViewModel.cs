@@ -121,7 +121,7 @@ namespace Unigram.ViewModels
 
             Delegate?.UpdateBackground(_item);
 
-            if (_item.Type is BackgroundTypePattern || _item.Type is BackgroundTypeFill)
+            if (_item.Type is BackgroundTypePattern or BackgroundTypeFill)
             {
                 var response = await ProtoService.SendAsync(new GetBackgrounds());
                 if (response is Backgrounds backgrounds)

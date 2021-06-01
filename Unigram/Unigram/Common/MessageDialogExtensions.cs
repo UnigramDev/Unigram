@@ -21,7 +21,7 @@ namespace Unigram.Common
         /// </summary>
         /// <param name="dialog">The dialog.</param>
         /// <returns></returns>
-        /// <exception cref="System.InvalidOperationException">This method can only be invoked from UI thread.</exception>
+        /// <exception cref="InvalidOperationException">This method can only be invoked from UI thread.</exception>
         public static async Task<ContentDialogResult> ShowQueuedAsync(this ContentDialog dialog)
         {
             while (_currentDialogShowRequest != null)
@@ -45,7 +45,7 @@ namespace Unigram.Common
         /// </summary>
         /// <param name="dialog">The dialog.</param>
         /// <returns></returns>
-        /// <exception cref="System.InvalidOperationException">This method can only be invoked from UI thread.</exception>
+        /// <exception cref="InvalidOperationException">This method can only be invoked from UI thread.</exception>
         public static async Task<ContentDialogResult> ShowIfPossibleAsync(this ContentDialog dialog)
         {
             while (_currentDialogShowRequest != null)

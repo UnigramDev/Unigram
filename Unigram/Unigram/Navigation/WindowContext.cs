@@ -38,7 +38,7 @@ namespace Unigram.Navigation
 
         public UIElement Content => Window.Content;
 
-        public readonly static List<WindowContext> ActiveWrappers = new List<WindowContext>();
+        public static readonly List<WindowContext> ActiveWrappers = new List<WindowContext>();
 
         public static WindowContext GetForCurrentView() => ActiveWrappers.FirstOrDefault(x => x.Window == Window.Current) ?? Default();
 
@@ -83,7 +83,7 @@ namespace Unigram.Navigation
                 for (int i = list.Length - 1; i >= 0; i--)
                 {
                     list[i].DynamicInvoke(sender, args);
-                    
+
                     if (args.Handled)
                     {
                         return;

@@ -37,12 +37,12 @@ namespace Unigram.Views
                 }
 
                 fail = false;
-                TLContainer.Current.Build(session);
+                Current.Build(session);
             }
 
             if (fail)
             {
-                TLContainer.Current.Build(first);
+                Current.Build(first);
             }
 
             _lifetime.Update();

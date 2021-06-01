@@ -2,6 +2,7 @@
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Converters;
+using Unigram.Navigation;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.Media.Playback;
@@ -98,7 +99,7 @@ namespace Unigram.Controls.Messages.Content
             else
             {
                 Texture.Background = null;
-                Button.Style = App.Current.Resources["InlineFileButtonStyle"] as Style;
+                Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
             }
 
             UpdateFile(message, audio.AudioValue);
@@ -140,30 +141,6 @@ namespace Unigram.Controls.Messages.Content
         private void OnPositionChanged(IPlaybackService sender, object args)
         {
             this.BeginOnUIThread(UpdatePosition);
-        }
-
-        private void UpdateDuration()
-        {
-            var message = _message;
-            if (message == null)
-            {
-                return;
-            }
-
-            var audio = GetContent(message.Content);
-            if (audio == null)
-            {
-                return;
-            }
-
-            if (message.Content is MessageAudio)
-            {
-                Subtitle.Text = audio.GetDuration();
-            }
-            else
-            {
-                Subtitle.Text = audio.GetDuration();
-            }
         }
 
         private void UpdatePosition()
@@ -341,14 +318,14 @@ namespace Unigram.Controls.Messages.Content
                 var height = (int)(thumbnail.Height * ratio);
 
                 Texture.Background = new ImageBrush { ImageSource = new BitmapImage(UriEx.ToLocal(file.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height }, Stretch = Stretch.UniformToFill, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
-                Button.Style = App.Current.Resources["ImmersiveFileButtonStyle"] as Style;
+                Button.Style = BootStrapper.Current.Resources["ImmersiveFileButtonStyle"] as Style;
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
                 message.ProtoService.DownloadFile(file.Id, 1);
 
                 Texture.Background = null;
-                Button.Style = App.Current.Resources["InlineFileButtonStyle"] as Style;
+                Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
             }
         }
 

@@ -26,8 +26,8 @@ namespace Unigram.Charts
         {
             if (chartData != null)
             {
-                float fullWidth = (chartWidth / (pickerDelegate.pickerEnd - pickerDelegate.pickerStart));
-                float offset = fullWidth * (pickerDelegate.pickerStart) - HORIZONTAL_PADDING;
+                float fullWidth = chartWidth / (pickerDelegate.pickerEnd - pickerDelegate.pickerStart);
+                float offset = fullWidth * pickerDelegate.pickerStart - HORIZONTAL_PADDING;
 
                 //canvas.save();
                 var transform = canvas.Transform;
@@ -67,8 +67,6 @@ namespace Unigram.Charts
                         continue;
                     }
 
-                    int j = 0;
-
                     int[] y = line.line.y;
 
                     line.chartPath = new CanvasPathBuilder(canvas);
@@ -98,10 +96,12 @@ namespace Unigram.Charts
                         float xPoint = chartData.xPercentage[i] * fullWidth - offset;
                         float yPercentage = (y[i] * chartData.linesK[k] - currentMinHeight) / (currentMaxHeight - currentMinHeight);
                         float padding = line.paint.StrokeWidth / 2f;
-                        float yPoint = MeasuredHeight - chartBottom - padding - (yPercentage) * (MeasuredHeight - chartBottom - SIGNATURE_TEXT_HEIGHT - padding);
+                        float yPoint = MeasuredHeight - chartBottom - padding - yPercentage * (MeasuredHeight - chartBottom - SIGNATURE_TEXT_HEIGHT - padding);
 
                         if (USE_LINES)
                         {
+
+                            int j;
                             if (j == 0)
                             {
                                 line.linesPath[j++] = xPoint;
@@ -123,8 +123,8 @@ namespace Unigram.Charts
 
                                 if (drawSteps)
                                 {
-                                    line.chartPath.BeginFigure(xPoint - (p / 2), yPoint);
-                                    line.chartPath.AddLine(xPoint + (p / 2), yPoint);
+                                    line.chartPath.BeginFigure(xPoint - p / 2, yPoint);
+                                    line.chartPath.AddLine(xPoint + p / 2, yPoint);
                                 }
                                 else
                                 {
@@ -135,8 +135,8 @@ namespace Unigram.Charts
                             {
                                 if (drawSteps)
                                 {
-                                    line.chartPath.AddLine(xPoint - (p / 2), yPoint);
-                                    line.chartPath.AddLine(xPoint + (p / 2), yPoint);
+                                    line.chartPath.AddLine(xPoint - p / 2, yPoint);
+                                    line.chartPath.AddLine(xPoint + p / 2, yPoint);
                                 }
                                 else
                                 {
@@ -237,8 +237,8 @@ namespace Unigram.Charts
                             {
                                 if (drawSteps)
                                 {
-                                    line.bottomLinePath.BeginFigure(xPoint - (p / 2), yPoint);
-                                    line.bottomLinePath.AddLine(xPoint + (p / 2), yPoint);
+                                    line.bottomLinePath.BeginFigure(xPoint - p / 2, yPoint);
+                                    line.bottomLinePath.AddLine(xPoint + p / 2, yPoint);
                                 }
                                 else
                                 {
@@ -249,8 +249,8 @@ namespace Unigram.Charts
                             {
                                 if (drawSteps)
                                 {
-                                    line.bottomLinePath.AddLine(xPoint - (p / 2), yPoint);
-                                    line.bottomLinePath.AddLine(xPoint + (p / 2), yPoint);
+                                    line.bottomLinePath.AddLine(xPoint - p / 2, yPoint);
+                                    line.bottomLinePath.AddLine(xPoint + p / 2, yPoint);
                                 }
                                 else
                                 {
@@ -288,8 +288,8 @@ namespace Unigram.Charts
 
             byte alpha = (byte)(chartActiveLineAlpha * selectionA);
 
-            float fullWidth = (chartWidth / (pickerDelegate.pickerEnd - pickerDelegate.pickerStart));
-            float offset = fullWidth * (pickerDelegate.pickerStart) - HORIZONTAL_PADDING;
+            float fullWidth = chartWidth / (pickerDelegate.pickerEnd - pickerDelegate.pickerStart);
+            float offset = fullWidth * pickerDelegate.pickerStart - HORIZONTAL_PADDING;
 
             float xPoint = chartData.xPercentage[selectedIndex] * fullWidth - offset;
 
@@ -307,7 +307,7 @@ namespace Unigram.Charts
                 }
 
                 float yPercentage = (line.line.y[selectedIndex] * chartData.linesK[tmpI] - currentMinHeight) / (currentMaxHeight - currentMinHeight);
-                float yPoint = MeasuredHeight - chartBottom - (yPercentage) * (MeasuredHeight - chartBottom - SIGNATURE_TEXT_HEIGHT);
+                float yPoint = MeasuredHeight - chartBottom - yPercentage * (MeasuredHeight - chartBottom - SIGNATURE_TEXT_HEIGHT);
 
                 line.selectionPaint.A = (byte)(255 * line.alpha * selectionA);
                 selectionBackgroundPaint.A = (byte)(255 * line.alpha * selectionA);
@@ -360,7 +360,7 @@ namespace Unigram.Charts
             layout.Dispose();
             for (int i = 0; i < n; i++)
             {
-                int y = (int)((MeasuredHeight - chartBottom) - chartHeight * ((a.values[i] - currentMinHeight) / (currentMaxHeight - currentMinHeight)));
+                int y = (int)(MeasuredHeight - chartBottom - chartHeight * ((a.values[i] - currentMinHeight) / (currentMaxHeight - currentMinHeight)));
                 if (a.valuesStr != null && lines.Count > 0)
                 {
                     if (a.valuesStr2 == null || lines.Count < 2)

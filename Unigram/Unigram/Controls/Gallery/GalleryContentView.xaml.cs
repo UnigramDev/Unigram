@@ -202,8 +202,8 @@ namespace Unigram.Controls.Gallery
             var factor = ScrollingHost.ZoomFactor + (zoomIn ? 0.25f : -0.25f);
             if (factor <= ScrollingHost.MaxZoomFactor)
             {
-                var horizontal = (Panel.ActualWidth * factor) - ScrollingHost.ActualWidth;
-                var vertical = (Panel.ActualHeight * factor) - ScrollingHost.ActualHeight;
+                var horizontal = Panel.ActualWidth * factor - ScrollingHost.ActualWidth;
+                var vertical = Panel.ActualHeight * factor - ScrollingHost.ActualHeight;
 
                 if (ScrollingHost.ScrollableWidth > 0)
                 {

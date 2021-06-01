@@ -59,7 +59,7 @@ namespace Unigram.Views
                 return;
             }
 
-            if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
+            if (chat.Type is ChatTypePrivate or ChatTypeSecret)
             {
                 var user = ViewModel.ProtoService.GetUser(chat);
                 if (user == null || user.ProfilePhoto == null)
@@ -328,7 +328,7 @@ namespace Unigram.Views
             Call.Visibility = Visibility.Collapsed;
             VideoCall.Visibility = Visibility.Collapsed;
 
-            Edit.Visibility = group.Status is ChatMemberStatusCreator || group.Status is ChatMemberStatusAdministrator ? Visibility.Visible : Visibility.Collapsed;
+            Edit.Visibility = group.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator ? Visibility.Visible : Visibility.Collapsed;
             Edit.Glyph = Icons.Edit;
 
             Verified.Visibility = group.IsVerified ? Visibility.Visible : Visibility.Collapsed;
@@ -484,7 +484,7 @@ namespace Unigram.Views
                 return;
             }
 
-            if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
+            if (chat.Type is ChatTypePrivate or ChatTypeSecret)
             {
                 var userId = chat.Type is ChatTypePrivate privata ? privata.UserId : chat.Type is ChatTypeSecret secret ? secret.UserId : 0;
                 if (userId != ViewModel.CacheService.Options.MyId)
@@ -575,7 +575,7 @@ namespace Unigram.Views
 
                 var fullInfo = ViewModel.ProtoService.GetSupergroupFull(super.SupergroupId);
 
-                if (supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator)
+                if (supergroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator)
                 {
                     if (chat.VoiceChat.GroupCallId == 0 && supergroup.CanManageVoiceChats())
                     {
@@ -601,7 +601,7 @@ namespace Unigram.Views
                 {
                     flyout.CreateFlyoutItem(ViewModel.MembersCommand, Strings.Resources.SearchMembers, new FontIcon { Glyph = Icons.Search });
 
-                    if (supergroup.Status is not ChatMemberStatusCreator && supergroup.Status is not ChatMemberStatusLeft && supergroup.Status is not ChatMemberStatusBanned)
+                    if (supergroup.Status is not ChatMemberStatusCreator and not ChatMemberStatusLeft and not ChatMemberStatusBanned)
                     {
                         flyout.CreateFlyoutItem(ViewModel.DeleteCommand, Strings.Resources.LeaveMegaMenu, new FontIcon { Glyph = Icons.Delete });
                     }
@@ -691,12 +691,12 @@ namespace Unigram.Views
                 {
                     span.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontFamily = new FontFamily("Consolas") });
                 }
-                else if (entity.Type is TextEntityTypePre || entity.Type is TextEntityTypePreCode)
+                else if (entity.Type is TextEntityTypePre or TextEntityTypePreCode)
                 {
                     // TODO any additional
                     span.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontFamily = new FontFamily("Consolas") });
                 }
-                else if (entity.Type is TextEntityTypeUrl || entity.Type is TextEntityTypeEmailAddress || entity.Type is TextEntityTypePhoneNumber || entity.Type is TextEntityTypeMention || entity.Type is TextEntityTypeHashtag || entity.Type is TextEntityTypeCashtag || entity.Type is TextEntityTypeBotCommand)
+                else if (entity.Type is TextEntityTypeUrl or TextEntityTypeEmailAddress or TextEntityTypePhoneNumber or TextEntityTypeMention or TextEntityTypeHashtag or TextEntityTypeCashtag or TextEntityTypeBotCommand)
                 {
                     var hyperlink = new Hyperlink();
                     var data = text.Substring(entity.Offset, entity.Length);
@@ -711,7 +711,7 @@ namespace Unigram.Views
                         MessageHelper.SetEntityData(hyperlink, data);
                     }
                 }
-                else if (entity.Type is TextEntityTypeTextUrl || entity.Type is TextEntityTypeMentionName)
+                else if (entity.Type is TextEntityTypeTextUrl or TextEntityTypeMentionName)
                 {
                     var hyperlink = new Hyperlink();
                     object data;
@@ -755,7 +755,7 @@ namespace Unigram.Views
             {
                 ViewModel.OpenUrl("tel:" + data, false);
             }
-            else if (type is TextEntityTypeHashtag || type is TextEntityTypeCashtag)
+            else if (type is TextEntityTypeHashtag or TextEntityTypeCashtag)
             {
 
             }
@@ -877,8 +877,8 @@ namespace Unigram.Views
 
             var overlay = photo.Compositor.CreateSpriteVisual();
             var gradient = overlay.Compositor.CreateLinearGradientBrush();
-            gradient.ColorStops.Add(overlay.Compositor.CreateColorGradientStop(0, ((SolidColorBrush)App.Current.Resources["PageHeaderBackgroundBrush"]).Color));
-            gradient.ColorStops.Add(overlay.Compositor.CreateColorGradientStop(1, ((SolidColorBrush)App.Current.Resources["PageSubHeaderBackgroundBrush"]).Color));
+            gradient.ColorStops.Add(overlay.Compositor.CreateColorGradientStop(0, ((SolidColorBrush)Navigation.BootStrapper.Current.Resources["PageHeaderBackgroundBrush"]).Color));
+            gradient.ColorStops.Add(overlay.Compositor.CreateColorGradientStop(1, ((SolidColorBrush)Navigation.BootStrapper.Current.Resources["PageSubHeaderBackgroundBrush"]).Color));
             gradient.StartPoint = new Vector2();
             gradient.EndPoint = new Vector2(0, 1);
             overlay.Brush = gradient;

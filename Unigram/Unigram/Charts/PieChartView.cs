@@ -26,7 +26,7 @@ namespace Unigram.Charts
 
         float MIN_TEXT_SIZE = 9;
         float MAX_TEXT_SIZE = 13;
-        readonly String[] lookupTable = new String[101];
+        readonly string[] lookupTable = new string[101];
 
         //PieLegendView pieLegendView;
 
@@ -150,7 +150,7 @@ namespace Unigram.Charts
                     //canvas.save();
                 }
 
-                float textAngle = -90 + a + (currentPercent / 2f) * 360f;
+                float textAngle = -90 + a + currentPercent / 2f * 360f;
 
                 if (lines[i].selectionA > 0f)
                 {
@@ -177,7 +177,7 @@ namespace Unigram.Charts
                     //        true,
                     //        lines[i].paint);
 
-                    var b = a + (currentPercent) * 360f;
+                    var b = a + currentPercent * 360f;
 
                     var builder = new CanvasPathBuilder(canvas);
                     var center = new Vector2((float)rectF.X + (float)rectF.Width / 2, (float)rectF.Y + (float)rectF.Height / 2);
@@ -223,10 +223,10 @@ namespace Unigram.Charts
                         continue;
                     }
 
-                    float currentPercent = (lines[i].drawingPart * lines[i].alpha / localSum);
+                    float currentPercent = lines[i].drawingPart * lines[i].alpha / localSum;
 
                     //canvas.save();
-                    float textAngle = -90 + a + (currentPercent / 2f) * 360f;
+                    float textAngle = -90 + a + currentPercent / 2f * 360f;
 
                     if (lines[i].selectionA > 0f)
                     {
@@ -283,7 +283,7 @@ namespace Unigram.Charts
                     line.linesPathBottomSize = 0;
                 }
 
-                float p = (1f / chartData.xPercentage.Length) * pickerWidth;
+                float p = 1f / chartData.xPercentage.Length * pickerWidth;
 
                 for (int i = 0; i < n; i++)
                 {
@@ -343,15 +343,15 @@ namespace Unigram.Charts
                             }
                             else if (allDisabled)
                             {
-                                yPercentage = (y[i] / sum) * line.alpha * line.alpha;
+                                yPercentage = y[i] / sum * line.alpha * line.alpha;
                             }
                             else
                             {
-                                yPercentage = (y[i] / sum) * line.alpha;
+                                yPercentage = y[i] / sum * line.alpha;
                             }
                         }
 
-                        float yPoint = (yPercentage) * (pickerHeight);
+                        float yPoint = yPercentage * pickerHeight;
 
 
                         line.linesPath[line.linesPathBottomSize++] = xPoint;
@@ -466,23 +466,21 @@ namespace Unigram.Charts
 
                 float r = (float)rectF.Width / 2;
                 int xl = (int)Math.Min(
-                    rectF.centerX() + r * Math.Cos(MathEx.ToRadians((selectionEndA * 360f) - 90f)),
-                    rectF.centerX() + r * Math.Cos(MathEx.ToRadians(((selectionStartA * 360f) - 90f)))
+                    rectF.centerX() + r * Math.Cos(MathEx.ToRadians(selectionEndA * 360f - 90f)),
+                    rectF.centerX() + r * Math.Cos(MathEx.ToRadians(selectionStartA * 360f - 90f))
                 );
 
                 if (xl < 0)
                 {
-                    xl = 0;
                 }
 
                 int yl = (int)Math.Min(
-                    (rectF.centerY() + r * Math.Sin(MathEx.ToRadians((selectionStartA * 360f) - 90f))),
-                    rectF.centerY() + r * Math.Sin(MathEx.ToRadians(((selectionEndA * 360f) - 90f)))
+                    rectF.centerY() + r * Math.Sin(MathEx.ToRadians(selectionStartA * 360f - 90f)),
+                    rectF.centerY() + r * Math.Sin(MathEx.ToRadians(selectionEndA * 360f - 90f))
                 );
 
                 yl = Math.Min(rectF.centerY(), yl);
 
-                yl -= 50;
                 // if (yl < 0) yl = 0;
 
                 //pieLegendView.setTranslationX(xl);

@@ -60,7 +60,7 @@ namespace Unigram.Views.Popups
                 var canBeDeletedOnlyForSelf = messages.All(x => x.CanBeDeletedOnlyForSelf);
                 var anyCanBeDeletedForAllUsers = messages.Any(x => x.IsOutgoing && x.CanBeDeletedForAllUsers);
 
-                if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeBasicGroup)
+                if (chat.Type is ChatTypePrivate or ChatTypeBasicGroup)
                 {
                     if (anyCanBeDeletedForAllUsers && !canBeDeletedForAllUsers)
                     {

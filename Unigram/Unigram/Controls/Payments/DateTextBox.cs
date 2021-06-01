@@ -61,7 +61,7 @@ namespace Unigram.Controls.Payments
             }
 
             int start = SelectionStart;
-            String str = Text;
+            string str = Text;
             if (characterAction == 3)
             {
                 str = str.Substring(0, actionPosition) + str.Substring(actionPosition + 1);
@@ -89,7 +89,7 @@ namespace Unigram.Controls.Payments
             bool isError = false;
             if (isYear)
             {
-                String[] args = new String[builder.Length > 2 ? 2 : 1];
+                string[] args = new string[builder.Length > 2 ? 2 : 1];
                 args[0] = builder.ToString().Substring(0, 2);
                 if (args.Length == 2)
                 {
@@ -111,7 +111,7 @@ namespace Unigram.Controls.Payments
                 else
                 {
                     int value = int.Parse(args[0]);
-                    if (value > 12 || value == 0)
+                    if (value is > 12 or 0)
                     {
                         //inputFields[FIELD_EXPIRE_DATE].setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteRedText4));
                         isError = true;
@@ -123,7 +123,7 @@ namespace Unigram.Controls.Payments
                 if (builder.Length == 1)
                 {
                     int value = int.Parse(builder.ToString());
-                    if (value != 1 && value != 0)
+                    if (value is not 1 and not 0)
                     {
                         builder.Insert(0, "0");
                         start++;
@@ -132,7 +132,7 @@ namespace Unigram.Controls.Payments
                 else if (builder.Length == 2)
                 {
                     int value = int.Parse(builder.ToString());
-                    if (value > 12 || value == 0)
+                    if (value is > 12 or 0)
                     {
                         //inputFields[FIELD_EXPIRE_DATE].setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteRedText4));
                         isError = true;

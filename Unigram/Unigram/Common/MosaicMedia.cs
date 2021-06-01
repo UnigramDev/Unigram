@@ -82,15 +82,15 @@ namespace Unigram.Common
         {
             itemSpans.Clear();
             itemsToRow.Clear();
-            int preferredRowSize = Math.Min(getSpanCount(viewPortAvailableSize), 100);
+            int preferredRowSize = Math.Min(GetSpanCount(viewPortAvailableSize), 100);
 
             double totalItemSize = 0;
-            int itemsCount = getFlowItemCount();
+            int itemsCount = GetFlowItemCount();
             int[] weights = new int[itemsCount];
             for (int j = 0; j < itemsCount; j++)
             {
                 Size size = SizeForItem(j);
-                totalItemSize += (size.Width / size.Height) * preferredRowSize;
+                totalItemSize += size.Width / size.Height * preferredRowSize;
                 weights[j] = (int)Math.Round(size.Width / size.Height * 100);
             }
 
@@ -124,7 +124,7 @@ namespace Unigram.Common
                     }
                 }
 
-                int spanLeft = getSpanCount(viewPortAvailableSize);
+                int spanLeft = GetSpanCount(viewPortAvailableSize);
                 for (int j = i, n = i + row.Count; j < n; j++)
                 {
                     Size preferredSize = SizeForItem(j);
@@ -132,7 +132,7 @@ namespace Unigram.Common
                     int itemSpan;
                     if (itemsCount < 3 || j != n - 1)
                     {
-                        itemSpan = (int)(width / viewPortAvailableSize * getSpanCount(viewPortAvailableSize));
+                        itemSpan = (int)(width / viewPortAvailableSize * GetSpanCount(viewPortAvailableSize));
                         spanLeft -= itemSpan;
                     }
                     else
@@ -215,8 +215,8 @@ namespace Unigram.Common
             int[] solution = GetLinearPartitionTable(sequence, numberOfPartitions);
             int solutionRowSize = numberOfPartitions - 1;
 
-            k = k - 2;
-            n = n - 1;
+            k -= 2;
+            n--;
             List<List<int>> answer = new List<List<int>>();
 
             while (k >= 0)
@@ -235,7 +235,7 @@ namespace Unigram.Common
                     answer.Insert(0, currentAnswer1);
                     n = solution[(n - 1) * solutionRowSize + k];
                 }
-                k = k - 1;
+                k--;
             }
 
             List<int> currentAnswer = new List<int>();
@@ -268,7 +268,7 @@ namespace Unigram.Common
                 size.Height = 100;
             }
             double aspect = size.Width / size.Height;
-            if (aspect > 4.0f || aspect < 0.6f)
+            if (aspect is > 4.0f or < 0.6f)
             {
                 size.Height = size.Width = Math.Max(size.Width, size.Height);
             }
@@ -303,12 +303,12 @@ namespace Unigram.Common
             return new Size(100, 100);
         }
 
-        protected int getSpanCount(double viewPortAvailableSize)
+        protected int GetSpanCount(double viewPortAvailableSize)
         {
             return (int)(viewPortAvailableSize / 3d);
         }
 
-        protected int getFlowItemCount()
+        protected int GetFlowItemCount()
         {
             return _items.Count;
             //return getItemCount();

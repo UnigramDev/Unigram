@@ -78,7 +78,7 @@ namespace Unigram.Common
             var maxAspectRatio = maxSize.Width / maxSize.Height;
             if (itemInfos.Length > 0)
             {
-                averageAspectRatio = averageAspectRatio / itemInfos.Length;
+                averageAspectRatio /= itemInfos.Length;
             }
 
             if (!forceCalc)
@@ -97,7 +97,7 @@ namespace Unigram.Common
                         itemInfos[1].LayoutFrame = new Rect(0.0, height + spacing, width, height);
                         itemInfos[1].Position = MosaicItemPosition.Bottom | MosaicItemPosition.Left | MosaicItemPosition.Right;
                     }
-                    else if (proportions == "ww" || proportions == "qq")
+                    else if (proportions is "ww" or "qq")
                     {
                         var width = (maxSize.Width - spacing) / 2.0;
                         var height = Math.Floor(Math.Min(width / itemInfos[0].AspectRatio, Math.Min(width / itemInfos[1].AspectRatio, maxSize.Height)));
@@ -133,7 +133,7 @@ namespace Unigram.Common
                         var secondHeight = maxSize.Height - thirdHeight - spacing;
                         var rightWidth = Math.Max(minWidth, Math.Min((maxSize.Width - spacing) * 0.5, Math.Round(Math.Min(thirdHeight * itemInfos[2].AspectRatio, secondHeight * itemInfos[1].AspectRatio))));
 
-                        var leftWidth = Math.Round(Math.Min(firstHeight * itemInfos[0].AspectRatio, (maxSize.Width - spacing - rightWidth)));
+                        var leftWidth = Math.Round(Math.Min(firstHeight * itemInfos[0].AspectRatio, maxSize.Width - spacing - rightWidth));
                         itemInfos[0].LayoutFrame = new Rect(0.0, 0.0, leftWidth, firstHeight);
                         itemInfos[0].Position = MosaicItemPosition.Top | MosaicItemPosition.Left | MosaicItemPosition.Bottom;
 

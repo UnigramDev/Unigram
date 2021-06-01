@@ -97,7 +97,7 @@ namespace Unigram.ViewModels.Gallery
         {
             get
             {
-                if (_message.Content is MessageVideo || _message.Content is MessageAnimation)
+                if (_message.Content is MessageVideo or MessageAnimation)
                 {
                     return true;
                 }

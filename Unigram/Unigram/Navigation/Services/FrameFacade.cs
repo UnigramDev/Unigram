@@ -280,7 +280,8 @@ namespace Unigram.Navigation.Services
                 }
             }
         }
-        void FacadeNavigatedEventHandler(object sender, Windows.UI.Xaml.Navigation.NavigationEventArgs e)
+
+        private void FacadeNavigatedEventHandler(object sender, NavigationEventArgs e)
         {
             Logger.Info();
 
@@ -327,6 +328,7 @@ namespace Unigram.Navigation.Services
                 }
             }
         }
+
         private void FacadeNavigatingCancelEventHandler(object sender, NavigatingCancelEventArgs e)
         {
             Logger.Info();

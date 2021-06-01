@@ -197,7 +197,7 @@ namespace Unigram.Common
             {
                 return resultSticker.Sticker;
             }
-            else if (content is Sticker || content is Animation)
+            else if (content is Sticker or Animation)
             {
                 return content;
             }
@@ -207,7 +207,7 @@ namespace Unigram.Common
 
         private void DoSomething(object item)
         {
-            if (item == null || !(item is StickerViewModel || item is Sticker || item is Animation))
+            if (item is null or not (StickerViewModel or Sticker or Animation))
             {
                 return;
             }

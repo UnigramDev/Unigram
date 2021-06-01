@@ -59,13 +59,11 @@ namespace Unigram.Controls
             }
 
             var w = (float)_layoutRoot.ActualWidth;
-            var h = 180f;
-
-            var weight = 4 + (_current.Y * 16);
+            var weight = 4 + _current.Y * 16;
 
             _thumbVisual.Offset = new Vector3(_current.X * w, 0, 0);
 
-            _thumbDrop.StrokeThickness = 20 - (weight * 2) / 2;
+            _thumbDrop.StrokeThickness = 20 - weight * 2 / 2;
             _thumbDrop.Fill = new SolidColorBrush(ColorForValue(_current.X));
         }
 
@@ -181,9 +179,9 @@ namespace Unigram.Controls
                 bottom = 0;
             }
 
-            var weight = 4 + (_current.Y * 16);
+            var weight = 4 + _current.Y * 16;
 
-            _thumbDrop.StrokeThickness = 20 - (weight * 2) / 2;
+            _thumbDrop.StrokeThickness = 20 - weight * 2 / 2;
             _thumbDrop.Fill = new SolidColorBrush(ColorForValue(_current.X));
 
             if (animate)

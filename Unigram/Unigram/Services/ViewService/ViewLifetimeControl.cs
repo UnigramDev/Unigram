@@ -167,8 +167,7 @@ namespace Unigram.Services.ViewService
         /// before.</returns>
         public static ViewLifetimeControl TryGetForCurrentView()
         {
-            ViewLifetimeControl res;
-            WindowControlsMap.TryGetValue(ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow), out res);
+            WindowControlsMap.TryGetValue(ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow), out ViewLifetimeControl res);
             return res;
         }
 

@@ -104,7 +104,7 @@ namespace Unigram.Common
                 {
                     newRun.Flags = TextStyle.Italic;
                 }
-                else if (entity.Type is TextEntityTypeCode || entity.Type is TextEntityTypePre || entity.Type is TextEntityTypePreCode)
+                else if (entity.Type is TextEntityTypeCode or TextEntityTypePre or TextEntityTypePreCode)
                 {
                     newRun.Flags = TextStyle.Monospace;
                     newRun.Type = entity.Type;
@@ -285,7 +285,7 @@ namespace Unigram.Common
             }
             else if (x is TextEntityTypeMentionName xMentionName && y is TextEntityTypeMentionName yMentionName)
             {
-                return int.Equals(xMentionName.UserId, yMentionName.UserId);
+                return Equals(xMentionName.UserId, yMentionName.UserId);
             }
 
             return x.GetType() == y.GetType();

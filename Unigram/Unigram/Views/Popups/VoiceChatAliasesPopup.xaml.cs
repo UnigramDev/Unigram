@@ -108,7 +108,7 @@ namespace Unigram.Views.Popups
             }
         }
 
-        private void Schedule_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void Schedule_Click(object sender, RoutedEventArgs e)
         {
             IsScheduleSelected = true;
             Hide(ContentDialogResult.Primary);

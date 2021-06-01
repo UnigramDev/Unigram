@@ -446,7 +446,7 @@ namespace Unigram.Controls.Messages
 
             if (maximum < 4)
             {
-                h = (36f - ((maximum - 1) * m)) / maximum;
+                h = (36f - (maximum - 1) * m) / maximum;
             }
 
             _forePath.Size = new Vector2(2, h);
@@ -611,7 +611,7 @@ namespace Unigram.Controls.Messages
 
             if (maximum < 4)
             {
-                h = (36f - ((maximum - 1) * m)) / maximum;
+                h = (36f - (maximum - 1) * m) / maximum;
             }
 
             var geometries = new CanvasGeometry[4];

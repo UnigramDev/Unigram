@@ -3,6 +3,7 @@ using System.Threading;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls.Chats;
+using Unigram.Navigation;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.UI.Xaml;
@@ -113,8 +114,8 @@ namespace Unigram.Controls.Messages.Content
             }
             else
             {
-                var maxWidth = (double)App.Current.Resources["MessageMaxWidth"];
-                maxWidth -= (10 + 8 + 2 + 10);
+                var maxWidth = (double)BootStrapper.Current.Resources["MessageMaxWidth"];
+                maxWidth -= 10 + 8 + 2 + 10;
 
                 if (string.Equals(webPage.Type, "telegram_background", StringComparison.OrdinalIgnoreCase))
                 {

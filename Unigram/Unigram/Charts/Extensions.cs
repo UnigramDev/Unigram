@@ -20,7 +20,7 @@ namespace Unigram.Charts
             }
             if (paint.TextAlignment is CanvasHorizontalAlignment textAlignmnet)
             {
-                textFormat = textFormat ?? new CanvasTextFormat();
+                textFormat ??= new CanvasTextFormat();
                 textFormat.HorizontalAlignment = textAlignmnet;
             }
 
@@ -81,13 +81,13 @@ namespace Unigram.Charts
     {
         public static double ToRadians(double degrees)
         {
-            double radians = (Math.PI / 180) * degrees;
+            double radians = Math.PI / 180 * degrees;
             return radians;
         }
 
         public static double ToDegrees(double radians)
         {
-            double degrees = (180 / Math.PI) * radians;
+            double degrees = 180 / Math.PI * radians;
             return degrees;
         }
     }
@@ -96,13 +96,13 @@ namespace Unigram.Charts
     {
         public static float ToRadians(float degrees)
         {
-            float radians = (MathF.PI / 180) * degrees;
+            float radians = MathF.PI / 180 * degrees;
             return radians;
         }
 
         public static float ToDegrees(float radians)
         {
-            float degrees = (180 / MathF.PI) * radians;
+            float degrees = 180 / MathF.PI * radians;
             return degrees;
         }
     }
@@ -136,11 +136,11 @@ namespace Unigram.Charts
 
         public static int HighestOneBit(this int i)
         {
-            i |= (i >> 1);
-            i |= (i >> 2);
-            i |= (i >> 4);
-            i |= (i >> 8);
-            i |= (i >> 16);
+            i |= i >> 1;
+            i |= i >> 2;
+            i |= i >> 4;
+            i |= i >> 8;
+            i |= i >> 16;
             return i - (i >> 1);
         }
 

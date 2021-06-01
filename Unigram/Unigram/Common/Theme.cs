@@ -255,7 +255,7 @@ namespace Unigram.Common
             return valueChanged;
         }
 
-        public bool AddOrUpdateValue(string key, Object value)
+        public bool AddOrUpdateValue(string key, object value)
         {
             bool valueChanged = false;
 

@@ -49,7 +49,7 @@ namespace Unigram.Views.Supergroups
 
         public void UpdateMember(Chat chat, User user, ChatMember member)
         {
-            if (member.Status is ChatMemberStatusCreator || member.Status is ChatMemberStatusAdministrator)
+            if (member.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator)
             {
                 var canBeEdited = (member.Status is ChatMemberStatusCreator && member.MemberId.IsUser(ViewModel.CacheService.Options.MyId)) || (member.Status is ChatMemberStatusAdministrator administrator && administrator.CanBeEdited);
 

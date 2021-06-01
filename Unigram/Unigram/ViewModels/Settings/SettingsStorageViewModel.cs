@@ -164,7 +164,7 @@ namespace Unigram.ViewModels.Settings
                 {
                     var type = chat.ByFileType[j];
 
-                    if (type.FileType is FileTypeProfilePhoto || type.FileType is FileTypeWallpaper)
+                    if (type.FileType is FileTypeProfilePhoto or FileTypeWallpaper)
                     {
                         result.Count -= type.Count;
                         result.Size -= type.Size;

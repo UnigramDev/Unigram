@@ -6,6 +6,7 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Native.Calls;
+using Unigram.Navigation;
 using Unigram.Services;
 using Windows.Devices.Enumeration;
 using Windows.UI;
@@ -796,7 +797,7 @@ namespace Unigram.Views
 
             var video = new MenuFlyoutSubItem();
             video.Text = "Webcam";
-            video.Icon = new FontIcon { Glyph = Icons.Camera, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
+            video.Icon = new FontIcon { Glyph = Icons.Camera, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
 
             var videoDevices = await DeviceInformation.FindAllAsync(DeviceClass.VideoCapture);
             foreach (var device in videoDevices)
@@ -822,7 +823,7 @@ namespace Unigram.Views
 
             var input = new MenuFlyoutSubItem();
             input.Text = "Microphone";
-            input.Icon = new FontIcon { Glyph = Icons.MicOn, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
+            input.Icon = new FontIcon { Glyph = Icons.MicOn, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
             input.Items.Add(defaultInput);
 
             var inputDevices = await DeviceInformation.FindAllAsync(DeviceClass.AudioCapture);
@@ -849,7 +850,7 @@ namespace Unigram.Views
 
             var output = new MenuFlyoutSubItem();
             output.Text = "Speaker";
-            output.Icon = new FontIcon { Glyph = Icons.Speaker, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
+            output.Icon = new FontIcon { Glyph = Icons.Speaker, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
             output.Items.Add(defaultOutput);
 
             var outputDevices = await DeviceInformation.FindAllAsync(DeviceClass.AudioRender);

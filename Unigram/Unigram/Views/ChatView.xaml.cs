@@ -241,7 +241,7 @@ namespace Unigram.Views
 
             //TextField.Language = Native.NativeUtils.GetCurrentCulture();
             _drawable ??= new AvatarWavesDrawable(true, true);
-            _drawable.Update((Color)App.Current.Resources["SystemAccentColor"], true);
+            _drawable.Update((Color)BootStrapper.Current.Resources["SystemAccentColor"], true);
         }
 
         private void InitializeAutomation()
@@ -780,7 +780,7 @@ namespace Unigram.Views
                 return;
             }
 
-            if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
+            if (chat.Type is ChatTypePrivate or ChatTypeSecret)
             {
                 var user = ViewModel.ProtoService.GetUser(chat);
                 if (user == null || user.ProfilePhoto == null)
@@ -951,7 +951,7 @@ namespace Unigram.Views
 
         private void Dispatcher_AcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
         {
-            if (args.EventType != CoreAcceleratorKeyEventType.KeyDown && args.EventType != CoreAcceleratorKeyEventType.SystemKeyDown)
+            if (args.EventType is not CoreAcceleratorKeyEventType.KeyDown and not CoreAcceleratorKeyEventType.SystemKeyDown)
             {
                 return;
             }
@@ -997,7 +997,7 @@ namespace Unigram.Views
                 }
 
                 var focused = FocusManager.GetFocusedElement();
-                if (focused is Selector || focused is SelectorItem || focused is Microsoft.UI.Xaml.Controls.ItemsRepeater || focused is ChatCell)
+                if (focused is Selector or SelectorItem or Microsoft.UI.Xaml.Controls.ItemsRepeater or ChatCell)
                 {
                     return;
                 }
@@ -1040,7 +1040,7 @@ namespace Unigram.Views
                 }
 
                 var focused = FocusManager.GetFocusedElement();
-                if (focused is Selector || focused is SelectorItem || focused is Microsoft.UI.Xaml.Controls.ItemsRepeater || focused is ChatCell)
+                if (focused is Selector or SelectorItem or Microsoft.UI.Xaml.Controls.ItemsRepeater or ChatCell)
                 {
                     return;
                 }
@@ -1741,7 +1741,7 @@ namespace Unigram.Views
 
             if (message.IsSaved())
             {
-                if (message.ForwardInfo?.Origin is MessageForwardOriginUser || message.ForwardInfo?.Origin is MessageForwardOriginChat)
+                if (message.ForwardInfo?.Origin is MessageForwardOriginUser or MessageForwardOriginChat)
                 {
                     ViewModel.NavigationService.NavigateToChat(message.ForwardInfo.FromChatId, message.ForwardInfo.FromMessageId);
                 }
@@ -2005,7 +2005,7 @@ namespace Unigram.Views
                     flyout.CreateFlyoutItem(MessageSelect_Loaded, ViewModel.MessageSelectCommand, message, Strings.Additional.Select, new FontIcon { Glyph = Icons.Multiselect });
                 }
             }
-            else if (message.SendingState is MessageSendingStateFailed || message.SendingState is MessageSendingStatePending)
+            else if (message.SendingState is MessageSendingStateFailed or MessageSendingStatePending)
             {
                 if (message.SendingState is MessageSendingStateFailed)
                 {
@@ -2150,7 +2150,7 @@ namespace Unigram.Views
                 var supergroup = ViewModel.ProtoService.GetSupergroup(supergroupType.SupergroupId);
                 if (supergroup.IsChannel)
                 {
-                    return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator;
+                    return supergroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator;
                 }
                 else if (supergroup.Status is ChatMemberStatusRestricted restricted)
                 {
@@ -2173,7 +2173,7 @@ namespace Unigram.Views
 
         private bool MessagePin_Loaded(MessageViewModel message)
         {
-            if (ViewModel.Type != DialogType.History && ViewModel.Type != DialogType.Pinned)
+            if (ViewModel.Type is not DialogType.History and not DialogType.Pinned)
             {
                 return false;
             }
@@ -2229,7 +2229,7 @@ namespace Unigram.Views
 
         private bool MessageEdit_Loaded(MessageViewModel message)
         {
-            if (message.Content is MessagePoll || message.Content is MessageLocation)
+            if (message.Content is MessagePoll or MessageLocation)
             {
                 return false;
             }
@@ -2239,7 +2239,7 @@ namespace Unigram.Views
 
         private bool MessageThread_Loaded(MessageViewModel message)
         {
-            if (ViewModel.Type != DialogType.History && ViewModel.Type != DialogType.Pinned)
+            if (ViewModel.Type is not DialogType.History and not DialogType.Pinned)
             {
                 return false;
             }
@@ -2358,7 +2358,7 @@ namespace Unigram.Views
             {
                 //var supergroup = ViewModel.ProtoService.GetSupergroup(supergroupType.SupergroupId);
                 //return !string.IsNullOrEmpty(supergroup.Username);
-                return ViewModel.Type == DialogType.History || ViewModel.Type == DialogType.Thread;
+                return ViewModel.Type is DialogType.History or DialogType.Thread;
             }
 
             return false;
@@ -2773,9 +2773,9 @@ namespace Unigram.Views
 
             if (e.ClickedItem is User user && ChatTextBox.SearchByUsername(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string username, out int index))
             {
-                var insert = string.Empty;
                 var adjust = 0;
 
+                string insert;
                 if (string.IsNullOrEmpty(user.Username))
                 {
                     insert = string.IsNullOrEmpty(user.FirstName) ? user.LastName : user.FirstName;
@@ -2805,7 +2805,7 @@ namespace Unigram.Views
             else if (e.ClickedItem is UserCommand command)
             {
                 var insert = $"/{command.Item.Command}";
-                if (chat.Type is ChatTypeSupergroup || chat.Type is ChatTypeBasicGroup)
+                if (chat.Type is ChatTypeSupergroup or ChatTypeBasicGroup)
                 {
                     var bot = ViewModel.ProtoService.GetUser(command.UserId);
                     if (bot != null && bot.Username.Length > 0)
@@ -2997,7 +2997,7 @@ namespace Unigram.Views
                 if (confirm == ContentDialogResult.Primary && dialog.SelectedDates.Count > 0)
                 {
                     var first = dialog.SelectedDates.FirstOrDefault();
-                    var offset = Unigram.Common.Extensions.ToTimestamp(first.Date);
+                    var offset = Common.Extensions.ToTimestamp(first.Date);
 
                     await ViewModel.LoadDateSliceAsync(offset);
                 }
@@ -3394,12 +3394,12 @@ namespace Unigram.Views
             Button CreateButton(string text, ICommand command, object commandParameter = null, int column = 0)
             {
                 var label = new TextBlock();
-                label.Style = App.Current.Resources["CaptionTextBlockStyle"] as Style;
-                label.Foreground = App.Current.Resources["SystemControlHighlightAccentBrush"] as Brush;
+                label.Style = BootStrapper.Current.Resources["CaptionTextBlockStyle"] as Style;
+                label.Foreground = BootStrapper.Current.Resources["SystemControlHighlightAccentBrush"] as Brush;
                 label.Text = text;
 
                 var button = new Button();
-                button.Style = App.Current.Resources["EmptyButtonStyle"] as Style;
+                button.Style = BootStrapper.Current.Resources["EmptyButtonStyle"] as Style;
                 button.HorizontalContentAlignment = HorizontalAlignment.Center;
                 button.VerticalContentAlignment = VerticalAlignment.Center;
                 button.Content = label;
@@ -3597,7 +3597,7 @@ namespace Unigram.Views
                 var rights = ViewModel.VerifyRights(chat, x => x.CanSendMediaMessages, Strings.Resources.GlobalAttachMediaRestricted, Strings.Resources.AttachMediaRestrictedForever, Strings.Resources.AttachMediaRestricted, out string label);
                 var pollsRights = ViewModel.VerifyRights(chat, x => x.CanSendPolls, Strings.Resources.GlobalAttachMediaRestricted, Strings.Resources.AttachMediaRestrictedForever, Strings.Resources.AttachMediaRestricted, out string pollsLabel);
 
-                var pollsAllowed = chat.Type is ChatTypeSupergroup || chat.Type is ChatTypeBasicGroup;
+                var pollsAllowed = chat.Type is ChatTypeSupergroup or ChatTypeBasicGroup;
                 if (!pollsAllowed && ViewModel.CacheService.TryGetUser(chat, out User user))
                 {
                     pollsAllowed = user.Type is UserTypeBot;
@@ -3662,7 +3662,7 @@ namespace Unigram.Views
                     AttachLocation.Visibility = Visibility.Collapsed;
                     AttachPoll.Visibility = Visibility.Collapsed;
                     AttachContact.Visibility = Visibility.Collapsed;
-                    AttachCurrent.Visibility = editing.Content is MessagePhoto || editing.Content is MessageVideo ? Visibility.Visible : Visibility.Collapsed;
+                    AttachCurrent.Visibility = editing.Content is MessagePhoto or MessageVideo ? Visibility.Visible : Visibility.Collapsed;
 
                     ComposerHeaderGlyph.Glyph = Icons.Edit;
 
@@ -4130,7 +4130,7 @@ namespace Unigram.Views
 
         public void UpdateBasicGroup(Chat chat, BasicGroup group)
         {
-            if (group.Status is ChatMemberStatusLeft || group.Status is ChatMemberStatusBanned)
+            if (group.Status is ChatMemberStatusLeft or ChatMemberStatusBanned)
             {
                 ShowAction(Strings.Resources.DeleteThisGroup, true);
 
@@ -4216,7 +4216,7 @@ namespace Unigram.Views
                 {
                     ShowArea();
                 }
-                else if (group.Status is ChatMemberStatusLeft || group.Status is ChatMemberStatusBanned)
+                else if (group.Status is ChatMemberStatusLeft or ChatMemberStatusBanned)
                 {
                     ShowAction(Strings.Resources.DeleteChat, true);
                 }
@@ -4271,7 +4271,7 @@ namespace Unigram.Views
                         ShowArea();
                     }
                 }
-                else if (group.Status is ChatMemberStatusLeft || group.Status is ChatMemberStatusBanned)
+                else if (group.Status is ChatMemberStatusLeft or ChatMemberStatusBanned)
                 {
                     ShowAction(Strings.Resources.DeleteChat, true);
                 }

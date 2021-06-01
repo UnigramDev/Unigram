@@ -154,7 +154,7 @@ namespace Unigram.Controls.Messages
                 return $"{sticker.Sticker.Emoji} {Strings.Resources.AttachSticker}";
             }
 
-            string GetCaption(string caption)
+            static string GetCaption(string caption)
             {
                 return string.IsNullOrEmpty(caption) ? string.Empty : ", ";
             }
@@ -204,7 +204,7 @@ namespace Unigram.Controls.Messages
             }
             else if (message.Content is MessageLocation location)
             {
-                return (location.LivePeriod > 0 ? Strings.Resources.AttachLiveLocation : Strings.Resources.AttachLocation);
+                return location.LivePeriod > 0 ? Strings.Resources.AttachLiveLocation : Strings.Resources.AttachLocation;
             }
             else if (message.Content is MessageVenue)
             {

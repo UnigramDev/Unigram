@@ -30,33 +30,33 @@ namespace Unigram.Common
         {
             _loader = ResourceLoader.GetForViewIndependentUse("Resources");
 
-            AddRules(new String[]{"bem", "brx", "da", "de", "el", "en", "eo", "es", "et", "fi", "fo", "gl", "he", "iw", "it", "nb",
+            AddRules(new string[]{"bem", "brx", "da", "de", "el", "en", "eo", "es", "et", "fi", "fo", "gl", "he", "iw", "it", "nb",
                 "nl", "nn", "no", "sv", "af", "bg", "bn", "ca", "eu", "fur", "fy", "gu", "ha", "is", "ku",
                 "lb", "ml", "mr", "nah", "ne", "om", "or", "pa", "pap", "ps", "so", "sq", "sw", "ta", "te",
                 "tk", "ur", "zu", "mn", "gsw", "chr", "rm", "pt", "an", "ast"}, new PluralRules_One());
-            AddRules(new String[] { "cs", "sk" }, new PluralRules_Czech());
-            AddRules(new String[] { "ff", "fr", "kab" }, new PluralRules_French());
-            AddRules(new String[] { "ru", "uk", "be" }, new PluralRules_Balkan());
-            AddRules(new String[] { "sr", "hr", "bs", "sh" }, new PluralRules_Serbian());
-            AddRules(new String[] { "lv" }, new PluralRules_Latvian());
-            AddRules(new String[] { "lt" }, new PluralRules_Lithuanian());
-            AddRules(new String[] { "pl" }, new PluralRules_Polish());
-            AddRules(new String[] { "ro", "mo" }, new PluralRules_Romanian());
-            AddRules(new String[] { "sl" }, new PluralRules_Slovenian());
-            AddRules(new String[] { "ar" }, new PluralRules_Arabic());
-            AddRules(new String[] { "mk" }, new PluralRules_Macedonian());
-            AddRules(new String[] { "cy" }, new PluralRules_Welsh());
-            AddRules(new String[] { "br" }, new PluralRules_Breton());
-            AddRules(new String[] { "lag" }, new PluralRules_Langi());
-            AddRules(new String[] { "shi" }, new PluralRules_Tachelhit());
-            AddRules(new String[] { "mt" }, new PluralRules_Maltese());
-            AddRules(new String[] { "ga", "se", "sma", "smi", "smj", "smn", "sms" }, new PluralRules_Two());
-            AddRules(new String[] { "ak", "am", "bh", "fil", "tl", "guw", "hi", "ln", "mg", "nso", "ti", "wa" }, new PluralRules_Zero());
-            AddRules(new String[]{"az", "bm", "fa", "ig", "hu", "ja", "kde", "kea", "ko", "my", "ses", "sg", "to",
+            AddRules(new string[] { "cs", "sk" }, new PluralRules_Czech());
+            AddRules(new string[] { "ff", "fr", "kab" }, new PluralRules_French());
+            AddRules(new string[] { "ru", "uk", "be" }, new PluralRules_Balkan());
+            AddRules(new string[] { "sr", "hr", "bs", "sh" }, new PluralRules_Serbian());
+            AddRules(new string[] { "lv" }, new PluralRules_Latvian());
+            AddRules(new string[] { "lt" }, new PluralRules_Lithuanian());
+            AddRules(new string[] { "pl" }, new PluralRules_Polish());
+            AddRules(new string[] { "ro", "mo" }, new PluralRules_Romanian());
+            AddRules(new string[] { "sl" }, new PluralRules_Slovenian());
+            AddRules(new string[] { "ar" }, new PluralRules_Arabic());
+            AddRules(new string[] { "mk" }, new PluralRules_Macedonian());
+            AddRules(new string[] { "cy" }, new PluralRules_Welsh());
+            AddRules(new string[] { "br" }, new PluralRules_Breton());
+            AddRules(new string[] { "lag" }, new PluralRules_Langi());
+            AddRules(new string[] { "shi" }, new PluralRules_Tachelhit());
+            AddRules(new string[] { "mt" }, new PluralRules_Maltese());
+            AddRules(new string[] { "ga", "se", "sma", "smi", "smj", "smn", "sms" }, new PluralRules_Two());
+            AddRules(new string[] { "ak", "am", "bh", "fil", "tl", "guw", "hi", "ln", "mg", "nso", "ti", "wa" }, new PluralRules_Zero());
+            AddRules(new string[]{"az", "bm", "fa", "ig", "hu", "ja", "kde", "kea", "ko", "my", "ses", "sg", "to",
                 "tr", "vi", "wo", "yo", "zh", "bo", "dz", "id", "jv", "jw", "ka", "km", "kn", "ms", "th", "in"}, new PluralRules_None());
         }
 
-        private static void AddRules(String[] languages, PluralRules rules)
+        private static void AddRules(string[] languages, PluralRules rules)
         {
             foreach (var language in languages)
             {
@@ -85,25 +85,6 @@ namespace Unigram.Common
             }
 
             return string.Format(LocaleService.Current.GetString(key, _currentRules.QuantityForNumber(count)), count.ToString("N0"));
-        }
-
-        private static string StringForQuantity(int quantity)
-        {
-            switch (quantity)
-            {
-                case QUANTITY_ZERO:
-                    return "Zero";
-                case QUANTITY_ONE:
-                    return "One";
-                case QUANTITY_TWO:
-                    return "Two";
-                case QUANTITY_FEW:
-                    return "Few";
-                case QUANTITY_MANY:
-                    return "Many";
-                default:
-                    return "Other";
-            }
         }
 
         public static CurrencyNumberFormatter GetCurrencyFormatter(string currency)
@@ -395,526 +376,528 @@ namespace Unigram.Common
         {
             if (_translitChars == null)
             {
-                _translitChars = new Dictionary<string, string>(520);
-                _translitChars["ȼ"] = "c";
-                _translitChars["ᶇ"] = "n";
-                _translitChars["ɖ"] = "d";
-                _translitChars["ỿ"] = "y";
-                _translitChars["ᴓ"] = "o";
-                _translitChars["ø"] = "o";
-                _translitChars["ḁ"] = "a";
-                _translitChars["ʯ"] = "h";
-                _translitChars["ŷ"] = "y";
-                _translitChars["ʞ"] = "k";
-                _translitChars["ừ"] = "u";
-                _translitChars["ꜳ"] = "aa";
-                _translitChars["ĳ"] = "ij";
-                _translitChars["ḽ"] = "l";
-                _translitChars["ɪ"] = "i";
-                _translitChars["ḇ"] = "b";
-                _translitChars["ʀ"] = "r";
-                _translitChars["ě"] = "e";
-                _translitChars["ﬃ"] = "ffi";
-                _translitChars["ơ"] = "o";
-                _translitChars["ⱹ"] = "r";
-                _translitChars["ồ"] = "o";
-                _translitChars["ǐ"] = "i";
-                _translitChars["ꝕ"] = "p";
-                _translitChars["ý"] = "y";
-                _translitChars["ḝ"] = "e";
-                _translitChars["ₒ"] = "o";
-                _translitChars["ⱥ"] = "a";
-                _translitChars["ʙ"] = "b";
-                _translitChars["ḛ"] = "e";
-                _translitChars["ƈ"] = "c";
-                _translitChars["ɦ"] = "h";
-                _translitChars["ᵬ"] = "b";
-                _translitChars["ṣ"] = "s";
-                _translitChars["đ"] = "d";
-                _translitChars["ỗ"] = "o";
-                _translitChars["ɟ"] = "j";
-                _translitChars["ẚ"] = "a";
-                _translitChars["ɏ"] = "y";
-                _translitChars["л"] = "l";
-                _translitChars["ʌ"] = "v";
-                _translitChars["ꝓ"] = "p";
-                _translitChars["ﬁ"] = "fi";
-                _translitChars["ᶄ"] = "k";
-                _translitChars["ḏ"] = "d";
-                _translitChars["ᴌ"] = "l";
-                _translitChars["ė"] = "e";
-                _translitChars["ё"] = "yo";
-                _translitChars["ᴋ"] = "k";
-                _translitChars["ċ"] = "c";
-                _translitChars["ʁ"] = "r";
-                _translitChars["ƕ"] = "hv";
-                _translitChars["ƀ"] = "b";
-                _translitChars["ṍ"] = "o";
-                _translitChars["ȣ"] = "ou";
-                _translitChars["ǰ"] = "j";
-                _translitChars["ᶃ"] = "g";
-                _translitChars["ṋ"] = "n";
-                _translitChars["ɉ"] = "j";
-                _translitChars["ǧ"] = "g";
-                _translitChars["ǳ"] = "dz";
-                _translitChars["ź"] = "z";
-                _translitChars["ꜷ"] = "au";
-                _translitChars["ǖ"] = "u";
-                _translitChars["ᵹ"] = "g";
-                _translitChars["ȯ"] = "o";
-                _translitChars["ɐ"] = "a";
-                _translitChars["ą"] = "a";
-                _translitChars["õ"] = "o";
-                _translitChars["ɻ"] = "r";
-                _translitChars["ꝍ"] = "o";
-                _translitChars["ǟ"] = "a";
-                _translitChars["ȴ"] = "l";
-                _translitChars["ʂ"] = "s";
-                _translitChars["ﬂ"] = "fl";
-                _translitChars["ȉ"] = "i";
-                _translitChars["ⱻ"] = "e";
-                _translitChars["ṉ"] = "n";
-                _translitChars["ï"] = "i";
-                _translitChars["ñ"] = "n";
-                _translitChars["ᴉ"] = "i";
-                _translitChars["ʇ"] = "t";
-                _translitChars["ẓ"] = "z";
-                _translitChars["ỷ"] = "y";
-                _translitChars["ȳ"] = "y";
-                _translitChars["ṩ"] = "s";
-                _translitChars["ɽ"] = "r";
-                _translitChars["ĝ"] = "g";
-                _translitChars["в"] = "v";
-                _translitChars["ᴝ"] = "u";
-                _translitChars["ḳ"] = "k";
-                _translitChars["ꝫ"] = "et";
-                _translitChars["ī"] = "i";
-                _translitChars["ť"] = "t";
-                _translitChars["ꜿ"] = "c";
-                _translitChars["ʟ"] = "l";
-                _translitChars["ꜹ"] = "av";
-                _translitChars["û"] = "u";
-                _translitChars["æ"] = "ae";
-                _translitChars["и"] = "i";
-                _translitChars["ă"] = "a";
-                _translitChars["ǘ"] = "u";
-                _translitChars["ꞅ"] = "s";
-                _translitChars["ᵣ"] = "r";
-                _translitChars["ᴀ"] = "a";
-                _translitChars["ƃ"] = "b";
-                _translitChars["ḩ"] = "h";
-                _translitChars["ṧ"] = "s";
-                _translitChars["ₑ"] = "e";
-                _translitChars["ʜ"] = "h";
-                _translitChars["ẋ"] = "x";
-                _translitChars["ꝅ"] = "k";
-                _translitChars["ḋ"] = "d";
-                _translitChars["ƣ"] = "oi";
-                _translitChars["ꝑ"] = "p";
-                _translitChars["ħ"] = "h";
-                _translitChars["ⱴ"] = "v";
-                _translitChars["ẇ"] = "w";
-                _translitChars["ǹ"] = "n";
-                _translitChars["ɯ"] = "m";
-                _translitChars["ɡ"] = "g";
-                _translitChars["ɴ"] = "n";
-                _translitChars["ᴘ"] = "p";
-                _translitChars["ᵥ"] = "v";
-                _translitChars["ū"] = "u";
-                _translitChars["ḃ"] = "b";
-                _translitChars["ṗ"] = "p";
-                _translitChars["ь"] = "";
-                _translitChars["å"] = "a";
-                _translitChars["ɕ"] = "c";
-                _translitChars["ọ"] = "o";
-                _translitChars["ắ"] = "a";
-                _translitChars["ƒ"] = "f";
-                _translitChars["ǣ"] = "ae";
-                _translitChars["ꝡ"] = "vy";
-                _translitChars["ﬀ"] = "ff";
-                _translitChars["ᶉ"] = "r";
-                _translitChars["ô"] = "o";
-                _translitChars["ǿ"] = "o";
-                _translitChars["ṳ"] = "u";
-                _translitChars["ȥ"] = "z";
-                _translitChars["ḟ"] = "f";
-                _translitChars["ḓ"] = "d";
-                _translitChars["ȇ"] = "e";
-                _translitChars["ȕ"] = "u";
-                _translitChars["п"] = "p";
-                _translitChars["ȵ"] = "n";
-                _translitChars["ʠ"] = "q";
-                _translitChars["ấ"] = "a";
-                _translitChars["ǩ"] = "k";
-                _translitChars["ĩ"] = "i";
-                _translitChars["ṵ"] = "u";
-                _translitChars["ŧ"] = "t";
-                _translitChars["ɾ"] = "r";
-                _translitChars["ƙ"] = "k";
-                _translitChars["ṫ"] = "t";
-                _translitChars["ꝗ"] = "q";
-                _translitChars["ậ"] = "a";
-                _translitChars["н"] = "n";
-                _translitChars["ʄ"] = "j";
-                _translitChars["ƚ"] = "l";
-                _translitChars["ᶂ"] = "f";
-                _translitChars["д"] = "d";
-                _translitChars["ᵴ"] = "s";
-                _translitChars["ꞃ"] = "r";
-                _translitChars["ᶌ"] = "v";
-                _translitChars["ɵ"] = "o";
-                _translitChars["ḉ"] = "c";
-                _translitChars["ᵤ"] = "u";
-                _translitChars["ẑ"] = "z";
-                _translitChars["ṹ"] = "u";
-                _translitChars["ň"] = "n";
-                _translitChars["ʍ"] = "w";
-                _translitChars["ầ"] = "a";
-                _translitChars["ǉ"] = "lj";
-                _translitChars["ɓ"] = "b";
-                _translitChars["ɼ"] = "r";
-                _translitChars["ò"] = "o";
-                _translitChars["ẘ"] = "w";
-                _translitChars["ɗ"] = "d";
-                _translitChars["ꜽ"] = "ay";
-                _translitChars["ư"] = "u";
-                _translitChars["ᶀ"] = "b";
-                _translitChars["ǜ"] = "u";
-                _translitChars["ẹ"] = "e";
-                _translitChars["ǡ"] = "a";
-                _translitChars["ɥ"] = "h";
-                _translitChars["ṏ"] = "o";
-                _translitChars["ǔ"] = "u";
-                _translitChars["ʎ"] = "y";
-                _translitChars["ȱ"] = "o";
-                _translitChars["ệ"] = "e";
-                _translitChars["ế"] = "e";
-                _translitChars["ĭ"] = "i";
-                _translitChars["ⱸ"] = "e";
-                _translitChars["ṯ"] = "t";
-                _translitChars["ᶑ"] = "d";
-                _translitChars["ḧ"] = "h";
-                _translitChars["ṥ"] = "s";
-                _translitChars["ë"] = "e";
-                _translitChars["ᴍ"] = "m";
-                _translitChars["ö"] = "o";
-                _translitChars["é"] = "e";
-                _translitChars["ı"] = "i";
-                _translitChars["ď"] = "d";
-                _translitChars["ᵯ"] = "m";
-                _translitChars["ỵ"] = "y";
-                _translitChars["я"] = "ya";
-                _translitChars["ŵ"] = "w";
-                _translitChars["ề"] = "e";
-                _translitChars["ứ"] = "u";
-                _translitChars["ƶ"] = "z";
-                _translitChars["ĵ"] = "j";
-                _translitChars["ḍ"] = "d";
-                _translitChars["ŭ"] = "u";
-                _translitChars["ʝ"] = "j";
-                _translitChars["ж"] = "zh";
-                _translitChars["ê"] = "e";
-                _translitChars["ǚ"] = "u";
-                _translitChars["ġ"] = "g";
-                _translitChars["ṙ"] = "r";
-                _translitChars["ƞ"] = "n";
-                _translitChars["ъ"] = "";
-                _translitChars["ḗ"] = "e";
-                _translitChars["ẝ"] = "s";
-                _translitChars["ᶁ"] = "d";
-                _translitChars["ķ"] = "k";
-                _translitChars["ᴂ"] = "ae";
-                _translitChars["ɘ"] = "e";
-                _translitChars["ợ"] = "o";
-                _translitChars["ḿ"] = "m";
-                _translitChars["ꜰ"] = "f";
-                _translitChars["а"] = "a";
-                _translitChars["ẵ"] = "a";
-                _translitChars["ꝏ"] = "oo";
-                _translitChars["ᶆ"] = "m";
-                _translitChars["ᵽ"] = "p";
-                _translitChars["ц"] = "ts";
-                _translitChars["ữ"] = "u";
-                _translitChars["ⱪ"] = "k";
-                _translitChars["ḥ"] = "h";
-                _translitChars["ţ"] = "t";
-                _translitChars["ᵱ"] = "p";
-                _translitChars["ṁ"] = "m";
-                _translitChars["á"] = "a";
-                _translitChars["ᴎ"] = "n";
-                _translitChars["ꝟ"] = "v";
-                _translitChars["è"] = "e";
-                _translitChars["ᶎ"] = "z";
-                _translitChars["ꝺ"] = "d";
-                _translitChars["ᶈ"] = "p";
-                _translitChars["м"] = "m";
-                _translitChars["ɫ"] = "l";
-                _translitChars["ᴢ"] = "z";
-                _translitChars["ɱ"] = "m";
-                _translitChars["ṝ"] = "r";
-                _translitChars["ṽ"] = "v";
-                _translitChars["ũ"] = "u";
-                _translitChars["ß"] = "ss";
-                _translitChars["т"] = "t";
-                _translitChars["ĥ"] = "h";
-                _translitChars["ᵵ"] = "t";
-                _translitChars["ʐ"] = "z";
-                _translitChars["ṟ"] = "r";
-                _translitChars["ɲ"] = "n";
-                _translitChars["à"] = "a";
-                _translitChars["ẙ"] = "y";
-                _translitChars["ỳ"] = "y";
-                _translitChars["ᴔ"] = "oe";
-                _translitChars["ы"] = "i";
-                _translitChars["ₓ"] = "x";
-                _translitChars["ȗ"] = "u";
-                _translitChars["ⱼ"] = "j";
-                _translitChars["ẫ"] = "a";
-                _translitChars["ʑ"] = "z";
-                _translitChars["ẛ"] = "s";
-                _translitChars["ḭ"] = "i";
-                _translitChars["ꜵ"] = "ao";
-                _translitChars["ɀ"] = "z";
-                _translitChars["ÿ"] = "y";
-                _translitChars["ǝ"] = "e";
-                _translitChars["ǭ"] = "o";
-                _translitChars["ᴅ"] = "d";
-                _translitChars["ᶅ"] = "l";
-                _translitChars["ù"] = "u";
-                _translitChars["ạ"] = "a";
-                _translitChars["ḅ"] = "b";
-                _translitChars["ụ"] = "u";
-                _translitChars["к"] = "k";
-                _translitChars["ằ"] = "a";
-                _translitChars["ᴛ"] = "t";
-                _translitChars["ƴ"] = "y";
-                _translitChars["ⱦ"] = "t";
-                _translitChars["з"] = "z";
-                _translitChars["ⱡ"] = "l";
-                _translitChars["ȷ"] = "j";
-                _translitChars["ᵶ"] = "z";
-                _translitChars["ḫ"] = "h";
-                _translitChars["ⱳ"] = "w";
-                _translitChars["ḵ"] = "k";
-                _translitChars["ờ"] = "o";
-                _translitChars["î"] = "i";
-                _translitChars["ģ"] = "g";
-                _translitChars["ȅ"] = "e";
-                _translitChars["ȧ"] = "a";
-                _translitChars["ẳ"] = "a";
-                _translitChars["щ"] = "sch";
-                _translitChars["ɋ"] = "q";
-                _translitChars["ṭ"] = "t";
-                _translitChars["ꝸ"] = "um";
-                _translitChars["ᴄ"] = "c";
-                _translitChars["ẍ"] = "x";
-                _translitChars["ủ"] = "u";
-                _translitChars["ỉ"] = "i";
-                _translitChars["ᴚ"] = "r";
-                _translitChars["ś"] = "s";
-                _translitChars["ꝋ"] = "o";
-                _translitChars["ỹ"] = "y";
-                _translitChars["ṡ"] = "s";
-                _translitChars["ǌ"] = "nj";
-                _translitChars["ȁ"] = "a";
-                _translitChars["ẗ"] = "t";
-                _translitChars["ĺ"] = "l";
-                _translitChars["ž"] = "z";
-                _translitChars["ᵺ"] = "th";
-                _translitChars["ƌ"] = "d";
-                _translitChars["ș"] = "s";
-                _translitChars["š"] = "s";
-                _translitChars["ᶙ"] = "u";
-                _translitChars["ẽ"] = "e";
-                _translitChars["ẜ"] = "s";
-                _translitChars["ɇ"] = "e";
-                _translitChars["ṷ"] = "u";
-                _translitChars["ố"] = "o";
-                _translitChars["ȿ"] = "s";
-                _translitChars["ᴠ"] = "v";
-                _translitChars["ꝭ"] = "is";
-                _translitChars["ᴏ"] = "o";
-                _translitChars["ɛ"] = "e";
-                _translitChars["ǻ"] = "a";
-                _translitChars["ﬄ"] = "ffl";
-                _translitChars["ⱺ"] = "o";
-                _translitChars["ȋ"] = "i";
-                _translitChars["ᵫ"] = "ue";
-                _translitChars["ȡ"] = "d";
-                _translitChars["ⱬ"] = "z";
-                _translitChars["ẁ"] = "w";
-                _translitChars["ᶏ"] = "a";
-                _translitChars["ꞇ"] = "t";
-                _translitChars["ğ"] = "g";
-                _translitChars["ɳ"] = "n";
-                _translitChars["ʛ"] = "g";
-                _translitChars["ᴜ"] = "u";
-                _translitChars["ф"] = "f";
-                _translitChars["ẩ"] = "a";
-                _translitChars["ṅ"] = "n";
-                _translitChars["ɨ"] = "i";
-                _translitChars["ᴙ"] = "r";
-                _translitChars["ǎ"] = "a";
-                _translitChars["ſ"] = "s";
-                _translitChars["у"] = "u";
-                _translitChars["ȫ"] = "o";
-                _translitChars["ɿ"] = "r";
-                _translitChars["ƭ"] = "t";
-                _translitChars["ḯ"] = "i";
-                _translitChars["ǽ"] = "ae";
-                _translitChars["ⱱ"] = "v";
-                _translitChars["ɶ"] = "oe";
-                _translitChars["ṃ"] = "m";
-                _translitChars["ż"] = "z";
-                _translitChars["ĕ"] = "e";
-                _translitChars["ꜻ"] = "av";
-                _translitChars["ở"] = "o";
-                _translitChars["ễ"] = "e";
-                _translitChars["ɬ"] = "l";
-                _translitChars["ị"] = "i";
-                _translitChars["ᵭ"] = "d";
-                _translitChars["ﬆ"] = "st";
-                _translitChars["ḷ"] = "l";
-                _translitChars["ŕ"] = "r";
-                _translitChars["ᴕ"] = "ou";
-                _translitChars["ʈ"] = "t";
-                _translitChars["ā"] = "a";
-                _translitChars["э"] = "e";
-                _translitChars["ḙ"] = "e";
-                _translitChars["ᴑ"] = "o";
-                _translitChars["ç"] = "c";
-                _translitChars["ᶊ"] = "s";
-                _translitChars["ặ"] = "a";
-                _translitChars["ų"] = "u";
-                _translitChars["ả"] = "a";
-                _translitChars["ǥ"] = "g";
-                _translitChars["р"] = "r";
-                _translitChars["ꝁ"] = "k";
-                _translitChars["ẕ"] = "z";
-                _translitChars["ŝ"] = "s";
-                _translitChars["ḕ"] = "e";
-                _translitChars["ɠ"] = "g";
-                _translitChars["ꝉ"] = "l";
-                _translitChars["ꝼ"] = "f";
-                _translitChars["ᶍ"] = "x";
-                _translitChars["х"] = "h";
-                _translitChars["ǒ"] = "o";
-                _translitChars["ę"] = "e";
-                _translitChars["ổ"] = "o";
-                _translitChars["ƫ"] = "t";
-                _translitChars["ǫ"] = "o";
-                _translitChars["i̇"] = "i";
-                _translitChars["ṇ"] = "n";
-                _translitChars["ć"] = "c";
-                _translitChars["ᵷ"] = "g";
-                _translitChars["ẅ"] = "w";
-                _translitChars["ḑ"] = "d";
-                _translitChars["ḹ"] = "l";
-                _translitChars["ч"] = "ch";
-                _translitChars["œ"] = "oe";
-                _translitChars["ᵳ"] = "r";
-                _translitChars["ļ"] = "l";
-                _translitChars["ȑ"] = "r";
-                _translitChars["ȭ"] = "o";
-                _translitChars["ᵰ"] = "n";
-                _translitChars["ᴁ"] = "ae";
-                _translitChars["ŀ"] = "l";
-                _translitChars["ä"] = "a";
-                _translitChars["ƥ"] = "p";
-                _translitChars["ỏ"] = "o";
-                _translitChars["į"] = "i";
-                _translitChars["ȓ"] = "r";
-                _translitChars["ǆ"] = "dz";
-                _translitChars["ḡ"] = "g";
-                _translitChars["ṻ"] = "u";
-                _translitChars["ō"] = "o";
-                _translitChars["ľ"] = "l";
-                _translitChars["ẃ"] = "w";
-                _translitChars["ț"] = "t";
-                _translitChars["ń"] = "n";
-                _translitChars["ɍ"] = "r";
-                _translitChars["ȃ"] = "a";
-                _translitChars["ü"] = "u";
-                _translitChars["ꞁ"] = "l";
-                _translitChars["ᴐ"] = "o";
-                _translitChars["ớ"] = "o";
-                _translitChars["ᴃ"] = "b";
-                _translitChars["ɹ"] = "r";
-                _translitChars["ᵲ"] = "r";
-                _translitChars["ʏ"] = "y";
-                _translitChars["ᵮ"] = "f";
-                _translitChars["ⱨ"] = "h";
-                _translitChars["ŏ"] = "o";
-                _translitChars["ú"] = "u";
-                _translitChars["ṛ"] = "r";
-                _translitChars["ʮ"] = "h";
-                _translitChars["ó"] = "o";
-                _translitChars["ů"] = "u";
-                _translitChars["ỡ"] = "o";
-                _translitChars["ṕ"] = "p";
-                _translitChars["ᶖ"] = "i";
-                _translitChars["ự"] = "u";
-                _translitChars["ã"] = "a";
-                _translitChars["ᵢ"] = "i";
-                _translitChars["ṱ"] = "t";
-                _translitChars["ể"] = "e";
-                _translitChars["ử"] = "u";
-                _translitChars["í"] = "i";
-                _translitChars["ɔ"] = "o";
-                _translitChars["с"] = "s";
-                _translitChars["й"] = "i";
-                _translitChars["ɺ"] = "r";
-                _translitChars["ɢ"] = "g";
-                _translitChars["ř"] = "r";
-                _translitChars["ẖ"] = "h";
-                _translitChars["ű"] = "u";
-                _translitChars["ȍ"] = "o";
-                _translitChars["ш"] = "sh";
-                _translitChars["ḻ"] = "l";
-                _translitChars["ḣ"] = "h";
-                _translitChars["ȶ"] = "t";
-                _translitChars["ņ"] = "n";
-                _translitChars["ᶒ"] = "e";
-                _translitChars["ì"] = "i";
-                _translitChars["ẉ"] = "w";
-                _translitChars["б"] = "b";
-                _translitChars["ē"] = "e";
-                _translitChars["ᴇ"] = "e";
-                _translitChars["ł"] = "l";
-                _translitChars["ộ"] = "o";
-                _translitChars["ɭ"] = "l";
-                _translitChars["ẏ"] = "y";
-                _translitChars["ᴊ"] = "j";
-                _translitChars["ḱ"] = "k";
-                _translitChars["ṿ"] = "v";
-                _translitChars["ȩ"] = "e";
-                _translitChars["â"] = "a";
-                _translitChars["ş"] = "s";
-                _translitChars["ŗ"] = "r";
-                _translitChars["ʋ"] = "v";
-                _translitChars["ₐ"] = "a";
-                _translitChars["ↄ"] = "c";
-                _translitChars["ᶓ"] = "e";
-                _translitChars["ɰ"] = "m";
-                _translitChars["е"] = "e";
-                _translitChars["ᴡ"] = "w";
-                _translitChars["ȏ"] = "o";
-                _translitChars["č"] = "c";
-                _translitChars["ǵ"] = "g";
-                _translitChars["ĉ"] = "c";
-                _translitChars["ю"] = "yu";
-                _translitChars["ᶗ"] = "o";
-                _translitChars["ꝃ"] = "k";
-                _translitChars["ꝙ"] = "q";
-                _translitChars["г"] = "g";
-                _translitChars["ṑ"] = "o";
-                _translitChars["ꜱ"] = "s";
-                _translitChars["ṓ"] = "o";
-                _translitChars["ȟ"] = "h";
-                _translitChars["ő"] = "o";
-                _translitChars["ꜩ"] = "tz";
-                _translitChars["ẻ"] = "e";
-                _translitChars["о"] = "o";
+                _translitChars = new Dictionary<string, string>(520)
+                {
+                    ["ȼ"] = "c",
+                    ["ᶇ"] = "n",
+                    ["ɖ"] = "d",
+                    ["ỿ"] = "y",
+                    ["ᴓ"] = "o",
+                    ["ø"] = "o",
+                    ["ḁ"] = "a",
+                    ["ʯ"] = "h",
+                    ["ŷ"] = "y",
+                    ["ʞ"] = "k",
+                    ["ừ"] = "u",
+                    ["ꜳ"] = "aa",
+                    ["ĳ"] = "ij",
+                    ["ḽ"] = "l",
+                    ["ɪ"] = "i",
+                    ["ḇ"] = "b",
+                    ["ʀ"] = "r",
+                    ["ě"] = "e",
+                    ["ﬃ"] = "ffi",
+                    ["ơ"] = "o",
+                    ["ⱹ"] = "r",
+                    ["ồ"] = "o",
+                    ["ǐ"] = "i",
+                    ["ꝕ"] = "p",
+                    ["ý"] = "y",
+                    ["ḝ"] = "e",
+                    ["ₒ"] = "o",
+                    ["ⱥ"] = "a",
+                    ["ʙ"] = "b",
+                    ["ḛ"] = "e",
+                    ["ƈ"] = "c",
+                    ["ɦ"] = "h",
+                    ["ᵬ"] = "b",
+                    ["ṣ"] = "s",
+                    ["đ"] = "d",
+                    ["ỗ"] = "o",
+                    ["ɟ"] = "j",
+                    ["ẚ"] = "a",
+                    ["ɏ"] = "y",
+                    ["л"] = "l",
+                    ["ʌ"] = "v",
+                    ["ꝓ"] = "p",
+                    ["ﬁ"] = "fi",
+                    ["ᶄ"] = "k",
+                    ["ḏ"] = "d",
+                    ["ᴌ"] = "l",
+                    ["ė"] = "e",
+                    ["ё"] = "yo",
+                    ["ᴋ"] = "k",
+                    ["ċ"] = "c",
+                    ["ʁ"] = "r",
+                    ["ƕ"] = "hv",
+                    ["ƀ"] = "b",
+                    ["ṍ"] = "o",
+                    ["ȣ"] = "ou",
+                    ["ǰ"] = "j",
+                    ["ᶃ"] = "g",
+                    ["ṋ"] = "n",
+                    ["ɉ"] = "j",
+                    ["ǧ"] = "g",
+                    ["ǳ"] = "dz",
+                    ["ź"] = "z",
+                    ["ꜷ"] = "au",
+                    ["ǖ"] = "u",
+                    ["ᵹ"] = "g",
+                    ["ȯ"] = "o",
+                    ["ɐ"] = "a",
+                    ["ą"] = "a",
+                    ["õ"] = "o",
+                    ["ɻ"] = "r",
+                    ["ꝍ"] = "o",
+                    ["ǟ"] = "a",
+                    ["ȴ"] = "l",
+                    ["ʂ"] = "s",
+                    ["ﬂ"] = "fl",
+                    ["ȉ"] = "i",
+                    ["ⱻ"] = "e",
+                    ["ṉ"] = "n",
+                    ["ï"] = "i",
+                    ["ñ"] = "n",
+                    ["ᴉ"] = "i",
+                    ["ʇ"] = "t",
+                    ["ẓ"] = "z",
+                    ["ỷ"] = "y",
+                    ["ȳ"] = "y",
+                    ["ṩ"] = "s",
+                    ["ɽ"] = "r",
+                    ["ĝ"] = "g",
+                    ["в"] = "v",
+                    ["ᴝ"] = "u",
+                    ["ḳ"] = "k",
+                    ["ꝫ"] = "et",
+                    ["ī"] = "i",
+                    ["ť"] = "t",
+                    ["ꜿ"] = "c",
+                    ["ʟ"] = "l",
+                    ["ꜹ"] = "av",
+                    ["û"] = "u",
+                    ["æ"] = "ae",
+                    ["и"] = "i",
+                    ["ă"] = "a",
+                    ["ǘ"] = "u",
+                    ["ꞅ"] = "s",
+                    ["ᵣ"] = "r",
+                    ["ᴀ"] = "a",
+                    ["ƃ"] = "b",
+                    ["ḩ"] = "h",
+                    ["ṧ"] = "s",
+                    ["ₑ"] = "e",
+                    ["ʜ"] = "h",
+                    ["ẋ"] = "x",
+                    ["ꝅ"] = "k",
+                    ["ḋ"] = "d",
+                    ["ƣ"] = "oi",
+                    ["ꝑ"] = "p",
+                    ["ħ"] = "h",
+                    ["ⱴ"] = "v",
+                    ["ẇ"] = "w",
+                    ["ǹ"] = "n",
+                    ["ɯ"] = "m",
+                    ["ɡ"] = "g",
+                    ["ɴ"] = "n",
+                    ["ᴘ"] = "p",
+                    ["ᵥ"] = "v",
+                    ["ū"] = "u",
+                    ["ḃ"] = "b",
+                    ["ṗ"] = "p",
+                    ["ь"] = "",
+                    ["å"] = "a",
+                    ["ɕ"] = "c",
+                    ["ọ"] = "o",
+                    ["ắ"] = "a",
+                    ["ƒ"] = "f",
+                    ["ǣ"] = "ae",
+                    ["ꝡ"] = "vy",
+                    ["ﬀ"] = "ff",
+                    ["ᶉ"] = "r",
+                    ["ô"] = "o",
+                    ["ǿ"] = "o",
+                    ["ṳ"] = "u",
+                    ["ȥ"] = "z",
+                    ["ḟ"] = "f",
+                    ["ḓ"] = "d",
+                    ["ȇ"] = "e",
+                    ["ȕ"] = "u",
+                    ["п"] = "p",
+                    ["ȵ"] = "n",
+                    ["ʠ"] = "q",
+                    ["ấ"] = "a",
+                    ["ǩ"] = "k",
+                    ["ĩ"] = "i",
+                    ["ṵ"] = "u",
+                    ["ŧ"] = "t",
+                    ["ɾ"] = "r",
+                    ["ƙ"] = "k",
+                    ["ṫ"] = "t",
+                    ["ꝗ"] = "q",
+                    ["ậ"] = "a",
+                    ["н"] = "n",
+                    ["ʄ"] = "j",
+                    ["ƚ"] = "l",
+                    ["ᶂ"] = "f",
+                    ["д"] = "d",
+                    ["ᵴ"] = "s",
+                    ["ꞃ"] = "r",
+                    ["ᶌ"] = "v",
+                    ["ɵ"] = "o",
+                    ["ḉ"] = "c",
+                    ["ᵤ"] = "u",
+                    ["ẑ"] = "z",
+                    ["ṹ"] = "u",
+                    ["ň"] = "n",
+                    ["ʍ"] = "w",
+                    ["ầ"] = "a",
+                    ["ǉ"] = "lj",
+                    ["ɓ"] = "b",
+                    ["ɼ"] = "r",
+                    ["ò"] = "o",
+                    ["ẘ"] = "w",
+                    ["ɗ"] = "d",
+                    ["ꜽ"] = "ay",
+                    ["ư"] = "u",
+                    ["ᶀ"] = "b",
+                    ["ǜ"] = "u",
+                    ["ẹ"] = "e",
+                    ["ǡ"] = "a",
+                    ["ɥ"] = "h",
+                    ["ṏ"] = "o",
+                    ["ǔ"] = "u",
+                    ["ʎ"] = "y",
+                    ["ȱ"] = "o",
+                    ["ệ"] = "e",
+                    ["ế"] = "e",
+                    ["ĭ"] = "i",
+                    ["ⱸ"] = "e",
+                    ["ṯ"] = "t",
+                    ["ᶑ"] = "d",
+                    ["ḧ"] = "h",
+                    ["ṥ"] = "s",
+                    ["ë"] = "e",
+                    ["ᴍ"] = "m",
+                    ["ö"] = "o",
+                    ["é"] = "e",
+                    ["ı"] = "i",
+                    ["ď"] = "d",
+                    ["ᵯ"] = "m",
+                    ["ỵ"] = "y",
+                    ["я"] = "ya",
+                    ["ŵ"] = "w",
+                    ["ề"] = "e",
+                    ["ứ"] = "u",
+                    ["ƶ"] = "z",
+                    ["ĵ"] = "j",
+                    ["ḍ"] = "d",
+                    ["ŭ"] = "u",
+                    ["ʝ"] = "j",
+                    ["ж"] = "zh",
+                    ["ê"] = "e",
+                    ["ǚ"] = "u",
+                    ["ġ"] = "g",
+                    ["ṙ"] = "r",
+                    ["ƞ"] = "n",
+                    ["ъ"] = "",
+                    ["ḗ"] = "e",
+                    ["ẝ"] = "s",
+                    ["ᶁ"] = "d",
+                    ["ķ"] = "k",
+                    ["ᴂ"] = "ae",
+                    ["ɘ"] = "e",
+                    ["ợ"] = "o",
+                    ["ḿ"] = "m",
+                    ["ꜰ"] = "f",
+                    ["а"] = "a",
+                    ["ẵ"] = "a",
+                    ["ꝏ"] = "oo",
+                    ["ᶆ"] = "m",
+                    ["ᵽ"] = "p",
+                    ["ц"] = "ts",
+                    ["ữ"] = "u",
+                    ["ⱪ"] = "k",
+                    ["ḥ"] = "h",
+                    ["ţ"] = "t",
+                    ["ᵱ"] = "p",
+                    ["ṁ"] = "m",
+                    ["á"] = "a",
+                    ["ᴎ"] = "n",
+                    ["ꝟ"] = "v",
+                    ["è"] = "e",
+                    ["ᶎ"] = "z",
+                    ["ꝺ"] = "d",
+                    ["ᶈ"] = "p",
+                    ["м"] = "m",
+                    ["ɫ"] = "l",
+                    ["ᴢ"] = "z",
+                    ["ɱ"] = "m",
+                    ["ṝ"] = "r",
+                    ["ṽ"] = "v",
+                    ["ũ"] = "u",
+                    ["ß"] = "ss",
+                    ["т"] = "t",
+                    ["ĥ"] = "h",
+                    ["ᵵ"] = "t",
+                    ["ʐ"] = "z",
+                    ["ṟ"] = "r",
+                    ["ɲ"] = "n",
+                    ["à"] = "a",
+                    ["ẙ"] = "y",
+                    ["ỳ"] = "y",
+                    ["ᴔ"] = "oe",
+                    ["ы"] = "i",
+                    ["ₓ"] = "x",
+                    ["ȗ"] = "u",
+                    ["ⱼ"] = "j",
+                    ["ẫ"] = "a",
+                    ["ʑ"] = "z",
+                    ["ẛ"] = "s",
+                    ["ḭ"] = "i",
+                    ["ꜵ"] = "ao",
+                    ["ɀ"] = "z",
+                    ["ÿ"] = "y",
+                    ["ǝ"] = "e",
+                    ["ǭ"] = "o",
+                    ["ᴅ"] = "d",
+                    ["ᶅ"] = "l",
+                    ["ù"] = "u",
+                    ["ạ"] = "a",
+                    ["ḅ"] = "b",
+                    ["ụ"] = "u",
+                    ["к"] = "k",
+                    ["ằ"] = "a",
+                    ["ᴛ"] = "t",
+                    ["ƴ"] = "y",
+                    ["ⱦ"] = "t",
+                    ["з"] = "z",
+                    ["ⱡ"] = "l",
+                    ["ȷ"] = "j",
+                    ["ᵶ"] = "z",
+                    ["ḫ"] = "h",
+                    ["ⱳ"] = "w",
+                    ["ḵ"] = "k",
+                    ["ờ"] = "o",
+                    ["î"] = "i",
+                    ["ģ"] = "g",
+                    ["ȅ"] = "e",
+                    ["ȧ"] = "a",
+                    ["ẳ"] = "a",
+                    ["щ"] = "sch",
+                    ["ɋ"] = "q",
+                    ["ṭ"] = "t",
+                    ["ꝸ"] = "um",
+                    ["ᴄ"] = "c",
+                    ["ẍ"] = "x",
+                    ["ủ"] = "u",
+                    ["ỉ"] = "i",
+                    ["ᴚ"] = "r",
+                    ["ś"] = "s",
+                    ["ꝋ"] = "o",
+                    ["ỹ"] = "y",
+                    ["ṡ"] = "s",
+                    ["ǌ"] = "nj",
+                    ["ȁ"] = "a",
+                    ["ẗ"] = "t",
+                    ["ĺ"] = "l",
+                    ["ž"] = "z",
+                    ["ᵺ"] = "th",
+                    ["ƌ"] = "d",
+                    ["ș"] = "s",
+                    ["š"] = "s",
+                    ["ᶙ"] = "u",
+                    ["ẽ"] = "e",
+                    ["ẜ"] = "s",
+                    ["ɇ"] = "e",
+                    ["ṷ"] = "u",
+                    ["ố"] = "o",
+                    ["ȿ"] = "s",
+                    ["ᴠ"] = "v",
+                    ["ꝭ"] = "is",
+                    ["ᴏ"] = "o",
+                    ["ɛ"] = "e",
+                    ["ǻ"] = "a",
+                    ["ﬄ"] = "ffl",
+                    ["ⱺ"] = "o",
+                    ["ȋ"] = "i",
+                    ["ᵫ"] = "ue",
+                    ["ȡ"] = "d",
+                    ["ⱬ"] = "z",
+                    ["ẁ"] = "w",
+                    ["ᶏ"] = "a",
+                    ["ꞇ"] = "t",
+                    ["ğ"] = "g",
+                    ["ɳ"] = "n",
+                    ["ʛ"] = "g",
+                    ["ᴜ"] = "u",
+                    ["ф"] = "f",
+                    ["ẩ"] = "a",
+                    ["ṅ"] = "n",
+                    ["ɨ"] = "i",
+                    ["ᴙ"] = "r",
+                    ["ǎ"] = "a",
+                    ["ſ"] = "s",
+                    ["у"] = "u",
+                    ["ȫ"] = "o",
+                    ["ɿ"] = "r",
+                    ["ƭ"] = "t",
+                    ["ḯ"] = "i",
+                    ["ǽ"] = "ae",
+                    ["ⱱ"] = "v",
+                    ["ɶ"] = "oe",
+                    ["ṃ"] = "m",
+                    ["ż"] = "z",
+                    ["ĕ"] = "e",
+                    ["ꜻ"] = "av",
+                    ["ở"] = "o",
+                    ["ễ"] = "e",
+                    ["ɬ"] = "l",
+                    ["ị"] = "i",
+                    ["ᵭ"] = "d",
+                    ["ﬆ"] = "st",
+                    ["ḷ"] = "l",
+                    ["ŕ"] = "r",
+                    ["ᴕ"] = "ou",
+                    ["ʈ"] = "t",
+                    ["ā"] = "a",
+                    ["э"] = "e",
+                    ["ḙ"] = "e",
+                    ["ᴑ"] = "o",
+                    ["ç"] = "c",
+                    ["ᶊ"] = "s",
+                    ["ặ"] = "a",
+                    ["ų"] = "u",
+                    ["ả"] = "a",
+                    ["ǥ"] = "g",
+                    ["р"] = "r",
+                    ["ꝁ"] = "k",
+                    ["ẕ"] = "z",
+                    ["ŝ"] = "s",
+                    ["ḕ"] = "e",
+                    ["ɠ"] = "g",
+                    ["ꝉ"] = "l",
+                    ["ꝼ"] = "f",
+                    ["ᶍ"] = "x",
+                    ["х"] = "h",
+                    ["ǒ"] = "o",
+                    ["ę"] = "e",
+                    ["ổ"] = "o",
+                    ["ƫ"] = "t",
+                    ["ǫ"] = "o",
+                    ["i̇"] = "i",
+                    ["ṇ"] = "n",
+                    ["ć"] = "c",
+                    ["ᵷ"] = "g",
+                    ["ẅ"] = "w",
+                    ["ḑ"] = "d",
+                    ["ḹ"] = "l",
+                    ["ч"] = "ch",
+                    ["œ"] = "oe",
+                    ["ᵳ"] = "r",
+                    ["ļ"] = "l",
+                    ["ȑ"] = "r",
+                    ["ȭ"] = "o",
+                    ["ᵰ"] = "n",
+                    ["ᴁ"] = "ae",
+                    ["ŀ"] = "l",
+                    ["ä"] = "a",
+                    ["ƥ"] = "p",
+                    ["ỏ"] = "o",
+                    ["į"] = "i",
+                    ["ȓ"] = "r",
+                    ["ǆ"] = "dz",
+                    ["ḡ"] = "g",
+                    ["ṻ"] = "u",
+                    ["ō"] = "o",
+                    ["ľ"] = "l",
+                    ["ẃ"] = "w",
+                    ["ț"] = "t",
+                    ["ń"] = "n",
+                    ["ɍ"] = "r",
+                    ["ȃ"] = "a",
+                    ["ü"] = "u",
+                    ["ꞁ"] = "l",
+                    ["ᴐ"] = "o",
+                    ["ớ"] = "o",
+                    ["ᴃ"] = "b",
+                    ["ɹ"] = "r",
+                    ["ᵲ"] = "r",
+                    ["ʏ"] = "y",
+                    ["ᵮ"] = "f",
+                    ["ⱨ"] = "h",
+                    ["ŏ"] = "o",
+                    ["ú"] = "u",
+                    ["ṛ"] = "r",
+                    ["ʮ"] = "h",
+                    ["ó"] = "o",
+                    ["ů"] = "u",
+                    ["ỡ"] = "o",
+                    ["ṕ"] = "p",
+                    ["ᶖ"] = "i",
+                    ["ự"] = "u",
+                    ["ã"] = "a",
+                    ["ᵢ"] = "i",
+                    ["ṱ"] = "t",
+                    ["ể"] = "e",
+                    ["ử"] = "u",
+                    ["í"] = "i",
+                    ["ɔ"] = "o",
+                    ["с"] = "s",
+                    ["й"] = "i",
+                    ["ɺ"] = "r",
+                    ["ɢ"] = "g",
+                    ["ř"] = "r",
+                    ["ẖ"] = "h",
+                    ["ű"] = "u",
+                    ["ȍ"] = "o",
+                    ["ш"] = "sh",
+                    ["ḻ"] = "l",
+                    ["ḣ"] = "h",
+                    ["ȶ"] = "t",
+                    ["ņ"] = "n",
+                    ["ᶒ"] = "e",
+                    ["ì"] = "i",
+                    ["ẉ"] = "w",
+                    ["б"] = "b",
+                    ["ē"] = "e",
+                    ["ᴇ"] = "e",
+                    ["ł"] = "l",
+                    ["ộ"] = "o",
+                    ["ɭ"] = "l",
+                    ["ẏ"] = "y",
+                    ["ᴊ"] = "j",
+                    ["ḱ"] = "k",
+                    ["ṿ"] = "v",
+                    ["ȩ"] = "e",
+                    ["â"] = "a",
+                    ["ş"] = "s",
+                    ["ŗ"] = "r",
+                    ["ʋ"] = "v",
+                    ["ₐ"] = "a",
+                    ["ↄ"] = "c",
+                    ["ᶓ"] = "e",
+                    ["ɰ"] = "m",
+                    ["е"] = "e",
+                    ["ᴡ"] = "w",
+                    ["ȏ"] = "o",
+                    ["č"] = "c",
+                    ["ǵ"] = "g",
+                    ["ĉ"] = "c",
+                    ["ю"] = "yu",
+                    ["ᶗ"] = "o",
+                    ["ꝃ"] = "k",
+                    ["ꝙ"] = "q",
+                    ["г"] = "g",
+                    ["ṑ"] = "o",
+                    ["ꜱ"] = "s",
+                    ["ṓ"] = "o",
+                    ["ȟ"] = "h",
+                    ["ő"] = "o",
+                    ["ꜩ"] = "tz",
+                    ["ẻ"] = "e",
+                    ["о"] = "o"
+                };
             }
 
             src = src.ToLower();
@@ -945,7 +928,7 @@ namespace Unigram.Common
         {
             public override int QuantityForNumber(int count)
             {
-                if (count == 0 || count == 1)
+                if (count is 0 or 1)
                 {
                     return QUANTITY_ONE;
                 }
@@ -1010,11 +993,11 @@ namespace Unigram.Common
         {
             public override int QuantityForNumber(int count)
             {
-                if (count >= 0 && count <= 1)
+                if (count is >= 0 and <= 1)
                 {
                     return QUANTITY_ONE;
                 }
-                else if (count >= 2 && count <= 10)
+                else if (count is >= 2 and <= 10)
                 {
                     return QUANTITY_FEW;
                 }
@@ -1038,7 +1021,7 @@ namespace Unigram.Common
                 {
                     return QUANTITY_TWO;
                 }
-                else if (rem100 >= 3 && rem100 <= 4)
+                else if (rem100 is >= 3 and <= 4)
                 {
                     return QUANTITY_FEW;
                 }
@@ -1058,7 +1041,7 @@ namespace Unigram.Common
                 {
                     return QUANTITY_ONE;
                 }
-                else if ((count == 0 || (rem100 >= 1 && rem100 <= 19)))
+                else if (count == 0 || (rem100 >= 1 && rem100 <= 19))
                 {
                     return QUANTITY_FEW;
                 }
@@ -1123,7 +1106,7 @@ namespace Unigram.Common
                 {
                     return QUANTITY_FEW;
                 }
-                else if (rem100 >= 11 && rem100 <= 19)
+                else if (rem100 is >= 11 and <= 19)
                 {
                     return QUANTITY_MANY;
                 }
@@ -1212,7 +1195,7 @@ namespace Unigram.Common
         {
             public override int QuantityForNumber(int count)
             {
-                if (count >= 0 && count < 2)
+                if (count is >= 0 and < 2)
                 {
                     return QUANTITY_ONE;
                 }
@@ -1231,7 +1214,7 @@ namespace Unigram.Common
                 {
                     return QUANTITY_ONE;
                 }
-                else if (count >= 2 && count <= 4)
+                else if (count is >= 2 and <= 4)
                 {
                     return QUANTITY_FEW;
                 }
@@ -1287,7 +1270,7 @@ namespace Unigram.Common
                 {
                     return QUANTITY_FEW;
                 }
-                else if ((rem10 == 0 || (rem10 >= 5 && rem10 <= 9) || (rem100 >= 11 && rem100 <= 14)))
+                else if (rem10 == 0 || (rem10 >= 5 && rem10 <= 9) || (rem100 >= 11 && rem100 <= 14))
                 {
                     return QUANTITY_MANY;
                 }
@@ -1336,11 +1319,11 @@ namespace Unigram.Common
                 {
                     return QUANTITY_TWO;
                 }
-                else if (rem100 >= 3 && rem100 <= 10)
+                else if (rem100 is >= 3 and <= 10)
                 {
                     return QUANTITY_FEW;
                 }
-                else if (rem100 >= 11 && rem100 <= 99)
+                else if (rem100 is >= 11 and <= 99)
                 {
                     return QUANTITY_MANY;
                 }

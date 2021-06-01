@@ -254,7 +254,7 @@ namespace Unigram.ViewModels.Chats
                             _stage = ItemsStage.Links;
                         }
                     }
-                    else if (_stage == ItemsStage.Links || _stage == ItemsStage.ExpiredLinks)
+                    else if (_stage is ItemsStage.Links or ItemsStage.ExpiredLinks)
                     {
                         var response = await _viewModel.ProtoService.SendAsync(new GetChatInviteLinks(_chat.Id, _userId, _stage == ItemsStage.ExpiredLinks, _offsetDate, _offsetInviteLink, 20));
                         if (response is ChatInviteLinks inviteLinks)

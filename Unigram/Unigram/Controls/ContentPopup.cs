@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Unigram.Common;
+using Unigram.Navigation;
 using Unigram.Services;
 using Windows.Foundation;
 using Windows.UI;
@@ -28,7 +29,7 @@ namespace Unigram.Controls
 
             if (Window.Current.Content is FrameworkElement element)
             {
-                var app = App.Current.RequestedTheme == ApplicationTheme.Dark ? ElementTheme.Dark : ElementTheme.Light;
+                var app = BootStrapper.Current.RequestedTheme == ApplicationTheme.Dark ? ElementTheme.Dark : ElementTheme.Light;
                 var frame = element.RequestedTheme;
 
                 if (app != frame)
@@ -70,7 +71,7 @@ namespace Unigram.Controls
         private void InputPane_Showing(InputPane sender, InputPaneVisibilityEventArgs args)
         {
             var element = FocusManager.GetFocusedElement() as Control;
-            if (element is TextBox || element is RichEditBox)
+            if (element is TextBox or RichEditBox)
             {
                 var transform = element.TransformToVisual(Window.Current.Content);
                 var point = transform.TransformPoint(new Point());

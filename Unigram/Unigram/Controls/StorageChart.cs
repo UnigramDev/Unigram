@@ -43,7 +43,7 @@ namespace Unigram.Controls
 
             foreach (var ellipse in _geometries)
             {
-                ellipse.Radius = new Vector2((width / 2) - (THICKNESS / 2));
+                ellipse.Radius = new Vector2(width / 2 - THICKNESS / 2);
                 ellipse.Center = new Vector2(width / 2);
             }
 
@@ -75,7 +75,7 @@ namespace Unigram.Controls
             for (int i = 0; i < _values.Length; i++)
             {
                 var ellipse = Window.Current.Compositor.CreateEllipseGeometry();
-                ellipse.Radius = new Vector2((width / 2) - (THICKNESS / 2));
+                ellipse.Radius = new Vector2(width / 2 - THICKNESS / 2);
                 ellipse.Center = new Vector2(width / 2);
 
                 var shape = Window.Current.Compositor.CreateSpriteShape(ellipse);
@@ -235,8 +235,10 @@ namespace Unigram.Controls
 
         public StorageChartItem(StorageStatisticsByFileType statistics)
         {
-            _types = new List<FileType>(1);
-            _types.Add(statistics.FileType);
+            _types = new List<FileType>(1)
+            {
+                statistics.FileType
+            };
 
             Size = statistics.Size;
 

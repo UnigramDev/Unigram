@@ -110,7 +110,7 @@ namespace Unigram.Services.ViewService
             Logger.Info($"Page: {page}, Parameter: {parameter}, Title: {title}, Size: {size}");
 
             var currentView = ApplicationView.GetForCurrentView();
-            title = title ?? currentView.Title;
+            title ??= currentView.Title;
 
 
 
@@ -185,7 +185,7 @@ namespace Unigram.Services.ViewService
                     await ApplicationViewSwitcher
                         .TryShowAsStandaloneAsync(newAppView.Id, ViewSizePreference.Default, currentView.Id, size);
                     //newAppView.TryResizeView(new Windows.Foundation.Size(360, bounds.Height));
-                    newAppView.TryResizeView(new Windows.Foundation.Size(360, 640));
+                    newAppView.TryResizeView(new Size(360, 640));
 
                     return control;
                 }).ConfigureAwait(false);

@@ -151,7 +151,7 @@ namespace Unigram.Controls
                 _ellipse.TrimEnd = MathF.Max(0, MathF.Min(1, (float)newValue));
             }
 
-            if (newValue >= 1.0 || newValue <= 0.0)
+            if (newValue is >= 1.0 or <= 0.0)
             {
                 Visibility = Visibility.Collapsed;
             }

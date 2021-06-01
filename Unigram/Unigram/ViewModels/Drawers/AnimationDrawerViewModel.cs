@@ -18,15 +18,16 @@ namespace Unigram.ViewModels.Drawers
     {
         private bool _updated;
 
-        public AnimationDrawerViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator) : base(protoService, cacheService, settingsService, aggregator)
+        public AnimationDrawerViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             SavedItems = new AnimationsCollection();
-            TrendingItems = new TrendingAnimationsCollection(protoService, aggregator);
+            TrendingItems = new TrendingAnimationsCollection(protoService);
 
             Sets = new List<AnimationsCollection>();
             Sets.Add(SavedItems);
             Sets.Add(TrendingItems);
-            Sets.AddRange(cacheService.AnimationSearchEmojis.Select(x => new SearchAnimationsCollection(protoService, aggregator, x)));
+            Sets.AddRange(cacheService.AnimationSearchEmojis.Select(x => new SearchAnimationsCollection(protoService, x)));
 
             SelectedSet = Sets[0];
 
@@ -95,22 +96,22 @@ namespace Unigram.ViewModels.Drawers
                 _source = source;
             }
 
-            public override bool areContentsTheSame(int oldItemPosition, int newItemPosition)
+            public override bool AreContentsTheSame(int oldItemPosition, int newItemPosition)
             {
                 return _target[oldItemPosition].AnimationValue.Id == _source[newItemPosition].AnimationValue.Id;
             }
 
-            public override bool areItemsTheSame(int oldItemPosition, int newItemPosition)
+            public override bool AreItemsTheSame(int oldItemPosition, int newItemPosition)
             {
                 return _target[oldItemPosition].AnimationValue.Id == _source[newItemPosition].AnimationValue.Id;
             }
 
-            public override int getNewListSize()
+            public override int GetNewListSize()
             {
                 return _source.Count;
             }
 
-            public override int getOldListSize()
+            public override int GetOldListSize()
             {
                 return _target.Count;
             }
@@ -187,7 +188,7 @@ namespace Unigram.ViewModels.Drawers
             }
             else
             {
-                SetAnimationSet(new SearchAnimationsCollection(ProtoService, Aggregator, query), true);
+                SetAnimationSet(new SearchAnimationsCollection(ProtoService, query), true);
             }
         }
 
@@ -260,8 +261,8 @@ namespace Unigram.ViewModels.Drawers
 
     public class TrendingAnimationsCollection : SearchAnimationsCollection
     {
-        public TrendingAnimationsCollection(IProtoService protoService, IEventAggregator aggregator)
-            : base(protoService, aggregator, string.Empty)
+        public TrendingAnimationsCollection(IProtoService protoService)
+            : base(protoService, string.Empty)
         {
         }
 
@@ -272,17 +273,15 @@ namespace Unigram.ViewModels.Drawers
     public class SearchAnimationsCollection : AnimationsCollection, ISupportIncrementalLoading
     {
         private readonly IProtoService _protoService;
-        private readonly IEventAggregator _aggregator;
         private readonly string _query;
 
         private int? _userId;
         private string _offset = string.Empty;
         private bool _hasMoreItems = true;
 
-        public SearchAnimationsCollection(IProtoService protoService, IEventAggregator aggregator, string query)
+        public SearchAnimationsCollection(IProtoService protoService, string query)
         {
             _protoService = protoService;
-            _aggregator = aggregator;
             _query = query;
         }
 

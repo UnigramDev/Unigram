@@ -93,7 +93,7 @@ namespace Unigram.Controls.Chats
             if (background == null && ActualTheme == ElementTheme.Light)
             {
                 background = new Background(0, false, false, string.Empty, null,
-                    new BackgroundTypeFill(new BackgroundFillFreeformGradient(new[] { 0x7FA381 , 0xFFF5C5, 0x336F55, 0xFBE37D })));
+                    new BackgroundTypeFill(new BackgroundFillFreeformGradient(new[] { 0x7FA381, 0xFFF5C5, 0x336F55, 0xFBE37D })));
             }
 
             if (_oldDark == dark && BackgroundEquals(_oldBackground, background))

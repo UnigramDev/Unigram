@@ -348,7 +348,7 @@ namespace Unigram.ViewModels
                         }
 
                         var content = container.ContentTemplateRoot as FrameworkElement;
-                        if (content is MessageBubble == false)
+                        if (content is not MessageBubble)
                         {
                             content = content.FindName("Bubble") as FrameworkElement;
                         }
@@ -548,7 +548,7 @@ namespace Unigram.ViewModels
                     {
                         message.Content = update.NewContent;
 
-                        if (update.NewContent is MessageExpiredPhoto || update.NewContent is MessageExpiredVideo)
+                        if (update.NewContent is MessageExpiredPhoto or MessageExpiredVideo)
                         {
                             // Probably not the best way
                             Items.Remove(message);
@@ -755,7 +755,7 @@ namespace Unigram.ViewModels
                                 }
 
                                 var content = container.ContentTemplateRoot as FrameworkElement;
-                                if (content is MessageBubble == false)
+                                if (content is not MessageBubble)
                                 {
                                     content = content.FindName("Bubble") as FrameworkElement;
                                 }
@@ -788,7 +788,7 @@ namespace Unigram.ViewModels
                             }
 
                             var content = container.ContentTemplateRoot as FrameworkElement;
-                            if (content is MessageBubble == false)
+                            if (content is not MessageBubble)
                             {
                                 content = content.FindName("Bubble") as FrameworkElement;
                             }
@@ -839,7 +839,7 @@ namespace Unigram.ViewModels
                                     }
 
                                     var content = container.ContentTemplateRoot as FrameworkElement;
-                                    if (content is MessageBubble == false)
+                                    if (content is not MessageBubble)
                                     {
                                         content = content.FindName("Bubble") as FrameworkElement;
                                     }
@@ -878,7 +878,7 @@ namespace Unigram.ViewModels
                             }
 
                             var content = container.ContentTemplateRoot as FrameworkElement;
-                            if (content is MessageBubble == false)
+                            if (content is not MessageBubble)
                             {
                                 content = content.FindName("Bubble") as FrameworkElement;
                             }
@@ -908,7 +908,7 @@ namespace Unigram.ViewModels
             }
 
             var content = container.ContentTemplateRoot as FrameworkElement;
-            if (content is MessageBubble == false)
+            if (content is not MessageBubble)
             {
                 content = content.FindName("Bubble") as FrameworkElement;
             }

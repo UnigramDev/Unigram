@@ -9,6 +9,7 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Cells;
 using Unigram.Converters;
+using Unigram.Navigation;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Folders;
@@ -349,8 +350,8 @@ namespace Unigram.Views.Popups
             var header = new ListView();
             header.SelectionMode = ListViewSelectionMode.Multiple;
             header.ItemsSource = flags;
-            header.ItemTemplate = App.Current.Resources["FolderPickerTemplate"] as DataTemplate;
-            header.ItemContainerStyle = App.Current.Resources["DefaultListViewItemStyle"] as Style;
+            header.ItemTemplate = BootStrapper.Current.Resources["FolderPickerTemplate"] as DataTemplate;
+            header.ItemContainerStyle = BootStrapper.Current.Resources["DefaultListViewItemStyle"] as Style;
             header.ContainerContentChanging += Header_ContainerContentChanging;
 
             foreach (var filter in target.OfType<FilterFlag>())
@@ -365,27 +366,27 @@ namespace Unigram.Views.Popups
             var panel = new StackPanel();
             panel.Children.Add(new Border
             {
-                Background = App.Current.Resources["PageBackgroundDarkBrush"] as Brush,
+                Background = BootStrapper.Current.Resources["PageBackgroundDarkBrush"] as Brush,
                 Child = new TextBlock
                 {
                     Text = Strings.Resources.FilterChatTypes,
                     Padding = new Thickness(12, 0, 0, 0),
-                    Style = App.Current.Resources["SettingsGroupTextBlockStyle"] as Style
+                    Style = BootStrapper.Current.Resources["SettingsGroupTextBlockStyle"] as Style
                 }
             });
             panel.Children.Add(header);
             panel.Children.Add(new Border
             {
-                Background = App.Current.Resources["PageBackgroundDarkBrush"] as Brush,
+                Background = BootStrapper.Current.Resources["PageBackgroundDarkBrush"] as Brush,
                 Child = new TextBlock
                 {
                     Text = Strings.Resources.FilterChats,
                     Padding = new Thickness(12, 0, 0, 0),
-                    Style = App.Current.Resources["SettingsGroupTextBlockStyle"] as Style
+                    Style = BootStrapper.Current.Resources["SettingsGroupTextBlockStyle"] as Style
                 }
             });
 
-            var dialog = SharePopup.GetForCurrentView();
+            var dialog = GetForCurrentView();
             dialog.ViewModel.Title = include ? Strings.Resources.FilterAlwaysShow : Strings.Resources.FilterNeverShow;
             dialog.ViewModel.AllowEmptySelection = true;
             dialog.Header = panel;
@@ -718,7 +719,7 @@ namespace Unigram.Views.Popups
                 return;
             }
 
-            if (e.Key == Windows.System.VirtualKey.Up || e.Key == Windows.System.VirtualKey.Down)
+            if (e.Key is Windows.System.VirtualKey.Up or Windows.System.VirtualKey.Down)
             {
                 var index = e.Key == Windows.System.VirtualKey.Up ? -1 : 1;
                 var next = activeList.SelectedIndex + index;
@@ -913,14 +914,13 @@ namespace Unigram.Views.Popups
         {
             if (CaptionInput.HandwritingView.IsOpen)
             {
-                RoutedEventHandler handler = null;
-                handler = (s, args) =>
+                void handler(object s, RoutedEventArgs args)
                 {
                     CaptionInput.HandwritingView.Unloaded -= handler;
 
                     ViewModel.Caption = CaptionInput.GetFormattedText();
                     Hide(ContentDialogResult.Primary);
-                };
+                }
 
                 CaptionInput.HandwritingView.Unloaded += handler;
                 CaptionInput.HandwritingView.TryClose();

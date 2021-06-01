@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Telegram.Td.Api;
+using Unigram.Navigation;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.UI.Xaml;
@@ -108,12 +109,12 @@ namespace Unigram.Controls
 
                         if (inline)
                         {
-                            button.Style = App.Current.Resources["ReplyInlineMarkupButtonStyle"] as Style;
+                            button.Style = BootStrapper.Current.Resources["ReplyInlineMarkupButtonStyle"] as Style;
                             button.Margin = new Thickness(1, 2, 1, 0);
                         }
                         else
                         {
-                            button.Style = App.Current.Resources["ReplyKeyboardMarkupButtonStyle"] as Style;
+                            button.Style = BootStrapper.Current.Resources["ReplyKeyboardMarkupButtonStyle"] as Style;
                             button.Margin = new Thickness(4, 8, 4, 0);
                             button.Height = resize ? 36 : double.NaN;
                         }
@@ -229,7 +230,7 @@ namespace Unigram.Controls
             }
             else
             {
-                width = width * Children.Count;
+                width *= Children.Count;
             }
 
             return new Size(width, height);

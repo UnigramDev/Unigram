@@ -605,7 +605,7 @@ namespace Unigram.Controls.Messages
             if (viaBot != null && viaBot.Type is UserTypeBot && !string.IsNullOrEmpty(viaBot.Username))
             {
                 var hyperlink = new Hyperlink();
-                hyperlink.Inlines.Add(new Run { Text = (paragraph.Inlines.Count > 0 ? " via @" : "via @"), FontWeight = FontWeights.Normal });
+                hyperlink.Inlines.Add(new Run { Text = paragraph.Inlines.Count > 0 ? " via @" : "via @", FontWeight = FontWeights.Normal });
                 hyperlink.Inlines.Add(new Run { Text = viaBot.Username });
                 hyperlink.UnderlineStyle = UnderlineStyle.None;
                 hyperlink.Foreground = light ? new SolidColorBrush(Colors.White) : GetBrush("MessageHeaderForegroundBrush");
@@ -1436,7 +1436,7 @@ namespace Unigram.Controls.Messages
                 return value as SolidColorBrush;
             }
 
-            return App.Current.Resources[key] as SolidColorBrush;
+            return Navigation.BootStrapper.Current.Resources[key] as SolidColorBrush;
         }
 
         private void Entity_Click(MessageViewModel message, TextEntityType type, string data)
@@ -1841,7 +1841,7 @@ namespace Unigram.Controls.Messages
                 }
             }
 
-            overlay.Size = new System.Numerics.Vector2((float)target.ActualWidth, (float)target.ActualHeight);
+            overlay.Size = new Vector2((float)target.ActualWidth, (float)target.ActualHeight);
             overlay.Opacity = 0f;
             overlay.Brush = brush;
 
@@ -2187,7 +2187,7 @@ namespace Unigram.Controls.Messages
 
         public void UpdateMockup()
         {
-            Span.FontSize = (double)App.Current.Resources["MessageFontSize"];
+            Span.FontSize = (double)Navigation.BootStrapper.Current.Resources["MessageFontSize"];
             ContentPanel.CornerRadius = new CornerRadius(SettingsService.Current.Appearance.BubbleRadius);
         }
 
@@ -2401,7 +2401,6 @@ namespace Unigram.Controls.Messages
             else if (constraint is VoiceNote voiceNote)
             {
                 width = Math.Min(Math.Max(4, voiceNote.Duration), 30) / 30d * availableSize.Width;
-                height = 48;
 
                 //return base.MeasureOverride(new Size(width, availableSize.Height));
             }

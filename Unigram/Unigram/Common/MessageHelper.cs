@@ -54,7 +54,7 @@ namespace Unigram.Common
         private static bool IsRandALCat(int c)
         {
             bool hasRandALCat = false;
-            if (c >= 0x5BE && c <= 0x10B7F)
+            if (c is >= 0x5BE and <= 0x10B7F)
             {
                 if (c <= 0x85E)
                 {
@@ -62,71 +62,71 @@ namespace Unigram.Common
                     else if (c == 0x5C0) hasRandALCat = true;
                     else if (c == 0x5C3) hasRandALCat = true;
                     else if (c == 0x5C6) hasRandALCat = true;
-                    else if (0x5D0 <= c && c <= 0x5EA) hasRandALCat = true;
-                    else if (0x5F0 <= c && c <= 0x5F4) hasRandALCat = true;
+                    else if (c is >= 0x5D0 and <= 0x5EA) hasRandALCat = true;
+                    else if (c is >= 0x5F0 and <= 0x5F4) hasRandALCat = true;
                     else if (c == 0x608) hasRandALCat = true;
                     else if (c == 0x60B) hasRandALCat = true;
                     else if (c == 0x60D) hasRandALCat = true;
                     else if (c == 0x61B) hasRandALCat = true;
-                    else if (0x61E <= c && c <= 0x64A) hasRandALCat = true;
-                    else if (0x66D <= c && c <= 0x66F) hasRandALCat = true;
-                    else if (0x671 <= c && c <= 0x6D5) hasRandALCat = true;
-                    else if (0x6E5 <= c && c <= 0x6E6) hasRandALCat = true;
-                    else if (0x6EE <= c && c <= 0x6EF) hasRandALCat = true;
-                    else if (0x6FA <= c && c <= 0x70D) hasRandALCat = true;
+                    else if (c is >= 0x61E and <= 0x64A) hasRandALCat = true;
+                    else if (c is >= 0x66D and <= 0x66F) hasRandALCat = true;
+                    else if (c is >= 0x671 and <= 0x6D5) hasRandALCat = true;
+                    else if (c is >= 0x6E5 and <= 0x6E6) hasRandALCat = true;
+                    else if (c is >= 0x6EE and <= 0x6EF) hasRandALCat = true;
+                    else if (c is >= 0x6FA and <= 0x70D) hasRandALCat = true;
                     else if (c == 0x710) hasRandALCat = true;
-                    else if (0x712 <= c && c <= 0x72F) hasRandALCat = true;
-                    else if (0x74D <= c && c <= 0x7A5) hasRandALCat = true;
+                    else if (c is >= 0x712 and <= 0x72F) hasRandALCat = true;
+                    else if (c is >= 0x74D and <= 0x7A5) hasRandALCat = true;
                     else if (c == 0x7B1) hasRandALCat = true;
-                    else if (0x7C0 <= c && c <= 0x7EA) hasRandALCat = true;
-                    else if (0x7F4 <= c && c <= 0x7F5) hasRandALCat = true;
+                    else if (c is >= 0x7C0 and <= 0x7EA) hasRandALCat = true;
+                    else if (c is >= 0x7F4 and <= 0x7F5) hasRandALCat = true;
                     else if (c == 0x7FA) hasRandALCat = true;
-                    else if (0x800 <= c && c <= 0x815) hasRandALCat = true;
+                    else if (c is >= 0x800 and <= 0x815) hasRandALCat = true;
                     else if (c == 0x81A) hasRandALCat = true;
                     else if (c == 0x824) hasRandALCat = true;
                     else if (c == 0x828) hasRandALCat = true;
-                    else if (0x830 <= c && c <= 0x83E) hasRandALCat = true;
-                    else if (0x840 <= c && c <= 0x858) hasRandALCat = true;
+                    else if (c is >= 0x830 and <= 0x83E) hasRandALCat = true;
+                    else if (c is >= 0x840 and <= 0x858) hasRandALCat = true;
                     else if (c == 0x85E) hasRandALCat = true;
                 }
                 else if (c == 0x200F) hasRandALCat = true;
                 else if (c >= 0xFB1D)
                 {
                     if (c == 0xFB1D) hasRandALCat = true;
-                    else if (0xFB1F <= c && c <= 0xFB28) hasRandALCat = true;
-                    else if (0xFB2A <= c && c <= 0xFB36) hasRandALCat = true;
-                    else if (0xFB38 <= c && c <= 0xFB3C) hasRandALCat = true;
+                    else if (c is >= 0xFB1F and <= 0xFB28) hasRandALCat = true;
+                    else if (c is >= 0xFB2A and <= 0xFB36) hasRandALCat = true;
+                    else if (c is >= 0xFB38 and <= 0xFB3C) hasRandALCat = true;
                     else if (c == 0xFB3E) hasRandALCat = true;
-                    else if (0xFB40 <= c && c <= 0xFB41) hasRandALCat = true;
-                    else if (0xFB43 <= c && c <= 0xFB44) hasRandALCat = true;
-                    else if (0xFB46 <= c && c <= 0xFBC1) hasRandALCat = true;
-                    else if (0xFBD3 <= c && c <= 0xFD3D) hasRandALCat = true;
-                    else if (0xFD50 <= c && c <= 0xFD8F) hasRandALCat = true;
-                    else if (0xFD92 <= c && c <= 0xFDC7) hasRandALCat = true;
-                    else if (0xFDF0 <= c && c <= 0xFDFC) hasRandALCat = true;
-                    else if (0xFE70 <= c && c <= 0xFE74) hasRandALCat = true;
-                    else if (0xFE76 <= c && c <= 0xFEFC) hasRandALCat = true;
-                    else if (0x10800 <= c && c <= 0x10805) hasRandALCat = true;
+                    else if (c is >= 0xFB40 and <= 0xFB41) hasRandALCat = true;
+                    else if (c is >= 0xFB43 and <= 0xFB44) hasRandALCat = true;
+                    else if (c is >= 0xFB46 and <= 0xFBC1) hasRandALCat = true;
+                    else if (c is >= 0xFBD3 and <= 0xFD3D) hasRandALCat = true;
+                    else if (c is >= 0xFD50 and <= 0xFD8F) hasRandALCat = true;
+                    else if (c is >= 0xFD92 and <= 0xFDC7) hasRandALCat = true;
+                    else if (c is >= 0xFDF0 and <= 0xFDFC) hasRandALCat = true;
+                    else if (c is >= 0xFE70 and <= 0xFE74) hasRandALCat = true;
+                    else if (c is >= 0xFE76 and <= 0xFEFC) hasRandALCat = true;
+                    else if (c is >= 0x10800 and <= 0x10805) hasRandALCat = true;
                     else if (c == 0x10808) hasRandALCat = true;
-                    else if (0x1080A <= c && c <= 0x10835) hasRandALCat = true;
-                    else if (0x10837 <= c && c <= 0x10838) hasRandALCat = true;
+                    else if (c is >= 0x1080A and <= 0x10835) hasRandALCat = true;
+                    else if (c is >= 0x10837 and <= 0x10838) hasRandALCat = true;
                     else if (c == 0x1083C) hasRandALCat = true;
-                    else if (0x1083F <= c && c <= 0x10855) hasRandALCat = true;
-                    else if (0x10857 <= c && c <= 0x1085F) hasRandALCat = true;
-                    else if (0x10900 <= c && c <= 0x1091B) hasRandALCat = true;
-                    else if (0x10920 <= c && c <= 0x10939) hasRandALCat = true;
+                    else if (c is >= 0x1083F and <= 0x10855) hasRandALCat = true;
+                    else if (c is >= 0x10857 and <= 0x1085F) hasRandALCat = true;
+                    else if (c is >= 0x10900 and <= 0x1091B) hasRandALCat = true;
+                    else if (c is >= 0x10920 and <= 0x10939) hasRandALCat = true;
                     else if (c == 0x1093F) hasRandALCat = true;
                     else if (c == 0x10A00) hasRandALCat = true;
-                    else if (0x10A10 <= c && c <= 0x10A13) hasRandALCat = true;
-                    else if (0x10A15 <= c && c <= 0x10A17) hasRandALCat = true;
-                    else if (0x10A19 <= c && c <= 0x10A33) hasRandALCat = true;
-                    else if (0x10A40 <= c && c <= 0x10A47) hasRandALCat = true;
-                    else if (0x10A50 <= c && c <= 0x10A58) hasRandALCat = true;
-                    else if (0x10A60 <= c && c <= 0x10A7F) hasRandALCat = true;
-                    else if (0x10B00 <= c && c <= 0x10B35) hasRandALCat = true;
-                    else if (0x10B40 <= c && c <= 0x10B55) hasRandALCat = true;
-                    else if (0x10B58 <= c && c <= 0x10B72) hasRandALCat = true;
-                    else if (0x10B78 <= c && c <= 0x10B7F) hasRandALCat = true;
+                    else if (c is >= 0x10A10 and <= 0x10A13) hasRandALCat = true;
+                    else if (c is >= 0x10A15 and <= 0x10A17) hasRandALCat = true;
+                    else if (c is >= 0x10A19 and <= 0x10A33) hasRandALCat = true;
+                    else if (c is >= 0x10A40 and <= 0x10A47) hasRandALCat = true;
+                    else if (c is >= 0x10A50 and <= 0x10A58) hasRandALCat = true;
+                    else if (c is >= 0x10A60 and <= 0x10A7F) hasRandALCat = true;
+                    else if (c is >= 0x10B00 and <= 0x10B35) hasRandALCat = true;
+                    else if (c is >= 0x10B40 and <= 0x10B55) hasRandALCat = true;
+                    else if (c is >= 0x10B58 and <= 0x10B72) hasRandALCat = true;
+                    else if (c is >= 0x10B78 and <= 0x10B7F) hasRandALCat = true;
                 }
             }
 
@@ -170,8 +170,6 @@ namespace Unigram.Common
             string message = null;
             string group = null;
             string sticker = null;
-            string[] instantView = null;
-            Dictionary<string, object> auth = null;
             string botUser = null;
             string botChat = null;
             string comment = null;
@@ -199,7 +197,7 @@ namespace Unigram.Common
                 if (string.Equals(username, "telegrampassport", StringComparison.OrdinalIgnoreCase))
                 {
                     username = null;
-                    auth = new Dictionary<string, object>();
+                    Dictionary<string, object> auth = new Dictionary<string, object>();
                     var scope = query.GetParameter("scope");
                     if (!string.IsNullOrEmpty(scope) && scope.StartsWith("{") && scope.EndsWith("}"))
                     {
@@ -530,7 +528,7 @@ namespace Unigram.Common
             }
         }
 
-        private static async  void NavigateToBackground(IProtoService protoService, INavigationService navigation, string slug)
+        private static async void NavigateToBackground(IProtoService protoService, INavigationService navigation, string slug)
         {
             await new BackgroundPopup(slug).ShowQueuedAsync();
 
@@ -986,7 +984,7 @@ namespace Unigram.Common
 
                     try
                     {
-                        await Windows.System.Launcher.LaunchUriAsync(uri);
+                        await Launcher.LaunchUriAsync(uri);
                     }
                     catch { }
                 }
@@ -1010,7 +1008,7 @@ namespace Unigram.Common
                 {
                     var link = text.SelectedText;
 
-                    var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.DocumentCopy, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
+                    var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.DocumentCopy, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
                     copy.Click += LinkCopy_Click;
 
                     var flyout = new MenuFlyout();
@@ -1046,9 +1044,9 @@ namespace Unigram.Common
 
                     var flyout = new MenuFlyout();
 
-                    if (type == null || type is TextEntityTypeUrl || type is TextEntityTypeTextUrl)
+                    if (type is null or TextEntityTypeUrl or TextEntityTypeTextUrl)
                     {
-                        var open = new MenuFlyoutItem { Text = Strings.Resources.Open, DataContext = link, Icon = new FontIcon { Glyph = Icons.OpenIn, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
+                        var open = new MenuFlyoutItem { Text = Strings.Resources.Open, DataContext = link, Icon = new FontIcon { Glyph = Icons.OpenIn, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
 
                         var action = GetEntityAction(hyperlink);
                         if (action != null)
@@ -1063,7 +1061,7 @@ namespace Unigram.Common
                         flyout.Items.Add(open);
                     }
 
-                    var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.DocumentCopy, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
+                    var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.DocumentCopy, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
                     copy.Click += LinkCopy_Click;
                     flyout.Items.Add(copy);
 
@@ -1093,7 +1091,7 @@ namespace Unigram.Common
             {
                 var link = text.SelectedText;
 
-                var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.DocumentCopy, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
+                var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.DocumentCopy, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
                 copy.Click += LinkCopy_Click;
 
                 items.Add(copy);
@@ -1113,9 +1111,9 @@ namespace Unigram.Common
                 }
 
                 var type = GetEntityType(hyperlink);
-                if (type == null || type is TextEntityTypeUrl || type is TextEntityTypeTextUrl)
+                if (type is null or TextEntityTypeUrl or TextEntityTypeTextUrl)
                 {
-                    var open = new MenuFlyoutItem { Text = Strings.Resources.Open, DataContext = link, Icon = new FontIcon { Glyph = Icons.OpenIn, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
+                    var open = new MenuFlyoutItem { Text = Strings.Resources.Open, DataContext = link, Icon = new FontIcon { Glyph = Icons.OpenIn, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
 
                     var action = GetEntityAction(hyperlink);
                     if (action != null)
@@ -1130,7 +1128,7 @@ namespace Unigram.Common
                     items.Add(open);
                 }
 
-                var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.DocumentCopy, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
+                var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.DocumentCopy, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
                 copy.Click += LinkCopy_Click;
                 items.Add(copy);
             }
@@ -1147,8 +1145,8 @@ namespace Unigram.Common
                     point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
                 }
 
-                var open = new MenuFlyoutItem { Text = Strings.Resources.Open, DataContext = link, Icon = new FontIcon { Glyph = Icons.OpenIn, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
-                var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.DocumentCopy, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
+                var open = new MenuFlyoutItem { Text = Strings.Resources.Open, DataContext = link, Icon = new FontIcon { Glyph = Icons.OpenIn, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
+                var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.DocumentCopy, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
 
                 open.Click += LinkOpen_Click;
                 copy.Click += LinkCopy_Click;
@@ -1164,7 +1162,7 @@ namespace Unigram.Common
             }
         }
 
-        private async static void LinkOpen_Click(object sender, RoutedEventArgs e)
+        private static async void LinkOpen_Click(object sender, RoutedEventArgs e)
         {
             var item = sender as MenuFlyoutItem;
             var entity = item.DataContext as string;

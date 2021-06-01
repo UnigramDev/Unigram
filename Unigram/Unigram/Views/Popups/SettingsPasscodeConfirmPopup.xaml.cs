@@ -55,7 +55,7 @@ namespace Unigram.Views.Popups
 
         private void Confirm_Changed(object sender, RoutedEventArgs e)
         {
-            if (IsSimple && Confirm.Password.Length == 4 && Confirm.Password.All(x => x >= '0' && x <= '9'))
+            if (IsSimple && Confirm.Password.Length == 4 && Confirm.Password.All(x => x is >= '0' and <= '9'))
             {
                 Done();
             }
@@ -72,8 +72,8 @@ namespace Unigram.Views.Popups
 
         private void Password_KeyDown(object sender, KeyRoutedEventArgs e)
         {
-            if (e.Key >= Windows.System.VirtualKey.Number0 && e.Key <= Windows.System.VirtualKey.Number9) { }
-            else if (e.Key >= Windows.System.VirtualKey.NumberPad0 && e.Key <= Windows.System.VirtualKey.NumberPad9) { }
+            if (e.Key is >= Windows.System.VirtualKey.Number0 and <= Windows.System.VirtualKey.Number9) { }
+            else if (e.Key is >= Windows.System.VirtualKey.NumberPad0 and <= Windows.System.VirtualKey.NumberPad9) { }
             else if (e.Key == Windows.System.VirtualKey.Enter)
             {
                 Done();

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Logs;
@@ -20,26 +19,8 @@ using Windows.UI.Xaml.Media;
 
 namespace Unigram.Navigation
 {
-    public abstract class BootStrapper : Application, INotifyPropertyChanged
+    public abstract class BootStrapper : Application
     {
-        #region INotifyPropertyChanged
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void Set<T>(ref T storage, T value, [CallerMemberName] String propertyName = null)
-        {
-            if (!object.Equals(storage, value))
-            {
-                storage = value;
-                RaisePropertyChanged(propertyName);
-            }
-        }
-
-        protected void RaisePropertyChanged([CallerMemberName] String propertyName = null) =>
-           PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
-        #endregion
-
         /// <summary>
         /// If a developer overrides this method, the developer can resolve DataContext or unwrap DataContext 
         /// available for the Page object when using a MVVM pattern that relies on a wrapped/porxy around ViewModels
@@ -134,43 +115,43 @@ namespace Unigram.Navigation
 
         // it is the intent of Template 10 to no longer require Launched/Activated overrides, only OnStartAsync()
 
-        protected override sealed void OnActivated(IActivatedEventArgs e)
+        protected sealed override void OnActivated(IActivatedEventArgs e)
         {
             Logger.Info();
             CallInternalActivated(e);
         }
 
-        protected override sealed void OnCachedFileUpdaterActivated(CachedFileUpdaterActivatedEventArgs args)
+        protected sealed override void OnCachedFileUpdaterActivated(CachedFileUpdaterActivatedEventArgs args)
         {
             Logger.Info();
             CallInternalActivated(args);
         }
 
-        protected override sealed void OnFileActivated(FileActivatedEventArgs args)
+        protected sealed override void OnFileActivated(FileActivatedEventArgs args)
         {
             Logger.Info();
             CallInternalActivated(args);
         }
 
-        protected override sealed void OnFileOpenPickerActivated(FileOpenPickerActivatedEventArgs args)
+        protected sealed override void OnFileOpenPickerActivated(FileOpenPickerActivatedEventArgs args)
         {
             Logger.Info();
             CallInternalActivated(args);
         }
 
-        protected override sealed void OnFileSavePickerActivated(FileSavePickerActivatedEventArgs args)
+        protected sealed override void OnFileSavePickerActivated(FileSavePickerActivatedEventArgs args)
         {
             Logger.Info();
             CallInternalActivated(args);
         }
 
-        protected override sealed void OnSearchActivated(SearchActivatedEventArgs args)
+        protected sealed override void OnSearchActivated(SearchActivatedEventArgs args)
         {
             Logger.Info();
             CallInternalActivated(args);
         }
 
-        protected override sealed void OnShareTargetActivated(ShareTargetActivatedEventArgs args)
+        protected sealed override void OnShareTargetActivated(ShareTargetActivatedEventArgs args)
         {
             Logger.Info();
             CallInternalActivated(args);
@@ -220,10 +201,10 @@ namespace Unigram.Navigation
             CallInternalLaunchAsync(e);
         }
 
-        async void CallInternalLaunchAsync(LaunchActivatedEventArgs e)
+        private void CallInternalLaunchAsync(LaunchActivatedEventArgs e)
         {
             CurrentState = States.BeforeLaunch;
-            await InternalLaunchAsync(e);
+            InternalLaunch(e);
             CurrentState = States.AfterLaunch;
         }
 
@@ -232,7 +213,7 @@ namespace Unigram.Navigation
         /// This is private because it is a specialized prelude to OnStartAsync().
         /// OnStartAsync will not be called if state restore is determined
         /// </summary>
-        private async Task InternalLaunchAsync(LaunchActivatedEventArgs e)
+        private void InternalLaunch(LaunchActivatedEventArgs e)
         {
             Logger.Info($"Previous:{e.PreviousExecutionState}");
 
@@ -284,8 +265,7 @@ namespace Unigram.Navigation
             // handle pre-launch
             if (e.PrelaunchActivated)
             {
-                bool runOnStartAsync;
-                OnPrelaunch(e, out runOnStartAsync);
+                OnPrelaunch(e, out bool runOnStartAsync);
                 if (!runOnStartAsync)
                 {
                     return;
@@ -570,10 +550,9 @@ namespace Unigram.Navigation
 
             // this is always okay to check, default or not
             // expire any state (based on expiry)
-            DateTime cacheDate;
             // default the cache age to very fresh if not known
             var otherwise = DateTime.MinValue.ToString();
-            if (DateTime.TryParse(navigationService.FrameFacade.GetFrameState(CacheDateKey, otherwise), out cacheDate))
+            if (DateTime.TryParse(navigationService.FrameFacade.GetFrameState(CacheDateKey, otherwise), out DateTime cacheDate))
             {
                 var cacheAge = DateTime.Now.Subtract(cacheDate);
                 if (cacheAge >= CacheMaxDuration)
@@ -618,7 +597,7 @@ namespace Unigram.Navigation
             }
         }
 
-        readonly Dictionary<string, States> CurrentStateHistory = new Dictionary<string, States>();
+        private readonly Dictionary<string, States> CurrentStateHistory = new Dictionary<string, States>();
 
         private void InitializeFrame(IActivatedEventArgs e)
         {
@@ -644,7 +623,7 @@ namespace Unigram.Navigation
 
         #endregion
 
-        readonly WindowLogic _WindowLogic = new WindowLogic();
+        private readonly WindowLogic _WindowLogic = new WindowLogic();
         private void CallActivateWindow(WindowLogic.ActivateWindowSources source)
         {
             _WindowLogic.ActivateWindow(source);
@@ -697,7 +676,7 @@ namespace Unigram.Navigation
         public bool AutoExtendExecutionSession { get; set; } = true;
         public bool AutoSuspendAllFrames { get; set; } = true;
 
-        readonly LifecycleLogic _LifecycleLogic = new LifecycleLogic();
+        private readonly LifecycleLogic _LifecycleLogic = new LifecycleLogic();
 
         private void CallResuming(object sender, object e)
         {
@@ -736,7 +715,7 @@ namespace Unigram.Navigation
             return await _LifecycleLogic.AutoRestoreAsync(e, NavigationService);
         }
 
-        async void CallHandleSuspendingAsync(object sender, SuspendingEventArgs e)
+        private async void CallHandleSuspendingAsync(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
             try

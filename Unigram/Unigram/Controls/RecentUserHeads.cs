@@ -314,7 +314,7 @@ namespace Unigram.Controls
 
     }
 
-    public class RecentUserCollection  : MvxObservableCollection<MessageSender>
+    public class RecentUserCollection : MvxObservableCollection<MessageSender>
     {
 
     }

@@ -18,8 +18,8 @@ namespace Unigram.Charts
         {
             if (chartData != null)
             {
-                float fullWidth = (chartWidth / (pickerDelegate.pickerEnd - pickerDelegate.pickerStart));
-                float offset = fullWidth * (pickerDelegate.pickerStart) - HORIZONTAL_PADDING;
+                float fullWidth = chartWidth / (pickerDelegate.pickerEnd - pickerDelegate.pickerStart);
+                float offset = fullWidth * pickerDelegate.pickerStart - HORIZONTAL_PADDING;
 
                 int start = startXIndex - 1;
                 if (start < 0)
@@ -93,7 +93,7 @@ namespace Unigram.Charts
                         float xPoint = p / 2 + chartData.xPercentage[i] * fullWidth - offset;
                         float yPercentage = y[i] / currentMaxHeight * a;
 
-                        float yPoint = MeasuredHeight - chartBottom - (yPercentage) * (MeasuredHeight - chartBottom - SIGNATURE_TEXT_HEIGHT);
+                        float yPoint = MeasuredHeight - chartBottom - yPercentage * (MeasuredHeight - chartBottom - SIGNATURE_TEXT_HEIGHT);
 
                         if (i == selectedIndex && legendShowing)
                         {

@@ -195,7 +195,7 @@ namespace Unigram.Controls.Cells
                 builder.Append(". ");
             }
 
-            if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
+            if (chat.Type is ChatTypePrivate or ChatTypeSecret)
             {
                 var user = protoService.GetUser(chat);
                 if (user != null)
@@ -313,7 +313,7 @@ namespace Unigram.Controls.Cells
                 position = chat.GetPosition(_chatList);
             }
 
-            PinnedIcon.Visibility = (chat.UnreadCount == 0 && !chat.IsMarkedAsUnread) && (position?.IsPinned ?? false) ? Visibility.Visible : Visibility.Collapsed;
+            PinnedIcon.Visibility = chat.UnreadCount == 0 && !chat.IsMarkedAsUnread && (position?.IsPinned ?? false) ? Visibility.Visible : Visibility.Collapsed;
             UnreadBadge.Visibility = (chat.UnreadCount > 0 || chat.IsMarkedAsUnread) ? chat.UnreadMentionCount == 1 && chat.UnreadCount == 1 ? Visibility.Collapsed : Visibility.Visible : Visibility.Collapsed;
             UnreadLabel.Text = chat.UnreadCount > 0 ? chat.UnreadCount.ToString() : string.Empty;
 
@@ -480,7 +480,7 @@ namespace Unigram.Controls.Cells
 
                 var shape1 = compositor.CreateSpriteShape();
                 shape1.Geometry = line1;
-                shape1.FillBrush = compositor.CreateColorBrush(Windows.UI.Colors.White);
+                shape1.FillBrush = compositor.CreateColorBrush(Colors.White);
 
                 var line2 = compositor.CreateRoundedRectangleGeometry();
                 line2.CornerRadius = Vector2.One;
@@ -489,7 +489,7 @@ namespace Unigram.Controls.Cells
 
                 var shape2 = compositor.CreateSpriteShape();
                 shape2.Geometry = line2;
-                shape2.FillBrush = compositor.CreateColorBrush(Windows.UI.Colors.White);
+                shape2.FillBrush = compositor.CreateColorBrush(Colors.White);
 
                 var line3 = compositor.CreateRoundedRectangleGeometry();
                 line3.CornerRadius = Vector2.One;
@@ -498,7 +498,7 @@ namespace Unigram.Controls.Cells
 
                 var shape3 = compositor.CreateSpriteShape();
                 shape3.Geometry = line3;
-                shape3.FillBrush = compositor.CreateColorBrush(Windows.UI.Colors.White);
+                shape3.FillBrush = compositor.CreateColorBrush(Colors.White);
 
                 var visual = compositor.CreateShapeVisual();
                 visual.Shapes.Add(shape3);
@@ -742,29 +742,18 @@ namespace Unigram.Controls.Cells
                 return Strings.Resources.Message;
             }
 
-            switch (value.Content)
+            return value.Content switch
             {
-                case MessageAnimation animation:
-                    return animation.Caption.Text.Replace('\n', ' ');
-                case MessageAudio audio:
-                    return audio.Caption.Text.Replace('\n', ' ');
-                case MessageDocument document:
-                    return document.Caption.Text.Replace('\n', ' ');
-                case MessagePhoto photo:
-                    return photo.Caption.Text.Replace('\n', ' ');
-                case MessageVideo video:
-                    return video.Caption.Text.Replace('\n', ' ');
-                case MessageVoiceNote voiceNote:
-                    return voiceNote.Caption.Text.Replace('\n', ' ');
-
-                case MessageText text:
-                    return text.Text.Text.Replace('\n', ' ');
-
-                case MessageDice dice:
-                    return dice.Emoji;
-            }
-
-            return string.Empty;
+                MessageAnimation animation => animation.Caption.Text.Replace('\n', ' '),
+                MessageAudio audio => audio.Caption.Text.Replace('\n', ' '),
+                MessageDocument document => document.Caption.Text.Replace('\n', ' '),
+                MessagePhoto photo => photo.Caption.Text.Replace('\n', ' '),
+                MessageVideo video => video.Caption.Text.Replace('\n', ' '),
+                MessageVoiceNote voiceNote => voiceNote.Caption.Text.Replace('\n', ' '),
+                MessageText text => text.Text.Text.Replace('\n', ' '),
+                MessageDice dice => dice.Emoji,
+                _ => string.Empty,
+            };
         }
 
         private string UpdateDraftLabel(Chat chat)
@@ -879,7 +868,7 @@ namespace Unigram.Controls.Cells
                 return result + $"{sticker.Sticker.Emoji} {Strings.Resources.AttachSticker}";
             }
 
-            string GetCaption(string caption)
+            static string GetCaption(string caption)
             {
                 return string.IsNullOrEmpty(caption) ? string.Empty : ", ";
             }
@@ -1315,7 +1304,7 @@ namespace Unigram.Controls.Cells
 
         private void InitializeSelection()
         {
-            CompositionPath GetCheckMark()
+            static CompositionPath GetCheckMark()
             {
                 CanvasGeometry result;
                 using (var builder = new CanvasPathBuilder(null))
@@ -1493,9 +1482,9 @@ namespace Unigram.Controls.Cells
 
             var sqrt = (float)Math.Sqrt(2);
 
-            var side = (stroke / sqrt) / 2f;
+            var side = stroke / sqrt / 2f;
             var diagonal = height * sqrt;
-            var length = (diagonal / 2f) / sqrt;
+            var length = diagonal / 2f / sqrt;
 
             var join = stroke / 2 * sqrt;
 
@@ -1510,12 +1499,12 @@ namespace Unigram.Controls.Cells
 
             var shape11 = Window.Current.Compositor.CreateSpriteShape(line11);
             shape11.StrokeThickness = 2;
-            shape11.StrokeBrush = Window.Current.Compositor.CreateColorBrush(Windows.UI.Colors.Black);
+            shape11.StrokeBrush = Window.Current.Compositor.CreateColorBrush(Colors.Black);
             shape11.IsStrokeNonScaling = true;
 
             var shape12 = Window.Current.Compositor.CreateSpriteShape(line12);
             shape12.StrokeThickness = 2;
-            shape12.StrokeBrush = Window.Current.Compositor.CreateColorBrush(Windows.UI.Colors.Black);
+            shape12.StrokeBrush = Window.Current.Compositor.CreateColorBrush(Colors.Black);
             shape12.IsStrokeNonScaling = true;
 
             var visual1 = Window.Current.Compositor.CreateShapeVisual();
@@ -1536,11 +1525,11 @@ namespace Unigram.Controls.Cells
 
             var shape21 = Window.Current.Compositor.CreateSpriteShape(line21);
             shape21.StrokeThickness = 2;
-            shape21.StrokeBrush = Window.Current.Compositor.CreateColorBrush(Windows.UI.Colors.Black);
+            shape21.StrokeBrush = Window.Current.Compositor.CreateColorBrush(Colors.Black);
 
             var shape22 = Window.Current.Compositor.CreateSpriteShape(line22);
             shape22.StrokeThickness = 2;
-            shape22.StrokeBrush = Window.Current.Compositor.CreateColorBrush(Windows.UI.Colors.Black);
+            shape22.StrokeBrush = Window.Current.Compositor.CreateColorBrush(Colors.Black);
 
             var visual2 = Window.Current.Compositor.CreateShapeVisual();
             visual2.Shapes.Add(shape22);
@@ -1601,7 +1590,7 @@ namespace Unigram.Controls.Cells
             var sqrt = (float)Math.Sqrt(2);
 
             var diagonal = height * sqrt;
-            var length = (diagonal / 2f) / sqrt;
+            var length = diagonal / 2f / sqrt;
 
             var duration = 250;
             var percent = stroke / length;
@@ -1611,7 +1600,7 @@ namespace Unigram.Controls.Cells
             var anim11 = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
             anim11.InsertKeyFrame(0, 0);
             anim11.InsertKeyFrame(1, 1, linear);
-            anim11.Duration = TimeSpan.FromMilliseconds(duration - (percent * duration));
+            anim11.Duration = TimeSpan.FromMilliseconds(duration - percent * duration);
 
             var anim12 = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
             anim12.InsertKeyFrame(0, 0);

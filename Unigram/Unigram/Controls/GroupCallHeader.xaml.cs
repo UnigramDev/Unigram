@@ -5,6 +5,7 @@ using System.Numerics;
 using System.Windows.Input;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Navigation;
 using Unigram.Services;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -95,7 +96,7 @@ namespace Unigram.Controls
 
                     TitleLabel.Text = call.Title.Length > 0 ? call.Title : Strings.Resources.VoipGroupScheduledVoiceChat;
 
-                    JoinButton.Background = App.Current.Resources["VoiceChatPurpleBrush"] as Brush;
+                    JoinButton.Background = BootStrapper.Current.Resources["VoiceChatPurpleBrush"] as Brush;
                     JoinButton.Content = call.GetStartsIn();
                 }
                 else
@@ -104,7 +105,7 @@ namespace Unigram.Controls
 
                     TitleLabel.Text = Strings.Resources.VoipGroupVoiceChat;
 
-                    JoinButton.Background = App.Current.Resources["StartButtonBackground"] as Brush;
+                    JoinButton.Background = BootStrapper.Current.Resources["StartButtonBackground"] as Brush;
                     JoinButton.Content = Strings.Resources.VoipChatJoin;
                 }
 

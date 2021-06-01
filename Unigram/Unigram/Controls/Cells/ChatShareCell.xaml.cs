@@ -88,7 +88,7 @@ namespace Unigram.Controls.Cells
 
         private void InitializeSelection()
         {
-            CompositionPath GetCheckMark()
+            static CompositionPath GetCheckMark()
             {
                 CanvasGeometry result;
                 using (var builder = new CanvasPathBuilder(null))
@@ -116,7 +116,7 @@ namespace Unigram.Controls.Cells
                 var shape1 = compositor.CreateSpriteShape();
                 shape1.Geometry = polygon;
                 shape1.StrokeThickness = 1.5f;
-                shape1.StrokeBrush = compositor.CreateColorBrush(Windows.UI.Colors.White);
+                shape1.StrokeBrush = compositor.CreateColorBrush(Colors.White);
 
                 var ellipse = compositor.CreateEllipseGeometry();
                 ellipse.Radius = new Vector2(8);
@@ -124,7 +124,7 @@ namespace Unigram.Controls.Cells
 
                 var shape2 = compositor.CreateSpriteShape();
                 shape2.Geometry = ellipse;
-                shape2.FillBrush = compositor.CreateColorBrush(Windows.UI.Colors.Black);
+                shape2.FillBrush = compositor.CreateColorBrush(Colors.Black);
 
                 var outer = compositor.CreateEllipseGeometry();
                 outer.Radius = new Vector2(10);
@@ -132,7 +132,7 @@ namespace Unigram.Controls.Cells
 
                 var shape3 = compositor.CreateSpriteShape();
                 shape3.Geometry = outer;
-                shape3.FillBrush = compositor.CreateColorBrush(Windows.UI.Colors.White);
+                shape3.FillBrush = compositor.CreateColorBrush(Colors.White);
 
                 var visual = compositor.CreateShapeVisual();
                 visual.Shapes.Add(shape3);

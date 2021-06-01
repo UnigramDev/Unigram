@@ -313,7 +313,7 @@ namespace Unigram.Controls
 
         public void Seek(double position)
         {
-            if (position < 0 || position > 1)
+            if (position is < 0 or > 1)
             {
                 return;
             }

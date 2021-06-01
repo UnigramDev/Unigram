@@ -191,7 +191,7 @@ namespace Unigram.Common
 
                 //Frame.Navigated += handler;
 
-                state = state ?? new NavigationState();
+                state ??= new NavigationState();
 
                 if (message != null)
                 {

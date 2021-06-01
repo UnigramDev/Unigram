@@ -21,8 +21,8 @@ namespace Unigram.Charts
         {
             if (chartData != null)
             {
-                float fullWidth = (chartWidth / (pickerDelegate.pickerEnd - pickerDelegate.pickerStart));
-                float offset = fullWidth * (pickerDelegate.pickerStart) - HORIZONTAL_PADDING;
+                float fullWidth = chartWidth / (pickerDelegate.pickerEnd - pickerDelegate.pickerStart);
+                float offset = fullWidth * pickerDelegate.pickerStart - HORIZONTAL_PADDING;
 
 
                 for (int k = 0; k < lines.Count; k++)
@@ -32,8 +32,6 @@ namespace Unigram.Charts
                     {
                         continue;
                     }
-
-                    int j = 0;
 
                     float p;
                     if (chartData.xPercentage.Length < 2)
@@ -62,10 +60,12 @@ namespace Unigram.Charts
                         float xPoint = chartData.xPercentage[i] * fullWidth - offset;
                         float yPercentage = (y[i] - currentMinHeight) / (currentMaxHeight - currentMinHeight);
                         float padding = line.paint.StrokeWidth / 2f;
-                        float yPoint = MeasuredHeight - chartBottom - padding - (yPercentage) * (MeasuredHeight - chartBottom - SIGNATURE_TEXT_HEIGHT - padding);
+                        float yPoint = MeasuredHeight - chartBottom - padding - yPercentage * (MeasuredHeight - chartBottom - SIGNATURE_TEXT_HEIGHT - padding);
 
                         if (USE_LINES)
                         {
+
+                            int j;
                             if (j == 0)
                             {
                                 line.linesPath[j++] = xPoint;
@@ -87,8 +87,8 @@ namespace Unigram.Charts
                                 //line.chartPath.moveTo(xPoint, yPoint);
                                 if (drawSteps)
                                 {
-                                    line.chartPath.BeginFigure(xPoint - (p / 2), yPoint);
-                                    line.chartPath.AddLine(xPoint + (p / 2), yPoint);
+                                    line.chartPath.BeginFigure(xPoint - p / 2, yPoint);
+                                    line.chartPath.AddLine(xPoint + p / 2, yPoint);
                                 }
                                 else
                                 {
@@ -101,8 +101,8 @@ namespace Unigram.Charts
                                 //line.chartPath.lineTo(xPoint, yPoint);
                                 if (drawSteps)
                                 {
-                                    line.chartPath.AddLine(xPoint - (p / 2), yPoint);
-                                    line.chartPath.AddLine(xPoint + (p / 2), yPoint);
+                                    line.chartPath.AddLine(xPoint - p / 2, yPoint);
+                                    line.chartPath.AddLine(xPoint + p / 2, yPoint);
                                 }
                                 else
                                 {
@@ -229,8 +229,8 @@ namespace Unigram.Charts
                             {
                                 if (drawSteps)
                                 {
-                                    line.bottomLinePath.BeginFigure(new Vector2(xPoint - (p / 2), yPoint));
-                                    line.bottomLinePath.AddLine(new Vector2(xPoint + (p / 2), yPoint));
+                                    line.bottomLinePath.BeginFigure(new Vector2(xPoint - p / 2, yPoint));
+                                    line.bottomLinePath.AddLine(new Vector2(xPoint + p / 2, yPoint));
                                 }
                                 else
                                 {
@@ -241,8 +241,8 @@ namespace Unigram.Charts
                             {
                                 if (drawSteps)
                                 {
-                                    line.bottomLinePath.AddLine(new Vector2(xPoint - (p / 2), yPoint));
-                                    line.bottomLinePath.AddLine(new Vector2(xPoint + (p / 2), yPoint));
+                                    line.bottomLinePath.AddLine(new Vector2(xPoint - p / 2, yPoint));
+                                    line.bottomLinePath.AddLine(new Vector2(xPoint + p / 2, yPoint));
                                 }
                                 else
                                 {

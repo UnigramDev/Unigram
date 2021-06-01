@@ -57,7 +57,7 @@ namespace Unigram.Services
         public bool IsBiometricsEnabled
         {
             get => _settingsService.IsHelloEnabled;
-            set =>_settingsService.IsHelloEnabled = value;
+            set => _settingsService.IsHelloEnabled = value;
         }
 
         public DateTime CloseTime
@@ -125,7 +125,7 @@ namespace Unigram.Services
         {
             if (passcode != null && passcode.Length == 4)
             {
-                return passcode.All(x => x >= '0' && x <= '9');
+                return passcode.All(x => x is >= '0' and <= '9');
             }
 
             return false;

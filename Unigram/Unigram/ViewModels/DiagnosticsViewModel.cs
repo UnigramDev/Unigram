@@ -142,10 +142,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public bool CanUseTestDC
-        {
-            get => ProtoService.AuthorizationState is not AuthorizationStateReady;
-        }
+        public bool CanUseTestDC => ProtoService.AuthorizationState is not AuthorizationStateReady;
 
         public bool UseTestDC
         {
@@ -229,7 +226,7 @@ namespace Unigram.ViewModels
             try
             {
                 var file = await ApplicationData.Current.LocalFolder.CreateFileAsync("video_info.txt", CreationCollisionOption.ReplaceExisting);
-                
+
                 await FileIO.WriteTextAsync(file, builder.ToString());
                 await SharePopup.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(file.Path), null, true, null));
             }

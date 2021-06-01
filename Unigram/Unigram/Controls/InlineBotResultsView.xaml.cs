@@ -123,7 +123,7 @@ namespace Unigram.Controls
                     var content = button.Content as Grid;
                     if (content.Children[0] is Image image)
                     {
-                        if (result is InlineQueryResultPhoto || result is InlineQueryResultVideo)
+                        if (result is InlineQueryResultPhoto or InlineQueryResultVideo)
                         {
                             image.Source = new BitmapImage(UriEx.ToLocal(file.Local.Path));
                         }
@@ -241,7 +241,7 @@ namespace Unigram.Controls
             {
                 _zoomer.ElementPrepared(args.Element);
 
-                if (result is InlineQueryResultPhoto || result is InlineQueryResultVideo)
+                if (result is InlineQueryResultPhoto or InlineQueryResultVideo)
                 {
                     File file = null;
                     if (result is InlineQueryResultPhoto photo)

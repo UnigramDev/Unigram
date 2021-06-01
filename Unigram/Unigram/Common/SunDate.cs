@@ -139,7 +139,7 @@ namespace Unigram.Common
 
         private static int SunRiseSetForYear(int year, int month, int day, double lon, double lat, double[] sun)
         {
-            return SunRiseSetHelperForYear(year, month, day, lon, lat, (-35.0 / 60.0), 1, sun);
+            return SunRiseSetHelperForYear(year, month, day, lon, lat, -35.0 / 60.0, 1, sun);
         }
 
         public static int[] CalculateSunriseSunset(double lat, double lon)

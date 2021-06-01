@@ -87,7 +87,7 @@ namespace Unigram.Views
         {
             if (_passcodeService.IsSimple && Field.Password.Length == 4)
             {
-                if (Field.Password.All(x => x >= '0' && x <= '9') && _passcodeService.Check(Field.Password))
+                if (Field.Password.All(x => x is >= '0' and <= '9') && _passcodeService.Check(Field.Password))
                 {
                     Unlock();
                 }

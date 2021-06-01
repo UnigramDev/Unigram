@@ -78,7 +78,7 @@ namespace Unigram.Services
                 var test = await protoService.SendAsync(new GetLanguagePackStrings(info.Id, new string[0]));
                 if (test is LanguagePackStrings strings)
                 {
-                    saveRemoteLocaleStrings(info.Id, strings);
+                    SaveRemoteLocaleStrings(info.Id, strings);
                 }
 
                 return new Error();
@@ -108,7 +108,7 @@ namespace Unigram.Services
             return new Ok();
         }
 
-        public void saveRemoteLocaleStrings(string lang, LanguagePackStrings difference)
+        public void SaveRemoteLocaleStrings(string lang, LanguagePackStrings difference)
         {
             var fileName = Path.Combine(ApplicationData.Current.LocalFolder.Path, "test", lang, "Resources.resw");
             try
@@ -424,7 +424,7 @@ namespace Unigram.Services
                         values[value.Key + "Many"] = GetValue(pluralized.ManyValue);
                         values[value.Key + "Other"] = GetValue(pluralized.OtherValue);
                         break;
-                    case LanguagePackStringValueDeleted _:
+                    case LanguagePackStringValueDeleted:
                         values.TryRemove(value.Key, out _);
                         break;
                 }

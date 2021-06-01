@@ -91,11 +91,11 @@ namespace Unigram.Common
 
                 if (h < 0.0)
                 {
-                    h = h + 360;
+                    h += 360;
                 }
             }
 
-            return new HSV(h, s, (v / 255));
+            return new HSV(h, s, v / 255);
         }
 
         public HSL ToHSL()
@@ -103,9 +103,9 @@ namespace Unigram.Common
             RGB rgb = this;
             HSL hsl = new HSL();
 
-            float r = (rgb.R / 255.0f);
-            float g = (rgb.G / 255.0f);
-            float b = (rgb.B / 255.0f);
+            float r = rgb.R / 255.0f;
+            float g = rgb.G / 255.0f;
+            float b = rgb.B / 255.0f;
 
             float min = Math.Min(Math.Min(r, g), b);
             float max = Math.Max(Math.Max(r, g), b);
@@ -126,15 +126,15 @@ namespace Unigram.Common
 
                 if (r == max)
                 {
-                    hue = ((g - b) / 6) / delta;
+                    hue = (g - b) / 6 / delta;
                 }
                 else if (g == max)
                 {
-                    hue = (1.0f / 3) + ((b - r) / 6) / delta;
+                    hue = 1.0f / 3 + (b - r) / 6 / delta;
                 }
                 else
                 {
-                    hue = (2.0f / 3) + ((r - g) / 6) / delta;
+                    hue = 2.0f / 3 + (r - g) / 6 / delta;
                 }
 
                 if (hue < 0)
@@ -193,7 +193,9 @@ namespace Unigram.Common
         public RGB ToRGB()
         {
             HSV hsv = this;
-            double r = 0, g = 0, b = 0;
+            double r;
+            double g;
+            double b;
 
             if (hsv.S == 0)
             {
@@ -212,15 +214,15 @@ namespace Unigram.Common
                 }
                 else
                 {
-                    hsv.H = hsv.H / 60;
+                    hsv.H /= 60;
                 }
 
                 i = (int)Math.Truncate(hsv.H);
                 f = hsv.H - i;
 
                 p = hsv.V * (1.0 - hsv.S);
-                q = hsv.V * (1.0 - (hsv.S * f));
-                t = hsv.V * (1.0 - (hsv.S * (1.0 - f)));
+                q = hsv.V * (1.0 - hsv.S * f);
+                t = hsv.V * (1.0 - hsv.S * (1.0 - f));
 
                 switch (i)
                 {
@@ -306,9 +308,9 @@ namespace Unigram.Common
         public RGB ToRGB()
         {
             var hsl = this;
-            byte r = 0;
-            byte g = 0;
-            byte b = 0;
+            byte r;
+            byte g;
+            byte b;
 
             if (hsl.S == 0)
             {
@@ -319,12 +321,12 @@ namespace Unigram.Common
                 double v1, v2;
                 double hue = (float)hsl.H / 360;
 
-                v2 = (hsl.L < 0.5) ? (hsl.L * (1 + hsl.S)) : ((hsl.L + hsl.S) - (hsl.L * hsl.S));
+                v2 = (hsl.L < 0.5) ? (hsl.L * (1 + hsl.S)) : (hsl.L + hsl.S - hsl.L * hsl.S);
                 v1 = 2 * hsl.L - v2;
 
-                r = (byte)(255 * HueToRGB(v1, v2, hue + (1.0f / 3)));
+                r = (byte)(255 * HueToRGB(v1, v2, hue + 1.0f / 3));
                 g = (byte)(255 * HueToRGB(v1, v2, hue));
-                b = (byte)(255 * HueToRGB(v1, v2, hue - (1.0f / 3)));
+                b = (byte)(255 * HueToRGB(v1, v2, hue - 1.0f / 3));
             }
 
             return new RGB(r, g, b);
@@ -344,7 +346,7 @@ namespace Unigram.Common
 
             if ((6 * vH) < 1)
             {
-                return (v1 + (v2 - v1) * 6 * vH);
+                return v1 + (v2 - v1) * 6 * vH;
             }
 
             if ((2 * vH) < 1)
@@ -354,7 +356,7 @@ namespace Unigram.Common
 
             if ((3 * vH) < 2)
             {
-                return (v1 + (v2 - v1) * ((2.0f / 3) - vH) * 6);
+                return v1 + (v2 - v1) * (2.0f / 3 - vH) * 6;
             }
 
             return v1;
@@ -434,11 +436,11 @@ namespace Unigram.Common
 
                 if (h < 0.0)
                 {
-                    h = h + 360;
+                    h += 360;
                 }
             }
 
-            return new HSV(h, s, (v / 255));
+            return new HSV(h, s, v / 255);
         }
 
 
@@ -447,9 +449,9 @@ namespace Unigram.Common
             RGB rgb = color;
             HSL hsl = new HSL();
 
-            float r = (rgb.R / 255.0f);
-            float g = (rgb.G / 255.0f);
-            float b = (rgb.B / 255.0f);
+            float r = rgb.R / 255.0f;
+            float g = rgb.G / 255.0f;
+            float b = rgb.B / 255.0f;
 
             float min = Math.Min(Math.Min(r, g), b);
             float max = Math.Max(Math.Max(r, g), b);
@@ -470,15 +472,15 @@ namespace Unigram.Common
 
                 if (r == max)
                 {
-                    hue = ((g - b) / 6) / delta;
+                    hue = (g - b) / 6 / delta;
                 }
                 else if (g == max)
                 {
-                    hue = (1.0f / 3) + ((b - r) / 6) / delta;
+                    hue = 1.0f / 3 + (b - r) / 6 / delta;
                 }
                 else
                 {
-                    hue = (2.0f / 3) + ((r - g) / 6) / delta;
+                    hue = 2.0f / 3 + (r - g) / 6 / delta;
                 }
 
                 if (hue < 0)

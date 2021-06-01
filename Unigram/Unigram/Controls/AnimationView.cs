@@ -211,7 +211,7 @@ namespace Unigram.Controls
             }
         }
 
-        private  async void OnSourceChanged(IVideoAnimationSource newValue, IVideoAnimationSource oldValue)
+        private async void OnSourceChanged(IVideoAnimationSource newValue, IVideoAnimationSource oldValue)
         {
             var canvas = _canvas;
             if (canvas == null)

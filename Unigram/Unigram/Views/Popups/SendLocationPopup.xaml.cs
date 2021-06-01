@@ -102,7 +102,7 @@ namespace Unigram.Views.Popups
         // Init map
         private void InitializeMap()
         {
-            var space = (ActualHeight * 40) / 100;
+            var space = ActualHeight * 40 / 100;
 
             MapPresenter.Height = ActualHeight;
             MapPresenter.Margin = new Thickness(0, -(space / 2), 0, -(space / 2));
@@ -139,13 +139,13 @@ namespace Unigram.Views.Popups
             {
                 //case GeolocationAccessStatus.Allowed:
 
-                Geolocator geolocator = new Geolocator { DesiredAccuracy = PositionAccuracy.Default };
+                var geolocator = new Geolocator { DesiredAccuracy = PositionAccuracy.Default };
 
                 // Subscribe to the StatusChanged event to get updates of location status changes.
                 //_geolocator.StatusChanged += OnStatusChanged;
 
                 // Carry out the operation.
-                Geoposition pos = await geolocator.GetGeopositionAsync();
+                var pos = await geolocator.GetGeopositionAsync();
 
                 mMap.Center = new Geopoint(new BasicGeoposition
                 {

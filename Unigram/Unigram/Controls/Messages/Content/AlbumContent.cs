@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Navigation;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.UI;
@@ -188,7 +189,7 @@ namespace Unigram.Controls.Messages.Content
                 paragraph.Inlines.Add(span);
 
                 var rich = new RichTextBlock();
-                rich.Style = App.Current.Resources["EmojiRichTextBlockStyle"] as Style;
+                rich.Style = BootStrapper.Current.Resources["EmojiRichTextBlockStyle"] as Style;
                 rich.Blocks.Add(paragraph);
                 rich.Margin = new Thickness(0, 0, 0, 8);
 
@@ -269,7 +270,7 @@ namespace Unigram.Controls.Messages.Content
 
                     if (entity.HasFlag(TextStyle.Mention) || entity.HasFlag(TextStyle.Url))
                     {
-                        if (entity.Type is TextEntityTypeMentionName || entity.Type is TextEntityTypeTextUrl)
+                        if (entity.Type is TextEntityTypeMentionName or TextEntityTypeTextUrl)
                         {
                             var hyperlink = new Hyperlink();
                             object data;
@@ -417,7 +418,7 @@ namespace Unigram.Controls.Messages.Content
                 return value as SolidColorBrush;
             }
 
-            return App.Current.Resources[key] as SolidColorBrush;
+            return BootStrapper.Current.Resources[key] as SolidColorBrush;
         }
 
         private void Entity_Click(MessageViewModel message, TextEntityType type, string data)
@@ -434,7 +435,7 @@ namespace Unigram.Controls.Messages.Content
             {
                 message.Delegate.OpenUrl("tel:" + data, false);
             }
-            else if (type is TextEntityTypeHashtag || type is TextEntityTypeCashtag)
+            else if (type is TextEntityTypeHashtag or TextEntityTypeCashtag)
             {
                 message.Delegate.OpenHashtag(data);
             }

@@ -662,7 +662,7 @@ namespace Unigram.Views.Settings
         {
             if (ResourceKey != null)
             {
-                Value = default(Color);
+                Value = default;
             }
             else
             {
@@ -686,7 +686,7 @@ namespace Unigram.Views.Settings
                 }
             }
 
-            return default(Color);
+            return default;
         }
     }
 

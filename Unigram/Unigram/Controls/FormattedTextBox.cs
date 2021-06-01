@@ -144,7 +144,7 @@ namespace Unigram.Controls
                 var send = SettingsService.Current.IsSendByEnterEnabled
                     ? !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down)
                     : ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
-                
+
                 AcceptsReturn = !send;
                 e.Handled = send;
 
@@ -196,11 +196,6 @@ namespace Unigram.Controls
 
         #region Context menu
 
-        private void OnContextMenuOpening(object sender, ContextMenuEventArgs e)
-        {
-            e.Handled = true;
-        }
-
         private void OnContextFlyoutOpening(object sender, object e)
         {
             var flyout = ContextFlyout as MenuFlyout;
@@ -226,7 +221,7 @@ namespace Unigram.Controls
             formatting.CreateFlyoutItem(length && format.Bold == FormatEffect.Off, ContextBold_Click, Strings.Resources.Bold, new FontIcon { Glyph = Icons.TextBold }, VirtualKey.B);
             formatting.CreateFlyoutItem(length && format.Italic == FormatEffect.Off, ContextItalic_Click, Strings.Resources.Italic, new FontIcon { Glyph = Icons.TextItalic }, VirtualKey.I);
             formatting.CreateFlyoutItem(length && format.Underline == UnderlineType.None, ContextUnderline_Click, Strings.Resources.Underline, new FontIcon { Glyph = Icons.TextUnderline }, VirtualKey.U);
-            formatting.CreateFlyoutItem(length && format.Strikethrough == FormatEffect.Off, ContextStrikethrough_Click, Strings.Resources.Strike, new FontIcon { Glyph = Icons.TextStrikethrough, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily }, VirtualKey.X, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
+            formatting.CreateFlyoutItem(length && format.Strikethrough == FormatEffect.Off, ContextStrikethrough_Click, Strings.Resources.Strike, new FontIcon { Glyph = Icons.TextStrikethrough, FontFamily = Navigation.BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily }, VirtualKey.X, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
             formatting.CreateFlyoutItem(length && format.Name != "Consolas", ContextMonospace_Click, Strings.Resources.Mono, new FontIcon { Glyph = Icons.Code }, VirtualKey.M, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
             formatting.Items.Add(new MenuFlyoutSeparator());
             formatting.CreateFlyoutItem(!mention, ContextLink_Click, clone.Link.Length > 0 ? "Edit link" : Strings.Resources.CreateLink, new FontIcon { Glyph = Icons.Link }, VirtualKey.K);
@@ -809,7 +804,7 @@ namespace Unigram.Controls
         }
 
         public bool CanPasteClipboardContent => Document.Selection.CanPaste(0);
-        
+
         public void PasteFromClipboard()
         {
             Document.Selection.Paste(0);
@@ -864,7 +859,7 @@ namespace Unigram.Controls
                         {
                             range.CharacterFormat.Strikethrough = FormatEffect.On;
                         }
-                        else if (entity.Type is TextEntityTypeCode || entity.Type is TextEntityTypePre || entity.Type is TextEntityTypePreCode)
+                        else if (entity.Type is TextEntityTypeCode or TextEntityTypePre or TextEntityTypePreCode)
                         {
                             range.CharacterFormat.Name = "Consolas";
                         }
@@ -915,7 +910,7 @@ namespace Unigram.Controls
                         {
                             range.CharacterFormat.Italic = FormatEffect.On;
                         }
-                        else if (entity.Type is TextEntityTypeCode || entity.Type is TextEntityTypePre || entity.Type is TextEntityTypePreCode)
+                        else if (entity.Type is TextEntityTypeCode or TextEntityTypePre or TextEntityTypePreCode)
                         {
                             range.CharacterFormat.Name = "Consolas";
                         }

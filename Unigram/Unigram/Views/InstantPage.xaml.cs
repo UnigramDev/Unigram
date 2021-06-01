@@ -10,6 +10,7 @@ using Unigram.Controls.Gallery;
 using Unigram.Controls.Messages;
 using Unigram.Controls.Messages.Content;
 using Unigram.Converters;
+using Unigram.Navigation;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
@@ -523,7 +524,7 @@ namespace Unigram.Views
         {
             var panel = new StackPanel();
 
-            var header = new BadgeButton { Content = ProcessText(details, false), Glyph = details.IsOpen ? Icons.ChevronUp : Icons.ChevronDown, Style = App.Current.Resources["GlyphBadgeButtonStyle"] as Style, Margin = new Thickness(-12, 0, -12, 0) };
+            var header = new BadgeButton { Content = ProcessText(details, false), Glyph = details.IsOpen ? Icons.ChevronUp : Icons.ChevronDown, Style = BootStrapper.Current.Resources["GlyphBadgeButtonStyle"] as Style, Margin = new Thickness(-12, 0, -12, 0) };
             var inner = new StackPanel { Padding = new Thickness(0, 12, 0, 12), Visibility = details.IsOpen ? Visibility.Visible : Visibility.Collapsed };
 
             panel.Children.Add(header);
@@ -1237,7 +1238,6 @@ namespace Unigram.Views
             element.Children.Add(header);
 
             PageBlock previousBlock = null;
-            FrameworkElement previousElement = null;
             foreach (var subBlock in block.PageBlocks)
             {
                 var subLayout = ProcessBlock(subBlock);
@@ -1250,7 +1250,7 @@ namespace Unigram.Views
                 }
 
                 previousBlock = block;
-                previousElement = subLayout;
+                FrameworkElement previousElement = subLayout;
             }
 
             return element;
@@ -1409,7 +1409,7 @@ namespace Unigram.Views
 
         private double SpacingBetweenBlocks(PageBlock upper, PageBlock lower)
         {
-            if (lower is PageBlockCover || lower is PageBlockChatLink)
+            if (lower is PageBlockCover or PageBlockChatLink)
             {
                 return 0;
             }
@@ -1421,7 +1421,7 @@ namespace Unigram.Views
 
             return 12;
 
-            if (lower is PageBlockCover || lower is PageBlockChatLink)
+            if (lower is PageBlockCover or PageBlockChatLink)
             {
                 return 0;
             }
@@ -1450,11 +1450,11 @@ namespace Unigram.Views
             }
             else if (lower is PageBlockParagraph)
             {
-                if (upper is PageBlockTitle || upper is PageBlockAuthorDate)
+                if (upper is PageBlockTitle or PageBlockAuthorDate)
                 {
                     return 20; // 34;
                 }
-                else if (upper is PageBlockHeader || upper is PageBlockSubheader)
+                else if (upper is PageBlockHeader or PageBlockSubheader)
                 {
                     return 15; // 25;
                 }
@@ -1477,15 +1477,15 @@ namespace Unigram.Views
             }
             else if (lower is PageBlockList)
             {
-                if (upper is PageBlockTitle || upper is PageBlockAuthorDate)
+                if (upper is PageBlockTitle or PageBlockAuthorDate)
                 {
                     return 20; // 34;
                 }
-                else if (upper is PageBlockHeader || upper is PageBlockSubheader)
+                else if (upper is PageBlockHeader or PageBlockSubheader)
                 {
                     return 19; // 31;
                 }
-                else if (upper is PageBlockParagraph || upper is PageBlockList)
+                else if (upper is PageBlockParagraph or PageBlockList)
                 {
                     return 19; // 31;
                 }
@@ -1534,9 +1534,9 @@ namespace Unigram.Views
 
         private double PaddingForBlock(PageBlock block)
         {
-            if (block is PageBlockCover || block is PageBlockPreformatted ||
-                block is PageBlockPhoto || block is PageBlockVideo ||
-                block is PageBlockSlideshow || block is PageBlockChatLink)
+            if (block is PageBlockCover or PageBlockPreformatted or
+                PageBlockPhoto or PageBlockVideo or
+                PageBlockSlideshow or PageBlockChatLink)
             {
                 return 0.0;
             }

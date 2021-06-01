@@ -170,7 +170,7 @@ namespace Unigram.ViewModels
             {
                 return AutoDownloadChat.Group;
             }
-            else if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
+            else if (chat.Type is ChatTypePrivate or ChatTypeSecret)
             {
                 var user = ProtoService.GetUser(chat);
                 if (user == null)
@@ -246,7 +246,7 @@ namespace Unigram.ViewModels
 
             if (message.ChatId == CacheService.Options.RepliesBotChatId)
             {
-                if (message.ForwardInfo?.Origin is MessageForwardOriginUser || message.ForwardInfo?.Origin is MessageForwardOriginChat)
+                if (message.ForwardInfo?.Origin is MessageForwardOriginUser or MessageForwardOriginChat)
                 {
                     chatId = message.ForwardInfo.FromChatId;
                     threadId = message.ForwardInfo.FromMessageId;

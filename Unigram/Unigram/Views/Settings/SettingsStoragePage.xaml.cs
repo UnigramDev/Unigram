@@ -3,6 +3,7 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
+using Unigram.Navigation;
 using Unigram.ViewModels.Settings;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -26,7 +27,7 @@ namespace Unigram.Views.Settings
             int j = 0;
             for (int i = 0; i < 4; i++)
             {
-                var label = new TextBlock { Text = ConvertKeepMediaTick(i), TextAlignment = TextAlignment.Center, HorizontalAlignment = HorizontalAlignment.Stretch, Style = App.Current.Resources["InfoCaptionTextBlockStyle"] as Style };
+                var label = new TextBlock { Text = ConvertKeepMediaTick(i), TextAlignment = TextAlignment.Center, HorizontalAlignment = HorizontalAlignment.Stretch, Style = BootStrapper.Current.Resources["InfoCaptionTextBlockStyle"] as Style };
                 Grid.SetColumn(label, j);
 
                 KeepMediaTicks.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });

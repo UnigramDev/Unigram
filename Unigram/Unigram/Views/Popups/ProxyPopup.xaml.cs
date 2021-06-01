@@ -155,7 +155,7 @@ namespace Unigram.Views.Popups
                     ? Strings.Resources.UseProxyTelegramInfo + Environment.NewLine + Environment.NewLine + Strings.Resources.UseProxyTelegramInfo2
                     : TypeHttp.IsChecked == true
                     ? "Enable if server supports transparent TCP connections via HTTP CONNECT method." + Environment.NewLine + Environment.NewLine + "When supported, it may improve connection speed dramatically. Try changing this option if this proxy doesn't work."
-                    : String.Empty;
+                    : string.Empty;
             }
         }
     }

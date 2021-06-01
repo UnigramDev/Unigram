@@ -37,7 +37,7 @@ namespace Unigram.Controls
             var size = root.GetActualSize();
             var offset = new Vector2();
 
-            if ((radius.TopLeft == 0 && radius.TopRight == 0) || (radius.BottomLeft == 0 || radius.BottomRight == 0))
+            if ((radius.TopLeft == 0 && radius.TopRight == 0) || radius.BottomLeft == 0 || radius.BottomRight == 0)
             {
                 size.Y += (float)radius.BottomLeft;
                 offset.Y = radius.TopLeft == 0 ? -(float)radius.BottomLeft : 0;
@@ -63,7 +63,7 @@ namespace Unigram.Controls
             var size = e.NewSize.ToVector2();
             var offset = new Vector2();
 
-            if ((radius.TopLeft == 0 && radius.TopRight == 0) || (radius.BottomLeft == 0 || radius.BottomRight == 0))
+            if ((radius.TopLeft == 0 && radius.TopRight == 0) || radius.BottomLeft == 0 || radius.BottomRight == 0)
             {
                 size.Y += (float)radius.BottomLeft;
                 offset.Y = radius.TopLeft == 0 ? -(float)radius.BottomLeft : 0;
@@ -111,7 +111,7 @@ namespace Unigram.Controls
             var size = root.GetActualSize();
             var offset = new Vector2();
 
-            if ((radius.TopLeft == 0 && radius.TopRight == 0) || (radius.BottomLeft == 0 || radius.BottomRight == 0))
+            if ((radius.TopLeft == 0 && radius.TopRight == 0) || radius.BottomLeft == 0 || radius.BottomRight == 0)
             {
                 size.Y += (float)radius.BottomLeft;
                 offset.Y = radius.TopLeft == 0 ? -(float)radius.BottomLeft : 0;

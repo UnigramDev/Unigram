@@ -39,7 +39,7 @@ namespace Unigram.ViewModels
             set => Set(ref _topChats, value);
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, Navigation.Services.NavigationState state)
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             //if (mode == NavigationMode.New)
             //{
@@ -53,7 +53,7 @@ namespace Unigram.ViewModels
                 var list = ProtoService.GetChats(chats.ChatIds);
                 Items.Clear();
 
-                if (_searchType == SearchChatsType.Post || _searchType == SearchChatsType.All)
+                if (_searchType is SearchChatsType.Post or SearchChatsType.All)
                 {
                     var myId = CacheService.Options.MyId;
                     var self = list.FirstOrDefault(x => x.Type is ChatTypePrivate privata && privata.UserId == myId);

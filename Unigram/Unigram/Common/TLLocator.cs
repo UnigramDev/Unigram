@@ -228,8 +228,7 @@ namespace Unigram.Views
                             _protoService,
                             _cacheService,
                             _settingsService,
-                            _eventAggregator),
-                        _eventAggregator));
+                            _eventAggregator)));
             }
             else if (type == typeof(Unigram.ViewModels.DialogThreadViewModel))
             {
@@ -266,8 +265,7 @@ namespace Unigram.Views
                             _protoService,
                             _cacheService,
                             _settingsService,
-                            _eventAggregator),
-                        _eventAggregator));
+                            _eventAggregator)));
             }
             else if (type == typeof(Unigram.ViewModels.DialogPinnedViewModel))
             {
@@ -304,8 +302,7 @@ namespace Unigram.Views
                             _protoService,
                             _cacheService,
                             _settingsService,
-                            _eventAggregator),
-                        _eventAggregator));
+                            _eventAggregator)));
             }
             else if (type == typeof(Unigram.ViewModels.DialogScheduledViewModel))
             {
@@ -342,8 +339,7 @@ namespace Unigram.Views
                             _protoService,
                             _cacheService,
                             _settingsService,
-                            _eventAggregator),
-                        _eventAggregator));
+                            _eventAggregator)));
             }
             else if (type == typeof(Unigram.ViewModels.DialogEventLogViewModel))
             {
@@ -380,8 +376,7 @@ namespace Unigram.Views
                             _protoService,
                             _cacheService,
                             _settingsService,
-                            _eventAggregator),
-                        _eventAggregator));
+                            _eventAggregator)));
             }
             else if (type == typeof(Unigram.ViewModels.Drawers.AnimationDrawerViewModel))
             {
@@ -616,8 +611,7 @@ namespace Unigram.Views
                             _protoService,
                             _cacheService,
                             _settingsService,
-                            _eventAggregator),
-                        _eventAggregator),
+                            _eventAggregator)),
                     _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.LogOutViewModel))
@@ -1215,8 +1209,7 @@ namespace Unigram.Views
                         _protoService,
                         _cacheService,
                         _settingsService,
-                        _eventAggregator),
-                    _eventAggregator));
+                        _eventAggregator)));
             }
             else if (type == typeof(Unigram.Services.IPlaybackService))
             {

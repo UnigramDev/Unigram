@@ -47,7 +47,7 @@ namespace Unigram.Views
                 Arrow.Visibility = Visibility.Collapsed;
                 //VisualUtilities.SetIsVisible(Arrow, false);
             }
-            else if (ViewModel.Type == DialogType.History || ViewModel.Type == DialogType.Thread)
+            else if (ViewModel.Type is DialogType.History or DialogType.Thread)
             {
                 Arrow.Visibility = Visibility.Visible;
                 //VisualUtilities.SetIsVisible(Arrow, true);
@@ -212,7 +212,7 @@ namespace Unigram.Views
 
             _dateHeaderTimer.Stop();
             _dateHeaderTimer.Start();
-            ShowHideDateHeader(minDateIndex > 0, minDateIndex > 0 && minDateIndex < int.MaxValue);
+            ShowHideDateHeader(minDateIndex > 0, minDateIndex is > 0 and < int.MaxValue);
 
             // Read and play messages logic:
             if (messages.Count > 0 && !Messages.IsProgrammaticScrolling && _windowContext.ActivationMode == CoreWindowActivationMode.ActivatedInForeground)

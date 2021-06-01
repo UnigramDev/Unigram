@@ -253,10 +253,10 @@ namespace Unigram.Services.Settings
             {
                 if (type == TelegramTheme.Light)
                 {
-                    return _themeLight = _themeLight ?? new ThemeSettingsBase(_container, TelegramTheme.Light);
+                    return _themeLight ??= new ThemeSettingsBase(_container, TelegramTheme.Light);
                 }
 
-                return _themeDark = _themeDark ?? new ThemeSettingsBase(_container, TelegramTheme.Dark);
+                return _themeDark ??= new ThemeSettingsBase(_container, TelegramTheme.Dark);
             }
         }
 
@@ -483,7 +483,7 @@ namespace Unigram.Services.Settings
 
         public TelegramTheme GetSystemTheme()
         {
-            var app = App.Current as App;
+            var app = BootStrapper.Current as App;
             var current = app.UISettings.GetColorValue(UIColorType.Background);
 
             return current == Colors.Black ? TelegramTheme.Dark : TelegramTheme.Light;

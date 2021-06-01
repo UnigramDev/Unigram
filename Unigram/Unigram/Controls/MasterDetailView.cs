@@ -167,7 +167,7 @@ namespace Unigram.Controls
             {
                 MasterPresenter.Visibility = Visibility.Visible;
             }
-            else if (CurrentState == MasterDetailState.Compact || CurrentState == MasterDetailState.Expanded)
+            else if (CurrentState is MasterDetailState.Compact or MasterDetailState.Expanded)
             {
                 MasterPresenter.Visibility = Visibility.Visible;
             }
@@ -304,7 +304,7 @@ namespace Unigram.Controls
             {
                 MasterPresenter.Visibility = Visibility.Visible;
             }
-            else if (CurrentState == MasterDetailState.Compact || CurrentState == MasterDetailState.Expanded)
+            else if (CurrentState is MasterDetailState.Compact or MasterDetailState.Expanded)
             {
                 MasterPresenter.Visibility = Visibility.Visible;
             }
@@ -421,7 +421,7 @@ namespace Unigram.Controls
             {
                 MasterPresenter.Visibility = Visibility.Visible;
             }
-            else if (CurrentState == MasterDetailState.Compact || CurrentState == MasterDetailState.Expanded)
+            else if (CurrentState is MasterDetailState.Compact or MasterDetailState.Expanded)
             {
                 MasterPresenter.Visibility = Visibility.Visible;
             }

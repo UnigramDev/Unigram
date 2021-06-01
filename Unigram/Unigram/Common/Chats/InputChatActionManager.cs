@@ -9,7 +9,7 @@ namespace Unigram.Common.Chats
     {
         public static string GetTypingString(Chat chat, IDictionary<int, ChatAction> typingUsers, Func<int, User> getUser, out ChatAction commonAction)
         {
-            if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
+            if (chat.Type is ChatTypePrivate or ChatTypeSecret)
             {
                 var tuple = typingUsers.FirstOrDefault();
                 //if (tuple != null)
@@ -27,8 +27,8 @@ namespace Unigram.Common.Chats
                         case ChatActionRecordingVoiceNote recordAudio:
                             commonAction = recordAudio;
                             return Strings.Resources.RecordingAudio;
-                        case ChatActionRecordingVideoNote _:
-                        case ChatActionUploadingVideoNote _:
+                        case ChatActionRecordingVideoNote:
+                        case ChatActionUploadingVideoNote:
                             commonAction = new ChatActionRecordingVideoNote();
                             return Strings.Resources.RecordingRound;
                         //case TLSendMessageTypingAction typing:
@@ -42,8 +42,8 @@ namespace Unigram.Common.Chats
                         case ChatActionUploadingPhoto uploadPhoto:
                             commonAction = uploadPhoto;
                             return Strings.Resources.SendingPhoto;
-                        case ChatActionRecordingVideo _:
-                        case ChatActionUploadingVideo _:
+                        case ChatActionRecordingVideo:
+                        case ChatActionUploadingVideo:
                             commonAction = new ChatActionUploadingVideo();
                             return Strings.Resources.SendingVideoStatus;
                     }

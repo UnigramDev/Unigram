@@ -153,7 +153,7 @@ namespace Unigram.Controls.Chats
                     Document.Selection.CharacterFormat = Document.GetDefaultCharacterFormat();
                 }
             }
-            else if (e.Key == VirtualKey.Up || e.Key == VirtualKey.Down)
+            else if (e.Key is VirtualKey.Up or VirtualKey.Down)
             {
                 var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
                 var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
@@ -174,7 +174,7 @@ namespace Unigram.Controls.Chats
                     ViewModel.MessageReplyNextCommand.Execute();
                     e.Handled = true;
                 }
-                else if (e.Key == VirtualKey.Up || e.Key == VirtualKey.Down)
+                else if (e.Key is VirtualKey.Up or VirtualKey.Down)
                 {
                     if (Autocomplete != null && ViewModel.Autocomplete != null)
                     {
@@ -242,12 +242,11 @@ namespace Unigram.Controls.Chats
                 // Still, someone should fill a ticket to Microsoft about this.
                 if (send && HandwritingView.IsOpen)
                 {
-                    RoutedEventHandler handler = null;
-                    handler = (s, args) =>
+                    void handler(object s, RoutedEventArgs args)
                     {
                         _ = SendAsync();
                         HandwritingView.Unloaded -= handler;
-                    };
+                    }
 
                     HandwritingView.Unloaded += handler;
                     HandwritingView.TryClose();

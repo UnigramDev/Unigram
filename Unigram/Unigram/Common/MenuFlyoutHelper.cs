@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Input;
 using Unigram.Controls.Drawers;
+using Unigram.Navigation;
 using Windows.Foundation;
 using Windows.System;
 using Windows.UI.Xaml;
@@ -118,7 +119,7 @@ namespace Unigram.Common
                     if (icon is FontIcon fontIcon)
                     {
                         fontIcon.FontSize = 20;
-                        fontIcon.FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily;
+                        fontIcon.FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily;
                     }
 
                     flyoutItem.Icon = icon;
@@ -149,7 +150,7 @@ namespace Unigram.Common
                     if (icon is FontIcon fontIcon)
                     {
                         fontIcon.FontSize = 20;
-                        fontIcon.FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily;
+                        fontIcon.FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily;
                     }
 
                     flyoutItem.Icon = icon;
@@ -180,7 +181,7 @@ namespace Unigram.Common
             {
                 if (icon is FontIcon fontIcon)
                 {
-                    fontIcon.FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily;
+                    fontIcon.FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily;
                 }
 
                 flyoutItem.Icon = icon;
@@ -238,7 +239,7 @@ namespace Unigram.Common
                 if (icon is FontIcon fontIcon)
                 {
                     fontIcon.FontSize = 20;
-                    fontIcon.FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily;
+                    fontIcon.FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily;
                 }
 
                 flyoutItem.Icon = icon;

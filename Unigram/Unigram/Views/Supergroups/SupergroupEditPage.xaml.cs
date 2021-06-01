@@ -243,7 +243,7 @@ namespace Unigram.Views.Supergroups
         {
             GroupStickersPanel.Visibility = Visibility.Collapsed;
 
-            Admins.Badge = fullInfo.Members.Count(x => x.Status is ChatMemberStatusCreator || x.Status is ChatMemberStatusAdministrator);
+            Admins.Badge = fullInfo.Members.Count(x => x.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator);
             Members.Badge = fullInfo.Members.Count;
             Blacklist.Badge = 0;
 

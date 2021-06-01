@@ -457,7 +457,7 @@ namespace Unigram.ViewModels.Chats
             return true;
         }
 
-        public void DownloadFile(MessageViewModel message, Telegram.Td.Api.File file)
+        public void DownloadFile(MessageViewModel message, File file)
         {
         }
 

@@ -172,7 +172,7 @@ namespace Unigram.Services
 
         public InvokedShortcut Process(AcceleratorKeyEventArgs args)
         {
-            if (args.EventType != CoreAcceleratorKeyEventType.KeyDown && args.EventType != CoreAcceleratorKeyEventType.SystemKeyDown)
+            if (args.EventType is not CoreAcceleratorKeyEventType.KeyDown and not CoreAcceleratorKeyEventType.SystemKeyDown)
             {
                 return new InvokedShortcut(VirtualKeyModifiers.None, VirtualKey.None, new ShortcutCommand[0]);
             }
@@ -212,7 +212,7 @@ namespace Unigram.Services
 
         public bool TryGetShortcut(AcceleratorKeyEventArgs args, out Shortcut shortcut)
         {
-            if (args.EventType != CoreAcceleratorKeyEventType.KeyDown && args.EventType != CoreAcceleratorKeyEventType.SystemKeyDown)
+            if (args.EventType is not CoreAcceleratorKeyEventType.KeyDown and not CoreAcceleratorKeyEventType.SystemKeyDown)
             {
                 shortcut = null;
                 return false;
@@ -241,17 +241,17 @@ namespace Unigram.Services
 
         private bool TryGetShortcut(VirtualKeyModifiers modifiers, VirtualKey key, out Shortcut shortcut)
         {
-            if (key == VirtualKey.Control || key == VirtualKey.LeftControl || key == VirtualKey.RightControl)
+            if (key is VirtualKey.Control or VirtualKey.LeftControl or VirtualKey.RightControl)
             {
                 shortcut = null;
                 return false;
             }
-            else if (key == VirtualKey.Menu || key == VirtualKey.LeftMenu || key == VirtualKey.RightMenu)
+            else if (key is VirtualKey.Menu or VirtualKey.LeftMenu or VirtualKey.RightMenu)
             {
                 shortcut = null;
                 return false;
             }
-            else if (key == VirtualKey.Shift || key == VirtualKey.LeftShift || key == VirtualKey.RightShift)
+            else if (key is VirtualKey.Shift or VirtualKey.LeftShift or VirtualKey.RightShift)
             {
                 shortcut = null;
                 return false;
@@ -662,7 +662,7 @@ namespace Unigram.Services
                 }
             }
 
-            if (Key >= VirtualKey.Number0 && Key <= VirtualKey.Number9)
+            if (Key is >= VirtualKey.Number0 and <= VirtualKey.Number9)
             {
                 parts.Add($"{Key - VirtualKey.Number0}");
             }

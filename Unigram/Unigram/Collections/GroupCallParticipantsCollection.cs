@@ -276,7 +276,9 @@ namespace Unigram.Collections
 
                 if (_handlers.TryGetValue(dispatcher, out NotifyCollectionChangedEventHandler handlers))
                 {
+#pragma warning disable IDE0059 // Unnecessary assignment of a value
                     handlers += value;
+#pragma warning restore IDE0059 // Unnecessary assignment of a value
                 }
                 else
                 {
@@ -293,7 +295,9 @@ namespace Unigram.Collections
 
                 if (_handlers.TryGetValue(dispatcher, out NotifyCollectionChangedEventHandler handlers))
                 {
+#pragma warning disable IDE0059 // Unnecessary assignment of a value
                     handlers -= value;
+#pragma warning restore IDE0059 // Unnecessary assignment of a value
                 }
             }
         }

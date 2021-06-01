@@ -97,17 +97,11 @@ namespace Unigram.Services.Settings
             return preferences;
         }
 
-        public bool IsDefault
-        {
-            get
-            {
-                return _photos == AutoDownloadMode.All &&
+        public bool IsDefault => _photos == AutoDownloadMode.All &&
                     _videos == AutoDownloadMode.All &&
                     _maximumVideoSize == 10 * 1024 * 1024 &&
                     _documents == AutoDownloadMode.All &&
                     _maximumDocumentSize == 3 * 1024 * 1024;
-            }
-        }
 
         private bool _disabled;
         public bool Disabled => _disabled;
@@ -176,7 +170,7 @@ namespace Unigram.Services.Settings
 
         public bool ShouldDownload(AutoDownloadMode mode, AutoDownloadChat chat, NetworkType networkType = null)
         {
-            bool isWiFi = networkType is NetworkTypeWiFi || networkType == null;
+            bool isWiFi = networkType is NetworkTypeWiFi or null;
             bool isCellular = !isWiFi && networkType is not NetworkTypeNone;
 
             bool shouldDownload = false;

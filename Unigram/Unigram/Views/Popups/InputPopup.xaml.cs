@@ -159,7 +159,7 @@ namespace Unigram.Views.Popups
                 return;
             }
 
-            var peer = ButtonAutomationPeer.CreatePeerForElement(button);
+            var peer = FrameworkElementAutomationPeer.CreatePeerForElement(button);
             var pattern = peer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
 
             pattern.Invoke();

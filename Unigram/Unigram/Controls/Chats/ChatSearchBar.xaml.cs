@@ -2,6 +2,7 @@
 using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Navigation;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Chats;
 using Windows.UI.Core;
@@ -46,7 +47,7 @@ namespace Unigram.Controls.Chats
 
             if (viewModel != null)
             {
-                var history = viewModel.Dialog.Type != DialogType.History && viewModel.Dialog.Type != DialogType.Thread;
+                var history = viewModel.Dialog.Type is not DialogType.History and not DialogType.Thread;
                 SearchPrevious.Visibility = history ? Visibility.Collapsed : Visibility.Visible;
                 SearchNext.Visibility = history ? Visibility.Collapsed : Visibility.Visible;
                 ToolsPanel.Visibility = history ? Visibility.Collapsed : Visibility.Visible;
@@ -146,11 +147,11 @@ namespace Unigram.Controls.Chats
 
                 if (filter.Filter is SearchMessagesFilterVideoNote)
                 {
-                    glyph.FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily;
+                    glyph.FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily;
                 }
                 else
                 {
-                    glyph.FontFamily = App.Current.Resources["SymbolThemeFontFamily"] as FontFamily;
+                    glyph.FontFamily = BootStrapper.Current.Resources["SymbolThemeFontFamily"] as FontFamily;
                 }
             }
         }
@@ -300,7 +301,7 @@ namespace Unigram.Controls.Chats
                     viewModel.Autocomplete = null;
                     break;
                 default:
-                    ToolsPanel.Visibility = viewModel.Dialog.Type != DialogType.History && viewModel.Dialog.Type != DialogType.Thread ? Visibility.Collapsed : Visibility.Visible;
+                    ToolsPanel.Visibility = viewModel.Dialog.Type is not DialogType.History and not DialogType.Thread ? Visibility.Collapsed : Visibility.Visible;
                     viewModel.Autocomplete = null;
                     break;
             }
@@ -322,7 +323,7 @@ namespace Unigram.Controls.Chats
             {
                 SetState(ChatSearchState.Media);
             }
-            else if (Field.State == ChatSearchState.Members || Field.State == ChatSearchState.Media)
+            else if (Field.State is ChatSearchState.Members or ChatSearchState.Media)
             {
                 SetState(ChatSearchState.Text);
             }

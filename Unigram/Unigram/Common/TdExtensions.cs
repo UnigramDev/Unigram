@@ -40,7 +40,7 @@ namespace Unigram.Common
 
         public static int ToId(this ChatList chatList)
         {
-            if (chatList is ChatListMain || chatList == null)
+            if (chatList is ChatListMain or null)
             {
                 return 0;
             }
@@ -116,7 +116,7 @@ namespace Unigram.Common
 
         public static string ToOutcomeText(this MessageCall call, bool outgoing)
         {
-            var missed = call.DiscardReason is CallDiscardReasonMissed || call.DiscardReason is CallDiscardReasonDeclined;
+            var missed = call.DiscardReason is CallDiscardReasonMissed or CallDiscardReasonDeclined;
 
             if (call.IsVideo)
             {
@@ -334,7 +334,7 @@ namespace Unigram.Common
                 // Included, After
                 else if (entity.Offset >= startIndex && entity.Offset < startIndex + length && entity.Offset + entity.Length > startIndex + length)
                 {
-                    var difference = (entity.Offset + entity.Length) - startIndex + length;
+                    var difference = entity.Offset + entity.Length - startIndex + length;
 
                     var replace = new TextEntity { Offset = entity.Offset - startIndex, Length = entity.Length - difference };
                     sub.Add(replace);
@@ -1541,10 +1541,10 @@ namespace Unigram.Common
                 return false;
             }
 
-            return supergroup.Status is ChatMemberStatusCreator ||
-                supergroup.Status is ChatMemberStatusAdministrator ||
-                supergroup.Status is ChatMemberStatusMember ||
-                supergroup.Status is ChatMemberStatusRestricted;
+            return supergroup.Status is ChatMemberStatusCreator or
+                ChatMemberStatusAdministrator or
+                ChatMemberStatusMember or
+                ChatMemberStatusRestricted;
         }
 
         public static int Count(this ChatPermissions permissions)
@@ -1674,7 +1674,7 @@ namespace Unigram.Common
             }
             else
             {
-                return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator || supergroup.Status is ChatMemberStatusMember;
+                return supergroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator or ChatMemberStatusMember;
             }
         }
 
@@ -1750,7 +1750,7 @@ namespace Unigram.Common
                 return false;
             }
 
-            return basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator || basicGroup.Status is ChatMemberStatusMember;
+            return basicGroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator or ChatMemberStatusMember;
         }
 
 

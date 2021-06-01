@@ -471,12 +471,12 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
+            if (chat.Type is ChatTypePrivate or ChatTypeSecret)
             {
                 var user = ProtoService.GetUser(chat.Type is ChatTypePrivate privata ? privata.UserId : chat.Type is ChatTypeSecret secret ? secret.UserId : 0);
                 if (user != null)
                 {
-                    await SharePopup.GetForCurrentView().ShowAsync(new InputMessageContact(new Telegram.Td.Api.Contact(user.PhoneNumber, user.FirstName, user.LastName, string.Empty, user.Id)));
+                    await SharePopup.GetForCurrentView().ShowAsync(new InputMessageContact(new Contact(user.PhoneNumber, user.FirstName, user.LastName, string.Empty, user.Id)));
                 }
             }
         }
@@ -747,7 +747,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
+            if (chat.Type is ChatTypePrivate or ChatTypeSecret)
             {
                 var user = ProtoService.GetUser(chat);
                 if (user == null)
@@ -804,7 +804,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
+            if (chat.Type is ChatTypePrivate or ChatTypeSecret)
             {
                 _voipService.Start(chat.Id, video);
             }
@@ -856,11 +856,11 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            if (chat.Type is ChatTypeSupergroup || chat.Type is ChatTypeBasicGroup)
+            if (chat.Type is ChatTypeSupergroup or ChatTypeBasicGroup)
             {
                 NavigationService.Navigate(typeof(SupergroupEditPage), chat.Id);
             }
-            else if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
+            else if (chat.Type is ChatTypePrivate or ChatTypeSecret)
             {
                 AddExecute();
             }
@@ -897,7 +897,7 @@ namespace Unigram.ViewModels
             }
 
             var message = Strings.Resources.AreYouSureDeleteAndExit;
-            if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
+            if (chat.Type is ChatTypePrivate or ChatTypeSecret)
             {
                 message = Strings.Resources.AreYouSureDeleteContact;
             }
@@ -919,7 +919,7 @@ namespace Unigram.ViewModels
                 }
                 else
                 {
-                    if (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup)
+                    if (chat.Type is ChatTypeBasicGroup or ChatTypeSupergroup)
                     {
                         await ProtoService.SendAsync(new LeaveChat(chat.Id));
                     }
@@ -1251,7 +1251,7 @@ namespace Unigram.ViewModels
                 {
                     _hasMore = false;
 
-                    if (_filter2 == null || _filter2 is ChatMembersFilterMembers)
+                    if (_filter2 is null or ChatMembersFilterMembers)
                     {
                         return members.Members.OrderBy(x => x, new ChatMemberComparer(_protoService, true)).ToArray();
                     }

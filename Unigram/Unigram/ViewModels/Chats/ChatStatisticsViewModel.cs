@@ -119,16 +119,18 @@ namespace Unigram.ViewModels.Chats
                 {
                     Period = channelStats.Period;
 
-                    stats = new List<ChartViewData>(9);
-                    stats.Add(ChartViewData.create(channelStats.MemberCountGraph, Strings.Resources.GrowthChartTitle, 0));
-                    stats.Add(ChartViewData.create(channelStats.JoinGraph, Strings.Resources.FollowersChartTitle, 0));
-                    stats.Add(ChartViewData.create(channelStats.MuteGraph, Strings.Resources.NotificationsChartTitle, 0));
-                    stats.Add(ChartViewData.create(channelStats.ViewCountByHourGraph, Strings.Resources.TopHoursChartTitle, /*0*/5));
-                    stats.Add(ChartViewData.create(channelStats.ViewCountBySourceGraph, Strings.Resources.ViewsBySourceChartTitle, 2));
-                    stats.Add(ChartViewData.create(channelStats.JoinBySourceGraph, Strings.Resources.NewFollowersBySourceChartTitle, 2));
-                    stats.Add(ChartViewData.create(channelStats.LanguageGraph, Strings.Resources.LanguagesChartTitle, 4));
-                    stats.Add(ChartViewData.create(channelStats.MessageInteractionGraph, Strings.Resources.InteractionsChartTitle, /*1*/6));
-                    stats.Add(ChartViewData.create(channelStats.InstantViewInteractionGraph, Strings.Resources.IVInteractionsChartTitle, /*1*/6));
+                    stats = new List<ChartViewData>(9)
+                    {
+                        ChartViewData.Create(channelStats.MemberCountGraph, Strings.Resources.GrowthChartTitle, 0),
+                        ChartViewData.Create(channelStats.JoinGraph, Strings.Resources.FollowersChartTitle, 0),
+                        ChartViewData.Create(channelStats.MuteGraph, Strings.Resources.NotificationsChartTitle, 0),
+                        ChartViewData.Create(channelStats.ViewCountByHourGraph, Strings.Resources.TopHoursChartTitle, /*0*/5),
+                        ChartViewData.Create(channelStats.ViewCountBySourceGraph, Strings.Resources.ViewsBySourceChartTitle, 2),
+                        ChartViewData.Create(channelStats.JoinBySourceGraph, Strings.Resources.NewFollowersBySourceChartTitle, 2),
+                        ChartViewData.Create(channelStats.LanguageGraph, Strings.Resources.LanguagesChartTitle, 4),
+                        ChartViewData.Create(channelStats.MessageInteractionGraph, Strings.Resources.InteractionsChartTitle, /*1*/6),
+                        ChartViewData.Create(channelStats.InstantViewInteractionGraph, Strings.Resources.IVInteractionsChartTitle, /*1*/6)
+                    };
 
                     var messages = await ProtoService.SendAsync(new GetMessages(chatId, channelStats.RecentMessageInteractions.Select(x => x.MessageId).ToArray())) as Messages;
                     if (messages == null)
@@ -159,15 +161,17 @@ namespace Unigram.ViewModels.Chats
                 {
                     Period = groupStats.Period;
 
-                    stats = new List<ChartViewData>(8);
-                    stats.Add(ChartViewData.create(groupStats.MemberCountGraph, Strings.Resources.GrowthChartTitle, 0));
-                    stats.Add(ChartViewData.create(groupStats.JoinGraph, Strings.Resources.GroupMembersChartTitle, 0));
-                    stats.Add(ChartViewData.create(groupStats.JoinBySourceGraph, Strings.Resources.NewMembersBySourceChartTitle, 2));
-                    stats.Add(ChartViewData.create(groupStats.LanguageGraph, Strings.Resources.MembersLanguageChartTitle, 4));
-                    stats.Add(ChartViewData.create(groupStats.MessageContentGraph, Strings.Resources.MessagesChartTitle, 2));
-                    stats.Add(ChartViewData.create(groupStats.ActionGraph, Strings.Resources.ActionsChartTitle, 1));
-                    stats.Add(ChartViewData.create(groupStats.DayGraph, Strings.Resources.TopHoursChartTitle, /*0*/5));
-                    stats.Add(ChartViewData.create(groupStats.WeekGraph, Strings.Resources.TopDaysOfWeekChartTitle, 4));
+                    stats = new List<ChartViewData>(8)
+                    {
+                        ChartViewData.Create(groupStats.MemberCountGraph, Strings.Resources.GrowthChartTitle, 0),
+                        ChartViewData.Create(groupStats.JoinGraph, Strings.Resources.GroupMembersChartTitle, 0),
+                        ChartViewData.Create(groupStats.JoinBySourceGraph, Strings.Resources.NewMembersBySourceChartTitle, 2),
+                        ChartViewData.Create(groupStats.LanguageGraph, Strings.Resources.MembersLanguageChartTitle, 4),
+                        ChartViewData.Create(groupStats.MessageContentGraph, Strings.Resources.MessagesChartTitle, 2),
+                        ChartViewData.Create(groupStats.ActionGraph, Strings.Resources.ActionsChartTitle, 1),
+                        ChartViewData.Create(groupStats.DayGraph, Strings.Resources.TopHoursChartTitle, /*0*/5),
+                        ChartViewData.Create(groupStats.WeekGraph, Strings.Resources.TopDaysOfWeekChartTitle, 4)
+                    };
 
                     if (stats[7] != null)
                     {
@@ -226,41 +230,41 @@ namespace Unigram.ViewModels.Chats
     {
 
         public bool isError;
-        public String errorMessage;
+        public string errorMessage;
         public long activeZoom;
         public bool viewShowed;
         public ChartData chartData;
         public ChartData childChartData;
-        public String token;
-        public String zoomToken;
+        public string token;
+        public string zoomToken;
 
         public readonly int graphType;
-        public readonly String title;
+        public readonly string title;
 
         public bool loading;
         public bool isEmpty;
         public bool isLanguages;
         public bool useWeekFormat;
 
-        public ChartViewData(String title, int grahType)
+        public ChartViewData(string title, int grahType)
         {
             this.title = title;
             graphType = grahType;
         }
 
-        public static ChartViewData create(StatisticalGraph graph, String title, int graphType)
+        public static ChartViewData Create(StatisticalGraph graph, string title, int graphType)
         {
-            if (graph == null || graph is StatisticalGraphError)
+            if (graph is null or StatisticalGraphError)
             {
                 return null;
             }
-            ChartViewData viewData = new ChartViewData(title, graphType);
+            var viewData = new ChartViewData(title, graphType);
             if (graph is StatisticalGraphData data)
             {
-                String json = data.JsonData;
+                string json = data.JsonData;
                 try
                 {
-                    viewData.chartData = createChartData(JsonObject.Parse(json), graphType);
+                    viewData.chartData = CreateChartData(JsonObject.Parse(json), graphType);
                     viewData.zoomToken = data.ZoomToken;
                     if (viewData.chartData == null || viewData.chartData.x == null || viewData.chartData.x.Length < 2)
                     {
@@ -287,13 +291,13 @@ namespace Unigram.ViewModels.Chats
             return viewData;
         }
 
-        private static ChartData createChartData(JsonObject jsonObject, int graphType)
+        private static ChartData CreateChartData(JsonObject jsonObject, int graphType)
         {
-            if (graphType == 0 || graphType == 5)
+            if (graphType is 0 or 5)
             {
                 return new ChartData(jsonObject);
             }
-            else if (graphType == 1 || graphType == 6)
+            else if (graphType is 1 or 6)
             {
                 return new DoubleLinearChartData(jsonObject);
             }
@@ -313,16 +317,16 @@ namespace Unigram.ViewModels.Chats
             var graph = await protoService.SendAsync(new GetStatisticalGraph(chatId, token, 0)) as StatisticalGraph;
             var viewData = this;
 
-            if (graph == null || graph is StatisticalGraphError)
+            if (graph is null or StatisticalGraphError)
             {
                 return false;
             }
             else if (graph is StatisticalGraphData data)
             {
-                String json = data.JsonData;
+                string json = data.JsonData;
                 try
                 {
-                    viewData.chartData = createChartData(JsonObject.Parse(json), graphType);
+                    viewData.chartData = CreateChartData(JsonObject.Parse(json), graphType);
                     viewData.zoomToken = data.ZoomToken;
                     if (viewData.chartData == null || viewData.chartData.x == null || viewData.chartData.x.Length < 2)
                     {

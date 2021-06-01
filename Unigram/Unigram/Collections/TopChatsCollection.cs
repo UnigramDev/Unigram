@@ -28,7 +28,7 @@ namespace Unigram.Collections
                 count = 0;
 
                 var response = await _protoService.SendAsync(new GetTopChats(_category, _limit));
-                if (response is Telegram.Td.Api.Chats chats)
+                if (response is Chats chats)
                 {
                     foreach (var id in chats.ChatIds)
                     {

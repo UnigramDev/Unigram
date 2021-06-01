@@ -201,7 +201,7 @@ namespace Unigram.Common
             {
                 return resultSticker.Sticker;
             }
-            else if (content is Sticker || content is Animation)
+            else if (content is Sticker or Animation)
             {
                 return content;
             }

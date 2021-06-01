@@ -30,7 +30,7 @@ namespace Unigram.Controls
                 {
                     if (message.IsOutgoing && !message.IsSaved())
                     {
-                        if (message.Content is MessageSticker || message.Content is MessageVideoNote)
+                        if (message.Content is MessageSticker or MessageVideoNote)
                         {
                             container.Padding = new Thickness(12, 0, 12, 0);
                         }
@@ -41,7 +41,7 @@ namespace Unigram.Controls
                     }
                     else
                     {
-                        if (message.Content is MessageSticker || message.Content is MessageVideoNote)
+                        if (message.Content is MessageSticker or MessageVideoNote)
                         {
                             container.Padding = new Thickness(12, 0, 12, 0);
                         }
@@ -53,7 +53,7 @@ namespace Unigram.Controls
                 }
                 else
                 {
-                    if (message.Content is MessageSticker || message.Content is MessageVideoNote)
+                    if (message.Content is MessageSticker or MessageVideoNote)
                     {
                         container.Padding = new Thickness(12, 0, 12, 0);
                     }

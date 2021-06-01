@@ -78,20 +78,20 @@ namespace Unigram.Controls.Chats
         {
             switch (action)
             {
-                case ChatActionTyping _:
+                case ChatActionTyping:
                     return AnimationType.Typing;
-                case ChatActionUploadingDocument _:
-                case ChatActionUploadingPhoto _:
-                case ChatActionUploadingVideo _:
-                case ChatActionUploadingVideoNote _:
-                case ChatActionUploadingVoiceNote _:
+                case ChatActionUploadingDocument:
+                case ChatActionUploadingPhoto:
+                case ChatActionUploadingVideo:
+                case ChatActionUploadingVideoNote:
+                case ChatActionUploadingVoiceNote:
                     return AnimationType.Uploading;
-                case ChatActionStartPlayingGame _:
+                case ChatActionStartPlayingGame:
                     return AnimationType.Playing;
-                case ChatActionRecordingVideo _:
-                case ChatActionRecordingVideoNote _:
+                case ChatActionRecordingVideo:
+                case ChatActionRecordingVideoNote:
                     return AnimationType.VideoRecording;
-                case ChatActionRecordingVoiceNote _:
+                case ChatActionRecordingVoiceNote:
                     return AnimationType.VoiceRecording;
                 default:
                     return AnimationType.None;

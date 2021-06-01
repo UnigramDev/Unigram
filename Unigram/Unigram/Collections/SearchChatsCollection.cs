@@ -96,7 +96,7 @@ namespace Unigram.Collections
                     }
                     else if (_type == SearchChatsType.Private)
                     {
-                        return !(chat.Type is ChatTypePrivate);
+                        return chat.Type is not ChatTypePrivate;
                     }
 
                     return false;
@@ -283,7 +283,7 @@ namespace Unigram.Collections
             });
         }
 
-        private bool LoadDateRanges(String str)
+        private bool LoadDateRanges(string str)
         {
             var ranges = DateTimeParser.Parse(str);
 
@@ -315,49 +315,25 @@ namespace Unigram.Collections
 
         public SearchMessagesFilter Filter => _filter;
 
-        public string Text
+        public string Text => _filter switch
         {
-            get
-            {
-                switch (_filter)
-                {
-                    case SearchMessagesFilterPhotoAndVideo:
-                        return Strings.Resources.SharedMediaTab2;
-                    case SearchMessagesFilterDocument:
-                        return Strings.Resources.SharedFilesTab2;
-                    case SearchMessagesFilterUrl:
-                        return Strings.Resources.SharedLinksTab2;
-                    case SearchMessagesFilterAudio:
-                        return Strings.Resources.SharedMusicTab2;
-                    case SearchMessagesFilterVoiceNote:
-                        return Strings.Resources.SharedVoiceTab2;
-                    default:
-                        return null;
-                }
-            }
-        }
+            SearchMessagesFilterPhotoAndVideo => Strings.Resources.SharedMediaTab2,
+            SearchMessagesFilterDocument => Strings.Resources.SharedFilesTab2,
+            SearchMessagesFilterUrl => Strings.Resources.SharedLinksTab2,
+            SearchMessagesFilterAudio => Strings.Resources.SharedMusicTab2,
+            SearchMessagesFilterVoiceNote => Strings.Resources.SharedVoiceTab2,
+            _ => null,
+        };
 
-        public string Glyph
+        public string Glyph => _filter switch
         {
-            get
-            {
-                switch (_filter)
-                {
-                    case SearchMessagesFilterPhotoAndVideo:
-                        return Icons.Image;
-                    case SearchMessagesFilterDocument:
-                        return Icons.Document;
-                    case SearchMessagesFilterUrl:
-                        return Icons.Link;
-                    case SearchMessagesFilterAudio:
-                        return Icons.MusicNote;
-                    case SearchMessagesFilterVoiceNote:
-                        return Icons.MicOn;
-                    default:
-                        return null;
-                }
-            }
-        }
+            SearchMessagesFilterPhotoAndVideo => Icons.Image,
+            SearchMessagesFilterDocument => Icons.Document,
+            SearchMessagesFilterUrl => Icons.Link,
+            SearchMessagesFilterAudio => Icons.MusicNote,
+            SearchMessagesFilterVoiceNote => Icons.MicOn,
+            _ => null,
+        };
     }
 
     public class SearchChatsFilterChat : ISearchChatsFilter
@@ -375,23 +351,13 @@ namespace Unigram.Collections
 
         public string Text => _protoService.GetTitle(_chat);
 
-        public string Glyph
+        public string Glyph => _chat.Type switch
         {
-            get
-            {
-                switch (_chat.Type)
-                {
-                    case ChatTypePrivate _:
-                        return Icons.Person;
-                    case ChatTypeBasicGroup _:
-                        return Icons.People;
-                    case ChatTypeSupergroup supergroup:
-                        return supergroup.IsChannel ? Icons.People : Icons.Megaphone;
-                    default:
-                        return null;
-                }
-            }
-        }
+            ChatTypePrivate => Icons.Person,
+            ChatTypeBasicGroup => Icons.People,
+            ChatTypeSupergroup supergroup => supergroup.IsChannel ? Icons.People : Icons.Megaphone,
+            _ => null,
+        };
     }
 
     public class SearchChatsFilterDateRange : ISearchChatsFilter

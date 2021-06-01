@@ -9,8 +9,8 @@ namespace Unigram.Charts.DataView
     {
 
         public int[] values;
-        public String[] valuesStr;
-        public String[] valuesStr2;
+        public string[] valuesStr;
+        public string[] valuesStr2;
         public int alpha;
 
         public int fixedAlpha = 255;
@@ -51,7 +51,7 @@ namespace Unigram.Charts.DataView
                 }
 
                 values = new int[n];
-                valuesStr = new String[n];
+                valuesStr = new string[n];
 
                 for (int i = 1; i < n; i++)
                 {
@@ -95,10 +95,10 @@ namespace Unigram.Charts.DataView
                 }
 
                 values = new int[n];
-                valuesStr = new String[n];
+                valuesStr = new string[n];
                 if (k > 0)
                 {
-                    valuesStr2 = new String[n];
+                    valuesStr2 = new string[n];
                 }
 
                 bool skipFloatValues = step / k < 1;
@@ -108,10 +108,10 @@ namespace Unigram.Charts.DataView
                     valuesStr[i] = formatWholeNumber(values[i], dif);
                     if (k > 0)
                     {
-                        float v = (values[i] / k);
+                        float v = values[i] / k;
                         if (skipFloatValues)
                         {
-                            if (v - ((int)v) < 0.01f)
+                            if (v - (int)v < 0.01f)
                             {
                                 valuesStr2[i] = formatWholeNumber((int)v, (int)(dif / k));
                             }
@@ -141,9 +141,9 @@ namespace Unigram.Charts.DataView
             return step * 5;
         }
 
-        public static readonly String[] s = { "", "K", "M", "G", "T", "P" };
+        public static readonly string[] s = { "", "K", "M", "G", "T", "P" };
 
-        public static String formatWholeNumber(int v, int dif)
+        public static string formatWholeNumber(int v, int dif)
         {
             if (v == 0)
             {
@@ -175,12 +175,12 @@ namespace Unigram.Charts.DataView
                 if (num_ == (int)num_)
                 {
                     //return String.Format(Locale.ENGLISH, "%s%s", formatCount((int)num_), s[count]);
-                    return String.Format(CultureInfo.InvariantCulture, "{0}{1}", formatCount((int)num_), s[count]);
+                    return string.Format(CultureInfo.InvariantCulture, "{0}{1}", formatCount((int)num_), s[count]);
                 }
                 else
                 {
                     //return String.Format(Locale.ENGLISH, "%.1f%s", num_, s[count]);
-                    return String.Format(CultureInfo.InvariantCulture, "{0:F1}{1}", num_, s[count]);
+                    return string.Format(CultureInfo.InvariantCulture, "{0:F1}{1}", num_, s[count]);
                 }
             }
         }
@@ -194,18 +194,18 @@ namespace Unigram.Charts.DataView
             }
             else
             {
-                return ((maxValue / 10 + 1) * 10);
+                return (maxValue / 10 + 1) * 10;
             }
         }
 
-        public static String formatCount(int count)
+        public static string formatCount(int count)
         {
             if (count < 1000)
             {
                 return count.ToString();
             }
 
-            List<String> strings = new List<String>();
+            List<string> strings = new List<string>();
             while (count != 0)
             {
                 int mod = count % 1000;
@@ -213,7 +213,7 @@ namespace Unigram.Charts.DataView
                 if (count > 0)
                 {
                     //strings.Add(String.format(Locale.ENGLISH, "%03d", mod));
-                    strings.Add(String.Format(CultureInfo.InvariantCulture, "{0:D3}", mod));
+                    strings.Add(string.Format(CultureInfo.InvariantCulture, "{0:D3}", mod));
                 }
                 else
                 {

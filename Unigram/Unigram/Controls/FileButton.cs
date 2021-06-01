@@ -269,7 +269,7 @@ namespace Unigram.Controls
             visual.Shapes.Add(shape2);
             visual.Shapes.Add(shape3);
             visual.Size = new Vector2(20, 20);
-            visual.Offset = new Vector3(((48 - 20) / 2) + 4.5f, (48 - 20) / 2, 0);
+            visual.Offset = new Vector3((48 - 20) / 2 + 4.5f, (48 - 20) / 2, 0);
 
             _visual1.Opacity = 0;
             _visual2.Opacity = 0;
@@ -341,7 +341,7 @@ namespace Unigram.Controls
             visual.Shapes.Add(shape2);
             visual.Shapes.Add(shape3);
             visual.Size = new Vector2(20, 20);
-            visual.Offset = new Vector3(((48 - 20) / 2) + 4.5f, (48 - 20) / 2, 0);
+            visual.Offset = new Vector3((48 - 20) / 2 + 4.5f, (48 - 20) / 2, 0);
 
             _visual1.Opacity = 0;
             _visual2.Opacity = 0;
@@ -378,7 +378,7 @@ namespace Unigram.Controls
             line3.StartAnimation("Path", anim31);
         }
 
-        CompositionPath GetLine(Vector2 pt1, Vector2 pt2)
+        private CompositionPath GetLine(Vector2 pt1, Vector2 pt2)
         {
             CanvasGeometry result;
             using (var builder = new CanvasPathBuilder(null))

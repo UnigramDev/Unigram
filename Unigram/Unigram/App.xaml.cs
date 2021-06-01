@@ -185,8 +185,7 @@ namespace Unigram
             }
 
             var dialog = new PasscodePage(biometrics);
-            TypedEventHandler<ContentDialog, ContentDialogClosingEventArgs> handler = null;
-            handler = (s, args) =>
+            void handler(ContentDialog s, ContentDialogClosingEventArgs args)
             {
                 dialog.Closing -= handler;
 
@@ -196,7 +195,7 @@ namespace Unigram
                 {
                     content.Visibility = Visibility.Visible;
                 }
-            };
+            }
 
             dialog.Closing += handler;
             var result = await dialog.ShowQueuedAsync();
@@ -266,7 +265,7 @@ namespace Unigram
                 }
                 else if (args.TaskInstance.TriggerDetails is RawNotification notification)
                 {
-                    int? GetSession(long id)
+                    static int? GetSession(long id)
                     {
                         if (ApplicationData.Current.LocalSettings.Values.TryGet($"User{id}", out int value))
                         {

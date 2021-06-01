@@ -150,7 +150,7 @@ namespace Unigram.Services
                     var key = split[0].Trim();
                     var value = split[1].Trim();
 
-                    if (value.StartsWith("#") && int.TryParse(value.Substring(1), System.Globalization.NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int hexValue))
+                    if (value.StartsWith("#") && int.TryParse(value.Substring(1), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int hexValue))
                     {
                         byte a = (byte)((hexValue & 0xff000000) >> 24);
                         byte r = (byte)((hexValue & 0x00ff0000) >> 16);
@@ -351,9 +351,9 @@ namespace Unigram.Services
 
         public static bool IsAccent(TelegramThemeType type)
         {
-            return type == TelegramThemeType.Tinted ||
-                type == TelegramThemeType.Night ||
-                type == TelegramThemeType.Day;
+            return type is TelegramThemeType.Tinted or
+                TelegramThemeType.Night or
+                TelegramThemeType.Day;
         }
     }
 

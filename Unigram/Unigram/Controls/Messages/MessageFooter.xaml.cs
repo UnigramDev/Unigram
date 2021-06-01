@@ -378,9 +378,9 @@ namespace Unigram.Controls.Messages
 
             var sqrt = (float)Math.Sqrt(2);
 
-            var side = (stroke / sqrt) / 2f;
+            var side = stroke / sqrt / 2f;
             var diagonal = height * sqrt;
-            var length = (diagonal / 2f) / sqrt;
+            var length = diagonal / 2f / sqrt;
 
             var join = stroke / 2 * sqrt;
 
@@ -486,7 +486,7 @@ namespace Unigram.Controls.Messages
             var sqrt = (float)Math.Sqrt(2);
 
             var diagonal = height * sqrt;
-            var length = (diagonal / 2f) / sqrt;
+            var length = diagonal / 2f / sqrt;
 
             var duration = 250;
             var percent = stroke / length;
@@ -496,7 +496,7 @@ namespace Unigram.Controls.Messages
             var anim11 = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
             anim11.InsertKeyFrame(0, 0);
             anim11.InsertKeyFrame(1, 1, linear);
-            anim11.Duration = TimeSpan.FromMilliseconds(duration - (percent * duration));
+            anim11.Duration = TimeSpan.FromMilliseconds(duration - percent * duration);
 
             var anim12 = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
             anim12.InsertKeyFrame(0, 0);

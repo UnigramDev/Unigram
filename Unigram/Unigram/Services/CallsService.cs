@@ -336,7 +336,7 @@ namespace Unigram.Services
 
         private void OnStateUpdated(VoipManager sender, VoipState args)
         {
-            if (args == VoipState.WaitInit || args == VoipState.WaitInitAck)
+            if (args is VoipState.WaitInit or VoipState.WaitInitAck)
             {
                 SoundEffects.Play(SoundEffect.VoipConnecting);
             }

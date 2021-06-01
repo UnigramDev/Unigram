@@ -104,7 +104,7 @@ namespace Unigram.Controls
             {
                 StartFall();
 
-                _speedCoef -= (i / 16.0f) * 0.15f;
+                _speedCoef -= i / 16.0f * 0.15f;
 
                 if (_speedCoef < 0.2f)
                 {
@@ -170,15 +170,15 @@ namespace Unigram.Controls
             };
             if (particle.type == 0)
             {
-                particle.typeSize = (byte)((int)((NextFloat() * 2.0f) + 4.0f));
+                particle.typeSize = (byte)(int)(NextFloat() * 2.0f + 4.0f);
             }
             else
             {
-                particle.typeSize = (byte)((int)((NextFloat() * 4.0f) + 4.0f));
+                particle.typeSize = (byte)(int)(NextFloat() * 4.0f + 4.0f);
             }
             if (falling)
             {
-                particle.y = (-NextFloat()) * CanvasHeight * 1.2f;
+                particle.y = -NextFloat() * CanvasHeight * 1.2f;
                 particle.x = 5.0f + NextInt((int)(CanvasWidth - 10.0f));
                 particle.xFinished = particle.finishedStart;
             }
@@ -200,9 +200,9 @@ namespace Unigram.Controls
                 {
                     i = -1;
                 }
-                particle.moveX = i * (1.2f + (NextFloat() * 4.0f));
-                particle.moveY = -(4.0f + (NextFloat() * 4.0f));
-                particle.y = (measuredHeight / 2) + NextInt(measuredHeight * 2);
+                particle.moveX = i * (1.2f + NextFloat() * 4.0f);
+                particle.moveY = -(4.0f + NextFloat() * 4.0f);
+                particle.y = measuredHeight / 2 + NextInt(measuredHeight * 2);
             }
             return particle;
         }
@@ -254,7 +254,7 @@ namespace Unigram.Controls
                 float f = i / 16.0f;
                 float f2 = x;
                 float f3 = moveX;
-                x = f2 + (f3 * f * coefficient);
+                x = f2 + f3 * f * coefficient;
                 y += moveY * f;
                 if (xFinished != 0)
                 {
@@ -279,7 +279,7 @@ namespace Unigram.Controls
                 {
                     if (f3 > 0.0f)
                     {
-                        moveX = f3 - (0.05f * f);
+                        moveX = f3 - 0.05f * f;
                         if (moveX <= 0.0f)
                         {
                             moveX = 0.0f;
@@ -289,7 +289,7 @@ namespace Unigram.Controls
                 }
                 else if (f3 < 0.0f)
                 {
-                    moveX = f3 + (0.05f * f);
+                    moveX = f3 + 0.05f * f;
                     if (moveX >= 0.0f)
                     {
                         moveX = 0.0f;
@@ -300,11 +300,11 @@ namespace Unigram.Controls
                 bool z = moveY < -0.5f;
                 if (moveY > -0.5f)
                 {
-                    moveY += ((1.0f / 3.0f) * f * _confetti._speedCoef);
+                    moveY += 1.0f / 3.0f * f * _confetti._speedCoef;
                 }
                 else
                 {
-                    moveY += ((1.0f / 3.0f) * f);
+                    moveY += 1.0f / 3.0f * f;
                 }
 
                 if (z && moveY > -0.5f)
@@ -314,7 +314,7 @@ namespace Unigram.Controls
 
                 if (type == 1)
                 {
-                    rotation = (short)(int)(rotation + (f * 10.0f));
+                    rotation = (short)(int)(rotation + f * 10.0f);
                     if (rotation > 360)
                     {
                         rotation -= 360;

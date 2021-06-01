@@ -155,7 +155,7 @@ namespace Unigram.Navigation.Services
 
         private INavigable ResolveForPage(Page page)
         {
-            if (page.DataContext is not INavigable || page.DataContext == null)
+            if (page.DataContext is not INavigable or null)
             {
                 // to support dependency injection, but keeping it optional.
                 var viewModel = BootStrapper.Current.ResolveForPage(page, this);
@@ -169,7 +169,7 @@ namespace Unigram.Navigation.Services
         }
 
         // before navigate (cancellable)
-        bool NavigatingFrom(Page page, Type targetPageType, object targetPageParameter, INavigable dataContext, bool suspending, NavigationMode mode)
+        private bool NavigatingFrom(Page page, Type targetPageType, object targetPageParameter, INavigable dataContext, bool suspending, NavigationMode mode)
         {
             Logger.Info($"Suspending: {suspending}");
 
@@ -191,7 +191,7 @@ namespace Unigram.Navigation.Services
         }
 
         // after navigate
-        async Task NavigateFromAsync(Page page, INavigable dataContext, bool suspending)
+        private async Task NavigateFromAsync(Page page, INavigable dataContext, bool suspending)
         {
             Logger.Info($"Suspending: {suspending}");
 
@@ -203,19 +203,17 @@ namespace Unigram.Navigation.Services
             await dataContext.OnNavigatedFromAsync(pageState, suspending).ConfigureAwait(false);
         }
 
-        async Task NavigateToAsync(NavigationMode mode, object parameter, object frameContent = null)
+        private async Task NavigateToAsync(NavigationMode mode, object parameter, object frameContent = null)
         {
             Logger.Info($"Mode: {mode}, Parameter: {parameter} FrameContent: {frameContent}");
 
-            frameContent = frameContent ?? FrameFacade.Frame.Content;
+            frameContent ??= FrameFacade.Frame.Content;
 
             var page = frameContent as Page;
             if (page != null)
             {
-                var cleaned = false;
                 if (page is IActivablePage cleanup)
                 {
-                    cleaned = true;
                     cleanup.Activate();
                 }
 
@@ -310,9 +308,9 @@ namespace Unigram.Navigation.Services
                 throw new InvalidOperationException("State container is unexpectedly null");
             }
 
-            state.Write<string>("CurrentPageType", CurrentPageType.AssemblyQualifiedName);
-            state.Write<object>("CurrentPageParam", CurrentPageParam);
-            state.Write<string>("NavigateState", FrameFacade?.NavigationService.NavigationState);
+            state.Write("CurrentPageType", CurrentPageType.AssemblyQualifiedName);
+            state.Write("CurrentPageParam", CurrentPageParam);
+            state.Write("NavigateState", FrameFacade?.NavigationService.NavigationState);
 
             await Task.CompletedTask;
         }

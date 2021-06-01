@@ -344,7 +344,7 @@ namespace Unigram.Controls
                 case double n when n >= 1d / 2d:
                     VolumeButton.Glyph = Icons.Speaker;
                     break;
-                case double n when n > 0 && n < 1d / 2d:
+                case double n when n is > 0 and < (1d / 2d):
                     VolumeButton.Glyph = Icons.Speaker1;
                     break;
 

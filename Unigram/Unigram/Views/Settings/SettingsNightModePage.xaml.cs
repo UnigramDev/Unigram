@@ -184,8 +184,8 @@ namespace Unigram.Views.Settings
             var end = DateTime.Today;
 
             var t = SunDate.CalculateSunriseSunset(location.Latitude, location.Longitude);
-            var sunrise = new TimeSpan(t[0] / 60, t[0] - (t[0] / 60) * 60, 0);
-            var sunset = new TimeSpan(t[1] / 60, t[1] - (t[1] / 60) * 60, 0);
+            var sunrise = new TimeSpan(t[0] / 60, t[0] - (t[0] / 60 * 60), 0);
+            var sunset = new TimeSpan(t[1] / 60, t[1] - (t[1] / 60 * 60), 0);
 
             start = start.Add(sunset);
             end = end.Add(sunrise);

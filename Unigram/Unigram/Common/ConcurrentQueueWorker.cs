@@ -38,8 +38,7 @@ namespace Unigram.Common
                 {
                     if (taskQueue.Count > 0 && MaxConcurrentCount >= _concurrentCount)
                     {
-                        var nextTaskAction = default(Func<Task>);
-                        if (taskQueue.TryDequeue(out nextTaskAction))
+                        if (taskQueue.TryDequeue(out Func<Task> nextTaskAction))
                         {
                             Interlocked.Increment(ref _concurrentCount);
 

@@ -44,7 +44,7 @@ namespace Unigram.ViewModels.SignIn
             });
 
             var authState = ProtoService.GetAuthorizationState();
-            var waitState = authState is AuthorizationStateWaitPhoneNumber || authState is AuthorizationStateWaitCode || authState is AuthorizationStateWaitPassword;
+            var waitState = authState is AuthorizationStateWaitPhoneNumber or AuthorizationStateWaitCode or AuthorizationStateWaitPassword;
 
             if (waitState && mode != NavigationMode.Refresh)
             {
@@ -182,8 +182,7 @@ namespace Unigram.ViewModels.SignIn
             await _notificationsService.CloseAsync();
 
             var function = new SetAuthenticationPhoneNumber(phoneNumber, new PhoneNumberAuthenticationSettings(false, false, false));
-            var request = default(Task<BaseObject>);
-
+            Task<BaseObject> request;
             if (ProtoService.AuthorizationState is AuthorizationStateWaitOtherDeviceConfirmation)
             {
                 request = _sessionService.SetAuthenticationPhoneNumberAsync(function);

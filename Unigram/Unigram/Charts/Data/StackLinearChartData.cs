@@ -107,7 +107,7 @@ namespace Unigram.Charts.Data
             {
                 for (int k = 0; k < nl; k++)
                 {
-                    ChartData.Line line = lines[k];
+                    Line line = lines[k];
                     if (line.y[i] > max[k])
                     {
                         max[k] = line.y[i];

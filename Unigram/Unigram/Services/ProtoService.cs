@@ -210,7 +210,7 @@ namespace Unigram.Services
 
         public bool TryInitialize()
         {
-            if (_authorizationState == null || _authorizationState is AuthorizationStateClosed)
+            if (_authorizationState is null or AuthorizationStateClosed)
             {
                 Initialize();
                 return true;
@@ -538,7 +538,7 @@ namespace Unigram.Services
 
         private async void UpdateVersion()
         {
-            if (_settings.Version < SettingsService.CurrentVersion && _settings.Version > 0)
+            if (_settings.Version is < SettingsService.CurrentVersion and > 0)
             {
                 var response = await SendAsync(new CreatePrivateChat(777000, false));
                 if (response is Chat chat)
@@ -555,7 +555,7 @@ namespace Unigram.Services
 
                     foreach (var entity in formattedText.Entities)
                     {
-                        if (entity.Type is TextEntityTypeTextUrl || entity.Type is TextEntityTypeUrl)
+                        if (entity.Type is TextEntityTypeTextUrl or TextEntityTypeUrl)
                         {
                             await SendAsync(new GetWebPagePreview(formattedText));
                             break;
@@ -875,7 +875,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 
         private int GetIdFromChatList(ChatList chatList)
         {
-            if (chatList is ChatListMain || chatList == null)
+            if (chatList is ChatListMain or null)
             {
                 return 0;
             }

@@ -305,7 +305,7 @@ namespace Unigram.Collections
 
         public virtual bool Set<P>(ref P storage, P value, [CallerMemberName] string propertyName = null)
         {
-            if (object.Equals(storage, value))
+            if (Equals(storage, value))
             {
                 return false;
             }

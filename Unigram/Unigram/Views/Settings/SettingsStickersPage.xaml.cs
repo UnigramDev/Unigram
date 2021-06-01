@@ -283,7 +283,7 @@ namespace Unigram.Views.Settings
 
         private void StickerSet_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            if (ViewModel.Type != StickersType.Installed && ViewModel.Type != StickersType.Masks)
+            if (ViewModel.Type is not StickersType.Installed and not StickersType.Masks)
             {
                 return;
             }
