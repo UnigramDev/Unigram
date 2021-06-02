@@ -730,6 +730,7 @@ namespace Unigram.Controls.Messages
                     Markup.InlineButtonClick += ReplyMarkup_ButtonClick;
                 }
 
+                Markup.Visibility = Visibility.Visible;
                 Markup.Update(message, message.ReplyMarkup);
             }
             else
