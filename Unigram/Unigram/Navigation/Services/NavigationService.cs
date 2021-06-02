@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Unigram.Common;
 using Unigram.Logs;
 using Unigram.Services.ViewService;
 using Unigram.Views;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
+using Windows.System;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
@@ -77,7 +77,7 @@ namespace Unigram.Navigation.Services
         public Frame Frame => FrameFacade.Frame;
         public object Content => Frame.Content;
 
-        public IDispatcherContext Dispatcher => this.GetDispatcherWrapper();
+        public IDispatcherContext Dispatcher { get; }
 
 
         public string NavigationState
@@ -97,6 +97,7 @@ namespace Unigram.Navigation.Services
         {
             IsInMainView = CoreApplication.MainView == CoreApplication.GetCurrentView();
             SessionId = session;
+            Dispatcher = new DispatcherContext(DispatcherQueue.GetForCurrentThread());
             FrameFacade = new FrameFacade(this, frame, id);
             FrameFacade.Navigating += async (s, e) =>
             {
@@ -174,7 +175,7 @@ namespace Unigram.Navigation.Services
             Logger.Info($"Suspending: {suspending}");
 
             dataContext.NavigationService = this;
-            dataContext.Dispatcher = this.GetDispatcherWrapper();
+            dataContext.Dispatcher = Dispatcher;
             dataContext.SessionState = BootStrapper.Current.SessionState;
 
             var args = new NavigatingEventArgs
@@ -196,7 +197,7 @@ namespace Unigram.Navigation.Services
             Logger.Info($"Suspending: {suspending}");
 
             dataContext.NavigationService = this;
-            dataContext.Dispatcher = this.GetDispatcherWrapper();
+            dataContext.Dispatcher = Dispatcher;
             dataContext.SessionState = BootStrapper.Current.SessionState;
 
             var pageState = FrameFacade.PageStateSettingsService(page.GetType()).Values;
@@ -228,7 +229,7 @@ namespace Unigram.Navigation.Services
                 {
                     // prepare for state load
                     dataContext.NavigationService = this;
-                    dataContext.Dispatcher = this.GetDispatcherWrapper();
+                    dataContext.Dispatcher = Dispatcher;
                     dataContext.SessionState = BootStrapper.Current.SessionState;
                     var pageState = FrameFacade.PageStateSettingsService(page.GetType(), parameter: parameter).Values;
                     await dataContext.OnNavigatedToAsync(parameter, mode, pageState);
@@ -400,7 +401,7 @@ namespace Unigram.Navigation.Services
                 if (dataContext != null)
                 {
                     dataContext.NavigationService = this;
-                    dataContext.Dispatcher = this.GetDispatcherWrapper();
+                    dataContext.Dispatcher = Dispatcher;
                     dataContext.SessionState = BootStrapper.Current.SessionState;
                     var pageState = FrameFacade.PageStateSettingsService(page.GetType(), parameter: FrameFacade.CurrentPageParam).Values;
                     await dataContext.OnNavigatedToAsync(FrameFacade.CurrentPageParam, NavigationMode.Refresh, pageState);

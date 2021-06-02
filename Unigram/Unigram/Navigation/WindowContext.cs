@@ -44,8 +44,6 @@ namespace Unigram.Navigation
 
         public static WindowContext Current(Window window) => ActiveWrappers.FirstOrDefault(x => x.Window == window);
 
-        public static WindowContext Current(INavigationService nav) => ActiveWrappers.FirstOrDefault(x => x.NavigationServices.Contains(nav));
-
         public WindowContext(Window window)
         {
             if (Current(window) != null)

@@ -11,8 +11,6 @@ using Telegram.Td.Api;
 using Unigram.Controls.Messages;
 using Unigram.Entities;
 using Unigram.Native;
-using Unigram.Navigation;
-using Unigram.Navigation.Services;
 using Unigram.Services;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
@@ -870,15 +868,6 @@ namespace Unigram.Common
 
             Window.Current.Close();
         }
-    }
-
-    public static class Template10Utils
-    {
-        public static WindowContext GetWindowWrapper(this INavigationService service)
-            => WindowContext.ActiveWrappers.FirstOrDefault(x => x.NavigationServices.Contains(service));
-
-        public static IDispatcherContext GetDispatcherWrapper(this INavigationService service)
-            => service.GetWindowWrapper()?.Dispatcher;
     }
 
     public static class UriEx

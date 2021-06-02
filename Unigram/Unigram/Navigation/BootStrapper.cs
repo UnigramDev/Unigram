@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using Unigram.Common;
 using Unigram.Logs;
 using Unigram.Navigation.Services;
 using Unigram.Services.ViewService;
@@ -818,7 +817,7 @@ namespace Unigram.Navigation
                         // date the cache (which marks the date/time it was suspended)
                         nav.FrameFacade.SetFrameState(CacheDateKey, DateTime.Now.ToString());
                         Logger.Info($"Nav.FrameId:{nav.FrameFacade.FrameId}");
-                        await nav.GetDispatcherWrapper().DispatchAsync(async () => await nav.SuspendingAsync());
+                        await nav.Dispatcher.DispatchAsync(async () => await nav.SuspendingAsync());
                     }
                     catch (Exception ex)
                     {
