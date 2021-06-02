@@ -75,7 +75,7 @@ namespace Unigram.Common
         public double TopOpacity { get; set; } = 1;
         public double BottomOpacity { get; set; } = 1;
 
-        public Point ControlPoint1 { get; set; } = new Point(.25, 0);
+        public Point ControlPoint1 { get; set; } = new Point(.30, 0);
         public Point ControlPoint2 { get; set; } = new Point(.58, 1);
 
         private LinearGradientBrush _target;

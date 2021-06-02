@@ -180,6 +180,7 @@ namespace Unigram.Collections
                 update.CanBeMutedForCurrentUser = participant.CanBeMutedForCurrentUser;
                 update.CanBeUnmutedForAllUsers = participant.CanBeUnmutedForAllUsers;
                 update.CanBeUnmutedForCurrentUser = participant.CanBeUnmutedForCurrentUser;
+                update.CanEnableVideo = participant.CanEnableVideo;
                 update.IsMutedForAllUsers = participant.IsMutedForAllUsers;
                 update.IsMutedForCurrentUser = participant.IsMutedForCurrentUser;
                 update.IsCurrentUser = participant.IsCurrentUser;

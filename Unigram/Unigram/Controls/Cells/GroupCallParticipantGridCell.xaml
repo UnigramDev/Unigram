@@ -34,6 +34,18 @@
                 IsOneWay="False"/>
         </Grid>
 
+        <StackPanel x:Name="PausedRoot" VerticalAlignment="Center" Visibility="Collapsed">
+            <TextBlock
+                Text="&#xE769;"
+                TextAlignment="Center"
+                FontFamily="{StaticResource SymbolThemeFontFamily}"
+                FontSize="24"/>
+            <TextBlock
+                Text="Video on Paused"
+                Style="{StaticResource BaseTextBlockStyle}"
+                TextAlignment="Center"/>
+        </StackPanel>
+
         <Grid x:Name="Info" VerticalAlignment="Bottom" Opacity="0.8" Padding="12,6">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
@@ -43,7 +55,7 @@
                     VerticalAlignment="Stretch"
                     Margin="-12,-6"
                     Grid.ColumnSpan="3">
-                <Rectangle>
+                <Rectangle x:Name="Scrim">
                     <Rectangle.Fill>
                         <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
                             <common:Scrim.Gradient>

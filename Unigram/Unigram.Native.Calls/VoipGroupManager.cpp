@@ -203,7 +203,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 				for (const GroupCallVideoSourceGroup& group : x.SourceGroups()) {
 					tgcalls::MediaSsrcGroup groupImpl;
 					groupImpl.semantics = string_to_unmanaged(group.Semantics());
-					groupImpl.ssrcs = std::vector<uint32_t>(begin(group.SourceIds()), end(group.SourceIds()));
+					groupImpl.ssrcs = vector_to_unmanaged<uint32_t, int32_t>(group.SourceIds());
 
 					item.ssrcGroups.push_back(std::move(groupImpl));
 				}

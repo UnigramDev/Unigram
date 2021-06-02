@@ -1,11 +1,15 @@
-﻿using Microsoft.Graphics.Canvas.UI.Xaml;
+﻿using Microsoft.Graphics.Canvas.Effects;
+using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
+using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Native.Calls;
 using Unigram.Services;
+using Windows.Foundation;
 using Windows.UI;
+using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
@@ -17,6 +21,9 @@ namespace Unigram.Controls.Cells
     {
         private GroupCallParticipant _participant;
         private GroupCallParticipantVideoInfo _videoInfo;
+
+        private SpriteVisual _pausedVisual;
+        private CompositionEffectBrush _pausedBrush;
 
         public GroupCallParticipantGridCell(ICacheService cacheService, GroupCallParticipant participant, GroupCallParticipantVideoInfo videoInfo)
         {
@@ -61,6 +68,8 @@ namespace Unigram.Controls.Cells
             _participant = participant;
             _videoInfo = videoInfo;
 
+            ShowHidePaused(videoInfo.IsPaused);
+
             if (cacheService.TryGetUser(participant.ParticipantId, out User user))
             {
                 Title.Text = user.GetFullName();
@@ -92,16 +101,16 @@ namespace Unigram.Controls.Cells
             }
         }
 
-        private bool _collapsed;
+        private bool _infoCollapsed;
 
         public void ShowHideInfo(bool show)
         {
-            if (_collapsed == !show)
+            if (_infoCollapsed == !show)
             {
                 return;
             }
 
-            _collapsed = !show;
+            _infoCollapsed = !show;
 
             var anim = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
             anim.InsertKeyFrame(0, show ? 0 : 1);
@@ -113,6 +122,79 @@ namespace Unigram.Controls.Cells
             info.StartAnimation("Opacity", anim);
             pin.StartAnimation("Opacity", anim);
         }
+
+        private bool _pausedCollapsed;
+
+        private void ShowHidePaused(bool show)
+        {
+            if (_pausedCollapsed == !show)
+            {
+                return;
+            }
+
+            _pausedCollapsed = !show;
+
+            if (show)
+            {
+                var paused = ElementCompositionPreview.GetElementVisual(PausedRoot);
+
+                var graphicsEffect = new GaussianBlurEffect
+                {
+                    Name = "Blur",
+                    BlurAmount = 10,
+                    BorderMode = EffectBorderMode.Hard,
+                    Source = new CompositionEffectSourceParameter("backdrop")
+                };
+
+                var effectFactory = Window.Current.Compositor.CreateEffectFactory(graphicsEffect, new[] { "Blur.BlurAmount" });
+                var effectBrush = effectFactory.CreateBrush();
+                var backdrop = Window.Current.Compositor.CreateBackdropBrush();
+                effectBrush.SetSourceParameter("backdrop", backdrop);
+
+                _pausedBrush = effectBrush;
+                _pausedVisual = Window.Current.Compositor.CreateSpriteVisual();
+                _pausedVisual.Size = this.GetActualSize();
+                _pausedVisual.Brush = effectBrush;
+
+                ElementCompositionPreview.SetElementChildVisual(CanvasRoot, _pausedVisual);
+                PausedRoot.Visibility = Visibility.Visible;
+                Scrim.Visibility = Visibility.Collapsed;
+
+                //var blur = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                //blur.Duration = TimeSpan.FromMilliseconds(300);
+                //blur.InsertKeyFrame(1, 10);
+
+                //var anim = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                //anim.InsertKeyFrame(0, show ? 0 : 1);
+                //anim.InsertKeyFrame(1, show ? 1 : 0);
+
+                //paused.StartAnimation("Opacity", anim);
+                //effectBrush.Properties.StartAnimation("Blur.BlurAmount", blur);
+            }
+            else
+            {
+                ElementCompositionPreview.SetElementChildVisual(CanvasRoot, null);
+                PausedRoot.Visibility = Visibility.Collapsed;
+                Scrim.Visibility = Visibility.Visible;
+
+                _pausedBrush?.Dispose();
+                _pausedBrush = null;
+
+                _pausedVisual?.Dispose();
+                _pausedVisual = null;
+            }
+        }
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            if (_pausedVisual != null)
+            {
+                _pausedVisual.Size = finalSize.ToVector2();
+            }
+
+            return base.ArrangeOverride(finalSize);
+        }
+
 
         private void Pin_Click(object sender, RoutedEventArgs e)
         {
