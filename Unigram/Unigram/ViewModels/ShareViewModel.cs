@@ -340,7 +340,7 @@ namespace Unigram.ViewModels
             set => _package = value;
         }
 
-        public string SendMessage { get; set; }
+        public FormattedText SendMessage { get; set; }
 
         public bool IsChatSelection { get; set; }
         public IList<long> PreSelectedItems { get; set; }
@@ -358,10 +358,10 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            if (!string.IsNullOrEmpty(SendMessage))
+            if (!string.IsNullOrEmpty(SendMessage?.Text))
             {
                 _isCommentEnabled = true;
-                _caption = new FormattedText(SendMessage, new TextEntity[0]);
+                _caption = SendMessage;
             }
 
             if (_isCommentEnabled && !string.IsNullOrEmpty(_caption?.Text))

@@ -164,366 +164,112 @@ namespace Unigram.Common
             return string.Equals(uri.Scheme, "tg", StringComparison.OrdinalIgnoreCase);
         }
 
-        public static async void OpenTelegramScheme(IProtoService protoService, INavigationService navigation, Uri scheme)
+        public static async void OpenTelegramUrl(IProtoService protoService, INavigationService navigation, Uri uri)
         {
-            string username = null;
-            string message = null;
-            string group = null;
-            string sticker = null;
-            string botUser = null;
-            string botChat = null;
-            string comment = null;
-            string phone = null;
-            string game = null;
-            string phoneHash = null;
-            string post = null;
-            string server = null;
-            string port = null;
-            string user = null;
-            string pass = null;
-            string secret = null;
-            string phoneCode = null;
-            string lang = null;
-            string channel = null;
-            string voiceChat = null;
-            string slug = null;
-            bool hasUrl = false;
+            var response = await protoService.SendAsync(new GetInternalLinkType(uri.ToString()));
+            if (response is InternalLinkTypeActiveSessions)
+            {
 
-            var query = scheme.Query.ParseQueryString();
-            if (scheme.AbsoluteUri.StartsWith("tg:resolve") || scheme.AbsoluteUri.StartsWith("tg://resolve"))
+            }
+            else if (response is InternalLinkTypeAuthenticationCode)
             {
-                username = query.GetParameter("domain");
 
-                if (string.Equals(username, "telegrampassport", StringComparison.OrdinalIgnoreCase))
-                {
-                    username = null;
-                    Dictionary<string, object> auth = new Dictionary<string, object>();
-                    var scope = query.GetParameter("scope");
-                    if (!string.IsNullOrEmpty(scope) && scope.StartsWith("{") && scope.EndsWith("}"))
-                    {
-                        auth.Add("nonce", query.GetParameter("nonce"));
-                    }
-                    else
-                    {
-                        auth.Add("payload", query.GetParameter("payload"));
-                    }
+            }
+            else if (response is InternalLinkTypeBackground background)
+            {
+                NavigateToBackground(protoService, navigation, background.BackgroundName);
+            }
+            else if (response is InternalLinkTypeBotStart botStart)
+            {
+                NavigateToUsername(protoService, navigation, botStart.BotUsername, botStart.StartParameter, null, null, null, null);
+            }
+            else if (response is InternalLinkTypeBotStartInGroup botStartInGroup)
+            {
+                NavigateToUsername(protoService, navigation, botStartInGroup.BotUsername, botStartInGroup.StartParameter, null, null, null, null, PageKind.Search);
+            }
+            else if (response is InternalLinkTypeChangePhoneNumber)
+            {
 
-                    auth.Add("bot_id", int.Parse(query.GetParameter("bot_id")));
-                    auth.Add("scope", scope);
-                    auth.Add("public_key", query.GetParameter("public_key"));
-                    auth.Add("callback_url", query.GetParameter("callback_url"));
-                }
-                else
-                {
-                    botUser = query.GetParameter("start");
-                    botChat = query.GetParameter("startgroup");
-                    game = query.GetParameter("game");
-                    post = query.GetParameter("post");
-                    comment = query.GetParameter("comment");
-                    voiceChat = query.GetParameter("voicechat");
-                }
             }
-            else if (scheme.AbsoluteUri.StartsWith("tg:join") || scheme.AbsoluteUri.StartsWith("tg://join"))
+            else if (response is InternalLinkTypeChatInvite)
             {
-                group = query.GetParameter("invite");
+                NavigateToInviteLink(protoService, navigation, uri.ToString());
             }
-            else if (scheme.AbsoluteUri.StartsWith("tg:addstickers") || scheme.AbsoluteUri.StartsWith("tg://addstickers"))
+            else if (response is InternalLinkTypeFilterSettings)
             {
-                sticker = query.GetParameter("set");
-            }
-            else if (scheme.AbsoluteUri.StartsWith("tg:addtheme") || scheme.AbsoluteUri.StartsWith("tg://addtheme"))
-            {
-                slug = query.GetParameter("slug");
-            }
-            else if (scheme.AbsoluteUri.StartsWith("tg:msg") || scheme.AbsoluteUri.StartsWith("tg://msg") || scheme.AbsoluteUri.StartsWith("tg://share") || scheme.AbsoluteUri.StartsWith("tg:share"))
-            {
-                message = query.GetParameter("url");
-                if (message == null)
-                {
-                    message = "";
-                }
-                if (query.GetParameter("text") != null)
-                {
-                    if (message.Length > 0)
-                    {
-                        hasUrl = true;
-                        message += "\n";
-                    }
-                    message += query.GetParameter("text");
-                }
-                if (message.Length > 4096 * 4)
-                {
-                    message = message.Substring(0, 4096 * 4);
-                }
-                while (message.EndsWith("\n"))
-                {
-                    message = message.Substring(0, message.Length - 1);
-                }
-            }
-            else if (scheme.AbsoluteUri.StartsWith("tg:confirmphone") || scheme.AbsoluteUri.StartsWith("tg://confirmphone"))
-            {
-                phone = query.GetParameter("phone");
-                phoneHash = query.GetParameter("hash");
-            }
-            else if (scheme.AbsoluteUri.StartsWith("tg:passport") || scheme.AbsoluteUri.StartsWith("tg://passport") || scheme.AbsoluteUri.StartsWith("tg:secureid") || scheme.AbsoluteUri.StartsWith("tg://secureid"))
-            {
-                //url = url.replace("tg:passport", "tg://telegram.org").replace("tg://passport", "tg://telegram.org").replace("tg:secureid", "tg://telegram.org");
-                //data = Uri.parse(url);
-                //auth = new HashMap<>();
-                //String scope = data.getQueryParameter("scope");
-                //if (!TextUtils.isEmpty(scope) && scope.startsWith("{") && scope.endsWith("}"))
-                //{
-                //    auth.put("nonce", data.getQueryParameter("nonce"));
-                //}
-                //else
-                //{
-                //    auth.put("payload", data.getQueryParameter("payload"));
-                //}
-                //auth.put("bot_id", data.getQueryParameter("bot_id"));
-                //auth.put("scope", scope);
-                //auth.put("public_key", data.getQueryParameter("public_key"));
-                //auth.put("callback_url", data.getQueryParameter("callback_url"));
-            }
-            else if (scheme.AbsoluteUri.StartsWith("tg:socks") || scheme.AbsoluteUri.StartsWith("tg://socks") || scheme.AbsoluteUri.StartsWith("tg:proxy") || scheme.AbsoluteUri.StartsWith("tg://proxy"))
-            {
-                server = query.GetParameter("server");
-                port = query.GetParameter("port");
-                user = query.GetParameter("user");
-                pass = query.GetParameter("pass");
-                secret = query.GetParameter("secret");
-            }
-            else if (scheme.AbsoluteUri.StartsWith("tg:login") || scheme.AbsoluteUri.StartsWith("tg://login"))
-            {
-                phoneCode = query.GetParameter("code");
-            }
-            //tg://setlanguage?lang=he-beta
-            else if (scheme.AbsoluteUri.StartsWith("tg:setlanguage") || scheme.AbsoluteUri.StartsWith("tg://setlanguage"))
-            {
-                lang = query.GetParameter("lang");
-            }
-            else if (scheme.AbsoluteUri.StartsWith("tg:privatepost") || scheme.AbsoluteUri.StartsWith("tg://privatepost"))
-            {
-                channel = query.GetParameter("channel");
-                post = query.GetParameter("post");
-            }
-            else if (scheme.AbsoluteUri.StartsWith("tg:settings") || scheme.AbsoluteUri.StartsWith("tg://settings"))
-            {
-                if (scheme.Segments.Length == 2)
-                {
-                    switch (scheme.Segments[1])
-                    {
-                        case "themes":
-                        case "devices":
-                        case "folders":
-                        case "change_number":
-                            break;
-                    }
-                }
-            }
 
-            if (message != null && message.StartsWith("@"))
-            {
-                message = " " + message;
             }
+            else if (response is InternalLinkTypeGame game)
+            {
+                NavigateToUsername(protoService, navigation, game.BotUsername, null, null, null, null, game.GameShortName);
+            }
+            else if (response is InternalLinkTypeLanguagePack languagePack)
+            {
+                NavigateToLanguage(protoService, navigation, languagePack.LanguagePackId);
+            }
+            else if (response is InternalLinkTypeMessage)
+            {
+                NavigateToMessage(protoService, navigation, uri.ToString());
+            }
+            else if (response is InternalLinkTypeMessageDraft messageDraft)
+            {
+                NavigateToShare(messageDraft.Text, messageDraft.ContainsLink);
+            }
+            else if (response is InternalLinkTypePassportDataRequest)
+            {
 
-            if (phone != null || phoneHash != null)
-            {
-                NavigateToConfirmPhone(protoService, phone, phoneHash);
             }
-            if (server != null && int.TryParse(port, out int portCode))
+            else if (response is InternalLinkTypePhoneNumberConfirmation phoneNumberConfirmation)
             {
-                NavigateToProxy(protoService, server, portCode, user, pass, secret);
+                NavigateToConfirmPhone(protoService, phoneNumberConfirmation.PhoneNumber, phoneNumberConfirmation.Hash);
             }
-            else if (group != null)
+            else if (response is InternalLinkTypeProxy proxy)
             {
-                NavigateToInviteLink(protoService, navigation, group);
+                NavigateToProxy(protoService, proxy.Server, proxy.Port, proxy.Type);
             }
-            else if (sticker != null)
+            else if (response is InternalLinkTypePublicChat publicChat)
             {
-                NavigateToStickerSet(sticker);
+                NavigateToUsername(protoService, navigation, publicChat.ChatUsername, null, null, null, null, null);
             }
-            else if (username != null)
+            else if (response is InternalLinkTypeQrCodeAuthentication)
             {
-                NavigateToUsername(protoService, navigation, username, botUser ?? botChat, voiceChat, post, comment, game);
+
             }
-            else if (username != null && username.StartsWith('+'))
+            else if (response is InternalLinkTypeSettings)
             {
-                NavigateToInviteLink(protoService, navigation, username.TrimStart('+'));
+
             }
-            else if (message != null)
+            else if (response is InternalLinkTypeStickerSet stickerSet)
             {
-                NavigateToShare(message, hasUrl);
+                NavigateToStickerSet(stickerSet.StickerSetName);
             }
-            else if (phoneCode != null)
+            else if (response is InternalLinkTypeTheme theme)
             {
-                NavigateToSendCode(protoService, phoneCode);
+                NavigateToTheme(protoService, theme.ThemeName);
             }
-            else if (lang != null)
+            else if (response is InternalLinkTypeThemeSettings)
             {
-                NavigateToLanguage(protoService, navigation, lang);
+
             }
-            else if (channel != null && post != null)
+            else if (response is InternalLinkTypeUnknownDeepLink)
             {
-                NavigateToMessage(protoService, navigation, channel, post);
+                NavigateToUnknownDeepLink(protoService, uri.ToString());
             }
-            else if (slug != null)
+            else if (response is InternalLinkTypeVoiceChat voiceChat)
             {
-                NavigateToTheme(protoService, slug);
-            }
-            else
-            {
-                var response = await protoService.SendAsync(new GetDeepLinkInfo(scheme.AbsoluteUri));
-                if (response is DeepLinkInfo info)
-                {
-                    var confirm = await MessagePopup.ShowAsync(info.Text, Strings.Resources.AppName, Strings.Resources.OK, info.NeedUpdateApplication ? Strings.Resources.UpdateApp : null);
-                    if (confirm == ContentDialogResult.Secondary)
-                    {
-                        await Launcher.LaunchUriAsync(new Uri("ms-windows-store://pdp/?PFN=" + Package.Current.Id.FamilyName));
-                    }
-                }
+                NavigateToUsername(protoService, navigation, voiceChat.ChatUsername, null, voiceChat.InviteHash, null, null, null);
             }
         }
 
-        public static void OpenTelegramUrl(IProtoService protoService, INavigationService navigation, Uri uri)
+        private static async void NavigateToUnknownDeepLink(IProtoService protoService, string url)
         {
-            if (IsTelegramScheme(uri))
+            var response = await protoService.SendAsync(new GetDeepLinkInfo(url));
+            if (response is DeepLinkInfo info)
             {
-                OpenTelegramScheme(protoService, navigation, uri);
-            }
-            else
-            {
-                var url = uri.ToString();
-                if (url.Contains("telegra.ph"))
+                var confirm = await MessagePopup.ShowAsync(info.Text, Strings.Resources.AppName, Strings.Resources.OK, info.NeedUpdateApplication ? Strings.Resources.UpdateApp : null);
+                if (confirm == ContentDialogResult.Secondary)
                 {
-                    navigation.NavigateToInstant(url);
-                }
-                else if (url.Contains("joinchat"))
-                {
-                    var index = url.TrimEnd('/').LastIndexOf("/", StringComparison.OrdinalIgnoreCase);
-                    if (index != -1)
-                    {
-                        var text = url.Substring(index).Replace("/", string.Empty);
-                        if (!string.IsNullOrEmpty(text))
-                        {
-                            NavigateToInviteLink(protoService, navigation, url);
-                        }
-                    }
-                }
-                else if (url.Contains("addstickers"))
-                {
-                    var index = url.TrimEnd('/').LastIndexOf("/", StringComparison.OrdinalIgnoreCase);
-                    if (index != -1)
-                    {
-                        var text = url.Substring(index).Replace("/", string.Empty);
-                        if (!string.IsNullOrEmpty(text))
-                        {
-                            NavigateToStickerSet(text);
-                        }
-                    }
-                }
-                else
-                {
-                    var query = url.ParseQueryString();
-
-                    var accessToken = GetAccessToken(query, out PageKind pageKind);
-                    var post = query.GetParameter("post");
-                    var game = query.GetParameter("game");
-                    var comment = query.GetParameter("comment");
-                    var voiceChat = query.GetParameter("voicechat");
-                    var result = url.StartsWith("http") ? url : ("https://" + url);
-
-                    if (uri.Segments.Length >= 2)
-                    {
-                        var username = uri.Segments[1].Replace("/", string.Empty);
-                        if (string.IsNullOrEmpty(post) && uri.Segments.Length >= 3)
-                        {
-                            post = uri.Segments[2].Replace("/", string.Empty);
-                        }
-                        if (!string.IsNullOrEmpty(username))
-                        {
-                            if (username.Equals("confirmphone", StringComparison.OrdinalIgnoreCase))
-                            {
-                                var phone = query.GetParameter("phone");
-                                var hash = query.GetParameter("hash");
-
-                                NavigateToConfirmPhone(null, phone, hash);
-                            }
-                            else if (username.Equals("login", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(post))
-                            {
-                                NavigateToSendCode(protoService, post);
-                            }
-                            else if (username.Equals("iv", StringComparison.OrdinalIgnoreCase))
-                            {
-                                navigation.NavigateToInstant(url);
-                            }
-                            else if (username.Equals("proxy", StringComparison.OrdinalIgnoreCase) || username.Equals("socks", StringComparison.OrdinalIgnoreCase))
-                            {
-                                var server = query.GetParameter("server");
-                                var port = query.GetParameter("port");
-                                var user = query.GetParameter("user");
-                                var pass = query.GetParameter("pass");
-                                var secret = query.GetParameter("secret");
-
-                                if (server != null && int.TryParse(port, out int portCode))
-                                {
-                                    NavigateToProxy(protoService, server, portCode, user, pass, secret);
-                                }
-                            }
-                            else if (username.Equals("share"))
-                            {
-                                var hasUrl = false;
-                                var text = query.GetParameter("url");
-                                if (text == null)
-                                {
-                                    text = "";
-                                }
-                                if (query.GetParameter("text") != null)
-                                {
-                                    if (text.Length > 0)
-                                    {
-                                        hasUrl = true;
-                                        text += "\n";
-                                    }
-                                    text += query.GetParameter("text");
-                                }
-                                if (text.Length > 4096 * 4)
-                                {
-                                    text = text.Substring(0, 4096 * 4);
-                                }
-                                while (text.EndsWith("\n"))
-                                {
-                                    text = text.Substring(0, text.Length - 1);
-                                }
-
-
-                                NavigateToShare(text, hasUrl);
-                            }
-                            else if (username.Equals("setlanguage", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(post))
-                            {
-                                NavigateToLanguage(protoService, navigation, post);
-                            }
-                            else if (username.Equals("c", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(post) && uri.Segments.Length >= 4)
-                            {
-                                NavigateToMessage(protoService, navigation, post, uri.Segments[3].Replace("/", string.Empty));
-                            }
-                            else if (username.Equals("bg", StringComparison.OrdinalIgnoreCase))
-                            {
-                                NavigateToBackground(protoService, navigation, post + uri.Query);
-                            }
-                            else if (username.Equals("addtheme", StringComparison.OrdinalIgnoreCase) && uri.Segments.Length == 3)
-                            {
-                                NavigateToTheme(protoService, uri.Segments[2].Replace("/", string.Empty));
-                            }
-                            else if (username.StartsWith('+'))
-                            {
-                                NavigateToInviteLink(protoService, navigation, url);
-                            }
-                            else
-                            {
-                                NavigateToUsername(protoService, navigation, username, accessToken, voiceChat, post, string.IsNullOrEmpty(comment) ? null : comment, string.IsNullOrEmpty(game) ? null : game, pageKind);
-                            }
-                        }
-                    }
+                    await Launcher.LaunchUriAsync(new Uri("ms-windows-store://pdp/?PFN=" + Package.Current.Id.FamilyName));
                 }
             }
         }
@@ -539,23 +285,30 @@ namespace Unigram.Common
             //}
         }
 
-        private static async void NavigateToMessage(IProtoService protoService, INavigationService navigation, string post, string message)
+        private static async void NavigateToMessage(IProtoService protoService, INavigationService navigation, string url)
         {
-            if (int.TryParse(post, out int supergroup) && long.TryParse(message, out long msgId))
+            var response = await protoService.SendAsync(new GetMessageLinkInfo(url));
+            if (response is MessageLinkInfo info && info.ChatId != 0)
             {
-                var response = await protoService.SendAsync(new CreateSupergroupChat(supergroup, false));
-                if (response is Chat chat)
+                if (info.Message != null)
                 {
-                    navigation.NavigateToChat(chat, msgId << 20);
+                    if (info.ForComment)
+                    {
+                        navigation.NavigateToThread(info.ChatId, info.Message.MessageThreadId, message: info.Message.Id);
+                    }
+                    else
+                    {
+                        navigation.NavigateToChat(info.ChatId, message: info.Message.Id);
+                    }
                 }
                 else
                 {
-                    await MessagePopup.ShowAsync(Strings.Resources.LinkNotFound, Strings.Resources.AppName, Strings.Resources.OK);
+                    navigation.NavigateToChat(info.ChatId);
                 }
             }
             else
             {
-                // TODO: error
+                await MessagePopup.ShowAsync(Strings.Resources.LinkNotFound, Strings.Resources.AppName, Strings.Resources.OK);
             }
         }
 
@@ -697,30 +450,37 @@ namespace Unigram.Common
             }
         }
 
-        public static async void NavigateToShare(string text, bool hasUrl)
+        public static async void NavigateToShare(FormattedText text, bool hasUrl)
         {
             await SharePopup.GetForCurrentView().ShowAsync(text);
         }
 
-        public static async void NavigateToProxy(IProtoService protoService, string server, int port, string username, string password, string secret)
+        public static async void NavigateToProxy(IProtoService protoService, string server, int port, ProxyType type)
         {
-            var userText = username != null ? $"{Strings.Resources.UseProxyUsername}: {username}\n" : string.Empty;
-            var passText = password != null ? $"{Strings.Resources.UseProxyPassword}: {password}\n" : string.Empty;
-            var secretText = secret != null ? $"{Strings.Resources.UseProxySecret}: {secret}\n" : string.Empty;
-            var secretInfo = secret != null ? $"\n\n{Strings.Resources.UseProxyTelegramInfo2}" : string.Empty;
+            string userText = string.Empty;
+            string passText = string.Empty;
+            string secretText = string.Empty;
+            string secretInfo = string.Empty;
+
+            if (type is ProxyTypeHttp http)
+            {
+                userText = !string.IsNullOrEmpty(http.Username) ? $"{Strings.Resources.UseProxyUsername}: {http.Username}\n" : string.Empty;
+                passText = !string.IsNullOrEmpty(http.Password) ? $"{Strings.Resources.UseProxyPassword}: {http.Password}\n" : string.Empty;
+            }
+            else if (type is ProxyTypeSocks5 socks5)
+            {
+                userText = !string.IsNullOrEmpty(socks5.Username) ? $"{Strings.Resources.UseProxyUsername}: {socks5.Username}\n" : string.Empty;
+                passText = !string.IsNullOrEmpty(socks5.Password) ? $"{Strings.Resources.UseProxyPassword}: {socks5.Password}\n" : string.Empty;
+            }
+            else if (type is ProxyTypeMtproto mtproto)
+            {
+                secretText = !string.IsNullOrEmpty(mtproto.Secret) ? $"{Strings.Resources.UseProxySecret}: {mtproto.Secret}\n" : string.Empty;
+                secretInfo = !string.IsNullOrEmpty(mtproto.Secret) ? $"\n\n{Strings.Resources.UseProxyTelegramInfo2}" : string.Empty;
+            }
+
             var confirm = await MessagePopup.ShowAsync($"{Strings.Resources.EnableProxyAlert}\n\n{Strings.Resources.UseProxyAddress}: {server}\n{Strings.Resources.UseProxyPort}: {port}\n{userText}{passText}{secretText}\n{Strings.Resources.EnableProxyAlert2}{secretInfo}", Strings.Resources.Proxy, Strings.Resources.ConnectingConnectProxy, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
-                ProxyType type;
-                if (secret != null)
-                {
-                    type = new ProxyTypeMtproto(secret);
-                }
-                else
-                {
-                    type = new ProxyTypeSocks5(username ?? string.Empty, password ?? string.Empty);
-                }
-
                 protoService.Send(new AddProxy(server ?? string.Empty, port, true, type));
             }
         }

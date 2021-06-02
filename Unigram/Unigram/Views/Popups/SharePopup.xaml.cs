@@ -175,7 +175,7 @@ namespace Unigram.Views.Popups
             return ShowAsync();
         }
 
-        public Task<ContentDialogResult> ShowAsync(string message)
+        public Task<ContentDialogResult> ShowAsync(FormattedText message)
         {
             ChatsPanel.SelectionMode = ListViewSelectionMode.Single;
             ViewModel.SearchType = SearchChatsType.Post;
