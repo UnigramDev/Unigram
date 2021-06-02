@@ -2285,7 +2285,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>powershell.exe -NoProfile -ExecutionPolicy RemoteSigned -file "$(ProjectDir)\..\UpdateManifest.ps1" -path "$(ProjectDir)" -config "$(ConfigurationName)" -store "$(AppxPackageIsForStore)" -sign "$(AppxPackageSigningEnabled)"</PreBuildEvent>
+    <PreBuildEvent>powershell.exe -NoProfile -ExecutionPolicy RemoteSigned -file "$(SolutionDir)\UpdateManifest.ps1" -path "$(ProjectDir)\" -config "$(ConfigurationName)" -store "$(AppxPackageIsForStore)" -sign "$(AppxPackageSigningEnabled)"</PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent>
