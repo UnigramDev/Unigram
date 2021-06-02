@@ -6,33 +6,43 @@
 
 namespace winrt::Unigram::Native::Calls::implementation
 {
-    int32_t VoipVideoChannelInfo::AudioSource()
-    {
-        return m_audioSource;
-    }
+	int32_t VoipVideoChannelInfo::AudioSource()
+	{
+		return m_audioSource;
+	}
 
-    void VoipVideoChannelInfo::AudioSource(int32_t value)
-    {
-        m_audioSource = value;
-    }
+	void VoipVideoChannelInfo::AudioSource(int32_t value)
+	{
+		m_audioSource = value;
+	}
 
-    hstring VoipVideoChannelInfo::Description()
-    {
-        return m_description;
-    }
+	hstring VoipVideoChannelInfo::EndpointId()
+	{
+		return m_endpointId;
+	}
 
-    void VoipVideoChannelInfo::Description(hstring value)
-    {
-        m_description = value;
-    }
+	void VoipVideoChannelInfo::EndpointId(hstring value)
+	{
+		m_endpointId = value;
+	}
 
-    VoipVideoChannelQuality VoipVideoChannelInfo::Quality()
-    {
-        return m_quality;
-    }
+	IVector<GroupCallVideoSourceGroup> VoipVideoChannelInfo::SourceGroups()
+	{
+		return m_sourceGroups;
+	}
 
-    void VoipVideoChannelInfo::Quality(VoipVideoChannelQuality value)
-    {
-        m_quality = value;
-    }
+	void VoipVideoChannelInfo::SourceGroups(IVector<GroupCallVideoSourceGroup> value)
+	{
+		m_sourceGroups = value;
+	}
+
+	VoipVideoChannelQuality VoipVideoChannelInfo::Quality()
+	{
+		return m_quality;
+	}
+
+	void VoipVideoChannelInfo::Quality(VoipVideoChannelQuality value)
+	{
+		m_quality = value;
+	}
 }

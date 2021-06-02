@@ -3,12 +3,12 @@
 
 namespace winrt::Unigram::Native::Calls::implementation
 {
-	VoipVideoRendererToken::VoipVideoRendererToken(std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> sink, int32_t audioSource, hstring endpointId, hstring description, CanvasControl canvasControl)
-	: m_sink(sink),
-	m_audioSource(audioSource),
-	m_endpointId(endpointId),
-	m_description(description),
-	m_canvasControl(std::make_shared<CanvasControl>(canvasControl))
+	VoipVideoRendererToken::VoipVideoRendererToken(std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> sink, int32_t audioSource, hstring endpointId, IVector<GroupCallVideoSourceGroup> sourceGroups, CanvasControl canvasControl)
+		: m_sink(sink),
+		m_audioSource(audioSource),
+		m_endpointId(endpointId),
+		m_sourceGroups(sourceGroups),
+		m_canvasControl(std::make_shared<CanvasControl>(canvasControl))
 	{
 	}
 
@@ -20,8 +20,8 @@ namespace winrt::Unigram::Native::Calls::implementation
 		return m_endpointId;
 	}
 
-	hstring VoipVideoRendererToken::Description() {
-		return m_description;
+	IVector<GroupCallVideoSourceGroup> VoipVideoRendererToken::SourceGroups() {
+		return m_sourceGroups;
 	}
 
 	bool VoipVideoRendererToken::IsMatch(hstring endpointId, CanvasControl canvasControl)

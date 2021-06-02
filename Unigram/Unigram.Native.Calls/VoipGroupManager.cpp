@@ -131,7 +131,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 			auto renderer = std::make_shared<VoipVideoRenderer>(canvas, true);
 			m_impl->addIncomingVideoOutput(string_to_unmanaged(videoInfo.EndpointId()), renderer);
 
-			return *winrt::make_self<VoipVideoRendererToken>(renderer, audioSource, videoInfo.EndpointId(), videoInfo.Description(), canvas);
+			return *winrt::make_self<VoipVideoRendererToken>(renderer, audioSource, videoInfo.EndpointId(), videoInfo.SourceGroups(), canvas);
 		}
 
 		return nullptr;
@@ -197,10 +197,18 @@ namespace winrt::Unigram::Native::Calls::implementation
 			for (const VoipVideoChannelInfo& x : descriptions) {
 				tgcalls::VideoChannelDescription item;
 				item.audioSsrc = x.AudioSource();
-				item.videoInformation = string_to_unmanaged(x.Description());
+				item.endpointId = string_to_unmanaged(x.EndpointId());
 				item.quality = (tgcalls::VideoChannelDescription::Quality)x.Quality();
 
-				impl.push_back(item);
+				for (const GroupCallVideoSourceGroup& group : x.SourceGroups()) {
+					tgcalls::MediaSsrcGroup groupImpl;
+					groupImpl.semantics = string_to_unmanaged(group.Semantics());
+					groupImpl.ssrcs = std::vector<uint32_t>(begin(group.SourceIds()), end(group.SourceIds()));
+
+					item.ssrcGroups.push_back(std::move(groupImpl));
+				}
+
+				impl.push_back(std::move(item));
 			}
 
 			m_impl->setRequestedVideoChannels(std::move(impl));

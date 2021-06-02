@@ -2,38 +2,55 @@
 
 #include "VoipVideoChannelInfo.g.h"
 
+using namespace winrt::Telegram::Td::Api;
+using namespace winrt::Windows::Foundation::Collections;
+
 namespace winrt::Unigram::Native::Calls::implementation
 {
-    struct VoipVideoChannelInfo : VoipVideoChannelInfoT<VoipVideoChannelInfo>
-    {
-        VoipVideoChannelInfo() = default;
-        VoipVideoChannelInfo(int32_t audioSource, hstring description, VoipVideoChannelQuality quality)
-        : m_audioSource(audioSource),
-        m_description(description),
-        m_quality(quality)
-        {
+	struct VoipVideoChannelInfo : VoipVideoChannelInfoT<VoipVideoChannelInfo>
+	{
+		VoipVideoChannelInfo() = default;
+		VoipVideoChannelInfo(int32_t audioSource, hstring endpointId, IVector<GroupCallVideoSourceGroup> sourceGroups, VoipVideoChannelQuality quality)
+			: m_audioSource(audioSource),
+			m_endpointId(endpointId),
+			m_sourceGroups(sourceGroups),
+			m_quality(quality)
+		{
 
-        }
+		}
 
-        int32_t AudioSource();
-        void AudioSource(int32_t value);
+		VoipVideoChannelInfo(VoipVideoRendererToken token, VoipVideoChannelQuality quality)
+			: m_audioSource(token.AudioSource()),
+			m_endpointId(token.EndpointId()),
+			m_sourceGroups(token.SourceGroups()),
+			m_quality(quality)
+		{
 
-        hstring Description();
-        void Description(hstring value);
+		}
 
-        VoipVideoChannelQuality Quality();
-        void Quality(VoipVideoChannelQuality value);
+		int32_t AudioSource();
+		void AudioSource(int32_t value);
 
-    private:
-        int32_t m_audioSource;
-        hstring m_description;
-        VoipVideoChannelQuality m_quality;
-    };
+		hstring EndpointId();
+		void EndpointId(hstring value);
+
+		IVector<GroupCallVideoSourceGroup> SourceGroups();
+		void SourceGroups(IVector<GroupCallVideoSourceGroup> value);
+
+		VoipVideoChannelQuality Quality();
+		void Quality(VoipVideoChannelQuality value);
+
+	private:
+		int32_t m_audioSource;
+		hstring m_endpointId;
+		IVector<GroupCallVideoSourceGroup> m_sourceGroups;
+		VoipVideoChannelQuality m_quality;
+	};
 }
 
 namespace winrt::Unigram::Native::Calls::factory_implementation
 {
-    struct VoipVideoChannelInfo : VoipVideoChannelInfoT<VoipVideoChannelInfo, implementation::VoipVideoChannelInfo>
-    {
-    };
+	struct VoipVideoChannelInfo : VoipVideoChannelInfoT<VoipVideoChannelInfo, implementation::VoipVideoChannelInfo>
+	{
+	};
 }

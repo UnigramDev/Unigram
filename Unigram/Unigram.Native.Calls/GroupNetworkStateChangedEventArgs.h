@@ -4,15 +4,15 @@
 
 namespace winrt::Unigram::Native::Calls::implementation
 {
-    struct GroupNetworkStateChangedEventArgs : GroupNetworkStateChangedEventArgsT<GroupNetworkStateChangedEventArgs>
-    {
-        GroupNetworkStateChangedEventArgs(bool isConnected, bool isTransitioningFromBroadcastToRtc);
+	struct GroupNetworkStateChangedEventArgs : GroupNetworkStateChangedEventArgsT<GroupNetworkStateChangedEventArgs>
+	{
+		GroupNetworkStateChangedEventArgs(bool isConnected, bool isTransitioningFromBroadcastToRtc);
 
-        bool IsConnected();
-        bool IsTransitioningFromBroadcastToRtc();
+		bool IsConnected();
+		bool IsTransitioningFromBroadcastToRtc();
 
-    private:
-        bool m_isConnected;
-        bool m_isTransitioningFromBroadcastToRtc;
-    };
+	private:
+		bool m_isConnected;
+		bool m_isTransitioningFromBroadcastToRtc;
+	};
 }

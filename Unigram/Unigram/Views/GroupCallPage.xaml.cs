@@ -1772,7 +1772,7 @@ namespace Unigram.Views
                 {
                     if (_gridTokens.TryGetValue(_pinnedEndpointId, out var token))
                     {
-                        descriptions[token.EndpointId] = new VoipVideoChannelInfo(token.AudioSource, token.Description, cell.Quality);
+                        descriptions[token.EndpointId] = new VoipVideoChannelInfo(token, cell.Quality);
                     }
                 }
             }
@@ -1787,7 +1787,7 @@ namespace Unigram.Views
 
                     if (_gridCells.TryGetValue(item.Value.EndpointId, out var cell))
                     {
-                        descriptions[item.Value.EndpointId] = new VoipVideoChannelInfo(item.Value.AudioSource, item.Value.Description, cell.Quality);
+                        descriptions[item.Value.EndpointId] = new VoipVideoChannelInfo(item.Value, cell.Quality);
                     }
                 }
             }
@@ -1799,7 +1799,7 @@ namespace Unigram.Views
                     continue;
                 }
 
-                descriptions[item.Value.EndpointId] = new VoipVideoChannelInfo(item.Value.AudioSource, item.Value.Description, VoipVideoChannelQuality.Thumbnail);
+                descriptions[item.Value.EndpointId] = new VoipVideoChannelInfo(item.Value, VoipVideoChannelQuality.Thumbnail);
             }
 
             _manager?.SetRequestedVideoChannels(descriptions.Values.ToArray());

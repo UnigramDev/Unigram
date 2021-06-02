@@ -5,7 +5,7 @@ namespace Unigram.Native.Calls
     {
         Int32 AudioSource{ get; };
         String EndpointId{ get; };
-        String Description{ get; };
+        IVector<Telegram.Td.Api.GroupCallVideoSourceGroup> SourceGroups{ get; };
 
         Boolean IsMatch(String endpointId, Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvasControl);
 

@@ -9,16 +9,16 @@
 
 namespace winrt::Unigram::Native::Calls::implementation
 {
-    VoipScreenCapture::VoipScreenCapture(GraphicsCaptureItem item)
-    {
-        m_impl = tgcalls::VideoCaptureInterface::Create(
-            tgcalls::StaticThreads::getThreads(),
-            "GraphicsCaptureItem",
-            std::make_shared<tgcalls::UwpContext>(item));
+	VoipScreenCapture::VoipScreenCapture(GraphicsCaptureItem item)
+	{
+		m_impl = tgcalls::VideoCaptureInterface::Create(
+			tgcalls::StaticThreads::getThreads(),
+			"GraphicsCaptureItem",
+			std::make_shared<tgcalls::UwpContext>(item));
 		m_impl->setOnFatalError([this] {
 			m_fatalErrorOccurred(*this, nullptr);
 			});
-    }
+	}
 
 	winrt::event_token VoipScreenCapture::FatalErrorOccurred(Windows::Foundation::TypedEventHandler<
 		winrt::Unigram::Native::Calls::VoipScreenCapture,

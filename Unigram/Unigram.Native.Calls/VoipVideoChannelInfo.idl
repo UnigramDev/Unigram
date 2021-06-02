@@ -1,3 +1,5 @@
+import "VoipVideoRendererToken.idl";
+
 namespace Unigram.Native.Calls
 {
     enum VoipVideoChannelQuality {
@@ -10,10 +12,12 @@ namespace Unigram.Native.Calls
     runtimeclass VoipVideoChannelInfo
     {
         VoipVideoChannelInfo();
-        VoipVideoChannelInfo(Int32 audioSource, String description, VoipVideoChannelQuality quality);
+        VoipVideoChannelInfo(Int32 audioSource, String endpointId, IVector<Telegram.Td.Api.GroupCallVideoSourceGroup> sourceGroups, VoipVideoChannelQuality quality);
+        VoipVideoChannelInfo(VoipVideoRendererToken token, VoipVideoChannelQuality quality);
 
         Int32 AudioSource;
-        String Description;
+        String EndpointId;
+        IVector<Telegram.Td.Api.GroupCallVideoSourceGroup> SourceGroups;
         VoipVideoChannelQuality Quality;
     }
 }
