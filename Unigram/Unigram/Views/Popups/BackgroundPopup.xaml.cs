@@ -5,6 +5,7 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Brushes;
+using Unigram.Controls.Chats;
 using Unigram.Converters;
 using Unigram.Services;
 using Unigram.ViewModels;
@@ -18,7 +19,6 @@ using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
-using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Views
 {
@@ -27,6 +27,8 @@ namespace Unigram.Views
         public BackgroundViewModel ViewModel => DataContext as BackgroundViewModel;
 
         private readonly FlatFileContext<Background> _backgrounds = new();
+
+        private readonly ChatBackgroundFreeform _freeform = new(false);
 
         private SpriteVisual _blurVisual;
         private CompositionEffectBrush _blurBrush;
@@ -58,7 +60,7 @@ namespace Unigram.Views
 
             //Presenter.Update(ViewModel.SessionId, ViewModel.Settings, ViewModel.Aggregator);
 
-            ElementCompositionPreview.GetElementVisual(LayoutRoot).Clip = Window.Current.Compositor.CreateInsetClip();
+            ElementCompositionPreview.GetElementVisual(ContentPanel).Clip = Window.Current.Compositor.CreateInsetClip();
 
             InitializeBlur();
         }
@@ -102,7 +104,32 @@ namespace Unigram.Views
 
         private void BlurPanel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
+            if (_fill is BackgroundFillFreeformGradient freeform)
+            {
+                _freeform.UpdateLayout(Background as ImageBrush, e.NewSize.Width, e.NewSize.Height, freeform);
+            }
+
             _blurVisual.Size = e.NewSize.ToVector2();
+        }
+
+        private BackgroundFill _fill;
+        public BackgroundFill Fill
+        {
+            get => _fill;
+            set
+            {
+                _fill = value;
+
+                if (value is BackgroundFillFreeformGradient freeform)
+                {
+                    Background = new ImageBrush { AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
+                    _freeform.UpdateLayout(Background as ImageBrush, ActualWidth, ActualHeight, freeform);
+                }
+                else
+                {
+                    Background = value?.ToBrush();
+                }
+            }
         }
 
         private void Blur_Click(object sender, RoutedEventArgs e)
@@ -226,6 +253,8 @@ namespace Unigram.Views
 
         private BackgroundFill ConvertBackground(BackgroundColor color1, BackgroundColor color2, BackgroundColor color3, BackgroundColor color4, int rotation)
         {
+            Fill = ViewModel.GetFill();
+
             var panel = PatternList.ItemsPanelRoot as ItemsStackPanel;
             if (panel != null)
             {
@@ -260,11 +289,11 @@ namespace Unigram.Views
                     }
 
                     content.Opacity = ViewModel.Intensity / 100d;
-                    root.Background = ViewModel.GetFill().ToBrush();
+                    root.Background = Background;
                 }
             }
 
-            return ViewModel.GetFill();
+            return null;
         }
 
         private string ConvertColor2Glyph(BackgroundColor color)
@@ -447,7 +476,7 @@ namespace Unigram.Views
                 }
 
                 content.Opacity = ViewModel.Intensity / 100d;
-                root.Background = Preview.Background;
+                root.Background = Background;
             }
             else
             {
@@ -455,7 +484,7 @@ namespace Unigram.Views
                 content.Source = null;
 
                 content.Opacity = 1;
-                root.Background = Preview.Background;
+                root.Background = Background;
             }
         }
 
@@ -515,7 +544,10 @@ namespace Unigram.Views
 
         private void Play_Click(object sender, RoutedEventArgs e)
         {
-            Preview.Play();
+            if (_fill is BackgroundFillFreeformGradient freeform)
+            {
+                _freeform.UpdateLayout(Background as ImageBrush, ActualWidth, ActualHeight, freeform, true);
+            }
         }
     }
 }

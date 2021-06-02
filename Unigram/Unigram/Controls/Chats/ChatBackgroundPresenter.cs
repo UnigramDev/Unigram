@@ -264,12 +264,10 @@ namespace Unigram.Controls.Chats
 
     public class ChatBackgroundPreview : Grid
     {
-        private readonly ChatBackgroundFreeform _background;
+        private readonly ChatBackgroundFreeform _background = new(false);
 
         public ChatBackgroundPreview()
         {
-            _background = new ChatBackgroundFreeform(false);
-
             SizeChanged += OnSizeChanged;
         }
 

@@ -1138,7 +1138,8 @@
                                                             HorizontalAlignment="Stretch"
                                                             HorizontalContentAlignment="Stretch"
                                                             VerticalAlignment="Top"
-                                                            IsTabStop="False">
+                                                            IsTabStop="False"
+                                                            Canvas.ZIndex="1">
                                                 <ContentControl.Template>
                                                     <ControlTemplate TargetType="ContentControl">
                                                         <ContentPresenter Content="{TemplateBinding Content}"
