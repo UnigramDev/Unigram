@@ -6,6 +6,7 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
+using Unigram.Navigation;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.UI.Composition;
@@ -271,6 +272,21 @@ namespace Unigram.Views.Popups
             return official || archived
                 ? string.Format(masks ? Strings.Resources.AddMasks : Strings.Resources.AddStickers, ViewModel.StickerSet.Stickers.Count)
                 : string.Format(masks ? Strings.Resources.AddMasks : Strings.Resources.AddStickers, ViewModel.StickerSet.Stickers.Count);
+        }
+
+        private Style ConvertIsInstalledStyle(bool installed, bool archived, bool official, bool masks)
+        {
+            if (ViewModel == null || ViewModel.StickerSet == null || ViewModel.StickerSet.Stickers == null)
+            {
+                return BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
+            }
+
+            if (installed && !archived)
+            {
+                return BootStrapper.Current.Resources["DangerButtonStyle"] as Style;
+            }
+
+            return BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
         }
 
         #endregion
