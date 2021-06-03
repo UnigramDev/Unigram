@@ -214,5 +214,19 @@ namespace Unigram.Controls
             DependencyProperty.Register("TextStyle", typeof(NumericTextBlock), typeof(NumericTextBlock), new PropertyMetadata(null));
 
         #endregion
+
+        #region OverflowVisibility
+
+        public Visibility OverflowVisibility
+        {
+            get => (Visibility)GetValue(OverflowVisibilityProperty);
+            set => SetValue(OverflowVisibilityProperty, value);
+        }
+
+        public static readonly DependencyProperty OverflowVisibilityProperty =
+            DependencyProperty.Register("OverflowVisibility", typeof(Visibility), typeof(NumericTextBlock), new PropertyMetadata(Visibility.Visible));
+
+        #endregion
+
     }
 }

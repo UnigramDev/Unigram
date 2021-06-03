@@ -3069,6 +3069,15 @@ namespace Unigram.Views
                     _stickersModeWide = StickersPanelMode.Collapsed;
                 }
             }
+
+            if (e.NewSize.Width >= 500 && ManageCount.OverflowVisibility == Visibility.Collapsed)
+            {
+                ManageCount.OverflowVisibility = Visibility.Collapsed;
+            }
+            else if (e.NewSize.Width < 500 && ManageCount.OverflowVisibility == Visibility.Visible)
+            {
+                ManageCount.OverflowVisibility = Visibility.Collapsed;
+            }
         }
 
         private void ContentPanel_SizeChanged(object sender, SizeChangedEventArgs e)
