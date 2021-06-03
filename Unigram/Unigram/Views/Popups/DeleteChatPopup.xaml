@@ -11,27 +11,18 @@
     PrimaryButtonStyle="{StaticResource DangerButtonStyle}"
     FocusPrimaryButton="False">
 
-    <!--<ContentDialog.Title>
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <controls:ProfilePicture
-                x:Name="Photo"
-                Width="36"
-                Height="36"
-                Margin="12,6"
-                IsEnabled="False"/>
-
-            <StackPanel VerticalAlignment="Center" Grid.Column="1">
-                <TextBlock x:Name="Title" Style="{StaticResource BaseTextBlockStyle}"/>
-            </StackPanel>
-
-            <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="3"/>
-        </Grid>
-    </ContentDialog.Title>-->
+    <controls:ContentPopup.Resources>
+        <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeCheckedPointerOver" Color="#FF6469" />
+        <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeIndeterminate" Color="#D13438" />
+        <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeIndeterminatePointerOver" Color="#FF6469" />
+        <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeIndeterminatePressed" Color="#992629" />
+        <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillChecked" Color="#D13438" />
+        <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillCheckedPointerOver" Color="#FF6469" />
+        <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillCheckedPressed" Color="#992629" />
+        <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillIndeterminate" Color="#D13438" />
+        <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillIndeterminatePointerOver" Color="#FF6469" />
+        <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillIndeterminatePressed" Color="#992629" />
+    </controls:ContentPopup.Resources>
 
     <StackPanel>
         <TextBlock
