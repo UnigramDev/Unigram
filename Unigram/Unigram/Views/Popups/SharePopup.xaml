@@ -14,7 +14,7 @@
     Title="{x:Bind ViewModel.Title, Mode=OneWay}"
     PrimaryButtonText="OK"
     PrimaryButtonClick="OnPrimaryButtonClick"
-    IsPrimaryButtonEnabled="False"
+    IsPrimaryButtonEnabled="{x:Bind ConvertButtonEnabled(ViewModel.AllowEmptySelection, ViewModel.SelectedItems.Count), Mode=OneWay}"
     SecondaryButtonText="Cancel"
     Opened="OnOpened"
     Closing="OnClosing">
@@ -247,7 +247,7 @@
             </Grid>
         </Grid>
 
-        <Grid x:Name="CommentPanel" Padding="0,0,0,8" Visibility="Collapsed" Grid.Row="2">
+        <Grid x:Name="CommentPanel" Padding="0,0,0,8" Visibility="{x:Bind ViewModel.IsCommentEnabled, Mode=OneWay}" Grid.Row="2">
             <controls:FormattedTextBox
                 x:Name="CaptionInput"
                 Accept="CaptionInput_Accept"

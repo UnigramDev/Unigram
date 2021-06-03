@@ -757,13 +757,19 @@ namespace Unigram.Views.Popups
 
         #endregion
 
+        #region Binding
+
+        private bool ConvertButtonEnabled(bool allowEmpty, int count)
+        {
+            return allowEmpty || count > 0;
+        }
+
+        #endregion
+
         private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ViewModel.SelectedItems = new MvxObservableCollection<Chat>(ChatsPanel.SelectedItems.Cast<Chat>());
 
-            CommentPanel.Visibility = ViewModel.SelectedItems.Count > 0 && ViewModel.IsCommentEnabled ? Visibility.Visible : Visibility.Collapsed;
-
-            IsPrimaryButtonEnabled = ViewModel.AllowEmptySelection || ViewModel.SelectedItems.Count > 0;
         }
 
         private void List_ItemClick(object sender, ItemClickEventArgs e)
