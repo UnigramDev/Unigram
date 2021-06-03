@@ -11,6 +11,8 @@
             <SolidColorBrush x:Key="PlaceholderForegroundHighBrush" Color="#3b3e45"/>
             <SolidColorBrush x:Key="PlaceholderForegroundLowBrush" Color="#545a68"/>
             <SolidColorBrush x:Key="PlaceholderBackgroundBrush" Color="#262a2d"/>
+
+            <StaticResource x:Key="AccentButtonBackgroundDisabled" ResourceKey="SystemAccentColorDark2" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="Light">
             <!--<SolidColorBrush x:Key="SystemControlHyperlinkTextBrush" Color="#000000"/>-->
@@ -20,6 +22,8 @@
             <SolidColorBrush x:Key="PlaceholderForegroundHighBrush" Color="#e4e4e4"/>
             <SolidColorBrush x:Key="PlaceholderForegroundLowBrush" Color="#c2c2c2"/>
             <SolidColorBrush x:Key="PlaceholderBackgroundBrush" Color="#f6f6f6"/>
+
+            <StaticResource x:Key="AccentButtonBackgroundDisabled" ResourceKey="SystemAccentColorLight2" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
