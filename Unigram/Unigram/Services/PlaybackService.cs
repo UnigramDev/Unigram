@@ -110,9 +110,7 @@ namespace Unigram.Services
             _transport.AutoRepeatMode = _settingsService.Playback.RepeatMode;
             _isRepeatEnabled = _settingsService.Playback.RepeatMode == MediaPlaybackAutoRepeatMode.Track
                 ? null
-                : _settingsService.Playback.RepeatMode == MediaPlaybackAutoRepeatMode.List
-                ? true
-                : false;
+                : _settingsService.Playback.RepeatMode == MediaPlaybackAutoRepeatMode.List;
 
             _mapping = new Dictionary<string, PlaybackItem>();
 
@@ -304,13 +302,7 @@ namespace Unigram.Services
             _transport.DisplayUpdater.Update();
         }
 
-        public IReadOnlyList<PlaybackItem> Items
-        {
-            get
-            {
-                return _items ?? (IReadOnlyList<PlaybackItem>)new PlaybackItem[0];
-            }
-        }
+        public IReadOnlyList<PlaybackItem> Items => _items ?? (IReadOnlyList<PlaybackItem>)new PlaybackItem[0];
 
         private PlaybackItem _currentPlayback;
         public PlaybackItem CurrentPlayback
@@ -326,13 +318,7 @@ namespace Unigram.Services
             }
         }
         private Message _currentItem;
-        public Message CurrentItem
-        {
-            get
-            {
-                return _currentItem;
-            }
-        }
+        public Message CurrentItem => _currentItem;
 
         public TimeSpan Position
         {
