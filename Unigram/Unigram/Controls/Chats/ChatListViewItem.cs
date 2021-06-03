@@ -10,7 +10,6 @@ using Windows.UI.Composition.Interactions;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
@@ -33,7 +32,7 @@ namespace Unigram.Controls.Chats
         private bool _forward;
         private bool _reply;
 
-        private ListViewItemPresenter _presenter;
+        private FrameworkElement _presenter;
 
         public ChatListViewItem(ChatListView parent)
             : base(parent)
@@ -52,7 +51,7 @@ namespace Unigram.Controls.Chats
         {
             base.OnApplyTemplate();
 
-            _presenter = GetTemplateChild("Presenter") as ListViewItemPresenter;
+            _presenter = GetTemplateChild("ContentBorder") as FrameworkElement;
 
             DetachEventHandlers();
             AttachEventHandlers();
