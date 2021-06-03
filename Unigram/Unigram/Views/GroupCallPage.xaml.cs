@@ -941,11 +941,12 @@ namespace Unigram.Views
 
         private async void Leave_Click(object sender, RoutedEventArgs e)
         {
-            var chat = _service.Chat;
-            var call = _service.Call;
+            var chat = _service?.Chat;
+            var call = _service?.Call;
 
             if (chat == null || call == null)
             {
+                await ApplicationView.GetForCurrentView().ConsolidateAsync();
                 return;
             }
 
@@ -977,11 +978,12 @@ namespace Unigram.Views
 
         private async void Discard()
         {
-            var chat = _service.Chat;
-            var call = _service.Call;
+            var chat = _service?.Chat;
+            var call = _service?.Call;
 
             if (chat == null || call == null)
             {
+                await ApplicationView.GetForCurrentView().ConsolidateAsync();
                 return;
             }
 
