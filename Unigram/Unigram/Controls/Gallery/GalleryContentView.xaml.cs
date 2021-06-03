@@ -26,6 +26,9 @@ namespace Unigram.Controls.Gallery
         private bool _areInteractionsEnabled = true;
         public bool AreInteractionsEnabled => ScrollingHost.ZoomFactor == 1;
 
+        public bool CanZoomIn => ScrollingHost.ZoomFactor < ScrollingHost.MaxZoomFactor;
+        public bool CanZoomOut => ScrollingHost.ZoomFactor > ScrollingHost.MinZoomFactor;
+
         public event EventHandler InteractionsEnabledChanged;
 
         public GalleryContentView()

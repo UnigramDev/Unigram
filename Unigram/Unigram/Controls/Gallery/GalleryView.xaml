@@ -208,11 +208,13 @@
                     FontSize="{StaticResource GlyphMediumFontSize}"/>
 
                 <controls:GlyphButton
+                    x:Name="ZoomOut"
                     Click="ZoomOut_Click"
                     Height="{ThemeResource AppBarThemeCompactHeight}"
                     Glyph="&#xE96A;"/>
 
                 <controls:GlyphButton
+                    x:Name="ZoomIn"
                     Click="ZoomIn_Click"
                     Height="{ThemeResource AppBarThemeCompactHeight}"
                     Glyph="&#xE969;"/>

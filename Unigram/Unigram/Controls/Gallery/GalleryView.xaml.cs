@@ -1191,6 +1191,10 @@ namespace Unigram.Controls.Gallery
 
         private void ImageView_InteractionsEnabledChanged(object sender, EventArgs e)
         {
+            //var container = GetContainer(0);
+            //ZoomIn.IsEnabled = container.CanZoomIn;
+            //ZoomOut.IsEnabled = container.CanZoomOut;
+
             IsLightDismissEnabled = Element2.AreInteractionsEnabled
                 && Element0.AreInteractionsEnabled
                 && Element1.AreInteractionsEnabled;
