@@ -518,6 +518,91 @@ namespace Unigram.Common
             return (null, null);
         }
 
+        public static (File File, Thumbnail Thumbnail, string FileName) GetFileAndThumbnailAndName(this Message message, bool allowPhoto)
+        {
+            switch (message.Content)
+            {
+                case MessageAnimation animation:
+                    return (animation.Animation.AnimationValue, animation.Animation.Thumbnail, animation.Animation.FileName);
+                case MessageAudio audio:
+                    return (audio.Audio.AudioValue, audio.Audio.AlbumCoverThumbnail, audio.Audio.FileName);
+                case MessageDocument document:
+                    return (document.Document.DocumentValue, document.Document.Thumbnail, document.Document.FileName);
+                case MessageGame game:
+                    if (game.Game.Animation != null)
+                    {
+                        return (game.Game.Animation.AnimationValue, game.Game.Animation.Thumbnail, game.Game.Animation.FileName);
+                    }
+                    else if (game.Game.Photo != null && allowPhoto)
+                    {
+                        var big = game.Game.Photo.GetBig();
+                        if (big != null)
+                        {
+                            return (big.Photo, null, null);
+                        }
+                    }
+                    break;
+                case MessagePhoto photo:
+                    if (allowPhoto)
+                    {
+                        var big = photo.Photo.GetBig();
+                        if (big != null)
+                        {
+                            return (big.Photo, null, null);
+                        }
+                    }
+                    break;
+                case MessageSticker sticker:
+                    return (sticker.Sticker.StickerValue, null, null);
+                case MessageText text:
+                    if (text.WebPage != null && text.WebPage.Animation != null)
+                    {
+                        return (text.WebPage.Animation.AnimationValue, text.WebPage.Animation.Thumbnail, text.WebPage.Animation.FileName);
+                    }
+                    else if (text.WebPage != null && text.WebPage.Audio != null)
+                    {
+                        return (text.WebPage.Audio.AudioValue, text.WebPage.Audio.AlbumCoverThumbnail, text.WebPage.Audio.FileName);
+                    }
+                    else if (text.WebPage != null && text.WebPage.Document != null)
+                    {
+                        return (text.WebPage.Document.DocumentValue, text.WebPage.Document.Thumbnail, text.WebPage.Document.FileName);
+                    }
+                    else if (text.WebPage != null && text.WebPage.Sticker != null)
+                    {
+                        return (text.WebPage.Sticker.StickerValue, null, null);
+                    }
+                    else if (text.WebPage != null && text.WebPage.Video != null)
+                    {
+                        return (text.WebPage.Video.VideoValue, text.WebPage.Video.Thumbnail, text.WebPage.Video.FileName);
+                    }
+                    else if (text.WebPage != null && text.WebPage.VideoNote != null)
+                    {
+                        return (text.WebPage.VideoNote.Video, text.WebPage.VideoNote.Thumbnail, null);
+                    }
+                    else if (text.WebPage != null && text.WebPage.VoiceNote != null)
+                    {
+                        return (text.WebPage.VoiceNote.Voice, null, null);
+                    }
+                    else if (text.WebPage != null && text.WebPage.Photo != null && allowPhoto)
+                    {
+                        var big = text.WebPage.Photo.GetBig();
+                        if (big != null)
+                        {
+                            return (big.Photo, null, null);
+                        }
+                    }
+                    break;
+                case MessageVideo video:
+                    return (video.Video.VideoValue, video.Video.Thumbnail, video.Video.FileName);
+                case MessageVideoNote videoNote:
+                    return (videoNote.VideoNote.Video, videoNote.VideoNote.Thumbnail, null);
+                case MessageVoiceNote voiceNote:
+                    return (voiceNote.VoiceNote.Voice, null, null);
+            }
+
+            return (null, null, null);
+        }
+
         public static File GetFile(this MessageViewModel message)
         {
             var content = message.GeneratedContent ?? message.Content;

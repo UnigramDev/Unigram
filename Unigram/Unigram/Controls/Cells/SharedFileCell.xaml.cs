@@ -9,6 +9,7 @@ using Unigram.ViewModels.Delegates;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Controls.Cells
 {
@@ -30,7 +31,7 @@ namespace Unigram.Controls.Cells
 
             _message = message;
 
-            var data = message.GetFileAndName(false);
+            var data = message.GetFileAndThumbnailAndName(false);
             if (data.File == null)
             {
                 return;
@@ -58,18 +59,33 @@ namespace Unigram.Controls.Cells
                 Title.Text = data.FileName;
             }
 
+            if (data.Thumbnail != null)
+            {
+                UpdateThumbnail(message, data.Thumbnail, data.Thumbnail.File);
+            }
+            else
+            {
+                Texture.Background = null;
+                Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
+            }
+
             UpdateFile(message, data.File);
         }
 
         public void UpdateFile(Message message, File file)
         {
-            var data = message.GetFileAndName(false);
+            var data = message.GetFileAndThumbnailAndName(false);
             if (data.File == null)
             {
                 return;
             }
 
-            if (data.File.Id != file.Id)
+            if (data.Thumbnail != null && data.Thumbnail.File.Id == file.Id)
+            {
+                UpdateThumbnail(message, data.Thumbnail, file);
+                return;
+            }
+            else if (data.File.Id != file.Id)
             {
                 return;
             }
@@ -106,6 +122,37 @@ namespace Unigram.Controls.Cells
                 Button.Progress = 1;
 
                 Subtitle.Text = FileSizeConverter.Convert(size) + " — " + UpdateTimeLabel(message);
+            }
+        }
+
+        private void UpdateThumbnail(Message message, Thumbnail thumbnail, File file)
+        {
+            if (file.Local.IsDownloadingCompleted)
+            {
+                double ratioX = (double)48 / thumbnail.Width;
+                double ratioY = (double)48 / thumbnail.Height;
+                double ratio = Math.Max(ratioX, ratioY);
+
+                var width = (int)(thumbnail.Width * ratio);
+                var height = (int)(thumbnail.Height * ratio);
+
+                try
+                {
+                    Texture.Background = new ImageBrush { ImageSource = new BitmapImage(UriEx.ToLocal(file.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height }, Stretch = Stretch.UniformToFill, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
+                    Button.Style = BootStrapper.Current.Resources["ImmersiveFileButtonStyle"] as Style;
+                }
+                catch
+                {
+                    Texture.Background = null;
+                    Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
+                }
+            }
+            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+            {
+                _protoService.DownloadFile(file.Id, 1);
+
+                Texture.Background = null;
+                Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
             }
         }
 
