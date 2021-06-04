@@ -2375,7 +2375,7 @@ namespace Unigram.Common
                 BackgroundFill fill = null;
                 if (bg_colorKey != null && TryGetColors(bg_colorKey, '-', 1, 2, out int[] patternLinear))
                 {
-                    if (linear.Length > 1)
+                    if (patternLinear.Length > 1)
                     {
                         query.TryGetValue("rotation", out string rotationKey);
                         int.TryParse(rotationKey ?? string.Empty, out int rotation);
@@ -2384,7 +2384,7 @@ namespace Unigram.Common
                     }
                     else
                     {
-                        fill = new BackgroundFillSolid(linear[0]);
+                        fill = new BackgroundFillSolid(patternLinear[0]);
                     }
                 }
                 else if (bg_colorKey != null && TryGetColors(bg_colorKey, '~', 3, 4, out int[] patternFreeform))
