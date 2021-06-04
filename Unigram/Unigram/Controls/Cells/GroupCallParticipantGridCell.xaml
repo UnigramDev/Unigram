@@ -1,4 +1,4 @@
-﻿<UserControl
+﻿<HyperlinkButton
     x:Class="Unigram.Controls.Cells.GroupCallParticipantGridCell"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -10,9 +10,17 @@
     xmlns:xaml="using:Microsoft.Graphics.Canvas.UI.Xaml"
     mc:Ignorable="d"
     d:DesignHeight="300"
-    d:DesignWidth="400">
+    d:DesignWidth="400"
+    Margin="2"
+    BorderThickness="2"
+    CornerRadius="8"
+    HorizontalContentAlignment="Stretch"
+    VerticalContentAlignment="Stretch"
+    HorizontalAlignment="Stretch"
+    VerticalAlignment="Stretch"
+    Padding="0">
 
-    <Grid x:Name="LayoutRoot" Background="{ThemeResource PageHeaderBorderBrush}" Margin="2" BorderThickness="2" CornerRadius="8">
+    <controls:AspectView x:Name="LayoutRoot" Background="{ThemeResource PageHeaderBorderBrush}" CornerRadius="8">
         <Border x:Name="CanvasRoot" CornerRadius="8">
             
         </Border>
@@ -71,6 +79,7 @@
             <TextBlock
                 x:Name="Title"
                 FontFamily="{StaticResource EmojiThemeFontFamily}"
+                Foreground="#FFFFFF"
                 TextWrapping="NoWrap"
                 TextTrimming="CharacterEllipsis"
                 VerticalAlignment="Center" />
@@ -79,8 +88,9 @@
                 x:Name="Glyph"
                 VerticalAlignment="Center"
                 FontFamily="{StaticResource SymbolThemeFontFamily}"
+                Foreground="#FFFFFF"
                 FontSize="20"
                 Grid.Column="1"/>
         </Grid>
-    </Grid>
-</UserControl>
+    </controls:AspectView>
+</HyperlinkButton>

@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Cells
 {
-    public sealed partial class GroupCallParticipantGridCell : UserControl
+    public sealed partial class GroupCallParticipantGridCell : HyperlinkButton
     {
         private GroupCallParticipant _participant;
         private GroupCallParticipantVideoInfo _videoInfo;
@@ -29,6 +29,9 @@ namespace Unigram.Controls.Cells
         {
             InitializeComponent();
             UpdateGroupCallParticipant(cacheService, participant, videoInfo);
+
+            var pin = ElementCompositionPreview.GetElementVisual(PinRoot);
+            pin.Opacity = 0;
         }
 
         public bool IsMatch(GroupCallParticipant participant, GroupCallParticipantVideoInfo videoInfo)
@@ -55,10 +58,17 @@ namespace Unigram.Controls.Cells
         public GroupCallParticipantVideoInfo VideoInfo => _videoInfo;
         public string EndpointId => _videoInfo.EndpointId;
 
+        public bool IsSelected { get; set; }
+
         public bool IsPinned
         {
             get => Pin.IsChecked == true;
             set => Pin.IsChecked = value;
+        }
+
+        public bool IsList
+        {
+            set => LayoutRoot.Constraint = value ? new Size(16, 9) : null;
         }
 
         public event EventHandler TogglePinned;
@@ -67,6 +77,8 @@ namespace Unigram.Controls.Cells
         {
             _participant = participant;
             _videoInfo = videoInfo;
+
+            Tag = participant;
 
             ShowHidePaused(videoInfo.IsPaused);
 
@@ -81,22 +93,22 @@ namespace Unigram.Controls.Cells
 
             if (participant.IsHandRaised)
             {
-                LayoutRoot.BorderBrush = null;
+                BorderBrush = null;
                 Glyph.Text = Icons.EmojiHand;
             }
             else if (participant.IsSpeaking)
             {
-                LayoutRoot.BorderBrush = new SolidColorBrush { Color = Color.FromArgb(0xFF, 0x33, 0xc6, 0x59) };
+                BorderBrush = new SolidColorBrush { Color = Color.FromArgb(0xFF, 0x33, 0xc6, 0x59) };
                 Glyph.Text = Icons.MicOn;
             }
             else if (participant.IsCurrentUser)
             {
-                LayoutRoot.BorderBrush = null;
+                BorderBrush = null;
                 Glyph.Text = participant.IsMutedForAllUsers || participant.IsMutedForCurrentUser ? Icons.MicOff : Icons.MicOn;
             }
             else
             {
-                LayoutRoot.BorderBrush = null;
+                BorderBrush = null;
                 Glyph.Text = participant.IsMutedForAllUsers || participant.IsMutedForCurrentUser ? Icons.MicOff : Icons.MicOn;
             }
         }
@@ -113,14 +125,17 @@ namespace Unigram.Controls.Cells
             _infoCollapsed = !show;
 
             var anim = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-            anim.InsertKeyFrame(0, show ? 0 : 1);
+            //anim.InsertKeyFrame(0, show ? 0 : 1);
             anim.InsertKeyFrame(1, show ? 1 : 0);
 
             var info = ElementCompositionPreview.GetElementVisual(Info);
-            var pin = ElementCompositionPreview.GetElementVisual(PinRoot);
-
             info.StartAnimation("Opacity", anim);
-            pin.StartAnimation("Opacity", anim);
+
+            if (IsSelected || !show)
+            {
+                var pin = ElementCompositionPreview.GetElementVisual(PinRoot);
+                pin.StartAnimation("Opacity", anim);
+            }
         }
 
         private bool _pausedCollapsed;
