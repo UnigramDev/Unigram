@@ -12,7 +12,6 @@
     d:DesignHeight="300"
     d:DesignWidth="400"
     Margin="2"
-    BorderThickness="2"
     CornerRadius="8"
     HorizontalContentAlignment="Stretch"
     VerticalContentAlignment="Stretch"
@@ -22,7 +21,7 @@
 
     <controls:AspectView x:Name="LayoutRoot" Background="{ThemeResource PageHeaderBorderBrush}" CornerRadius="8">
         <Border x:Name="CanvasRoot" CornerRadius="8">
-            <xaml:CanvasControl/>
+            <!--<xaml:CanvasControl/>-->
         </Border>
 
         <Grid x:Name="PinRoot" HorizontalAlignment="Right" VerticalAlignment="Top">
@@ -56,6 +55,7 @@
 
         <Grid x:Name="Info" VerticalAlignment="Bottom" Opacity="0.8" Padding="12,6">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
@@ -77,20 +77,34 @@
             </Border>
 
             <TextBlock
-                x:Name="Title"
-                FontFamily="{StaticResource EmojiThemeFontFamily}"
-                Foreground="#FFFFFF"
-                TextWrapping="NoWrap"
-                TextTrimming="CharacterEllipsis"
-                VerticalAlignment="Center" />
-
-            <TextBlock
                 x:Name="Glyph"
                 VerticalAlignment="Center"
                 FontFamily="{StaticResource SymbolThemeFontFamily}"
                 Foreground="#FFFFFF"
                 FontSize="20"
+                Margin="0,0,8,0"/>
+
+            <TextBlock
+                x:Name="Title"
+                FontFamily="{StaticResource EmojiThemeFontFamily}"
+                Foreground="#FFFFFF"
+                TextWrapping="NoWrap"
+                TextTrimming="CharacterEllipsis"
+                VerticalAlignment="Center"
                 Grid.Column="1"/>
+
+            <TextBlock
+                x:Name="ScreenSharing"
+                VerticalAlignment="Center"
+                FontFamily="{StaticResource SymbolThemeFontFamily}"
+                Foreground="#FFFFFF"
+                FontSize="20"
+                Grid.Column="2"/>
         </Grid>
+
+        <Border
+            x:Name="Speaking"
+            BorderThickness="2"
+            CornerRadius="8"/>
     </controls:AspectView>
 </HyperlinkButton>

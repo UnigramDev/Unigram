@@ -35,6 +35,11 @@ namespace Unigram.Controls.Cells
             InitializeComponent();
             UpdateGroupCallParticipant(cacheService, participant, videoInfo);
 
+            if (screenSharing)
+            {
+                ScreenSharing.Text = Icons.SmallScreencastFilled;
+            }
+
             var pin = ElementCompositionPreview.GetElementVisual(PinRoot);
             pin.Opacity = 0;
         }
@@ -108,24 +113,14 @@ namespace Unigram.Controls.Cells
                 Title.Text = cacheService.GetTitle(chat);
             }
 
-            if (participant.IsHandRaised)
+            if (participant.IsSpeaking)
             {
-                BorderBrush = null;
-                Glyph.Text = Icons.EmojiHand;
-            }
-            else if (participant.IsSpeaking)
-            {
-                BorderBrush = new SolidColorBrush { Color = Color.FromArgb(0xFF, 0x33, 0xc6, 0x59) };
+                Speaking.BorderBrush = new SolidColorBrush { Color = Color.FromArgb(0xFF, 0x33, 0xc6, 0x59) };
                 Glyph.Text = Icons.MicOn;
-            }
-            else if (participant.IsCurrentUser)
-            {
-                BorderBrush = null;
-                Glyph.Text = participant.IsMutedForAllUsers || participant.IsMutedForCurrentUser ? Icons.MicOff : Icons.MicOn;
             }
             else
             {
-                BorderBrush = null;
+                Speaking.BorderBrush = null;
                 Glyph.Text = participant.IsMutedForAllUsers || participant.IsMutedForCurrentUser ? Icons.MicOff : Icons.MicOn;
             }
         }

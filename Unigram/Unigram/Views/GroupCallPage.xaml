@@ -112,7 +112,8 @@
                 Glyph="&#xE966;"
                 Width="40"
                 Height="48"
-                FontSize="16"/>
+                FontSize="16"
+                IsTabStop="False"/>
             <controls:AnimatedGlyphToggleButton
                 x:Name="Mode"
                 Click="Mode_Click"
@@ -124,7 +125,8 @@
                 Width="40"
                 Height="48"
                 FontSize="16"
-                IsOneWay="False"/>
+                IsOneWay="False"
+                IsTabStop="False"/>
             <controls:GlyphButton
                 x:Name="Menu"
                 Click="Menu_ContextRequested"
@@ -193,10 +195,10 @@
                 Padding="12,0,12,72">
                 <ListView.Header>
                     <StackPanel x:Name="ListHeader">
-                        <Grid x:Name="ViewportAspect" Margin="-4,0,-4,0" Grid.ColumnSpan="2">
+                        <Grid x:Name="ViewportAspect" Margin="-2,-2,-2,0" Grid.ColumnSpan="2">
                             <local:ParticipantsGrid x:Name="Viewport" SizeChanged="OnViewportSizeChanged"/>
                         </Grid>
-                        <StackPanel x:Name="ListViewport" Margin="-4,-4,-4,0"/>
+                        <StackPanel x:Name="ListViewport" Margin="-2,-2,-2,0"/>
                     </StackPanel>
                 </ListView.Header>
                 <ListView.ItemsPanel>

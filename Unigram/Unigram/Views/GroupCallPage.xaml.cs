@@ -280,21 +280,23 @@ namespace Unigram.Views
             _listCells.Clear();
             _gridCells.Clear();
 
-            static void RemoveChildren(UIElementCollection collection)
-            {
-                for (int i = 0; i < collection.Count; i++)
-                {
-                    if (collection[i] is GroupCallParticipantGridCell cell)
-                    {
-                        cell.Surface = null;
-                    }
-                }
-            }
-
-            RemoveChildren(Viewport.Children);
-            RemoveChildren(ListViewport.Children);
+            RemoveChildren(false);
+            RemoveChildren(true);
 
             AudioCanvas.RemoveFromVisualTree();
+        }
+
+        private void RemoveChildren(bool list)
+        {
+            var collection = list ? ListViewport.Children : Viewport.Children;
+
+            for (int i = 0; i < collection.Count; i++)
+            {
+                if (collection[i] is GroupCallParticipantGridCell cell)
+                {
+                    cell.Surface = null;
+                }
+            }
         }
 
         public void Connect(VoipGroupManager controller)
@@ -362,10 +364,10 @@ namespace Unigram.Views
 
                 Viewport.Mode = mode;
                 ViewportAspect.Padding = new Thickness(0, 0, 8, 0);
-                ViewportAspect.Margin = new Thickness(8, 0, -4, 4);
+                ViewportAspect.Margin = new Thickness(8, -2, -2, 4);
                 ParticipantsPanel.ColumnDefinitions[1].Width = new GridLength(224, GridUnitType.Pixel);
                 ParticipantsPanel.Margin = new Thickness();
-                List.Padding = new Thickness(8, 4, 12, 12);
+                List.Padding = new Thickness(8, 0, 12, 12);
 
                 if (ListHeader.Children.Contains(ViewportAspect))
                 {
@@ -444,7 +446,7 @@ namespace Unigram.Views
 
                 Viewport.Mode = mode;
                 ViewportAspect.Padding = new Thickness(0, 0, 0, 0);
-                ViewportAspect.Margin = new Thickness(-4, 0, -4, Viewport.Children.Count > 0 ? 4 : 0);
+                ViewportAspect.Margin = new Thickness(-2, -2, -2, Viewport.Children.Count > 0 ? 4 : 0);
                 ParticipantsPanel.ColumnDefinitions[1].Width = new GridLength(1, GridUnitType.Auto);
                 ParticipantsPanel.Margin = new Thickness(0, 0, 0, -56);
                 List.Padding = new Thickness(12, 0, 12, 72);
@@ -1688,14 +1690,17 @@ namespace Unigram.Views
 
             if (participant.HasVideoInfo())
             {
-                if (participant.ScreenSharingVideoInfo != null)
+                if (participant.ScreenSharingVideoInfo != null && participant.VideoInfo != null)
                 {
-                    status.Text += Icons.SmallScreencastFilled;
+                    status.Text = Icons.SmallScreencastFilled + Icons.SmallVideoFilled;
                 }
-
-                if (participant.VideoInfo != null)
+                else if (participant.ScreenSharingVideoInfo != null && participant.VideoInfo != null)
                 {
-                    status.Text += Icons.SmallVideoFilled;
+                    status.Text = Icons.SmallScreencastFilled;
+                }
+                else if (participant.VideoInfo != null)
+                {
+                    status.Text = Icons.SmallVideoFilled;
                 }
 
                 status.Margin = new Thickness(0, 0, 4, 0);
@@ -1771,40 +1776,21 @@ namespace Unigram.Views
         {
             var descriptions = new Dictionary<string, VoipVideoChannelInfo>();
 
-            if (_selectedEndpointId != null)
+            foreach (var cell in _gridCells.Values)
             {
-                if (_gridCells.TryGetValue(_selectedEndpointId, out var cell))
-                {
-                    if (_gridTokens.TryGetValue(_selectedEndpointId, out var token))
-                    {
-                        descriptions[token.EndpointId] = new VoipVideoChannelInfo(token, cell.Quality);
-                    }
-                }
-            }
-            else
-            {
-                foreach (var item in _gridTokens)
-                {
-                    if (descriptions.ContainsKey(item.Value.EndpointId))
-                    {
-                        continue;
-                    }
-
-                    if (_gridCells.TryGetValue(item.Value.EndpointId, out var cell))
-                    {
-                        descriptions[item.Value.EndpointId] = new VoipVideoChannelInfo(item.Value, cell.Quality);
-                    }
-                }
+                descriptions[cell.EndpointId] =
+                    new VoipVideoChannelInfo(cell.Participant.AudioSourceId, cell.EndpointId, cell.VideoInfo.SourceGroups, cell.Quality);
             }
 
-            foreach (var item in _listTokens)
+            foreach (var cell in _listCells.Values)
             {
-                if (descriptions.ContainsKey(item.Value.EndpointId))
+                if (descriptions.ContainsKey(cell.EndpointId))
                 {
                     continue;
                 }
 
-                descriptions[item.Value.EndpointId] = new VoipVideoChannelInfo(item.Value, VoipVideoChannelQuality.Thumbnail);
+                descriptions[cell.EndpointId] =
+                    new VoipVideoChannelInfo(cell.Participant.AudioSourceId, cell.EndpointId, cell.VideoInfo.SourceGroups, cell.Quality);
             }
 
             _manager?.SetRequestedVideoChannels(descriptions.Values.ToArray());
@@ -1840,14 +1826,14 @@ namespace Unigram.Views
 
             if (_mode == ParticipantsGridMode.Compact)
             {
-                ViewportAspect.Margin = new Thickness(-4, 0, -4, Viewport.Children.Count > 0 ? 4 : 0);
+                ViewportAspect.Margin = new Thickness(-2, -2, -2, Viewport.Children.Count > 0 ? 4 : 0);
             }
             else
             {
-                ViewportAspect.Margin = new Thickness(8, 0, -4, 0);
+                ViewportAspect.Margin = new Thickness(8, -2, -2, 0);
             }
 
-            ListViewport.Margin = new Thickness(-4, -4, -4, ListViewport.Children.Count > 0 ? 4 : 0);
+            ListViewport.Margin = new Thickness(-2, -2, -2, ListViewport.Children.Count > 0 ? 4 : 0);
 
             UpdateLayout(this.GetActualSize(), this.GetActualSize(), true);
         }
@@ -1887,14 +1873,14 @@ namespace Unigram.Views
 
             if (_mode == ParticipantsGridMode.Compact)
             {
-                ViewportAspect.Margin = new Thickness(-4, 0, -4, Viewport.Children.Count > 0 ? 4 : 0);
+                ViewportAspect.Margin = new Thickness(-2, -2, -2, Viewport.Children.Count > 0 ? 4 : 0);
             }
             else
             {
-                ViewportAspect.Margin = new Thickness(8, 0, -4, ListViewport.Children.Count > 0 ? 4 : 0);
+                ViewportAspect.Margin = new Thickness(8, -2, -2, ListViewport.Children.Count > 0 ? 4 : 0);
             }
 
-            ListViewport.Margin = new Thickness(-4, -4, -4, ListViewport.Children.Count > 0 ? 4 : 0);
+            ListViewport.Margin = new Thickness(-2, -2, -2, ListViewport.Children.Count > 0 ? 4 : 0);
 
             UpdateLayout(this.GetActualSize(), this.GetActualSize(), true);
         }
@@ -1931,6 +1917,7 @@ namespace Unigram.Views
 
                 _listCells.Clear();
 
+                RemoveChildren(true);
                 ListViewport.Children.Clear();
             }
 
@@ -2176,6 +2163,8 @@ namespace Unigram.Views
                         }
                     }
 
+                    child.Surface = new CanvasControl();
+
                     VoipVideoRendererToken future;
                     if (participant.ScreenSharingVideoInfo?.EndpointId == child.EndpointId && participant.IsCurrentUser && _service.IsScreenSharing)
                     {
@@ -2207,11 +2196,12 @@ namespace Unigram.Views
 
                 if (tokens.TryRemove(item, out var token))
                 {
-                    // Wait for token to be disposed to avoid a
-                    // race condition in CanvasControl.
+                    // Wait for token to be disposed to avoid
+                    // a race condition in CanvasControl.
                     token.Stop();
                 }
 
+                prev[item].Surface = null;
                 prev.Remove(item);
             }
 
