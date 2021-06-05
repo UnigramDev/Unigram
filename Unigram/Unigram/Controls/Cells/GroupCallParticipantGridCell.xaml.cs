@@ -7,6 +7,7 @@ using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Native.Calls;
 using Unigram.Services;
+using Unigram.Views;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -25,8 +26,12 @@ namespace Unigram.Controls.Cells
         private SpriteVisual _pausedVisual;
         private CompositionEffectBrush _pausedBrush;
 
-        public GroupCallParticipantGridCell(ICacheService cacheService, GroupCallParticipant participant, GroupCallParticipantVideoInfo videoInfo)
+        private readonly bool _screenSharing;
+
+        public GroupCallParticipantGridCell(ICacheService cacheService, GroupCallParticipant participant, GroupCallParticipantVideoInfo videoInfo, bool screenSharing)
         {
+            _screenSharing = screenSharing;
+
             InitializeComponent();
             UpdateGroupCallParticipant(cacheService, participant, videoInfo);
 
@@ -52,11 +57,23 @@ namespace Unigram.Controls.Cells
             _ => VoipVideoChannelQuality.Thumbnail
         };
 
+        public Stretch GetStretch(ParticipantsGridMode mode, bool list)
+        {
+            if (_screenSharing || IsSelected || IsPinned)
+            {
+                return Stretch.Uniform;
+            }
+
+            return mode == ParticipantsGridMode.Compact || list ? Stretch.Fill : Stretch.UniformToFill;
+        }
+
         public GroupCallParticipant Participant => _participant;
         public MessageSender ParticipantId => _participant.ParticipantId;
 
         public GroupCallParticipantVideoInfo VideoInfo => _videoInfo;
         public string EndpointId => _videoInfo.EndpointId;
+
+        public bool IsScreenSharing => _screenSharing;
 
         public bool IsSelected { get; set; }
 

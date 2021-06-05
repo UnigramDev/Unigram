@@ -128,7 +128,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 
 	winrt::Unigram::Native::Calls::VoipVideoRendererToken VoipGroupManager::AddIncomingVideoOutput(int32_t audioSource, GroupCallParticipantVideoInfo videoInfo, CanvasControl canvas) {
 		if (m_impl) {
-			auto renderer = std::make_shared<VoipVideoRenderer>(canvas, true);
+			auto renderer = std::make_shared<VoipVideoRenderer>(canvas);
 			m_impl->addIncomingVideoOutput(string_to_unmanaged(videoInfo.EndpointId()), renderer);
 
 			return *winrt::make_self<VoipVideoRendererToken>(renderer, audioSource, videoInfo.EndpointId(), videoInfo.SourceGroups(), canvas);

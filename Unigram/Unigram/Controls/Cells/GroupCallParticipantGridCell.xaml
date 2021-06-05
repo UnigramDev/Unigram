@@ -22,7 +22,7 @@
 
     <controls:AspectView x:Name="LayoutRoot" Background="{ThemeResource PageHeaderBorderBrush}" CornerRadius="8">
         <Border x:Name="CanvasRoot" CornerRadius="8">
-            
+            <xaml:CanvasControl/>
         </Border>
 
         <Grid x:Name="PinRoot" HorizontalAlignment="Right" VerticalAlignment="Top">

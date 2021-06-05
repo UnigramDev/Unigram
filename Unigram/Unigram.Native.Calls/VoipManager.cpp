@@ -216,7 +216,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 		if (m_impl) {
 			if (canvas != nullptr) {
 				//m_renderer = std::make_shared<VoipVideoRenderer>(canvas);
-				m_impl->setIncomingVideoOutput(std::make_shared<VoipVideoRenderer>(canvas, false));
+				m_impl->setIncomingVideoOutput(std::make_shared<VoipVideoRenderer>(canvas));
 			}
 			else {
 				m_impl->setIncomingVideoOutput(nullptr);

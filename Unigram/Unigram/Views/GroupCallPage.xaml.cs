@@ -139,7 +139,7 @@ namespace Unigram.Views
                 }
                 else
                 {
-                    AddGridItem(participant, item);
+                    AddGridItem(participant, item, item == participant.ScreenSharingVideoInfo);
                 }
 
                 if (_listCells.TryGetValue(item.EndpointId, out cell))
@@ -148,7 +148,7 @@ namespace Unigram.Views
                 }
                 else if (_mode != ParticipantsGridMode.Compact && _selectedEndpointId != null)
                 {
-                    AddListItem(participant, item);
+                    AddListItem(participant, item, item == participant.ScreenSharingVideoInfo);
                 }
             }
 
@@ -280,13 +280,19 @@ namespace Unigram.Views
             _listCells.Clear();
             _gridCells.Clear();
 
-            for (int i = 0; i < Viewport.Children.Count; i++)
+            static void RemoveChildren(UIElementCollection collection)
             {
-                if (Viewport.Children[i] is GroupCallParticipantGridCell cell)
+                for (int i = 0; i < collection.Count; i++)
                 {
-                    cell.Surface = null;
+                    if (collection[i] is GroupCallParticipantGridCell cell)
+                    {
+                        cell.Surface = null;
+                    }
                 }
             }
+
+            RemoveChildren(Viewport.Children);
+            RemoveChildren(ListViewport.Children);
 
             AudioCanvas.RemoveFromVisualTree();
         }
@@ -327,7 +333,7 @@ namespace Unigram.Views
                 return;
             }
 
-            var expanded = nextSize.X >= 500 && Viewport.Children.Count > 0;
+            var expanded = nextSize.X >= 600 && Viewport.Children.Count > 0;
             var docked = Mode.IsChecked == true;
 
             var prev = _mode;
@@ -586,7 +592,7 @@ namespace Unigram.Views
             var view = ApplicationView.GetForCurrentView();
             var size = view.VisibleBounds;
 
-            if (size.Width >= 500)
+            if (size.Width >= 600)
             {
                 view.TryResizeView(new Size(380, size.Height + 1));
             }
@@ -1804,17 +1810,17 @@ namespace Unigram.Views
             _manager?.SetRequestedVideoChannels(descriptions.Values.ToArray());
         }
 
-        private void AddGridItem(GroupCallParticipant participant, GroupCallParticipantVideoInfo videoInfo)
+        private void AddGridItem(GroupCallParticipant participant, GroupCallParticipantVideoInfo videoInfo, bool screenSharing)
         {
-            AddItem(participant, videoInfo, false);
+            AddItem(participant, videoInfo, screenSharing, false);
         }
 
-        private void AddListItem(GroupCallParticipant participant, GroupCallParticipantVideoInfo videoInfo)
+        private void AddListItem(GroupCallParticipant participant, GroupCallParticipantVideoInfo videoInfo, bool screenSharing)
         {
-            AddItem(participant, videoInfo, true);
+            AddItem(participant, videoInfo, screenSharing, true);
         }
 
-        private void AddItem(GroupCallParticipant participant, GroupCallParticipantVideoInfo videoInfo, bool list)
+        private void AddItem(GroupCallParticipant participant, GroupCallParticipantVideoInfo videoInfo, bool screenSharing, bool list)
         {
             var cells = list ? _listCells : _gridCells;
             var viewport = list ? ListViewport.Children : Viewport.Children;
@@ -1824,7 +1830,7 @@ namespace Unigram.Views
                 return;
             }
 
-            var child = new GroupCallParticipantGridCell(_cacheService, participant, videoInfo);
+            var child = new GroupCallParticipantGridCell(_cacheService, participant, videoInfo, screenSharing);
             child.Click += Participant_Click;
             child.ContextRequested += Participant_ContextRequested;
             child.IsList = list;
@@ -1944,7 +1950,7 @@ namespace Unigram.Views
                 {
                     if (cell.IsSelected && _mode != ParticipantsGridMode.Compact)
                     {
-                        AddListItem(child.Participant, child.VideoInfo);
+                        AddListItem(child.Participant, child.VideoInfo, child.IsScreenSharing);
                     }
 
                     Canvas.SetZIndex(child, 0);
@@ -2165,11 +2171,10 @@ namespace Unigram.Views
                     {
                         if (token.IsMatch(child.EndpointId, child.Surface))
                         {
+                            token.Stretch = child.GetStretch(_mode, list);
                             continue;
                         }
                     }
-
-                    child.Surface = new CanvasControl();
 
                     VoipVideoRendererToken future;
                     if (participant.ScreenSharingVideoInfo?.EndpointId == child.EndpointId && participant.IsCurrentUser && _service.IsScreenSharing)
@@ -2183,6 +2188,7 @@ namespace Unigram.Views
 
                     if (future != null)
                     {
+                        future.Stretch = child.GetStretch(_mode, list);
                         tokens[child.EndpointId] = future;
                     }
                     else
@@ -2206,7 +2212,6 @@ namespace Unigram.Views
                     token.Stop();
                 }
 
-                prev[item].Surface = null;
                 prev.Remove(item);
             }
 

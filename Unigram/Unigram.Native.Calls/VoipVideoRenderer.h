@@ -1,3 +1,6 @@
+#ifndef VOIP_VIDEO_RENDERER_H
+#define VOIP_VIDEO_RENDERER_H
+
 #include "pch.h"
 
 #include <stddef.h>
@@ -29,11 +32,14 @@ using namespace winrt::Microsoft::Graphics::Canvas::Effects;
 using namespace winrt::Microsoft::Graphics::Canvas::UI::Xaml;
 using namespace winrt::Windows::Foundation::Numerics;
 using namespace winrt::Windows::Graphics::DirectX;
+using namespace winrt::Windows::UI::Xaml::Media;
 
 struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 {
 	bool m_disposed{ false };
 	bool m_readyToDraw;
+
+	Stretch m_stretch{ Stretch::Uniform };
 
 	winrt::event_token m_eventToken;
 	winrt::slim_mutex m_lock;
@@ -45,11 +51,11 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 	CanvasBitmap m_bitmapU{ nullptr };
 	CanvasBitmap m_bitmapV{ nullptr };
 
-	VoipVideoRenderer(CanvasControl canvas, bool fill) {
+	VoipVideoRenderer(CanvasControl canvas) {
 		m_canvasControl = std::make_shared<CanvasControl>(canvas);
 		m_readyToDraw = canvas.ReadyToDraw();
 
-		m_eventToken = canvas.Draw([this, fill](const CanvasControl sender, CanvasDrawEventArgs const args) {
+		m_eventToken = canvas.Draw([this](const CanvasControl sender, CanvasDrawEventArgs const args) {
 			m_readyToDraw = true;
 
 			if (m_bitmapY != nullptr) {
@@ -80,7 +86,24 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 					break;
 				}
 
-				args.DrawingSession().Transform(matrix * make_float3x2_scale(std::min(ratioX, ratioY), float2(width / 2, height / 2)));
+				if (m_stretch == Stretch::UniformToFill) {
+					if (ratioX < ratioY && ((bitmapWidth * ratioY) - width) / width <= .25f) {
+						args.DrawingSession().Transform(matrix * make_float3x2_scale(ratioY, float2(width / 2, height / 2)));
+					}
+					else if (ratioY < ratioX && ((bitmapHeight * ratioX) - height) / height <= .25f) {
+						args.DrawingSession().Transform(matrix * make_float3x2_scale(ratioX, float2(width / 2, height / 2)));
+					}
+					else {
+						args.DrawingSession().Transform(matrix * make_float3x2_scale(std::min(ratioX, ratioY), float2(width / 2, height / 2)));
+					}
+				}
+				else if (m_stretch == Stretch::Uniform) {
+					args.DrawingSession().Transform(matrix * make_float3x2_scale(std::min(ratioX, ratioY), float2(width / 2, height / 2)));
+				}
+				else if (m_stretch == Stretch::Fill) {
+					args.DrawingSession().Transform(matrix * make_float3x2_scale(std::max(ratioX, ratioY), float2(width / 2, height / 2)));
+				}
+
 				args.DrawingSession().DrawImage(m_shader, x, y);
 			}
 			});
@@ -187,3 +210,4 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 		m_canvasControl->Invalidate();
 	}
 };
+#endif // VOIP_VIDEO_RENDERER_H
