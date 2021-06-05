@@ -1010,9 +1010,9 @@
                                 </VisualState>
                                 <VisualState x:Name="PrimaryVisible">
                                     <VisualState.Setters>
-                                        <Setter Target="PrimaryButton.(Grid.Column)" Value="2" />
-                                        <Setter Target="PrimaryButton.(Grid.ColumnSpan)" Value="2" />
-                                        <Setter Target="PrimaryButton.Margin" Value="2,0,0,0" />
+                                        <Setter Target="PrimaryRoot.(Grid.Column)" Value="2" />
+                                        <Setter Target="PrimaryRoot.(Grid.ColumnSpan)" Value="2" />
+                                        <Setter Target="PrimaryRoot.Margin" Value="2,0,0,0" />
                                         <Setter Target="SecondaryButton.Visibility" Value="Collapsed" />
                                         <Setter Target="CloseButton.Visibility" Value="Collapsed" />
                                     </VisualState.Setters>
@@ -1022,7 +1022,7 @@
                                         <Setter Target="SecondaryButton.(Grid.Column)" Value="2" />
                                         <Setter Target="SecondaryButton.(Grid.ColumnSpan)" Value="2" />
                                         <Setter Target="SecondaryButton.Margin" Value="2,0,0,0" />
-                                        <Setter Target="PrimaryButton.Visibility" Value="Collapsed" />
+                                        <Setter Target="PrimaryRoot.Visibility" Value="Collapsed" />
                                         <Setter Target="CloseButton.Visibility" Value="Collapsed" />
                                     </VisualState.Setters>
                                 </VisualState>
@@ -1031,13 +1031,13 @@
                                         <Setter Target="CloseButton.(Grid.Column)" Value="2" />
                                         <Setter Target="CloseButton.(Grid.ColumnSpan)" Value="2" />
                                         <Setter Target="CloseButton.Margin" Value="2,0,0,0" />
-                                        <Setter Target="PrimaryButton.Visibility" Value="Collapsed" />
+                                        <Setter Target="PrimaryRoot.Visibility" Value="Collapsed" />
                                         <Setter Target="SecondaryButton.Visibility" Value="Collapsed" />
                                     </VisualState.Setters>
                                 </VisualState>
                                 <VisualState x:Name="PrimaryAndSecondaryVisible">
                                     <VisualState.Setters>
-                                        <Setter Target="PrimaryButton.(Grid.ColumnSpan)" Value="2" />
+                                        <Setter Target="PrimaryRoot.(Grid.ColumnSpan)" Value="2" />
                                         <Setter Target="SecondaryButton.(Grid.Column)" Value="2" />
                                         <Setter Target="SecondaryButton.(Grid.ColumnSpan)" Value="2" />
                                         <Setter Target="SecondaryButton.Margin" Value="2,0,0,0" />
@@ -1046,7 +1046,7 @@
                                 </VisualState>
                                 <VisualState x:Name="PrimaryAndCloseVisible">
                                     <VisualState.Setters>
-                                        <Setter Target="PrimaryButton.(Grid.ColumnSpan)" Value="2" />
+                                        <Setter Target="PrimaryRoot.(Grid.ColumnSpan)" Value="2" />
                                         <Setter Target="CloseButton.(Grid.Column)" Value="2" />
                                         <Setter Target="CloseButton.(Grid.ColumnSpan)" Value="2" />
                                         <Setter Target="CloseButton.Margin" Value="2,0,0,0" />
@@ -1061,7 +1061,7 @@
                                         <Setter Target="CloseButton.(Grid.Column)" Value="2" />
                                         <Setter Target="CloseButton.(Grid.ColumnSpan)" Value="2" />
                                         <Setter Target="CloseButton.Margin" Value="2,0,0,0" />
-                                        <Setter Target="PrimaryButton.Visibility" Value="Collapsed" />
+                                        <Setter Target="PrimaryRoot.Visibility" Value="Collapsed" />
                                     </VisualState.Setters>
                                 </VisualState>
                             </VisualStateGroup>
@@ -1088,6 +1088,15 @@
                                 <VisualState x:Name="AccentColorBorder">
                                     <VisualState.Setters>
                                         <Setter Target="BackgroundElement.BorderBrush" Value="{ThemeResource SystemControlForegroundAccentBrush}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="SplitButtonStates">
+                                <VisualState x:Name="NoSplitButton" />
+                                <VisualState x:Name="PrimaryAsSplitButton">
+                                    <VisualState.Setters>
+                                        <Setter Target="PrimaryButton.CornerRadius" Value="2,0,0,2" />
+                                        <Setter Target="PrimarySplitButton.Visibility" Value="Visible" />
                                     </VisualState.Setters>
                                 </VisualState>
                             </VisualStateGroup>
@@ -1176,15 +1185,47 @@
                                             <ColumnDefinition Width="0.5*" />
                                             <ColumnDefinition />
                                         </Grid.ColumnDefinitions>
-                                        <Button x:Name="PrimaryButton"
-                                                Content="{TemplateBinding PrimaryButtonText}"
-                                                IsEnabled="{TemplateBinding IsPrimaryButtonEnabled}"
-                                                Style="{TemplateBinding PrimaryButtonStyle}"
-                                                ElementSoundMode="FocusOnly"
-                                                HorizontalAlignment="Stretch"
-                                                VerticalAlignment="Stretch"
-                                                Margin="0,0,2,0"
-                                                Grid.Column="0" />
+                                        <Grid x:Name="PrimaryRoot"
+                                              Margin="0,0,2,0"
+                                              Grid.Column="0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <Button x:Name="PrimaryButton"
+                                                    Content="{TemplateBinding PrimaryButtonText}"
+                                                    IsEnabled="{TemplateBinding IsPrimaryButtonEnabled}"
+                                                    Style="{TemplateBinding PrimaryButtonStyle}"
+                                                    ElementSoundMode="FocusOnly"
+                                                    HorizontalAlignment="Stretch"
+                                                    VerticalAlignment="Stretch" />
+
+                                            <Button x:Name="PrimarySplitButton"
+                                                    Grid.Column="1"
+                                                    IsEnabled="{TemplateBinding IsPrimaryButtonEnabled}"
+                                                    Style="{TemplateBinding PrimaryButtonStyle}"
+                                                    BorderBrush="Transparent"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalContentAlignment="Stretch"
+                                                    HorizontalAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    Padding="6,0,6,0"
+                                                    Margin="1,0,0,0"
+                                                    CornerRadius="0,2,2,0"
+                                                    IsTabStop="False"
+                                                    AutomationProperties.AccessibilityView="Raw"
+                                                    Visibility="Collapsed">
+                                                <Button.Content>
+                                                    <TextBlock
+                                                        FontFamily="Segoe MDL2 Assets"
+                                                        FontSize="12"
+                                                        Text="&#xE70D;"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalAlignment="Right"
+                                                        AutomationProperties.AccessibilityView="Raw"/>
+                                                </Button.Content>
+                                            </Button>
+                                        </Grid>
                                         <Button x:Name="SecondaryButton"
                                                 Content="{TemplateBinding SecondaryButtonText}"
                                                 IsEnabled="{TemplateBinding IsSecondaryButtonEnabled}"

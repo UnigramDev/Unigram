@@ -98,6 +98,8 @@ namespace Unigram.Controls
         {
             base.OnApplyTemplate();
 
+            VisualStateManager.GoToState(this, IsPrimaryButtonSplit ? "PrimaryAsSplitButton" : "NoSplitButton", false);
+
             var button = GetTemplateChild("PrimaryButton") as Button;
             if (button != null && FocusPrimaryButton)
             {
@@ -189,5 +191,19 @@ namespace Unigram.Controls
 
             Hide();
         }
+
+        #region IsPrimaryButtonSplit
+
+        public bool IsPrimaryButtonSplit
+        {
+            get => (bool)GetValue(IsPrimaryButtonSplitProperty);
+            set => SetValue(IsPrimaryButtonSplitProperty, value);
+        }
+
+        public static readonly DependencyProperty IsPrimaryButtonSplitProperty =
+            DependencyProperty.Register("IsPrimaryButtonSplit", typeof(bool), typeof(ContentPopup), new PropertyMetadata(false));
+
+        #endregion
+
     }
 }

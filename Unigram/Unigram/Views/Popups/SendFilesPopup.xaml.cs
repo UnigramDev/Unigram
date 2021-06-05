@@ -84,7 +84,9 @@ namespace Unigram.Views.Popups
                 if (_isFilesSelected != value)
                 {
                     _isFilesSelected = value;
+                    _isMediaSelected = !value;
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsFilesSelected"));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsMediaSelected"));
                 }
             }
         }
@@ -571,16 +573,18 @@ namespace Unigram.Views.Popups
 
         protected override void OnApplyTemplate()
         {
-            var button = (Button)GetTemplateChild("PrimaryButton");
+            IsPrimaryButtonSplit = CanSchedule;
+
+            var button = GetTemplateChild("PrimarySplitButton") as Button;
             if (button != null && CanSchedule)
             {
-                button.ContextRequested += PrimaryButton_ContextRequested;
+                button.Click += PrimaryButton_ContextRequested;
             }
 
             base.OnApplyTemplate();
         }
 
-        private void PrimaryButton_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        private void PrimaryButton_ContextRequested(object sender, RoutedEventArgs args)
         {
             var self = IsSavedMessages;
 
@@ -588,7 +592,7 @@ namespace Unigram.Views.Popups
             flyout.CreateFlyoutItem(new RelayCommand(() => { Silent = true; Hide(ContentDialogResult.Primary); }), Strings.Resources.SendWithoutSound, new FontIcon { Glyph = Icons.AlertOff });
             flyout.CreateFlyoutItem(new RelayCommand(() => { Schedule = true; Hide(ContentDialogResult.Primary); }), self ? Strings.Resources.SetReminder : Strings.Resources.ScheduleMessage, new FontIcon { Glyph = Icons.CalendarClock });
 
-            flyout.ShowAt(sender, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft });
+            flyout.ShowAt(sender as FrameworkElement, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedRight });
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)

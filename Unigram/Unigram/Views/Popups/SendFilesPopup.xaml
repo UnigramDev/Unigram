@@ -234,34 +234,18 @@
     </ContentControl.Resources>
 
     <ContentDialog.Title>
-        <Grid Margin="-12,-8,-12,-12">
+        <Grid Height="48" Margin="0,-8,-12,-12">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <controls:PivotRadioButton
-                Glyph="&#xEB9F;"
-                CheckedGlyph="&#xEB9F;"
+            <CheckBox
                 Click="PivotRadioButton_Click"
-                Style="{StaticResource ModernPivotRadioButtonStyle}"
-                IsChecked="{x:Bind IsMediaSelected, Mode=TwoWay}"
-                Visibility="{x:Bind IsMediaOnly, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-            <controls:PivotRadioButton
-                Glyph="&#xE7C3;"
-                CheckedGlyph="&#xE7C3;"
-                Click="PivotRadioButton_Click"
-                Style="{StaticResource ModernPivotRadioButtonStyle}"
                 IsChecked="{x:Bind IsFilesSelected, Mode=TwoWay}"
-                Grid.Column="1"/>
-            <controls:PivotRadioButton
-                Glyph="&#xE7B8;"
-                CheckedGlyph="&#xE7B8;"
-                Style="{StaticResource ModernPivotRadioButtonStyle}"
-                Visibility="Collapsed"
-                Grid.Column="2"/>
+                Visibility="{x:Bind IsMediaOnly, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                Content="{CustomResource SendWithoutCompression}"
+                VerticalAlignment="Center"/>
 
             <controls:GlyphToggleButton
                 x:Name="AlbumButton"
@@ -273,7 +257,8 @@
                 Visibility="{x:Bind IsAlbumAvailable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                 IsChecked="{x:Bind IsAlbum, Mode=OneWay}"
                 IsOneWay="False"
-                Grid.Column="4"/>
+                FontSize="24"
+                Grid.Column="2"/>
         </Grid>
     </ContentDialog.Title>
 
