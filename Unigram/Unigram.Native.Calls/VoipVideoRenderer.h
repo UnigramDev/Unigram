@@ -43,9 +43,11 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 
 	winrt::event_token m_eventToken;
 	winrt::slim_mutex m_lock;
+	winrt::slim_mutex m_drawLock;
 
 	std::shared_ptr<CanvasControl> m_canvasControl;
 	webrtc::VideoRotation m_rotation{ webrtc::kVideoRotation_0 };
+	GaussianBlurEffect m_blur{ nullptr };
 	PixelShaderEffect m_shader{ nullptr };
 	CanvasBitmap m_bitmapY{ nullptr };
 	CanvasBitmap m_bitmapU{ nullptr };
@@ -56,9 +58,10 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 		m_readyToDraw = canvas.ReadyToDraw();
 
 		m_eventToken = canvas.Draw([this](const CanvasControl sender, CanvasDrawEventArgs const args) {
+			winrt::slim_lock_guard const guard(m_drawLock);
 			m_readyToDraw = true;
 
-			if (m_bitmapY != nullptr) {
+			if (m_bitmapY && !m_disposed) {
 				float width = sender.Size().Width;
 				float height = sender.Size().Height;
 				float bitmapWidth = m_bitmapY.SizeInPixels().Width;
@@ -71,6 +74,8 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 				float y = (height - bitmapHeight) / 2;
 
 				float3x2 matrix;
+				float scale = 1;
+
 				switch (m_rotation) {
 				case webrtc::kVideoRotation_0:
 					matrix = float3x2::identity();
@@ -88,22 +93,35 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 
 				if (m_stretch == Stretch::UniformToFill) {
 					if (ratioX < ratioY && ((bitmapWidth * ratioY) - width) / width <= .25f) {
-						args.DrawingSession().Transform(matrix * make_float3x2_scale(ratioY, float2(width / 2, height / 2)));
+						scale = ratioY;
 					}
 					else if (ratioY < ratioX && ((bitmapHeight * ratioX) - height) / height <= .25f) {
-						args.DrawingSession().Transform(matrix * make_float3x2_scale(ratioX, float2(width / 2, height / 2)));
+						scale = ratioX;
 					}
 					else {
-						args.DrawingSession().Transform(matrix * make_float3x2_scale(std::min(ratioX, ratioY), float2(width / 2, height / 2)));
+						scale = std::min(ratioX, ratioY);
 					}
 				}
 				else if (m_stretch == Stretch::Uniform) {
-					args.DrawingSession().Transform(matrix * make_float3x2_scale(std::min(ratioX, ratioY), float2(width / 2, height / 2)));
+					scale = std::min(ratioX, ratioY);
 				}
 				else if (m_stretch == Stretch::Fill) {
-					args.DrawingSession().Transform(matrix * make_float3x2_scale(std::max(ratioX, ratioY), float2(width / 2, height / 2)));
+					scale = std::max(ratioX, ratioY);
 				}
 
+				if (bitmapWidth * scale < width || bitmapHeight * scale < height) {
+					if (m_blur == nullptr) {
+						m_blur = GaussianBlurEffect();
+						m_blur.BlurAmount(10);
+						m_blur.Source(m_shader);
+						m_blur.BorderMode(EffectBorderMode::Hard);
+					}
+
+					args.DrawingSession().Transform(matrix * make_float3x2_scale(std::max(ratioX, ratioY), float2(width / 2, height / 2)));
+					args.DrawingSession().DrawImage(m_blur, x, y);
+				}
+
+				args.DrawingSession().Transform(matrix * make_float3x2_scale(scale, float2(width / 2, height / 2)));
 				args.DrawingSession().DrawImage(m_shader, x, y);
 			}
 			});
@@ -111,30 +129,37 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 
 	~VoipVideoRenderer() {
 		winrt::slim_lock_guard const guard(m_lock);
+		winrt::slim_lock_guard const drawGuard(m_drawLock);
 
 		m_disposed = true;
+		m_readyToDraw = false;
 
 		if (m_canvasControl) {
 			m_canvasControl->Draw(m_eventToken);
 			m_canvasControl = nullptr;
 		}
 
-		if (m_shader != nullptr) {
+		if (m_blur) {
+			m_blur.Close();
+			m_blur = nullptr;
+		}
+
+		if (m_shader) {
 			m_shader.Close();
 			m_shader = nullptr;
 		}
 
-		if (m_bitmapY != nullptr) {
+		if (m_bitmapY) {
 			m_bitmapY.Close();
 			m_bitmapY = nullptr;
 		}
 
-		if (m_bitmapU != nullptr) {
+		if (m_bitmapU) {
 			m_bitmapU.Close();
 			m_bitmapU = nullptr;
 		}
 
-		if (m_bitmapV != nullptr) {
+		if (m_bitmapV) {
 			m_bitmapV.Close();
 			m_bitmapV = nullptr;
 		}
@@ -144,7 +169,7 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 	{
 		winrt::slim_lock_guard const guard(m_lock);
 
-		if (!m_canvasControl || m_disposed || !m_readyToDraw) {
+		if (m_disposed || !m_readyToDraw || !m_canvasControl) {
 			return;
 		}
 
@@ -185,7 +210,7 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 				fclose(file);
 
 				auto shaderView = winrt::array_view<uint8_t const>(buffer, buffer + length);
-				m_shader = winrt::Microsoft::Graphics::Canvas::Effects::PixelShaderEffect(shaderView);
+				m_shader = PixelShaderEffect(shaderView);
 				m_shader.Source1BorderMode(EffectBorderMode::Hard);
 				m_shader.Source2BorderMode(EffectBorderMode::Hard);
 				m_shader.Source3BorderMode(EffectBorderMode::Hard);
