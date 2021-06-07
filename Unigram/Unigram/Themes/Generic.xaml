@@ -1213,7 +1213,7 @@
                                                     Padding="6,0,6,0"
                                                     Margin="1,0,0,0"
                                                     CornerRadius="0,2,2,0"
-                                                    IsTabStop="False"
+                                                    IsTabStop="True"
                                                     AutomationProperties.AccessibilityView="Raw"
                                                     Visibility="Collapsed">
                                                 <Button.Content>
