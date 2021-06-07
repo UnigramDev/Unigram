@@ -1204,6 +1204,7 @@
                                                     Grid.Column="1"
                                                     IsEnabled="{TemplateBinding IsPrimaryButtonEnabled}"
                                                     Style="{TemplateBinding PrimaryButtonStyle}"
+                                                    AutomationProperties.Name="{CustomResource AccDescrMoreOptions}"
                                                     BorderBrush="Transparent"
                                                     HorizontalContentAlignment="Stretch"
                                                     VerticalContentAlignment="Stretch"
