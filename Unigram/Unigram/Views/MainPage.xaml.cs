@@ -2028,12 +2028,16 @@ namespace Unigram.Views
                 else if (args.Phase == 1)
                 {
                     var subtitle = content.Children[2] as TextBlock;
-                    if (result.User != null || result.Chat != null && (result.Chat.Type is ChatTypePrivate privata || result.Chat.Type is ChatTypeSecret))
+                    if (result.User != null || (result.Chat != null && (result.Chat.Type is ChatTypePrivate privata || result.Chat.Type is ChatTypeSecret)))
                     {
-                        var user = result.User ?? ViewModel.ProtoService.GetUser(result.Chat);
+                        var user = result.User ?? ViewModel.CacheService.GetUser(result.Chat);
                         if (result.IsPublic)
                         {
                             subtitle.Text = $"@{user.Username}";
+                        }
+                        else if (ViewModel.CacheService.IsSavedMessages(user))
+                        {
+                            subtitle.Text = Strings.Resources.ThisIsYou;
                         }
                         else
                         {
