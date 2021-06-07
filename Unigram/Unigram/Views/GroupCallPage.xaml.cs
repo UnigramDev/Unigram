@@ -332,8 +332,8 @@ namespace Unigram.Views
 
         private async void UpdateLayout(Vector2 prevSize, Vector2 nextSize, bool animated)
         {
-            var call = _service?.Call;
-            if (call == null)
+            var service = _service;
+            if (service == null)
             {
                 return;
             }
@@ -438,7 +438,7 @@ namespace Unigram.Views
             }
             else
             {
-                Menu.Visibility = call.CanStartVideo ? Visibility.Visible : Visibility.Collapsed;
+                Menu.Visibility = service.CanEnableVideo ? Visibility.Visible : Visibility.Collapsed;
                 Resize.Glyph = Icons.ArrowMaximize;
 
                 Grid.SetRowSpan(ParticipantsPanel, 1);
@@ -505,7 +505,7 @@ namespace Unigram.Views
 
                 UpdateVideo();
                 UpdateScreen();
-                Settings.Visibility = SettingsInfo.Visibility = call.CanStartVideo ? Visibility.Collapsed : Visibility.Visible;
+                Settings.Visibility = SettingsInfo.Visibility = service.CanEnableVideo ? Visibility.Collapsed : Visibility.Visible;
             }
 
             var padding = 0;
@@ -674,8 +674,8 @@ namespace Unigram.Views
 
         private void TransformBottomRoot(Vector2 prevSize, Vector2 nextSize, ParticipantsGridMode prev, ParticipantsGridMode next)
         {
-            var call = _service.Call;
-            if (call == null)
+            var service = _service;
+            if (service == null)
             {
                 return;
             }
@@ -840,7 +840,7 @@ namespace Unigram.Views
             leave.StartAnimation("Translation", otherOffset);
             leaveInfo.StartAnimation("Translation", otherOffset);
 
-            if (call.CanStartVideo || next != ParticipantsGridMode.Compact)
+            if (service.CanEnableVideo || next != ParticipantsGridMode.Compact)
             {
                 video.StartAnimation("Translation", otherOffset);
                 videoInfo.StartAnimation("Translation", otherOffset);
@@ -929,8 +929,8 @@ namespace Unigram.Views
                     }
                     else
                     {
-                        Menu.Visibility = call.CanStartVideo ? Visibility.Visible : Visibility.Collapsed;
-                        Settings.Visibility = SettingsInfo.Visibility = call.CanStartVideo ? Visibility.Collapsed : Visibility.Visible;
+                        Menu.Visibility = _service.CanEnableVideo ? Visibility.Visible : Visibility.Collapsed;
+                        Settings.Visibility = SettingsInfo.Visibility = _service.CanEnableVideo ? Visibility.Collapsed : Visibility.Visible;
                     }
 
                     Resize.Visibility = Visibility.Visible;
@@ -961,6 +961,7 @@ namespace Unigram.Views
                 }
 
                 UpdateNetworkState(call, currentUser, _service.IsConnected);
+                UpdateLayout(this.GetActualSize(), this.GetActualSize(), true);
             });
         }
 
@@ -1156,7 +1157,7 @@ namespace Unigram.Views
 
         private async void Video_Click(object sender, RoutedEventArgs e)
         {
-            if (_service?.IsCapturing == false)
+            if (_service?.IsVideoEnabled == false)
             {
                 var permissions = await MediaDeviceWatcher.CheckAccessAsync(true, ElementTheme.Dark);
                 if (permissions == false || _service == null)
@@ -1345,13 +1346,13 @@ namespace Unigram.Views
 
         private void UpdateVideo()
         {
-            var call = _service?.Call;
-            if (call == null)
+            var service = _service;
+            if (service == null)
             {
                 return;
             }
 
-            if (call.CanStartVideo)
+            if (service.CanEnableVideo)
             {
                 switch (_prevColors)
                 {
@@ -1359,14 +1360,14 @@ namespace Unigram.Views
                         Video.Background = new SolidColorBrush { Color = Color.FromArgb(0x66, 0x76, 0x6E, 0xE9) };
                         break;
                     case ButtonColors.Unmute:
-                        Video.Background = new SolidColorBrush { Color = Color.FromArgb((byte)(_service.IsCapturing ? 0xFF : 0x66), 0x33, 0xc6, 0x59) };
+                        Video.Background = new SolidColorBrush { Color = Color.FromArgb((byte)(_service.IsVideoEnabled ? 0xFF : 0x66), 0x33, 0xc6, 0x59) };
                         break;
                     case ButtonColors.Mute:
-                        Video.Background = new SolidColorBrush { Color = Color.FromArgb((byte)(_service.IsCapturing ? 0xFF : 0x66), 0x00, 0x78, 0xff) };
+                        Video.Background = new SolidColorBrush { Color = Color.FromArgb((byte)(_service.IsVideoEnabled ? 0xFF : 0x66), 0x00, 0x78, 0xff) };
                         break;
                 }
 
-                Video.Glyph = _service.IsCapturing ? Icons.VideoFilled : Icons.VideoOffFilled;
+                Video.Glyph = service.IsVideoEnabled ? Icons.VideoFilled : Icons.VideoOffFilled;
                 Video.Visibility = VideoInfo.Visibility = Visibility.Visible;
             }
             else
@@ -1377,13 +1378,13 @@ namespace Unigram.Views
 
         private void UpdateScreen()
         {
-            var call = _service?.Call;
-            if (call == null)
+            var service = _service;
+            if (service == null)
             {
                 return;
             }
 
-            if (_mode != ParticipantsGridMode.Compact && call.CanStartVideo && GraphicsCaptureSession.IsSupported())
+            if (_mode != ParticipantsGridMode.Compact && service.CanEnableVideo && GraphicsCaptureSession.IsSupported())
             {
                 switch (_prevColors)
                 {
@@ -1391,14 +1392,14 @@ namespace Unigram.Views
                         Screen.Background = new SolidColorBrush { Color = Color.FromArgb(0x66, 0x76, 0x6E, 0xE9) };
                         break;
                     case ButtonColors.Unmute:
-                        Screen.Background = new SolidColorBrush { Color = Color.FromArgb((byte)(_service.IsScreenSharing ? 0xFF : 0x66), 0x33, 0xc6, 0x59) };
+                        Screen.Background = new SolidColorBrush { Color = Color.FromArgb((byte)(service.IsScreenSharing ? 0xFF : 0x66), 0x33, 0xc6, 0x59) };
                         break;
                     case ButtonColors.Mute:
-                        Screen.Background = new SolidColorBrush { Color = Color.FromArgb((byte)(_service.IsScreenSharing ? 0xFF : 0x66), 0x00, 0x78, 0xff) };
+                        Screen.Background = new SolidColorBrush { Color = Color.FromArgb((byte)(service.IsScreenSharing ? 0xFF : 0x66), 0x00, 0x78, 0xff) };
                         break;
                 }
 
-                Screen.Glyph = _service.IsScreenSharing ? Icons.ShareScreenStopFilled : Icons.ShareScreenFilled;
+                Screen.Glyph = service.IsScreenSharing ? Icons.ShareScreenStopFilled : Icons.ShareScreenFilled;
                 Screen.Visibility = ScreenInfo.Visibility = Visibility.Visible;
             }
             else
@@ -1470,7 +1471,7 @@ namespace Unigram.Views
                 }
             }
 
-            if (call.CanStartVideo && GraphicsCaptureSession.IsSupported())
+            if (_service.CanEnableVideo && GraphicsCaptureSession.IsSupported())
             {
                 if (_service.IsScreenSharing)
                 {

@@ -55,7 +55,8 @@ namespace Unigram.Services
         Task CreateAsync(long chatId);
         Task DiscardAsync();
 
-        bool IsCapturing { get; }
+        bool CanEnableVideo { get; }
+        bool IsVideoEnabled { get; }
         void ToggleCapturing();
 
         VoipGroupManager ScreenSharing { get; }
@@ -350,7 +351,7 @@ namespace Unigram.Services
                 Participants?.Dispose();
                 Participants = new GroupCallParticipantsCollection(ProtoService, Aggregator, groupCall);
 
-                var response = await ProtoService.SendAsync(new JoinGroupCall(groupCall.Id, alias, ssrc, payload, true, false, string.Empty));
+                var response = await ProtoService.SendAsync(new JoinGroupCall(groupCall.Id, alias, ssrc, payload, _manager.IsMuted, _capturer != null, string.Empty));
                 if (response is Text json)
                 {
                     _isJoining = false;
@@ -377,11 +378,26 @@ namespace Unigram.Services
                     Participants?.Load();
                 }
             });
+
         }
 
         #region Capturing
 
-        public bool IsCapturing => _capturer != null;
+        public bool CanEnableVideo
+        {
+            get
+            {
+                var currentUser = _currentUser;
+                if (currentUser != null)
+                {
+                    return currentUser.CanEnableVideo && !(currentUser.IsMutedForAllUsers && !currentUser.CanUnmuteSelf);
+                }
+
+                return _call?.CanStartVideo ?? false;
+            }
+        }
+
+        public bool IsVideoEnabled => _capturer != null;
 
         public async void ToggleCapturing()
         {
@@ -441,9 +457,16 @@ namespace Unigram.Services
             };
 
             _screenManager = new VoipGroupManager(descriptor);
-            _screenManager.EmitJoinPayload(async (ssrc, payload) =>
+
+            RejoinScreenSharing(call);
+        }
+
+        private void RejoinScreenSharing(GroupCall groupCall)
+        {
+            _screenManager?.SetConnectionMode(VoipGroupConnectionMode.None, false);
+            _screenManager?.EmitJoinPayload(async (ssrc, payload) =>
             {
-                var response = await ProtoService.SendAsync(new StartGroupCallScreenSharing(call.Id, payload));
+                var response = await ProtoService.SendAsync(new StartGroupCallScreenSharing(groupCall.Id, payload));
                 if (response is Text json)
                 {
                     if (_screenManager == null)
@@ -709,8 +732,6 @@ namespace Unigram.Services
             {
                 if (update.GroupCall.IsJoined || update.GroupCall.NeedRejoin || _isJoining)
                 {
-                    var canStartVideo = _call.CanStartVideo;
-
                     _call = update.GroupCall;
 
                     var lifetime = _callLifetime;
@@ -726,10 +747,6 @@ namespace Unigram.Services
                     }
 
                     if (update.GroupCall.NeedRejoin || _isScheduled != (update.GroupCall.ScheduledStartDate > 0))
-                    {
-                        Rejoin(update.GroupCall, _alias);
-                    }
-                    else if (update.GroupCall.CanStartVideo && !canStartVideo)
                     {
                         Rejoin(update.GroupCall, _alias);
                     }
@@ -750,12 +767,27 @@ namespace Unigram.Services
         {
             if (_call?.Id == update.GroupCallId && update.Participant.IsCurrentUser)
             {
-                _currentUser = update.Participant;
-
-                if (update.Participant.IsMutedForAllUsers || update.Participant.IsMutedForCurrentUser)
+                // User got muted by admins, update local state
+                if (update.Participant.IsMutedForAllUsers && !update.Participant.CanUnmuteSelf)
                 {
                     _manager.IsMuted = true;
+
+                    if (_currentUser?.VideoInfo != null && update.Participant.VideoInfo == null && _capturer != null)
+                    {
+                        _capturer.SetOutput(null);
+                        _manager.SetVideoCapture(null);
+
+                        _capturer.Dispose();
+                        _capturer = null;
+                    }
+
+                    if (_currentUser?.ScreenSharingVideoInfo != null && update.Participant.ScreenSharingVideoInfo != null && _screenCapturer != null)
+                    {
+                        EndScreenSharing();
+                    }
                 }
+
+                _currentUser = update.Participant;
 
                 var lifetime = _callLifetime;
                 if (lifetime != null)
