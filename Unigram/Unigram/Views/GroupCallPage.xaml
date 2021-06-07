@@ -114,19 +114,6 @@
                 Height="48"
                 FontSize="16"
                 IsTabStop="False"/>
-            <controls:AnimatedGlyphToggleButton
-                x:Name="Mode"
-                Click="Mode_Click"
-                Visibility="Collapsed"
-                Glyph="&#xE968;"
-                CheckedGlyph="&#xE967;"
-                IsChecked="True"
-                Margin="-8,0,0,0"
-                Width="40"
-                Height="48"
-                FontSize="16"
-                IsOneWay="False"
-                IsTabStop="False"/>
             <controls:GlyphButton
                 x:Name="Menu"
                 Click="Menu_ContextRequested"

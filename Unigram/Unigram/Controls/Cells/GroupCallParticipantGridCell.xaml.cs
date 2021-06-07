@@ -12,6 +12,8 @@ using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation.Peers;
+using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
@@ -40,8 +42,8 @@ namespace Unigram.Controls.Cells
                 ScreenSharing.Text = Icons.SmallScreencastFilled;
             }
 
-            var pin = ElementCompositionPreview.GetElementVisual(PinRoot);
-            pin.Opacity = 0;
+            var header = ElementCompositionPreview.GetElementVisual(Header);
+            header.Opacity = 0;
         }
 
         public bool IsMatch(GroupCallParticipant participant, GroupCallParticipantVideoInfo videoInfo)
@@ -95,6 +97,8 @@ namespace Unigram.Controls.Cells
 
         public event EventHandler TogglePinned;
 
+        public event EventHandler ToggleDocked;
+
         public void UpdateGroupCallParticipant(ICacheService cacheService, GroupCallParticipant participant, GroupCallParticipantVideoInfo videoInfo)
         {
             _participant = participant;
@@ -127,7 +131,7 @@ namespace Unigram.Controls.Cells
 
         private bool _infoCollapsed;
 
-        public void ShowHideInfo(bool show)
+        public void ShowHideInfo(bool show, bool? docked)
         {
             if (_infoCollapsed == !show)
             {
@@ -145,9 +149,38 @@ namespace Unigram.Controls.Cells
 
             if (IsSelected || !show)
             {
-                var pin = ElementCompositionPreview.GetElementVisual(PinRoot);
-                pin.StartAnimation("Opacity", anim);
+                ShowHideHeader(show, docked);
             }
+        }
+
+        private bool _headerCollapsed;
+
+        public void ShowHideHeader(bool show, bool? docked)
+        {
+            if (show && docked == null)
+            {
+                ModeRoot.Visibility = Visibility.Collapsed;
+            }
+            else if (show)
+            {
+                Mode.IsChecked = docked;
+                Mode.Visibility = Visibility.Visible;
+            }
+
+            if (_headerCollapsed == !show)
+            {
+                return;
+            }
+
+            _headerCollapsed = !show;
+
+            Back.IsEnabled = Mode.IsEnabled = Pin.IsEnabled = show;
+
+            var anim = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            anim.InsertKeyFrame(1, show ? 1 : 0);
+
+            var header = ElementCompositionPreview.GetElementVisual(Header);
+            header.StartAnimation("Opacity", anim);
         }
 
         private bool _pausedCollapsed;
@@ -226,6 +259,19 @@ namespace Unigram.Controls.Cells
         private void Pin_Click(object sender, RoutedEventArgs e)
         {
             TogglePinned?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void Mode_Click(object sender, RoutedEventArgs e)
+        {
+            ToggleDocked?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void Back_Click(object sender, RoutedEventArgs e)
+        {
+            var peer = new HyperlinkButtonAutomationPeer(this);
+            var pattern = peer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
+
+            pattern.Invoke();
         }
     }
 }

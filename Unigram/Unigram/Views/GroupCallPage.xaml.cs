@@ -55,6 +55,9 @@ namespace Unigram.Views
         private readonly DispatcherTimer _scheduledTimer;
         private readonly DispatcherTimer _debouncerTimer;
 
+        private ParticipantsGridMode _mode = ParticipantsGridMode.Compact;
+        private bool _docked = true;
+
         public GroupCallPage(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator, IGroupCallService voipService)
         {
             InitializeComponent();
@@ -336,7 +339,7 @@ namespace Unigram.Views
             }
 
             var expanded = nextSize.X >= 600 && Viewport.Children.Count > 0;
-            var docked = Mode.IsChecked == true;
+            var docked = _docked;
 
             var prev = _mode;
             var mode = expanded && docked
@@ -355,7 +358,6 @@ namespace Unigram.Views
             if (mode != ParticipantsGridMode.Compact)
             {
                 Menu.Visibility = Visibility.Collapsed;
-                Mode.Visibility = Visibility.Visible;
                 Resize.Glyph = Icons.ArrowMinimize;
 
                 Grid.SetRowSpan(ParticipantsPanel, 2);
@@ -363,11 +365,9 @@ namespace Unigram.Views
                 Grid.SetColumn(List, 1);
 
                 Viewport.Mode = mode;
-                ViewportAspect.Padding = new Thickness(0, 0, 8, 0);
-                ViewportAspect.Margin = new Thickness(8, -2, -2, 4);
                 ParticipantsPanel.ColumnDefinitions[1].Width = new GridLength(224, GridUnitType.Pixel);
                 ParticipantsPanel.Margin = new Thickness();
-                List.Padding = new Thickness(8, 0, 12, 12);
+                List.Padding = new Thickness(8, 0, 12, 8);
 
                 if (ListHeader.Children.Contains(ViewportAspect))
                 {
@@ -377,11 +377,13 @@ namespace Unigram.Views
 
                 if (mode == ParticipantsGridMode.Docked)
                 {
+                    ViewportAspect.Margin = new Thickness(10, -2, 0, 8);
                     List.Margin = new Thickness();
                     BottomPanel.Padding = new Thickness(8, 8, 224, 42);
                 }
                 else
                 {
+                    ViewportAspect.Margin = new Thickness(10, -2, 10, 8);
                     List.Margin = new Thickness(216, 0, -216, 0);
                     BottomPanel.Padding = new Thickness(8, 8, 8, 42);
                 }
@@ -437,7 +439,6 @@ namespace Unigram.Views
             else
             {
                 Menu.Visibility = call.CanStartVideo ? Visibility.Visible : Visibility.Collapsed;
-                Mode.Visibility = Visibility.Collapsed;
                 Resize.Glyph = Icons.ArrowMaximize;
 
                 Grid.SetRowSpan(ParticipantsPanel, 1);
@@ -445,7 +446,6 @@ namespace Unigram.Views
                 Grid.SetColumn(List, 0);
 
                 Viewport.Mode = mode;
-                ViewportAspect.Padding = new Thickness(0, 0, 0, 0);
                 ViewportAspect.Margin = new Thickness(-2, -2, -2, Viewport.Children.Count > 0 ? 4 : 0);
                 ParticipantsPanel.ColumnDefinitions[1].Width = new GridLength(1, GridUnitType.Auto);
                 ParticipantsPanel.Margin = new Thickness(0, 0, 0, -56);
@@ -530,6 +530,8 @@ namespace Unigram.Views
 
             ShowHideBottomRoot(true);
 
+            TransformList(prevSize, nextSize, prev, mode);
+
             if (animated)
             {
                 if (prev == ParticipantsGridMode.Compact || mode == ParticipantsGridMode.Compact)
@@ -539,6 +541,66 @@ namespace Unigram.Views
                 else
                 {
                     TransformDocked();
+                }
+            }
+        }
+
+        private void TransformList(Vector2 prevSize, Vector2 nextSize, ParticipantsGridMode prev, ParticipantsGridMode next)
+        {
+            if (next != ParticipantsGridMode.Compact && _selectedEndpointId != null)
+            {
+                foreach (var cell in Viewport.Cells)
+                {
+                    if (cell.IsSelected && _listCells.TryGetValue(cell.EndpointId, out var listCell))
+                    {
+                        RemoveListItem(listCell);
+                    }
+                    else if (!cell.IsSelected && _mode != ParticipantsGridMode.Compact)
+                    {
+                        AddListItem(cell.Participant, cell.VideoInfo, cell.IsScreenSharing);
+                    }
+                }
+
+                ShowHideParticipantsWithVideo(false);
+            }
+            else
+            {
+                _prevList.Clear();
+
+                _listTokens.Values.ForEach(x => x.Stop());
+                _listTokens.Clear();
+
+                _listCells.Clear();
+
+                RemoveChildren(true);
+                ListViewport.Children.Clear();
+
+                ShowHideParticipantsWithVideo(true);
+            }
+
+            UpdateVisibleParticipants(false);
+        }
+
+        private void ShowHideParticipantsWithVideo(bool show)
+        {
+            var panel = List.ItemsPanelRoot;
+            if (panel == null)
+            {
+                return;
+            }
+
+            foreach (var row in panel.Children.OfType<SelectorItem>())
+            {
+                var participant = List.ItemFromContainer(row) as GroupCallParticipant;
+                if (participant != null && !show && participant.HasVideoInfo())
+                {
+                    row.IsEnabled = false;
+                    row.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    row.IsEnabled = true;
+                    row.Visibility = Visibility.Visible;
                 }
             }
         }
@@ -586,8 +648,8 @@ namespace Unigram.Views
             list.StartAnimation("Translation", listOffset);
         }
 
-        private ParticipantsGridMode _mode = ParticipantsGridMode.Compact;
         private string _selectedEndpointId;
+        private int _selectedTimestamp;
 
         private void Resize_Click(object sender, RoutedEventArgs e)
         {
@@ -604,8 +666,9 @@ namespace Unigram.Views
             }
         }
 
-        private void Mode_Click(object sender, RoutedEventArgs e)
+        private void Participant_ToggleDocked(object sender, EventArgs e)
         {
+            _docked = !_docked;
             UpdateLayout(this.GetActualSize(), this.GetActualSize(), true);
         }
 
@@ -926,6 +989,19 @@ namespace Unigram.Views
                 if (participants.TryGetFromAudioSourceId(level.Key, out var participant))
                 {
                     validLevels[participant] = level.Value.Key;
+
+                    var endpoint = participant.ScreenSharingVideoInfo?.EndpointId ?? participant.VideoInfo?.EndpointId;
+                    if (endpoint != null && endpoint == _selectedEndpointId)
+                    {
+                        const float speakingLevelThreshold = 0.1f;
+                        const int cutoffTimeout = 3000;
+                        const int silentTimeout = 2000;
+
+                        if (level.Value.Key > speakingLevelThreshold && level.Value.Value)
+                        {
+                            _selectedTimestamp = Environment.TickCount;
+                        }
+                    }
                 }
             }
 
@@ -1632,7 +1708,7 @@ namespace Unigram.Views
                 return;
             }
 
-            UpdateGroupCallParticipant(content, participant, true);
+            UpdateGroupCallParticipant(args.ItemContainer, content, participant, true);
             args.Handled = true;
         }
 
@@ -1656,11 +1732,11 @@ namespace Unigram.Views
                     return;
                 }
 
-                UpdateGroupCallParticipant(content, participant, false);
+                UpdateGroupCallParticipant(container, content, participant, false);
             });
         }
 
-        private void UpdateGroupCallParticipant(Grid content, GroupCallParticipant participant, bool containerContentChanging)
+        private void UpdateGroupCallParticipant(SelectorItem container, Grid content, GroupCallParticipant participant, bool containerContentChanging)
         {
             var wave = content.Children[0] as Border;
             var photo = content.Children[1] as ProfilePicture;
@@ -1690,6 +1766,17 @@ namespace Unigram.Views
 
             if (participant.HasVideoInfo())
             {
+                if (_mode != ParticipantsGridMode.Compact && _selectedEndpointId != null)
+                {
+                    container.IsEnabled = false;
+                    container.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    container.IsEnabled = true;
+                    container.Visibility = Visibility.Visible;
+                }
+
                 if (participant.ScreenSharingVideoInfo != null && participant.VideoInfo != null)
                 {
                     status.Text = Icons.SmallScreencastFilled + Icons.SmallVideoFilled;
@@ -1707,6 +1794,9 @@ namespace Unigram.Views
             }
             else
             {
+                container.IsEnabled = true;
+                container.Visibility = Visibility.Visible;
+
                 status.Text = string.Empty;
                 status.Margin = new Thickness(0);
             }
@@ -1818,6 +1908,7 @@ namespace Unigram.Views
 
             var child = new GroupCallParticipantGridCell(_cacheService, participant, videoInfo, screenSharing);
             child.Click += Participant_Click;
+            child.ToggleDocked += Participant_ToggleDocked;
             child.ContextRequested += Participant_ContextRequested;
             child.IsList = list;
 
@@ -1828,9 +1919,13 @@ namespace Unigram.Views
             {
                 ViewportAspect.Margin = new Thickness(-2, -2, -2, Viewport.Children.Count > 0 ? 4 : 0);
             }
+            else if (_mode == ParticipantsGridMode.Docked)
+            {
+                ViewportAspect.Margin = new Thickness(10, -2, 0, 8);
+            }
             else
             {
-                ViewportAspect.Margin = new Thickness(8, -2, -2, 0);
+                ViewportAspect.Margin = new Thickness(10, -2, 10, 8);
             }
 
             ListViewport.Margin = new Thickness(-2, -2, -2, ListViewport.Children.Count > 0 ? 4 : 0);
@@ -1875,9 +1970,13 @@ namespace Unigram.Views
             {
                 ViewportAspect.Margin = new Thickness(-2, -2, -2, Viewport.Children.Count > 0 ? 4 : 0);
             }
+            else if (_mode == ParticipantsGridMode.Docked)
+            {
+                ViewportAspect.Margin = new Thickness(10, -2, 0, 8);
+            }
             else
             {
-                ViewportAspect.Margin = new Thickness(8, -2, -2, ListViewport.Children.Count > 0 ? 4 : 0);
+                ViewportAspect.Margin = new Thickness(10, -2, 10, 8);
             }
 
             ListViewport.Margin = new Thickness(-2, -2, -2, ListViewport.Children.Count > 0 ? 4 : 0);
@@ -1908,45 +2007,24 @@ namespace Unigram.Views
 
             cell.IsSelected = !cell.IsSelected;
 
-            if (!cell.IsSelected)
-            {
-                _prevList.Clear();
-
-                _listTokens.Values.ForEach(x => x.Stop());
-                _listTokens.Clear();
-
-                _listCells.Clear();
-
-                RemoveChildren(true);
-                ListViewport.Children.Clear();
-            }
-
             foreach (var child in Viewport.Cells)
             {
                 if (child == cell)
                 {
-                    if (cell.IsSelected && _listCells.TryGetValue(cell.EndpointId, out var listCell))
-                    {
-                        RemoveListItem(listCell);
-                    }
-
                     Canvas.SetZIndex(child, 1);
+                    child.ShowHideHeader(cell.IsSelected, _mode == ParticipantsGridMode.Compact ? null : _docked);
                     continue;
                 }
-                else
-                {
-                    if (cell.IsSelected && _mode != ParticipantsGridMode.Compact)
-                    {
-                        AddListItem(child.Participant, child.VideoInfo, child.IsScreenSharing);
-                    }
 
-                    Canvas.SetZIndex(child, 0);
-                    child.IsSelected = false;
-                }
+                Canvas.SetZIndex(child, 0);
+                child.ShowHideHeader(false, null);
+                child.IsSelected = false;
             }
 
             _selectedEndpointId = cell.IsSelected ? cell.EndpointId : null;
             Viewport.InvalidateMeasure();
+
+            TransformList(this.GetActualSize(), this.GetActualSize(), _mode, _mode);
 
             // Wait for the UI to update to calculate correct quality
             await this.UpdateLayoutAsync();
@@ -2246,7 +2324,7 @@ namespace Unigram.Views
 
             foreach (var child in Viewport.Cells)
             {
-                child.ShowHideInfo(show);
+                child.ShowHideInfo(show, _mode == ParticipantsGridMode.Compact ? null : _docked);
             }
 
             ShowHideBottomRoot(show || Viewport.Mode == ParticipantsGridMode.Compact);
@@ -2579,12 +2657,6 @@ namespace Unigram.Views
             }
             else
             {
-                if (count == 2)
-                {
-                    rows = 2;
-                    columns = 1;
-                }
-
                 var tail = columns - (rows * columns - count);
                 if (tail > 0 && rows >= columns + tail && rows > 1)
                 {
@@ -2594,6 +2666,12 @@ namespace Unigram.Views
                 else if (tail > 0 && columns >= columns - 1 + tail && columns > 1)
                 {
                     //columns--;
+                }
+
+                if (count == 2)
+                {
+                    rows = 2;
+                    columns = 1;
                 }
 
                 if (_mode == ParticipantsGridMode.Docked)
@@ -2654,12 +2732,6 @@ namespace Unigram.Views
             }
             else
             {
-                if (count == 2)
-                {
-                    rows = 2;
-                    columns = 1;
-                }
-
                 var tail = columns - (rows * columns - count);
                 if (tail > 0 && rows >= columns + tail && rows > 1)
                 {
@@ -2669,6 +2741,12 @@ namespace Unigram.Views
                 else if (tail > 0 && columns >= columns - 1 + tail && columns > 1)
                 {
                     //columns--;
+                }
+
+                if (count == 2)
+                {
+                    rows = 2;
+                    columns = 1;
                 }
 
                 if (_mode == ParticipantsGridMode.Docked)

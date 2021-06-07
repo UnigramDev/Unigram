@@ -24,21 +24,61 @@
             <!--<xaml:CanvasControl/>-->
         </Border>
 
-        <Grid x:Name="PinRoot" HorizontalAlignment="Right" VerticalAlignment="Top">
-            <Border
-                CornerRadius="20"
-                Background="#BB000000"
-                Width="32"
-                Height="32"/>
-            <controls:AnimatedGlyphToggleButton
-                x:Name="Pin"
-                Click="Pin_Click"
-                Glyph="&#xE840;"
-                CheckedGlyph="&#xE77A;"
-                CornerRadius="16"
-                Width="40"
-                Height="40"
-                IsOneWay="False"/>
+        <Grid x:Name="Header" VerticalAlignment="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid x:Name="BackRoot" Margin="4,4,0,0">
+                <Border
+                    CornerRadius="20"
+                    Background="#77000000"
+                    Width="32"
+                    Height="32"/>
+                <controls:GlyphButton
+                    x:Name="Back"
+                    Click="Back_Click"
+                    Glyph="&#xE72B;"
+                    CornerRadius="16"
+                    Width="40"
+                    Height="40"/>
+            </Grid>
+
+            <Grid x:Name="ModeRoot" Margin="0,4,0,0" Grid.Column="2">
+                <Border
+                    CornerRadius="20"
+                    Background="#77000000"
+                    Width="32"
+                    Height="32"/>
+                <controls:AnimatedGlyphToggleButton
+                    x:Name="Mode"
+                    Click="Mode_Click"
+                    Glyph="&#xE968;"
+                    CheckedGlyph="&#xE967;"
+                    CornerRadius="16"
+                    Width="40"
+                    Height="40"
+                    IsOneWay="False"/>
+            </Grid>
+
+            <Grid x:Name="PinRoot" Margin="0,4,4,0" Grid.Column="3">
+                <Border
+                    CornerRadius="20"
+                    Background="#77000000"
+                    Width="32"
+                    Height="32"/>
+                <controls:AnimatedGlyphToggleButton
+                    x:Name="Pin"
+                    Click="Pin_Click"
+                    Glyph="&#xE840;"
+                    CheckedGlyph="&#xE77A;"
+                    CornerRadius="16"
+                    Width="40"
+                    Height="40"
+                    IsOneWay="False"/>
+            </Grid>
         </Grid>
 
         <StackPanel x:Name="PausedRoot" VerticalAlignment="Center" Visibility="Collapsed">
@@ -69,7 +109,7 @@
                             <common:Scrim.Gradient>
                                 <common:CubicBezierGradient
                                     TopColor="#00000000"
-                                    BottomColor="#FF000000"/>
+                                    BottomColor="#99000000"/>
                             </common:Scrim.Gradient>
                         </LinearGradientBrush>
                     </Rectangle.Fill>
