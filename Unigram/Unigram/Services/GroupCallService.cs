@@ -376,6 +376,8 @@ namespace Unigram.Services
                     _manager.SetJoinResponsePayload(json.TextValue);
 
                     Participants?.Load();
+
+                    RejoinScreenSharing(groupCall);
                 }
             });
 
@@ -781,10 +783,14 @@ namespace Unigram.Services
                         _capturer = null;
                     }
 
-                    if (_currentUser?.ScreenSharingVideoInfo != null && update.Participant.ScreenSharingVideoInfo != null && _screenCapturer != null)
+                    if (_currentUser?.ScreenSharingVideoInfo != null && update.Participant.ScreenSharingVideoInfo == null && _screenCapturer != null)
                     {
                         EndScreenSharing();
                     }
+                }
+                else if (_currentUser?.ScreenSharingVideoInfo != null && update.Participant.ScreenSharingVideoInfo == null && _screenCapturer != null)
+                {
+                    RejoinScreenSharing(_call);
                 }
 
                 _currentUser = update.Participant;
