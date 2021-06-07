@@ -166,7 +166,14 @@ namespace Unigram.Common
 
         public static async void OpenTelegramUrl(IProtoService protoService, INavigationService navigation, Uri uri)
         {
-            var response = await protoService.SendAsync(new GetInternalLinkType(uri.ToString()));
+            var url = uri.ToString();
+            if (url.Contains("telegra.ph"))
+            {
+                navigation.NavigateToInstant(url);
+                return;
+            }
+
+            var response = await protoService.SendAsync(new GetInternalLinkType(url));
             if (response is InternalLinkTypeActiveSessions)
             {
 
