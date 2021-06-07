@@ -130,7 +130,7 @@ namespace Unigram.Controls.Messages.Content
         private void UpdateDuration()
         {
             var message = _message;
-            if (message == null)
+            if (message == null || !_templateApplied)
             {
                 return;
             }
