@@ -467,6 +467,7 @@ namespace Unigram
                 }
                 else
                 {
+                    session.Revoked -= ExtendedExecutionSession_Revoked;
                     session.Dispose();
 
                     Logs.Logger.Warning(Logs.LogTarget.Lifecycle, "ExtendedExecutionResult.Denied");
