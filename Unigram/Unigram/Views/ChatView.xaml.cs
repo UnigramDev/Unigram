@@ -4066,6 +4066,8 @@ namespace Unigram.Views
                 ViewModel.HasBotCommands = false;
             }
 
+            Automation.SetToolTip(Call, Strings.Resources.Call);
+
             Call.Glyph = Icons.Phone;
             Call.Visibility = /*!secret &&*/ fullInfo.CanBeCalled ? Visibility.Visible : Visibility.Collapsed;
             VideoCall.Visibility = /*!secret &&*/ fullInfo.CanBeCalled && fullInfo.SupportsVideoCalls ? Visibility.Visible : Visibility.Collapsed;
@@ -4354,6 +4356,8 @@ namespace Unigram.Views
             }
             else
             {
+                Automation.SetToolTip(Call, Strings.Resources.VoipGroupJoinCall);
+
                 Call.Glyph = Icons.VoiceChat;
                 Call.Visibility = Visibility.Visible;
             }
