@@ -50,10 +50,10 @@ namespace Unigram.Services
 
         Task JoinAsync(long chatId);
         Task RejoinAsync();
-        void Leave();
+        Task LeaveAsync();
 
         Task CreateAsync(long chatId);
-        void Discard();
+        Task DiscardAsync();
 
         bool IsCapturing { get; }
         void ToggleCapturing();
@@ -190,9 +190,9 @@ namespace Unigram.Services
             await JoinAsyncInternal(chat, chat.VoiceChat.GroupCallId, null);
         }
 
-        public async void Leave()
+        public Task LeaveAsync()
         {
-            await DisposeAsync(false);
+            return DisposeAsync(false);
         }
 
         public async Task CreateAsync(long chatId)
@@ -622,9 +622,9 @@ namespace Unigram.Services
             _speakingParticipants = validSpeakers;
         }
 
-        public async void Discard()
+        public Task DiscardAsync()
         {
-            await DisposeAsync(true);
+            return DisposeAsync(true);
         }
 
         private Task DisposeAsync(bool? discard = null)

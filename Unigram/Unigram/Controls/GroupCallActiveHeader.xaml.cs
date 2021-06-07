@@ -84,13 +84,21 @@ namespace Unigram.Controls
 
         private async void Dismiss_Click(object sender, RoutedEventArgs e)
         {
-            await _service.ConsolidateAsync();
-            _service.Leave();
+            var service = _service;
+            if (service != null)
+            {
+                await service.ConsolidateAsync();
+                await service.LeaveAsync();
+            }
         }
 
         private async void Title_Click(object sender, RoutedEventArgs e)
         {
-            await _service.ShowAsync();
+            var service = _service;
+            if (service != null)
+            {
+                await service.ShowAsync();
+            }
         }
     }
 

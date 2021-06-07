@@ -244,11 +244,11 @@ namespace Unigram.Views
         {
             if (discard == true && _service != null)
             {
-                _service.Discard();
+                _service.DiscardAsync();
             }
             else if (discard == false && _service != null)
             {
-                _service.Leave();
+                _service.LeaveAsync();
             }
 
             if (_disposed)
