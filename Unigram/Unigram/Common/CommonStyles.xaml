@@ -3754,10 +3754,6 @@
                                             <EasingDoubleKeyFrame KeyTime="0:0:0" Value="0" />
                                             <SplineDoubleKeyFrame KeyTime="0:0:0.333" Value="-32" KeySpline="0.1,0.9,0.2,1" />
                                         </DoubleAnimationUsingKeyFrames>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="MultiSelectClipTransform" Storyboard.TargetProperty="X">
-                                            <EasingDoubleKeyFrame KeyTime="0:0:0" Value="0" />
-                                            <SplineDoubleKeyFrame KeyTime="0:0:0.333" Value="32" KeySpline="0.1,0.9,0.2,1" />
-                                        </DoubleAnimationUsingKeyFrames>
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenterTranslateTransform" Storyboard.TargetProperty="X">
                                             <EasingDoubleKeyFrame KeyTime="0:0:0" Value="32" />
                                             <SplineDoubleKeyFrame KeyTime="0:0:0.333" Value="0" KeySpline="0.1,0.9,0.2,1" />
@@ -3772,10 +3768,6 @@
                                     <Storyboard>
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="MultiSelectCheckBoxTransform" Storyboard.TargetProperty="X">
                                             <EasingDoubleKeyFrame KeyTime="0:0:0" Value="-32" />
-                                            <SplineDoubleKeyFrame KeyTime="0:0:0.333" Value="0" KeySpline="0.1,0.9,0.2,1" />
-                                        </DoubleAnimationUsingKeyFrames>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="MultiSelectClipTransform" Storyboard.TargetProperty="X">
-                                            <EasingDoubleKeyFrame KeyTime="0:0:0" Value="32" />
                                             <SplineDoubleKeyFrame KeyTime="0:0:0.333" Value="0" KeySpline="0.1,0.9,0.2,1" />
                                         </DoubleAnimationUsingKeyFrames>
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenterTranslateTransform" Storyboard.TargetProperty="X">
@@ -3843,13 +3835,6 @@
                             VerticalAlignment="Center"
                             HorizontalAlignment="Left"
                             Visibility="Collapsed">
-                            <Border.Clip>
-                                <RectangleGeometry Rect="0,0,20,20">
-                                    <RectangleGeometry.Transform>
-                                        <TranslateTransform x:Name="MultiSelectClipTransform" />
-                                    </RectangleGeometry.Transform>
-                                </RectangleGeometry>
-                            </Border.Clip>
                             <Border.RenderTransform>
                                 <TranslateTransform x:Name="MultiSelectCheckBoxTransform" />
                             </Border.RenderTransform>
