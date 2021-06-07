@@ -28,8 +28,6 @@ namespace Unigram.Controls
         public Action<Animation> AnimationClick { get; set; }
         public event TypedEventHandler<UIElement, ItemContextRequestedEventArgs<Animation>> AnimationContextRequested;
 
-        private StickersPanelMode _widget;
-
         public StickerPanel()
         {
             InitializeComponent();
@@ -50,16 +48,6 @@ namespace Unigram.Controls
                     Pivot.SelectedIndex = 2;
                     break;
             }
-        }
-
-        public void SetView(StickersPanelMode mode)
-        {
-            _widget = mode;
-            VisualStateManager.GoToState(this, mode == StickersPanelMode.Overlay
-                ? "FilledState"
-                : mode == StickersPanelMode.Sidebar
-                ? "SidebarState"
-                : "NarrowState", false);
         }
 
         public void UpdateFile(File file)

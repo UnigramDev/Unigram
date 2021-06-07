@@ -71,9 +71,6 @@ namespace Unigram.Views
         private Visual _stickersPanel;
         private Visual _stickersShadow;
         private StickersPanelMode _stickersMode = StickersPanelMode.Collapsed;
-        private StickersPanelMode _stickersModeWide = StickersPanelMode.Sidebar;
-
-        private const double SIDEBAR_MIN_WIDTH = 380 + 320;
 
         private readonly DispatcherTimer _elapsedTimer;
         private readonly Visual _ellipseVisual;
@@ -281,11 +278,6 @@ namespace Unigram.Views
             StickersPanel.AnimationClick = Animations_ItemClick;
             StickersPanel.AnimationContextRequested += Animation_ContextRequested;
 
-            _stickersModeWide = SettingsService.Current.IsSidebarOpen
-                && SettingsService.Current.Stickers.IsSidebarEnabled
-                    ? StickersPanelMode.Sidebar
-                    : StickersPanelMode.Collapsed;
-
             _stickersPanel = ElementCompositionPreview.GetElementVisual(StickersPanel.Presenter);
             _stickersShadow = ElementCompositionPreview.GetElementChildVisual(StickersPanel.Shadow);
 
@@ -294,11 +286,6 @@ namespace Unigram.Views
             _stickersTimer.Tick += (s, args) =>
             {
                 _stickersTimer.Stop();
-
-                if (_stickersMode == StickersPanelMode.Sidebar)
-                {
-                    return;
-                }
 
                 var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
                 if (popups.Count > 0)
@@ -309,10 +296,6 @@ namespace Unigram.Views
                 Collapse_Click(StickersPanel, null);
                 TextField.Focus(FocusState.Programmatic);
             };
-
-            // Not working here
-            VisualStateManager.GoToState(this, "FilledState", false);
-            StickersPanel.SetView(StickersPanelMode.Overlay);
 
             ButtonStickers.PointerEntered += Stickers_PointerEntered;
             ButtonStickers.PointerExited += Stickers_PointerExited;
@@ -388,7 +371,7 @@ namespace Unigram.Views
                 _stickersTimer.Stop();
             }
 
-            if (_stickersMode == StickersPanelMode.Sidebar || StickersPanel.Visibility == Visibility.Visible)
+            if (StickersPanel.Visibility == Visibility.Visible)
             {
                 return;
             }
@@ -396,9 +379,6 @@ namespace Unigram.Views
             _stickersMode = StickersPanelMode.Overlay;
             ButtonStickers.IsChecked = false;
             SettingsService.Current.IsSidebarOpen = false;
-
-            VisualStateManager.GoToState(this, "FilledState", false);
-            StickersPanel.SetView(StickersPanelMode.Overlay);
 
             Focus(FocusState.Programmatic);
             TextField.Focus(FocusState.Programmatic);
@@ -1545,88 +1525,9 @@ namespace Unigram.Views
             }
         }
 
-        private StickersPanelMode CurrentPanelMode
-        {
-            get
-            {
-                return ActualWidth >= SIDEBAR_MIN_WIDTH
-                    && SettingsService.Current.Stickers.IsSidebarEnabled
-                        ? StickersPanelMode.Sidebar
-                        : StickersPanelMode.Overlay;
-            }
-        }
-
         private void Stickers_Click(object sender, RoutedEventArgs e)
         {
-            switch (CurrentPanelMode)
-            {
-                case StickersPanelMode.Overlay:
-                    Stickers_PointerEntered(sender, null);
-                    break;
-                case StickersPanelMode.Sidebar:
-                    ShowHideDockedStickersPanel();
-                    break;
-            }
-        }
-
-        private void ShowHideDockedStickersPanel(bool? show = null)
-        {
-            VisualStateManager.GoToState(this, "SidebarState", false);
-            StickersPanel.SetView(StickersPanelMode.Sidebar);
-
-            var chat = ViewModel.Chat;
-            if (chat == null)
-            {
-                return;
-            }
-
-            if (StickersPanel.Visibility == Visibility.Collapsed || _stickersMode == StickersPanelMode.Overlay)
-            {
-                if (show == false)
-                {
-                    return;
-                }
-
-                _stickersMode = _stickersModeWide = StickersPanelMode.Sidebar;
-                ButtonStickers.IsChecked = true;
-                SettingsService.Current.IsSidebarOpen = true;
-
-                Focus(FocusState.Programmatic);
-                TextField.Focus(FocusState.Programmatic);
-
-                InputPane.GetForCurrentView().TryHide();
-
-                StickersPanel.Visibility = Visibility.Visible;
-                StickersPanel.Activate();
-
-                ViewModel.OpenStickersCommand.Execute(null);
-
-                _stickersPanel.StopAnimation("Opacity");
-                _stickersPanel.Clip?.StopAnimation("LeftInset");
-                _stickersPanel.Clip?.StopAnimation("TopInset");
-
-                _stickersShadow.StopAnimation("Opacity");
-                _stickersShadow.Clip?.StopAnimation("LeftInset");
-                _stickersShadow.Clip?.StopAnimation("TopInset");
-
-                _stickersPanel.Opacity = 1;
-                _stickersPanel.Clip = Window.Current.Compositor.CreateInsetClip();
-
-                _stickersShadow.Opacity = 1;
-                _stickersShadow.Clip = Window.Current.Compositor.CreateInsetClip(-48, -48, -48, -4);
-            }
-            else
-            {
-                if (show == true)
-                {
-                    return;
-                }
-
-                Focus(FocusState.Programmatic);
-                TextField.Focus(FocusState.Keyboard);
-
-                Collapse_Click(StickersPanel, null);
-            }
+            Stickers_PointerEntered(sender, null);
         }
 
         private void Commands_Click(object sender, RoutedEventArgs e)
@@ -2980,53 +2881,42 @@ namespace Unigram.Views
 
         private void Collapse_Click(object sender, RoutedEventArgs e)
         {
-            if (_stickersMode == StickersPanelMode.Overlay)
+            if (StickersPanel.Visibility == Visibility.Collapsed || _stickersMode == StickersPanelMode.Collapsed)
             {
-                if (StickersPanel.Visibility == Visibility.Collapsed || _stickersMode == StickersPanelMode.Collapsed)
-                {
-                    return;
-                }
-
-                _stickersMode = StickersPanelMode.Collapsed;
-                SettingsService.Current.IsSidebarOpen = false;
-
-                var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-                batch.Completed += (s, args) =>
-                {
-                    StickersPanel.Visibility = Visibility.Collapsed;
-                    StickersPanel.Deactivate();
-                };
-
-                var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-                opacity.InsertKeyFrame(0, 1);
-                opacity.InsertKeyFrame(1, 0);
-
-                var clip = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-                clip.InsertKeyFrame(0, 0);
-                clip.InsertKeyFrame(1, 48);
-
-                var clipShadow = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-                clipShadow.InsertKeyFrame(0, -48);
-                clipShadow.InsertKeyFrame(1, 48);
-
-                _stickersPanel.StartAnimation("Opacity", opacity);
-                _stickersPanel.Clip.StartAnimation("LeftInset", clip);
-                _stickersPanel.Clip.StartAnimation("TopInset", clip);
-
-                _stickersShadow.StartAnimation("Opacity", opacity);
-                _stickersShadow.Clip.StartAnimation("LeftInset", clip);
-                _stickersShadow.Clip.StartAnimation("TopInset", clip);
-
-                batch.End();
+                return;
             }
-            else
-            {
-                _stickersMode = _stickersModeWide = StickersPanelMode.Collapsed;
-                SettingsService.Current.IsSidebarOpen = false;
 
-                StickersPanel.Deactivate();
+            _stickersMode = StickersPanelMode.Collapsed;
+            SettingsService.Current.IsSidebarOpen = false;
+
+            var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
                 StickersPanel.Visibility = Visibility.Collapsed;
-            }
+                StickersPanel.Deactivate();
+            };
+
+            var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            opacity.InsertKeyFrame(0, 1);
+            opacity.InsertKeyFrame(1, 0);
+
+            var clip = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            clip.InsertKeyFrame(0, 0);
+            clip.InsertKeyFrame(1, 48);
+
+            var clipShadow = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            clipShadow.InsertKeyFrame(0, -48);
+            clipShadow.InsertKeyFrame(1, 48);
+
+            _stickersPanel.StartAnimation("Opacity", opacity);
+            _stickersPanel.Clip.StartAnimation("LeftInset", clip);
+            _stickersPanel.Clip.StartAnimation("TopInset", clip);
+
+            _stickersShadow.StartAnimation("Opacity", opacity);
+            _stickersShadow.Clip.StartAnimation("LeftInset", clip);
+            _stickersShadow.Clip.StartAnimation("TopInset", clip);
+
+            batch.End();
 
             ButtonStickers.IsChecked = false;
 
@@ -3046,30 +2936,6 @@ namespace Unigram.Views
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (e.NewSize.Width > e.PreviousSize.Width && e.NewSize.Width >= SIDEBAR_MIN_WIDTH && e.PreviousSize.Width < SIDEBAR_MIN_WIDTH)
-            {
-                if (_stickersModeWide == StickersPanelMode.Sidebar)
-                {
-                    ShowHideDockedStickersPanel(true);
-                }
-                else
-                {
-                    Collapse_Click(null, null);
-                }
-            }
-            else if ((e.NewSize.Width < e.PreviousSize.Width || e.PreviousSize.Width == 0) && e.NewSize.Width < SIDEBAR_MIN_WIDTH && (e.PreviousSize.Width >= SIDEBAR_MIN_WIDTH || e.PreviousSize.Width == 0))
-            {
-                if (_stickersMode == StickersPanelMode.Sidebar)
-                {
-                    _stickersModeWide = StickersPanelMode.Sidebar;
-                    Collapse_Click(null, null);
-                }
-                else
-                {
-                    _stickersModeWide = StickersPanelMode.Collapsed;
-                }
-            }
-
             if (e.NewSize.Width >= 500 && ManageCount.OverflowVisibility == Visibility.Collapsed)
             {
                 ManageCount.OverflowVisibility = Visibility.Collapsed;
@@ -4643,8 +4509,7 @@ namespace Unigram.Views
     public enum StickersPanelMode
     {
         Collapsed,
-        Overlay,
-        Sidebar
+        Overlay
     }
 
 
