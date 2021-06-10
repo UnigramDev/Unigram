@@ -126,10 +126,9 @@ namespace Unigram.Common
                     return;
                 }
 
-                var reason = user.GetRestrictionReason();
-                if (reason != null && reason.Length > 0)
+                if (user.RestrictionReason.Length > 0)
                 {
-                    await MessagePopup.ShowAsync(reason, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(user.RestrictionReason, Strings.Resources.AppName, Strings.Resources.OK);
                     return;
                 }
             }
@@ -147,10 +146,9 @@ namespace Unigram.Common
                     return;
                 }
 
-                var reason = supergroup.GetRestrictionReason();
-                if (reason != null && reason.Length > 0)
+                if (supergroup.RestrictionReason.Length > 0)
                 {
-                    await MessagePopup.ShowAsync(reason, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(supergroup.RestrictionReason, Strings.Resources.AppName, Strings.Resources.OK);
                     return;
                 }
             }
