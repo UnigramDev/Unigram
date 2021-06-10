@@ -175,7 +175,8 @@ namespace Unigram.Views
                 if (user.Type is UserTypeBot ||
                     user.Id == ViewModel.CacheService.Options.MyId ||
                     LastSeenConverter.IsServiceUser(user) ||
-                    LastSeenConverter.IsSupportUser(user))
+                    LastSeenConverter.IsSupportUser(user) ||
+                    user.Type is UserTypeDeleted)
                 {
                     MiscPanel.Visibility = Visibility.Collapsed;
                     UserStartSecret.Visibility = Visibility.Collapsed;
