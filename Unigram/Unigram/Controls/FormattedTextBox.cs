@@ -153,6 +153,21 @@ namespace Unigram.Controls
                     Accept?.Invoke(this, EventArgs.Empty);
                 }
             }
+            else if (e.Key == VirtualKey.Z)
+            {
+                var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
+                var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
+
+                if (ctrl && shift)
+                {
+                    if (Document.CanRedo())
+                    {
+                        Document.Redo();
+                    }
+
+                    e.Handled = true;
+                }
+            }
 
             if (!e.Handled)
             {
