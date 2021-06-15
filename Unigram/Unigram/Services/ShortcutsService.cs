@@ -195,10 +195,20 @@ namespace Unigram.Services
                 modifiers |= VirtualKeyModifiers.Shift;
             }
 
-            var shortcut = new Shortcut(modifiers, args.VirtualKey);
+            if (args.VirtualKey is >= VirtualKey.NumberPad0 and <= VirtualKey.NumberPad9)
+            {
+                return Process(modifiers, VirtualKey.Number0 + (args.VirtualKey - VirtualKey.NumberPad0));
+            }
+
+            return Process(modifiers, args.VirtualKey);
+        }
+
+        private InvokedShortcut Process(VirtualKeyModifiers modifiers, VirtualKey key)
+        {
+            var shortcut = new Shortcut(modifiers, key);
             if (_commands.TryGetValue(shortcut, out var value))
             {
-                return new InvokedShortcut(modifiers, args.VirtualKey, value);
+                return new InvokedShortcut(modifiers, key, value);
             }
 
             return new InvokedShortcut(VirtualKeyModifiers.None, VirtualKey.None, new ShortcutCommand[0]);
