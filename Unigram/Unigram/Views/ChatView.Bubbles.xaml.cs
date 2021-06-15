@@ -210,6 +210,11 @@ namespace Unigram.Views
                 }
             }
 
+            if (minDate)
+            {
+                _dateHeader.Offset = Vector3.Zero;
+            }
+
             _dateHeaderTimer.Stop();
             _dateHeaderTimer.Start();
             ShowHideDateHeader(minDateIndex > 0, minDateIndex is > 0 and < int.MaxValue);
