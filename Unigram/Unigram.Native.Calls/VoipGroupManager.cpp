@@ -198,7 +198,8 @@ namespace winrt::Unigram::Native::Calls::implementation
 				tgcalls::VideoChannelDescription item;
 				item.audioSsrc = x.AudioSource();
 				item.endpointId = string_to_unmanaged(x.EndpointId());
-				item.quality = (tgcalls::VideoChannelDescription::Quality)x.Quality();
+				item.minQuality = (tgcalls::VideoChannelDescription::Quality)x.MinQuality();
+				item.maxQuality = (tgcalls::VideoChannelDescription::Quality)x.MaxQuality();
 
 				for (const GroupCallVideoSourceGroup& group : x.SourceGroups()) {
 					tgcalls::MediaSsrcGroup groupImpl;

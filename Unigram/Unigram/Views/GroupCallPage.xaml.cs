@@ -1870,7 +1870,7 @@ namespace Unigram.Views
             foreach (var cell in _gridCells.Values)
             {
                 descriptions[cell.EndpointId] =
-                    new VoipVideoChannelInfo(cell.Participant.AudioSourceId, cell.EndpointId, cell.VideoInfo.SourceGroups, cell.Quality);
+                    new VoipVideoChannelInfo(cell.Participant.AudioSourceId, cell.EndpointId, cell.VideoInfo.SourceGroups, cell.Quality, cell.Quality);
             }
 
             foreach (var cell in _listCells.Values)
@@ -1881,7 +1881,7 @@ namespace Unigram.Views
                 }
 
                 descriptions[cell.EndpointId] =
-                    new VoipVideoChannelInfo(cell.Participant.AudioSourceId, cell.EndpointId, cell.VideoInfo.SourceGroups, cell.Quality);
+                    new VoipVideoChannelInfo(cell.Participant.AudioSourceId, cell.EndpointId, cell.VideoInfo.SourceGroups, cell.Quality, cell.Quality);
             }
 
             _manager?.SetRequestedVideoChannels(descriptions.Values.ToArray());

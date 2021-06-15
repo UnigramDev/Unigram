@@ -36,13 +36,23 @@ namespace winrt::Unigram::Native::Calls::implementation
 		m_sourceGroups = value;
 	}
 
-	VoipVideoChannelQuality VoipVideoChannelInfo::Quality()
+	VoipVideoChannelQuality VoipVideoChannelInfo::MinQuality()
 	{
-		return m_quality;
+		return m_minQuality;
 	}
 
-	void VoipVideoChannelInfo::Quality(VoipVideoChannelQuality value)
+	void VoipVideoChannelInfo::MinQuality(VoipVideoChannelQuality value)
 	{
-		m_quality = value;
+		m_minQuality = value;
+	}
+
+	VoipVideoChannelQuality VoipVideoChannelInfo::MaxQuality()
+	{
+		return m_maxQuality;
+	}
+
+	void VoipVideoChannelInfo::MaxQuality(VoipVideoChannelQuality value)
+	{
+		m_maxQuality = value;
 	}
 }

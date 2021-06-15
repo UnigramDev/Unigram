@@ -10,20 +10,22 @@ namespace winrt::Unigram::Native::Calls::implementation
 	struct VoipVideoChannelInfo : VoipVideoChannelInfoT<VoipVideoChannelInfo>
 	{
 		VoipVideoChannelInfo() = default;
-		VoipVideoChannelInfo(int32_t audioSource, hstring endpointId, IVector<GroupCallVideoSourceGroup> sourceGroups, VoipVideoChannelQuality quality)
+		VoipVideoChannelInfo(int32_t audioSource, hstring endpointId, IVector<GroupCallVideoSourceGroup> sourceGroups, VoipVideoChannelQuality minQuality, VoipVideoChannelQuality maxQuality)
 			: m_audioSource(audioSource),
 			m_endpointId(endpointId),
 			m_sourceGroups(sourceGroups),
-			m_quality(quality)
+			m_minQuality(minQuality),
+			m_maxQuality(maxQuality)
 		{
 
 		}
 
-		VoipVideoChannelInfo(VoipVideoRendererToken token, VoipVideoChannelQuality quality)
+		VoipVideoChannelInfo(VoipVideoRendererToken token, VoipVideoChannelQuality minQuality, VoipVideoChannelQuality maxQuality)
 			: m_audioSource(token.AudioSource()),
 			m_endpointId(token.EndpointId()),
 			m_sourceGroups(token.SourceGroups()),
-			m_quality(quality)
+			m_minQuality(minQuality),
+			m_maxQuality(maxQuality)
 		{
 
 		}
@@ -37,14 +39,18 @@ namespace winrt::Unigram::Native::Calls::implementation
 		IVector<GroupCallVideoSourceGroup> SourceGroups();
 		void SourceGroups(IVector<GroupCallVideoSourceGroup> value);
 
-		VoipVideoChannelQuality Quality();
-		void Quality(VoipVideoChannelQuality value);
+		VoipVideoChannelQuality MinQuality();
+		void MinQuality(VoipVideoChannelQuality value);
+
+		VoipVideoChannelQuality MaxQuality();
+		void MaxQuality(VoipVideoChannelQuality value);
 
 	private:
 		int32_t m_audioSource;
 		hstring m_endpointId;
 		IVector<GroupCallVideoSourceGroup> m_sourceGroups;
-		VoipVideoChannelQuality m_quality;
+		VoipVideoChannelQuality m_minQuality;
+		VoipVideoChannelQuality m_maxQuality;
 	};
 }
 

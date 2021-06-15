@@ -12,12 +12,13 @@ namespace Unigram.Native.Calls
     runtimeclass VoipVideoChannelInfo
     {
         VoipVideoChannelInfo();
-        VoipVideoChannelInfo(Int32 audioSource, String endpointId, IVector<Telegram.Td.Api.GroupCallVideoSourceGroup> sourceGroups, VoipVideoChannelQuality quality);
-        VoipVideoChannelInfo(VoipVideoRendererToken token, VoipVideoChannelQuality quality);
+        VoipVideoChannelInfo(Int32 audioSource, String endpointId, IVector<Telegram.Td.Api.GroupCallVideoSourceGroup> sourceGroups, VoipVideoChannelQuality minQuality, VoipVideoChannelQuality maxQuality);
+        VoipVideoChannelInfo(VoipVideoRendererToken token, VoipVideoChannelQuality minQuality, VoipVideoChannelQuality maxQuality);
 
         Int32 AudioSource;
         String EndpointId;
         IVector<Telegram.Td.Api.GroupCallVideoSourceGroup> SourceGroups;
-        VoipVideoChannelQuality Quality;
+        VoipVideoChannelQuality MinQuality;
+        VoipVideoChannelQuality MaxQuality;
     }
 }
