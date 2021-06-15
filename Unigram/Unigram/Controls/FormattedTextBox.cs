@@ -505,13 +505,12 @@ namespace Unigram.Controls
 
             if (IsUrlValid(link))
             {
-                if (link.StartsWith("tg-user://") && int.TryParse(link.Substring("tg-user://".Length), out int userId))
-                {
-                    type = new TextEntityTypeMentionName(userId);
-                    return true;
-                }
-
                 type = new TextEntityTypeTextUrl(link);
+                return true;
+            }
+            else if (link.StartsWith("tg-user://") && int.TryParse(link.Substring("tg-user://".Length), out int userId))
+            {
+                type = new TextEntityTypeMentionName(userId);
                 return true;
             }
 
