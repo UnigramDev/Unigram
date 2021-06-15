@@ -43,26 +43,16 @@ namespace Unigram.Views.Popups
             {
                 case InputPopupType.Text:
                     FindName(nameof(Label));
-                    Label.Loaded += OnLoaded;
                     break;
                 case InputPopupType.Password:
                     FindName(nameof(Password));
-                    Password.Loaded += OnLoaded;
                     break;
                 case InputPopupType.Value:
                     FindName(nameof(Number));
-                    Number.Loaded += OnLoaded;
                     break;
             }
 
             Opened += OnOpened;
-        }
-
-        private void OnLoaded(object sender, RoutedEventArgs e)
-        {
-            Label?.Focus(FocusState.Keyboard);
-            Password?.Focus(FocusState.Keyboard);
-            Number?.Focus(FocusState.Keyboard);
         }
 
         private void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
@@ -90,18 +80,26 @@ namespace Unigram.Views.Popups
                 scope.Names.Add(name);
 
                 Label.InputScope = scope;
+
+                Label.Focus(FocusState.Keyboard);
+                Label.SelectionStart = Label.Text.Length;
             }
             else if (Password != null)
             {
                 Password.PlaceholderText = PlaceholderText;
                 Password.Password = Text;
                 Password.MaxLength = MaxLength;
+
+                Password.Focus(FocusState.Keyboard);
+                Password.SelectAll();
             }
             else if (Number != null)
             {
                 Number.NumberFormatter = Formatter;
                 Number.Maximum = Maximum;
                 Number.Value = Value;
+
+                Number.Focus(FocusState.Keyboard);
             }
         }
 
