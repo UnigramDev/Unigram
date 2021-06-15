@@ -93,7 +93,7 @@ namespace Unigram.Controls.Chats
             if (background == null && ActualTheme == ElementTheme.Light)
             {
                 background = new Background(0, false, false, string.Empty, null,
-                    new BackgroundTypeFill(new BackgroundFillFreeformGradient(new[] { 0x7FA381, 0xFFF5C5, 0x336F55, 0xFBE37D })));
+                    new BackgroundTypeFill(new BackgroundFillFreeformGradient(new[] { 0xDBDDBB, 0x6BA587, 0xD5D88D, 0x88B884 })));
             }
 
             if (_oldDark == dark && BackgroundEquals(_oldBackground, background))
@@ -312,10 +312,10 @@ namespace Unigram.Controls.Chats
     {
         private static readonly Color[] _colors = new Color[]
         {
-            Color.FromArgb(0xFF, 0x7F, 0xA3, 0x81),
-            Color.FromArgb(0xFF, 0xFF, 0xF5, 0xC5),
-            Color.FromArgb(0xFF, 0x33, 0x6F, 0x55),
-            Color.FromArgb(0xFF, 0xFB, 0xE3, 0x7D)
+            Color.FromArgb(0xFF, 0xDB, 0xDD, 0xBB),
+            Color.FromArgb(0xFF, 0x6B, 0xA5, 0x87),
+            Color.FromArgb(0xFF, 0xD5, 0xD8, 0x8D),
+            Color.FromArgb(0xFF, 0x88, 0xB8, 0x84)
         };
 
         private static readonly Vector2[] _positions = new Vector2[]

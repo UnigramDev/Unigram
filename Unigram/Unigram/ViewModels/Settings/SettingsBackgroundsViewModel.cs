@@ -36,7 +36,7 @@ namespace Unigram.ViewModels.Settings
         {
             var background = CacheService.SelectedBackground;
             var predefined = new Background(Constants.WallpaperLocalId, true, false, Constants.WallpaperDefaultFileName, null,
-                new BackgroundTypeFill(new BackgroundFillFreeformGradient(new[] { 0x7FA381, 0xFFF5C5, 0x336F55, 0xFBE37D })));
+                new BackgroundTypeFill(new BackgroundFillFreeformGradient(new[] { 0xDBDDBB, 0x6BA587, 0xD5D88D, 0x88B884 })));
 
             var items = new List<Background>
             {
