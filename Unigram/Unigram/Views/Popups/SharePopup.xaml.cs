@@ -896,7 +896,7 @@ namespace Unigram.Views.Popups
             }
 
             var focused = FocusManager.GetFocusedElement();
-            if (focused == null || (focused is TextBox == false && focused is RichEditBox == false))
+            if (focused is null or (not TextBox and not RichEditBox))
             {
                 if (character == "\u0016" && CaptionInput.CanPasteClipboardContent)
                 {
@@ -910,6 +910,8 @@ namespace Unigram.Views.Popups
                 else
                 {
                     Search_Click(null, null);
+
+                    SearchField.Focus(FocusState.Keyboard);
                     SearchField.Text = character;
                     SearchField.SelectionStart = character.Length;
                 }
