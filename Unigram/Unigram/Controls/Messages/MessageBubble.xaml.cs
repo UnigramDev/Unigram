@@ -1231,6 +1231,8 @@ namespace Unigram.Controls.Messages
                 return false;
             }
 
+            var preformatted = false;
+
             var runs = TextStyleRun.GetRuns(text, entities);
             var previous = 0;
 
@@ -1258,6 +1260,11 @@ namespace Unigram.Controls.Messages
 
                     span.Inlines.Add(hyperlink);
                     hyperlink.Inlines.Add(new Run { Text = data, FontFamily = new FontFamily("Consolas") });
+
+                    if (entity.Type is TextEntityTypePre or TextEntityTypePreCode)
+                    {
+                        preformatted = true;
+                    }
                 }
                 else
                 {
@@ -1376,6 +1383,8 @@ namespace Unigram.Controls.Messages
 
                 previous = entity.Offset + entity.Length;
             }
+
+            MaxWidth = preformatted ? double.PositiveInfinity : 432;
 
             if (text.Length > previous)
             {
