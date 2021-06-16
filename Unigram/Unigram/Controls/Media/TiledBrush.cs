@@ -5,7 +5,7 @@ using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Controls.Brushes
+namespace Unigram.Controls.Media
 {
     public class TiledBrush : XamlCompositionBrushBase
     {

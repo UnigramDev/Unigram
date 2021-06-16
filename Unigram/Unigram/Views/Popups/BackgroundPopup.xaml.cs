@@ -4,7 +4,7 @@ using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Controls.Brushes;
+using Unigram.Controls.Media;
 using Unigram.Controls.Chats;
 using Unigram.Converters;
 using Unigram.Services;

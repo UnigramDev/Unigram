@@ -5,7 +5,7 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls.Brushes;
+using Unigram.Controls.Media;
 using Unigram.Services;
 using Windows.UI;
 using Windows.UI.Composition;
