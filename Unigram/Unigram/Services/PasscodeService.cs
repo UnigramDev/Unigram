@@ -12,6 +12,8 @@ namespace Unigram.Services
 {
     public interface IPasscodeService
     {
+        int RetryIn { get; }
+
         bool IsEnabled { get; }
         bool IsSimple { get; }
         bool IsLocked { get; }
@@ -25,7 +27,8 @@ namespace Unigram.Services
         void Lock();
         void Unlock();
 
-        bool Check(string passcode);
+        bool TryUnlock(string passcode);
+
         void Set(string passcode, bool simple, int timeout);
         void Reset();
     }
@@ -34,25 +37,25 @@ namespace Unigram.Services
     {
         private readonly PasscodeLockSettings _settingsService;
 
+        private double _retryIn;
+
         public PasscodeService(PasscodeLockSettings settingsService)
         {
             _settingsService = settingsService;
+
+            if (_settingsService.RetryCount >= 3)
+            {
+                _retryIn = 5000 + (5000 * (Math.Min(_settingsService.RetryCount, 8) - 3));
+            }
         }
 
-        public bool IsEnabled
-        {
-            get => _settingsService.Hash.Length > 0;
-        }
+        public int RetryIn => (int)Math.Ceiling(UpdateRetryIn() / 1000);
 
-        public bool IsSimple
-        {
-            get => _settingsService.IsSimple;
-        }
+        public bool IsEnabled => _settingsService.Hash.Length > 0;
 
-        public bool IsLocked
-        {
-            get => _settingsService.IsLocked;
-        }
+        public bool IsSimple => _settingsService.IsSimple;
+
+        public bool IsLocked => _settingsService.IsLocked;
 
         public bool IsBiometricsEnabled
         {
@@ -72,10 +75,8 @@ namespace Unigram.Services
             set => _settingsService.AutolockTimeout = value;
         }
 
-        public bool IsLockscreenRequired
-        {
-            get => IsEnabled && ((AutolockTimeout > 0 && CloseTime < DateTime.MaxValue && DateTime.Now > CloseTime.AddSeconds(AutolockTimeout)) || IsLocked);
-        }
+        public bool IsLockscreenRequired =>
+            IsEnabled && ((AutolockTimeout > 0 && CloseTime < DateTime.MaxValue && DateTime.UtcNow > CloseTime.AddSeconds(AutolockTimeout)) || IsLocked);
 
         public void Lock()
         {
@@ -88,6 +89,9 @@ namespace Unigram.Services
         {
             _settingsService.IsLocked = false;
             _settingsService.CloseTime = DateTime.MaxValue;
+            _settingsService.RetryCount = 0;
+            _settingsService.RetryTime = DateTime.MaxValue;
+            _retryIn = 0;
             Publish(true);
         }
 
@@ -101,12 +105,15 @@ namespace Unigram.Services
             _settingsService.IsSimple = simple;
             _settingsService.AutolockTimeout = timeout;
             _settingsService.CloseTime = DateTime.MaxValue;
+            _settingsService.RetryCount = 0;
+            _settingsService.RetryTime = DateTime.MaxValue;
             _settingsService.IsLocked = false;
             Publish(true);
         }
 
         public void Reset()
         {
+            _retryIn = 0;
             _settingsService.Clear();
             Publish(false);
         }
@@ -131,9 +138,47 @@ namespace Unigram.Services
             return false;
         }
 
-        public bool Check(string passcode)
+        public bool TryUnlock(string passcode)
         {
-            return Utils.ByteArraysEqual(Utils.ComputeHash(_settingsService.Salt, Encoding.UTF8.GetBytes(passcode)), _settingsService.Hash);
+            if (_retryIn > 0)
+            {
+                return false;
+            }
+
+            var unlock = Utils.ByteArraysEqual(Utils.ComputeHash(_settingsService.Salt, Encoding.UTF8.GetBytes(passcode)), _settingsService.Hash);
+            if (unlock)
+            {
+                Unlock();
+            }
+            else
+            {
+                _settingsService.RetryCount++;
+
+                if (_settingsService.RetryCount >= 3)
+                {
+                    _settingsService.RetryTime = DateTime.UtcNow;
+                    _retryIn = 5000 + (5000 * (Math.Min(_settingsService.RetryCount, 8) - 3));
+                }
+            }
+
+            return unlock;
+        }
+
+        public double UpdateRetryIn()
+        {
+            var time = DateTime.UtcNow;
+            if (time > _settingsService.RetryTime)
+            {
+                _retryIn -= (time - _settingsService.RetryTime).TotalMilliseconds;
+
+                if (_retryIn < 0)
+                {
+                    _retryIn = 0;
+                }
+            }
+
+            _settingsService.RetryTime = time;
+            return _retryIn;
         }
     }
 }

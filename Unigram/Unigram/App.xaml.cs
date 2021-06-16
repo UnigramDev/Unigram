@@ -506,7 +506,7 @@ namespace Unigram
         {
             Logs.Logger.Info(Logs.LogTarget.Lifecycle, "OnSuspendingAsync");
 
-            TLContainer.Current.Passcode.CloseTime = DateTime.Now;
+            TLContainer.Current.Passcode.CloseTime = DateTime.UtcNow;
 
             return Task.CompletedTask;
         }

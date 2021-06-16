@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Services;
@@ -20,6 +19,8 @@ namespace Unigram.Views
         private readonly IPasscodeService _passcodeService;
         private readonly bool _biometrics;
 
+        private readonly DispatcherTimer _retryTimer;
+
         private bool _accepted;
 
         public PasscodePage(bool biometrics)
@@ -28,6 +29,15 @@ namespace Unigram.Views
 
             _passcodeService = TLContainer.Current.Passcode;
             _biometrics = biometrics;
+
+            _retryTimer = new DispatcherTimer();
+            _retryTimer.Interval = TimeSpan.FromMilliseconds(100);
+            _retryTimer.Tick += Retry_Tick;
+
+            if (_passcodeService.RetryIn > 0)
+            {
+                _retryTimer.Start();
+            }
 
             _applicationView = ApplicationView.GetForCurrentView();
             _applicationView.VisibleBoundsChanged += OnVisibleBoundsChanged;
@@ -44,6 +54,20 @@ namespace Unigram.Views
             confirmScope.Names.Add(new InputScopeName(_passcodeService.IsSimple ? InputScopeNameValue.NumericPin : InputScopeNameValue.Password));
             Field.InputScope = confirmScope;
             Field.MaxLength = _passcodeService.IsSimple ? 4 : int.MaxValue;
+        }
+
+        private void Retry_Tick(object sender, object e)
+        {
+            if (_passcodeService.RetryIn > 0)
+            {
+                RetryIn.Visibility = Visibility.Visible;
+                RetryIn.Text = string.Format(Strings.Resources.TooManyTries, Locale.Declension("Seconds", _passcodeService.RetryIn));
+            }
+            else
+            {
+                _retryTimer.Stop();
+                RetryIn.Visibility = Visibility.Collapsed;
+            }
         }
 
         #region Bounds
@@ -87,14 +111,13 @@ namespace Unigram.Views
         {
             if (_passcodeService.IsSimple && Field.Password.Length == 4)
             {
-                if (Field.Password.All(x => x is >= '0' and <= '9') && _passcodeService.Check(Field.Password))
+                if (_passcodeService.TryUnlock(Field.Password))
                 {
                     Unlock();
                 }
                 else
                 {
-                    VisualUtilities.ShakeView(Field);
-                    Field.Password = string.Empty;
+                    Lock();
                 }
             }
         }
@@ -103,14 +126,13 @@ namespace Unigram.Views
         {
             if (e.Key == Windows.System.VirtualKey.Enter)
             {
-                if (_passcodeService.Check(Field.Password))
+                if (_passcodeService.TryUnlock(Field.Password))
                 {
                     Unlock();
                 }
                 else
                 {
-                    VisualUtilities.ShakeView(Field);
-                    Field.Password = string.Empty;
+                    Lock();
                 }
             }
         }
@@ -122,14 +144,13 @@ namespace Unigram.Views
 
         private void Enter_Click(object sender, RoutedEventArgs e)
         {
-            if (_passcodeService.Check(Field.Password))
+            if (_passcodeService.TryUnlock(Field.Password))
             {
                 Unlock();
             }
             else
             {
-                VisualUtilities.ShakeView(Field);
-                Field.Password = string.Empty;
+                Lock();
 
                 InputPane.GetForCurrentView().TryShow();
             }
@@ -191,9 +212,20 @@ namespace Unigram.Views
             FieldPanel.Margin = new Thickness(0, 0, 0, 120);
         }
 
+        private void Lock()
+        {
+            if (_passcodeService.RetryIn > 0)
+            {
+                _retryTimer.Start();
+            }
+
+            VisualUtilities.ShakeView(Field);
+            Field.Password = string.Empty;
+        }
+
         private void Unlock()
         {
-            _passcodeService.Unlock();
+            _retryTimer.Stop();
             _accepted = true;
 
             Hide();

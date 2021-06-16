@@ -287,8 +287,7 @@ namespace Unigram.Common
         {
             if (_passcodeService.IsEnabled)
             {
-                var dialog = new SettingsPasscodeConfirmPopup(passcode => Task.FromResult(!_passcodeService.Check(passcode)), _passcodeService.IsSimple);
-                dialog.IsSimple = _passcodeService.IsSimple;
+                var dialog = new SettingsPasscodeConfirmPopup();
 
                 var confirm = await dialog.ShowAsync();
                 if (confirm == ContentDialogResult.Primary)

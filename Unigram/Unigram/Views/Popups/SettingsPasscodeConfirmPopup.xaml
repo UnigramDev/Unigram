@@ -15,12 +15,19 @@
 
     <StackPanel>
         <PasswordBox
-            x:Name="Confirm"
+            x:Name="Field"
             PlaceholderText="{CustomResource EnterCurrentPasscode}"
             MaxLength="4"
             PasswordChanged="Confirm_Changed"
             KeyDown="Password_KeyDown"
             InputScope="NumericPin"
             Margin="0,12,0,0"/>
+
+        <TextBlock
+            x:Name="RetryIn"
+            Visibility="Collapsed"
+            Style="{StaticResource CaptionTextBlockStyle}"
+            Foreground="{ThemeResource DangerButtonBackground}"
+            Margin="0,4,0,0"/>
     </StackPanel>
 </controls:ContentPopup>
