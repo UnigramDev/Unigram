@@ -41,7 +41,7 @@ namespace Unigram.Views.Popups
                 if (_autocomplete != value)
                 {
                     _autocomplete = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Autocomplete"));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Autocomplete)));
                 }
             }
         }
@@ -70,7 +70,9 @@ namespace Unigram.Views.Popups
                 if (_isMediaSelected != value)
                 {
                     _isMediaSelected = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsMediaSelected"));
+                    _isFilesSelected = !value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsMediaSelected)));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsFilesSelected)));
                 }
             }
         }
@@ -85,9 +87,22 @@ namespace Unigram.Views.Popups
                 {
                     _isFilesSelected = value;
                     _isMediaSelected = !value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsFilesSelected"));
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsMediaSelected"));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsFilesSelected)));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsMediaSelected)));
                 }
+            }
+        }
+
+        public string SendWithoutCompression
+        {
+            get
+            {
+                if (IsMediaSelected)
+                {
+                    return Items.Count == 1 ? Strings.Resources.SendAsFile : Strings.Resources.SendAsFiles;
+                }
+
+                return string.Format(Strings.Resources.SendItems, Locale.Declension("Files", Items.Count));
             }
         }
 
@@ -102,7 +117,7 @@ namespace Unigram.Views.Popups
                 if (_isAlbum != value)
                 {
                     _isAlbum = IsAlbumAvailable && value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsAlbum"));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsAlbum)));
                 }
             }
         }
@@ -143,6 +158,8 @@ namespace Unigram.Views.Popups
 
         private void OnCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SendWithoutCompression)));
+
             if (Items.Count > 0)
             {
                 UpdateView();
@@ -256,6 +273,11 @@ namespace Unigram.Views.Popups
             if (root == null)
             {
                 return;
+            }
+
+            if (root is AspectView aspect)
+            {
+                aspect.Constraint = new Size(storage.Width, storage.Height);
             }
 
             var glyph = root.FindName("Glyph") as TextBlock;
@@ -408,8 +430,8 @@ namespace Unigram.Views.Popups
 
         private void UpdateView()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsMediaOnly"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsAlbumAvailable"));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsMediaOnly)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsAlbumAvailable)));
 
             if (IsMediaSelected && !IsMediaOnly)
             {

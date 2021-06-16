@@ -135,7 +135,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="MediaItemTemplate" x:DataType="entities:StorageMedia">
-            <Grid MinHeight="48" MaxHeight="294">
+            <controls:AspectView MinHeight="48" MaxHeight="294">
                 <Image
                     x:Name="Preview"
                     Source="{x:Bind Preview, Mode=OneWay}"
@@ -214,7 +214,7 @@
                         CornerRadius="4,12,12,4"
                         Grid.Column="2"/>
                 </Grid>
-            </Grid>
+            </controls:AspectView>
             <!--<cells:SendMediaCell
                 Media="{x:Bind}"
                 Source="{x:Bind Preview, Mode=OneWay}"
@@ -244,7 +244,12 @@
                 Click="PivotRadioButton_Click"
                 IsChecked="{x:Bind IsFilesSelected, Mode=TwoWay}"
                 Visibility="{x:Bind IsMediaOnly, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                Content="{CustomResource SendWithoutCompression}"
+                Content="{x:Bind SendWithoutCompression, Mode=OneWay}"
+                VerticalAlignment="Center"/>
+
+            <TextBlock
+                Visibility="{x:Bind IsMediaOnly, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
+                Text="{x:Bind SendWithoutCompression, Mode=OneWay}"
                 VerticalAlignment="Center"/>
 
             <controls:GlyphToggleButton
