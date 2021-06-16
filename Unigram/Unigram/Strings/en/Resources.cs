@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 05/24/2021 12:36:50
+// 	Generated: 06/16/2021 15:17:58
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -48523,6 +48523,39 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Noise suppression"
+        /// </summary>
+        public static string VoipNoiseCancellation
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipNoiseCancellation");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Disabled"
+        /// </summary>
+        public static string VoipNoiseCancellationDisabled
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipNoiseCancellationDisabled");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Enabled"
+        /// </summary>
+        public static string VoipNoiseCancellationEnabled
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipNoiseCancellationEnabled");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Calls"
         /// </summary>
         public static string VoipNotificationSettings
@@ -48937,6 +48970,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("VoipUserMicrophoneIsOff");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Video on Pause"
+        /// </summary>
+        public static string VoipVideoOnPause
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipVideoOnPause");
             }
         }
         

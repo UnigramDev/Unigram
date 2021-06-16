@@ -1567,7 +1567,7 @@ namespace Unigram.Views
                 flyout.Items.Add(input);
                 flyout.Items.Add(output);
 
-                flyout.CreateFlyoutItem(() => _service.IsNoiseSuppressionEnabled = !_service.IsNoiseSuppressionEnabled, "Noise Suppression", _service.IsNoiseSuppressionEnabled ? new FontIcon { Glyph = Icons.Checkmark } : null);
+                flyout.CreateFlyoutItem(() => _service.IsNoiseSuppressionEnabled = !_service.IsNoiseSuppressionEnabled, Strings.Resources.VoipNoiseCancellation, _service.IsNoiseSuppressionEnabled ? new FontIcon { Glyph = Icons.Checkmark } : null);
             }
 
             //flyout.CreateFlyoutItem(ShareInviteLink, Strings.Resources.VoipGroupShareInviteLink, new FontIcon { Glyph = Icons.Link });

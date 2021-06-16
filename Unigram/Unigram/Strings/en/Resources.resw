@@ -13425,6 +13425,15 @@ Participants will see that the chat is being recorded.</value>
   <data name="VoipNeedMicPermission" xml:space="preserve">
     <value>Telegram needs access to your microphone so that you can make calls.</value>
   </data>
+  <data name="VoipNoiseCancellation" xml:space="preserve">
+    <value>Noise suppression</value>
+  </data>
+  <data name="VoipNoiseCancellationDisabled" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="VoipNoiseCancellationEnabled" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
   <data name="VoipNotificationSettings" xml:space="preserve">
     <value>Calls</value>
   </data>
@@ -13538,6 +13547,9 @@ Participants will see that the chat is being recorded.</value>
   </data>
   <data name="VoipUserMicrophoneIsOff" xml:space="preserve">
     <value>{0}'s microphone is off</value>
+  </data>
+  <data name="VoipVideoOnPause" xml:space="preserve">
+    <value>Video on Pause</value>
   </data>
   <data name="VoipVideoUnavailable" xml:space="preserve">
     <value>Video</value>
