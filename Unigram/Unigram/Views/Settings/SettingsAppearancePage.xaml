@@ -244,7 +244,7 @@
                         Style="{StaticResource CheckButtonStyle}"/>
                     <ToggleSwitch
                         IsOn="{x:Bind ViewModel.DisableHighlightWords, Mode=TwoWay}"
-                        Header="Disable mispelled words highlight"
+                        Header="Disable misspelled words highlight"
                         Style="{StaticResource CheckButtonStyle}"/>
 
                     <ToggleSwitch
