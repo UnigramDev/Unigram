@@ -196,12 +196,12 @@ namespace Unigram.Views.Host
             if (e.Content is IRootContentPage content)
             {
                 content.Root = this;
-                Navigation.PaneToggleButtonVisibility = content.EvalutatePaneToggleButtonVisibility();
+                Navigation.PaneToggleButtonVisibility = content.EvaluatePaneToggleButtonVisibility();
                 InitializeNavigation(sender as Frame);
             }
             else
             {
-                Navigation.PaneToggleButtonVisibility = Visibility.Collapsed;
+                Navigation.PaneToggleButtonVisibility = PaneToggleButtonVisibility.Collapsed;
             }
         }
 
@@ -494,7 +494,7 @@ namespace Unigram.Views.Host
 
         #region Exposed
 
-        public void SetPaneToggleButtonVisibility(Visibility value)
+        public void SetPaneToggleButtonVisibility(PaneToggleButtonVisibility value)
         {
             Navigation.PaneToggleButtonVisibility = value;
         }
@@ -688,6 +688,14 @@ namespace Unigram.Views.Host
                 }
             }
         }
+
+        private void Navigation_BackRequested(Controls.NavigationView sender, object args)
+        {
+            if (_navigationService?.Frame?.Content is IRootContentPage content)
+            {
+                content.BackRequested();
+            }
+        }
     }
 
     public interface IRootContentPage
@@ -696,9 +704,9 @@ namespace Unigram.Views.Host
 
         void NavigationView_ItemClick(RootDestination destination);
 
-        //Visibility PaneToggleButtonVisibility { get; }
+        PaneToggleButtonVisibility EvaluatePaneToggleButtonVisibility();
 
-        Visibility EvalutatePaneToggleButtonVisibility();
+        void BackRequested();
 
         void Dispose();
     }

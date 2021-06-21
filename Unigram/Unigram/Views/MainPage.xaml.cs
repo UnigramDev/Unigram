@@ -359,7 +359,6 @@ namespace Unigram.Views
                 ShowHideTopTabs(!ViewModel.Chats.Settings.IsLeftTabsEnabled && update.ChatFilters.Count > 0);
                 ShowHideArchive(ViewModel.SelectedFilter == null || ViewModel.SelectedFilter.ChatList is ChatListMain);
 
-                UpdateBackButtonVisibility();
                 UpdatePaneToggleButtonVisibility();
             });
         }
@@ -1353,29 +1352,17 @@ namespace Unigram.Views
 
         private void UpdatePaneToggleButtonVisibility()
         {
-            if (BackButton.Visibility == Visibility.Visible || !_searchCollapsed || ChatsList.SelectionMode == ListViewSelectionMode.Multiple)
+            if (rpMasterTitlebar.SelectedIndex != 0 || ViewModel.Chats.Items.ChatList is ChatListArchive || !_searchCollapsed || ChatsList.SelectionMode == ListViewSelectionMode.Multiple)
             {
-                Root?.SetPaneToggleButtonVisibility(Visibility.Collapsed);
+                Root?.SetPaneToggleButtonVisibility(PaneToggleButtonVisibility.Back);
             }
             else if (MasterDetail.CurrentState == MasterDetailState.Minimal)
             {
-                Root?.SetPaneToggleButtonVisibility(MasterDetail.NavigationService.CurrentPageType == typeof(BlankPage) ? Visibility.Visible : Visibility.Collapsed);
+                Root?.SetPaneToggleButtonVisibility(MasterDetail.NavigationService.CurrentPageType == typeof(BlankPage) ? PaneToggleButtonVisibility.Visible : PaneToggleButtonVisibility.Collapsed);
             }
             else
             {
-                Root?.SetPaneToggleButtonVisibility(Visibility.Visible);
-            }
-        }
-
-        private void UpdateBackButtonVisibility()
-        {
-            if (rpMasterTitlebar.SelectedIndex != 0 || ViewModel.Chats.Items.ChatList is ChatListArchive || !_searchCollapsed)
-            {
-                BackButton.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                BackButton.Visibility = Visibility.Collapsed;
+                Root?.SetPaneToggleButtonVisibility(PaneToggleButtonVisibility.Visible);
             }
         }
 
@@ -1396,15 +1383,17 @@ namespace Unigram.Views
             VisualStateManager.GoToState(this, visibility == Visibility.Collapsed ? "Normal" : "TitleBar", false);
         }
 
-        public Visibility EvalutatePaneToggleButtonVisibility()
+        public PaneToggleButtonVisibility EvaluatePaneToggleButtonVisibility()
         {
             if (MasterDetail.CurrentState == MasterDetailState.Minimal)
             {
-                return MasterDetail.NavigationService.CurrentPageType == typeof(BlankPage) ? Visibility.Visible : Visibility.Collapsed;
+                return MasterDetail.NavigationService.CurrentPageType == typeof(BlankPage)
+                    ? PaneToggleButtonVisibility.Visible
+                    : PaneToggleButtonVisibility.Collapsed;
             }
             else
             {
-                return Visibility.Visible;
+                return PaneToggleButtonVisibility.Visible;
             }
         }
 
@@ -1655,8 +1644,6 @@ namespace Unigram.Views
 
             SearchField.Text = string.Empty;
 
-            UpdateBackButtonVisibility();
-
             UpdateHeader();
             UpdatePaneToggleButtonVisibility();
 
@@ -1770,7 +1757,6 @@ namespace Unigram.Views
 
             Search_TextChanged(null, null);
 
-            UpdateBackButtonVisibility();
             UpdatePaneToggleButtonVisibility();
         }
 
@@ -1781,7 +1767,6 @@ namespace Unigram.Views
 
             SearchReset();
 
-            UpdateBackButtonVisibility();
             UpdatePaneToggleButtonVisibility();
 
             FocusTarget.Focus(FocusState.Programmatic);
@@ -2427,7 +2412,6 @@ namespace Unigram.Views
             ShowHideLeftTabs(ViewModel.Chats.Settings.IsLeftTabsEnabled && ViewModel.Filters.Count > 0);
             ShowHideArchive(filter == null || filter.ChatList is ChatListMain);
 
-            UpdateBackButtonVisibility();
             UpdatePaneToggleButtonVisibility();
 
             return filter;
@@ -2653,7 +2637,7 @@ namespace Unigram.Views
             batch.End();
         }
 
-        private void BackButton_Click(object sender, RoutedEventArgs e)
+        public void BackRequested()
         {
             if (!_searchCollapsed)
             {

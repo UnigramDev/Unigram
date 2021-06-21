@@ -381,16 +381,6 @@
                             </StackPanel>
                         </Grid>
 
-                        <controls:GlyphButton
-                            x:Name="BackButton"
-                            Click="BackButton_Click"
-                            Glyph="&#xE72B;"
-                            Height="{ThemeResource AppBarThemeCompactHeight}"
-                            Width="40"
-                            Visibility="Collapsed"
-                            AutomationProperties.Name="{CustomResource AccDescrGoBack}"
-                            ToolTipService.ToolTip="{CustomResource AccDescrGoBack}"/>
-
                         <Grid x:Name="ManagePanel" Background="{ThemeResource PageHeaderBackgroundBrush}" Visibility="Collapsed" Grid.ColumnSpan="3">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>

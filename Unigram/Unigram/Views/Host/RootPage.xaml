@@ -117,7 +117,7 @@
             <ColumnDefinition x:Name="MainColumn"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <controls:NavigationView x:Name="Navigation" PaneOpening="Navigation_PaneOpening" PaneClosing="Navigation_PaneClosing">
+        <controls:NavigationView x:Name="Navigation" BackRequested="Navigation_BackRequested" PaneOpening="Navigation_PaneOpening" PaneClosing="Navigation_PaneClosing">
             <controls:NavigationView.PaneHeader>
                 <Button x:Name="Accounts" Click="Expand_Click" RequestedTheme="Dark" Style="{StaticResource EmptyButtonStyle}">
                     <Grid Padding="12,8">
