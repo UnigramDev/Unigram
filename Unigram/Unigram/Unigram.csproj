@@ -220,7 +220,6 @@
     <Compile Include="Controls\AnimatedGlyphToggleButton.cs" />
     <Compile Include="Controls\AnimationView.cs" />
     <Compile Include="Controls\BackButton.cs" />
-    <Compile Include="Controls\Brushes\TiledBrush.cs" />
     <Compile Include="Controls\CallHangupButton.cs" />
     <Compile Include="Controls\CallToggleButton.cs" />
     <Compile Include="Controls\CaptionTextBox.cs" />
@@ -325,6 +324,9 @@
     <Compile Include="Controls\LazoListView.cs" />
     <Compile Include="Controls\LazoListViewItem.cs" />
     <Compile Include="Controls\MasterDetailPanel.cs" />
+    <Compile Include="Controls\Media\SolidGaussianBrush.cs" />
+    <Compile Include="Controls\Media\TiledBrush.cs" />
+    <Compile Include="Controls\MenuButton.cs" />
     <Compile Include="Controls\MessagePopup.xaml.cs">
       <DependentUpon>MessagePopup.xaml</DependentUpon>
     </Compile>
@@ -2276,7 +2278,7 @@
     </Reference>
     <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\rlottie\$(Platform)\RLottie.dll" />
     <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\rlottie\$(Platform)\RLottie.pri" />
-    <ReferenceCopyLocalPaths Condition=" '$(Configuration)' == 'Debug' " Include="$(ProjectDir)\..\Libraries\rlottie\$(Platform)\zlib1.dll" />
+    <!--<ReferenceCopyLocalPaths Condition=" '$(Configuration)' == 'Debug' " Include="$(ProjectDir)\..\Libraries\rlottie\$(Platform)\zlib1.dll" />-->
   </ItemGroup>
   <ItemGroup />
   <!--<ItemGroup>

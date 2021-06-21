@@ -3395,7 +3395,7 @@
         <Setter Property="Foreground" Value="#FFFFFFFF" />
         <Setter Property="BorderBrush" Value="{ThemeResource ButtonBorderBrush}" />
         <Setter Property="BorderThickness" Value="{ThemeResource ButtonBorderThemeThickness}" />
-        <Setter Property="Padding" Value="2,4,2,4" />
+        <Setter Property="Padding" Value="2,4,2,5" />
         <Setter Property="HorizontalAlignment" Value="Center" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="FontFamily" Value="{ThemeResource EmojiThemeFontFamily}" />
@@ -3405,7 +3405,7 @@
         <Setter Property="FocusVisualMargin" Value="-3" />
         <Setter Property="Glyph" Value=""/>
         <Setter Property="Width" Value="Auto"/>
-        <Setter Property="Height" Value="Auto"/>
+        <Setter Property="Height" Value="32"/>
         <Setter Property="CornerRadius" Value="{StaticResource ControlCornerRadius}"/>
         <Setter Property="Template">
             <Setter.Value>
@@ -3506,7 +3506,7 @@
         <Setter Property="Foreground" Value="{ThemeResource ButtonForeground}" />
         <Setter Property="BorderBrush" Value="{ThemeResource ButtonBorderBrush}" />
         <Setter Property="BorderThickness" Value="{ThemeResource ButtonBorderThemeThickness}" />
-        <Setter Property="Padding" Value="8,4,8,4" />
+        <Setter Property="Padding" Value="8,4,8,5" />
         <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="FontFamily" Value="{ThemeResource EmojiThemeFontFamily}" />

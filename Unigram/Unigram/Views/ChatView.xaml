@@ -774,17 +774,19 @@
             <Grid x:Name="InlinePanel"
                   SizeChanged="InlinePanel_SizeChanged"
                   VerticalAlignment="Bottom"
-                  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                   Visibility="{x:Bind ViewModel.Search, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=invert}"
                   Margin="12,0,12,-12"
                   CornerRadius="8,8,0,0">
                 <controls:InlineBotResultsView
                     x:Name="ListInline"
+                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                     Visibility="{x:Bind ViewModel.InlineBotResultsVisibility, Mode=OneWay}"
                     ItemClick="InlineBotResults_ItemClick"
                     VerticalAlignment="Bottom"/>
                 <controls:OrientableListView
                     x:Name="ListAutocomplete"
+                    Visibility="Collapsed"
+                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                     ItemTemplateSelector="{StaticResource AutocompleteTemplate}"
                     ChoosingItemContainer="Autocomplete_ChoosingItemContainer"
                     ContainerContentChanging="Autocomplete_ContainerContentChanging"
@@ -844,12 +846,13 @@
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <Grid x:Name="ComposerHeader" Visibility="Collapsed" Grid.ColumnSpan="4">
+                <Grid x:Name="ComposerHeader" Visibility="Collapsed" Grid.ColumnSpan="5">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="48"/>
                         <ColumnDefinition/>
@@ -870,14 +873,22 @@
                         Grid.Column="2"/>
                 </Grid>
 
-                <Border Grid.ColumnSpan="4" Grid.Row="2">
+                <Border Grid.ColumnSpan="5" Grid.Row="2">
                     <Border
                         x:Name="TextBackground"
                         Background="{ThemeResource PageBackgroundDarkBrush}"
                         Visibility="Collapsed"/>
                 </Border>
 
-                <Border x:Name="TextFieldPanel" Grid.ColumnSpan="2" Grid.Row="1">
+                <controls:MenuButton
+                    x:Name="ButtonMore"
+                    AutomationProperties.Name="{CustomResource AccDescrBotCommands}"
+                    ToolTipService.ToolTip="{CustomResource AccDescrBotCommands}"
+                    Visibility="Collapsed"
+                    Margin="8,0,0,0"
+                    Grid.Row="1"/>
+
+                <Border x:Name="TextFieldPanel" Grid.ColumnSpan="2" Grid.Column="1" Grid.Row="1">
                     <chats:ChatTextBox
                         x:Name="TextField"
                         FontFamily="{ThemeResource EmojiThemeFontFamily}"
@@ -885,6 +896,7 @@
                         Formatting="{x:Bind TextFormatting}"
                         Messages="{x:Bind Messages}"
                         Autocomplete="{x:Bind ListAutocomplete}"
+                        IsMenuExpanded="{x:Bind ButtonMore.IsChecked, Mode=OneWay}"
                         AcceptsReturn="False"
                         BorderThickness="0"
                         Padding="48,4,0,6"
@@ -901,7 +913,7 @@
                         ShowFormatting="TextField_Formatting"
                         HideFormatting="TextField_Formatting"/>
                 </Border>
-                <Border x:Name="btnAttach" Grid.Row="1">
+                <Border x:Name="btnAttach" Grid.Column="1" Grid.Row="1">
                     <controls:GlyphButton
                         x:Name="ButtonAttach"
                         Click="Attach_Click"
@@ -987,7 +999,7 @@
                     </controls:GlyphButton>
                 </Border>
 
-                <Grid x:Name="ButtonsPanel" Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="1">
+                <Grid x:Name="ButtonsPanel" Grid.Column="3" Grid.ColumnSpan="2" Grid.Row="1">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
@@ -1114,7 +1126,7 @@
                         Visibility="Collapsed"/>
                 </Grid>
 
-                <Border Grid.Column="1" Grid.Row="2">
+                <Border Grid.Column="2" Grid.Row="2">
                     <chats:ChatTextFormatting
                         x:Name="TextFormatting"
                         TextBox="{x:Bind TextField}"
