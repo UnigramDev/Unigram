@@ -2383,7 +2383,9 @@ namespace Unigram.ViewModels
             }
         }
 
-        private async void ShowDraftMessage(Chat chat)
+        private DraftMessage _draft;
+
+        private async void ShowDraftMessage(Chat chat, bool force = true)
         {
             DraftMessage draft;
 
@@ -2397,13 +2399,29 @@ namespace Unigram.ViewModels
                 draft = chat.DraftMessage;
             }
 
-            if (draft == null || (_type != DialogType.History && _type != DialogType.Thread))
+            if (!force)
             {
+                var current = GetFormattedText();
+                var previous = _draft?.InputMessageText as InputMessageText;
+
+                if (previous != null && !string.Equals(previous.Text.Text, current.Text))
+                {
+                    return;
+                }
+            }
+
+            var input = draft?.InputMessageText as InputMessageText;
+            if (input == null || (_type != DialogType.History && _type != DialogType.Thread))
+            {
+                _draft = null;
+
                 SetText(null as string);
                 ComposerHeader = null;
             }
             else
             {
+                _draft = draft;
+
                 if (draft.InputMessageText is InputMessageText text)
                 {
                     SetText(text.Text);
