@@ -72,7 +72,7 @@ namespace Unigram.Controls.Drawers
             var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => FieldAnimations.TextChanged += new TextChangedEventHandler(handler));
             debouncer.Invoked += (s, args) =>
             {
-                ViewModel.FindAnimations(FieldAnimations.Text);
+                ViewModel.Search(FieldAnimations.Text);
             };
         }
 

@@ -171,13 +171,27 @@ namespace Unigram.Controls
             }
             else if (index == 1 && AnimationsRoot != null)
             {
+                var viewModel = AnimationsRoot.DataContext as AnimationDrawerViewModel;
+
                 AnimationsRoot.Deactivate();
                 UnloadObject(AnimationsRoot);
+
+                if (viewModel != null)
+                {
+                    viewModel.Search(string.Empty);
+                }
             }
             else if (index == 2 && StickersRoot != null)
             {
+                var viewModel = StickersRoot.DataContext as StickerDrawerViewModel;
+
                 StickersRoot.Deactivate();
                 UnloadObject(StickersRoot);
+
+                if (viewModel != null)
+                {
+                    viewModel.Search(string.Empty);
+                }
             }
         }
 

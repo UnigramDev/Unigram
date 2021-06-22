@@ -452,7 +452,7 @@ namespace Unigram.Controls.Drawers
 
         private void FieldStickers_TextChanged(object sender, TextChangedEventArgs e)
         {
-            ViewModel.FindStickers(FieldStickers.Text);
+            ViewModel.Search(FieldStickers.Text);
         }
 
         private void OnContextRequested(UIElement sender, ContextRequestedEventArgs args)

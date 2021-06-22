@@ -180,7 +180,7 @@ namespace Unigram.ViewModels.Drawers
 
         public TrendingAnimationsCollection TrendingItems { get; private set; }
 
-        public void FindAnimations(string query)
+        public void Search(string query)
         {
             if (string.IsNullOrWhiteSpace(query))
             {

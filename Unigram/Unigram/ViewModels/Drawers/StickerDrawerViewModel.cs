@@ -223,7 +223,7 @@ namespace Unigram.ViewModels.Drawers
 
         public MvxObservableCollection<StickerSetViewModel> Stickers => SearchStickers ?? (MvxObservableCollection<StickerSetViewModel>)SavedStickers;
 
-        public async void FindStickers(string query)
+        public async void Search(string query)
         {
             if (string.IsNullOrWhiteSpace(query))
             {
