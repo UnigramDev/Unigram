@@ -76,7 +76,7 @@ namespace Unigram.Services
         }
 
         public bool IsLockscreenRequired =>
-            IsEnabled && ((AutolockTimeout > 0 && CloseTime < DateTime.MaxValue && DateTime.UtcNow > CloseTime.AddSeconds(AutolockTimeout)) || IsLocked);
+            IsEnabled && ((AutolockTimeout > 0 && CloseTime < DateTime.MaxValue && CloseTime > DateTime.UtcNow.AddSeconds(-AutolockTimeout)) || IsLocked);
 
         public void Lock()
         {
