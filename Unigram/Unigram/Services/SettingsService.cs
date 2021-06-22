@@ -469,11 +469,11 @@ namespace Unigram.Services
             set => AddOrUpdateValue(ref _disableHighlightWords, _local, "DisableHighlightWords", value);
         }
 
-        private bool? _isSendByEnterEnabled;
+        private static bool? _isSendByEnterEnabled;
         public bool IsSendByEnterEnabled
         {
-            get => _isSendByEnterEnabled ??= GetValueOrDefault("IsSendByEnterEnabled", true);
-            set => AddOrUpdateValue(ref _isSendByEnterEnabled, "IsSendByEnterEnabled", value);
+            get => _isSendByEnterEnabled ??= GetValueOrDefault(_local, "IsSendByEnterEnabled", true);
+            set => AddOrUpdateValue(ref _isSendByEnterEnabled, _local, "IsSendByEnterEnabled", value);
         }
 
         private bool? _isTextFormattingVisible;

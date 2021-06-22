@@ -76,34 +76,16 @@ namespace Unigram.Controls
                     return;
                 }
             }
-            else if (e.Key == VirtualKey.Enter)
-            {
-                var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
-                var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
-
-                bool send;
-                if (ViewModel != null && ViewModel.Settings.IsSendByEnterEnabled)
-                {
-                    send = !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
-                }
-                else
-                {
-                    send = ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
-                }
-
-                AcceptsReturn = !send;
-                e.Handled = send;
-
-                if (send)
-                {
-                    View?.Accept();
-                }
-            }
 
             if (!e.Handled)
             {
                 base.OnKeyDown(e);
             }
+        }
+
+        protected override void OnAccept()
+        {
+            View?.Accept();
         }
 
         private void OnSelectionChanged(object sender, RoutedEventArgs e)

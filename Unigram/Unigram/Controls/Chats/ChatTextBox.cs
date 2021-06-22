@@ -219,43 +219,6 @@ namespace Unigram.Controls.Chats
                     return;
                 }
             }
-            else if (e.Key == VirtualKey.Enter)
-            {
-                var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
-                var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
-
-                var send = false;
-
-                if (ViewModel.Settings.IsSendByEnterEnabled)
-                {
-                    send = !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
-                }
-                else
-                {
-                    send = ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
-                }
-
-                AcceptsReturn = !send;
-                e.Handled = send;
-
-                // If handwriting panel is open, the app would crash on send.
-                // Still, someone should fill a ticket to Microsoft about this.
-                if (send && HandwritingView.IsOpen)
-                {
-                    void handler(object s, RoutedEventArgs args)
-                    {
-                        _ = SendAsync();
-                        HandwritingView.Unloaded -= handler;
-                    }
-
-                    HandwritingView.Unloaded += handler;
-                    HandwritingView.TryClose();
-                }
-                else if (send)
-                {
-                    _ = SendAsync();
-                }
-            }
             else if (e.Key == VirtualKey.X && Math.Abs(Document.Selection.Length) == 4)
             {
                 var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
@@ -274,6 +237,11 @@ namespace Unigram.Controls.Chats
             {
                 base.OnKeyDown(e);
             }
+        }
+
+        protected override void OnAccept()
+        {
+            _ = SendAsync();
         }
 
         private void OnTextChanged(object sender, RoutedEventArgs e)

@@ -148,9 +148,22 @@ namespace Unigram.Controls
                 AcceptsReturn = !send;
                 e.Handled = send;
 
-                if (send)
+                // If handwriting panel is open, the app would crash on send.
+                // Still, someone should fill a ticket to Microsoft about this.
+                if (send && HandwritingView.IsOpen)
                 {
-                    Accept?.Invoke(this, EventArgs.Empty);
+                    void handler(object s, RoutedEventArgs args)
+                    {
+                        OnAccept();
+                        HandwritingView.Unloaded -= handler;
+                    }
+
+                    HandwritingView.Unloaded += handler;
+                    HandwritingView.TryClose();
+                }
+                else if (send)
+                {
+                    OnAccept();
                 }
             }
             else if (e.Key == VirtualKey.Z)
@@ -173,6 +186,11 @@ namespace Unigram.Controls
             {
                 base.OnKeyDown(e);
             }
+        }
+
+        protected virtual void OnAccept()
+        {
+            Accept?.Invoke(this, EventArgs.Empty);
         }
 
         public event TypedEventHandler<FormattedTextBox, EventArgs> Accept;
