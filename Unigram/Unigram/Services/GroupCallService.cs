@@ -347,8 +347,7 @@ namespace Unigram.Services
             _manager?.SetConnectionMode(VoipGroupConnectionMode.None, false);
             _manager?.EmitJoinPayload(async (ssrc, payload) =>
             {
-                Participants?.Dispose();
-                Participants = new GroupCallParticipantsCollection(ProtoService, Aggregator, groupCall);
+                Participants ??= new GroupCallParticipantsCollection(ProtoService, Aggregator, groupCall);
 
                 var response = await ProtoService.SendAsync(new JoinGroupCall(groupCall.Id, alias, ssrc, payload, _manager.IsMuted, _capturer != null, string.Empty));
                 if (response is Text json)
@@ -373,8 +372,6 @@ namespace Unigram.Services
                     _source = ssrc;
                     _manager.SetConnectionMode(broadcast ? VoipGroupConnectionMode.Broadcast : VoipGroupConnectionMode.Rtc, true);
                     _manager.SetJoinResponsePayload(json.TextValue);
-
-                    Participants?.Load();
 
                     RejoinScreenSharing(groupCall);
                 }
