@@ -9,7 +9,6 @@
 #include "VoipVideoRendererToken.h"
 #include "GroupNetworkStateChangedEventArgs.h"
 #include "BroadcastPartRequestedEventArgs.h"
-#include "MediaChannelDescriptionsRequestedEventArgs.h"
 
 #include "StaticThreads.h"
 
@@ -64,20 +63,6 @@ namespace winrt::Unigram::Native::Calls::implementation
 				[task](int64_t time, int64_t response, FilePart filePart) { task->done(time, response, filePart); });
 
 			m_broadcastPartRequested(*this, *args);
-			return task;
-		};
-		impl.requestMediaChannelDescriptions = [this](const std::vector<uint32_t>& ssrcs, std::function<void(std::vector<tgcalls::MediaChannelDescription>&&)> done) {
-			auto task = std::make_shared<RequestMediaChannelDescriptionTaskImpl>(std::move(done));
-			auto vector = winrt::single_threaded_vector<int32_t>();
-
-			for (const uint32_t& ssrc : ssrcs) {
-				vector.Append(ssrc);
-			}
-
-			auto args = winrt::make_self<MediaChannelDescriptionsRequestedEventArgs>(vector,
-				[task](GroupCallMediaChannelDescriptions descriptions) { task->done(descriptions); });
-
-			m_mediaChannelDescriptionsRequested(*this, *args);
 			return task;
 		};
 
@@ -256,19 +241,5 @@ namespace winrt::Unigram::Native::Calls::implementation
 	void VoipGroupManager::BroadcastPartRequested(winrt::event_token const& token)
 	{
 		m_broadcastPartRequested.remove(token);
-	}
-
-
-
-	winrt::event_token VoipGroupManager::MediaChannelDescriptionsRequested(Windows::Foundation::TypedEventHandler<
-		winrt::Unigram::Native::Calls::VoipGroupManager,
-		winrt::Unigram::Native::Calls::MediaChannelDescriptionsRequestedEventArgs> const& value)
-	{
-		return m_mediaChannelDescriptionsRequested.add(value);
-	}
-
-	void VoipGroupManager::MediaChannelDescriptionsRequested(winrt::event_token const& token)
-	{
-		m_mediaChannelDescriptionsRequested.remove(token);
 	}
 }

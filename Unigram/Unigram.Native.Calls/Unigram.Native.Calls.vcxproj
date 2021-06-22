@@ -216,10 +216,6 @@
       <DependentUpon>GroupNetworkStateChangedEventArgs.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="MediaChannelDescriptionsRequestedEventArgs.h">
-      <DependentUpon>MediaChannelDescriptionsRequestedEventArgs.idl</DependentUpon>
-      <SubType>Code</SubType>
-    </ClInclude>
     <ClInclude Include="RemoteMediaStateUpdatedEventArgs.h">
       <DependentUpon>RemoteMediaStateUpdatedEventArgs.idl</DependentUpon>
     </ClInclude>
@@ -363,10 +359,6 @@
       <DependentUpon>GroupNetworkStateChangedEventArgs.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="MediaChannelDescriptionsRequestedEventArgs.cpp">
-      <DependentUpon>MediaChannelDescriptionsRequestedEventArgs.idl</DependentUpon>
-      <SubType>Code</SubType>
-    </ClCompile>
     <ClCompile Include="RemoteMediaStateUpdatedEventArgs.cpp">
       <DependentUpon>RemoteMediaStateUpdatedEventArgs.idl</DependentUpon>
     </ClCompile>
@@ -433,9 +425,6 @@
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="GroupNetworkStateChangedEventArgs.idl">
-      <SubType>Designer</SubType>
-    </Midl>
-    <Midl Include="MediaChannelDescriptionsRequestedEventArgs.idl">
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="RemoteMediaStateUpdatedEventArgs.idl" />

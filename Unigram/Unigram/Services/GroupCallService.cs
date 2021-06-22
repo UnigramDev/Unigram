@@ -286,7 +286,6 @@ namespace Unigram.Services
                 _manager.NetworkStateUpdated += OnNetworkStateUpdated;
                 _manager.AudioLevelsUpdated += OnAudioLevelsUpdated;
                 _manager.BroadcastPartRequested += OnBroadcastPartRequested;
-                _manager.MediaChannelDescriptionsRequested += OnMediaChannelDescriptionsRequested;
 
                 // This must be set before, as updates might come
                 // between ShowAsync and Rejoin.
@@ -546,20 +545,6 @@ namespace Unigram.Services
             });
         }
 
-        private void OnMediaChannelDescriptionsRequested(VoipGroupManager sender, MediaChannelDescriptionsRequestedEventArgs args)
-        {
-            var call = _call;
-            if (call == null)
-            {
-                return;
-            }
-
-            ProtoService.Send(new GetGroupCallMediaChannelDescriptions(call.Id, args.Ssrcs), result =>
-            {
-                args.Deferral(result as GroupCallMediaChannelDescriptions);
-            });
-        }
-
         private void OnNetworkStateUpdated(VoipGroupManager sender, GroupNetworkStateChangedEventArgs args)
         {
             //if (_isConnected && !connected)
@@ -683,7 +668,6 @@ namespace Unigram.Services
                     _manager.NetworkStateUpdated -= OnNetworkStateUpdated;
                     _manager.AudioLevelsUpdated -= OnAudioLevelsUpdated;
                     _manager.BroadcastPartRequested -= OnBroadcastPartRequested;
-                    _manager.MediaChannelDescriptionsRequested -= OnMediaChannelDescriptionsRequested;
 
                     _manager.SetVideoCapture(null);
 

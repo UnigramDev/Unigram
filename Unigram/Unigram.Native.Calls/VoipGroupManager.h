@@ -55,11 +55,6 @@ namespace winrt::Unigram::Native::Calls::implementation
 			winrt::Unigram::Native::Calls::BroadcastPartRequestedEventArgs> const& value);
 		void BroadcastPartRequested(winrt::event_token const& token);
 
-		winrt::event_token MediaChannelDescriptionsRequested(Windows::Foundation::TypedEventHandler<
-			winrt::Unigram::Native::Calls::VoipGroupManager,
-			winrt::Unigram::Native::Calls::MediaChannelDescriptionsRequestedEventArgs> const& value);
-		void MediaChannelDescriptionsRequested(winrt::event_token const& token);
-
 	private:
 		std::unique_ptr<tgcalls::GroupInstanceCustomImpl> m_impl = nullptr;
 		std::shared_ptr<tgcalls::VideoCaptureInterface> m_capturer = nullptr;
@@ -76,9 +71,6 @@ namespace winrt::Unigram::Native::Calls::implementation
 		winrt::event<Windows::Foundation::TypedEventHandler<
 			winrt::Unigram::Native::Calls::VoipGroupManager,
 			winrt::Unigram::Native::Calls::BroadcastPartRequestedEventArgs>> m_broadcastPartRequested;
-		winrt::event<Windows::Foundation::TypedEventHandler<
-			winrt::Unigram::Native::Calls::VoipGroupManager,
-			winrt::Unigram::Native::Calls::MediaChannelDescriptionsRequestedEventArgs>> m_mediaChannelDescriptionsRequested;
 	};
 
 
@@ -138,58 +130,6 @@ namespace winrt::Unigram::Native::Calls::implementation
 		std::function<void(tgcalls::BroadcastPart&&)> _done;
 		webrtc::Mutex _mutex;
 
-	};
-
-	class RequestMediaChannelDescriptionTaskImpl final : public tgcalls::RequestMediaChannelDescriptionTask {
-	public:
-		RequestMediaChannelDescriptionTaskImpl(
-			std::function<void(std::vector<tgcalls::MediaChannelDescription>&&)> done)
-			: _done(std::move(done))
-		{
-
-		}
-
-		void done(GroupCallMediaChannelDescriptions descriptions) {
-			webrtc::MutexLock lock(&_mutex);
-
-			if (_done) {
-				if (descriptions) {
-					auto vector = std::vector<tgcalls::MediaChannelDescription>();
-
-					for (const GroupCallMediaChannelDescription& description : descriptions.Descriptions()) {
-						tgcalls::MediaChannelDescription impl;
-						impl.audioSsrc = description.SourceId();
-						impl.videoInformation = string_to_unmanaged(description.Description());
-
-						if (description.IsVideo()) {
-							impl.type = tgcalls::MediaChannelDescription::Type::Video;
-						}
-						else {
-							impl.type = tgcalls::MediaChannelDescription::Type::Audio;
-						}
-
-						vector.push_back(std::move(impl));
-					}
-
-					_done(std::move(vector));
-				}
-			}
-		}
-
-		void cancel() override {
-			webrtc::MutexLock lock(&_mutex);
-
-			if (!_done) {
-				return;
-			}
-
-			_done = nullptr;
-		}
-	private:
-		const int64_t _time = 0;
-		const int32_t _scale = 0;
-		std::function<void(std::vector<tgcalls::MediaChannelDescription>&&)> _done;
-		webrtc::Mutex _mutex;
 	};
 }
 
