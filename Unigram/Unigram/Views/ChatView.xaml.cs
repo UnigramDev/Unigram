@@ -3527,40 +3527,47 @@ namespace Unigram.Views
 
         public void UpdateChatReplyMarkup(Chat chat, MessageViewModel message)
         {
+            string GetPlaceholder()
+            {
+                if (ViewModel.CacheService.TryGetSupergroup(chat, out Supergroup supergroup))
+                {
+                    if (supergroup.IsChannel)
+                    {
+                        return chat.DefaultDisableNotification
+                            ? Strings.Resources.ChannelSilentBroadcast
+                            : Strings.Resources.ChannelBroadcast;
+                    }
+                    else if (supergroup.Status is ChatMemberStatusCreator creator && creator.IsAnonymous || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.IsAnonymous)
+                    {
+                        return Strings.Resources.SendAnonymously;
+                    }
+                }
+
+                return Strings.Resources.TypeMessage;
+            }
+
             if (message?.ReplyMarkup is ReplyMarkupForceReply forceReply && forceReply.IsPersonal)
             {
                 ViewModel.ReplyToMessage(message);
 
-                TextField.PlaceholderText = forceReply.InputFieldPlaceholder;
+                if (forceReply.InputFieldPlaceholder.Length > 0)
+                {
+                    TextField.PlaceholderText = forceReply.InputFieldPlaceholder;
+                }
+                else
+                {
+                    TextField.PlaceholderText = GetPlaceholder();
+                }
 
                 ButtonMarkup.Visibility = Visibility.Collapsed;
                 CollapseMarkup(false);
             }
             else
             {
-                string GetPlaceholder()
-                {
-                    if (ViewModel.CacheService.TryGetSupergroup(chat, out Supergroup supergroup))
-                    {
-                        if (supergroup.IsChannel)
-                        {
-                            return chat.DefaultDisableNotification
-                                ? Strings.Resources.ChannelSilentBroadcast
-                                : Strings.Resources.ChannelBroadcast;
-                        }
-                        else if (supergroup.Status is ChatMemberStatusCreator creator && creator.IsAnonymous || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.IsAnonymous)
-                        {
-                            return Strings.Resources.SendAnonymously;
-                        }
-                    }
-
-                    return Strings.Resources.TypeMessage;
-                }
-
                 var updated = ReplyMarkup.Update(message, message?.ReplyMarkup, false);
                 if (updated)
                 {
-                    if (message.ReplyMarkup is ReplyMarkupShowKeyboard showKeyboard)
+                    if (message.ReplyMarkup is ReplyMarkupShowKeyboard showKeyboard && showKeyboard.InputFieldPlaceholder.Length > 0)
                     {
                         TextField.PlaceholderText = showKeyboard.InputFieldPlaceholder;
                     }
