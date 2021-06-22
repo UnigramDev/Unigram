@@ -18,6 +18,9 @@ namespace winrt::Unigram::Native::Calls::implementation
 		m_impl->setOnFatalError([this] {
 			m_fatalErrorOccurred(*this, nullptr);
 			});
+		m_impl->setOnPause([this] (bool paused) {
+			m_paused(*this, paused);
+			});
 	}
 
 	winrt::event_token VoipScreenCapture::FatalErrorOccurred(Windows::Foundation::TypedEventHandler<
@@ -30,5 +33,17 @@ namespace winrt::Unigram::Native::Calls::implementation
 	void VoipScreenCapture::FatalErrorOccurred(winrt::event_token const& token)
 	{
 		m_fatalErrorOccurred.remove(token);
+	}
+
+	winrt::event_token VoipScreenCapture::Paused(Windows::Foundation::TypedEventHandler<
+		winrt::Unigram::Native::Calls::VoipScreenCapture,
+		bool> const& value)
+	{
+		return m_paused.add(value);
+	}
+
+	void VoipScreenCapture::Paused(winrt::event_token const& token)
+	{
+		m_paused.remove(token);
 	}
 }

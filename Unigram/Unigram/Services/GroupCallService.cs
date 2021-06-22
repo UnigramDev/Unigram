@@ -15,6 +15,7 @@ using Unigram.Views;
 using Unigram.Views.Popups;
 using Windows.Data.Json;
 using Windows.Devices.Enumeration;
+using Windows.Foundation;
 using Windows.Graphics.Capture;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -94,6 +95,7 @@ namespace Unigram.Services
 
         private VoipGroupManager _screenManager;
         private VoipScreenCapture _screenCapturer;
+        private EventDebouncer<bool> _screenDebouncer;
         private int _screenSource;
 
         private bool _isScheduled;
@@ -448,6 +450,11 @@ namespace Unigram.Services
             _screenCapturer = new VoipScreenCapture(item);
             _screenCapturer.FatalErrorOccurred += OnFatalErrorOccurred;
 
+            _screenDebouncer = new EventDebouncer<bool>(500,
+                handler => _screenCapturer.Paused += new TypedEventHandler<VoipScreenCapture, bool>(handler),
+                handler => _screenCapturer.Paused -= new TypedEventHandler<VoipScreenCapture, bool>(handler), true);
+            _screenDebouncer.Invoked += OnPaused;
+
             var descriptor = new VoipGroupDescriptor
             {
                 VideoContentType = VoipVideoContentType.Screencast,
@@ -457,6 +464,20 @@ namespace Unigram.Services
             _screenManager = new VoipGroupManager(descriptor);
 
             RejoinScreenSharing(call);
+        }
+
+        private void OnPaused(object sender, bool paused)
+        {
+            var call = _call;
+            if (call != null)
+            {
+                ProtoService.SendAsync(new ToggleGroupCallScreenSharingIsPaused(call.Id, paused));
+            }
+        }
+
+        private void OnFatalErrorOccurred(VoipScreenCapture sender, object args)
+        {
+            EndScreenSharing();
         }
 
         private void RejoinScreenSharing(GroupCall groupCall)
@@ -479,11 +500,6 @@ namespace Unigram.Services
             });
         }
 
-        private void OnFatalErrorOccurred(VoipScreenCapture sender, object args)
-        {
-            EndScreenSharing();
-        }
-
         public void EndScreenSharing()
         {
             if (_screenManager != null)
@@ -498,6 +514,9 @@ namespace Unigram.Services
 
             if (_screenCapturer != null)
             {
+                _screenDebouncer.Invoked -= OnPaused;
+                _screenDebouncer = null;
+
                 //_screenCapturer.SetOutput(null);
                 _screenCapturer.FatalErrorOccurred -= OnFatalErrorOccurred;
                 _screenCapturer.Dispose();

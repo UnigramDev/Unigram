@@ -19,10 +19,18 @@ namespace winrt::Unigram::Native::Calls::implementation
 			winrt::Windows::Foundation::IInspectable> const& value);
 		void FatalErrorOccurred(winrt::event_token const& token);
 
+		winrt::event_token Paused(Windows::Foundation::TypedEventHandler<
+			winrt::Unigram::Native::Calls::VoipScreenCapture,
+			bool> const& value);
+		void Paused(winrt::event_token const& token);
+
 	private:
 		winrt::event<Windows::Foundation::TypedEventHandler<
 			winrt::Unigram::Native::Calls::VoipScreenCapture,
 			winrt::Windows::Foundation::IInspectable>> m_fatalErrorOccurred;
+		winrt::event<Windows::Foundation::TypedEventHandler<
+			winrt::Unigram::Native::Calls::VoipScreenCapture,
+			bool>> m_paused;
 	};
 }
 
