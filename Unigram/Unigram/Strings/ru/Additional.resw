@@ -121,20 +121,20 @@
     <value>Чаты</value>
   </data>
   <data name="CopyImage" xml:space="preserve">
-    <value>Copy image</value>
+    <value>Копировать изображение</value>
   </data>
   <data name="DeletedMessage" xml:space="preserve">
-    <value>Deleted message</value>
+    <value>Удалённое сообщение</value>
   </data>
   <data name="News" xml:space="preserve">
     <value>Новости</value>
   </data>
   <data name="OriginalMessage" xml:space="preserve">
-    <value>original</value>
-    <comment>Original message date and time</comment>
+    <value>выложено</value>
+    <comment>Дата и время публикации изначального варианта сообщения</comment>
   </data>
   <data name="SaveAs" xml:space="preserve">
-    <value>Save as...</value>
+    <value>Сохранить как...</value>
   </data>
   <data name="Select" xml:space="preserve">
     <value>Выбрать</value>
