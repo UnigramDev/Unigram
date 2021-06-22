@@ -257,6 +257,11 @@ namespace Unigram.Common
                 return GetDeletedUser(user, side);
             }
 
+            if (chat.Photo?.Minithumbnail != null)
+            {
+                return GetBlurred(chat.Photo.Minithumbnail.Data);
+            }
+
             return GetChat(chat, side);
         }
 
@@ -273,6 +278,11 @@ namespace Unigram.Common
                 {
                     protoService?.DownloadFile(file.Id, 1);
                 }
+            }
+
+            if (chat.Photo?.Minithumbnail != null)
+            {
+                return GetBlurred(chat.Photo.Minithumbnail.Data);
             }
 
             return GetChat(chat, side);
@@ -295,6 +305,11 @@ namespace Unigram.Common
             else if (user.Type is UserTypeDeleted)
             {
                 return GetDeletedUser(user, side);
+            }
+
+            if (user.ProfilePhoto?.Minithumbnail != null)
+            {
+                return GetBlurred(user.ProfilePhoto.Minithumbnail.Data);
             }
 
             return GetUser(user, side);
