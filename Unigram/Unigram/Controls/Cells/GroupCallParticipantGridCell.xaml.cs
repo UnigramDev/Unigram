@@ -59,8 +59,8 @@ namespace Unigram.Controls.Cells
 
         public VoipVideoChannelQuality Quality => ActualHeight switch
         {
-            double h when h >= 720 => VoipVideoChannelQuality.Full,
-            double h when h >= 360 => VoipVideoChannelQuality.Medium,
+            double h when h >= 720 || (h >= 360 && IsScreenSharing) => VoipVideoChannelQuality.Full,
+            double h when h >= 360 && !IsScreenSharing => VoipVideoChannelQuality.Medium,
             _ => VoipVideoChannelQuality.Thumbnail
         };
 
