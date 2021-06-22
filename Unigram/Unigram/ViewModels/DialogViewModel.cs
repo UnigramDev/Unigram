@@ -856,9 +856,9 @@ namespace Unigram.ViewModels
                 fullInfo = await ProtoService.SendAsync(new GetUserFullInfo(user.Id)) as UserFullInfo;
             }
 
-            if (fullInfo != null && fullInfo.BotInfo.Description.Length > 0)
+            if (fullInfo != null && fullInfo.Description.Length > 0)
             {
-                var result = ProtoService.Execute(new GetTextEntities(fullInfo.BotInfo.Description)) as TextEntities;
+                var result = ProtoService.Execute(new GetTextEntities(fullInfo.Description)) as TextEntities;
                 var entities = result?.Entities ?? new List<TextEntity>();
 
                 foreach (var entity in entities)
@@ -868,7 +868,7 @@ namespace Unigram.ViewModels
 
                 entities.Add(new TextEntity(0, Strings.Resources.BotInfoTitle.Length, new TextEntityTypeBold()));
 
-                var message = $"{Strings.Resources.BotInfoTitle}{Environment.NewLine}{fullInfo.BotInfo.Description}";
+                var message = $"{Strings.Resources.BotInfoTitle}{Environment.NewLine}{fullInfo.Description}";
                 var text = new FormattedText(message, entities);
 
                 Items.Insert(0, _messageFactory.Create(this, new Message(0, new MessageSenderUser(user.Id), chat.Id, null, null, false, false, false, false, true, false, false, false, false, false, 0, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(text, null), null)));
@@ -3506,8 +3506,8 @@ namespace Unigram.ViewModels
             }
             else if (chat.Type is ChatTypePrivate privata)
             {
-                var fullInfo = ProtoService.GetUserFull(privata.UserId);
-                if (fullInfo == null)
+                var user = ProtoService.GetUser(privata.UserId);
+                if (user == null)
                 {
                     return;
                 }
@@ -3520,7 +3520,7 @@ namespace Unigram.ViewModels
                 {
                     UnblockExecute();
                 }
-                else if (fullInfo.BotInfo != null)
+                else if (user.Type is UserTypeBot)
                 {
                     StartExecute();
                 }
