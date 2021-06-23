@@ -4030,7 +4030,7 @@ namespace Unigram.Views
 
         private async void ShowHideAutocomplete(bool show)
         {
-            if ((show && ListAutocomplete.Visibility == Visibility.Visible) || (!show && (ListAutocomplete.Visibility == Visibility.Collapsed || _autocompleteCollapsed)))
+            if ((show && ListAutocomplete.Visibility == Visibility.Visible && !_autocompleteCollapsed) || (!show && (ListAutocomplete.Visibility == Visibility.Collapsed || _autocompleteCollapsed)))
             {
                 return;
             }
@@ -4038,9 +4038,12 @@ namespace Unigram.Views
             _autocompleteCollapsed = !show;
             ListAutocomplete.Visibility = Visibility.Visible;
 
-            await ListAutocomplete.UpdateLayoutAsync();
+            var source = ListAutocomplete.ItemsSource;
 
             var list = ElementCompositionPreview.GetElementVisual(ListAutocomplete);
+            list.StopAnimation("Translation");
+
+            await ListAutocomplete.UpdateLayoutAsync();
 
             var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
@@ -4051,7 +4054,7 @@ namespace Unigram.Views
                 {
                     _autocompleteCollapsed = false;
                 }
-                else
+                else if (ListAutocomplete.ItemsSource == source)
                 {
                     ListAutocomplete.ItemsSource = null;
                     ListAutocomplete.Visibility = Visibility.Collapsed;
