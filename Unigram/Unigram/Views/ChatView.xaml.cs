@@ -2807,7 +2807,7 @@ namespace Unigram.Views
                     ViewModel.ResolveInlineBot(user.Username);
                 }
             }
-            else if (e.ClickedItem is UserCommand command)
+            else if (e.ClickedItem is UserCommand command && ChatTextBox.SearchByCommand(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string initialCommand))
             {
                 var insert = $"/{command.Item.Command}";
                 if (chat.Type is ChatTypeSupergroup or ChatTypeBasicGroup)
@@ -2819,8 +2819,22 @@ namespace Unigram.Views
                     }
                 }
 
-                TextField.SetText(null, null);
-                ViewModel.SendCommand.Execute(insert);
+                var complete = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Tab).HasFlag(CoreVirtualKeyStates.Down);
+                if (complete)
+                {
+                    insert += " ";
+
+                    var start = TextField.Document.Selection.StartPosition - 1 - initialCommand.Length + insert.Length;
+                    var range = TextField.Document.GetRange(TextField.Document.Selection.StartPosition - 1 - initialCommand.Length, TextField.Document.Selection.StartPosition);
+                    range.SetText(TextSetOptions.None, insert);
+
+                    TextField.Document.Selection.StartPosition = start;
+                }
+                else
+                {
+                    TextField.SetText(null, null);
+                    ViewModel.SendCommand.Execute(insert);
+                }
             }
             else if (e.ClickedItem is string hashtag && ChatTextBox.SearchByHashtag(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string initial, out _))
             {
@@ -2829,8 +2843,6 @@ namespace Unigram.Views
                 var range = TextField.Document.GetRange(TextField.Document.Selection.StartPosition - 1 - initial.Length, TextField.Document.Selection.StartPosition);
                 range.SetText(TextSetOptions.None, insert);
 
-                //TextField.Document.GetRange(start, start).SetText(TextSetOptions.None, " ");
-                //TextField.Document.Selection.StartPosition = start + 1;
                 TextField.Document.Selection.StartPosition = start;
             }
             else if (e.ClickedItem is EmojiData emoji && ChatTextBox.SearchByEmoji(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string replacement))
@@ -2840,8 +2852,6 @@ namespace Unigram.Views
                 var range = TextField.Document.GetRange(TextField.Document.Selection.StartPosition - 1 - replacement.Length, TextField.Document.Selection.StartPosition);
                 range.SetText(TextSetOptions.None, insert);
 
-                //TextField.Document.GetRange(start, start).SetText(TextSetOptions.None, " ");
-                //TextField.Document.Selection.StartPosition = start + 1;
                 TextField.Document.Selection.StartPosition = start;
             }
             else if (e.ClickedItem is Sticker sticker)
@@ -2854,8 +2864,6 @@ namespace Unigram.Views
                     Collapse_Click(null, null);
                 }
             }
-
-            ViewModel.Autocomplete = null;
         }
 
         private void List_SelectionModeChanged(DependencyObject sender, DependencyProperty dp)
