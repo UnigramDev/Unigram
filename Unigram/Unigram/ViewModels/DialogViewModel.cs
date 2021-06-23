@@ -833,7 +833,7 @@ namespace Unigram.ViewModels
         protected async Task AddHeaderAsync()
         {
             var previous = Items.FirstOrDefault();
-            if (previous != null && (previous.Content is MessageHeaderDate /*|| previous.Id == 0*/))
+            if (previous != null && (previous.Content is MessageHeaderDate || (previous.Content is MessageText && previous.Id == 0)))
             {
                 return;
             }
