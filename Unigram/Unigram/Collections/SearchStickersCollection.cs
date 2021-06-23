@@ -78,6 +78,8 @@ namespace Unigram.Collections
 
         public bool HasMoreItems => _hasMore;
 
+        public string Query => _query;
+
         public Orientation Orientation => Orientation.Horizontal;
     }
 }

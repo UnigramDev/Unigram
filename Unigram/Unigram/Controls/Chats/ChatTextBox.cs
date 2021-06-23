@@ -319,7 +319,7 @@ namespace Unigram.Controls.Chats
 
             var query = text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length));
 
-            if (TryGetAutocomplete(text, query, out var autocomplete))
+            if (TryGetAutocomplete(text, query, ViewModel.Autocomplete, out var autocomplete))
             {
                 ClearInlineBotResults();
                 ViewModel.Autocomplete = autocomplete;
@@ -351,7 +351,7 @@ namespace Unigram.Controls.Chats
             }
         }
 
-        private bool TryGetAutocomplete(string text, string query, out IAutocompleteCollection autocomplete)
+        private bool TryGetAutocomplete(string text, string query, IAutocompleteCollection prev, out IAutocompleteCollection autocomplete)
         {
             if (Emoji.ContainsSingleEmoji(text) && ViewModel.ComposerHeader?.EditingMessage == null)
             {
@@ -369,6 +369,12 @@ namespace Unigram.Controls.Chats
                         autocomplete = null;
                         return false;
                     }
+                }
+
+                if (prev is SearchStickersCollection && prev.Query.Equals(text.Trim()))
+                {
+                    autocomplete = prev;
+                    return true;
                 }
 
                 autocomplete = new SearchStickersCollection(ViewModel.ProtoService, ViewModel.Settings, text.Trim());
@@ -389,21 +395,45 @@ namespace Unigram.Controls.Chats
                     members = false;
                 }
 
+                if (prev is UsernameCollection && prev.Query.Equals(username))
+                {
+                    autocomplete = prev;
+                    return true;
+                }
+
                 autocomplete = new UsernameCollection(ViewModel.ProtoService, ViewModel.Chat.Id, ViewModel.ThreadId, username, index == 0, members);
                 return true;
             }
             else if (SearchByHashtag(query, out string hashtag, out _))
             {
+                if (prev is SearchHashtagsCollection && prev.Query.Equals(hashtag))
+                {
+                    autocomplete = prev;
+                    return true;
+                }
+
                 autocomplete = new SearchHashtagsCollection(ViewModel.ProtoService, hashtag);
                 return true;
             }
             else if (SearchByEmoji(query, out string replacement) && replacement.Length > 0)
             {
+                if (prev is EmojiCollection && prev.Query.Equals(hashtag))
+                {
+                    autocomplete = prev;
+                    return true;
+                }
+
                 autocomplete = new EmojiCollection(ViewModel.ProtoService, replacement, CoreTextServicesManager.GetForCurrentView().InputLanguage.LanguageTag);
                 return true;
             }
             else if (SearchByCommand(query, out string command))
             {
+                if (prev is AutocompleteList<UserCommand> && prev.Query.Equals(hashtag))
+                {
+                    autocomplete = prev;
+                    return true;
+                }
+
                 autocomplete = GetCommands(command.ToLower());
                 return true;
             }
@@ -417,7 +447,7 @@ namespace Unigram.Controls.Chats
             var all = ViewModel.BotCommands;
             if (all != null)
             {
-                var results = new AutocompleteList<UserCommand>(all.Where(x => x.Item.Command.ToLower().StartsWith(command, StringComparison.OrdinalIgnoreCase)));
+                var results = new AutocompleteList<UserCommand>(command, all.Where(x => x.Item.Command.ToLower().StartsWith(command, StringComparison.OrdinalIgnoreCase)));
                 if (results.Count > 0)
                 {
                     return results;
@@ -496,6 +526,8 @@ namespace Unigram.Controls.Chats
 
             public bool HasMoreItems => _hasMore;
 
+            public string Query => _query;
+
             public Orientation Orientation => Orientation.Vertical;
         }
 
@@ -560,39 +592,9 @@ namespace Unigram.Controls.Chats
 
             public bool HasMoreItems => _hasMore;
 
+            public string Query => _query;
+
             public Orientation Orientation => Orientation.Horizontal;
-        }
-
-        public class EmojiGroupCollection : MvxObservableCollection<List<EmojiGroup>>, ISupportIncrementalLoading
-        {
-            private readonly IProtoService _protoService;
-            private readonly string _query;
-            private readonly EmojiSkinTone _skin;
-            private readonly string _inputLanguage;
-
-            private bool _hasMore = true;
-
-            public EmojiGroupCollection(IProtoService protoService, string query, EmojiSkinTone skin, string inputLanguage)
-            {
-                _protoService = protoService;
-                _query = query;
-                _skin = skin;
-                _inputLanguage = inputLanguage;
-            }
-
-            public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
-            {
-                return AsyncInfo.Run(async token =>
-                {
-                    _hasMore = false;
-
-                    Add(await Emoji.SearchAsync(_protoService, _query, _skin, _inputLanguage));
-
-                    return new LoadMoreItemsResult { Count = 1 };
-                });
-            }
-
-            public bool HasMoreItems => _hasMore;
         }
 
         public class SearchHashtagsCollection : MvxObservableCollection<string>, IAutocompleteCollection, ISupportIncrementalLoading
@@ -630,6 +632,8 @@ namespace Unigram.Controls.Chats
             }
 
             public bool HasMoreItems => _hasMore;
+
+            public string Query => _query;
 
             public Orientation Orientation => Orientation.Vertical;
         }
@@ -1047,17 +1051,21 @@ namespace Unigram.Controls.Chats
 
     public interface IAutocompleteCollection : ICollection
     {
+        public string Query { get; }
+
         public Orientation Orientation { get; }
     }
 
     public class AutocompleteList<T> : List<T>, IAutocompleteCollection
     {
+        public string Query { get; }
+
         public Orientation Orientation { get; set; } = Orientation.Vertical;
 
-        public AutocompleteList(IEnumerable<T> collection)
+        public AutocompleteList(string query, IEnumerable<T> collection)
             : base(collection)
         {
-
+            Query = query;
         }
     }
 }
