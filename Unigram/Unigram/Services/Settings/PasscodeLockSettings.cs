@@ -84,7 +84,7 @@ namespace Unigram.Services.Settings
             }
             set
             {
-                _closeTime = value.ToUniversalTime();
+                _closeTime = value;
                 AddOrUpdateValue("CloseTime", value.ToFileTimeUtc());
             }
         }
@@ -139,7 +139,7 @@ namespace Unigram.Services.Settings
             }
             set
             {
-                _retryTime = value.ToUniversalTime();
+                _retryTime = value;
                 AddOrUpdateValue("RetryTime", value.ToFileTimeUtc());
             }
         }
