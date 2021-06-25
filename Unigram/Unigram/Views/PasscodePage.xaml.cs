@@ -225,6 +225,8 @@ namespace Unigram.Views
 
         private void Unlock()
         {
+            _passcodeService.Unlock();
+
             _retryTimer.Stop();
             _accepted = true;
 
