@@ -2807,34 +2807,45 @@ namespace Unigram.Views
                     ViewModel.ResolveInlineBot(user.Username);
                 }
             }
-            else if (e.ClickedItem is UserCommand command && ChatTextBox.SearchByCommand(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string initialCommand))
+            else if (e.ClickedItem is UserCommand command)
             {
-                var insert = $"/{command.Item.Command}";
-                if (chat.Type is ChatTypeSupergroup or ChatTypeBasicGroup)
+                var input = text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length));
+                if (string.IsNullOrEmpty(input))
                 {
-                    var bot = ViewModel.ProtoService.GetUser(command.UserId);
-                    if (bot != null && bot.Username.Length > 0)
+                    input = "/";
+                }
+
+                if (ChatTextBox.SearchByCommand(input, out string initialCommand))
+                {
+                    var insert = $"/{command.Item.Command}";
+                    if (chat.Type is ChatTypeSupergroup or ChatTypeBasicGroup)
                     {
-                        insert += $"@{bot.Username}";
+                        var bot = ViewModel.ProtoService.GetUser(command.UserId);
+                        if (bot != null && bot.Username.Length > 0)
+                        {
+                            insert += $"@{bot.Username}";
+                        }
+                    }
+
+                    var complete = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Tab).HasFlag(CoreVirtualKeyStates.Down);
+                    if (complete)
+                    {
+                        insert += " ";
+
+                        var start = TextField.Document.Selection.StartPosition - 1 - initialCommand.Length + insert.Length;
+                        var range = TextField.Document.GetRange(TextField.Document.Selection.StartPosition - 1 - initialCommand.Length, TextField.Document.Selection.StartPosition);
+                        range.SetText(TextSetOptions.None, insert);
+
+                        TextField.Document.Selection.StartPosition = start;
+                    }
+                    else
+                    {
+                        TextField.SetText(null, null);
+                        ViewModel.SendCommand.Execute(insert);
                     }
                 }
 
-                var complete = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Tab).HasFlag(CoreVirtualKeyStates.Down);
-                if (complete)
-                {
-                    insert += " ";
-
-                    var start = TextField.Document.Selection.StartPosition - 1 - initialCommand.Length + insert.Length;
-                    var range = TextField.Document.GetRange(TextField.Document.Selection.StartPosition - 1 - initialCommand.Length, TextField.Document.Selection.StartPosition);
-                    range.SetText(TextSetOptions.None, insert);
-
-                    TextField.Document.Selection.StartPosition = start;
-                }
-                else
-                {
-                    TextField.SetText(null, null);
-                    ViewModel.SendCommand.Execute(insert);
-                }
+                ButtonMore.IsChecked = false;
             }
             else if (e.ClickedItem is string hashtag && ChatTextBox.SearchByHashtag(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string initial, out _))
             {
