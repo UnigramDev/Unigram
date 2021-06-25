@@ -213,17 +213,29 @@ namespace Unigram.Services
 
         #region App version
 
-        public const ulong CurrentVersion = (7UL << 48) | (7UL << 32) | (0UL << 16);
-        public const string CurrentChangelog = @"Payments 2.0, Scheduled Voice Chats
+        public const ulong CurrentVersion = (7UL << 48) | (8UL << 32) | (0UL << 16);
+        public const string CurrentChangelog = @"GROUP VIDEO CALLS AND ANIMATED BACKGROUNDS
 
-**Payments 2.0**
-• Offer real goods and services for sale in any group, channel or bot – Telegram doesn't charge a commission.
-• Pay for goods securely using one of the 8 integrated payment providers – Telegram doesn't collect your payment info.
-• See how this works in our @TestStore.
+**Group Video Calls**
+• Start video conferences from Voice Chats in any group.
+• Share your screen or video from your camera with up to 30 participants (limit to be increased soon).
+• Talk without video with an unlimited number of participants.
+• Create voice chats from the info page of any group where you are an admin.
+• Group video calls are supported natively on all devices, including iPads and laptops.
 
-**Scheduled Voice Chats**
-• Schedule voice chats to let participants know about them in advance.
-• View a countdown to the voice chat and get notified when it starts.";
+**Animated Backgrounds**
+• Meet animated backgrounds for chats – first time in a messaging app! These multi-color gradient backgrounds are generated algorithmically and move beautifully every time you send a message.
+• Create your own backgrounds in Appearance Settings by selecting unique combinations of colors and applying any of the dozens of patterns. 
+• Share your animated backgrounds with friends and family to upgrade them to a new level of messaging experience.
+• Choose between dozens of new gorgeous animated backgrounds in Appearance Settings > Background.
+
+**Message Sending Animations**
+• Send messages with improved animations­­ – your input text smoothly transforms into the message bubble as it flies into the chat.
+• Stickers and animated emoji you send jump into the chat from the sticker panel.
+
+**Login Info Reminders**
+• Confirm that your phone number is up to date from the new prompt in Settings.
+• You will now receive a notification from Telegram each time your 2-Step Verification settings are changed.";
 
         public int Session => _session;
 
