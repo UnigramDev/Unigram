@@ -1352,13 +1352,27 @@ namespace Unigram.Views
 
         private void UpdatePaneToggleButtonVisibility()
         {
-            if (rpMasterTitlebar.SelectedIndex != 0 || ViewModel.Chats.Items.ChatList is ChatListArchive || !_searchCollapsed || ChatsList.SelectionMode == ListViewSelectionMode.Multiple)
+            if (MasterDetail.CurrentState == MasterDetailState.Minimal)
+            {
+                if (MasterDetail.NavigationService.CurrentPageType == typeof(BlankPage))
+                {
+                    if (rpMasterTitlebar.SelectedIndex != 0 || ViewModel.Chats.Items.ChatList is ChatListArchive || !_searchCollapsed || ChatsList.SelectionMode == ListViewSelectionMode.Multiple)
+                    {
+                        Root?.SetPaneToggleButtonVisibility(PaneToggleButtonVisibility.Back);
+                    }
+                    else
+                    {
+                        Root?.SetPaneToggleButtonVisibility(PaneToggleButtonVisibility.Visible);
+                    }
+                }
+                else
+                {
+                    Root?.SetPaneToggleButtonVisibility(PaneToggleButtonVisibility.Collapsed);
+                }
+            }
+            else if (rpMasterTitlebar.SelectedIndex != 0 || ViewModel.Chats.Items.ChatList is ChatListArchive || !_searchCollapsed || ChatsList.SelectionMode == ListViewSelectionMode.Multiple)
             {
                 Root?.SetPaneToggleButtonVisibility(PaneToggleButtonVisibility.Back);
-            }
-            else if (MasterDetail.CurrentState == MasterDetailState.Minimal)
-            {
-                Root?.SetPaneToggleButtonVisibility(MasterDetail.NavigationService.CurrentPageType == typeof(BlankPage) ? PaneToggleButtonVisibility.Visible : PaneToggleButtonVisibility.Collapsed);
             }
             else
             {
@@ -2410,7 +2424,7 @@ namespace Unigram.Views
         {
             ShowHideTopTabs(!ViewModel.Chats.Settings.IsLeftTabsEnabled && ViewModel.Filters.Count > 0 && !(filter.ChatList is ChatListArchive));
             ShowHideLeftTabs(ViewModel.Chats.Settings.IsLeftTabsEnabled && ViewModel.Filters.Count > 0);
-            ShowHideArchive(filter == null || filter.ChatList is ChatListMain);
+            ShowHideArchive((filter == null || filter.ChatList is ChatListMain) && ViewModel.Chats.Items.ChatList is not ChatListArchive);
 
             UpdatePaneToggleButtonVisibility();
 
