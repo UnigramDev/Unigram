@@ -34,16 +34,19 @@ namespace Unigram.ViewModels.Settings
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
+            var dark = Settings.Appearance.IsDarkTheme();
+            var freeform = dark ? new[] { 0x1B2836, 0x121A22, 0x1B2836, 0x121A22 } : new[] { 0xDBDDBB, 0x6BA587, 0xD5D88D, 0x88B884 };
+
             var background = CacheService.SelectedBackground;
-            var predefined = new Background(Constants.WallpaperLocalId, true, false, Constants.WallpaperDefaultFileName, null,
-                new BackgroundTypeFill(new BackgroundFillFreeformGradient(new[] { 0xDBDDBB, 0x6BA587, 0xD5D88D, 0x88B884 })));
+            var predefined = new Background(Constants.WallpaperLocalId, true, dark, Constants.WallpaperDefaultFileName, null,
+                new BackgroundTypeFill(new BackgroundFillFreeformGradient(freeform)));
 
             var items = new List<Background>
             {
                 predefined
             };
 
-            var response = await ProtoService.SendAsync(new GetBackgrounds(Settings.Appearance.IsDarkTheme()));
+            var response = await ProtoService.SendAsync(new GetBackgrounds(dark));
             if (response is Backgrounds wallpapers)
             {
                 items.AddRange(wallpapers.BackgroundsValue);

@@ -85,24 +85,25 @@ namespace Unigram.Controls.Chats
 
             aggregator.Subscribe(this);
             //Update(session, settings.Wallpaper);
-            Update(protoService.SelectedBackground, SettingsService.Current.Appearance.IsDarkTheme());
+            Update(protoService.SelectedBackground, ActualTheme == ElementTheme.Dark);
         }
 
         private void Update(Background background, bool dark)
         {
-            if (background == null && ActualTheme == ElementTheme.Light)
+            if (background == null)
             {
-                background = new Background(0, false, false, string.Empty, null,
-                    new BackgroundTypeFill(new BackgroundFillFreeformGradient(new[] { 0xDBDDBB, 0x6BA587, 0xD5D88D, 0x88B884 })));
+                var freeform = dark ? new[] { 0x1B2836, 0x121A22, 0x1B2836, 0x121A22 } : new[] { 0xDBDDBB, 0x6BA587, 0xD5D88D, 0x88B884 };
+                background = new Background(0, true, dark, string.Empty, null,
+                    new BackgroundTypeFill(new BackgroundFillFreeformGradient(freeform)));
             }
 
             if (_oldDark == dark && BackgroundEquals(_oldBackground, background))
             {
-                if (background?.Type is BackgroundTypeFill typeFill && typeFill.Fill is BackgroundFillFreeformGradient freeform1)
+                if (background?.Type is BackgroundTypeFill updateFill && updateFill.Fill is BackgroundFillFreeformGradient freeform1)
                 {
                     _defaultBackground.UpdateLayout(_colorBackground, freeform1, true);
                 }
-                else if (background?.Type is BackgroundTypePattern typePattern && typePattern.Fill is BackgroundFillFreeformGradient freeform2)
+                else if (background?.Type is BackgroundTypePattern updatePattern && updatePattern.Fill is BackgroundFillFreeformGradient freeform2)
                 {
                     _defaultBackground.UpdateLayout(_colorBackground, freeform2, true);
                 }
@@ -113,15 +114,7 @@ namespace Unigram.Controls.Chats
             _oldBackground = background;
             _oldDark = dark;
 
-            if (background == null)
-            {
-                UpdateBlurred(false);
-
-                _colorBackground.Fill = null;
-                _imageBackground.Fill = new TiledBrush { Source = new Uri("ms-appx:///Assets/Images/DefaultBackground.theme-dark.png") };
-                _imageBackground.Opacity = 1;
-            }
-            else if (background.Type is BackgroundTypeFill typeFill)
+            if (background.Type is BackgroundTypeFill typeFill)
             {
                 UpdateBlurred(false);
 

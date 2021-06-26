@@ -1376,7 +1376,6 @@
     <None Include="Unigram_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\Images\DefaultBackground.theme-dark.png" />
     <Content Include="Assets\JumpList\SavedMessages\SavedMessages.targetsize-16.png" />
     <Content Include="Assets\JumpList\SavedMessages\SavedMessages.targetsize-24.png" />
     <Content Include="Assets\JumpList\SavedMessages\SavedMessages.targetsize-256.png" />
