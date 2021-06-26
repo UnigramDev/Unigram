@@ -374,12 +374,12 @@ namespace Unigram.Controls.Messages
 
             paragraph.Inlines.Clear();
 
-            if (message == null)
+            var chat = message?.GetChat();
+            if (chat == null)
             {
                 return;
             }
 
-            var chat = message.GetChat();
             var content = message.GeneratedContent ?? message.Content;
 
             var sticker = content is MessageSticker;
