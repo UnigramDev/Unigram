@@ -1,11 +1,14 @@
 ﻿using LinqToVisualTree;
+using System;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Navigation;
 using Unigram.Services;
 using Windows.Foundation;
 using Windows.UI;
+using Windows.UI.Core;
 using Windows.UI.Input;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -49,6 +52,8 @@ namespace Unigram.Controls
             InputPane.GetForCurrentView().Showing += InputPane_Showing;
             InputPane.GetForCurrentView().Hiding += InputPane_Hiding;
 
+            Window.Current.CoreWindow.CharacterReceived += OnCharacterReceived;
+
             ApplicationView_VisibleBoundsChanged(ApplicationView.GetForCurrentView());
         }
 
@@ -58,6 +63,24 @@ namespace Unigram.Controls
 
             InputPane.GetForCurrentView().Showing -= InputPane_Showing;
             InputPane.GetForCurrentView().Hiding -= InputPane_Hiding;
+
+            Window.Current.CoreWindow.CharacterReceived -= OnCharacterReceived;
+        }
+
+        private void OnCharacterReceived(CoreWindow sender, CharacterReceivedEventArgs args)
+        {
+            var character = Encoding.UTF32.GetString(BitConverter.GetBytes(args.KeyCode));
+            if (character != "\r" || DefaultButton == ContentDialogButton.Primary)
+            {
+                return;
+            }
+
+            var focused = FocusManager.GetFocusedElement();
+            if (focused is null or (not TextBox and not RichEditBox))
+            {
+                Hide(ContentDialogResult.Primary);
+                args.Handled = true;
+            }
         }
 
         private void ApplicationView_VisibleBoundsChanged(ApplicationView sender, object args = null)
