@@ -55,7 +55,7 @@ namespace Unigram.ViewModels.Settings
                 if (selected != null)
                 {
                     items.Remove(selected);
-                    items.Insert(1, selected);
+                    items.Insert(0, selected);
                 }
                 else if (background == null)
                 {
