@@ -445,7 +445,7 @@
         </ListView>
 
         <controls:ScrollViewerScrim
-            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+            Background="{ThemeResource ContentDialogBackground}"
             ScrollingHost="{x:Bind List}"/>
     </Grid>
 </controls:ContentPopup>

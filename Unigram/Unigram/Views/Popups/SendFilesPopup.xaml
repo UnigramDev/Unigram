@@ -296,7 +296,7 @@
             </ListView>
             
             <controls:ScrollViewerScrim
-                Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                Background="{ThemeResource ContentDialogBackground}"
                 ScrollingHost="{x:Bind List}"/>
         </Grid>
         <Grid x:Name="AlbumPanel" x:Load="False">
@@ -323,7 +323,7 @@
             </ListView>
             
             <controls:ScrollViewerScrim
-                Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                Background="{ThemeResource ContentDialogBackground}"
                 ScrollingHost="{x:Bind Album}"/>
         </Grid>
 

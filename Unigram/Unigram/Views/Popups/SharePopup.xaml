@@ -39,8 +39,6 @@
         <TextBox
             x:Name="SearchField"
             PlaceholderText="{CustomResource Search}"
-            Background="{ThemeResource PageBackgroundDarkBrush}"
-            BorderBrush="{ThemeResource PageBackgroundDarkBrush}"
             PreventKeyboardDisplayOnProgrammaticFocus="True"
             VerticalAlignment="Center"
             GotFocus="Search_Click"
@@ -82,7 +80,7 @@
             </ListView>
 
             <controls:ScrollViewerScrim
-                Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                Background="{ThemeResource ContentDialogBackground}"
                 ScrollingHost="{x:Bind ChatsPanel}"/>
 
             <Grid x:Name="SearchPanel" x:Load="False">
@@ -242,7 +240,7 @@
                 </controls:TextListView>
 
                 <controls:ScrollViewerScrim
-                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                    Background="{ThemeResource ContentDialogBackground}"
                     ScrollingHost="{x:Bind DialogsSearchListView}"/>
             </Grid>
         </Grid>
