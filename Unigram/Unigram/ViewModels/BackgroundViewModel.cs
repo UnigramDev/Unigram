@@ -380,6 +380,9 @@ namespace Unigram.ViewModels
                 return;
             }
 
+            var dark = Settings.Appearance.IsDarkTheme();
+            var freeform = dark ? new[] { 0x1B2836, 0x121A22, 0x1B2836, 0x121A22 } : new[] { 0xDBDDBB, 0x6BA587, 0xD5D88D, 0x88B884 };
+
             // This is a new background and it has to be uploaded to Telegram servers
             Task<BaseObject> task;
             if (wallpaper.Id == Constants.WallpaperLocalId && StorageApplicationPermissions.FutureAccessList.ContainsItem(wallpaper.Name))
@@ -387,14 +390,14 @@ namespace Unigram.ViewModels
                 var item = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(wallpaper.Name);
                 var generated = await item.ToGeneratedAsync(ConversionType.Copy, forceCopy: true);
 
-                task = ProtoService.SendAsync(new SetBackground(new InputBackgroundLocal(generated), new BackgroundTypeWallpaper(_isBlurEnabled, false), Settings.Appearance.IsDarkTheme()));
+                task = ProtoService.SendAsync(new SetBackground(new InputBackgroundLocal(generated), new BackgroundTypeWallpaper(_isBlurEnabled, false), dark));
             }
             else
             {
                 var fill = GetFill();
-                if (wallpaper.Type is BackgroundTypeFill && fill is BackgroundFillFreeformGradient freeform && freeform.Colors.SequenceEqual(new[] { 0x7FA381, 0xFFF5C5, 0x336F55, 0xFBE37D }))
+                if (wallpaper.Type is BackgroundTypeFill && fill is BackgroundFillFreeformGradient fillFreeform && fillFreeform.Colors.SequenceEqual(freeform))
                 {
-                    task = ProtoService.SendAsync(new SetBackground(null, null, Settings.Appearance.IsDarkTheme()));
+                    task = ProtoService.SendAsync(new SetBackground(null, null, dark));
                 }
                 else
                 {
@@ -417,7 +420,11 @@ namespace Unigram.ViewModels
                         return;
                     }
 
-                    task = ProtoService.SendAsync(new SetBackground(new InputBackgroundRemote(wallpaper.Id), type, Settings.Appearance.IsDarkTheme()));
+                    var input = wallpaper.Id == Constants.WallpaperLocalId
+                        ? null
+                        : new InputBackgroundRemote(wallpaper.Id);
+
+                    task = ProtoService.SendAsync(new SetBackground(input, type, dark));
                 }
             }
 
