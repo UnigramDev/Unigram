@@ -108,6 +108,8 @@ namespace Unigram.Views.Settings
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
+                    content.Source = null;
+
                     _backgrounds[file.Id].Add(wallpaper);
                     ViewModel.ProtoService.DownloadFile(file.Id, 1);
                 }
@@ -116,6 +118,7 @@ namespace Unigram.Views.Settings
             {
                 content.Opacity = 1;
                 preview.Fill = fill.Fill;
+                content.Source = null;
             }
         }
 
