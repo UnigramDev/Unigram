@@ -1207,29 +1207,31 @@
                                                 <RowDefinition Height="Auto" />
                                                 <RowDefinition Height="*" />
                                             </Grid.RowDefinitions>
-                                            <ContentControl x:Name="Title"
-                                                            Margin="{ThemeResource ContentDialogTitleMargin}"
-                                                            Content="{TemplateBinding Title}"
-                                                            ContentTemplate="{TemplateBinding TitleTemplate}"
-                                                            FontSize="20"
-                                                            FontFamily="XamlAutoFontFamily"
-                                                            FontWeight="Normal"
-                                                            Foreground="{TemplateBinding Foreground}"
-                                                            HorizontalAlignment="Stretch"
-                                                            HorizontalContentAlignment="Stretch"
-                                                            VerticalAlignment="Top"
-                                                            IsTabStop="False"
-                                                            Canvas.ZIndex="1">
+                                            <ContentControl
+                                                x:Name="Title"
+                                                Margin="{StaticResource ContentDialogTitleMargin}"
+                                                Content="{TemplateBinding Title}"
+                                                ContentTemplate="{TemplateBinding TitleTemplate}"
+                                                FontSize="20"
+                                                FontFamily="XamlAutoFontFamily"
+                                                FontWeight="SemiBold"
+                                                Foreground="{TemplateBinding Foreground}"
+                                                HorizontalAlignment="Stretch"
+                                                HorizontalContentAlignment="Stretch"
+                                                VerticalAlignment="Top"
+                                                IsTabStop="False"
+                                                Canvas.ZIndex="1">
                                                 <ContentControl.Template>
                                                     <ControlTemplate TargetType="ContentControl">
-                                                        <ContentPresenter Content="{TemplateBinding Content}"
-                                                                          MaxLines="1"
-                                                                          TextWrapping="NoWrap"
-                                                                          ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                                          Margin="{TemplateBinding Padding}"
-                                                                          ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                                        <ContentPresenter
+                                                            Content="{TemplateBinding Content}"
+                                                            MaxLines="1"
+                                                            TextWrapping="NoWrap"
+                                                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                            Margin="{TemplateBinding Padding}"
+                                                            ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                                                     </ControlTemplate>
                                                 </ContentControl.Template>
                                             </ContentControl>

@@ -12,7 +12,9 @@
     FocusPrimaryButton="False">
 
     <controls:ContentPopup.Resources>
+        <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeChecked" Color="#D13438" />
         <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeCheckedPointerOver" Color="#FF6469" />
+        <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeCheckedPressed" Color="#992629" />
         <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeIndeterminate" Color="#D13438" />
         <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeIndeterminatePointerOver" Color="#FF6469" />
         <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeIndeterminatePressed" Color="#992629" />
