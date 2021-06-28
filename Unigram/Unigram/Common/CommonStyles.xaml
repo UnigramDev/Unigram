@@ -3825,16 +3825,17 @@
                             AutomationProperties.AccessibilityView="Raw" />
                         <Rectangle x:Name="PlaceholderRect" Visibility="Collapsed" Fill="{ThemeResource ListViewItemPlaceholderBackground}" />
                         <Border x:Name="MultiSelectSquare"
-                            Background="{ThemeResource CheckBoxCheckBackgroundFillUnchecked}"
-                            BorderBrush="{ThemeResource CheckBoxCheckBackgroundStrokeUnchecked}"
-                            BorderThickness="1"
-                            CornerRadius="2"
-                            Width="20"
-                            Height="20"
-                            Margin="12,0,0,0"
-                            VerticalAlignment="Center"
-                            HorizontalAlignment="Left"
-                            Visibility="Collapsed">
+                                BackgroundSizing="OuterBorderEdge"
+                                Background="{ThemeResource CheckBoxCheckBackgroundFillUnchecked}"
+                                BorderBrush="{ThemeResource CheckBoxCheckBackgroundStrokeUnchecked}"
+                                BorderThickness="1"
+                                CornerRadius="2"
+                                Width="20"
+                                Height="20"
+                                Margin="12,0,0,0"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Left"
+                                Visibility="Collapsed">
                             <Border.RenderTransform>
                                 <TranslateTransform x:Name="MultiSelectCheckBoxTransform" />
                             </Border.RenderTransform>
