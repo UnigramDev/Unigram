@@ -303,10 +303,12 @@ namespace winrt::Unigram::Native::Calls::implementation
 	}
 
 	//virtual void setVideoCapture(std::shared_ptr<VideoCaptureInterface> videoCapture) = 0;
-	void VoipManager::SetVideoCapture(Unigram::Native::Calls::VoipVideoCapture videoCapture) {
+	void VoipManager::SetVideoCapture(Unigram::Native::Calls::IVoipVideoCapture videoCapture) {
 		if (m_impl) {
 			if (videoCapture) {
-				auto implementation = winrt::get_self<implementation::VoipVideoCapture>(videoCapture);
+				auto implementation = winrt::get_self<VoipVideoCapture>(videoCapture
+					.as<winrt::default_interface<VoipVideoCapture>>());
+
 				m_capturer = implementation->m_impl;
 			}
 			else {

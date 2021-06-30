@@ -35,7 +35,7 @@ namespace Unigram.Native.Calls
 
         void ReceiveSignalingData(Windows.Foundation.Collections.IVector<byte> data);
         //virtual void setVideoCapture(std::shared_ptr<VideoCaptureInterface> videoCapture) = 0;
-        void SetVideoCapture(VoipVideoCapture videoCapture);
+        void SetVideoCapture(IVoipVideoCapture videoCapture);
         void SetRequestedVideoAspect(Single aspect);
 
         //void stop(std::function<void(FinalState)> completion);

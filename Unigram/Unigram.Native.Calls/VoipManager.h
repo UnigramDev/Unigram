@@ -51,7 +51,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 
 		void ReceiveSignalingData(IVector<uint8_t> const data);
 		//virtual void setVideoCapture(std::shared_ptr<VideoCaptureInterface> videoCapture) = 0;
-		void SetVideoCapture(Unigram::Native::Calls::VoipVideoCapture videoCapture);
+		void SetVideoCapture(Unigram::Native::Calls::IVoipVideoCapture videoCapture);
 		void SetRequestedVideoAspect(float aspect);
 
 		//void stop(std::function<void(FinalState)> completion);

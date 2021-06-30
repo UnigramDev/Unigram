@@ -158,7 +158,9 @@ namespace winrt::Unigram::Native::Calls::implementation
 	void VoipGroupManager::SetVideoCapture(Unigram::Native::Calls::IVoipVideoCapture videoCapture) {
 		if (m_impl) {
 			if (videoCapture) {
-				auto implementation = winrt::get_self<implementation::VoipVideoCapture>(videoCapture);
+				auto implementation = winrt::get_self<VoipVideoCapture>(videoCapture
+					.as<winrt::default_interface<VoipVideoCapture>>());
+
 				m_capturer = implementation->m_impl;
 			}
 			else {

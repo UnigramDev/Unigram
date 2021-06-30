@@ -330,7 +330,7 @@ namespace Unigram.Views
 
         private bool _capturerWasNull = true;
 
-        public void Connect(VoipVideoCapture capturer)
+        public void Connect(IVoipVideoCapture capturer)
         {
             if (_disposed)
             {
@@ -751,32 +751,24 @@ namespace Unigram.Views
             _protoService.Send(new DiscardCall(call.Id, false, (int)duration.TotalSeconds, _service.Capturer != null, relay));
         }
 
-        private void Video_Click(object sender, RoutedEventArgs e)
+        private async void Video_Click(object sender, RoutedEventArgs e)
         {
-            if (_service.Manager != null)
+            var capturer = await _service.ToggleCapturingAsync(_service.CaptureType == VoipCaptureType.Video
+                ? VoipCaptureType.None
+                : VoipCaptureType.Video);
+
+            if (capturer != null)
             {
-                if (_service.Capturer != null)
-                {
-                    ViewfinderPanel.Visibility = Visibility.Collapsed;
+                ViewfinderPanel.Visibility = Visibility.Visible;
 
-                    _service.Capturer.SetOutput(null);
-                    _service.Manager.SetVideoCapture(null);
-
-                    _service.Capturer.Dispose();
-                    _service.Capturer = null;
-                }
-                else
-                {
-                    ViewfinderPanel.Visibility = Visibility.Visible;
-
-                    _service.Capturer = new VoipVideoCapture(string.Empty);
-
-                    _service.Capturer.SetOutput(Viewfinder);
-                    _service.Manager.SetVideoCapture(_service.Capturer);
-                }
-
-                CheckConstraints();
+                capturer.SetOutput(Viewfinder);
             }
+            else
+            {
+                ViewfinderPanel.Visibility = Visibility.Collapsed;
+            }
+
+            CheckConstraints();
         }
 
         private void Audio_Click(object sender, RoutedEventArgs e)

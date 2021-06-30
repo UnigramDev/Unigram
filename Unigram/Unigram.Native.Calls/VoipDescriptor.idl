@@ -16,6 +16,6 @@ namespace Unigram.Native.Calls
         Boolean EnableP2p;
         String AudioInputId;
         String AudioOutputId;
-        VoipVideoCapture VideoCapture;
+        IVoipVideoCapture VideoCapture;
     }
 } // namespace Unigram.Native.Calls
