@@ -173,7 +173,7 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <microsoft:ProgressBar x:Name="Reading" VerticalAlignment="Stretch" Background="Transparent" Foreground="{ThemeResource SystemControlBackgroundBaseLowBrush}" Grid.ColumnSpan="3"/>
+                <ProgressBar x:Name="Reading" VerticalAlignment="Stretch" Background="Transparent" Foreground="{ThemeResource SystemControlBackgroundBaseLowBrush}" Grid.ColumnSpan="3"/>
 
                 <TextBlock Text="{x:Bind ViewModel.Title, Mode=OneWay}"
                            VerticalAlignment="Center"
