@@ -417,7 +417,7 @@ namespace Unigram.Controls.Chats
             }
             else if (SearchByEmoji(query, out string replacement) && replacement.Length > 0)
             {
-                if (prev is EmojiCollection && prev.Query.Equals(hashtag))
+                if (prev is EmojiCollection && prev.Query.Equals(replacement))
                 {
                     autocomplete = prev;
                     return true;
@@ -428,7 +428,7 @@ namespace Unigram.Controls.Chats
             }
             else if (SearchByCommand(query, out string command))
             {
-                if (prev is AutocompleteList<UserCommand> && prev.Query.Equals(hashtag))
+                if (prev is AutocompleteList<UserCommand> && prev.Query.Equals(command))
                 {
                     autocomplete = prev;
                     return true;
