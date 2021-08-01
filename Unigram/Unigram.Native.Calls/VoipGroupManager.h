@@ -37,6 +37,8 @@ namespace winrt::Unigram::Native::Calls::implementation
 		void SetAudioInputDevice(hstring id);
 		void SetVideoCapture(Unigram::Native::Calls::IVoipVideoCapture videoCapture);
 
+		void AddExternalAudioSamples(std::vector<uint8_t>&& samples);
+
 		void SetVolume(int32_t ssrc, double volume);
 		void SetRequestedVideoChannels(IVector<VoipVideoChannelInfo> descriptions);
 

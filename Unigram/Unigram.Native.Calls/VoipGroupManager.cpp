@@ -171,6 +171,12 @@ namespace winrt::Unigram::Native::Calls::implementation
 		}
 	}
 
+	void VoipGroupManager::AddExternalAudioSamples(std::vector<uint8_t>&& samples) {
+		if (m_impl) {
+			m_impl->addExternalAudioSamples(std::move(samples));
+		}
+	}
+
 	void VoipGroupManager::SetVolume(int32_t ssrc, double volume) {
 		if (m_impl) {
 			m_impl->setVolume(ssrc, volume);

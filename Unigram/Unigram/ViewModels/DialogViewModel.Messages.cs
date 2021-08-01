@@ -637,7 +637,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new GetMessageLink(chat.Id, message.Id, false, _threadId != 0));
+            var response = await ProtoService.SendAsync(new GetMessageLink(chat.Id, message.Id, 0, false, _threadId != 0));
             if (response is MessageLink link)
             {
                 var dataPackage = new DataPackage();

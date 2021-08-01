@@ -118,7 +118,7 @@ namespace Unigram.Services
                 }
 
                 _capturer = new VoipVideoCapture(await _videoWatcher.GetAndUpdateAsync());
-                _manager.SetVideoCapture(_capturer);
+                _manager?.SetVideoCapture(_capturer);
             }
             else if (type == VoipCaptureType.Screencast && _capturer is not VoipScreenCapture)
             {
@@ -138,7 +138,7 @@ namespace Unigram.Services
                 }
 
                 _capturer = new VoipScreenCapture(item);
-                _manager.SetVideoCapture(_capturer);
+                _manager?.SetVideoCapture(_capturer);
             }
 
             return _capturer;

@@ -387,13 +387,17 @@ namespace Unigram.Services
         {
             get
             {
-                var currentUser = _currentUser;
-                if (currentUser != null)
+                var call = _call;
+                if (call != null && call.CanEnableVideo)
                 {
-                    return currentUser.CanEnableVideo && !(currentUser.IsMutedForAllUsers && !currentUser.CanUnmuteSelf);
+                    var currentUser = _currentUser;
+                    if (currentUser != null)
+                    {
+                        return !(currentUser.IsMutedForAllUsers && !currentUser.CanUnmuteSelf);
+                    }
                 }
 
-                return _call?.CanStartVideo ?? false;
+                return false;
             }
         }
 
@@ -485,7 +489,7 @@ namespace Unigram.Services
             _screenManager?.SetConnectionMode(VoipGroupConnectionMode.None, false);
             _screenManager?.EmitJoinPayload(async (ssrc, payload) =>
             {
-                var response = await ProtoService.SendAsync(new StartGroupCallScreenSharing(groupCall.Id, payload));
+                var response = await ProtoService.SendAsync(new StartGroupCallScreenSharing(groupCall.Id, ssrc, payload));
                 if (response is Text json)
                 {
                     if (_screenManager == null)

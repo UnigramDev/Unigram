@@ -13,7 +13,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 	{
 		m_impl = tgcalls::VideoCaptureInterface::Create(
 			tgcalls::StaticThreads::getThreads(),
-			"GraphicsCaptureItem",
+			"GraphicsCaptureItem", true,
 			std::make_shared<tgcalls::UwpContext>(item));
 		m_impl->setOnFatalError([this] {
 			m_fatalErrorOccurred(*this, nullptr);
