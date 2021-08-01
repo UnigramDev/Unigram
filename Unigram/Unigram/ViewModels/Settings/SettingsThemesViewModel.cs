@@ -57,8 +57,6 @@ namespace Unigram.ViewModels.Settings
         public async Task SetThemeAsync(ThemeInfoBase info)
         {
             await _themeService.SetThemeAsync(info, !_darkOnly && NightMode == NightMode.Disabled);
-            RaisePropertyChanged(nameof(IsNightModeAvailable));
-
             await RefreshThemesAsync();
         }
 
@@ -146,35 +144,7 @@ namespace Unigram.ViewModels.Settings
             }
         };
 
-        //public bool IsSystemTheme
-        //{
-        //    get
-        //    {
-        //        return !Settings.Appearance.RequestedTheme.HasFlag(TelegramTheme.Brand);
-        //    }
-        //    set
-        //    {
-        //        Settings.Appearance.RequestedTheme = value ? GetRawTheme() : (GetRawTheme() | TelegramTheme.Brand);
-        //        RaisePropertyChanged();
-        //        RaisePropertyChanged(() => RequestedTheme);
-        //    }
-        //}
-
-        public bool IsNightModeAvailable
-        {
-            get
-            {
-                return Settings.Appearance.RequestedTheme == TelegramTheme.Light;
-            }
-        }
-
-        public NightMode NightMode
-        {
-            get
-            {
-                return Settings.Appearance.NightMode;
-            }
-        }
+        public NightMode NightMode => Settings.Appearance.NightMode;
 
         private bool _areCustomThemesAvailable;
         public bool AreCustomThemesAvailable

@@ -91,7 +91,6 @@
                     <controls:BadgeButton
                         Content="{CustomResource AutoNightTheme}"
                         Badge="{x:Bind ConvertNightMode(ViewModel.NightMode), Mode=OneWay}"
-                        Visibility="{x:Bind ViewModel.IsNightModeAvailable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                         Click="NightMode_Click"/>
                 </controls:HeaderedControl>
 
