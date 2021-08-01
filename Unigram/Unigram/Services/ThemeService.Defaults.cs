@@ -30,6 +30,7 @@ namespace Unigram.Services
                     { "PinnedMessageBorderBrush", ColorEx.FromHex(0xFF151D26) },
                     { "SystemAccentColor", ColorEx.FromHex(0xFF5288C1) },
                     { "ApplicationPageBackgroundThemeBrush", ColorEx.FromHex(0xFF1C2733) },
+                    { "ContentDialogBackground", ColorEx.FromHex(0xFF1C2733) },
                     { "TelegramSeparatorMediumBrush", ColorEx.FromHex(0xFF10171E) },
                     { "SystemControlDisabledChromeDisabledLowBrush", ColorEx.FromHex(0xFF7D8E98) },
                     { "ChatVerifiedBadgeBrush", ColorEx.FromHex(0xFF5288C1) },
