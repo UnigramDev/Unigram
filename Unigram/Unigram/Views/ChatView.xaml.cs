@@ -90,6 +90,8 @@ namespace Unigram.Views
         private readonly ZoomableListHandler _autocompleteZoomer;
         private readonly AnimatedListHandler<Sticker> _autocompleteHandler;
 
+        private MessageSender _floatingSender;
+
         public ChatView(Func<IDialogDelegate, DialogViewModel> getViewModel)
         {
             InitializeComponent();

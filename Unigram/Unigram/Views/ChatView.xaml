@@ -672,6 +672,16 @@
                 </ListView.Header>
             </chats:ChatListView>
 
+            <controls:ProfilePicture
+                x:Name="FloatingPhoto"
+                Click="Participant_Click"
+                IsTabStop="False"
+                Width="30"
+                Height="30"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Bottom"
+                Margin="12,0,0,6"/>
+
             <Border x:Name="Yolo2" x:Load="False" Visibility="Collapsed" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="12,5,12,7" Margin="12" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
                 <TextBlock x:Name="EmptyLabel" Foreground="White" Style="{StaticResource CaptionTextBlockStyle}"/>
             </Border>
