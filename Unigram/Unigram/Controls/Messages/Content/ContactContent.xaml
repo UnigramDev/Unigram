@@ -31,7 +31,7 @@
                             <TextBlock x:Name="Subtitle" Style="{StaticResource DisabledCaptionTextBlockStyle}"/>
                         </StackPanel>
 
-                        <Button x:Name="Button" Margin="0,0,0,6" Style="{StaticResource InstantViewButtonStyle}" Grid.Row="1" Grid.ColumnSpan="2">
+                        <Button x:Name="Button" Margin="0,6,0,6" Style="{StaticResource InstantViewButtonStyle}" Grid.Row="1" Grid.ColumnSpan="2">
                             <TextBlock Text="{CustomResource ViewDetails}" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}"/>
                         </Button>
                     </Grid>

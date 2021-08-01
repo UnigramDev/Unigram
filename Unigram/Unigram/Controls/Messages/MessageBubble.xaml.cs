@@ -937,7 +937,7 @@ namespace Unigram.Controls.Messages
                     Panel.Placeholder = content is MessageBigEmoji;
                 }
             }
-            else if ((content is MessageText webPage && webPage.WebPage != null) || content is MessageGame || (content is MessageContact contact && !string.IsNullOrEmpty(contact.Contact.Vcard)))
+            else if ((content is MessageText webPage && webPage.WebPage != null) || content is MessageGame)
             {
                 ContentPanel.Padding = new Thickness(0, 4, 0, 0);
                 Media.Margin = new Thickness(10, -6, 10, 0);
@@ -965,6 +965,15 @@ namespace Unigram.Controls.Messages
                 Grid.SetRow(Footer, caption ? 3 : 4);
                 Grid.SetRow(Message, 2);
                 Panel.Placeholder = caption;
+            }
+            else if (content is MessageContact)
+            {
+                ContentPanel.Padding = new Thickness(0, 4, 0, 0);
+                Media.Margin = new Thickness(10, 4, 10, 0);
+                FooterToNormal();
+                Grid.SetRow(Footer, 4);
+                Grid.SetRow(Message, 2);
+                Panel.Placeholder = false;
             }
             else
             {

@@ -64,17 +64,14 @@ namespace Unigram.Controls.Messages.Content
             if (user != null)
             {
                 Photo.Source = PlaceholderHelper.GetUser(message.ProtoService, user, 48);
-
-                Title.Text = user.GetFullName();
-                Subtitle.Text = PhoneNumber.Format(contact.Contact.PhoneNumber);
             }
             else
             {
                 Photo.Source = PlaceholderHelper.GetNameForUser(contact.Contact.FirstName, contact.Contact.LastName, 48);
-
-                Title.Text = contact.Contact.GetFullName();
-                Subtitle.Text = PhoneNumber.Format(contact.Contact.PhoneNumber);
             }
+
+            Title.Text = contact.Contact.GetFullName();
+            Subtitle.Text = PhoneNumber.Format(contact.Contact.PhoneNumber);
 
             Button.Visibility = string.IsNullOrEmpty(contact.Contact.Vcard) ? Visibility.Collapsed : Visibility.Visible;
         }
