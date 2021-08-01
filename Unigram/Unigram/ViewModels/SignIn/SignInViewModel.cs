@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -65,7 +66,17 @@ namespace Unigram.ViewModels.SignIn
 
                             if (mode == QrCodeMode.Primary)
                             {
-                                ProtoService.Send(new RequestQrCodeAuthentication());
+                                var userIds = new List<int>();
+
+                                foreach (var session in _lifetimeService.Items)
+                                {
+                                    if (Settings.UseTestDC == session.Settings.UseTestDC)
+                                    {
+                                        userIds.Add(session.UserId);
+                                    }
+                                }
+
+                                ProtoService.Send(new RequestQrCodeAuthentication(userIds));
                             }
 
                             return;
