@@ -81,7 +81,7 @@ namespace Unigram.Services.ViewService
 
                 if (ApiInformation.IsPropertyPresent("Windows.UI.ViewManagement.ApplicationView", "PersistedStateId"))
                 {
-                    newAppView.PersistedStateId = "Calls";
+                    newAppView.PersistedStateId = parameters.PersistentId;
                 }
 
                 var control = ViewLifetimeControl.GetForCurrentView();
@@ -97,7 +97,7 @@ namespace Unigram.Services.ViewService
                 preferences.CustomSize = new Size(parameters.Width, parameters.Height);
 
                 await ApplicationViewSwitcher.TryShowAsViewModeAsync(newAppView.Id, parameters.ViewMode, preferences);
-                newAppView.TryResizeView(new Size(parameters.Width, parameters.Height));
+                //newAppView.TryResizeView(new Size(parameters.Width, parameters.Height));
 
                 return control;
             }).ConfigureAwait(false);
