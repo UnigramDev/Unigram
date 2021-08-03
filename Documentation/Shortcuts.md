@@ -87,7 +87,7 @@
           </tr>
           <tr class="row20">
             <td class="column0 style2 s style2" rowspan="9">Folders</td>
-            <td class="column1 style1 s">First folder</td>
+            <td class="column1 style1 s">First folder (All chats)</td>
             <td class="column2 style1 s">Ctrl + 1</td>
           </tr>
           <tr class="row21">
@@ -119,11 +119,11 @@
             <td class="column2 style1 s">Ctrl + 8</td>
           </tr>
           <tr class="row28">
-            <td class="column1 style1 s">Ninth folder</td>
+            <td class="column1 style1 s">Archive</td>
             <td class="column2 style1 s">Ctrl + 9</td>
           </tr>
           <tr class="row27">
-            <td class="column0 style2 s style2" rowspan="6">Other shortcuts</td>
+            <td class="column0 style2 s style2" rowspan="7">Other shortcuts</td>
             <td class="column1 style2 s style2" rowspan="2">Go back</td>
             <td class="column2 style1 s">ESC</td>
           </tr>
@@ -143,15 +143,19 @@
             <td class="column2 style1 s">Ctrl + Arrow Up</td>
           </tr>
           <tr class="row32">
-            <td class="column1 style1 s">Close Unigram</td>
+            <td class="column1 style1 s">Close Unigram (Main window only)</td>
             <td class="column2 style1 s">Ctrl + Q</td>
           </tr>
           <tr class="row33">
+            <td class="column1 style1 s">Close current window</td>
+            <td class="column2 style1 s">Ctrl + W</td>
+          </tr>
+          <tr class="row34">
             <td class="column0 style2 s style2" rowspan="3">Record Notes</td>
             <td class="column1 style2 s style2">Start Record</td>
             <td class="column2 style1 s">Ctrl + R</td>
           </tr>
-          <tr class="row34">
+          <tr class="row35">
             <td class="column1 style2 s style2">Stop Record</td>
             <td class="column2 style1 s">Ctrl + D</td>
           </tr>
@@ -159,6 +163,3 @@
     </table>
   </body>
 </html>
-
-          
-          
