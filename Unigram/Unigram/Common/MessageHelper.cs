@@ -301,7 +301,7 @@ namespace Unigram.Common
                 {
                     if (info.ForComment)
                     {
-                        navigation.NavigateToThread(info.ChatId, info.Message.MessageThreadId, message: info.Message.Id);
+                        navigation.NavigateToThread(info.ChatId, info.Message.Id, message: info.Message.Id);
                     }
                     else
                     {
