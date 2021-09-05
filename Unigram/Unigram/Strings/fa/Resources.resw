@@ -169,6 +169,9 @@
   <data name="AccDescrExpandPanel" xml:space="preserve">
     <value>باز کردن صفحه</value>
   </data>
+  <data name="AccDescrFingerprint" xml:space="preserve">
+    <value>اثر انگشت</value>
+  </data>
   <data name="AccDescrForwarding" xml:space="preserve">
     <value>در حال هدایت از</value>
   </data>
@@ -635,6 +638,12 @@
   <data name="ActionGroupCallEnded" xml:space="preserve">
     <value>گفتگوی صوتی به پایان رسید (⁨{0}⁩)</value>
   </data>
+  <data name="ActionGroupCallEndedBy" xml:space="preserve">
+    <value>⁨un1⁩ به گفتگوی صوتی پایان داد (⁨{0}⁩)</value>
+  </data>
+  <data name="ActionGroupCallEndedByYou" xml:space="preserve">
+    <value>شما به گفتگوی صوتی پایان دادید (⁨{0}⁩)</value>
+  </data>
   <data name="ActionGroupCallInvited" xml:space="preserve">
     <value>⁨un1⁩، ⁨un2⁩ را به گفتگوی صوتی دعوت کرد</value>
   </data>
@@ -643,6 +652,9 @@
   </data>
   <data name="ActionGroupCallJustStarted" xml:space="preserve">
     <value>گفتگوی صوتی شروع شد</value>
+  </data>
+  <data name="ActionGroupCallScheduled" xml:space="preserve">
+    <value>گفتگوی صوتی در تاریخ ⁨{0}⁩ زمان‌بندی شد</value>
   </data>
   <data name="ActionGroupCallStarted" xml:space="preserve">
     <value>⁨un1⁩ یک گفتگوی صوتی را شروع کرد</value>
@@ -1157,6 +1169,29 @@
   <data name="AppNameBeta" xml:space="preserve">
     <value>تلگرام</value>
   </data>
+  <data name="AppUpdate" xml:space="preserve">
+    <value>به‌روزرسانی تلگرام</value>
+  </data>
+  <data name="AppUpdateChangelogEmpty" xml:space="preserve">
+    <value>**تازه‌ها**
+
+• رفع اشکال‌ها و بهبودها.</value>
+  </data>
+  <data name="AppUpdateDownloading" xml:space="preserve">
+    <value>در حال دانلود ⁨{0}⁩%...</value>
+  </data>
+  <data name="AppUpdateDownloadNow" xml:space="preserve">
+    <value>دانلود همین الان</value>
+  </data>
+  <data name="AppUpdateNow" xml:space="preserve">
+    <value>به‌روزرسانی همین الان</value>
+  </data>
+  <data name="AppUpdateRemindMeLater" xml:space="preserve">
+    <value>بعداً به من یادآوری کن</value>
+  </data>
+  <data name="AppUpdateVersionAndSize" xml:space="preserve">
+    <value>نسخه ⁨{0}⁩ • ⁨{1}⁩</value>
+  </data>
   <data name="April" xml:space="preserve">
     <value>آوریل</value>
   </data>
@@ -1401,7 +1436,7 @@
     <value>آیا از به اشتراک‌ گذاشتن شماره تلفن خود ⁨{0}⁩ با **⁨{1}⁩** اطمینان دارید؟</value>
   </data>
   <data name="AreYouSureUnblockContact" xml:space="preserve">
-    <value>آیا از رفع مسدودیت این مخاطب اطمینان دارید؟</value>
+    <value>آیا از رفع مسدودیت این کاربر اطمینان دارید؟</value>
   </data>
   <data name="AreYouSureWebSessions" xml:space="preserve">
     <value>آیا از قطع اتصال تمامی وبسایت‌هایی که از تلگرام برای ورود به آن‌ها استفاده کرده‌اید اطمینان دارید؟</value>
@@ -1581,11 +1616,14 @@
 
 برای تأیید ورود به حساب کاربری تلگرام، لطفاً به قسمت تنظیمات > دستگاه‌ها > اسکن QR مراجعه کرده و کد را اسکن کنید.</value>
   </data>
+  <data name="AutoDelete1Month" xml:space="preserve">
+    <value>1 ماه</value>
+  </data>
   <data name="AutoDelete24Hours" xml:space="preserve">
     <value>24 ساعت</value>
   </data>
   <data name="AutoDelete7Days" xml:space="preserve">
-    <value>7 روز</value>
+    <value>1 هفته</value>
   </data>
   <data name="AutoDeleteAlertChannelInfo" xml:space="preserve">
     <value>پس از گذشت مدت زمان خاصی، پیام‌های جدید برای مشترکین این کانال به صورت خودکار حذف می‌شوند.</value>
@@ -1870,6 +1908,9 @@
   <data name="BackgroundColorPreviewLine2" xml:space="preserve">
     <value>سالمون اسم ماهی است، نه رنگ.</value>
   </data>
+  <data name="BackgroundColors" xml:space="preserve">
+    <value>رنگ‌ها</value>
+  </data>
   <data name="BackgroundColorSinglePreviewLine1" xml:space="preserve">
     <value>جهت اعمال پس‌زمینه بر روی «تنظیم» بزنید.</value>
   </data>
@@ -1902,6 +1943,18 @@
   </data>
   <data name="BackgroundSearchColor" xml:space="preserve">
     <value>رنگ:</value>
+  </data>
+  <data name="BackgroundToChats" xml:space="preserve">
+    <value>پس‌زمینه در **⁨{0}⁩** به اشتراک گذاشته شد.</value>
+  </data>
+  <data name="BackgroundToGroup" xml:space="preserve">
+    <value>پس‌زمینه در **⁨{0}⁩** به اشتراک گذاشته شد.</value>
+  </data>
+  <data name="BackgroundToSavedMessages" xml:space="preserve">
+    <value>پس‌زمینه در **پیام‌های ذخیره شده** به اشتراک گذاشته شد.</value>
+  </data>
+  <data name="BackgroundToUser" xml:space="preserve">
+    <value>پس‌زمینه با **⁨{0}⁩** به اشتراک گذاشته شد.</value>
   </data>
   <data name="BadgeNumber" xml:space="preserve">
     <value>شمارنده نشانگر</value>
@@ -2065,6 +2118,9 @@
   <data name="BotShare" xml:space="preserve">
     <value>به اشتراک گذاشتن</value>
   </data>
+  <data name="BotsMenuTitle" xml:space="preserve">
+    <value>فهرست</value>
+  </data>
   <data name="BotStart" xml:space="preserve">
     <value>شروع</value>
   </data>
@@ -2209,6 +2265,15 @@
   <data name="CallViaTelegram" xml:space="preserve">
     <value>تماس تلگرامی</value>
   </data>
+  <data name="CallVideoPin" xml:space="preserve">
+    <value>سنجاق کردن</value>
+  </data>
+  <data name="CallVideoPreviewTitle" xml:space="preserve">
+    <value>پیش‌نمایش</value>
+  </data>
+  <data name="CallVideoUnpin" xml:space="preserve">
+    <value>برداشتن سنجاق</value>
+  </data>
   <data name="CameraPermissionText" xml:space="preserve">
     <value>برای اجازه دسترسی به دوربین ضربه بزنید</value>
   </data>
@@ -2252,6 +2317,15 @@
   <data name="CancelPasswordQuestion" xml:space="preserve">
     <value>آیا از لغو راه‌اندازی تأیید دو مرحله‌ای اطمینان دارید؟</value>
   </data>
+  <data name="CancelPasswordReset" xml:space="preserve">
+    <value>فرآیند بازنشانی گذرواژه لغو شود؟ در صورتی که بعداً درخواست بازنشانی جدیدی دهید، 7 روز دیگر طول خواهید کشید.</value>
+  </data>
+  <data name="CancelPasswordResetNo" xml:space="preserve">
+    <value>خیر</value>
+  </data>
+  <data name="CancelPasswordResetYes" xml:space="preserve">
+    <value>بله</value>
+  </data>
   <data name="CancelPollAlertText" xml:space="preserve">
     <value>آیا از لغو این نظرسنجی اطمینان دارید؟</value>
   </data>
@@ -2260,6 +2334,9 @@
   </data>
   <data name="CancelRegistration" xml:space="preserve">
     <value>لغو ثبت نام</value>
+  </data>
+  <data name="CancelReset" xml:space="preserve">
+    <value>لغو بازنشانی</value>
   </data>
   <data name="CancelSending" xml:space="preserve">
     <value>لغو ارسال</value>
@@ -2299,6 +2376,9 @@
   </data>
   <data name="ChangeChatBackground" xml:space="preserve">
     <value>تغییر پس‌زمینه گفتگو</value>
+  </data>
+  <data name="ChangeColorToColor" xml:space="preserve">
+    <value>آیا می‌خواهید از پس‌زمینه انتخاب شده فعلی خود استفاده کنید یا آن را برای این پوسته به حالت پیش‌فرض بازنشانی کنید؟</value>
   </data>
   <data name="ChangeLanguageLater" xml:space="preserve">
     <value>شما می‌توانید بعداً زبان خود را در قسمت تنظیمات تغییر دهید.</value>
@@ -2445,6 +2525,9 @@
   </data>
   <data name="ChannelDeleteMenu" xml:space="preserve">
     <value>حذف کانال</value>
+  </data>
+  <data name="ChannelDescriptionChanged" xml:space="preserve">
+    <value>توضیحات کانال به‌روزرسانی شد.</value>
   </data>
   <data name="ChannelDiscuss" xml:space="preserve">
     <value>بحث کردن</value>
@@ -2652,6 +2735,9 @@
   <data name="ChannelSubscribers" xml:space="preserve">
     <value>مشترکین</value>
   </data>
+  <data name="ChannelTitleChanged" xml:space="preserve">
+    <value>عنوان کانال به‌روزرسانی شد.</value>
+  </data>
   <data name="ChannelTooMuch" xml:space="preserve">
     <value>متأسفانه شما عضو گروه‌ها و کانال‌های زیادی هستید. لطفاً پیش از ایجاد گروه یا کانال جدید برخی از آن‌ها را ترک کنید.</value>
   </data>
@@ -2823,6 +2909,9 @@
   <data name="ChatsArchived" xml:space="preserve">
     <value>گفتگوها بایگانی شدند.</value>
   </data>
+  <data name="ChatsDeletedUndo" xml:space="preserve">
+    <value>گفتگوها حذف شدند.</value>
+  </data>
   <data name="ChatSetLocation" xml:space="preserve">
     <value>تنظیم موقعیت مکانی</value>
   </data>
@@ -2951,6 +3040,39 @@
   </data>
   <data name="Checking" xml:space="preserve">
     <value>در حال بررسی...</value>
+  </data>
+  <data name="CheckPassword" xml:space="preserve">
+    <value>بررسی گذرواژه</value>
+  </data>
+  <data name="CheckPasswordBackToSettings" xml:space="preserve">
+    <value>بازگشت به تنظیمات</value>
+  </data>
+  <data name="CheckPasswordInfo" xml:space="preserve">
+    <value>آیا همچنان گذرواژه خود را به یاد دارید؟</value>
+  </data>
+  <data name="CheckPasswordPerfect" xml:space="preserve">
+    <value>عالی!</value>
+  </data>
+  <data name="CheckPasswordPerfectInfo" xml:space="preserve">
+    <value>شما همچنان گذرواژه خود را به یاد دارید.</value>
+  </data>
+  <data name="CheckPasswordWrong" xml:space="preserve">
+    <value>شما گذرواژه را اشتباه وارد کردید.</value>
+  </data>
+  <data name="CheckPhoneNumber" xml:space="preserve">
+    <value>آیا شماره تلفن شما همچنان ⁨{0}⁩ است؟</value>
+  </data>
+  <data name="CheckPhoneNumberInfo" xml:space="preserve">
+    <value>جهت اطمینان از این که همیشه بتوانید وارد حساب کاربری تلگرام خود شوید، شماره تلفن خود را به‌روز نگه دارید. **اطلاعات بیشتر**</value>
+  </data>
+  <data name="CheckPhoneNumberLearnMoreUrl" xml:space="preserve">
+    <value>https://telegram.org/faq#q-i-have-a-new-phone-number-what-do-i-do</value>
+  </data>
+  <data name="CheckPhoneNumberNo" xml:space="preserve">
+    <value>خیر</value>
+  </data>
+  <data name="CheckPhoneNumberYes" xml:space="preserve">
+    <value>بله</value>
   </data>
   <data name="ChooseCountry" xml:space="preserve">
     <value>کشورتان را انتخاب کنید</value>
@@ -3555,6 +3677,24 @@
   <data name="DaysLeft_zero" xml:space="preserve">
     <value/>
   </data>
+  <data name="DaysSchedule_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="DaysSchedule_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="DaysSchedule_one" xml:space="preserve">
+    <value>⁨{0}⁩ روز</value>
+  </data>
+  <data name="DaysSchedule_other" xml:space="preserve">
+    <value>⁨{0}⁩ روز</value>
+  </data>
+  <data name="DaysSchedule_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="DaysSchedule_zero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="Deactivate" xml:space="preserve">
     <value>حذف همین الان</value>
   </data>
@@ -3566,6 +3706,9 @@
   </data>
   <data name="DebugMenuCallSettings" xml:space="preserve">
     <value>تنظیمات تماس</value>
+  </data>
+  <data name="DebugMenuCheckAppUpdate" xml:space="preserve">
+    <value>بررسی به‌روزرسانی برنامه</value>
   </data>
   <data name="DebugMenuClearMediaCache" xml:space="preserve">
     <value>پاک کردن حافظه موقت رسانه ارسالی</value>
@@ -3608,6 +3751,9 @@
   </data>
   <data name="DebugMenuResetDialogs" xml:space="preserve">
     <value>بازنشانی گفتگو‌ها</value>
+  </data>
+  <data name="DebugSendLastLogs" xml:space="preserve">
+    <value>ارسال آخرین گزارش‌ها</value>
   </data>
   <data name="DebugSendLogs" xml:space="preserve">
     <value>ارسال گزارشات</value>
@@ -3709,7 +3855,7 @@
     <value>حذف برای همه</value>
   </data>
   <data name="DeleteChannelForAll" xml:space="preserve">
-    <value>حذف برای تمامی مشترکان</value>
+    <value>حذف برای تمامی مشترکین</value>
   </data>
   <data name="DeleteChat" xml:space="preserve">
     <value>حذف و خروج</value>
@@ -4376,6 +4522,9 @@
   <data name="EnterYourPasscode" xml:space="preserve">
     <value>گذرواژه خود را وارد کنید</value>
   </data>
+  <data name="EnterYourTelegramPasscode" xml:space="preserve">
+    <value>گذرواژه تلگرام خود را وارد کنید</value>
+  </data>
   <data name="ErrorOccurred" xml:space="preserve">
     <value>خطایی رخ داد.</value>
   </data>
@@ -4576,6 +4725,9 @@
   <data name="EventLogPreviousGroupDescription" xml:space="preserve">
     <value>توضیحات قبلی</value>
   </data>
+  <data name="EventLogPreviousGroupTheme" xml:space="preserve">
+    <value>پوسته قبلی</value>
+  </data>
   <data name="EventLogPreviousLink" xml:space="preserve">
     <value>لینک قبلی</value>
   </data>
@@ -4720,13 +4872,13 @@
     <value>⁨un1⁩ سنجاق یک پیام را برداشت</value>
   </data>
   <data name="EventLogVoiceChatAllowedToSpeak" xml:space="preserve">
-    <value>⁨un1⁩ به شرکت کنندگان جدید در گفتگوی صوتی اجازه صحبت داد</value>
+    <value>⁨un1⁩ به شرکت کنندگان جدید گفتگوی صوتی اجازه صحبت داد</value>
   </data>
   <data name="EventLogVoiceChatMuted" xml:space="preserve">
     <value>⁨un1⁩، ⁨un2⁩ را در یک گفتگوی صوتی بی‌صدا کرد</value>
   </data>
   <data name="EventLogVoiceChatNotAllowedToSpeak" xml:space="preserve">
-    <value>⁨un1⁩ شرکت کنندگان جدید در گفتگوی صوتی را بی‌صدا کرد</value>
+    <value>⁨un1⁩ شرکت کنندگان جدید گفتگوی صوتی را بی‌صدا کرد</value>
   </data>
   <data name="EventLogVoiceChatUnmuted" xml:space="preserve">
     <value>⁨un1⁩، ⁨un2⁩ را در یک گفتگوی صوتی صدادار کرد</value>
@@ -5475,6 +5627,9 @@
   <data name="GalleryPermissionText" xml:space="preserve">
     <value>برای اجازه دسترسی به گالری ضربه بزنید</value>
   </data>
+  <data name="GameCantSendSecretChat" xml:space="preserve">
+    <value>متأسفانه بازی‌ها نمی‌توانند به گفتگوهای محرمانه ارسال شوند.</value>
+  </data>
   <data name="General" xml:space="preserve">
     <value>عمومی </value>
   </data>
@@ -5798,6 +5953,24 @@
   <data name="HoursBold_zero" xml:space="preserve">
     <value/>
   </data>
+  <data name="HoursSchedule_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="HoursSchedule_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="HoursSchedule_one" xml:space="preserve">
+    <value>⁨{0}⁩ ساعت</value>
+  </data>
+  <data name="HoursSchedule_other" xml:space="preserve">
+    <value>⁨{0}⁩ ساعت</value>
+  </data>
+  <data name="HoursSchedule_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="HoursSchedule_zero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="Hybrid" xml:space="preserve">
     <value>ترکیبی</value>
   </data>
@@ -5809,6 +5982,9 @@
   </data>
   <data name="ImporImportingService" xml:space="preserve">
     <value>در حال انتقال پیام‌ها و رسانه‌ها...</value>
+  </data>
+  <data name="ImporImportingStickersService" xml:space="preserve">
+    <value>در حال انتقال استیکرها...</value>
   </data>
   <data name="Import" xml:space="preserve">
     <value>انتقال</value>
@@ -5885,6 +6061,54 @@
   </data>
   <data name="ImportNotAdmin" xml:space="preserve">
     <value>برای انتقال پیام‌ها در گروه، شما باید در آن مدیر باشید.</value>
+  </data>
+  <data name="ImportStickers" xml:space="preserve">
+    <value>انتقال ⁨{0}⁩</value>
+  </data>
+  <data name="ImportStickersDoneInfo" xml:space="preserve">
+    <value>استیکرهای بیشتری را به تلگرام انتقال دهید و آن‌ها را با دوستان خود به اشتراک بگذارید.</value>
+  </data>
+  <data name="ImportStickersDoneTitle" xml:space="preserve">
+    <value>استیکرها با موفقیت انتقال داده شدند!</value>
+  </data>
+  <data name="ImportStickersEnterName" xml:space="preserve">
+    <value>نام را وارد کنید</value>
+  </data>
+  <data name="ImportStickersEnterNameInfo" xml:space="preserve">
+    <value>لطفاً برای بسته خود نامی انتخاب کنید.</value>
+  </data>
+  <data name="ImportStickersEnterUrlInfo" xml:space="preserve">
+    <value>شما می‌توانید از 9-0، a-z و _ استفاده کنید.</value>
+  </data>
+  <data name="ImportStickersImportingTitle" xml:space="preserve">
+    <value>انتقال استیکرها</value>
+  </data>
+  <data name="ImportStickersLinkAvailable" xml:space="preserve">
+    <value>این لینک در دسترس است.</value>
+  </data>
+  <data name="ImportStickersLinkChecking" xml:space="preserve">
+    <value>در حال بررسی لینک...</value>
+  </data>
+  <data name="ImportStickersLinkInvalid" xml:space="preserve">
+    <value>متأسفانه این لینک نامعتبر است.</value>
+  </data>
+  <data name="ImportStickersLinkInvalidLong" xml:space="preserve">
+    <value>لینک نباید از 32 کاراکتر بیشتر باشد.</value>
+  </data>
+  <data name="ImportStickersLinkInvalidShort" xml:space="preserve">
+    <value>لینک باید حداقل 5 کاراکتر داشته باشد.</value>
+  </data>
+  <data name="ImportStickersLinkTaken" xml:space="preserve">
+    <value>متأسفانه این لینک قبلاً گرفته شده است.</value>
+  </data>
+  <data name="ImportStickersProcessing" xml:space="preserve">
+    <value>در حال پردازش استیکرها...</value>
+  </data>
+  <data name="ImportStickersRemove" xml:space="preserve">
+    <value>حذف از انتقال</value>
+  </data>
+  <data name="ImportStickersRemoveMenu" xml:space="preserve">
+    <value>حذف از انتقال</value>
   </data>
   <data name="ImportToChat" xml:space="preserve">
     <value>آیا می‌خواهید پیام‌ها از طرف **⁨{0}⁩** را به گروه **⁨{1}⁩** انتقال دهید؟
@@ -6092,11 +6316,26 @@
   <data name="InvLinkToUser" xml:space="preserve">
     <value>لینک دعوت به **⁨{0}⁩** ارسال شد.</value>
   </data>
+  <data name="InvoiceCantForwardSecretChat" xml:space="preserve">
+    <value>متأسفانه صورت‌حساب‌ها را نمی‌توان به گفتگوهای محرمانه هدایت کرد.</value>
+  </data>
+  <data name="InvoiceCantSendSecretChat" xml:space="preserve">
+    <value>متأسفانه صورت‌حساب‌ها را نمی‌توان به گفتگوهای محرمانه ارسال کرد.</value>
+  </data>
   <data name="IsRecordingAudio" xml:space="preserve">
     <value>⁨{0}⁩ در حال ضبط پیام صوتی است...</value>
   </data>
   <data name="IsRecordingRound" xml:space="preserve">
     <value>⁨{0}⁩ در حال ضبط پیام ویدیویی است...</value>
+  </data>
+  <data name="IsRecordingVideo" xml:space="preserve">
+    <value>⁨{0}⁩ در حال ضبط ویدیو است...</value>
+  </data>
+  <data name="IsSelectingContact" xml:space="preserve">
+    <value>⁨{0}⁩ در حال انتخاب مخاطب برای به اشتراک گذاری است...</value>
+  </data>
+  <data name="IsSelectingLocation" xml:space="preserve">
+    <value>⁨{0}⁩ در حال انتخاب موقعیت مکانی برای به اشتراک گذاری است...</value>
   </data>
   <data name="IsSendingAudio" xml:space="preserve">
     <value>⁨{0}⁩ در حال ارسال صدا است...</value>
@@ -6446,7 +6685,7 @@
     <value/>
   </data>
   <data name="LinksCreatedByOtherAdmins" xml:space="preserve">
-    <value>لینک‌های دعوت ایجاد شده توسط سایر مدیران</value>
+    <value>لینک‌های ایجاد شده توسط سایر مدیران</value>
   </data>
   <data name="LinksCreatedByThisAdmin" xml:space="preserve">
     <value>لینک‌های ایجاد شده توسط این مدیر</value>
@@ -6553,7 +6792,7 @@
     <value>تلاش‌های ناتمام جهت ورود به حساب کاربری</value>
   </data>
   <data name="LoginAttemptsInfo" xml:space="preserve">
-    <value>دستگاه‌های بالا هیچ گونه دسترسی به حساب کاربری شما ندارند. در این دستگاه‌ها کد به درستی وارد شده، اما گذرواژه درستی وارد نشده بود.</value>
+    <value>دستگاه‌های بالا هیچ گونه دسترسی به حساب کاربری شما ندارند. در این دستگاه‌ها کد به درستی وارد شده، اما گذرواژه دو مرحله‌ای درست وارد نشد.</value>
   </data>
   <data name="LoginPassword" xml:space="preserve">
     <value>گذرواژه</value>
@@ -6828,6 +7067,24 @@
   <data name="Members_zero" xml:space="preserve">
     <value/>
   </data>
+  <data name="MembersAreSpeakingToast_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MembersAreSpeakingToast_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MembersAreSpeakingToast_one" xml:space="preserve">
+    <value>⁨un1⁩ در حال صحبت‌ است</value>
+  </data>
+  <data name="MembersAreSpeakingToast_other" xml:space="preserve">
+    <value>⁨un1⁩ در حال صحبت‌ هستند</value>
+  </data>
+  <data name="MembersAreSpeakingToast_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MembersAreSpeakingToast_zero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="MembersCount" xml:space="preserve">
     <value>⁨{0}⁩ از ⁨{1}⁩ انتخاب شده</value>
   </data>
@@ -6982,10 +7239,10 @@
     <value/>
   </data>
   <data name="MessagesDeletedHint_one" xml:space="preserve">
-    <value>⁨{0}⁩ پیام پاک شد</value>
+    <value>پیام پاک شد</value>
   </data>
   <data name="MessagesDeletedHint_other" xml:space="preserve">
-    <value>⁨{0}⁩ پیام پاک شدند</value>
+    <value>⁨{0}⁩ پیام پاک شد</value>
   </data>
   <data name="MessagesDeletedHint_two" xml:space="preserve">
     <value/>
@@ -7098,8 +7355,26 @@
   <data name="MinutesBold_zero" xml:space="preserve">
     <value/>
   </data>
+  <data name="MinutesSchedule_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MinutesSchedule_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MinutesSchedule_one" xml:space="preserve">
+    <value>⁨{0}⁩ دقیقه</value>
+  </data>
+  <data name="MinutesSchedule_other" xml:space="preserve">
+    <value>⁨{0}⁩ دقیقه</value>
+  </data>
+  <data name="MinutesSchedule_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MinutesSchedule_zero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="MobileHidden" xml:space="preserve">
-    <value>تلفن پنهان</value>
+    <value>شماره تلفن پنهان</value>
   </data>
   <data name="MobileHiddenExceptionInfo" xml:space="preserve">
     <value>شماره تلفن شما هنگامی که ⁨{0}⁩ شما را به عنوان مخاطب اضافه کند، قابل مشاهده خواهد بود.</value>
@@ -7284,6 +7559,9 @@
   <data name="NewMessageTitle" xml:space="preserve">
     <value>پیام جدید</value>
   </data>
+  <data name="NewPassword" xml:space="preserve">
+    <value>گذرواژه جدید</value>
+  </data>
   <data name="NewPoll" xml:space="preserve">
     <value>نظرسنجی جدید</value>
   </data>
@@ -7378,7 +7656,7 @@
     <value>با زدن دکمه مداد در گوشه پایین سمت چپ پیام‌رسانی را شروع کنید.</value>
   </data>
   <data name="NoComments" xml:space="preserve">
-    <value>هنوز دیدگاهی ارسال نشده است...</value>
+    <value>هنوز دیدگاهی در اینجا ارسال نشده است...</value>
   </data>
   <data name="NoContacts" xml:space="preserve">
     <value>هنوز مخاطبی موجود نیست</value>
@@ -7428,7 +7706,7 @@
     <value>بدون محدودیت</value>
   </data>
   <data name="NoMailInstalled" xml:space="preserve">
-    <value>لطفاً ایمیلی به sms@stel.com ارسال کرده و مشکلتان مطرح کنید.</value>
+    <value>لطفاً ایمیلی به sms@stel.com ارسال کرده و مشکلتان را مطرح کنید</value>
   </data>
   <data name="NoMasks" xml:space="preserve">
     <value>هنوز ماسکی موجود نیست</value>
@@ -7483,6 +7761,13 @@
   </data>
   <data name="NoRecent" xml:space="preserve">
     <value>مورد اخیری موجود نیست</value>
+  </data>
+  <data name="NoRecentCalls" xml:space="preserve">
+    <value>تماس اخیری وجود ندارد</value>
+  </data>
+  <data name="NoRecentCallsInfo" xml:space="preserve">
+    <value>تماس‌های صوتی و ویدیویی اخیر شما
+در اینجا نشان داده خواهند شد.</value>
   </data>
   <data name="NoRecentGIFs" xml:space="preserve">
     <value>گیف اخیری موجود نیست</value>
@@ -8998,6 +9283,9 @@
   <data name="PasswordHintText" xml:space="preserve">
     <value>برای گذرواژه خود یک راهنما ایجاد کنید</value>
   </data>
+  <data name="PasswordHintTextLogin" xml:space="preserve">
+    <value>برای گذرواژه خود یک راهنما ایجاد کنید.</value>
+  </data>
   <data name="PasswordOff" xml:space="preserve">
     <value>غیرفعال</value>
   </data>
@@ -9035,7 +9323,7 @@
     <value>ذخیره اطلاعات پرداخت</value>
   </data>
   <data name="PaymentCardSavePaymentInformationInfoLine1" xml:space="preserve">
-    <value>شما می‌توانید اطلاعات پرداخت خود را برای استفاده‌های بعدی ذخیره کنید.</value>
+    <value>شما می‌توانید اطلاعات پرداخت خود را برای استفاده‌های بعدی ذخیره کنید. این اطلاعات مستقیماً در ارائه دهنده پرداخت شما ذخیره می‌شود. تلگرام به اطلاعات کارت اعتباری شما دسترسی ندارد.</value>
   </data>
   <data name="PaymentCardSavePaymentInformationInfoLine2" xml:space="preserve">
     <value>لطفاً برای فعال کردن این گزینه *تأیید دو‌مرحله‌ای را فعال کنید*.</value>
@@ -9051,6 +9339,9 @@
   </data>
   <data name="PaymentCheckoutMethod" xml:space="preserve">
     <value>روش پرداخت</value>
+  </data>
+  <data name="PaymentCheckoutMethodNewCard" xml:space="preserve">
+    <value>کارت جدید</value>
   </data>
   <data name="PaymentCheckoutName" xml:space="preserve">
     <value>نام</value>
@@ -9081,6 +9372,9 @@
   </data>
   <data name="PaymentFailed" xml:space="preserve">
     <value>متأسفانه پرداخت رد شد.</value>
+  </data>
+  <data name="PaymentInfoHint" xml:space="preserve">
+    <value>شما مبلغ **⁨{0}⁩** برای **⁨{1}⁩** پرداخت کردید.</value>
   </data>
   <data name="PaymentInvoice" xml:space="preserve">
     <value>صورت‌حساب</value>
@@ -9178,8 +9472,17 @@
   <data name="PaymentTestInvoice" xml:space="preserve">
     <value>صورت‌حساب آزمایشی</value>
   </data>
+  <data name="PaymentTip" xml:space="preserve">
+    <value>انعام</value>
+  </data>
+  <data name="PaymentTipOptional" xml:space="preserve">
+    <value>انعام (اختیاری)</value>
+  </data>
   <data name="PaymentTransactionMessage" xml:space="preserve">
     <value>آیا از انتقال ⁨{0}⁩ به ربات ⁨{1}⁩ برای ⁨{2}⁩ اطمینان دارید؟</value>
+  </data>
+  <data name="PaymentTransactionMessage2" xml:space="preserve">
+    <value>مبلغ **⁨{0}⁩** به ربات **⁨{1}⁩** برای **⁨{2}⁩** انتقال داده شود؟</value>
   </data>
   <data name="PaymentTransactionReview" xml:space="preserve">
     <value>بررسی تراکنش</value>
@@ -9193,7 +9496,7 @@
   <data name="PaymentWarningText" xml:space="preserve">
     <value>تلگرام و ⁨{0}⁩ قادر به دسترسی به اطلاعات کارت اعتباری شما نخواهند بود. جزئیات کارت اعتباری تنها توسط سیستم پرداخت ⁨{1}⁩ مورد استفاده قرار خواهد گرفت.
 
-پرداخت‌ها مستقیماً به توسعه‌دهنده ⁨{0}⁩ ارسال خواهند شد. تلگرام هیچ تضمینی ارائه نمی‌دهد، بنابراین با مسئولیت خودتان ادامه دهید. در صورت بروز هر گونه مشکل، با توسعه‌دهنده ⁨{0}⁩ بانک خود تماس بگیرید.</value>
+پرداخت‌ها مستقیماً به توسعه‌دهنده ⁨{0}⁩ ارسال خواهند شد. تلگرام هیچ تضمینی ارائه نمی‌دهد، بنابراین با مسئولیت خودتان ادامه دهید. در صورت بروز هر گونه مشکل، با توسعه‌دهنده ⁨{0}⁩ یا بانک خود تماس بگیرید.</value>
   </data>
   <data name="PendingEmailText" xml:space="preserve">
     <value>ایمیل بازیابی شما ⁨{0}⁩ هنوز فعال نشده و در انتظار تأیید است.</value>
@@ -9477,6 +9780,24 @@
   <data name="PinMessageAlertTitle" xml:space="preserve">
     <value>سنجاق کردن پیام</value>
   </data>
+  <data name="PinnedDialogsCount_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PinnedDialogsCount_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PinnedDialogsCount_one" xml:space="preserve">
+    <value>گفتگو سنجاق شد</value>
+  </data>
+  <data name="PinnedDialogsCount_other" xml:space="preserve">
+    <value>⁨{0}⁩ گفتگو سنجاق شدند</value>
+  </data>
+  <data name="PinnedDialogsCount_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PinnedDialogsCount_zero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="PinnedMessage" xml:space="preserve">
     <value>پیام سنجاق شده</value>
   </data>
@@ -9542,6 +9863,15 @@
   </data>
   <data name="PleaseEnterNewFirstPassword" xml:space="preserve">
     <value>گذرواژه جدیدی را وارد کنید</value>
+  </data>
+  <data name="PleaseEnterNewFirstPasswordHint" xml:space="preserve">
+    <value>گذرواژه جدید را وارد کنید</value>
+  </data>
+  <data name="PleaseEnterNewFirstPasswordLogin" xml:space="preserve">
+    <value>شما اکنون می‌توانید گذرواژه جدیدی تنظیم کنید که برای ورود به حساب کاربری شما از آن استفاده خواهد شد.</value>
+  </data>
+  <data name="PleaseEnterNewSecondPasswordHint" xml:space="preserve">
+    <value>گذرواژه جدید را دوباره وارد کنید</value>
   </data>
   <data name="PleaseEnterPassword" xml:space="preserve">
     <value>گذرواژه‌ جدید خود را وارد کنید</value>
@@ -9682,13 +10012,13 @@
     <value>پیام‌های هدایت شده</value>
   </data>
   <data name="PrivacyForwardsContacts" xml:space="preserve">
-    <value>در صورت اجازه توسط تنظیمات پایین پیوند داده شود</value>
+    <value>در صورت اجازه توسط تنظیمات پایین، لینک داده شود</value>
   </data>
   <data name="PrivacyForwardsEverybody" xml:space="preserve">
-    <value>به حساب کاربری شما پیوند داده شود</value>
+    <value>به حساب کاربری شما لینک داده شود</value>
   </data>
   <data name="PrivacyForwardsInfo" xml:space="preserve">
-    <value>پیام‌های ارسالی شما در هنگام هدایت شدن توسط سایر کاربران به حساب کاربری شما پیوند داده نمی‌شوند.</value>
+    <value>پیام‌های ارسالی شما در هنگام هدایت شدن توسط سایر کاربران به حساب کاربری شما لینک داده نمی‌شوند.</value>
   </data>
   <data name="PrivacyForwardsInfo2" xml:space="preserve">
     <value>شما می‌توانید کاربران یا کل یک گروه را به عنوان استثناهایی اضافه کنید که جایگزین تنظیمات بالا خواهند شد.</value>
@@ -9731,6 +10061,15 @@
   </data>
   <data name="PrivacyPaymentsClearInfo" xml:space="preserve">
     <value>شما می‌توانید تمامی اطلاعات ارسال خود را حذف کرده و از ارائه‌دهندگان خدمات پرداختی بخواهید کارت‌های بانکی ذخیره شده شما را حذف کنند. توجه داشته باشید که تلگرام به هیچ وجه اطلاعات کارت‌های بانکی شما را ذخیره نمی کند.</value>
+  </data>
+  <data name="PrivacyPaymentsPaymentInfoCleared" xml:space="preserve">
+    <value>اطلاعات پرداخت پاک شد.</value>
+  </data>
+  <data name="PrivacyPaymentsPaymentShippingCleared" xml:space="preserve">
+    <value>اطلاعات پرداخت و ارسال پاک شدند.</value>
+  </data>
+  <data name="PrivacyPaymentsShippingInfoCleared" xml:space="preserve">
+    <value>اطلاعات ارسال پاک شد.</value>
   </data>
   <data name="PrivacyPhone" xml:space="preserve">
     <value>شماره تلفن</value>
@@ -10022,6 +10361,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="RecordingRound" xml:space="preserve">
     <value>در حال ضبط پیام ویدیویی...</value>
   </data>
+  <data name="RecordingVideoStatus" xml:space="preserve">
+    <value>در حال ضبط ویدیو...</value>
+  </data>
   <data name="RecoveryEmail" xml:space="preserve">
     <value>ایمیل بازیابی</value>
   </data>
@@ -10182,7 +10524,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>ارسال گزارش</value>
   </data>
   <data name="ReportSentInfo" xml:space="preserve">
-    <value>ناظمان تلگرام گزارش شما را بررسی خواهند کرد.
+    <value>مدیران تلگرام گزارش شما را بررسی خواهند کرد.
 با تشکر از همکاری شما!</value>
   </data>
   <data name="ReportSpam" xml:space="preserve">
@@ -10313,6 +10655,12 @@ https://telegram.org/blog/coronavirus</value>
   <data name="ResetNotificationsText" xml:space="preserve">
     <value>تمامی تنظیمات اعلان‌ها به حالت‌‌‌ پیش‌فرض بازنشانی شد</value>
   </data>
+  <data name="ResetPassword" xml:space="preserve">
+    <value>بازنشانی گذرواژه</value>
+  </data>
+  <data name="ResetPasswordWait" xml:space="preserve">
+    <value>شما اخیراً درخواستی برای بازنشانی گذرواژه دادید که لغو شد. لطفاً پیش از درخواست جدید، ⁨{0}⁩ صبر کنید.</value>
+  </data>
   <data name="ResetStatistics" xml:space="preserve">
     <value>بازنشانی آمار</value>
   </data>
@@ -10342,14 +10690,32 @@ https://telegram.org/blog/coronavirus</value>
   <data name="RestoreEmailTroubleText" xml:space="preserve">
     <value>اگر نمی‌توانید به ایمیل خود دسترسی داشته باشید، گزینه‌های باقیمانده برای شما، به‌یادآوردن گذرواژه یا بازنشانی حساب کاربریتان است.</value>
   </data>
+  <data name="RestoreEmailTroubleText2" xml:space="preserve">
+    <value>در صورتی که به ایمیل بازیابی خود دسترسی ندارید، گزینه‌های باقیمانده برای شما این است که گذرواژه خود را به یاد آورید یا 7 روز صبر کنید تا گذرواژه شما بازنشانی شود.</value>
+  </data>
   <data name="RestorePasswordNoEmailText" xml:space="preserve">
-    <value>از آنجا که شما هنگام تنظیم گذرواژه خود ایمیلی برای بازیابی ارائه نکرده‌اید، گزینه‌های باقیمانده برای شما به‌یادآوردن گذرواژه یا بازنشانی حساب کاربریتان است.</value>
+    <value>از آنجا که شما هنگام تنظیم گذرواژه خود ایمیلی برای بازیابی ارائه نکردید، گزینه‌های باقیمانده برای شما به‌یادآوردن گذرواژه خود یا بازنشانی حساب کاربریتان است.</value>
+  </data>
+  <data name="RestorePasswordNoEmailText2" xml:space="preserve">
+    <value>از آنجا که شما هنگام تنظیم گذرواژه خود ایمیلی برای بازیابی ارائه نکردید، گزینه‌های باقیمانده برای شما این است که گذرواژه خود را به یاد آورید یا 7 روز صبر کنید تا گذرواژه شما بازنشانی شود.</value>
   </data>
   <data name="RestorePasswordNoEmailTitle" xml:space="preserve">
     <value>متأسفیم</value>
   </data>
   <data name="RestorePasswordResetAccount" xml:space="preserve">
     <value>بازنشانی حساب کاربری</value>
+  </data>
+  <data name="RestorePasswordResetIn" xml:space="preserve">
+    <value>می‌توانید گذرواژه خود را بعد از ⁨{0}⁩ بازنشانی کنید</value>
+  </data>
+  <data name="RestorePasswordResetPassword" xml:space="preserve">
+    <value>بازنشانی گذرواژه</value>
+  </data>
+  <data name="RestorePasswordResetPasswordOk" xml:space="preserve">
+    <value>گذرواژه تأیید دو مرحله‌ای شما بازنشانی شد.</value>
+  </data>
+  <data name="RestorePasswordResetPasswordText" xml:space="preserve">
+    <value>آیا از بازنشانی گذرواژه تأیید دو مرحله‌ای خود اطمینان دارید؟</value>
   </data>
   <data name="Restrictions_few" xml:space="preserve">
     <value/>
@@ -10621,6 +10987,24 @@ https://telegram.org/blog/coronavirus</value>
   <data name="SecondsBold_zero" xml:space="preserve">
     <value/>
   </data>
+  <data name="SecondsSchedule_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="SecondsSchedule_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="SecondsSchedule_one" xml:space="preserve">
+    <value>⁨{0}⁩ ثانیه</value>
+  </data>
+  <data name="SecondsSchedule_other" xml:space="preserve">
+    <value>⁨{0}⁩ ثانیه</value>
+  </data>
+  <data name="SecondsSchedule_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="SecondsSchedule_zero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="SecretChat" xml:space="preserve">
     <value>گفتگوهای محرمانه</value>
   </data>
@@ -10638,6 +11022,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="SecretChatTimerMinutes" xml:space="preserve">
     <value>دقیقه</value>
+  </data>
+  <data name="SecretChatTimerMonths" xml:space="preserve">
+    <value>ماه</value>
   </data>
   <data name="SecretChatTimerSeconds" xml:space="preserve">
     <value>ثانیه</value>
@@ -10686,6 +11073,12 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="SelectImage" xml:space="preserve">
     <value>انتخاب تصویر</value>
+  </data>
+  <data name="SelectingContact" xml:space="preserve">
+    <value>در حال انتخاب مخاطب برای به اشتراک گذاری...</value>
+  </data>
+  <data name="SelectingLocation" xml:space="preserve">
+    <value>در حال انتخاب موقعیت مکانی برای به اشتراک گذاری...</value>
   </data>
   <data name="SelectOtherChat" xml:space="preserve">
     <value>انتخاب گفتگوی دیگر</value>
@@ -10805,10 +11198,10 @@ https://telegram.org/blog/coronavirus</value>
     <value>مدیران این گروه شما را از نوشتن در اینجا محدود کرده‌اند.</value>
   </data>
   <data name="SendMessagesTo" xml:space="preserve">
-    <value>پیام‌ها‌ به ⁨{0}⁩ ارسال شوند؟</value>
+    <value>ارسال به ⁨{0}⁩؟</value>
   </data>
   <data name="SendMessagesToGroup" xml:space="preserve">
-    <value>پیام‌ها به ⁨{0}⁩ ارسال شوند؟</value>
+    <value>ارسال به ⁨{0}⁩؟</value>
   </data>
   <data name="SendMessagesToGroupText" xml:space="preserve">
     <value>آیا می‌خواهید این پیام را برای **⁨{0}⁩** ارسال کنید؟</value>
@@ -11136,6 +11529,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="ShareTheme" xml:space="preserve">
     <value>به اشتراک گذاشتن پوسته</value>
   </data>
+  <data name="ShareVideo" xml:space="preserve">
+    <value>به اشتراک گذاری ویدیو از دوربین</value>
+  </data>
   <data name="ShareYouLocationInfo" xml:space="preserve">
     <value>این کار موقعیت مکانی فعلی شما را برای ربات ارسال خواهد کرد.</value>
   </data>
@@ -11325,8 +11721,35 @@ https://telegram.org/blog/coronavirus</value>
   <data name="Speaking" xml:space="preserve">
     <value>در حال صحبت</value>
   </data>
+  <data name="SpeakingWithVolume" xml:space="preserve">
+    <value>⁨{0}⁩% درحال صحبت</value>
+  </data>
+  <data name="Speed" xml:space="preserve">
+    <value>سرعت</value>
+  </data>
+  <data name="SpeedFast" xml:space="preserve">
+    <value>سریع</value>
+  </data>
+  <data name="SpeedNormal" xml:space="preserve">
+    <value>عادی</value>
+  </data>
+  <data name="SpeedSlow" xml:space="preserve">
+    <value>کند</value>
+  </data>
+  <data name="SpeedVeryFast" xml:space="preserve">
+    <value>خیلی سریع</value>
+  </data>
+  <data name="SpeedVerySlow" xml:space="preserve">
+    <value>خیلی کند</value>
+  </data>
   <data name="Start" xml:space="preserve">
     <value>شروع</value>
+  </data>
+  <data name="StartDayAt" xml:space="preserve">
+    <value>'شروع در تاریخ' MMM d 'در' HH:mm</value>
+  </data>
+  <data name="StartDayYearAt" xml:space="preserve">
+    <value>'شروع در تاریخ' MMM d yyyy 'در' HH:mm</value>
   </data>
   <data name="StartEncryptedChat" xml:space="preserve">
     <value>شروع گفتگوی محرمانه</value>
@@ -11334,8 +11757,29 @@ https://telegram.org/blog/coronavirus</value>
   <data name="StartMessaging" xml:space="preserve">
     <value>شروع پیام‌رسانی</value>
   </data>
+  <data name="StartsDayAt" xml:space="preserve">
+    <value>'شروع در تاریخ' MMM d 'در' HH:mm</value>
+  </data>
+  <data name="StartsDayYearAt" xml:space="preserve">
+    <value>'شروع در تاریخ' MMM d yyyy 'در' HH:mm</value>
+  </data>
+  <data name="StartShortDayAt" xml:space="preserve">
+    <value>MMM d'،' HH:mm</value>
+  </data>
+  <data name="StartShortDayYearAt" xml:space="preserve">
+    <value>MMM d yyyy'،' HH:mm</value>
+  </data>
+  <data name="StartShortTodayAt" xml:space="preserve">
+    <value>'امروز،' HH:mm</value>
+  </data>
+  <data name="StartsTodayAt" xml:space="preserve">
+    <value>'شروع امروز در' HH:mm</value>
+  </data>
   <data name="StartText" xml:space="preserve">
     <value>لطفاً کد کشور خود را تأیید کرده و شماره تلفن خود را وارد کنید.</value>
+  </data>
+  <data name="StartTodayAt" xml:space="preserve">
+    <value>'زمان شروع امروز در' HH:mm</value>
   </data>
   <data name="StartVoipChannelAlertText" xml:space="preserve">
     <value>آیا می‌خواهید در این کانال یک گفتگوی صوتی شروع کنید؟</value>
@@ -11645,6 +12089,21 @@ https://telegram.org/blog/coronavirus</value>
   <data name="TapOnThePencil" xml:space="preserve">
     <value>برای شروع یک گفتگوی جدید، بر روی مداد بزنید</value>
   </data>
+  <data name="TapToAddBio" xml:space="preserve">
+    <value>برای افزودن بیوگرافی ضربه بزنید</value>
+  </data>
+  <data name="TapToAddDescription" xml:space="preserve">
+    <value>برای افزودن توضیحات ضربه بزنید</value>
+  </data>
+  <data name="TapToAddPhoto" xml:space="preserve">
+    <value>برای افزودن عکس ضربه بزنید</value>
+  </data>
+  <data name="TapToAddPhotoOrBio" xml:space="preserve">
+    <value>برای افزودن عکس یا بیوگرافی ضربه بزنید</value>
+  </data>
+  <data name="TapToAddPhotoOrDescription" xml:space="preserve">
+    <value>برای افزودن عکس یا توضیحات ضربه بزنید</value>
+  </data>
   <data name="TapToChange" xml:space="preserve">
     <value>برای تغییر ضربه بزنید</value>
   </data>
@@ -11698,6 +12157,12 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="TelegramFaqUrl" xml:space="preserve">
     <value>https://telegram.org/faq/fa</value>
+  </data>
+  <data name="TelegramFeatures" xml:space="preserve">
+    <value>قابلیت‌های تلگرام</value>
+  </data>
+  <data name="TelegramFeaturesUrl" xml:space="preserve">
+    <value>https://t.me/TelegramTips</value>
   </data>
   <data name="TelegramPassport" xml:space="preserve">
     <value>پاسپورت تلگرام</value>
@@ -12054,7 +12519,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>⁨{0}⁩ خالی</value>
   </data>
   <data name="TotalDeviceSize" xml:space="preserve">
-    <value>⁨{0}⁩ داده دیگر</value>
+    <value>⁨{0}⁩ برنامه دیگر</value>
   </data>
   <data name="TurnPasswordOff" xml:space="preserve">
     <value>غیرفعال کردن گذرواژه</value>
@@ -12171,10 +12636,28 @@ https://telegram.org/blog/coronavirus</value>
     <value>برداشتن سنجاق</value>
   </data>
   <data name="UnpinMessageAlert" xml:space="preserve">
-    <value>آیا می‌خواهید سنجاق این پیام را بردارید؟</value>
+    <value>سنجاق این پیام برداشته شود؟</value>
   </data>
   <data name="UnpinMessageAlertTitle" xml:space="preserve">
     <value>برداشتن سنجاق پیام</value>
+  </data>
+  <data name="UnpinnedDialogsCount_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="UnpinnedDialogsCount_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="UnpinnedDialogsCount_one" xml:space="preserve">
+    <value>سنجاق گفتگو برداشته شد</value>
+  </data>
+  <data name="UnpinnedDialogsCount_other" xml:space="preserve">
+    <value>سنجاق ⁨{0}⁩ گفتگو برداشته شد</value>
+  </data>
+  <data name="UnpinnedDialogsCount_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="UnpinnedDialogsCount_zero" xml:space="preserve">
+    <value/>
   </data>
   <data name="UnreadMessages" xml:space="preserve">
     <value>پیام‌های خوانده نشده</value>
@@ -12564,10 +13047,16 @@ https://telegram.org/blog/coronavirus</value>
     <value>عنوان ویدیو</value>
   </data>
   <data name="VideoDoesNotSupportStreaming" xml:space="preserve">
-    <value>این ویدیو برای پخش پیوسته بهینه نشده است. شما باید جهت پخش این ویدیو آن را به طور کامل دانلود کنید.</value>
+    <value>ویدیو برای پخش پیوسته بهینه نیست. شما باید برای پخش این ویدیو آن را به طور کامل دانلود کنید.</value>
   </data>
   <data name="VideoMessagesAutodownload" xml:space="preserve">
     <value>پیام‌های ویدیویی</value>
+  </data>
+  <data name="VideoPreview" xml:space="preserve">
+    <value>پیش‌نمایش ویدیو</value>
+  </data>
+  <data name="VideoPreviewDesrciption" xml:space="preserve">
+    <value>ویدیو از دوربین شما با سایر اعضای این گفتگوی صوتی به اشتراک گذاشته خواهد شد</value>
   </data>
   <data name="VideoQualityIsTooLow" xml:space="preserve">
     <value>کیفیت ویدیو برای تغییر تنظیمات فشرده‌سازی بسیار کم است.</value>
@@ -12731,6 +13220,15 @@ https://telegram.org/blog/coronavirus</value>
   <data name="Voice_zero" xml:space="preserve">
     <value/>
   </data>
+  <data name="VoipAddBio" xml:space="preserve">
+    <value>افزودن بیوگرافی</value>
+  </data>
+  <data name="VoipAddDescription" xml:space="preserve">
+    <value>افزودن توضیحات</value>
+  </data>
+  <data name="VoipAddPhoto" xml:space="preserve">
+    <value>تغییر عکس</value>
+  </data>
   <data name="VoipAnswerCall" xml:space="preserve">
     <value>پاسخ</value>
   </data>
@@ -12746,8 +13244,14 @@ https://telegram.org/blog/coronavirus</value>
   <data name="VoipAudioRoutingHeadset" xml:space="preserve">
     <value>هدفون</value>
   </data>
+  <data name="VoipAudioRoutingPhone" xml:space="preserve">
+    <value>تلفن همراه</value>
+  </data>
   <data name="VoipAudioRoutingSpeaker" xml:space="preserve">
     <value>بلندگو</value>
+  </data>
+  <data name="VoipBackCamera" xml:space="preserve">
+    <value>دوربین پشت</value>
   </data>
   <data name="VoipBusy" xml:space="preserve">
     <value>خط مشغول است</value>
@@ -12755,14 +13259,71 @@ https://telegram.org/blog/coronavirus</value>
   <data name="VoipCallEnded" xml:space="preserve">
     <value>تماس پایان یافت</value>
   </data>
+  <data name="VoipCamera" xml:space="preserve">
+    <value>دوربین</value>
+  </data>
+  <data name="VoipChannelScheduleInfo" xml:space="preserve">
+    <value>مشترکین کانال مطلع خواهند شد که گفتگوی صوتی در ⁨{0}⁩ شروع می‌شود.</value>
+  </data>
+  <data name="VoipChannelStart2" xml:space="preserve">
+    <value>به محض این که گفتگوی صوتی را شروع کنید، به مشترکین این کانال اطلاع داده می‌شود.</value>
+  </data>
+  <data name="VoipChatActiveChats" xml:space="preserve">
+    <value>گفتگوهای صوتی فعال</value>
+  </data>
+  <data name="VoipChatChatJoined" xml:space="preserve">
+    <value>**⁨{0}⁩** به گفتگوی صوتی پیوست.</value>
+  </data>
+  <data name="VoipChatDisplayedAs" xml:space="preserve">
+    <value>شما به این صورت نمایش داده می‌شوید:</value>
+  </data>
   <data name="VoipChatJoin" xml:space="preserve">
     <value>پیوستن</value>
+  </data>
+  <data name="VoipChatLateBy" xml:space="preserve">
+    <value>تأخیر به مدت</value>
+  </data>
+  <data name="VoipChatRecentCalls" xml:space="preserve">
+    <value>تماس‌های اخیر</value>
+  </data>
+  <data name="VoipChatReminderHint" xml:space="preserve">
+    <value>هنگام شروع به شما اطلاع خواهیم داد.</value>
+  </data>
+  <data name="VoipChatShare" xml:space="preserve">
+    <value>به اشتراک گذاری</value>
+  </data>
+  <data name="VoipChatStartScreenCapture" xml:space="preserve">
+    <value>به اشتراک گذاری صفحه نمایش</value>
+  </data>
+  <data name="VoipChatStartsIn" xml:space="preserve">
+    <value>شروع در</value>
+  </data>
+  <data name="VoipChatStopScreenCapture" xml:space="preserve">
+    <value>متوقف کردن به اشتراک گذاری صفحه نمایش</value>
+  </data>
+  <data name="VoipChatUserJoined" xml:space="preserve">
+    <value>**⁨{0}⁩** به گفتگوی صوتی پیوست.</value>
   </data>
   <data name="VoipConnecting" xml:space="preserve">
     <value>در حال اتصال</value>
   </data>
   <data name="VoipDeclineCall" xml:space="preserve">
     <value>رد</value>
+  </data>
+  <data name="VoipEditBio" xml:space="preserve">
+    <value>ویرایش بیوگرافی</value>
+  </data>
+  <data name="VoipEditDescription" xml:space="preserve">
+    <value>ویرایش توضیحات</value>
+  </data>
+  <data name="VoipEditName" xml:space="preserve">
+    <value>ویرایش نام</value>
+  </data>
+  <data name="VoipEditTitle" xml:space="preserve">
+    <value>ویرایش عنوان</value>
+  </data>
+  <data name="VoipEditTitleHint" xml:space="preserve">
+    <value>عنوان</value>
   </data>
   <data name="VoipEndCall" xml:space="preserve">
     <value>پایان تماس</value>
@@ -12782,6 +13343,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="VoipFlip" xml:space="preserve">
     <value>برگرداندن</value>
   </data>
+  <data name="VoipFrontCamera" xml:space="preserve">
+    <value>دوربین جلو</value>
+  </data>
   <data name="VoipGroupAdd" xml:space="preserve">
     <value>افزودن</value>
   </data>
@@ -12797,14 +13361,29 @@ https://telegram.org/blog/coronavirus</value>
   <data name="VoipGroupAllowToSpeak" xml:space="preserve">
     <value>اجازه صحبت</value>
   </data>
+  <data name="VoipGroupAudio" xml:space="preserve">
+    <value>صدا</value>
+  </data>
   <data name="VoipGroupAudioRecordSaved" xml:space="preserve">
     <value>صدا در **پیام‌های ذخیره شده** ذخیره شد.</value>
   </data>
   <data name="VoipGroupAudioRecordStarted" xml:space="preserve">
     <value>ضبط گفتگوی صوتی شروع شد.</value>
   </data>
+  <data name="VoipGroupBioEditAlertText" xml:space="preserve">
+    <value>می‌توانید چند خط درباره خودتان اضافه کنید. همه این متن را خواهند دید.</value>
+  </data>
+  <data name="VoipGroupBioEditTitle" xml:space="preserve">
+    <value>بیوگرافی</value>
+  </data>
+  <data name="VoipGroupCancelChat" xml:space="preserve">
+    <value>لغو گفتگوی صوتی</value>
+  </data>
   <data name="VoipGroupCancelRaiseHand" xml:space="preserve">
     <value>لغو درخواست صحبت</value>
+  </data>
+  <data name="VoipGroupCancelReminder" xml:space="preserve">
+    <value>لغو یادآور</value>
   </data>
   <data name="VoipGroupConnecting" xml:space="preserve">
     <value>در حال اتصال...</value>
@@ -12969,11 +13548,35 @@ https://telegram.org/blog/coronavirus</value>
   <data name="VoipGroupSaveFileHint" xml:space="preserve">
     <value>عنوان فایل ضبط</value>
   </data>
+  <data name="VoipGroupScheduledVoiceChat" xml:space="preserve">
+    <value>گفتگوی صوتی زمان‌بندی شده</value>
+  </data>
+  <data name="VoipGroupScheduleInfo" xml:space="preserve">
+    <value>اعضای گروه مطلع خواهند شد که گفتگوی صوتی در ⁨{0}⁩ شروع می‌شود.</value>
+  </data>
+  <data name="VoipGroupScheduleVoiceChat" xml:space="preserve">
+    <value>زمان‌بندی گفتگوی صوتی</value>
+  </data>
   <data name="VoipGroupSearchMembers" xml:space="preserve">
     <value>جستجوی اعضا برای دعوت...</value>
   </data>
+  <data name="VoipGroupSetReminder" xml:space="preserve">
+    <value>تنظیم یادآور</value>
+  </data>
   <data name="VoipGroupShareInviteLink" xml:space="preserve">
     <value>به اشتراک گذاشتن لینک دعوت</value>
+  </data>
+  <data name="VoipGroupShareLink" xml:space="preserve">
+    <value>به اشتراک گذاشتن لینک دعوت</value>
+  </data>
+  <data name="VoipGroupSoundMuted" xml:space="preserve">
+    <value>گفتگوی صوتی بی‌صدا شد.</value>
+  </data>
+  <data name="VoipGroupSoundUnmuted" xml:space="preserve">
+    <value>گفتگوی صوتی صدادار شد.</value>
+  </data>
+  <data name="VoipGroupStart2" xml:space="preserve">
+    <value>به محض اینکه گفتگوی صوتی را شروع کنید، به اعضای این گروه اطلاع داده می‌شود.</value>
   </data>
   <data name="VoipGroupStartAs" xml:space="preserve">
     <value>شروع گفتگوی صوتی به عنوان...</value>
@@ -12984,6 +13587,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="VoipGroupStartAsInfoGroup" xml:space="preserve">
     <value>انتخاب کنید که به عنوان حساب کاربری شخصی خود، به عنوان این گروه یا به عنوان یکی از کانال‌هایتان نمایش داده شوید.</value>
   </data>
+  <data name="VoipGroupStartNow" xml:space="preserve">
+    <value>شروع همین الان</value>
+  </data>
   <data name="VoipGroupStartRecordingText" xml:space="preserve">
     <value>این گفتگو ضبط شده و به صورت یک فایل صوتی ذخیره شود؟
  
@@ -12991,6 +13597,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="VoipGroupStartRecordingTitle" xml:space="preserve">
     <value>شروع ضبط</value>
+  </data>
+  <data name="VoipGroupStartVoiceChat" xml:space="preserve">
+    <value>شروع گفتگوی صوتی</value>
   </data>
   <data name="VoipGroupStopRecordCall" xml:space="preserve">
     <value>متوقف کردن ضبط</value>
@@ -13089,11 +13698,23 @@ https://telegram.org/blog/coronavirus</value>
   <data name="VoipMutedTapForSpeak" xml:space="preserve">
     <value>در صورت تمایل به صحبت، ضربه بزنید</value>
   </data>
+  <data name="VoipNeedCameraPermission" xml:space="preserve">
+    <value>تلگرام باید به دوربین شما دسترسی داشته باشد تا بتوانید تماس‌های ویدیویی برقرار کنید.</value>
+  </data>
   <data name="VoipNeedMicCameraPermission" xml:space="preserve">
     <value>تلگرام باید به میکروفن و دوربین شما دسترسی داشته باشد تا بتوانید تماس ویدیویی برقرار کنید.</value>
   </data>
   <data name="VoipNeedMicPermission" xml:space="preserve">
     <value>تلگرام باید به میکروفن شما دسترسی داشته باشد تا بتوانید تماس برقرار کنید.</value>
+  </data>
+  <data name="VoipNoiseCancellation" xml:space="preserve">
+    <value>حذف نویز</value>
+  </data>
+  <data name="VoipNoiseCancellationDisabled" xml:space="preserve">
+    <value>غیرفعال</value>
+  </data>
+  <data name="VoipNoiseCancellationEnabled" xml:space="preserve">
+    <value>فعال</value>
   </data>
   <data name="VoipNotificationSettings" xml:space="preserve">
     <value>تماس‌ها</value>
@@ -13149,6 +13770,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="VoipPeerVideoOutdatedMakeVoice" xml:space="preserve">
     <value>تماس صوتی بگیرید</value>
   </data>
+  <data name="VoipPhoneScreen" xml:space="preserve">
+    <value>صفحه نمایش تلفن همراه</value>
+  </data>
   <data name="VoipQuickReplies" xml:space="preserve">
     <value>پاسخ با پیام متنی</value>
   </data>
@@ -13170,8 +13794,17 @@ https://telegram.org/blog/coronavirus</value>
   <data name="VoipRingtoneInfo" xml:space="preserve">
     <value>شما می‌توانید آهنگ زنگ تماس‌های تلگرامی این مخاطب با خود را سفارشی‌سازی کنید.</value>
   </data>
+  <data name="VoipSelectAudioOutput" xml:space="preserve">
+    <value>خروجی صدا را انتخاب کنید</value>
+  </data>
+  <data name="VoipSetNewPhoto" xml:space="preserve">
+    <value>تنظیم عکس جدید</value>
+  </data>
   <data name="VoipSettingsRingtone" xml:space="preserve">
     <value>آهنگ زنگ</value>
+  </data>
+  <data name="VoipShareVideo" xml:space="preserve">
+    <value>به اشتراک گذاشتن ویدیو</value>
   </data>
   <data name="VoipSpeaker" xml:space="preserve">
     <value>بلندگو</value>
@@ -13188,6 +13821,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="VoipSwitchToVideoCall" xml:space="preserve">
     <value>به تماس ویدیویی تغییر می‌دهید؟</value>
   </data>
+  <data name="VoipTapToAddBio" xml:space="preserve">
+    <value>برای افزودن بیوگرافی ضربه بزنید</value>
+  </data>
   <data name="VoipTapToMute" xml:space="preserve">
     <value>شما در حال صحبت هستید</value>
   </data>
@@ -13202,6 +13838,30 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="VoipUserMicrophoneIsOff" xml:space="preserve">
     <value>میکروفن ⁨{0}⁩ غیرفعال است</value>
+  </data>
+  <data name="VoipVideoNotAvailable" xml:space="preserve">
+    <value>ویدیو فقط برای ⁨{0}⁩ اول
+در دسترس است</value>
+  </data>
+  <data name="VoipVideoNotAvailableAdmin" xml:space="preserve">
+    <value>گفتگوی صوتی بیش از ⁨{0}⁩ دارد.
+شرکت کنندگان جدید فقط به صدای در حال پخش دسترسی دارند.</value>
+  </data>
+  <data name="VoipVideoOnPause" xml:space="preserve">
+    <value>ویدیو در حالت مکث است</value>
+  </data>
+  <data name="VoipVideoPrivateScreenSharing" xml:space="preserve">
+    <value>هر چیزی روی صفحه نمایش شما، از جمله اعلان‌ها، به اشتراک گذاشته خواهد شد.</value>
+  </data>
+  <data name="VoipVideoScreenSharing" xml:space="preserve">
+    <value>شما در حال به اشتراک گذاری صفحه نمایش خود هستید</value>
+  </data>
+  <data name="VoipVideoScreenSharingTwoLines" xml:space="preserve">
+    <value>شما در حال به اشتراک گذاری
+صفحه نمایش خود هستید</value>
+  </data>
+  <data name="VoipVideoScreenStopSharing" xml:space="preserve">
+    <value>متوقف کردن به اشتراک گذاری</value>
   </data>
   <data name="VoipVideoUnavailable" xml:space="preserve">
     <value>ویدیو</value>
@@ -13384,6 +14044,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="YouLeft" xml:space="preserve">
     <value>شما این گروه را ترک کردید</value>
   </data>
+  <data name="YourBioChanged" xml:space="preserve">
+    <value>بیوگرافی به‌روزرسانی شد.</value>
+  </data>
   <data name="YourCode" xml:space="preserve">
     <value>تأیید شماره تلفن</value>
   </data>
@@ -13434,11 +14097,27 @@ https://telegram.org/blog/coronavirus</value>
   <data name="YourName" xml:space="preserve">
     <value>نام شما</value>
   </data>
+  <data name="YourNameChanged" xml:space="preserve">
+    <value>نام به‌روزرسانی شد.</value>
+  </data>
   <data name="YourPassword" xml:space="preserve">
     <value>گذرواژه‌ شما</value>
   </data>
   <data name="YourPasswordChangedSuccessText" xml:space="preserve">
     <value>گذرواژه تأیید دو مرحله‌ای شما تغییر کرد.</value>
+  </data>
+  <data name="YourPasswordHeader" xml:space="preserve">
+    <value>گذرواژه شما</value>
+  </data>
+  <data name="YourPasswordRemember" xml:space="preserve">
+    <value>حساب کاربری شما با تأیید دو مرحله‌ای محافظت می‌شود.
+آیا همچنان گذرواژه خود را به یاد دارید؟</value>
+  </data>
+  <data name="YourPasswordRememberNo" xml:space="preserve">
+    <value>مطمئن نیستم</value>
+  </data>
+  <data name="YourPasswordRememberYes" xml:space="preserve">
+    <value>بله، قطعاً</value>
   </data>
   <data name="YourPasswordSuccess" xml:space="preserve">
     <value>عملیات با موفقیت انجام شد!</value>
