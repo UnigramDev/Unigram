@@ -386,7 +386,7 @@ namespace Unigram.Services
 
         private void InitializeReady()
         {
-            Send(new GetChats(new ChatListMain(), long.MaxValue, 0, 20));
+            Send(new LoadChats(new ChatListMain(), 20));
 
             UpdateVersion();
         }

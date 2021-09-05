@@ -64,10 +64,10 @@ namespace Unigram.Services
 
                 Monitor.Exit(_chatList);
 
-                var response = await _client.SendAsync(new GetChats(chatList, offsetOrder, offsetChatId, count - sorted.Count));
-                if (response is Chats chats)
+                var response = await _client.SendAsync(new LoadChats(chatList, count - sorted.Count));
+                if (response is Ok or Error)
                 {
-                    if (chats.ChatIds.Count == 0)
+                    if (response is Error error && error.Code == 404)
                     {
                         _haveFullChatList[index] = true;
                     }
