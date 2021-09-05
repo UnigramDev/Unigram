@@ -70,7 +70,7 @@ namespace Unigram.ViewModels.SignIn
 
                                 foreach (var session in _lifetimeService.Items)
                                 {
-                                    if (Settings.UseTestDC == session.Settings.UseTestDC)
+                                    if (Settings.UseTestDC == session.Settings.UseTestDC && session.UserId != 0)
                                     {
                                         userIds.Add(session.UserId);
                                     }
