@@ -103,7 +103,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 					auto bytes = std::vector<uint8_t>(size);
 					memcpy(bytes.data(), data.data(), size);
 
-					broadcastPart.oggData = std::move(bytes);
+					broadcastPart.data = std::move(bytes);
 					broadcastPart.responseTimestamp = response;
 					broadcastPart.timestampMilliseconds = time;
 					broadcastPart.status = tgcalls::BroadcastPart::Status::Success;
