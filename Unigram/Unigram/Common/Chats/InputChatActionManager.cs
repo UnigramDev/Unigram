@@ -12,41 +12,41 @@ namespace Unigram.Common.Chats
             if (chat.Type is ChatTypePrivate or ChatTypeSecret)
             {
                 var tuple = typingUsers.FirstOrDefault();
-                //if (tuple != null)
+                var action = tuple.Value;
+                switch (action)
                 {
-                    var action = tuple.Value;
-                    switch (action)
-                    {
-                        //case TLSendMessageChooseContactAction chooseContact:
-                        //    return "";
-                        case ChatActionStartPlayingGame gamePlay:
-                            commonAction = gamePlay;
-                            return Strings.Resources.SendingGame;
-                        //case TLSendMessageGeoLocationAction geoLocation:
-                        //    return "";
-                        case ChatActionRecordingVoiceNote recordAudio:
-                            commonAction = recordAudio;
-                            return Strings.Resources.RecordingAudio;
-                        case ChatActionRecordingVideoNote:
-                        case ChatActionUploadingVideoNote:
-                            commonAction = new ChatActionRecordingVideoNote();
-                            return Strings.Resources.RecordingRound;
-                        //case TLSendMessageTypingAction typing:
-                        //    return Strings.Resources.Typing;
-                        case ChatActionUploadingVoiceNote uploadAudio:
-                            commonAction = uploadAudio;
-                            return Strings.Resources.SendingAudio;
-                        case ChatActionUploadingDocument uploadDocument:
-                            commonAction = uploadDocument;
-                            return Strings.Resources.SendingFile;
-                        case ChatActionUploadingPhoto uploadPhoto:
-                            commonAction = uploadPhoto;
-                            return Strings.Resources.SendingPhoto;
-                        case ChatActionRecordingVideo:
-                        case ChatActionUploadingVideo:
-                            commonAction = new ChatActionUploadingVideo();
-                            return Strings.Resources.SendingVideoStatus;
-                    }
+                    //case TLSendMessageChooseContactAction chooseContact:
+                    //    return "";
+                    case ChatActionStartPlayingGame gamePlay:
+                        commonAction = gamePlay;
+                        return Strings.Resources.SendingGame;
+                    //case TLSendMessageGeoLocationAction geoLocation:
+                    //    return "";
+                    case ChatActionRecordingVoiceNote recordAudio:
+                        commonAction = recordAudio;
+                        return Strings.Resources.RecordingAudio;
+                    case ChatActionRecordingVideoNote:
+                    case ChatActionUploadingVideoNote:
+                        commonAction = new ChatActionRecordingVideoNote();
+                        return Strings.Resources.RecordingRound;
+                    //case TLSendMessageTypingAction typing:
+                    //    return Strings.Resources.Typing;
+                    case ChatActionUploadingVoiceNote uploadAudio:
+                        commonAction = uploadAudio;
+                        return Strings.Resources.SendingAudio;
+                    case ChatActionUploadingDocument uploadDocument:
+                        commonAction = uploadDocument;
+                        return Strings.Resources.SendingFile;
+                    case ChatActionUploadingPhoto uploadPhoto:
+                        commonAction = uploadPhoto;
+                        return Strings.Resources.SendingPhoto;
+                    case ChatActionRecordingVideo:
+                    case ChatActionUploadingVideo:
+                        commonAction = new ChatActionUploadingVideo();
+                        return Strings.Resources.SendingVideoStatus;
+                    case ChatActionChoosingSticker choosingSticker:
+                        commonAction = choosingSticker;
+                        return Strings.Resources.ChoosingSticker.Replace("**", "");
                 }
 
                 commonAction = new ChatActionTyping();
@@ -65,42 +65,41 @@ namespace Unigram.Common.Chats
                 }
 
                 var userName = string.IsNullOrEmpty(user.FirstName) ? user.LastName : user.FirstName;
-
-                //if (tuple != null)
+                var action = tuple.Value;
+                switch (action)
                 {
-                    var action = tuple.Value;
-                    switch (action)
-                    {
-                        //case TLSendMessageChooseContactAction chooseContact:
-                        //    return "";
-                        case ChatActionStartPlayingGame gamePlay:
-                            commonAction = gamePlay;
-                            return string.Format(Strings.Resources.IsSendingGame, userName);
-                        //case TLSendMessageGeoLocationAction geoLocation:
-                        //    return "";
-                        case ChatActionRecordingVoiceNote recordAudio:
-                            commonAction = recordAudio;
-                            return string.Format(Strings.Resources.IsRecordingAudio, userName);
-                        case ChatActionRecordingVideoNote:
-                        case ChatActionUploadingVideoNote:
-                            commonAction = new ChatActionRecordingVideoNote();
-                            return string.Format(Strings.Resources.IsSendingVideo, userName);
-                        //case TLSendMessageTypingAction typing:
-                        //    return string.Format(Strings.Resources.IsTyping, userName);
-                        case ChatActionUploadingVoiceNote uploadAudio:
-                            commonAction = uploadAudio;
-                            return string.Format(Strings.Resources.IsSendingAudio, userName);
-                        case ChatActionUploadingDocument uploadDocument:
-                            commonAction = uploadDocument;
-                            return string.Format(Strings.Resources.IsSendingFile, userName);
-                        case ChatActionUploadingPhoto uploadPhoto:
-                            commonAction = uploadPhoto;
-                            return string.Format(Strings.Resources.IsSendingPhoto, userName);
-                        case ChatActionRecordingVideo:
-                        case ChatActionUploadingVideo:
-                            commonAction = new ChatActionUploadingVideo();
-                            return string.Format(Strings.Resources.IsSendingVideo, userName);
-                    }
+                    //case TLSendMessageChooseContactAction chooseContact:
+                    //    return "";
+                    case ChatActionStartPlayingGame gamePlay:
+                        commonAction = gamePlay;
+                        return string.Format(Strings.Resources.IsSendingGame, userName);
+                    //case TLSendMessageGeoLocationAction geoLocation:
+                    //    return "";
+                    case ChatActionRecordingVoiceNote recordAudio:
+                        commonAction = recordAudio;
+                        return string.Format(Strings.Resources.IsRecordingAudio, userName);
+                    case ChatActionRecordingVideoNote:
+                    case ChatActionUploadingVideoNote:
+                        commonAction = new ChatActionRecordingVideoNote();
+                        return string.Format(Strings.Resources.IsSendingVideo, userName);
+                    //case TLSendMessageTypingAction typing:
+                    //    return string.Format(Strings.Resources.IsTyping, userName);
+                    case ChatActionUploadingVoiceNote uploadAudio:
+                        commonAction = uploadAudio;
+                        return string.Format(Strings.Resources.IsSendingAudio, userName);
+                    case ChatActionUploadingDocument uploadDocument:
+                        commonAction = uploadDocument;
+                        return string.Format(Strings.Resources.IsSendingFile, userName);
+                    case ChatActionUploadingPhoto uploadPhoto:
+                        commonAction = uploadPhoto;
+                        return string.Format(Strings.Resources.IsSendingPhoto, userName);
+                    case ChatActionRecordingVideo:
+                    case ChatActionUploadingVideo:
+                        commonAction = new ChatActionUploadingVideo();
+                        return string.Format(Strings.Resources.IsSendingVideo, userName);
+                    case ChatActionChoosingSticker choosingSticker:
+                        commonAction = choosingSticker;
+                        return string.Format(Strings.Resources.IsChoosingSticker.Replace("**", ""), userName);
                 }
 
                 commonAction = new ChatActionTyping();

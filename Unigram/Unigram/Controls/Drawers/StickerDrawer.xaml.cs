@@ -27,6 +27,7 @@ namespace Unigram.Controls.Drawers
 
         public Action<Sticker> ItemClick { get; set; }
         public event TypedEventHandler<UIElement, ItemContextRequestedEventArgs<Sticker>> ItemContextRequested;
+        public event EventHandler ChoosingItem;
 
         private readonly AnimatedListHandler<StickerViewModel> _handler;
         private readonly ZoomableListHandler _zoomer;
@@ -218,6 +219,11 @@ namespace Unigram.Controls.Drawers
                         Toolbar.ScrollIntoView(header.Content);
                     }
                 }
+            }
+
+            if (sender is ScrollViewer scrollViewer && scrollViewer.VerticalOffset > 0 && e.IsIntermediate)
+            {
+                ChoosingItem?.Invoke(this, EventArgs.Empty);
             }
         }
 

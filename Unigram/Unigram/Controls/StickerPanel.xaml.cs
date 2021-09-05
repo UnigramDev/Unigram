@@ -24,6 +24,7 @@ namespace Unigram.Controls
 
         public Action<Sticker> StickerClick { get; set; }
         public event TypedEventHandler<UIElement, ItemContextRequestedEventArgs<Sticker>> StickerContextRequested;
+        public event EventHandler ChoosingSticker;
 
         public Action<Animation> AnimationClick { get; set; }
         public event TypedEventHandler<UIElement, ItemContextRequestedEventArgs<Animation>> AnimationContextRequested;
@@ -155,6 +156,7 @@ namespace Unigram.Controls
                     StickersRoot.DataContext = StickerDrawerViewModel.GetForCurrentView(TLContainer.Current.Resolve<IProtoService>().SessionId);
                     StickersRoot.ItemClick = Stickers_ItemClick;
                     StickersRoot.ItemContextRequested += (s, args) => StickerContextRequested?.Invoke(s, args);
+                    StickersRoot.ChoosingItem += (s, args) => ChoosingSticker?.Invoke(s, args);
                 }
 
                 StickersRoot.Activate();

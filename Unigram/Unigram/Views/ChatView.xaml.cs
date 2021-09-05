@@ -283,6 +283,7 @@ namespace Unigram.Views
 
             StickersPanel.StickerClick = Stickers_ItemClick;
             StickersPanel.StickerContextRequested += Sticker_ContextRequested;
+            StickersPanel.ChoosingSticker += Stickers_ChoosingItem;
 
             StickersPanel.AnimationClick = Animations_ItemClick;
             StickersPanel.AnimationContextRequested += Animation_ContextRequested;
@@ -2523,6 +2524,11 @@ namespace Unigram.Views
 
             await Task.Delay(100);
             TextField.Focus(FocusState.Programmatic);
+        }
+
+        private void Stickers_ChoosingItem(object sender, EventArgs e)
+        {
+            ViewModel.ChatActionManager.SetTyping(new ChatActionChoosingSticker());
         }
 
         public async void Animations_ItemClick(Animation animation)
