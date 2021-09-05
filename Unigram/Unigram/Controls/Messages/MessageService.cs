@@ -144,6 +144,8 @@ namespace Unigram.Controls.Messages
                             return UpdatePollStopped(message, pollStopped, active);
                         case ChatEventSlowModeDelayChanged slowModeDelayChanged:
                             return UpdateSlowModeDelayChanged(message, slowModeDelayChanged, active);
+                        case ChatEventThemeChanged themeChanged:
+                            return UpdateThemeChanged(message, themeChanged, active);
                         case ChatEventVoiceChatCreated voiceChatCreated:
                             return UpdateVoiceChatCreated(message, voiceChatCreated, active);
                         case ChatEventVoiceChatDiscarded voiceChatDiscarded:
@@ -518,6 +520,26 @@ namespace Unigram.Controls.Messages
             return (content, entities);
         }
 
+        private static (string, IList<TextEntity>) UpdateThemeChanged(MessageViewModel message, ChatEventThemeChanged themeChanged, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            if (message.ProtoService.TryGetUser(message.Sender, out User fromUser))
+            {
+                if (message.IsChannelPost)
+                {
+                    content = ReplaceWithLink(Strings.Resources.EventLogEditedChannelTheme, "un1", fromUser, ref entities);
+                }
+                else
+                {
+                    content = ReplaceWithLink(Strings.Resources.EventLogEditedGroupTheme, "un1", fromUser, ref entities);
+                }
+            }
+
+            return (content, entities);
+        }
+
         private static (string, IList<TextEntity>) UpdateVoiceChatCreated(MessageViewModel message, ChatEventVoiceChatCreated voiceChatCreated, bool active)
         {
             var content = string.Empty;
@@ -525,7 +547,14 @@ namespace Unigram.Controls.Messages
 
             if (message.ProtoService.TryGetUser(message.Sender, out User fromUser))
             {
-                content = ReplaceWithLink(Strings.Resources.EventLogStartedVoiceChat, "un1", fromUser, ref entities);
+                if (message.IsChannelPost)
+                {
+                    content = ReplaceWithLink(Strings.Resources.EventLogStartedLiveStream, "un1", fromUser, ref entities);
+                }
+                else
+                {
+                    content = ReplaceWithLink(Strings.Resources.EventLogStartedVoiceChat, "un1", fromUser, ref entities);
+                }
             }
 
             return (content, entities);
@@ -538,7 +567,14 @@ namespace Unigram.Controls.Messages
 
             if (message.ProtoService.TryGetUser(message.Sender, out User fromUser))
             {
-                content = ReplaceWithLink(Strings.Resources.EventLogEndedVoiceChat, "un1", fromUser, ref entities);
+                if (message.IsChannelPost)
+                {
+                    content = ReplaceWithLink(Strings.Resources.EventLogEndedLiveStream, "un1", fromUser, ref entities);
+                }
+                else
+                {
+                    content = ReplaceWithLink(Strings.Resources.EventLogEndedVoiceChat, "un1", fromUser, ref entities);
+                }
             }
 
             return (content, entities);
@@ -736,8 +772,7 @@ namespace Unigram.Controls.Messages
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            var chat = message.GetChat();
-            if (chat != null && chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
+            if (message.IsChannelPost)
             {
                 content = chatChangePhoto.Photo.Animation != null
                     ? Strings.Resources.ActionChannelChangedVideo
@@ -767,8 +802,7 @@ namespace Unigram.Controls.Messages
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            var chat = message.GetChat();
-            if (chat != null && chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
+            if (message.IsChannelPost)
             {
                 content = Strings.Resources.ActionChannelChangedTitle.Replace("un2", chatChangeTitle.Title);
             }
@@ -838,8 +872,7 @@ namespace Unigram.Controls.Messages
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            var chat = message.GetChat();
-            if (chat?.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
+            if (message.IsChannelPost)
             {
                 content = Strings.Resources.ActionChannelRemovedPhoto;
             }
@@ -906,7 +939,7 @@ namespace Unigram.Controls.Messages
                     }
                 }
             }
-            else if (chat.Type is ChatTypeSupergroup super && super.IsChannel)
+            else if (message.IsChannelPost)
             {
                 if (chatSetTtl.Ttl != 0)
                 {
@@ -1017,7 +1050,29 @@ namespace Unigram.Controls.Messages
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            content = string.Format(Strings.Resources.ActionGroupCallEnded, voiceChatEnded.GetDuration());
+            if (message.IsChannelPost)
+            {
+                content = string.Format(Strings.Resources.ActionChannelCallEnded, voiceChatEnded.GetDuration());
+            }
+            else if (message.ProtoService.TryGetUser(message.Sender, out User senderUser))
+            {
+                if (senderUser.Id == message.ProtoService.Options.MyId)
+                {
+                    content = string.Format(Strings.Resources.ActionGroupCallEndedByYou, voiceChatEnded.GetDuration());
+                }
+                else
+                {
+                    content = ReplaceWithLink(string.Format(Strings.Resources.ActionGroupCallEndedBy, voiceChatEnded.GetDuration()), "un1", senderUser, ref entities);
+                }
+            }
+            else if (message.ProtoService.TryGetChat(message.Sender, out Chat senderChat))
+            {
+                content = ReplaceWithLink(string.Format(Strings.Resources.ActionGroupCallEndedBy, voiceChatEnded.GetDuration()), "un1", senderChat, ref entities);
+            }
+            else
+            {
+                content = string.Format(Strings.Resources.ActionGroupCallEnded, voiceChatEnded.GetDuration());
+            }
 
             return (content, entities);
         }
@@ -1027,7 +1082,14 @@ namespace Unigram.Controls.Messages
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            content = string.Format(Strings.Resources.ActionGroupCallScheduled, voiceChatScheduled.GetStartsAt());
+            if (message.IsChannelPost)
+            {
+                content = string.Format(Strings.Resources.ActionChannelCallScheduled, voiceChatScheduled.GetStartsAt());
+            }
+            else
+            {
+                content = string.Format(Strings.Resources.ActionGroupCallScheduled, voiceChatScheduled.GetStartsAt());
+            }
 
             return (content, entities);
         }
@@ -1037,7 +1099,11 @@ namespace Unigram.Controls.Messages
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            if (message.ProtoService.TryGetUser(message.Sender, out User senderUser))
+            if (message.IsChannelPost)
+            {
+                content = Strings.Resources.ActionChannelCallJustStarted;
+            }
+            else if (message.ProtoService.TryGetUser(message.Sender, out User senderUser))
             {
                 if (senderUser.Id == message.ProtoService.Options.MyId)
                 {
@@ -1344,8 +1410,7 @@ namespace Unigram.Controls.Messages
         {
             var content = string.Empty;
 
-            var chat = message.GetChat();
-            if (chat?.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
+            if (message.IsChannelPost)
             {
                 content = Strings.Resources.ActionCreateChannel;
             }
