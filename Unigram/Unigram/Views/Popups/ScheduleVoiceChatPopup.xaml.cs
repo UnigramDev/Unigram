@@ -26,7 +26,7 @@ namespace Unigram.Views.Popups
             Date.MinDate = DateTime.Today;
             Date.MaxDate = DateTime.Today.AddDays(7);
 
-            Title = Strings.Resources.VoipGroupScheduleVoiceChat;
+            Title = channel ? Strings.Resources.VoipChannelScheduleVoiceChat : Strings.Resources.VoipGroupScheduleVoiceChat;
             PrimaryButtonText = Strings.Resources.Schedule;
             SecondaryButtonText = Strings.Resources.Cancel;
 

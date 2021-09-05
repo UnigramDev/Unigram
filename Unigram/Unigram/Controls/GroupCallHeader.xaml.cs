@@ -66,6 +66,7 @@ namespace Unigram.Controls
         public bool UpdateGroupCall(Chat chat, GroupCall call)
         {
             var visible = true;
+            var channel = chat.Type is ChatTypeSupergroup super && super.IsChannel;
 
             //if (chat.VoiceChat.GroupCallId != call?.Id || !chat.VoiceChat.HasParticipants || call == null || call.IsJoined)
             //{
@@ -77,7 +78,7 @@ namespace Unigram.Controls
             {
                 ShowHide(true);
 
-                TitleLabel.Text = call.ScheduledStartDate > 0 && call.Title.Length > 0 ? call.Title : Strings.Resources.VoipGroupVoiceChat;
+                TitleLabel.Text = call.ScheduledStartDate > 0 && call.Title.Length > 0 ? call.Title : channel ? Strings.Resources.VoipChannelVoiceChat : Strings.Resources.VoipGroupVoiceChat;
                 ServiceLabel.Text = call.ParticipantCount > 0 ? Locale.Declension("Participants", call.ParticipantCount) : Strings.Resources.MembersTalkingNobody;
 
                 if (call.ScheduledStartDate != 0)
@@ -94,7 +95,7 @@ namespace Unigram.Controls
                         _scheduledTimer.Stop();
                     }
 
-                    TitleLabel.Text = call.Title.Length > 0 ? call.Title : Strings.Resources.VoipGroupScheduledVoiceChat;
+                    TitleLabel.Text = call.Title.Length > 0 ? call.Title : channel ? Strings.Resources.VoipChannelScheduledVoiceChat : Strings.Resources.VoipGroupScheduledVoiceChat;
 
                     JoinButton.Background = BootStrapper.Current.Resources["VoiceChatPurpleBrush"] as Brush;
                     JoinButton.Content = call.GetStartsIn();
@@ -103,7 +104,7 @@ namespace Unigram.Controls
                 {
                     _scheduledTimer.Stop();
 
-                    TitleLabel.Text = Strings.Resources.VoipGroupVoiceChat;
+                    TitleLabel.Text = channel ? Strings.Resources.VoipChannelVoiceChat : Strings.Resources.VoipGroupVoiceChat;
 
                     JoinButton.Background = BootStrapper.Current.Resources["StartButtonBackground"] as Brush;
                     JoinButton.Content = Strings.Resources.VoipChatJoin;

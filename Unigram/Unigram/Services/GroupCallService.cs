@@ -38,6 +38,7 @@ namespace Unigram.Services
         GroupCallParticipantsCollection Participants { get; }
 
         Chat Chat { get; }
+        bool IsChannel { get; }
 
         GroupCall Call { get; }
         GroupCallParticipant CurrentUser { get; }
@@ -558,7 +559,7 @@ namespace Unigram.Services
 
             var stamp = DateTime.Now.ToTimestamp();
 
-            ProtoService.Send(new GetGroupCallStreamSegment(call.Id, time, args.Scale), result =>
+            ProtoService.Send(new GetGroupCallStreamSegment(call.Id, time, args.Scale, args.ChannelId, args.VideoQuality), result =>
             {
                 stamp = DateTime.Now.ToTimestamp() - stamp;
                 args.Deferral(time, response.Value + stamp, result as FilePart);
@@ -829,6 +830,7 @@ namespace Unigram.Services
         }
 
         public Chat Chat => _chat;
+        public bool IsChannel => _chat?.Type is ChatTypeSupergroup super && super.IsChannel;
         public GroupCall Call => _call;
         public GroupCallParticipant CurrentUser => _currentUser;
         public int Source => _source;

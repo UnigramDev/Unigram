@@ -20,17 +20,24 @@ namespace Unigram.Views.Popups
 
             _protoService = protoService;
             var already = senders.FirstOrDefault(x => x.IsEqual(chat.VoiceChat.DefaultParticipantId));
+            var channel = chat.Type is ChatTypeSupergroup super && super.IsChannel;
 
             Title = chat.VoiceChat.GroupCallId != 0
                 ? Strings.Resources.VoipGroupDisplayAs
+                : channel
+                ? Strings.Resources.StartVoipChannelTitle
                 : Strings.Resources.VoipGroupStartAs;
 
-            MessageLabel.Text = chat.Type is ChatTypeSupergroup super && super.IsChannel
+            MessageLabel.Text = channel
                 ? Strings.Resources.VoipGroupStartAsInfo
                 : Strings.Resources.VoipGroupStartAsInfoGroup;
 
             List.ItemsSource = senders;
             List.SelectedItem = already ?? senders.FirstOrDefault();
+
+            Schedule.Content = channel
+                ? Strings.Resources.VoipChannelScheduleVoiceChat
+                : Strings.Resources.VoipGroupScheduleVoiceChat;
 
             Schedule.Visibility = canSchedule
                 ? Visibility.Visible

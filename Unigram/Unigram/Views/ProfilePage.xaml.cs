@@ -580,7 +580,7 @@ namespace Unigram.Views
                 {
                     if (chat.VoiceChat.GroupCallId == 0 && supergroup.CanManageVoiceChats())
                     {
-                        flyout.CreateFlyoutItem(ViewModel.CallCommand, false, Strings.Resources.StartVoipChat, new FontIcon { Glyph = Icons.VoiceChat });
+                        flyout.CreateFlyoutItem(ViewModel.CallCommand, false, supergroup.IsChannel ? Strings.Resources.StartVoipChannel : Strings.Resources.StartVoipChat, new FontIcon { Glyph = Icons.VoiceChat });
                     }
 
                     if (supergroup.IsChannel)

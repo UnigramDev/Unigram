@@ -55,7 +55,7 @@
             Click="Schedule_Click"
             Content="{CustomResource VoipGroupScheduleVoiceChat}"
             HorizontalAlignment="Left"
-            Margin="0,12,0,-20"
+            Margin="-12,12,0,-16"
             Grid.Row="2"/>
 
     </Grid>

@@ -1062,11 +1062,11 @@ namespace Unigram.Views
                 var popup = new MessagePopup
                 {
                     RequestedTheme = ElementTheme.Dark,
-                    Title = Strings.Resources.VoipGroupLeaveAlertTitle,
-                    Message = Strings.Resources.VoipGroupLeaveAlertText,
+                    Title = _service.IsChannel ? Strings.Resources.VoipChannelLeaveAlertTitle : Strings.Resources.VoipGroupLeaveAlertTitle,
+                    Message = _service.IsChannel ? Strings.Resources.VoipChannelLeaveAlertText : Strings.Resources.VoipGroupLeaveAlertText,
                     PrimaryButtonText = Strings.Resources.VoipGroupLeave,
                     SecondaryButtonText = Strings.Resources.Cancel,
-                    CheckBoxLabel = Strings.Resources.VoipGroupLeaveAlertEndChat
+                    CheckBoxLabel = _service.IsChannel ? Strings.Resources.VoipChannelLeaveAlertEndChat : Strings.Resources.VoipGroupLeaveAlertEndChat
                 };
 
                 var confirm = await popup.ShowQueuedAsync();
@@ -1096,8 +1096,8 @@ namespace Unigram.Views
 
             var popup = new MessagePopup();
             popup.RequestedTheme = ElementTheme.Dark;
-            popup.Title = Strings.Resources.VoipGroupEndAlertTitle;
-            popup.Message = Strings.Resources.VoipGroupEndAlertText;
+            popup.Title = _service.IsChannel ? Strings.Resources.VoipChannelEndAlertTitle : Strings.Resources.VoipGroupEndAlertTitle;
+            popup.Message = _service.IsChannel ? Strings.Resources.VoipChannelEndAlertText : Strings.Resources.VoipGroupEndAlertText;
             popup.PrimaryButtonText = Strings.Resources.VoipGroupEnd;
             popup.SecondaryButtonText = Strings.Resources.Cancel;
 
@@ -1429,7 +1429,7 @@ namespace Unigram.Views
 
             if (call.CanBeManaged)
             {
-                flyout.CreateFlyoutItem(SetTitle, Strings.Resources.VoipGroupEditTitle, new FontIcon { Glyph = Icons.Edit });
+                flyout.CreateFlyoutItem(SetTitle, _service.IsChannel ? Strings.Resources.VoipChannelEditTitle : Strings.Resources.VoipGroupEditTitle, new FontIcon { Glyph = Icons.Edit });
             }
 
             if (call.CanChangeMuteNewParticipants)
@@ -1576,7 +1576,7 @@ namespace Unigram.Views
             {
                 flyout.CreateFlyoutSeparator();
 
-                var discard = flyout.CreateFlyoutItem(Discard, Strings.Resources.VoipGroupEndChat, new FontIcon { Glyph = Icons.Dismiss });
+                var discard = flyout.CreateFlyoutItem(Discard, _service.IsChannel ? Strings.Resources.VoipChannelEndChat : Strings.Resources.VoipGroupEndChat, new FontIcon { Glyph = Icons.Dismiss });
                 discard.Foreground = new SolidColorBrush(Colors.IndianRed);
             }
 
@@ -1605,7 +1605,7 @@ namespace Unigram.Views
 
             var input = new InputPopup();
             input.RequestedTheme = ElementTheme.Dark;
-            input.Title = Strings.Resources.VoipGroupTitle;
+            input.Title = _service.IsChannel ? Strings.Resources.VoipChannelTitle : Strings.Resources.VoipGroupTitle;
             input.PrimaryButtonText = Strings.Resources.Save;
             input.SecondaryButtonText = Strings.Resources.Cancel;
             input.PlaceholderText = chat.Title;
@@ -1644,7 +1644,7 @@ namespace Unigram.Views
             var confirm = await input.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
-                _protoService.Send(new StartGroupCallRecording(call.Id, input.Text));
+                _protoService.Send(new StartGroupCallRecording(call.Id, input.Text, false, false));
             }
         }
 
@@ -1659,7 +1659,7 @@ namespace Unigram.Views
             var popup = new MessagePopup();
             popup.RequestedTheme = ElementTheme.Dark;
             popup.Title = Strings.Resources.VoipGroupStopRecordingTitle;
-            popup.Message = Strings.Resources.VoipGroupStopRecordingText;
+            popup.Message = _service.IsChannel ? Strings.Resources.VoipChannelStopRecordingText : Strings.Resources.VoipGroupStopRecordingText;
             popup.PrimaryButtonText = Strings.Resources.Stop;
             popup.SecondaryButtonText = Strings.Resources.Cancel;
 
