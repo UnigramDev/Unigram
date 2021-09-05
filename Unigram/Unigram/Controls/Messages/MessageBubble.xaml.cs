@@ -1261,14 +1261,7 @@ namespace Unigram.Controls.Messages
                 if (entity.HasFlag(TextStyle.Monospace))
                 {
                     var data = text.Substring(entity.Offset, entity.Length);
-                    var hyperlink = new Hyperlink();
-                    hyperlink.Click += (s, args) => Entity_Click(message, entity.Type, data);
-                    hyperlink.Foreground = GetBrush("MessageForegroundBrush");
-                    hyperlink.UnderlineStyle = UnderlineStyle.None;
-                    //hyperlink.Foreground = foreground;
-
-                    span.Inlines.Add(hyperlink);
-                    hyperlink.Inlines.Add(new Run { Text = data, FontFamily = new FontFamily("Consolas") });
+                    span.Inlines.Add(new Run { Text = data, FontFamily = new FontFamily("Consolas") });
 
                     if (entity.Type is TextEntityTypePre or TextEntityTypePreCode)
                     {
