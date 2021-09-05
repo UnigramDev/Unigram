@@ -954,7 +954,7 @@ namespace Unigram.ViewModels
                     var bot = message.GetViaBotUser();
                     if (bot != null)
                     {
-                        InformativeMessage = _messageFactory.Create(this, new Message(0, new MessageSenderUser(bot.Id), 0, null, null, false, false, false, false, true, false, false, false, false, false, 0, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText(Strings.Resources.Loading, new TextEntity[0]), null), null));
+                        InformativeMessage = _messageFactory.Create(this, new Message(0, new MessageSenderUser(bot.Id), 0, null, null, false, false, false, false, true, false, false, false, false, false, false, false, 0, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText(Strings.Resources.Loading, new TextEntity[0]), null), null));
                     }
 
                     var response = await ProtoService.SendAsync(new GetCallbackQueryAnswer(chat.Id, message.Id, new CallbackQueryPayloadData(callback.Data)));
@@ -975,7 +975,7 @@ namespace Unigram.ViewModels
                                     return;
                                 }
 
-                                InformativeMessage = _messageFactory.Create(this, new Message(0, new MessageSenderUser(bot.Id), 0, null, null, false, false, false, false, true, false, false, false, false, false, 0, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText(answer.Text, new TextEntity[0]), null), null));
+                                InformativeMessage = _messageFactory.Create(this, new Message(0, new MessageSenderUser(bot.Id), 0, null, null, false, false, false, false, true, false, false, false, false, false, false, false, 0, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText(answer.Text, new TextEntity[0]), null), null));
                             }
                         }
                         else if (!string.IsNullOrEmpty(answer.Url))
@@ -1161,38 +1161,30 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var fileName = result.FileName;
-            if (string.IsNullOrEmpty(fileName))
+            var response = await ProtoService.SendAsync(new GetSuggestedFileName(file.Id, ""));
+            if (response is Text text)
             {
-                fileName = Path.GetFileName(file.Local.Path);
-            }
-
-            var clean = ProtoService.Execute(new CleanFileName(fileName));
-            if (clean is Text text && !string.IsNullOrEmpty(text.TextValue))
-            {
-                fileName = text.TextValue;
-            }
-
-            var extension = Path.GetExtension(fileName);
-            if (string.IsNullOrEmpty(extension))
-            {
-                extension = ".dat";
-            }
-
-            try
-            {
-                var picker = new FileSavePicker();
-                picker.FileTypeChoices.Add($"{extension.TrimStart('.').ToUpper()} File", new[] { extension });
-                picker.SuggestedStartLocation = PickerLocationId.Downloads;
-                picker.SuggestedFileName = fileName;
-
-                var picked = await picker.PickSaveFileAsync();
-                if (picked != null)
+                var extension = Path.GetExtension(text.TextValue);
+                if (string.IsNullOrEmpty(extension))
                 {
-                    await cached.CopyAndReplaceAsync(picked);
+                    extension = ".dat";
                 }
+
+                try
+                {
+                    var picker = new FileSavePicker();
+                    picker.FileTypeChoices.Add($"{extension.TrimStart('.').ToUpper()} File", new[] { extension });
+                    picker.SuggestedStartLocation = PickerLocationId.Downloads;
+                    picker.SuggestedFileName = text.TextValue;
+
+                    var picked = await picker.PickSaveFileAsync();
+                    if (picked != null)
+                    {
+                        await cached.CopyAndReplaceAsync(picked);
+                    }
+                }
+                catch { }
             }
-            catch { }
         }
 
         #endregion
