@@ -27,6 +27,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
@@ -1054,12 +1055,7 @@ namespace Unigram.Controls.Gallery
 
             var flyout = new MenuFlyout();
 
-            flyout.CreateFlyoutItem(x => item.CanView, viewModel.ViewCommand, item, Strings.Resources.ShowInChat, new FontIcon { Glyph = Icons.Comment });
-            flyout.CreateFlyoutItem(x => item.CanShare, viewModel.ForwardCommand, item, Strings.Resources.Forward, new FontIcon { Glyph = Icons.Share });
-            flyout.CreateFlyoutItem(x => item.CanCopy, viewModel.CopyCommand, item, Strings.Resources.Copy, new FontIcon { Glyph = Icons.DocumentCopy }, Windows.System.VirtualKey.C);
-            flyout.CreateFlyoutItem(x => item.CanSave, viewModel.SaveCommand, item, Strings.Additional.SaveAs, new FontIcon { Glyph = Icons.SaveAs }, Windows.System.VirtualKey.S);
-            flyout.CreateFlyoutItem(x => viewModel.CanOpenWith, viewModel.OpenWithCommand, item, Strings.Resources.OpenInExternalApp, new FontIcon { Glyph = Icons.OpenIn });
-            flyout.CreateFlyoutItem(x => viewModel.CanDelete, viewModel.DeleteCommand, item, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
+            PopulateContextRequested(flyout, viewModel, item);
 
             flyout.ShowAt(sender as FrameworkElement, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedRight });
         }
@@ -1086,14 +1082,49 @@ namespace Unigram.Controls.Gallery
 
             var flyout = new MenuFlyout();
 
+            PopulateContextRequested(flyout, viewModel, item);
+
+            args.ShowAt(flyout, element);
+        }
+
+        private void PopulateContextRequested(MenuFlyout flyout, GalleryViewModelBase viewModel, GalleryContent item)
+        {
+            if (item.IsVideo && !item.IsLoop)
+            {
+                var rates = new double[] { 0.25, 0.5, 1, 1.5, 2 };
+                var labels = new string[] { Strings.Resources.SpeedVerySlow, Strings.Resources.SpeedSlow, Strings.Resources.SpeedNormal, Strings.Resources.SpeedFast, Strings.Resources.SpeedVeryFast };
+
+                var speed = new MenuFlyoutSubItem();
+                speed.Text = Strings.Resources.Speed;
+                speed.Icon = new FontIcon { Glyph = Icons.TopSpeed, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
+
+                for (int i = 0; i < rates.Length; i++)
+                {
+                    var rate = rates[i];
+                    var toggle = new ToggleMenuFlyoutItem
+                    {
+                        Text = labels[i],
+                        IsChecked = _mediaPlayer.PlaybackSession.PlaybackRate == rate,
+                        CommandParameter = rate,
+                        Command = new RelayCommand<double>(x =>
+                        {
+                            _mediaPlayer.PlaybackSession.PlaybackRate = rate;
+                        })
+                    };
+
+                    speed.Items.Add(toggle);
+                }
+
+                flyout.Items.Add(speed);
+                flyout.CreateFlyoutSeparator();
+            }
+
             flyout.CreateFlyoutItem(x => item.CanView, viewModel.ViewCommand, item, Strings.Resources.ShowInChat, new FontIcon { Glyph = Icons.Comment });
             flyout.CreateFlyoutItem(x => item.CanShare, viewModel.ForwardCommand, item, Strings.Resources.Forward, new FontIcon { Glyph = Icons.Share });
             flyout.CreateFlyoutItem(x => item.CanCopy, viewModel.CopyCommand, item, Strings.Resources.Copy, new FontIcon { Glyph = Icons.DocumentCopy }, Windows.System.VirtualKey.C);
             flyout.CreateFlyoutItem(x => item.CanSave, viewModel.SaveCommand, item, Strings.Additional.SaveAs, new FontIcon { Glyph = Icons.SaveAs }, Windows.System.VirtualKey.S);
             flyout.CreateFlyoutItem(x => viewModel.CanOpenWith, viewModel.OpenWithCommand, item, Strings.Resources.OpenInExternalApp, new FontIcon { Glyph = Icons.OpenIn });
             flyout.CreateFlyoutItem(x => viewModel.CanDelete, viewModel.DeleteCommand, item, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
-
-            args.ShowAt(flyout, element);
         }
 
         #endregion

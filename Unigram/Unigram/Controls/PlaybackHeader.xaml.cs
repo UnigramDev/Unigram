@@ -392,14 +392,15 @@ namespace Unigram.Controls
         private void Rate_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
             var flyout = new MenuFlyout();
-            var rates = new double[] { 0.25, 0.5, 0.75, 1, 1.25, 1.50, 1.75, 2 };
+            var rates = new double[] { 0.25, 0.5, 1, 1.5, 2 };
+            var labels = new string[] { Strings.Resources.SpeedVerySlow, Strings.Resources.SpeedSlow, Strings.Resources.SpeedNormal, Strings.Resources.SpeedFast, Strings.Resources.SpeedVeryFast };
 
             for (int i = 0; i < rates.Length; i++)
             {
                 var rate = rates[i];
                 var toggle = new ToggleMenuFlyoutItem
                 {
-                    Text = $"{rate}",
+                    Text = labels[i],
                     IsChecked = _playbackService.PlaybackRate == rate,
                     CommandParameter = rate,
                     Command = new RelayCommand<double>(x =>
