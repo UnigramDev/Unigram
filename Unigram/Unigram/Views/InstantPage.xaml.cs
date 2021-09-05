@@ -1665,7 +1665,7 @@ namespace Unigram.Views
         {
         }
 
-        public async void OpenMedia(MessageViewModel message, FrameworkElement target)
+        public async void OpenMedia(MessageViewModel message, FrameworkElement target, int timestamp = 0)
         {
             var content = target.Tag as GalleryContent;
             if (content == null)

@@ -546,9 +546,20 @@ namespace Unigram.ViewModels
             //}
         }
 
-        public async void OpenMedia(MessageViewModel message, FrameworkElement target)
+        public async void OpenMedia(MessageViewModel message, FrameworkElement target, int timestamp = 0)
         {
-            if (message.Content is MessagePoll poll)
+            if (message.Content is MessageAudio or MessageVoiceNote)
+            {
+                _playbackService.Play(message, _threadId);
+
+                if (timestamp > 0)
+                {
+                    _playbackService.Seek(TimeSpan.FromSeconds(timestamp));
+                }
+
+                return;
+            }
+            else if (message.Content is MessagePoll poll)
             {
                 await new PollResultsPopup(ProtoService, CacheService, Settings, Aggregator, this, message.ChatId, message.Id, poll.Poll).ShowQueuedAsync();
                 return;
@@ -599,7 +610,10 @@ namespace Unigram.ViewModels
                     }
                 }
 
-                await GalleryView.GetForCurrentView().ShowAsync(viewModel, () => target);
+                var gallery = GalleryView.GetForCurrentView();
+                gallery.InitialPosition = timestamp;
+
+                await gallery.ShowAsync(viewModel, target != null ? () => target : null);
             }
 
             TextField?.Focus(FocusState.Programmatic);

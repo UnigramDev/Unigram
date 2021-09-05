@@ -1489,9 +1489,9 @@ namespace Unigram.Controls.Messages
             {
                 message.Delegate.OpenBankCardNumber(data);
             }
-            else if (type is TextEntityTypeCode or TextEntityTypePre or TextEntityTypePreCode)
+            else if (type is TextEntityTypeMediaTimestamp mediaTimestamp && message.ReplyToMessage != null)
             {
-                MessageHelper.CopyText(data);
+                message.Delegate.OpenMedia(message.ReplyToMessage, null, mediaTimestamp.MediaTimestamp);
             }
         }
 

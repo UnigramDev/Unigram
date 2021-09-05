@@ -23,7 +23,7 @@ namespace Unigram.ViewModels.Delegates
         void OpenLocation(Location location, string title);
         void OpenLiveLocation(MessageViewModel message);
         void OpenInlineButton(MessageViewModel message, InlineKeyboardButton button);
-        void OpenMedia(MessageViewModel message, FrameworkElement target);
+        void OpenMedia(MessageViewModel message, FrameworkElement target, int timestamp = 0);
         void PlayMessage(MessageViewModel message);
 
         void Call(MessageViewModel message, bool video);

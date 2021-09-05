@@ -508,7 +508,7 @@ namespace Unigram.ViewModels.Chats
         {
         }
 
-        public void OpenMedia(MessageViewModel message, FrameworkElement target)
+        public void OpenMedia(MessageViewModel message, FrameworkElement target, int timestamp = 0)
         {
         }
 

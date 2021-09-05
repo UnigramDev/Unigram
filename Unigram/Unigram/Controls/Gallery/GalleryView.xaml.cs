@@ -55,6 +55,14 @@ namespace Unigram.Controls.Gallery
         private bool _wasFullScreen;
         private bool _unloaded;
 
+        private int? _initialPosition;
+
+        public int InitialPosition
+        {
+            get => _initialPosition ?? 0;
+            set => _initialPosition = value > 0 ? value : null;
+        }
+
         private GalleryView()
         {
             InitializeComponent();
@@ -301,7 +309,10 @@ namespace Unigram.Controls.Gallery
             {
                 _closing = closing;
 
-                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", _closing());
+                if (_closing != null)
+                {
+                    ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", _closing());
+                }
 
                 if (_compactLifetime != null)
                 {
@@ -504,6 +515,7 @@ namespace Unigram.Controls.Gallery
             }
 
             _layer.Opacity = 1;
+            _bottom.Opacity = 1;
 
             Transport.Show();
             ScrollingHost.Opacity = 1;
@@ -640,6 +652,12 @@ namespace Unigram.Controls.Gallery
                 else
                 {
                     _mediaPlayer.Source = MediaSource.CreateFromUri(UriEx.ToLocal(file.Local.Path));
+                }
+
+                if (_initialPosition is int initialPosition)
+                {
+                    _initialPosition = null;
+                    _mediaPlayer.PlaybackSession.Position = TimeSpan.FromSeconds(initialPosition);
                 }
 
                 _mediaPlayer.IsLoopingEnabled = item.IsLoop;
