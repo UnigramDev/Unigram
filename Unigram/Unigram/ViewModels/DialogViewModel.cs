@@ -142,6 +142,7 @@ namespace Unigram.ViewModels
             ActionCommand = new RelayCommand(ActionExecute);
             OpenMessageCommand = new RelayCommand<Message>(OpenMessageExecute);
             ScheduledCommand = new RelayCommand(ScheduledExecute);
+            OpenUserCommand = new RelayCommand<long>(OpenUser);
 
             MessagesForwardCommand = new RelayCommand(MessagesForwardExecute, MessagesForwardCanExecute);
             MessagesDeleteCommand = new RelayCommand(MessagesDeleteExecute, MessagesDeleteCanExecute);
@@ -2794,6 +2795,8 @@ namespace Unigram.ViewModels
 */
             //ProtoService.Send(new SendMessage())
         }
+
+        public RelayCommand<long> OpenUserCommand { get; }
 
         #region Join channel
 

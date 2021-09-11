@@ -68,20 +68,28 @@ namespace Unigram.Common
             args.Handled = true;
         }
 
-        public static void CreateFlyoutSeparator(this MenuFlyout flyout)
+        public static MenuFlyoutSeparator CreateFlyoutSeparator(this MenuFlyout flyout)
         {
             if (flyout.Items.Count > 0 && (flyout.Items[flyout.Items.Count - 1] is MenuFlyoutItem or MenuFlyoutSubItem))
             {
-                flyout.Items.Add(new MenuFlyoutSeparator());
+                var separator = new MenuFlyoutSeparator();
+                flyout.Items.Add(separator);
+                return separator;
             }
+
+            return null;
         }
 
-        public static void CreateFlyoutSeparator(this MenuFlyoutSubItem flyout)
+        public static MenuFlyoutSeparator CreateFlyoutSeparator(this MenuFlyoutSubItem flyout)
         {
             if (flyout.Items.Count > 0 && (flyout.Items[flyout.Items.Count - 1] is MenuFlyoutItem or MenuFlyoutSubItem))
             {
-                flyout.Items.Add(new MenuFlyoutSeparator());
+                var separator = new MenuFlyoutSeparator();
+                flyout.Items.Add(separator);
+                return separator;
             }
+
+            return null;
         }
 
         public static void CreateFlyoutItem<T>(this MenuFlyout flyout, Func<T, bool> visibility, ICommand command, T parameter, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control) where T : class

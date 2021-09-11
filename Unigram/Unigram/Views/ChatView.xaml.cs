@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Telegram.Td;
 using Telegram.Td.Api;
-using Unigram.Charts;
 using Unigram.Common;
 using Unigram.Common.Chats;
 using Unigram.Controls;
@@ -2035,6 +2034,11 @@ namespace Unigram.Views
                 flyout.CreateFlyoutItem(MessageSendNow_Loaded, ViewModel.MessageSendNowCommand, message, Strings.Resources.MessageScheduleSend, new FontIcon { Glyph = Icons.Send, FontFamily = new FontFamily("ms-appx:///Assets/Fonts/Telegram.ttf#Telegram") });
                 flyout.CreateFlyoutItem(MessageReschedule_Loaded, ViewModel.MessageRescheduleCommand, message, Strings.Resources.MessageScheduleEditTime, new FontIcon { Glyph = Icons.CalendarClock });
 
+                if (message.CanGetViewers)
+                {
+                    LoadMessageViewers(message, flyout);
+                }
+
                 // Generic
                 flyout.CreateFlyoutItem(MessageReply_Loaded, ViewModel.MessageReplyCommand, message, Strings.Resources.Reply, new FontIcon { Glyph = Icons.ArrowReply });
 
@@ -2139,6 +2143,82 @@ namespace Unigram.Views
             }
 
             args.ShowAt(flyout, sender as FrameworkElement);
+        }
+
+        private async void LoadMessageViewers(MessageViewModel message, MenuFlyout flyout)
+        {
+            var played = message.Content is MessageVoiceNote or MessageVideoNote;
+
+            var placeholder = flyout.CreateFlyoutItem(() => { }, "...", new FontIcon { Glyph = played ? Icons.Play : Icons.Seen });
+            var separator = flyout.CreateFlyoutSeparator();
+
+            // Width must be fixed because viewers are loaded asynchronously
+            placeholder.Width = 220;
+
+            var response = await message.ProtoService.SendAsync(new GetMessageViewers(message.ChatId, message.Id));
+            if (response is Telegram.Td.Api.Users users && users.UserIds.Count > 0)
+            {
+                var profiles = message.ProtoService.GetUsers(users.UserIds);
+
+                var pictures = new StackPanel();
+                pictures.Orientation = Orientation.Horizontal;
+
+                foreach (var user in profiles.Take(Math.Min(3, profiles.Count)))
+                {
+                    var picture = new ProfilePicture();
+                    picture.Width = 24;
+                    picture.Height = 24;
+                    picture.IsEnabled = false;
+                    picture.Source = PlaceholderHelper.GetUser(message.ProtoService, user, 24);
+                    picture.Margin = new Thickness(pictures.Children.Count > 0 ? -10 : 0, -2, 0, -2);
+
+                    Canvas.SetZIndex(picture, -pictures.Children.Count);
+                    pictures.Children.Add(picture);
+                }
+
+                if (profiles.Count > 1)
+                {
+                    var final = new MenuFlyoutSubItem();
+                    final.Style = App.Current.Resources["MessageSeenMenuFlyoutSubItemStyle"] as Style;
+                    final.Text = Locale.Declension(played ? "MessagePlayed" : "MessageSeen", users.UserIds.Count);
+                    final.Icon = new FontIcon { Glyph = played ? Icons.Play : Icons.Seen, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
+                    final.Tag = pictures;
+
+                    // Width must be fixed because viewers are loaded asynchronously
+                    final.Width = 220;
+
+                    foreach (var user in message.ProtoService.GetUsers(users.UserIds))
+                    {
+                        var picture = new ProfilePicture();
+                        picture.Width = 24;
+                        picture.Height = 24;
+                        picture.IsEnabled = false;
+                        picture.Source = PlaceholderHelper.GetUser(message.ProtoService, user, 24);
+                        picture.Margin = new Thickness(-4, -2, 0, -2);
+
+                        var item = final.CreateFlyoutItem(ViewModel.OpenUserCommand, user.Id, user.GetFullName());
+                        item.Style = App.Current.Resources["ProfilePictureMenuFlyoutItemStyle"] as Style;
+                        item.Icon = new FontIcon();
+                        item.Tag = picture;
+                    }
+
+                    flyout.Items.Remove(placeholder);
+                    flyout.Items.Insert(0, final);
+                }
+                else if (profiles.Count > 0)
+                {
+                    placeholder.Style = App.Current.Resources["MessageSeenMenuFlyoutItemStyle"] as Style;
+                    placeholder.Text = profiles[0].GetFullName();
+                    placeholder.Tag = pictures;
+                    placeholder.CommandParameter = profiles[0].Id;
+                    placeholder.Command = ViewModel.OpenUserCommand;
+                }
+            }
+            else
+            {
+                flyout.Items.Remove(placeholder);
+                flyout.Items.Remove(separator);
+            }
         }
 
         private bool MessageSendNow_Loaded(MessageViewModel message)
@@ -4924,7 +5004,7 @@ namespace Unigram.Views
                         {
                             wavesEnter = 1.0f;
                         }
-                        float interpolation = f7 * CubicBezierInterpolator.EASE_OUT.getInterpolation(wavesEnter);
+                        float interpolation = f7 * Unigram.Charts.CubicBezierInterpolator.EASE_OUT.getInterpolation(wavesEnter);
                         //canvas.scale(interpolation, interpolation, f, f2);
                         canvas.Transform = Matrix3x2.CreateScale(interpolation, interpolation, new Vector2(x, y));
                         blobDrawable.Update(amplitude, 1.0f);
@@ -4954,7 +5034,7 @@ namespace Unigram.Views
                         }
                     }
                 }
-                float interpolation2 = f7 * CubicBezierInterpolator.EASE_OUT.getInterpolation(wavesEnter);
+                float interpolation2 = f7 * Unigram.Charts.CubicBezierInterpolator.EASE_OUT.getInterpolation(wavesEnter);
                 //canvas.scale(interpolation2, interpolation2, f, f2);
                 canvas.Transform = Matrix3x2.CreateScale(interpolation2, interpolation2, new Vector2(x, y));
                 blobDrawable.Update(amplitude, 1.0f);
@@ -4976,7 +5056,7 @@ namespace Unigram.Views
         {
             get
             {
-                float interpolation = CubicBezierInterpolator.EASE_OUT.getInterpolation(wavesEnter);
+                float interpolation = Unigram.Charts.CubicBezierInterpolator.EASE_OUT.getInterpolation(wavesEnter);
                 return (((amplitude * 0.2f) + 0.8f) * interpolation) + ((1.0f - interpolation) * 1.0f);
             }
         }
@@ -5143,7 +5223,7 @@ namespace Unigram.Views
 
         private Matrix3x2 SetRotate(float degree, float px, float py)
         {
-            return Matrix3x2.CreateRotation(MathFEx.ToRadians(degree), new Vector2(px, py));
+            return Matrix3x2.CreateRotation(Unigram.Charts.MathFEx.ToRadians(degree), new Vector2(px, py));
         }
 
         public void GenerateBlob()

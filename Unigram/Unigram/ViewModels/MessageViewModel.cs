@@ -52,6 +52,7 @@ namespace Unigram.ViewModels
         public bool CanBeEdited => _message.CanBeEdited;
         public bool CanGetMessageThread => _message.CanGetMessageThread;
         public bool CanGetStatistics => _message.CanGetStatistics;
+        public bool CanGetViewers => _message.CanGetViewers;
         public bool IsOutgoing { get => _message.IsOutgoing; set => _message.IsOutgoing = value; }
         public bool IsPinned { get => _message.IsPinned; set => _message.IsPinned = value; }
         public MessageSchedulingState SchedulingState => _message.SchedulingState;
