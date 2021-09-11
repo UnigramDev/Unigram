@@ -31,10 +31,10 @@ namespace Unigram.ViewModels.Delegates
         void VotePoll(MessageViewModel message, IList<PollOption> option);
 
         void OpenUsername(string username);
-        void OpenUser(int userId);
+        void OpenUser(long userId);
         void OpenChat(long chatId, bool profile = false);
         void OpenChat(long chatId, long messageId);
-        void OpenViaBot(int viaBotUserId);
+        void OpenViaBot(long viaBotUserId);
 
         void OpenUrl(string url, bool untrust);
         void OpenHashtag(string hashtag);

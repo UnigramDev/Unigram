@@ -178,7 +178,7 @@ namespace Unigram.Common
             return bitmap;
         }
 
-        public static ImageSource GetSavedMessages(int id, int side)
+        public static ImageSource GetSavedMessages(long id, int side)
         {
             var bitmap = new BitmapImage { DecodePixelWidth = side, DecodePixelHeight = side, DecodePixelType = DecodePixelType.Logical };
             using (var stream = new InMemoryRandomAccessStream())

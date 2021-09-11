@@ -1048,7 +1048,7 @@ namespace Unigram.ViewModels
             NavigationService.Navigate(typeof(SupergroupMembersPage), chat.Id);
         }
 
-        public virtual ChatMemberCollection CreateMembers(int supergroupId)
+        public virtual ChatMemberCollection CreateMembers(long supergroupId)
         {
             return new ChatMemberCollection(ProtoService, supergroupId, new SupergroupMembersFilterRecent());
         }
@@ -1154,7 +1154,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public async void OpenUser(int userId)
+        public async void OpenUser(long userId)
         {
             var response = await ProtoService.SendAsync(new CreatePrivateChat(userId, false));
             if (response is Chat chat)
@@ -1220,7 +1220,7 @@ namespace Unigram.ViewModels
         private readonly ChatMembersFilter _filter2;
         private readonly string _query;
 
-        private readonly int _supergroupId;
+        private readonly long _supergroupId;
         private readonly SupergroupMembersFilter _filter;
 
         private bool _hasMore;
@@ -1234,7 +1234,7 @@ namespace Unigram.ViewModels
             _hasMore = true;
         }
 
-        public ChatMemberCollection(IProtoService protoService, int supergroupId, SupergroupMembersFilter filter)
+        public ChatMemberCollection(IProtoService protoService, long supergroupId, SupergroupMembersFilter filter)
         {
             _protoService = protoService;
             _supergroupId = supergroupId;
@@ -1293,7 +1293,7 @@ namespace Unigram.ViewModels
         private readonly long _chatId;
         private readonly string _query;
 
-        private readonly int _supergroupId;
+        private readonly long _supergroupId;
         private SupergroupMembersFilter _filter;
         private int _offset;
 
@@ -1310,7 +1310,7 @@ namespace Unigram.ViewModels
             _group = group;
         }
 
-        public ChatMemberGroupedCollection(IProtoService protoService, int supergroupId, bool group)
+        public ChatMemberGroupedCollection(IProtoService protoService, long supergroupId, bool group)
         {
             _protoService = protoService;
             _supergroupId = supergroupId;

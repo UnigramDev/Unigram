@@ -1309,7 +1309,7 @@ namespace Unigram.Common
             return false;
         }
 
-        public static bool IsUser(this MessageSender sender, int userId)
+        public static bool IsUser(this MessageSender sender, long userId)
         {
             return sender is MessageSenderUser user && user.UserId == userId;
         }
@@ -2696,7 +2696,7 @@ namespace Telegram.Td.Api
         /// <summary>
         /// Identifier of the user who performed the action that triggered the event.
         /// </summary>
-        public int UserId { get; set; }
+        public long UserId { get; set; }
 
         /// <summary>
         /// Point in time (Unix timestamp) when the event happened.

@@ -2982,7 +2982,7 @@ namespace Unigram.Views
             return empty && !self && !bot ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        public string ConvertEmptyText(int userId)
+        public string ConvertEmptyText(long userId)
         {
             return userId != 777000 && userId != 429000 && userId != 4244000 && (userId / 1000 == 333 || userId % 1000 == 0) ? Strings.Resources.GotAQuestion : Strings.Resources.NoMessages;
         }
@@ -3490,7 +3490,7 @@ namespace Unigram.Views
             }
         }
 
-        public void UpdateChatActions(Chat chat, IDictionary<int, ChatAction> actions)
+        public void UpdateChatActions(Chat chat, IDictionary<long, ChatAction> actions)
         {
             if (chat.Type is ChatTypePrivate privata && privata.UserId == ViewModel.CacheService.Options.MyId)
             {

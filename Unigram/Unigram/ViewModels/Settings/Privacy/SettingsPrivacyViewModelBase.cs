@@ -171,10 +171,10 @@ namespace Unigram.ViewModels.Settings
                 badge = string.Format("{0} ({1})", badge, string.Join(", ", list));
             }
 
-            _restrictedUsers = restrictedUsers ?? new UserPrivacySettingRuleRestrictUsers(new int[0]);
+            _restrictedUsers = restrictedUsers ?? new UserPrivacySettingRuleRestrictUsers(new long[0]);
             _restrictedChatMembers = restrictedChatMembers ?? new UserPrivacySettingRuleRestrictChatMembers(new long[0]);
 
-            _allowedUsers = allowedUsers ?? new UserPrivacySettingRuleAllowUsers(new int[0]);
+            _allowedUsers = allowedUsers ?? new UserPrivacySettingRuleAllowUsers(new long[0]);
             _allowedChatMembers = allowedChatMembers ?? new UserPrivacySettingRuleAllowChatMembers(new long[0]);
 
             BeginOnUIThread(() =>
@@ -234,7 +234,7 @@ namespace Unigram.ViewModels.Settings
             }
 
             var chats = new List<long>();
-            var users = new List<int>();
+            var users = new List<long>();
 
             foreach (var id in _allowedUsers.UserIds)
             {
@@ -306,7 +306,7 @@ namespace Unigram.ViewModels.Settings
             }
 
             var chats = new List<long>();
-            var users = new List<int>();
+            var users = new List<long>();
 
             foreach (var id in _restrictedUsers.UserIds)
             {
@@ -419,7 +419,7 @@ namespace Unigram.ViewModels.Settings
             return ProtoService.SendAsync(new SetUserPrivacySettingRules(_inputKey, new UserPrivacySettingRules(rules)));
         }
 
-        private string GetBadge(IList<int> userIds, IList<long> chatIds)
+        private string GetBadge(IList<long> userIds, IList<long> chatIds)
         {
             var count = userIds.Count;
 

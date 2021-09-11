@@ -37,7 +37,7 @@ namespace Unigram.ViewModels.Users
                 Items = new ItemsCollection(ProtoService, user.Id);
                 RaisePropertyChanged(nameof(Items));
             }
-            else if (parameter is int userId)
+            else if (parameter is long userId)
             {
                 Items = new ItemsCollection(ProtoService, userId);
                 RaisePropertyChanged(nameof(Items));
@@ -51,9 +51,9 @@ namespace Unigram.ViewModels.Users
         public class ItemsCollection : MvxObservableCollection<Chat>, ISupportIncrementalLoading
         {
             private readonly IProtoService _protoService;
-            private readonly int _userId;
+            private readonly long _userId;
 
-            public ItemsCollection(IProtoService protoService, int userId)
+            public ItemsCollection(IProtoService protoService, long userId)
             {
                 _protoService = protoService;
                 _userId = userId;

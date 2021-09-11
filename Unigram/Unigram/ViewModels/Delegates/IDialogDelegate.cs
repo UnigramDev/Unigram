@@ -8,7 +8,7 @@ namespace Unigram.ViewModels.Delegates
 {
     public interface IDialogDelegate : IProfileDelegate
     {
-        void UpdateChatActions(Chat chat, IDictionary<int, ChatAction> actions);
+        void UpdateChatActions(Chat chat, IDictionary<long, ChatAction> actions);
 
         void UpdateChatPermissions(Chat chat);
         void UpdateChatActionBar(Chat chat);

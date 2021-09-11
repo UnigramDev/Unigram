@@ -21,7 +21,7 @@ namespace Unigram.Collections
         private readonly SearchChatsType _type;
 
         private readonly List<long> _chats = new List<long>();
-        private readonly List<int> _users = new List<int>();
+        private readonly List<long> _users = new List<long>();
 
         private readonly IList<ISearchChatsFilter> _internal;
         private readonly MvxObservableCollection<ISearchChatsFilter> _filters;

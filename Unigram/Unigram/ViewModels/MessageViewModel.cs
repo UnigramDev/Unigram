@@ -36,7 +36,7 @@ namespace Unigram.ViewModels
         public long MediaAlbumId => _message.MediaAlbumId;
         public MessageInteractionInfo InteractionInfo { get => _message.InteractionInfo; set => _message.InteractionInfo = value; }
         public string AuthorSignature => _message.AuthorSignature;
-        public int ViaBotUserId => _message.ViaBotUserId;
+        public long ViaBotUserId => _message.ViaBotUserId;
         public double TtlExpiresIn { get => _message.TtlExpiresIn; set => _message.TtlExpiresIn = value; }
         public int Ttl => _message.Ttl;
         public long ReplyToMessageId { get => _message.ReplyToMessageId; set => _message.ReplyToMessageId = value; }

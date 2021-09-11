@@ -29,7 +29,7 @@ namespace Unigram.Services
 
         DiagnosticsSettings Diagnostics { get; }
 
-        int UserId { get; set; }
+        long UserId { get; set; }
         long PushReceiverId { get; set; }
 
         string FilesDirectory { get; set; }
@@ -331,10 +331,10 @@ namespace Unigram.Services
             set => AddOrUpdateValue(ref _useTestDC, _own, "UseTestDC", value);
         }
 
-        private int? _userId;
-        public int UserId
+        private long? _userId;
+        public long UserId
         {
-            get => _userId ??= GetValueOrDefault(_own, "UserId", 0);
+            get => _userId ??= GetValueOrDefault(_own, "UserId", 0L);
             set
             {
                 _userId = value;

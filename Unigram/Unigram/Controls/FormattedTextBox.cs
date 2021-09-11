@@ -248,7 +248,7 @@ namespace Unigram.Controls
 
             var clone = Document.Selection.GetClone();
             clone.StartOf(TextRangeUnit.Link, true);
-            var mention = TryGetUserId(clone, out int userId);
+            var mention = TryGetUserId(clone, out long userId);
 
             var formatting = new MenuFlyoutSubItem { Text = "Formatting" };
             formatting.CreateFlyoutItem(length && format.Bold == FormatEffect.Off, ContextBold_Click, Strings.Resources.Bold, new FontIcon { Glyph = Icons.TextBold }, VirtualKey.B);
@@ -505,10 +505,10 @@ namespace Unigram.Controls
                 document.Weight == format.Weight;
         }
 
-        protected bool TryGetUserId(ITextRange range, out int userId)
+        protected bool TryGetUserId(ITextRange range, out long userId)
         {
             var link = range.Link.Trim('"');
-            if (link.StartsWith("tg-user://") && int.TryParse(link.Substring("tg-user://".Length), out userId))
+            if (link.StartsWith("tg-user://") && long.TryParse(link.Substring("tg-user://".Length), out userId))
             {
                 return true;
             }
@@ -526,7 +526,7 @@ namespace Unigram.Controls
                 type = new TextEntityTypeTextUrl(link);
                 return true;
             }
-            else if (link.StartsWith("tg-user://") && int.TryParse(link.Substring("tg-user://".Length), out int userId))
+            else if (link.StartsWith("tg-user://") && long.TryParse(link.Substring("tg-user://".Length), out long userId))
             {
                 type = new TextEntityTypeMentionName(userId);
                 return true;

@@ -7,7 +7,7 @@ namespace Unigram.Common.Chats
 {
     public class InputChatActionManager
     {
-        public static string GetTypingString(Chat chat, IDictionary<int, ChatAction> typingUsers, Func<int, User> getUser, out ChatAction commonAction)
+        public static string GetTypingString(Chat chat, IDictionary<long, ChatAction> typingUsers, Func<long, User> getUser, out ChatAction commonAction)
         {
             if (chat.Type is ChatTypePrivate or ChatTypeSecret)
             {

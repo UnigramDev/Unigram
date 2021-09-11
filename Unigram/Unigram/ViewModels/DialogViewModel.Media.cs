@@ -505,7 +505,7 @@ namespace Unigram.ViewModels
                             if (first != null)
                             {
                                 var remote = first.RemoteId;
-                                if (int.TryParse(remote.Substring(1), out int userId))
+                                if (long.TryParse(remote.Substring(1), out long userId))
                                 {
                                     var user = ProtoService.GetUser(userId);
                                     if (user != null)

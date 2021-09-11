@@ -365,7 +365,7 @@ namespace Unigram.Controls.Cells
             }
         }
 
-        public void UpdateChatActions(Chat chat, IDictionary<int, ChatAction> actions)
+        public void UpdateChatActions(Chat chat, IDictionary<long, ChatAction> actions)
         {
             if (actions != null && actions.Count > 0)
             {

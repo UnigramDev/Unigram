@@ -390,7 +390,7 @@ namespace Unigram.ViewModels
                             album = first.MediaAlbumId != 0 && _messages.All(x => x.MediaAlbumId == first.MediaAlbumId);
                         }
 
-                        var response = await ProtoService.SendAsync(new ForwardMessages(chat.Id, _messages[0].ChatId, _messages.Select(x => x.Id).ToList(), new MessageSendOptions(false, false, null), _sendAsCopy || _removeCaptions, _removeCaptions));
+                        var response = await ProtoService.SendAsync(new ForwardMessages(chat.Id, _messages[0].ChatId, _messages.Select(x => x.Id).ToList(), new MessageSendOptions(false, false, null), _sendAsCopy || _removeCaptions, _removeCaptions, false));
                     }
                 }
 

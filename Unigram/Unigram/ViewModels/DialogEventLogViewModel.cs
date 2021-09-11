@@ -34,8 +34,8 @@ namespace Unigram.ViewModels
             set => Set(ref _filters, value);
         }
 
-        private IList<int> _userIds = new int[0];
-        public IList<int> UserIds
+        private IList<long> _userIds = new long[0];
+        public IList<long> UserIds
         {
             get => _userIds;
             set => Set(ref _userIds, value);
@@ -144,7 +144,7 @@ namespace Unigram.ViewModels
                     var target = replied.FirstOrDefault();
                     if (target != null)
                     {
-                        replied.Insert(0, _messageFactory.Create(this, new Message(0, target.Sender, target.ChatId, null, target.SchedulingState, target.IsOutgoing, false, false, false, true, false, false, false, false, false, target.IsChannelPost, false, target.Date, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderDate(), null)));
+                        replied.Insert(0, _messageFactory.Create(this, new Message(0, target.Sender, target.ChatId, null, target.SchedulingState, target.IsOutgoing, false, false, false, true, false, false, false, false, false, false, target.IsChannelPost, false, target.Date, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderDate(), null)));
                     }
 
                     Items.ReplaceWith(replied);
@@ -254,7 +254,7 @@ namespace Unigram.ViewModels
                 }
             }
 
-            return new Message(chatEvent.Id, sender, chatId, null, null, false, false, false, false, false, false, false, false, false, false, isChannel, false, chatEvent.Date, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, null, null);
+            return new Message(chatEvent.Id, sender, chatId, null, null, false, false, false, false, false, false, false, false, false, false, false, isChannel, false, chatEvent.Date, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, null, null);
         }
 
         private MessageViewModel GetMessage(long chatId, bool isChannel, ChatEvent chatEvent, bool child = false)
@@ -343,7 +343,7 @@ namespace Unigram.ViewModels
                         break;
                     case ChatEventMemberJoined:
                         message = GetMessage(_chat.Id, channel, item);
-                        message.Content = new MessageChatAddMembers(new int[] { item.UserId });
+                        message.Content = new MessageChatAddMembers(new long[] { item.UserId });
                         break;
                     case ChatEventTitleChanged titleChanged:
                         message = GetMessage(_chat.Id, channel, item);

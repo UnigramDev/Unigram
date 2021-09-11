@@ -1695,7 +1695,7 @@ namespace Unigram.Views
         {
         }
 
-        public void OpenUser(int userId)
+        public void OpenUser(long userId)
         {
         }
 
@@ -1707,7 +1707,7 @@ namespace Unigram.Views
         {
         }
 
-        public void OpenViaBot(int viaBotUserId)
+        public void OpenViaBot(long viaBotUserId)
         {
         }
 

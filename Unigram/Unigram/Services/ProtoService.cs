@@ -70,7 +70,7 @@ namespace Unigram.Services
         Chat GetChat(long id);
         IList<Chat> GetChats(IList<long> ids);
 
-        IDictionary<int, ChatAction> GetChatActions(long id);
+        IDictionary<long, ChatAction> GetChatActions(long id);
 
         bool IsSavedMessages(User user);
         bool IsSavedMessages(Chat chat);
@@ -88,36 +88,36 @@ namespace Unigram.Services
 
         SecretChat GetSecretChat(int id);
         SecretChat GetSecretChat(Chat chat);
-        SecretChat GetSecretChatForUser(int id);
+        SecretChat GetSecretChatForUser(long id);
 
         User GetUser(Chat chat);
-        User GetUser(int id);
-        bool TryGetUser(int id, out User value);
+        User GetUser(long id);
+        bool TryGetUser(long id, out User value);
         bool TryGetUser(Chat chat, out User value);
         bool TryGetUser(MessageSender sender, out User value);
 
-        UserFullInfo GetUserFull(int id);
+        UserFullInfo GetUserFull(long id);
         UserFullInfo GetUserFull(Chat chat);
-        IList<User> GetUsers(IList<int> ids);
+        IList<User> GetUsers(IList<long> ids);
 
-        BasicGroup GetBasicGroup(int id);
+        BasicGroup GetBasicGroup(long id);
         BasicGroup GetBasicGroup(Chat chat);
-        bool TryGetBasicGroup(int id, out BasicGroup value);
+        bool TryGetBasicGroup(long id, out BasicGroup value);
         bool TryGetBasicGroup(Chat chat, out BasicGroup value);
 
-        BasicGroupFullInfo GetBasicGroupFull(int id);
+        BasicGroupFullInfo GetBasicGroupFull(long id);
         BasicGroupFullInfo GetBasicGroupFull(Chat chat);
-        bool TryGetBasicGroupFull(int id, out BasicGroupFullInfo value);
+        bool TryGetBasicGroupFull(long id, out BasicGroupFullInfo value);
         bool TryGetBasicGroupFull(Chat chat, out BasicGroupFullInfo value);
 
-        Supergroup GetSupergroup(int id);
+        Supergroup GetSupergroup(long id);
         Supergroup GetSupergroup(Chat chat);
-        bool TryGetSupergroup(int id, out Supergroup value);
+        bool TryGetSupergroup(long id, out Supergroup value);
         bool TryGetSupergroup(Chat chat, out Supergroup value);
 
-        SupergroupFullInfo GetSupergroupFull(int id);
+        SupergroupFullInfo GetSupergroupFull(long id);
         SupergroupFullInfo GetSupergroupFull(Chat chat);
-        bool TryGetSupergroupFull(int id, out SupergroupFullInfo value);
+        bool TryGetSupergroupFull(long id, out SupergroupFullInfo value);
         bool TryGetSupergroupFull(Chat chat, out SupergroupFullInfo value);
 
         bool TryGetChatForFileId(int fileId, out Chat chat);
@@ -151,23 +151,23 @@ namespace Unigram.Services
         private readonly IEventAggregator _aggregator;
 
         private readonly Dictionary<long, Chat> _chats = new Dictionary<long, Chat>();
-        private readonly ConcurrentDictionary<long, ConcurrentDictionary<int, ChatAction>> _chatActions = new ConcurrentDictionary<long, ConcurrentDictionary<int, ChatAction>>();
+        private readonly ConcurrentDictionary<long, ConcurrentDictionary<long, ChatAction>> _chatActions = new ConcurrentDictionary<long, ConcurrentDictionary<long, ChatAction>>();
 
         private readonly Dictionary<int, SecretChat> _secretChats = new Dictionary<int, SecretChat>();
 
-        private readonly Dictionary<int, User> _users = new Dictionary<int, User>();
-        private readonly Dictionary<int, UserFullInfo> _usersFull = new Dictionary<int, UserFullInfo>();
+        private readonly Dictionary<long, User> _users = new Dictionary<long, User>();
+        private readonly Dictionary<long, UserFullInfo> _usersFull = new Dictionary<long, UserFullInfo>();
 
-        private readonly Dictionary<int, BasicGroup> _basicGroups = new Dictionary<int, BasicGroup>();
-        private readonly Dictionary<int, BasicGroupFullInfo> _basicGroupsFull = new Dictionary<int, BasicGroupFullInfo>();
+        private readonly Dictionary<long, BasicGroup> _basicGroups = new Dictionary<long, BasicGroup>();
+        private readonly Dictionary<long, BasicGroupFullInfo> _basicGroupsFull = new Dictionary<long, BasicGroupFullInfo>();
 
-        private readonly Dictionary<int, Supergroup> _supergroups = new Dictionary<int, Supergroup>();
-        private readonly Dictionary<int, SupergroupFullInfo> _supergroupsFull = new Dictionary<int, SupergroupFullInfo>();
+        private readonly Dictionary<long, Supergroup> _supergroups = new Dictionary<long, Supergroup>();
+        private readonly Dictionary<long, SupergroupFullInfo> _supergroupsFull = new Dictionary<long, SupergroupFullInfo>();
 
         private readonly Dictionary<int, ChatListUnreadCount> _unreadCounts = new Dictionary<int, ChatListUnreadCount>();
 
         private readonly FlatFileContext<long> _chatsMap = new FlatFileContext<long>();
-        private readonly FlatFileContext<int> _usersMap = new FlatFileContext<int>();
+        private readonly FlatFileContext<long> _usersMap = new FlatFileContext<long>();
 
         private readonly StickerSet[] _animatedSet = new StickerSet[2] { null, null };
         private readonly TaskCompletionSource<StickerSet>[] _animatedSetTask = new TaskCompletionSource<StickerSet>[2] { null, null };
@@ -905,7 +905,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 
         public bool TryGetUserForFileId(int fileId, out User user)
         {
-            if (_usersMap.TryGetValue(fileId, out int userId))
+            if (_usersMap.TryGetValue(fileId, out long userId))
             {
                 user = GetUser(userId);
                 return true;
@@ -1041,9 +1041,9 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             return null;
         }
 
-        public IDictionary<int, ChatAction> GetChatActions(long id)
+        public IDictionary<long, ChatAction> GetChatActions(long id)
         {
-            if (_chatActions.TryGetValue(id, out ConcurrentDictionary<int, ChatAction> value))
+            if (_chatActions.TryGetValue(id, out ConcurrentDictionary<long, ChatAction> value))
             {
                 return value;
             }
@@ -1161,7 +1161,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             return result;
         }
 
-        public IList<User> GetUsers(IList<int> ids)
+        public IList<User> GetUsers(IList<long> ids)
         {
             var result = new List<User>(ids.Count);
 
@@ -1197,7 +1197,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             return null;
         }
 
-        public SecretChat GetSecretChatForUser(int id)
+        public SecretChat GetSecretChatForUser(long id)
         {
             return _secretChats.FirstOrDefault(x => x.Value.UserId == id).Value;
         }
@@ -1216,7 +1216,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             return null;
         }
 
-        public User GetUser(int id)
+        public User GetUser(long id)
         {
             if (_users.TryGetValue(id, out User value))
             {
@@ -1226,7 +1226,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             return null;
         }
 
-        public bool TryGetUser(int id, out User value)
+        public bool TryGetUser(long id, out User value)
         {
             return _users.TryGetValue(id, out value);
         }
@@ -1259,7 +1259,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 
 
 
-        public UserFullInfo GetUserFull(int id)
+        public UserFullInfo GetUserFull(long id)
         {
             if (_usersFull.TryGetValue(id, out UserFullInfo value))
             {
@@ -1285,7 +1285,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 
 
 
-        public BasicGroup GetBasicGroup(int id)
+        public BasicGroup GetBasicGroup(long id)
         {
             if (_basicGroups.TryGetValue(id, out BasicGroup value))
             {
@@ -1305,7 +1305,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             return null;
         }
 
-        public bool TryGetBasicGroup(int id, out BasicGroup value)
+        public bool TryGetBasicGroup(long id, out BasicGroup value)
         {
             return _basicGroups.TryGetValue(id, out value);
         }
@@ -1323,7 +1323,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 
 
 
-        public BasicGroupFullInfo GetBasicGroupFull(int id)
+        public BasicGroupFullInfo GetBasicGroupFull(long id)
         {
             if (_basicGroupsFull.TryGetValue(id, out BasicGroupFullInfo value))
             {
@@ -1343,7 +1343,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             return null;
         }
 
-        public bool TryGetBasicGroupFull(int id, out BasicGroupFullInfo value)
+        public bool TryGetBasicGroupFull(long id, out BasicGroupFullInfo value)
         {
             return _basicGroupsFull.TryGetValue(id, out value);
         }
@@ -1361,7 +1361,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 
 
 
-        public Supergroup GetSupergroup(int id)
+        public Supergroup GetSupergroup(long id)
         {
             if (_supergroups.TryGetValue(id, out Supergroup value))
             {
@@ -1381,7 +1381,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             return null;
         }
 
-        public bool TryGetSupergroup(int id, out Supergroup value)
+        public bool TryGetSupergroup(long id, out Supergroup value)
         {
             return _supergroups.TryGetValue(id, out value);
         }
@@ -1399,7 +1399,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 
 
 
-        public SupergroupFullInfo GetSupergroupFull(int id)
+        public SupergroupFullInfo GetSupergroupFull(long id)
         {
             if (_supergroupsFull.TryGetValue(id, out SupergroupFullInfo value))
             {
@@ -1419,7 +1419,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             return null;
         }
 
-        public bool TryGetSupergroupFull(int id, out SupergroupFullInfo value)
+        public bool TryGetSupergroupFull(long id, out SupergroupFullInfo value)
         {
             return _supergroupsFull.TryGetValue(id, out value);
         }
@@ -1972,7 +1972,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             }
             else if (update is UpdateUserChatAction updateUserChatAction)
             {
-                var actions = _chatActions.GetOrAdd(updateUserChatAction.ChatId, x => new ConcurrentDictionary<int, ChatAction>());
+                var actions = _chatActions.GetOrAdd(updateUserChatAction.ChatId, x => new ConcurrentDictionary<long, ChatAction>());
                 if (updateUserChatAction.Action is ChatActionCancel)
                 {
                     actions.TryRemove(updateUserChatAction.UserId, out _);
@@ -2034,7 +2034,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 
     public class FlatFileContext<T> : Dictionary<int, T>
     {
-        //public new T this[int id]
+        //public new T this[long id]
         //{
         //    get
         //    {

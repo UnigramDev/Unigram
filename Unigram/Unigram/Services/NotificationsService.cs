@@ -707,7 +707,7 @@ namespace Unigram.Services
                     var channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
                     if (channel.Uri != _settings.PushToken)
                     {
-                        var ids = new List<int>();
+                        var ids = new List<long>();
 
                         foreach (var settings in TLContainer.Current.ResolveAll<ISettingsService>())
                         {

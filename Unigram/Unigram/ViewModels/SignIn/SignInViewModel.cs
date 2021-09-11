@@ -66,7 +66,7 @@ namespace Unigram.ViewModels.SignIn
 
                             if (mode == QrCodeMode.Primary)
                             {
-                                var userIds = new List<int>();
+                                var userIds = new List<long>();
 
                                 foreach (var session in _lifetimeService.Items)
                                 {
