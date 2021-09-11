@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.210629.4\build\native\Microsoft.Windows.CppWinRT.props" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.210629.4\build\native\Microsoft.Windows.CppWinRT.props')" />
+  <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.210825.3\build\native\Microsoft.Windows.CppWinRT.props" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.210825.3\build\native\Microsoft.Windows.CppWinRT.props')" />
   <PropertyGroup Label="Globals">
     <CppWinRTOptimized>true</CppWinRTOptimized>
     <CppWinRTRootNamespaceAutoMerge>true</CppWinRTRootNamespaceAutoMerge>
@@ -172,6 +172,11 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="C:\tgcalls\tgcalls\group\AudioStreamingPart.h" />
+    <ClInclude Include="C:\tgcalls\tgcalls\group\StreamingMediaContext.h" />
+    <ClInclude Include="C:\tgcalls\tgcalls\group\VideoStreamingPart.h" />
+    <ClInclude Include="C:\tgcalls\tgcalls\SctpDataChannelProviderInterfaceImpl.h" />
+    <ClInclude Include="C:\tgcalls\tgcalls\TurnCustomizerImpl.h" />
     <ClInclude Include="C:\tgcalls\tgcalls\platform\uwp\UwpContext.h" />
     <ClInclude Include="C:\tgcalls\tgcalls\platform\uwp\UwpScreenCapturer.h" />
     <ClInclude Include="C:\tgcalls\tgcalls\AudioFrame.h" />
@@ -183,7 +188,6 @@
     <ClInclude Include="C:\tgcalls\tgcalls\StaticThreads.h" />
     <ClInclude Include="C:\tgcalls\tgcalls\group\GroupInstanceCustomImpl.h" />
     <ClInclude Include="C:\tgcalls\tgcalls\group\GroupNetworkManager.h" />
-    <ClInclude Include="C:\tgcalls\tgcalls\group\StreamingPart.h" />
     <ClInclude Include="C:\tgcalls\tgcalls\AudioDeviceHelper.h" />
     <ClInclude Include="C:\tgcalls\tgcalls\group\GroupInstanceImpl.h" />
     <ClInclude Include="C:\tgcalls\tgcalls\CodecSelectHelper.h" />
@@ -202,7 +206,6 @@
     <ClInclude Include="C:\tgcalls\tgcalls\platform\tdesktop\VideoCameraCapturer.h" />
     <ClInclude Include="C:\tgcalls\tgcalls\platform\tdesktop\VideoCapturerInterfaceImpl.h" />
     <ClInclude Include="C:\tgcalls\tgcalls\platform\tdesktop\VideoCapturerTrackSource.h" />
-    <ClInclude Include="C:\tgcalls\tgcalls\reference\InstanceImplReference.h" />
     <ClInclude Include="C:\tgcalls\tgcalls\Stats.h" />
     <ClInclude Include="C:\tgcalls\tgcalls\ThreadLocalObject.h" />
     <ClInclude Include="C:\tgcalls\tgcalls\VideoCaptureInterface.h" />
@@ -230,6 +233,7 @@
     <ClInclude Include="rnnoise\src\rnn_data.h" />
     <ClInclude Include="rnnoise\src\tansig_table.h" />
     <ClInclude Include="rnnoise\src\_kiss_fft_guts.h" />
+    <ClInclude Include="UwpScreenAudioCapturer.h" />
     <ClInclude Include="VoipDescriptor.h">
       <DependentUpon>VoipDescriptor.idl</DependentUpon>
     </ClInclude>
@@ -267,6 +271,21 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="C:\tgcalls\tgcalls\group\AudioStreamingPart.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="C:\tgcalls\tgcalls\group\StreamingMediaContext.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="C:\tgcalls\tgcalls\group\VideoStreamingPart.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="C:\tgcalls\tgcalls\SctpDataChannelProviderInterfaceImpl.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="C:\tgcalls\tgcalls\TurnCustomizerImpl.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="C:\tgcalls\tgcalls\platform\uwp\UwpScreenCapturer.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -289,9 +308,6 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="C:\tgcalls\tgcalls\group\GroupNetworkManager.cpp">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="C:\tgcalls\tgcalls\group\StreamingPart.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="C:\tgcalls\tgcalls\AudioDeviceHelper.cpp">
@@ -339,9 +355,6 @@
     <ClCompile Include="C:\tgcalls\tgcalls\platform\tdesktop\VideoCapturerTrackSource.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="C:\tgcalls\tgcalls\reference\InstanceImplReference.cpp">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="C:\tgcalls\tgcalls\ThreadLocalObject.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -386,6 +399,7 @@
     <ClCompile Include="SignalingDataEmittedEventArgs.cpp">
       <DependentUpon>SignalingDataEmittedEventArgs.idl</DependentUpon>
     </ClCompile>
+    <ClCompile Include="UwpScreenAudioCapturer.cpp" />
     <ClCompile Include="VoipDescriptor.cpp">
       <DependentUpon>VoipDescriptor.idl</DependentUpon>
     </ClCompile>
@@ -464,7 +478,7 @@
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\packages\FFmpeg.UWP.4.1.5\build\native\FFmpeg.UWP.targets" Condition="Exists('..\packages\FFmpeg.UWP.4.1.5\build\native\FFmpeg.UWP.targets')" />
     <Import Project="..\packages\Win2D.uwp.1.26.0\build\native\Win2D.uwp.targets" Condition="Exists('..\packages\Win2D.uwp.1.26.0\build\native\Win2D.uwp.targets')" />
-    <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.210629.4\build\native\Microsoft.Windows.CppWinRT.targets" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.210629.4\build\native\Microsoft.Windows.CppWinRT.targets')" />
+    <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.210825.3\build\native\Microsoft.Windows.CppWinRT.targets" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.210825.3\build\native\Microsoft.Windows.CppWinRT.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -472,7 +486,7 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\FFmpeg.UWP.4.1.5\build\native\FFmpeg.UWP.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\FFmpeg.UWP.4.1.5\build\native\FFmpeg.UWP.targets'))" />
     <Error Condition="!Exists('..\packages\Win2D.uwp.1.26.0\build\native\Win2D.uwp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Win2D.uwp.1.26.0\build\native\Win2D.uwp.targets'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.210629.4\build\native\Microsoft.Windows.CppWinRT.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.210629.4\build\native\Microsoft.Windows.CppWinRT.props'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.210629.4\build\native\Microsoft.Windows.CppWinRT.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.210629.4\build\native\Microsoft.Windows.CppWinRT.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.210825.3\build\native\Microsoft.Windows.CppWinRT.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.210825.3\build\native\Microsoft.Windows.CppWinRT.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.210825.3\build\native\Microsoft.Windows.CppWinRT.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.210825.3\build\native\Microsoft.Windows.CppWinRT.targets'))" />
   </Target>
 </Project>
