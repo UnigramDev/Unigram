@@ -60,6 +60,8 @@ namespace Unigram.Controls.Messages
                     return UpdateChatChangePhoto(message, chatChangePhoto, active);
                 case MessageChatChangeTitle chatChangeTitle:
                     return UpdateChatChangeTitle(message, chatChangeTitle, active);
+                case MessageChatSetTheme chatSetTheme:
+                    return UpdateChatSetTheme(message, chatSetTheme, active);
                 case MessageChatDeleteMember chatDeleteMember:
                     return UpdateChatDeleteMember(message, chatDeleteMember, active);
                 case MessageChatDeletePhoto chatDeletePhoto:
@@ -821,6 +823,37 @@ namespace Unigram.Controls.Messages
             return (content, entities);
         }
 
+        private static (string, IList<TextEntity>) UpdateChatSetTheme(MessageViewModel message, MessageChatSetTheme chatSetTheme, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            if (message.IsOutgoing)
+            {
+                if (string.IsNullOrEmpty(chatSetTheme.ThemeName))
+                {
+                    content = Strings.Resources.ChatThemeDisabledYou;
+                }
+                else
+                {
+                    content = string.Format(Strings.Resources.ChatThemeChangedYou, chatSetTheme.ThemeName);
+                }
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(chatSetTheme.ThemeName))
+                {
+                    content = ReplaceWithLink(string.Format(Strings.Resources.ChatThemeDisabled, "un1"), "un1", message.GetSender(), ref entities);
+                }
+                else
+                {
+                    content = ReplaceWithLink(string.Format(Strings.Resources.ChatThemeChangedTo, "un1", chatSetTheme.ThemeName), "un1", message.GetSender(), ref entities);
+                }
+            }
+
+            return (content, entities);
+        }
+
         private static (string, IList<TextEntity>) UpdateChatDeleteMember(MessageViewModel message, MessageChatDeleteMember chatDeleteMember, bool active)
         {
             var content = string.Empty;
@@ -1050,24 +1083,13 @@ namespace Unigram.Controls.Messages
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            if (message.IsChannelPost)
+            if (message.IsOutgoing)
             {
-                content = string.Format(Strings.Resources.ActionChannelCallEnded, voiceChatEnded.GetDuration());
+                content = string.Format(Strings.Resources.ActionGroupCallEndedByYou, voiceChatEnded.GetDuration());
             }
             else if (message.ProtoService.TryGetUser(message.Sender, out User senderUser))
             {
-                if (senderUser.Id == message.ProtoService.Options.MyId)
-                {
-                    content = string.Format(Strings.Resources.ActionGroupCallEndedByYou, voiceChatEnded.GetDuration());
-                }
-                else
-                {
-                    content = ReplaceWithLink(string.Format(Strings.Resources.ActionGroupCallEndedBy, voiceChatEnded.GetDuration()), "un1", senderUser, ref entities);
-                }
-            }
-            else if (message.ProtoService.TryGetChat(message.Sender, out Chat senderChat))
-            {
-                content = ReplaceWithLink(string.Format(Strings.Resources.ActionGroupCallEndedBy, voiceChatEnded.GetDuration()), "un1", senderChat, ref entities);
+                content = ReplaceWithLink(string.Format(Strings.Resources.ActionGroupCallEndedBy, voiceChatEnded.GetDuration()), "un1", senderUser, ref entities);
             }
             else
             {

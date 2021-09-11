@@ -160,6 +160,12 @@ namespace Unigram.Converters
 
         public const string ChatBubblesQuestion = "\uE783";
 
+        public const string TopSpeed = "\uE90D";
+
+        public const string PaintBrush = "\uE90E";
+
+        public const string Seen = "\uE96B";
+
         public static readonly ChatFilterIcon[] Filters = new ChatFilterIcon[]
         {
             ChatFilterIcon.Cat,

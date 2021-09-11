@@ -130,6 +130,8 @@ namespace Unigram.Services
         ChatListUnreadCount GetUnreadCount(ChatList chatList);
         void SetUnreadCount(ChatList chatList, UpdateUnreadChatCount chatCount = null, UpdateUnreadMessageCount messageCount = null);
 
+        Task<ChatTheme> GetChatThemeAsync(string themeName);
+
         Task<StickerSet> GetAnimatedSetAsync(AnimatedSetType type);
         bool IsDiceEmoji(string text, out string dice);
 
@@ -193,6 +195,9 @@ namespace Unigram.Services
 
         private Background _selectedBackground;
         private Background _selectedBackgroundDark;
+
+        private ChatThemes _chatThemes;
+        private TaskCompletionSource<ChatThemes> _chatThemesTask;
 
         private bool _initializeAfterClose;
 
@@ -1467,6 +1472,38 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             return false;
         }
 
+        public async Task<ChatTheme> GetChatThemeAsync(string themeName)
+        {
+            if (string.IsNullOrEmpty(themeName))
+            {
+                return null;
+            }
+
+            var themes = _chatThemes;
+            if (themes != null)
+            {
+                return themes.ChatThemesValue.FirstOrDefault(x => string.Equals(x.Name, themeName));
+            }
+
+            var tsc = _chatThemesTask;
+            if (tsc != null)
+            {
+                themes = await tsc.Task;
+                return themes.ChatThemesValue.FirstOrDefault(x => string.Equals(x.Name, themeName));
+            }
+
+            tsc = _chatThemesTask = new TaskCompletionSource<ChatThemes>();
+
+            var response = await SendAsync(new GetChatThemes());
+            if (response is ChatThemes chatThemes)
+            {
+                themes = _chatThemes = chatThemes;
+                return themes.ChatThemesValue.FirstOrDefault(x => string.Equals(x.Name, themeName));
+            }
+
+            return null;
+        }
+
         public async Task<StickerSet> GetAnimatedSetAsync(AnimatedSetType type)
         {
             var set = _animatedSet[(int)type];
@@ -1722,6 +1759,13 @@ Read more about how to update your device [here](https://support.microsoft.com/h
                 if (_chats.TryGetValue(updateChatReplyMarkup.ChatId, out Chat value))
                 {
                     value.ReplyMarkupMessageId = updateChatReplyMarkup.ReplyMarkupMessageId;
+                }
+            }
+            else if (update is UpdateChatTheme updateChatTheme)
+            {
+                if (_chats.TryGetValue(updateChatTheme.ChatId, out Chat value))
+                {
+                    value.ThemeName = updateChatTheme.ThemeName;
                 }
             }
             else if (update is UpdateChatTitle updateChatTitle)

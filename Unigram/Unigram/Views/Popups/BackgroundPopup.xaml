@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views"
+    xmlns:common="using:Unigram.Common"
     xmlns:controls="using:Unigram.Controls"
     xmlns:messages="using:Unigram.Controls.Messages"
     xmlns:chats="using:Unigram.Controls.Chats"
@@ -476,11 +477,7 @@
                     <messages:MessageBubble x:Name="Message1" HorizontalAlignment="Left"/>
                     <messages:MessageBubble x:Name="Message2" HorizontalAlignment="Right">
                         <FrameworkElement.Resources>
-                            <ResourceDictionary>
-                                <ResourceDictionary.MergedDictionaries>
-                                    <ResourceDictionary Source="ms-appx:///Themes/OutgoingOverride.xaml"/>
-                                </ResourceDictionary.MergedDictionaries>
-                            </ResourceDictionary>
+                            <common:ThemeOutgoing />
                         </FrameworkElement.Resources>
                     </messages:MessageBubble>
                     <Grid HorizontalAlignment="Center" Margin="12,0">

@@ -51,6 +51,7 @@ namespace Unigram.ViewModels
         IHandle<UpdateUserStatus>,
         IHandle<UpdateChatTitle>,
         IHandle<UpdateChatPhoto>,
+        IHandle<UpdateChatTheme>,
         IHandle<UpdateChatNotificationSettings>,
         IHandle<UpdateChatOnlineMemberCount>,
 
@@ -228,6 +229,14 @@ namespace Unigram.ViewModels
             if (update.ChatId == _chat?.Id)
             {
                 BeginOnUIThread(() => Delegate?.UpdateChatPhoto(_chat));
+            }
+        }
+
+        public void Handle(UpdateChatTheme update)
+        {
+            if (update.ChatId == _chat?.Id)
+            {
+                BeginOnUIThread(() => Delegate?.UpdateChatTheme(_chat));
             }
         }
 

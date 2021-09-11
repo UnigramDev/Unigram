@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 09/05/2021 10:40:38
+// 	Generated: 09/11/2021 10:27:50
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -8581,6 +8581,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Change colors"
+        /// </summary>
+        public static string ChangeColors
+        {
+            get
+            {
+                return resourceLoader.GetString("ChangeColors");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "You can change your language later in Settings."
         /// </summary>
         public static string ChangeLanguageLater
@@ -10163,6 +10174,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Apply Theme"
+        /// </summary>
+        public static string ChatApplyTheme
+        {
+            get
+            {
+                return resourceLoader.GetString("ChatApplyTheme");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Chat archived."
         /// </summary>
         public static string ChatArchived
@@ -10434,6 +10456,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ChatLocation");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No Theme"
+        /// </summary>
+        public static string ChatNoTheme
+        {
+            get
+            {
+                return resourceLoader.GetString("ChatNoTheme");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Reset Theme"
+        /// </summary>
+        public static string ChatResetTheme
+        {
+            get
+            {
+                return resourceLoader.GetString("ChatResetTheme");
             }
         }
         
@@ -10885,6 +10929,94 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ChatsUnmute");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} changed chat theme to {1}"
+        /// </summary>
+        public static string ChatThemeChangedTo
+        {
+            get
+            {
+                return resourceLoader.GetString("ChatThemeChangedTo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You changed chat theme to {0}"
+        /// </summary>
+        public static string ChatThemeChangedYou
+        {
+            get
+            {
+                return resourceLoader.GetString("ChatThemeChangedYou");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} disabled chat theme"
+        /// </summary>
+        public static string ChatThemeDisabled
+        {
+            get
+            {
+                return resourceLoader.GetString("ChatThemeDisabled");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You disabled chat theme"
+        /// </summary>
+        public static string ChatThemeDisabledYou
+        {
+            get
+            {
+                return resourceLoader.GetString("ChatThemeDisabledYou");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Apply"
+        /// </summary>
+        public static string ChatThemeSaveDialogApply
+        {
+            get
+            {
+                return resourceLoader.GetString("ChatThemeSaveDialogApply");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Discard"
+        /// </summary>
+        public static string ChatThemeSaveDialogDiscard
+        {
+            get
+            {
+                return resourceLoader.GetString("ChatThemeSaveDialogDiscard");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to apply the new theme for this chat?"
+        /// </summary>
+        public static string ChatThemeSaveDialogText
+        {
+            get
+            {
+                return resourceLoader.GetString("ChatThemeSaveDialogText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Save changes?"
+        /// </summary>
+        public static string ChatThemeSaveDialogTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("ChatThemeSaveDialogTitle");
             }
         }
         
@@ -26375,6 +26507,72 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{0} Played"
+        /// </summary>
+        public static string MessagePlayed_few
+        {
+            get
+            {
+                return resourceLoader.GetString("MessagePlayed_few");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} Played"
+        /// </summary>
+        public static string MessagePlayed_many
+        {
+            get
+            {
+                return resourceLoader.GetString("MessagePlayed_many");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Played"
+        /// </summary>
+        public static string MessagePlayed_one
+        {
+            get
+            {
+                return resourceLoader.GetString("MessagePlayed_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} Played"
+        /// </summary>
+        public static string MessagePlayed_other
+        {
+            get
+            {
+                return resourceLoader.GetString("MessagePlayed_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} Played"
+        /// </summary>
+        public static string MessagePlayed_two
+        {
+            get
+            {
+                return resourceLoader.GetString("MessagePlayed_two");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} Played"
+        /// </summary>
+        public static string MessagePlayed_zero
+        {
+            get
+            {
+                return resourceLoader.GetString("MessagePlayed_zero");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Message Preview"
         /// </summary>
         public static string MessagePreview
@@ -26723,6 +26921,72 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("MessagesOverview");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} Seen"
+        /// </summary>
+        public static string MessageSeen_few
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageSeen_few");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} Seen"
+        /// </summary>
+        public static string MessageSeen_many
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageSeen_many");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Seen"
+        /// </summary>
+        public static string MessageSeen_one
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageSeen_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} Seen"
+        /// </summary>
+        public static string MessageSeen_other
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageSeen_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} Seen"
+        /// </summary>
+        public static string MessageSeen_two
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageSeen_two");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} Seen"
+        /// </summary>
+        public static string MessageSeen_zero
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageSeen_zero");
             }
         }
         
@@ -41397,6 +41661,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("SelectOtherChat");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Select theme"
+        /// </summary>
+        public static string SelectTheme
+        {
+            get
+            {
+                return resourceLoader.GetString("SelectTheme");
             }
         }
         

@@ -119,7 +119,7 @@ namespace Unigram.Common
             return (int)(dateTime.ToUniversalTime() - dtDateTime).TotalSeconds;
         }
 
-        public static bool TryGet<T>(this ResourceDictionary dict, string key, out T value)
+        public static bool TryGet<T>(this ResourceDictionary dict, object key, out T value)
         {
             bool success;
             if (success = dict.TryGetValue(key, out object tryGetValue))

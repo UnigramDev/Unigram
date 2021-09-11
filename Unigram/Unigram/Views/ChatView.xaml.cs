@@ -3349,6 +3349,27 @@ namespace Unigram.Views
             }
 
             UpdateChatPermissions(chat);
+            UpdateChatTheme(chat);
+        }
+
+        public async void UpdateChatTheme(Chat chat)
+        {
+            var theme = await ViewModel.CacheService.GetChatThemeAsync(chat.ThemeName);
+            if (!StillValid(chat))
+            {
+                return;
+            }
+
+            if (Theme.Current.Update(ActualTheme, theme))
+            {
+                var background = ActualTheme == ElementTheme.Light ? theme?.LightSettings.Background : theme?.DarkSettings.Background;
+                if (background == null)
+                {
+                    background = ViewModel.ProtoService.GetSelectedBackground(ActualTheme == ElementTheme.Dark);
+                }
+
+                ViewModel.Aggregator.Publish(new UpdateSelectedBackground(ActualTheme == ElementTheme.Dark, background));
+            }
         }
 
         public void UpdateChatPermissions(Chat chat)

@@ -376,7 +376,7 @@ namespace Unigram.Common
             byte g = (byte)((hexValue & 0x0000ff00) >> 8);
             byte b = (byte)(hexValue & 0x000000ff);
 
-            return Color.FromArgb(a, r, g, b);
+            return Color.FromArgb(a > 0 ? a : (byte)0xFF, r, g, b);
         }
 
         public static Color FromHex(int hexValue)
@@ -386,7 +386,7 @@ namespace Unigram.Common
             byte g = (byte)((hexValue & 0x0000ff00) >> 8);
             byte b = (byte)(hexValue & 0x000000ff);
 
-            return Color.FromArgb(a, r, g, b);
+            return Color.FromArgb(a > 0 ? a : (byte)0xFF, r, g, b);
         }
 
         public static int ToHex(Color color)

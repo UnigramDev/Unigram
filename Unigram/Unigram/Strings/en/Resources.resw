@@ -2403,6 +2403,9 @@ If this wasn't you, please enter the code we've just sent you via SMS. You can a
   <data name="ChangeColorToColor" xml:space="preserve">
     <value>Do you want to use your currently selected background or reset it to the default for this theme?</value>
   </data>
+  <data name="ChangeColors" xml:space="preserve">
+    <value>Change colors</value>
+  </data>
   <data name="ChangeLanguageLater" xml:space="preserve">
     <value>You can change your language later in Settings.</value>
   </data>
@@ -2841,6 +2844,9 @@ Minimum length is 5 characters.</value>
   <data name="ChatAdmin" xml:space="preserve">
     <value>admin</value>
   </data>
+  <data name="ChatApplyTheme" xml:space="preserve">
+    <value>Apply Theme</value>
+  </data>
   <data name="ChatArchived" xml:space="preserve">
     <value>Chat archived.</value>
   </data>
@@ -2915,6 +2921,12 @@ Minimum length is 5 characters.</value>
   </data>
   <data name="ChatLocation" xml:space="preserve">
     <value>Location</value>
+  </data>
+  <data name="ChatNoTheme" xml:space="preserve">
+    <value>No Theme</value>
+  </data>
+  <data name="ChatResetTheme" xml:space="preserve">
+    <value>Reset Theme</value>
   </data>
   <data name="Chats_few" xml:space="preserve">
     <value/>
@@ -3038,6 +3050,30 @@ Minimum length is 5 characters.</value>
   </data>
   <data name="ChatsUnmute" xml:space="preserve">
     <value>Unmute</value>
+  </data>
+  <data name="ChatThemeChangedTo" xml:space="preserve">
+    <value>{0} changed chat theme to {1}</value>
+  </data>
+  <data name="ChatThemeChangedYou" xml:space="preserve">
+    <value>You changed chat theme to {0}</value>
+  </data>
+  <data name="ChatThemeDisabled" xml:space="preserve">
+    <value>{0} disabled chat theme</value>
+  </data>
+  <data name="ChatThemeDisabledYou" xml:space="preserve">
+    <value>You disabled chat theme</value>
+  </data>
+  <data name="ChatThemeSaveDialogApply" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="ChatThemeSaveDialogDiscard" xml:space="preserve">
+    <value>Discard</value>
+  </data>
+  <data name="ChatThemeSaveDialogText" xml:space="preserve">
+    <value>Do you want to apply the new theme for this chat?</value>
+  </data>
+  <data name="ChatThemeSaveDialogTitle" xml:space="preserve">
+    <value>Save changes?</value>
   </data>
   <data name="ChatVideo" xml:space="preserve">
     <value>Video</value>
@@ -7325,6 +7361,24 @@ Minimum length is 5 characters.</value>
   <data name="MessagePinnedHint" xml:space="preserve">
     <value>Message pinned</value>
   </data>
+  <data name="MessagePlayed_few" xml:space="preserve">
+    <value>{0} Played</value>
+  </data>
+  <data name="MessagePlayed_many" xml:space="preserve">
+    <value>{0} Played</value>
+  </data>
+  <data name="MessagePlayed_one" xml:space="preserve">
+    <value>Played</value>
+  </data>
+  <data name="MessagePlayed_other" xml:space="preserve">
+    <value>{0} Played</value>
+  </data>
+  <data name="MessagePlayed_two" xml:space="preserve">
+    <value>{0} Played</value>
+  </data>
+  <data name="MessagePlayed_zero" xml:space="preserve">
+    <value>{0} Played</value>
+  </data>
   <data name="MessagePreview" xml:space="preserve">
     <value>Message Preview</value>
   </data>
@@ -7420,6 +7474,24 @@ Minimum length is 5 characters.</value>
   </data>
   <data name="MessagesOverview" xml:space="preserve">
     <value>Messages</value>
+  </data>
+  <data name="MessageSeen_few" xml:space="preserve">
+    <value>{0} Seen</value>
+  </data>
+  <data name="MessageSeen_many" xml:space="preserve">
+    <value>{0} Seen</value>
+  </data>
+  <data name="MessageSeen_one" xml:space="preserve">
+    <value>Seen</value>
+  </data>
+  <data name="MessageSeen_other" xml:space="preserve">
+    <value>{0} Seen</value>
+  </data>
+  <data name="MessageSeen_two" xml:space="preserve">
+    <value>{0} Seen</value>
+  </data>
+  <data name="MessageSeen_zero" xml:space="preserve">
+    <value>{0} Seen</value>
   </data>
   <data name="MessagesSettings" xml:space="preserve">
     <value>Messages</value>
@@ -11462,6 +11534,9 @@ You may need to restart the app for this to take effect.</value>
   </data>
   <data name="SelectOtherChat" xml:space="preserve">
     <value>Select another chat</value>
+  </data>
+  <data name="SelectTheme" xml:space="preserve">
+    <value>Select theme</value>
   </data>
   <data name="Send" xml:space="preserve">
     <value>Send</value>

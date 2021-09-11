@@ -10,6 +10,7 @@ namespace Unigram.ViewModels.Delegates
     {
         void UpdateChatActions(Chat chat, IDictionary<long, ChatAction> actions);
 
+        void UpdateChatTheme(Chat chat);
         void UpdateChatPermissions(Chat chat);
         void UpdateChatActionBar(Chat chat);
         void UpdateChatHasScheduledMessages(Chat chat);

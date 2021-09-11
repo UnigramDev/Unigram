@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
+using Telegram.Td.Api;
 using Unigram.Services;
 using Unigram.Services.Settings;
 using Windows.Storage;
@@ -24,7 +24,7 @@ namespace Unigram.Common
             try
             {
                 isolatedStore = ApplicationData.Current.LocalSettings.CreateContainer("Theme", ApplicationDataCreateDisposition.Always);
-                Current = this;
+                Current ??= this;
 
                 this.Add("MessageFontSize", GetValueOrDefault("MessageFontSize", 14d));
 
@@ -46,6 +46,9 @@ namespace Unigram.Common
             }
             catch { }
 
+            MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/ThemeGreen.xaml") });
+
+            UpdateAcrylicBrushes();
             Initialize();
         }
 
@@ -67,7 +70,7 @@ namespace Unigram.Common
         public void Initialize(TelegramTheme requested)
         {
             var settings = SettingsService.Current.Appearance;
-            if (settings[requested].Type == TelegramThemeType.Custom && File.Exists(settings[requested].Custom))
+            if (settings[requested].Type == TelegramThemeType.Custom && System.IO.File.Exists(settings[requested].Custom))
             {
                 UpdateCustom(settings[requested].Custom);
             }
@@ -77,16 +80,16 @@ namespace Unigram.Common
             }
             else
             {
-                Update();
+                Update(requested);
             }
         }
 
         private void UpdateCustom(string path)
         {
-            var lines = File.ReadAllLines(path);
-            var dict = new ResourceDictionary();
+            var lines = System.IO.File.ReadAllLines(path);
+            var values = new Dictionary<string, Color>();
 
-            var flags = SettingsService.Current.Appearance.RequestedTheme;
+            var requested = SettingsService.Current.Appearance.RequestedTheme;
 
             foreach (var line in lines)
             {
@@ -96,7 +99,7 @@ namespace Unigram.Common
                 }
                 else if (line.StartsWith("parent: "))
                 {
-                    flags = (TelegramTheme)int.Parse(line.Substring("parent: ".Length));
+                    requested = (TelegramTheme)int.Parse(line.Substring("parent: ".Length));
                 }
                 else if (line.Equals("!") || line.Equals("#") || string.IsNullOrWhiteSpace(line))
                 {
@@ -120,72 +123,98 @@ namespace Unigram.Common
                         byte g = (byte)((hexValue & 0x0000ff00) >> 8);
                         byte b = (byte)(hexValue & 0x000000ff);
 
-                        if (key.EndsWith("Brush"))
-                        {
-                            dict[key] = new SolidColorBrush(Color.FromArgb(a, r, g, b));
-                        }
-                        else if (key.EndsWith("Color"))
-                        {
-                            dict[key] = Color.FromArgb(a, r, g, b);
-                        }
+                        values[key] = Color.FromArgb(a, r, g, b);
                     }
                 }
             }
 
-            Update();
-
-            MergedDictionaries[0].MergedDictionaries.Clear();
-            MergedDictionaries[0].MergedDictionaries.Add(dict);
-            //MergedDictionaries.Add(dict);
+            Update(requested, values);
         }
 
-        public void Update()
-        {
-            MergedDictionaries.Clear();
-            MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/ThemeGreen.xaml") });
+        private int? _lastTheme;
+        private long? _lastBackground;
 
-            UpdateAcrylicBrushes();
+        public bool Update(ElementTheme requested, ChatTheme theme)
+        {
+            var updated = false;
+
+            var settings = requested == ElementTheme.Light ? theme?.LightSettings : theme?.DarkSettings;
+            if (settings != null)
+            {
+                if (_lastTheme != settings.AccentColor)
+                {
+                    Update(ThemeAccentInfo.FromAccent(requested == ElementTheme.Light
+                        ? TelegramThemeType.Day
+                        : TelegramThemeType.Tinted, settings.OutgoingMessageAccentColor.ToColor()));
+                }
+                if (_lastBackground != settings.Background?.Id)
+                {
+                    updated = true;
+                }
+
+                _lastTheme = settings.AccentColor;
+                _lastBackground = settings.Background?.Id;
+            }
+            else
+            {
+                if (_lastTheme != null)
+                {
+                    Update(requested == ElementTheme.Dark
+                        ? TelegramTheme.Dark 
+                        : TelegramTheme.Light);
+                }
+                if (_lastBackground != null)
+                {
+                    updated = true;
+                }
+
+                _lastTheme = null;
+                _lastBackground = null;
+            }
+
+            return updated;
         }
 
         public void Update(ThemeInfoBase info)
         {
             if (info is ThemeCustomInfo custom)
             {
-                Update(custom.Values);
+                Update(info.Parent, custom.Values);
             }
             else if (info is ThemeAccentInfo colorized)
             {
-                Update(colorized.Values);
+                Update(info.Parent, colorized.Values);
             }
             else
             {
-                Update();
+                Update(info.Parent);
             }
         }
 
-        private void Update(IDictionary<string, Color> values)
+        private void Update(TelegramTheme requested, IDictionary<string, Color> values = null)
         {
             try
             {
-                Update();
+                ThemeOutgoing.Update(requested, values);
 
-                var dict = new ResourceDictionary();
+                var target = MergedDictionaries[0].ThemeDictionaries[requested == TelegramTheme.Light ? "Light" : "Dark"] as ResourceDictionary;
+                var mapping = ThemeService.GetMapping(requested);
+                var lookup = ThemeService.GetLookup(requested);
 
-                foreach (var item in values)
+                foreach (var item in lookup)
                 {
-                    if (item.Key.EndsWith("Brush"))
+                    if (target.TryGet(item.Key, out SolidColorBrush brush))
                     {
-                        dict[item.Key] = new SolidColorBrush(item.Value);
-                    }
-                    else if (item.Key.EndsWith("Color"))
-                    {
-                        dict[item.Key] = item.Value;
+                        if (values != null && values.TryGetValue(item.Key, out Color themed))
+                        {
+                            brush.Color = themed;
+                        }
+                        else if (brush.Color != item.Value)
+                        {
+                            brush.Color = item.Value;
+                        }
                     }
                 }
-
-                MergedDictionaries[0].MergedDictionaries.Clear();
-                MergedDictionaries[0].MergedDictionaries.Add(dict);
-                //MergedDictionaries.Add(dict);
             }
             catch { }
         }
@@ -359,5 +388,122 @@ namespace Unigram.Common
         }
 
         #endregion
+    }
+
+    public class ThemeOutgoing : ResourceDictionary
+    {
+        [ThreadStatic]
+        private static Dictionary<string, SolidColorBrush> _light = new()
+        {
+            { "MessageForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0x000000)) },
+            { "MessageForegroundLinkBrush", new SolidColorBrush(ColorEx.FromHex(0x168ACD)) },
+            { "MessageBackgroundBrush", new SolidColorBrush(ColorEx.FromHex(0xF0FDDF)) },
+            { "MessageSubtleLabelBrush", new SolidColorBrush(ColorEx.FromHex(0x6DC264)) },
+            { "MessageSubtleGlyphBrush", new SolidColorBrush(ColorEx.FromHex(0x5DC452)) },
+            { "MessageSubtleForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0x6DC264)) },
+            { "MessageHeaderForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0x3A8E26)) },
+            { "MessageHeaderBorderBrush", new SolidColorBrush(ColorEx.FromHex(0x5DC452)) },
+            { "MessageMediaForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0xF0FDDF)) },
+            { "MessageMediaBackgroundBrush", new SolidColorBrush(ColorEx.FromHex(0x78C67F)) },
+            { "MessageOverlayBackgroundBrush", new SolidColorBrush(ColorEx.FromHex(0x54000000)) },
+            { "MessageCallForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0x2AB32A)) },
+            { "MessageCallMissedForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0xDD5849)) },
+        };
+
+        [ThreadStatic]
+        private static Dictionary<string, SolidColorBrush> _dark = new()
+        {
+            { "MessageForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0xE4ECF2)) },
+            { "MessageForegroundLinkBrush", new SolidColorBrush(ColorEx.FromHex(0x83CAFF)) },
+            { "MessageBackgroundBrush", new SolidColorBrush(ColorEx.FromHex(0x2B5278)) },
+            { "MessageSubtleLabelBrush", new SolidColorBrush(ColorEx.FromHex(0x7DA8D3)) },
+            { "MessageSubtleGlyphBrush", new SolidColorBrush(ColorEx.FromHex(0x72BCFD)) },
+            { "MessageSubtleForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0x7DA8D3)) },
+            { "MessageHeaderForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0x90CAFF)) },
+            { "MessageHeaderBorderBrush", new SolidColorBrush(ColorEx.FromHex(0x65B9F4)) },
+            { "MessageMediaForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0xFFFFFF)) },
+            { "MessageMediaBackgroundBrush", new SolidColorBrush(ColorEx.FromHex(0x4C9CE2)) },
+            { "MessageOverlayBackgroundBrush", new SolidColorBrush(ColorEx.FromHex(0x54000000)) },
+            { "MessageCallForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0x49A2F0)) },
+            { "MessageCallMissedForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0xED5050)) },
+        };
+
+        public ThemeOutgoing()
+        {
+            var light = new ResourceDictionary();
+            var dark = new ResourceDictionary();
+
+            foreach (var item in _light)
+            {
+                light[item.Key] = item.Value;
+            }
+
+            foreach (var item in _dark)
+            {
+                dark[item.Key] = item.Value;
+            }
+
+            ThemeDictionaries["Light"] = light;
+            ThemeDictionaries["Default"] = dark;
+        }
+
+        public static void Update(TelegramTheme parent, IDictionary<string, Color> values = null)
+        {
+            if (values == null)
+            {
+                Update(parent);
+                return;
+            }
+
+            var target = parent == TelegramTheme.Dark ? _dark : _light;
+
+            foreach (var value in values)
+            {
+                if (value.Key.EndsWith("OutColor"))
+                {
+                    var key = value.Key.Substring(0, value.Key.Length - "OutColor".Length);
+                    if (target.TryGetValue($"{key}Brush", out SolidColorBrush brush))
+                    {
+                        brush.Color = value.Value;
+                    }
+                }
+            }
+        }
+
+        public static void Update(TelegramTheme parent)
+        {
+            if (parent == TelegramTheme.Light)
+            {
+                _light["MessageForegroundBrush"].Color = ColorEx.FromHex(0x000000);
+                _light["MessageForegroundLinkBrush"].Color = ColorEx.FromHex(0x168ACD);
+                _light["MessageBackgroundBrush"].Color = ColorEx.FromHex(0xF0FDDF);
+                _light["MessageSubtleLabelBrush"].Color = ColorEx.FromHex(0x6DC264);
+                _light["MessageSubtleGlyphBrush"].Color = ColorEx.FromHex(0x5DC452);
+                _light["MessageSubtleForegroundBrush"].Color = ColorEx.FromHex(0x6DC264);
+                _light["MessageHeaderForegroundBrush"].Color = ColorEx.FromHex(0x3A8E26);
+                _light["MessageHeaderBorderBrush"].Color = ColorEx.FromHex(0x5DC452);
+                _light["MessageMediaForegroundBrush"].Color = ColorEx.FromHex(0xF0FDDF);
+                _light["MessageMediaBackgroundBrush"].Color = ColorEx.FromHex(0x78C67F);
+                _light["MessageOverlayBackgroundBrush"].Color = ColorEx.FromHex(0x54000000);
+                _light["MessageCallForegroundBrush"].Color = ColorEx.FromHex(0x2AB32A);
+                _light["MessageCallMissedForegroundBrush"].Color = ColorEx.FromHex(0xDD5849);
+            }
+            else
+            {
+                _dark["MessageForegroundBrush"].Color = ColorEx.FromHex(0xE4ECF2);
+                _dark["MessageForegroundLinkBrush"].Color = ColorEx.FromHex(0x83CAFF);
+                _dark["MessageBackgroundBrush"].Color = ColorEx.FromHex(0x2B5278);
+                _dark["MessageSubtleLabelBrush"].Color = ColorEx.FromHex(0x7DA8D3);
+                _dark["MessageSubtleGlyphBrush"].Color = ColorEx.FromHex(0x72BCFD);
+                _dark["MessageSubtleForegroundBrush"].Color = ColorEx.FromHex(0x7DA8D3);
+                _dark["MessageHeaderForegroundBrush"].Color = ColorEx.FromHex(0x90CAFF);
+                _dark["MessageHeaderBorderBrush"].Color = ColorEx.FromHex(0x65B9F4);
+                _dark["MessageMediaForegroundBrush"].Color = ColorEx.FromHex(0xFFFFFF);
+                _dark["MessageMediaBackgroundBrush"].Color = ColorEx.FromHex(0x4C9CE2);
+                _dark["MessageOverlayBackgroundBrush"].Color = ColorEx.FromHex(0x54000000);
+                _dark["MessageCallForegroundBrush"].Color = ColorEx.FromHex(0x49A2F0);
+                _dark["MessageCallMissedForegroundBrush"].Color = ColorEx.FromHex(0xED5050);
+            }
+        }
     }
 }

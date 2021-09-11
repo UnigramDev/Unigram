@@ -1071,6 +1071,7 @@ namespace Unigram.Common
                 case MessageChatAddMembers:
                 case MessageChatChangePhoto:
                 case MessageChatChangeTitle:
+                case MessageChatSetTheme:
                 case MessageChatDeleteMember:
                 case MessageChatDeletePhoto:
                 case MessageChatJoinByLink:

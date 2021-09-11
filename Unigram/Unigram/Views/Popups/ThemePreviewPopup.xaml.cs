@@ -30,7 +30,7 @@ namespace Unigram.Views.Popups
 
             var flags = TelegramTheme.Light;
             var theme = SettingsService.Current.Appearance.RequestedTheme;
-            var mapping = TLContainer.Current.Resolve<IThemeService>().GetMapping(flags);
+            var mapping = ThemeService.GetMapping(flags);
 
             var file = await StorageFile.GetFileFromPathAsync(path);
             var lines = await FileIO.ReadLinesAsync(file);
@@ -45,7 +45,7 @@ namespace Unigram.Views.Popups
                 else if (line.StartsWith("parent: "))
                 {
                     flags = (TelegramTheme)int.Parse(line.Substring("parent: ".Length));
-                    mapping = TLContainer.Current.Resolve<IThemeService>().GetMapping(flags);
+                    mapping = ThemeService.GetMapping(flags);
 
                     dict["MessageForegroundBrush"] = new SolidColorBrush(TLContainer.Current.Resolve<IThemeService>().GetDefaultColor(flags, "MessageForegroundColor"));
                 }

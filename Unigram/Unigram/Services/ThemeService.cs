@@ -16,7 +16,6 @@ namespace Unigram.Services
 {
     public interface IThemeService
     {
-        Dictionary<string, string[]> GetMapping(TelegramTheme flags);
         Color GetDefaultColor(TelegramTheme flags, string key);
 
         IList<ThemeInfoBase> GetThemes();
@@ -42,9 +41,14 @@ namespace Unigram.Services
             _aggregator = aggregator;
         }
 
-        public Dictionary<string, string[]> GetMapping(TelegramTheme flags)
+        public static Dictionary<string, string[]> GetMapping(TelegramTheme flags)
         {
             return flags == TelegramTheme.Dark ? _mappingDark : _mapping;
+        }
+
+        public static Dictionary<string, Color> GetLookup(TelegramTheme flags)
+        {
+            return flags == TelegramTheme.Dark ? _default2Dark : _default2;
         }
 
         public Color GetDefaultColor(TelegramTheme flags, string key)
@@ -327,7 +331,7 @@ namespace Unigram.Services
         {
             get
             {
-                if (Values.TryGetValue("MessageBackgroundColor", out Color color))
+                if (Values.TryGetValue("MessageBackgroundBrush", out Color color))
                 {
                     return color;
                 }
@@ -452,7 +456,7 @@ namespace Unigram.Services
         {
             get
             {
-                if (Values.TryGetValue("MessageBackgroundColor", out Color color))
+                if (Values.TryGetValue("MessageBackgroundBrush", out Color color))
                 {
                     return color;
                 }
