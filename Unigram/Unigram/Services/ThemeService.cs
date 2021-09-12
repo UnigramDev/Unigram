@@ -252,6 +252,18 @@ namespace Unigram.Services
             return new ThemeAccentInfo(type, accent, values);
         }
 
+        public static Color Colorize(TelegramThemeType type, Color accent, string key)
+        {
+            var colorizer = ThemeColorizer.FromTheme(type, _accent[type], accent);
+            if (_map[type].TryGetValue(key, out Color color))
+            {
+                return colorizer.Colorize(color);
+            }
+
+            var lookup = ThemeService.GetLookup(type == TelegramThemeType.Day ? TelegramTheme.Light : TelegramTheme.Dark);
+            return colorizer.Colorize(lookup[key]);
+        }
+
         public override Color AccentColor { get; }
 
         public TelegramThemeType Type { get; private set; }

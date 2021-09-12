@@ -709,23 +709,6 @@
                         <DataTemplate>
                             <Grid Width="72" Height="72">
                                 <Image Stretch="UniformToFill"/>
-
-                                <Grid VerticalAlignment="Center">
-                                    <Rectangle x:Name="NormalRectangle"
-                                                   Fill="{ThemeResource CheckBoxCheckBackgroundStrokeUnchecked}"
-                                                   Stroke="{ThemeResource CheckBoxCheckBackgroundStrokeUnchecked}"
-                                                   StrokeThickness="{ThemeResource CheckBoxBorderThemeThickness}"
-                                                   RadiusX="16"
-                                                   RadiusY="16"
-                                                   UseLayoutRounding="False"
-                                                   Height="32"
-                                                   Width="32" />
-                                    <FontIcon x:Name="CheckGlyph"
-                                                  FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                                  Glyph="&#xE001;"
-                                                  FontSize="24"
-                                                  Foreground="{ThemeResource CheckBoxCheckBackgroundFillChecked}" />
-                                </Grid>
                             </Grid>
                         </DataTemplate>
                     </GridView.ItemTemplate>
@@ -739,6 +722,8 @@
                 <Slider
                     Header="{CustomResource BackgroundIntensity}"
                     Value="{x:Bind ViewModel.Intensity, Mode=TwoWay}"
+                    Minimum="-100"
+                    Maximum="100"
                     Margin="12,12,12,0"
                     Grid.Row="2"/>
             </Grid>

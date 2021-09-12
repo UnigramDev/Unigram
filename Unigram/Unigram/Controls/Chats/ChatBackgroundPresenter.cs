@@ -72,7 +72,16 @@ namespace Unigram.Controls.Chats
             {
                 if (update.ForDarkTheme == (ActualTheme == ElementTheme.Dark))
                 {
-                    Update(update.Background, update.ForDarkTheme);
+                    var background = update.Background;
+
+                    // I'm not a big fan of this, but this is the easiest way to keep background in sync
+                    var chat = update.ForDarkTheme ? Theme.Current.ChatTheme?.DarkSettings.Background : Theme.Current.ChatTheme?.LightSettings.Background;
+                    if (chat != null)
+                    {
+                        background = chat;
+                    }
+
+                    Update(background, update.ForDarkTheme);
                 }
             });
         }
@@ -130,6 +139,8 @@ namespace Unigram.Controls.Chats
                 {
                     _colorBackground.Fill = typeFill.ToBrush();
                 }
+
+                Background = null;
             }
             else if (background.Type is BackgroundTypePattern typePattern)
             {
@@ -145,19 +156,36 @@ namespace Unigram.Controls.Chats
                     _colorBackground.Fill = typePattern.Fill.ToBrush();
                 }
 
-                _imageBackground.Opacity = typePattern.Intensity / 100d;
+                if (typePattern.Intensity < 0)
+                {
+                    _imageBackground.Opacity = 1;
+                    _colorBackground.Opacity = Math.Abs(typePattern.Intensity / 100d);
+
+                    Background = new SolidColorBrush(Colors.Black);
+                }
+                else
+                {
+                    _imageBackground.Opacity = typePattern.Intensity / 100d;
+                    _colorBackground.Opacity = 1;
+
+                    Background = null;
+                }
 
                 var document = background.Document.DocumentValue;
                 if (document.Local.IsDownloadingCompleted)
                 {
                     if (string.Equals(background.Document.MimeType, "application/x-tgwallpattern", StringComparison.OrdinalIgnoreCase))
                     {
-                        _imageBackground.Fill = new TiledBrush { SvgSource = PlaceholderHelper.GetVectorSurface(null, document, typePattern.GetForeground()) };
+                        _imageBackground.Fill = new TiledBrush { IsNegative = typePattern.Intensity < 0, SvgSource = PlaceholderHelper.GetVectorSurface(null, document, typePattern.GetForeground()) };
                     }
                     else
                     {
                         _imageBackground.Fill = new ImageBrush { ImageSource = new BitmapImage(UriEx.ToLocal(document.Local.Path)), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
                     }
+                }
+                else if (document.Local.CanBeDownloaded && !document.Local.IsDownloadingActive)
+                {
+                    _protoService.DownloadFile(document.Id, 16);
                 }
             }
             else if (background.Type is BackgroundTypeWallpaper typeWallpaper)
@@ -172,6 +200,12 @@ namespace Unigram.Controls.Chats
                 {
                     _imageBackground.Fill = new ImageBrush { ImageSource = new BitmapImage(UriEx.ToLocal(document.Local.Path)), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
                 }
+                else if (document.Local.CanBeDownloaded && !document.Local.IsDownloadingActive)
+                {
+                    _protoService.DownloadFile(document.Id, 16);
+                }
+
+                Background = null;
             }
         }
 

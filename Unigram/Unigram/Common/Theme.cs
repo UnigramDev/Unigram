@@ -57,6 +57,8 @@ namespace Unigram.Common
             }
         }
 
+        public ChatTheme ChatTheme => _lastTheme;
+
         public void Initialize()
         {
             Initialize(SettingsService.Current.Appearance.GetCalculatedApplicationTheme());
@@ -69,7 +71,14 @@ namespace Unigram.Common
 
         public void Initialize(ElementTheme requested)
         {
-            Initialize(requested == ElementTheme.Dark ? TelegramTheme.Dark : TelegramTheme.Light);
+            if (_lastTheme != null)
+            {
+                Update(requested, _lastTheme);
+            }
+            else
+            {
+                Initialize(requested == ElementTheme.Dark ? TelegramTheme.Dark : TelegramTheme.Light);
+            }
         }
 
         public void Initialize(TelegramTheme requested)
@@ -141,8 +150,10 @@ namespace Unigram.Common
             Update(requested, values);
         }
 
-        private int? _lastTheme;
+        private int? _lastAccent;
         private long? _lastBackground;
+
+        private ChatTheme _lastTheme;
 
         public bool Update(ElementTheme requested, ChatTheme theme)
         {
@@ -151,7 +162,7 @@ namespace Unigram.Common
             var settings = requested == ElementTheme.Light ? theme?.LightSettings : theme?.DarkSettings;
             if (settings != null)
             {
-                if (_lastTheme != settings.AccentColor)
+                if (_lastAccent != settings.AccentColor)
                 {
                     Update(ThemeAccentInfo.FromAccent(requested == ElementTheme.Light
                         ? TelegramThemeType.Day
@@ -162,12 +173,12 @@ namespace Unigram.Common
                     updated = true;
                 }
 
-                _lastTheme = settings.AccentColor;
+                _lastAccent = settings.AccentColor;
                 _lastBackground = settings.Background?.Id;
             }
             else
             {
-                if (_lastTheme != null)
+                if (_lastAccent != null)
                 {
                     Update(requested == ElementTheme.Dark
                         ? TelegramTheme.Dark 
@@ -178,10 +189,11 @@ namespace Unigram.Common
                     updated = true;
                 }
 
-                _lastTheme = null;
+                _lastAccent = null;
                 _lastBackground = null;
             }
 
+            _lastTheme = theme;
             return updated;
         }
 
@@ -402,7 +414,8 @@ namespace Unigram.Common
     public class ThemeOutgoing : ResourceDictionary
     {
         [ThreadStatic]
-        private static readonly Dictionary<string, SolidColorBrush> _light = new()
+        private static Dictionary<string, SolidColorBrush> _light;
+        public static Dictionary<string, SolidColorBrush> Light => _light ??= new()
         {
             { "MessageForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0x000000)) },
             { "MessageForegroundLinkBrush", new SolidColorBrush(ColorEx.FromHex(0x168ACD)) },
@@ -420,7 +433,8 @@ namespace Unigram.Common
         };
 
         [ThreadStatic]
-        private static readonly Dictionary<string, SolidColorBrush> _dark = new()
+        private static Dictionary<string, SolidColorBrush> _dark;
+        public static Dictionary<string, SolidColorBrush> Dark => _dark ??= new()
         {
             { "MessageForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0xE4ECF2)) },
             { "MessageForegroundLinkBrush", new SolidColorBrush(ColorEx.FromHex(0x83CAFF)) },
@@ -442,12 +456,12 @@ namespace Unigram.Common
             var light = new ResourceDictionary();
             var dark = new ResourceDictionary();
 
-            foreach (var item in _light)
+            foreach (var item in Light)
             {
                 light[item.Key] = item.Value;
             }
 
-            foreach (var item in _dark)
+            foreach (var item in Dark)
             {
                 dark[item.Key] = item.Value;
             }
@@ -464,7 +478,7 @@ namespace Unigram.Common
                 return;
             }
 
-            var target = parent == TelegramTheme.Dark ? _dark : _light;
+            var target = parent == TelegramTheme.Dark ? Dark : Light;
 
             foreach (var value in values)
             {
@@ -484,35 +498,35 @@ namespace Unigram.Common
         {
             if (parent == TelegramTheme.Light)
             {
-                _light["MessageForegroundBrush"].Color = ColorEx.FromHex(0x000000);
-                _light["MessageForegroundLinkBrush"].Color = ColorEx.FromHex(0x168ACD);
-                _light["MessageBackgroundBrush"].Color = ColorEx.FromHex(0xF0FDDF);
-                _light["MessageSubtleLabelBrush"].Color = ColorEx.FromHex(0x6DC264);
-                _light["MessageSubtleGlyphBrush"].Color = ColorEx.FromHex(0x5DC452);
-                _light["MessageSubtleForegroundBrush"].Color = ColorEx.FromHex(0x6DC264);
-                _light["MessageHeaderForegroundBrush"].Color = ColorEx.FromHex(0x3A8E26);
-                _light["MessageHeaderBorderBrush"].Color = ColorEx.FromHex(0x5DC452);
-                _light["MessageMediaForegroundBrush"].Color = ColorEx.FromHex(0xF0FDDF);
-                _light["MessageMediaBackgroundBrush"].Color = ColorEx.FromHex(0x78C67F);
-                _light["MessageOverlayBackgroundBrush"].Color = ColorEx.FromHex(0x54000000);
-                _light["MessageCallForegroundBrush"].Color = ColorEx.FromHex(0x2AB32A);
-                _light["MessageCallMissedForegroundBrush"].Color = ColorEx.FromHex(0xDD5849);
+                Light["MessageForegroundBrush"].Color = ColorEx.FromHex(0x000000);
+                Light["MessageForegroundLinkBrush"].Color = ColorEx.FromHex(0x168ACD);
+                Light["MessageBackgroundBrush"].Color = ColorEx.FromHex(0xF0FDDF);
+                Light["MessageSubtleLabelBrush"].Color = ColorEx.FromHex(0x6DC264);
+                Light["MessageSubtleGlyphBrush"].Color = ColorEx.FromHex(0x5DC452);
+                Light["MessageSubtleForegroundBrush"].Color = ColorEx.FromHex(0x6DC264);
+                Light["MessageHeaderForegroundBrush"].Color = ColorEx.FromHex(0x3A8E26);
+                Light["MessageHeaderBorderBrush"].Color = ColorEx.FromHex(0x5DC452);
+                Light["MessageMediaForegroundBrush"].Color = ColorEx.FromHex(0xF0FDDF);
+                Light["MessageMediaBackgroundBrush"].Color = ColorEx.FromHex(0x78C67F);
+                Light["MessageOverlayBackgroundBrush"].Color = ColorEx.FromHex(0x54000000);
+                Light["MessageCallForegroundBrush"].Color = ColorEx.FromHex(0x2AB32A);
+                Light["MessageCallMissedForegroundBrush"].Color = ColorEx.FromHex(0xDD5849);
             }
             else
             {
-                _dark["MessageForegroundBrush"].Color = ColorEx.FromHex(0xE4ECF2);
-                _dark["MessageForegroundLinkBrush"].Color = ColorEx.FromHex(0x83CAFF);
-                _dark["MessageBackgroundBrush"].Color = ColorEx.FromHex(0x2B5278);
-                _dark["MessageSubtleLabelBrush"].Color = ColorEx.FromHex(0x7DA8D3);
-                _dark["MessageSubtleGlyphBrush"].Color = ColorEx.FromHex(0x72BCFD);
-                _dark["MessageSubtleForegroundBrush"].Color = ColorEx.FromHex(0x7DA8D3);
-                _dark["MessageHeaderForegroundBrush"].Color = ColorEx.FromHex(0x90CAFF);
-                _dark["MessageHeaderBorderBrush"].Color = ColorEx.FromHex(0x65B9F4);
-                _dark["MessageMediaForegroundBrush"].Color = ColorEx.FromHex(0xFFFFFF);
-                _dark["MessageMediaBackgroundBrush"].Color = ColorEx.FromHex(0x4C9CE2);
-                _dark["MessageOverlayBackgroundBrush"].Color = ColorEx.FromHex(0x54000000);
-                _dark["MessageCallForegroundBrush"].Color = ColorEx.FromHex(0x49A2F0);
-                _dark["MessageCallMissedForegroundBrush"].Color = ColorEx.FromHex(0xED5050);
+                Dark["MessageForegroundBrush"].Color = ColorEx.FromHex(0xE4ECF2);
+                Dark["MessageForegroundLinkBrush"].Color = ColorEx.FromHex(0x83CAFF);
+                Dark["MessageBackgroundBrush"].Color = ColorEx.FromHex(0x2B5278);
+                Dark["MessageSubtleLabelBrush"].Color = ColorEx.FromHex(0x7DA8D3);
+                Dark["MessageSubtleGlyphBrush"].Color = ColorEx.FromHex(0x72BCFD);
+                Dark["MessageSubtleForegroundBrush"].Color = ColorEx.FromHex(0x7DA8D3);
+                Dark["MessageHeaderForegroundBrush"].Color = ColorEx.FromHex(0x90CAFF);
+                Dark["MessageHeaderBorderBrush"].Color = ColorEx.FromHex(0x65B9F4);
+                Dark["MessageMediaForegroundBrush"].Color = ColorEx.FromHex(0xFFFFFF);
+                Dark["MessageMediaBackgroundBrush"].Color = ColorEx.FromHex(0x4C9CE2);
+                Dark["MessageOverlayBackgroundBrush"].Color = ColorEx.FromHex(0x54000000);
+                Dark["MessageCallForegroundBrush"].Color = ColorEx.FromHex(0x49A2F0);
+                Dark["MessageCallMissedForegroundBrush"].Color = ColorEx.FromHex(0xED5050);
             }
         }
     }

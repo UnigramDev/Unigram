@@ -47,6 +47,8 @@ namespace Unigram.Services
                     { "MessageSubtleGlyphOutgoing", ColorEx.FromHex(0xFF86CAFF) },
                     { "MessageHeaderForegroundOutgoing", ColorEx.FromHex(0xFF86CAFF) },
                     { "MessageHeaderBorderOutgoing", ColorEx.FromHex(0xFF86CAFF) },
+                    { "MessageMediaBackgroundBrush", ColorEx.FromHex(0xFF3F96D0) },
+                    { "MessageMediaBackgroundOutgoing", ColorEx.FromHex(0xFF4C9CE2) },
                 }
             },
             {
@@ -72,6 +74,8 @@ namespace Unigram.Services
                     { "MessageSubtleGlyphOutgoing", ColorEx.FromHex(0xFF86CAFF) },
                     { "MessageHeaderForegroundOutgoing", ColorEx.FromHex(0xFF86CAFF) },
                     { "MessageHeaderBorderOutgoing", ColorEx.FromHex(0xFF86CAFF) },
+                    { "MessageMediaBackgroundBrush", ColorEx.FromHex(0xFF3F96D0) },
+                    { "MessageMediaBackgroundOutgoing", ColorEx.FromHex(0xFF4C9CE2) },
                 }
             },
             {
@@ -96,6 +100,8 @@ namespace Unigram.Services
                     { "MessageSubtleGlyphOutgoing", ColorEx.FromHex(0xFF86CAFF) },
                     { "MessageHeaderForegroundOutgoing", ColorEx.FromHex(0xFF86CAFF) },
                     { "MessageHeaderBorderOutgoing", ColorEx.FromHex(0xFF86CAFF) },
+                    { "MessageMediaBackgroundBrush", ColorEx.FromHex(0xFF40A7E3) },
+                    { "MessageMediaBackgroundOutgoing", ColorEx.FromHex(0xFF40A7E3) }
                 }
             },
         };

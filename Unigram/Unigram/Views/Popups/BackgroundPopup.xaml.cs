@@ -200,7 +200,7 @@ namespace Unigram.Views
                 {
                     if (string.Equals(wallpaper.Document.MimeType, "application/x-tgwallpattern", StringComparison.OrdinalIgnoreCase))
                     {
-                        Presenter.Fill = new TiledBrush { SvgSource = PlaceholderHelper.GetVectorSurface(ViewModel.ProtoService, big.DocumentValue, ViewModel.GetPatternForeground()) };
+                        Presenter.Fill = new TiledBrush { IsNegative = ViewModel.Intensity < 0, SvgSource = PlaceholderHelper.GetVectorSurface(ViewModel.ProtoService, big.DocumentValue, ViewModel.GetPatternForeground()) };
                     }
                     else
                     {
@@ -269,9 +269,6 @@ namespace Unigram.Views
                     var wallpaper = ViewModel.Patterns[i];
                     var root = container.ContentTemplateRoot as Grid;
 
-                    var check = root.Children[1];
-                    check.Visibility = wallpaper.Id == ViewModel.SelectedPattern?.Id ? Visibility.Visible : Visibility.Collapsed;
-
                     var content = root.Children[0] as Image;
                     if (wallpaper.Document != null)
                     {
@@ -321,9 +318,22 @@ namespace Unigram.Views
             return !color3.IsEmpty && color4.IsEmpty ? Visibility.Visible : Visibility.Collapsed;
         }
 
+        private bool _negative;
+
         private double ConvertIntensity(int intensity)
         {
-            return intensity / 100d;
+            if (intensity < 0 && !_negative)
+            {
+                _negative = true;
+                UpdatePresenter(ViewModel.Item);
+            }
+            else if (intensity >= 0 && _negative)
+            {
+                _negative = false;
+                UpdatePresenter(ViewModel.Item);
+            }
+
+            return Math.Abs(intensity / 100d);
         }
 
         #endregion
@@ -451,9 +461,6 @@ namespace Unigram.Views
 
             var wallpaper = args.Item as Background;
             var root = args.ItemContainer.ContentTemplateRoot as Grid;
-
-            var check = root.Children[1];
-            check.Visibility = wallpaper.Id == ViewModel.SelectedPattern?.Id ? Visibility.Visible : Visibility.Collapsed;
 
             if (wallpaper.Document != null)
             {

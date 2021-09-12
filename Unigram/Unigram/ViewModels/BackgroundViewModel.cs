@@ -231,6 +231,11 @@ namespace Unigram.ViewModels
 
         public Color GetPatternForeground()
         {
+            if (_intensity < 0)
+            {
+                return Colors.Black;
+            }
+
             if (!_color1.IsEmpty && !_color2.IsEmpty)
             {
                 return ColorEx.GetPatternColor(ColorEx.GetAverageColor(_color1, _color2));
