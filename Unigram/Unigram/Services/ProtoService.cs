@@ -131,6 +131,7 @@ namespace Unigram.Services
         void SetUnreadCount(ChatList chatList, UpdateUnreadChatCount chatCount = null, UpdateUnreadMessageCount messageCount = null);
 
         Task<ChatTheme> GetChatThemeAsync(string themeName);
+        Task<IList<ChatTheme>> GetChatThemesAsync();
 
         Task<StickerSet> GetAnimatedSetAsync(AnimatedSetType type);
         bool IsDiceEmoji(string text, out string dice);
@@ -1479,17 +1480,28 @@ Read more about how to update your device [here](https://support.microsoft.com/h
                 return null;
             }
 
+            var themes = await GetChatThemesAsync();
+            if (themes != null)
+            {
+                return themes.FirstOrDefault(x => string.Equals(x.Name, themeName));
+            }
+
+            return null;
+        }
+
+        public async Task<IList<ChatTheme>> GetChatThemesAsync()
+        {
             var themes = _chatThemes;
             if (themes != null)
             {
-                return themes.ChatThemesValue.FirstOrDefault(x => string.Equals(x.Name, themeName));
+                return themes.ChatThemesValue;
             }
 
             var tsc = _chatThemesTask;
             if (tsc != null)
             {
                 themes = await tsc.Task;
-                return themes.ChatThemesValue.FirstOrDefault(x => string.Equals(x.Name, themeName));
+                return themes.ChatThemesValue;
             }
 
             tsc = _chatThemesTask = new TaskCompletionSource<ChatThemes>();
@@ -1497,10 +1509,11 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             var response = await SendAsync(new GetChatThemes());
             if (response is ChatThemes chatThemes)
             {
-                themes = _chatThemes = chatThemes;
-                return themes.ChatThemesValue.FirstOrDefault(x => string.Equals(x.Name, themeName));
+                tsc.SetResult(themes = _chatThemes = chatThemes);
+                return themes.ChatThemesValue;
             }
 
+            tsc.SetResult(null);
             return null;
         }
 

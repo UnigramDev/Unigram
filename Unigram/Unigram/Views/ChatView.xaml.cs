@@ -1805,6 +1805,11 @@ namespace Unigram.Views
 
             flyout.CreateFlyoutItem(ViewModel.SearchCommand, Strings.Resources.Search, new FontIcon { Glyph = Icons.Search }, Windows.System.VirtualKey.F);
 
+            if (user != null)
+            {
+                flyout.CreateFlyoutItem(ViewModel.SetThemeCommand, Strings.Resources.ChangeColors, new FontIcon { Glyph = Icons.PaintBrush });
+            }
+
             if (supergroup != null && supergroup.Status is not ChatMemberStatusCreator && (supergroup.IsChannel || !string.IsNullOrEmpty(supergroup.Username)))
             {
                 flyout.CreateFlyoutItem(ViewModel.ReportCommand, Strings.Resources.ReportChat, new FontIcon { Glyph = Icons.ShieldError });
@@ -2153,7 +2158,7 @@ namespace Unigram.Views
             var separator = flyout.CreateFlyoutSeparator();
 
             // Width must be fixed because viewers are loaded asynchronously
-            placeholder.Width = 220;
+            placeholder.Width = 200;
 
             var response = await message.ProtoService.SendAsync(new GetMessageViewers(message.ChatId, message.Id));
             if (response is Telegram.Td.Api.Users users && users.UserIds.Count > 0)
@@ -2185,7 +2190,7 @@ namespace Unigram.Views
                     final.Tag = pictures;
 
                     // Width must be fixed because viewers are loaded asynchronously
-                    final.Width = 220;
+                    final.Width = 200;
 
                     foreach (var user in message.ProtoService.GetUsers(users.UserIds))
                     {

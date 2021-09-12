@@ -139,6 +139,7 @@ namespace Unigram.ViewModels
             SendCommand = new RelayCommand<string>(SendMessage);
             SwitchCommand = new RelayCommand<string>(SwitchExecute);
             SetTimerCommand = new RelayCommand(SetTimerExecute);
+            SetThemeCommand = new RelayCommand(SetThemeExecute);
             ActionCommand = new RelayCommand(ActionExecute);
             OpenMessageCommand = new RelayCommand<Message>(OpenMessageExecute);
             ScheduledCommand = new RelayCommand(ScheduledExecute);
@@ -3436,12 +3437,32 @@ namespace Unigram.ViewModels
             dialog.Value = chat.MessageTtlSetting;
 
             var confirm = await dialog.ShowQueuedAsync();
-            if (confirm != ContentDialogResult.Primary)
+            if (confirm == ContentDialogResult.Primary)
+            {
+                ProtoService.Send(new SetChatMessageTtlSetting(chat.Id, dialog.Value));
+            }
+        }
+
+        #endregion
+
+        #region Set theme
+
+        public RelayCommand SetThemeCommand { get; }
+        private async void SetThemeExecute()
+        {
+            var chat = _chat;
+            if (chat == null)
             {
                 return;
             }
 
-            ProtoService.Send(new SetChatMessageTtlSetting(chat.Id, dialog.Value));
+            var dialog = new ChatThemePopup(ProtoService, chat.ThemeName);
+
+            var confirm = await dialog.ShowQueuedAsync();
+            if (confirm == ContentDialogResult.Primary)
+            {
+                ProtoService.Send(new SetChatTheme(chat.Id, dialog.ThemeName));
+            }
         }
 
         #endregion

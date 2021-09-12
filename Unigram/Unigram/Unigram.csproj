@@ -19,7 +19,7 @@
     <PackageCertificateKeyFile>
     </PackageCertificateKeyFile>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
-    <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
+    <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x64</AppxBundlePlatforms>
     <PackageCertificateThumbprint>B87C6AEEAAB0BCB6EC3EBC452C77E47086B56D4E</PackageCertificateThumbprint>
@@ -176,7 +176,6 @@
     <Compile Include="Common\ConcurrentQueueWorker.cs" />
     <Compile Include="Common\CurrencyNumberFormatter.cs" />
     <Compile Include="Common\DateTimeParser.cs" />
-    <Compile Include="Common\DiffUtil.cs" />
     <Compile Include="Common\MediaDeviceWatcher.cs" />
     <Compile Include="Common\DisposableMutex.cs" />
     <Compile Include="Common\DropShadowEx.cs" />
@@ -234,6 +233,9 @@
     </Compile>
     <Compile Include="Controls\Cells\ChatShareCell.xaml.cs">
       <DependentUpon>ChatShareCell.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Cells\ChatThemeCell.xaml.cs">
+      <DependentUpon>ChatThemeCell.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Cells\GroupCallParticipantGridCell.xaml.cs">
       <DependentUpon>GroupCallParticipantGridCell.xaml</DependentUpon>
@@ -495,6 +497,7 @@
     <Compile Include="ViewModels\Payments\PaymentFormViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsBlockedChatsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsStickersViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsThemeViewModel.cs" />
     <Compile Include="Views\ChatEventLogPage.xaml.cs">
       <DependentUpon>ChatEventLogPage.xaml</DependentUpon>
     </Compile>
@@ -539,6 +542,9 @@
     </Compile>
     <Compile Include="Views\Popups\SelectColorPopup.xaml.cs">
       <DependentUpon>SelectColorPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Popups\ChatThemePopup.xaml.cs">
+      <DependentUpon>ChatThemePopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\VoiceChatAliasesPopup.xaml.cs">
       <DependentUpon>VoiceChatAliasesPopup.xaml</DependentUpon>
@@ -1434,6 +1440,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Cells\ChatThemeCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Cells\GroupCallParticipantGridCell.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1710,6 +1720,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Popups\ChatThemePopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Popups\VoiceChatAliasesPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1730,15 +1744,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Themes\OutgoingOverride.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Themes\ThemeGreen.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Themes\ThemeTemplates.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -2220,10 +2226,13 @@
       <Version>6.1.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.UI.Xaml">
-      <Version>2.6.0</Version>
+      <Version>2.6.2</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.1</Version>
+    </PackageReference>
+    <PackageReference Include="Rg.DiffUtils">
+      <Version>1.0.0</Version>
     </PackageReference>
     <PackageReference Include="System.ValueTuple">
       <Version>4.5.0</Version>
@@ -2261,7 +2270,7 @@
     </Reference>
     <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\rlottie\$(Platform)\RLottie.dll" />
     <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\rlottie\$(Platform)\RLottie.pri" />
-    <!--<ReferenceCopyLocalPaths Condition=" '$(Configuration)' == 'Debug' " Include="$(ProjectDir)\..\Libraries\rlottie\$(Platform)\zlib1.dll" />-->
+    <ReferenceCopyLocalPaths Condition=" '$(Configuration)' == 'Debug' " Include="$(ProjectDir)\..\Libraries\rlottie\$(Platform)\zlib1.dll" />
   </ItemGroup>
   <ItemGroup />
   <!--<ItemGroup>

@@ -1347,6 +1347,10 @@ namespace Unigram.ViewModels
             {
                 NavigationService.NavigateToInvoice(message);
             }
+            else if (message.Content is MessageChatSetTheme)
+            {
+                SetThemeExecute();
+            }
         }
 
         #endregion
