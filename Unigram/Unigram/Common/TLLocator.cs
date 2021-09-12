@@ -964,6 +964,18 @@ namespace Unigram.Views
                         _settingsService,
                         _eventAggregator));
             }
+            else if (type == typeof(Unigram.ViewModels.Settings.SettingsThemeViewModel))
+            {
+                return (T)(object)new Unigram.ViewModels.Settings.SettingsThemeViewModel(
+                    _protoService,
+                    _cacheService,
+                    _settingsService,
+                    _eventAggregator,
+                    _themeService ??= new Unigram.Services.ThemeService(
+                        _protoService,
+                        _settingsService,
+                        _eventAggregator));
+            }
             else if (type == typeof(Unigram.ViewModels.Settings.SettingsThemesViewModel))
             {
                 return (T)(object)new Unigram.ViewModels.Settings.SettingsThemesViewModel(

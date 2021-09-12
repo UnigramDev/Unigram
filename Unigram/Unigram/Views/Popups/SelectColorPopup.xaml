@@ -34,6 +34,7 @@
             Grid.Row="1"/>
 
         <HyperlinkButton
+            x:Name="Accent"
             Content="Use system accent color"
             Click="System_Click"
             HorizontalAlignment="Left"

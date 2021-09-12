@@ -21,6 +21,8 @@ namespace Unigram.Common
 
         public Theme()
         {
+            var main = Current == null;
+
             try
             {
                 isolatedStore = ApplicationData.Current.LocalSettings.CreateContainer("Theme", ApplicationDataCreateDisposition.Always);
@@ -48,8 +50,11 @@ namespace Unigram.Common
 
             MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/ThemeGreen.xaml") });
 
-            UpdateAcrylicBrushes();
-            Initialize();
+            if (main)
+            {
+                UpdateAcrylicBrushes();
+                Initialize();
+            }
         }
 
         public void Initialize()
@@ -82,6 +87,11 @@ namespace Unigram.Common
             {
                 Update(requested);
             }
+        }
+
+        public void Initialize(string path)
+        {
+            UpdateCustom(path);
         }
 
         private void UpdateCustom(string path)
@@ -198,7 +208,6 @@ namespace Unigram.Common
                 ThemeOutgoing.Update(requested, values);
 
                 var target = MergedDictionaries[0].ThemeDictionaries[requested == TelegramTheme.Light ? "Light" : "Dark"] as ResourceDictionary;
-                var mapping = ThemeService.GetMapping(requested);
                 var lookup = ThemeService.GetLookup(requested);
 
                 foreach (var item in lookup)
@@ -393,7 +402,7 @@ namespace Unigram.Common
     public class ThemeOutgoing : ResourceDictionary
     {
         [ThreadStatic]
-        private static Dictionary<string, SolidColorBrush> _light = new()
+        private static readonly Dictionary<string, SolidColorBrush> _light = new()
         {
             { "MessageForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0x000000)) },
             { "MessageForegroundLinkBrush", new SolidColorBrush(ColorEx.FromHex(0x168ACD)) },
@@ -411,7 +420,7 @@ namespace Unigram.Common
         };
 
         [ThreadStatic]
-        private static Dictionary<string, SolidColorBrush> _dark = new()
+        private static readonly Dictionary<string, SolidColorBrush> _dark = new()
         {
             { "MessageForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0xE4ECF2)) },
             { "MessageForegroundLinkBrush", new SolidColorBrush(ColorEx.FromHex(0x83CAFF)) },
@@ -459,9 +468,10 @@ namespace Unigram.Common
 
             foreach (var value in values)
             {
-                if (value.Key.EndsWith("OutColor"))
+                if (value.Key.EndsWith("Outgoing"))
                 {
-                    var key = value.Key.Substring(0, value.Key.Length - "OutColor".Length);
+                    var key = value.Key.Substring(0, value.Key.Length - "Outgoing".Length);
+                    
                     if (target.TryGetValue($"{key}Brush", out SolidColorBrush brush))
                     {
                         brush.Color = value.Value;

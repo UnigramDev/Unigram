@@ -228,6 +228,13 @@ namespace Unigram.ViewModels.Settings
             var preparing = new ThemeCustomInfo { Name = input.Text, Parent = theme.Parent };
             var fileName = Client.Execute(new CleanFileName(theme.Name)) as Text;
 
+            var lookup = ThemeService.GetLookup(theme.Parent);
+
+            foreach (var value in lookup)
+            {
+                preparing.Values[value.Key] = value.Value;
+            }
+
             if (theme is ThemeCustomInfo custom)
             {
                 foreach (var item in custom.Values)

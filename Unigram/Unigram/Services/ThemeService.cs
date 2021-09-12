@@ -16,8 +16,6 @@ namespace Unigram.Services
 {
     public interface IThemeService
     {
-        Color GetDefaultColor(TelegramTheme flags, string key);
-
         IList<ThemeInfoBase> GetThemes();
         Task<IList<ThemeInfoBase>> GetCustomThemesAsync();
 
@@ -41,33 +39,9 @@ namespace Unigram.Services
             _aggregator = aggregator;
         }
 
-        public static Dictionary<string, string[]> GetMapping(TelegramTheme flags)
-        {
-            return flags == TelegramTheme.Dark ? _mappingDark : _mapping;
-        }
-
         public static Dictionary<string, Color> GetLookup(TelegramTheme flags)
         {
-            return flags == TelegramTheme.Dark ? _default2Dark : _default2;
-        }
-
-        public Color GetDefaultColor(TelegramTheme flags, string key)
-        {
-            var resources = flags == TelegramTheme.Dark ? _defaultDark : _defaultLight;
-
-            while (resources.TryGetValue(key, out object value))
-            {
-                if (value is string)
-                {
-                    key = value as string;
-                }
-                else if (value is Color color)
-                {
-                    return color;
-                }
-            }
-
-            return default;
+            return flags == TelegramTheme.Dark ? _defaultDark : _default;
         }
 
         public IList<ThemeInfoBase> GetThemes()
@@ -344,7 +318,7 @@ namespace Unigram.Services
         {
             get
             {
-                if (Values.TryGetValue("MessageBackgroundOutColor", out Color color))
+                if (Values.TryGetValue("MessageBackgroundOutgoing", out Color color))
                 {
                     return color;
                 }
@@ -469,7 +443,7 @@ namespace Unigram.Services
         {
             get
             {
-                if (Values.TryGetValue("MessageBackgroundOutColor", out Color color))
+                if (Values.TryGetValue("MessageBackgroundOutgoing", out Color color))
                 {
                     return color;
                 }

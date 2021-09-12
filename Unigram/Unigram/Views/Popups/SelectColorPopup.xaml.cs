@@ -1,5 +1,6 @@
 ﻿using Unigram.Controls;
 using Windows.UI;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Popups
@@ -20,6 +21,12 @@ namespace Unigram.Views.Popups
         {
             get => _color;
             set => Picker.Color = _color = value;
+        }
+
+        public bool IsAccentColorVisible
+        {
+            get => Accent.Visibility == Visibility.Visible;
+            set => Accent.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

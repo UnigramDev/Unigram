@@ -18,6 +18,10 @@
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
     SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
 
+    <ContentDialog.Resources>
+        <common:Theme x:Name="ThemePreview"/>
+    </ContentDialog.Resources>
+
     <Grid x:Name="LayoutRoot" Margin="-24,-18,-24,0" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

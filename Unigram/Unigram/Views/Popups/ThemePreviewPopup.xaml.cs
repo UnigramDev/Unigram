@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
@@ -7,10 +6,8 @@ using Unigram.Converters;
 using Unigram.Services;
 using Unigram.Services.Settings;
 using Windows.Storage;
-using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Views.Popups
 {
@@ -27,14 +24,12 @@ namespace Unigram.Views.Popups
         private async void Initialize(string path)
         {
             _path = path;
+            ThemePreview.Initialize(path);
 
             var flags = TelegramTheme.Light;
-            var theme = SettingsService.Current.Appearance.RequestedTheme;
-            var mapping = ThemeService.GetMapping(flags);
 
             var file = await StorageFile.GetFileFromPathAsync(path);
             var lines = await FileIO.ReadLinesAsync(file);
-            var dict = new ResourceDictionary();
 
             foreach (var line in lines)
             {
@@ -45,49 +40,9 @@ namespace Unigram.Views.Popups
                 else if (line.StartsWith("parent: "))
                 {
                     flags = (TelegramTheme)int.Parse(line.Substring("parent: ".Length));
-                    mapping = ThemeService.GetMapping(flags);
-
-                    dict["MessageForegroundBrush"] = new SolidColorBrush(TLContainer.Current.Resolve<IThemeService>().GetDefaultColor(flags, "MessageForegroundColor"));
-                }
-                else if (line.Equals("!") || line.Equals("#"))
-                {
-                    continue;
-                }
-                else
-                {
-                    var split = line.Split(':');
-                    var key = split[0].Trim();
-                    var value = split[1].Trim();
-
-                    if (value.StartsWith("#") && int.TryParse(value.Substring(1), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int hexValue))
-                    {
-                        byte a = (byte)((hexValue & 0xff000000) >> 24);
-                        byte r = (byte)((hexValue & 0x00ff0000) >> 16);
-                        byte g = (byte)((hexValue & 0x0000ff00) >> 8);
-                        byte b = (byte)(hexValue & 0x000000ff);
-
-                        if (key.EndsWith("Brush"))
-                        {
-                            dict[key] = new SolidColorBrush(Color.FromArgb(a, r, g, b));
-
-                            if (mapping.TryGetValue(key, out string[] additional))
-                            {
-                                foreach (var child in additional)
-                                {
-                                    dict[child] = new SolidColorBrush(Color.FromArgb(a, r, g, b));
-                                }
-                            }
-                        }
-                        else if (key.EndsWith("Color"))
-                        {
-                            dict[key] = Color.FromArgb(a, r, g, b);
-                            dict[key.Substring(0, key.Length - 5) + "Brush"] = new SolidColorBrush(Color.FromArgb(a, r, g, b));
-                        }
-                    }
                 }
             }
 
-            LayoutRoot.Resources.ThemeDictionaries[flags == TelegramTheme.Light ? "Light" : "Dark"] = dict;
             LayoutRoot.RequestedTheme = flags == TelegramTheme.Light ? ElementTheme.Light : ElementTheme.Dark;
 
             Chat1.Mockup(new ChatTypePrivate(), 0, "Eva Summer", string.Empty, "Reminds me of a Chinese proverb...", false, 0, false, true, DateTime.Now);
