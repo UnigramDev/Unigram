@@ -288,7 +288,7 @@ namespace Unigram.Common
             {
                 var dialog = new SettingsPasscodeConfirmPopup();
 
-                var confirm = await dialog.ShowAsync();
+                var confirm = await dialog.ShowQueuedAsync();
                 if (confirm == ContentDialogResult.Primary)
                 {
                     Navigate(typeof(SettingsPasscodePage));

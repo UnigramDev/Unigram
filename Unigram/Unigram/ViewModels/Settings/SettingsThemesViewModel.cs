@@ -191,7 +191,7 @@ namespace Unigram.ViewModels.Settings
                 var dialog = new SelectColorPopup();
                 dialog.Color = accent;
 
-                var confirm = await dialog.ShowAsync();
+                var confirm = await dialog.ShowQueuedAsync();
                 if (confirm == ContentDialogResult.Primary)
                 {
                     await SetThemeAsync(ThemeAccentInfo.FromAccent(type, dialog.Color));

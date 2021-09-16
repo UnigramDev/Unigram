@@ -91,7 +91,7 @@ namespace Unigram.ViewModels.Settings
             dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
-            var confirm = await dialog.ShowAsync();
+            var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
                 _theme.Name = dialog.Text;
@@ -110,7 +110,7 @@ namespace Unigram.ViewModels.Settings
             dialog.Color = brush.Color;
             dialog.IsAccentColorVisible = false;
 
-            var confirm = await dialog.ShowAsync();
+            var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
                 brush.Color = dialog.Color;

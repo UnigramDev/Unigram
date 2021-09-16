@@ -1,5 +1,4 @@
-﻿using System;
-using Unigram.Collections;
+﻿using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Services;
 using Unigram.Views.Popups;
@@ -28,7 +27,7 @@ namespace Unigram.ViewModels.Settings
         {
             var dialog = new EditShortcutPopup(_shortcutsService, info);
 
-            var confirm = await dialog.ShowAsync();
+            var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
                 Items.ReplaceWith(_shortcutsService.Update(dialog.Shortcut, info.Command));
