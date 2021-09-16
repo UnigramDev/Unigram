@@ -804,7 +804,6 @@
                                                         Visibility="Collapsed"
                                                         Stroke="{ThemeResource ChatLastMessageStateBrush}"
                                                         SelectionStroke="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                                        Accent="{ThemeResource SystemAccentColor}"
                                                         ActualThemeChanged="ArchivedChats_ActualThemeChanged"/>
                                                 </Button>
                                                 <Border VerticalAlignment="Bottom">

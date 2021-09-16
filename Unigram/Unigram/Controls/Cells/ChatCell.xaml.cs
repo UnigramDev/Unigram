@@ -1236,35 +1236,9 @@ namespace Unigram.Controls.Cells
         }
 
 
-        #region Accent
+        #region SelectionStroke
 
-        public Color Accent
-        {
-            get => (Color)GetValue(AccentProperty);
-            set => SetValue(AccentProperty, value);
-        }
-
-        public static readonly DependencyProperty AccentProperty =
-            DependencyProperty.Register("Accent", typeof(Color), typeof(ChatCell), new PropertyMetadata(default(Color), OnAccentChanged));
-
-        private static void OnAccentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var sender = d as ChatCell;
-            var solid = (Color)e.NewValue;
-
-            if (solid == null || sender._ellipse == null)
-            {
-                return;
-            }
-
-            var brush = Window.Current.Compositor.CreateColorBrush(solid);
-
-            sender._ellipse.FillBrush = brush;
-        }
-
-        #endregion
-
-        #region Accent
+        private long _selectionStrokeToken;
 
         public SolidColorBrush SelectionStroke
         {
@@ -1280,14 +1254,29 @@ namespace Unigram.Controls.Cells
             var sender = d as ChatCell;
             var solid = e.NewValue as SolidColorBrush;
 
+            if (e.OldValue is SolidColorBrush old && sender._selectionStrokeToken != 0)
+            {
+                old.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, sender._selectionStrokeToken);
+            }
+
             if (solid == null || sender._stroke == null)
             {
                 return;
             }
 
-            var brush = Window.Current.Compositor.CreateColorBrush(solid.Color);
+            sender._stroke.FillBrush = Window.Current.Compositor.CreateColorBrush(solid.Color);
+            sender._selectionStrokeToken = solid.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, sender.OnSelectionStrokeChanged);
+        }
 
-            sender._stroke.FillBrush = brush;
+        private void OnSelectionStrokeChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            var solid = sender as SolidColorBrush;
+            if (solid == null || _stroke == null)
+            {
+                return;
+            }
+
+            _stroke.FillBrush = Window.Current.Compositor.CreateColorBrush(solid.Color);
         }
 
         #endregion
@@ -1444,6 +1433,8 @@ namespace Unigram.Controls.Cells
 
         #region Stroke
 
+        private long _strokeToken;
+
         public Brush Stroke
         {
             get => (Brush)GetValue(StrokeProperty);
@@ -1458,7 +1449,12 @@ namespace Unigram.Controls.Cells
             var sender = d as ChatCell;
             var solid = e.NewValue as SolidColorBrush;
 
-            if (solid == null || sender._container == null)
+            if (e.OldValue is SolidColorBrush old && sender._strokeToken != 0)
+            {
+                old.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, sender._strokeToken);
+            }
+
+            if (solid == null || sender._container == null || sender._ellipse == null)
             {
                 return;
             }
@@ -1469,6 +1465,27 @@ namespace Unigram.Controls.Cells
             {
                 shape.StrokeBrush = brush;
             }
+
+            sender._ellipse.FillBrush = brush;
+            sender._selectionStrokeToken = solid.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, sender.OnStrokeChanged);
+        }
+
+        private void OnStrokeChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            var solid = sender as SolidColorBrush;
+            if (solid == null || _container == null || _ellipse == null)
+            {
+                return;
+            }
+
+            var brush = Window.Current.Compositor.CreateColorBrush(solid.Color);
+
+            foreach (var shape in _shapes)
+            {
+                shape.StrokeBrush = brush;
+            }
+
+            _ellipse.FillBrush = brush;
         }
 
         #endregion
