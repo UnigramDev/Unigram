@@ -129,7 +129,10 @@ namespace Unigram.Common
                         tint = TelegramThemeType.Tinted;
                     }
 
-                    Update(ThemeAccentInfo.FromAccent(tint, settings.OutgoingMessageAccentColor.ToColor()));
+                    var accent = settings.AccentColor.ToColor();
+                    var outgoing = settings.OutgoingMessageAccentColor.ToColor();
+
+                    Update(ThemeAccentInfo.FromAccent(tint, accent, outgoing));
                 }
                 if (_lastBackground != settings.Background?.Id)
                 {
