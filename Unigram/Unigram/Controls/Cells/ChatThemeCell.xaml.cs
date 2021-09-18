@@ -27,7 +27,7 @@ namespace Unigram.Controls.Cells
             {
                 NoTheme.Visibility = Visibility.Visible;
 
-                Preview.Fill = new BackgroundFillSolid(0xf0f0f0);
+                Preview.Fill = null;
                 Outgoing.Fill = null;
                 Incoming.Fill = null;
                 return;

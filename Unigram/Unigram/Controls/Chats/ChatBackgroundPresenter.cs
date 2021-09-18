@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls.Media;
@@ -97,7 +98,7 @@ namespace Unigram.Controls.Chats
             Update(protoService.SelectedBackground, ActualTheme == ElementTheme.Dark);
         }
 
-        private void Update(Background background, bool dark)
+        private async void Update(Background background, bool dark)
         {
             if (background == null)
             {
@@ -176,7 +177,7 @@ namespace Unigram.Controls.Chats
                 {
                     if (string.Equals(background.Document.MimeType, "application/x-tgwallpattern", StringComparison.OrdinalIgnoreCase))
                     {
-                        _imageBackground.Fill = new TiledBrush { IsNegative = typePattern.Intensity < 0, SvgSource = PlaceholderHelper.GetVectorSurface(null, document, typePattern.GetForeground()) };
+                        await SetPatternAsync(typePattern, document);
                     }
                     else
                     {
@@ -206,6 +207,26 @@ namespace Unigram.Controls.Chats
                 }
 
                 Background = null;
+            }
+        }
+
+        private async Task SetPatternAsync(BackgroundTypePattern typePattern, File file)
+        {
+            if (_imageBackground.Fill is TiledBrush brush)
+            {
+                brush.Surface = await PlaceholderHelper.GetPatternSurfaceAsync(null, file);
+                brush.FallbackColor = typePattern.GetForeground();
+                brush.IsNegative = typePattern.Intensity < 0;
+                brush.Update();
+            }
+            else
+            {
+                _imageBackground.Fill = new TiledBrush
+                {
+                    Surface = await PlaceholderHelper.GetPatternSurfaceAsync(null, file),
+                    FallbackColor = typePattern.GetForeground(),
+                    IsNegative = typePattern.Intensity < 0,
+                };
             }
         }
 

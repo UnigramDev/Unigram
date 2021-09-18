@@ -72,13 +72,15 @@ namespace Unigram.ViewModels.Settings
                 {
                     _index[i] = new ThemeBrush(value.Key, custom);
                 }
-                else
+                else if (value.Value != default)
                 {
                     _index[i] = new ThemeBrush(value.Key, value.Value);
                 }
 
-                Items.Add(_index[i]);
-                i++;
+                if (_index[i] != null)
+                {
+                    Items.Add(_index[i++]);
+                }
             }
         }
 

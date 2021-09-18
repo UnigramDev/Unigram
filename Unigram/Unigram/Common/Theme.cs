@@ -1,7 +1,6 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using Telegram.Td.Api;
 using Unigram.Services;
 using Unigram.Services.Settings;
@@ -86,7 +85,7 @@ namespace Unigram.Common
             var settings = SettingsService.Current.Appearance;
             if (settings[requested].Type == TelegramThemeType.Custom && System.IO.File.Exists(settings[requested].Custom))
             {
-                UpdateCustom(settings[requested].Custom);
+                Update(ThemeCustomInfo.FromFile(settings[requested].Custom));
             }
             else if (ThemeAccentInfo.IsAccent(settings[requested].Type))
             {
@@ -100,54 +99,7 @@ namespace Unigram.Common
 
         public void Initialize(string path)
         {
-            UpdateCustom(path);
-        }
-
-        private void UpdateCustom(string path)
-        {
-            var lines = System.IO.File.ReadAllLines(path);
-            var values = new Dictionary<string, Color>();
-
-            var requested = SettingsService.Current.Appearance.RequestedTheme;
-
-            foreach (var line in lines)
-            {
-                if (line.StartsWith("name: "))
-                {
-                    continue;
-                }
-                else if (line.StartsWith("parent: "))
-                {
-                    requested = (TelegramTheme)int.Parse(line.Substring("parent: ".Length));
-                }
-                else if (line.Equals("!") || line.Equals("#") || string.IsNullOrWhiteSpace(line))
-                {
-                    continue;
-                }
-                else
-                {
-                    var split = line.Split(':');
-                    if (split.Length < 2)
-                    {
-                        continue;
-                    }
-
-                    var key = split[0].Trim();
-                    var value = split[1].Trim();
-
-                    if (value.StartsWith("#") && int.TryParse(value.Substring(1), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int hexValue))
-                    {
-                        byte a = (byte)((hexValue & 0xff000000) >> 24);
-                        byte r = (byte)((hexValue & 0x00ff0000) >> 16);
-                        byte g = (byte)((hexValue & 0x0000ff00) >> 8);
-                        byte b = (byte)(hexValue & 0x000000ff);
-
-                        values[key] = Color.FromArgb(a, r, g, b);
-                    }
-                }
-            }
-
-            Update(requested, values);
+            Update(ThemeCustomInfo.FromFile(path));
         }
 
         private int? _lastAccent;
@@ -155,18 +107,29 @@ namespace Unigram.Common
 
         private ChatTheme _lastTheme;
 
-        public bool Update(ElementTheme requested, ChatTheme theme)
+        public bool Update(ElementTheme elementTheme, ChatTheme theme)
         {
             var updated = false;
+            var requested = elementTheme == ElementTheme.Dark ? TelegramTheme.Dark : TelegramTheme.Light;
 
-            var settings = requested == ElementTheme.Light ? theme?.LightSettings : theme?.DarkSettings;
+            var settings = requested == TelegramTheme.Light ? theme?.LightSettings : theme?.DarkSettings;
             if (settings != null)
             {
                 if (_lastAccent != settings.AccentColor)
                 {
-                    Update(ThemeAccentInfo.FromAccent(requested == ElementTheme.Light
-                        ? TelegramThemeType.Day
-                        : TelegramThemeType.Tinted, settings.OutgoingMessageAccentColor.ToColor()));
+                    _lastTheme = theme;
+
+                    var tint = SettingsService.Current.Appearance[requested].Type;
+                    if (tint == TelegramThemeType.Classic || (tint == TelegramThemeType.Custom && requested == TelegramTheme.Light))
+                    {
+                        tint = TelegramThemeType.Day;
+                    }
+                    else if (tint == TelegramThemeType.Custom)
+                    {
+                        tint = TelegramThemeType.Tinted;
+                    }
+
+                    Update(ThemeAccentInfo.FromAccent(tint, settings.OutgoingMessageAccentColor.ToColor()));
                 }
                 if (_lastBackground != settings.Background?.Id)
                 {
@@ -180,9 +143,8 @@ namespace Unigram.Common
             {
                 if (_lastAccent != null)
                 {
-                    Update(requested == ElementTheme.Dark
-                        ? TelegramTheme.Dark 
-                        : TelegramTheme.Light);
+                    _lastTheme = null;
+                    Initialize(requested);
                 }
                 if (_lastBackground != null)
                 {
@@ -193,7 +155,6 @@ namespace Unigram.Common
                 _lastBackground = null;
             }
 
-            _lastTheme = theme;
             return updated;
         }
 
@@ -221,6 +182,7 @@ namespace Unigram.Common
 
                 var target = MergedDictionaries[0].ThemeDictionaries[requested == TelegramTheme.Light ? "Light" : "Dark"] as ResourceDictionary;
                 var lookup = ThemeService.GetLookup(requested);
+                var shades = ThemeService.GetShades(requested);
 
                 foreach (var item in lookup)
                 {
@@ -230,15 +192,33 @@ namespace Unigram.Common
                         {
                             brush.Color = themed;
                         }
-                        else if (brush.Color != item.Value)
+                        else
                         {
-                            brush.Color = item.Value;
+                            var value = item.Value;
+                            if (value == default && shades.TryGetValue(item.Key, out AccentShade shade))
+                            {
+                                if (values != null && values.TryGetValue($"SystemAccentColor{shade}", out Color accent))
+                                {
+                                    value = accent;
+                                }
+                                else
+                                {
+                                    value = ThemeInfoBase.Accents[TelegramThemeType.Day][shade];
+                                }
+                            }
+
+                            if (brush.Color != value && value != default)
+                            {
+                                brush.Color = value;
+                            }
                         }
                     }
                 }
             }
             catch { }
         }
+
+        #region Acrylic patch
 
         private void UpdateAcrylicBrushes()
         {
@@ -333,6 +313,8 @@ namespace Unigram.Common
                 accentAcrylicInAppFillColorBaseBrush.TintLuminosityOpacity = 0.8;
             }
         }
+
+        #endregion
 
         #region Settings
 

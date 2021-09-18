@@ -150,7 +150,17 @@ namespace Unigram.Common
             }
             else if (pattern.Fill is BackgroundFillGradient gradient)
             {
-                return ColorEx.GetPatternColor(ColorEx.GetAverageColor(gradient.TopColor.ToColor(), gradient.BottomColor.ToColor()));
+                return ColorEx.GetPatternColor(ColorEx.GetAverageColor(gradient.TopColor, gradient.BottomColor));
+            }
+            else if (pattern.Fill is BackgroundFillFreeformGradient freeform)
+            {
+                var averageColor = ColorEx.GetAverageColor(freeform.Colors[2], ColorEx.GetAverageColor(freeform.Colors[0], freeform.Colors[1]));
+                if (freeform.Colors[3] != 0)
+                {
+                    averageColor = ColorEx.GetAverageColor(freeform.Colors[3], averageColor);
+                }
+
+                return ColorEx.GetPatternColor(averageColor, true);
             }
 
             return Color.FromArgb(0x66, 0xFF, 0xFF, 0xFF);

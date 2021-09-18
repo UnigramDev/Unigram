@@ -41,7 +41,12 @@ namespace Unigram.Services
 
         public static Dictionary<string, Color> GetLookup(TelegramTheme flags)
         {
-            return flags == TelegramTheme.Dark ? _defaultDark : _default;
+            return flags == TelegramTheme.Dark ? _defaultDark : _defaultLight;
+        }
+
+        public static Dictionary<string, AccentShade> GetShades(TelegramTheme flags)
+        {
+            return flags == TelegramTheme.Dark ? _accentsDark : _accentsLight;
         }
 
         public IList<ThemeInfoBase> GetThemes()
@@ -105,40 +110,7 @@ namespace Unigram.Services
         public async Task<ThemeCustomInfo> DeserializeAsync(StorageFile file)
         {
             var lines = await FileIO.ReadLinesAsync(file);
-            var theme = new ThemeCustomInfo();
-            theme.Path = file.Path;
-
-            foreach (var line in lines)
-            {
-                if (line.StartsWith("name: "))
-                {
-                    theme.Name = line.Substring("name: ".Length);
-                }
-                else if (line.StartsWith("parent: "))
-                {
-                    theme.Parent = (TelegramTheme)int.Parse(line.Substring("parent: ".Length));
-                }
-                else if (line.Equals("!") || line.Equals("#"))
-                {
-                    continue;
-                }
-                else
-                {
-                    var split = line.Split(':');
-                    var key = split[0].Trim();
-                    var value = split[1].Trim();
-
-                    if (value.StartsWith("#") && int.TryParse(value.Substring(1), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int hexValue))
-                    {
-                        byte a = (byte)((hexValue & 0xff000000) >> 24);
-                        byte r = (byte)((hexValue & 0x00ff0000) >> 16);
-                        byte g = (byte)((hexValue & 0x0000ff00) >> 8);
-                        byte b = (byte)(hexValue & 0x000000ff);
-
-                        theme.Values[key] = Color.FromArgb(a, r, g, b);
-                    }
-                }
-            }
+            var theme = ThemeCustomInfo.FromFile(file.Path, lines);
 
             return theme;
         }
@@ -206,7 +178,7 @@ namespace Unigram.Services
         }
     }
 
-    public partial class ThemeAccentInfo : ThemeInfoBase
+    public class ThemeAccentInfo : ThemeInfoBase
     {
         public ThemeAccentInfo(TelegramThemeType type, Color accent, Dictionary<string, Color> values)
         {
@@ -241,8 +213,13 @@ namespace Unigram.Services
                 color = BootStrapper.Current.UISettings.GetColorValue(UIColorType.Accent);
             }
 
-            var colorizer = ThemeColorizer.FromTheme(type, _accent[type], color);
+            var colorizer = ThemeColorizer.FromTheme(type, _accent[type][AccentShade.Base], color);
             var values = new Dictionary<string, Color>();
+
+            foreach (var item in _accent[type])
+            {
+                values[$"SystemAccentColor{item.Key}"] = colorizer.Colorize(item.Value);
+            }
 
             foreach (var item in _map[type])
             {
@@ -254,7 +231,7 @@ namespace Unigram.Services
 
         public static Color Colorize(TelegramThemeType type, Color accent, string key)
         {
-            var colorizer = ThemeColorizer.FromTheme(type, _accent[type], accent);
+            var colorizer = ThemeColorizer.FromTheme(type, _accent[type][AccentShade.Base], accent);
             if (_map[type].TryGetValue(key, out Color color))
             {
                 return colorizer.Colorize(color);
@@ -360,6 +337,80 @@ namespace Unigram.Services
         public string Path { get; set; }
 
         public override bool IsOfficial { get; }
+
+        public static ThemeCustomInfo FromFile(string path)
+        {
+            return ThemeCustomInfo.FromFile(path, System.IO.File.ReadAllLines(path));
+        }
+
+        public static ThemeCustomInfo FromFile(string path, IList<string> lines)
+        {
+            var values = new Dictionary<string, Color>();
+
+            var requested = SettingsService.Current.Appearance.RequestedTheme;
+            var accent = _accent[requested == TelegramTheme.Dark ? TelegramThemeType.Night : TelegramThemeType.Day][AccentShade.Base];
+
+            foreach (var line in lines)
+            {
+                if (line.StartsWith("name: "))
+                {
+                    continue;
+                }
+                else if (line.StartsWith("parent: "))
+                {
+                    requested = (TelegramTheme)int.Parse(line.Substring("parent: ".Length));
+                    accent = _accent[requested == TelegramTheme.Dark ? TelegramThemeType.Night : TelegramThemeType.Day][AccentShade.Base];
+                }
+                else if (line.Equals("!") || line.Equals("#") || string.IsNullOrWhiteSpace(line))
+                {
+                    continue;
+                }
+                else
+                {
+                    var split = line.Split(':');
+                    if (split.Length < 2)
+                    {
+                        continue;
+                    }
+
+                    var key = split[0].Trim();
+                    var value = split[1].Trim();
+
+                    if (value.StartsWith("#") && int.TryParse(value.Substring(1), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int hexValue))
+                    {
+                        byte a = (byte)((hexValue & 0xff000000) >> 24);
+                        byte r = (byte)((hexValue & 0x00ff0000) >> 16);
+                        byte g = (byte)((hexValue & 0x0000ff00) >> 8);
+                        byte b = (byte)(hexValue & 0x000000ff);
+
+                        if (key == "accent")
+                        {
+                            accent = Color.FromArgb(a, r, g, b);
+                        }
+                        else
+                        {
+                            values[key] = Color.FromArgb(a, r, g, b);
+                        }
+                    }
+                }
+            }
+
+            var type = requested == TelegramTheme.Dark ? TelegramThemeType.Night : TelegramThemeType.Day;
+
+            var colorizer = ThemeColorizer.FromTheme(type, _accent[type][AccentShade.Base], accent);
+
+            foreach (var item in _accent[type])
+            {
+                values[$"SystemAccentColor{item.Key}"] = colorizer.Colorize(item.Value);
+            }
+
+            return new ThemeCustomInfo
+            {
+                Parent = requested,
+                Values = values,
+                Path = path
+            };
+        }
 
         public static bool Equals(ThemeCustomInfo x, ThemeCustomInfo y)
         {
@@ -483,7 +534,7 @@ namespace Unigram.Services
         public override bool IsOfficial => true;
     }
 
-    public abstract class ThemeInfoBase
+    public abstract partial class ThemeInfoBase
     {
         public string Name { get; set; }
         public TelegramTheme Parent { get; set; }

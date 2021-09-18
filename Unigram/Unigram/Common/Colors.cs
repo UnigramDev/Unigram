@@ -499,15 +499,15 @@ namespace Unigram.Common
             return hsl;
         }
 
-        public static Color GetPatternColor(Color color)
+        public static Color GetPatternColor(Color color, bool alwaysDark = false)
         {
             var rgb = (RGB)color;
             var hsb = rgb.ToHSV();
             if (hsb.S > 0.0f || (hsb.V < 1.0f && hsb.V > 0.0f))
             {
-                hsb.S = Math.Min(1.0f, hsb.S + 0.05f + 0.1f * (1.0f - hsb.S));
+                hsb.S = Math.Min(1.0f, hsb.S + (alwaysDark ? 0.15f : 0.05f) + 0.1f * (1.0f - hsb.S));
             }
-            if (hsb.V > 0.5f)
+            if (alwaysDark || hsb.V > 0.5f)
             {
                 hsb.V = Math.Max(0.0f, hsb.V * 0.65f);
             }
@@ -517,7 +517,7 @@ namespace Unigram.Common
             }
 
             var result = hsb.ToRGB();
-            return Color.FromArgb(0x66, result.R, result.G, result.B);
+            return Color.FromArgb(0x64, result.R, result.G, result.B);
         }
 
         public static Color GetAverageColor(Color color1, Color color2)
@@ -530,6 +530,36 @@ namespace Unigram.Common
             double b2 = color2.B;
 
             return Color.FromArgb(255, (byte)(r1 / 2d + r2 / 2d), (byte)(g1 / 2d + g2 / 2d), (byte)(b1 / 2d + b2 / 2d));
+        }
+
+        public static Color GetAverageColor(int color1, int color2)
+        {
+            return GetAverageColor(color1.ToColor(), color2.ToColor());
+        }
+
+        public static Color GetAverageColor(Color color1, int color2)
+        {
+            return GetAverageColor(color1, color2.ToColor());
+        }
+
+        public static Color GetAverageColor(int color1, Color color2)
+        {
+            return GetAverageColor(color1.ToColor(), color2);
+        }
+
+        public static bool IsDark(int color1, int color2, int color3, int color4)
+        {
+            Color averageColor = GetAverageColor(color1, color2);
+            if (color3 != 0)
+            {
+                averageColor = GetAverageColor(averageColor, color3);
+            }
+            if (color4 != 0)
+            {
+                averageColor = GetAverageColor(averageColor, color4);
+            }
+            HSV hsb = averageColor.ToHSV();
+            return hsb.V < 0.3f;
         }
     }
 }

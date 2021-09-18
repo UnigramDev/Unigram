@@ -232,7 +232,10 @@ namespace Unigram.ViewModels.Settings
 
             foreach (var value in lookup)
             {
-                preparing.Values[value.Key] = value.Value;
+                if (value.Value != default)
+                {
+                    preparing.Values[value.Key] = value.Value;
+                }
             }
 
             if (theme is ThemeCustomInfo custom)

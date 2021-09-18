@@ -9,6 +9,7 @@ using Unigram.Converters;
 using Unigram.Native;
 using Unigram.Services;
 using Windows.Foundation;
+using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Xaml.Media;
@@ -376,6 +377,54 @@ namespace Unigram.Common
                         bitmap = LoadedImageSurface.StartLoadFromStream(stream, new Size(size.Width / 3, size.Height / 3));
                     }
                     catch { }
+                }
+
+                return bitmap;
+            }
+            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && protoService != null)
+            {
+                protoService.DownloadFile(file.Id, 1);
+            }
+
+            return null;
+        }
+
+        public static async Task<LoadedImageSurface> GetPatternSurfaceAsync(IProtoService protoService, File file)
+        {
+            if (file.Local.IsDownloadingCompleted)
+            {
+                var bitmap = default(LoadedImageSurface);
+
+                var cache = System.IO.Path.ChangeExtension(file.Local.Path, ".cache.png");
+                var relative = System.IO.Path.GetRelativePath(ApplicationData.Current.LocalFolder.Path, cache);
+
+                var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(relative) as StorageFile;
+                if (item == null)
+                {
+                    var text = GetSvgXml(file);
+                    var create = await ApplicationData.Current.LocalFolder.CreateFileAsync(relative);
+
+                    using (var stream = await create.OpenAsync(FileAccessMode.ReadWrite))
+                    {
+                        try
+                        {
+                            Size size;
+                            await Task.Run(() => PlaceholderImageHelper.Current.DrawSvg(text, Colors.White, stream, out size));
+                        }
+                        catch { }
+                    }
+                }
+
+                {
+                    using (var stream = await item.OpenReadAsync())
+                    {
+                        try
+                        {
+                            var props = await item.Properties.GetImagePropertiesAsync();
+                            bitmap = LoadedImageSurface.StartLoadFromStream(stream, new Size(props.Width / 3d, props.Height / 3d));
+                        }
+                        catch { }
+                    }
                 }
 
                 return bitmap;

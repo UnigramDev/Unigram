@@ -9,23 +9,23 @@
             <Color x:Key="SystemAccentColor">#71BAFA</Color>
 
             <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="{StaticResource SystemChromeLowColor}" />
-            <StaticResource x:Key="ChatPageBackgroundBrush" ResourceKey="ApplicationPageBackgroundThemeBrush" />
-            <StaticResource x:Key="ContentDialogBackground" ResourceKey="SolidBackgroundFillColorBaseBrush" />
+            <SolidColorBrush x:Key="ChatPageBackgroundBrush" Color="{StaticResource SystemChromeLowColor}" />
+            <SolidColorBrush x:Key="ContentDialogBackground" Color="{StaticResource SolidBackgroundFillColorBase}" />
 
             <SolidColorBrush x:Key="PageHeaderForegroundBrush" Color="{StaticResource SystemBaseHighColor}" />
-            <SolidColorBrush x:Key="PageHeaderHighlightBrush" Color="{ThemeResource SystemAccentColor}" />
-            <StaticResource x:Key="PageHeaderDisabledBrush" ResourceKey="SystemControlForegroundBaseMediumBrush" />
+            <SolidColorBrush x:Key="PageHeaderHighlightBrush" Color="{StaticResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="PageHeaderDisabledBrush" Color="{StaticResource SystemBaseMediumColor}" />
 
-            <StaticResource x:Key="PageTitleBackgroundBrush" ResourceKey="SystemControlBackgroundChromeMediumLowBrush" />
-            <StaticResource x:Key="PageHeaderBackgroundBrush" ResourceKey="ApplicationPageBackgroundThemeBrush" />
-            <StaticResource x:Key="PageHeaderBorderBrush" ResourceKey="SystemControlBackgroundChromeMediumBrush" />
-            <StaticResource x:Key="PageSubHeaderBackgroundBrush" ResourceKey="ApplicationPageBackgroundThemeBrush" />
-            <StaticResource x:Key="PageBackgroundDarkBrush" ResourceKey="SystemControlBackgroundChromeMediumBrush" />
+            <SolidColorBrush x:Key="PageTitleBackgroundBrush" Color="{StaticResource SystemChromeMediumLowColor}" />
+            <SolidColorBrush x:Key="PageHeaderBackgroundBrush" Color="{StaticResource SystemChromeLowColor}" />
+            <SolidColorBrush x:Key="PageHeaderBorderBrush" Color="{StaticResource SystemChromeMediumColor}" />
+            <SolidColorBrush x:Key="PageSubHeaderBackgroundBrush" Color="{StaticResource SystemChromeLowColor}" />
+            <SolidColorBrush x:Key="PageBackgroundDarkBrush" Color="{StaticResource SystemChromeMediumColor}" />
 
             <SolidColorBrush x:Key="TelegramSeparatorMediumBrush" Color="{StaticResource SystemChromeMediumColor}" />
 
             <SolidColorBrush x:Key="PinnedMessageForegroundBrush" Color="{ThemeResource SystemAccentColor}" />
-            <StaticResource x:Key="PinnedMessageBorderBrush" ResourceKey="SystemControlBackgroundChromeMediumBrush" />
+            <SolidColorBrush x:Key="PinnedMessageBorderBrush" Color="{StaticResource SystemChromeMediumColor}" />
 
             <!-- Chats -->
             <SolidColorBrush x:Key="ChatOnlineBadgeBrush" Color="#89DF9E" />
@@ -2214,24 +2214,24 @@
             <!-- Common -->
             <Color x:Key="SystemAccentColor">#158DCD</Color>
 
-            <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="#FFFFFFFF" />
-            <StaticResource x:Key="ChatPageBackgroundBrush" ResourceKey="ApplicationPageBackgroundThemeBrush" />
-            <StaticResource x:Key="ContentDialogBackground" ResourceKey="SolidBackgroundFillColorBaseBrush" />
+            <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="{StaticResource SystemAltHighColor}" />
+            <SolidColorBrush x:Key="ChatPageBackgroundBrush" Color="{StaticResource SystemAltHighColor}" />
+            <SolidColorBrush x:Key="ContentDialogBackground" Color="{StaticResource SolidBackgroundFillColorBase}" />
 
             <SolidColorBrush x:Key="PageHeaderForegroundBrush" Color="{StaticResource SystemBaseHighColor}" />
             <SolidColorBrush x:Key="PageHeaderHighlightBrush" Color="{ThemeResource SystemAccentColor}" />
-            <StaticResource x:Key="PageHeaderDisabledBrush" ResourceKey="SystemControlForegroundBaseMediumBrush" />
+            <SolidColorBrush x:Key="PageHeaderDisabledBrush" Color="{StaticResource SystemBaseMediumColor}" />
 
-            <StaticResource x:Key="PageTitleBackgroundBrush" ResourceKey="SystemControlBackgroundChromeMediumLowBrush" />
-            <StaticResource x:Key="PageHeaderBackgroundBrush" ResourceKey="ApplicationPageBackgroundThemeBrush" />
-            <StaticResource x:Key="PageHeaderBorderBrush" ResourceKey="SystemControlBackgroundChromeMediumLowBrush" />
-            <StaticResource x:Key="PageSubHeaderBackgroundBrush" ResourceKey="ApplicationPageBackgroundThemeBrush" />
-            <StaticResource x:Key="PageBackgroundDarkBrush" ResourceKey="SystemControlBackgroundChromeMediumLowBrush" />
+            <SolidColorBrush x:Key="PageTitleBackgroundBrush" Color="{StaticResource SystemChromeMediumLowColor}" />
+            <SolidColorBrush x:Key="PageHeaderBackgroundBrush" Color="{StaticResource SystemAltHighColor}" />
+            <SolidColorBrush x:Key="PageHeaderBorderBrush" Color="{StaticResource SystemChromeMediumLowColor}" />
+            <SolidColorBrush x:Key="PageSubHeaderBackgroundBrush" Color="{StaticResource SystemAltHighColor}" />
+            <SolidColorBrush x:Key="PageBackgroundDarkBrush" Color="{StaticResource SystemChromeMediumLowColor}" />
 
             <SolidColorBrush x:Key="TelegramSeparatorMediumBrush" Color="{StaticResource SystemChromeMediumLowColor}" />
 
             <SolidColorBrush x:Key="PinnedMessageForegroundBrush" Color="{ThemeResource SystemAccentColor}" />
-            <StaticResource x:Key="PinnedMessageBorderBrush" ResourceKey="SystemControlBackgroundChromeMediumBrush" />
+            <SolidColorBrush x:Key="PinnedMessageBorderBrush" Color="{StaticResource SystemChromeMediumColor}" />
 
             <!-- Chats -->
             <SolidColorBrush x:Key="ChatOnlineBadgeBrush" Color="#00B12C" />

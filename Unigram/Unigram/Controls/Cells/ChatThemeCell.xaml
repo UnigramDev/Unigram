@@ -12,7 +12,7 @@
     d:DesignWidth="400"
     ActualThemeChanged="OnActualThemeChanged">
 
-    <Grid>
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
