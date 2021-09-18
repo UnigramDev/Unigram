@@ -1534,7 +1534,7 @@ namespace Unigram.ViewModels
             StickerSet set = null;
             foreach (var message in messages)
             {
-                if (message.Content is MessageText text && text.WebPage == null)
+                if (message.Content is MessageText text && text.WebPage == null && !text.Text.Entities.Any())
                 {
                     if (Emoji.TryCountEmojis(text.Text.Text, out int count, 3))
                     {
