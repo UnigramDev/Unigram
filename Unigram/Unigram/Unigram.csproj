@@ -484,6 +484,9 @@
     <Compile Include="Services\CallsService.cs" />
     <Compile Include="Services\GroupCallService.cs" />
     <Compile Include="Services\ProtoService.ChatList.cs" />
+    <Compile Include="Services\Theme\ThemeAccentInfo.cs" />
+    <Compile Include="Services\Theme\ThemeBundledInfo.cs" />
+    <Compile Include="Services\Theme\ThemeCustomInfo.cs" />
     <Compile Include="Services\ThemeService.Defaults.cs" />
     <Compile Include="ViewModels\ChatListViewModel.cs" />
     <Compile Include="ViewModels\Delegates\IChatListDelegate.cs" />
@@ -2226,7 +2229,7 @@
       <Version>6.1.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.UI.Xaml">
-      <Version>2.6.2</Version>
+      <Version>2.7.0</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.1</Version>

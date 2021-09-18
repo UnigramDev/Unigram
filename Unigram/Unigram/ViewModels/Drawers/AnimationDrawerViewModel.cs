@@ -85,38 +85,6 @@ namespace Unigram.ViewModels.Drawers
             });
         }
 
-        public class AnimationCallback : DiffUtil.Callback
-        {
-            private readonly IList<Animation> _target;
-            private readonly IList<Animation> _source;
-
-            public AnimationCallback(IList<Animation> target, IList<Animation> source)
-            {
-                _target = target;
-                _source = source;
-            }
-
-            public override bool AreContentsTheSame(int oldItemPosition, int newItemPosition)
-            {
-                return _target[oldItemPosition].AnimationValue.Id == _source[newItemPosition].AnimationValue.Id;
-            }
-
-            public override bool AreItemsTheSame(int oldItemPosition, int newItemPosition)
-            {
-                return _target[oldItemPosition].AnimationValue.Id == _source[newItemPosition].AnimationValue.Id;
-            }
-
-            public override int GetNewListSize()
-            {
-                return _source.Count;
-            }
-
-            public override int GetOldListSize()
-            {
-                return _target.Count;
-            }
-        }
-
         private void Merge(IList<Animation> destination, IList<Animation> origin)
         {
             if (destination.Count > 0)
