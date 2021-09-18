@@ -89,6 +89,8 @@ namespace Unigram.Views
         private readonly ZoomableListHandler _autocompleteZoomer;
         private readonly AnimatedListHandler<Sticker> _autocompleteHandler;
 
+        private TaskCompletionSource<bool> _updateThemeTask;
+
         private MessageSender _floatingSender;
 
         public ChatView(Func<IDialogDelegate, DialogViewModel> getViewModel)
@@ -473,6 +475,7 @@ namespace Unigram.Views
                 viewModel.MessageSliceLoaded -= OnMessageSliceLoaded;
             }
 
+            _updateThemeTask?.TrySetResult(true);
             Bindings.Update();
         }
 
@@ -480,6 +483,7 @@ namespace Unigram.Views
         {
             DataContext = _viewModel = _getViewModel(this);
 
+            _updateThemeTask = new TaskCompletionSource<bool>();
             _viewModel.MessageSliceLoaded += OnMessageSliceLoaded;
             ViewModel.TextField = TextField;
             ViewModel.ListField = Messages;
@@ -3440,6 +3444,12 @@ namespace Unigram.Views
         public async void UpdateChatTheme(Chat chat)
         {
             var theme = await ViewModel.CacheService.GetChatThemeAsync(chat.ThemeName);
+
+            if (_updateThemeTask != null)
+            {
+                await _updateThemeTask.Task;
+            }
+
             if (!StillValid(chat))
             {
                 return;
@@ -4445,7 +4455,7 @@ namespace Unigram.Views
 
 
 
-        public async void UpdateSupergroup(Chat chat, Supergroup group)
+        public void UpdateSupergroup(Chat chat, Supergroup group)
         {
             if (ViewModel.Type == DialogType.EventLog)
             {
