@@ -2164,6 +2164,10 @@ namespace Unigram.Views
             // Width must be fixed because viewers are loaded asynchronously
             placeholder.Width = 200;
 
+            var final = new MenuFlyoutSubItem();
+            final.Visibility = Visibility.Collapsed;
+            flyout.Items.Insert(0, final);
+
             var response = await message.ProtoService.SendAsync(new GetMessageViewers(message.ChatId, message.Id));
             if (response is Telegram.Td.Api.Users users && users.UserIds.Count > 0)
             {
@@ -2187,7 +2191,7 @@ namespace Unigram.Views
 
                 if (profiles.Count > 1)
                 {
-                    var final = new MenuFlyoutSubItem();
+                    //var final = new MenuFlyoutSubItem();
                     final.Style = App.Current.Resources["MessageSeenMenuFlyoutSubItemStyle"] as Style;
                     final.Text = Locale.Declension(played ? "MessagePlayed" : "MessageSeen", users.UserIds.Count);
                     final.Icon = new FontIcon { Glyph = played ? Icons.Play : Icons.Seen, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
@@ -2211,8 +2215,10 @@ namespace Unigram.Views
                         item.Tag = picture;
                     }
 
-                    flyout.Items.Remove(placeholder);
-                    flyout.Items.Insert(0, final);
+                    //flyout.Items.Remove(placeholder);
+                    //flyout.Items.Insert(0, final);
+                    placeholder.Visibility = Visibility.Collapsed;
+                    final.Visibility = Visibility.Visible;
                 }
                 else if (profiles.Count > 0)
                 {
