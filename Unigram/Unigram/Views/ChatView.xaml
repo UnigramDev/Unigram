@@ -392,34 +392,14 @@
           Drop="OnDrop">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
-                <VisualState x:Name="NarrowState">
-                    <VisualState.Setters>
-                        <Setter Target="StickersPanel.Height" Value="300"/>
-                        <Setter Target="StickersPanel.MinHeight" Value="260"/>
-                        <Setter Target="StickersPanel.MaxHeight" Value="360"/>
-                        <Setter Target="StickersPanel.Margin" Value="0"/>
-                    </VisualState.Setters>
-                </VisualState>
+                <VisualState x:Name="FilledState"/>
                 <VisualState x:Name="SidebarState">
                     <VisualState.Setters>
-                        <Setter Target="KeyboardItems.(Grid.Column)" Value="1"/>
-                        <Setter Target="KeyboardItems.(Grid.Row)" Value="0"/>
-                        <Setter Target="KeyboardItems.(Grid.RowSpan)" Value="5"/>
+                        <Setter Target="StickersPanel.(Grid.Column)" Value="1"/>
+                        <Setter Target="StickersPanel.(Grid.Row)" Value="0"/>
+                        <Setter Target="StickersPanel.(Grid.RowSpan)" Value="5"/>
                         <Setter Target="StickersPanel.Width" Value="320"/>
-                        <Setter Target="StickersPanel.Height" Value="Auto"/>
-                        <Setter Target="StickersPanel.MinHeight" Value="0"/>
-                        <Setter Target="StickersPanel.MaxHeight" Value="3600"/>
                         <Setter Target="StickersPanel.Margin" Value="0"/>
-                    </VisualState.Setters>
-                </VisualState>
-                <VisualState x:Name="FilledState">
-                    <VisualState.Setters>
-                        <Setter Target="KeyboardItems.(Grid.Row)" Value="2"/>
-                        <!--<Setter Target="KeyboardItems.VerticalAlignment" Value="Bottom"/>-->
-                        <Setter Target="StickersPanel.Height" Value="Auto"/>
-                        <Setter Target="StickersPanel.MinHeight" Value="0"/>
-                        <Setter Target="StickersPanel.MaxHeight" Value="3600"/>
-                        <Setter Target="StickersPanel.Margin" Value="0,48,0,0"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -450,12 +430,8 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition x:Name="KeyboardPlaceholder" Height="Auto"/>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition Width="Auto"/>
-        </Grid.ColumnDefinitions>
 
-        <chats:ChatBackgroundPresenter x:Name="BackgroundPresenter" x:DeferLoadStrategy="Lazy" Grid.RowSpan="5"/>
+        <chats:ChatBackgroundPresenter x:Name="BackgroundPresenter" x:Load="False" Grid.RowSpan="5"/>
 
         <Grid Padding="0,0,0,8" VerticalAlignment="Bottom" Grid.RowSpan="4">
             <Grid.ColumnDefinitions>
@@ -831,9 +807,13 @@
             <controls:ReplyMarkupPanel x:Name="ReplyMarkup" AllowFocusOnInteraction="False" ButtonClick="ReplyMarkup_ButtonClick" Margin="8,0,8,4"/>
         </ScrollViewer>
 
-        <Grid x:Name="KeyboardItems" Grid.Row="4" Canvas.ZIndex="3">
-            <controls:StickerPanel x:Name="StickersPanel" Visibility="Collapsed" Height="260" MaxHeight="360" MinHeight="260"/>
-        </Grid>
+        <controls:StickerPanel
+            x:Name="StickersPanel"
+            Visibility="Collapsed"
+            Margin="0,48,0,56"
+            Canvas.ZIndex="3"
+            Grid.Row="2"
+            Grid.RowSpan="2"/>
 
         <!-- Input pane -->
         <Border x:Name="Separator" Margin="12,0" Grid.Row="3"/>
