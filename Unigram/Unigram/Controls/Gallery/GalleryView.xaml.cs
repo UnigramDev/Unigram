@@ -1107,10 +1107,15 @@ namespace Unigram.Controls.Gallery
 
         private void PopulateContextRequested(MenuFlyout flyout, GalleryViewModelBase viewModel, GalleryContent item)
         {
-            if (item.IsVideo && !item.IsLoop)
+            if (item.IsVideo && !item.IsLoop && _mediaPlayer != null)
             {
                 var rates = new double[] { 0.25, 0.5, 1, 1.5, 2 };
                 var labels = new string[] { Strings.Resources.SpeedVerySlow, Strings.Resources.SpeedSlow, Strings.Resources.SpeedNormal, Strings.Resources.SpeedFast, Strings.Resources.SpeedVeryFast };
+
+                var command = new RelayCommand<double>(rate =>
+                {
+                    _mediaPlayer.PlaybackSession.PlaybackRate = rate;
+                });
 
                 var speed = new MenuFlyoutSubItem();
                 speed.Text = Strings.Resources.Speed;
@@ -1124,10 +1129,7 @@ namespace Unigram.Controls.Gallery
                         Text = labels[i],
                         IsChecked = _mediaPlayer.PlaybackSession.PlaybackRate == rate,
                         CommandParameter = rate,
-                        Command = new RelayCommand<double>(x =>
-                        {
-                            _mediaPlayer.PlaybackSession.PlaybackRate = rate;
-                        })
+                        Command = command
                     };
 
                     speed.Items.Add(toggle);
