@@ -31,6 +31,7 @@
             ColorChanged="Picker_ColorChanged"
             Height="240"
             Margin="-24,0"
+            Padding="24,0"
             Grid.Row="1"/>
 
         <HyperlinkButton
@@ -38,7 +39,7 @@
             Content="Use system accent color"
             Click="System_Click"
             HorizontalAlignment="Left"
-            Margin="0,0,0,-20"
+            Margin="-12,0,0,-20"
             Grid.Row="2"/>
     </Grid>
 </local:ContentPopup>

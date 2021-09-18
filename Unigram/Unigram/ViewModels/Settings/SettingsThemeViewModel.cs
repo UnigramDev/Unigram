@@ -72,9 +72,9 @@ namespace Unigram.ViewModels.Settings
                 {
                     _index[i] = new ThemeBrush(value.Key, custom);
                 }
-                else if (value.Value != default)
+                else if (value.Value is Color color)
                 {
-                    _index[i] = new ThemeBrush(value.Key, value.Value);
+                    _index[i] = new ThemeBrush(value.Key, color);
                 }
 
                 if (_index[i] != null)

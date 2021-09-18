@@ -707,6 +707,7 @@
     </Style>
 
     <Style TargetType="local:ColorPicker">
+        <Setter Property="Padding" Value="12,0"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ColorPicker">
@@ -734,7 +735,7 @@
                             x:Name="ValueSlider"
                             IsDirectionReversed="True"
                             IsThumbToolTipEnabled="False"
-                            Margin="12,0"
+                            Margin="{TemplateBinding Padding}"
                             Grid.Row="1">
                             <Slider.Template>
                                 <ControlTemplate TargetType="Slider">
@@ -854,7 +855,7 @@
                                                 </Grid.RowDefinitions>
                                                 <Rectangle x:Name="HorizontalTrackRect"
                                                             Fill="{TemplateBinding Foreground}"
-                                                            Height="{ThemeResource SliderHorizontalThumbHeight}"
+                                                            Height="20"
                                                             Grid.Row="1"
                                                             Grid.ColumnSpan="3"
                                                             RadiusX="10"
@@ -886,8 +887,8 @@
                                                 <Thumb x:Name="HorizontalThumb"
                                                         Style="{StaticResource SliderThumbStyle}"
                                                         DataContext="{TemplateBinding Value}"
-                                                        Height="{ThemeResource SliderHorizontalThumbHeight}"
-                                                        Width="{ThemeResource SliderHorizontalThumbWidth}"
+                                                        Height="20"
+                                                        Width="20"
                                                         Grid.Row="0"
                                                         Grid.RowSpan="3"
                                                         Grid.Column="1"

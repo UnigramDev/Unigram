@@ -19,7 +19,7 @@ namespace Unigram.Services
         Task<ThemeCustomInfo> DeserializeAsync(StorageFile file);
 
         Task InstallThemeAsync(StorageFile file);
-        Task SetThemeAsync(ThemeInfoBase info, bool apply);
+        void SetTheme(ThemeInfoBase info, bool apply);
     }
 
     public partial class ThemeService : IThemeService
@@ -35,14 +35,9 @@ namespace Unigram.Services
             _aggregator = aggregator;
         }
 
-        public static Dictionary<string, Color> GetLookup(TelegramTheme flags)
+        public static Dictionary<string, object> GetLookup(TelegramTheme flags)
         {
             return flags == TelegramTheme.Dark ? _defaultDark : _defaultLight;
-        }
-
-        public static Dictionary<string, AccentShade> GetShades(TelegramTheme flags)
-        {
-            return flags == TelegramTheme.Dark ? _accentsDark : _accentsLight;
         }
 
         public IList<ThemeInfoBase> GetThemes()
@@ -126,7 +121,7 @@ namespace Unigram.Services
             var equals = installed.FirstOrDefault(x => x is ThemeCustomInfo custom && ThemeCustomInfo.Equals(custom, info));
             if (equals != null)
             {
-                await SetThemeAsync(equals, true);
+                SetTheme(equals, true);
                 return;
             }
 
@@ -136,11 +131,11 @@ namespace Unigram.Services
             var theme = await DeserializeAsync(result);
             if (theme != null)
             {
-                await SetThemeAsync(theme, true);
+                SetTheme(theme, true);
             }
         }
 
-        public async Task SetThemeAsync(ThemeInfoBase info, bool apply)
+        public void SetTheme(ThemeInfoBase info, bool apply)
         {
             if (apply)
             {

@@ -369,22 +369,32 @@ namespace Unigram.Common
             return Color.FromArgb(alpha, color.R, color.G, color.B);
         }
 
-        public static Color FromHex(uint hexValue)
+        public static Color FromHex(uint hexValue, bool allowDefault = false)
         {
             byte a = (byte)((hexValue & 0xff000000) >> 24);
             byte r = (byte)((hexValue & 0x00ff0000) >> 16);
             byte g = (byte)((hexValue & 0x0000ff00) >> 8);
             byte b = (byte)(hexValue & 0x000000ff);
+
+            if (a == 0 && r == 0 && g == 0 && b == 0 && allowDefault)
+            {
+                return default;
+            }
 
             return Color.FromArgb(a > 0 ? a : (byte)0xFF, r, g, b);
         }
 
-        public static Color FromHex(int hexValue)
+        public static Color FromHex(int hexValue, bool allowDefault = false)
         {
             byte a = (byte)((hexValue & 0xff000000) >> 24);
             byte r = (byte)((hexValue & 0x00ff0000) >> 16);
             byte g = (byte)((hexValue & 0x0000ff00) >> 8);
             byte b = (byte)(hexValue & 0x000000ff);
+
+            if (a == 0 && r == 0 && g == 0 && b == 0 && allowDefault)
+            {
+                return default;
+            }
 
             return Color.FromArgb(a > 0 ? a : (byte)0xFF, r, g, b);
         }

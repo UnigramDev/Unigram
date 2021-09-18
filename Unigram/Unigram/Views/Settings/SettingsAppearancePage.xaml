@@ -181,7 +181,7 @@
                                 </ItemsPanelTemplate>
                             </ListView.ItemsPanel>
                             <ListView.Footer>
-                                <HyperlinkButton Command="{x:Bind ViewModel.AccentThemeCommand}" Width="24" Height="24" Margin="12,12,12,12" Padding="0">
+                                <HyperlinkButton Command="{x:Bind ViewModel.AccentThemeCommand}" Width="24" Height="24" Margin="12,12,12,12" Style="{StaticResource EmptyHyperlinkButtonStyle}">
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="9"/>

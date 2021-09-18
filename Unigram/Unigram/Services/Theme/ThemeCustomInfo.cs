@@ -1,24 +1,28 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
 using Unigram.Common;
+using Unigram.Navigation;
 using Unigram.Services.Settings;
 using Windows.UI;
+using Windows.UI.ViewManagement;
 
 namespace Unigram.Services
 {
-    public class ThemeCustomInfo : ThemeInfoBase
+    public class ThemeCustomInfo : ThemeAccentInfo
     {
-        public ThemeCustomInfo()
+        public ThemeCustomInfo(TelegramTheme parent, Color accent, string name)
+            : base(TelegramThemeType.Custom, accent, null, null)
         {
-            Values = new Dictionary<string, Color>();
-            IsOfficial = false;
+            Parent = parent;
+            Name = name;
         }
 
-        public Dictionary<string, Color> Values { get; private set; }
+        private ThemeCustomInfo(string path, Color accent, Dictionary<string, Color> values, Dictionary<AccentShade, Color> shades)
+            : base(TelegramThemeType.Custom, accent, values, shades)
+        {
+        }
 
         public string Path { get; set; }
-
-        public override bool IsOfficial { get; }
 
         public static ThemeCustomInfo FromFile(string path)
         {
@@ -28,20 +32,22 @@ namespace Unigram.Services
         public static ThemeCustomInfo FromFile(string path, IList<string> lines)
         {
             var values = new Dictionary<string, Color>();
+            var shades = new Dictionary<AccentShade, Color>();
 
             var requested = SettingsService.Current.Appearance.RequestedTheme;
-            var accent = _accent[requested == TelegramTheme.Dark ? TelegramThemeType.Night : TelegramThemeType.Day][AccentShade.Base];
+            var accent = _accent[requested == TelegramTheme.Dark ? TelegramThemeType.Night : TelegramThemeType.Day][AccentShade.Default];
+            var name = string.Empty;
 
             foreach (var line in lines)
             {
                 if (line.StartsWith("name: "))
                 {
-                    continue;
+                    name = line.Substring("name: ".Length);
                 }
                 else if (line.StartsWith("parent: "))
                 {
                     requested = (TelegramTheme)int.Parse(line.Substring("parent: ".Length));
-                    accent = _accent[requested == TelegramTheme.Dark ? TelegramThemeType.Night : TelegramThemeType.Day][AccentShade.Base];
+                    accent = _accent[requested == TelegramTheme.Dark ? TelegramThemeType.Night : TelegramThemeType.Day][AccentShade.Default];
                 }
                 else if (line.Equals("!") || line.Equals("#") || string.IsNullOrWhiteSpace(line))
                 {
@@ -74,23 +80,31 @@ namespace Unigram.Services
                             values[key] = Color.FromArgb(a, r, g, b);
                         }
                     }
+                    else if (key == "accent" && value == "default")
+                    {
+                        accent = default;
+                    }
                 }
             }
 
-            var type = requested == TelegramTheme.Dark ? TelegramThemeType.Night : TelegramThemeType.Day;
+            var color = accent;
+            if (color == default)
+            {
+                color = BootStrapper.Current.UISettings.GetColorValue(UIColorType.Accent);
+            }
 
-            var colorizer = ThemeColorizer.FromTheme(type, _accent[type][AccentShade.Base], accent);
+            var type = requested == TelegramTheme.Dark ? TelegramThemeType.Night : TelegramThemeType.Day;
+            var colorizer = ThemeColorizer.FromTheme(type, _accent[type][AccentShade.Default], color);
 
             foreach (var item in _accent[type])
             {
-                values[$"SystemAccentColor{item.Key}"] = colorizer.Colorize(item.Value);
+                shades[item.Key] = colorizer.Colorize(item.Value);
             }
 
-            return new ThemeCustomInfo
+            return new ThemeCustomInfo(path, accent, values, shades)
             {
+                Name = name,
                 Parent = requested,
-                Values = values,
-                Path = path
             };
         }
 
@@ -194,19 +208,6 @@ namespace Unigram.Services
                 }
 
                 return base.MessageBackgroundOutColor;
-            }
-        }
-
-        public override Color AccentColor
-        {
-            get
-            {
-                if (Values.TryGetValue("SystemAccentColor", out Color color))
-                {
-                    return color;
-                }
-
-                return base.AccentColor;
             }
         }
     }

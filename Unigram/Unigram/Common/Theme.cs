@@ -165,11 +165,11 @@ namespace Unigram.Common
         {
             if (info is ThemeCustomInfo custom)
             {
-                Update(info.Parent, custom.Values);
+                Update(info.Parent, custom);
             }
             else if (info is ThemeAccentInfo colorized)
             {
-                Update(info.Parent, colorized.Values);
+                Update(info.Parent, colorized);
             }
             else
             {
@@ -177,44 +177,44 @@ namespace Unigram.Common
             }
         }
 
-        private void Update(TelegramTheme requested, IDictionary<string, Color> values = null)
+        private void Update(TelegramTheme requested, ThemeAccentInfo info = null)
         {
             try
             {
-                ThemeOutgoing.Update(requested, values);
+                ThemeOutgoing.Update(requested, info?.Values);
+
+                var values = info?.Values;
+                var shades = info?.Shades;
 
                 var target = MergedDictionaries[0].ThemeDictionaries[requested == TelegramTheme.Light ? "Light" : "Dark"] as ResourceDictionary;
                 var lookup = ThemeService.GetLookup(requested);
-                var shades = ThemeService.GetShades(requested);
 
                 foreach (var item in lookup)
                 {
                     if (target.TryGet(item.Key, out SolidColorBrush brush))
                     {
-                        if (values != null && values.TryGetValue(item.Key, out Color themed))
+                        Color value;
+                        if (item.Value is AccentShade shade)
                         {
-                            brush.Color = themed;
-                        }
-                        else
-                        {
-                            var value = item.Value;
-                            if (value == default && shades.TryGetValue(item.Key, out AccentShade shade))
+                            if (shades != null && shades.TryGetValue(shade, out Color accent))
                             {
-                                if (values != null && values.TryGetValue($"SystemAccentColor{shade}", out Color accent))
-                                {
-                                    value = accent;
-                                }
-                                else
-                                {
-                                    value = ThemeInfoBase.Accents[TelegramThemeType.Day][shade];
-                                }
+                                value = accent;
                             }
+                            else
+                            {
+                                value = ThemeInfoBase.Accents[TelegramThemeType.Day][shade];
+                            }
+                        }
+                        else if (values != null && values.TryGetValue(item.Key, out Color themed))
+                        {
+                            value = themed;
+                        }
+                        else if (item.Value is Color color)
+                        {
+                            value = color;
+                        }
 
-                            if (brush.Color != value && value != default)
-                            {
-                                brush.Color = value;
-                            }
-                        }
+                        brush.Color = value;
                     }
                 }
             }

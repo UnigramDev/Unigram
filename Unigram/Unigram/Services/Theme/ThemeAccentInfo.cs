@@ -9,11 +9,12 @@ namespace Unigram.Services
 {
     public class ThemeAccentInfo : ThemeInfoBase
     {
-        public ThemeAccentInfo(TelegramThemeType type, Color accent, Dictionary<string, Color> values)
+        protected ThemeAccentInfo(TelegramThemeType type, Color accent, Dictionary<string, Color> values, Dictionary<AccentShade, Color> shades)
         {
             Type = type;
             AccentColor = accent;
-            Values = values;
+            Values = values ?? new Dictionary<string, Color>();
+            Shades = shades ?? new Dictionary<AccentShade, Color>();
 
             switch (type)
             {
@@ -31,7 +32,7 @@ namespace Unigram.Services
                     break;
             }
 
-            IsOfficial = true;
+            IsOfficial = type != TelegramThemeType.Custom;
         }
 
         public static ThemeAccentInfo FromAccent(TelegramThemeType type, Color accent, Color outgoing = default)
@@ -42,14 +43,10 @@ namespace Unigram.Services
                 color = BootStrapper.Current.UISettings.GetColorValue(UIColorType.Accent);
             }
 
-            var colorizer = ThemeColorizer.FromTheme(type, _accent[type][AccentShade.Base], color);
-            var outgoingColorizer = outgoing != default ? ThemeColorizer.FromTheme(type, _accent[type][AccentShade.Base], outgoing) : null;
+            var colorizer = ThemeColorizer.FromTheme(type, _accent[type][AccentShade.Default], color);
+            var outgoingColorizer = outgoing != default ? ThemeColorizer.FromTheme(type, _accent[type][AccentShade.Default], outgoing) : null;
             var values = new Dictionary<string, Color>();
-
-            foreach (var item in _accent[type])
-            {
-                values[$"SystemAccentColor{item.Key}"] = colorizer.Colorize(item.Value);
-            }
+            var shades = new Dictionary<AccentShade, Color>();
 
             foreach (var item in _map[type])
             {
@@ -63,43 +60,40 @@ namespace Unigram.Services
                 }
             }
 
-            return new ThemeAccentInfo(type, accent, values);
+            foreach (var item in _accent[type])
+            {
+                shades[item.Key] = colorizer.Colorize(item.Value);
+            }
+
+            return new ThemeAccentInfo(type, accent, values, shades);
         }
 
         public static Color Colorize(TelegramThemeType type, Color accent, string key)
         {
-            var colorizer = ThemeColorizer.FromTheme(type, _accent[type][AccentShade.Base], accent);
+            var colorizer = ThemeColorizer.FromTheme(type, _accent[type][AccentShade.Default], accent);
             if (_map[type].TryGetValue(key, out Color color))
             {
                 return colorizer.Colorize(color);
             }
 
             var lookup = ThemeService.GetLookup(type == TelegramThemeType.Day ? TelegramTheme.Light : TelegramTheme.Dark);
-            return colorizer.Colorize(lookup[key]);
+            return colorizer.Colorize((Color)lookup[key]);
         }
 
         public override Color AccentColor { get; }
 
         public TelegramThemeType Type { get; private set; }
 
-        public Dictionary<string, Color> Values { get; private set; }
+        public Dictionary<string, Color> Values { get; protected set; }
+
+        public Dictionary<AccentShade, Color> Shades { get; protected set; }
 
         public override bool IsOfficial { get; }
 
 
 
-        public override Color SelectionColor
-        {
-            get
-            {
-                if (AccentColor == default)
-                {
-                    return BootStrapper.Current.UISettings.GetColorValue(UIColorType.Accent);
-                }
 
-                return AccentColor;
-            }
-        }
+        public override Color SelectionColor => Shades[AccentShade.Default];
 
         public override Color ChatBackgroundColor
         {

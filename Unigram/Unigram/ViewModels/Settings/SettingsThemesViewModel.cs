@@ -56,7 +56,7 @@ namespace Unigram.ViewModels.Settings
 
         public async Task SetThemeAsync(ThemeInfoBase info)
         {
-            await _themeService.SetThemeAsync(info, !_darkOnly && NightMode == NightMode.Disabled);
+            _themeService.SetTheme(info, !_darkOnly && NightMode == NightMode.Disabled);
             await RefreshThemesAsync();
         }
 
@@ -225,16 +225,16 @@ namespace Unigram.ViewModels.Settings
                 return;
             }
 
-            var preparing = new ThemeCustomInfo { Name = input.Text, Parent = theme.Parent };
+            var preparing = new ThemeCustomInfo(theme.Parent, theme.AccentColor, input.Text);
             var fileName = Client.Execute(new CleanFileName(theme.Name)) as Text;
 
             var lookup = ThemeService.GetLookup(theme.Parent);
 
             foreach (var value in lookup)
             {
-                if (value.Value != default)
+                if (value.Value is Color color)
                 {
-                    preparing.Values[value.Key] = value.Value;
+                    preparing.Values[value.Key] = color;
                 }
             }
 
