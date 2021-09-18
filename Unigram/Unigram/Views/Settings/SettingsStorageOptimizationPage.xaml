@@ -410,43 +410,13 @@
         </Style>
     </ContentDialog.Resources>
     
-    <ContentDialog.Title>
-        <Grid Height="{ThemeResource AppBarThemeCompactHeight}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <controls:ProfilePicture
-                x:Name="Photo"
-                Width="36"
-                Height="36"
-                Margin="12,6,0,6"
-                IsHitTestVisible="False"/>
-
-            <StackPanel Margin="12,0,0,0" Orientation="Vertical" VerticalAlignment="Center" Grid.Column="1">
-                <TextBlock
-                    x:Name="Title"
-                    Style="{StaticResource BaseTextBlockStyle}"
-                    TextWrapping="NoWrap"
-                    TextTrimming="CharacterEllipsis"
-                    MaxLines="1"/>
-                <TextBlock
-                    x:Name="Subtitle"
-                    Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                    Style="{StaticResource CaptionTextBlockStyle}" />
-            </StackPanel>
-
-            <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="3"/>
-        </Grid>
-    </ContentDialog.Title>
-
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}" Margin="0,0,0,-24">
         <controls:TableListView
             x:Name="List"
             ContainerContentChanging="OnContainerContentChanging"
             SelectionMode="None"
-            Padding="0,16">
+            Margin="-12,0,-24,0"
+            Padding="0,16,12,24">
             <ListView.Header>
                 <Grid Margin="0,0,0,24">
                     <controls:StorageChart
@@ -490,5 +460,9 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </controls:TableListView>
+
+        <controls:ScrollViewerScrim
+            Background="{ThemeResource PageBackgroundDarkBrush}"
+            ScrollingHost="{x:Bind List}"/>
     </Grid>
 </controls:ContentPopup>
