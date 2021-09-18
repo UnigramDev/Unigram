@@ -75,11 +75,9 @@ namespace Unigram
 
             UnhandledException += (s, args) =>
             {
-                if (args.Exception is NotSupportedException)
-                {
-                    args.Handled = true;
-                }
-                else
+                args.Handled = true;
+
+                if (args.Exception is not NotSupportedException)
                 {
                     Client.Execute(new AddLogMessage(1, "Unhandled exception:\n" + args.Exception.ToString()));
                 }
@@ -89,6 +87,13 @@ namespace Unigram
             Microsoft.AppCenter.AppCenter.Start(Constants.AppCenterId,
                 typeof(Microsoft.AppCenter.Analytics.Analytics),
                 typeof(Microsoft.AppCenter.Crashes.Crashes));
+
+            Microsoft.AppCenter.Crashes.Crashes.ShouldProcessErrorReport = error =>
+            {
+#pragma warning disable CS0618 // Type or member is obsolete
+                return error.Exception is not NotSupportedException;
+#pragma warning restore CS0618 // Type or member is obsolete
+            };
 
             Microsoft.AppCenter.Analytics.Analytics.TrackEvent("Windows",
                 new System.Collections.Generic.Dictionary<string, string>
