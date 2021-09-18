@@ -20,6 +20,11 @@ namespace Unigram.Views
             NavigationCacheMode = NavigationCacheMode.Required;
         }
 
+        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+        {
+            View.OnNavigatingFrom(e.SourcePageType);
+        }
+
         public void OnBackRequested(HandledEventArgs args)
         {
             View.OnBackRequested(args);

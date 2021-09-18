@@ -445,6 +445,21 @@ namespace Unigram.Views
             _stickersShadow.Clip.StartAnimation("TopInset", clipShadow);
         }
 
+        public void OnNavigatingFrom(Type sourcePageType)
+        {
+            var unallowed = sourcePageType != typeof(ChatPage)
+                && sourcePageType != typeof(ChatEventLogPage)
+                && sourcePageType != typeof(ChatPinnedPage)
+                && sourcePageType != typeof(ChatScheduledPage)
+                && sourcePageType != typeof(ChatThreadPage);
+
+            if (unallowed && Theme.Current.Update(ActualTheme, null))
+            {
+                var background = ViewModel.ProtoService.GetSelectedBackground(ActualTheme == ElementTheme.Dark);
+                ViewModel.Aggregator.Publish(new UpdateSelectedBackground(ActualTheme == ElementTheme.Dark, background));
+            }
+        }
+
 #pragma warning disable CA1063 // Implement IDisposable Correctly
         public void Dispose()
 #pragma warning restore CA1063 // Implement IDisposable Correctly
