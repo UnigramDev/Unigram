@@ -213,29 +213,33 @@ namespace Unigram.Services
 
         #region App version
 
-        public const ulong CurrentVersion = (7UL << 48) | (8UL << 32) | (0UL << 16);
-        public const string CurrentChangelog = @"GROUP VIDEO CALLS AND ANIMATED BACKGROUNDS
+        public const ulong CurrentVersion = (8UL << 48) | (1UL << 32) | (0UL << 16);
+        public const string CurrentChangelog = @"Chat Themes, Interactive Emoji, Read Receipts in Groups and Live Stream Recording
 
-**Group Video Calls**
-• Start video conferences from Voice Chats in any group.
-• Share your screen or video from your camera with up to 30 participants (limit to be increased soon).
-• Talk without video with an unlimited number of participants.
-• Create voice chats from the info page of any group where you are an admin.
-• Group video calls are supported natively on all devices, including iPads and laptops.
+**Chat Themes**
+• Choose one of 8 new preset themes for any individual private chat.
+• Tap the chat header > More (⋯) > 'Change Colors' to pick a theme.
+• Both chat participants will see the same theme in that chat – on all their devices.
+• Each new theme features colorful gradient message bubbles, beautifully animated backgrounds and unique background patterns.
+• All chat themes have day and night versions and will follow your overall dark mode settings.
+• More chat themes coming soon.
 
-**Animated Backgrounds**
-• Meet animated backgrounds for chats – first time in a messaging app! These multi-color gradient backgrounds are generated algorithmically and move beautifully every time you send a message.
-• Create your own backgrounds in Appearance Settings by selecting unique combinations of colors and applying any of the dozens of patterns. 
-• Share your animated backgrounds with friends and family to upgrade them to a new level of messaging experience.
-• Choose between dozens of new gorgeous animated backgrounds in Appearance Settings > Background.
+**Interactive Emoji**
+• Some animated emoji now have fullscreen effects.
+• Send 🎆 🎉 🎈 👍 💩 or ❤️ to any private chat, then tap on the animated emoji to launch the effect.
+• If your chat partner also has the chat open, you will both see the effects and feel the vibrations simultaneously.
+• See the ""Watching"" status when your chat partner is enjoying emoji effects with you.
+• More interactive emoji coming soon.
 
-**Message Sending Animations**
-• Send messages with improved animations­­ – your input text smoothly transforms into the message bubble as it flies into the chat.
-• Stickers and animated emoji you send jump into the chat from the sticker panel.
+**Read Receipts in Small Groups**
+• Select one of your outgoing messages in small groups to see who recently viewed it.
+• To protect privacy, read receipts are only stored for 7 days after the message was sent.
 
-**Login Info Reminders**
-• Confirm that your phone number is up to date from the new prompt in Settings.
-• You will now receive a notification from Telegram each time your 2-Step Verification settings are changed.";
+**Record Live Streams and Video Chats**
+• Record video and audio from live broadcasts in your group or channel.
+• Admins can start recording from the Settings menu (⋯).
+• Choose between recording in portrait or landscape orientation.
+• Finished recordings are sent to the admin's Saved Messages and can be easily shared.";
 
         public int Session => _session;
 
