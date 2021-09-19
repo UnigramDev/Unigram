@@ -20,7 +20,7 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Controls.Chats
 {
-    public class ChatBackgroundPresenter : Grid, IHandle<UpdateSelectedBackground>
+    public class ChatBackgroundPresenter : Grid, IHandle<UpdateSelectedBackground>, IHandle<UpdateFile>
     {
         private int _session;
         private IProtoService _protoService;
@@ -64,6 +64,21 @@ namespace Unigram.Controls.Chats
             else if (_oldBackground?.Type is BackgroundTypePattern typePattern && typePattern.Fill is BackgroundFillFreeformGradient freeform2)
             {
                 _defaultBackground.UpdateLayout(_colorBackground, freeform2);
+            }
+        }
+
+        public void Handle(UpdateFile update)
+        {
+            if (update.File.Id == _oldBackground?.Document?.DocumentValue.Id)
+            {
+                var background = _oldBackground;
+                _oldBackground.UpdateFile(update.File);
+                _oldBackground = null;
+
+                this.BeginOnUIThread(() =>
+                {
+                    Update(background, ActualTheme == ElementTheme.Dark);
+                });
             }
         }
 

@@ -401,20 +401,24 @@ namespace Unigram.Common
                 var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(relative) as StorageFile;
                 if (item == null)
                 {
-                    var text = GetSvgXml(file);
-                    var create = await ApplicationData.Current.LocalFolder.CreateFileAsync(relative);
+                    item = await ApplicationData.Current.LocalFolder.CreateFileAsync(relative);
 
-                    using (var stream = await create.OpenAsync(FileAccessMode.ReadWrite))
+                    using (var stream = await item.OpenAsync(FileAccessMode.ReadWrite))
                     {
                         try
                         {
                             Size size;
-                            await Task.Run(() => PlaceholderImageHelper.Current.DrawSvg(text, Colors.White, stream, out size));
+                            await Task.Run(() =>
+                            {
+                                var text = GetSvgXml(file);
+                                PlaceholderImageHelper.Current.DrawSvg(text, Colors.White, stream, out size);
+                            });
                         }
                         catch { }
                     }
                 }
 
+                if (item != null)
                 {
                     using (var stream = await item.OpenReadAsync())
                     {
