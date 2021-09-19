@@ -116,6 +116,11 @@ namespace Unigram.Views.Chats
                 HeaderVoice.Padding = new Thickness(0, embedded ? 12 : embedded ? 12 + 16 : 16, 0, 8);
                 HeaderVoice.CornerRadius = new CornerRadius(embedded ? 0 : 8, embedded ? 0 : 8, 8, 8);
             }
+
+            if (HeaderAnimations != null)
+            {
+                HeaderAnimations.Padding = new Thickness(0, embedded ? 12 : embedded ? 12 + 8 : 8, 0, 0);
+            }
         }
 
         public ScrollViewer GetScrollViewer()
@@ -147,6 +152,10 @@ namespace Unigram.Views.Chats
             else if (ScrollingHost.SelectedItem == PivotVoice)
             {
                 return ScrollingVoice.GetScrollViewer();
+            }
+            else if (ScrollingHost.SelectedItem == PivotAnimations)
+            {
+                return ScrollingAnimations.GetScrollViewer();
             }
 
             return null;
@@ -205,6 +214,12 @@ namespace Unigram.Views.Chats
                 yield return viewer5;
             }
 
+            var viewer7 = ScrollingAnimations?.GetScrollViewer();
+            if (viewer7 != null)
+            {
+                yield return viewer7;
+            }
+
             var viewer6 = _tab?.GetScrollViewer();
             if (viewer6 != null)
             {
@@ -246,6 +261,10 @@ namespace Unigram.Views.Chats
                 else if (ScrollingHost.SelectedItem == PivotVoice)
                 {
                     ScrollingVoice.SelectedItems.AddRange(ViewModel.SelectedItems);
+                }
+                else if (ScrollingHost.SelectedItem == PivotAnimations)
+                {
+                    ScrollingAnimations.SelectedItems.AddRange(ViewModel.SelectedItems);
                 }
             }
             else if (e.PropertyName.Equals("SharedCount"))
@@ -290,6 +309,13 @@ namespace Unigram.Views.Chats
                     FindName(nameof(TopNavVoice));
                     FindName(nameof(PivotVoice));
                     InitializeSearch(SearchVoice, () => new SearchMessagesFilterVoiceNote());
+                }
+
+                if (PivotAnimations == null && ViewModel.SharedCount[5] > 0)
+                {
+                    FindName(nameof(TopNavAnimations));
+                    FindName(nameof(PivotAnimations));
+                    //InitializeSearch(SearchAnimations, () => new SearchMessagesFilterAnimations());
                 }
 
                 if (PivotCommonChats == null && Tab is UserCommonChatsView)
@@ -638,6 +664,10 @@ namespace Unigram.Views.Chats
             {
                 selector.ItemsPanelRoot.SizeChanged += ScrollingVoice_SizeChanged;
             }
+            else if (selector == ScrollingAnimations)
+            {
+                selector.ItemsPanelRoot.SizeChanged += ScrollingAnimations_SizeChanged;
+            }
 
             var scrollViewer = selector.GetScrollViewer();
             scrollViewer.ChangeView(null, 12, null, true);
@@ -704,6 +734,12 @@ namespace Unigram.Views.Chats
                 ScrollingVoice.ItemsPanelRoot.MinHeight = e.NewSize.Height + 12;
                 ScrollingVoice.GetScrollViewer().ChangeView(null, 12, null, true);
             }
+
+            if (ScrollingAnimations?.ItemsPanelRoot != null)
+            {
+                ScrollingAnimations.ItemsPanelRoot.MinHeight = e.NewSize.Height + 12;
+                ScrollingAnimations.GetScrollViewer().ChangeView(null, 12, null, true);
+            }
         }
 
         private void Tab_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -757,6 +793,15 @@ namespace Unigram.Views.Chats
             {
                 ScrollingVoice.ItemsPanelRoot.SizeChanged -= ScrollingVoice_SizeChanged;
                 ScrollingVoice.GetScrollViewer().ChangeView(null, 12, null, true);
+            }
+        }
+
+        private void ScrollingAnimations_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (ScrollingAnimations.GetScrollViewer().VerticalOffset < 12)
+            {
+                ScrollingAnimations.ItemsPanelRoot.SizeChanged -= ScrollingAnimations_SizeChanged;
+                ScrollingAnimations.GetScrollViewer().ChangeView(null, 12, null, true);
             }
         }
     }

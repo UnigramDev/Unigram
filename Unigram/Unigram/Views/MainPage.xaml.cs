@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LinqToVisualTree;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -1284,11 +1285,13 @@ namespace Unigram.Views
 
             MasterDetail.BackgroundOpacity =
                 e.SourcePageType == typeof(ChatPage) ||
+                e.SourcePageType == typeof(ChatPinnedPage) ||
                 e.SourcePageType == typeof(ChatThreadPage) ||
                 e.SourcePageType == typeof(ChatScheduledPage) ||
                 e.SourcePageType == typeof(ChatEventLogPage) ||
                 e.SourcePageType == typeof(BlankPage) ||
                 frame.CurrentSourcePageType == typeof(ChatPage) ||
+                frame.CurrentSourcePageType == typeof(ChatPinnedPage) ||
                 frame.CurrentSourcePageType == typeof(ChatThreadPage) ||
                 frame.CurrentSourcePageType == typeof(ChatScheduledPage) ||
                 frame.CurrentSourcePageType == typeof(ChatEventLogPage) ||
@@ -1310,6 +1313,21 @@ namespace Unigram.Views
 
             UpdatePaneToggleButtonVisibility();
             UpdateListViewsSelectedItem(MasterDetail.NavigationService.GetPeerFromBackStack());
+
+            //var allowed = e.SourcePageType == typeof(ChatPage)
+            //    || e.SourcePageType == typeof(ChatEventLogPage)
+            //    || e.SourcePageType == typeof(ChatPinnedPage)
+            //    || e.SourcePageType == typeof(ChatScheduledPage)
+            //    || e.SourcePageType == typeof(ChatThreadPage);
+            //if (allowed && e.Parameter is long chatId)
+            //{
+            //    var profile = MasterDetail.Descendants<ProfilePage>().FirstOrDefault();
+            //    if (profile != null)
+            //    {
+            //        profile.NavigatedTo(null);
+            //        profile.ViewModel.OnNavigatedToAsync(chatId, NavigationMode.New, new NavigationState());
+            //    }
+            //}
         }
 
         private void OnStateChanged(object sender, EventArgs e)

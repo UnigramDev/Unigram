@@ -51,6 +51,11 @@
                             <ContentControl Content="{TemplateBinding DetailHeader}" IsTabStop="False" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" VerticalAlignment="Top"/>
                             <ContentControl Content="{TemplateBinding Banner}" IsTabStop="False" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" VerticalAlignment="Top"/>
 
+                            <!--<SplitView PanePlacement="Right" DisplayMode="Inline" IsPaneOpen="True">
+                                <SplitView.Pane>
+                                    <local:ProfilePage Grid.Column="1"/>
+                                </SplitView.Pane>
+                            </SplitView>-->
                             <Grid x:Name="DetailPresenter">
                                 <Border VerticalAlignment="Top" Background="{TemplateBinding BorderBrush}" Height="{ThemeResource AppBarThemeCompactHeight}"/>
                             </Grid>

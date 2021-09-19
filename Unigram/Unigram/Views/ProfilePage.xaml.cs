@@ -41,6 +41,16 @@ namespace Unigram.Views
             DescriptionLabel.AddHandler(ContextRequestedEvent, new TypedEventHandler<UIElement, ContextRequestedEventArgs>(About_ContextRequested), true);
         }
 
+        public void NavigatedTo(NavigationEventArgs e)
+        {
+            SharedMedia.OnNavigatedTo(e);
+        }
+
+        public void NavigatedFrom(NavigationEventArgs e)
+        {
+            SharedMedia.OnNavigatedFrom(e);
+        }
+
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             SharedMedia.OnNavigatedTo(e);

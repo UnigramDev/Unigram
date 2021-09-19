@@ -71,8 +71,8 @@ namespace Unigram.Views.Popups
         private void PrimaryButton_ContextRequested(object sender, RoutedEventArgs args)
         {
             var flyout = new MenuFlyout();
-            flyout.CreateFlyoutItem(new RelayCommand(() => { ViewModel.SendAsCopy = true; Hide(ContentDialogResult.Primary); }), "Send as copy", new FontIcon { Glyph = Icons.DocumentCopy });
-            flyout.CreateFlyoutItem(new RelayCommand(() => { ViewModel.RemoveCaptions = true; Hide(ContentDialogResult.Primary); }), "Remove captions", new FontIcon { Glyph = Icons.Block });
+            flyout.CreateFlyoutItem(new RelayCommand(() => { ViewModel.SendAsCopy = true; Hide(ContentDialogResult.Primary); }), Strings.Resources.HideSenderNames.Replace("\\’", "’"), new FontIcon { Glyph = Icons.DocumentCopy });
+            flyout.CreateFlyoutItem(new RelayCommand(() => { ViewModel.RemoveCaptions = true; Hide(ContentDialogResult.Primary); }), Strings.Resources.HideCaption, new FontIcon { Glyph = Icons.Block });
 
             flyout.ShowAt(sender as FrameworkElement, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedRight });
         }

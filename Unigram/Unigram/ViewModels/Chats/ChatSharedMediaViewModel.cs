@@ -59,12 +59,14 @@ namespace Unigram.ViewModels.Chats
             Links = new MediaCollection(ProtoService, chatId, new SearchMessagesFilterUrl());
             Music = new MediaCollection(ProtoService, chatId, new SearchMessagesFilterAudio());
             Voice = new MediaCollection(ProtoService, chatId, new SearchMessagesFilterVoiceNote());
+            Animations = new MediaCollection(ProtoService, chatId, new SearchMessagesFilterAnimation());
 
             RaisePropertyChanged(nameof(Media));
             RaisePropertyChanged(nameof(Files));
             RaisePropertyChanged(nameof(Links));
             RaisePropertyChanged(nameof(Music));
             RaisePropertyChanged(nameof(Voice));
+            RaisePropertyChanged(nameof(Animations));
 
             Aggregator.Subscribe(this);
 
@@ -86,7 +88,8 @@ namespace Unigram.ViewModels.Chats
                 new SearchMessagesFilterDocument(),
                 new SearchMessagesFilterUrl(),
                 new SearchMessagesFilterAudio(),
-                new SearchMessagesFilterVoiceNote()
+                new SearchMessagesFilterVoiceNote(),
+                new SearchMessagesFilterAnimation(),
             };
 
             for (int i = 0; i < filters.Length; i++)
@@ -97,6 +100,8 @@ namespace Unigram.ViewModels.Chats
                     SharedCount[i] = count.CountValue;
                 }
             }
+
+            SharedCount[SharedCount.Length - 1] = 0;
 
             RaisePropertyChanged(nameof(SharedCount));
         }
@@ -125,6 +130,7 @@ namespace Unigram.ViewModels.Chats
                     UpdateDeleteMessages(Links, table);
                     UpdateDeleteMessages(Music, table);
                     UpdateDeleteMessages(Voice, table);
+                    UpdateDeleteMessages(Animations, table);
                 });
             }
         }
@@ -161,6 +167,7 @@ namespace Unigram.ViewModels.Chats
         public MediaCollection Links { get; private set; }
         public MediaCollection Music { get; private set; }
         public MediaCollection Voice { get; private set; }
+        public MediaCollection Animations { get; private set; }
 
         public void Find(SearchMessagesFilter filter, string query)
         {
@@ -185,6 +192,10 @@ namespace Unigram.ViewModels.Chats
                 case SearchMessagesFilterVoiceNote voiceNote:
                     Voice = new MediaCollection(ProtoService, Chat.Id, voiceNote, query);
                     RaisePropertyChanged(nameof(Voice));
+                    break;
+                case SearchMessagesFilterAnimation animation:
+                    Animations = new MediaCollection(ProtoService, Chat.Id, animation, query);
+                    RaisePropertyChanged(nameof(Animations));
                     break;
             }
         }

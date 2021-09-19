@@ -537,14 +537,20 @@
     <Compile Include="Views\Popups\BackgroundPopup.xaml.cs">
       <DependentUpon>BackgroundPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Popups\ChooseColorPopup.xaml.cs">
+      <DependentUpon>ChooseColorPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Popups\ChooseRadioPopup.xaml.cs">
+      <DependentUpon>ChooseRadioPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Popups\InputPopup.xaml.cs">
       <DependentUpon>InputPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Popups\RecordVoiceChatPopup.xaml.cs">
+      <DependentUpon>RecordVoiceChatPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Popups\ScheduleVoiceChatPopup.xaml.cs">
       <DependentUpon>ScheduleVoiceChatPopup.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Popups\SelectColorPopup.xaml.cs">
-      <DependentUpon>SelectColorPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\ChatThemePopup.xaml.cs">
       <DependentUpon>ChatThemePopup.xaml</DependentUpon>
@@ -879,9 +885,6 @@
     </Compile>
     <Compile Include="Views\Popups\ScheduleMessagePopup.xaml.cs">
       <DependentUpon>ScheduleMessagePopup.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Popups\SelectRadioPopup.xaml.cs">
-      <DependentUpon>SelectRadioPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\SendFilesPopup.xaml.cs">
       <DependentUpon>SendFilesPopup.xaml</DependentUpon>
@@ -1711,15 +1714,23 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Popups\ChooseColorPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Popups\ChooseRadioPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Popups\InputPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Popups\ScheduleVoiceChatPopup.xaml">
+    <Page Include="Views\Popups\RecordVoiceChatPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Popups\SelectColorPopup.xaml">
+    <Page Include="Views\Popups\ScheduleVoiceChatPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1904,10 +1915,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Popups\ScheduleMessagePopup.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Popups\SelectRadioPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -2273,7 +2280,7 @@
     </Reference>
     <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\rlottie\$(Platform)\RLottie.dll" />
     <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\rlottie\$(Platform)\RLottie.pri" />
-    <ReferenceCopyLocalPaths Condition=" '$(Configuration)' == 'Debug' " Include="$(ProjectDir)\..\Libraries\rlottie\$(Platform)\zlib1.dll" />
+    <!--<ReferenceCopyLocalPaths Condition=" '$(Configuration)' == 'Debug' " Include="$(ProjectDir)\..\Libraries\rlottie\$(Platform)\zlib1.dll" />-->
   </ItemGroup>
   <ItemGroup />
   <!--<ItemGroup>

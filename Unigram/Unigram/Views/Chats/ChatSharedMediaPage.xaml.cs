@@ -15,6 +15,16 @@ namespace Unigram.Views.Chats
             DataContext = View.DataContext = TLContainer.Current.Resolve<ChatSharedMediaViewModel, IFileDelegate>(View);
         }
 
+        public void NavigatedTo(NavigationEventArgs e)
+        {
+            View.OnNavigatedTo(e);
+        }
+
+        public void NavigatedFrom(NavigationEventArgs e)
+        {
+            View.OnNavigatedFrom(e);
+        }
+
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             View.OnNavigatedTo(e);

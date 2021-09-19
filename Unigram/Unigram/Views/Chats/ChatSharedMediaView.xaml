@@ -36,6 +36,7 @@
                     <controls:TopNavViewItem x:Name="TopNavLinks" x:Load="False" Content="{CustomResource SharedLinksTab2}"/>
                     <controls:TopNavViewItem x:Name="TopNavMusic" x:Load="False" Content="{CustomResource SharedMusicTab2}"/>
                     <controls:TopNavViewItem x:Name="TopNavVoice" x:Load="False" Content="{CustomResource SharedVoiceTab2}"/>
+                    <controls:TopNavViewItem x:Name="TopNavAnimations" x:Load="False" Content="{CustomResource SharedGIFsTab2}"/>
                     <controls:TopNavViewItem x:Name="TopNavCommonChats" x:Load="False" Content="{CustomResource SharedGroupsTab2}"/>
                 </controls:TopNavView>
             </controls:ContentPageHeader>
@@ -61,7 +62,7 @@
                     Padding="12,0,12,8"
                     common:FluidGridView.OrientationOnly="False">
                     <common:FluidGridView.Triggers>
-                        <common:LengthGridViewTrigger ItemLength="96"/>
+                        <common:LengthGridViewTrigger ItemLength="120"/>
                     </common:FluidGridView.Triggers>
                     <GridView.ItemContainerStyle>
                         <Style TargetType="GridViewItem">
@@ -338,6 +339,62 @@
                         </ItemsPanelTemplate>
                     </ListView.ItemsPanel>
                 </controls:SelectListView>
+            </PivotItem>
+            <PivotItem  x:Name="PivotAnimations" x:Load="False" Header="{CustomResource SharedGIFsTab2}">
+                <controls:SelectGridView
+                    x:Name="ScrollingAnimations"
+                    ItemsSource="{x:Bind ViewModel.Animations, Mode=OneWay}"
+                    SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
+                    SelectionChanged="List_SelectionChanged"
+                    ChoosingItemContainer="OnChoosingItemContainer"
+                    ContainerContentChanging="OnContainerContentChanging"
+                    Loaded="Scrolling_Loaded"
+                    Padding="12,0,12,8"
+                    common:FluidGridView.OrientationOnly="False">
+                    <common:FluidGridView.Triggers>
+                        <common:LengthGridViewTrigger ItemLength="120"/>
+                    </common:FluidGridView.Triggers>
+                    <GridView.ItemContainerStyle>
+                        <Style TargetType="GridViewItem">
+                            <Setter Property="Margin" Value="4"/>
+                            <Setter Property="Padding" Value="0"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                        </Style>
+                    </GridView.ItemContainerStyle>
+                    <GridView.Header>
+                        <Border x:Name="HeaderAnimations" Padding="0,8,0,0"/>
+                    </GridView.Header>
+                    <GridView.Footer>
+                        <!--<Border Height="8"/>-->
+                        <microsoft:ProgressBar Background="Transparent" IsIndeterminate="{x:Bind ViewModel.Animations.IsLoading, Mode=OneWay}"/>
+                    </GridView.Footer>
+                    <GridView.ItemTemplateSelector>
+                        <selectors:MessageContentTemplateSelector>
+                            <selectors:MessageContentTemplateSelector.AnimationTemplate>
+                                <DataTemplate>
+                                    <HyperlinkButton Click="Photo_Click" Style="{StaticResource EmptyHyperlinkButtonStyle}">
+                                        <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
+                                            <Image Stretch="UniformToFill"/>
+                                        </Grid>
+                                    </HyperlinkButton>
+                                </DataTemplate>
+                            </selectors:MessageContentTemplateSelector.AnimationTemplate>
+                            <selectors:MessageContentTemplateSelector.HeaderDateTemplate>
+                                <DataTemplate>
+                                    <Border Background="{ThemeResource PageSubHeaderBackgroundBrush}">
+                                        <TextBlock Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                                    </Border>
+                                </DataTemplate>
+                            </selectors:MessageContentTemplateSelector.HeaderDateTemplate>
+                        </selectors:MessageContentTemplateSelector>
+                    </GridView.ItemTemplateSelector>
+                    <GridView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsWrapGrid Orientation="Horizontal" VerticalAlignment="Top" GroupPadding="0,0,0,8" MaxWidth="640" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
+                        </ItemsPanelTemplate>
+                    </GridView.ItemsPanel>
+                </controls:SelectGridView>
             </PivotItem>
             <PivotItem x:Name="PivotCommonChats" x:Load="False" Header="{CustomResource SharedGroupsTab2}"/>
         </Pivot>

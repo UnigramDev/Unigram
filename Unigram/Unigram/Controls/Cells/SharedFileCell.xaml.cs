@@ -217,13 +217,12 @@ namespace Unigram.Controls.Cells
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var data = _message.GetFileAndName(false);
-            if (data.File == null)
+            var file = _message.GetFile();
+            if (file == null)
             {
                 return;
             }
 
-            var file = data.File;
             if (file.Local.IsDownloadingActive)
             {
                 _protoService.Send(new CancelDownloadFile(file.Id, false));

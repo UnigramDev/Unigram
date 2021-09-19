@@ -126,6 +126,7 @@ namespace Unigram.Common
                 {
                     if (icon is FontIcon fontIcon)
                     {
+                        //fontIcon.Margin = new Thickness(-2);
                         fontIcon.FontSize = 20;
                         fontIcon.FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily;
                     }
@@ -157,6 +158,7 @@ namespace Unigram.Common
                 {
                     if (icon is FontIcon fontIcon)
                     {
+                        //fontIcon.Margin = new Thickness(-2);
                         fontIcon.FontSize = 20;
                         fontIcon.FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily;
                     }
@@ -189,6 +191,8 @@ namespace Unigram.Common
             {
                 if (icon is FontIcon fontIcon)
                 {
+                    //fontIcon.Margin = new Thickness(-2);
+                    fontIcon.FontSize = 20;
                     fontIcon.FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily;
                 }
 
@@ -246,6 +250,7 @@ namespace Unigram.Common
             {
                 if (icon is FontIcon fontIcon)
                 {
+                    //fontIcon.Margin = new Thickness(-2);
                     fontIcon.FontSize = 20;
                     fontIcon.FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily;
                 }
@@ -260,6 +265,16 @@ namespace Unigram.Common
 
             items.Add(flyoutItem);
             return flyoutItem;
+        }
+
+        public static FontIcon Icon(string glyph)
+        {
+            return new FontIcon
+            {
+                Glyph = glyph,
+                FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily,
+                Margin = new Thickness(-2)
+            };
         }
     }
 }
