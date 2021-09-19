@@ -7,9 +7,9 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Views.Popups
 {
-    public sealed partial class SelectRadioPopup : ContentPopup
+    public sealed partial class ChooseRadioPopup : ContentPopup
     {
-        public SelectRadioPopup(IEnumerable<SelectRadioItem> options)
+        public ChooseRadioPopup(IEnumerable<SelectRadioItem> options)
         {
             InitializeComponent();
 

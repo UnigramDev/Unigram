@@ -130,7 +130,7 @@ namespace Unigram.ViewModels.Settings
                 new SelectRadioItem(5 * 60 * 60, Locale.FormatAutoLock(5 * 60 * 60), timeout == 5 * 60 * 60)
             };
 
-            var dialog = new SelectRadioPopup(items);
+            var dialog = new ChooseRadioPopup(items);
             dialog.Title = Strings.Resources.AutoLock;
             dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.SecondaryButtonText = Strings.Resources.Cancel;

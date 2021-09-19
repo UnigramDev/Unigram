@@ -188,7 +188,7 @@ namespace Unigram.ViewModels.Settings
                     accent = BootStrapper.Current.UISettings.GetColorValue(UIColorType.Accent);
                 }
 
-                var dialog = new SelectColorPopup();
+                var dialog = new ChooseColorPopup();
                 dialog.Color = accent;
 
                 var confirm = await dialog.ShowQueuedAsync();

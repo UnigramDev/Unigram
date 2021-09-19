@@ -1,11 +1,7 @@
-﻿using LinqToVisualTree;
-using System.Linq;
-using Unigram.Common;
+﻿using Unigram.Common;
 using Unigram.Controls;
 using Windows.Globalization.NumberFormatting;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation.Peers;
-using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
@@ -151,16 +147,7 @@ namespace Unigram.Views.Popups
                 return;
             }
 
-            var button = this.Descendants<Button>().FirstOrDefault(x => x is Button btn && string.Equals(btn.Name, "PrimaryButton"));
-            if (button == null)
-            {
-                return;
-            }
-
-            var peer = FrameworkElementAutomationPeer.CreatePeerForElement(button);
-            var pattern = peer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
-
-            pattern.Invoke();
+            Hide(ContentDialogResult.Primary);
         }
 
         private void Label_TextChanged(object sender, TextChangedEventArgs e)

@@ -107,7 +107,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand<ThemeBrush> EditBrushCommand { get; }
         private async void EditBrushExecute(ThemeBrush brush)
         {
-            var dialog = new SelectColorPopup();
+            var dialog = new ChooseColorPopup();
             dialog.Title = brush.Key;
             dialog.Color = brush.Color;
             dialog.IsAccentColorVisible = false;

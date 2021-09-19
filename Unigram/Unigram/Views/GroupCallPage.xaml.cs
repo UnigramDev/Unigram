@@ -1630,21 +1630,13 @@ namespace Unigram.Views
                 return;
             }
 
-            var input = new InputPopup();
+            var input = new RecordVoiceChatPopup(call.Title);
             input.RequestedTheme = ElementTheme.Dark;
-            input.Title = Strings.Resources.VoipGroupStartRecordingTitle;
-            input.Header = Strings.Resources.VoipGroupStartRecordingText;
-            input.PrimaryButtonText = Strings.Resources.Start;
-            input.SecondaryButtonText = Strings.Resources.Cancel;
-            input.PlaceholderText = Strings.Resources.VoipGroupSaveFileHint;
-            input.Text = call.Title;
-            input.MaxLength = 64;
-            input.CanBeEmpty = true;
 
             var confirm = await input.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
-                _protoService.Send(new StartGroupCallRecording(call.Id, input.Text, false, false));
+                _protoService.Send(new StartGroupCallRecording(call.Id, input.FileName, input.RecordVideo, input.UsePortraitOrientation));
             }
         }
 

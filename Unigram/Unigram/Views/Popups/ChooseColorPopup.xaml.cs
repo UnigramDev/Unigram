@@ -5,9 +5,9 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Popups
 {
-    public sealed partial class SelectColorPopup : ContentPopup
+    public sealed partial class ChooseColorPopup : ContentPopup
     {
-        public SelectColorPopup()
+        public ChooseColorPopup()
         {
             InitializeComponent();
 
