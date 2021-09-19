@@ -46,7 +46,7 @@
 
         <local:MessagePinnedLine
             x:Name="Line"
-            Foreground="{ThemeResource PinnedMessageForegroundBrush}"
+            Stroke="{ThemeResource PinnedMessageForegroundBrush}"
             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
             BorderBrush="{ThemeResource PinnedMessageBorderBrush}"
             IsTabStop="False"

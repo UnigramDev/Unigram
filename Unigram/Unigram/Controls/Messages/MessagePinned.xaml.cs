@@ -336,7 +336,6 @@ namespace Unigram.Controls.Messages
 
         public MessagePinnedLine()
         {
-            RegisterPropertyChangedCallback(ForegroundProperty, OnForegroundChanged);
             RegisterPropertyChangedCallback(BackgroundProperty, OnBackgroundChanged);
             RegisterPropertyChangedCallback(BorderBrushProperty, OnBorderBrushChanged);
 
@@ -379,13 +378,50 @@ namespace Unigram.Controls.Messages
             ElementCompositionPreview.SetElementChildVisual(this, visual);
         }
 
-        private void OnForegroundChanged(DependencyObject sender, DependencyProperty dp)
+        #region Stroke
+
+        private long _strokeToken;
+
+        public Brush Stroke
         {
-            if (_fore != null)
-            {
-                _fore.FillBrush = GetBrush(dp);
-            }
+            get => (Brush)GetValue(StrokeProperty);
+            set => SetValue(StrokeProperty, value);
         }
+
+        public static readonly DependencyProperty StrokeProperty =
+            DependencyProperty.Register("Stroke", typeof(Brush), typeof(MessagePinnedLine), new PropertyMetadata(null, OnStrokeChanged));
+
+        private static void OnStrokeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var sender = d as MessagePinnedLine;
+            var solid = e.NewValue as SolidColorBrush;
+
+            if (e.OldValue is SolidColorBrush old && sender._strokeToken != 0)
+            {
+                old.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, sender._strokeToken);
+            }
+
+            if (solid == null || sender._fore == null)
+            {
+                return;
+            }
+
+            sender._fore.FillBrush = Window.Current.Compositor.CreateColorBrush(solid.Color);
+            sender._strokeToken = solid.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, sender.OnStrokeChanged);
+        }
+
+        private void OnStrokeChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            var solid = sender as SolidColorBrush;
+            if (solid == null || _fore == null)
+            {
+                return;
+            }
+
+            _fore.FillBrush = Window.Current.Compositor.CreateColorBrush(solid.Color);
+        }
+
+        #endregion
 
         private void OnBackgroundChanged(DependencyObject sender, DependencyProperty dp)
         {
