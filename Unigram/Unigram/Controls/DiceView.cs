@@ -373,13 +373,13 @@ namespace Unigram.Controls
             {
                 if (state is DiceStickersSlotMachine slotMachine)
                 {
-                    animations[0] = _backAnimation ??= LottieAnimation.LoadFromFile(slotMachine.Background.StickerValue.Local.Path, FrameSize, false, null);
-                    animations[1] = LottieAnimation.LoadFromData(MergeReels(slotMachine), FrameSize, $"{newValue}", false, null);
-                    animations[2] = _frontAnimation ??= LottieAnimation.LoadFromFile(slotMachine.Lever.StickerValue.Local.Path, FrameSize, false, null);
+                    animations[0] = _backAnimation ??= LottieAnimation.LoadFromFile(slotMachine.Background.StickerValue.Local.Path, _frameSize, false, null);
+                    animations[1] = LottieAnimation.LoadFromData(MergeReels(slotMachine), _frameSize, $"{newValue}", false, null);
+                    animations[2] = _frontAnimation ??= LottieAnimation.LoadFromFile(slotMachine.Lever.StickerValue.Local.Path, _frameSize, false, null);
                 }
                 else if (state is DiceStickersRegular regular)
                 {
-                    animations[1] = LottieAnimation.LoadFromFile(regular.Sticker.StickerValue.Local.Path, FrameSize, false, null);
+                    animations[1] = LottieAnimation.LoadFromFile(regular.Sticker.StickerValue.Local.Path, _frameSize, false, null);
                 }
             });
 
