@@ -2456,7 +2456,7 @@ namespace Unigram.Common
                     query.TryGetValue("intensity", out string intensityKey);
                     int.TryParse(intensityKey, out int intensity);
 
-                    return new BackgroundTypePattern(fill, intensity, modeSplit.Contains("motion"));
+                    return new BackgroundTypePattern(fill, Math.Abs(intensity), intensity < 0, modeSplit.Contains("motion"));
                 }
                 else
                 {

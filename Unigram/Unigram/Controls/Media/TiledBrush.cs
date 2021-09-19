@@ -10,12 +10,12 @@ namespace Unigram.Controls.Media
     {
         public LoadedImageSurface Surface { get; set; }
 
-        public bool IsNegative { get; set; }
+        public bool IsInverted { get; set; }
 
         protected override void OnConnected()
         {
             _connected = true;
-            _negative = IsNegative;
+            _negative = IsInverted;
 
             if (_recreate || (CompositionBrush == null && Surface != null))
             {
@@ -33,7 +33,7 @@ namespace Unigram.Controls.Media
                 };
 
                 IGraphicsEffect effect;
-                if (IsNegative)
+                if (IsInverted)
                 { 
                     //var matrix = new ColorMatrixEffect
                     //{
@@ -102,7 +102,7 @@ namespace Unigram.Controls.Media
         {
             if (_connected && CompositionBrush != null && Surface != null)
             {
-                if (_negative != IsNegative)
+                if (_negative != IsInverted)
                 {
                     _recreate = true;
                     OnConnected();

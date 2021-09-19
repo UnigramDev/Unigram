@@ -200,7 +200,7 @@ namespace Unigram.Views
                 {
                     if (string.Equals(wallpaper.Document.MimeType, "application/x-tgwallpattern", StringComparison.OrdinalIgnoreCase))
                     {
-                        Presenter.Fill = new TiledBrush { IsNegative = ViewModel.Intensity < 0, Surface = PlaceholderHelper.GetVectorSurface(ViewModel.ProtoService, big.DocumentValue, ViewModel.GetPatternForeground()) };
+                        Presenter.Fill = new TiledBrush { IsInverted = ViewModel.Intensity < 0, Surface = PlaceholderHelper.GetVectorSurface(ViewModel.ProtoService, big.DocumentValue, ViewModel.GetPatternForeground()) };
                     }
                     else
                     {

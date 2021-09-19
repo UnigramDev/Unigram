@@ -157,10 +157,10 @@ namespace Unigram.Controls.Chats
                     _colorBackground.Fill = typePattern.Fill.ToBrush();
                 }
 
-                if (typePattern.Intensity < 0)
+                if (typePattern.IsInverted)
                 {
                     _imageBackground.Opacity = 1;
-                    _colorBackground.Opacity = Math.Abs(typePattern.Intensity / 100d);
+                    _colorBackground.Opacity = typePattern.Intensity / 100d;
 
                     Background = new SolidColorBrush(Colors.Black);
                 }
@@ -216,7 +216,7 @@ namespace Unigram.Controls.Chats
             {
                 brush.Surface = await PlaceholderHelper.GetPatternSurfaceAsync(null, file);
                 brush.FallbackColor = typePattern.GetForeground();
-                brush.IsNegative = typePattern.Intensity < 0;
+                brush.IsInverted = typePattern.IsInverted;
                 brush.Update();
             }
             else
@@ -225,7 +225,7 @@ namespace Unigram.Controls.Chats
                 {
                     Surface = await PlaceholderHelper.GetPatternSurfaceAsync(null, file),
                     FallbackColor = typePattern.GetForeground(),
-                    IsNegative = typePattern.Intensity < 0,
+                    IsInverted = typePattern.IsInverted,
                 };
             }
         }

@@ -894,7 +894,7 @@ namespace Unigram.ViewModels
                             return;
                         }
 
-                        response = await ProtoService.SendAsync(new GetLoginUrl(chat.Id, message.Id, (int)loginUrl.Id, dialog.HasWriteAccess));
+                        response = await ProtoService.SendAsync(new GetLoginUrl(chat.Id, message.Id, loginUrl.Id, dialog.HasWriteAccess));
                         if (response is HttpUrl httpUrl)
                         {
                             if (MessageHelper.TryCreateUri(httpUrl.Url, out Uri uri))

@@ -3464,8 +3464,6 @@ namespace Unigram.Views
 
         public async void UpdateChatTheme(Chat chat)
         {
-            var theme = await ViewModel.CacheService.GetChatThemeAsync(chat.ThemeName);
-
             if (_updateThemeTask != null)
             {
                 await _updateThemeTask.Task;
@@ -3476,6 +3474,7 @@ namespace Unigram.Views
                 return;
             }
 
+            var theme = ViewModel.CacheService.GetChatTheme(chat.ThemeName);
             if (Theme.Current.Update(ActualTheme, theme))
             {
                 var background = ActualTheme == ElementTheme.Light ? theme?.LightSettings.Background : theme?.DarkSettings.Background;

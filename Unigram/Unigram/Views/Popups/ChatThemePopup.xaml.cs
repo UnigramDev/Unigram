@@ -18,20 +18,11 @@ namespace Unigram.Views.Popups
             PrimaryButtonText = Strings.Resources.ChatApplyTheme;
             SecondaryButtonText = Strings.Resources.Cancel;
 
-            Initialize(protoService, selectedTheme);
-        }
+            var items = new List<ChatTheme>(protoService.GetChatThemes());
+            items.Insert(0, new ChatTheme("\u274C", null, null));
 
-        private async void Initialize(IProtoService protoService, string selectedTheme)
-        {
-            var response = await protoService.GetChatThemesAsync();
-            if (response != null)
-            {
-                var items = new List<ChatTheme>(response);
-                items.Insert(0, new ChatTheme("\u274C", null, null));
-
-                List.ItemsSource = items;
-                List.SelectedItem = string.IsNullOrEmpty(selectedTheme) ? items[0] : items.FirstOrDefault(x => x.Name == selectedTheme);
-            }
+            List.ItemsSource = items;
+            List.SelectedItem = string.IsNullOrEmpty(selectedTheme) ? items[0] : items.FirstOrDefault(x => x.Name == selectedTheme);
         }
 
         public string ThemeName => List.SelectedItem is ChatTheme theme && theme.LightSettings != null ? theme.Name : string.Empty;

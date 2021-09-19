@@ -323,7 +323,6 @@ namespace Unigram.ViewModels
                     case ChatEventMessageEdited:
                     case ChatEventMessagePinned:
                     case ChatEventPollStopped:
-                    case ChatEventThemeChanged:
                         message = GetMessage(_chat.Id, channel, item, true);
                         //message.Content = new MessageChatEvent(item, true);
                         message.Content = GetMessageContent(item, channel);
@@ -778,14 +777,6 @@ namespace Unigram.ViewModels
             else if (item.Action is ChatEventPollStopped pollStopped)
             {
                 return pollStopped.Message.Content;
-            }
-            else if (item.Action is ChatEventThemeChanged themeChanged)
-            {
-                return new MessageText(new FormattedText(themeChanged.NewThemeName, new TextEntity[0]), new WebPage
-                {
-                    SiteName = Strings.Resources.EventLogPreviousGroupTheme,
-                    Description = new FormattedText(themeChanged.OldThemeName, new TextEntity[0])
-                });
             }
 
             return new MessageChatEvent(item);

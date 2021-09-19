@@ -85,7 +85,7 @@ namespace Unigram.ViewModels
             else if (background.Type is BackgroundTypePattern typePattern)
             {
                 fill = typePattern.Fill;
-                Intensity = typePattern.Intensity;
+                Intensity = typePattern.IsInverted ? -typePattern.Intensity : typePattern.Intensity;
                 IsBlurEnabled = false;
             }
             else if (background.Type is BackgroundTypeWallpaper typeWallpaper)
@@ -413,7 +413,7 @@ namespace Unigram.ViewModels
                     }
                     else if (wallpaper.Type is BackgroundTypePattern)
                     {
-                        type = new BackgroundTypePattern(fill, _intensity, false);
+                        type = new BackgroundTypePattern(fill, Math.Abs(_intensity), _intensity < 0, false);
                     }
                     else if (wallpaper.Type is BackgroundTypeWallpaper)
                     {

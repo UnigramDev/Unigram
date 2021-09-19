@@ -146,8 +146,6 @@ namespace Unigram.Controls.Messages
                             return UpdatePollStopped(message, pollStopped, active);
                         case ChatEventSlowModeDelayChanged slowModeDelayChanged:
                             return UpdateSlowModeDelayChanged(message, slowModeDelayChanged, active);
-                        case ChatEventThemeChanged themeChanged:
-                            return UpdateThemeChanged(message, themeChanged, active);
                         case ChatEventVoiceChatCreated voiceChatCreated:
                             return UpdateVoiceChatCreated(message, voiceChatCreated, active);
                         case ChatEventVoiceChatDiscarded voiceChatDiscarded:
@@ -517,26 +515,6 @@ namespace Unigram.Controls.Messages
             else if (poll.Poll.Type is PollTypeQuiz)
             {
                 content = ReplaceWithLink(Strings.Resources.EventLogStopQuiz, "un1", fromUser, ref entities);
-            }
-
-            return (content, entities);
-        }
-
-        private static (string, IList<TextEntity>) UpdateThemeChanged(MessageViewModel message, ChatEventThemeChanged themeChanged, bool active)
-        {
-            var content = string.Empty;
-            var entities = active ? new List<TextEntity>() : null;
-
-            if (message.ProtoService.TryGetUser(message.Sender, out User fromUser))
-            {
-                if (message.IsChannelPost)
-                {
-                    content = ReplaceWithLink(Strings.Resources.EventLogEditedChannelTheme, "un1", fromUser, ref entities);
-                }
-                else
-                {
-                    content = ReplaceWithLink(Strings.Resources.EventLogEditedGroupTheme, "un1", fromUser, ref entities);
-                }
             }
 
             return (content, entities);

@@ -130,8 +130,8 @@ namespace Unigram.Services
         ChatListUnreadCount GetUnreadCount(ChatList chatList);
         void SetUnreadCount(ChatList chatList, UpdateUnreadChatCount chatCount = null, UpdateUnreadMessageCount messageCount = null);
 
-        Task<ChatTheme> GetChatThemeAsync(string themeName);
-        Task<IList<ChatTheme>> GetChatThemesAsync();
+        ChatTheme GetChatTheme(string themeName);
+        IList<ChatTheme> GetChatThemes();
 
         Task<StickerSet> GetAnimatedSetAsync(AnimatedSetType type);
         bool IsDiceEmoji(string text, out string dice);
@@ -189,6 +189,8 @@ namespace Unigram.Services
 
         private UpdateAnimationSearchParameters _animationSearchParameters;
 
+        private UpdateChatThemes _chatThemes;
+
         private AuthorizationState _authorizationState;
         private ConnectionState _connectionState;
 
@@ -196,9 +198,6 @@ namespace Unigram.Services
 
         private Background _selectedBackground;
         private Background _selectedBackgroundDark;
-
-        private ChatThemes _chatThemes;
-        private TaskCompletionSource<ChatThemes> _chatThemesTask;
 
         private bool _initializeAfterClose;
 
@@ -1473,14 +1472,14 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             return false;
         }
 
-        public async Task<ChatTheme> GetChatThemeAsync(string themeName)
+        public ChatTheme GetChatTheme(string themeName)
         {
             if (string.IsNullOrEmpty(themeName))
             {
                 return null;
             }
 
-            var themes = await GetChatThemesAsync();
+            var themes = GetChatThemes();
             if (themes != null)
             {
                 return themes.FirstOrDefault(x => string.Equals(x.Name, themeName));
@@ -1489,32 +1488,9 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             return null;
         }
 
-        public async Task<IList<ChatTheme>> GetChatThemesAsync()
+        public IList<ChatTheme> GetChatThemes()
         {
-            var themes = _chatThemes;
-            if (themes != null)
-            {
-                return themes.ChatThemesValue;
-            }
-
-            var tsc = _chatThemesTask;
-            if (tsc != null)
-            {
-                themes = await tsc.Task;
-                return themes.ChatThemesValue;
-            }
-
-            tsc = _chatThemesTask = new TaskCompletionSource<ChatThemes>();
-
-            var response = await SendAsync(new GetChatThemes());
-            if (response is ChatThemes chatThemes)
-            {
-                tsc.SetResult(themes = _chatThemes = chatThemes);
-                return themes.ChatThemesValue;
-            }
-
-            tsc.SetResult(null);
-            return null;
+            return _chatThemes?.ChatThemes ?? new ChatTheme[0];
         }
 
         public async Task<StickerSet> GetAnimatedSetAsync(AnimatedSetType type)
@@ -1780,6 +1756,10 @@ Read more about how to update your device [here](https://support.microsoft.com/h
                 {
                     value.ThemeName = updateChatTheme.ThemeName;
                 }
+            }
+            else if (update is UpdateChatThemes updateChatThemes)
+            {
+                _chatThemes = updateChatThemes;
             }
             else if (update is UpdateChatTitle updateChatTitle)
             {
