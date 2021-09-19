@@ -633,7 +633,10 @@ namespace Unigram.Common
 
         public static ImageSource GetLottieFrame(string path, int frame, int width, int height, bool webp = true)
         {
-            var animation = LottieAnimation.LoadFromFile(path, false, null);
+            // Frame size affects disk cache, so we always use 256.
+            var frameSize = new Windows.Graphics.SizeInt32 { Width = 256, Height = 256 };
+
+            var animation = LottieAnimation.LoadFromFile(path, frameSize, false, null);
             if (animation == null)
             {
                 if (webp)

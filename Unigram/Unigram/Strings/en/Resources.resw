@@ -4557,6 +4557,9 @@ Learn more at telegram.org</value>
   <data name="Enhance" xml:space="preserve">
     <value>Enhance</value>
   </data>
+  <data name="EnjoyngAnimations" xml:space="preserve">
+    <value>**oo** watching {0}</value>
+  </data>
   <data name="EnterChannelName" xml:space="preserve">
     <value>Channel name</value>
   </data>

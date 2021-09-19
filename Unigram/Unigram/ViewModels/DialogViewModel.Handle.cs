@@ -5,6 +5,7 @@ using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls.Messages;
+using Unigram.Controls.Messages.Content;
 using Unigram.Services;
 using Unigram.Services.Updates;
 using Windows.UI.Xaml;
@@ -40,6 +41,7 @@ namespace Unigram.ViewModels
         IHandle<UpdateMessageIsPinned>,
         IHandle<UpdateMessageSendFailed>,
         IHandle<UpdateMessageSendSucceeded>,
+        IHandle<UpdateAnimatedEmojiMessageClicked>,
 
         IHandle<UpdateUser>,
         IHandle<UpdateUserFullInfo>,
@@ -707,6 +709,21 @@ namespace Unigram.ViewModels
             }
         }
 
+        public void Handle(UpdateAnimatedEmojiMessageClicked update)
+        {
+            if (update.ChatId == _chat?.Id)
+            {
+                Handle(update.MessageId, null, (bubble, message) =>
+                {
+                    if (bubble.MediaTemplateRoot is AnimatedStickerContent content && message.Content is MessageText text)
+                    {
+                        ChatActionManager.SetTyping(new ChatActionEnjoyingAnimations(text.Text.Text));
+                        content.PlayInteraction(message, update.Sticker);
+                    }
+                });
+            }
+        }
+
         public void Handle(UpdateFile update)
         {
             var chat = _chat;
@@ -746,7 +763,7 @@ namespace Unigram.ViewModels
 
                             if (album.Messages.TryGetValue(messageId, out MessageViewModel child))
                             {
-                                update(child);
+                                update?.Invoke(child);
                                 found = true;
 
                                 message.UpdateWith(album.Messages[0]);
@@ -783,7 +800,7 @@ namespace Unigram.ViewModels
 
                         if (message.Id == messageId)
                         {
-                            update(message);
+                            update?.Invoke(message);
 
                             if (action == null)
                             {

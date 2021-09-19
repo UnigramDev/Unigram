@@ -1563,7 +1563,7 @@ namespace Unigram.ViewModels
                             if (string.Equals(stickerEmoji, emoji, StringComparison.OrdinalIgnoreCase))
                             {
                                 message.GeneratedContent = new MessageSticker(sticker);
-                                continue;
+                                break;
                             }
                         }
 

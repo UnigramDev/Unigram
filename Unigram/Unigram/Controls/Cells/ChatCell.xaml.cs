@@ -1467,7 +1467,7 @@ namespace Unigram.Controls.Cells
             }
 
             sender._ellipse.FillBrush = brush;
-            sender._selectionStrokeToken = solid.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, sender.OnStrokeChanged);
+            sender._strokeToken = solid.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, sender.OnStrokeChanged);
         }
 
         private void OnStrokeChanged(DependencyObject sender, DependencyProperty dp)

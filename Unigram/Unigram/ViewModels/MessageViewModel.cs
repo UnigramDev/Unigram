@@ -31,6 +31,9 @@ namespace Unigram.ViewModels
         public bool IsFirst { get; set; } = true;
         public bool IsLast { get; set; } = true;
 
+        // Used only by animated emojis
+        public Sticker Interaction { get; set; }
+
         public ReplyMarkup ReplyMarkup { get => _message.ReplyMarkup; set => _message.ReplyMarkup = value; }
         public MessageContent Content { get => _message.Content; set => _message.Content = value; }
         public long MediaAlbumId => _message.MediaAlbumId;
@@ -126,14 +129,10 @@ namespace Unigram.ViewModels
         {
             var message = _message.UpdateFile(file);
             var generated = UpdateGeneratedFile(file);
+            var interaction = Interaction?.UpdateFile(file) ?? false;
+            var reply = ReplyToMessage?.UpdateFile(file) ?? false;
 
-            var reply = ReplyToMessage;
-            if (reply != null)
-            {
-                return reply.UpdateFile(file) || message;
-            }
-
-            return message || generated;
+            return message || generated || interaction || reply;
         }
 
         private bool UpdateGeneratedFile(File file)

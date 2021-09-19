@@ -1525,6 +1525,10 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             {
                 name = Options.AnimatedEmojiStickerSetName ?? "AnimatedEmojies";
             }
+            else if (type == AnimatedSetType.Interactions)
+            {
+                name = "EmojiAnimations";
+            }
             else
             {
                 return null;
@@ -2041,7 +2045,8 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 
     public enum AnimatedSetType
     {
-        Emoji
+        Emoji,
+        Interactions
     }
 
     public class ChatListUnreadCount

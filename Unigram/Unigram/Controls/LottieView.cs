@@ -7,6 +7,7 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
 using Unigram.Common;
@@ -66,6 +67,7 @@ namespace Unigram.Controls
 
         private int _index;
         private bool _backward;
+        private bool _flipped;
 
         private bool _isLoopingEnabled = true;
         private bool _isCachingEnabled = true;
@@ -197,7 +199,7 @@ namespace Unigram.Controls
                 _bitmap.Dispose();
             }
 
-            var buffer = ArrayPool<byte>.Shared.Rent(256 * 256 * 4);
+            var buffer = ArrayPool<byte>.Shared.Rent(_frameSize.Width * _frameSize.Height * 4);
             _bitmap = CanvasBitmap.CreateFromBytes(sender, buffer, _frameSize.Width, _frameSize.Height, DirectXPixelFormat.B8G8R8A8UIntNormalized);
             ArrayPool<byte>.Shared.Return(buffer);
 
@@ -213,6 +215,11 @@ namespace Unigram.Controls
             if (_bitmap == null || _animation == null || _unloaded)
             {
                 return;
+            }
+
+            if (_flipped)
+            {
+                args.DrawingSession.Transform = Matrix3x2.CreateScale(-1, 1, sender.Size.ToVector2() / 2);
             }
 
             args.DrawingSession.DrawImage(_bitmap, new Rect(0, 0, sender.Size.Width, sender.Size.Height));
@@ -360,7 +367,7 @@ namespace Unigram.Controls
 
             var shouldPlay = _shouldPlay;
 
-            var animation = await Task.Run(() => LottieAnimation.LoadFromFile(newValue, _isCachingEnabled, ColorReplacements));
+            var animation = await Task.Run(() => LottieAnimation.LoadFromFile(newValue, _frameSize, _isCachingEnabled, ColorReplacements));
             if (animation == null || !string.Equals(newValue, _source, StringComparison.OrdinalIgnoreCase))
             {
                 // The app can't access the file specified
@@ -547,6 +554,24 @@ namespace Unigram.Controls
         private static void OnBackwardChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((LottieView)d)._backward = (bool)e.NewValue;
+        }
+
+        #endregion
+
+        #region IsFlipped
+
+        public bool IsFlipped
+        {
+            get => (bool)GetValue(IsFlippedProperty);
+            set => SetValue(IsFlippedProperty, value);
+        }
+
+        public static readonly DependencyProperty IsFlippedProperty =
+            DependencyProperty.Register("IsFlipped", typeof(bool), typeof(LottieView), new PropertyMetadata(false, OnFlippedChanged));
+
+        private static void OnFlippedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((LottieView)d)._flipped = (bool)e.NewValue;
         }
 
         #endregion

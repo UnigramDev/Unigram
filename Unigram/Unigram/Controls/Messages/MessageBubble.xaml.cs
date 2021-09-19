@@ -108,6 +108,8 @@ namespace Unigram.Controls.Messages
 
         #endregion
 
+        public UIElement MediaTemplateRoot => Media.Child;
+
         public void UpdateMessage(MessageViewModel message)
         {
             _message = message;
