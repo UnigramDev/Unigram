@@ -155,7 +155,7 @@ namespace Unigram.Common
             else if (pattern.Fill is BackgroundFillFreeformGradient freeform)
             {
                 var averageColor = ColorEx.GetAverageColor(freeform.Colors[2], ColorEx.GetAverageColor(freeform.Colors[0], freeform.Colors[1]));
-                if (freeform.Colors[3] != 0)
+                if (freeform.Colors.Count > 3)
                 {
                     averageColor = ColorEx.GetAverageColor(freeform.Colors[3], averageColor);
                 }
