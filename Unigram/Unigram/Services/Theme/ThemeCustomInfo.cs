@@ -104,6 +104,7 @@ namespace Unigram.Services
             return new ThemeCustomInfo(path, accent, values, shades)
             {
                 Name = name,
+                Path = path,
                 Parent = requested,
             };
         }
