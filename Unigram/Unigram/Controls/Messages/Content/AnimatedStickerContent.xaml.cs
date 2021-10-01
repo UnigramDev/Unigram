@@ -7,12 +7,10 @@ using Unigram.Common;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.System;
-using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Messages.Content
 {
@@ -244,13 +242,10 @@ namespace Unigram.Controls.Messages.Content
                 var y = Player.Height * (0.08 - (0.16 * random.NextDouble()));
                 var shift = Player.Width * 0.075;
 
-
                 var left = (Player.Width * 2) - shift + x;
                 var right = 0 + shift - x;
                 var top = Player.Height + y;
                 var bottom = Player.Height - y;
-
-                player.Background = new SolidColorBrush(Color.FromArgb(0x33, (byte)random.Next(256), (byte)random.Next(256), (byte)random.Next(256)));
 
                 if (message.IsOutgoing)
                 {

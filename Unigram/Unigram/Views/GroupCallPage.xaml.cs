@@ -1412,8 +1412,8 @@ namespace Unigram.Views
         {
             var flyout = new MenuFlyout();
 
-            var chat = _service.Chat;
-            var call = _service.Call;
+            var chat = _service?.Chat;
+            var call = _service?.Call;
 
             if (chat == null || call == null)
             {
