@@ -362,33 +362,6 @@ namespace Unigram.Common
             return null;
         }
 
-        public static LoadedImageSurface GetVectorSurface(IProtoService protoService, File file, Color foreground)
-        {
-            if (file.Local.IsDownloadingCompleted)
-            {
-                var text = GetSvgXml(file);
-
-                var bitmap = default(LoadedImageSurface);
-                using (var stream = new InMemoryRandomAccessStream())
-                {
-                    try
-                    {
-                        PlaceholderImageHelper.Current.DrawSvg(text, foreground, stream, out Size size);
-                        bitmap = LoadedImageSurface.StartLoadFromStream(stream, new Size(size.Width / 3, size.Height / 3));
-                    }
-                    catch { }
-                }
-
-                return bitmap;
-            }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && protoService != null)
-            {
-                protoService.DownloadFile(file.Id, 1);
-            }
-
-            return null;
-        }
-
         public static async Task<LoadedImageSurface> GetPatternSurfaceAsync(IProtoService protoService, File file)
         {
             if (file.Local.IsDownloadingCompleted)
@@ -401,7 +374,7 @@ namespace Unigram.Common
                 var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(relative) as StorageFile;
                 if (item == null)
                 {
-                    item = await ApplicationData.Current.LocalFolder.CreateFileAsync(relative);
+                    item = await ApplicationData.Current.LocalFolder.CreateFileAsync(relative, CreationCollisionOption.ReplaceExisting);
 
                     using (var stream = await item.OpenAsync(FileAccessMode.ReadWrite))
                     {

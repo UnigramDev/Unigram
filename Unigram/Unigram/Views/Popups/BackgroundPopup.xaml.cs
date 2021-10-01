@@ -19,6 +19,7 @@ using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
+using System.Threading.Tasks;
 
 namespace Unigram.Views
 {
@@ -200,13 +201,33 @@ namespace Unigram.Views
                 {
                     if (string.Equals(wallpaper.Document.MimeType, "application/x-tgwallpattern", StringComparison.OrdinalIgnoreCase))
                     {
-                        Presenter.Fill = new TiledBrush { IsInverted = ViewModel.Intensity < 0, Surface = PlaceholderHelper.GetVectorSurface(ViewModel.ProtoService, big.DocumentValue, ViewModel.GetPatternForeground()) };
+                        await SetPatternAsync(wallpaper.Document.DocumentValue, true);
                     }
                     else
                     {
                         Presenter.Fill = new ImageBrush { ImageSource = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, big.DocumentValue, 0, 0), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
                     }
                 }
+            }
+        }
+
+        private async Task SetPatternAsync(File file, bool download)
+        {
+            if (Presenter.Fill is TiledBrush brush)
+            {
+                brush.Surface = await PlaceholderHelper.GetPatternSurfaceAsync(download ? ViewModel.ProtoService : null, file);
+                brush.FallbackColor = ViewModel.GetPatternForeground();
+                brush.IsInverted = ViewModel.Intensity < 0;
+                brush.Update();
+            }
+            else
+            {
+                Presenter.Fill = new TiledBrush
+                {
+                    Surface = await PlaceholderHelper.GetPatternSurfaceAsync(download ? ViewModel.ProtoService : null, file),
+                    FallbackColor = ViewModel.GetPatternForeground(),
+                    IsInverted = ViewModel.Intensity < 0,
+                };
             }
         }
 
@@ -340,7 +361,7 @@ namespace Unigram.Views
 
         public void Handle(UpdateFile update)
         {
-            this.BeginOnUIThread(() =>
+            this.BeginOnUIThread(async () =>
             {
                 if (ViewModel.Item is Background wallpaper && wallpaper.UpdateFile(update.File))
                 {
@@ -360,7 +381,7 @@ namespace Unigram.Views
                         //rectangle.Opacity = pattern.Intensity / 100d;
                         if (string.Equals(wallpaper.Document.MimeType, "application/x-tgwallpattern", StringComparison.OrdinalIgnoreCase))
                         {
-                            Presenter.Fill = new TiledBrush { Surface = PlaceholderHelper.GetVectorSurface(null, big.DocumentValue, ViewModel.GetPatternForeground()) };
+                            await SetPatternAsync(big.DocumentValue, false);
                         }
                         else
                         {
