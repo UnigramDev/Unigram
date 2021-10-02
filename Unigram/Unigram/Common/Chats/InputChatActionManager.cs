@@ -47,9 +47,9 @@ namespace Unigram.Common.Chats
                     case ChatActionChoosingSticker choosingSticker:
                         commonAction = choosingSticker;
                         return Strings.Resources.ChoosingSticker.Replace("**", "");
-                    case ChatActionEnjoyingAnimations enjoyingAnimations:
-                        commonAction = enjoyingAnimations;
-                        return string.Format(Strings.Resources.EnjoyngAnimations.Replace("**oo**", string.Empty).Trim(' '), enjoyingAnimations.Emoji);
+                    case ChatActionWatchingAnimations watchingAnimations:
+                        commonAction = watchingAnimations;
+                        return string.Format(Strings.Resources.EnjoyngAnimations.Replace("**oo**", string.Empty).Trim(' '), watchingAnimations.Emoji);
                 }
 
                 commonAction = new ChatActionTyping();

@@ -1432,7 +1432,7 @@ namespace Unigram.Views
                 flyout.CreateFlyoutItem(SetTitle, _service.IsChannel ? Strings.Resources.VoipChannelEditTitle : Strings.Resources.VoipGroupEditTitle, new FontIcon { Glyph = Icons.Edit });
             }
 
-            if (call.CanChangeMuteNewParticipants)
+            if (call.CanToggleMuteNewParticipants)
             {
                 var toggleFalse = new ToggleMenuFlyoutItem();
                 toggleFalse.Text = Strings.Resources.VoipGroupAllCanSpeak;
