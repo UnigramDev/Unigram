@@ -8,6 +8,7 @@ using Unigram.Controls.Messages;
 using Unigram.Controls.Messages.Content;
 using Unigram.Services;
 using Unigram.Services.Updates;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -452,7 +453,10 @@ namespace Unigram.ViewModels
 
                 if (!update.Message.IsOutgoing && Settings.Notifications.InAppSounds)
                 {
-                    _pushService.PlaySound();
+                    if (TLWindowContext.GetForCurrentView().ActivationMode == CoreWindowActivationMode.ActivatedInForeground)
+                    {
+                        _pushService.PlaySound();
+                    }
                 }
             }
         }

@@ -290,10 +290,7 @@ namespace Unigram.Services
                 return;
             }
 
-            Task.Run(() =>
-            {
-                SoundEffects.Play(SoundEffect.Sent);
-            });
+            Task.Run(() => SoundEffects.Play(SoundEffect.Sent));
         }
 
         public async void Handle(UpdateActiveNotifications update)
