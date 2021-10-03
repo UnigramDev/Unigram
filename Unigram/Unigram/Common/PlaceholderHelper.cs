@@ -362,8 +362,12 @@ namespace Unigram.Common
             return null;
         }
 
+        private static readonly DisposableMutex _patternSurfaceLock = new DisposableMutex();
+
         public static async Task<LoadedImageSurface> GetPatternSurfaceAsync(IProtoService protoService, File file)
         {
+            using var locked = await _patternSurfaceLock.WaitAsync();
+
             if (file.Local.IsDownloadingCompleted)
             {
                 var bitmap = default(LoadedImageSurface);
