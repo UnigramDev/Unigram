@@ -48,7 +48,7 @@ namespace Unigram.Views
             {
                 PackageSignatureKind.Store => "",
                 PackageSignatureKind.Enterprise => " Direct",
-                _ => " Debug"
+                _ => " Direct"
             };
 
             if (version.Revision > 0)

@@ -21,6 +21,13 @@
             set => AddOrUpdateValue(ref _lastErrorMessage, "LastErrorMessage", value);
         }
 
+        private int? _lastErrorVersion;
+        public int LastErrorVersion
+        {
+            get => _lastErrorVersion ??= GetValueOrDefault("LastErrorVersion", 0);
+            set => AddOrUpdateValue(ref _lastErrorVersion, "LastErrorVersion", value);
+        }
+
         public bool IsLastErrorDiskFull { get; set; }
     }
 }

@@ -105,7 +105,7 @@ namespace Unigram
             Client.SetLogMessageCallback(0, FatalErrorCallback);
 
             var lastMessage = SettingsService.Current.Diagnostics.LastErrorMessage;
-            if (lastMessage != null && lastMessage.Length > 0)
+            if (lastMessage != null && lastMessage.Length > 0 && SettingsService.Current.Diagnostics.LastErrorVersion == Package.Current.Id.Version.Build)
             {
                 SettingsService.Current.Diagnostics.LastErrorMessage = null;
                 SettingsService.Current.Diagnostics.IsLastErrorDiskFull = TdException.IsDiskFullError(lastMessage);
@@ -127,6 +127,7 @@ namespace Unigram
                 message += "Entered background: " + IsBackground;
 
                 SettingsService.Current.Diagnostics.LastErrorMessage = message;
+                SettingsService.Current.Diagnostics.LastErrorVersion = Package.Current.Id.Version.Build;
             }
         }
 
