@@ -2,6 +2,7 @@
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Services;
+using Unigram.Services.Settings;
 using Unigram.ViewModels.Settings;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -62,13 +63,20 @@ namespace Unigram.Views.Settings
 
             var radio = root.Children[0] as RadioButton;
 
+            radio.Click -= Switch_Click;
+            radio.Click += Switch_Click;
+
             if (theme is ThemeCustomInfo custom)
             {
-                radio.IsChecked = string.Equals(SettingsService.Current.Appearance[SettingsService.Current.Appearance.RequestedTheme].Custom, custom.Path, StringComparison.OrdinalIgnoreCase);
+                radio.IsChecked = SettingsService.Current.Appearance[SettingsService.Current.Appearance.RequestedTheme].Type == TelegramThemeType.Custom && string.Equals(SettingsService.Current.Appearance[SettingsService.Current.Appearance.RequestedTheme].Custom, custom.Path, StringComparison.OrdinalIgnoreCase);
+            }
+            else if (theme is ThemeAccentInfo accent)
+            {
+                radio.IsChecked = SettingsService.Current.Appearance[SettingsService.Current.Appearance.RequestedTheme].Type == accent.Type && SettingsService.Current.Appearance.Accents[accent.Type] == accent.AccentColor;
             }
             else
             {
-                radio.IsChecked = string.IsNullOrEmpty(SettingsService.Current.Appearance[SettingsService.Current.Appearance.RequestedTheme].Custom) && SettingsService.Current.Appearance.RequestedTheme == theme.Parent;
+                radio.IsChecked = SettingsService.Current.Appearance[SettingsService.Current.Appearance.RequestedTheme].Type == TelegramThemeType.Classic && SettingsService.Current.Appearance.RequestedTheme == theme.Parent;
             }
         }
     }
