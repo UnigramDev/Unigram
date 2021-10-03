@@ -658,9 +658,9 @@ namespace Unigram.Views
                 var inner = 250 * 1;
                 var delay = 0;
 
-                var anim = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-                anim.InsertKeyFrame(0, new Vector3(0, diff, 0));
-                anim.InsertKeyFrame(1, new Vector3());
+                var anim = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                anim.InsertKeyFrame(0, diff);
+                anim.InsertKeyFrame(1, 0);
                 anim.Duration = TimeSpan.FromMilliseconds(outer);
                 anim.DelayTime = TimeSpan.FromMilliseconds(delay);
                 anim.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
@@ -712,15 +712,15 @@ namespace Unigram.Views
 
                         bubble.AnimateSendout(xScale, yScale, fontScale, outer, inner, delay, reply);
 
-                        anim = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-                        anim.InsertKeyFrame(0, new Vector3(0, yOffset, 0));
-                        anim.InsertKeyFrame(1, new Vector3());
+                        anim = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                        anim.InsertKeyFrame(0, yOffset);
+                        anim.InsertKeyFrame(1, 0);
                         anim.Duration = TimeSpan.FromMilliseconds(outer);
                         anim.DelayTime = TimeSpan.FromMilliseconds(delay);
                         anim.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
                     }
 
-                    visual.StartAnimation("Offset", anim);
+                    visual.StartAnimation("Offset.Y", anim);
                 }
 
                 batch.End();

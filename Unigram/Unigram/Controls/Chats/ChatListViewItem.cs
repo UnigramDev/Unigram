@@ -327,7 +327,7 @@ namespace Unigram.Controls.Chats
 
         public void IdleStateEntered(InteractionTracker sender, InteractionTrackerIdleStateEnteredArgs args)
         {
-
+            ConfigureAnimations(_visual, null);
         }
 
         public void InteractingStateEntered(InteractionTracker sender, InteractionTrackerInteractingStateEnteredArgs args)
