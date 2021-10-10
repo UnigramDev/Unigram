@@ -443,11 +443,11 @@ namespace Unigram.Common
         {
             if (parentLength <= 400)
             {
-                return parentLength / 4d;
+                return parentLength / 3d;
             }
             else if (parentLength <= 500)
             {
-                return parentLength / 5d;
+                return parentLength / 4d;
             }
             else
             {
