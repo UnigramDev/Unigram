@@ -73,7 +73,7 @@
                         </Style>
                     </GridView.ItemContainerStyle>
                     <GridView.Header>
-                            <Border x:Name="HeaderMedia" Padding="0,8,0,0"/>
+                        <Border x:Name="HeaderMedia" Padding="0,8,0,0"/>
                     </GridView.Header>
                     <GridView.Footer>
                         <!--<Border Height="8"/>-->
@@ -95,7 +95,7 @@
                                     <HyperlinkButton Click="Photo_Click" Style="{StaticResource EmptyHyperlinkButtonStyle}">
                                         <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
                                             <Image Stretch="UniformToFill"/>
-                                                
+
                                             <Grid Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" Padding="4,4,8,4">
                                                 <FontIcon Glyph="&#xE768;" Foreground="White" HorizontalAlignment="Left" FontSize="12"/>
                                                 <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>

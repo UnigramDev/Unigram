@@ -89,6 +89,8 @@ namespace Unigram.ViewModels
         protected readonly INetworkService _networkService;
         protected readonly IMessageFactory _messageFactory;
 
+        public INavigationService SecondaryNavigationService { get; set; }
+
         public IPlaybackService PlaybackService => _playbackService;
 
         //private UserActivitySession _timelineSession;
