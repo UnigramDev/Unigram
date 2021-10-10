@@ -157,7 +157,8 @@ namespace Unigram.Controls
                     result = dialogsWidthRatio > 0 ? CountDialogsWidthFromRatio(availableSize.Width, dialogsWidthRatio, _isPrimary) : columnMinimalWidthLeft;
                 }
 
-                var corpus = SettingsService.Current.ProfileWidthRatio > 0 ? CountDialogsWidthFromRatio(availableSize.Width - result, SettingsService.Current.ProfileWidthRatio, false) : columnMinimalWidthLeft;
+                var inner = detail as MasterDetailView;
+                var corpus = inner != null && inner.IsBlank ? 0 : SettingsService.Current.ProfileWidthRatio > 0 ? CountDialogsWidthFromRatio(availableSize.Width - result, SettingsService.Current.ProfileWidthRatio, false) : columnMinimalWidthLeft;
 
                 masterHeader?.Measure(new Size(result, availableSize.Height));
                 corpusHeader?.Measure(new Size(availableSize.Width - result - corpus, availableSize.Height));
@@ -192,7 +193,14 @@ namespace Unigram.Controls
             // Single column mode
             if (finalSize.Width < columnMinimalWidthLeft + columnMinimalWidthMain || _isBlank)
             {
-                CurrentState = MasterDetailState.Minimal;
+                if (_isBlank && finalSize.Width >= columnMinimalWidthLeft + columnMinimalWidthMain)
+                {
+                    CurrentState = MasterDetailState.Expanded;
+                }
+                else
+                {
+                    CurrentState = MasterDetailState.Minimal;
+                }
 
                 background?.Arrange(new Rect(new Point(0, 0), finalSize));
                 masterHeader?.Arrange(new Rect(new Point(0, 0), finalSize));
@@ -213,7 +221,7 @@ namespace Unigram.Controls
             else
             {
                 double result;
-                if (dialogsWidthRatio == 0 && _allowCompact)
+                if (dialogsWidthRatio == 0 && _allowCompact && _isPrimary)
                 {
                     result = columnCompactWidthLeft;
                     CurrentState = MasterDetailState.Compact;
@@ -224,7 +232,8 @@ namespace Unigram.Controls
                     CurrentState = MasterDetailState.Expanded;
                 }
 
-                var corpus = SettingsService.Current.ProfileWidthRatio > 0 ? CountDialogsWidthFromRatio(finalSize.Width - result, SettingsService.Current.ProfileWidthRatio, false) : columnMinimalWidthLeft;
+                var inner = detail as MasterDetailView;
+                var corpus = inner != null && inner.IsBlank ? 0 : SettingsService.Current.ProfileWidthRatio > 0 ? CountDialogsWidthFromRatio(finalSize.Width - result, SettingsService.Current.ProfileWidthRatio, false) : columnMinimalWidthLeft;
 
                 background?.Arrange(new Rect(result, 0, finalSize.Width - result, finalSize.Height));
                 masterHeader?.Arrange(new Rect(0, 0, result, finalSize.Height));
