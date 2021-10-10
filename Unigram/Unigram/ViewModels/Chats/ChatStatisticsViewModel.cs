@@ -9,7 +9,6 @@ using Unigram.Common;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
-using Unigram.Views;
 using Windows.Data.Json;
 using Windows.UI.Xaml.Navigation;
 
@@ -88,7 +87,7 @@ namespace Unigram.ViewModels.Chats
             var response = await ProtoService.SendAsync(new CreatePrivateChat(userId, false));
             if (response is Chat chat)
             {
-                NavigationService.Navigate(typeof(ProfilePage), chat.Id);
+                NavigationService.NavigateToChat(chat);
             }
         }
 

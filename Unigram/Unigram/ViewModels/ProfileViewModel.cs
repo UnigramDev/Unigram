@@ -14,7 +14,6 @@ using Unigram.ViewModels.Chats;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Supergroups;
 using Unigram.ViewModels.Users;
-using Unigram.Views;
 using Unigram.Views.Chats;
 using Unigram.Views.Popups;
 using Unigram.Views.Supergroups;
@@ -1135,22 +1134,7 @@ namespace Unigram.ViewModels
             var response = await ProtoService.SendAsync(new SearchPublicChat(username));
             if (response is Chat chat)
             {
-                if (chat.Type is ChatTypePrivate privata)
-                {
-                    var user = ProtoService.GetUser(privata.UserId);
-                    if (user?.Type is UserTypeBot)
-                    {
-                        NavigationService.NavigateToChat(chat);
-                    }
-                    else
-                    {
-                        NavigationService.Navigate(typeof(ProfilePage), chat.Id);
-                    }
-                }
-                else
-                {
-                    NavigationService.NavigateToChat(chat);
-                }
+                NavigationService.NavigateToChat(chat);
             }
         }
 
@@ -1159,15 +1143,7 @@ namespace Unigram.ViewModels
             var response = await ProtoService.SendAsync(new CreatePrivateChat(userId, false));
             if (response is Chat chat)
             {
-                var user = ProtoService.GetUser(userId);
-                if (user?.Type is UserTypeBot)
-                {
-                    NavigationService.NavigateToChat(chat);
-                }
-                else
-                {
-                    NavigationService.Navigate(typeof(ProfilePage), chat.Id);
-                }
+                NavigationService.NavigateToChat(chat);
             }
         }
 

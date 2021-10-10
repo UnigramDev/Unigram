@@ -101,12 +101,12 @@ namespace Unigram.Common
                 var response = await ProtoService.SendAsync(new CreatePrivateChat(user.UserId, false));
                 if (response is Chat chat)
                 {
-                    Navigate(typeof(ProfilePage), chat.Id);
+                    NavigateToChat(chat);
                 }
             }
             else if (sender is MessageSenderChat chat)
             {
-                Navigate(typeof(ProfilePage), chat.ChatId);
+                NavigateToChat(chat.ChatId);
             }
         }
 

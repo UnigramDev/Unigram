@@ -31,12 +31,12 @@ namespace Unigram.Views.Settings
                     var response = await ViewModel.ProtoService.SendAsync(new CreatePrivateChat(user.Id, false));
                     if (response is Chat chat)
                     {
-                        ViewModel.NavigationService.Navigate(typeof(ProfilePage), chat.Id);
+                        ViewModel.NavigationService.NavigateToChat(chat);
                     }
                 }
                 else if (ViewModel.CacheService.TryGetChat(messageSender, out Chat chat))
                 {
-                    ViewModel.NavigationService.Navigate(typeof(ProfilePage), chat.Id);
+                    ViewModel.NavigationService.NavigateToChat(chat);
                 }
             }
         }
