@@ -23,17 +23,22 @@
             <SolidColorBrush x:Key="PageBackgroundDarkBrush" Color="{StaticResource SystemChromeMediumColor}" />
 
             <SolidColorBrush x:Key="TelegramSeparatorMediumBrush" Color="{StaticResource SystemChromeMediumColor}" />
+            
+            <SolidColorBrush x:Key="TelegramBackgroundAccentBrush" Color="{StaticResource SystemAccentColor}"/>
+            <SolidColorBrush x:Key="TelegramForegroundAccentBrush" Color="{StaticResource SystemAccentColor}"/>
 
-            <SolidColorBrush x:Key="PinnedMessageForegroundBrush" Color="{ThemeResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="PinnedMessageForegroundBrush" Color="{StaticResource SystemAccentColor}" />
             <SolidColorBrush x:Key="PinnedMessageBorderBrush" Color="{StaticResource SystemChromeMediumColor}" />
+
+            <SolidColorBrush x:Key="TinyButtonBackgroundBrush" Color="{StaticResource SystemAccentColor}" Opacity="0.2" />
 
             <!-- Chats -->
             <SolidColorBrush x:Key="ChatOnlineBadgeBrush" Color="#89DF9E" />
-            <SolidColorBrush x:Key="ChatVerifiedBadgeBrush" Color="{ThemeResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="ChatVerifiedBadgeBrush" Color="{StaticResource SystemAccentColor}" />
 
-            <SolidColorBrush x:Key="ChatLastMessageStateBrush" Color="{ThemeResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="ChatLastMessageStateBrush" Color="{StaticResource SystemAccentColor}" />
 
-            <SolidColorBrush x:Key="ChatFromLabelBrush" Color="{ThemeResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="ChatFromLabelBrush" Color="{StaticResource SystemAccentColor}" />
             <SolidColorBrush x:Key="ChatDraftLabelBrush" Color="#DD4B39" />
 
             <SolidColorBrush x:Key="ChatUnreadBadgeMutedBrush" Color="#444444" />
@@ -42,7 +47,7 @@
             <SolidColorBrush x:Key="ChatFailedBadgeBrush" Color="#FF0000" />
             <SolidColorBrush x:Key="ChatFailedLabelBrush" Color="#FFFFFF" />
 
-            <SolidColorBrush x:Key="ChatUnreadBadgeBrush" Color="{ThemeResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="ChatUnreadBadgeBrush" Color="{StaticResource SystemAccentColor}" />
             <SolidColorBrush x:Key="ChatUnreadLabelBrush" Color="#FFFFFF" />
 
             <!-- Messages -->
@@ -90,7 +95,7 @@
             <Color x:Key="SystemChromeGrayColor">#FF767676</Color>
             <Color x:Key="SystemListLowColor">#19FFFFFF</Color>
             <Color x:Key="SystemListMediumColor">#33FFFFFF</Color>
-            <SolidColorBrush x:Key="SystemControlBackgroundAccentBrush" Color="{ThemeResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="SystemControlBackgroundAccentBrush" Color="{StaticResource SystemAccentColor}" />
             <SolidColorBrush x:Key="SystemControlBackgroundAltHighBrush" Color="{StaticResource SystemAltHighColor}" />
             <SolidColorBrush x:Key="SystemControlBackgroundAltMediumHighBrush" Color="{StaticResource SystemAltMediumHighColor}" />
             <SolidColorBrush x:Key="SystemControlBackgroundAltMediumBrush" Color="{StaticResource SystemAltMediumColor}" />
@@ -109,7 +114,7 @@
             <SolidColorBrush x:Key="SystemControlBackgroundChromeWhiteBrush" Color="{StaticResource SystemChromeWhiteColor}" />
             <SolidColorBrush x:Key="SystemControlBackgroundListLowBrush" Color="{StaticResource SystemListLowColor}" />
             <SolidColorBrush x:Key="SystemControlBackgroundListMediumBrush" Color="{StaticResource SystemListMediumColor}" />
-            <SolidColorBrush x:Key="SystemControlDisabledAccentBrush" Color="{ThemeResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="SystemControlDisabledAccentBrush" Color="{StaticResource SystemAccentColor}" />
             <SolidColorBrush x:Key="SystemControlDisabledBaseHighBrush" Color="{StaticResource SystemBaseHighColor}" />
             <SolidColorBrush x:Key="SystemControlDisabledBaseLowBrush" Color="{StaticResource SystemBaseLowColor}" />
             <SolidColorBrush x:Key="SystemControlDisabledBaseMediumLowBrush" Color="{StaticResource SystemBaseMediumLowColor}" />
@@ -121,8 +126,8 @@
             <SolidColorBrush x:Key="SystemControlDisabledTransparentBrush" Color="Transparent" />
             <!--<SolidColorBrush x:Key="SystemControlFocusVisualPrimaryBrush" Color="{ThemeResource SystemBaseHighColor}" />-->
             <!--<SolidColorBrush x:Key="SystemControlFocusVisualSecondaryBrush" Color="{ThemeResource SystemAltMediumColor}" />-->
-            <SolidColorBrush x:Key="SystemControlRevealFocusVisualBrush" Color="{ThemeResource SystemAccentColor}" />
-            <SolidColorBrush x:Key="SystemControlForegroundAccentBrush" Color="{ThemeResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="SystemControlRevealFocusVisualBrush" Color="{StaticResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="SystemControlForegroundAccentBrush" Color="{StaticResource SystemAccentColor}" />
             <SolidColorBrush x:Key="SystemControlForegroundAltHighBrush" Color="{StaticResource SystemAltHighColor}" />
             <SolidColorBrush x:Key="SystemControlForegroundAltMediumHighBrush" Color="{StaticResource SystemAltMediumHighColor}" />
             <SolidColorBrush x:Key="SystemControlForegroundBaseHighBrush" Color="{StaticResource SystemBaseHighColor}" />
@@ -141,8 +146,8 @@
             <SolidColorBrush x:Key="SystemControlForegroundTransparentBrush" Color="Transparent" />
             <SolidColorBrush x:Key="SystemControlForegroundChromeBlackMediumBrush" Color="{StaticResource SystemChromeBlackMediumColor}" />
             <SolidColorBrush x:Key="SystemControlForegroundChromeBlackMediumLowBrush" Color="{StaticResource SystemChromeBlackMediumLowColor}" />
-            <SolidColorBrush x:Key="SystemControlHighlightAccentBrush" Color="{ThemeResource SystemAccentColor}" />
-            <SolidColorBrush x:Key="SystemControlHighlightAltAccentBrush" Color="{ThemeResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="SystemControlHighlightAccentBrush" Color="{StaticResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="SystemControlHighlightAltAccentBrush" Color="{StaticResource SystemAccentColor}" />
             <SolidColorBrush x:Key="SystemControlHighlightAltAltHighBrush" Color="{StaticResource SystemAltHighColor}" />
             <SolidColorBrush x:Key="SystemControlHighlightAltBaseHighBrush" Color="{StaticResource SystemBaseHighColor}" />
             <SolidColorBrush x:Key="SystemControlHighlightAltBaseLowBrush" Color="{StaticResource SystemBaseLowColor}" />
@@ -150,9 +155,9 @@
             <SolidColorBrush x:Key="SystemControlHighlightAltBaseMediumHighBrush" Color="{StaticResource SystemBaseMediumHighColor}" />
             <SolidColorBrush x:Key="SystemControlHighlightAltAltMediumHighBrush" Color="{StaticResource SystemAltMediumHighColor}" />
             <SolidColorBrush x:Key="SystemControlHighlightAltBaseMediumLowBrush" Color="{StaticResource SystemBaseMediumLowColor}" />
-            <SolidColorBrush x:Key="SystemControlHighlightAltListAccentHighBrush" Color="{ThemeResource SystemAccentColor}" Opacity="0.9" />
-            <SolidColorBrush x:Key="SystemControlHighlightAltListAccentLowBrush" Color="{ThemeResource SystemAccentColor}" Opacity="0.6" />
-            <SolidColorBrush x:Key="SystemControlHighlightAltListAccentMediumBrush" Color="{ThemeResource SystemAccentColor}" Opacity="0.8" />
+            <SolidColorBrush x:Key="SystemControlHighlightAltListAccentHighBrush" Color="{StaticResource SystemAccentColor}" Opacity="0.9" />
+            <SolidColorBrush x:Key="SystemControlHighlightAltListAccentLowBrush" Color="{StaticResource SystemAccentColor}" Opacity="0.6" />
+            <SolidColorBrush x:Key="SystemControlHighlightAltListAccentMediumBrush" Color="{StaticResource SystemAccentColor}" Opacity="0.8" />
             <SolidColorBrush x:Key="SystemControlHighlightAltChromeWhiteBrush" Color="{StaticResource SystemChromeWhiteColor}" />
             <SolidColorBrush x:Key="SystemControlHighlightAltTransparentBrush" Color="Transparent" />
             <SolidColorBrush x:Key="SystemControlHighlightBaseHighBrush" Color="{StaticResource SystemBaseHighColor}" />
@@ -162,14 +167,14 @@
             <SolidColorBrush x:Key="SystemControlHighlightBaseMediumLowBrush" Color="{StaticResource SystemBaseMediumLowColor}" />
             <SolidColorBrush x:Key="SystemControlHighlightChromeAltLowBrush" Color="{StaticResource SystemChromeAltLowColor}" />
             <SolidColorBrush x:Key="SystemControlHighlightChromeHighBrush" Color="{StaticResource SystemChromeHighColor}" />
-            <SolidColorBrush x:Key="SystemControlHighlightListAccentHighBrush" Color="{ThemeResource SystemAccentColor}" Opacity="0.9" />
-            <SolidColorBrush x:Key="SystemControlHighlightListAccentLowBrush" Color="{ThemeResource SystemAccentColor}" Opacity="0.6" />
-            <SolidColorBrush x:Key="SystemControlHighlightListAccentMediumBrush" Color="{ThemeResource SystemAccentColor}" Opacity="0.8" />
+            <SolidColorBrush x:Key="SystemControlHighlightListAccentHighBrush" Color="{StaticResource SystemAccentColor}" Opacity="0.9" />
+            <SolidColorBrush x:Key="SystemControlHighlightListAccentLowBrush" Color="{StaticResource SystemAccentColor}" Opacity="0.6" />
+            <SolidColorBrush x:Key="SystemControlHighlightListAccentMediumBrush" Color="{StaticResource SystemAccentColor}" Opacity="0.8" />
             <SolidColorBrush x:Key="SystemControlHighlightListMediumBrush" Color="{StaticResource SystemListMediumColor}" />
             <SolidColorBrush x:Key="SystemControlHighlightListLowBrush" Color="{StaticResource SystemListLowColor}" />
             <SolidColorBrush x:Key="SystemControlHighlightChromeWhiteBrush" Color="{StaticResource SystemChromeWhiteColor}" />
             <SolidColorBrush x:Key="SystemControlHighlightTransparentBrush" Color="Transparent" />
-            <SolidColorBrush x:Key="SystemControlHyperlinkTextBrush" Color="{ThemeResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="SystemControlHyperlinkTextBrush" Color="{StaticResource SystemAccentColor}" />
             <SolidColorBrush x:Key="SystemControlHyperlinkBaseHighBrush" Color="{StaticResource SystemBaseHighColor}" />
             <SolidColorBrush x:Key="SystemControlHyperlinkBaseMediumBrush" Color="{StaticResource SystemBaseMediumColor}" />
             <SolidColorBrush x:Key="SystemControlHyperlinkBaseMediumHighBrush" Color="{StaticResource SystemBaseMediumHighColor}" />
@@ -191,8 +196,8 @@
             <StaticResource x:Key="SystemControlDescriptionTextForegroundBrush" ResourceKey="SystemControlPageTextBaseMediumBrush" />
             <!-- Resources for Microsoft.UI.Xaml -->
             <SolidColorBrush x:Key="SystemControlTransparentBrush" Color="Transparent" />
-            <SolidColorBrush x:Key="SystemControlHighlightListAccentVeryHighBrush" Color="{ThemeResource SystemAccentColor}" Opacity="0.9" />
-            <SolidColorBrush x:Key="SystemControlHighlightListAccentMediumLowBrush" Color="{ThemeResource SystemAccentColor}" Opacity="0.75" />
+            <SolidColorBrush x:Key="SystemControlHighlightListAccentVeryHighBrush" Color="{StaticResource SystemAccentColor}" Opacity="0.9" />
+            <SolidColorBrush x:Key="SystemControlHighlightListAccentMediumLowBrush" Color="{StaticResource SystemAccentColor}" Opacity="0.75" />
             <x:Boolean x:Key="UseSystemFocusVisuals">True</x:Boolean>
             <Thickness x:Key="TextControlBorderThemeThickness">1</Thickness>
             <Thickness x:Key="TextControlBorderThemeThicknessFocused">1,1,1,2</Thickness>
@@ -275,9 +280,9 @@
             <SolidColorBrush x:Key="TextFillColorTertiaryBrush" Color="{StaticResource TextFillColorTertiary}" />
             <SolidColorBrush x:Key="TextFillColorDisabledBrush" Color="{StaticResource TextFillColorDisabled}" />
             <SolidColorBrush x:Key="TextFillColorInverseBrush" Color="{StaticResource TextFillColorInverse}" />
-            <SolidColorBrush x:Key="AccentTextFillColorPrimaryBrush" Color="{ThemeResource SystemAccentColorLight3}" />
-            <SolidColorBrush x:Key="AccentTextFillColorSecondaryBrush" Color="{ThemeResource SystemAccentColorLight3}" />
-            <SolidColorBrush x:Key="AccentTextFillColorTertiaryBrush" Color="{ThemeResource SystemAccentColorLight2}" />
+            <SolidColorBrush x:Key="AccentTextFillColorPrimaryBrush" Color="{StaticResource SystemAccentColorLight3}" />
+            <SolidColorBrush x:Key="AccentTextFillColorSecondaryBrush" Color="{StaticResource SystemAccentColorLight3}" />
+            <SolidColorBrush x:Key="AccentTextFillColorTertiaryBrush" Color="{StaticResource SystemAccentColorLight2}" />
             <SolidColorBrush x:Key="AccentTextFillColorDisabledBrush" Color="{StaticResource AccentTextFillColorDisabled}" />
             <SolidColorBrush x:Key="TextOnAccentFillColorSelectedTextBrush" Color="{StaticResource TextOnAccentFillColorSelectedText}" />
             <SolidColorBrush x:Key="TextOnAccentFillColorPrimaryBrush" Color="{StaticResource TextOnAccentFillColorPrimary}" />
@@ -305,10 +310,10 @@
             <SolidColorBrush x:Key="ControlOnImageFillColorSecondaryBrush" Color="{StaticResource ControlOnImageFillColorSecondary}" />
             <SolidColorBrush x:Key="ControlOnImageFillColorTertiaryBrush" Color="{StaticResource ControlOnImageFillColorTertiary}" />
             <SolidColorBrush x:Key="ControlOnImageFillColorDisabledBrush" Color="{StaticResource ControlOnImageFillColorDisabled}" />
-            <SolidColorBrush x:Key="AccentFillColorSelectedTextBackgroundBrush" Color="{ThemeResource SystemAccentColor}" />
-            <SolidColorBrush x:Key="AccentFillColorDefaultBrush" Color="{ThemeResource SystemAccentColorLight2}" />
-            <SolidColorBrush x:Key="AccentFillColorSecondaryBrush" Color="{ThemeResource SystemAccentColorLight2}" Opacity="0.9" />
-            <SolidColorBrush x:Key="AccentFillColorTertiaryBrush" Color="{ThemeResource SystemAccentColorLight2}" Opacity="0.8" />
+            <SolidColorBrush x:Key="AccentFillColorSelectedTextBackgroundBrush" Color="{StaticResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="AccentFillColorDefaultBrush" Color="{StaticResource SystemAccentColorLight2}" />
+            <SolidColorBrush x:Key="AccentFillColorSecondaryBrush" Color="{StaticResource SystemAccentColorLight2}" Opacity="0.9" />
+            <SolidColorBrush x:Key="AccentFillColorTertiaryBrush" Color="{StaticResource SystemAccentColorLight2}" Opacity="0.8" />
             <SolidColorBrush x:Key="AccentFillColorDisabledBrush" Color="{StaticResource AccentFillColorDisabled}" />
             <SolidColorBrush x:Key="ControlStrokeColorDefaultBrush" Color="{StaticResource ControlStrokeColorDefault}" />
             <SolidColorBrush x:Key="ControlStrokeColorSecondaryBrush" Color="{StaticResource ControlStrokeColorSecondary}" />
@@ -338,7 +343,7 @@
             <SolidColorBrush x:Key="SolidBackgroundFillColorSecondaryBrush" Color="{StaticResource SolidBackgroundFillColorSecondary}" />
             <SolidColorBrush x:Key="SolidBackgroundFillColorTertiaryBrush" Color="{StaticResource SolidBackgroundFillColorTertiary}" />
             <SolidColorBrush x:Key="SolidBackgroundFillColorQuarternaryBrush" Color="{StaticResource SolidBackgroundFillColorQuarternary}" />
-            <SolidColorBrush x:Key="SystemFillColorAttentionBrush" Color="{ThemeResource SystemAccentColorLight2}" />
+            <SolidColorBrush x:Key="SystemFillColorAttentionBrush" Color="{StaticResource SystemAccentColorLight2}" />
             <SolidColorBrush x:Key="SystemFillColorSuccessBrush" Color="{StaticResource SystemFillColorSuccess}" />
             <SolidColorBrush x:Key="SystemFillColorCautionBrush" Color="{StaticResource SystemFillColorCaution}" />
             <SolidColorBrush x:Key="SystemFillColorCriticalBrush" Color="{StaticResource SystemFillColorCritical}" />
@@ -402,9 +407,9 @@
             <SolidColorBrush x:Key="TextOnAccentAAFillColorDisabledBrush" Color="{StaticResource TextOnAccentAAFillColorDisabled}" />
             <SolidColorBrush x:Key="ControlAAFillColorDefaultBrush" Color="{StaticResource ControlAAFillColorDefault}" />
             <SolidColorBrush x:Key="ControlAAFillColorDisabledBrush" Color="{StaticResource ControlAAFillColorDisabled}" />
-            <SolidColorBrush x:Key="AccentAAFillColorDefaultBrush" Color="{ThemeResource SystemAccentColorLight2}" />
-            <SolidColorBrush x:Key="AccentAAFillColorSecondaryBrush" Color="{ThemeResource SystemAccentColorLight3}" />
-            <SolidColorBrush x:Key="AccentAAFillColorTertiaryBrush" Color="{ThemeResource SystemAccentColorLight1}" />
+            <SolidColorBrush x:Key="AccentAAFillColorDefaultBrush" Color="{StaticResource SystemAccentColorLight2}" />
+            <SolidColorBrush x:Key="AccentAAFillColorSecondaryBrush" Color="{StaticResource SystemAccentColorLight3}" />
+            <SolidColorBrush x:Key="AccentAAFillColorTertiaryBrush" Color="{StaticResource SystemAccentColorLight1}" />
             <SolidColorBrush x:Key="AccentAAFillColorDisabledBrush" Color="{StaticResource AccentAAFillColorDisabled}" />
             <SolidColorBrush x:Key="ControlStrokeColorForAAFillOnImageBrush" Color="{StaticResource ControlStrokeColorForAAFillOnImage}" />
             <SolidColorBrush x:Key="ControlAAStrokeColorDefaultBrush" Color="{StaticResource ControlAAStrokeColorDefault}" />
@@ -487,12 +492,12 @@
             <Color x:Key="SystemChromeAltHighColor">#FF1C1C1C</Color>
             <media:AcrylicBrush x:Key="SystemControlAcrylicWindowBrush" BackgroundSource="HostBackdrop" TintColor="{StaticResource SystemChromeAltHighColor}" TintOpacity="0.8" FallbackColor="{StaticResource SystemChromeMediumColor}" />
             <media:AcrylicBrush x:Key="SystemControlAcrylicElementBrush" BackgroundSource="Backdrop" TintColor="{StaticResource SystemChromeAltHighColor}" TintOpacity="0.8" FallbackColor="{StaticResource SystemChromeMediumColor}" />
-            <media:AcrylicBrush x:Key="SystemControlAccentAcrylicWindowAccentMediumHighBrush" BackgroundSource="HostBackdrop" TintColor="{ThemeResource SystemAccentColor}" TintOpacity="0.7" FallbackColor="{ThemeResource SystemAccentColor}" />
-            <media:AcrylicBrush x:Key="SystemControlAccentAcrylicElementAccentMediumHighBrush" BackgroundSource="Backdrop" TintColor="{ThemeResource SystemAccentColor}" TintOpacity="0.7" FallbackColor="{ThemeResource SystemAccentColor}" />
-            <media:AcrylicBrush x:Key="SystemControlAccentDark1AcrylicWindowAccentDark1Brush" BackgroundSource="HostBackdrop" TintColor="{ThemeResource SystemAccentColorDark1}" TintOpacity="0.8" FallbackColor="{ThemeResource SystemAccentColorDark1}" />
-            <media:AcrylicBrush x:Key="SystemControlAccentDark1AcrylicElementAccentDark1Brush" BackgroundSource="Backdrop" TintColor="{ThemeResource SystemAccentColorDark1}" TintOpacity="0.8" FallbackColor="{ThemeResource SystemAccentColorDark1}" />
-            <media:AcrylicBrush x:Key="SystemControlAccentDark2AcrylicWindowAccentDark2MediumHighBrush" BackgroundSource="HostBackdrop" TintColor="{ThemeResource SystemAccentColorDark2}" TintOpacity="0.7" FallbackColor="{ThemeResource SystemAccentColorDark2}" />
-            <media:AcrylicBrush x:Key="SystemControlAccentDark2AcrylicElementAccentDark2MediumHighBrush" BackgroundSource="Backdrop" TintColor="{ThemeResource SystemAccentColorDark2}" TintOpacity="0.7" FallbackColor="{ThemeResource SystemAccentColorDark2}" />
+            <media:AcrylicBrush x:Key="SystemControlAccentAcrylicWindowAccentMediumHighBrush" BackgroundSource="HostBackdrop" TintColor="{StaticResource SystemAccentColor}" TintOpacity="0.7" FallbackColor="{StaticResource SystemAccentColor}" />
+            <media:AcrylicBrush x:Key="SystemControlAccentAcrylicElementAccentMediumHighBrush" BackgroundSource="Backdrop" TintColor="{StaticResource SystemAccentColor}" TintOpacity="0.7" FallbackColor="{StaticResource SystemAccentColor}" />
+            <media:AcrylicBrush x:Key="SystemControlAccentDark1AcrylicWindowAccentDark1Brush" BackgroundSource="HostBackdrop" TintColor="{StaticResource SystemAccentColorDark1}" TintOpacity="0.8" FallbackColor="{StaticResource SystemAccentColorDark1}" />
+            <media:AcrylicBrush x:Key="SystemControlAccentDark1AcrylicElementAccentDark1Brush" BackgroundSource="Backdrop" TintColor="{StaticResource SystemAccentColorDark1}" TintOpacity="0.8" FallbackColor="{StaticResource SystemAccentColorDark1}" />
+            <media:AcrylicBrush x:Key="SystemControlAccentDark2AcrylicWindowAccentDark2MediumHighBrush" BackgroundSource="HostBackdrop" TintColor="{StaticResource SystemAccentColorDark2}" TintOpacity="0.7" FallbackColor="{StaticResource SystemAccentColorDark2}" />
+            <media:AcrylicBrush x:Key="SystemControlAccentDark2AcrylicElementAccentDark2MediumHighBrush" BackgroundSource="Backdrop" TintColor="{StaticResource SystemAccentColorDark2}" TintOpacity="0.7" FallbackColor="{StaticResource SystemAccentColorDark2}" />
             <media:AcrylicBrush x:Key="SystemControlAcrylicWindowMediumHighBrush" BackgroundSource="HostBackdrop" TintColor="{StaticResource SystemChromeAltHighColor}" TintOpacity="0.7" FallbackColor="{StaticResource SystemChromeMediumColor}" />
             <media:AcrylicBrush x:Key="SystemControlAcrylicElementMediumHighBrush" BackgroundSource="Backdrop" TintColor="{StaticResource SystemChromeAltHighColor}" TintOpacity="0.7" FallbackColor="{StaticResource SystemChromeMediumColor}" />
             <media:AcrylicBrush x:Key="SystemControlChromeMediumLowAcrylicWindowMediumBrush" BackgroundSource="HostBackdrop" TintColor="{StaticResource SystemChromeAltHighColor}" TintOpacity="0.6" FallbackColor="{StaticResource SystemChromeMediumLowColor}" />
@@ -546,16 +551,16 @@
             <media:RevealBackgroundBrush x:Key="SystemControlBackgroundBaseLowRevealBackgroundBrush" TargetTheme="Dark" Color="{StaticResource SystemRevealBaseLowColor}" FallbackColor="{StaticResource SystemBaseLowColor}" />
             <media:RevealBackgroundBrush x:Key="SystemControlTransparentRevealBackgroundBrush" TargetTheme="Dark" Color="Transparent" FallbackColor="Transparent" />
             <media:RevealBackgroundBrush x:Key="SystemControlBackgroundAltHighRevealBackgroundBrush" TargetTheme="Dark" Color="{StaticResource SystemAltHighColor}" FallbackColor="{StaticResource SystemAltHighColor}" />
-            <media:RevealBackgroundBrush x:Key="SystemControlHighlightAccentRevealBackgroundBrush" TargetTheme="Dark" Color="{ThemeResource SystemAccentColor}" FallbackColor="{ThemeResource SystemAccentColor}" />
-            <media:RevealBackgroundBrush x:Key="SystemControlHighlightAccent3RevealBackgroundBrush" TargetTheme="Dark" Color="{ThemeResource SystemAccentColorDark3}" FallbackColor="{ThemeResource SystemAccentColorDark3}" />
-            <media:RevealBackgroundBrush x:Key="SystemControlHighlightAccent2RevealBackgroundBrush" TargetTheme="Dark" Color="{ThemeResource SystemAccentColorDark2}" FallbackColor="{ThemeResource SystemAccentColorDark2}" />
+            <media:RevealBackgroundBrush x:Key="SystemControlHighlightAccentRevealBackgroundBrush" TargetTheme="Dark" Color="{StaticResource SystemAccentColor}" FallbackColor="{StaticResource SystemAccentColor}" />
+            <media:RevealBackgroundBrush x:Key="SystemControlHighlightAccent3RevealBackgroundBrush" TargetTheme="Dark" Color="{StaticResource SystemAccentColorDark3}" FallbackColor="{StaticResource SystemAccentColorDark3}" />
+            <media:RevealBackgroundBrush x:Key="SystemControlHighlightAccent2RevealBackgroundBrush" TargetTheme="Dark" Color="{StaticResource SystemAccentColorDark2}" FallbackColor="{StaticResource SystemAccentColorDark2}" />
             <media:RevealBackgroundBrush x:Key="SystemControlHighlightListMediumRevealBackgroundBrush" TargetTheme="Dark" Color="{StaticResource SystemRevealListMediumColor}" FallbackColor="{StaticResource SystemListMediumColor}" />
             <media:RevealBackgroundBrush x:Key="SystemControlHighlightListLowRevealBackgroundBrush" TargetTheme="Dark" Color="{StaticResource SystemRevealListLowColor}" FallbackColor="{StaticResource SystemListLowColor}" />
             <media:RevealBackgroundBrush x:Key="SystemControlBackgroundBaseMediumLowRevealBaseLowBackgroundBrush" TargetTheme="Dark" Color="{StaticResource SystemRevealBaseLowColor}" FallbackColor="{StaticResource SystemBaseMediumLowColor}" />
-            <media:RevealBackgroundBrush x:Key="SystemControlHighlightBaseMediumLowRevealAccentBackgroundBrush" TargetTheme="Dark" Color="{ThemeResource SystemAccentColor}" FallbackColor="{StaticResource SystemBaseMediumLowColor}" />
+            <media:RevealBackgroundBrush x:Key="SystemControlHighlightBaseMediumLowRevealAccentBackgroundBrush" TargetTheme="Dark" Color="{StaticResource SystemAccentColor}" FallbackColor="{StaticResource SystemBaseMediumLowColor}" />
             <media:RevealBackgroundBrush x:Key="SystemControlHighlightListMediumRevealListLowBackgroundBrush" TargetTheme="Dark" Color="{StaticResource SystemRevealListLowColor}" FallbackColor="{StaticResource SystemListMediumColor}" />
-            <media:RevealBackgroundBrush x:Key="SystemControlHighlightAccent3RevealAccent2BackgroundBrush" TargetTheme="Dark" Color="{ThemeResource SystemAccentColorDark2}" FallbackColor="{ThemeResource SystemAccentColorDark3}" />
-            <media:RevealBorderBrush x:Key="SystemControlBackgroundAccentRevealBorderBrush" TargetTheme="Dark" Color="{ThemeResource SystemAccentColor}" FallbackColor="{ThemeResource SystemAccentColor}" />
+            <media:RevealBackgroundBrush x:Key="SystemControlHighlightAccent3RevealAccent2BackgroundBrush" TargetTheme="Dark" Color="{StaticResource SystemAccentColorDark2}" FallbackColor="{StaticResource SystemAccentColorDark3}" />
+            <media:RevealBorderBrush x:Key="SystemControlBackgroundAccentRevealBorderBrush" TargetTheme="Dark" Color="{StaticResource SystemAccentColor}" FallbackColor="{StaticResource SystemAccentColor}" />
             <media:RevealBorderBrush x:Key="SystemControlBackgroundBaseHighRevealBorderBrush" TargetTheme="Dark" Color="{StaticResource SystemRevealBaseHighColor}" FallbackColor="{StaticResource SystemBaseHighColor}" />
             <media:RevealBorderBrush x:Key="SystemControlBackgroundBaseLowRevealBorderBrush" TargetTheme="Dark" Color="{StaticResource SystemRevealBaseLowColor}" FallbackColor="{StaticResource SystemBaseLowColor}" />
             <media:RevealBorderBrush x:Key="SystemControlBackgroundBaseMediumRevealBorderBrush" TargetTheme="Dark" Color="{StaticResource SystemRevealBaseMediumColor}" FallbackColor="{StaticResource SystemBaseMediumColor}" />
@@ -574,7 +579,7 @@
             <media:RevealBorderBrush x:Key="SystemControlBackgroundTransparentRevealBorderBrush" TargetTheme="Dark" Color="Transparent" FallbackColor="Transparent" />
             <media:RevealBorderBrush x:Key="SystemControlHighlightTransparentRevealBorderBrush" TargetTheme="Dark" Color="Transparent" FallbackColor="Transparent" />
             <media:RevealBorderBrush x:Key="SystemControlHighlightAltTransparentRevealBorderBrush" TargetTheme="Dark" Color="Transparent" FallbackColor="Transparent" />
-            <media:RevealBorderBrush x:Key="SystemControlHighlightAccentRevealBorderBrush" TargetTheme="Dark" Color="{ThemeResource SystemAccentColor}" FallbackColor="{ThemeResource SystemAccentColor}" />
+            <media:RevealBorderBrush x:Key="SystemControlHighlightAccentRevealBorderBrush" TargetTheme="Dark" Color="{StaticResource SystemAccentColor}" FallbackColor="{StaticResource SystemAccentColor}" />
             <media:RevealBorderBrush x:Key="SystemControlHighlightBaseHighRevealBorderBrush" TargetTheme="Dark" Color="{StaticResource SystemRevealBaseHighColor}" FallbackColor="{StaticResource SystemBaseHighColor}" />
             <media:RevealBorderBrush x:Key="SystemControlHighlightBaseLowRevealBorderBrush" TargetTheme="Dark" Color="{StaticResource SystemRevealBaseLowColor}" FallbackColor="{StaticResource SystemBaseLowColor}" />
             <media:RevealBorderBrush x:Key="SystemControlHighlightBaseMediumRevealBorderBrush" TargetTheme="Dark" Color="{StaticResource SystemRevealBaseMediumColor}" FallbackColor="{StaticResource SystemBaseMediumColor}" />
@@ -724,7 +729,7 @@
             <Thickness x:Key="ContentDialogContentScrollViewerMargin">0,0,0,0</Thickness>
             <StaticResource x:Key="ContentDialogLightDismissOverlayBackground" ResourceKey="SystemControlPageBackgroundMediumAltMediumBrush" />
             <SolidColorBrush x:Key="ContentDialogBackgroundThemeBrush" Color="LightGray" />
-            <SolidColorBrush x:Key="ContentDialogBorderThemeBrush" Color="{ThemeResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="ContentDialogBorderThemeBrush" Color="{StaticResource SystemAccentColor}" />
             <SolidColorBrush x:Key="ContentDialogContentForegroundBrush" Color="Black" />
             <SolidColorBrush x:Key="ContentDialogDimmingThemeBrush" Color="#99FFFFFF" />
             <Thickness x:Key="ContentDialogCommandSpaceMargin">0,24,0,0</Thickness>
@@ -1181,7 +1186,7 @@
                     <ScaleTransform ScaleY="-1" CenterY="0.5" />
                 </LinearGradientBrush.RelativeTransform>
                 <LinearGradientBrush.GradientStops>
-                    <GradientStop Offset="1.0" Color="{ThemeResource SystemAccentColorLight2}" />
+                    <GradientStop Offset="1.0" Color="{StaticResource SystemAccentColorLight2}" />
                     <GradientStop Offset="1.0" Color="{StaticResource ControlStrokeColorDefault}" />
                 </LinearGradientBrush.GradientStops>
             </LinearGradientBrush>
@@ -2175,10 +2180,10 @@
             <media:AcrylicBrush x:Key="AcrylicInAppFillColorDefaultInverseBrush" TintColor="#FCFCFC" TintOpacity="0.0" FallbackColor="#F9F9F9" BackgroundSource="Backdrop" />
             <media:AcrylicBrush x:Key="AcrylicBackgroundFillColorBaseBrush" TintColor="#202020" TintOpacity="0.0" FallbackColor="#202020" BackgroundSource="HostBackdrop" />
             <media:AcrylicBrush x:Key="AcrylicInAppFillColorBaseBrush" TintColor="#202020" TintOpacity="0.0" FallbackColor="#202020" BackgroundSource="Backdrop" />
-            <media:AcrylicBrush x:Key="AccentAcrylicBackgroundFillColorDefaultBrush" TintColor="{ThemeResource SystemAccentColorDark1}" TintOpacity="0.8" FallbackColor="{ThemeResource SystemAccentColorDark1}" BackgroundSource="HostBackdrop" />
-            <media:AcrylicBrush x:Key="AccentAcrylicInAppFillColorDefaultBrush" TintColor="{ThemeResource SystemAccentColorDark1}" TintOpacity="0.8" FallbackColor="{ThemeResource SystemAccentColorDark1}" BackgroundSource="Backdrop" />
-            <media:AcrylicBrush x:Key="AccentAcrylicBackgroundFillColorBaseBrush" TintColor="{ThemeResource SystemAccentColorDark2}" TintOpacity="0.8" FallbackColor="{ThemeResource SystemAccentColorDark2}" BackgroundSource="HostBackdrop" />
-            <media:AcrylicBrush x:Key="AccentAcrylicInAppFillColorBaseBrush" TintColor="{ThemeResource SystemAccentColorDark2}" TintOpacity="0.8" FallbackColor="{ThemeResource SystemAccentColorDark2}" BackgroundSource="Backdrop" />
+            <media:AcrylicBrush x:Key="AccentAcrylicBackgroundFillColorDefaultBrush" TintColor="{StaticResource SystemAccentColorDark1}" TintOpacity="0.8" FallbackColor="{StaticResource SystemAccentColorDark1}" BackgroundSource="HostBackdrop" />
+            <media:AcrylicBrush x:Key="AccentAcrylicInAppFillColorDefaultBrush" TintColor="{StaticResource SystemAccentColorDark1}" TintOpacity="0.8" FallbackColor="{StaticResource SystemAccentColorDark1}" BackgroundSource="Backdrop" />
+            <media:AcrylicBrush x:Key="AccentAcrylicBackgroundFillColorBaseBrush" TintColor="{StaticResource SystemAccentColorDark2}" TintOpacity="0.8" FallbackColor="{StaticResource SystemAccentColorDark2}" BackgroundSource="HostBackdrop" />
+            <media:AcrylicBrush x:Key="AccentAcrylicInAppFillColorBaseBrush" TintColor="{StaticResource SystemAccentColorDark2}" TintOpacity="0.8" FallbackColor="{StaticResource SystemAccentColorDark2}" BackgroundSource="Backdrop" />
             <StaticResource x:Key="CommandBarFlyoutBackground" ResourceKey="SystemControlTransientBackgroundBrush" />
             <StaticResource x:Key="CommandBarFlyoutForeground" ResourceKey="TextFillColorPrimaryBrush" />
             <StaticResource x:Key="CommandBarFlyoutBorderBrush" ResourceKey="ControlStrokeColorDefaultBrush" />
@@ -2219,7 +2224,7 @@
             <SolidColorBrush x:Key="ContentDialogBackground" Color="{StaticResource SolidBackgroundFillColorBase}" />
 
             <SolidColorBrush x:Key="PageHeaderForegroundBrush" Color="{StaticResource SystemBaseHighColor}" />
-            <SolidColorBrush x:Key="PageHeaderHighlightBrush" Color="{ThemeResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="PageHeaderHighlightBrush" Color="{StaticResource SystemAccentColor}" />
             <SolidColorBrush x:Key="PageHeaderDisabledBrush" Color="{StaticResource SystemBaseMediumColor}" />
 
             <SolidColorBrush x:Key="PageTitleBackgroundBrush" Color="{StaticResource SystemChromeMediumLowColor}" />
@@ -2230,14 +2235,19 @@
 
             <SolidColorBrush x:Key="TelegramSeparatorMediumBrush" Color="{StaticResource SystemChromeMediumLowColor}" />
 
-            <SolidColorBrush x:Key="PinnedMessageForegroundBrush" Color="{ThemeResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="TelegramBackgroundAccentBrush" Color="{StaticResource SystemAccentColor}"/>
+            <SolidColorBrush x:Key="TelegramForegroundAccentBrush" Color="{StaticResource SystemAccentColor}"/>
+
+            <SolidColorBrush x:Key="PinnedMessageForegroundBrush" Color="{StaticResource SystemAccentColor}" />
             <SolidColorBrush x:Key="PinnedMessageBorderBrush" Color="{StaticResource SystemChromeMediumColor}" />
+
+            <SolidColorBrush x:Key="TinyButtonBackgroundBrush" Color="{StaticResource SystemAccentColor}" Opacity="0.2" />
 
             <!-- Chats -->
             <SolidColorBrush x:Key="ChatOnlineBadgeBrush" Color="#00B12C" />
-            <SolidColorBrush x:Key="ChatVerifiedBadgeBrush" Color="{ThemeResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="ChatVerifiedBadgeBrush" Color="{StaticResource SystemAccentColor}" />
 
-            <SolidColorBrush x:Key="ChatLastMessageStateBrush" Color="{ThemeResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="ChatLastMessageStateBrush" Color="{StaticResource SystemAccentColor}" />
 
             <SolidColorBrush x:Key="ChatFromLabelBrush" Color="#3C7EB0" />
             <SolidColorBrush x:Key="ChatDraftLabelBrush" Color="#DD4B39" />
@@ -2248,7 +2258,7 @@
             <SolidColorBrush x:Key="ChatFailedBadgeBrush" Color="#FF0000" />
             <SolidColorBrush x:Key="ChatFailedLabelBrush" Color="#FFFFFF" />
 
-            <SolidColorBrush x:Key="ChatUnreadBadgeBrush" Color="{ThemeResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="ChatUnreadBadgeBrush" Color="{StaticResource SystemAccentColor}" />
             <SolidColorBrush x:Key="ChatUnreadLabelBrush" Color="#FFFFFF" />
 
             <!-- Messages -->
@@ -2296,7 +2306,7 @@
             <Color x:Key="SystemChromeGrayColor">#FF767676</Color>
             <Color x:Key="SystemListLowColor">#19000000</Color>
             <Color x:Key="SystemListMediumColor">#33000000</Color>
-            <SolidColorBrush x:Key="SystemControlBackgroundAccentBrush" Color="{ThemeResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="SystemControlBackgroundAccentBrush" Color="{StaticResource SystemAccentColor}" />
             <SolidColorBrush x:Key="SystemControlBackgroundAltHighBrush" Color="{StaticResource SystemAltHighColor}" />
             <SolidColorBrush x:Key="SystemControlBackgroundAltMediumHighBrush" Color="{StaticResource SystemAltMediumHighColor}" />
             <SolidColorBrush x:Key="SystemControlBackgroundAltMediumBrush" Color="{StaticResource SystemAltMediumColor}" />
@@ -2315,7 +2325,7 @@
             <SolidColorBrush x:Key="SystemControlBackgroundChromeWhiteBrush" Color="{StaticResource SystemChromeWhiteColor}" />
             <SolidColorBrush x:Key="SystemControlBackgroundListLowBrush" Color="{StaticResource SystemListLowColor}" />
             <SolidColorBrush x:Key="SystemControlBackgroundListMediumBrush" Color="{StaticResource SystemListMediumColor}" />
-            <SolidColorBrush x:Key="SystemControlDisabledAccentBrush" Color="{ThemeResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="SystemControlDisabledAccentBrush" Color="{StaticResource SystemAccentColor}" />
             <SolidColorBrush x:Key="SystemControlDisabledBaseHighBrush" Color="{StaticResource SystemBaseHighColor}" />
             <SolidColorBrush x:Key="SystemControlDisabledBaseLowBrush" Color="{StaticResource SystemBaseLowColor}" />
             <SolidColorBrush x:Key="SystemControlDisabledBaseMediumLowBrush" Color="{StaticResource SystemBaseMediumLowColor}" />
@@ -2327,7 +2337,7 @@
             <SolidColorBrush x:Key="SystemControlDisabledTransparentBrush" Color="Transparent" />
             <!--<SolidColorBrush x:Key="SystemControlFocusVisualPrimaryBrush" Color="{ThemeResource SystemBaseHighColor}" />-->
             <!--<SolidColorBrush x:Key="SystemControlFocusVisualSecondaryBrush" Color="{ThemeResource SystemAltMediumColor}" />-->
-            <SolidColorBrush x:Key="SystemControlForegroundAccentBrush" Color="{ThemeResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="SystemControlForegroundAccentBrush" Color="{StaticResource SystemAccentColor}" />
             <SolidColorBrush x:Key="SystemControlForegroundAltHighBrush" Color="{StaticResource SystemAltHighColor}" />
             <SolidColorBrush x:Key="SystemControlForegroundAltMediumHighBrush" Color="{StaticResource SystemAltMediumHighColor}" />
             <SolidColorBrush x:Key="SystemControlForegroundBaseHighBrush" Color="{StaticResource SystemBaseHighColor}" />
@@ -2346,8 +2356,8 @@
             <SolidColorBrush x:Key="SystemControlForegroundListLowBrush" Color="{StaticResource SystemListLowColor}" />
             <SolidColorBrush x:Key="SystemControlForegroundListMediumBrush" Color="{StaticResource SystemListMediumColor}" />
             <SolidColorBrush x:Key="SystemControlForegroundTransparentBrush" Color="Transparent" />
-            <SolidColorBrush x:Key="SystemControlHighlightAccentBrush" Color="{ThemeResource SystemAccentColor}" />
-            <SolidColorBrush x:Key="SystemControlHighlightAltAccentBrush" Color="{ThemeResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="SystemControlHighlightAccentBrush" Color="{StaticResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="SystemControlHighlightAltAccentBrush" Color="{StaticResource SystemAccentColor}" />
             <SolidColorBrush x:Key="SystemControlHighlightAltAltHighBrush" Color="{StaticResource SystemAltHighColor}" />
             <SolidColorBrush x:Key="SystemControlHighlightAltBaseHighBrush" Color="{StaticResource SystemBaseHighColor}" />
             <SolidColorBrush x:Key="SystemControlHighlightAltBaseLowBrush" Color="{StaticResource SystemBaseLowColor}" />
@@ -2355,9 +2365,9 @@
             <SolidColorBrush x:Key="SystemControlHighlightAltBaseMediumHighBrush" Color="{StaticResource SystemBaseMediumHighColor}" />
             <SolidColorBrush x:Key="SystemControlHighlightAltAltMediumHighBrush" Color="{StaticResource SystemAltMediumHighColor}" />
             <SolidColorBrush x:Key="SystemControlHighlightAltBaseMediumLowBrush" Color="{StaticResource SystemBaseMediumLowColor}" />
-            <SolidColorBrush x:Key="SystemControlHighlightAltListAccentHighBrush" Color="{ThemeResource SystemAccentColor}" Opacity="0.7" />
-            <SolidColorBrush x:Key="SystemControlHighlightAltListAccentLowBrush" Color="{ThemeResource SystemAccentColor}" Opacity="0.4" />
-            <SolidColorBrush x:Key="SystemControlHighlightAltListAccentMediumBrush" Color="{ThemeResource SystemAccentColor}" Opacity="0.6" />
+            <SolidColorBrush x:Key="SystemControlHighlightAltListAccentHighBrush" Color="{StaticResource SystemAccentColor}" Opacity="0.7" />
+            <SolidColorBrush x:Key="SystemControlHighlightAltListAccentLowBrush" Color="{StaticResource SystemAccentColor}" Opacity="0.4" />
+            <SolidColorBrush x:Key="SystemControlHighlightAltListAccentMediumBrush" Color="{StaticResource SystemAccentColor}" Opacity="0.6" />
             <SolidColorBrush x:Key="SystemControlHighlightAltChromeWhiteBrush" Color="{StaticResource SystemChromeWhiteColor}" />
             <SolidColorBrush x:Key="SystemControlHighlightAltTransparentBrush" Color="Transparent" />
             <SolidColorBrush x:Key="SystemControlHighlightBaseHighBrush" Color="{StaticResource SystemBaseHighColor}" />
@@ -2367,14 +2377,14 @@
             <SolidColorBrush x:Key="SystemControlHighlightBaseMediumLowBrush" Color="{StaticResource SystemBaseMediumLowColor}" />
             <SolidColorBrush x:Key="SystemControlHighlightChromeAltLowBrush" Color="{StaticResource SystemChromeAltLowColor}" />
             <SolidColorBrush x:Key="SystemControlHighlightChromeHighBrush" Color="{StaticResource SystemChromeHighColor}" />
-            <SolidColorBrush x:Key="SystemControlHighlightListAccentHighBrush" Color="{ThemeResource SystemAccentColor}" Opacity="0.7" />
-            <SolidColorBrush x:Key="SystemControlHighlightListAccentLowBrush" Color="{ThemeResource SystemAccentColor}" Opacity="0.4" />
-            <SolidColorBrush x:Key="SystemControlHighlightListAccentMediumBrush" Color="{ThemeResource SystemAccentColor}" Opacity="0.6" />
+            <SolidColorBrush x:Key="SystemControlHighlightListAccentHighBrush" Color="{StaticResource SystemAccentColor}" Opacity="0.7" />
+            <SolidColorBrush x:Key="SystemControlHighlightListAccentLowBrush" Color="{StaticResource SystemAccentColor}" Opacity="0.4" />
+            <SolidColorBrush x:Key="SystemControlHighlightListAccentMediumBrush" Color="{StaticResource SystemAccentColor}" Opacity="0.6" />
             <SolidColorBrush x:Key="SystemControlHighlightListMediumBrush" Color="{StaticResource SystemListMediumColor}" />
             <SolidColorBrush x:Key="SystemControlHighlightListLowBrush" Color="{StaticResource SystemListLowColor}" />
             <SolidColorBrush x:Key="SystemControlHighlightChromeWhiteBrush" Color="{StaticResource SystemChromeWhiteColor}" />
             <SolidColorBrush x:Key="SystemControlHighlightTransparentBrush" Color="Transparent" />
-            <SolidColorBrush x:Key="SystemControlHyperlinkTextBrush" Color="{ThemeResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="SystemControlHyperlinkTextBrush" Color="{StaticResource SystemAccentColor}" />
             <SolidColorBrush x:Key="SystemControlHyperlinkBaseHighBrush" Color="{StaticResource SystemBaseHighColor}" />
             <SolidColorBrush x:Key="SystemControlHyperlinkBaseMediumBrush" Color="{StaticResource SystemBaseMediumColor}" />
             <SolidColorBrush x:Key="SystemControlHyperlinkBaseMediumHighBrush" Color="{StaticResource SystemBaseMediumHighColor}" />
@@ -2396,8 +2406,8 @@
             <StaticResource x:Key="SystemControlDescriptionTextForegroundBrush" ResourceKey="SystemControlPageTextBaseMediumBrush" />
             <!-- Resources for Microsoft.UI.Xaml -->
             <SolidColorBrush x:Key="SystemControlTransparentBrush" Color="Transparent" />
-            <SolidColorBrush x:Key="SystemControlHighlightListAccentVeryHighBrush" Color="{ThemeResource SystemAccentColor}" Opacity="0.9" />
-            <SolidColorBrush x:Key="SystemControlHighlightListAccentMediumLowBrush" Color="{ThemeResource SystemAccentColor}" Opacity="0.75" />
+            <SolidColorBrush x:Key="SystemControlHighlightListAccentVeryHighBrush" Color="{StaticResource SystemAccentColor}" Opacity="0.9" />
+            <SolidColorBrush x:Key="SystemControlHighlightListAccentMediumLowBrush" Color="{StaticResource SystemAccentColor}" Opacity="0.75" />
             <x:Boolean x:Key="UseSystemFocusVisuals">True</x:Boolean>
             <Thickness x:Key="TextControlBorderThemeThickness">1</Thickness>
             <Thickness x:Key="TextControlBorderThemeThicknessFocused">1,1,1,2</Thickness>
@@ -2480,9 +2490,9 @@
             <SolidColorBrush x:Key="TextFillColorTertiaryBrush" Color="{StaticResource TextFillColorTertiary}" />
             <SolidColorBrush x:Key="TextFillColorDisabledBrush" Color="{StaticResource TextFillColorDisabled}" />
             <SolidColorBrush x:Key="TextFillColorInverseBrush" Color="{StaticResource TextFillColorInverse}" />
-            <SolidColorBrush x:Key="AccentTextFillColorPrimaryBrush" Color="{ThemeResource SystemAccentColorDark2}" />
-            <SolidColorBrush x:Key="AccentTextFillColorSecondaryBrush" Color="{ThemeResource SystemAccentColorDark3}" />
-            <SolidColorBrush x:Key="AccentTextFillColorTertiaryBrush" Color="{ThemeResource SystemAccentColorDark1}" />
+            <SolidColorBrush x:Key="AccentTextFillColorPrimaryBrush" Color="{StaticResource SystemAccentColorDark2}" />
+            <SolidColorBrush x:Key="AccentTextFillColorSecondaryBrush" Color="{StaticResource SystemAccentColorDark3}" />
+            <SolidColorBrush x:Key="AccentTextFillColorTertiaryBrush" Color="{StaticResource SystemAccentColorDark1}" />
             <SolidColorBrush x:Key="AccentTextFillColorDisabledBrush" Color="{StaticResource AccentTextFillColorDisabled}" />
             <SolidColorBrush x:Key="TextOnAccentFillColorSelectedTextBrush" Color="{StaticResource TextOnAccentFillColorSelectedText}" />
             <SolidColorBrush x:Key="TextOnAccentFillColorPrimaryBrush" Color="{StaticResource TextOnAccentFillColorPrimary}" />
@@ -2510,10 +2520,10 @@
             <SolidColorBrush x:Key="ControlOnImageFillColorSecondaryBrush" Color="{StaticResource ControlOnImageFillColorSecondary}" />
             <SolidColorBrush x:Key="ControlOnImageFillColorTertiaryBrush" Color="{StaticResource ControlOnImageFillColorTertiary}" />
             <SolidColorBrush x:Key="ControlOnImageFillColorDisabledBrush" Color="{StaticResource ControlOnImageFillColorDisabled}" />
-            <SolidColorBrush x:Key="AccentFillColorSelectedTextBackgroundBrush" Color="{ThemeResource SystemAccentColor}" />
-            <SolidColorBrush x:Key="AccentFillColorDefaultBrush" Color="{ThemeResource SystemAccentColorDark1}" />
-            <SolidColorBrush x:Key="AccentFillColorSecondaryBrush" Color="{ThemeResource SystemAccentColorDark1}" Opacity="0.9" />
-            <SolidColorBrush x:Key="AccentFillColorTertiaryBrush" Color="{ThemeResource SystemAccentColorDark1}" Opacity="0.8" />
+            <SolidColorBrush x:Key="AccentFillColorSelectedTextBackgroundBrush" Color="{StaticResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="AccentFillColorDefaultBrush" Color="{StaticResource SystemAccentColorDark1}" />
+            <SolidColorBrush x:Key="AccentFillColorSecondaryBrush" Color="{StaticResource SystemAccentColorDark1}" Opacity="0.9" />
+            <SolidColorBrush x:Key="AccentFillColorTertiaryBrush" Color="{StaticResource SystemAccentColorDark1}" Opacity="0.8" />
             <SolidColorBrush x:Key="AccentFillColorDisabledBrush" Color="{StaticResource AccentFillColorDisabled}" />
             <SolidColorBrush x:Key="ControlStrokeColorDefaultBrush" Color="{StaticResource ControlStrokeColorDefault}" />
             <SolidColorBrush x:Key="ControlStrokeColorSecondaryBrush" Color="{StaticResource ControlStrokeColorSecondary}" />
@@ -2543,7 +2553,7 @@
             <SolidColorBrush x:Key="SolidBackgroundFillColorSecondaryBrush" Color="{StaticResource SolidBackgroundFillColorSecondary}" />
             <SolidColorBrush x:Key="SolidBackgroundFillColorTertiaryBrush" Color="{StaticResource SolidBackgroundFillColorTertiary}" />
             <SolidColorBrush x:Key="SolidBackgroundFillColorQuarternaryBrush" Color="{StaticResource SolidBackgroundFillColorQuarternary}" />
-            <SolidColorBrush x:Key="SystemFillColorAttentionBrush" Color="{ThemeResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="SystemFillColorAttentionBrush" Color="{StaticResource SystemAccentColor}" />
             <SolidColorBrush x:Key="SystemFillColorSuccessBrush" Color="{StaticResource SystemFillColorSuccess}" />
             <SolidColorBrush x:Key="SystemFillColorCautionBrush" Color="{StaticResource SystemFillColorCaution}" />
             <SolidColorBrush x:Key="SystemFillColorCriticalBrush" Color="{StaticResource SystemFillColorCritical}" />
@@ -2610,9 +2620,9 @@
             <SolidColorBrush x:Key="TextOnAccentAAFillColorDisabledBrush" Color="{StaticResource TextOnAccentAAFillColorDisabled}" />
             <SolidColorBrush x:Key="ControlAAFillColorDefaultBrush" Color="{StaticResource ControlAAFillColorDefault}" />
             <SolidColorBrush x:Key="ControlAAFillColorDisabledBrush" Color="{StaticResource ControlAAFillColorDisabled}" />
-            <SolidColorBrush x:Key="AccentAAFillColorDefaultBrush" Color="{ThemeResource SystemAccentColorDark1}" />
-            <SolidColorBrush x:Key="AccentAAFillColorSecondaryBrush" Color="{ThemeResource SystemAccentColorDark2}" />
-            <SolidColorBrush x:Key="AccentAAFillColorTertiaryBrush" Color="{ThemeResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="AccentAAFillColorDefaultBrush" Color="{StaticResource SystemAccentColorDark1}" />
+            <SolidColorBrush x:Key="AccentAAFillColorSecondaryBrush" Color="{StaticResource SystemAccentColorDark2}" />
+            <SolidColorBrush x:Key="AccentAAFillColorTertiaryBrush" Color="{StaticResource SystemAccentColor}" />
             <SolidColorBrush x:Key="AccentAAFillColorDisabledBrush" Color="{StaticResource AccentAAFillColorDisabled}" />
             <SolidColorBrush x:Key="ControlStrokeColorForAAFillOnImageBrush" Color="{StaticResource ControlStrokeColorForAAFillOnImage}" />
             <SolidColorBrush x:Key="ControlAAStrokeColorDefaultBrush" Color="{StaticResource ControlAAStrokeColorDefault}" />
@@ -2695,12 +2705,12 @@
             <Color x:Key="SystemChromeAltHighColor">#FFFFFFFF</Color>
             <media:AcrylicBrush x:Key="SystemControlAcrylicWindowBrush" BackgroundSource="HostBackdrop" TintColor="{StaticResource SystemChromeAltHighColor}" TintOpacity="0.8" FallbackColor="{StaticResource SystemChromeMediumColor}" />
             <media:AcrylicBrush x:Key="SystemControlAcrylicElementBrush" BackgroundSource="Backdrop" TintColor="{StaticResource SystemChromeAltHighColor}" TintOpacity="0.8" FallbackColor="{StaticResource SystemChromeMediumColor}" />
-            <media:AcrylicBrush x:Key="SystemControlAccentAcrylicWindowAccentMediumHighBrush" BackgroundSource="HostBackdrop" TintColor="{ThemeResource SystemAccentColor}" TintOpacity="0.7" FallbackColor="{ThemeResource SystemAccentColor}" />
-            <media:AcrylicBrush x:Key="SystemControlAccentAcrylicElementAccentMediumHighBrush" BackgroundSource="Backdrop" TintColor="{ThemeResource SystemAccentColor}" TintOpacity="0.7" FallbackColor="{ThemeResource SystemAccentColor}" />
-            <media:AcrylicBrush x:Key="SystemControlAccentDark1AcrylicWindowAccentDark1Brush" BackgroundSource="HostBackdrop" TintColor="{ThemeResource SystemAccentColorDark1}" TintOpacity="0.8" FallbackColor="{ThemeResource SystemAccentColorDark1}" />
-            <media:AcrylicBrush x:Key="SystemControlAccentDark1AcrylicElementAccentDark1Brush" BackgroundSource="Backdrop" TintColor="{ThemeResource SystemAccentColorDark1}" TintOpacity="0.8" FallbackColor="{ThemeResource SystemAccentColorDark1}" />
-            <media:AcrylicBrush x:Key="SystemControlAccentDark2AcrylicWindowAccentDark2MediumHighBrush" BackgroundSource="HostBackdrop" TintColor="{ThemeResource SystemAccentColorDark2}" TintOpacity="0.7" FallbackColor="{ThemeResource SystemAccentColorDark2}" />
-            <media:AcrylicBrush x:Key="SystemControlAccentDark2AcrylicElementAccentDark2MediumHighBrush" BackgroundSource="Backdrop" TintColor="{ThemeResource SystemAccentColorDark2}" TintOpacity="0.7" FallbackColor="{ThemeResource SystemAccentColorDark2}" />
+            <media:AcrylicBrush x:Key="SystemControlAccentAcrylicWindowAccentMediumHighBrush" BackgroundSource="HostBackdrop" TintColor="{StaticResource SystemAccentColor}" TintOpacity="0.7" FallbackColor="{StaticResource SystemAccentColor}" />
+            <media:AcrylicBrush x:Key="SystemControlAccentAcrylicElementAccentMediumHighBrush" BackgroundSource="Backdrop" TintColor="{StaticResource SystemAccentColor}" TintOpacity="0.7" FallbackColor="{StaticResource SystemAccentColor}" />
+            <media:AcrylicBrush x:Key="SystemControlAccentDark1AcrylicWindowAccentDark1Brush" BackgroundSource="HostBackdrop" TintColor="{StaticResource SystemAccentColorDark1}" TintOpacity="0.8" FallbackColor="{StaticResource SystemAccentColorDark1}" />
+            <media:AcrylicBrush x:Key="SystemControlAccentDark1AcrylicElementAccentDark1Brush" BackgroundSource="Backdrop" TintColor="{StaticResource SystemAccentColorDark1}" TintOpacity="0.8" FallbackColor="{StaticResource SystemAccentColorDark1}" />
+            <media:AcrylicBrush x:Key="SystemControlAccentDark2AcrylicWindowAccentDark2MediumHighBrush" BackgroundSource="HostBackdrop" TintColor="{StaticResource SystemAccentColorDark2}" TintOpacity="0.7" FallbackColor="{StaticResource SystemAccentColorDark2}" />
+            <media:AcrylicBrush x:Key="SystemControlAccentDark2AcrylicElementAccentDark2MediumHighBrush" BackgroundSource="Backdrop" TintColor="{StaticResource SystemAccentColorDark2}" TintOpacity="0.7" FallbackColor="{StaticResource SystemAccentColorDark2}" />
             <media:AcrylicBrush x:Key="SystemControlAcrylicWindowMediumHighBrush" BackgroundSource="HostBackdrop" TintColor="{StaticResource SystemChromeAltHighColor}" TintOpacity="0.7" FallbackColor="{StaticResource SystemChromeMediumColor}" />
             <media:AcrylicBrush x:Key="SystemControlAcrylicElementMediumHighBrush" BackgroundSource="Backdrop" TintColor="{StaticResource SystemChromeAltHighColor}" TintOpacity="0.7" FallbackColor="{StaticResource SystemChromeMediumColor}" />
             <media:AcrylicBrush x:Key="SystemControlChromeMediumLowAcrylicWindowMediumBrush" BackgroundSource="HostBackdrop" TintColor="{StaticResource SystemChromeAltHighColor}" TintOpacity="0.6" FallbackColor="{StaticResource SystemChromeMediumLowColor}" />
@@ -2754,16 +2764,16 @@
             <media:RevealBackgroundBrush x:Key="SystemControlBackgroundBaseLowRevealBackgroundBrush" TargetTheme="Light" Color="{StaticResource SystemRevealBaseLowColor}" FallbackColor="{StaticResource SystemBaseLowColor}" />
             <media:RevealBackgroundBrush x:Key="SystemControlTransparentRevealBackgroundBrush" TargetTheme="Light" Color="Transparent" FallbackColor="Transparent" />
             <media:RevealBackgroundBrush x:Key="SystemControlBackgroundAltHighRevealBackgroundBrush" TargetTheme="Light" Color="{StaticResource SystemAltHighColor}" FallbackColor="{StaticResource SystemAltHighColor}" />
-            <media:RevealBackgroundBrush x:Key="SystemControlHighlightAccentRevealBackgroundBrush" TargetTheme="Light" Color="{ThemeResource SystemAccentColor}" FallbackColor="{ThemeResource SystemAccentColor}" />
-            <media:RevealBackgroundBrush x:Key="SystemControlHighlightAccent3RevealBackgroundBrush" TargetTheme="Light" Color="{ThemeResource SystemAccentColorLight3}" FallbackColor="{ThemeResource SystemAccentColorLight3}" />
-            <media:RevealBackgroundBrush x:Key="SystemControlHighlightAccent2RevealBackgroundBrush" TargetTheme="Light" Color="{ThemeResource SystemAccentColorLight2}" FallbackColor="{ThemeResource SystemAccentColorLight2}" />
+            <media:RevealBackgroundBrush x:Key="SystemControlHighlightAccentRevealBackgroundBrush" TargetTheme="Light" Color="{StaticResource SystemAccentColor}" FallbackColor="{StaticResource SystemAccentColor}" />
+            <media:RevealBackgroundBrush x:Key="SystemControlHighlightAccent3RevealBackgroundBrush" TargetTheme="Light" Color="{StaticResource SystemAccentColorLight3}" FallbackColor="{StaticResource SystemAccentColorLight3}" />
+            <media:RevealBackgroundBrush x:Key="SystemControlHighlightAccent2RevealBackgroundBrush" TargetTheme="Light" Color="{StaticResource SystemAccentColorLight2}" FallbackColor="{StaticResource SystemAccentColorLight2}" />
             <media:RevealBackgroundBrush x:Key="SystemControlHighlightListMediumRevealBackgroundBrush" TargetTheme="Light" Color="{StaticResource SystemRevealListMediumColor}" FallbackColor="{StaticResource SystemListMediumColor}" />
             <media:RevealBackgroundBrush x:Key="SystemControlHighlightListLowRevealBackgroundBrush" TargetTheme="Light" Color="{StaticResource SystemRevealListLowColor}" FallbackColor="{StaticResource SystemListLowColor}" />
             <media:RevealBackgroundBrush x:Key="SystemControlBackgroundBaseMediumLowRevealBaseLowBackgroundBrush" TargetTheme="Light" Color="{StaticResource SystemRevealBaseLowColor}" FallbackColor="{StaticResource SystemBaseMediumLowColor}" />
-            <media:RevealBackgroundBrush x:Key="SystemControlHighlightBaseMediumLowRevealAccentBackgroundBrush" TargetTheme="Light" Color="{ThemeResource SystemAccentColor}" FallbackColor="{StaticResource SystemBaseMediumLowColor}" />
+            <media:RevealBackgroundBrush x:Key="SystemControlHighlightBaseMediumLowRevealAccentBackgroundBrush" TargetTheme="Light" Color="{StaticResource SystemAccentColor}" FallbackColor="{StaticResource SystemBaseMediumLowColor}" />
             <media:RevealBackgroundBrush x:Key="SystemControlHighlightListMediumRevealListLowBackgroundBrush" TargetTheme="Light" Color="{StaticResource SystemRevealListLowColor}" FallbackColor="{StaticResource SystemListMediumColor}" />
-            <media:RevealBackgroundBrush x:Key="SystemControlHighlightAccent3RevealAccent2BackgroundBrush" TargetTheme="Light" Color="{ThemeResource SystemAccentColorLight2}" FallbackColor="{ThemeResource SystemAccentColorLight3}" />
-            <media:RevealBorderBrush x:Key="SystemControlBackgroundAccentRevealBorderBrush" TargetTheme="Light" Color="{ThemeResource SystemAccentColor}" FallbackColor="{ThemeResource SystemAccentColor}" />
+            <media:RevealBackgroundBrush x:Key="SystemControlHighlightAccent3RevealAccent2BackgroundBrush" TargetTheme="Light" Color="{StaticResource SystemAccentColorLight2}" FallbackColor="{StaticResource SystemAccentColorLight3}" />
+            <media:RevealBorderBrush x:Key="SystemControlBackgroundAccentRevealBorderBrush" TargetTheme="Light" Color="{StaticResource SystemAccentColor}" FallbackColor="{StaticResource SystemAccentColor}" />
             <media:RevealBorderBrush x:Key="SystemControlBackgroundBaseHighRevealBorderBrush" TargetTheme="Light" Color="{StaticResource SystemRevealBaseHighColor}" FallbackColor="{StaticResource SystemBaseHighColor}" />
             <media:RevealBorderBrush x:Key="SystemControlBackgroundBaseLowRevealBorderBrush" TargetTheme="Light" Color="{StaticResource SystemRevealBaseLowColor}" FallbackColor="{StaticResource SystemBaseLowColor}" />
             <media:RevealBorderBrush x:Key="SystemControlBackgroundBaseMediumRevealBorderBrush" TargetTheme="Light" Color="{StaticResource SystemRevealBaseMediumColor}" FallbackColor="{StaticResource SystemBaseMediumColor}" />
@@ -2782,7 +2792,7 @@
             <media:RevealBorderBrush x:Key="SystemControlBackgroundTransparentRevealBorderBrush" TargetTheme="Light" Color="Transparent" FallbackColor="Transparent" />
             <media:RevealBorderBrush x:Key="SystemControlHighlightTransparentRevealBorderBrush" TargetTheme="Light" Color="Transparent" FallbackColor="Transparent" />
             <media:RevealBorderBrush x:Key="SystemControlHighlightAltTransparentRevealBorderBrush" TargetTheme="Light" Color="Transparent" FallbackColor="Transparent" />
-            <media:RevealBorderBrush x:Key="SystemControlHighlightAccentRevealBorderBrush" TargetTheme="Light" Color="{ThemeResource SystemAccentColor}" FallbackColor="{ThemeResource SystemAccentColor}" />
+            <media:RevealBorderBrush x:Key="SystemControlHighlightAccentRevealBorderBrush" TargetTheme="Light" Color="{StaticResource SystemAccentColor}" FallbackColor="{StaticResource SystemAccentColor}" />
             <media:RevealBorderBrush x:Key="SystemControlHighlightBaseHighRevealBorderBrush" TargetTheme="Light" Color="{StaticResource SystemRevealBaseHighColor}" FallbackColor="{StaticResource SystemBaseHighColor}" />
             <media:RevealBorderBrush x:Key="SystemControlHighlightBaseLowRevealBorderBrush" TargetTheme="Light" Color="{StaticResource SystemRevealBaseLowColor}" FallbackColor="{StaticResource SystemBaseLowColor}" />
             <media:RevealBorderBrush x:Key="SystemControlHighlightBaseMediumRevealBorderBrush" TargetTheme="Light" Color="{StaticResource SystemRevealBaseMediumColor}" FallbackColor="{StaticResource SystemBaseMediumColor}" />
@@ -2932,7 +2942,7 @@
             <Thickness x:Key="ContentDialogContentScrollViewerMargin">0,0,0,0</Thickness>
             <StaticResource x:Key="ContentDialogLightDismissOverlayBackground" ResourceKey="SystemControlPageBackgroundMediumAltMediumBrush" />
             <SolidColorBrush x:Key="ContentDialogBackgroundThemeBrush" Color="LightGray" />
-            <SolidColorBrush x:Key="ContentDialogBorderThemeBrush" Color="{ThemeResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="ContentDialogBorderThemeBrush" Color="{StaticResource SystemAccentColor}" />
             <SolidColorBrush x:Key="ContentDialogContentForegroundBrush" Color="Black" />
             <SolidColorBrush x:Key="ContentDialogDimmingThemeBrush" Color="#99FFFFFF" />
             <Thickness x:Key="ContentDialogCommandSpaceMargin">0,24,0,0</Thickness>
@@ -3389,7 +3399,7 @@
                     <ScaleTransform ScaleY="-1" CenterY="0.5" />
                 </LinearGradientBrush.RelativeTransform>
                 <LinearGradientBrush.GradientStops>
-                    <GradientStop Offset="1.0" Color="{ThemeResource SystemAccentColorDark1}" />
+                    <GradientStop Offset="1.0" Color="{StaticResource SystemAccentColorDark1}" />
                     <GradientStop Offset="1.0" Color="{StaticResource ControlStrokeColorDefault}" />
                 </LinearGradientBrush.GradientStops>
             </LinearGradientBrush>
@@ -4383,10 +4393,10 @@
             <media:AcrylicBrush x:Key="AcrylicInAppFillColorDefaultInverseBrush" TintColor="#2C2C2C" TintOpacity="0.15" FallbackColor="#2C2C2C" BackgroundSource="Backdrop" />
             <media:AcrylicBrush x:Key="AcrylicBackgroundFillColorBaseBrush" TintColor="#F3F3F3" TintOpacity="0.0" FallbackColor="#F3F3F3" BackgroundSource="HostBackdrop" />
             <media:AcrylicBrush x:Key="AcrylicInAppFillColorBaseBrush" TintColor="#F3F3F3" TintOpacity="0.0" FallbackColor="#F3F3F3" BackgroundSource="Backdrop" />
-            <media:AcrylicBrush x:Key="AccentAcrylicBackgroundFillColorDefaultBrush" TintColor="{ThemeResource SystemAccentColorLight3}" TintOpacity="0.8" FallbackColor="{ThemeResource SystemAccentColorLight3}" BackgroundSource="HostBackdrop" />
-            <media:AcrylicBrush x:Key="AccentAcrylicInAppFillColorDefaultBrush" TintColor="{ThemeResource SystemAccentColorLight3}" TintOpacity="0.8" FallbackColor="{ThemeResource SystemAccentColorLight3}" BackgroundSource="Backdrop" />
-            <media:AcrylicBrush x:Key="AccentAcrylicBackgroundFillColorBaseBrush" TintColor="{ThemeResource SystemAccentColorLight3}" TintOpacity="0.8" FallbackColor="{ThemeResource SystemAccentColorLight3}" BackgroundSource="HostBackdrop" />
-            <media:AcrylicBrush x:Key="AccentAcrylicInAppFillColorBaseBrush" TintColor="{ThemeResource SystemAccentColorLight3}" TintOpacity="0.8" FallbackColor="{ThemeResource SystemAccentColorLight3}" BackgroundSource="Backdrop" />
+            <media:AcrylicBrush x:Key="AccentAcrylicBackgroundFillColorDefaultBrush" TintColor="{StaticResource SystemAccentColorLight3}" TintOpacity="0.8" FallbackColor="{StaticResource SystemAccentColorLight3}" BackgroundSource="HostBackdrop" />
+            <media:AcrylicBrush x:Key="AccentAcrylicInAppFillColorDefaultBrush" TintColor="{StaticResource SystemAccentColorLight3}" TintOpacity="0.8" FallbackColor="{StaticResource SystemAccentColorLight3}" BackgroundSource="Backdrop" />
+            <media:AcrylicBrush x:Key="AccentAcrylicBackgroundFillColorBaseBrush" TintColor="{StaticResource SystemAccentColorLight3}" TintOpacity="0.8" FallbackColor="{StaticResource SystemAccentColorLight3}" BackgroundSource="HostBackdrop" />
+            <media:AcrylicBrush x:Key="AccentAcrylicInAppFillColorBaseBrush" TintColor="{StaticResource SystemAccentColorLight3}" TintOpacity="0.8" FallbackColor="{StaticResource SystemAccentColorLight3}" BackgroundSource="Backdrop" />
             <StaticResource x:Key="CommandBarFlyoutBackground" ResourceKey="SystemControlTransientBackgroundBrush" />
             <StaticResource x:Key="CommandBarFlyoutForeground" ResourceKey="TextFillColorPrimaryBrush" />
             <StaticResource x:Key="CommandBarFlyoutBorderBrush" ResourceKey="ControlStrokeColorDefaultBrush" />

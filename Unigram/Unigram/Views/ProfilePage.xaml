@@ -167,10 +167,7 @@
                                 <TextBlock x:Name="Subtitle" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource PageHeaderDisabledBrush}"/>
                             </Border>
 
-                            <Border x:Name="SendMessage" VerticalAlignment="Center" Width="36" Height="36" CornerRadius="18" Margin="8,12,12,12" Grid.Column="2" Grid.RowSpan="2">
-                                <Border.Background>
-                                    <SolidColorBrush Opacity="0.2" Color="{ThemeResource SystemAccentColor}"/>
-                                </Border.Background>
+                            <Border x:Name="SendMessage" Background="{ThemeResource TinyButtonBackgroundBrush}" VerticalAlignment="Center" Width="36" Height="36" CornerRadius="18" Margin="8,12,12,12" Grid.Column="2" Grid.RowSpan="2">
                                 <controls:GlyphButton
                                     Glyph="&#xE8BD;"
                                     Command="{x:Bind ViewModel.SendMessageCommand}"

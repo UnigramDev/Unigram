@@ -57,10 +57,7 @@
                         Grid.Row="1"
                         Grid.Column="1"/>
 
-                    <Border VerticalAlignment="Center" Width="36" Height="36" CornerRadius="18" Margin="8,12,12,12" Grid.Column="2" Grid.RowSpan="2">
-                        <Border.Background>
-                            <SolidColorBrush Opacity="0.2" Color="{ThemeResource SystemAccentColor}"/>
-                        </Border.Background>
+                    <Border Background="{ThemeResource TinyButtonBackgroundBrush}" VerticalAlignment="Center" Width="36" Height="36" CornerRadius="18" Margin="8,12,12,12" Grid.Column="2" Grid.RowSpan="2">
                         <controls:GlyphButton
                             Glyph="&#xE722;"
                             Click="EditPhoto_Click"

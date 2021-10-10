@@ -88,10 +88,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <Border x:Name="Biometrics" Visibility="Collapsed" Width="32" Height="32" CornerRadius="16" Margin="0,0,8,0">
-                    <Border.Background>
-                        <SolidColorBrush Opacity="0.2" Color="{ThemeResource SystemAccentColor}"/>
-                    </Border.Background>
+                <Border x:Name="Biometrics" Background="{ThemeResource TinyButtonBackgroundBrush}" Visibility="Collapsed" Width="32" Height="32" CornerRadius="16" Margin="0,0,8,0">
                     <controls:GlyphButton
                         Glyph="&#xE904;"
                         Click="Biometrics_Click"
@@ -114,10 +111,7 @@
                     LosingFocus="Field_LosingFocus"
                     Grid.Column="1"/>
 
-                <Border Width="32" Height="32" CornerRadius="16" Margin="8,0,0,0" Grid.Column="2">
-                    <Border.Background>
-                        <SolidColorBrush Opacity="0.2" Color="{ThemeResource SystemAccentColor}"/>
-                    </Border.Background>
+                <Border Background="{ThemeResource TinyButtonBackgroundBrush}" Width="32" Height="32" CornerRadius="16" Margin="8,0,0,0" Grid.Column="2">
                     <controls:GlyphButton
                         Glyph="&#xE72A;"
                         Click="Enter_Click"
