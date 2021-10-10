@@ -388,10 +388,10 @@ namespace Unigram.Services
             set => AddOrUpdateValue(ref _profileWidthRatio, _local, "ProfileWidthRatio", value);
         }
 
-        private bool? _isSidebarOpen;
+        private static bool? _isSidebarOpen;
         public bool IsSidebarOpen
         {
-            get => _isSidebarOpen ??= GetValueOrDefault(_local, "IsSidebarOpen", true);
+            get => _isSidebarOpen ??= GetValueOrDefault(_local, "IsSidebarOpen", false);
             set => AddOrUpdateValue(ref _isSidebarOpen, _local, "IsSidebarOpen", value);
         }
 

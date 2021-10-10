@@ -100,7 +100,7 @@ namespace Unigram.Controls
 
             // TODO: maybe checking for the actual width is not the perfect way,
             // but if it is 0 it means that the control is not loaded, and the event shouldn't be handled
-            if (CanGoBack && ActualWidth > 0 /*&& type == BackStackType.Navigation*/)
+            if (CanGoBack && ActualWidth > 0 /*&& type == BackStackType.Navigation*/ && (CurrentState == MasterDetailState.Minimal || DetailFrame.CurrentSourcePageType != typeof(ProfilePage)))
             {
                 DetailFrame.GoBack();
                 args.Handled = true;
@@ -298,16 +298,7 @@ namespace Unigram.Controls
 
         #region Public methods
 
-        public bool CanGoBack
-        {
-            get
-            {
-                return DetailFrame.CanGoBack;
-
-                // BEFORE BACK NAVIGATION IN FILLED (WIDE) STATE FIX.
-                // return DetailFrame.CanGoBack && AdaptiveStates.CurrentState.Name == NarrowState;
-            }
-        }
+        public bool CanGoBack => DetailFrame.CanGoBack;// BEFORE BACK NAVIGATION IN FILLED (WIDE) STATE FIX.// return DetailFrame.CanGoBack && AdaptiveStates.CurrentState.Name == NarrowState;
 
         public MasterDetailState CurrentState
         {
@@ -428,7 +419,7 @@ namespace Unigram.Controls
         }
 
         public static readonly DependencyProperty IsBlankProperty =
-            DependencyProperty.Register("IsBlank", typeof(bool), typeof(MasterDetailView), new PropertyMetadata(true));
+            DependencyProperty.Register("IsBlank", typeof(bool), typeof(MasterDetailView), new PropertyMetadata(false));
 
         #endregion
     }

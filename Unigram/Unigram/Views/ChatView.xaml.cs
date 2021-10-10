@@ -385,7 +385,6 @@ namespace Unigram.Views
 
             _stickersMode = StickersPanelMode.Overlay;
             ButtonStickers.IsChecked = false;
-            SettingsService.Current.IsSidebarOpen = false;
 
             Focus(FocusState.Programmatic);
             TextField.Focus(FocusState.Programmatic);
@@ -3035,7 +3034,6 @@ namespace Unigram.Views
             }
 
             _stickersMode = StickersPanelMode.Collapsed;
-            SettingsService.Current.IsSidebarOpen = false;
 
             var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>

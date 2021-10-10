@@ -84,7 +84,7 @@ namespace Unigram.Controls
         }
 
         public static readonly DependencyProperty IsBlankProperty =
-            DependencyProperty.Register("IsBlank", typeof(bool), typeof(MasterDetailPanel), new PropertyMetadata(true, OnBlankChanged));
+            DependencyProperty.Register("IsBlank", typeof(bool), typeof(MasterDetailPanel), new PropertyMetadata(false, OnBlankChanged));
 
         private static void OnBlankChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
