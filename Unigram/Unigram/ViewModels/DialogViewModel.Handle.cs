@@ -449,15 +449,18 @@ namespace Unigram.ViewModels
             if (update.Message.ChatId == _chat?.Id && CheckSchedulingState(update.Message))
             {
                 var endReached = IsEndReached();
-                BeginOnUIThread(() => InsertMessage(update.Message));
-
-                if (!update.Message.IsOutgoing && Settings.Notifications.InAppSounds)
+                BeginOnUIThread(() =>
                 {
-                    if (TLWindowContext.GetForCurrentView().ActivationMode == CoreWindowActivationMode.ActivatedInForeground)
+                    InsertMessage(update.Message);
+
+                    if (!update.Message.IsOutgoing && Settings.Notifications.InAppSounds)
                     {
-                        _pushService.PlaySound();
+                        if (TLWindowContext.GetForCurrentView().ActivationMode == CoreWindowActivationMode.ActivatedInForeground)
+                        {
+                            _pushService.PlaySound();
+                        }
                     }
-                }
+                });
             }
         }
 
