@@ -20,35 +20,52 @@ namespace Unigram.Controls.Cells
 
         public ProfilePicture Photo => PhotoElement;
 
-        #region Accent
+        #region Stroke
 
-        public Color Accent
+        private long _strokeToken;
+
+        public Brush Stroke
         {
-            get => (Color)GetValue(AccentProperty);
-            set => SetValue(AccentProperty, value);
+            get => (Brush)GetValue(StrokeProperty);
+            set => SetValue(StrokeProperty, value);
         }
 
-        public static readonly DependencyProperty AccentProperty =
-            DependencyProperty.Register("Accent", typeof(Color), typeof(ChatShareCell), new PropertyMetadata(default(Color), OnAccentChanged));
+        public static readonly DependencyProperty StrokeProperty =
+            DependencyProperty.Register("Stroke", typeof(Brush), typeof(ChatShareCell), new PropertyMetadata(null, OnStrokeChanged));
 
-        private static void OnAccentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnStrokeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var sender = d as ChatShareCell;
-            var solid = (Color)e.NewValue;
+            var solid = e.NewValue as SolidColorBrush;
+
+            if (e.OldValue is SolidColorBrush old && sender._strokeToken != 0)
+            {
+                old.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, sender._strokeToken);
+            }
 
             if (solid == null || sender._ellipse == null)
             {
                 return;
             }
 
-            var brush = Window.Current.Compositor.CreateColorBrush(solid);
+            sender._ellipse.FillBrush = Window.Current.Compositor.CreateColorBrush(solid.Color);
+            sender._strokeToken = solid.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, sender.OnStrokeChanged);
+        }
 
-            sender._ellipse.FillBrush = brush;
+        private void OnStrokeChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            var solid = sender as SolidColorBrush;
+            if (solid == null || _ellipse == null)
+            {
+                return;
+            }
+
+            _ellipse.FillBrush = Window.Current.Compositor.CreateColorBrush(solid.Color);
         }
 
         #endregion
 
-        #region Accent
+        #region SelectionStroke
 
         public SolidColorBrush SelectionStroke
         {
