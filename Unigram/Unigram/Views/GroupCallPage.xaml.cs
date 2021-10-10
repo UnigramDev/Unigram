@@ -20,6 +20,7 @@ using Unigram.Views.Popups;
 using Windows.Devices.Enumeration;
 using Windows.Foundation;
 using Windows.Graphics.Capture;
+using Windows.System.Display;
 using Windows.UI;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -54,6 +55,8 @@ namespace Unigram.Views
 
         private readonly DispatcherTimer _scheduledTimer;
         private readonly DispatcherTimer _debouncerTimer;
+
+        private readonly DisplayRequest _displayRequest = new();
 
         private ParticipantsGridMode _mode = ParticipantsGridMode.Compact;
         private bool _docked = true;
@@ -233,11 +236,22 @@ namespace Unigram.Views
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                _displayRequest.RequestActive();
+            }
+            catch { }
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             Dispose();
+
+            try
+            {
+                _displayRequest.RequestRelease();
+            }
+            catch { }
         }
 
         public void Dispose(bool? discard = null)
