@@ -7,9 +7,9 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Popups
 {
-    public sealed partial class ScheduleVoiceChatPopup : ContentPopup
+    public sealed partial class ScheduleVideoChatPopup : ContentPopup
     {
-        public ScheduleVoiceChatPopup(bool channel)
+        public ScheduleVideoChatPopup(bool channel)
         {
             InitializeComponent();
 

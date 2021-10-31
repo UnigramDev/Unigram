@@ -543,17 +543,17 @@
     <Compile Include="Views\Popups\InputPopup.xaml.cs">
       <DependentUpon>InputPopup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Popups\RecordVoiceChatPopup.xaml.cs">
-      <DependentUpon>RecordVoiceChatPopup.xaml</DependentUpon>
+    <Compile Include="Views\Popups\RecordVideoChatPopup.xaml.cs">
+      <DependentUpon>RecordVideoChatPopup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Popups\ScheduleVoiceChatPopup.xaml.cs">
-      <DependentUpon>ScheduleVoiceChatPopup.xaml</DependentUpon>
+    <Compile Include="Views\Popups\ScheduleVideoChatPopup.xaml.cs">
+      <DependentUpon>ScheduleVideoChatPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\ChatThemePopup.xaml.cs">
       <DependentUpon>ChatThemePopup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Popups\VoiceChatAliasesPopup.xaml.cs">
-      <DependentUpon>VoiceChatAliasesPopup.xaml</DependentUpon>
+    <Compile Include="Views\Popups\VideoChatAliasesPopup.xaml.cs">
+      <DependentUpon>VideoChatAliasesPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\ZoomableMediaPopup.xaml.cs">
       <DependentUpon>ZoomableMediaPopup.xaml</DependentUpon>
@@ -1719,21 +1719,21 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Popups\RecordVoiceChatPopup.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="Views\Popups\RecordVideoChatPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Popups\ScheduleVoiceChatPopup.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="Views\Popups\ScheduleVideoChatPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Popups\ChatThemePopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Popups\VoiceChatAliasesPopup.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="Views\Popups\VideoChatAliasesPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Popups\ZoomableMediaPopup.xaml">
       <SubType>Designer</SubType>

@@ -152,7 +152,7 @@ namespace Unigram.Converters
         public const string SpeakerNone = "\uE74F";
         public const string SendFilled = "\uE919";
 
-        public const string VoiceChat = "\uE900";
+        public const string VideoChat = "\uE900";
 
         public const string EmojiHand = "\uE901";
 

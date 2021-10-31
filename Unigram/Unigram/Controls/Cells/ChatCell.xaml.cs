@@ -401,9 +401,9 @@ namespace Unigram.Controls.Cells
             VerifiedIcon.Visibility = verified ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        public void UpdateChatVoiceChat(Chat chat)
+        public void UpdateChatVideoChat(Chat chat)
         {
-            UpdateOnlineBadge(chat.VoiceChat?.HasParticipants ?? false, true);
+            UpdateOnlineBadge(chat.VideoChat?.HasParticipants ?? false, true);
         }
 
         public void UpdateUserStatus(Chat chat, UserStatus status)
@@ -622,9 +622,9 @@ namespace Unigram.Controls.Cells
             {
                 UpdateUserStatus(chat, user.Status);
             }
-            else if (chat.VoiceChat.GroupCallId != 0)
+            else if (chat.VideoChat.GroupCallId != 0)
             {
-                UpdateOnlineBadge(chat.VoiceChat.HasParticipants, true);
+                UpdateOnlineBadge(chat.VideoChat.HasParticipants, true);
             }
             else if (OnlineBadge != null)
             {

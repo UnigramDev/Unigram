@@ -302,11 +302,11 @@ namespace Unigram.ViewModels
                     case ChatEventMessageTtlSettingChanged:
                     case ChatEventLinkedChatChanged:
                     case ChatEventLocationChanged:
-                    case ChatEventVoiceChatCreated:
-                    case ChatEventVoiceChatDiscarded:
-                    case ChatEventVoiceChatMuteNewParticipantsToggled:
-                    case ChatEventVoiceChatParticipantIsMutedToggled:
-                    case ChatEventVoiceChatParticipantVolumeLevelChanged:
+                    case ChatEventVideoChatCreated:
+                    case ChatEventVideoChatDiscarded:
+                    case ChatEventVideoChatMuteNewParticipantsToggled:
+                    case ChatEventVideoChatParticipantIsMutedToggled:
+                    case ChatEventVideoChatParticipantVolumeLevelChanged:
                     case ChatEventInviteLinkDeleted:
                     case ChatEventInviteLinkEdited:
                     case ChatEventInviteLinkRevoked:
@@ -745,9 +745,9 @@ namespace Unigram.ViewModels
                     {
                         AppendChange(n.CanPinMessages, Strings.Resources.EventLogPromotedPinMessages);
                     }
-                    if (o.CanManageVoiceChats != n.CanManageVoiceChats)
+                    if (o.CanManageVideoChats != n.CanManageVideoChats)
                     {
-                        AppendChange(n.CanManageVoiceChats, Strings.Resources.EventLogPromotedManageCall);
+                        AppendChange(n.CanManageVideoChats, Strings.Resources.EventLogPromotedManageCall);
                     }
                 }
 

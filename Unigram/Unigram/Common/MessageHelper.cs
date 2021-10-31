@@ -262,9 +262,9 @@ namespace Unigram.Common
             {
                 NavigateToUnknownDeepLink(protoService, uri.ToString());
             }
-            else if (response is InternalLinkTypeVoiceChat voiceChat)
+            else if (response is InternalLinkTypeVideoChat videoChat)
             {
-                NavigateToUsername(protoService, navigation, voiceChat.ChatUsername, null, voiceChat.InviteHash, null, null, null);
+                NavigateToUsername(protoService, navigation, videoChat.ChatUsername, null, videoChat.InviteHash, null, null, null);
             }
         }
 
@@ -529,7 +529,7 @@ namespace Unigram.Common
             await StickerSetPopup.GetForCurrentView().ShowAsync(text);
         }
 
-        public static async void NavigateToUsername(IProtoService protoService, INavigationService navigation, string username, string accessToken, string voiceChat, string post, string comment, string game, PageKind kind = PageKind.Dialog)
+        public static async void NavigateToUsername(IProtoService protoService, INavigationService navigation, string username, string accessToken, string videoChat, string post, string comment, string game, PageKind kind = PageKind.Dialog)
         {
             if (username.StartsWith("@"))
             {
@@ -583,9 +583,9 @@ namespace Unigram.Common
                             navigation.NavigateToChat(chat, message: message << 20);
                         }
                     }
-                    else if (voiceChat != null)
+                    else if (videoChat != null)
                     {
-                        navigation.NavigateToChat(chat, state: new NavigationState { { "voiceChat", voiceChat } });
+                        navigation.NavigateToChat(chat, state: new NavigationState { { "videoChat", videoChat } });
                     }
                     else
                     {

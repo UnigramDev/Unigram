@@ -68,13 +68,13 @@ namespace Unigram.Controls
             var visible = true;
             var channel = chat.Type is ChatTypeSupergroup super && super.IsChannel;
 
-            //if (chat.VoiceChat.GroupCallId != call?.Id || !chat.VoiceChat.HasParticipants || call == null || call.IsJoined)
+            //if (chat.VideoChat.GroupCallId != call?.Id || !chat.VideoChat.HasParticipants || call == null || call.IsJoined)
             //{
             //    ShowHide(false);
             //    visible = false;
             //}
             //else
-            if (call != null && chat.VoiceChat.GroupCallId == call.Id && ((chat.VoiceChat.HasParticipants && !(call.IsJoined || call.NeedRejoin)) || call.ScheduledStartDate > 0))
+            if (call != null && chat.VideoChat.GroupCallId == call.Id && ((chat.VideoChat.HasParticipants && !(call.IsJoined || call.NeedRejoin)) || call.ScheduledStartDate > 0))
             {
                 ShowHide(true);
 
@@ -97,7 +97,7 @@ namespace Unigram.Controls
 
                     TitleLabel.Text = call.Title.Length > 0 ? call.Title : channel ? Strings.Resources.VoipChannelScheduledVoiceChat : Strings.Resources.VoipGroupScheduledVoiceChat;
 
-                    JoinButton.Background = BootStrapper.Current.Resources["VoiceChatPurpleBrush"] as Brush;
+                    JoinButton.Background = BootStrapper.Current.Resources["VideoChatPurpleBrush"] as Brush;
                     JoinButton.Content = call.GetStartsIn();
                 }
                 else

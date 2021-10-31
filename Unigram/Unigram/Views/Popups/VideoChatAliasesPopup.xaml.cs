@@ -10,19 +10,19 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Popups
 {
-    public sealed partial class VoiceChatAliasesPopup : ContentPopup
+    public sealed partial class VideoChatAliasesPopup : ContentPopup
     {
         private readonly IProtoService _protoService;
 
-        public VoiceChatAliasesPopup(IProtoService protoService, Chat chat, bool canSchedule, IList<MessageSender> senders)
+        public VideoChatAliasesPopup(IProtoService protoService, Chat chat, bool canSchedule, IList<MessageSender> senders)
         {
             InitializeComponent();
 
             _protoService = protoService;
-            var already = senders.FirstOrDefault(x => x.IsEqual(chat.VoiceChat.DefaultParticipantId));
+            var already = senders.FirstOrDefault(x => x.IsEqual(chat.VideoChat.DefaultParticipantId));
             var channel = chat.Type is ChatTypeSupergroup super && super.IsChannel;
 
-            Title = chat.VoiceChat.GroupCallId != 0
+            Title = chat.VideoChat.GroupCallId != 0
                 ? Strings.Resources.VoipGroupDisplayAs
                 : channel
                 ? Strings.Resources.StartVoipChannelTitle

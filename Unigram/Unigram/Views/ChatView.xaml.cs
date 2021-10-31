@@ -3319,7 +3319,7 @@ namespace Unigram.Views
             VideoCall.Visibility = Visibility.Collapsed;
 
             // We want to collapse the bar only of we know that there's no call at all
-            if (chat.VoiceChat.GroupCallId == 0)
+            if (chat.VideoChat.GroupCallId == 0)
             {
                 GroupCall.ShowHide(false);
             }
@@ -4518,7 +4518,7 @@ namespace Unigram.Views
             {
                 Automation.SetToolTip(Call, Strings.Resources.VoipGroupJoinCall);
 
-                Call.Glyph = Icons.VoiceChat;
+                Call.Glyph = Icons.VideoChat;
                 Call.Visibility = Visibility.Visible;
             }
         }

@@ -151,7 +151,7 @@ namespace Unigram.Services
 
         private async Task<MessageSenders> CanChooseAliasAsyncInternal(TaskCompletionSource<MessageSenders> tsc, long chatId)
         {
-            var response = await ProtoService.SendAsync(new GetVoiceChatAvailableParticipants(chatId));
+            var response = await ProtoService.SendAsync(new GetVideoChatAvailableParticipants(chatId));
             if (response is MessageSenders senders)
             {
                 _availableAliases = senders;
@@ -166,7 +166,7 @@ namespace Unigram.Services
         public async Task JoinAsync(long chatId)
         {
             var chat = CacheService.GetChat(chatId);
-            if (chat == null || chat.VoiceChat.GroupCallId == 0)
+            if (chat == null || chat.VideoChat.GroupCallId == 0)
             {
                 return;
             }
@@ -191,7 +191,7 @@ namespace Unigram.Services
             //    return;
             //}
 
-            await JoinAsyncInternal(chat, chat.VoiceChat.GroupCallId, null);
+            await JoinAsyncInternal(chat, chat.VideoChat.GroupCallId, null);
         }
 
         public Task LeaveAsync()
@@ -202,14 +202,14 @@ namespace Unigram.Services
         public async Task CreateAsync(long chatId)
         {
             var chat = CacheService.GetChat(chatId);
-            if (chat == null || chat.VoiceChat.GroupCallId != 0)
+            if (chat == null || chat.VideoChat.GroupCallId != 0)
             {
                 return;
             }
 
             await CanChooseAliasAsync(chat.Id);
 
-            var popup = new VoiceChatAliasesPopup(ProtoService, chat, true, _availableAliases?.Senders.ToArray());
+            var popup = new VideoChatAliasesPopup(ProtoService, chat, true, _availableAliases?.Senders.ToArray());
 
             var confirm = await popup.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
@@ -219,7 +219,7 @@ namespace Unigram.Services
 
                 if (popup.IsScheduleSelected)
                 {
-                    var schedule = new ScheduleVoiceChatPopup(chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel);
+                    var schedule = new ScheduleVideoChatPopup(chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel);
 
                     var again = await schedule.ShowQueuedAsync();
                     if (again != ContentDialogResult.Primary)
@@ -230,7 +230,7 @@ namespace Unigram.Services
                     startDate = schedule.Value.ToTimestamp();
                 }
 
-                var response = await ProtoService.SendAsync(new CreateVoiceChat(chat.Id, string.Empty, startDate));
+                var response = await ProtoService.SendAsync(new CreateVideoChat(chat.Id, string.Empty, startDate));
                 if (response is GroupCallId groupCallId)
                 {
                     await JoinAsyncInternal(chat, groupCallId.Id, participantId);
@@ -260,7 +260,7 @@ namespace Unigram.Services
                 }
             }
 
-            alias ??= chat.VoiceChat.DefaultParticipantId;
+            alias ??= chat.VideoChat.DefaultParticipantId;
 
             if (alias == null)
             {
@@ -298,7 +298,7 @@ namespace Unigram.Services
 
                 if (groupCall.ScheduledStartDate > 0)
                 {
-                    ProtoService.Send(new SetVoiceChatDefaultParticipant(chat.Id, alias));
+                    ProtoService.Send(new SetVideoChatDefaultParticipant(chat.Id, alias));
                 }
                 else
                 {
@@ -329,7 +329,7 @@ namespace Unigram.Services
             var available = await CanChooseAliasAsync(chat.Id);
             if (available && _availableAliases != null)
             {
-                var popup = new VoiceChatAliasesPopup(ProtoService, chat, false, _availableAliases.Senders.ToArray());
+                var popup = new VideoChatAliasesPopup(ProtoService, chat, false, _availableAliases.Senders.ToArray());
                 popup.RequestedTheme = darkTheme ? ElementTheme.Dark : ElementTheme.Default;
 
                 var confirm = await popup.ShowQueuedAsync();
@@ -845,10 +845,10 @@ namespace Unigram.Services
                 {
                     var parameters = new ViewServiceParams
                     {
-                        Title = Strings.Resources.VoipGroupVoiceChat,
+                        Title = IsChannel ? Strings.Resources.VoipChannelVoiceChat : Strings.Resources.VoipGroupVoiceChat,
                         Width = 380,
                         Height = 580,
-                        PersistentId = "VoiceChat",
+                        PersistentId = "VideoChat",
                         Content = control => new GroupCallPage(ProtoService, CacheService, Aggregator, this)
                     };
 

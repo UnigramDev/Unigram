@@ -3,9 +3,9 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Popups
 {
-    public sealed partial class RecordVoiceChatPopup : ContentPopup
+    public sealed partial class RecordVideoChatPopup : ContentPopup
     {
-        public RecordVoiceChatPopup(string title)
+        public RecordVideoChatPopup(string title)
         {
             InitializeComponent();
 

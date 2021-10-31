@@ -157,7 +157,7 @@
             <!-- WinUI bug: https://github.com/microsoft/microsoft-ui-xaml/issues/2623 -->
             <!--<muxc:StackLayout x:Name="ThreadStackLayout"/>-->
 
-            <media:RadialGradientBrush x:Key="VoiceChatPurpleBrush" GradientOrigin="1,-1" Center="1,-1" RadiusX="1.5" RadiusY="2.5">
+            <media:RadialGradientBrush x:Key="VideoChatPurpleBrush" GradientOrigin="1,-1" Center="1,-1" RadiusX="1.5" RadiusY="2.5">
                 <GradientStop Color="#57A4FE" Offset="0"/>
                 <GradientStop Color="#F05459" Offset="0.5"/>
                 <GradientStop Color="#766EE9" Offset="1"/>

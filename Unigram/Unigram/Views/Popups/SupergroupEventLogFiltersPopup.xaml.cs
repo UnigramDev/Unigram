@@ -46,7 +46,7 @@ namespace Unigram.Views.Popups
             MessageEdits.IsChecked = filters.MessageEdits;
             MessagePins.IsChecked = filters.MessagePins;
             MemberLeaves.IsChecked = filters.MemberLeaves;
-            VoiceChatChanges.IsChecked = filters.VoiceChatChanges;
+            VideoChatChanges.IsChecked = filters.VideoChatChanges;
 
             Event_Toggled(null, null);
 
@@ -162,7 +162,7 @@ namespace Unigram.Views.Popups
                 MessageEdits = MessageEdits.IsChecked == true,
                 MessagePins = MessagePins.IsChecked == true,
                 MemberLeaves = MemberLeaves.IsChecked == true,
-                VoiceChatChanges = VoiceChatChanges.IsChecked == true,
+                VideoChatChanges = VideoChatChanges.IsChecked == true,
             };
 
             var areAllAdministratorsSelected = List.Items.All(x => List.SelectedItems.Contains(x));

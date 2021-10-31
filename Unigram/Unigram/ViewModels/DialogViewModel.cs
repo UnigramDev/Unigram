@@ -2207,7 +2207,7 @@ namespace Unigram.ViewModels
                 });
             }
 
-            UpdateGroupCall(chat, chat.VoiceChat.GroupCallId);
+            UpdateGroupCall(chat, chat.VideoChat.GroupCallId);
 
             ShowReplyMarkup(chat);
             ShowDraftMessage(chat);

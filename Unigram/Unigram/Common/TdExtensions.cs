@@ -1091,16 +1091,16 @@ namespace Unigram.Common
                 case MessageContactRegistered:
                 case MessageCustomServiceAction:
                 case MessageGameScore:
-                case MessageInviteVoiceChatParticipants:
+                case MessageInviteVideoChatParticipants:
                 case MessageProximityAlertTriggered:
                 case MessagePassportDataSent:
                 case MessagePaymentSuccessful:
                 case MessagePinMessage:
                 case MessageScreenshotTaken:
                 case MessageSupergroupChatCreate:
-                case MessageVoiceChatEnded:
-                case MessageVoiceChatScheduled:
-                case MessageVoiceChatStarted:
+                case MessageVideoChatEnded:
+                case MessageVideoChatScheduled:
+                case MessageVideoChatStarted:
                 case MessageWebsiteConnected:
                     return true;
                 case MessageExpiredPhoto:
@@ -1475,9 +1475,9 @@ namespace Unigram.Common
             return photo.Sizes.LastOrDefault(x => x.Photo.Local.IsDownloadingCompleted || x.Photo.Local.CanBeDownloaded);
         }
 
-        public static string GetStartsAt(this MessageVoiceChatScheduled messageVoiceChatScheduled)
+        public static string GetStartsAt(this MessageVideoChatScheduled messageVideoChatScheduled)
         {
-            var date = Converters.Converter.DateTime(messageVoiceChatScheduled.StartDate);
+            var date = Converters.Converter.DateTime(messageVideoChatScheduled.StartDate);
             return string.Format(Strings.Resources.formatDateAtTime, Converters.Converter.ShortDate.Format(date), Converters.Converter.ShortTime.Format(date));
         }
 
@@ -1519,9 +1519,9 @@ namespace Unigram.Common
             }
         }
 
-        public static string GetDuration(this MessageVoiceChatEnded voiceChatEnded)
+        public static string GetDuration(this MessageVideoChatEnded videoChatEnded)
         {
-            var duration = TimeSpan.FromSeconds(voiceChatEnded.Duration);
+            var duration = TimeSpan.FromSeconds(videoChatEnded.Duration);
             if (duration.TotalDays >= 1)
             {
                 return Locale.Declension("Days", (int)duration.TotalDays);
@@ -1700,24 +1700,24 @@ namespace Unigram.Common
             return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanChangeInfo;
         }
 
-        public static bool CanManageVoiceChats(this Supergroup supergroup)
+        public static bool CanManageVideoChats(this Supergroup supergroup)
         {
             if (supergroup.Status == null)
             {
                 return false;
             }
 
-            return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanManageVoiceChats;
+            return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanManageVideoChats;
         }
 
-        public static bool CanManageVoiceChats(this BasicGroup basicGroup)
+        public static bool CanManageVideoChats(this BasicGroup basicGroup)
         {
             if (basicGroup.Status == null)
             {
                 return false;
             }
 
-            return basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanManageVoiceChats;
+            return basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanManageVideoChats;
         }
 
         public static bool CanPostMessages(this Supergroup supergroup)

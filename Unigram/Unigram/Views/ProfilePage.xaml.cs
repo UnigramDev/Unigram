@@ -588,9 +588,9 @@ namespace Unigram.Views
 
                 if (supergroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator)
                 {
-                    if (chat.VoiceChat.GroupCallId == 0 && supergroup.CanManageVoiceChats())
+                    if (chat.VideoChat.GroupCallId == 0 && supergroup.CanManageVideoChats())
                     {
-                        flyout.CreateFlyoutItem(ViewModel.CallCommand, false, supergroup.IsChannel ? Strings.Resources.StartVoipChannel : Strings.Resources.StartVoipChat, new FontIcon { Glyph = Icons.VoiceChat });
+                        flyout.CreateFlyoutItem(ViewModel.CallCommand, false, supergroup.IsChannel ? Strings.Resources.StartVoipChannel : Strings.Resources.StartVoipChat, new FontIcon { Glyph = Icons.VideoChat });
                     }
 
                     if (supergroup.IsChannel)
@@ -630,9 +630,9 @@ namespace Unigram.Views
                     return;
                 }
 
-                if (chat.VoiceChat.GroupCallId == 0 && basicGroup.CanManageVoiceChats())
+                if (chat.VideoChat.GroupCallId == 0 && basicGroup.CanManageVideoChats())
                 {
-                    flyout.CreateFlyoutItem(ViewModel.CallCommand, false, Strings.Resources.StartVoipChat, new FontIcon { Glyph = Icons.VoiceChat });
+                    flyout.CreateFlyoutItem(ViewModel.CallCommand, false, Strings.Resources.StartVoipChat, new FontIcon { Glyph = Icons.VideoChat });
                 }
 
                 if (chat.Permissions.CanChangeInfo || basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator)

@@ -295,7 +295,7 @@
                 FontWeight="Bold"
                 TextAlignment="Center"
                 Style="{StaticResource HeaderTextBlockStyle}"
-                Foreground="{StaticResource VoiceChatPurpleBrush}"/>
+                Foreground="{StaticResource VideoChatPurpleBrush}"/>
 
             <TextBlock
                 x:Name="StartsAt"

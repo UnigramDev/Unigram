@@ -898,7 +898,7 @@ namespace Unigram.Views
                     }
 
                     FindName(nameof(ScheduledPanel));
-                    SubtitleInfo.Text = Strings.Resources.VoipGroupScheduledVoiceChat;
+                    SubtitleInfo.Text = _service.IsChannel ? Strings.Resources.VoipChannelScheduledVoiceChat : Strings.Resources.VoipGroupScheduledVoiceChat;
                     ParticipantsPanel.Visibility = Visibility.Collapsed;
                     ScheduledInfo.Text = duration < TimeSpan.Zero ? Strings.Resources.VoipChatLateBy : Strings.Resources.VoipChatStartsIn;
                     StartsAt.Text = call.GetStartsAt();
@@ -1644,7 +1644,7 @@ namespace Unigram.Views
                 return;
             }
 
-            var input = new RecordVoiceChatPopup(call.Title);
+            var input = new RecordVideoChatPopup(call.Title);
             input.RequestedTheme = ElementTheme.Dark;
 
             var confirm = await input.ShowQueuedAsync();

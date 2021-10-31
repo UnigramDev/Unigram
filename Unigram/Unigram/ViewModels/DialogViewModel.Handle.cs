@@ -26,7 +26,7 @@ namespace Unigram.ViewModels
         IHandle<UpdateChatDefaultDisableNotification>,
         IHandle<UpdateChatActionBar>,
         IHandle<UpdateChatHasScheduledMessages>,
-        IHandle<UpdateChatVoiceChat>,
+        IHandle<UpdateChatVideoChat>,
 
         IHandle<UpdateUserChatAction>,
 
@@ -187,7 +187,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public void Handle(UpdateChatVoiceChat update)
+        public void Handle(UpdateChatVideoChat update)
         {
             if (_chat?.Id == update.ChatId)
             {
@@ -197,7 +197,7 @@ namespace Unigram.ViewModels
 
         public void Handle(UpdateGroupCall update)
         {
-            if (_chat?.VoiceChat?.GroupCallId == update.GroupCall.Id)
+            if (_chat?.VideoChat?.GroupCallId == update.GroupCall.Id)
             {
                 BeginOnUIThread(() => Delegate?.UpdateGroupCall(_chat, update.GroupCall));
             }
