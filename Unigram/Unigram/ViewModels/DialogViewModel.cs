@@ -1514,11 +1514,11 @@ namespace Unigram.ViewModels
             return _messageFactory.Create(this, message);
         }
 
-        protected async Task ProcessMessagesAsync(Chat chat, IList<MessageViewModel> messages)
+        protected Task ProcessMessagesAsync(Chat chat, IList<MessageViewModel> messages)
         {
-            if (Settings.IsLargeEmojiEnabled)
+            if (!ProtoService.Options.DisableAnimatedEmoji)
             {
-                await ProcessEmojiAsync(chat, messages);
+                ProcessEmoji(chat, messages);
             }
 
             ProcessAlbums(chat, messages, out var albums);
@@ -1529,48 +1529,24 @@ namespace Unigram.ViewModels
             {
                 ProcessFiles(chat, albums);
             }
+
+            return Task.CompletedTask;
         }
 
-        private async Task ProcessEmojiAsync(Chat chat, IList<MessageViewModel> messages)
+        private void ProcessEmoji(Chat chat, IList<MessageViewModel> messages)
         {
-            StickerSet set = null;
             foreach (var message in messages)
             {
                 if (message.Content is MessageText text && text.WebPage == null && !text.Text.Entities.Any())
                 {
                     if (Emoji.TryCountEmojis(text.Text.Text, out int count, 3))
                     {
-                        if (count > 1)
-                        {
-                            message.GeneratedContent = new MessageBigEmoji(text.Text, count);
-                            continue;
-                        }
-
-                        if (set == null)
-                        {
-                            set = await ProtoService.GetAnimatedSetAsync(AnimatedSetType.Emoji);
-                        }
-
-                        if (set == null)
-                        {
-                            break;
-                        }
-
-                        var emoji = Emoji.RemoveModifiers(text.Text.Text, false);
-
-                        foreach (var sticker in set.Stickers)
-                        {
-                            var stickerEmoji = Emoji.RemoveModifiers(sticker.Emoji, false);
-
-                            if (string.Equals(stickerEmoji, emoji, StringComparison.OrdinalIgnoreCase))
-                            {
-                                message.GeneratedContent = new MessageSticker(sticker);
-                                break;
-                            }
-                        }
-
-                        message.GeneratedContent ??= new MessageBigEmoji(text.Text, count);
+                        message.GeneratedContent = new MessageBigEmoji(text.Text, count);
                     }
+                }
+                else if (message.Content is MessageAnimatedEmoji animatedEmoji)
+                {
+                    message.GeneratedContent = new MessageSticker(animatedEmoji.AnimatedEmoji.Sticker);
                 }
             }
         }
@@ -1592,7 +1568,7 @@ namespace Unigram.ViewModels
                 }
 
                 var target = parent ?? message;
-                var content = message.GeneratedContent ?? message.Content as object;
+                var content = message.Content as object;
 
                 if (content is MessageAlbum albumMessage)
                 {
@@ -1607,6 +1583,15 @@ namespace Unigram.ViewModels
                 else if (content is MessageAudio audioMessage)
                 {
                     content = audioMessage.Audio;
+                }
+                else if (content is MessageAnimatedEmoji animatedEmojiMessage)
+                {
+                    _filesMap[animatedEmojiMessage.AnimatedEmoji.Sticker.StickerValue.Id].Add(target);
+
+                    if (animatedEmojiMessage.AnimatedEmoji.Sound != null)
+                    {
+                        _filesMap[animatedEmojiMessage.AnimatedEmoji.Sound.Id].Add(target);
+                    }
                 }
                 else if (content is MessageDice diceMessage)
                 {

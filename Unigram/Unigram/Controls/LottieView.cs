@@ -630,6 +630,6 @@ namespace Unigram.Controls
 
         public event EventHandler FirstFrameRendered;
 
-        public IReadOnlyDictionary<uint, uint> ColorReplacements { get; set; }
+        public IReadOnlyDictionary<int, int> ColorReplacements { get; set; }
     }
 }

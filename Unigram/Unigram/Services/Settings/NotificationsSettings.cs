@@ -111,13 +111,6 @@ namespace Unigram.Services.Settings
             set => AddOrUpdateValue(ref _countUnreadMessages, "CountUnreadMessages", value);
         }
 
-        private bool? _isPinnedEnabled;
-        public bool IsPinnedEnabled
-        {
-            get => _isPinnedEnabled ??= GetValueOrDefault("IsPinnedEnabled", true);
-            set => AddOrUpdateValue(ref _isPinnedEnabled, "IsPinnedEnabled", value);
-        }
-
         private bool? _isContactEnabled;
         public bool IsContactEnabled
         {

@@ -44,7 +44,6 @@ namespace Unigram.Services
         bool IsSendByEnterEnabled { get; set; }
         bool IsTextFormattingVisible { get; set; }
         bool IsReplaceEmojiEnabled { get; set; }
-        bool IsLargeEmojiEnabled { get; set; }
         bool IsContactsSyncEnabled { get; set; }
         bool IsContactsSyncRequested { get; set; }
         bool IsContactsSortedByEpoch { get; set; }
@@ -384,7 +383,7 @@ namespace Unigram.Services
         private static double? _profileWidthRatio;
         public double ProfileWidthRatio
         {
-            get => _profileWidthRatio ??= GetValueOrDefault(_local, "ProfileWidthRatio", 5d / 14d);
+            get => _profileWidthRatio ??= GetValueOrDefault(_local, "ProfileWidthRatio", 9d / 14d);
             set => AddOrUpdateValue(ref _profileWidthRatio, _local, "ProfileWidthRatio", value);
         }
 
@@ -511,13 +510,6 @@ namespace Unigram.Services
         {
             get => _isReplaceEmojiEnabled ??= GetValueOrDefault("IsReplaceEmojiEnabled", true);
             set => AddOrUpdateValue(ref _isReplaceEmojiEnabled, "IsReplaceEmojiEnabled", value);
-        }
-
-        private static bool? _isLargeEmojiEnabled;
-        public bool IsLargeEmojiEnabled
-        {
-            get => _isLargeEmojiEnabled ??= GetValueOrDefault(_local, "IsLargeEmojiEnabled", true);
-            set => AddOrUpdateValue(ref _isLargeEmojiEnabled, _local, "IsLargeEmojiEnabled", value);
         }
 
         private bool? _isContactsSyncEnabled;

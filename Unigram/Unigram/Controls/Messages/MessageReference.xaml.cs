@@ -167,6 +167,10 @@ namespace Unigram.Controls.Messages
             {
                 return (video.IsSecret ? Strings.Resources.AttachDestructingVideo : Strings.Resources.AttachVideo) + GetCaption(video.Caption.Text);
             }
+            else if (message.Content is MessageAnimatedEmoji animatedEmoji)
+            {
+                return animatedEmoji.Emoji;
+            }
             else if (message.Content is MessageAnimation animation)
             {
                 return Strings.Resources.AttachGif + GetCaption(animation.Caption.Text);

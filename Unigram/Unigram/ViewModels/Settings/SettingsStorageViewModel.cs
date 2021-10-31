@@ -49,9 +49,9 @@ namespace Unigram.ViewModels.Settings
             get
             {
                 var enabled = CacheService.Options.UseStorageOptimizer;
-                var ttl = CacheService.Options.StorageMaxTimeFromLastAccess;
+                var ttl = (int)CacheService.Options.StorageMaxTimeFromLastAccess;
 
-                return CacheService.Options.UseStorageOptimizer ? ttl / 60 / 60 / 24 : 0;
+                return enabled ? ttl / 60 / 60 / 24 : 0;
             }
             set
             {

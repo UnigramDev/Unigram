@@ -94,10 +94,10 @@ namespace Unigram.ViewModels.Settings
 
         public bool IsPinnedEnabled
         {
-            get => !CacheService.Options.DisablePinnedMessageNotifications && Settings.Notifications.IsPinnedEnabled;
+            get => !CacheService.Options.DisablePinnedMessageNotifications;
             set
             {
-                CacheService.Options.DisablePinnedMessageNotifications = !(Settings.Notifications.IsPinnedEnabled = value);
+                CacheService.Options.DisablePinnedMessageNotifications = !value;
                 RaisePropertyChanged();
             }
         }

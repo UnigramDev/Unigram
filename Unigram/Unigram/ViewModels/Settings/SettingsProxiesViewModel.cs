@@ -149,7 +149,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        private void Handle(ConnectionState state, int enabledProxyId)
+        private void Handle(ConnectionState state, long enabledProxyId)
         {
             foreach (var item in Items)
             {

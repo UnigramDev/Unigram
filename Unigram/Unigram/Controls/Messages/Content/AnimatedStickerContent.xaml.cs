@@ -64,13 +64,13 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            if (message.Content is MessageText text)
+            if (message.Content is MessageAnimatedEmoji animatedEmoji)
             {
                 Width = Player.Width = 200 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
                 Height = Player.Height = 200 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
-                Player.ColorReplacements = Emoji.GetColorReplacements(text.Text.Text);
+                Player.ColorReplacements = animatedEmoji.AnimatedEmoji.ColorReplacements.ToDictionary(x => x.OldColor, x => x.NewColor);
 
-                var sound = message.ProtoService.GetEmojiSound(sticker.Emoji);
+                var sound = animatedEmoji.AnimatedEmoji.Sound;
                 if (sound != null && sound.Local.CanBeDownloaded && !sound.Local.IsDownloadingActive)
                 {
                     message.ProtoService.DownloadFile(sound.Id, 1);
@@ -177,12 +177,12 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            if (_message.Content is MessageText)
+            if (_message.Content is MessageAnimatedEmoji animatedEmoji)
             {
                 var started = Player.Play();
                 if (started)
                 {
-                    var sound = _message.ProtoService.GetEmojiSound(sticker.Emoji);
+                    var sound = animatedEmoji.AnimatedEmoji.Sound;
                     if (sound != null && sound.Local.IsDownloadingCompleted)
                     {
                         SoundEffects.Play(sound);

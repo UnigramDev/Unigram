@@ -141,10 +141,10 @@ namespace Unigram.ViewModels.Settings
 
         public bool IsLargeEmojiEnabled
         {
-            get => Settings.IsLargeEmojiEnabled;
+            get => !ProtoService.Options.DisableAnimatedEmoji;
             set
             {
-                Settings.IsLargeEmojiEnabled = value;
+                ProtoService.Options.DisableAnimatedEmoji = !value;
                 RaisePropertyChanged();
             }
         }

@@ -858,6 +858,10 @@ namespace Unigram.Controls.Cells
             {
                 return result + Strings.Resources.AttachRound;
             }
+            else if (message.Content is MessageAnimatedEmoji animatedEmoji)
+            {
+                return result + animatedEmoji.Emoji;
+            }
             else if (message.Content is MessageSticker sticker)
             {
                 if (string.IsNullOrEmpty(sticker.Sticker.Emoji))
