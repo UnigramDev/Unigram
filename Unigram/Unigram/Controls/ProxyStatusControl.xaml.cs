@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using System;
 using Unigram.ViewModels.Settings;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls
 {

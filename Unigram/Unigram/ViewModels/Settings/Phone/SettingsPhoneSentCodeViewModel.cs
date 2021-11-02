@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using Microsoft.UI.Xaml.Navigation;
+using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Entities;
@@ -6,7 +7,6 @@ using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views.Settings;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {

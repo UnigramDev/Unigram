@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml.Controls;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -17,7 +18,6 @@ using Windows.Data.Xml.Dom;
 using Windows.Foundation.Collections;
 using Windows.Networking.PushNotifications;
 using Windows.UI.Notifications;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Services
 {
@@ -1424,7 +1424,7 @@ namespace Unigram.Services
             return false;
         }
 
-        private void BeginOnUIThread(Windows.System.DispatcherQueueHandler action, Action fallback = null)
+        private void BeginOnUIThread(Microsoft.UI.Dispatching.DispatcherQueueHandler action, Action fallback = null)
         {
             var dispatcher = WindowContext.Default()?.Dispatcher;
             if (dispatcher != null)

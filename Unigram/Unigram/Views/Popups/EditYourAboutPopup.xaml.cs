@@ -1,5 +1,5 @@
-﻿using Unigram.Controls;
-using Windows.UI.Xaml.Controls;
+﻿using Microsoft.UI.Xaml.Controls;
+using Unigram.Controls;
 
 namespace Unigram.Views.Popups
 {

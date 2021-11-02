@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml.Media.Imaging;
+using System;
 using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Collections;
@@ -6,7 +7,6 @@ using Unigram.Common;
 using Unigram.Services;
 using Unigram.Views.Popups;
 using Windows.Storage;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.ViewModels.BasicGroups
 {

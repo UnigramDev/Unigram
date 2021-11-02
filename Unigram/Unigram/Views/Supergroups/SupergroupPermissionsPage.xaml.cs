@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
+using System;
 using System.ComponentModel;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -8,9 +11,6 @@ using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Supergroups;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Input;
 
 namespace Unigram.Views.Supergroups
 {

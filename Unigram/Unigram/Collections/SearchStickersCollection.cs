@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Data;
+using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
 using Unigram.Controls.Chats;
 using Unigram.Services;
 using Unigram.Services.Settings;
 using Windows.Foundation;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Data;
 
 namespace Unigram.Collections
 {

@@ -1,8 +1,8 @@
-﻿using System.Runtime.InteropServices.WindowsRuntime;
+﻿using Microsoft.UI.Xaml.Data;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
 using Unigram.Services;
 using Windows.Foundation;
-using Windows.UI.Xaml.Data;
 
 namespace Unigram.Collections
 {

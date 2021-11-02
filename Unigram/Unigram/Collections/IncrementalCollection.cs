@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.UI.Xaml.Data;
+using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Foundation;
-using Windows.UI.Xaml.Data;
 
 namespace Unigram.Collections
 {

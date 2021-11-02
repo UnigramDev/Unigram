@@ -1,9 +1,9 @@
-﻿using Unigram.Common;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Services;
 using Unigram.ViewModels;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls.Cells
 {

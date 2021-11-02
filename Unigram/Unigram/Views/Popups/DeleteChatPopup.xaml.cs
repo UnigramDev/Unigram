@@ -1,9 +1,9 @@
-﻿using Telegram.Td.Api;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Services;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Popups
 {

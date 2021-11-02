@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
+using System;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Navigation;
@@ -8,9 +11,6 @@ using Windows.ApplicationModel.Core;
 using Windows.System.Profile;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Views.Host
 {
@@ -65,7 +65,7 @@ namespace Unigram.Views.Host
             WindowContext.GetForCurrentView().AcceleratorKeyActivated -= OnAcceleratorKeyActivated;
         }
 
-        private void OnNavigated(object sender, Windows.UI.Xaml.Navigation.NavigationEventArgs e)
+        private void OnNavigated(object sender, Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
         {
             if (e.Content is HostedPage hosted)
             {

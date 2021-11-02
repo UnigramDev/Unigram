@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Unigram.Controls;
@@ -8,8 +10,6 @@ using Windows.Media.Capture;
 using Windows.Media.Devices;
 using Windows.System;
 using Windows.System.Profile;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Common
 {

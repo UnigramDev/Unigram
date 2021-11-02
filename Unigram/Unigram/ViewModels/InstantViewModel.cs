@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml.Navigation;
+using System;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -10,7 +11,6 @@ using Unigram.ViewModels.Delegates;
 using Unigram.Views.Popups;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.System;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {

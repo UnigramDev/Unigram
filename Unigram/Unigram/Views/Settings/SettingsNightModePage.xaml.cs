@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
+using System;
 using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -7,9 +10,6 @@ using Unigram.Services;
 using Unigram.Services.Settings;
 using Unigram.ViewModels.Settings;
 using Windows.System.UserProfile;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Input;
 
 namespace Unigram.Views.Settings
 {

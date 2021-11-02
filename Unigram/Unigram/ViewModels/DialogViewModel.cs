@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Microsoft.UI.Text;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,10 +24,6 @@ using Unigram.ViewModels.Drawers;
 using Unigram.Views;
 using Unigram.Views.Popups;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.UI.Text;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 using Point = Windows.Foundation.Point;
 
 namespace Unigram.ViewModels

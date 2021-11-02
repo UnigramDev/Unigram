@@ -1,4 +1,9 @@
-﻿using System;
+﻿using Microsoft.UI;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Media;
+using System;
 using System.ComponentModel;
 using Telegram.Td.Api;
 using Unigram.Collections;
@@ -8,11 +13,6 @@ using Unigram.Converters;
 using Unigram.Navigation.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Supergroups;
-using Windows.UI;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Views.Supergroups
 {

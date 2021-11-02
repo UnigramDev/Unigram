@@ -1,10 +1,10 @@
-﻿using System.Text;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using System.Text;
 using Unigram.Converters;
 using Unigram.Native.Calls;
 using Unigram.Services.Settings;
 using Unigram.ViewModels.Settings;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Settings
 {

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,8 +11,6 @@ using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Navigation.Services;
 using Unigram.Services;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {

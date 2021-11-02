@@ -1,8 +1,8 @@
-﻿using Unigram.Collections;
+﻿using Microsoft.UI.Xaml.Controls;
+using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Services;
 using Unigram.Views.Popups;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.ViewModels.Settings
 {

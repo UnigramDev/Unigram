@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -18,8 +20,6 @@ using Windows.Devices.Enumeration;
 using Windows.Foundation;
 using Windows.Graphics.Capture;
 using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Services
 {

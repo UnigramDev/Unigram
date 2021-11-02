@@ -1,5 +1,5 @@
-﻿using Unigram.ViewModels.Settings;
-using Windows.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
+using Unigram.ViewModels.Settings;
 
 namespace Unigram.Views.Settings
 {

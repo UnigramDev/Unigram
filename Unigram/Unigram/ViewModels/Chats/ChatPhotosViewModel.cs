@@ -1,11 +1,11 @@
-﻿using System.Linq;
+﻿using Microsoft.UI.Xaml.Controls;
+using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Services;
 using Unigram.ViewModels.Gallery;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.ViewModels.Chats
 {

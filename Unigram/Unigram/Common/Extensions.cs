@@ -1,4 +1,10 @@
 ﻿using LinqToVisualTree;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -21,12 +27,6 @@ using Windows.Storage.FileProperties;
 using Windows.Storage.Pickers;
 using Windows.UI;
 using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 using static Unigram.Services.GenerationService;
 using Point = Windows.Foundation.Point;
 
@@ -422,11 +422,11 @@ namespace Unigram.Common
 
 
 
-        public static async void BeginOnUIThread(this DependencyObject element, Action action)
+        public static void BeginOnUIThread(this DependencyObject element, Action action)
         {
             try
             {
-                await element.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, new Windows.UI.Core.DispatchedHandler(action));
+                element.DispatcherQueue?.TryEnqueue(new Microsoft.UI.Dispatching.DispatcherQueueHandler(action));
             }
             catch
             {

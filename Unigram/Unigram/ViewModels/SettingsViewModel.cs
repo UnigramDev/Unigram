@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
+using Newtonsoft.Json;
 using System;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -13,8 +15,6 @@ using Unigram.ViewModels.Delegates;
 using Unigram.Views;
 using Unigram.Views.Settings;
 using Windows.Foundation;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 using static Unigram.Services.GenerationService;
 
 namespace Unigram.ViewModels

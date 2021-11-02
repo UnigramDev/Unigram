@@ -1,4 +1,6 @@
 ﻿using Microsoft.Graphics.Canvas;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -12,8 +14,6 @@ using Windows.Media.Editing;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Common
 {

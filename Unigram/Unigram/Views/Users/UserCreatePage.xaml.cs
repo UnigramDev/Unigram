@@ -1,7 +1,7 @@
-﻿using Unigram.Common;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media;
+using Unigram.Common;
 using Unigram.ViewModels.Users;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Views.Users
 {

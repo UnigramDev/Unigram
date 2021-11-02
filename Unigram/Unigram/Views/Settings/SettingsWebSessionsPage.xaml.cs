@@ -1,8 +1,8 @@
-﻿using Telegram.Td.Api;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Telegram.Td.Api;
 using Unigram.Controls.Cells;
 using Unigram.ViewModels.Settings;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Settings
 {

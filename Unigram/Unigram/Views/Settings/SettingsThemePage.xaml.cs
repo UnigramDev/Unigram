@@ -1,7 +1,7 @@
-﻿using Unigram.Services;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Unigram.Services;
 using Unigram.ViewModels.Settings;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Settings
 {

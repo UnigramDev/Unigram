@@ -1,9 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using Microsoft.UI.Xaml.Navigation;
+using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Services.Settings;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {

@@ -1,4 +1,10 @@
-﻿using System;
+﻿using Microsoft.UI.Input;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Media;
+using System;
 using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -6,11 +12,6 @@ using Unigram.Navigation;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Chats;
 using Windows.UI.Core;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media;
 using static Unigram.Controls.Chats.ChatTextBox;
 
 namespace Unigram.Controls.Chats
@@ -79,7 +80,7 @@ namespace Unigram.Controls.Chats
             var visual = ElementCompositionPreview.GetElementVisual(TopPanel);
             visual.Clip = visual.Compositor.CreateInsetClip();
 
-            var batch = visual.Compositor.CreateScopedBatch(Windows.UI.Composition.CompositionBatchTypes.Animation);
+            var batch = visual.Compositor.CreateScopedBatch(Microsoft.UI.Composition.CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
                 visual.Clip = null;
@@ -190,9 +191,9 @@ namespace Unigram.Controls.Chats
             DeleteButton.Visibility = string.IsNullOrEmpty(Field.Text) && Field.State == ChatSearchState.Text ? Visibility.Collapsed : Visibility.Visible;
         }
 
-        private void OnKeyDown(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
+        private void OnKeyDown(object sender, Microsoft.UI.Xaml.Input.KeyRoutedEventArgs e)
         {
-            var shift = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
+            var shift = InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
 
             if (e.Key == Windows.System.VirtualKey.Enter && !shift && Field.State != ChatSearchState.Members)
             {

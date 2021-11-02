@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
+using System;
 using System.Linq;
 using Unigram.Charts;
 using Unigram.Charts.Data;
@@ -6,9 +9,6 @@ using Unigram.Charts.DataView;
 using Unigram.Common;
 using Unigram.Navigation;
 using Unigram.ViewModels.Chats;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Cells
 {

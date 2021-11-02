@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
+using System;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Services;
@@ -6,11 +9,7 @@ using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.Security.Credentials;
 using Windows.Security.Cryptography;
-using Windows.UI.Core;
 using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Input;
 
 namespace Unigram.Views
 {
@@ -194,7 +193,7 @@ namespace Unigram.Views
 
         private void Window_Activated(object sender, WindowActivatedEventArgs e)
         {
-            if (e.WindowActivationState != CoreWindowActivationState.Deactivated)
+            if (e.WindowActivationState != WindowActivationState.Deactivated)
             {
                 Field.Focus(FocusState.Keyboard);
             }
@@ -238,7 +237,7 @@ namespace Unigram.Views
             try
             {
                 var windowContext = TLWindowContext.GetForCurrentView();
-                if (windowContext.ActivationMode == CoreWindowActivationMode.ActivatedInForeground)
+                if (windowContext.ActivationMode == Windows.UI.Core.CoreWindowActivationMode.ActivatedInForeground)
                 {
                     var result = await KeyCredentialManager.OpenAsync(Strings.Resources.AppName);
                     if (result.Credential != null)

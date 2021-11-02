@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Media;
+using System;
 using System.Numerics;
-using Windows.UI.Composition;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls
 {
@@ -21,12 +21,12 @@ namespace Unigram.Controls
         {
             DefaultStyleKey = typeof(ProgressBarRing);
 
-            var ellipse = Window.Current.Compositor.CreateEllipseGeometry();
+            var ellipse = Navigation.BootStrapper.Current.Compositor.CreateEllipseGeometry();
             ellipse.Radius = new Vector2((float)Radius);
             ellipse.Center = new Vector2((float)Center);
             ellipse.TrimEnd = 0f;
 
-            var shape = Window.Current.Compositor.CreateSpriteShape(ellipse);
+            var shape = Navigation.BootStrapper.Current.Compositor.CreateSpriteShape(ellipse);
             shape.CenterPoint = new Vector2((float)Center);
             shape.StrokeThickness = 2;
             shape.StrokeStartCap = CompositionStrokeCap.Round;
@@ -34,22 +34,22 @@ namespace Unigram.Controls
 
             if (Foreground is SolidColorBrush brush)
             {
-                shape.StrokeBrush = Window.Current.Compositor.CreateColorBrush(brush.Color);
+                shape.StrokeBrush = Navigation.BootStrapper.Current.Compositor.CreateColorBrush(brush.Color);
             }
 
-            var visual = Window.Current.Compositor.CreateShapeVisual();
+            var visual = Navigation.BootStrapper.Current.Compositor.CreateShapeVisual();
             visual.Shapes.Add(shape);
             visual.Size = new Vector2((float)Center * 2);
             visual.CenterPoint = new Vector3((float)Center);
 
-            var trimEnd = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var trimEnd = Navigation.BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
             trimEnd.Target = nameof(CompositionGeometry.TrimEnd);
-            trimEnd.InsertExpressionKeyFrame(1.0f, "this.FinalValue", Window.Current.Compositor.CreateLinearEasingFunction());
+            trimEnd.InsertExpressionKeyFrame(1.0f, "this.FinalValue", Navigation.BootStrapper.Current.Compositor.CreateLinearEasingFunction());
 
-            var visibility = Window.Current.Compositor.CreateExpressionAnimation("target.TrimEnd > 0 && target.TrimEnd < 1");
+            var visibility = Navigation.BootStrapper.Current.Compositor.CreateExpressionAnimation("target.TrimEnd > 0 && target.TrimEnd < 1");
             visibility.SetReferenceParameter("target", ellipse);
 
-            var animations = Window.Current.Compositor.CreateImplicitAnimationCollection();
+            var animations = Navigation.BootStrapper.Current.Compositor.CreateImplicitAnimationCollection();
             animations[nameof(CompositionGeometry.TrimEnd)] = trimEnd;
 
             ellipse.ImplicitAnimations = animations;
@@ -60,8 +60,8 @@ namespace Unigram.Controls
             _shape = shape;
             _ellipse = ellipse;
 
-            var easing = Window.Current.Compositor.CreateLinearEasingFunction();
-            var forever = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var easing = Navigation.BootStrapper.Current.Compositor.CreateLinearEasingFunction();
+            var forever = Navigation.BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
             forever.InsertKeyFrame(1, 360, easing);
             forever.IterationBehavior = AnimationIterationBehavior.Forever;
             forever.Duration = TimeSpan.FromSeconds(3);
@@ -97,7 +97,7 @@ namespace Unigram.Controls
         {
             if (_shape != null && Foreground is SolidColorBrush brush)
             {
-                _shape.StrokeBrush = Window.Current.Compositor.CreateColorBrush(brush.Color);
+                _shape.StrokeBrush = Navigation.BootStrapper.Current.Compositor.CreateColorBrush(brush.Color);
             }
         }
 

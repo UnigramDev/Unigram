@@ -1,6 +1,6 @@
-﻿using Unigram.ViewModels.Settings;
+﻿using Microsoft.UI.Xaml;
+using Unigram.ViewModels.Settings;
 using Unigram.ViewModels.Settings.Privacy;
-using Windows.UI.Xaml;
 
 namespace Unigram.Views.Settings.Privacy
 {

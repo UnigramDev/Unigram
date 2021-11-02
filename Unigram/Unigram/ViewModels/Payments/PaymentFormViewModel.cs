@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
+using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -11,8 +13,6 @@ using Unigram.Services;
 using Unigram.Views.Payments;
 using Unigram.Views.Popups;
 using Windows.UI.ViewManagement;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Payments
 {

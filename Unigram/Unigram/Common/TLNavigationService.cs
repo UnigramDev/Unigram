@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Microsoft.UI.Input;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using System;
 using System.Collections.Generic;
 using Telegram.Td.Api;
 using Unigram.Controls;
@@ -15,8 +18,6 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.WindowManagement;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Common
 {
@@ -200,8 +201,8 @@ namespace Unigram.Common
                     state["access_token"] = accessToken;
                 }
 
-                var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
-                var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
+                var ctrl = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
+                var shift = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
                 if (shift && !ctrl)
                 {
                     Type target;
@@ -235,7 +236,7 @@ namespace Unigram.Common
                         chatPage.Activate();
                         chatPage.ViewModel.NavigationService = this;
                         chatPage.ViewModel.Dispatcher = Dispatcher;
-                        await chatPage.ViewModel.OnNavigatedToAsync(chat.Id, Windows.UI.Xaml.Navigation.NavigationMode.New, state);
+                        await chatPage.ViewModel.OnNavigatedToAsync(chat.Id, Microsoft.UI.Xaml.Navigation.NavigationMode.New, state);
 
                         FrameFacade.RaiseNavigated(chat.Id);
                     }

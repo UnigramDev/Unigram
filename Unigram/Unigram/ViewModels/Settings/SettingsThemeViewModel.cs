@@ -1,4 +1,5 @@
-﻿using Rg.DiffUtils;
+﻿using Microsoft.UI.Xaml.Controls;
+using Rg.DiffUtils;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,7 +9,6 @@ using Unigram.Services;
 using Unigram.Views.Popups;
 using Windows.Storage;
 using Windows.UI;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.ViewModels.Settings
 {

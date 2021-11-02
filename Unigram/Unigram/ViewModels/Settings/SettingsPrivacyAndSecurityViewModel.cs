@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
+using System;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
@@ -10,9 +13,6 @@ using Unigram.ViewModels.Settings.Privacy;
 using Unigram.Views.Popups;
 using Unigram.Views.Settings;
 using Unigram.Views.Settings.Password;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {

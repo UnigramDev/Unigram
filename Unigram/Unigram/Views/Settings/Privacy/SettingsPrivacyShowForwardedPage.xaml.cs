@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
+using System;
 using System.Numerics;
 using Unigram.Common;
 using Unigram.ViewModels.Settings;
 using Unigram.ViewModels.Settings.Privacy;
 using Windows.Foundation.Metadata;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Views.Settings.Privacy
 {
@@ -27,7 +27,7 @@ namespace Unigram.Views.Settings.Privacy
 
             BackgroundPresenter.Update(ViewModel.SessionId, ViewModel.ProtoService, ViewModel.Aggregator);
 
-            if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "Shadow"))
+            if (ApiInformation.IsPropertyPresent("Microsoft.UI.Xaml.UIElement", "Shadow"))
             {
                 var themeShadow = new ThemeShadow();
                 ToolTip.Shadow = themeShadow;

@@ -50,7 +50,7 @@ namespace Unigram.ViewModels
             set => Set(ref _isLoading, value);
         }
 
-        protected virtual void BeginOnUIThread(Windows.System.DispatcherQueueHandler action, Action fallback = null)
+        protected virtual void BeginOnUIThread(Microsoft.UI.Dispatching.DispatcherQueueHandler action, Action fallback = null)
         {
             var dispatcher = Dispatcher;
             if (dispatcher == null)

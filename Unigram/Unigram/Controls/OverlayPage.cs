@@ -1,4 +1,11 @@
-﻿using System;
+﻿using Microsoft.UI.Input;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Animation;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -11,18 +18,10 @@ using Unigram.Services;
 using Unigram.Services.Keyboard;
 using Unigram.Services.ViewService;
 using Windows.ApplicationModel.Core;
-using Windows.Devices.Input;
 using Windows.Foundation;
 using Windows.Graphics.Display;
-using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.WindowManagement;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Animation;
 
 namespace Unigram.Controls
 {

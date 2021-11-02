@@ -1,4 +1,9 @@
-﻿using System;
+﻿using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Media;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -7,11 +12,6 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Navigation;
 using Unigram.Services;
-using Windows.UI.Composition;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls
 {

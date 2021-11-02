@@ -1,4 +1,7 @@
 ﻿using LinqToVisualTree;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -7,9 +10,6 @@ using Unigram.Common;
 using Unigram.Controls.Messages;
 using Unigram.ViewModels;
 using Windows.Foundation;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Unigram.Controls.Chats
 {

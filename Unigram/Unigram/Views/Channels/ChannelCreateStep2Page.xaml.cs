@@ -1,10 +1,10 @@
-﻿using Telegram.Td.Api;
+﻿using Microsoft.UI.Xaml.Controls;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.ViewModels.Channels;
 using Unigram.ViewModels.Delegates;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Channels
 {

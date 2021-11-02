@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using System.Collections.Generic;
 using Telegram.Td.Api;
 using Unigram.Converters;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls.Payments
 {

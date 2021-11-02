@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Microsoft.UI.Input;
+using System;
 using Windows.Foundation;
-using Windows.UI.Input;
 
 namespace Unigram.Charts
 {

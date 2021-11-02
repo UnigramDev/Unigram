@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using System;
 using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -8,8 +10,6 @@ using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Supergroups;
 using Unigram.Views.Popups;
 using Windows.Storage.Pickers;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Supergroups
 {

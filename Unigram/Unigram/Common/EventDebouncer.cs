@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml;
+using System;
 using System.Threading;
-using Windows.UI.Xaml;
 
 namespace Unigram.Common
 {

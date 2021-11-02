@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml.Controls;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
@@ -7,7 +8,6 @@ using Windows.ApplicationModel.ExtendedExecution;
 using Windows.Devices.Enumeration;
 using Windows.Devices.Geolocation;
 using Windows.System;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Services
 {

@@ -1,4 +1,11 @@
-﻿using System;
+﻿using Microsoft.UI.Input;
+using Microsoft.UI.Text;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation.Peers;
+using Microsoft.UI.Xaml.Automation.Provider;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
+using System;
 using System.Collections;
 using Telegram.Td.Api;
 using Unigram.Collections;
@@ -6,13 +13,7 @@ using Unigram.Controls.Chats;
 using Unigram.ViewModels;
 using Windows.System;
 using Windows.UI.Core;
-using Windows.UI.Text;
 using Windows.UI.Text.Core;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation.Peers;
-using Windows.UI.Xaml.Automation.Provider;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Input;
 
 namespace Unigram.Controls
 {
@@ -33,9 +34,9 @@ namespace Unigram.Controls
         {
             if (e.Key is VirtualKey.Up or VirtualKey.Down)
             {
-                var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
-                var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
-                var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
+                var alt = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
+                var ctrl = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
+                var shift = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
 
                 if (!alt && !ctrl && !shift)
                 {
@@ -70,7 +71,7 @@ namespace Unigram.Controls
             }
             else if (e.Key == VirtualKey.Tab)
             {
-                var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
+                var ctrl = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
                 if (ctrl)
                 {
                     return;

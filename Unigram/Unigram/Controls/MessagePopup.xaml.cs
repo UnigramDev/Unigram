@@ -1,8 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls
 {

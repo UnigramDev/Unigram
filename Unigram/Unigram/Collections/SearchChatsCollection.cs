@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml.Data;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -9,7 +10,6 @@ using Unigram.Converters;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.Foundation;
-using Windows.UI.Xaml.Data;
 
 namespace Unigram.Collections
 {

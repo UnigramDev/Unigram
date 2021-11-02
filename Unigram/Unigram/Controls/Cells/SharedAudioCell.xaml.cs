@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
+using System;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls.Messages.Content;
@@ -6,10 +10,6 @@ using Unigram.Converters;
 using Unigram.Navigation;
 using Unigram.Services;
 using Windows.Media.Playback;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Controls.Cells
 {

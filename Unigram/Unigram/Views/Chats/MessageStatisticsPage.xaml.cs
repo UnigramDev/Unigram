@@ -1,12 +1,12 @@
-﻿using Telegram.Td.Api;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Telegram.Td.Api;
 using Unigram.Charts;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Cells;
 using Unigram.ViewModels.Chats;
 using Unigram.ViewModels.Delegates;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Chats
 {

@@ -1,11 +1,9 @@
-﻿using Unigram.Controls;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Unigram.Controls;
 using Unigram.Navigation;
 using Unigram.Services;
 using Windows.UI.Core;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-
-// The Content Dialog item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
 namespace Unigram.Views.Popups
 {

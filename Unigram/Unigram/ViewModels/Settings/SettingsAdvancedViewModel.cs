@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Navigation;
+using System;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -7,8 +9,6 @@ using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Services.Updates;
 using Windows.System;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {

@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Microsoft.UI.Dispatching;
+using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Logs;
-using Windows.System;
 
 namespace Unigram.Navigation
 {

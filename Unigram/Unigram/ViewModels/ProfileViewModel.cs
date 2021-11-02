@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -19,8 +21,6 @@ using Unigram.Views.Popups;
 using Unigram.Views.Supergroups;
 using Unigram.Views.Users;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {

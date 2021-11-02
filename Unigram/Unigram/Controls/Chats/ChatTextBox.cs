@@ -1,4 +1,13 @@
-﻿using System;
+﻿using Microsoft.UI.Input;
+using Microsoft.UI.Text;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation.Peers;
+using Microsoft.UI.Xaml.Automation.Provider;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Input;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,15 +26,7 @@ using Windows.Foundation;
 using Windows.Storage.Streams;
 using Windows.System;
 using Windows.UI.Core;
-using Windows.UI.Text;
 using Windows.UI.Text.Core;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation.Peers;
-using Windows.UI.Xaml.Automation.Provider;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Input;
 
 namespace Unigram.Controls.Chats
 {
@@ -155,9 +156,9 @@ namespace Unigram.Controls.Chats
             }
             else if (e.Key is VirtualKey.Up or VirtualKey.Down)
             {
-                var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
-                var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
-                var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
+                var alt = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
+                var ctrl = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
+                var shift = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
 
                 if (e.Key == VirtualKey.Up && !alt && !ctrl && !shift && IsEmpty && ViewModel.Autocomplete == null)
                 {
@@ -194,7 +195,7 @@ namespace Unigram.Controls.Chats
             }
             else if ((e.Key == VirtualKey.Tab || e.Key == VirtualKey.Enter) && Autocomplete != null && Autocomplete.Items.Count > 0 && ViewModel.Autocomplete != null && ((ViewModel.Autocomplete is SearchStickersCollection && Autocomplete.SelectedItem != null) || ViewModel.Autocomplete is not SearchStickersCollection))
             {
-                var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
+                var shift = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
                 if (shift)
                 {
                     return;
@@ -213,7 +214,7 @@ namespace Unigram.Controls.Chats
             }
             else if (e.Key == VirtualKey.Tab)
             {
-                var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
+                var ctrl = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
                 if (ctrl)
                 {
                     return;
@@ -221,7 +222,7 @@ namespace Unigram.Controls.Chats
             }
             else if (e.Key == VirtualKey.X && Math.Abs(Document.Selection.Length) == 4)
             {
-                var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
+                var alt = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
                 if (alt)
                 {
                     Document.Selection.GetText(TextGetOptions.NoHidden, out string hex);

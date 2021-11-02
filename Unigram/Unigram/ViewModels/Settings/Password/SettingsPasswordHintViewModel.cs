@@ -1,10 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using Microsoft.UI.Xaml.Navigation;
+using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views.Settings.Password;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings.Password
 {

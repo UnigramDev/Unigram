@@ -1,8 +1,8 @@
-﻿using Unigram.Common;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Unigram.Common;
 using Unigram.Converters;
 using Unigram.ViewModels.Settings;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Settings
 {
@@ -30,7 +30,7 @@ namespace Unigram.Views.Settings
             Username.Focus(FocusState.Keyboard);
         }
 
-        private void Copy_Click(Windows.UI.Xaml.Documents.Hyperlink sender, Windows.UI.Xaml.Documents.HyperlinkClickEventArgs args)
+        private void Copy_Click(Microsoft.UI.Xaml.Documents.Hyperlink sender, Microsoft.UI.Xaml.Documents.HyperlinkClickEventArgs args)
         {
             ViewModel.CopyCommand.Execute();
         }

@@ -1,15 +1,15 @@
-﻿using System;
+﻿using Microsoft.UI;
+using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Media;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Collections;
-using Windows.UI;
-using Windows.UI.Composition;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls
 {
@@ -167,7 +167,7 @@ namespace Unigram.Controls
 
             _layoutRoot.Children.Move((uint)oldIndex, (uint)newIndex);
 
-            var compositor = Window.Current.Compositor;
+            var compositor = Navigation.BootStrapper.Current.Compositor;
             var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
 
             var start = Math.Min(oldIndex, newIndex);
@@ -215,7 +215,7 @@ namespace Unigram.Controls
 
         private CompositionScopedBatch CreateScopedBatch()
         {
-            var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            var batch = Navigation.BootStrapper.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
                 lock (_toBeRemoved)
@@ -240,13 +240,13 @@ namespace Unigram.Controls
             visual.Offset = new Vector3(index * 26, 0, 0);
             visual.CenterPoint = new Vector3(36 / 2);
 
-            var addingScale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var addingScale = Navigation.BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
             addingScale.InsertKeyFrame(0.0f, new Vector3(0));
             addingScale.InsertKeyFrame(0.9f, new Vector3(1.1f, 1.1f, 1));
             addingScale.InsertKeyFrame(1.0f, new Vector3(1));
             //addingScale.Duration = TimeSpan.FromSeconds(1);
 
-            var addingOpacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var addingOpacity = Navigation.BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
             addingOpacity.InsertKeyFrame(0.0f, 0);
             addingOpacity.InsertKeyFrame(1.0f, 1);
             //addingOpacity.Duration = TimeSpan.FromSeconds(1);
@@ -261,12 +261,12 @@ namespace Unigram.Controls
 
             var child = ElementCompositionPreview.GetElementVisual(container);
 
-            var removingScale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var removingScale = Navigation.BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
             removingScale.InsertKeyFrame(0.0f, new Vector3(1));
             removingScale.InsertKeyFrame(1.0f, new Vector3(0));
             //removingScale.Duration = TimeSpan.FromSeconds(1);
 
-            var removingOpacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var removingOpacity = Navigation.BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
             removingOpacity.InsertKeyFrame(0.0f, 1);
             removingOpacity.InsertKeyFrame(1.0f, 0);
             //removingOpacity.Duration = TimeSpan.FromSeconds(1);
@@ -280,7 +280,7 @@ namespace Unigram.Controls
             Canvas.SetZIndex(container, -newIndex);
 
             var child = ElementCompositionPreview.GetElementVisual(container);
-            var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var offset = Navigation.BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
 
             if (oldIndex >= 0)
             {
@@ -303,7 +303,7 @@ namespace Unigram.Controls
                 var count = Math.Min(_maxCount, Math.Max(1, _items.Count));
                 var diff = 88f - (count * 36f - ((count - 1) * 10f));
 
-                var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                var offset = Navigation.BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
                 offset.InsertKeyFrame(1, new Vector3(diff / 2, 0, 0));
                 //offset.Duration = TimeSpan.FromSeconds(1);
 

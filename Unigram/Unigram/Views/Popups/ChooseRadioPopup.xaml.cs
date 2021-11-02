@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Shapes;
+using System.Collections.Generic;
 using System.Linq;
 using Unigram.Controls;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Views.Popups
 {

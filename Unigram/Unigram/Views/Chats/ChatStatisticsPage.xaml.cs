@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Imaging;
+using System;
 using System.Linq;
 using System.Text;
 using Telegram.Td.Api;
@@ -9,9 +12,6 @@ using Unigram.Controls.Cells;
 using Unigram.Converters;
 using Unigram.ViewModels.Chats;
 using Unigram.ViewModels.Delegates;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Views.Chats
 {

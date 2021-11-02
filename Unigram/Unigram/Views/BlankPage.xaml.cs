@@ -1,9 +1,9 @@
-﻿using System.Linq;
+﻿using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
+using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Services;
 using Unigram.Views.SignIn;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views
 {

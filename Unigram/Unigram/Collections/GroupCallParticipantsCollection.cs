@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml.Data;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,7 +12,6 @@ using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Windows.Foundation;
 using Windows.System;
-using Windows.UI.Xaml.Data;
 
 namespace Unigram.Collections
 {

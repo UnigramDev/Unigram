@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Data;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -15,8 +17,6 @@ using Unigram.ViewModels.Delegates;
 using Unigram.Views.Folders;
 using Unigram.Views.Popups;
 using Windows.Foundation;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Data;
 
 namespace Unigram.ViewModels
 {

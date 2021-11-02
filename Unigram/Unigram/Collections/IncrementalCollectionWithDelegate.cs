@@ -1,5 +1,5 @@
-﻿using Windows.Foundation;
-using Windows.UI.Xaml.Data;
+﻿using Microsoft.UI.Xaml.Data;
+using Windows.Foundation;
 
 namespace Unigram.Collections
 {

@@ -1,5 +1,4 @@
-﻿using System;
-using Unigram.Common;
+﻿using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Navigation;
 

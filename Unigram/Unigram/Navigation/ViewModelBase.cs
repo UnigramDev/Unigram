@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.UI.Xaml.Navigation;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unigram.Navigation.Services;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Navigation
 {

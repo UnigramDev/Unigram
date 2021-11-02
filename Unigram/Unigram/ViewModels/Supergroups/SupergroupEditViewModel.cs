@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
+using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
@@ -11,8 +13,6 @@ using Unigram.Views.Chats;
 using Unigram.Views.Popups;
 using Unigram.Views.Supergroups;
 using Windows.Foundation;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 using static Unigram.Services.GenerationService;
 
 namespace Unigram.ViewModels.Supergroups

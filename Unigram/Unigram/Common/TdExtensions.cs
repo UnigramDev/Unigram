@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml.Media;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -11,7 +12,6 @@ using Unigram.ViewModels;
 using Unigram.ViewModels.Settings;
 using Windows.Foundation;
 using Windows.UI;
-using Windows.UI.Xaml.Media;
 using Point = Windows.Foundation.Point;
 
 namespace Unigram.Common

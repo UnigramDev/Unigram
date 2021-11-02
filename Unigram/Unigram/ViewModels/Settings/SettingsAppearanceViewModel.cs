@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views.Popups;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {

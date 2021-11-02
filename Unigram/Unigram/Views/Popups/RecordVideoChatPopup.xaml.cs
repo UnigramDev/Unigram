@@ -1,5 +1,5 @@
-﻿using Unigram.Controls;
-using Windows.UI.Xaml.Controls;
+﻿using Microsoft.UI.Xaml.Controls;
+using Unigram.Controls;
 
 namespace Unigram.Views.Popups
 {
@@ -31,7 +31,7 @@ namespace Unigram.Views.Popups
         {
         }
 
-        private void Label_KeyDown(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
+        private void Label_KeyDown(object sender, Microsoft.UI.Xaml.Input.KeyRoutedEventArgs e)
         {
             if (e.Key != Windows.System.VirtualKey.Enter)
             {

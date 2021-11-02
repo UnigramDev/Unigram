@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Unigram.Services.Stripe
+﻿namespace Unigram.Services.Stripe
 {
     public class CardUtils
     {

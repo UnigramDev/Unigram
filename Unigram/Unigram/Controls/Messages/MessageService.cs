@@ -1,4 +1,9 @@
-﻿using System;
+﻿using Microsoft.UI;
+using Microsoft.UI.Text;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Media;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,11 +12,7 @@ using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Services;
 using Unigram.ViewModels;
-using Windows.UI;
 using Windows.UI.Text;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Messages
 {

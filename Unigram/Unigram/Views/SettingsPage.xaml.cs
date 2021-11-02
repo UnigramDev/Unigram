@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
+using System;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
@@ -11,9 +14,6 @@ using Unigram.Views.Popups;
 using Unigram.Views.Settings;
 using Windows.ApplicationModel;
 using Windows.Storage.Pickers;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views
 {

@@ -10,7 +10,7 @@ namespace Unigram.Controls
             Click += OnClick;
         }
 
-        private void OnClick(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void OnClick(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
             BootStrapper.Current.RaiseBackRequested();
         }

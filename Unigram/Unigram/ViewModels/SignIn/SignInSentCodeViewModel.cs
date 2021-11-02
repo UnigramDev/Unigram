@@ -1,10 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using Microsoft.UI.Xaml.Navigation;
+using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Navigation.Services;
 using Unigram.Services;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.SignIn
 {

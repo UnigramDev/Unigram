@@ -1,4 +1,7 @@
-﻿using RLottie;
+﻿using Microsoft.UI;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
+using RLottie;
 using System;
 using System.Collections.Generic;
 using System.IO.Compression;
@@ -12,8 +15,6 @@ using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Common
 {
@@ -585,7 +586,7 @@ namespace Unigram.Common
             {
                 try
                 {
-                    Size size;
+                    Size size = default;
                     await Task.Run(() => PlaceholderImageHelper.Current.DrawWebP(path, 512, stream, out size));
 
                     if (size.Width > 0 && size.Height > 0 && maxWidth != 512)

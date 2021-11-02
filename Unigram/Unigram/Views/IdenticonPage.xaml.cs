@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml.Navigation;
+using System;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Users
 {

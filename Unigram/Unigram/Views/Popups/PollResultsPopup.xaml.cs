@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using System.Collections.Generic;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
@@ -6,8 +8,6 @@ using Unigram.Controls;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Popups
 {

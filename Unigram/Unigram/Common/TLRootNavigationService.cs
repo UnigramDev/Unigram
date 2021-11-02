@@ -1,12 +1,12 @@
-﻿using Telegram.Td.Api;
+﻿using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
+using Telegram.Td.Api;
 using Unigram.Controls;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.ViewModels.SignIn;
 using Unigram.Views;
 using Unigram.Views.SignIn;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Common
 {

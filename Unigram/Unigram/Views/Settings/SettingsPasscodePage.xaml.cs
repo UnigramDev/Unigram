@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml;
+using System;
 using Unigram.Common;
 using Unigram.ViewModels.Settings;
 using Windows.Security.Credentials;
-using Windows.UI.Xaml;
 
 namespace Unigram.Views.Settings
 {

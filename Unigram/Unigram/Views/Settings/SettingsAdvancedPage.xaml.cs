@@ -1,6 +1,6 @@
-﻿using Unigram.Common;
+﻿using Microsoft.UI.Xaml.Controls;
+using Unigram.Common;
 using Unigram.ViewModels.Settings;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Settings
 {
@@ -23,16 +23,16 @@ namespace Unigram.Views.Settings
 
             if (ApiInformation.IsTypePresent("Windows.ApplicationModel.FullTrustProcessLauncher"))
             {
-                TraySwitch.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                TraySwitch.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
             }
             else
             {
-                TraySwitch.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                TraySwitch.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
             }
 #endif
         }
 
-        private void Shortcuts_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void Shortcuts_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
             Frame.Navigate(typeof(SettingsShortcutsPage));
         }

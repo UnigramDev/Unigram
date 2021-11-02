@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml.Controls;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,6 @@ using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Services;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.ViewModels.Chats
 {

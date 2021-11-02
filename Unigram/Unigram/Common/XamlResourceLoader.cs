@@ -1,5 +1,5 @@
-﻿using Unigram.Services;
-using Windows.UI.Xaml.Resources;
+﻿using Microsoft.UI.Xaml.Resources;
+using Unigram.Services;
 
 namespace Unigram.Common
 {

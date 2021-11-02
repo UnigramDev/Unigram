@@ -1,4 +1,7 @@
-﻿using System.Runtime.InteropServices.WindowsRuntime;
+﻿using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Navigation;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
@@ -8,9 +11,6 @@ using Unigram.Navigation.Services;
 using Unigram.Services;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Chats
 {

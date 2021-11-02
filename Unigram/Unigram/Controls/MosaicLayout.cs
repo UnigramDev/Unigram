@@ -6,7 +6,6 @@ using System.Collections.Specialized;
 using System.Linq;
 using Unigram.Common;
 using Windows.Foundation;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls
 {

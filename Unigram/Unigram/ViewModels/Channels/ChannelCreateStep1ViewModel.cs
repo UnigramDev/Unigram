@@ -1,9 +1,9 @@
-﻿using Telegram.Td.Api;
+﻿using Microsoft.UI.Xaml.Media.Imaging;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services;
 using Unigram.Views.Channels;
 using Windows.Storage;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.ViewModels.Channels
 {

@@ -1,4 +1,8 @@
-﻿using System.Linq;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
+using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
@@ -6,10 +10,6 @@ using Unigram.Converters;
 using Unigram.Navigation;
 using Unigram.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Views
 {

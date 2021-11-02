@@ -1,7 +1,7 @@
-﻿using Telegram.Td.Api;
+﻿using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Documents;
+using Telegram.Td.Api;
 using Unigram.ViewModels;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Documents;
 
 namespace Unigram.Controls.Messages.Content
 {

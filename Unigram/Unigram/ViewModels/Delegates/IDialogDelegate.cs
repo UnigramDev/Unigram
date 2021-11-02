@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.UI.Xaml;
+using System.Collections.Generic;
 using Telegram.Td.Api;
 using Unigram.Controls.Chats;
 using Unigram.ViewModels.Chats;
-using Windows.UI.Xaml;
 
 namespace Unigram.ViewModels.Delegates
 {

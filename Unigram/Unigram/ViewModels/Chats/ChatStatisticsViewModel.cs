@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml.Navigation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,7 +11,6 @@ using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Windows.Data.Json;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Chats
 {

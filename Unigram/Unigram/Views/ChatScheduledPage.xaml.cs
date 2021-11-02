@@ -1,8 +1,8 @@
-﻿using System.ComponentModel;
+﻿using Microsoft.UI.Xaml.Navigation;
+using System.ComponentModel;
 using Unigram.Navigation;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views
 {

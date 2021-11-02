@@ -1,4 +1,6 @@
-﻿using Microsoft.UI.Xaml.Controls;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.Collections.Generic;
 using Telegram.Td.Api;
@@ -6,8 +8,6 @@ using Unigram.Services;
 using Unigram.Services.Settings;
 using Windows.Storage;
 using Windows.UI;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Common
 {
@@ -193,7 +193,7 @@ namespace Unigram.Common
                 {
                     if (target.TryGet(item.Key, out SolidColorBrush brush))
                     {
-                        Color value;
+                        Color value = default;
                         if (item.Value is AccentShade shade)
                         {
                             if (shades != null && shades.TryGetValue(shade, out Color accent))
