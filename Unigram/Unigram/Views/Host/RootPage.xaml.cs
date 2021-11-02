@@ -175,12 +175,20 @@ namespace Unigram.Views.Host
                 detail.ClearCache();
             }
 
+            var corpus = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId($"Profile{master.FrameFacade.FrameId}");
+            if (corpus != null)
+            {
+                corpus.Navigate(typeof(BlankPage));
+                corpus.ClearCache();
+            }
+
             master.Frame.Navigating -= OnNavigating;
             master.Frame.Navigated -= OnNavigated;
             master.Frame.Navigate(typeof(BlankPage));
 
             WindowContext.GetForCurrentView().NavigationServices.Remove(master);
             WindowContext.GetForCurrentView().NavigationServices.Remove(detail);
+            WindowContext.GetForCurrentView().NavigationServices.Remove(corpus);
         }
 
         private void OnNavigating(object sender, NavigatingCancelEventArgs e)

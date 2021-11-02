@@ -103,7 +103,7 @@ namespace Unigram.Views.Channels
 
             if (fullInfo.InviteLink == null && string.IsNullOrEmpty(group.Username))
             {
-                ViewModel.ProtoService.Send(new CreateChatInviteLink(chat.Id, 0, 0));
+                ViewModel.ProtoService.Send(new CreateChatInviteLink(chat.Id, string.Empty, 0, 0, false));
             }
         }
 
@@ -131,7 +131,7 @@ namespace Unigram.Views.Channels
 
             if (fullInfo.InviteLink == null)
             {
-                ViewModel.ProtoService.Send(new CreateChatInviteLink(chat.Id, 0, 0));
+                ViewModel.ProtoService.Send(new CreateChatInviteLink(chat.Id, string.Empty, 0, 0, false));
             }
         }
 

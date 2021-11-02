@@ -36,6 +36,7 @@
 
         <Style x:Key="ProfileMasterDetailViewStyle" TargetType="controls:MasterDetailView">
             <Setter Property="IsTabStop" Value="False"/>
+            <Setter Property="IsPrimary" Value="False"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="controls:MasterDetailView">

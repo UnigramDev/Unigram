@@ -105,7 +105,7 @@ namespace Unigram.Controls
                 DetailFrame.GoBack();
                 args.Handled = true;
             }
-            else if (ParentFrame.Content is INavigablePage masterPage /*&& type == BackStackType.Hamburger*/)
+            else if (ParentFrame.Content is INavigablePage masterPage /*&& type == BackStackType.Hamburger*/ && IsPrimary)
             {
                 masterPage.OnBackRequested(args);
                 if (args.Handled)
@@ -420,6 +420,19 @@ namespace Unigram.Controls
 
         public static readonly DependencyProperty IsBlankProperty =
             DependencyProperty.Register("IsBlank", typeof(bool), typeof(MasterDetailView), new PropertyMetadata(false));
+
+        #endregion
+
+        #region IsPrimary
+
+        public bool IsPrimary
+        {
+            get => (bool)GetValue(IsPrimaryProperty);
+            set => SetValue(IsPrimaryProperty, value);
+        }
+
+        public static readonly DependencyProperty IsPrimaryProperty =
+            DependencyProperty.Register("IsPrimary", typeof(bool), typeof(MasterDetailView), new PropertyMetadata(false));
 
         #endregion
     }

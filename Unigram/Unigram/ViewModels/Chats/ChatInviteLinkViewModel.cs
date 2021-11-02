@@ -148,7 +148,7 @@ namespace Unigram.ViewModels.Chats
         {
             if (inviteLink == null)
             {
-                ProtoService.Send(new CreateChatInviteLink(chat.Id, 0, 0));
+                ProtoService.Send(new CreateChatInviteLink(chat.Id, string.Empty, 0, 0, false));
             }
             else
             {

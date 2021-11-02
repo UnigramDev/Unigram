@@ -451,7 +451,7 @@ namespace Unigram.Views
             }
         }
 
-        private void SetProxyVisibility(bool expectBlocking, int proxyId, ConnectionState connectionState)
+        private void SetProxyVisibility(bool expectBlocking, long proxyId, ConnectionState connectionState)
         {
             if (expectBlocking || proxyId != 0)
             {
@@ -1084,7 +1084,7 @@ namespace Unigram.Views
 
                 var index = command - ShortcutCommand.ChatPinned1;
 
-                var response = await ViewModel.ProtoService.GetChatListAsync(new ChatListMain(), 0, ViewModel.CacheService.Options.PinnedChatCountMax * 2 + 1);
+                var response = await ViewModel.ProtoService.GetChatListAsync(new ChatListMain(), 0, (int)ViewModel.CacheService.Options.PinnedChatCountMax * 2 + 1);
                 if (response is Telegram.Td.Api.Chats chats && index >= 0 && index < chats.ChatIds.Count)
                 {
                     for (int i = 0; i < chats.ChatIds.Count; i++)
@@ -3040,31 +3040,31 @@ namespace Unigram.Views
                 //masterDetail.BlankPageType = typeof(ProfilePage);
                 masterDetail.ViewStateChanged += Profile_ViewStateChanged;
                 masterDetail.Initialize("Profile", Frame, ViewModel.ProtoService.SessionId);
-                masterDetail.NavigationService.FrameFacade.Navigating += (s, args) =>
+                masterDetail.NavigationService.Navigating += (s, args) =>
                 {
                     // I'd consider this a temporary solution
-                    var allowed = args.SourcePageType == typeof(ProfilePage)
-                        || args.SourcePageType == typeof(BlankPage)
-                        || args.SourcePageType == typeof(ChatInviteLinkPage)
-                        || args.SourcePageType == typeof(ChatStatisticsPage)
-                        || args.SourcePageType == typeof(MessageStatisticsPage)
-                        || args.SourcePageType == typeof(SupergroupAddAdministratorPage)
-                        || args.SourcePageType == typeof(SupergroupAddRestrictedPage)
-                        || args.SourcePageType == typeof(SupergroupAdministratorsPage)
-                        || args.SourcePageType == typeof(SupergroupBannedPage)
-                        || args.SourcePageType == typeof(SupergroupEditAdministratorPage)
-                        || args.SourcePageType == typeof(SupergroupEditLinkedChatPage)
-                        || args.SourcePageType == typeof(SupergroupEditPage)
-                        || args.SourcePageType == typeof(SupergroupEditRestrictedPage)
-                        || args.SourcePageType == typeof(SupergroupEditStickerSetPage)
-                        || args.SourcePageType == typeof(SupergroupEditTypePage)
-                        || args.SourcePageType == typeof(SupergroupMembersPage)
-                        || args.SourcePageType == typeof(SupergroupPermissionsPage);
+                    var allowed = args.TargetPageType == typeof(ProfilePage)
+                        || args.TargetPageType == typeof(BlankPage)
+                        || args.TargetPageType == typeof(ChatInviteLinkPage)
+                        || args.TargetPageType == typeof(ChatStatisticsPage)
+                        || args.TargetPageType == typeof(MessageStatisticsPage)
+                        || args.TargetPageType == typeof(SupergroupAddAdministratorPage)
+                        || args.TargetPageType == typeof(SupergroupAddRestrictedPage)
+                        || args.TargetPageType == typeof(SupergroupAdministratorsPage)
+                        || args.TargetPageType == typeof(SupergroupBannedPage)
+                        || args.TargetPageType == typeof(SupergroupEditAdministratorPage)
+                        || args.TargetPageType == typeof(SupergroupEditLinkedChatPage)
+                        || args.TargetPageType == typeof(SupergroupEditPage)
+                        || args.TargetPageType == typeof(SupergroupEditRestrictedPage)
+                        || args.TargetPageType == typeof(SupergroupEditStickerSetPage)
+                        || args.TargetPageType == typeof(SupergroupEditTypePage)
+                        || args.TargetPageType == typeof(SupergroupMembersPage)
+                        || args.TargetPageType == typeof(SupergroupPermissionsPage);
 
                     if (args.NavigationMode == NavigationMode.New && !allowed)
                     {
                         args.Cancel = true;
-                        Windows.System.DispatcherQueue.GetForCurrentThread().TryEnqueue(() => MasterDetail.NavigationService.Navigate(args.SourcePageType, args.Parameter));
+                        Windows.System.DispatcherQueue.GetForCurrentThread().TryEnqueue(() => MasterDetail.NavigationService.Navigate(args.TargetPageType, args.Parameter, args.TargetPageParameter as NavigationState));
                     }
                 };
                 masterDetail.NavigationService.FrameFacade.Navigated += (s, args) =>

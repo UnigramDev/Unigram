@@ -151,7 +151,7 @@ namespace Unigram.Views.Supergroups
                 if (fullInfo.InviteLink == null && string.IsNullOrEmpty(group.Username))
                 {
                     InviteLinkPanel.Visibility = Visibility.Collapsed;
-                    ViewModel.ProtoService.Send(new CreateChatInviteLink(chat.Id, 0, 0));
+                    ViewModel.ProtoService.Send(new CreateChatInviteLink(chat.Id, string.Empty, 0, 0, false));
                 }
                 else if (string.IsNullOrEmpty(group.Username))
                 {
@@ -252,7 +252,7 @@ namespace Unigram.Views.Supergroups
                 if (fullInfo.InviteLink == null)
                 {
                     InviteLinkPanel.Visibility = Visibility.Collapsed;
-                    ViewModel.ProtoService.Send(new CreateChatInviteLink(chat.Id, 0, 0));
+                    ViewModel.ProtoService.Send(new CreateChatInviteLink(chat.Id, string.Empty, 0, 0, false));
                 }
                 else
                 {
