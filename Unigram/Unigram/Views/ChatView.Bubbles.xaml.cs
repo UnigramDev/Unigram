@@ -191,72 +191,72 @@ namespace Unigram.Views
                 }
                 else
                 {
-                    if (minOffset != null && minOffset + container.ActualHeight >= FloatingPhoto.ActualHeight)
-                    {
-                        var content = container.ContentTemplateRoot as FrameworkElement;
-                        var photo = content?.FindName("Photo") as ProfilePicture;
+                    //if (minOffset != null && minOffset + container.ActualHeight >= FloatingPhoto.ActualHeight)
+                    //{
+                    //    var content = container.ContentTemplateRoot as FrameworkElement;
+                    //    var photo = content?.FindName("Photo") as ProfilePicture;
 
-                        if (photo != null)
-                        {
-                            var height = (float)container.ActualHeight;
-                            var offset = (float)minOffset + height;
+                    //    if (photo != null)
+                    //    {
+                    //        var height = (float)container.ActualHeight;
+                    //        var offset = (float)minOffset + height;
 
-                            if (offset + 6 >= height && offset + 6 < height * 2 && message.IsFirst)
-                            {
-                                if (maxOffset)
-                                {
-                                    HideFloatingPhoto();
-                                }
+                    //        if (offset + 6 >= height && offset + 6 < height * 2 && message.IsFirst)
+                    //        {
+                    //            if (maxOffset)
+                    //            {
+                    //                HideFloatingPhoto();
+                    //            }
 
-                                photo.Visibility = Visibility.Visible;
-                                photo.VerticalAlignment = VerticalAlignment.Top;
-                                photo.Margin = new Thickness(0, 4, 0, -4);
-                            }
-                            else
-                            {
-                                if (maxOffset)
-                                {
-                                    if (!message.Sender.IsEqual(_floatingSender))
-                                    {
-                                        _floatingSender = message.Sender;
-                                        FloatingPhoto.Source = photo.Source;
-                                    }
+                    //            photo.Visibility = Visibility.Visible;
+                    //            photo.VerticalAlignment = VerticalAlignment.Top;
+                    //            photo.Margin = new Thickness(0, 4, 0, -4);
+                    //        }
+                    //        else
+                    //        {
+                    //            if (maxOffset)
+                    //            {
+                    //                if (!message.Sender.IsEqual(_floatingSender))
+                    //                {
+                    //                    _floatingSender = message.Sender;
+                    //                    FloatingPhoto.Source = photo.Source;
+                    //                }
 
-                                    FloatingPhoto.Tag = message;
-                                    FloatingPhoto.Visibility = Visibility.Visible;
-                                }
+                    //                FloatingPhoto.Tag = message;
+                    //                FloatingPhoto.Visibility = Visibility.Visible;
+                    //            }
 
-                                photo.Visibility = Visibility.Collapsed;
-                                photo.VerticalAlignment = VerticalAlignment.Bottom;
-                                photo.Margin = new Thickness();
-                            }
+                    //            photo.Visibility = Visibility.Collapsed;
+                    //            photo.VerticalAlignment = VerticalAlignment.Bottom;
+                    //            photo.Margin = new Thickness();
+                    //        }
 
-                            if (message.IsLast || i == panel.LastVisibleIndex)
-                            {
-                                minOffset = null;
-                            }
-                            else
-                            {
-                                maxOffset = false;
-                            }
-                        }
-                        else if (maxOffset)
-                        {
-                            HideFloatingPhoto();
-                        }
-                    }
-                    else
-                    {
-                        var content = container.ContentTemplateRoot as FrameworkElement;
-                        var photo = content?.FindName("Photo") as ProfilePicture;
+                    //        if (message.IsLast || i == panel.LastVisibleIndex)
+                    //        {
+                    //            minOffset = null;
+                    //        }
+                    //        else
+                    //        {
+                    //            maxOffset = false;
+                    //        }
+                    //    }
+                    //    else if (maxOffset)
+                    //    {
+                    //        HideFloatingPhoto();
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    var content = container.ContentTemplateRoot as FrameworkElement;
+                    //    var photo = content?.FindName("Photo") as ProfilePicture;
 
-                        if (photo != null)
-                        {
-                            photo.Visibility = message.IsLast ? Visibility.Visible : Visibility.Collapsed;
-                            photo.VerticalAlignment = VerticalAlignment.Bottom;
-                            photo.Margin = new Thickness();
-                        }
-                    }
+                    //    if (photo != null)
+                    //    {
+                    //        photo.Visibility = message.IsLast ? Visibility.Visible : Visibility.Collapsed;
+                    //        photo.VerticalAlignment = VerticalAlignment.Bottom;
+                    //        photo.Margin = new Thickness();
+                    //    }
+                    //}
 
                     container.Opacity = 1;
                 }
@@ -298,10 +298,10 @@ namespace Unigram.Views
                 _dateHeader.Offset = Vector3.Zero;
             }
 
-            if (minOffset != null && !intermediate)
-            {
-                HideFloatingPhoto();
-            }
+            //if (minOffset != null && !intermediate)
+            //{
+            //    HideFloatingPhoto();
+            //}
 
             _dateHeaderTimer.Stop();
             _dateHeaderTimer.Start();
