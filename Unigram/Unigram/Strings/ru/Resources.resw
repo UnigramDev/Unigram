@@ -2398,6 +2398,9 @@
   <data name="ChangeChatBackground" xml:space="preserve">
     <value>Изменить фон</value>
   </data>
+  <data name="ChangeColors" xml:space="preserve">
+    <value>Изменить цвета</value>
+  </data>
   <data name="ChangeColorToColor" xml:space="preserve">
     <value>Использовать ранее выбранный фон или сбросить его на фон по умолчанию для этой темы?</value>
   </data>
@@ -2838,6 +2841,9 @@
   <data name="ChatAdmin" xml:space="preserve">
     <value>админ</value>
   </data>
+  <data name="ChatApplyTheme" xml:space="preserve">
+    <value>Применить тему</value>
+  </data>
   <data name="ChatArchived" xml:space="preserve">
     <value>Чат в архиве.</value>
   </data>
@@ -2912,6 +2918,12 @@
   </data>
   <data name="ChatLocation" xml:space="preserve">
     <value>Геопозиция</value>
+  </data>
+  <data name="ChatNoTheme" xml:space="preserve">
+    <value>Без темы</value>
+  </data>
+  <data name="ChatResetTheme" xml:space="preserve">
+    <value>Сбросить тему</value>
   </data>
   <data name="Chats_few" xml:space="preserve">
     <value>{0} чата</value>
@@ -3035,6 +3047,33 @@
   </data>
   <data name="ChatsUnmute" xml:space="preserve">
     <value>Вкл. уведомления</value>
+  </data>
+  <data name="ChatThemeChangedTo" xml:space="preserve">
+    <value>{0} изменил(а) тему чата на {1}</value>
+  </data>
+  <data name="ChatThemeChangedYou" xml:space="preserve">
+    <value>Вы изменили тему чата на {0}</value>
+  </data>
+  <data name="ChatThemeDayNightSwitchTooltip" xml:space="preserve">
+    <value>Нажмите, чтобы посмотреть, как чат будет выглядеть у {0} в ночном режиме.</value>
+  </data>
+  <data name="ChatThemeDisabled" xml:space="preserve">
+    <value>{0} отключил(а) тему чата</value>
+  </data>
+  <data name="ChatThemeDisabledYou" xml:space="preserve">
+    <value>Вы отключили тему чата</value>
+  </data>
+  <data name="ChatThemeSaveDialogApply" xml:space="preserve">
+    <value>Применить</value>
+  </data>
+  <data name="ChatThemeSaveDialogDiscard" xml:space="preserve">
+    <value>Сбросить</value>
+  </data>
+  <data name="ChatThemeSaveDialogText" xml:space="preserve">
+    <value>Применить в этом чате новую тему?</value>
+  </data>
+  <data name="ChatThemeSaveDialogTitle" xml:space="preserve">
+    <value>Сохранить изменения?</value>
   </data>
   <data name="ChatVideo" xml:space="preserve">
     <value>Видео</value>
@@ -4194,6 +4233,9 @@
   <data name="Done" xml:space="preserve">
     <value>Готово</value>
   </data>
+  <data name="DoNoSetTheme" xml:space="preserve">
+    <value>Не менять тему</value>
+  </data>
   <data name="Draft" xml:space="preserve">
     <value>Черновик</value>
   </data>
@@ -4419,6 +4461,9 @@
   <data name="EmojiBigSize" xml:space="preserve">
     <value>Большие одиночные эмодзи</value>
   </data>
+  <data name="EmojiInteractionTapHint" xml:space="preserve">
+    <value>Если бы у {0} был открыт чат, в нём тоже играла бы анимация.</value>
+  </data>
   <data name="EmojiSuggestions" xml:space="preserve">
     <value>Подсказки эмодзи</value>
   </data>
@@ -4516,6 +4561,9 @@
   </data>
   <data name="Enhance" xml:space="preserve">
     <value>Улучшение</value>
+  </data>
+  <data name="EnjoyngAnimations" xml:space="preserve">
+    <value>**oo** смотрит на {0}</value>
   </data>
   <data name="EnterChannelName" xml:space="preserve">
     <value>Имя канала</value>
@@ -6464,6 +6512,9 @@
   <data name="IsChoosingSticker" xml:space="preserve">
     <value>{0} выбирает стикер</value>
   </data>
+  <data name="IsEnjoyngAnimations" xml:space="preserve">
+    <value>{0} **oo** смотрит на {1}</value>
+  </data>
   <data name="IsRecordingAudio" xml:space="preserve">
     <value>{0} записывает голосовое сообщение...</value>
   </data>
@@ -7318,6 +7369,24 @@
   <data name="MessagePinnedHint" xml:space="preserve">
     <value>Сообщение закреплено</value>
   </data>
+  <data name="MessagePlayed_few" xml:space="preserve">
+    <value>{0} прослушивания</value>
+  </data>
+  <data name="MessagePlayed_many" xml:space="preserve">
+    <value>{0} прослушиваний</value>
+  </data>
+  <data name="MessagePlayed_one" xml:space="preserve">
+    <value>{0} прослушивание</value>
+  </data>
+  <data name="MessagePlayed_other" xml:space="preserve">
+    <value>{0} прослушиваний</value>
+  </data>
+  <data name="MessagePlayed_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagePlayed_zero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="MessagePreview" xml:space="preserve">
     <value>Показывать текст</value>
   </data>
@@ -7410,6 +7479,27 @@
   </data>
   <data name="MessagesDeletedHint_zero" xml:space="preserve">
     <value/>
+  </data>
+  <data name="MessageSeen_few" xml:space="preserve">
+    <value>{0} просмотра</value>
+  </data>
+  <data name="MessageSeen_many" xml:space="preserve">
+    <value>{0} просмотров</value>
+  </data>
+  <data name="MessageSeen_one" xml:space="preserve">
+    <value>{0} просмотр</value>
+  </data>
+  <data name="MessageSeen_other" xml:space="preserve">
+    <value>{0} просмотров</value>
+  </data>
+  <data name="MessageSeen_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessageSeen_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessageSeenTooltipMessage" xml:space="preserve">
+    <value>Для защиты конфиденциальности информация о просмотрах хранится **7 дней**.</value>
   </data>
   <data name="MessagesOverview" xml:space="preserve">
     <value>Сообщения</value>
@@ -8686,6 +8776,15 @@
   </data>
   <data name="OpenUrlTitle" xml:space="preserve">
     <value>Открыть ссылку</value>
+  </data>
+  <data name="OptimizingTelegram" xml:space="preserve">
+    <value>Оптимизация Telegram...</value>
+  </data>
+  <data name="OptimizingTelegramDescription1" xml:space="preserve">
+    <value>Это может занять некоторое время в зависимости от размера базы данных. Пожалуйста, не закрывайте приложение, пока процесс не будет завершен.</value>
+  </data>
+  <data name="OptimizingTelegramDescription2" xml:space="preserve">
+    <value>Приносим извинения за неудобства</value>
   </data>
   <data name="Option_few" xml:space="preserve">
     <value>ещё {0} варианта ответа</value>
@@ -11453,6 +11552,9 @@
   <data name="SelectOtherChat" xml:space="preserve">
     <value>Выбрать другой чат</value>
   </data>
+  <data name="SelectTheme" xml:space="preserve">
+    <value>Выбрать тему</value>
+  </data>
   <data name="Send" xml:space="preserve">
     <value>Отправить</value>
   </data>
@@ -12131,14 +12233,30 @@
     <value>ПОДРОБНЕЕ</value>
   </data>
   <data name="SponsoredMessageAlertLearnMoreUrl" xml:space="preserve">
-    <value>https://ads.telegram.org</value>
+    <value>https://promote.telegram.org</value>
+  </data>
+  <data name="SponsoredMessageAlertText" xml:space="preserve">
+    <value>В отличие от других приложений, Telegram не использует ваши личные данные для таргетирования рекламы. Рекламные сообщения в Telegram зависят исключительно от тематики публичных каналов, в которых они отображаются. Это означает, что личные данные пользователей не собираются и не анализируются для отображения рекламы и все пользователи, просматривающие тот или иной канал в Telegram, видят одинаковые рекламные сообщения.</value>
   </data>
   <data name="SponsoredMessageAlertTitle" xml:space="preserve">
     <value>Спонсируемые сообщения</value>
   </data>
   <data name="SponsoredMessageInfo" xml:space="preserve">
-    <value>Что такое спонсируемые
-сообщения?</value>
+    <value>Как работают рекламные сообщения?</value>
+  </data>
+  <data name="SponsoredMessageInfoDescription1" xml:space="preserve">
+    <value>В отличие от других приложений, Telegram не использует ваши личные данные для таргетирования рекламы. Рекламные сообщения в Telegram зависят исключительно от тематики публичных каналов, в которых они отображаются. Это означает, что личные данные пользователей не собираются и не анализируются для отображения рекламы, и все пользователи, просматривающие тот или иной канал в Telegram, видят одинаковые рекламные сообщения.</value>
+  </data>
+  <data name="SponsoredMessageInfoDescription2" xml:space="preserve">
+    <value>В отличие от других приложений, Telegram не отслеживает, перешли ли вы по рекламному сообщению, и не создает на вас "досье" на основе вашей активности. Мы также запретили использовать внешние ссылки в рекламных сообщениях, чтобы третьи стороны не могли шпионить за нашими пользователями. Мы считаем, что каждый имеет право на неприкосновенность частной жизни и технологические платформы должны это уважать.</value>
+  </data>
+  <data name="SponsoredMessageInfoDescription3" xml:space="preserve">
+    <value>Telegram предоставляет бесплатный и неограниченный сервис сотням миллионов пользователей, что влечет за собой значительные расходы на оборудование и датацентры. Чтобы оставаться независимым и оставаться верным своим ценностям, Telegram разработал платный инструмент для продвижения каналов и сообщений с учетом заботы о конфиденциальности пользователей. Мы приветствуем ответственных рекламодателей по адресу:</value>
+  </data>
+  <data name="SponsoredMessageInfoDescription4" xml:space="preserve">
+    <value>Рекламные сообщения в настоящее время работают в тестовом режиме. Как только они будут полностью запущены и позволят Telegram покрывать основные расходы, мы начнем делиться доходами от рекламы с владельцами публичных каналов, в которых выводятся рекламные сообщения.
+
+Реклама в интернете должна перестать быть синонимом нарушения конфиденциальности пользователей. Давайте вместе изменим то, как функционируют технологические компании.</value>
   </data>
   <data name="Start" xml:space="preserve">
     <value>Начать</value>
@@ -12663,6 +12781,12 @@
   </data>
   <data name="Theme" xml:space="preserve">
     <value>Тема</value>
+  </data>
+  <data name="ThemeAlsoAppliedForHint" xml:space="preserve">
+    <value>Тема также применится для **{0}**.</value>
+  </data>
+  <data name="ThemeAlsoDisabledForHint" xml:space="preserve">
+    <value>Выбранная тема будет сброшена и у **{0}**.</value>
   </data>
   <data name="ThemeArcticBlue" xml:space="preserve">
     <value>Холодная</value>
@@ -14068,7 +14192,7 @@
     <value>личный аккаунт</value>
   </data>
   <data name="VoipGroupRecordCall" xml:space="preserve">
-    <value>Записать аудио</value>
+    <value>Начать запись</value>
   </data>
   <data name="VoipGroupRecording" xml:space="preserve">
     <value>Аудио записывается</value>
@@ -14354,7 +14478,7 @@
     <value>Начать запись</value>
   </data>
   <data name="VoipRecordVoiceChat" xml:space="preserve">
-    <value>Запись голосового чата</value>
+    <value>Запись видеочата</value>
   </data>
   <data name="VoipRecordVoiceChatInfo" xml:space="preserve">
     <value>Выберите способ записи чата</value>

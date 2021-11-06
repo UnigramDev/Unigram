@@ -892,6 +892,9 @@
   <data name="AddContactTitle" xml:space="preserve">
     <value>Kişi Ekle</value>
   </data>
+  <data name="AddedBy" xml:space="preserve">
+    <value>{0} {1} tarafından eklendi</value>
+  </data>
   <data name="AddedToFavorites" xml:space="preserve">
     <value>Çıkartma, Favorilere eklendi</value>
   </data>
@@ -964,6 +967,9 @@
   <data name="AddSubscriber" xml:space="preserve">
     <value>Abone ekle</value>
   </data>
+  <data name="AddToChannel" xml:space="preserve">
+    <value>Kanala Ekle</value>
+  </data>
   <data name="AddToContacts" xml:space="preserve">
     <value>Kişilere ekle</value>
   </data>
@@ -975,6 +981,9 @@
   </data>
   <data name="AddToFavorites" xml:space="preserve">
     <value>Favorilere Ekle</value>
+  </data>
+  <data name="AddToGroup" xml:space="preserve">
+    <value>Gruba Ekle</value>
   </data>
   <data name="AddToMasks" xml:space="preserve">
     <value>Maskelere Ekle</value>
@@ -1177,6 +1186,12 @@
   <data name="AppNameBeta" xml:space="preserve">
     <value>Telegram</value>
   </data>
+  <data name="ApproveNewMembers" xml:space="preserve">
+    <value>Yeni Üyeleri Onayla</value>
+  </data>
+  <data name="ApproveNewMembersDescription" xml:space="preserve">
+    <value>Yeni kullanıcılar ancak yöneticiler tarafından onaylandıktan sonra kanala katılabilir.</value>
+  </data>
   <data name="AppUpdate" xml:space="preserve">
     <value>Telegram'ı Güncelle</value>
   </data>
@@ -1213,35 +1228,35 @@
     <value>Kişiler dışındakilerden gelen yeni sohbetleri, grupları ve kanalları otomatik olarak arşivleyin ve sessize alın.</value>
   </data>
   <data name="ArchivedChats" xml:space="preserve">
-    <value>Arşivlenen Sohbetler</value>
+    <value>Arşivlenmiş Sohbetler</value>
   </data>
   <data name="ArchivedMasks" xml:space="preserve">
-    <value>Arşivlenen Maskeler</value>
+    <value>Arşivlenmiş Maskeler</value>
   </data>
   <data name="ArchivedMasksAlertInfo" xml:space="preserve">
     <value>Eski Maske paketlerinizden bazıları arşivlendi. Bunları Maske Ayarlar bölümünden yeniden etkinleştirebilirsiniz.</value>
   </data>
   <data name="ArchivedMasksAlertTitle" xml:space="preserve">
-    <value>Arşivlenen maskeler</value>
+    <value>Arşivlenmiş maskeler</value>
   </data>
   <data name="ArchivedMasksEmpty" xml:space="preserve">
-    <value>Arşivlenen maske yok</value>
+    <value>Arşivlenmiş maske yok</value>
   </data>
   <data name="ArchivedMasksInfo" xml:space="preserve">
     <value>En fazla 200 maskeye sahip olabilirsiniz.
 Daha fazla eklediğinizde kullanılmayan paketler arşivlenir.</value>
   </data>
   <data name="ArchivedStickers" xml:space="preserve">
-    <value>Arşivlenen Çıkartmalar</value>
+    <value>Arşivlenmiş Çıkartmalar</value>
   </data>
   <data name="ArchivedStickersAlertInfo" xml:space="preserve">
     <value>Eski çıkartma paketlerinden bazıları arşivlendi. Bunları, Çıkartma Ayarları bölümünden yeniden etkinleştirebilirsiniz.</value>
   </data>
   <data name="ArchivedStickersAlertTitle" xml:space="preserve">
-    <value>Arşivlenen çıkartmalar</value>
+    <value>Arşivlenmiş çıkartmalar</value>
   </data>
   <data name="ArchivedStickersEmpty" xml:space="preserve">
-    <value>Arşivlenen çıkartma yok</value>
+    <value>Arşivlenmiş çıkartma yok</value>
   </data>
   <data name="ArchivedStickersInfo" xml:space="preserve">
     <value>200 etkin çıkartma paketiniz olabilir.
@@ -1412,9 +1427,9 @@ Daha fazlasını eklediğinizde kullanılmayan paketler arşivlenir.</value>
   <data name="AreYouSureLogout" xml:space="preserve">
     <value>Oturumunuzu kapatmak istediğinizden emin misiniz?
 
-Telegram'ı tüm cihazlarınızda aynı anda sorunsuz bir şekilde kullanabileceğinizi unutmayın.
+Telegram'ı tüm cihazlarınızda aynı anda bağımsız bir şekilde kullanabileceğinizi unutmayın.
 
-Oturumu kapatmak tüm gizli sohbetlerinizi yok eder.</value>
+Unutmayın, oturumu kapatmak tüm gizli sohbetlerinizi yok eder.</value>
   </data>
   <data name="AreYouSureRegistration" xml:space="preserve">
     <value>Kaydı iptal etmek istediğinizden emin misiniz?</value>
@@ -1522,6 +1537,9 @@ Birçok sorunun cevabına ve <![CDATA[<a href="https://telegram.org/faq/tr#sorun
   </data>
   <data name="AttachMediaRestrictedForever" xml:space="preserve">
     <value>Bu grubun yöneticileri, buraya medya göndermenizi kısıtladı</value>
+  </data>
+  <data name="AttachMenu" xml:space="preserve">
+    <value>Ekle...</value>
   </data>
   <data name="AttachMusic" xml:space="preserve">
     <value>Müzik</value>
@@ -2167,8 +2185,14 @@ Gün doğumu: {1}</value>
   <data name="Brown" xml:space="preserve">
     <value>Kahverengi</value>
   </data>
+  <data name="BrowseThemes" xml:space="preserve">
+    <value>Temalara Göz At</value>
+  </data>
   <data name="BubbleRadius" xml:space="preserve">
     <value>Mesaj köşeleri</value>
+  </data>
+  <data name="BuildMyOwnTheme" xml:space="preserve">
+    <value>Kendi temamı oluştur</value>
   </data>
   <data name="BuiltInThemes" xml:space="preserve">
     <value>Yerleşik temalar</value>
@@ -2186,10 +2210,34 @@ Gün doğumu: {1}</value>
     <value>Boş</value>
   </data>
   <data name="CacheWasCleared" xml:space="preserve">
-    <value>{0} cihazınızda serbest bırakıldı!</value>
+    <value>Cihazınızda {0} temizlendi!</value>
   </data>
   <data name="CalculatingSize" xml:space="preserve">
     <value>Hesaplanıyor…</value>
+  </data>
+  <data name="Calendar" xml:space="preserve">
+    <value>Takvim</value>
+  </data>
+  <data name="CalendarWeekNameShortFriday" xml:space="preserve">
+    <value>C</value>
+  </data>
+  <data name="CalendarWeekNameShortMonday" xml:space="preserve">
+    <value>P</value>
+  </data>
+  <data name="CalendarWeekNameShortSaturday" xml:space="preserve">
+    <value>C</value>
+  </data>
+  <data name="CalendarWeekNameShortSunday" xml:space="preserve">
+    <value>P</value>
+  </data>
+  <data name="CalendarWeekNameShortThursday" xml:space="preserve">
+    <value>P</value>
+  </data>
+  <data name="CalendarWeekNameShortTuesday" xml:space="preserve">
+    <value>S</value>
+  </data>
+  <data name="CalendarWeekNameShortWednesday" xml:space="preserve">
+    <value>Ç</value>
   </data>
   <data name="Call" xml:space="preserve">
     <value>Ara</value>
@@ -2352,7 +2400,7 @@ Bu siz değilseniz, lütfen size az önce kısa mesaj ile gönderdiğimiz kodu g
     <value>Anket silinsin mi?</value>
   </data>
   <data name="CancelRegistration" xml:space="preserve">
-    <value>Kaydolmaktan vazgeç</value>
+    <value>Kaydı iptal et</value>
   </data>
   <data name="CancelReset" xml:space="preserve">
     <value>Sıfırlamayı iptal et</value>
@@ -2396,6 +2444,9 @@ Bu siz değilseniz, lütfen size az önce kısa mesaj ile gönderdiğimiz kodu g
   <data name="ChangeChatBackground" xml:space="preserve">
     <value>Sohbet Arka Planını Değiştir</value>
   </data>
+  <data name="ChangeColors" xml:space="preserve">
+    <value>Renkleri değiştir</value>
+  </data>
   <data name="ChangeColorToColor" xml:space="preserve">
     <value>Seçili arka planınızı kullanmak mı yoksa bu tema için varsayılana sıfırlamak mı istiyorsunuz?</value>
   </data>
@@ -2417,7 +2468,7 @@ Not: Parolayı unutursanız, uygulamayı silmeniz ve yeniden yüklemeniz gerekir
     <value>İzinleri değiştir</value>
   </data>
   <data name="ChangePhoneHelp" xml:space="preserve">
-    <value>Kısa mesaj ile yeni numaranıza bir doğrulama kodu göndereceğiz.</value>
+    <value>Yeni numaranıza kısa mesaj ile bir doğrulama kodu göndereceğiz.</value>
   </data>
   <data name="ChangePhoneNewNumber" xml:space="preserve">
     <value>Yeni Numara</value>
@@ -2582,7 +2633,7 @@ Not: Parolayı unutursanız, uygulamayı silmeniz ve yeniden yüklemeniz gerekir
     <value>**{0}** kanalından ayrılmak istediğinizden emin misiniz?</value>
   </data>
   <data name="ChannelLinkInfo" xml:space="preserve">
-    <value>Telegram kullanıcıları, bu bağlantıyı izleyerek kanalınıza katılabilir.</value>
+    <value>Telegram'daki herkes bu bağlantıyı izleyerek grubunuza katılabilir.</value>
   </data>
   <data name="ChannelLinkTitle" xml:space="preserve">
     <value>Genel bağlantı</value>
@@ -2749,7 +2800,7 @@ Not: Parolayı unutursanız, uygulamayı silmeniz ve yeniden yüklemeniz gerekir
     <value>Mesajları İmzala</value>
   </data>
   <data name="ChannelSignMessagesInfo" xml:space="preserve">
-    <value>Gönderdikleri mesajlara yöneticilerin adlarını ekleyin.</value>
+    <value>Yöneticilerin adlarını gönderdikleri mesajlara ekleyin.</value>
   </data>
   <data name="ChannelSilentBroadcast" xml:space="preserve">
     <value>Sessiz Yayın</value>
@@ -2834,6 +2885,9 @@ Uzunluk en az 5 karakterdir.</value>
   <data name="ChatAdmin" xml:space="preserve">
     <value>yönetici</value>
   </data>
+  <data name="ChatApplyTheme" xml:space="preserve">
+    <value>Temayı Uygula</value>
+  </data>
   <data name="ChatArchived" xml:space="preserve">
     <value>Sohbet arşivlendi.</value>
   </data>
@@ -2908,6 +2962,12 @@ Uzunluk en az 5 karakterdir.</value>
   </data>
   <data name="ChatLocation" xml:space="preserve">
     <value>Konum</value>
+  </data>
+  <data name="ChatNoTheme" xml:space="preserve">
+    <value>Tema Yok</value>
+  </data>
+  <data name="ChatResetTheme" xml:space="preserve">
+    <value>Temayı Sıfırla</value>
   </data>
   <data name="Chats_few" xml:space="preserve">
     <value/>
@@ -3032,6 +3092,33 @@ Uzunluk en az 5 karakterdir.</value>
   <data name="ChatsUnmute" xml:space="preserve">
     <value>Sesi aç</value>
   </data>
+  <data name="ChatThemeChangedTo" xml:space="preserve">
+    <value>{0} sohbet temasını {1} olarak değiştirdi</value>
+  </data>
+  <data name="ChatThemeChangedYou" xml:space="preserve">
+    <value>Sohbet temasını {0} olarak değiştirdiniz.</value>
+  </data>
+  <data name="ChatThemeDayNightSwitchTooltip" xml:space="preserve">
+    <value>**{0}** kişisinin gece modunu kullanırken sohbeti nasıl göreceğini görmek için dokunun.</value>
+  </data>
+  <data name="ChatThemeDisabled" xml:space="preserve">
+    <value>{0} sohbet temasını devre dışı bıraktı</value>
+  </data>
+  <data name="ChatThemeDisabledYou" xml:space="preserve">
+    <value>Sohbet temasını devre dışı bıraktınız</value>
+  </data>
+  <data name="ChatThemeSaveDialogApply" xml:space="preserve">
+    <value>Uygula</value>
+  </data>
+  <data name="ChatThemeSaveDialogDiscard" xml:space="preserve">
+    <value>Vazgeç</value>
+  </data>
+  <data name="ChatThemeSaveDialogText" xml:space="preserve">
+    <value>Bu sohbete yeni temayı uygulamak istiyor musunuz? </value>
+  </data>
+  <data name="ChatThemeSaveDialogTitle" xml:space="preserve">
+    <value>Değişikler kaydedilsin mi?</value>
+  </data>
   <data name="ChatVideo" xml:space="preserve">
     <value>Video</value>
   </data>
@@ -3069,22 +3156,22 @@ Uzunluk en az 5 karakterdir.</value>
     <value>Ayarlara Geri Dön</value>
   </data>
   <data name="CheckPasswordInfo" xml:space="preserve">
-    <value>Parolanızı hala hatırlıyor musunuz?</value>
+    <value>Parolanızı hatırlıyor musunuz?</value>
   </data>
   <data name="CheckPasswordPerfect" xml:space="preserve">
     <value>Harika!</value>
   </data>
   <data name="CheckPasswordPerfectInfo" xml:space="preserve">
-    <value>Hala parolanızı hatırlıyorsunuz.</value>
+    <value>Parolanızı hâlâ hatırlıyorsunuz.</value>
   </data>
   <data name="CheckPasswordWrong" xml:space="preserve">
     <value>Yanlış parola girdiniz.</value>
   </data>
   <data name="CheckPhoneNumber" xml:space="preserve">
-    <value>{0} hala sizin numaranız mı?</value>
+    <value>{0} hâlâ sizin numaranız mı?</value>
   </data>
   <data name="CheckPhoneNumberInfo" xml:space="preserve">
-    <value>Telegram'da her zaman oturum açabilmeniz için numaranızı güncel tutun. **Daha fazla bilgi edin**</value>
+    <value>Telegram'da oturum açabilmek için numaranızı her zaman güncel tutun. **Daha fazla bilgi edin**</value>
   </data>
   <data name="CheckPhoneNumberLearnMoreUrl" xml:space="preserve">
     <value>https://telegram.org/faq?setln=tr#s-yeni-bir-telefon-numaram-var-ne-yapmaliyim</value>
@@ -3507,7 +3594,7 @@ Daha fazla alan ve ek özellikler için bir süper gruba yükseltin:
     <value>Kopyala</value>
   </data>
   <data name="CopyLink" xml:space="preserve">
-    <value>Kopyala</value>
+    <value>Bağlantıyı kopyala</value>
   </data>
   <data name="CountOfResults_few" xml:space="preserve">
     <value/>
@@ -3547,6 +3634,9 @@ Daha fazla alan ve ek özellikler için bir süper gruba yükseltin:
   </data>
   <data name="CreateLink" xml:space="preserve">
     <value>Bağlantı Oluştur</value>
+  </data>
+  <data name="CreateLinkHeader" xml:space="preserve">
+    <value>OLUŞTUR</value>
   </data>
   <data name="CreateNewContact" xml:space="preserve">
     <value>Yeni Kişi Oluştur</value>
@@ -4169,6 +4259,12 @@ Kanaldaki herkes bu gruptaki mesajları görebilir.</value>
   <data name="DiscussionUnlinkGroupAlert" xml:space="preserve">
     <value>**{0}** ile bu grubun bağlantısını kaldırmak istediğinizden emin misiniz?</value>
   </data>
+  <data name="Dismiss" xml:space="preserve">
+    <value>Reddet</value>
+  </data>
+  <data name="DismissRequest" xml:space="preserve">
+    <value>İsteği reddet</value>
+  </data>
   <data name="DistanceUnits" xml:space="preserve">
     <value>Mesafe Birimleri</value>
   </data>
@@ -4189,6 +4285,9 @@ Kanaldaki herkes bu gruptaki mesajları görebilir.</value>
   </data>
   <data name="Done" xml:space="preserve">
     <value>Bitti</value>
+  </data>
+  <data name="DoNoSetTheme" xml:space="preserve">
+    <value>Tema Ayarlama</value>
   </data>
   <data name="Draft" xml:space="preserve">
     <value>Taslak</value>
@@ -4307,6 +4406,9 @@ Kanaldaki herkes bu gruptaki mesajları görebilir.</value>
   <data name="EditContact" xml:space="preserve">
     <value>Kişiyi düzenle</value>
   </data>
+  <data name="EditCurrentTheme" xml:space="preserve">
+    <value>Mevcut Temayı Düzenle</value>
+  </data>
   <data name="EditedMessage" xml:space="preserve">
     <value>düzenlendi</value>
   </data>
@@ -4404,7 +4506,7 @@ Hiç kimse seçilmezse, sık iletişim kurulan kişileriniz bu widget'ta göster
     <value>Seyahat ve yerler</value>
   </data>
   <data name="Emoji6" xml:space="preserve">
-    <value>Objeler</value>
+    <value>Nesneler</value>
   </data>
   <data name="Emoji7" xml:space="preserve">
     <value>Semboller</value>
@@ -4414,6 +4516,9 @@ Hiç kimse seçilmezse, sık iletişim kurulan kişileriniz bu widget'ta göster
   </data>
   <data name="EmojiBigSize" xml:space="preserve">
     <value>Tek ifadeleri büyük göster</value>
+  </data>
+  <data name="EmojiInteractionTapHint" xml:space="preserve">
+    <value>**{0}** şu anda sohbeti görüntüleseydi, bu animasyondan hoşlanacaktı.</value>
   </data>
   <data name="EmojiSuggestions" xml:space="preserve">
     <value>İfade önerileri</value>
@@ -4437,7 +4542,7 @@ Hiç kimse seçilmezse, sık iletişim kurulan kişileriniz bu widget'ta göster
     <value>Etkinleştir</value>
   </data>
   <data name="EnableAllStreamingInfo" xml:space="preserve">
-    <value>Bazı videolar yayınlanamaz. Örneğin, Telegram 4.7 ve önceki sürümleri kullanılarak Android'den gönderilen tüm videolar yayınlanamaz.</value>
+    <value>Bazı videolar hemen oynatılamaz. Örneğin, Telegram'ın 4.7 ve önceki sürümleriyle Android'den gönderilen tüm videolar.</value>
   </data>
   <data name="EnableAnimations" xml:space="preserve">
     <value>Animasyonları Etkinleştir</value>
@@ -4459,7 +4564,7 @@ Telegram hesabınızda oturum açmak için burada belirlediğiniz parolaya ihtiy
     <value>Vekil sunucunuzu daha sonra Ayarlar > Veri ve Depolama bölümünden değiştirebilirsiniz.</value>
   </data>
   <data name="EnableStreaming" xml:space="preserve">
-    <value>Video ve Ses Dosyaları Akışı</value>
+    <value>Video ve Ses Dosyalarını Hemen Oynat</value>
   </data>
   <data name="EncryptedChatStartedIncoming" xml:space="preserve">
     <value>Gizli sohbete katıldınız.</value>
@@ -4512,6 +4617,9 @@ telegram.org adresinden daha fazlasını öğrenin</value>
   </data>
   <data name="Enhance" xml:space="preserve">
     <value>İyileştir</value>
+  </data>
+  <data name="EnjoyngAnimations" xml:space="preserve">
+    <value>**oo** {0} izleniyor</value>
   </data>
   <data name="EnterChannelName" xml:space="preserve">
     <value>Kanal adı</value>
@@ -4788,7 +4896,7 @@ Sorgunuzla eşleşen yeni eylem bulunamadı.</value>
     <value>Görüntülü sohbetleri yönetme</value>
   </data>
   <data name="EventLogPromotedNoRights" xml:space="preserve">
-    <value>{0} kişini yöneticiliğe yükseltti</value>
+    <value>{0} kişisini yöneticiliğe yükseltti</value>
   </data>
   <data name="EventLogPromotedPinMessages" xml:space="preserve">
     <value>Mesajları sabitleme</value>
@@ -4961,7 +5069,7 @@ Süre: {1}</value>
     <value>Soldur</value>
   </data>
   <data name="FakeMessage" xml:space="preserve">
-    <value>SAHTE</value>
+    <value>TAKLİT</value>
   </data>
   <data name="FavoriteStickers" xml:space="preserve">
     <value>Favoriler</value>
@@ -5060,7 +5168,7 @@ Süre: {1}</value>
     <value>Sohbetleri Dahil Et</value>
   </data>
   <data name="FilterArchived" xml:space="preserve">
-    <value>Arşivlenen</value>
+    <value>Arşivlenmiş</value>
   </data>
   <data name="FilterAvailableText" xml:space="preserve">
     <value>Sohbetlerinizi klasörler halinde düzenlemek için *Ayarlar > Klasörler*'i açın.</value>
@@ -5138,7 +5246,7 @@ Süre: {1}</value>
     <value>Hariç Tutulan Sohbetler</value>
   </data>
   <data name="FilterExcludeArchived" xml:space="preserve">
-    <value>Arşivlenenleri Hariç Tut</value>
+    <value>Arşivlenmişleri Hariç Tut</value>
   </data>
   <data name="FilterExcludeInfo" xml:space="preserve">
     <value>Bu klasörde görünmeyecek sohbetleri ve sohbet türlerini seçin.</value>
@@ -5279,7 +5387,7 @@ Süre: {1}</value>
     <value>Dokunma sensörü</value>
   </data>
   <data name="FingerprintInfo" xml:space="preserve">
-    <value>Devam etmek için parmak izinizi onaylayın</value>
+    <value>Devam etmek için parmak izinizi doğrulayın</value>
   </data>
   <data name="FingerprintNotRecognized" xml:space="preserve">
     <value>Parmak izi tanınmadı. Tekrar deneyin.</value>
@@ -5888,7 +5996,7 @@ bir sorunuz mu var?</value>
     <value>Gruplar</value>
   </data>
   <data name="GroupsAndChannelsHelp" xml:space="preserve">
-    <value>Sizi kimlerin gruplara ve kanallara ekleyebileceğini değiştirin.</value>
+    <value>Sizi, gruplara ve kanallara kimlerin ekleyebileceğini değiştirin.</value>
   </data>
   <data name="GroupSettingsChangedAlert" xml:space="preserve">
     <value>Bu gruptaki bazı ayarları değiştirdiniz. Değişiklikler uygulansın mı?</value>
@@ -5933,6 +6041,12 @@ bir sorunuz mu var?</value>
   </data>
   <data name="GrowthChartTitle" xml:space="preserve">
     <value>Büyüme</value>
+  </data>
+  <data name="HasBeenAddedToChannel" xml:space="preserve">
+    <value>{0} kanala eklendi</value>
+  </data>
+  <data name="HasBeenAddedToGroup" xml:space="preserve">
+    <value>{0} gruba eklendi</value>
   </data>
   <data name="HashtagCopied" xml:space="preserve">
     <value>Etiket panoya kopyalandı.</value>
@@ -6294,10 +6408,10 @@ Mesajlar geçerli güne aktarılır, ancak orijinal zaman damgalarını da içer
     <value/>
   </data>
   <data name="Invitations_one" xml:space="preserve">
-    <value>{0} davetiye</value>
+    <value>{0} davet</value>
   </data>
   <data name="Invitations_other" xml:space="preserve">
-    <value>{0} davetiye</value>
+    <value>{0} davet</value>
   </data>
   <data name="Invitations_two" xml:space="preserve">
     <value/>
@@ -6407,6 +6521,9 @@ Mesajlar geçerli güne aktarılır, ancak orijinal zaman damgalarını da içer
   <data name="IsChoosingSticker" xml:space="preserve">
     <value>{0} çıkartma seçiyor</value>
   </data>
+  <data name="IsEnjoyngAnimations" xml:space="preserve">
+    <value>{0}, **oo** {1} izleniyor</value>
+  </data>
   <data name="IsRecordingAudio" xml:space="preserve">
     <value>{0} sesli mesaj kaydediyor…</value>
   </data>
@@ -6485,14 +6602,53 @@ Mesajlar geçerli güne aktarılır, ancak orijinal zaman damgalarını da içer
   <data name="JoinByPeekJoin" xml:space="preserve">
     <value>KATIL</value>
   </data>
+  <data name="JoinedViaInviteLinkApproved" xml:space="preserve">
+    <value>un1, un2 davet bağlantısıyla katıldı, un3 tarafından onaylandı</value>
+  </data>
   <data name="JoinGroup" xml:space="preserve">
     <value>GRUBA KATIL</value>
+  </data>
+  <data name="JoinRequests_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="JoinRequests_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="JoinRequests_one" xml:space="preserve">
+    <value>{0} katılma isteği</value>
+  </data>
+  <data name="JoinRequests_other" xml:space="preserve">
+    <value>{0} katılma isteği</value>
+  </data>
+  <data name="JoinRequests_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="JoinRequests_zero" xml:space="preserve">
+    <value/>
   </data>
   <data name="JoinToGroupErrorFull" xml:space="preserve">
     <value>Üzgünüz, bu grup zaten dolu.</value>
   </data>
   <data name="JoinToGroupErrorNotExist" xml:space="preserve">
     <value>Üzgünüz, bu sohbet mevcut görünmüyor.</value>
+  </data>
+  <data name="JoinUsersRequests_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="JoinUsersRequests_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="JoinUsersRequests_one" xml:space="preserve">
+    <value>{0} katılma isteği</value>
+  </data>
+  <data name="JoinUsersRequests_other" xml:space="preserve">
+    <value>{0} katılma isteği</value>
+  </data>
+  <data name="JoinUsersRequests_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="JoinUsersRequests_zero" xml:space="preserve">
+    <value/>
   </data>
   <data name="July" xml:space="preserve">
     <value>Temmuz</value>
@@ -6510,9 +6666,9 @@ Mesajlar geçerli güne aktarılır, ancak orijinal zaman damgalarını da içer
     <value>Süresiz</value>
   </data>
   <data name="KeepMediaInfo" xml:space="preserve">
-    <value>Bulut sohbet ortamındaki fotoğraflar, videolar ve diğer dosyalar **erişmediğiniz** bu sürede cihazınızın hafızasında yer açmak için cihazınızdan silinecektir. 
+    <value>Depolama alanından tasarruf etmek için, bu süre içinde **erişmediğiniz** bulut sohbetlerindeki fotoğraflar, videolar ve diğer dosyalar bu cihazdan kaldırılır.
 
-Tüm medya dosyalarınız Telegram bulut sisteminde duracaktır ve istediğiniz zaman tekrar indirebilirsiniz.</value>
+Tüm medya dosyalarınız Telegram bulutunda durur ve tekrar ihtiyacınız olduğunda yeniden indirilebilir.</value>
   </data>
   <data name="KickFromBroadcast" xml:space="preserve">
     <value>Yayın listesinden kaldır</value>
@@ -6744,6 +6900,12 @@ Bu bağlantı yalnızca bu sohbetin üyeleri için çalışacak.</value>
   </data>
   <data name="LinkLimitReached" xml:space="preserve">
     <value>Sınıra ulaşıldı</value>
+  </data>
+  <data name="LinkNameHelp" xml:space="preserve">
+    <value>Bu ismi sadece yöneticiler görecektir.</value>
+  </data>
+  <data name="LinkNameHint" xml:space="preserve">
+    <value>Bağlantı Adı (İsteğe bağlı)</value>
   </data>
   <data name="LinkNotFound" xml:space="preserve">
     <value>Üzgünüz, bu mesaja erişemezsiniz. Yayınlanan bu sohbetin bir üyesi değilsiniz.</value>
@@ -7091,6 +7253,18 @@ Telefon numaranız gizli kalacaktır.</value>
   <data name="MediaSelected_zero" xml:space="preserve">
     <value/>
   </data>
+  <data name="MediaShowPhotos" xml:space="preserve">
+    <value>Fotoğrafları göster</value>
+  </data>
+  <data name="MediaShowVideos" xml:space="preserve">
+    <value>Videoları göster</value>
+  </data>
+  <data name="MediaZoomIn" xml:space="preserve">
+    <value>Yakınlaştır</value>
+  </data>
+  <data name="MediaZoomOut" xml:space="preserve">
+    <value>Uzaklaştır</value>
+  </data>
   <data name="MegaAddedBy" xml:space="preserve">
     <value>un1 sizi bu gruba ekledi</value>
   </data>
@@ -7132,6 +7306,9 @@ Telefon numaranız gizli kalacaktır.</value>
 
 a-z, 0,9 ve alt çizgi kullanabilirsiniz.
 Uzunluk en az 5 karakterdir.</value>
+  </data>
+  <data name="MemberRequests" xml:space="preserve">
+    <value>Katılma İstekleri</value>
   </data>
   <data name="Members_few" xml:space="preserve">
     <value/>
@@ -7259,6 +7436,24 @@ Uzunluk en az 5 karakterdir.</value>
   <data name="MessagePinnedHint" xml:space="preserve">
     <value>Mesaj sabitlendi</value>
   </data>
+  <data name="MessagePlayed_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagePlayed_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagePlayed_one" xml:space="preserve">
+    <value>Oynattı</value>
+  </data>
+  <data name="MessagePlayed_other" xml:space="preserve">
+    <value>{0} Oynatma</value>
+  </data>
+  <data name="MessagePlayed_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagePlayed_zero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="MessagePreview" xml:space="preserve">
     <value>Mesaj Önizlemesi</value>
   </data>
@@ -7351,6 +7546,27 @@ Uzunluk en az 5 karakterdir.</value>
   </data>
   <data name="MessagesDeletedHint_zero" xml:space="preserve">
     <value/>
+  </data>
+  <data name="MessageSeen_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessageSeen_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessageSeen_one" xml:space="preserve">
+    <value>Görüldü</value>
+  </data>
+  <data name="MessageSeen_other" xml:space="preserve">
+    <value>{0} Görülme</value>
+  </data>
+  <data name="MessageSeen_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessageSeen_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessageSeenTooltipMessage" xml:space="preserve">
+    <value>Gizliliği korumak için görüntülemeler yalnızca **7 gün** boyunca saklanır.</value>
   </data>
   <data name="MessagesOverview" xml:space="preserve">
     <value>Mesaj</value>
@@ -7822,6 +8038,13 @@ Bir sohbete ait bildirimleri, profilini açıp 'Bildirimler' seçeneğinden öze
   <data name="NoMediaSecret" xml:space="preserve">
     <value>Bu sohbetteki fotoğraf ve videolar burada gösterilecek.</value>
   </data>
+  <data name="NoMemberRequests" xml:space="preserve">
+    <value>Katılma isteği yok</value>
+  </data>
+  <data name="NoMemberRequestsDescription" xml:space="preserve">
+    <value>Gruba katılmak için
+bekleyen istek yok.</value>
+  </data>
   <data name="NoMessages" xml:space="preserve">
     <value>Burada henüz mesaj yok…</value>
   </data>
@@ -7924,6 +8147,12 @@ burada görünecek.</value>
   </data>
   <data name="NoStickersFound" xml:space="preserve">
     <value>Çıkartma bulunamadı</value>
+  </data>
+  <data name="NoSubscribeRequests" xml:space="preserve">
+    <value>Katılma isteği yok</value>
+  </data>
+  <data name="NoSubscribeRequestsDescription" xml:space="preserve">
+    <value>Kanala katılmak için bekleyen isteğiniz yok.</value>
   </data>
   <data name="NotificationActionPinnedContact" xml:space="preserve">
     <value>{0}, {1} grubunda bir kişi sabitledi</value>
@@ -8628,6 +8857,15 @@ Telegram Ekibi</value>
   </data>
   <data name="OpenUrlTitle" xml:space="preserve">
     <value>Bağlantıyı Aç</value>
+  </data>
+  <data name="OptimizingTelegram" xml:space="preserve">
+    <value>Telegram optimize ediliyor...</value>
+  </data>
+  <data name="OptimizingTelegramDescription1" xml:space="preserve">
+    <value>Bu, veritabanının boyutuna bağlı olarak biraz zaman alabilir. Lütfen işlem tamamlanana kadar uygulamayı açık tutun.</value>
+  </data>
+  <data name="OptimizingTelegramDescription2" xml:space="preserve">
+    <value>Rahatsızlıktan dolayı özür dileriz.</value>
   </data>
   <data name="Option_few" xml:space="preserve">
     <value/>
@@ -9497,7 +9735,7 @@ Daha fazla bilgi için *SSS* sayfamızı ziyaret edebilirsiniz.</value>
     <value>Lütfen geçerli bir e-posta adresi girin. Unutulan bir parolayı kurtarmanın tek yolu budur.</value>
   </data>
   <data name="PaymentPasswordEmailTitle" xml:space="preserve">
-    <value>Kurtarma E-posta Adresi</value>
+    <value>Kurtarma e-postası</value>
   </data>
   <data name="PaymentPasswordEnter" xml:space="preserve">
     <value>Parola girin</value>
@@ -9769,10 +10007,10 @@ Konumunuza yalnızca seçtiğiniz süre boyunca erişeceğiz ve istediğiniz zam
     <value>NUMARAYI DEĞİŞTİR</value>
   </data>
   <data name="PhoneNumberChange2" xml:space="preserve">
-    <value>Numara Değiştir</value>
+    <value>Numarayı Değiştir</value>
   </data>
   <data name="PhoneNumberChangeTitle" xml:space="preserve">
-    <value>Numara değiştir</value>
+    <value>Numarayı değiştir</value>
   </data>
   <data name="PhoneNumberFlood" xml:space="preserve">
     <value>Üzgünüz, hesabınızı kısa süre içinde çok fazla kez sildiniz ve yeniden oluşturdunuz. Lütfen tekrar kaydolmadan önce birkaç gün bekleyin.</value>
@@ -10270,7 +10508,7 @@ Konumunuza yalnızca seçtiğiniz süre boyunca erişeceğiz ve istediğiniz zam
     <value>Önceki Mesaj</value>
   </data>
   <data name="PrimaryLinkHelp" xml:space="preserve">
-    <value>Telegram'ı yüklemiş olan herkes bu bağlantıyı izleyerek grubunuza katılabilir.</value>
+    <value>Telegram'daki herkes bu bağlantıyı takip ederek grubunuza katılabilir.</value>
   </data>
   <data name="PrimaryLinkHelpChannel" xml:space="preserve">
     <value>Telegram'daki herkes bu bağlantıyı izleyerek kanalınıza katılabilir.</value>
@@ -10669,7 +10907,7 @@ Konumunuza yalnızca seçtiğiniz süre boyunca erişeceğiz ve istediğiniz zam
     <value>bir video kaydediyor...</value>
   </data>
   <data name="RecoveryEmail" xml:space="preserve">
-    <value>Kurtarma e-posta adresi</value>
+    <value>Kurtarma e-postası</value>
   </data>
   <data name="RecoveryEmailTitle" xml:space="preserve">
     <value>Kurtarma E-postası</value>
@@ -10801,7 +11039,7 @@ Konumunuza yalnızca seçtiğiniz süre boyunca erişeceğiz ve istediğiniz zam
     <value>Açıklama</value>
   </data>
   <data name="ReportChatFakeAccount" xml:space="preserve">
-    <value>Sahte Hesap</value>
+    <value>Taklit Hesap</value>
   </data>
   <data name="ReportChatOther" xml:space="preserve">
     <value>Diğer</value>
@@ -10868,7 +11106,7 @@ Konumunuza yalnızca seçtiğiniz süre boyunca erişeceğiz ve istediğiniz zam
     <value>Çocuk İstismarını Bildir</value>
   </data>
   <data name="ReportTitleFake" xml:space="preserve">
-    <value>Sahteliği Bildir</value>
+    <value>Taklit Bildir</value>
   </data>
   <data name="ReportTitlePornography" xml:space="preserve">
     <value>Pornografiyi Bildir</value>
@@ -10892,6 +11130,33 @@ Konumunuza yalnızca seçtiğiniz süre boyunca erişeceğiz ve istediğiniz zam
   </data>
   <data name="ReportUserLocation" xml:space="preserve">
     <value>Bildir</value>
+  </data>
+  <data name="RequestToJoinChannel" xml:space="preserve">
+    <value>Kanala Katılma İsteği</value>
+  </data>
+  <data name="RequestToJoinChannelApproved" xml:space="preserve">
+    <value>Kanala katılma isteğiniz onaylandı</value>
+  </data>
+  <data name="RequestToJoinChannelDescription" xml:space="preserve">
+    <value>Bu kanal, yeni aboneleri ancak yöneticileri tarafından onaylandıktan sonra kabul eder.</value>
+  </data>
+  <data name="RequestToJoinChannelSentDescription" xml:space="preserve">
+    <value>Kanalın yöneticileri isteğinizi onayladıktan sonra kanala ekleneceksiniz.</value>
+  </data>
+  <data name="RequestToJoinGroup" xml:space="preserve">
+    <value>Gruba Katılma İsteği</value>
+  </data>
+  <data name="RequestToJoinGroupApproved" xml:space="preserve">
+    <value>Gruba katılma isteğiniz onaylandı</value>
+  </data>
+  <data name="RequestToJoinGroupDescription" xml:space="preserve">
+    <value>Bu grup, yeni üyeleri ancak yöneticileri tarafından onaylandıktan sonra kabul eder.</value>
+  </data>
+  <data name="RequestToJoinGroupSentDescription" xml:space="preserve">
+    <value>Grubun yöneticileri isteğinizi onayladıktan sonra gruba ekleneceksiniz.</value>
+  </data>
+  <data name="RequestToJoinSent" xml:space="preserve">
+    <value>Katılma isteği gönderildi</value>
   </data>
   <data name="ResendCode" xml:space="preserve">
     <value>Kodu yeniden gönder</value>
@@ -10979,13 +11244,13 @@ Eğer hesabınızı sıfırlarsanız, bütün mesajlarınız ve konuşmalarını
     <value>İstatistikleri Sıfırla</value>
   </data>
   <data name="ResetStatisticsAlert" xml:space="preserve">
-    <value>Kullanım istatistiklerinizi silmek istiyor musunuz?</value>
+    <value>Kullanım istatistiklerinizi sıfırlamak istiyor musunuz?</value>
   </data>
   <data name="ResetStatisticsAlertTitle" xml:space="preserve">
     <value>İstatistikleri sıfırla</value>
   </data>
   <data name="RestoreEmailSent" xml:space="preserve">
-    <value>Sağladığınız e-posta adresine bir kurtarma kodu gönderdik:
+    <value>Belirttiğiniz e-posta adresine bir kurtarma kodu gönderdik:
 
 {0}</value>
   </data>
@@ -11119,11 +11384,14 @@ Eğer hesabınızı sıfırlarsanız, bütün mesajlarınız ve konuşmalarını
   <data name="SaveLink" xml:space="preserve">
     <value>Bağlantıyı Kaydet</value>
   </data>
+  <data name="SaveLinkHeader" xml:space="preserve">
+    <value>KAYDET</value>
+  </data>
   <data name="SaveTheme" xml:space="preserve">
     <value>TEMAYI KAYDET</value>
   </data>
   <data name="SaveToDownloads" xml:space="preserve">
-    <value>İndirilenlere Kaydet</value>
+    <value>İndirilenlere kaydet</value>
   </data>
   <data name="SaveToGallery" xml:space="preserve">
     <value>Galeriye kaydet</value>
@@ -11240,6 +11508,9 @@ Bunun etkili olması için uygulamayı yeniden başlatmanız gerekebilir.</value
   </data>
   <data name="SearchInSettings" xml:space="preserve">
     <value>Ayarlar ve SSS'de Ara</value>
+  </data>
+  <data name="SearchMemberRequests" xml:space="preserve">
+    <value>Katılma isteklerini ara</value>
   </data>
   <data name="SearchMembers" xml:space="preserve">
     <value>Üyeleri bul</value>
@@ -11396,6 +11667,9 @@ Bunun etkili olması için uygulamayı yeniden başlatmanız gerekebilir.</value
   </data>
   <data name="SelectOtherChat" xml:space="preserve">
     <value>Başka sohbet seçin</value>
+  </data>
+  <data name="SelectTheme" xml:space="preserve">
+    <value>Tema seçin</value>
   </data>
   <data name="Send" xml:space="preserve">
     <value>Gönder</value>
@@ -11642,6 +11916,9 @@ Cevaplamayın, Telegram her şeyi otomatik olarak yapacak.</value>
   <data name="SETTINGS" xml:space="preserve">
     <value>Ayarlar</value>
   </data>
+  <data name="SettingsBrowseThemes" xml:space="preserve">
+    <value>Temalara Göz At</value>
+  </data>
   <data name="SettingsDebug" xml:space="preserve">
     <value>Hata Ayıklama</value>
   </data>
@@ -11662,6 +11939,9 @@ Cevaplamayın, Telegram her şeyi otomatik olarak yapacak.</value>
   </data>
   <data name="SettingsSearchFaq" xml:space="preserve">
     <value>SSS</value>
+  </data>
+  <data name="SettingsSwitchToNightMode" xml:space="preserve">
+    <value>Gece Moduna Geç</value>
   </data>
   <data name="SetUrlAvailable" xml:space="preserve">
     <value>{0} kullanılabilir.</value>
@@ -11749,6 +12029,9 @@ Cevaplamayın, Telegram her şeyi otomatik olarak yapacak.</value>
   </data>
   <data name="SharedMedia" xml:space="preserve">
     <value>Paylaşılan Medya</value>
+  </data>
+  <data name="SharedMediaFastScrollHint" xml:space="preserve">
+    <value>Daha hızlı kaydırma için bu çubuğa basılı tutabilir ve hareket ettirebilirsiniz.</value>
   </data>
   <data name="SharedMediaTab" xml:space="preserve">
     <value>MEDYA</value>
@@ -11999,7 +12282,7 @@ Yavaş Mod etkin. Tek seferde birden fazla mesaj gönderemezsiniz.</value>
     <value>Akıllı Bildirimler</value>
   </data>
   <data name="SmartNotificationsAlert" xml:space="preserve">
-    <value>Ses Uyarı Sıklığı</value>
+    <value>Sesli Uyarı Sıklığı</value>
   </data>
   <data name="SmartNotificationsDetail" xml:space="preserve">
     <value>{1} içinde {0}</value>
@@ -12047,7 +12330,7 @@ Yavaş Mod etkin. Tek seferde birden fazla mesaj gönderemezsiniz.</value>
     <value>konuşuyor</value>
   </data>
   <data name="SpeakingWithVolume" xml:space="preserve">
-    <value>{0}% konuşuyor</value>
+    <value>%{0} konuşuyor</value>
   </data>
   <data name="Speed" xml:space="preserve">
     <value>Hız</value>
@@ -12074,7 +12357,7 @@ Yavaş Mod etkin. Tek seferde birden fazla mesaj gönderemezsiniz.</value>
     <value>DAHA FAZLASINI ÖĞREN</value>
   </data>
   <data name="SponsoredMessageAlertLearnMoreUrl" xml:space="preserve">
-    <value>https://ads.telegram.org</value>
+    <value>https://promote.telegram.org</value>
   </data>
   <data name="SponsoredMessageAlertText" xml:space="preserve">
     <value>Diğer uygulamalardan farklı olarak Telegram, reklamları hedeflemek için asla özel verilerinizi kullanmaz. Reklamları görüntülemek için hiçbir kullanıcı verisi toplanmaz veya analiz edilmez ve Telegram'da bir kanalı görüntüleyen her kullanıcı aynı sponsorlu mesajı görür. Herkesin mahremiyet hakkına sahip olduğuna ve teknolojik platformların buna saygı duyması gerektiğine inanıyoruz. </value>
@@ -12084,6 +12367,20 @@ Yavaş Mod etkin. Tek seferde birden fazla mesaj gönderemezsiniz.</value>
   </data>
   <data name="SponsoredMessageInfo" xml:space="preserve">
     <value>Sponsorlu mesajlar nedir?</value>
+  </data>
+  <data name="SponsoredMessageInfoDescription1" xml:space="preserve">
+    <value>Diğer uygulamalardan farklı olarak Telegram, reklam hedeflemeleri için asla özel verilerinizi kullanmaz. Telegram'daki sponsorlu mesajlar, yalnızca gösterildikleri genel kanalların konusuna dayanmaktadır. Bu, reklamları görüntülemek için hiçbir kullanıcı verisinin çıkarılmadığı veya analiz edilmediği ve Telegram'da bir kanalı görüntüleyen her kullanıcının aynı sponsorlu mesajı gördüğü anlamına gelir.</value>
+  </data>
+  <data name="SponsoredMessageInfoDescription2" xml:space="preserve">
+    <value>Diğer uygulamalardan farklı olarak Telegram, sponsorlu bir mesaja dokunup dokunmadığınızı izlemez ve etkinliğinize göre sizin profilinizi çıkarmaz. Ayrıca, üçüncü tarafların kullanıcılarımızı gözetlememesini sağlamak için sponsorlu mesajlardaki harici bağlantıları da engelliyoruz. Herkesin mahremiyet hakkına sahip olduğuna ve teknolojik platformların buna saygı duyması gerektiğine inanıyoruz.</value>
+  </data>
+  <data name="SponsoredMessageInfoDescription3" xml:space="preserve">
+    <value>Telegram, önemli sunucu ve trafik maliyetleri içeren hizmetini yüz milyonlarca kullanıcıya ücretsiz ve sınırsız olarak sunuyor. Telegram, bağımsız ve değerlerine sadık kalmak amacıyla mesajları tanıtmak için kullanıcı gizliliğini de göz önünde bulunduran ücretli bir araç geliştirdi. Sorumlu reklamverenleri memnuniyetle karşılıyoruz:</value>
+  </data>
+  <data name="SponsoredMessageInfoDescription4" xml:space="preserve">
+    <value>Sponsorlu Mesajlar şu anda test modunda. Reklamlar, tamamen kullanıma sunulduğunda ve Telegram'ın temel maliyetlerini karşılamaya başladığında, sponsorlu mesajların görüntülendiği genel kanalların sahipleriyle reklam gelirlerini paylaşmaya başlayacağız.
+
+Çevrimiçi reklamlar artık kullanıcı gizliliğinin kötüye kullanılmasıyla eş anlamlı olmamalı. Bir teknoloji şirketinin nasıl çalışması gerektiğini hep birlikte yeniden tanımlayalım.</value>
   </data>
   <data name="Start" xml:space="preserve">
     <value>Başlat</value>
@@ -12218,7 +12515,7 @@ Yavaş Mod etkin. Tek seferde birden fazla mesaj gönderemezsiniz.</value>
     <value>Çıkartmalar ve Maskeler</value>
   </data>
   <data name="StickersRemove" xml:space="preserve">
-    <value>Sil</value>
+    <value>Kaldır</value>
   </data>
   <data name="StickersRemoved" xml:space="preserve">
     <value>Çıkartmalar silindi</value>
@@ -12275,7 +12572,7 @@ Yavaş Mod etkin. Tek seferde birden fazla mesaj gönderemezsiniz.</value>
     <value>Anketi Durdur</value>
   </data>
   <data name="StopPollAlertText" xml:space="preserve">
-    <value>Bu anketi şimdi durdurursanız, artık kimse oy kullanamaz. Bu işlem geri alınamaz.</value>
+    <value>Bu anketi şimdi durdurursanız, artık kimse oy kullanamayacak. Bu işlem geri alınamaz.</value>
   </data>
   <data name="StopPollAlertTitle" xml:space="preserve">
     <value>Anket durdurulsun mu?</value>
@@ -12306,6 +12603,9 @@ Yavaş Mod etkin. Tek seferde birden fazla mesaj gönderemezsiniz.</value>
   </data>
   <data name="Strike" xml:space="preserve">
     <value>Üstü çizili</value>
+  </data>
+  <data name="SubscribeRequests" xml:space="preserve">
+    <value>Katılma İstekleri</value>
   </data>
   <data name="Subscribers_few" xml:space="preserve">
     <value/>
@@ -12608,6 +12908,12 @@ Yeni bir cihazdan Telegram'da her oturum açtığınızda bu parola gerekecektir
   </data>
   <data name="Theme" xml:space="preserve">
     <value>Tema</value>
+  </data>
+  <data name="ThemeAlsoAppliedForHint" xml:space="preserve">
+    <value>Tema ayrıca **{0}** için de uygulanacak.</value>
+  </data>
+  <data name="ThemeAlsoDisabledForHint" xml:space="preserve">
+    <value>Tema ayrıca **{0}** için de devre dışı bırakılacaktır.</value>
   </data>
   <data name="ThemeArcticBlue" xml:space="preserve">
     <value>Kutup</value>
@@ -12976,7 +13282,7 @@ Ancak Telegram'ın mütevazı ihtiyaçlarını kabul etmiyorsanız, bu hizmeti b
     <value>GERİ AL</value>
   </data>
   <data name="UndoAllCustom" xml:space="preserve">
-    <value>Kişileriniz, gruplarınız ve kanallarınız için tüm özel bildirim ayarlarını geri alın.</value>
+    <value>Tüm kişileriniz, gruplarınız ve kanallarınız için tüm özel bildirim ayarlarını sıfırlayın.</value>
   </data>
   <data name="UnhideFromTop" xml:space="preserve">
     <value>Sabitle</value>
@@ -13108,7 +13414,7 @@ Ancak Telegram'ın mütevazı ihtiyaçlarını kabul etmiyorsanız, bu hizmeti b
     <value>Asla</value>
   </data>
   <data name="UseLessDataOnMobile" xml:space="preserve">
-    <value>Sadece mobil veride</value>
+    <value>Sadece mobil verideyken</value>
   </data>
   <data name="UseLessDataOnRoaming" xml:space="preserve">
     <value>Sadece dolaşımdayken</value>
@@ -13210,7 +13516,7 @@ Ancak Telegram'ın mütevazı ihtiyaçlarını kabul etmiyorsanız, bu hizmeti b
     <value>Üzgünüz, bu kullanıcı adı geçersiz.</value>
   </data>
   <data name="UsernameInvalidLong" xml:space="preserve">
-    <value>Kullanıcı adı 32 karakterden uzun olamaz.</value>
+    <value>Kullanıcı adı 32 karakteri aşmamalıdır.</value>
   </data>
   <data name="UsernameInvalidShort" xml:space="preserve">
     <value>Bir kullanıcı adı en az 5 karakterden oluşmalıdır.</value>
@@ -13414,7 +13720,7 @@ Ancak Telegram'ın mütevazı ihtiyaçlarını kabul etmiyorsanız, bu hizmeti b
     <value>Video Başlığı</value>
   </data>
   <data name="VideoDoesNotSupportStreaming" xml:space="preserve">
-    <value>Video, akış için optimize edilmedi. Bunu oynatmanız için tamamını indirmeniz gerekebilir.</value>
+    <value>Video, hemen oynatma için optimize edilmedi. Bu videoyu oynatmak için videonun tamamını indirmeniz gerekebilir.</value>
   </data>
   <data name="VideoMessagesAutodownload" xml:space="preserve">
     <value>Görüntülü mesajlar</value>
@@ -13567,7 +13873,7 @@ Ancak Telegram'ın mütevazı ihtiyaçlarını kabul etmiyorsanız, bu hizmeti b
     <value>Konuyu Görüntüle</value>
   </data>
   <data name="Vignette" xml:space="preserve">
-    <value>Skeç etkisi</value>
+    <value>Vinyet</value>
   </data>
   <data name="Voice_few" xml:space="preserve">
     <value/>
@@ -14069,7 +14375,7 @@ Katılımcılar sohbetin kaydedildiğini görecek.</value>
   <data name="VoipGroupStartRecordingVideoText" xml:space="preserve">
     <value>Bu sohbeti kaydetmeye başlamak ve sonucu bir video dosyasına kaydetmek istiyor musunuz?
 
-Diğer katılımcılar sohbetin kaydedildiğini görürler.</value>
+Diğer katılımcılar sohbetin kaydedildiğini görecektir.</value>
   </data>
   <data name="VoipGroupStartVoiceChat" xml:space="preserve">
     <value>Görüntülü Sohbet Başlat</value>
@@ -14279,7 +14585,7 @@ Diğer katılımcılar sohbetin kaydedildiğini görürler.</value>
     <value>Kayda Başla</value>
   </data>
   <data name="VoipRecordVoiceChat" xml:space="preserve">
-    <value>Sesli sohbeti kaydet</value>
+    <value>Görüntülü sohbeti kaydet</value>
   </data>
   <data name="VoipRecordVoiceChatInfo" xml:space="preserve">
     <value>Bu sohbeti nasıl kaydedeceğinizi seçin</value>
@@ -14330,7 +14636,7 @@ Diğer katılımcılar sohbetin kaydedildiğini görürler.</value>
     <value>Sesi Aç</value>
   </data>
   <data name="VoipUseLessData" xml:space="preserve">
-    <value>Aramalarda Daha Az Veri</value>
+    <value>Aramalarda Daha Az Veri Kullan</value>
   </data>
   <data name="VoipUserCameraIsOff" xml:space="preserve">
     <value>{0} kişisinin kamerası kapalı</value>
@@ -14339,8 +14645,8 @@ Diğer katılımcılar sohbetin kaydedildiğini görürler.</value>
     <value>{0} kişisinin mikrofonu kapalı</value>
   </data>
   <data name="VoipVideoNotAvailable" xml:space="preserve">
-    <value>Görüntü sadece ilk {0}
-için kullanılabilir </value>
+    <value>Video akışını izlemek için Telegram'ı
+en son sürüme güncelleyin.</value>
   </data>
   <data name="VoipVideoNotAvailableAdmin" xml:space="preserve">
     <value>Görüntülü sohbette {0} üzerinde katılımcı var.
@@ -14610,7 +14916,7 @@ Parolanızı unutursanız, Telegram hesabınıza erişimi kaybedersiniz. Hesabı
   </data>
   <data name="YourPasswordRemember" xml:space="preserve">
     <value>Hesabınız İki Adımlı Doğrulama ile korunmaktadır.
-Parolanızı hala hatırlıyor musunuz?</value>
+Parolanızı hatırlıyor musunuz?</value>
   </data>
   <data name="YourPasswordRememberNo" xml:space="preserve">
     <value>Emin değilim</value>

@@ -892,6 +892,9 @@
   <data name="AddContactTitle" xml:space="preserve">
     <value>연락처 추가</value>
   </data>
+  <data name="AddedBy" xml:space="preserve">
+    <value>{0} {1} 에 추가됨</value>
+  </data>
   <data name="AddedToFavorites" xml:space="preserve">
     <value>스티커가 즐겨찾기에 추가되었습니다</value>
   </data>
@@ -964,6 +967,9 @@
   <data name="AddSubscriber" xml:space="preserve">
     <value>구독자 추가</value>
   </data>
+  <data name="AddToChannel" xml:space="preserve">
+    <value>채널에 추가</value>
+  </data>
   <data name="AddToContacts" xml:space="preserve">
     <value>연락처에 추가</value>
   </data>
@@ -975,6 +981,9 @@
   </data>
   <data name="AddToFavorites" xml:space="preserve">
     <value>즐겨찾기에 추가</value>
+  </data>
+  <data name="AddToGroup" xml:space="preserve">
+    <value>그룹에 추가</value>
   </data>
   <data name="AddToMasks" xml:space="preserve">
     <value>마스크에 추가</value>
@@ -1179,6 +1188,12 @@
   </data>
   <data name="AppNameBeta" xml:space="preserve">
     <value>텔레그램</value>
+  </data>
+  <data name="ApproveNewMembers" xml:space="preserve">
+    <value>새로운 참가자 승인</value>
+  </data>
+  <data name="ApproveNewMembersDescription" xml:space="preserve">
+    <value>관리자 승인한 후에만 사용자 입장이 가능하도록 하려면 이 옵션을 키세요.</value>
   </data>
   <data name="AppUpdate" xml:space="preserve">
     <value>텔레그램 업데이트</value>
@@ -1391,7 +1406,7 @@
     <value>정말 **저장한 메시지**를 삭제하시겠습니까?</value>
   </data>
   <data name="AreYouSureDeleteThisChatWithBot" xml:space="preserve">
-    <value>정말 **{0}** 대화방을 삭제하고 차단하시겠습니까?</value>
+    <value>정말 **{0}** 님과의 대화방을 삭제하고 차단하시겠습니까?</value>
   </data>
   <data name="AreYouSureDeleteThisChatWithGroup" xml:space="preserve">
     <value>정말 **{0}** 대화방을 삭제하시겠습니까?</value>
@@ -1524,6 +1539,9 @@
   </data>
   <data name="AttachMediaRestrictedForever" xml:space="preserve">
     <value>그룹 관리자의 제한으로 여기에 미디어를 보내실 수 없습니다.</value>
+  </data>
+  <data name="AttachMenu" xml:space="preserve">
+    <value>첨부...</value>
   </data>
   <data name="AttachMusic" xml:space="preserve">
     <value>음악</value>
@@ -2170,8 +2188,14 @@
   <data name="Brown" xml:space="preserve">
     <value>갈색</value>
   </data>
+  <data name="BrowseThemes" xml:space="preserve">
+    <value>테마 검색</value>
+  </data>
   <data name="BubbleRadius" xml:space="preserve">
     <value>메시지 모서리</value>
+  </data>
+  <data name="BuildMyOwnTheme" xml:space="preserve">
+    <value>내 테마 만들기</value>
   </data>
   <data name="BuiltInThemes" xml:space="preserve">
     <value>내장 테마</value>
@@ -2193,6 +2217,30 @@
   </data>
   <data name="CalculatingSize" xml:space="preserve">
     <value>계산 중...</value>
+  </data>
+  <data name="Calendar" xml:space="preserve">
+    <value>달력</value>
+  </data>
+  <data name="CalendarWeekNameShortFriday" xml:space="preserve">
+    <value>금</value>
+  </data>
+  <data name="CalendarWeekNameShortMonday" xml:space="preserve">
+    <value>월</value>
+  </data>
+  <data name="CalendarWeekNameShortSaturday" xml:space="preserve">
+    <value>토</value>
+  </data>
+  <data name="CalendarWeekNameShortSunday" xml:space="preserve">
+    <value>일</value>
+  </data>
+  <data name="CalendarWeekNameShortThursday" xml:space="preserve">
+    <value>목</value>
+  </data>
+  <data name="CalendarWeekNameShortTuesday" xml:space="preserve">
+    <value>화</value>
+  </data>
+  <data name="CalendarWeekNameShortWednesday" xml:space="preserve">
+    <value>수</value>
   </data>
   <data name="Call" xml:space="preserve">
     <value>전화 걸기</value>
@@ -2398,6 +2446,9 @@
   </data>
   <data name="ChangeChatBackground" xml:space="preserve">
     <value>대화 배경 바꾸기</value>
+  </data>
+  <data name="ChangeColors" xml:space="preserve">
+    <value>색상 변경</value>
   </data>
   <data name="ChangeColorToColor" xml:space="preserve">
     <value>지금 선택한 배경을 사용하시겠습니까? 아니면 이 테마의 기본 설정으로 초기화 하시겠습니까?</value>
@@ -2752,7 +2803,7 @@
     <value>메시지 서명</value>
   </data>
   <data name="ChannelSignMessagesInfo" xml:space="preserve">
-    <value>메시지에 게시한 관리자의 이름을 추가합니다.</value>
+    <value>메시지에 게시한 관리자의 이름을 추가합니다</value>
   </data>
   <data name="ChannelSilentBroadcast" xml:space="preserve">
     <value>조용히 알리기</value>
@@ -2837,6 +2888,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="ChatAdmin" xml:space="preserve">
     <value>관리자</value>
   </data>
+  <data name="ChatApplyTheme" xml:space="preserve">
+    <value>테마 적용</value>
+  </data>
   <data name="ChatArchived" xml:space="preserve">
     <value>대화방 보관됨.</value>
   </data>
@@ -2911,6 +2965,12 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   </data>
   <data name="ChatLocation" xml:space="preserve">
     <value>위치</value>
+  </data>
+  <data name="ChatNoTheme" xml:space="preserve">
+    <value>테마 없음</value>
+  </data>
+  <data name="ChatResetTheme" xml:space="preserve">
+    <value>테마 초기화</value>
   </data>
   <data name="Chats_few" xml:space="preserve">
     <value/>
@@ -3034,6 +3094,33 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   </data>
   <data name="ChatsUnmute" xml:space="preserve">
     <value>알림 켜기</value>
+  </data>
+  <data name="ChatThemeChangedTo" xml:space="preserve">
+    <value>{0} 님이 대화 테마를 {1} 으로 변경</value>
+  </data>
+  <data name="ChatThemeChangedYou" xml:space="preserve">
+    <value>대화방 테마를 {0}(으)로 변경하셨습니다</value>
+  </data>
+  <data name="ChatThemeDayNightSwitchTooltip" xml:space="preserve">
+    <value>**{0}**님이 야간 모드 사용시 이 테마가 어떻게 보여지는지 보려면 여기를 탭하세요.</value>
+  </data>
+  <data name="ChatThemeDisabled" xml:space="preserve">
+    <value>{0} 님이 대화 테마를 비활성화 함</value>
+  </data>
+  <data name="ChatThemeDisabledYou" xml:space="preserve">
+    <value>회원님이 대화 테마를 비활성화 함</value>
+  </data>
+  <data name="ChatThemeSaveDialogApply" xml:space="preserve">
+    <value>적용하기</value>
+  </data>
+  <data name="ChatThemeSaveDialogDiscard" xml:space="preserve">
+    <value>취소하기</value>
+  </data>
+  <data name="ChatThemeSaveDialogText" xml:space="preserve">
+    <value>이 대화에 새로운 테마를 적용하겠습니까?</value>
+  </data>
+  <data name="ChatThemeSaveDialogTitle" xml:space="preserve">
+    <value>변경내역을 저장하겠습니까?</value>
   </data>
   <data name="ChatVideo" xml:space="preserve">
     <value>동영상</value>
@@ -3549,6 +3636,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   </data>
   <data name="CreateLink" xml:space="preserve">
     <value>링크 만들기</value>
+  </data>
+  <data name="CreateLinkHeader" xml:space="preserve">
+    <value>생성</value>
   </data>
   <data name="CreateNewContact" xml:space="preserve">
     <value>새 연락처 등록</value>
@@ -4173,6 +4263,12 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="DiscussionUnlinkGroupAlert" xml:space="preserve">
     <value>정말 이 그룹에서 **{0}** 채널을 끊어내시겠습니까?</value>
   </data>
+  <data name="Dismiss" xml:space="preserve">
+    <value>무시</value>
+  </data>
+  <data name="DismissRequest" xml:space="preserve">
+    <value>요청 무시</value>
+  </data>
   <data name="DistanceUnits" xml:space="preserve">
     <value>거리 단위</value>
   </data>
@@ -4193,6 +4289,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   </data>
   <data name="Done" xml:space="preserve">
     <value>완료</value>
+  </data>
+  <data name="DoNoSetTheme" xml:space="preserve">
+    <value>테마 설정 안함</value>
   </data>
   <data name="Draft" xml:space="preserve">
     <value>임시 저장</value>
@@ -4311,6 +4410,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="EditContact" xml:space="preserve">
     <value>연락처 수정</value>
   </data>
+  <data name="EditCurrentTheme" xml:space="preserve">
+    <value>현재 테마 수정</value>
+  </data>
   <data name="EditedMessage" xml:space="preserve">
     <value>수정됨</value>
   </data>
@@ -4419,6 +4521,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="EmojiBigSize" xml:space="preserve">
     <value>큰 이모지 하나 그리기</value>
   </data>
+  <data name="EmojiInteractionTapHint" xml:space="preserve">
+    <value>만약 **{0}**님이 이 대화를 보고 있다면, 이 애니메이션도 보게 됩니다.</value>
+  </data>
   <data name="EmojiSuggestions" xml:space="preserve">
     <value>이모지 추천</value>
   </data>
@@ -4516,6 +4621,9 @@ telegram.org에서 자세히 알아보세요.</value>
   </data>
   <data name="Enhance" xml:space="preserve">
     <value>향상</value>
+  </data>
+  <data name="EnjoyngAnimations" xml:space="preserve">
+    <value>{0}  보는 중 **oo**  </value>
   </data>
   <data name="EnterChannelName" xml:space="preserve">
     <value>채널명</value>
@@ -5994,6 +6102,12 @@ telegram.org에서 자세히 알아보세요.</value>
   <data name="GrowthChartTitle" xml:space="preserve">
     <value>성장</value>
   </data>
+  <data name="HasBeenAddedToChannel" xml:space="preserve">
+    <value>{0}님이 채널에 추가됨</value>
+  </data>
+  <data name="HasBeenAddedToGroup" xml:space="preserve">
+    <value>{0}님이 그룹에 추가됨</value>
+  </data>
   <data name="HashtagCopied" xml:space="preserve">
     <value>클립보드에 해시태그 복사됨</value>
   </data>
@@ -6467,6 +6581,9 @@ telegram.org에서 자세히 알아보세요.</value>
   <data name="IsChoosingSticker" xml:space="preserve">
     <value>{0} 님이 스티커 고르는 중</value>
   </data>
+  <data name="IsEnjoyngAnimations" xml:space="preserve">
+    <value>{0} 님이 {1} 보는 중 **oo**</value>
+  </data>
   <data name="IsRecordingAudio" xml:space="preserve">
     <value>{0} 님이 음성 메시지 녹음 중...</value>
   </data>
@@ -6545,14 +6662,53 @@ telegram.org에서 자세히 알아보세요.</value>
   <data name="JoinByPeekJoin" xml:space="preserve">
     <value>들어가기</value>
   </data>
+  <data name="JoinedViaInviteLinkApproved" xml:space="preserve">
+    <value>un3님이 초대링크 un2을 통해 입장한 un1님을 승인함</value>
+  </data>
   <data name="JoinGroup" xml:space="preserve">
     <value>그룹 들어가기</value>
+  </data>
+  <data name="JoinRequests_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="JoinRequests_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="JoinRequests_one" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="JoinRequests_other" xml:space="preserve">
+    <value>{0}명이 입장 요청</value>
+  </data>
+  <data name="JoinRequests_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="JoinRequests_zero" xml:space="preserve">
+    <value/>
   </data>
   <data name="JoinToGroupErrorFull" xml:space="preserve">
     <value>죄송합니다. 이 그룹은 이미 가득 찼습니다.</value>
   </data>
   <data name="JoinToGroupErrorNotExist" xml:space="preserve">
     <value>죄송하지만, 대화방이 없어진 모양입니다.</value>
+  </data>
+  <data name="JoinUsersRequests_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="JoinUsersRequests_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="JoinUsersRequests_one" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="JoinUsersRequests_other" xml:space="preserve">
+    <value>{0}명이 입장 요청</value>
+  </data>
+  <data name="JoinUsersRequests_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="JoinUsersRequests_zero" xml:space="preserve">
+    <value/>
   </data>
   <data name="July" xml:space="preserve">
     <value>7월</value>
@@ -6807,6 +6963,12 @@ telegram.org에서 자세히 알아보세요.</value>
   </data>
   <data name="LinkLimitReached" xml:space="preserve">
     <value>한계 도달</value>
+  </data>
+  <data name="LinkNameHelp" xml:space="preserve">
+    <value>회원님과 다른 관리자들만 이름을 볼 수 있습니다.</value>
+  </data>
+  <data name="LinkNameHint" xml:space="preserve">
+    <value>링크 이름 (선택)</value>
   </data>
   <data name="LinkNotFound" xml:space="preserve">
     <value>안타깝게도 이 메시지에 접근하실 수 없습니다. 회원님은 메시지가 게시된 대화방의 참가자가 아닙니다.</value>
@@ -7154,6 +7316,18 @@ telegram.org에서 자세히 알아보세요.</value>
   <data name="MediaSelected_zero" xml:space="preserve">
     <value/>
   </data>
+  <data name="MediaShowPhotos" xml:space="preserve">
+    <value>사진 보기</value>
+  </data>
+  <data name="MediaShowVideos" xml:space="preserve">
+    <value>동영상 보기</value>
+  </data>
+  <data name="MediaZoomIn" xml:space="preserve">
+    <value>확대</value>
+  </data>
+  <data name="MediaZoomOut" xml:space="preserve">
+    <value>축소</value>
+  </data>
   <data name="MegaAddedBy" xml:space="preserve">
     <value>un1 님이 나를 이 그룹에 추가했습니다</value>
   </data>
@@ -7195,6 +7369,9 @@ telegram.org에서 자세히 알아보세요.</value>
 
 a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 있습니다.
 최소 길이는 다섯 자입니다.</value>
+  </data>
+  <data name="MemberRequests" xml:space="preserve">
+    <value>입장 요청</value>
   </data>
   <data name="Members_few" xml:space="preserve">
     <value/>
@@ -7322,6 +7499,24 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="MessagePinnedHint" xml:space="preserve">
     <value>메시지가 고정되었습니다</value>
   </data>
+  <data name="MessagePlayed_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagePlayed_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagePlayed_one" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagePlayed_other" xml:space="preserve">
+    <value>{0}번 재생됨</value>
+  </data>
+  <data name="MessagePlayed_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagePlayed_zero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="MessagePreview" xml:space="preserve">
     <value>메시지 미리보기</value>
   </data>
@@ -7414,6 +7609,27 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   </data>
   <data name="MessagesDeletedHint_zero" xml:space="preserve">
     <value/>
+  </data>
+  <data name="MessageSeen_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessageSeen_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessageSeen_one" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessageSeen_other" xml:space="preserve">
+    <value>{0}번 읽음</value>
+  </data>
+  <data name="MessageSeen_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessageSeen_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessageSeenTooltipMessage" xml:space="preserve">
+    <value>개인 정보 보호를 위하여, 읽음 내역은 **7일**간 저장됩니다.</value>
   </data>
   <data name="MessagesOverview" xml:space="preserve">
     <value>메시지</value>
@@ -7887,6 +8103,13 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="NoMediaSecret" xml:space="preserve">
     <value>이 대화방에서 나눈 사진과 동영상을 여기서 보실 수 있습니다.</value>
   </data>
+  <data name="NoMemberRequests" xml:space="preserve">
+    <value>입장 요청 없음</value>
+  </data>
+  <data name="NoMemberRequestsDescription" xml:space="preserve">
+    <value>보류 중인 그룹
+입장 요청이 없습니다.</value>
+  </data>
   <data name="NoMessages" xml:space="preserve">
     <value>메시지가 없습니다...</value>
   </data>
@@ -7991,6 +8214,13 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   </data>
   <data name="NoStickersFound" xml:space="preserve">
     <value>스티커를 찾지 못했습니다</value>
+  </data>
+  <data name="NoSubscribeRequests" xml:space="preserve">
+    <value>입장 요청 없음</value>
+  </data>
+  <data name="NoSubscribeRequestsDescription" xml:space="preserve">
+    <value>보류 중인 채널 
+입장 요청이 없습니다.</value>
   </data>
   <data name="NotificationActionPinnedContact" xml:space="preserve">
     <value>{0} 님이 {1} 그룹에 연락처를 고정했습니다</value>
@@ -8695,6 +8925,16 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   </data>
   <data name="OpenUrlTitle" xml:space="preserve">
     <value>링크 열기</value>
+  </data>
+  <data name="OptimizingTelegram" xml:space="preserve">
+    <value>텔레그램 최적화 중...</value>
+  </data>
+  <data name="OptimizingTelegramDescription1" xml:space="preserve">
+    <value>데이터베이스 크기에 따라 다르겠지만, 시간이 어느정도 소요가 될 것으로 예상됩니다.
+프로세스가 끝날때까지 앱을 열어주세요.</value>
+  </data>
+  <data name="OptimizingTelegramDescription2" xml:space="preserve">
+    <value>불편을 드려서 죄송합니다.</value>
   </data>
   <data name="Option_few" xml:space="preserve">
     <value/>
@@ -10962,6 +11202,36 @@ https://telegram.org/blog/coronavirus</value>
   <data name="ReportUserLocation" xml:space="preserve">
     <value>신고</value>
   </data>
+  <data name="RequestedToJoinAt" xml:space="preserve">
+    <value>{0}에 참가 요청</value>
+  </data>
+  <data name="RequestToJoinChannel" xml:space="preserve">
+    <value>채널 입장 요청</value>
+  </data>
+  <data name="RequestToJoinChannelApproved" xml:space="preserve">
+    <value>채널 입장 요청 승인됨</value>
+  </data>
+  <data name="RequestToJoinChannelDescription" xml:space="preserve">
+    <value>이 채널은 관리자가 신규 구독자를 승인해야 입장이 가능합니다.</value>
+  </data>
+  <data name="RequestToJoinChannelSentDescription" xml:space="preserve">
+    <value>관리자가 요청 승인한 후에 채널에 추가가 됩니다.</value>
+  </data>
+  <data name="RequestToJoinGroup" xml:space="preserve">
+    <value>그룹 입장 요청</value>
+  </data>
+  <data name="RequestToJoinGroupApproved" xml:space="preserve">
+    <value>그룹 입장 요청 승인됨</value>
+  </data>
+  <data name="RequestToJoinGroupDescription" xml:space="preserve">
+    <value>이 그룹은 관리자가 신규 참가자를 승인해야 입장이 가능합니다.</value>
+  </data>
+  <data name="RequestToJoinGroupSentDescription" xml:space="preserve">
+    <value>관리자가 요청 승인한 후에 그룹에 추가가 됩니다.</value>
+  </data>
+  <data name="RequestToJoinSent" xml:space="preserve">
+    <value>입장 요청 보냄</value>
+  </data>
   <data name="ResendCode" xml:space="preserve">
     <value>코드 다시 보내기</value>
   </data>
@@ -11188,6 +11458,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="SaveLink" xml:space="preserve">
     <value>링크 저장</value>
   </data>
+  <data name="SaveLinkHeader" xml:space="preserve">
+    <value>저장</value>
+  </data>
   <data name="SaveTheme" xml:space="preserve">
     <value>테마 저장</value>
   </data>
@@ -11309,6 +11582,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="SearchInSettings" xml:space="preserve">
     <value>설정과 자주 묻는 질문 검색</value>
+  </data>
+  <data name="SearchMemberRequests" xml:space="preserve">
+    <value>입장 요청 검색</value>
   </data>
   <data name="SearchMembers" xml:space="preserve">
     <value>참가자 검색</value>
@@ -11465,6 +11741,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="SelectOtherChat" xml:space="preserve">
     <value>다른 대화 선택</value>
+  </data>
+  <data name="SelectTheme" xml:space="preserve">
+    <value>테마 선택</value>
   </data>
   <data name="Send" xml:space="preserve">
     <value>보내기</value>
@@ -11711,6 +11990,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="SETTINGS" xml:space="preserve">
     <value>설정</value>
   </data>
+  <data name="SettingsBrowseThemes" xml:space="preserve">
+    <value>테마 검색</value>
+  </data>
   <data name="SettingsDebug" xml:space="preserve">
     <value>디버그</value>
   </data>
@@ -11731,6 +12013,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="SettingsSearchFaq" xml:space="preserve">
     <value>자주 묻는 질문</value>
+  </data>
+  <data name="SettingsSwitchToNightMode" xml:space="preserve">
+    <value>야간 모드 전환</value>
   </data>
   <data name="SetUrlAvailable" xml:space="preserve">
     <value>{0} 사용하실 수 있습니다.</value>
@@ -11818,6 +12103,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="SharedMedia" xml:space="preserve">
     <value>공유한 미디어</value>
+  </data>
+  <data name="SharedMediaFastScrollHint" xml:space="preserve">
+    <value>바를 누른채 이동하면 더 빠르게 스크롤을 할 수 있습니다</value>
   </data>
   <data name="SharedMediaTab" xml:space="preserve">
     <value>미디어</value>
@@ -12125,7 +12413,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>빠르게</value>
   </data>
   <data name="SpeedNormal" xml:space="preserve">
-    <value>일반</value>
+    <value>보통</value>
   </data>
   <data name="SpeedSlow" xml:space="preserve">
     <value>느리게</value>
@@ -12137,13 +12425,13 @@ https://telegram.org/blog/coronavirus</value>
     <value>매우 느리게</value>
   </data>
   <data name="SponsoredMessage" xml:space="preserve">
-    <value>스폰서드</value>
+    <value>스폰서</value>
   </data>
   <data name="SponsoredMessageAlertLearnMore" xml:space="preserve">
     <value>자세히 보기</value>
   </data>
   <data name="SponsoredMessageAlertLearnMoreUrl" xml:space="preserve">
-    <value>https://ads.telegram.org</value>
+    <value>https://promote.telegram.org</value>
   </data>
   <data name="SponsoredMessageAlertText" xml:space="preserve">
     <value>다른 앱과는 달리, 텔레그램은 사용자의 개인 정보를 토대로 타겟 광고로 사용하지 않습니다. 어떠한 사용자 데이터도 채집하고 분석하여 광고로 표시가 되지 않으며, 채널에 보여지는 스폰서드 메시지는 모든 사람에게 동일하게 표시됩니다. 저희는 모두가 개인정보에 대한 권리를 가지고 있으며, 기술 플랫폼들도 모두 이것을 존중해야된다고 생각합니다.</value>
@@ -12152,8 +12440,22 @@ https://telegram.org/blog/coronavirus</value>
     <value>스폰서드 메시지</value>
   </data>
   <data name="SponsoredMessageInfo" xml:space="preserve">
-    <value>스폰서드 메시지가
+    <value>스폰서 메시지가
 뭔가요?</value>
+  </data>
+  <data name="SponsoredMessageInfoDescription1" xml:space="preserve">
+    <value>다른 앱과는 다르게, 텔레그램은 개인 정보를 활용하여 타겟 광고를 절대 하지 않습니다. 텔레그램 스폰서 메시지는 보여지는 채널의 주제를 기반으로 합니다. 즉, 그 어떠한 개인 정보도 광고 표시를 하기 위해 추출과 분석이 되어지지 않았으며, 텔레그램 채널에 있는 모든 사용자가 동일한 스폰서 메시지가 표시가 된다는 뜻입니다.</value>
+  </data>
+  <data name="SponsoredMessageInfoDescription2" xml:space="preserve">
+    <value>다른 앱과는 다르게, 텔레그램은 사용자의 활동분석을 통한 프로파일링과 어떤 스폰서 메시지에 반응했는지 추적을 하지 않습니다. 또한 스폰서 메시지에 외부 링크를 제한하여 제3자가 저희 회원들을 염탐할 수 없도록 조취를 취하고 있습니다. 저희는 누구나 개인 정보에 대한 권리를 가지고 있으며 테크 플랫폼은 이를 존중해야 된다고 믿고 있습니다.</value>
+  </data>
+  <data name="SponsoredMessageInfoDescription3" xml:space="preserve">
+    <value>텔레그램은 수억 명의 사용자에게 무료이면서 무제한 서비스를 제공하기 위해 상당한 서버 및 트래픽 비용이 발생합니다. 독립성을 유지함과 동시에 본연의 가치를 지키기 위해 텔레그램은 개인 정보 보호를 고려한 유료 홍보 메시지 툴을 개발하였습니다. 책임감 있는 광고주들은 언제든지 다음으로의 연락을 환영합니다:</value>
+  </data>
+  <data name="SponsoredMessageInfoDescription4" xml:space="preserve">
+    <value>현재 스폰서 메시지는 테스트 중에 있습니다. 정식 출시가 되고 텔레그램의 기본 비용을 충당할 수 있게 되면, 스폰서 메시지가 표시되고 있는 공개 채널 소유자들에게 수익을 공유하기 시작할 것입니다.
+
+온라인 광고가 더 이상 사용자 개인 정보 침해와 동일시 되는 일은 없어져야 합니다. 테크회사가 어떻게 운영을 해야 하는지 모두 함께 재정의 해나갑시다.</value>
   </data>
   <data name="Start" xml:space="preserve">
     <value>시작</value>
@@ -12376,6 +12678,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="Strike" xml:space="preserve">
     <value>취소선</value>
+  </data>
+  <data name="SubscribeRequests" xml:space="preserve">
+    <value>입장 요청</value>
   </data>
   <data name="Subscribers_few" xml:space="preserve">
     <value/>
@@ -12677,6 +12982,12 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="Theme" xml:space="preserve">
     <value>테마</value>
+  </data>
+  <data name="ThemeAlsoAppliedForHint" xml:space="preserve">
+    <value>테마가 **{0}**님에게도 비활성화 됩니다.</value>
+  </data>
+  <data name="ThemeAlsoDisabledForHint" xml:space="preserve">
+    <value>테마가 **{0}**님에게도 비활성화 됩니다.</value>
   </data>
   <data name="ThemeArcticBlue" xml:space="preserve">
     <value>북극</value>
@@ -14139,9 +14450,9 @@ https://telegram.org/blog/coronavirus</value>
     <value>녹음 시작</value>
   </data>
   <data name="VoipGroupStartRecordingVideoText" xml:space="preserve">
-    <value>이 대화 녹화를 시작하고 결과물을 영상 파일로 저장하겠습니까?
+    <value>이 대화 녹화를 시작하고 결과물을 파일로 저장하겠습니까?
 
-이 대화가 녹화되는 것을 다른 참가자들에게 표시됩니다.</value>
+다른 참가자에게 이 대화가 녹화되고 있음이 보이게 됩니다.</value>
   </data>
   <data name="VoipGroupStartVoiceChat" xml:space="preserve">
     <value>영상 대화 시작</value>
@@ -14411,8 +14722,8 @@ https://telegram.org/blog/coronavirus</value>
     <value>{0} 님의 마이크가 꺼져 있습니다</value>
   </data>
   <data name="VoipVideoNotAvailable" xml:space="preserve">
-    <value>처음 {0}명의 참가자에게만
-영상이 제공됩니다</value>
+    <value>영상 방송을 보려면, 최신 버전의
+텔레그램으로 업데이트 해주세요.</value>
   </data>
   <data name="VoipVideoNotAvailableAdmin" xml:space="preserve">
     <value>영상 대화에 {0}명 이상의 참가자가 있습니다.

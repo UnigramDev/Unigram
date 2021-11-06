@@ -2398,6 +2398,9 @@
   <data name="ChangeChatBackground" xml:space="preserve">
     <value>Змяніць фон чата</value>
   </data>
+  <data name="ChangeColors" xml:space="preserve">
+    <value>Змяніць колеры</value>
+  </data>
   <data name="ChangeColorToColor" xml:space="preserve">
     <value>Вы хочаце выкарыстоўваць выбраны вамі фон або скінуць яго на перадвызначаны для гэтай тэмы?</value>
   </data>
@@ -2836,6 +2839,9 @@
   <data name="ChatAdmin" xml:space="preserve">
     <value>кіраўнік</value>
   </data>
+  <data name="ChatApplyTheme" xml:space="preserve">
+    <value>Дастасаваць тэму</value>
+  </data>
   <data name="ChatArchived" xml:space="preserve">
     <value>Чат у архіве</value>
   </data>
@@ -2910,6 +2916,12 @@
   </data>
   <data name="ChatLocation" xml:space="preserve">
     <value>Месцазнах.</value>
+  </data>
+  <data name="ChatNoTheme" xml:space="preserve">
+    <value>Без тэмы</value>
+  </data>
+  <data name="ChatResetTheme" xml:space="preserve">
+    <value>Скінуць тэму</value>
   </data>
   <data name="Chats_few" xml:space="preserve">
     <value>{0} чаты</value>
@@ -3033,6 +3045,33 @@
   </data>
   <data name="ChatsUnmute" xml:space="preserve">
     <value>Апавяшчаць</value>
+  </data>
+  <data name="ChatThemeChangedTo" xml:space="preserve">
+    <value>{0} змяніў(-ла) тэму чата на {1}</value>
+  </data>
+  <data name="ChatThemeChangedYou" xml:space="preserve">
+    <value>Вы змянілі тэму чата на {0}</value>
+  </data>
+  <data name="ChatThemeDayNightSwitchTooltip" xml:space="preserve">
+    <value>Націсніце тут, каб убачыць, як тэма будзе выглядаць для **{0}** у начным рэжыме.</value>
+  </data>
+  <data name="ChatThemeDisabled" xml:space="preserve">
+    <value>{0} адключыў(-ла) тэму чата</value>
+  </data>
+  <data name="ChatThemeDisabledYou" xml:space="preserve">
+    <value>Вы адключылі тэму чата</value>
+  </data>
+  <data name="ChatThemeSaveDialogApply" xml:space="preserve">
+    <value>Дастасаваць</value>
+  </data>
+  <data name="ChatThemeSaveDialogDiscard" xml:space="preserve">
+    <value>Скінуць</value>
+  </data>
+  <data name="ChatThemeSaveDialogText" xml:space="preserve">
+    <value>Хочаце дастасаваць тэму для гэтага чата?</value>
+  </data>
+  <data name="ChatThemeSaveDialogTitle" xml:space="preserve">
+    <value>Захаваць змены?</value>
   </data>
   <data name="ChatVideo" xml:space="preserve">
     <value>Відэа</value>
@@ -4198,6 +4237,9 @@
   <data name="Done" xml:space="preserve">
     <value>Гатова</value>
   </data>
+  <data name="DoNoSetTheme" xml:space="preserve">
+    <value>Не прызначаць тэму</value>
+  </data>
   <data name="Draft" xml:space="preserve">
     <value>Чарнавік</value>
   </data>
@@ -4425,6 +4467,9 @@
   <data name="EmojiBigSize" xml:space="preserve">
     <value>Вялікія эмодзі</value>
   </data>
+  <data name="EmojiInteractionTapHint" xml:space="preserve">
+    <value>Калі **{0}** адкрые чат у гэты момант, то таксама ўбачыць анімацыю.</value>
+  </data>
   <data name="EmojiSuggestions" xml:space="preserve">
     <value>Прапановы эмодзі</value>
   </data>
@@ -4522,6 +4567,9 @@
   </data>
   <data name="Enhance" xml:space="preserve">
     <value>Паляпшэнне</value>
+  </data>
+  <data name="EnjoyngAnimations" xml:space="preserve">
+    <value>**oo** праглядае {0}</value>
   </data>
   <data name="EnterChannelName" xml:space="preserve">
     <value>Назва канала</value>
@@ -6421,6 +6469,9 @@
   <data name="IsChoosingSticker" xml:space="preserve">
     <value>{0} выбірае стыкер</value>
   </data>
+  <data name="IsEnjoyngAnimations" xml:space="preserve">
+    <value>{0} **oo** цешыцца анімацыямі {1}</value>
+  </data>
   <data name="IsRecordingAudio" xml:space="preserve">
     <value>{0} запісвае галасавое паведамленне...</value>
   </data>
@@ -7276,6 +7327,24 @@
   <data name="MessagePinnedHint" xml:space="preserve">
     <value>Паведамленне замацавана</value>
   </data>
+  <data name="MessagePlayed_few" xml:space="preserve">
+    <value>{0} прайгралі</value>
+  </data>
+  <data name="MessagePlayed_many" xml:space="preserve">
+    <value>{0} прайгралі</value>
+  </data>
+  <data name="MessagePlayed_one" xml:space="preserve">
+    <value>Прайграна</value>
+  </data>
+  <data name="MessagePlayed_other" xml:space="preserve">
+    <value>{0} прайгралі</value>
+  </data>
+  <data name="MessagePlayed_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagePlayed_zero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="MessagePreview" xml:space="preserve">
     <value>Перадпрагляд паведамлення</value>
   </data>
@@ -7368,6 +7437,27 @@
   </data>
   <data name="MessagesDeletedHint_zero" xml:space="preserve">
     <value/>
+  </data>
+  <data name="MessageSeen_few" xml:space="preserve">
+    <value>{0} прачыталі</value>
+  </data>
+  <data name="MessageSeen_many" xml:space="preserve">
+    <value>{0} прачыталі</value>
+  </data>
+  <data name="MessageSeen_one" xml:space="preserve">
+    <value>{0} прачытаў</value>
+  </data>
+  <data name="MessageSeen_other" xml:space="preserve">
+    <value>{0} прачыталі</value>
+  </data>
+  <data name="MessageSeen_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessageSeen_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessageSeenTooltipMessage" xml:space="preserve">
+    <value>Каб абараніць прыватнасць карыстальнікаў, гэтыя прагляды захоўваюцца на працягу **7 дзён**.</value>
   </data>
   <data name="MessagesOverview" xml:space="preserve">
     <value>Паведамленні</value>
@@ -8645,6 +8735,15 @@
   </data>
   <data name="OpenUrlTitle" xml:space="preserve">
     <value>Адкрыць спасылку</value>
+  </data>
+  <data name="OptimizingTelegram" xml:space="preserve">
+    <value>Аптымізацыя Telegram...</value>
+  </data>
+  <data name="OptimizingTelegramDescription1" xml:space="preserve">
+    <value>Гэта можа заняць час, у залежнасці ад памераў базы даных. Калі ласка, не закрывайце праграму да сканчэння працэсу.</value>
+  </data>
+  <data name="OptimizingTelegramDescription2" xml:space="preserve">
+    <value>Прабачце за нязручнасці.</value>
   </data>
   <data name="Option_few" xml:space="preserve">
     <value>{0} варыянты ў апытанне</value>
@@ -11039,7 +11138,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>СКІНУЦЬ УЛІКОВЫ ЗАПІС</value>
   </data>
   <data name="RestorePasswordResetIn" xml:space="preserve">
-    <value>Вы можаце скінуць ваш пароль праз {0}</value>
+    <value>Вы можаце скінуць ваш пароль праз {0}.</value>
   </data>
   <data name="RestorePasswordResetPassword" xml:space="preserve">
     <value>СКІНУЦЬ ПАРОЛЬ</value>
@@ -11415,6 +11514,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="SelectOtherChat" xml:space="preserve">
     <value>Выберыце іншы чат</value>
+  </data>
+  <data name="SelectTheme" xml:space="preserve">
+    <value>Выбраць тэму</value>
   </data>
   <data name="Send" xml:space="preserve">
     <value>Адправіць</value>
@@ -12628,6 +12730,12 @@ https://telegram.org/blog/coronavirus</value>
   <data name="Theme" xml:space="preserve">
     <value>Тэма</value>
   </data>
+  <data name="ThemeAlsoAppliedForHint" xml:space="preserve">
+    <value>Тэма будзе таксама дастасавана для **{0}**.</value>
+  </data>
+  <data name="ThemeAlsoDisabledForHint" xml:space="preserve">
+    <value>Тэма будзе таксама адключана для **{0}**.</value>
+  </data>
   <data name="ThemeArcticBlue" xml:space="preserve">
     <value>Арктычная</value>
   </data>
@@ -13654,7 +13762,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>Скасаваць жывы эфір</value>
   </data>
   <data name="VoipChannelChatJoined" xml:space="preserve">
-    <value>**{0}** далучыўся да жывога эфіру.</value>
+    <value>**{0}** далучыўся(-лася) да жывога эфіру.</value>
   </data>
   <data name="VoipChannelEditTitle" xml:space="preserve">
     <value>Змяніць загаловак жывога эфіру</value>
@@ -13699,10 +13807,10 @@ https://telegram.org/blog/coronavirus</value>
     <value>Адкрыць жывы эфір</value>
   </data>
   <data name="VoipChannelRecording" xml:space="preserve">
-    <value>Жывы эфір запісваецца на відэа</value>
+    <value>Жывы эфір запісваецца</value>
   </data>
   <data name="VoipChannelRecordVoiceChat" xml:space="preserve">
-    <value>Запісаць галасавы эфір</value>
+    <value>Запісаць жывы эфір</value>
   </data>
   <data name="VoipChannelRemoveMemberAlertText2" xml:space="preserve">
     <value>Вы ўпэўнены, што хочаце выдаліць {0} з жывога эфіру і заблакіраваць яго або яе ў {1}?</value>
@@ -13746,7 +13854,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>Удзельнікі эфіру будуць бачыць вас як **{0}**</value>
   </data>
   <data name="VoipChannelUserJoined" xml:space="preserve">
-    <value>**{0}** далучыўся да жывога эфіру.</value>
+    <value>**{0}** далучыўся(-лася) да жывога эфіру.</value>
   </data>
   <data name="VoipChannelVideoNotAvailableAdmin" xml:space="preserve">
     <value>Жывы эфір ужо мае больш за {0}.
@@ -14135,7 +14243,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>Выдаліць</value>
   </data>
   <data name="VoipGroupVideoRecordSaved" xml:space="preserve">
-    <value>Відэа створана і занесена ў **Захаванае**.</value>
+    <value>Відэа захавана ў **Захаванае**.</value>
   </data>
   <data name="VoipGroupVideoRecordStarted" xml:space="preserve">
     <value>Запіс відэа пачаўся.</value>
@@ -14301,7 +14409,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>Пачаць запіс</value>
   </data>
   <data name="VoipRecordVoiceChat" xml:space="preserve">
-    <value>Запісаць галасавы чат</value>
+    <value>Запісаць відэачат</value>
   </data>
   <data name="VoipRecordVoiceChatInfo" xml:space="preserve">
     <value>Выберыце, якім спосабам запісаць гэты чат</value>
@@ -14361,8 +14469,8 @@ https://telegram.org/blog/coronavirus</value>
     <value>Мікрафон {0} выключаны</value>
   </data>
   <data name="VoipVideoNotAvailable" xml:space="preserve">
-    <value>Відэа даступнае толькі 
-для першых {0} удзельнікаў</value>
+    <value>Каб глядзець відэа, 
+абнавіце Telegram</value>
   </data>
   <data name="VoipVideoNotAvailableAdmin" xml:space="preserve">
     <value>Відэачат перавысіў {0} удзельнікаў.

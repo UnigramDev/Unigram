@@ -169,6 +169,9 @@
   <data name="AccDescrExpandPanel" xml:space="preserve">
     <value>Paneel uitklappen</value>
   </data>
+  <data name="AccDescrFingerprint" xml:space="preserve">
+    <value>Vingerafdruk</value>
+  </data>
   <data name="AccDescrForwarding" xml:space="preserve">
     <value>Doorsturen van</value>
   </data>
@@ -585,6 +588,9 @@
   </data>
   <data name="ActionChangedVideo" xml:space="preserve">
     <value>Groepsvideo door un1 gewijzigd</value>
+  </data>
+  <data name="ActionChannelCallEnded" xml:space="preserve">
+    <value>Livestream beëindigd ({0})</value>
   </data>
   <data name="ActionChannelChangedPhoto" xml:space="preserve">
     <value>Kanaalfoto bijgewerkt</value>
@@ -2363,6 +2369,9 @@ Als jij dit niet was, geef dan de code in die we zojuist per SMS hebben gestuurd
   <data name="ChangeChatBackground" xml:space="preserve">
     <value>Chatachtergrond wijzigen</value>
   </data>
+  <data name="ChangeColors" xml:space="preserve">
+    <value>Kleuren wijzigen</value>
+  </data>
   <data name="ChangeColorToColor" xml:space="preserve">
     <value>Wil je je huidige achtergrond gebruiken of deze herstellen naar de standaard achtergrond van dit thema?</value>
   </data>
@@ -2894,6 +2903,9 @@ De minimale lengte is 5 karakters.</value>
   <data name="ChatsArchived" xml:space="preserve">
     <value>Chats gearchiveerd</value>
   </data>
+  <data name="ChatsDeletedUndo" xml:space="preserve">
+    <value>Chats verwijderd.</value>
+  </data>
   <data name="ChatSetLocation" xml:space="preserve">
     <value>Locatie instellen</value>
   </data>
@@ -3025,6 +3037,12 @@ De minimale lengte is 5 karakters.</value>
   </data>
   <data name="CheckPasswordPerfect" xml:space="preserve">
     <value>Perfect!</value>
+  </data>
+  <data name="CheckPhoneNumberNo" xml:space="preserve">
+    <value>Nee</value>
+  </data>
+  <data name="CheckPhoneNumberYes" xml:space="preserve">
+    <value>Ja</value>
   </data>
   <data name="ChooseCountry" xml:space="preserve">
     <value>Kies een land</value>
@@ -4340,6 +4358,9 @@ Kies je niemand? dan geeft de widget je meest gebruikte contacten weer.</value>
   <data name="EmojiBigSize" xml:space="preserve">
     <value>Grote emoji gebruiken</value>
   </data>
+  <data name="EmojiInteractionTapHint" xml:space="preserve">
+    <value>Als **{0}** de chat nu zou bekijken, dan zou die ook deze animatie zien.</value>
+  </data>
   <data name="EmojiSuggestions" xml:space="preserve">
     <value>Emojisuggesties</value>
   </data>
@@ -4929,6 +4950,9 @@ voor je zoekopdracht.</value>
     <value>NEP</value>
   </data>
   <data name="FavoriteStickers" xml:space="preserve">
+    <value>Favorieten</value>
+  </data>
+  <data name="FavoriteStickersShort" xml:space="preserve">
     <value>Favorieten</value>
   </data>
   <data name="FeaturedGifs" xml:space="preserve">
@@ -5552,6 +5576,12 @@ voor je zoekopdracht.</value>
   <data name="ForwardedVideo_zero" xml:space="preserve">
     <value/>
   </data>
+  <data name="ForwardingFromNameAndMessage" xml:space="preserve">
+    <value>{0}: {0}</value>
+  </data>
+  <data name="ForwardingFromNames" xml:space="preserve">
+    <value>Van {0}</value>
+  </data>
   <data name="ForwardTo" xml:space="preserve">
     <value>Doorsturen naar</value>
   </data>
@@ -5667,7 +5697,7 @@ voor je zoekopdracht.</value>
     <value>GIF's</value>
   </data>
   <data name="GigagroupAlertLearnMore" xml:space="preserve">
-    <value>Lees meer</value>
+    <value>LEES MEER</value>
   </data>
   <data name="GigagroupAlertText" xml:space="preserve">
     <value>Je groep heeft de limiet van **200,000** leden bereikt.
@@ -8518,6 +8548,15 @@ Het Telegram-team</value>
   </data>
   <data name="OpenUrlTitle" xml:space="preserve">
     <value>Link openen</value>
+  </data>
+  <data name="OptimizingTelegram" xml:space="preserve">
+    <value>Telegram optimaliseren...</value>
+  </data>
+  <data name="OptimizingTelegramDescription1" xml:space="preserve">
+    <value>Dit kan even duren, afhankelijk van de grootte van de database. Houd de app open totdat het proces is voltooid.</value>
+  </data>
+  <data name="OptimizingTelegramDescription2" xml:space="preserve">
+    <value>Excuses voor het ongemak.</value>
   </data>
   <data name="Option_few" xml:space="preserve">
     <value/>
@@ -11693,6 +11732,22 @@ Tempolimiet is ingeschakeld, je kunt niet meer dan 1 bericht tegelijkertijd stur
   <data name="SpeedVerySlow" xml:space="preserve">
     <value>Erg traag</value>
   </data>
+  <data name="SponsoredMessage" xml:space="preserve">
+    <value>gesponsord</value>
+  </data>
+  <data name="SponsoredMessageAlertLearnMore" xml:space="preserve">
+    <value>LEES MEER</value>
+  </data>
+  <data name="SponsoredMessageAlertLearnMoreUrl" xml:space="preserve">
+    <value>https://promote.telegram.org</value>
+  </data>
+  <data name="SponsoredMessageAlertTitle" xml:space="preserve">
+    <value>Gesponsorde berichten</value>
+  </data>
+  <data name="SponsoredMessageInfo" xml:space="preserve">
+    <value>Wat zijn gesponsorde
+berichten?</value>
+  </data>
   <data name="Start" xml:space="preserve">
     <value>Start</value>
   </data>
@@ -11732,8 +11787,14 @@ Tempolimiet is ingeschakeld, je kunt niet meer dan 1 bericht tegelijkertijd stur
   <data name="StartTodayAt" xml:space="preserve">
     <value>'Begint vandaag om' HH:mm</value>
   </data>
+  <data name="StartVoipChannel" xml:space="preserve">
+    <value>Livestream starten</value>
+  </data>
   <data name="StartVoipChannelAlertText" xml:space="preserve">
     <value>Wil je een spraakchat starten in dit kanaal?</value>
+  </data>
+  <data name="StartVoipChannelTitle" xml:space="preserve">
+    <value>Livestream</value>
   </data>
   <data name="StartVoipChat" xml:space="preserve">
     <value>Spraakchat starten</value>
@@ -13212,11 +13273,53 @@ Je mag **a–z**, **0–9** en underscore gebruiken. De minimale lengte is **5**
   <data name="VoipCamera" xml:space="preserve">
     <value>Camera</value>
   </data>
+  <data name="VoipChannelCancelChat" xml:space="preserve">
+    <value>Livestream annuleren</value>
+  </data>
+  <data name="VoipChannelEditTitle" xml:space="preserve">
+    <value>Livestreamtitel bewerken</value>
+  </data>
+  <data name="VoipChannelEndAlertTitle" xml:space="preserve">
+    <value>Livestream beëindigen</value>
+  </data>
+  <data name="VoipChannelEndChat" xml:space="preserve">
+    <value>Livestream beëindigen</value>
+  </data>
+  <data name="VoipChannelLeaveAlertEndChat" xml:space="preserve">
+    <value>Livestream beëindigen</value>
+  </data>
+  <data name="VoipChannelLeaveAlertTitle" xml:space="preserve">
+    <value>Livestream verlaten</value>
+  </data>
+  <data name="VoipChannelOpenVoiceChat" xml:space="preserve">
+    <value>Livestream openen</value>
+  </data>
+  <data name="VoipChannelRecordVoiceChat" xml:space="preserve">
+    <value>Livestream opnemen</value>
+  </data>
+  <data name="VoipChannelScheduledVoiceChat" xml:space="preserve">
+    <value>Geplande livestream</value>
+  </data>
   <data name="VoipChannelScheduleInfo" xml:space="preserve">
     <value>Leden van het kanaal krijgen een melding dat de spraakchat start over {0}</value>
   </data>
+  <data name="VoipChannelScheduleVoiceChat" xml:space="preserve">
+    <value>Livestream plannen</value>
+  </data>
   <data name="VoipChannelStart2" xml:space="preserve">
     <value>Leden van dit kanaal krijgen een melding zodra je spraakchat start.</value>
+  </data>
+  <data name="VoipChannelStartVoiceChat" xml:space="preserve">
+    <value>Livestream starten</value>
+  </data>
+  <data name="VoipChannelTitle" xml:space="preserve">
+    <value>Livestreamtitel</value>
+  </data>
+  <data name="VoipChannelViewVoiceChat" xml:space="preserve">
+    <value>LIVESTREAM BEKIJKEN</value>
+  </data>
+  <data name="VoipChannelVoiceChat" xml:space="preserve">
+    <value>Livestream</value>
   </data>
   <data name="VoipChatActiveChats" xml:space="preserve">
     <value>Actieve spraakchats</value>
@@ -13426,7 +13529,7 @@ Je mag **a–z**, **0–9** en underscore gebruiken. De minimale lengte is **5**
     <value>Weet je zeker dat je deze spraakchat wilt verlaten?</value>
   </data>
   <data name="VoipGroupLeaveAlertTitle" xml:space="preserve">
-    <value>Spraakchat verlaten</value>
+    <value>Videochat verlaten</value>
   </data>
   <data name="VoipGroupMute" xml:space="preserve">
     <value>Dempen</value>
