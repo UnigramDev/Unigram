@@ -1484,6 +1484,13 @@ Read more about how to update your device [here](https://support.microsoft.com/h
                     value.NotificationSettings = updateNotificationSettings.NotificationSettings;
                 }
             }
+            else if (update is UpdateChatPendingJoinRequests updateChatPendingJoinRequests)
+            {
+                if (_chats.TryGetValue(updateChatPendingJoinRequests.ChatId, out Chat value))
+                {
+                    value.PendingJoinRequests = updateChatPendingJoinRequests.PendingJoinRequests;
+                }
+            }
             else if (update is UpdateChatPermissions updateChatPermissions)
             {
                 if (_chats.TryGetValue(updateChatPermissions.ChatId, out Chat value))

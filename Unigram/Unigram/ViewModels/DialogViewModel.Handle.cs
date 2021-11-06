@@ -27,6 +27,7 @@ namespace Unigram.ViewModels
         IHandle<UpdateChatActionBar>,
         IHandle<UpdateChatHasScheduledMessages>,
         IHandle<UpdateChatVideoChat>,
+        IHandle<UpdateChatPendingJoinRequests>,
 
         IHandle<UpdateUserChatAction>,
 
@@ -278,6 +279,14 @@ namespace Unigram.ViewModels
         }
 
         #endregion
+
+        public void Handle(UpdateChatPendingJoinRequests update)
+        {
+            if (update.ChatId == _chat?.Id)
+            {
+                BeginOnUIThread(() => Delegate?.UpdateChatPendingJoinRequests(_chat));
+            }
+        }
 
         public void Handle(UpdateChatPermissions update)
         {

@@ -69,10 +69,7 @@ namespace Unigram.Controls
 
                 for (int i = 0; i < _items.Count; i++)
                 {
-                    var container = CreateContainer(_items[i]);
-
-                    Canvas.SetZIndex(container, -i);
-                    _layoutRoot.Children.Insert(i, container);
+                    InsertItem(i, _items[i]);
                 }
             }
         }

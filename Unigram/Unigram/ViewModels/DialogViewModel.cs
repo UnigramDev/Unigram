@@ -143,6 +143,7 @@ namespace Unigram.ViewModels
             SetTimerCommand = new RelayCommand(SetTimerExecute);
             SetThemeCommand = new RelayCommand(SetThemeExecute);
             ActionCommand = new RelayCommand(ActionExecute);
+            JoinRequestsCommand = new RelayCommand(JoinRequestsExecute);
             OpenMessageCommand = new RelayCommand<Message>(OpenMessageExecute);
             ScheduledCommand = new RelayCommand(ScheduledExecute);
             OpenUserCommand = new RelayCommand<long>(OpenUser);
@@ -3585,6 +3586,17 @@ namespace Unigram.ViewModels
                     }
                 }
             }
+        }
+
+        #endregion
+
+        #region Join requests
+
+        public RelayCommand JoinRequestsCommand { get; }
+        private async void JoinRequestsExecute()
+        {
+            var popup = new ChatJoinRequestsPopup(ProtoService, CacheService, Settings, Aggregator, _chat, string.Empty);
+            var confirm = await popup.ShowQueuedAsync();
         }
 
         #endregion
