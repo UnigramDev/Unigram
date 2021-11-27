@@ -246,19 +246,24 @@ namespace Unigram.Controls.Cells
             }
 
             //if (!message.IsOutgoing && message.SenderUserId != 0 && !message.IsService())
-            if (ShowFrom(protoService, chat, message, out User fromUser))
+            if (ShowFrom(protoService, chat, message, out User fromUser, out Chat fromChat))
             {
                 if (message.IsOutgoing)
                 {
-                    if (!(chat.Type is ChatTypePrivate priv && priv.UserId == fromUser.Id) && !message.IsChannelPost)
+                    if (!(chat.Type is ChatTypePrivate priv && priv.UserId == fromUser?.Id) && !message.IsChannelPost)
                     {
                         builder.Append(Strings.Resources.FromYou);
                         builder.Append(": ");
                     }
                 }
-                else
+                else if (fromUser != null)
                 {
                     builder.Append(fromUser.GetFullName());
+                    builder.Append(": ");
+                }
+                else if (fromChat != null)
+                {
+                    builder.Append(fromChat.Title);
                     builder.Append(": ");
                 }
             }
@@ -804,7 +809,7 @@ namespace Unigram.Controls.Cells
             var format = "{0}: ";
             var result = string.Empty;
 
-            if (ShowFrom(_protoService, chat, message, out User from))
+            if (ShowFrom(_protoService, chat, message, out User fromUser, out Chat fromChat))
             {
                 if (message.IsSaved(_protoService.Options.MyId))
                 {
@@ -812,33 +817,37 @@ namespace Unigram.Controls.Cells
                 }
                 else if (message.IsOutgoing)
                 {
-                    if (!(chat.Type is ChatTypePrivate priv && priv.UserId == from.Id) && !message.IsChannelPost)
+                    if (!(chat.Type is ChatTypePrivate priv && priv.UserId == fromUser?.Id) && !message.IsChannelPost)
                     {
                         result = string.Format(format, Strings.Resources.FromYou);
                     }
                 }
-                else
+                else if (fromUser != null)
                 {
-                    if (!string.IsNullOrEmpty(from.FirstName))
+                    if (!string.IsNullOrEmpty(fromUser.FirstName))
                     {
-                        result = string.Format(format, from.FirstName.Trim());
+                        result = string.Format(format, fromUser.FirstName.Trim());
                     }
-                    else if (!string.IsNullOrEmpty(from.LastName))
+                    else if (!string.IsNullOrEmpty(fromUser.LastName))
                     {
-                        result = string.Format(format, from.LastName.Trim());
+                        result = string.Format(format, fromUser.LastName.Trim());
                     }
-                    else if (!string.IsNullOrEmpty(from.Username))
+                    else if (!string.IsNullOrEmpty(fromUser.Username))
                     {
-                        result = string.Format(format, from.Username.Trim());
+                        result = string.Format(format, fromUser.Username.Trim());
                     }
-                    else if (from.Type is UserTypeDeleted)
+                    else if (fromUser.Type is UserTypeDeleted)
                     {
                         result = string.Format(format, Strings.Resources.HiddenName);
                     }
                     else
                     {
-                        result = string.Format(format, from.Id);
+                        result = string.Format(format, fromUser.Id);
                     }
+                }
+                else if (fromChat != null)
+                {
+                    result = string.Format(format, fromChat.Title);
                 }
             }
 
@@ -948,31 +957,39 @@ namespace Unigram.Controls.Cells
             return result;
         }
 
-        private bool ShowFrom(ICacheService cacheService, Chat chat, Message message, out User senderUser)
+        private bool ShowFrom(ICacheService cacheService, Chat chat, Message message, out User senderUser, out Chat senderChat)
         {
             if (message.IsService())
             {
                 senderUser = null;
+                senderChat = null;
                 return false;
             }
 
             if (message.IsOutgoing)
             {
-                return cacheService.TryGetUser(message.SenderId, out senderUser);
+                senderChat = null;
+                return cacheService.TryGetUser(message.SenderId, out senderUser)
+                    || cacheService.TryGetChat(message.SenderId, out senderChat);
             }
 
             if (chat.Type is ChatTypeBasicGroup)
             {
+                senderChat = null;
                 return cacheService.TryGetUser(message.SenderId, out senderUser);
             }
 
             if (chat.Type is ChatTypeSupergroup supergroup)
             {
                 senderUser = null;
-                return !supergroup.IsChannel && cacheService.TryGetUser(message.SenderId, out senderUser);
+                senderChat = null;
+                return !supergroup.IsChannel
+                    && cacheService.TryGetUser(message.SenderId, out senderUser)
+                    || cacheService.TryGetChat(message.SenderId, out senderChat);
             }
 
             senderUser = null;
+            senderChat = null;
             return false;
         }
 

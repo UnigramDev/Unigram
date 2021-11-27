@@ -24,11 +24,12 @@ namespace Unigram.ViewModels
         IHandle<UpdateChatReadInbox>,
         IHandle<UpdateChatDraftMessage>,
         IHandle<UpdateChatDefaultDisableNotification>,
+        IHandle<UpdateChatDefaultMessageSenderId>,
         IHandle<UpdateChatActionBar>,
         IHandle<UpdateChatHasScheduledMessages>,
         IHandle<UpdateChatVideoChat>,
 
-        IHandle<UpdateUserChatAction>,
+        IHandle<UpdateChatAction>,
 
         IHandle<UpdateChatLastMessage>,
         IHandle<UpdateNewMessage>,
@@ -63,7 +64,7 @@ namespace Unigram.ViewModels
         IHandle<UpdateFile>
     {
 
-        public void Handle(UpdateUserChatAction update)
+        public void Handle(UpdateChatAction update)
         {
             if (update.ChatId == _chat?.Id && update.MessageThreadId == _threadId && (_type == DialogType.History || _type == DialogType.Thread))
             {
@@ -404,6 +405,14 @@ namespace Unigram.ViewModels
             if (update.ChatId == _chat?.Id)
             {
                 BeginOnUIThread(() => Delegate?.UpdateChatDefaultDisableNotification(_chat, update.DefaultDisableNotification));
+            }
+        }
+
+        public void Handle(UpdateChatDefaultMessageSenderId update)
+        {
+            if (update.ChatId == _chat?.Id)
+            {
+                BeginOnUIThread(() => Delegate?.UpdateChatDefaultMessageSenderId(_chat, update.DefaultMessageSenderId));
             }
         }
 

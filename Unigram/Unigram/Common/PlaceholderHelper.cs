@@ -227,6 +227,20 @@ namespace Unigram.Common
             return bitmap;
         }
 
+        public static ImageSource GetMessageSender(IProtoService protoService, MessageSender sender, int side)
+        {
+            if (protoService.TryGetUser(sender, out User user))
+            {
+                return GetUser(protoService, user, side);
+            }
+            else if (protoService.TryGetChat(sender, out Chat chat))
+            {
+                return GetChat(protoService, chat, side);
+            }
+
+            return null;
+        }
+
         public static ImageSource GetChat(IProtoService protoService, Chat chat, int side)
         {
             if (protoService != null)
