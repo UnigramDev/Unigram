@@ -487,6 +487,18 @@
   <data name="AcceptCall" xml:space="preserve">
     <value>Accept</value>
   </data>
+  <data name="AcceptCalls" xml:space="preserve">
+    <value>Accept Calls</value>
+  </data>
+  <data name="AcceptCallsChatsDescription" xml:space="preserve">
+    <value>Use this device for Calls</value>
+  </data>
+  <data name="AcceptSecretChats" xml:space="preserve">
+    <value>Accept Secret Chats</value>
+  </data>
+  <data name="AcceptSecretChatsDescription" xml:space="preserve">
+    <value>Use this device for Secret Chats</value>
+  </data>
   <data name="AccessError" xml:space="preserve">
     <value>Access error</value>
   </data>
@@ -1161,6 +1173,9 @@
   </data>
   <data name="Appearance" xml:space="preserve">
     <value>Appearance</value>
+  </data>
+  <data name="Application" xml:space="preserve">
+    <value>Application</value>
   </data>
   <data name="AppFolderInfo" xml:space="preserve">
     <value>Browse the app's folder</value>
@@ -6506,6 +6521,9 @@ Messages will be imported into the current day but will also include their origi
   <data name="InvoiceCantSendSecretChat" xml:space="preserve">
     <value>Sorry, invoices can’t be sent to secret chats.</value>
   </data>
+  <data name="IpAddress" xml:space="preserve">
+    <value>IP Address</value>
+  </data>
   <data name="IsChoosingSticker" xml:space="preserve">
     <value>{0} is ch**oo**sing a sticker</value>
   </data>
@@ -6953,6 +6971,9 @@ This operation can take a few minutes to complete.</value>
   </data>
   <data name="LocatedChannelsTooMuch" xml:space="preserve">
     <value>Sorry, the target user owns too many location-based groups. Please ask them to delete or transfer an existing one first.</value>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>Location</value>
   </data>
   <data name="LocationNotifiation" xml:space="preserve">
     <value>Proximity alert</value>

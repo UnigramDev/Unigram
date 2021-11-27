@@ -15,11 +15,13 @@ using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.Graphics;
 using Windows.Graphics.DirectX;
+using Windows.Graphics.Display;
 using Windows.Storage;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Controls
 {
@@ -73,6 +75,7 @@ namespace Unigram.Controls
         private bool _isCachingEnabled = true;
 
         private SizeInt32 _frameSize = new SizeInt32 { Width = 256, Height = 256 };
+        private DecodePixelType _decodeFrameType = DecodePixelType.Physical;
 
         private readonly LoopThread _thread;
         private readonly LoopThread _threadUI;
@@ -366,8 +369,21 @@ namespace Unigram.Controls
             _source = newValue;
 
             var shouldPlay = _shouldPlay;
+            var frameSize = _frameSize;
 
-            var animation = await Task.Run(() => LottieAnimation.LoadFromFile(newValue, _frameSize, _isCachingEnabled, ColorReplacements));
+            if (_decodeFrameType == DecodePixelType.Logical)
+            {
+                // TODO: subscribe for DPI changed event
+                var dpi = DisplayInformation.GetForCurrentView().LogicalDpi / 96.0f;
+
+                frameSize = new SizeInt32
+                {
+                    Width = (int)(_frameSize.Width * dpi),
+                    Height = (int)(_frameSize.Height * dpi)
+                };
+            }
+
+            var animation = await Task.Run(() => LottieAnimation.LoadFromFile(newValue, frameSize, _isCachingEnabled, ColorReplacements));
             if (animation == null || !string.Equals(newValue, _source, StringComparison.OrdinalIgnoreCase))
             {
                 // The app can't access the file specified
@@ -590,6 +606,24 @@ namespace Unigram.Controls
         private static void OnFrameSizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((LottieView)d)._frameSize = (SizeInt32)e.NewValue;
+        }
+
+        #endregion
+
+        #region DecodeFrameType
+
+        public DecodePixelType DecodeFrameType
+        {
+            get { return (DecodePixelType)GetValue(DecodeFrameTypeProperty); }
+            set { SetValue(DecodeFrameTypeProperty, value); }
+        }
+
+        public static readonly DependencyProperty DecodeFrameTypeProperty =
+            DependencyProperty.Register("DecodeFrameType", typeof(DecodePixelType), typeof(LottieView), new PropertyMetadata(DecodePixelType.Physical, OnDecodeFrameTypeChanged));
+
+        private static void OnDecodeFrameTypeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((LottieView)d)._decodeFrameType = (DecodePixelType)e.NewValue;
         }
 
         #endregion

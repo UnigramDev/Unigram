@@ -1596,7 +1596,7 @@ namespace Unigram.Strings
                 return resourceLoader.GetString("Accept");
             }
         }
-        
+
         /// <summary>
         /// Localized resource similar to "Accept"
         /// </summary>
@@ -1607,7 +1607,7 @@ namespace Unigram.Strings
                 return resourceLoader.GetString("AcceptCall");
             }
         }
-        
+
         /// <summary>
         /// Localized resource similar to "Access error"
         /// </summary>
