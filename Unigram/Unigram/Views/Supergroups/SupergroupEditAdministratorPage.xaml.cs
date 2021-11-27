@@ -74,15 +74,15 @@ namespace Unigram.Views.Supergroups
             {
                 PermissionsPanel.Visibility = Visibility.Visible;
 
-                ChangeInfo.Header = group.IsChannel ? Strings.Resources.EditAdminChangeChannelInfo : Strings.Resources.EditAdminChangeGroupInfo;
-                PostMessages.Visibility = group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
-                EditMessages.Visibility = group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
-                DeleteMessages.Header = group.IsChannel ? Strings.Resources.EditAdminDeleteMessages : Strings.Resources.EditAdminGroupDeleteMessages;
-                BanUsers.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
-                PinMessages.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
-                ManageVideoChats.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
-                IsAnonymous.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
-                AddUsers.Header = chat.Permissions.CanInviteUsers ? Strings.Resources.EditAdminAddUsersViaLink : Strings.Resources.EditAdminAddUsers;
+                ChangeInfo.Content = group.IsChannel ? Strings.Resources.EditAdminChangeChannelInfo : Strings.Resources.EditAdminChangeGroupInfo;
+                PostMessages.Visibility = PostMessagesSeparator.Visibility = group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
+                EditMessages.Visibility = EditMessagesSeparator.Visibility = group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
+                DeleteMessages.Content = group.IsChannel ? Strings.Resources.EditAdminDeleteMessages : Strings.Resources.EditAdminGroupDeleteMessages;
+                BanUsers.Visibility = BanUsersSeparator.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
+                PinMessages.Visibility = PinMessagesSeparator.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
+                ManageVideoChats.Visibility = ManageVideoChatsSeparator.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
+                IsAnonymous.Visibility = IsAnonymousSeparator.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
+                AddUsers.Content = chat.Permissions.CanInviteUsers ? Strings.Resources.EditAdminAddUsersViaLink : Strings.Resources.EditAdminAddUsers;
             }
             else
             {
