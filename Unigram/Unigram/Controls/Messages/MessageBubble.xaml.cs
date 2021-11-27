@@ -172,12 +172,12 @@ namespace Unigram.Controls.Messages
                 {
                     title = null;
                 }
-                else if (message.ProtoService.TryGetUser(message.Sender, out User senderUser))
+                else if (message.ProtoService.TryGetUser(message.SenderId, out User senderUser))
                 {
                     senderBot = senderUser.Type is UserTypeBot;
                     title = senderUser.GetFullName();
                 }
-                else if (message.ProtoService.TryGetChat(message.Sender, out Chat senderChat))
+                else if (message.ProtoService.TryGetChat(message.SenderId, out Chat senderChat))
                 {
                     title = message.ProtoService.GetTitle(senderChat);
                 }
@@ -191,11 +191,11 @@ namespace Unigram.Controls.Messages
 
             if (message.ReplyToMessage != null)
             {
-                if (message.ProtoService.TryGetUser(message.ReplyToMessage.Sender, out User replyUser))
+                if (message.ProtoService.TryGetUser(message.ReplyToMessage.SenderId, out User replyUser))
                 {
                     builder.AppendLine($"{Strings.Resources.AccDescrReplying} {replyUser.GetFullName()}. ");
                 }
-                else if (message.ProtoService.TryGetChat(message.ReplyToMessage.Sender, out Chat replyChat))
+                else if (message.ProtoService.TryGetChat(message.ReplyToMessage.SenderId, out Chat replyChat))
                 {
                     builder.AppendLine($"{Strings.Resources.AccDescrReplying} {message.ProtoService.GetTitle(replyChat)}. ");
                 }
@@ -430,7 +430,7 @@ namespace Unigram.Controls.Messages
                     paragraph.Inlines.Add(hyperlink);
                     shown = true;
                 }
-                else if (message.ProtoService.TryGetUser(message.Sender, out User senderUser))
+                else if (message.ProtoService.TryGetUser(message.SenderId, out User senderUser))
                 {
                     var hyperlink = new Hyperlink();
                     hyperlink.Inlines.Add(new Run { Text = senderUser.GetFullName() });
@@ -441,7 +441,7 @@ namespace Unigram.Controls.Messages
                     paragraph.Inlines.Add(hyperlink);
                     shown = true;
                 }
-                else if (message.ProtoService.TryGetChat(message.Sender, out Chat senderChat))
+                else if (message.ProtoService.TryGetChat(message.SenderId, out Chat senderChat))
                 {
                     var hyperlink = new Hyperlink();
                     hyperlink.Inlines.Add(new Run { Text = senderChat.Title });
@@ -631,7 +631,7 @@ namespace Unigram.Controls.Messages
                     admin.Visibility = Visibility.Visible;
                     admin.Text = title;
                 }
-                else if (admin != null && shown && !message.IsChannelPost && message.Sender is MessageSenderChat && message.ForwardInfo != null)
+                else if (admin != null && shown && !message.IsChannelPost && message.SenderId is MessageSenderChat && message.ForwardInfo != null)
                 {
                     admin.Visibility = Visibility.Visible;
                     admin.Text = Strings.Resources.DiscussChannel;
@@ -684,7 +684,7 @@ namespace Unigram.Controls.Messages
 
         private void From_Click(MessageViewModel message)
         {
-            if (message.ProtoService.TryGetChat(message.Sender, out Chat senderChat))
+            if (message.ProtoService.TryGetChat(message.SenderId, out Chat senderChat))
             {
                 if (senderChat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
                 {
@@ -695,7 +695,7 @@ namespace Unigram.Controls.Messages
                     message.Delegate.OpenChat(senderChat.Id, true);
                 }
             }
-            else if (message.Sender is MessageSenderUser senderUser)
+            else if (message.SenderId is MessageSenderUser senderUser)
             {
                 message.Delegate.OpenUser(senderUser.UserId);
             }
@@ -804,7 +804,7 @@ namespace Unigram.Controls.Messages
 
                 RecentRepliers.Children.Clear();
 
-                foreach (var sender in info.RecentRepliers)
+                foreach (var sender in info.RecentReplierIds)
                 {
                     var picture = new ProfilePicture();
                     picture.Width = 24;

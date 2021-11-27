@@ -66,7 +66,7 @@ namespace Unigram.Services
         Chat GetChat(long id);
         IList<Chat> GetChats(IList<long> ids);
 
-        IDictionary<long, ChatAction> GetChatActions(long id);
+        IDictionary<MessageSender, ChatAction> GetChatActions(long id);
 
         bool IsSavedMessages(User user);
         bool IsSavedMessages(Chat chat);
@@ -147,7 +147,7 @@ namespace Unigram.Services
         private readonly IEventAggregator _aggregator;
 
         private readonly Dictionary<long, Chat> _chats = new Dictionary<long, Chat>();
-        private readonly ConcurrentDictionary<long, ConcurrentDictionary<long, ChatAction>> _chatActions = new ConcurrentDictionary<long, ConcurrentDictionary<long, ChatAction>>();
+        private readonly ConcurrentDictionary<long, ConcurrentDictionary<MessageSender, ChatAction>> _chatActions = new ConcurrentDictionary<long, ConcurrentDictionary<MessageSender, ChatAction>>();
 
         private readonly Dictionary<int, SecretChat> _secretChats = new Dictionary<int, SecretChat>();
 
@@ -161,6 +161,8 @@ namespace Unigram.Services
         private readonly Dictionary<long, SupergroupFullInfo> _supergroupsFull = new Dictionary<long, SupergroupFullInfo>();
 
         private readonly Dictionary<int, ChatListUnreadCount> _unreadCounts = new Dictionary<int, ChatListUnreadCount>();
+
+        private readonly Dictionary<int, File> _files = new Dictionary<int, File>();
 
         private readonly FlatFileContext<long> _chatsMap = new FlatFileContext<long>();
         private readonly FlatFileContext<long> _usersMap = new FlatFileContext<long>();
@@ -487,6 +489,8 @@ Read more about how to update your device [here](https://support.microsoft.com/h
         public void CleanUp()
         {
             _options.Clear();
+
+            _files.Clear();
 
             _chats.Clear();
             _chatActions.Clear();
@@ -914,9 +918,9 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             return null;
         }
 
-        public IDictionary<long, ChatAction> GetChatActions(long id)
+        public IDictionary<MessageSender, ChatAction> GetChatActions(long id)
         {
-            if (_chatActions.TryGetValue(id, out ConcurrentDictionary<long, ChatAction> value))
+            if (_chatActions.TryGetValue(id, out ConcurrentDictionary<MessageSender, ChatAction> value))
             {
                 return value;
             }
@@ -1428,6 +1432,13 @@ Read more about how to update your device [here](https://support.microsoft.com/h
                     value.DefaultDisableNotification = updateChatDefaultDisableNotification.DefaultDisableNotification;
                 }
             }
+            else if (update is UpdateChatDefaultMessageSenderId updateChatDefaultMessageSenderId)
+            {
+                if (_chats.TryGetValue(updateChatDefaultMessageSenderId.ChatId, out Chat value))
+                {
+                    value.DefaultMessageSenderId = updateChatDefaultMessageSenderId.DefaultMessageSenderId;
+                }
+            }
             else if (update is UpdateChatDraftMessage updateChatDraftMessage)
             {
                 if (_chats.TryGetValue(updateChatDraftMessage.ChatId, out Chat value))
@@ -1809,16 +1820,16 @@ Read more about how to update your device [here](https://support.microsoft.com/h
                     }
                 }
             }
-            else if (update is UpdateUserChatAction updateUserChatAction)
+            else if (update is UpdateChatAction updateUserChatAction)
             {
-                var actions = _chatActions.GetOrAdd(updateUserChatAction.ChatId, x => new ConcurrentDictionary<long, ChatAction>());
+                var actions = _chatActions.GetOrAdd(updateUserChatAction.ChatId, x => new ConcurrentDictionary<MessageSender, ChatAction>(new MessageSenderEqualityComparer()));
                 if (updateUserChatAction.Action is ChatActionCancel)
                 {
-                    actions.TryRemove(updateUserChatAction.UserId, out _);
+                    actions.TryRemove(updateUserChatAction.SenderId, out _);
                 }
                 else
                 {
-                    actions[updateUserChatAction.UserId] = updateUserChatAction.Action;
+                    actions[updateUserChatAction.SenderId] = updateUserChatAction.Action;
                 }
             }
             else if (update is UpdateUserFullInfo updateUserFullInfo)
@@ -1970,6 +1981,28 @@ Read more about how to update your device [here](https://support.microsoft.com/h
         public void OnResult(BaseObject result)
         {
             _callback(result);
+        }
+    }
+
+    public class MessageSenderEqualityComparer : IEqualityComparer<MessageSender>
+    {
+        public bool Equals(MessageSender x, MessageSender y)
+        {
+            return x.IsEqual(y);
+        }
+
+        public int GetHashCode(MessageSender obj)
+        {
+            if (obj is MessageSenderUser user)
+            {
+                return user.UserId.GetHashCode();
+            }
+            else if (obj is MessageSenderChat chat)
+            {
+                return chat.ChatId.GetHashCode();
+            }
+
+            return obj.GetHashCode();
         }
     }
 }

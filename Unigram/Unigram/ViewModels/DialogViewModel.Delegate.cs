@@ -606,11 +606,11 @@ namespace Unigram.ViewModels
 
         public string GetAdminTitle(MessageViewModel message)
         {
-            if (message.Sender is MessageSenderUser senderUser)
+            if (message.SenderId is MessageSenderUser senderUser)
             {
                 return GetAdminTitle(senderUser.UserId);
             }
-            else if (message.Sender is MessageSenderChat && !message.IsChannelPost)
+            else if (message.SenderId is MessageSenderChat && !message.IsChannelPost)
             {
                 return message.AuthorSignature.Length > 0 ? message.AuthorSignature : null;
             }

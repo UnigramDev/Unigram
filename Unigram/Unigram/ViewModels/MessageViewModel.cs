@@ -53,6 +53,7 @@ namespace Unigram.ViewModels
         public bool CanBeDeletedOnlyForSelf => _message.CanBeDeletedOnlyForSelf;
         public bool CanBeForwarded => _message.CanBeForwarded;
         public bool CanBeEdited => _message.CanBeEdited;
+        public bool CanBeSaved => _message.CanBeSaved;
         public bool CanGetMessageThread => _message.CanGetMessageThread;
         public bool CanGetStatistics => _message.CanGetStatistics;
         public bool CanGetViewers => _message.CanGetViewers;
@@ -62,7 +63,7 @@ namespace Unigram.ViewModels
         public MessageSendingState SendingState => _message.SendingState;
         public long ChatId => _message.ChatId;
         public long MessageThreadId => _message.MessageThreadId;
-        public MessageSender Sender => _message.Sender;
+        public MessageSender SenderId => _message.SenderId;
         public long Id => _message.Id;
 
         public Photo GetPhoto() => _message.GetPhoto();
@@ -83,11 +84,11 @@ namespace Unigram.ViewModels
 
         public BaseObject GetSender()
         {
-            if (_message.Sender is MessageSenderUser user)
+            if (_message.SenderId is MessageSenderUser user)
             {
                 return ProtoService.GetUser(user.UserId);
             }
-            else if (_message.Sender is MessageSenderChat chat)
+            else if (_message.SenderId is MessageSenderChat chat)
             {
                 return ProtoService.GetChat(chat.ChatId);
             }
@@ -102,7 +103,7 @@ namespace Unigram.ViewModels
                 return ProtoService.GetUser(_message.ViaBotUserId);
             }
 
-            if (ProtoService.TryGetUser(_message.Sender, out User user) && user.Type is UserTypeBot)
+            if (ProtoService.TryGetUser(_message.SenderId, out User user) && user.Type is UserTypeBot)
             {
                 return user;
             }
@@ -192,7 +193,7 @@ namespace Unigram.ViewModels
             {
                 return true;
             }
-            else if (Sender is MessageSenderUser senderUser)
+            else if (SenderId is MessageSenderUser senderUser)
             {
                 if (Content is MessageText text && text.WebPage == null)
                 {
@@ -266,6 +267,7 @@ namespace Unigram.ViewModels
             _message.CanBeDeletedForAllUsers = message.CanBeDeletedForAllUsers;
             _message.CanBeDeletedOnlyForSelf = message.CanBeDeletedOnlyForSelf;
             _message.CanBeEdited = message.CanBeEdited;
+            _message.CanBeSaved = message.CanBeSaved;
             _message.CanBeForwarded = message.CanBeForwarded;
             _message.CanGetMessageThread = message.CanGetMessageThread;
             _message.CanGetStatistics = message.CanGetStatistics;
@@ -284,7 +286,7 @@ namespace Unigram.ViewModels
             _message.ReplyMarkup = message.ReplyMarkup;
             _message.ReplyInChatId = message.ReplyInChatId;
             _message.ReplyToMessageId = message.ReplyToMessageId;
-            _message.Sender = message.Sender;
+            _message.SenderId = message.SenderId;
             _message.SendingState = message.SendingState;
             _message.Ttl = message.Ttl;
             _message.TtlExpiresIn = message.TtlExpiresIn;

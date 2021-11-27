@@ -86,13 +86,13 @@ namespace Unigram.Collections
                 var previousDate = Utils.UnixTimestampToDateTime(previous.Date);
                 if (previousDate.Year != itemDate.Year || previousDate.Month != itemDate.Month)
                 {
-                    var service = new Message(0, previous.Sender, previous.ChatId, null, null, previous.IsOutgoing, false, false, false, true, false, false, false, false, false, false, previous.IsChannelPost, false, previous.Date, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderDate(), null);
+                    var service = new Message(0, previous.SenderId, previous.ChatId, null, null, previous.IsOutgoing, false, false, false, false, true, false, false, false, false, false, false, previous.IsChannelPost, false, previous.Date, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderDate(), null);
                     return service;
                 }
             }
             else if (item == null && previous != null)
             {
-                var service = new Message(0, previous.Sender, previous.ChatId, null, null, previous.IsOutgoing, false, false, false, true, false, false, false, false, false, false, previous.IsChannelPost, false, previous.Date, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderDate(), null);
+                var service = new Message(0, previous.SenderId, previous.ChatId, null, null, previous.IsOutgoing, false, false, false, false, true, false, false, false, false, false, false, previous.IsChannelPost, false, previous.Date, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderDate(), null);
                 return service;
             }
 

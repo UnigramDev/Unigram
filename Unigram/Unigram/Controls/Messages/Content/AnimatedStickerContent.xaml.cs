@@ -68,7 +68,7 @@ namespace Unigram.Controls.Messages.Content
             {
                 Width = Player.Width = 200 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
                 Height = Player.Height = 200 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
-                Player.ColorReplacements = animatedEmoji.AnimatedEmoji.ColorReplacements.ToDictionary(x => x.OldColor, x => x.NewColor);
+                //Player.ColorReplacements = animatedEmoji.AnimatedEmoji.ColorReplacements.ToDictionary(x => x.OldColor, x => x.NewColor);
 
                 var sound = animatedEmoji.AnimatedEmoji.Sound;
                 if (sound != null && sound.Local.CanBeDownloaded && !sound.Local.IsDownloadingActive)

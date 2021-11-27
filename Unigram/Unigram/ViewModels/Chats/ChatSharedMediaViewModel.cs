@@ -343,9 +343,7 @@ namespace Unigram.ViewModels.Chats
                 }
             }
 
-            var firstSender = first.Sender as MessageSenderUser;
-
-            var sameUser = firstSender != null && messages.All(x => x.Sender is MessageSenderUser senderUser && senderUser.UserId == firstSender.UserId);
+            var sameUser = messages.All(x => x.SenderId.IsEqual(first.SenderId));
             var dialog = new DeleteMessagesPopup(CacheService, messages.Where(x => x != null).ToArray());
 
             var confirm = await dialog.ShowQueuedAsync();
@@ -358,7 +356,7 @@ namespace Unigram.ViewModels.Chats
 
             if (dialog.DeleteAll && sameUser)
             {
-                ProtoService.Send(new DeleteChatMessagesFromUser(chat.Id, firstSender.UserId));
+                ProtoService.Send(new DeleteChatMessagesBySender(chat.Id, first.SenderId));
             }
             else
             {
@@ -367,12 +365,12 @@ namespace Unigram.ViewModels.Chats
 
             if (dialog.BanUser && sameUser)
             {
-                ProtoService.Send(new SetChatMemberStatus(chat.Id, firstSender, new ChatMemberStatusBanned()));
+                ProtoService.Send(new SetChatMemberStatus(chat.Id, first.SenderId, new ChatMemberStatusBanned()));
             }
 
             if (dialog.ReportSpam && sameUser && chat.Type is ChatTypeSupergroup supertype)
             {
-                ProtoService.Send(new ReportSupergroupSpam(supertype.SupergroupId, firstSender.UserId, messages.Select(x => x.Id).ToList()));
+                ProtoService.Send(new ReportSupergroupSpam(supertype.SupergroupId, messages.Select(x => x.Id).ToList()));
             }
         }
 

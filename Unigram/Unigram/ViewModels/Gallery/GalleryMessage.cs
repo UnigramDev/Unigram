@@ -77,11 +77,11 @@ namespace Unigram.ViewModels.Gallery
                     // TODO: ...
                 }
 
-                if (_message.Sender is MessageSenderChat senderChat)
+                if (_message.SenderId is MessageSenderChat senderChat)
                 {
                     return _protoService.GetChat(senderChat.ChatId);
                 }
-                else if (_message.Sender is MessageSenderUser senderUser)
+                else if (_message.SenderId is MessageSenderUser senderUser)
                 {
                     return _protoService.GetUser(senderUser.UserId);
                 }

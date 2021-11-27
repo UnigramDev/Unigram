@@ -670,7 +670,7 @@ namespace Unigram.Controls.Messages
                 return title;
             }
 
-            if (message.ProtoService.TryGetChat(message.Sender, out Chat senderChat))
+            if (message.ProtoService.TryGetChat(message.SenderId, out Chat senderChat))
             {
                 return message.ProtoService.GetTitle(senderChat);
             }
@@ -683,7 +683,7 @@ namespace Unigram.Controls.Messages
                 }
             }
 
-            if (message.ProtoService.TryGetUser(message.Sender, out User user))
+            if (message.ProtoService.TryGetUser(message.SenderId, out User user))
             {
                 return user.GetFullName();
             }

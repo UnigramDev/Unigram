@@ -1128,7 +1128,7 @@ namespace Unigram.Services
 
             var result = string.Empty;
 
-            if (_protoService.TryGetUser(message.Sender, out User senderUser))
+            if (_protoService.TryGetUser(message.SenderId, out User senderUser))
             {
                 if (ShowFrom(chat))
                 {
@@ -1391,18 +1391,18 @@ namespace Unigram.Services
 
             if (message.IsOutgoing)
             {
-                return cacheService.TryGetUser(message.Sender, out senderUser);
+                return cacheService.TryGetUser(message.SenderId, out senderUser);
             }
 
             if (chat.Type is ChatTypeBasicGroup)
             {
-                return cacheService.TryGetUser(message.Sender, out senderUser);
+                return cacheService.TryGetUser(message.SenderId, out senderUser);
             }
 
             if (chat.Type is ChatTypeSupergroup supergroup)
             {
                 senderUser = null;
-                return !supergroup.IsChannel && cacheService.TryGetUser(message.Sender, out senderUser);
+                return !supergroup.IsChannel && cacheService.TryGetUser(message.SenderId, out senderUser);
             }
 
             senderUser = null;

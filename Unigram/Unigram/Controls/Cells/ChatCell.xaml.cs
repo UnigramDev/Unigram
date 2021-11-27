@@ -365,11 +365,11 @@ namespace Unigram.Controls.Cells
             }
         }
 
-        public void UpdateChatActions(Chat chat, IDictionary<long, ChatAction> actions)
+        public void UpdateChatActions(Chat chat, IDictionary<MessageSender, ChatAction> actions)
         {
             if (actions != null && actions.Count > 0)
             {
-                TypingLabel.Text = InputChatActionManager.GetTypingString(chat, actions, _protoService.GetUser, out ChatAction commonAction);
+                TypingLabel.Text = InputChatActionManager.GetTypingString(chat, actions, _protoService.GetUser, _protoService.GetChat, out ChatAction commonAction);
                 TypingLabel.Visibility = Visibility.Visible;
                 BriefInfo.Visibility = Visibility.Collapsed;
                 Minithumbnail.Visibility = Visibility.Collapsed;
@@ -958,18 +958,18 @@ namespace Unigram.Controls.Cells
 
             if (message.IsOutgoing)
             {
-                return cacheService.TryGetUser(message.Sender, out senderUser);
+                return cacheService.TryGetUser(message.SenderId, out senderUser);
             }
 
             if (chat.Type is ChatTypeBasicGroup)
             {
-                return cacheService.TryGetUser(message.Sender, out senderUser);
+                return cacheService.TryGetUser(message.SenderId, out senderUser);
             }
 
             if (chat.Type is ChatTypeSupergroup supergroup)
             {
                 senderUser = null;
-                return !supergroup.IsChannel && cacheService.TryGetUser(message.Sender, out senderUser);
+                return !supergroup.IsChannel && cacheService.TryGetUser(message.SenderId, out senderUser);
             }
 
             senderUser = null;

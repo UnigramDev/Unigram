@@ -41,11 +41,11 @@ namespace Unigram.Controls.Cells
 
             if (string.IsNullOrEmpty(data.FileName))
             {
-                if (_protoService.TryGetUser(message.Sender, out User user))
+                if (_protoService.TryGetUser(message.SenderId, out User user))
                 {
                     Title.Text = user.GetFullName();
                 }
-                else if (_protoService.TryGetChat(message.Sender, out Chat chat))
+                else if (_protoService.TryGetChat(message.SenderId, out Chat chat))
                 {
                     Title.Text = chat.Title;
                 }

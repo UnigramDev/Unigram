@@ -2592,28 +2592,6 @@ namespace Unigram.Views
         }
     }
 
-    public class MessageSenderEqualityComparer : IEqualityComparer<MessageSender>
-    {
-        public bool Equals(MessageSender x, MessageSender y)
-        {
-            return x.IsEqual(y);
-        }
-
-        public int GetHashCode(MessageSender obj)
-        {
-            if (obj is MessageSenderUser user)
-            {
-                return user.UserId.GetHashCode();
-            }
-            else if (obj is MessageSenderChat chat)
-            {
-                return chat.ChatId.GetHashCode();
-            }
-
-            return obj.GetHashCode();
-        }
-    }
-
     public enum ParticipantsGridMode
     {
         Compact,

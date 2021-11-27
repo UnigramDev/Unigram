@@ -27,7 +27,7 @@ namespace Unigram.ViewModels
 
         private long _minEventId = long.MaxValue;
 
-        private ChatEventLogFilters _filters = new ChatEventLogFilters(true, true, true, true, true, true, true, true, true, true, true, true);
+        private ChatEventLogFilters _filters = new ChatEventLogFilters(true, true, true, true, true, true, true, true, true, true, true, true, true);
         public ChatEventLogFilters Filters
         {
             get => _filters;
@@ -144,7 +144,7 @@ namespace Unigram.ViewModels
                     var target = replied.FirstOrDefault();
                     if (target != null)
                     {
-                        replied.Insert(0, _messageFactory.Create(this, new Message(0, target.Sender, target.ChatId, null, target.SchedulingState, target.IsOutgoing, false, false, false, true, false, false, false, false, false, false, target.IsChannelPost, false, target.Date, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderDate(), null)));
+                        replied.Insert(0, _messageFactory.Create(this, new Message(0, target.SenderId, target.ChatId, null, target.SchedulingState, target.IsOutgoing, false, false, false, false, true, false, false, false, false, false, false, target.IsChannelPost, false, target.Date, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderDate(), null)));
                     }
 
                     Items.ReplaceWith(replied);
@@ -238,23 +238,23 @@ namespace Unigram.ViewModels
             {
                 if (chatEvent.Action is ChatEventMessageDeleted messageDeleted)
                 {
-                    sender = messageDeleted.Message.Sender;
+                    sender = messageDeleted.Message.SenderId;
                 }
                 else if (chatEvent.Action is ChatEventMessageEdited messageEdited)
                 {
-                    sender = messageEdited.NewMessage.Sender;
+                    sender = messageEdited.NewMessage.SenderId;
                 }
                 else if (chatEvent.Action is ChatEventMessagePinned messagePinned)
                 {
-                    sender = messagePinned.Message.Sender;
+                    sender = messagePinned.Message.SenderId;
                 }
                 else if (chatEvent.Action is ChatEventPollStopped pollStopped)
                 {
-                    sender = pollStopped.Message.Sender;
+                    sender = pollStopped.Message.SenderId;
                 }
             }
 
-            return new Message(chatEvent.Id, sender, chatId, null, null, false, false, false, false, false, false, false, false, false, false, false, isChannel, false, chatEvent.Date, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, null, null);
+            return new Message(chatEvent.Id, sender, chatId, null, null, false, false, false, false, false, false, false, false, false, false, false, false, isChannel, false, chatEvent.Date, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, null, null);
         }
 
         private MessageViewModel GetMessage(long chatId, bool isChannel, ChatEvent chatEvent, bool child = false)

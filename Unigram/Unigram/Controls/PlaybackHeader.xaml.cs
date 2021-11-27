@@ -190,11 +190,11 @@ namespace Unigram.Controls
                 var title = string.Empty;
                 var date = Converter.DateTime(message.Date);
 
-                if (_cacheService.TryGetUser(message.Sender, out Telegram.Td.Api.User senderUser))
+                if (_cacheService.TryGetUser(message.SenderId, out Telegram.Td.Api.User senderUser))
                 {
                     title = senderUser.Id == _cacheService.Options.MyId ? Strings.Resources.ChatYourSelfName : senderUser.GetFullName();
                 }
-                else if (_cacheService.TryGetChat(message.Sender, out Chat senderChat))
+                else if (_cacheService.TryGetChat(message.SenderId, out Chat senderChat))
                 {
                     title = _cacheService.GetTitle(senderChat);
                 }

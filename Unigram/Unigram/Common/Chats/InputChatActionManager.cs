@@ -7,7 +7,7 @@ namespace Unigram.Common.Chats
 {
     public class InputChatActionManager
     {
-        public static string GetTypingString(Chat chat, IDictionary<long, ChatAction> typingUsers, Func<long, User> getUser, out ChatAction commonAction)
+        public static string GetTypingString(Chat chat, IDictionary<MessageSender, ChatAction> typingUsers, Func<long, User> getUser, Func<long, Chat> getChat, out ChatAction commonAction)
         {
             if (chat.Type is ChatTypePrivate or ChatTypeSecret)
             {
@@ -60,14 +60,30 @@ namespace Unigram.Common.Chats
             {
                 var tuple = typingUsers.FirstOrDefault();
 
-                var user = getUser.Invoke(tuple.Key);
-                if (user == null)
+                string userName = null;
+                if (tuple.Key is MessageSenderUser senderUser)
                 {
-                    commonAction = null;
-                    return string.Empty;
+                    var user = getUser.Invoke(senderUser.UserId);
+                    if (user == null)
+                    {
+                        commonAction = null;
+                        return string.Empty;
+                    }
+
+                    userName = string.IsNullOrEmpty(user.FirstName) ? user.LastName : user.FirstName;
+                }
+                else if (tuple.Key is MessageSenderChat senderChat)
+                {
+                    var user = getChat.Invoke(senderChat.ChatId);
+                    if (user == null)
+                    {
+                        commonAction = null;
+                        return string.Empty;
+                    }
+
+                    userName = chat.Title;
                 }
 
-                var userName = string.IsNullOrEmpty(user.FirstName) ? user.LastName : user.FirstName;
                 var action = tuple.Value;
                 switch (action)
                 {
@@ -110,26 +126,37 @@ namespace Unigram.Common.Chats
             }
             else
             {
-
                 var count = 0;
                 var label = string.Empty;
                 foreach (var pu in typingUsers)
                 {
-                    var user = getUser.Invoke(pu.Key);
-                    if (user == null)
+                    if (pu.Key is MessageSenderUser senderUser)
                     {
-
-                    }
-
-                    if (user != null)
-                    {
-                        if (label.Length > 0)
+                        var user = getUser.Invoke(senderUser.UserId);
+                        if (user != null)
                         {
-                            label += ", ";
+                            if (label.Length > 0)
+                            {
+                                label += ", ";
+                            }
+                            label += string.IsNullOrEmpty(user.FirstName) ? user.LastName : user.FirstName;
+                            count++;
                         }
-                        label += string.IsNullOrEmpty(user.FirstName) ? user.LastName : user.FirstName;
-                        count++;
                     }
+                    else if (pu.Key is MessageSenderChat senderChat)
+                    {
+                        var user = getChat.Invoke(senderChat.ChatId);
+                        if (user != null)
+                        {
+                            if (label.Length > 0)
+                            {
+                                label += ", ";
+                            }
+                            label += user.Title;
+                            count++;
+                        }
+                    }
+
                     if (count == 2)
                     {
                         break;
