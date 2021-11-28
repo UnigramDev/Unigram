@@ -329,6 +329,7 @@
     <Compile Include="Controls\Media\SolidGaussianBrush.cs" />
     <Compile Include="Controls\Media\TiledBrush.cs" />
     <Compile Include="Controls\MenuButton.cs" />
+    <Compile Include="Controls\MenuFlyoutLabel.cs" />
     <Compile Include="Controls\MessagePopup.xaml.cs">
       <DependentUpon>MessagePopup.xaml</DependentUpon>
     </Compile>
@@ -484,6 +485,7 @@
     <Compile Include="Services\CallsService.cs" />
     <Compile Include="Services\GroupCallService.cs" />
     <Compile Include="Services\ProtoService.ChatList.cs" />
+    <Compile Include="Services\ProtoService.Files.cs" />
     <Compile Include="Services\Theme\ThemeAccentInfo.cs" />
     <Compile Include="Services\Theme\ThemeBundledInfo.cs" />
     <Compile Include="Services\Theme\ThemeCustomInfo.cs" />
@@ -943,6 +945,9 @@
     <Compile Include="Views\Settings\Phone\SettingsPhoneSentCodePage.xaml.cs">
       <DependentUpon>SettingsPhoneSentCodePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\Popups\SettingsSessionPopup.xaml.cs">
+      <DependentUpon>SettingsSessionPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings\Privacy\SettingsPrivacyAllowCallsPage.xaml.cs">
       <DependentUpon>SettingsPrivacyAllowCallsPage.xaml</DependentUpon>
     </Compile>
@@ -1293,6 +1298,17 @@
       <SubType>Designer</SubType>
     </PRIResource>
     <Content Include="Assets\Fonts\Telegram.ttf" />
+    <Content Include="Assets\Animations\DeviceAndroid.json" />
+    <Content Include="Assets\Animations\DeviceChrome.json" />
+    <Content Include="Assets\Animations\DeviceEdge.json" />
+    <Content Include="Assets\Animations\DeviceFirefox.json" />
+    <Content Include="Assets\Animations\DeviceIpad.json" />
+    <Content Include="Assets\Animations\DeviceIphone.json" />
+    <Content Include="Assets\Animations\DeviceLinux.json" />
+    <Content Include="Assets\Animations\DeviceMac.json" />
+    <Content Include="Assets\Animations\DeviceSafari.json" />
+    <Content Include="Assets\Animations\DeviceUbuntu.json" />
+    <Content Include="Assets\Animations\DeviceWindows.json" />
     <None Include="Assets\i420.hlsl" />
     <Content Include="Assets\Images\BoxArt.png" />
     <Content Include="Assets\Images\Reply.scale-100.png" />
@@ -1990,6 +2006,10 @@
     <Page Include="Views\Settings\Phone\SettingsPhoneSentCodePage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\Popups\SettingsSessionPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\Privacy\SettingsPrivacyAllowCallsPage.xaml">
       <Generator>MSBuild:Compile</Generator>

@@ -1425,6 +1425,13 @@ Read more about how to update your device [here](https://support.microsoft.com/h
                     value.ActionBar = updateChatActionBar.ActionBar;
                 }
             }
+            else if (update is UpdateChatAllowSavingContent updateChatAllowSavingContent)
+            {
+                if (_chats.TryGetValue(updateChatAllowSavingContent.ChatId, out Chat value))
+                {
+                    value.AllowSavingContent = updateChatAllowSavingContent.AllowSavingContent;
+                }
+            }
             else if (update is UpdateChatDefaultDisableNotification updateChatDefaultDisableNotification)
             {
                 if (_chats.TryGetValue(updateChatDefaultDisableNotification.ChatId, out Chat value))
@@ -1630,6 +1637,8 @@ Read more about how to update your device [here](https://support.microsoft.com/h
                 {
                     user.UpdateFile(updateFile.File);
                 }
+
+                _files[updateFile.File.Id] = updateFile.File;
             }
             else if (update is UpdateFileGenerationStart updateFileGenerationStart)
             {

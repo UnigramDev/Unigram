@@ -78,7 +78,7 @@
                 <StackPanel>
                     <controls:HeaderedControl Header="{CustomResource CurrentSession}"
                                               Footer="{CustomResource ClearOtherSessionsHelp}">
-                        <cells:SessionCell Session="{x:Bind ViewModel.Current, Mode=OneWay}"/>
+                        <cells:SessionCell Session="{x:Bind ViewModel.Current, Mode=OneWay}" />
 
                         <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}"
                                    Height="1"
@@ -111,14 +111,13 @@
             <ListView.Footer>
                 <StackPanel Margin="0,0,0,24">
                     <Border MaxWidth="640">
-                        <TextBlock Text="{CustomResource TerminateSessionInfo}"
+                        <TextBlock Text="{CustomResource SessionsListInfo}"
                                    Style="{StaticResource InfoCaptionTextBlockStyle}"
                                    Margin="12,8,12,8" />
                     </Border>
 
-                    <controls:HeaderedControl Header="{CustomResource PrivacyAdvanced}"
-                                              Footer="{CustomResource DeleteAccountHelp}">
-                        <controls:BadgeButton Content="{CustomResource DeleteAccountIfAwayFor2}"
+                    <controls:HeaderedControl Header="{CustomResource TerminateOldSessionHeader}">
+                        <controls:BadgeButton Content="{CustomResource IfInactiveFor}"
                                               Badge="{x:Bind ConvertTtl(ViewModel.InactiveSessionTtlDays), Mode=OneWay}"
                                               Command="{x:Bind ViewModel.SetInactiveSessionTtlCommand}" />
                     </controls:HeaderedControl>

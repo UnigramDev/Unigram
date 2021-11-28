@@ -2059,11 +2059,23 @@ namespace Unigram.Views
                     ViewModel.ProtoService.Send(new DeleteFileW(file.Id));
                 }), message, "Delete from disk", new FontIcon { Glyph = Icons.Delete });
 #endif
+
+                if (message.CanBeSaved is false)
+                {
+                    flyout.CreateFlyoutSeparator();
+                    flyout.Items.Add(new MenuFlyoutLabel
+                    {
+                        Padding = new Thickness(12, 8, 12, 4),
+                        Text = message.IsChannelPost
+                            ? Strings.Resources.ForwardsRestrictedInfoChannel
+                            : Strings.Resources.ForwardsRestrictedInfoGroup
+                    });
+                }
             }
 
             //sender.ContextFlyout = menu;
 
-            if (flyout.Items.Count > 0 && flyout.Items[flyout.Items.Count - 1] is MenuFlyoutSeparator)
+            if (flyout.Items.Count > 0 && flyout.Items[flyout.Items.Count - 1] is MenuFlyoutSeparator and not MenuFlyoutLabel)
             {
                 flyout.Items.RemoveAt(flyout.Items.Count - 1);
             }
@@ -2342,6 +2354,11 @@ namespace Unigram.Views
 
         private bool MessageCopy_Loaded(MessageViewModel message)
         {
+            if (message.CanBeSaved is false)
+            {
+                return false;
+            }
+
             if (message.Content is MessageText text)
             {
                 return !string.IsNullOrEmpty(text.Text.Text);
@@ -2356,7 +2373,7 @@ namespace Unigram.Views
 
         private bool MessageCopyMedia_Loaded(MessageViewModel message)
         {
-            if (message.Ttl > 0)
+            if (message.Ttl > 0 || !message.CanBeSaved)
             {
                 return false;
             }
@@ -2441,7 +2458,7 @@ namespace Unigram.Views
 
         private bool MessageSaveMedia_Loaded(MessageViewModel message)
         {
-            if (message.Ttl > 0)
+            if (message.Ttl > 0 || !message.CanBeSaved)
             {
                 return false;
             }
@@ -2462,6 +2479,11 @@ namespace Unigram.Views
 
         private bool MessageSaveAnimation_Loaded(MessageViewModel message)
         {
+            if (message.CanBeSaved is false)
+            {
+                return false;
+            }
+
             if (message.Content is MessageText text)
             {
                 return text.WebPage != null && text.WebPage.Animation != null;
@@ -3680,7 +3702,7 @@ namespace Unigram.Views
                     pollsAllowed = user.Type is UserTypeBot;
                 }
 
-                AttachRestriction.Tag = label ?? string.Empty;
+                AttachRestriction.Text = label ?? string.Empty;
                 AttachRestriction.Visibility = rights ? Visibility.Visible : Visibility.Collapsed;
                 AttachMedia.Visibility = rights ? Visibility.Collapsed : Visibility.Visible;
                 AttachDocument.Visibility = rights ? Visibility.Collapsed : Visibility.Visible;
@@ -3758,7 +3780,7 @@ namespace Unigram.Views
                     var rights = ViewModel.VerifyRights(chat, x => x.CanSendMediaMessages, Strings.Resources.GlobalAttachMediaRestricted, Strings.Resources.AttachMediaRestrictedForever, Strings.Resources.AttachMediaRestricted, out string label);
                     var pollsRights = ViewModel.VerifyRights(chat, x => x.CanSendPolls, Strings.Resources.GlobalAttachMediaRestricted, Strings.Resources.AttachMediaRestrictedForever, Strings.Resources.AttachMediaRestricted, out string pollsLabel);
 
-                    AttachRestriction.Tag = label ?? string.Empty;
+                    AttachRestriction.Text = label ?? string.Empty;
                     AttachRestriction.Visibility = rights ? Visibility.Visible : Visibility.Collapsed;
                     AttachMedia.Visibility = rights ? Visibility.Collapsed : Visibility.Visible;
                     AttachDocument.Visibility = rights ? Visibility.Collapsed : Visibility.Visible;
@@ -4827,6 +4849,7 @@ namespace Unigram.Views
             }
 
             var flyout = new MenuFlyout();
+            flyout.Items.Add(new MenuFlyoutLabel { Text = Strings.Resources.SendMessageAsTitle });
             flyout.Closing += (s, args) =>
             {
                 ButtonMore.IsChecked = false;
