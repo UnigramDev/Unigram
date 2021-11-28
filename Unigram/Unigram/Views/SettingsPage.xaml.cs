@@ -176,6 +176,12 @@ namespace Unigram.Views
             MasterDetail.NavigationService.GoBackAt(0, false);
         }
 
+        private void Sessions_Click(object sender, RoutedEventArgs e)
+        {
+            MasterDetail.NavigationService.Navigate(typeof(SettingsSessionsPage));
+            MasterDetail.NavigationService.GoBackAt(0, false);
+        }
+
         private void Language_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(SettingsLanguagePage));
@@ -185,6 +191,12 @@ namespace Unigram.Views
         private void Questions_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.NavigateToInstant(Strings.Resources.TelegramFaqUrl);
+            MasterDetail.NavigationService.GoBackAt(0, false);
+        }
+
+        private void PrivacyPolicy_Click(object sender, RoutedEventArgs e)
+        {
+            MasterDetail.NavigationService.NavigateToInstant(Strings.Resources.PrivacyPolicyUrl);
             MasterDetail.NavigationService.GoBackAt(0, false);
         }
 
