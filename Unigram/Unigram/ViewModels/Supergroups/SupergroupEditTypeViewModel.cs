@@ -1,5 +1,8 @@
-﻿using Telegram.Td.Api;
+﻿using System.Threading.Tasks;
+using Telegram.Td.Api;
+using Unigram.Navigation.Services;
 using Unigram.Services;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Supergroups
 {
@@ -10,12 +13,30 @@ namespace Unigram.ViewModels.Supergroups
         {
         }
 
+        private bool _allowSavingContent;
+        public bool AllowSavingContent
+        {
+            get => _allowSavingContent;
+            set => Set(ref _allowSavingContent, value);
+        }
+
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        {
+            await base.OnNavigatedToAsync(parameter, mode, state);
+            AllowSavingContent = Chat?.AllowSavingContent ?? false;
+        }
+
         protected override async void SendExecute()
         {
             var chat = _chat;
             if (chat == null)
             {
                 return;
+            }
+
+            if (chat.AllowSavingContent != AllowSavingContent)
+            {
+                await ProtoService.SendAsync(new ToggleChatAllowSavingContent(Chat.Id, AllowSavingContent));
             }
 
             var username = _isPublic ? (_username?.Trim() ?? string.Empty) : string.Empty;

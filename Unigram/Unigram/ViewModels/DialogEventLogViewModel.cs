@@ -294,6 +294,7 @@ namespace Unigram.ViewModels
                         //message.Content = new MessageChatEvent(item, true);
                         message.Content = GetMessageContent(item, channel);
                         break;
+                    case ChatEventAllowSavingContentToggled:
                     case ChatEventSignMessagesToggled:
                     case ChatEventStickerSetChanged:
                     case ChatEventInvitesToggled:

@@ -92,10 +92,18 @@ namespace Unigram.Views.Supergroups
             About.IsReadOnly = !group.CanChangeInfo();
 
             ChatType.Content = group.IsChannel ? Strings.Resources.ChannelType : Strings.Resources.GroupType;
-            ChatType.Badge = group.Username.Length > 0
-                ? group.IsChannel ? Strings.Resources.TypePublic : Strings.Resources.TypePublicGroup
-                : group.IsChannel ? Strings.Resources.TypePrivate : Strings.Resources.TypePrivateGroup;
             ChatType.Visibility = Visibility.Collapsed;
+            ChatType.Badge = group.Username.Length > 0
+                ? group.IsChannel
+                    ? Strings.Resources.TypePublic
+                    : Strings.Resources.TypePublicGroup
+                : group.IsChannel
+                    ? chat.AllowSavingContent
+                        ? Strings.Resources.TypePrivate
+                        : Strings.Resources.TypePrivateRestrictedForwards
+                    : chat.AllowSavingContent
+                        ? Strings.Resources.TypePrivateGroup
+                        : Strings.Resources.TypePrivateGroupRestrictedForwards;
 
             ChatHistory.Badge = null;
             ChatHistory.Visibility = group.CanChangeInfo() && string.IsNullOrEmpty(group.Username) && !group.IsChannel ? Visibility.Visible : Visibility.Collapsed;

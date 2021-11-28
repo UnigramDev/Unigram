@@ -110,6 +110,8 @@ namespace Unigram.Controls.Messages
                 case MessageChatEvent chatEvent:
                     switch (chatEvent.Action)
                     {
+                        case ChatEventAllowSavingContentToggled allowSavingContentToggled:
+                            return UpdateAllowSavingContentToggled(message, allowSavingContentToggled, active);
                         case ChatEventSignMessagesToggled signMessagesToggled:
                             return UpdateSignMessagesToggled(message, signMessagesToggled, active);
                         case ChatEventStickerSetChanged stickerSetChanged:
@@ -211,6 +213,29 @@ namespace Unigram.Controls.Messages
             else
             {
                 content = ReplaceWithLink(Strings.Resources.EventLogToggledSlowmodeOff, "un1", fromUser, ref entities);
+            }
+
+            return (content, entities);
+        }
+
+        private static (string Text, IList<TextEntity> Entities) UpdateAllowSavingContentToggled(MessageViewModel message, ChatEventAllowSavingContentToggled allowSavingContentToggled, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            var fromUser = message.GetSender();
+
+            if (allowSavingContentToggled.AllowSavingContent)
+            {
+                content = ReplaceWithLink(message.IsChannelPost
+                    ? Strings.Resources.ActionForwardsEnabledChannel
+                    : Strings.Resources.ActionForwardsEnabledGroup, "un1", fromUser, ref entities);
+            }
+            else
+            {
+                content = ReplaceWithLink(message.IsChannelPost
+                    ? Strings.Resources.ActionForwardsRestrictedChannel
+                    : Strings.Resources.ActionForwardsRestrictedGroup, "un1", fromUser, ref entities);
             }
 
             return (content, entities);
