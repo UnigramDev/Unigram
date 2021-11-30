@@ -559,7 +559,7 @@ namespace Unigram.Common
                     }
                     else
                     {
-                        navigation.NavigateToChat(chat.Id);
+                        navigation.Navigate(typeof(ProfilePage), chat.Id);
                     }
                 }
                 else
