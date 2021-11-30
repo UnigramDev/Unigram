@@ -1448,19 +1448,12 @@ namespace Unigram.Views
                 return;
             }
 
-            if (ViewModel.CacheService.IsSavedMessages(chat))
+            if (ViewModel.CacheService.IsRepliesChat(chat))
             {
-                ViewModel.NavigationService.Navigate(typeof(ChatSharedMediaPage), chat.Id, infoOverride: new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
+                return;
             }
-            else
-            {
-                if (ViewModel.CacheService.IsRepliesChat(chat))
-                {
-                    return;
-                }
 
-                ViewModel.NavigationService.Navigate(typeof(ProfilePage), chat.Id, infoOverride: new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
-            }
+            ViewModel.NavigationService.Navigate(typeof(ProfilePage), chat.Id, infoOverride: new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
         }
 
         private async void Attach_Click(object sender, RoutedEventArgs e)
