@@ -685,7 +685,7 @@ namespace Unigram.Services
 
         private static void SendToList<TMessage>(
             TMessage message,
-            IEnumerable<WeakActionAndToken> weakActionsAndTokens,
+            IList<WeakActionAndToken> weakActionsAndTokens,
             Type messageTargetType,
             object token,
             bool completion)
@@ -694,8 +694,11 @@ namespace Unigram.Services
             {
                 // Clone to protect from people registering in a "receive message" method
                 // Correction Messaging BL0004.007
-                var list = weakActionsAndTokens.ToList();
-                var listClone = list.Take(list.Count()).ToList();
+                //var list = weakActionsAndTokens.ToList();
+                //var listClone = list.Take(list.Count()).ToList();
+                
+                // The list should be a clone already.
+                var listClone = weakActionsAndTokens;
 
                 foreach (var item in listClone)
                 {
@@ -808,23 +811,9 @@ namespace Unigram.Services
             {
                 DispatcherQueueHandler cleanupAction = Cleanup;
 
+                _isCleanupRegistered = true;
                 _cleanupQueue ??= DispatcherQueueController.CreateOnDedicatedThread();
                 _cleanupQueue.DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, cleanupAction);
-
-                //if (Window.Current != null
-                //    && Window.Current.Dispatcher != null)
-                //{
-                //    Window.Current.Dispatcher.RunAsync(
-                //        CoreDispatcherPriority.Normal,
-                //        new DispatchedHandler(cleanupAction));
-                //}
-                //else
-                //{
-                //    // Runs without a window (unit test)
-                //    cleanupAction();
-                //}
-
-                _isCleanupRegistered = true;
             }
         }
 
@@ -855,11 +844,13 @@ namespace Unigram.Services
 
                 lock (_recipientsStrictAction)
                 {
-                    if (_recipientsStrictAction.ContainsKey(messageType))
+                    // Trying to improve this routine a bit.
+                    if (_recipientsStrictAction.TryGetValue(messageType, out var strictList))
                     {
-                        list = _recipientsStrictAction[messageType]
-                            .Take(_recipientsStrictAction[messageType].Count())
-                            .ToList();
+                        //list = _recipientsStrictAction[messageType]
+                        //    .Take(_recipientsStrictAction[messageType].Count())
+                        //    .ToList();
+                        list = strictList.ToList();
                     }
                 }
 
@@ -1078,7 +1069,7 @@ namespace Unigram.Services
                     return true;
                 }
 
-                if (Reference != null)
+                if (Reference?.Target != null)
                 {
                     return Reference.IsAlive;
                 }
@@ -1217,7 +1208,10 @@ namespace Unigram.Services
                     return true;
                 }
 
-                return Reference.IsAlive;
+                // Accessing Target seems to be mandatory
+                // to retrieve the correct reference state.
+                return Reference.Target != null
+                    && Reference.IsAlive;
             }
         }
 
