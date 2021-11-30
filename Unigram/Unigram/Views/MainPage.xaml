@@ -34,72 +34,31 @@
         <CollectionViewSource x:Name="ChatsResults" Source="{x:Bind ViewModel.Chats.Search, Mode=OneWay}" IsSourceGrouped="True"/>
         <CollectionViewSource x:Name="ContactsResults" Source="{x:Bind ViewModel.Contacts.Search, Mode=OneWay}" IsSourceGrouped="True"/>
 
-        <Style x:Key="ProfileMasterDetailViewStyle" TargetType="controls:MasterDetailView">
-            <Setter Property="IsTabStop" Value="False"/>
-            <Setter Property="IsPrimary" Value="False"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="controls:MasterDetailView">
-                        <controls:MasterDetailPanel x:Name="AdaptivePanel" IsPrimary="False" IsBlank="{TemplateBinding IsBlank}">
-                            <Border x:Name="PART_DetailPresenter">
-                                <Grid x:Name="DetailPresenter"/>
-                            </Border>
-
-                            <ContentPresenter x:Name="MasterFrame"
-                                              Content="{TemplateBinding Content}"
-                                              ContentTemplate="{TemplateBinding ContentTemplate}"
-                                              ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
-                                              ContentTransitions="{TemplateBinding ContentTransitions}"
-                                              HorizontalContentAlignment="Stretch"
-                                              VerticalContentAlignment="Stretch"/>
-
-                            <UserControl x:Name="PART_Grip" Canvas.ZIndex="2">
-                                <Border x:Name="Grip" Width="12" Background="Transparent" BorderBrush="Transparent" BorderThickness="0,0,6,0">
-                                    <VisualStateManager.VisualStateGroups>
-                                        <VisualStateGroup>
-                                            <VisualState x:Name="Normal"/>
-                                            <VisualState x:Name="Pressed">
-                                                <VisualState.Setters>
-                                                    <Setter Target="Grip.Background" Value="{ThemeResource ScrollBarThumbBackground}"/>
-                                                </VisualState.Setters>
-                                            </VisualState>
-                                        </VisualStateGroup>
-                                    </VisualStateManager.VisualStateGroups>
-                                </Border>
-                            </UserControl>
-                        </controls:MasterDetailPanel>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <Style x:Key="RootMasterDetailViewStyle" TargetType="controls:MasterDetailView">
+        <Style TargetType="controls:MasterDetailView">
             <Setter Property="IsTabStop" Value="False"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="controls:MasterDetailView">
                         <controls:MasterDetailPanel x:Name="AdaptivePanel" IsBlank="{TemplateBinding IsBlank}" Background="{ThemeResource PageBackgroundDarkBrush}">
                             <chats:ChatBackgroundPresenter
-                                x:Name="PART_Background"
                                 Background="{ThemeResource ChatPageBackgroundBrush}"
                                 Opacity="{TemplateBinding BackgroundOpacity}"
                                 Loading="ChatBackgroundPresenter_Loading"/>
 
                             <!--<Grid BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding Padding}" VerticalAlignment="Top"/>-->
 
-                            <ContentControl x:Name="PART_MasterHeader" Content="{TemplateBinding MasterHeader}" IsTabStop="False" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" VerticalAlignment="Top"/>
-                            <ContentControl x:Name="PART_DetailHeader" Content="{TemplateBinding DetailHeader}" IsTabStop="False" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" VerticalAlignment="Top"/>
-                            <ContentControl x:Name="PART_CorpusHeader" Content="{TemplateBinding CorpusHeader}" IsTabStop="False" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" VerticalAlignment="Top"/>
-                            <ContentControl x:Name="PART_Banner" Content="{TemplateBinding Banner}" IsTabStop="False" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" VerticalAlignment="Top"/>
+                            <ContentControl Content="{TemplateBinding MasterHeader}" IsTabStop="False" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" VerticalAlignment="Top"/>
+                            <ContentControl Content="{TemplateBinding DetailHeader}" IsTabStop="False" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" VerticalAlignment="Top"/>
+                            <ContentControl Content="{TemplateBinding Banner}" IsTabStop="False" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" VerticalAlignment="Top"/>
 
-                            <controls:MasterDetailView
-                                x:Name="PART_DetailPresenter"
-                                Loading="MasterDetailView_Loading"
-                                Style="{StaticResource ProfileMasterDetailViewStyle}">
-                                <Grid x:Name="DetailPresenter">
-                                    <Border VerticalAlignment="Top" Background="{TemplateBinding BorderBrush}" Height="{ThemeResource AppBarThemeCompactHeight}"/>
-                                </Grid>
-                            </controls:MasterDetailView>
+                            <!--<SplitView PanePlacement="Right" DisplayMode="Inline" IsPaneOpen="True">
+                                <SplitView.Pane>
+                                    <local:ProfilePage Grid.Column="1"/>
+                                </SplitView.Pane>
+                            </SplitView>-->
+                            <Grid x:Name="DetailPresenter">
+                                <Border VerticalAlignment="Top" Background="{TemplateBinding BorderBrush}" Height="{ThemeResource AppBarThemeCompactHeight}"/>
+                            </Grid>
 
                             <ContentPresenter x:Name="MasterFrame"
                                               Content="{TemplateBinding Content}"
@@ -109,7 +68,7 @@
                                               HorizontalContentAlignment="Stretch"
                                               VerticalContentAlignment="Stretch"/>
 
-                            <UserControl x:Name="PART_Grip" Canvas.ZIndex="2">
+                            <UserControl Canvas.ZIndex="2">
                                 <Border x:Name="Grip" Width="12" Background="Transparent" BorderBrush="Transparent" BorderThickness="0,0,6,0">
                                     <VisualStateManager.VisualStateGroups>
                                         <VisualStateGroup>
@@ -287,8 +246,8 @@
                 </controls:TopNavView.ItemContainerStyle>
             </controls:TopNavView>
         </Border>
-
-        <controls:MasterDetailView x:Name="MasterDetail" ViewStateChanged="OnStateChanged" Update="OnUpdate" Style="{StaticResource RootMasterDetailViewStyle}" Grid.Column="1" Grid.Row="1">
+        
+        <controls:MasterDetailView x:Name="MasterDetail" ViewStateChanged="OnStateChanged" Update="OnUpdate" Grid.Column="1" Grid.Row="1">
             <controls:MasterDetailView.Banner>
                 <Grid>
                     <controls:PlaybackHeader x:Name="Playback" x:Load="False"/>

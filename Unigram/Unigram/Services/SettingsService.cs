@@ -380,13 +380,6 @@ namespace Unigram.Services
             set => AddOrUpdateValue(ref _dialogsWidthRatio, _local, "DialogsWidthRatio", value);
         }
 
-        private static double? _profileWidthRatio;
-        public double ProfileWidthRatio
-        {
-            get => _profileWidthRatio ??= GetValueOrDefault(_local, "ProfileWidthRatio", 9d / 14d);
-            set => AddOrUpdateValue(ref _profileWidthRatio, _local, "ProfileWidthRatio", value);
-        }
-
         private bool? _isSidebarOpen;
         public bool IsSidebarOpen
         {

@@ -514,6 +514,9 @@
     <Compile Include="Views\ChatPinnedPage.xaml.cs">
       <DependentUpon>ChatPinnedPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Chats\ChatSharedMediaPage.xaml.cs">
+      <DependentUpon>ChatSharedMediaPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Chats\ChatSharedMediaView.xaml.cs">
       <DependentUpon>ChatSharedMediaView.xaml</DependentUpon>
     </Compile>
@@ -1689,6 +1692,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\ChatPinnedPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Chats\ChatSharedMediaPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -1280,22 +1280,20 @@ namespace Unigram.Views
             UpdatePaneToggleButtonVisibility();
             UpdateListViewsSelectedItem(MasterDetail.NavigationService.GetPeerFromBackStack());
 
-            var allowed = e.SourcePageType == typeof(ChatPage)
-                || e.SourcePageType == typeof(ChatEventLogPage)
-                || e.SourcePageType == typeof(ChatPinnedPage)
-                || e.SourcePageType == typeof(ChatScheduledPage)
-                || e.SourcePageType == typeof(ChatThreadPage);
-            if (allowed && e.Parameter is long chatId && e.Content is Page page && page.DataContext is DialogViewModel dialogViewModel)
-            {
-                var profile = MasterDetail.Descendants<MasterDetailView>().FirstOrDefault();
-                if (profile != null)
-                {
-                    profile.NavigationService.Navigate(typeof(ProfilePage), chatId);
-                    profile.NavigationService.GoBackAt(0, false);
-
-                    dialogViewModel.SecondaryNavigationService = profile.NavigationService;
-                }
-            }
+            //var allowed = e.SourcePageType == typeof(ChatPage)
+            //    || e.SourcePageType == typeof(ChatEventLogPage)
+            //    || e.SourcePageType == typeof(ChatPinnedPage)
+            //    || e.SourcePageType == typeof(ChatScheduledPage)
+            //    || e.SourcePageType == typeof(ChatThreadPage);
+            //if (allowed && e.Parameter is long chatId)
+            //{
+            //    var profile = MasterDetail.Descendants<ProfilePage>().FirstOrDefault();
+            //    if (profile != null)
+            //    {
+            //        profile.NavigatedTo(null);
+            //        profile.ViewModel.OnNavigatedToAsync(chatId, NavigationMode.New, new NavigationState());
+            //    }
+            //}
         }
 
         private void OnStateChanged(object sender, EventArgs e)
@@ -1379,7 +1377,7 @@ namespace Unigram.Views
 
         private void SetTitleBarVisibility(Visibility visibility)
         {
-            //MasterDetail.IsBlank = visibility == Visibility.Collapsed;
+            MasterDetail.IsBlank = visibility == Visibility.Collapsed;
             VisualStateManager.GoToState(this, visibility == Visibility.Collapsed ? "Normal" : "TitleBar", false);
         }
 
@@ -2980,53 +2978,6 @@ namespace Unigram.Views
         private void ArchivedChats_ActualThemeChanged(FrameworkElement sender, object args)
         {
             ArchivedChats.UpdateChatList(ViewModel.ProtoService, new ChatListArchive());
-        }
-
-        private void MasterDetailView_Loading(FrameworkElement sender, object args)
-        {
-            var masterDetail = sender as MasterDetailView;
-            if (masterDetail.NavigationService == null)
-            {
-                masterDetail.AllowCompact = false;
-                //masterDetail.BlankPageType = typeof(ProfilePage);
-                masterDetail.ViewStateChanged += Profile_ViewStateChanged;
-                masterDetail.Initialize("Profile", Frame, ViewModel.ProtoService.SessionId);
-                masterDetail.NavigationService.FrameFacade.Navigated += (s, args) =>
-                {
-                    masterDetail.IsBlank = args.SourcePageType == typeof(BlankPage);
-
-                    if (args.Content is HostedPage hosted)
-                    {
-                        MasterDetail.CorpusHeader = hosted.Header;
-                    }
-                    else
-                    {
-                        MasterDetail.CorpusHeader = null;
-                    }
-                };
-            }
-        }
-
-        private void Profile_ViewStateChanged(object sender, EventArgs e)
-        {
-            var allowed = MasterDetail.NavigationService.Frame.CurrentSourcePageType == typeof(ChatPage)
-                || MasterDetail.NavigationService.Frame.CurrentSourcePageType == typeof(ChatEventLogPage)
-                || MasterDetail.NavigationService.Frame.CurrentSourcePageType == typeof(ChatPinnedPage)
-                || MasterDetail.NavigationService.Frame.CurrentSourcePageType == typeof(ChatScheduledPage)
-                || MasterDetail.NavigationService.Frame.CurrentSourcePageType == typeof(ChatThreadPage);
-
-            var masterDetail = sender as MasterDetailView;
-            if (masterDetail.CurrentState == MasterDetailState.Minimal)
-            {
-                if (masterDetail.NavigationService.Frame.CurrentSourcePageType == typeof(ProfilePage))
-                {
-                    masterDetail.NavigationService.GoBackAt(0);
-                }
-            }
-            else if (masterDetail.NavigationService.Frame.CurrentSourcePageType == typeof(BlankPage) && allowed)
-            {
-                masterDetail.NavigationService.Navigate(typeof(ProfilePage), MasterDetail.NavigationService.CurrentPageParam);
-            }
         }
     }
 

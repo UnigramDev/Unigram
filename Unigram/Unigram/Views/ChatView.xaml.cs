@@ -27,6 +27,7 @@ using Unigram.ViewModels;
 using Unigram.ViewModels.Chats;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Users;
+using Unigram.Views.Chats;
 using Unigram.Views.Popups;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
@@ -1447,19 +1448,18 @@ namespace Unigram.Views
                 return;
             }
 
-            if (ViewModel.CacheService.IsRepliesChat(chat))
+            if (ViewModel.CacheService.IsSavedMessages(chat))
             {
-                return;
-            }
-
-            if (ViewModel.SecondaryNavigationService.Frame.CurrentSourcePageType != typeof(ProfilePage))
-            {
-                ViewModel.SecondaryNavigationService.Navigate(typeof(ProfilePage), chat.Id, infoOverride: new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
-                ViewModel.SecondaryNavigationService.GoBackAt(0, false);
+                ViewModel.NavigationService.Navigate(typeof(ChatSharedMediaPage), chat.Id, infoOverride: new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
             }
             else
             {
-                ViewModel.SecondaryNavigationService.GoBackAt(0);
+                if (ViewModel.CacheService.IsRepliesChat(chat))
+                {
+                    return;
+                }
+
+                ViewModel.NavigationService.Navigate(typeof(ProfilePage), chat.Id, infoOverride: new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
             }
         }
 
@@ -5015,4 +5015,5 @@ namespace Unigram.Views
             }
         }
     }
+
 }

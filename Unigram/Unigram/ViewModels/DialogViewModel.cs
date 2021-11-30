@@ -90,8 +90,6 @@ namespace Unigram.ViewModels
         protected readonly IStorageService _storageService;
         protected readonly IMessageFactory _messageFactory;
 
-        public INavigationService SecondaryNavigationService { get; set; }
-
         public IPlaybackService PlaybackService => _playbackService;
 
         public IStorageService StorageService => _storageService;
