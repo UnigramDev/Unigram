@@ -96,9 +96,6 @@ namespace Unigram.Views
             var minDate = true;
             var minDateIndex = panel.FirstVisibleIndex;
 
-            var minOffset = new double?();
-            var maxOffset = true;
-
             var messages = new List<long>(panel.LastVisibleIndex - panel.FirstVisibleIndex);
             var animations = new List<(SelectorItem, MessageViewModel)>(panel.LastVisibleIndex - panel.FirstVisibleIndex);
 
@@ -150,14 +147,6 @@ namespace Unigram.Views
                             DateHeaderLabel.Text = Converter.DayGrouping(Utils.UnixTimestampToDateTime(message.Date));
                         }
                     }
-
-                    if (minOffset == null)
-                    {
-                        transform = container.TransformToVisual(FloatingPhoto);
-                        point = transform.TransformPoint(new Point());
-
-                        minOffset = point.Y;
-                    }
                 }
 
                 if (message.Content is MessageHeaderDate && minDate && i >= panel.FirstVisibleIndex)
@@ -191,79 +180,7 @@ namespace Unigram.Views
                 }
                 else
                 {
-                    if (minOffset != null && minOffset + container.ActualHeight >= FloatingPhoto.ActualHeight)
-                    {
-                        var content = container.ContentTemplateRoot as FrameworkElement;
-                        var photo = content?.FindName("Photo") as ProfilePicture;
-
-                        if (photo != null)
-                        {
-                            var height = (float)container.ActualHeight;
-                            var offset = (float)minOffset + height;
-
-                            if (offset + 6 >= height && offset + 6 < height * 2 && message.IsFirst)
-                            {
-                                if (maxOffset)
-                                {
-                                    HideFloatingPhoto();
-                                }
-
-                                photo.Visibility = Visibility.Visible;
-                                photo.VerticalAlignment = VerticalAlignment.Top;
-                                photo.Margin = new Thickness(0, 4, 0, -4);
-                            }
-                            else
-                            {
-                                if (maxOffset)
-                                {
-                                    if (!message.SenderId.IsEqual(_floatingSender))
-                                    {
-                                        _floatingSender = message.SenderId;
-                                        FloatingPhoto.Source = photo.Source;
-                                    }
-
-                                    FloatingPhoto.Tag = message;
-                                    FloatingPhoto.Visibility = Visibility.Visible;
-                                }
-
-                                photo.Visibility = Visibility.Collapsed;
-                                photo.VerticalAlignment = VerticalAlignment.Bottom;
-                                photo.Margin = new Thickness();
-                            }
-
-                            if (message.IsLast || i == panel.LastVisibleIndex)
-                            {
-                                minOffset = null;
-                            }
-                            else
-                            {
-                                maxOffset = false;
-                            }
-                        }
-                        else if (maxOffset)
-                        {
-                            HideFloatingPhoto();
-                        }
-                    }
-                    else
-                    {
-                        var content = container.ContentTemplateRoot as FrameworkElement;
-                        var photo = content?.FindName("Photo") as ProfilePicture;
-
-                        if (photo != null)
-                        {
-                            photo.Visibility = message.IsLast ? Visibility.Visible : Visibility.Collapsed;
-                            photo.VerticalAlignment = VerticalAlignment.Bottom;
-                            photo.Margin = new Thickness();
-                        }
-                    }
-
                     container.Opacity = 1;
-                }
-
-                if (minOffset != null)
-                {
-                    minOffset += container.ActualHeight;
                 }
 
                 // Read and play messages logic:
@@ -296,11 +213,6 @@ namespace Unigram.Views
             if (minDate)
             {
                 _dateHeader.Offset = Vector3.Zero;
-            }
-
-            if (minOffset != null && !intermediate)
-            {
-                HideFloatingPhoto();
             }
 
             _dateHeaderTimer.Stop();
@@ -406,15 +318,6 @@ namespace Unigram.Views
             _dateHeaderPanel.StartAnimation("Opacity", opacity);
 
             batch.End();
-        }
-
-        private void HideFloatingPhoto()
-        {
-            //_floatingSender = null;
-            //FloatingPhoto.Source = null;
-
-            FloatingPhoto.Visibility = Visibility.Collapsed;
-            FloatingPhoto.Tag = null;
         }
 
         private readonly Dictionary<long, IPlayerView> _prev = new Dictionary<long, IPlayerView>();

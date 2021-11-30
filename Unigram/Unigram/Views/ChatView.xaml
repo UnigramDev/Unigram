@@ -743,15 +743,6 @@
                 </ListView.Header>
             </chats:ChatListView>
 
-            <controls:ProfilePicture x:Name="FloatingPhoto"
-                                     Click="Participant_Click"
-                                     IsTabStop="False"
-                                     Width="30"
-                                     Height="30"
-                                     HorizontalAlignment="Left"
-                                     VerticalAlignment="Bottom"
-                                     Margin="12,0,0,6" />
-
             <Border x:Name="Yolo2"
                     x:Load="False"
                     Visibility="Collapsed"
