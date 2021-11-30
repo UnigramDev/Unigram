@@ -1021,10 +1021,11 @@
                                      Visibility="Collapsed"
                                      Margin="8,0,0,0"
                                      Grid.Row="1">
-                    <Image x:Name="PhotoMore"
-                           Width="32"
-                           Height="32"
-                           Margin="-8" />
+                    <controls:ProfilePicture x:Name="PhotoMore"
+                                             IsEnabled="False"
+                                             Width="32"
+                                             Height="32"
+                                             Margin="-8" />
                 </controls:MenuButton>
 
 

@@ -35,8 +35,7 @@ namespace Unigram.ViewModels
         IHandle<UpdateUserStatus>,
         IHandle<UpdateChatTitle>,
         IHandle<UpdateChatPhoto>,
-        IHandle<UpdateChatNotificationSettings>,
-        IHandle<UpdateFile>
+        IHandle<UpdateChatNotificationSettings>
     {
         public string LastSeen { get; internal set; }
 
@@ -45,17 +44,19 @@ namespace Unigram.ViewModels
         private readonly IVoipService _voipService;
         private readonly IGroupCallService _groupCallService;
         private readonly INotificationsService _notificationsService;
+        private readonly IStorageService _storageService;
 
         private readonly ChatSharedMediaViewModel _chatSharedMediaViewModel;
         private readonly UserCommonChatsViewModel _userCommonChatsViewModel;
         private readonly SupergroupMembersViewModel _supergroupMembersVieModel;
 
-        public ProfileViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IVoipService voipService, IGroupCallService groupCallService, INotificationsService notificationsService, ChatSharedMediaViewModel chatSharedMediaViewModel, UserCommonChatsViewModel userCommonChatsViewModel, SupergroupMembersViewModel supergroupMembersViewModel)
+        public ProfileViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IVoipService voipService, IGroupCallService groupCallService, INotificationsService notificationsService, IStorageService storageService, ChatSharedMediaViewModel chatSharedMediaViewModel, UserCommonChatsViewModel userCommonChatsViewModel, SupergroupMembersViewModel supergroupMembersViewModel)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _voipService = voipService;
             _groupCallService = groupCallService;
             _notificationsService = notificationsService;
+            _storageService = storageService;
 
             _chatSharedMediaViewModel = chatSharedMediaViewModel;
             _userCommonChatsViewModel = userCommonChatsViewModel;
@@ -97,6 +98,8 @@ namespace Unigram.ViewModels
             Children.Add(userCommonChatsViewModel);
             Children.Add(supergroupMembersViewModel);
         }
+
+        public IStorageService StorageService => _storageService;
 
         public ChatSharedMediaViewModel ChatSharedMedia => _chatSharedMediaViewModel;
         public UserCommonChatsViewModel UserCommonChats => _userCommonChatsViewModel;
@@ -337,17 +340,6 @@ namespace Unigram.ViewModels
             {
                 BeginOnUIThread(() => Delegate?.UpdateChatNotificationSettings(_chat));
             }
-        }
-
-        public void Handle(UpdateFile update)
-        {
-            var chat = _chat;
-            if (chat == null)
-            {
-                return;
-            }
-
-            BeginOnUIThread(() => Delegate?.UpdateFile(update.File));
         }
 
         public RelayCommand SendMessageCommand { get; }

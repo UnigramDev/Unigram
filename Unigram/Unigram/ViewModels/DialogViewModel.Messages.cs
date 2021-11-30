@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
@@ -13,7 +12,6 @@ using Unigram.Views;
 using Unigram.Views.Chats;
 using Unigram.Views.Popups;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
 using Windows.System;
 using Windows.UI.Xaml;
@@ -876,6 +874,14 @@ namespace Unigram.ViewModels
                 {
                     NavigationService.NavigateToInvoice(message);
                 }
+                else if (inline.Type is InlineKeyboardButtonTypeUser user)
+                {
+                    var response = await ProtoService.SendAsync(new CreatePrivateChat(user.UserId, false));
+                    if (response is Chat userChat)
+                    {
+                        NavigationService.NavigateToChat(userChat);
+                    }
+                }
                 else if (inline.Type is InlineKeyboardButtonTypeLoginUrl loginUrl)
                 {
                     var response = await ProtoService.SendAsync(new GetLoginUrlInfo(chat.Id, message.Id, loginUrl.Id));
@@ -1145,43 +1151,10 @@ namespace Unigram.ViewModels
         public RelayCommand<MessageViewModel> MessageSaveMediaCommand { get; }
         private async void MessageSaveMediaExecute(MessageViewModel message)
         {
-            var result = message.Get().GetFileAndName(true);
-
-            var file = result.File;
-            if (file == null || !file.Local.IsDownloadingCompleted)
+            var file = message.GetFile();
+            if (file != null)
             {
-                return;
-            }
-
-            var cached = await ProtoService.GetFileAsync(file);
-            if (cached == null)
-            {
-                return;
-            }
-
-            var response = await ProtoService.SendAsync(new GetSuggestedFileName(file.Id, ""));
-            if (response is Text text)
-            {
-                var extension = Path.GetExtension(text.TextValue);
-                if (string.IsNullOrEmpty(extension))
-                {
-                    extension = ".dat";
-                }
-
-                try
-                {
-                    var picker = new FileSavePicker();
-                    picker.FileTypeChoices.Add($"{extension.TrimStart('.').ToUpper()} File", new[] { extension });
-                    picker.SuggestedStartLocation = PickerLocationId.Downloads;
-                    picker.SuggestedFileName = text.TextValue;
-
-                    var picked = await picker.PickSaveFileAsync();
-                    if (picked != null)
-                    {
-                        await cached.CopyAndReplaceAsync(picked);
-                    }
-                }
-                catch { }
+                await _storageService.SaveAsAsync(file);
             }
         }
 
@@ -1209,21 +1182,10 @@ namespace Unigram.ViewModels
         public RelayCommand<MessageViewModel> MessageOpenWithCommand { get; }
         private async void MessageOpenWithExecute(MessageViewModel message)
         {
-            var result = message.Get().GetFileAndName(true);
-
-            var file = result.File;
-            if (file == null || !file.Local.IsDownloadingCompleted)
+            var file = message.GetFile();
+            if (file != null)
             {
-                return;
-            }
-
-            var item = await ProtoService.GetFileAsync(file);
-            if (item != null)
-            {
-                var options = new LauncherOptions();
-                options.DisplayApplicationPicker = true;
-
-                await Launcher.LaunchFileAsync(item, options);
+                await _storageService.OpenWithAsync(file);
             }
         }
 
@@ -1234,27 +1196,10 @@ namespace Unigram.ViewModels
         public RelayCommand<MessageViewModel> MessageOpenFolderCommand { get; }
         private async void MessageOpenFolderExecute(MessageViewModel message)
         {
-            var result = message.Get().GetFileAndName(true);
-
-            var file = result.File;
-            if (file == null || !file.Local.IsDownloadingCompleted)
+            var file = message.GetFile();
+            if (file != null)
             {
-                return;
-            }
-
-            var item = await ProtoService.GetFileAsync(file);
-            if (item != null)
-            {
-                try
-                {
-                    var folder = await item.GetParentAsync();
-
-                    var options = new FolderLauncherOptions();
-                    options.ItemsToSelect.Add(item);
-
-                    await Launcher.LaunchFolderAsync(folder, options);
-                }
-                catch { }
+                await _storageService.OpenFolderAsync(file);
             }
         }
 

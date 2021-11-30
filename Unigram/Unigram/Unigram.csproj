@@ -187,6 +187,7 @@
     <Compile Include="Common\RemoteFileStream.cs" />
     <Compile Include="Common\Scrim.cs" />
     <Compile Include="Common\SoundEffects.cs" />
+    <Compile Include="Common\UpdateManager.cs" />
     <Compile Include="Common\SunDate.cs" />
     <Compile Include="Common\TdException.cs" />
     <Compile Include="Common\TextStyleRun.cs" />
@@ -486,6 +487,7 @@
     <Compile Include="Services\GroupCallService.cs" />
     <Compile Include="Services\ProtoService.ChatList.cs" />
     <Compile Include="Services\ProtoService.Files.cs" />
+    <Compile Include="Services\StorageService.cs" />
     <Compile Include="Services\Theme\ThemeAccentInfo.cs" />
     <Compile Include="Services\Theme\ThemeBundledInfo.cs" />
     <Compile Include="Services\Theme\ThemeCustomInfo.cs" />
@@ -690,7 +692,6 @@
     <Compile Include="ViewModels\Delegates\IBasicGroupDelegate.cs" />
     <Compile Include="ViewModels\Delegates\IChatDelegate.cs" />
     <Compile Include="ViewModels\Delegates\IDialogDelegate.cs" />
-    <Compile Include="ViewModels\Delegates\IFileDelegate.cs" />
     <Compile Include="ViewModels\Delegates\IMessageDelegate.cs" />
     <Compile Include="ViewModels\Folders\FoldersViewModel.cs" />
     <Compile Include="ViewModels\Folders\FolderViewModel.cs" />

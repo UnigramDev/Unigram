@@ -19,7 +19,6 @@ namespace Unigram.ViewModels.Supergroups
 {
     public class SupergroupEditViewModel : TLViewModelBase,
         IDelegable<ISupergroupEditDelegate>,
-        IHandle<UpdateFile>,
         IHandle<UpdateChatPhoto>,
         IHandle<UpdateSupergroup>,
         IHandle<UpdateSupergroupFullInfo>,
@@ -140,20 +139,6 @@ namespace Unigram.ViewModels.Supergroups
         {
             Aggregator.Unsubscribe(this);
             return Task.CompletedTask;
-        }
-
-        public void Handle(UpdateFile update)
-        {
-            var chat = _chat;
-            if (chat?.Photo == null)
-            {
-                return;
-            }
-
-            if (update.File.Local.IsDownloadingCompleted && chat.Photo.UpdateFile(update.File))
-            {
-                BeginOnUIThread(() => Delegate?.UpdateChatPhoto(chat));
-            }
         }
 
         public void Handle(UpdateChatPhoto update)

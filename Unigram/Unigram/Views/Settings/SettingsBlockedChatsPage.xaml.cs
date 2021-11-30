@@ -2,24 +2,22 @@
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Settings;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 using Point = Windows.Foundation.Point;
 
 namespace Unigram.Views.Settings
 {
-    public sealed partial class SettingsBlockedChatsPage : HostedPage, IFileDelegate
+    public sealed partial class SettingsBlockedChatsPage : HostedPage
     {
         public SettingsBlockedChatsViewModel ViewModel => DataContext as SettingsBlockedChatsViewModel;
 
         public SettingsBlockedChatsPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsBlockedChatsViewModel, IFileDelegate>(this);
+            DataContext = TLContainer.Current.Resolve<SettingsBlockedChatsViewModel>();
         }
 
         private async void ListView_ItemClick(object sender, ItemClickEventArgs e)
@@ -83,11 +81,11 @@ namespace Unigram.Views.Settings
                 var photo = content.Children[0] as ProfilePicture;
                 if (user != null)
                 {
-                    photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
+                    photo.SetUser(ViewModel.ProtoService, user, 36);
                 }
                 else if (chat != null)
                 {
-                    photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 36);
+                    photo.SetChat(ViewModel.ProtoService, chat, 36);
                 }
             }
 
@@ -118,39 +116,6 @@ namespace Unigram.Views.Settings
                 }
 
                 flyout.ShowAt(sender, point);
-            }
-        }
-
-        public void UpdateFile(File file)
-        {
-            foreach (MessageSender sender in ScrollingHost.Items)
-            {
-                if (ViewModel.CacheService.TryGetUser(sender, out User user) && user.UpdateFile(file))
-                {
-                    var container = ScrollingHost.ContainerFromItem(sender) as SelectorItem;
-                    if (container == null)
-                    {
-                        return;
-                    }
-
-                    var content = container.ContentTemplateRoot as Grid;
-
-                    var photo = content.Children[0] as ProfilePicture;
-                    photo.Source = PlaceholderHelper.GetUser(null, user, 36);
-                }
-                else if (ViewModel.CacheService.TryGetChat(sender, out Chat chat) && chat.UpdateFile(file))
-                {
-                    var container = ScrollingHost.ContainerFromItem(sender) as SelectorItem;
-                    if (container == null)
-                    {
-                        return;
-                    }
-
-                    var content = container.ContentTemplateRoot as Grid;
-
-                    var photo = content.Children[0] as ProfilePicture;
-                    photo.Source = PlaceholderHelper.GetChat(null, chat, 36);
-                }
             }
         }
     }

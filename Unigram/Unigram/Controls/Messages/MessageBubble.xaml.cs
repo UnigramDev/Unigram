@@ -813,11 +813,11 @@ namespace Unigram.Controls.Messages
 
                     if (message.ProtoService.TryGetUser(sender, out User user))
                     {
-                        picture.Source = PlaceholderHelper.GetUser(message.ProtoService, user, 24);
+                        picture.SetUser(message.ProtoService, user, 24);
                     }
                     else if (message.ProtoService.TryGetChat(sender, out Chat chat))
                     {
-                        picture.Source = PlaceholderHelper.GetChat(message.ProtoService, chat, 24);
+                        picture.SetChat(message.ProtoService, chat, 24);
                     }
 
                     if (RecentRepliers.Children.Count > 0)
@@ -1112,24 +1112,6 @@ namespace Unigram.Controls.Messages
             }
 
             return null;
-        }
-
-        public void UpdateFile(MessageViewModel message, File file)
-        {
-            if (!_templateApplied)
-            {
-                return;
-            }
-
-            if (Media.Child is IContentWithFile content)
-            {
-                content.UpdateFile(message, file);
-            }
-
-            if (Reply != null)
-            {
-                Reply.UpdateFile(message, file);
-            }
         }
 
         private void UpdateMessageText(MessageViewModel message)

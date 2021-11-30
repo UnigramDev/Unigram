@@ -214,7 +214,7 @@ namespace Unigram.Controls.Messages.Content
                 }
 
                 var picture = new ProfilePicture();
-                picture.Source = PlaceholderHelper.GetUser(message.ProtoService, user, 16);
+                picture.SetUser(message.ProtoService, user, 16);
                 picture.Width = 16;
                 picture.Height = 16;
 

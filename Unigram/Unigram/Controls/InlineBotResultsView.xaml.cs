@@ -34,6 +34,7 @@ namespace Unigram.Controls
             _zoomer.Opening = _handler.UnloadVisibleItems;
             _zoomer.Closing = _handler.ThrottleVisibleItems;
             _zoomer.DownloadFile = fileId => ViewModel.ProtoService.DownloadFile(fileId, 32);
+            _zoomer.SessionId = () => ViewModel.ProtoService.SessionId;
         }
 
         public void UpdateCornerRadius(double radius)
@@ -177,8 +178,6 @@ namespace Unigram.Controls
                     _handler.ThrottleVisibleItems();
                 }
             }
-
-            _zoomer.UpdateFile(file);
         }
 
         private void Item_Click(object item)

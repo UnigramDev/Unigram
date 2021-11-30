@@ -8,10 +8,12 @@ using Windows.UI.Xaml.Documents;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed class WebPageSmallPhotoContent : WebPageContentBase, IContentWithFile
+    public sealed class WebPageSmallPhotoContent : WebPageContentBase, IContent
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
+
+        private string _fileToken;
 
         public WebPageSmallPhotoContent(MessageViewModel message)
         {
@@ -81,6 +83,7 @@ namespace Unigram.Controls.Messages.Content
             var small = webPage.Photo?.GetSmall();
             if (small != null)
             {
+                UpdateManager.Subscribe(this, message, small.Photo, ref _fileToken, UpdateFile, true);
                 UpdateFile(message, small.Photo);
             }
 
@@ -88,9 +91,12 @@ namespace Unigram.Controls.Messages.Content
             UpdateInstantView(webPage, Button, Run1, Run2, Run3);
         }
 
-        public void UpdateMessageContentOpened(MessageViewModel message) { }
+        private void UpdateFile(object target, File file)
+        {
+            UpdateFile(_message, file);
+        }
 
-        public void UpdateFile(MessageViewModel message, File file)
+        private void UpdateFile(MessageViewModel message, File file)
         {
             var text = message.Content as MessageText;
             if (text == null || !_templateApplied)

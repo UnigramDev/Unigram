@@ -1,25 +1,19 @@
 ﻿using System.Collections.ObjectModel;
 using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Navigation.Services;
 using Unigram.Services;
-using Unigram.ViewModels.Delegates;
 using Unigram.Views.Popups;
 using Windows.Foundation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsBlockedChatsViewModel : TLViewModelBase, IDelegable<IFileDelegate>, IHandle<UpdateFile>
+    public class SettingsBlockedChatsViewModel : TLViewModelBase
     {
-        public IFileDelegate Delegate { get; set; }
-
         public SettingsBlockedChatsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
@@ -27,23 +21,6 @@ namespace Unigram.ViewModels.Settings
 
             BlockCommand = new RelayCommand(BlockExecute);
             UnblockCommand = new RelayCommand<MessageSender>(UnblockExecute);
-        }
-
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
-        {
-            Aggregator.Subscribe(this);
-            return Task.CompletedTask;
-        }
-
-        public override Task OnNavigatedFromAsync(NavigationState pageState, bool suspending)
-        {
-            Aggregator.Unsubscribe(this);
-            return Task.CompletedTask;
-        }
-
-        public void Handle(UpdateFile update)
-        {
-            BeginOnUIThread(() => Delegate?.UpdateFile(update.File));
         }
 
         public ObservableCollection<MessageSender> Items { get; private set; }

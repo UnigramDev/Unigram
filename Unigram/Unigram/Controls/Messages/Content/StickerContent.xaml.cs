@@ -9,10 +9,12 @@ using Windows.UI.Xaml.Hosting;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed class StickerContent : ImageView, IContentWithFile, IContentWithMask
+    public sealed class StickerContent : ImageView, IContent, IContentWithMask
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
+
+        private string _fileToken;
 
         private CompositionAnimation _thumbnailShimmer;
 
@@ -44,12 +46,16 @@ namespace Unigram.Controls.Messages.Content
                 UpdateThumbnail(message, sticker.Outline);
             }
 
+            UpdateManager.Subscribe(this, message, sticker.StickerValue, ref _fileToken, UpdateFile, true);
             UpdateFile(message, sticker.StickerValue);
         }
 
-        public void UpdateMessageContentOpened(MessageViewModel message) { }
+        private void UpdateFile(object target, File file)
+        {
+            UpdateFile(_message, file);
+        }
 
-        public async void UpdateFile(MessageViewModel message, File file)
+        private async void UpdateFile(MessageViewModel message, File file)
         {
             var sticker = GetContent(message.Content);
             if (sticker == null)

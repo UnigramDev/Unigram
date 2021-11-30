@@ -1,7 +1,6 @@
 ﻿using System;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls.Messages.Content;
 using Unigram.Converters;
 using Unigram.Navigation;
 using Unigram.Services;
@@ -19,6 +18,8 @@ namespace Unigram.Controls.Cells
         private IProtoService _protoService;
         private Message _message;
         public Message Message => _message;
+
+        private string _fileToken;
 
         public SharedAudioCell()
         {
@@ -76,6 +77,7 @@ namespace Unigram.Controls.Cells
                 Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
             }
 
+            UpdateManager.Subscribe(this, protoService, audio.AudioValue, ref _fileToken, UpdateFile);
             UpdateFile(message, audio.AudioValue);
         }
 
@@ -144,7 +146,12 @@ namespace Unigram.Controls.Cells
 
         #endregion
 
-        public void UpdateFile(Message message, File file)
+        private void UpdateFile(object target, File file)
+        {
+            UpdateFile(_message, file);
+        }
+
+        private void UpdateFile(Message message, File file)
         {
             _playbackService.PlaybackStateChanged -= OnPlaybackStateChanged;
             _playbackService.PositionChanged -= OnPositionChanged;

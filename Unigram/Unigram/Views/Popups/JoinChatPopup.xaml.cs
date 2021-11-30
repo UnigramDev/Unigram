@@ -17,7 +17,7 @@ namespace Unigram.Views.Popups
 
             _protoService = protoService;
 
-            Photo.Source = PlaceholderHelper.GetChat(protoService, info, 72);
+            Photo.SetChat(protoService, info, 72);
 
             Title.Text = info.Title;
             Subtitle.Text = ConvertCount(info.MemberCount, info.MemberUserIds.Count == 0);
@@ -82,7 +82,7 @@ namespace Unigram.Views.Popups
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.Source = PlaceholderHelper.GetUser(_protoService, user, 48);
+                photo.SetUser(_protoService, user, 48);
             }
 
             if (args.Phase < 2)

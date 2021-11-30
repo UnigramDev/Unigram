@@ -14,8 +14,8 @@ namespace Unigram.ViewModels.Users
         private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
         private readonly User _user;
 
-        public UserPhotosViewModel(IProtoService protoService, IEventAggregator aggregator, User user, UserFullInfo userFull)
-            : base(protoService, aggregator)
+        public UserPhotosViewModel(IProtoService protoService, IStorageService storageService, IEventAggregator aggregator, User user, UserFullInfo userFull)
+            : base(protoService, storageService, aggregator)
         {
             _user = user;
 

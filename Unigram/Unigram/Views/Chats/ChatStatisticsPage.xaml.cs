@@ -40,7 +40,7 @@ namespace Unigram.Views.Chats
 
         public void UpdateChatPhoto(Chat chat)
         {
-            Photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 36);
+            Photo.SetChat(ViewModel.ProtoService, chat, 36);
         }
 
         #endregion
@@ -258,7 +258,7 @@ namespace Unigram.Views.Chats
 
                     title.Text = user.GetFullName();
                     subtitle.Text = stringBuilder.ToString();
-                    photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
+                    photo.SetUser(ViewModel.ProtoService, user, 36);
 
                     button.CommandParameter = senderInfo.UserId;
                     button.Command = ViewModel.OpenProfileCommand;
@@ -299,7 +299,7 @@ namespace Unigram.Views.Chats
 
                     title.Text = user.GetFullName();
                     subtitle.Text = stringBuilder.ToString();
-                    photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
+                    photo.SetUser(ViewModel.ProtoService, user, 36);
 
                     button.CommandParameter = adminInfo.UserId;
                     button.Command = ViewModel.OpenProfileCommand;
@@ -322,7 +322,7 @@ namespace Unigram.Views.Chats
                     }
 
                     title.Text = user.GetFullName();
-                    photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
+                    photo.SetUser(ViewModel.ProtoService, user, 36);
 
                     button.CommandParameter = inviterInfo.UserId;
                     button.Command = ViewModel.OpenProfileCommand;

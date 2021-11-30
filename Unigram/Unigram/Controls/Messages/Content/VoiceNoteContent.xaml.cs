@@ -14,6 +14,8 @@ namespace Unigram.Controls.Messages.Content
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
+        private string _fileToken;
+
         public VoiceNoteContent(MessageViewModel message)
         {
             _message = message;
@@ -82,7 +84,7 @@ namespace Unigram.Controls.Messages.Content
 
             Progress.UpdateWaveform(voiceNote);
 
-            //UpdateDuration();
+            UpdateManager.Subscribe(this, message, voiceNote.Voice, ref _fileToken, UpdateFile);
             UpdateFile(message, voiceNote.Voice);
         }
 
@@ -190,7 +192,12 @@ namespace Unigram.Controls.Messages.Content
             UpdateDuration();
         }
 
-        public void UpdateFile(MessageViewModel message, File file)
+        private void UpdateFile(object target, File file)
+        {
+            UpdateFile(_message, file);
+        }
+
+        private void UpdateFile(MessageViewModel message, File file)
         {
             message.PlaybackService.PlaybackStateChanged -= OnPlaybackStateChanged;
             message.PlaybackService.PositionChanged -= OnPositionChanged;
@@ -225,7 +232,7 @@ namespace Unigram.Controls.Messages.Content
                 Button.SetGlyph(file.Id, MessageContentState.Download);
                 Button.Progress = 0;
 
-                if (message.Delegate.CanBeDownloaded(message))
+                if (message.Delegate.CanBeDownloaded(voiceNote, file))
                 {
                     _message.ProtoService.DownloadFile(file.Id, 32);
                 }

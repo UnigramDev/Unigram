@@ -88,14 +88,7 @@ namespace Unigram.Controls.Messages.Content
                     LivePanel.Visibility = Visibility.Visible;
                     PinDot.Visibility = Visibility.Collapsed;
 
-                    if (_message.ProtoService.TryGetUser(message.SenderId, out User senderUser))
-                    {
-                        PinPhoto.Source = PlaceholderHelper.GetUser(message.ProtoService, senderUser, 32);
-                    }
-                    else if (_message.ProtoService.TryGetChat(message.SenderId, out Chat senderChat))
-                    {
-                        PinPhoto.Source = PlaceholderHelper.GetChat(message.ProtoService, senderChat, 32);
-                    }
+                    PinPhoto.SetMessageSender(message.ProtoService, message.SenderId, 32);
 
                     Title.Text = Strings.Resources.AttachLiveLocation;
                     Subtitle.Text = Locale.FormatLocationUpdateDate(message.EditDate > 0 ? message.EditDate : message.Date);

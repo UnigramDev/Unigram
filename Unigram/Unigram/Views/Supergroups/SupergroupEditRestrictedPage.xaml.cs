@@ -42,7 +42,7 @@ namespace Unigram.Views.Supergroups
         {
             Title.Text = user.GetFullName();
             Subtitle.Text = LastSeenConverter.GetLabel(user, true);
-            Photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 64);
+            Photo.SetUser(ViewModel.ProtoService, user, 64);
 
             Verified.Visibility = user.IsVerified ? Visibility.Visible : Visibility.Collapsed;
         }

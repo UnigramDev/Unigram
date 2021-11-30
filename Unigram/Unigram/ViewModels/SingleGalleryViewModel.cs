@@ -6,8 +6,8 @@ namespace Unigram.ViewModels
 {
     public class SingleGalleryViewModel : GalleryViewModelBase
     {
-        public SingleGalleryViewModel(IProtoService protoService, IEventAggregator aggregator, GalleryContent item)
-            : base(protoService, aggregator)
+        public SingleGalleryViewModel(IProtoService protoService, IStorageService storageService, IEventAggregator aggregator, GalleryContent item)
+            : base(protoService, storageService, aggregator)
         {
             Items = new MvxObservableCollection<GalleryContent> { item };
             SelectedItem = item;

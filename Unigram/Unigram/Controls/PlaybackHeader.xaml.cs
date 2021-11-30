@@ -17,12 +17,11 @@ using Windows.UI.Xaml.Input;
 
 namespace Unigram.Controls
 {
-    public sealed partial class PlaybackHeader : UserControl, IHandle<UpdateFile>
+    public sealed partial class PlaybackHeader : UserControl
     {
         private IProtoService _cacheService;
         private IPlaybackService _playbackService;
         private INavigationService _navigationService;
-        private IEventAggregator _aggregator;
 
         private readonly Visual _visual1;
         private readonly Visual _visual2;
@@ -47,12 +46,11 @@ namespace Unigram.Controls
             _visual = _visual1;
         }
 
-        public void Update(IProtoService cacheService, IPlaybackService playbackService, INavigationService navigationService, IEventAggregator aggregator)
+        public void Update(IProtoService cacheService, IPlaybackService playbackService, INavigationService navigationService)
         {
             _cacheService = cacheService;
             _playbackService = playbackService;
             _navigationService = navigationService;
-            _aggregator = aggregator;
 
             _playbackService.MediaFailed -= OnMediaFailed;
             _playbackService.MediaFailed += OnMediaFailed;
@@ -114,37 +112,6 @@ namespace Unigram.Controls
             });
         }
 
-        public void Handle(UpdateFile update)
-        {
-            UpdateFile(update.File);
-        }
-
-        private void UpdateFile(File file)
-        {
-            foreach (var item in _playbackService.Items)
-            {
-                if (item.UpdateFile(file))
-                {
-                    this.BeginOnUIThread(() =>
-                    {
-                        var container = Items.ContainerFromItem(item) as SelectorItem;
-                        if (container == null)
-                        {
-                            return;
-                        }
-
-                        var cell = container.ContentTemplateRoot as SharedAudioCell;
-                        if (cell == null)
-                        {
-                            return;
-                        }
-
-                        cell.UpdateFile(item.Message, file);
-                    });
-                }
-            }
-        }
-
         private void UpdatePosition()
         {
             if (_scrubbing)
@@ -164,8 +131,6 @@ namespace Unigram.Controls
                 _chatId = 0;
                 _messageId = 0;
 
-                _aggregator.Unsubscribe(this);
-
                 TitleLabel1.Text = TitleLabel2.Text = string.Empty;
                 SubtitleLabel1.Text = SubtitleLabel2.Text = string.Empty;
                 Visibility = Visibility.Collapsed;
@@ -174,7 +139,6 @@ namespace Unigram.Controls
             }
             else
             {
-                _aggregator.Subscribe(this);
                 Visibility = Visibility.Visible;
             }
 

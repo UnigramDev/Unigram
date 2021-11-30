@@ -67,7 +67,6 @@ namespace Unigram.ViewModels
         public long Id => _message.Id;
 
         public Photo GetPhoto() => _message.GetPhoto();
-        public File GetAnimation() => _message.GetAnimation();
 
         public bool IsService() => _message.IsService();
         public bool IsSaved() => _message.IsSaved(_protoService.Options.MyId);
@@ -124,51 +123,6 @@ namespace Unigram.ViewModels
         public void Replace(Message message)
         {
             _message = message;
-        }
-
-        public bool UpdateFile(File file)
-        {
-            var message = _message.UpdateFile(file);
-            var generated = UpdateGeneratedFile(file);
-            var interaction = Interaction?.UpdateFile(file) ?? false;
-            var reply = ReplyToMessage?.UpdateFile(file) ?? false;
-
-            return message || generated || interaction || reply;
-        }
-
-        private bool UpdateGeneratedFile(File file)
-        {
-            switch (GeneratedContent)
-            {
-                case MessageAlbum album:
-                    return album.UpdateFile(file);
-                case MessageAnimation animation:
-                    return animation.UpdateFile(file);
-                case MessageAudio audio:
-                    return audio.UpdateFile(file);
-                case MessageDocument document:
-                    return document.UpdateFile(file);
-                case MessageGame game:
-                    return game.UpdateFile(file);
-                case MessageInvoice invoice:
-                    return invoice.UpdateFile(file);
-                case MessagePhoto photo:
-                    return photo.UpdateFile(file);
-                case MessageSticker sticker:
-                    return sticker.UpdateFile(file);
-                case MessageText text:
-                    return text.UpdateFile(file);
-                case MessageVideo video:
-                    return video.UpdateFile(file);
-                case MessageVideoNote videoNote:
-                    return videoNote.UpdateFile(file);
-                case MessageVoiceNote voiceNote:
-                    return voiceNote.UpdateFile(file);
-                case MessageChatChangePhoto chatChangePhoto:
-                    return chatChangePhoto.UpdateFile(file);
-                default:
-                    return false;
-            }
         }
 
         public bool IsShareable()

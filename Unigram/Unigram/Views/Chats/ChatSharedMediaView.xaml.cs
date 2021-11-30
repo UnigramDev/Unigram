@@ -4,13 +4,13 @@ using System.ComponentModel;
 using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Controls.Cells;
 using Unigram.Controls.Chats;
 using Unigram.Controls.Gallery;
 using Unigram.Converters;
 using Unigram.Navigation;
 using Unigram.ViewModels.Chats;
-using Unigram.ViewModels.Delegates;
 using Unigram.Views.Supergroups;
 using Unigram.Views.Users;
 using Windows.UI.Xaml;
@@ -21,7 +21,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Chats
 {
-    public sealed partial class ChatSharedMediaView : UserControl, INavigablePage, IFileDelegate
+    public sealed partial class ChatSharedMediaView : UserControl, INavigablePage
     {
         public ChatSharedMediaViewModel ViewModel => DataContext as ChatSharedMediaViewModel;
 
@@ -347,7 +347,7 @@ namespace Unigram.Views.Chats
             var element = sender as FrameworkElement;
             var message = element.Tag as Message;
 
-            var viewModel = new ChatGalleryViewModel(ViewModel.ProtoService, ViewModel.Aggregator, message.ChatId, 0, message, true);
+            var viewModel = new ChatGalleryViewModel(ViewModel.ProtoService, ViewModel.StorageService, ViewModel.Aggregator, message.ChatId, 0, message, true);
             await GalleryView.GetForCurrentView().ShowAsync(viewModel, () => element);
         }
 
@@ -474,21 +474,21 @@ namespace Unigram.Views.Chats
             AutomationProperties.SetName(args.ItemContainer,
                 Automation.GetSummary(ViewModel.ProtoService, message, true));
 
-            if (args.ItemContainer.ContentTemplateRoot is HyperlinkButton hyperlink)
+            if (args.ItemContainer.ContentTemplateRoot is Grid content)
             {
-                var grid = hyperlink.Content as Grid;
-                var photo = grid.Children[0] as Image;
+                var photo = content.Children[0] as ImageView;
+                photo.Tag = message;
 
                 if (message.Content is MessagePhoto photoMessage)
                 {
                     var small = photoMessage.Photo.GetSmall();
-                    photo.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, small.Photo, 0, 0);
+                    photo.SetSource(ViewModel.ProtoService, small.Photo);
                 }
                 else if (message.Content is MessageVideo videoMessage && videoMessage.Video.Thumbnail != null)
                 {
-                    photo.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, videoMessage.Video.Thumbnail.File, 0, 0);
+                    photo.SetSource(ViewModel.ProtoService, videoMessage.Video.Thumbnail.File);
 
-                    var panel = grid.Children[1] as Grid;
+                    var panel = content.Children[1] as Grid;
                     var duration = panel.Children[1] as TextBlock;
                     duration.Text = videoMessage.Video.GetDuration();
                 }
@@ -509,7 +509,7 @@ namespace Unigram.Views.Chats
             {
                 voiceCell.UpdateMessage(ViewModel.PlaybackService, ViewModel.ProtoService, message);
             }
-            else if (message.Content is MessageHeaderDate && args.ItemContainer.ContentTemplateRoot is Border content && content.Child is TextBlock header)
+            else if (message.Content is MessageHeaderDate && args.ItemContainer.ContentTemplateRoot is Border border && border.Child is TextBlock header)
             {
                 header.Text = Converter.MonthGrouping(Utils.UnixTimestampToDateTime(message.Date));
             }
@@ -517,110 +517,6 @@ namespace Unigram.Views.Chats
             if (args.ItemContainer.ContentTemplateRoot is FrameworkElement element)
             {
                 element.Tag = message;
-            }
-        }
-
-        public void UpdateFile(File file)
-        {
-            var viewModel = ViewModel;
-            if (viewModel == null)
-            {
-                return;
-            }
-
-            if (viewModel.Media != null && viewModel.Media.TryGetMessagesForFileId(file.Id, out IList<Message> messages))
-            {
-                foreach (var message in messages)
-                {
-                    message.UpdateFile(file);
-
-                    var container = ScrollingMedia.ContainerFromItem(message) as GridViewItem;
-                    var content = container?.ContentTemplateRoot as HyperlinkButton;
-
-                    if (content == null)
-                    {
-                        continue;
-                    }
-
-                    var grid = content.Content as Grid;
-                    var thumbnail = grid.Children[0] as Image;
-
-                    if (message.Content is MessagePhoto photo)
-                    {
-                        var small = photo.Photo.GetSmall();
-                        if (small != null && small.Photo.Id == file.Id && file.Local.IsDownloadingCompleted)
-                        {
-                            thumbnail.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, small.Photo, 0, 0);
-                        }
-                    }
-                    else if (message.Content is MessageVideo video)
-                    {
-                        var thumb = video.Video.Thumbnail;
-                        if (thumb != null && thumb.File.Id == file.Id && file.Local.IsDownloadingCompleted)
-                        {
-                            thumbnail.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, thumb.File, 0, 0);
-                        }
-                    }
-                }
-
-                if (file.Local.IsDownloadingCompleted && file.Remote.IsUploadingCompleted)
-                {
-                    messages.Clear();
-                }
-            }
-
-            if (viewModel.Files != null && viewModel.Files.TryGetMessagesForFileId(file.Id, out messages))
-            {
-                foreach (var message in messages)
-                {
-                    message.UpdateFile(file);
-
-                    var container = ScrollingFiles.ContainerFromItem(message) as ListViewItem;
-                    var content = container?.ContentTemplateRoot as SharedFileCell;
-
-                    if (container == null)
-                    {
-                        continue;
-                    }
-
-                    content.UpdateFile(message, file);
-                }
-            }
-
-            if (viewModel.Music != null && viewModel.Music.TryGetMessagesForFileId(file.Id, out messages))
-            {
-                foreach (var message in messages)
-                {
-                    message.UpdateFile(file);
-
-                    var container = ScrollingMusic.ContainerFromItem(message) as ListViewItem;
-                    var content = container?.ContentTemplateRoot as SharedFileCell;
-
-                    if (content == null)
-                    {
-                        continue;
-                    }
-
-                    content.UpdateFile(message, file);
-                }
-            }
-
-            if (viewModel.Voice != null && viewModel.Voice.TryGetMessagesForFileId(file.Id, out messages))
-            {
-                foreach (var message in messages)
-                {
-                    message.UpdateFile(file);
-
-                    var container = ScrollingVoice.ContainerFromItem(message) as ListViewItem;
-                    var content = container?.ContentTemplateRoot as SharedFileCell;
-
-                    if (content == null)
-                    {
-                        continue;
-                    }
-
-                    content.UpdateFile(message, file);
-                }
             }
         }
 

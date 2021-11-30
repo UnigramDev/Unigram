@@ -30,7 +30,7 @@ namespace Unigram.Controls
 
         public RecentUserCollection Items => _items;
 
-        public Func<MessageSender, ImageSource> GetPicture { get; set; }
+        public Action<ProfilePicture, MessageSender> SetPicture { get; set; }
 
         protected override void OnApplyTemplate()
         {
@@ -183,21 +183,15 @@ namespace Unigram.Controls
 
         private UIElement CreateContainer(object item)
         {
-            var picture = new Image();
+            var picture = new ProfilePicture();
+            picture.IsEnabled = false;
             picture.Width = 32;
             picture.Height = 32;
-            picture.Stretch = Stretch.UniformToFill;
 
-            if (item is MessageSender sender && GetPicture != null)
+            if (item is MessageSender sender)
             {
-                picture.Source = GetPicture(sender);
+                SetPicture?.Invoke(picture, sender);
             }
-
-            var rounder = new Border();
-            rounder.Width = 32;
-            rounder.Height = 32;
-            rounder.CornerRadius = new CornerRadius(32 / 2);
-            rounder.Child = picture;
 
             var container = new Border();
             container.Width = 36;
@@ -207,7 +201,7 @@ namespace Unigram.Controls
             container.BorderBrush = new SolidColorBrush(Colors.White);
             container.BorderThickness = new Thickness(2);
             container.CornerRadius = new CornerRadius(36 / 2);
-            container.Child = rounder;
+            container.Child = picture;
             container.Tag = item;
 
             return container;

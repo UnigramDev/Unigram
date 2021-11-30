@@ -81,13 +81,15 @@ namespace Unigram.Common
             set => _popupPanel.DownloadFile = value;
         }
 
+
+        public Func<int> SessionId
+        {
+            get => _popupPanel.SessionId;
+            set => _popupPanel.SessionId = value;
+        }
+
         public Action Opening { get; set; }
         public Action Closing { get; set; }
-
-        public void UpdateFile(File file)
-        {
-            _popupPanel.UpdateFile(file);
-        }
 
         private PointerEventHandler _handlerPressed;
         private PointerEventHandler _handlerReleased;

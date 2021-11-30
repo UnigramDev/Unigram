@@ -71,7 +71,7 @@ namespace Unigram.Views.Supergroups
 
         public void UpdateChatPhoto(Chat chat)
         {
-            Photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 64);
+            Photo.SetChat(ViewModel.ProtoService, chat, 64);
         }
 
         public void UpdateSupergroup(Chat chat, Supergroup group)

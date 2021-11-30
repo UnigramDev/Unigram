@@ -65,11 +65,6 @@ namespace Unigram.Common
                 }));
         }
 
-        public void UpdateFile(File file)
-        {
-            _source.UpdateFile(file);
-        }
-
         public void Dispose()
         {
             if (_fileStream != null)
@@ -133,6 +128,11 @@ namespace Unigram.Common
 
             _file = file;
             _chunk = (int)(file.Size / (duration / 10d));
+
+            if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
+            {
+                UpdateManager.Subscribe(this, protoService, file, UpdateFile);
+            }
         }
 
         public void SeekCallback(int offset)
@@ -179,14 +179,12 @@ namespace Unigram.Common
 
         public int Id => _file.Id;
 
-        public void UpdateFile(File file)
+        private void UpdateFile(object target, File file)
         {
             if (file.Id != _file.Id)
             {
                 return;
             }
-
-            _file.Update(file);
 
             var enough = file.Local.DownloadedPrefixSize >= _bufferSize;
             var end = file.Local.DownloadOffset + file.Local.DownloadedPrefixSize == file.Size;

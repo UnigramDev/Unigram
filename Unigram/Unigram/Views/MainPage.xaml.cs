@@ -66,7 +66,6 @@ namespace Unigram.Views
         IHandle<UpdateChatFilters>,
         IHandle<UpdateChatNotificationSettings>,
         IHandle<UpdatePasscodeLock>,
-        IHandle<UpdateFile>,
         IHandle<UpdateConnectionState>,
         IHandle<UpdateOption>,
         IHandle<UpdateCallDialog>,
@@ -371,39 +370,6 @@ namespace Unigram.Views
             this.BeginOnUIThread(() =>
             {
                 Lock.Visibility = update.IsEnabled ? Visibility.Visible : Visibility.Collapsed;
-            });
-        }
-
-        public void Handle(UpdateFile update)
-        {
-            this.BeginOnUIThread(() =>
-            {
-                if (update.File.Local.IsDownloadingCompleted && ViewModel.ProtoService.TryGetChatForFileId(update.File.Id, out Chat chat))
-                {
-                    var container = ChatsList.ContainerFromItem(chat) as SelectorItem;
-                    if (container != null)
-                    {
-                        var chatView = container.ContentTemplateRoot as ChatCell;
-                        if (chatView != null)
-                        {
-                            chatView.UpdateFile(chat, update.File);
-                        }
-                    }
-                }
-
-                if (update.File.Local.IsDownloadingCompleted && ViewModel.ProtoService.TryGetUserForFileId(update.File.Id, out User user))
-                {
-                    var container = ChatsList.ContainerFromItem(user) as SelectorItem;
-                    if (container != null)
-                    {
-                        var content = container.ContentTemplateRoot as Grid;
-
-                        var photo = content.Children[0] as ProfilePicture;
-                        photo.Source = PlaceholderHelper.GetUser(null, user, 36);
-                    }
-                }
-
-                SettingsView?.UpdateFile(update.File);
             });
         }
 
@@ -824,7 +790,7 @@ namespace Unigram.Views
             if (show && Playback == null)
             {
                 FindName(nameof(Playback));
-                Playback.Update(ViewModel.ProtoService, ViewModel.PlaybackService, ViewModel.NavigationService, ViewModel.Aggregator);
+                Playback.Update(ViewModel.ProtoService, ViewModel.PlaybackService, ViewModel.NavigationService);
             }
 
             return;
@@ -2124,11 +2090,11 @@ namespace Unigram.Views
                     var photo = content.Children[0] as ProfilePicture;
                     if (result.Chat != null)
                     {
-                        photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, result.Chat, 36);
+                        photo.SetChat(ViewModel.ProtoService, result.Chat, 36);
                     }
                     else if (result.User != null)
                     {
-                        photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, result.User, 36);
+                        photo.SetUser(ViewModel.ProtoService, result.User, 36);
                     }
                 }
 
@@ -2190,7 +2156,7 @@ namespace Unigram.Views
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
+                photo.SetUser(ViewModel.ProtoService, user, 36);
             }
 
             if (args.Phase < 2)
@@ -2299,7 +2265,7 @@ namespace Unigram.Views
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
+                photo.SetUser(ViewModel.ProtoService, user, 36);
             }
 
             if (args.Phase < 2)
@@ -2328,7 +2294,7 @@ namespace Unigram.Views
             var photo = grid.Children[0] as ProfilePicture;
             var title = content.Children[1] as TextBlock;
 
-            photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 48);
+            photo.SetChat(ViewModel.ProtoService, chat, 48);
             title.Text = ViewModel.ProtoService.GetTitle(chat, true);
 
             var badge = grid.Children[1] as Border;

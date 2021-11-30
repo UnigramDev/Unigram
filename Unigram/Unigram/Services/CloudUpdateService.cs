@@ -19,7 +19,7 @@ namespace Unigram.Services
         //Task<IList<CloudUpdate>> GetHistoryAsync();
     }
 
-    public class CloudUpdateService : ICloudUpdateService, IHandle<UpdateFile>
+    public class CloudUpdateService : ICloudUpdateService
     {
         private readonly FileContext<CloudUpdate> _mapping = new FileContext<CloudUpdate>();
 
@@ -38,8 +38,6 @@ namespace Unigram.Services
             _protoService = protoService;
             _networkService = networkService;
             _aggregator = aggregator;
-
-            _aggregator.Subscribe(this);
         }
 
         public CloudUpdate NextUpdate => _nextUpdate;
@@ -115,6 +113,7 @@ namespace Unigram.Services
                     if (epoch.TotalDays >= 3 || !_networkService.IsMetered)
                     {
                         _protoService.DownloadFile(cloud.Document.Id, 16);
+                        UpdateManager.Subscribe(cloud, _protoService, cloud.Document, UpdateFile, true);
                     }
                 }
             }
@@ -125,35 +124,26 @@ namespace Unigram.Services
             _checking = false;
         }
 
-        public async void Handle(UpdateFile update)
+        private async void UpdateFile(object target, File file)
         {
-            var file = update.File;
-            if (_mapping.TryGetValue(file.Id, out List<CloudUpdate> sets))
+            var cloud = target as CloudUpdate;
+            if (cloud == null)
             {
-                foreach (var set in sets)
+                return;
+            }
+
+            if (file.Local.IsDownloadingCompleted)
+            {
+                var folder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("updates", CreationCollisionOption.OpenIfExists);
+                var result = await TryCopyPartLocally(folder, file.Local.Path, cloud.Version);
+
+                var current = Package.Current.Id.Version.ToVersion();
+                if (current < cloud.Version)
                 {
-                    set.UpdateFile(file);
-                }
+                    _nextUpdate = cloud;
+                    _nextUpdate.File = result;
 
-                var cloud = sets.FirstOrDefault();
-                if (cloud == null)
-                {
-                    return;
-                }
-
-                if (file.Local.IsDownloadingCompleted)
-                {
-                    var folder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("updates", CreationCollisionOption.OpenIfExists);
-                    var result = await TryCopyPartLocally(folder, file.Local.Path, cloud.Version);
-
-                    var current = Package.Current.Id.Version.ToVersion();
-                    if (current < cloud.Version)
-                    {
-                        _nextUpdate = cloud;
-                        _nextUpdate.File = result;
-
-                        _aggregator.Publish(new UpdateAppVersion(cloud));
-                    }
+                    _aggregator.Publish(new UpdateAppVersion(cloud));
                 }
             }
         }
@@ -229,8 +219,6 @@ namespace Unigram.Services
                         Version = version,
                         Document = document.Document.DocumentValue
                     };
-
-                    _mapping[document.Document.DocumentValue.Id].Add(set);
 
                     var current = Package.Current.Id.Version.ToVersion();
                     var folder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("updates", CreationCollisionOption.OpenIfExists);
@@ -330,7 +318,6 @@ namespace Unigram.Services
                         Date = message.Date
                     };
 
-                    _mapping[document.Document.DocumentValue.Id].Add(set);
                     dict.Add(set);
                 }
             }

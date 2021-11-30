@@ -8,7 +8,7 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed partial class DocumentPhotoContent : AspectView, IContentWithFile
+    public sealed partial class DocumentPhotoContent : AspectView, IContent
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
@@ -66,10 +66,6 @@ namespace Unigram.Controls.Messages.Content
             }
         }
 
-        public void UpdateMessageContentOpened(MessageViewModel message)
-        {
-        }
-
         public void UpdateFile(MessageViewModel message, File file)
         {
             var photo = GetContent(message.Content);
@@ -119,7 +115,7 @@ namespace Unigram.Controls.Messages.Content
                 Button.Opacity = 1;
                 Overlay.Opacity = 0;
 
-                if (message.Delegate.CanBeDownloaded(message))
+                if (message.Delegate.CanBeDownloaded(photo, file))
                 {
                     _message.ProtoService.DownloadFile(file.Id, 32);
                 }

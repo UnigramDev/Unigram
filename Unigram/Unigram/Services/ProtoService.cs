@@ -116,9 +116,6 @@ namespace Unigram.Services
         bool TryGetSupergroupFull(long id, out SupergroupFullInfo value);
         bool TryGetSupergroupFull(Chat chat, out SupergroupFullInfo value);
 
-        bool TryGetChatForFileId(int fileId, out Chat chat);
-        bool TryGetUserForFileId(int fileId, out User user);
-
         bool IsAnimationSaved(int id);
         bool IsStickerFavorite(int id);
         bool IsStickerSetInstalled(long id);
@@ -163,9 +160,6 @@ namespace Unigram.Services
         private readonly Dictionary<int, ChatListUnreadCount> _unreadCounts = new Dictionary<int, ChatListUnreadCount>();
 
         private readonly Dictionary<int, File> _files = new Dictionary<int, File>();
-
-        private readonly FlatFileContext<long> _chatsMap = new FlatFileContext<long>();
-        private readonly FlatFileContext<long> _usersMap = new FlatFileContext<long>();
 
         private IList<string> _diceEmojis;
 
@@ -510,9 +504,6 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 
             _unreadCounts.Clear();
 
-            _chatsMap.Clear();
-            _usersMap.Clear();
-
             _diceEmojis = null;
 
             _savedAnimations = null;
@@ -555,12 +546,23 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 
         public void Send(Function function, Action<BaseObject> handler = null)
         {
-            _client.Send(function, handler);
+            if (handler != null)
+            {
+                _client.Send(function, response =>
+                {
+                    ProcessFiles(response);
+                    handler(response);
+                });
+            }
+            else
+            {
+                _client.Send(function);
+            }
         }
 
         public Task<BaseObject> SendAsync(Function function)
         {
-            return _client.SendAsync(function);
+            return _client.SendAsync(function, ProcessFiles);
         }
 
 
@@ -766,30 +768,6 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             }
 
             return -1;
-        }
-
-        public bool TryGetChatForFileId(int fileId, out Chat chat)
-        {
-            if (_chatsMap.TryGetValue(fileId, out long chatId))
-            {
-                chat = GetChat(chatId);
-                return true;
-            }
-
-            chat = null;
-            return false;
-        }
-
-        public bool TryGetUserForFileId(int fileId, out User user)
-        {
-            if (_usersMap.TryGetValue(fileId, out long userId))
-            {
-                user = GetUser(userId);
-                return true;
-            }
-
-            user = null;
-            return false;
         }
 
 
@@ -1385,6 +1363,8 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 
         public void OnResult(BaseObject update)
         {
+            ProcessFiles(update);
+
             if (update is UpdateAuthorizationState updateAuthorizationState)
             {
                 switch (updateAuthorizationState.AuthorizationState)
@@ -1515,12 +1495,6 @@ Read more about how to update your device [here](https://support.microsoft.com/h
                 {
                     value.Photo = updateChatPhoto.Photo;
                 }
-
-                if (updateChatPhoto.Photo != null)
-                {
-                    _chatsMap[updateChatPhoto.Photo.Small.Id] = updateChatPhoto.ChatId;
-                    _chatsMap[updateChatPhoto.Photo.Big.Id] = updateChatPhoto.ChatId;
-                }
             }
             else if (update is UpdateChatPosition updateChatPosition)
             {
@@ -1628,17 +1602,10 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             }
             else if (update is UpdateFile updateFile)
             {
-                if (TryGetChatForFileId(updateFile.File.Id, out Chat chat))
-                {
-                    chat.UpdateFile(updateFile.File);
-                }
+                EventAggregator.Default.Send(updateFile.File, $"{SessionId}_{updateFile.File.Id}",
+                    updateFile.File.Local.IsDownloadingCompleted);
 
-                if (TryGetUserForFileId(updateFile.File.Id, out User user))
-                {
-                    user.UpdateFile(updateFile.File);
-                }
-
-                _files[updateFile.File.Id] = updateFile.File;
+                return;
             }
             else if (update is UpdateFileGenerationStart updateFileGenerationStart)
             {
@@ -1713,28 +1680,6 @@ Read more about how to update your device [here](https://support.microsoft.com/h
                 Monitor.Enter(updateNewChat.Chat);
                 SetChatPositions(updateNewChat.Chat, updateNewChat.Chat.Positions);
                 Monitor.Exit(updateNewChat.Chat);
-
-                if (updateNewChat.Chat.Photo != null)
-                {
-                    if (!(updateNewChat.Chat.Photo.Small.Local.IsDownloadingCompleted && updateNewChat.Chat.Photo.Small.Remote.IsUploadingCompleted))
-                    {
-                        _chatsMap[updateNewChat.Chat.Photo.Small.Id] = updateNewChat.Chat.Id;
-                    }
-
-                    if (!(updateNewChat.Chat.Photo.Big.Local.IsDownloadingCompleted && updateNewChat.Chat.Photo.Big.Remote.IsUploadingCompleted))
-                    {
-                        _chatsMap[updateNewChat.Chat.Photo.Big.Id] = updateNewChat.Chat.Id;
-                    }
-                }
-
-                //if (updateNewChat.Chat.Type is ChatTypePrivate privata)
-                //{
-                //    _userToChat[privata.UserId] = updateNewChat.Chat.Id;
-                //}
-                //else if (updateNewChat.Chat.Type is ChatTypeSecret secret)
-                //{
-                //    _secretChatToChat[secret.SecretChatId] = updateNewChat.Chat.Id;
-                //}
             }
             else if (update is UpdateNewMessage updateNewMessage)
             {
@@ -1815,19 +1760,6 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             else if (update is UpdateUser updateUser)
             {
                 _users[updateUser.User.Id] = updateUser.User;
-
-                if (updateUser.User.ProfilePhoto != null)
-                {
-                    if (!(updateUser.User.ProfilePhoto.Small.Local.IsDownloadingCompleted && updateUser.User.ProfilePhoto.Small.Remote.IsUploadingCompleted))
-                    {
-                        _usersMap[updateUser.User.ProfilePhoto.Small.Id] = updateUser.User.Id;
-                    }
-
-                    if (!(updateUser.User.ProfilePhoto.Big.Local.IsDownloadingCompleted && updateUser.User.ProfilePhoto.Big.Remote.IsUploadingCompleted))
-                    {
-                        _usersMap[updateUser.User.ProfilePhoto.Big.Id] = updateUser.User.Id;
-                    }
-                }
             }
             else if (update is UpdateChatAction updateUserChatAction)
             {
@@ -1886,26 +1818,6 @@ Read more about how to update your device [here](https://support.microsoft.com/h
         }
     }
 
-    public class FlatFileContext<T> : Dictionary<int, T>
-    {
-        //public new T this[long id]
-        //{
-        //    get
-        //    {
-        //        if (TryGetValue(id, out T item))
-        //        {
-        //            return item;
-        //        }
-
-        //        return this[id] = new List<T>();
-        //    }
-        //    set
-        //    {
-        //        base[id] = value;
-        //    }
-        //}
-    }
-
     static class TdExtensions
     {
         public static void Send(this Client client, Function function, Action<BaseObject> handler)
@@ -1925,9 +1837,9 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             client.Send(function, null);
         }
 
-        public static Task<BaseObject> SendAsync(this Client client, Function function)
+        public static Task<BaseObject> SendAsync(this Client client, Function function, Action<BaseObject> closure)
         {
-            var tsc = new TdCompletionSource();
+            var tsc = new TdCompletionSource(closure);
             client.Send(function, tsc);
 
             return tsc.Task;
@@ -1972,8 +1884,16 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 
     class TdCompletionSource : TaskCompletionSource<BaseObject>, ClientResultHandler
     {
+        private readonly Action<BaseObject> _closure;
+
+        public TdCompletionSource(Action<BaseObject> closure)
+        {
+            _closure = closure;
+        }
+
         public void OnResult(BaseObject result)
         {
+            _closure(result);
             SetResult(result);
         }
     }

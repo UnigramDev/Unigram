@@ -14,6 +14,9 @@ namespace Unigram.Controls.Messages.Content
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
+        private string _fileToken;
+        private string _thumbnailToken;
+
         public PhotoContent(MessageViewModel message)
         {
             _message = message;
@@ -73,15 +76,13 @@ namespace Unigram.Controls.Messages.Content
 
             //UpdateMessageContentOpened(message);
 
-            var small = photo.GetSmall();
-            var big = photo.GetBig();
+            var small = photo.GetSmall()?.Photo;
+            var big = photo.GetBig()?.Photo;
 
-            UpdateThumbnail(message, small, photo.Minithumbnail);
+            UpdateThumbnail(message, small, photo.Minithumbnail, true);
 
-            if (big != null)
-            {
-                UpdateFile(message, big.Photo);
-            }
+            UpdateManager.Subscribe(this, message, big, ref _fileToken, UpdateFile);
+            UpdateFile(message, big);
         }
 
         public void Mockup(MessagePhoto photo)
@@ -105,7 +106,12 @@ namespace Unigram.Controls.Messages.Content
             }
         }
 
-        public void UpdateFile(MessageViewModel message, File file)
+        private void UpdateFile(object target, File file)
+        {
+            UpdateFile(_message, file);
+        }
+
+        private void UpdateFile(MessageViewModel message, File file)
         {
             var photo = GetContent(message.Content);
             if (photo == null || !_templateApplied)
@@ -116,12 +122,7 @@ namespace Unigram.Controls.Messages.Content
             var small = photo.GetSmall();
             var big = photo.GetBig();
 
-            if (small != null && small.Photo.Id != big.Photo.Id && small.Photo.Id == file.Id)
-            {
-                UpdateThumbnail(message, small, null);
-                return;
-            }
-            else if (big == null || big.Photo.Id != file.Id)
+            if (big == null || big.Photo.Id != file.Id)
             {
                 return;
             }
@@ -163,7 +164,7 @@ namespace Unigram.Controls.Messages.Content
                 Button.Opacity = 1;
                 Overlay.Opacity = 0;
 
-                if (message.Delegate.CanBeDownloaded(message))
+                if (message.Delegate.CanBeDownloaded(photo, file))
                 {
                     _message.ProtoService.DownloadFile(file.Id, 32);
                 }
@@ -236,23 +237,38 @@ namespace Unigram.Controls.Messages.Content
             }
         }
 
-        private void UpdateThumbnail(MessageViewModel message, PhotoSize small, Minithumbnail minithumbnail)
+        private void UpdateThumbnail(object target, File file)
         {
-            if (small != null)
+            var photo = GetContent(_message.Content);
+            if (photo == null || !_templateApplied)
             {
-                var file = small.Photo;
+                return;
+            }
+
+            UpdateThumbnail(_message, file, photo.Minithumbnail, false);
+        }
+
+        private void UpdateThumbnail(MessageViewModel message, File file, Minithumbnail minithumbnail, bool download)
+        {
+            if (file != null)
+            {
                 if (file.Local.IsDownloadingCompleted)
                 {
                     LayoutRoot.Background = new ImageBrush { ImageSource = PlaceholderHelper.GetBlurred(file.Local.Path, message.IsSecret() ? 15 : 3), Stretch = Stretch.UniformToFill };
                 }
-                else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                else if (download)
                 {
-                    if (minithumbnail != null)
+                    if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                     {
-                        LayoutRoot.Background = new ImageBrush { ImageSource = PlaceholderHelper.GetBlurred(minithumbnail.Data, message.IsSecret() ? 15 : 3), Stretch = Stretch.UniformToFill };
+                        if (minithumbnail != null)
+                        {
+                            LayoutRoot.Background = new ImageBrush { ImageSource = PlaceholderHelper.GetBlurred(minithumbnail.Data, message.IsSecret() ? 15 : 3), Stretch = Stretch.UniformToFill };
+                        }
+
+                        message.ProtoService.DownloadFile(file.Id, 1);
                     }
 
-                    message.ProtoService.DownloadFile(file.Id, 1);
+                    UpdateManager.Subscribe(this, message, file, ref _thumbnailToken, UpdateThumbnail, true);
                 }
             }
             else if (minithumbnail != null)
@@ -315,7 +331,6 @@ namespace Unigram.Controls.Messages.Content
 
                 return;
             }
-
 
             var file = big.Photo;
             if (file.Local.IsDownloadingActive)

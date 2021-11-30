@@ -7,7 +7,6 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Gallery;
-using Unigram.Services;
 using Unigram.Services.Settings;
 using Unigram.Services.Updates;
 using Unigram.ViewModels.Chats;
@@ -23,100 +22,10 @@ namespace Unigram.ViewModels
 {
     public partial class DialogViewModel : IMessageDelegate
     {
-        private readonly FileContext<MessageViewModel> _filesMap = new FileContext<MessageViewModel>();
-        private readonly FileContext<MessageViewModel> _photosMap = new FileContext<MessageViewModel>();
-
-        public bool CanBeDownloaded(MessageViewModel message)
+        public bool CanBeDownloaded(object content, File file)
         {
-            var content = message.Content as object;
-            if (content is MessageAnimation animationMessage)
-            {
-                content = animationMessage.Animation;
-            }
-            else if (content is MessageAudio audioMessage)
-            {
-                content = audioMessage.Audio;
-            }
-            else if (content is MessageDocument documentMessage)
-            {
-                content = documentMessage.Document;
-            }
-            else if (content is MessageGame gameMessage)
-            {
-                if (gameMessage.Game.Animation != null)
-                {
-                    content = gameMessage.Game.Animation;
-                }
-                else if (gameMessage.Game.Photo != null)
-                {
-                    content = gameMessage.Game.Photo;
-                }
-            }
-            else if (content is MessageInvoice invoiceMessage)
-            {
-                content = invoiceMessage.Photo;
-            }
-            else if (content is MessageLocation locationMessage)
-            {
-                content = locationMessage.Location;
-            }
-            else if (content is MessagePhoto photoMessage)
-            {
-                content = photoMessage.Photo;
-            }
-            else if (content is MessageSticker stickerMessage)
-            {
-                content = stickerMessage.Sticker;
-            }
-            else if (content is MessageText textMessage)
-            {
-                if (textMessage?.WebPage?.Animation != null)
-                {
-                    content = textMessage?.WebPage?.Animation;
-                }
-                else if (textMessage?.WebPage?.Document != null)
-                {
-                    content = textMessage?.WebPage?.Document;
-                }
-                else if (textMessage?.WebPage?.Sticker != null)
-                {
-                    content = textMessage?.WebPage?.Sticker;
-                }
-                else if (textMessage?.WebPage?.Video != null)
-                {
-                    content = textMessage?.WebPage?.Video;
-                }
-                else if (textMessage?.WebPage?.VideoNote != null)
-                {
-                    content = textMessage?.WebPage?.VideoNote;
-                }
-                // PHOTO SHOULD ALWAYS BE AT THE END!
-                else if (textMessage?.WebPage?.Photo != null)
-                {
-                    content = textMessage?.WebPage?.Photo;
-                }
-            }
-            else if (content is MessageVideo videoMessage)
-            {
-                content = videoMessage.Video;
-            }
-            else if (content is MessageVideoNote videoNoteMessage)
-            {
-                content = videoNoteMessage.VideoNote;
-            }
-            else if (content is MessageVoiceNote voiceNoteMessage)
-            {
-                content = voiceNoteMessage.VoiceNote;
-            }
-
-            var file = message.GetFile();
-            if (file != null && ProtoService.IsDownloadFileCanceled(file.Id))
-            {
-                return false;
-            }
-
-            var chat = _chat;
-            if (chat == null)
+           var chat = _chat;
+            if (chat == null || ProtoService.IsDownloadFileCanceled(file.Id))
             {
                 return false;
             }
@@ -188,35 +97,15 @@ namespace Unigram.ViewModels
 
         public void DownloadFile(MessageViewModel message, File file)
         {
-            _filesMap[file.Id].Add(message);
             ProtoService.DownloadFile(file.Id, 32);
         }
 
-        public bool TryGetMessagesForFileId(int fileId, out IList<MessageViewModel> items)
+
+
+        public void ViewVisibleMessages(bool intermediate)
         {
-            if (_filesMap.TryGetValue(fileId, out List<MessageViewModel> messages))
-            {
-                items = messages;
-                return true;
-            }
-
-            items = null;
-            return false;
+            Delegate?.ViewVisibleMessages(intermediate);
         }
-
-        public bool TryGetMessagesForPhotoId(int fileId, out IList<MessageViewModel> items)
-        {
-            if (_photosMap.TryGetValue(fileId, out List<MessageViewModel> messages))
-            {
-                items = messages;
-                return true;
-            }
-
-            items = null;
-            return false;
-        }
-
-
 
         public void ReplyToMessage(MessageViewModel message)
         {
@@ -555,7 +444,7 @@ namespace Unigram.ViewModels
             var webPage = message.Content is MessageText text ? text.WebPage : null;
             if (webPage != null && webPage.IsInstantGallery())
             {
-                viewModel = await InstantGalleryViewModel.CreateAsync(ProtoService, Aggregator, message, webPage);
+                viewModel = await InstantGalleryViewModel.CreateAsync(ProtoService, StorageService, Aggregator, message, webPage);
 
                 if (viewModel.Items.IsEmpty())
                 {
@@ -573,11 +462,11 @@ namespace Unigram.ViewModels
                 {
                     if ((message.Content is MessageAnimation || message.Content is MessagePhoto || message.Content is MessageVideo) && !message.IsSecret())
                     {
-                        viewModel = new ChatGalleryViewModel(ProtoService, Aggregator, message.ChatId, _threadId, message.Get());
+                        viewModel = new ChatGalleryViewModel(ProtoService, _storageService, Aggregator, message.ChatId, _threadId, message.Get());
                     }
                     else
                     {
-                        viewModel = new SingleGalleryViewModel(ProtoService, Aggregator, new GalleryMessage(ProtoService, message.Get()));
+                        viewModel = new SingleGalleryViewModel(ProtoService, _storageService, Aggregator, new GalleryMessage(ProtoService, message.Get()));
                     }
                 }
 

@@ -1,7 +1,6 @@
 ﻿using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Users;
 using Unigram.Views.Chats;
 using Windows.UI.Xaml;
@@ -9,7 +8,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Users
 {
-    public sealed partial class UserCommonChatsView : UserControl, IProfileTab, IFileDelegate
+    public sealed partial class UserCommonChatsView : UserControl, IProfileTab
     {
         public UserCommonChatsViewModel ViewModel => DataContext as UserCommonChatsViewModel;
 
@@ -90,7 +89,7 @@ namespace Unigram.Views.Users
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 36);
+                photo.SetChat(ViewModel.ProtoService, chat, 36);
             }
 
             if (args.Phase < 2)
@@ -99,42 +98,6 @@ namespace Unigram.Views.Users
             }
 
             args.Handled = true;
-        }
-
-        public void UpdateFile(File file)
-        {
-            this.BeginOnUIThread(() =>
-            {
-                var panel = List.ItemsPanelRoot as ItemsStackPanel;
-                if (panel == null)
-                {
-                    return;
-                }
-
-                if (panel.FirstCacheIndex < 0)
-                {
-                    return;
-                }
-
-                //for (int i = panel.FirstCacheIndex; i <= panel.LastCacheIndex; i++)
-                for (int i = 0; i < ViewModel.Items.Count; i++)
-                {
-                    var chat = ViewModel.Items[i];
-                    if (chat.UpdateFile(file))
-                    {
-                        var container = List.ContainerFromItem(chat) as ListViewItem;
-                        if (container == null)
-                        {
-                            return;
-                        }
-
-                        var content = container.ContentTemplateRoot as Grid;
-
-                        var photo = content.Children[0] as ProfilePicture;
-                        photo.Source = PlaceholderHelper.GetChat(null, chat, 36);
-                    }
-                }
-            });
         }
     }
 }

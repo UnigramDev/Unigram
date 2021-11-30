@@ -48,18 +48,20 @@ namespace Unigram.Controls
             _parent = parent;
             ElementCompositionPreview.SetIsTranslationEnabled(parent, true);
 
-            RecentUsers.GetPicture = sender =>
+            RecentUsers.SetPicture = (photo, sender) =>
             {
                 if (protoService.TryGetUser(sender, out User user))
                 {
-                    return PlaceholderHelper.GetUser(protoService, user, 32);
+                    photo.SetUser(protoService, user, 32);
                 }
                 else if (protoService.TryGetChat(sender, out Chat chat))
                 {
-                    return PlaceholderHelper.GetChat(protoService, chat, 32);
+                    photo.SetChat(protoService, chat, 32);
                 }
-
-                return null;
+                else
+                {
+                    photo.Source = null;
+                }
             };
         }
 

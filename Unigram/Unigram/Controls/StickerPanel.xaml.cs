@@ -6,7 +6,6 @@ using Unigram.Controls.Drawers;
 using Unigram.Services;
 using Unigram.Services.Settings;
 using Unigram.ViewModels;
-using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Drawers;
 using Unigram.Views;
 using Windows.Foundation;
@@ -15,7 +14,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls
 {
-    public sealed partial class StickerPanel : UserControl, IFileDelegate
+    public sealed partial class StickerPanel : UserControl
     {
         public new FrameworkElement Shadow => ShadowElement;
         public FrameworkElement Presenter => BackgroundElement;
@@ -49,17 +48,6 @@ namespace Unigram.Controls
                     Pivot.SelectedIndex = 2;
                     break;
             }
-        }
-
-        public void UpdateFile(File file)
-        {
-            if (!file.Local.IsDownloadingCompleted)
-            {
-                return;
-            }
-
-            StickersRoot?.UpdateFile(file);
-            AnimationsRoot?.UpdateFile(file);
         }
 
         private void Emojis_ItemClick(object sender, ItemClickEventArgs e)

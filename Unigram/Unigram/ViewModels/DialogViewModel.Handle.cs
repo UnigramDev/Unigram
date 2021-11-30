@@ -59,9 +59,7 @@ namespace Unigram.ViewModels
         IHandle<UpdateChatNotificationSettings>,
         IHandle<UpdateChatOnlineMemberCount>,
 
-        IHandle<UpdateGroupCall>,
-
-        IHandle<UpdateFile>
+        IHandle<UpdateGroupCall>
     {
 
         public void Handle(UpdateChatAction update)
@@ -582,8 +580,6 @@ namespace Unigram.ViewModels
                             InsertMessageInOrder(Items, message);
                         }
                     }
-
-                    ProcessFiles(_chat, new[] { message });
                 }, (bubble, message, reply) =>
                 {
                     if (reply)
@@ -711,7 +707,6 @@ namespace Unigram.ViewModels
                 {
                     message.Replace(update.Message);
                     message.GeneratedContentUnread = true;
-                    ProcessFiles(_chat, new[] { message });
                 }, (bubble, message) =>
                 {
                     bubble.UpdateMessage(message);
@@ -747,8 +742,6 @@ namespace Unigram.ViewModels
             {
                 return;
             }
-
-            BeginOnUIThread(() => Delegate?.UpdateFile(update.File));
 
             var header = _composerHeader;
             if (header?.EditingMessageMedia != null && header?.EditingMessageFileId == update.File.Id && update.File.Size == update.File.Remote.UploadedSize)

@@ -222,7 +222,7 @@ namespace Unigram.Views
                     return;
                 }
 
-                var viewModel = new UserPhotosViewModel(ViewModel.ProtoService, ViewModel.Aggregator, user, userFull);
+                var viewModel = new UserPhotosViewModel(ViewModel.ProtoService, ViewModel.StorageService, ViewModel.Aggregator, user, userFull);
                 await GalleryView.GetForCurrentView().ShowAsync(viewModel, () => Photo);
             }
         }
@@ -255,7 +255,7 @@ namespace Unigram.Views
 
         public void UpdateUser(Chat chat, User user, bool secret)
         {
-            Photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 64);
+            Photo.SetUser(ViewModel.ProtoService, user, 64);
             Title.Text = user.GetFullName();
 
             Verified.Visibility = user.IsVerified ? Visibility.Visible : Visibility.Collapsed;
@@ -295,28 +295,6 @@ namespace Unigram.Views
 
         public void UpdateChatPhoto(Chat chat)
         {
-        }
-
-
-
-        public void UpdateFile(File file)
-        {
-            var chat = ViewModel.Chat;
-            if (chat == null)
-            {
-                return;
-            }
-
-            var user = ViewModel.CacheService.GetUser(chat);
-            if (user == null)
-            {
-                return;
-            }
-
-            if (user.UpdateFile(file))
-            {
-                Photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 64);
-            }
         }
 
         #endregion

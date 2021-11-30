@@ -33,9 +33,11 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Gallery
 {
-    public sealed partial class GalleryView : OverlayPage, INavigatingPage, IGalleryDelegate, IFileDelegate, IHandle<UpdateFile>, IHandle<UpdateDeleteMessages>, IHandle<UpdateMessageContent>
+    public sealed partial class GalleryView : OverlayPage, INavigatingPage, IGalleryDelegate, IHandle<UpdateDeleteMessages>, IHandle<UpdateMessageContent>
     {
         public GalleryViewModelBase ViewModel => DataContext as GalleryViewModelBase;
+
+        public IProtoService ProtoService => ViewModel.ProtoService;
 
         private Func<FrameworkElement> _closing;
 
@@ -155,12 +157,6 @@ namespace Unigram.Controls.Gallery
             batch.End();
         }
 
-        public void Handle(UpdateFile update)
-        {
-            _fileStream?.UpdateFile(update.File);
-            this.BeginOnUIThread(() => UpdateFile(update.File));
-        }
-
         public void Handle(UpdateDeleteMessages update)
         {
             this.BeginOnUIThread(() =>
@@ -183,42 +179,6 @@ namespace Unigram.Controls.Gallery
                     Hide();
                 }
             });
-        }
-
-        public void UpdateFile(File file)
-        {
-            var viewModel = ViewModel;
-            if (viewModel == null)
-            {
-                return;
-            }
-
-            foreach (var item in viewModel.Items)
-            {
-                if (item.UpdateFile(file))
-                {
-                    if (Element0.Item == item)
-                    {
-                        Element0.UpdateFile(item, file);
-                    }
-
-                    if (Element1.Item == item)
-                    {
-                        Element1.UpdateFile(item, file);
-                    }
-
-                    if (Element2.Item == item)
-                    {
-                        Element2.UpdateFile(item, file);
-                    }
-
-                    if (_fileStream?.FileId == file.Id)
-                    {
-                        //Transport.DownloadMaximum = file.Size;
-                        //Transport.DownloadValue = file.Local.DownloadOffset + file.Local.DownloadedPrefixSize;
-                    }
-                }
-            }
         }
 
         public void OpenFile(GalleryContent item, File file)
@@ -325,7 +285,6 @@ namespace Unigram.Controls.Gallery
                     _compactLifetime = null;
                 }
 
-                parameter.Delegate = this;
                 parameter.Items.CollectionChanged -= OnCollectionChanged;
                 parameter.Items.CollectionChanged += OnCollectionChanged;
 
@@ -396,8 +355,6 @@ namespace Unigram.Controls.Gallery
             if (ViewModel != null)
             {
                 ViewModel.Aggregator.Unsubscribe(this);
-
-                ViewModel.Delegate = null;
                 ViewModel.Items.CollectionChanged -= OnCollectionChanged;
 
                 Bindings.StopTracking();

@@ -36,7 +36,6 @@ namespace Unigram.Views
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<ProfileViewModel, IProfileDelegate>(this);
             SharedMedia.DataContext = ViewModel.ChatSharedMedia;
-            SharedMedia.ViewModel.Delegate = SharedMedia;
 
             DescriptionLabel.AddHandler(ContextRequestedEvent, new TypedEventHandler<UIElement, ContextRequestedEventArgs>(About_ContextRequested), true);
         }
@@ -83,7 +82,7 @@ namespace Unigram.Views
                     return;
                 }
 
-                var viewModel = new UserPhotosViewModel(ViewModel.ProtoService, ViewModel.Aggregator, user, userFull);
+                var viewModel = new UserPhotosViewModel(ViewModel.ProtoService, ViewModel.StorageService, ViewModel.Aggregator, user, userFull);
                 await GalleryView.GetForCurrentView().ShowAsync(viewModel, () => Photo);
             }
             else if (chat.Type is ChatTypeBasicGroup)
@@ -94,7 +93,7 @@ namespace Unigram.Views
                     return;
                 }
 
-                var viewModel = new ChatPhotosViewModel(ViewModel.ProtoService, ViewModel.Aggregator, chat, basicGroupFull.Photo);
+                var viewModel = new ChatPhotosViewModel(ViewModel.ProtoService, ViewModel.StorageService, ViewModel.Aggregator, chat, basicGroupFull.Photo);
                 await GalleryView.GetForCurrentView().ShowAsync(viewModel, () => Photo);
             }
             else if (chat.Type is ChatTypeSupergroup)
@@ -105,7 +104,7 @@ namespace Unigram.Views
                     return;
                 }
 
-                var viewModel = new ChatPhotosViewModel(ViewModel.ProtoService, ViewModel.Aggregator, chat, supergroupFull.Photo);
+                var viewModel = new ChatPhotosViewModel(ViewModel.ProtoService, ViewModel.StorageService, ViewModel.Aggregator, chat, supergroupFull.Photo);
                 await GalleryView.GetForCurrentView().ShowAsync(viewModel, () => Photo);
             }
         }
@@ -142,7 +141,7 @@ namespace Unigram.Views
 
         public void UpdateChatPhoto(Chat chat)
         {
-            Photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 64);
+            Photo.SetChat(ViewModel.ProtoService, chat, 64);
             PhotoInfo.Source = Photo.Source;
         }
 
@@ -410,42 +409,6 @@ namespace Unigram.Views
 
             Members.Badge = fullInfo.MemberCount;
             //Members.Visibility = fullInfo.CanGetMembers && group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
-        }
-
-
-
-        public void UpdateFile(File file)
-        {
-            var chat = ViewModel.Chat;
-            if (chat != null && chat.UpdateFile(file))
-            {
-                Photo.Source = PlaceholderHelper.GetChat(null, chat, 64);
-            }
-
-            //for (int i = 0; i < ScrollingHost.Items.Count; i++)
-            //{
-            //    var member = ScrollingHost.Items[i] as ChatMember;
-
-            //    var user = ViewModel.ProtoService.GetUser(member.UserId);
-            //    if (user == null)
-            //    {
-            //        return;
-            //    }
-
-            //    if (user.UpdateFile(file))
-            //    {
-            //        var container = ScrollingHost.ContainerFromIndex(i) as ListViewItem;
-            //        if (container == null)
-            //        {
-            //            return;
-            //        }
-
-            //        var content = container.ContentTemplateRoot as Grid;
-
-            //        var photo = content.Children[0] as ProfilePicture;
-            //        photo.Source = PlaceholderHelper.GetUser(null, user, 36);
-            //    }
-            //}
         }
 
         #endregion

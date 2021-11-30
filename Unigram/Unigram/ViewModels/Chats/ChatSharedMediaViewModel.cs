@@ -10,23 +10,22 @@ using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.Views.Popups;
-using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Chats
 {
-    public class ChatSharedMediaViewModel : TLViewModelBase, IMessageDelegate, IDelegable<IFileDelegate>, IHandle<UpdateFile>, IHandle<UpdateDeleteMessages>
+    public class ChatSharedMediaViewModel : TLViewModelBase, IMessageDelegate, IHandle<UpdateDeleteMessages>
     {
-        public IFileDelegate Delegate { get; set; }
-
         private readonly IPlaybackService _playbackService;
+        private readonly IStorageService _storageService;
 
-        public ChatSharedMediaViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IPlaybackService playbackService)
+        public ChatSharedMediaViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IStorageService storageService, IEventAggregator aggregator, IPlaybackService playbackService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _playbackService = playbackService;
+            _storageService = storageService;
 
             MessagesForwardCommand = new RelayCommand(MessagesForwardExecute, MessagesForwardCanExecute);
             MessagesDeleteCommand = new RelayCommand(MessagesDeleteExecute, MessagesDeleteCanExecute);
@@ -39,6 +38,8 @@ namespace Unigram.ViewModels.Chats
         }
 
         public IPlaybackService PlaybackService => _playbackService;
+
+        public IStorageService StorageService => _storageService;
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
@@ -110,11 +111,6 @@ namespace Unigram.ViewModels.Chats
         {
             Aggregator.Unsubscribe(this);
             return Task.CompletedTask;
-        }
-
-        public void Handle(UpdateFile update)
-        {
-            BeginOnUIThread(() => Delegate?.UpdateFile(update.File));
         }
 
         public void Handle(UpdateDeleteMessages update)
@@ -240,52 +236,11 @@ namespace Unigram.ViewModels.Chats
         public RelayCommand<Message> MessageSaveCommand { get; }
         private async void MessageSaveExecute(Message message)
         {
-            var result = message.GetFileAndName(true);
-
-            var file = result.File;
-            if (file == null || !file.Local.IsDownloadingCompleted)
+            var file = message.GetFile();
+            if (file != null)
             {
-                return;
+                await _storageService.SaveAsAsync(file);
             }
-
-            var cached = await ProtoService.GetFileAsync(file);
-            if (cached == null)
-            {
-                return;
-            }
-
-            var fileName = result.FileName;
-            if (string.IsNullOrEmpty(fileName))
-            {
-                fileName = System.IO.Path.GetFileName(file.Local.Path);
-            }
-
-            var clean = ProtoService.Execute(new CleanFileName(fileName));
-            if (clean is Text text && !string.IsNullOrEmpty(text.TextValue))
-            {
-                fileName = text.TextValue;
-            }
-
-            var extension = System.IO.Path.GetExtension(fileName);
-            if (string.IsNullOrEmpty(extension))
-            {
-                extension = ".dat";
-            }
-
-            try
-            {
-                var picker = new FileSavePicker();
-                picker.FileTypeChoices.Add($"{extension.TrimStart('.').ToUpper()} File", new[] { extension });
-                picker.SuggestedStartLocation = PickerLocationId.Downloads;
-                picker.SuggestedFileName = fileName;
-
-                var picked = await picker.PickSaveFileAsync();
-                if (picked != null)
-                {
-                    await cached.CopyAndReplaceAsync(picked);
-                }
-            }
-            catch { }
         }
 
         #endregion
@@ -461,7 +416,7 @@ namespace Unigram.ViewModels.Chats
 
         #region Delegate
 
-        public bool CanBeDownloaded(MessageViewModel message)
+        public bool CanBeDownloaded(object content, File file)
         {
             return true;
         }
@@ -472,6 +427,11 @@ namespace Unigram.ViewModels.Chats
 
         public void ReplyToMessage(MessageViewModel message)
         {
+        }
+
+        public void ViewVisibleMessages(bool intermediate)
+        {
+
         }
 
         public void OpenReply(MessageViewModel message)

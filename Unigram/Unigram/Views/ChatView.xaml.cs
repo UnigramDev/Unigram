@@ -100,6 +100,7 @@ namespace Unigram.Views
             _autocompleteZoomer.Opening = _autocompleteHandler.UnloadVisibleItems;
             _autocompleteZoomer.Closing = _autocompleteHandler.ThrottleVisibleItems;
             _autocompleteZoomer.DownloadFile = fileId => ViewModel.ProtoService.DownloadFile(fileId, 32);
+            _autocompleteZoomer.SessionId = () => ViewModel.ProtoService.SessionId;
 
             TextField.IsFormattingVisible = ViewModel.Settings.IsTextFormattingVisible;
 
@@ -797,7 +798,7 @@ namespace Unigram.Views
                     return;
                 }
 
-                var viewModel = new UserPhotosViewModel(ViewModel.ProtoService, ViewModel.Aggregator, user, userFull);
+                var viewModel = new UserPhotosViewModel(ViewModel.ProtoService, ViewModel.StorageService, ViewModel.Aggregator, user, userFull);
                 await GalleryView.GetForCurrentView().ShowAsync(viewModel, () => Photo);
             }
             else if (chat.Type is ChatTypeBasicGroup)
@@ -808,7 +809,7 @@ namespace Unigram.Views
                     return;
                 }
 
-                var viewModel = new ChatPhotosViewModel(ViewModel.ProtoService, ViewModel.Aggregator, chat, basicGroupFull.Photo);
+                var viewModel = new ChatPhotosViewModel(ViewModel.ProtoService, ViewModel.StorageService, ViewModel.Aggregator, chat, basicGroupFull.Photo);
                 await GalleryView.GetForCurrentView().ShowAsync(viewModel, () => Photo);
             }
             else if (chat.Type is ChatTypeSupergroup)
@@ -819,7 +820,7 @@ namespace Unigram.Views
                     return;
                 }
 
-                var viewModel = new ChatPhotosViewModel(ViewModel.ProtoService, ViewModel.Aggregator, chat, supergroupFull.Photo);
+                var viewModel = new ChatPhotosViewModel(ViewModel.ProtoService, ViewModel.StorageService, ViewModel.Aggregator, chat, supergroupFull.Photo);
                 await GalleryView.GetForCurrentView().ShowAsync(viewModel, () => Photo);
             }
         }
@@ -2047,9 +2048,7 @@ namespace Unigram.Views
 #if DEBUG
                 flyout.CreateFlyoutItem(x => true, new RelayCommand<MessageViewModel>(x =>
                 {
-                    var result = x.Get().GetFile();
-
-                    var file = result;
+                    var file = x.GetFile();
                     if (file == null)
                     {
                         return;
@@ -2111,7 +2110,7 @@ namespace Unigram.Views
                     picture.Width = 24;
                     picture.Height = 24;
                     picture.IsEnabled = false;
-                    picture.Source = PlaceholderHelper.GetUser(message.ProtoService, user, 24);
+                    picture.SetUser(message.ProtoService, user, 24);
                     picture.Margin = new Thickness(pictures.Children.Count > 0 ? -10 : 0, -2, 0, -2);
 
                     Canvas.SetZIndex(picture, -pictures.Children.Count);
@@ -2135,7 +2134,7 @@ namespace Unigram.Views
                         picture.Width = 24;
                         picture.Height = 24;
                         picture.IsEnabled = false;
-                        picture.Source = PlaceholderHelper.GetUser(message.ProtoService, user, 24);
+                        picture.SetUser(message.ProtoService, user, 24);
                         picture.Margin = new Thickness(-4, -2, 0, -2);
 
                         var item = final.CreateFlyoutItem(ViewModel.OpenUserCommand, user.Id, user.GetFullName());
@@ -2463,8 +2462,8 @@ namespace Unigram.Views
                 return false;
             }
 
-            var file = message.Get().GetFileAndName(true);
-            if (file.File != null && file.File.Local.IsDownloadingCompleted)
+            var file = message.GetFile();
+            if (file != null && file.Local.IsDownloadingCompleted)
             {
                 return true;
             }
@@ -3216,7 +3215,7 @@ namespace Unigram.Views
                     return;
                 }
 
-                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
+                photo.SetUser(ViewModel.ProtoService, user, 36);
             }
             else if (args.Item is User user)
             {
@@ -3231,7 +3230,7 @@ namespace Unigram.Views
                 name.Text = user.GetFullName();
                 username.Text = string.IsNullOrEmpty(user.Username) ? string.Empty : $" @{user.Username}";
 
-                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
+                photo.SetUser(ViewModel.ProtoService, user, 36);
             }
             else if (args.Item is string hashtag)
             {
@@ -3272,7 +3271,7 @@ namespace Unigram.Views
                         lottie.Source = UriEx.ToLocal(file.Local.Path);
                     }
                 }
-                else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                else
                 {
                     if (content.Children[0] is Image photo)
                     {
@@ -3286,7 +3285,12 @@ namespace Unigram.Views
                     CompositionPathParser.ParseThumbnail(sticker.Outline, out ShapeVisual visual, false);
                     ElementCompositionPreview.SetElementChildVisual(content.Children[0], visual);
 
-                    ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                    UpdateManager.Subscribe(content, ViewModel.ProtoService, file, UpdateSticker, true);
+
+                    if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                    {
+                        ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                    }
                 }
             }
         }
@@ -3360,7 +3364,7 @@ namespace Unigram.Views
             }
             else
             {
-                PhotoMore.Source = PlaceholderHelper.GetMessageSender(ViewModel.ProtoService, defaultMessageSenderId, 32);
+                PhotoMore.SetMessageSender(ViewModel.ProtoService, defaultMessageSenderId, 32);
                 ShowHideBotCommands(true);
             }
         }
@@ -3440,7 +3444,7 @@ namespace Unigram.Views
             }
             else
             {
-                Photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, (int)Photo.Width);
+                Photo.SetChat(ViewModel.ProtoService, chat, (int)Photo.Width);
             }
         }
 
@@ -4089,7 +4093,7 @@ namespace Unigram.Views
             };
 
             var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-            offset.InsertKeyFrame(show ? 0 : 1, new Vector3(-44, 0, 0));
+            offset.InsertKeyFrame(show ? 0 : 1, new Vector3(-40, 0, 0));
             offset.InsertKeyFrame(show ? 1 : 0, new Vector3());
             offset.Duration = TimeSpan.FromMilliseconds(150);
 
@@ -4564,224 +4568,7 @@ namespace Unigram.Views
 
         public void UpdateFile(File file)
         {
-            if (_viewModel.TryGetMessagesForFileId(file.Id, out IList<MessageViewModel> messages))
-            {
-                foreach (var message in messages)
-                {
-                    message.UpdateFile(file);
-                    message.GeneratedContentUnread = true;
-
-                    var container = Messages.ContainerFromItem(message) as ListViewItem;
-                    if (container == null)
-                    {
-                        continue;
-                    }
-
-                    var element = container.ContentTemplateRoot as FrameworkElement;
-                    if (element is Grid)
-                    {
-                        element = element.FindName("Bubble") as FrameworkElement;
-                    }
-
-                    if (element is MessageBubble bubble)
-                    {
-                        bubble.UpdateFile(message, file);
-                    }
-                    else if (message.Content is MessageChatChangePhoto && file.Local.IsDownloadingCompleted)
-                    {
-                        var photo = element.FindName("Photo") as Image;
-                        if (photo != null)
-                        {
-                            photo.Source = UriEx.ToBitmap(file.Local.Path, 120, 120);
-                        }
-                    }
-
-                    var content = message.GeneratedContent ?? message.Content;
-                    if (content is MessageAnimation animation && animation.Animation.AnimationValue.Id == file.Id && file.Local.IsDownloadingCompleted)
-                    {
-                        ViewVisibleMessages(false);
-                    }
-                    else if (content is MessageVideoNote videoNote && videoNote.VideoNote.Video.Id == file.Id && file.Local.IsDownloadingCompleted)
-                    {
-                        ViewVisibleMessages(false);
-                    }
-                    else if (content is MessageSticker sticker && sticker.Sticker.IsAnimated && sticker.Sticker.StickerValue.Id == file.Id && file.Local.IsDownloadingCompleted)
-                    {
-                        ViewVisibleMessages(false);
-                    }
-                    else if (content is MessageDice dice)
-                    {
-                        var state = dice.GetState();
-                        if (state.IsDownloadingCompleted())
-                        {
-                            ViewVisibleMessages(false);
-                        }
-                    }
-                    else if (content is MessageText text && text.WebPage != null && file.Local.IsDownloadingCompleted)
-                    {
-                        if (text.WebPage.Animation?.AnimationValue.Id == file.Id || text.WebPage.VideoNote?.Video.Id == file.Id)
-                        {
-                            ViewVisibleMessages(false);
-                        }
-                        else if (text.WebPage.Sticker?.StickerValue.Id == file.Id && text.WebPage.Sticker.IsAnimated)
-                        {
-                            ViewVisibleMessages(false);
-                        }
-                    }
-                }
-
-                //if (file.Local.IsDownloadingCompleted && file.Remote.IsUploadingCompleted)
-                //{
-                //    messages.Clear();
-                //}
-            }
-
-            if (file.Local.IsDownloadingCompleted && _viewModel.TryGetMessagesForPhotoId(file.Id, out IList<MessageViewModel> photos))
-            {
-                foreach (var message in photos)
-                {
-                    var container = Messages.ContainerFromItem(message) as ListViewItem;
-                    if (container == null)
-                    {
-                        continue;
-                    }
-
-                    var content = container.ContentTemplateRoot as FrameworkElement;
-                    if (content is MessageBubble == false)
-                    {
-                        var photo = content.FindName("Photo") as ProfilePicture;
-                        if (photo != null)
-                        {
-                            if (message.IsSaved())
-                            {
-                                if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
-                                {
-                                    var user = message.ProtoService.GetUser(fromUser.SenderUserId);
-                                    if (user != null)
-                                    {
-                                        photo.Source = PlaceholderHelper.GetUser(null, user, 32);
-                                    }
-                                }
-                                else if (message.ForwardInfo?.Origin is MessageForwardOriginChat fromChat)
-                                {
-                                    var originChat = message.ProtoService.GetChat(fromChat.SenderChatId);
-                                    if (originChat != null)
-                                    {
-                                        photo.Source = PlaceholderHelper.GetChat(null, originChat, 32);
-                                    }
-                                }
-                                else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel)
-                                {
-                                    var originChannel = message.ProtoService.GetChat(fromChannel.ChatId);
-                                    if (originChannel != null)
-                                    {
-                                        photo.Source = PlaceholderHelper.GetChat(null, originChannel, 32);
-                                    }
-                                }
-                            }
-                            else if (message.ProtoService.TryGetUser(message.SenderId, out User senderUser))
-                            {
-                                photo.Source = PlaceholderHelper.GetUser(null, senderUser, 30);
-                            }
-                            else if (message.ProtoService.TryGetChat(message.SenderId, out Chat senderChat))
-                            {
-                                photo.Source = PlaceholderHelper.GetChat(null, senderChat, 30);
-                            }
-                        }
-                    }
-                }
-
-                photos.Clear();
-            }
-
-            var chat = ViewModel.Chat;
-            if (chat != null && chat.UpdateFile(file))
-            {
-                if (chat.Type is ChatTypePrivate privata && privata.UserId == ViewModel.CacheService.Options.MyId)
-                {
-                    Photo.Source = PlaceholderHelper.GetSavedMessages(privata.UserId, (int)Photo.Width);
-                }
-                else
-                {
-                    Photo.Source = PlaceholderHelper.GetChat(null, chat, (int)Photo.Width);
-                }
-            }
-
             ListInline.UpdateFile(file);
-            StickersPanel.UpdateFile(file);
-
-            foreach (var item in ListAutocomplete.Items.ToArray())
-            {
-                if (item is UserCommand command)
-                {
-                    var user = ViewModel.ProtoService.GetUser(command.UserId);
-                    if (user.UpdateFile(file))
-                    {
-                        var container = ListAutocomplete.ContainerFromItem(command) as ListViewItem;
-                        if (container == null)
-                        {
-                            continue;
-                        }
-
-                        var content = container.ContentTemplateRoot as Grid;
-                        if (content == null)
-                        {
-                            continue;
-                        }
-
-                        var photo = content.Children[0] as ProfilePicture;
-                        photo.Source = PlaceholderHelper.GetUser(null, user, 36);
-                    }
-                }
-                else if (item is User user)
-                {
-                    if (user.UpdateFile(file))
-                    {
-                        var container = ListAutocomplete.ContainerFromItem(user) as ListViewItem;
-                        if (container == null)
-                        {
-                            continue;
-                        }
-
-                        var content = container.ContentTemplateRoot as Grid;
-                        if (content == null)
-                        {
-                            continue;
-                        }
-
-                        var photo = content.Children[0] as ProfilePicture;
-                        photo.Source = PlaceholderHelper.GetUser(null, user, 36);
-                    }
-                }
-                else if (item is Sticker sticker)
-                {
-                    if (sticker.UpdateFile(file) && file.Local.IsDownloadingCompleted)
-                    {
-                        var container = ListAutocomplete.ContainerFromItem(sticker) as SelectorItem;
-                        if (container == null)
-                        {
-                            continue;
-                        }
-
-                        var content = container.ContentTemplateRoot as Grid;
-                        if (content == null)
-                        {
-                            continue;
-                        }
-
-                        if (content.Children[0] is Border border && border.Child is Image photo)
-                        {
-                            photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path, 68);
-                            ElementCompositionPreview.SetElementChildVisual(content.Children[0], null);
-                        }
-                        else if (content.Children[0] is LottieView lottie)
-                        {
-                            lottie.Source = UriEx.ToLocal(file.Local.Path);
-                            _autocompleteHandler.ThrottleVisibleItems();
-                        }
-                    }
-                }
-            }
 
             var header = ViewModel.ComposerHeader;
             if (header?.EditingMessageFileId == file.Id)
@@ -4791,27 +4578,32 @@ namespace Unigram.Views
             }
         }
 
+        private void UpdateSticker(object target, File file)
+        {
+            var content = target as Grid;
+            if (content == null)
+            {
+                return;
+            }
+
+            if (content.Children[0] is Border border && border.Child is Image photo)
+            {
+                photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path, 68);
+                ElementCompositionPreview.SetElementChildVisual(content.Children[0], null);
+            }
+            else if (content.Children[0] is LottieView lottie)
+            {
+                lottie.Source = UriEx.ToLocal(file.Local.Path);
+                _autocompleteHandler.ThrottleVisibleItems();
+            }
+        }
+
         #endregion
 
         private void TextField_Formatting(FormattedTextBox sender, EventArgs args)
         {
             ViewModel.Settings.IsTextFormattingVisible = sender.IsFormattingVisible;
             ShowHideTextFormatting(sender.IsFormattingVisible);
-        }
-
-        private void Autocomplete_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            if (e.NewSize.Height > e.PreviousSize.Height)
-            {
-                var diff = (float)e.NewSize.Height - (float)e.PreviousSize.Height;
-                var visual = ElementCompositionPreview.GetElementVisual(ListAutocomplete);
-
-                var anim = Window.Current.Compositor.CreateSpringVector3Animation();
-                anim.InitialValue = new Vector3(0, diff, 0);
-                anim.FinalValue = new Vector3();
-
-                visual.StartAnimation("Offset", anim);
-            }
         }
 
         private void TextField_Sending(object sender, EventArgs e)
@@ -4868,7 +4660,7 @@ namespace Unigram.Views
 
                     if (ViewModel.ProtoService.TryGetUser(messageSender, out User senderUser))
                     {
-                        picture.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, senderUser, 24);
+                        picture.SetUser(ViewModel.ProtoService, senderUser, 24);
 
                         var item = flyout.CreateFlyoutItem(ViewModel.SetDefaultSenderCommand, messageSender, senderUser.GetFullName());
                         item.Style = App.Current.Resources["ProfilePictureMenuFlyoutItemStyle"] as Style;
@@ -4877,7 +4669,7 @@ namespace Unigram.Views
                     }
                     else if (ViewModel.ProtoService.TryGetChat(messageSender, out Chat senderChat))
                     {
-                        picture.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, senderChat, 24);
+                        picture.SetChat(ViewModel.ProtoService, senderChat, 24);
 
                         var item = flyout.CreateFlyoutItem(ViewModel.SetDefaultSenderCommand, messageSender, senderChat.Title);
                         item.Style = App.Current.Resources["ProfilePictureMenuFlyoutItemStyle"] as Style;

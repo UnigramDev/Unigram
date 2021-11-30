@@ -18,11 +18,11 @@ namespace Unigram.ViewModels
     {
         private readonly IMessageFactory _messageFactory;
 
-        public InstantViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IMessageFactory messageFactory, IEventAggregator aggregator)
+        public InstantViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IStorageService storageService, IMessageFactory messageFactory, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _messageFactory = messageFactory;
-            _gallery = new InstantGalleryViewModel(protoService, aggregator);
+            _gallery = new InstantGalleryViewModel(protoService, storageService, aggregator);
 
             ShareCommand = new RelayCommand(ShareExecute);
             FeedbackCommand = new RelayCommand(FeedbackExecute);

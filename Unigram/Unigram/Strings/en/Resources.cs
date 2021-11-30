@@ -2179,7 +2179,51 @@ namespace Unigram.Strings
                 return resourceLoader.GetString("ActionEditedInviteLinkToSameClickable");
             }
         }
-        
+
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string ActionForwardsEnabledChannel
+        {
+            get
+            {
+                return resourceLoader.GetString("ActionForwardsEnabledChannel");
+            }
+        }
+
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string ActionForwardsEnabledGroup
+        {
+            get
+            {
+                return resourceLoader.GetString("ActionForwardsEnabledGroup");
+            }
+        }
+
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string ActionForwardsRestrictedChannel
+        {
+            get
+            {
+                return resourceLoader.GetString("ActionForwardsRestrictedChannel");
+            }
+        }
+
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string ActionForwardsRestrictedGroup
+        {
+            get
+            {
+                return resourceLoader.GetString("ActionForwardsRestrictedGroup");
+            }
+        }
+
         /// <summary>
         /// Localized resource similar to "Video chat ended ({0})"
         /// </summary>
@@ -20596,7 +20640,7 @@ namespace Unigram.Strings
                 return resourceLoader.GetString("ForwardPreviewSendersNameVisibleGroup");
             }
         }
-        
+
         /// <summary>
         /// Localized resource similar to "Send messages"
         /// </summary>
@@ -20607,7 +20651,29 @@ namespace Unigram.Strings
                 return resourceLoader.GetString("ForwardSendMessages");
             }
         }
-        
+
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string ForwardsRestrictedInfoChannel
+        {
+            get
+            {
+                return resourceLoader.GetString("ForwardsRestrictedInfoChannel");
+            }
+        }
+
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string ForwardsRestrictedInfoGroup
+        {
+            get
+            {
+                return resourceLoader.GetString("ForwardsRestrictedInfoGroup");
+            }
+        }
+
         /// <summary>
         /// Localized resource similar to "Forward to..."
         /// </summary>
@@ -42059,7 +42125,7 @@ namespace Unigram.Strings
                 return resourceLoader.GetString("SendLocation");
             }
         }
-        
+
         /// <summary>
         /// Localized resource similar to "Send Message"
         /// </summary>
@@ -42070,7 +42136,18 @@ namespace Unigram.Strings
                 return resourceLoader.GetString("SendMessage");
             }
         }
-        
+
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string SendMessageAsTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("SendMessageAsTitle");
+            }
+        }
+
         /// <summary>
         /// Localized resource similar to "Send Message"
         /// </summary>
@@ -47255,7 +47332,7 @@ namespace Unigram.Strings
                 return resourceLoader.GetString("TypePrivate");
             }
         }
-        
+
         /// <summary>
         /// Localized resource similar to "Private"
         /// </summary>
@@ -47266,7 +47343,31 @@ namespace Unigram.Strings
                 return resourceLoader.GetString("TypePrivateGroup");
             }
         }
-        
+
+
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string TypePrivateGroupRestrictedForwards
+        {
+            get
+            {
+                return resourceLoader.GetString("TypePrivateGroupRestrictedForwards");
+            }
+        }
+
+
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string TypePrivateRestrictedForwards
+        {
+            get
+            {
+                return resourceLoader.GetString("TypePrivateRestrictedForwards");
+            }
+        }
+
         /// <summary>
         /// Localized resource similar to "Public"
         /// </summary>

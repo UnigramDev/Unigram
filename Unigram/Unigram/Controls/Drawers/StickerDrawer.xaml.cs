@@ -1,12 +1,9 @@
 ﻿using LinqToVisualTree;
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Services;
-using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Drawers;
 using Windows.Foundation;
 using Windows.UI.Composition;
@@ -21,7 +18,7 @@ using StickerViewModel = Unigram.ViewModels.Drawers.StickerViewModel;
 
 namespace Unigram.Controls.Drawers
 {
-    public sealed partial class StickerDrawer : UserControl, IDrawer, IFileDelegate
+    public sealed partial class StickerDrawer : UserControl, IDrawer
     {
         public StickerDrawerViewModel ViewModel => DataContext as StickerDrawerViewModel;
 
@@ -33,9 +30,6 @@ namespace Unigram.Controls.Drawers
         private readonly ZoomableListHandler _zoomer;
 
         private readonly AnimatedListHandler<StickerSetViewModel> _toolbarHandler;
-
-        private readonly FileContext<StickerViewModel> _stickers = new FileContext<StickerViewModel>();
-        private readonly FileContext<StickerSetViewModel> _stickerSets = new FileContext<StickerSetViewModel>();
 
         private readonly Dictionary<string, DataTemplate> _typeToTemplateMapping = new Dictionary<string, DataTemplate>();
         private readonly Dictionary<string, HashSet<SelectorItem>> _typeToItemHashSetMapping = new Dictionary<string, HashSet<SelectorItem>>();
@@ -54,6 +48,7 @@ namespace Unigram.Controls.Drawers
             _zoomer.Opening = _handler.UnloadVisibleItems;
             _zoomer.Closing = _handler.ThrottleVisibleItems;
             _zoomer.DownloadFile = fileId => ViewModel.ProtoService.DownloadFile(fileId, 32);
+            _zoomer.SessionId = () => ViewModel.ProtoService.SessionId;
 
             _typeToItemHashSetMapping.Add("AnimatedItemTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("ItemTemplate", new HashSet<SelectorItem>());
@@ -104,77 +99,45 @@ namespace Unigram.Controls.Drawers
             _handler.UnloadVisibleItems();
         }
 
-        public async void UpdateFile(File file)
+        private async void UpdateSticker(object target, File file)
         {
-            if (_stickers.TryGetValue(file.Id, out List<StickerViewModel> items) && items.Count > 0)
+            var content = target as Border;
+            if (content == null)
             {
-                foreach (var sticker in items.ToImmutableHashSet())
-                {
-                    sticker.UpdateFile(file);
-
-                    var container = List.ContainerFromItem(sticker) as SelectorItem;
-                    if (container == null)
-                    {
-                        continue;
-                    }
-
-                    var content = container.ContentTemplateRoot as Border;
-                    if (content == null)
-                    {
-                        continue;
-                    }
-
-                    if (content.Child is Border border && border.Child is Image photo)
-                    {
-                        photo.Source = await PlaceholderHelper.GetWebPFrameAsync(file.Local.Path, 68);
-                        ElementCompositionPreview.SetElementChildVisual(content.Child, null);
-                    }
-                    else if (content.Child is LottieView lottie)
-                    {
-                        lottie.Source = UriEx.ToLocal(file.Local.Path);
-                        _handler.ThrottleVisibleItems();
-                    }
-                }
+                return;
             }
 
-            if (_stickerSets.TryGetValue(file.Id, out List<StickerSetViewModel> sets) && sets.Count > 0)
+            if (content.Child is Border border && border.Child is Image photo)
             {
-                foreach (var item in sets.ToImmutableHashSet())
-                {
-                    var cover = item.Thumbnail ?? item.Covers.FirstOrDefault()?.Thumbnail;
-                    if (cover == null)
-                    {
-                        continue;
-                    }
+                photo.Source = await PlaceholderHelper.GetWebPFrameAsync(file.Local.Path, 68);
+                ElementCompositionPreview.SetElementChildVisual(content.Child, null);
+            }
+            else if (content.Child is LottieView lottie)
+            {
+                lottie.Source = UriEx.ToLocal(file.Local.Path);
+                _handler.ThrottleVisibleItems();
+            }
+        }
 
-                    cover.UpdateFile(file);
+        private void UpdateStickerSet(object target, File file)
+        {
+            var content = target as Grid;
+            var item = content?.Tag as StickerSetViewModel;
 
-                    var container = Toolbar.ContainerFromItem(item) as SelectorItem;
-                    if (container == null)
-                    {
-                        continue;
-                    }
-
-                    var content = container.ContentTemplateRoot as Grid;
-                    var photo = content?.Children[0] as Image;
-
-                    if (content == null)
-                    {
-                        continue;
-                    }
-
-                    if (item.IsAnimated)
-                    {
-                        photo.Source = PlaceholderHelper.GetLottieFrame(file.Local.Path, 0, 36, 36);
-                    }
-                    else
-                    {
-                        photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path, 36);
-                    }
-                }
+            var photo = content?.Children[0] as Image;
+            if (photo == null)
+            {
+                return;
             }
 
-            _zoomer.UpdateFile(file);
+            if (item.IsAnimated)
+            {
+                photo.Source = PlaceholderHelper.GetLottieFrame(file.Local.Path, 0, 36, 36);
+            }
+            else
+            {
+                photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path, 36);
+            }
         }
 
         private void Stickers_ItemClick(object sender, ItemClickEventArgs e)
@@ -368,7 +331,7 @@ namespace Unigram.Controls.Drawers
                     lottie.Source = UriEx.ToLocal(file.Local.Path);
                 }
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive /*&& args.Phase == 0*/)
+            else
             {
                 if (content.Child is Image photo)
                 {
@@ -379,10 +342,17 @@ namespace Unigram.Controls.Drawers
                     lottie.Source = null;
                 }
 
+                content.Tag = sticker;
+
                 CompositionPathParser.ParseThumbnail(sticker.Outline, out ShapeVisual visual, false);
                 ElementCompositionPreview.SetElementChildVisual(content.Child, visual);
 
-                DownloadFile(_stickers, file.Id, sticker);
+                UpdateManager.Subscribe(content, ViewModel.ProtoService, file, UpdateSticker, true);
+
+                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive /*&& args.Phase == 0*/)
+                {
+                    ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                }
             }
         }
 
@@ -409,7 +379,7 @@ namespace Unigram.Controls.Drawers
                     return;
                 }
 
-                content.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 36);
+                content.SetChat(ViewModel.ProtoService, chat, 36);
             }
             else if (args.Item is StickerSetViewModel sticker)
             {
@@ -442,18 +412,19 @@ namespace Unigram.Controls.Drawers
                         photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path, 36);
                     }
                 }
-                else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                else
                 {
                     photo.Source = null;
-                    DownloadFile(_stickerSets, file.Id, sticker);
+                    content.Tag = sticker;
+
+                    UpdateManager.Subscribe(content, ViewModel.ProtoService, file, UpdateStickerSet, true);
+
+                    if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                    {
+                        ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                    }
                 }
             }
-        }
-
-        private void DownloadFile<T>(FileContext<T> context, int id, T sticker)
-        {
-            context[id].Add(sticker);
-            ViewModel.ProtoService.DownloadFile(id, 1);
         }
 
         private void FieldStickers_TextChanged(object sender, TextChangedEventArgs e)
