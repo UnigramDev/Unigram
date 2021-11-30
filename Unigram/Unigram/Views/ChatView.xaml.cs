@@ -45,6 +45,7 @@ using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Animation;
 using Point = Windows.Foundation.Point;
 
 namespace Unigram.Views
@@ -1452,14 +1453,11 @@ namespace Unigram.Views
 
             if (ViewModel.SecondaryNavigationService.Frame.CurrentSourcePageType != typeof(ProfilePage))
             {
-                SettingsService.Current.IsSidebarOpen = true;
-
-                ViewModel.SecondaryNavigationService.Navigate(typeof(ProfilePage), chat.Id);
+                ViewModel.SecondaryNavigationService.Navigate(typeof(ProfilePage), chat.Id, infoOverride: new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
                 ViewModel.SecondaryNavigationService.GoBackAt(0, false);
             }
             else
             {
-                SettingsService.Current.IsSidebarOpen = false;
                 ViewModel.SecondaryNavigationService.GoBackAt(0);
             }
         }

@@ -19,11 +19,9 @@ using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
 using Unigram.Views.BasicGroups;
 using Unigram.Views.Channels;
-using Unigram.Views.Chats;
 using Unigram.Views.Host;
 using Unigram.Views.Popups;
 using Unigram.Views.Settings;
-using Unigram.Views.Supergroups;
 using Unigram.Views.Users;
 using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
@@ -1283,7 +1281,7 @@ namespace Unigram.Views
             UpdateListViewsSelectedItem(MasterDetail.NavigationService.GetPeerFromBackStack());
 
             var profile = MasterDetail.Descendants<MasterDetailView>().FirstOrDefault();
-            if (profile?.NavigationService == null)
+            if (profile == null)
             {
                 return;
             }
@@ -1294,7 +1292,7 @@ namespace Unigram.Views
                 || e.SourcePageType == typeof(ChatScheduledPage)
                 || e.SourcePageType == typeof(ChatThreadPage);
 
-            allowed &= MasterDetail.CurrentState != MasterDetailState.Minimal && SettingsService.Current.IsSidebarOpen;
+            allowed &= MasterDetail.CurrentState == MasterDetailState.Minimal || SettingsService.Current.IsSidebarOpen;
 
             if (e.Parameter is long chatId && e.Content is Page page && page.DataContext is DialogViewModel dialogViewModel)
             {
@@ -3006,36 +3004,14 @@ namespace Unigram.Views
                 //masterDetail.BlankPageType = typeof(ProfilePage);
                 masterDetail.ViewStateChanged += Profile_ViewStateChanged;
                 masterDetail.Initialize("Profile", Frame, ViewModel.ProtoService.SessionId);
-                masterDetail.NavigationService.Navigating += (s, args) =>
-                {
-                    // I'd consider this a temporary solution
-                    var allowed = args.TargetPageType == typeof(ProfilePage)
-                        || args.TargetPageType == typeof(BlankPage)
-                        || args.TargetPageType == typeof(ChatInviteLinkPage)
-                        || args.TargetPageType == typeof(ChatStatisticsPage)
-                        || args.TargetPageType == typeof(MessageStatisticsPage)
-                        || args.TargetPageType == typeof(SupergroupAddAdministratorPage)
-                        || args.TargetPageType == typeof(SupergroupAddRestrictedPage)
-                        || args.TargetPageType == typeof(SupergroupAdministratorsPage)
-                        || args.TargetPageType == typeof(SupergroupBannedPage)
-                        || args.TargetPageType == typeof(SupergroupEditAdministratorPage)
-                        || args.TargetPageType == typeof(SupergroupEditLinkedChatPage)
-                        || args.TargetPageType == typeof(SupergroupEditPage)
-                        || args.TargetPageType == typeof(SupergroupEditRestrictedPage)
-                        || args.TargetPageType == typeof(SupergroupEditStickerSetPage)
-                        || args.TargetPageType == typeof(SupergroupEditTypePage)
-                        || args.TargetPageType == typeof(SupergroupMembersPage)
-                        || args.TargetPageType == typeof(SupergroupPermissionsPage);
-
-                    if (args.NavigationMode == NavigationMode.New && !allowed)
-                    {
-                        args.Cancel = true;
-                        Windows.System.DispatcherQueue.GetForCurrentThread().TryEnqueue(() => MasterDetail.NavigationService.Navigate(args.TargetPageType, args.Parameter, args.TargetPageParameter as NavigationState));
-                    }
-                };
                 masterDetail.NavigationService.FrameFacade.Navigated += (s, args) =>
                 {
                     masterDetail.IsBlank = args.SourcePageType == typeof(BlankPage);
+
+                    if (MasterDetail.CurrentState != MasterDetailState.Minimal && MasterDetail.NavigationService.Frame.CurrentSourcePageType != typeof(BlankPage))
+                    {
+                        SettingsService.Current.IsSidebarOpen = args.SourcePageType != typeof(BlankPage);
+                    }
 
                     if (args.Content is HostedPage hosted)
                     {
