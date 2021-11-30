@@ -1254,9 +1254,8 @@ namespace Unigram.ViewModels
             {
                 var date = Converter.DateTime(message.Date);
 
-                var dialog = new CalendarPopup();
+                var dialog = new CalendarPopup(date);
                 dialog.MaxDate = DateTimeOffset.Now.Date;
-                dialog.SelectedDates.Add(date);
 
                 var confirm = await dialog.ShowQueuedAsync();
                 if (confirm == ContentDialogResult.Primary && dialog.SelectedDates.Count > 0)

@@ -27,7 +27,6 @@ using Unigram.ViewModels;
 using Unigram.ViewModels.Chats;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Users;
-using Unigram.Views.Chats;
 using Unigram.Views.Popups;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
@@ -3026,9 +3025,8 @@ namespace Unigram.Views
             {
                 var date = Converter.DateTime(messageDate);
 
-                var dialog = new CalendarPopup();
+                var dialog = new CalendarPopup(date);
                 dialog.MaxDate = DateTimeOffset.Now.Date;
-                dialog.SelectedDates.Add(date);
 
                 var confirm = await dialog.ShowQueuedAsync();
                 if (confirm == ContentDialogResult.Primary && dialog.SelectedDates.Count > 0)
