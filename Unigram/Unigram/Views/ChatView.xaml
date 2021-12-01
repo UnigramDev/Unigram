@@ -605,6 +605,33 @@
                     <selectors:MessageStyleSelector>
                         <selectors:MessageStyleSelector.MessageStyle>
                             <Style TargetType="ListViewItem"
+                                   BasedOn="{StaticResource DefaultListViewItemStyle}">
+                                <Setter Property="FontFamily"
+                                        Value="{ThemeResource ContentControlThemeFontFamily}" />
+                                <Setter Property="FontSize"
+                                        Value="{ThemeResource ControlContentThemeFontSize}" />
+                                <Setter Property="Background"
+                                        Value="Transparent" />
+                                <Setter Property="Foreground"
+                                        Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                                <Setter Property="TabNavigation"
+                                        Value="Local" />
+                                <Setter Property="IsHoldingEnabled"
+                                        Value="True" />
+                                <Setter Property="Padding"
+                                        Value="12,0,12,0" />
+                                <Setter Property="HorizontalContentAlignment"
+                                        Value="Stretch" />
+                                <Setter Property="VerticalContentAlignment"
+                                        Value="Stretch" />
+                                <Setter Property="MinWidth"
+                                        Value="{ThemeResource ListViewItemMinWidth}" />
+                                <Setter Property="MinHeight"
+                                        Value="0" />
+                            </Style>
+                        </selectors:MessageStyleSelector.MessageStyle>
+                        <selectors:MessageStyleSelector.ExpandedStyle>
+                            <Style TargetType="ListViewItem"
                                    BasedOn="{StaticResource MessageListViewItemStyle}">
                                 <Setter Property="FontFamily"
                                         Value="{ThemeResource ContentControlThemeFontFamily}" />
@@ -628,39 +655,8 @@
                                         Value="{ThemeResource ListViewItemMinWidth}" />
                                 <Setter Property="MinHeight"
                                         Value="0" />
-                                <!--<Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="ListViewItem">
-                                            <ListViewItemPresenter
-                                                x:Name="ContentBorder"
-                                                ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                SelectionCheckMarkVisualEnabled="True"
-                                                CheckBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
-                                                CheckBoxBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
-                                                DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}"
-                                                DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}"
-                                                FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}"
-                                                FocusSecondaryBorderBrush="{ThemeResource SystemControlForegroundBaseHighBrush}"
-                                                PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
-                                                PointerOverBackground="Transparent"
-                                                PointerOverForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
-                                                SelectedBackground="{ThemeResource SystemControlHighlightListAccentLowBrush}"
-                                                SelectedForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
-                                                SelectedPointerOverBackground="{ThemeResource SystemControlHighlightListAccentMediumBrush}"
-                                                PressedBackground="Transparent"
-                                                SelectedPressedBackground="{ThemeResource SystemControlHighlightListAccentHighBrush}"
-                                                DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
-                                                DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
-                                                ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
-                                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                ContentMargin="{TemplateBinding Padding}"
-                                                CheckMode="Inline"/>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>-->
                             </Style>
-                        </selectors:MessageStyleSelector.MessageStyle>
+                        </selectors:MessageStyleSelector.ExpandedStyle>
                         <selectors:MessageStyleSelector.ServiceStyle>
                             <Style TargetType="ListViewItem">
                                 <Setter Property="FontFamily"
