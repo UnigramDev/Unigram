@@ -67,6 +67,11 @@ namespace Unigram.Common
 
         public void Dispose()
         {
+            if (_source != null)
+            {
+                _source.Dispose();
+            }
+
             if (_fileStream != null)
             {
                 _fileStream.Dispose();
@@ -115,6 +120,8 @@ namespace Unigram.Common
         private readonly int _chunk;
         private readonly object _readLock = new();
 
+        private bool _canceled;
+
         private int _offset;
         private int _next;
 
@@ -152,6 +159,11 @@ namespace Unigram.Common
                 var inBegin = _offset >= begin;
                 var inEnd = end >= _offset + count || end == _file.Size;
                 var difference = end - _offset;
+
+                if (_canceled)
+                {
+                    return;
+                }
 
                 if (_file.Local.Path.Length > 0 && (inBegin && inEnd) || _file.Local.IsDownloadingCompleted)
                 {
@@ -193,6 +205,12 @@ namespace Unigram.Common
             {
                 _event.Set();
             }
+        }
+
+        public void Dispose()
+        {
+            _canceled = true;
+            _protoService.Send(new CancelDownloadFile(_file.Id, false));
         }
     }
 
