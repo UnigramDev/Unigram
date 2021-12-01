@@ -122,7 +122,7 @@ namespace Unigram.Controls.Chats
 
             if (background == null)
             {
-                var freeform = dark ? new[] { 0x1B2836, 0x121A22, 0x1B2836, 0x121A22 } : new[] { 0xDBDDBB, 0x6BA587, 0xD5D88D, 0x88B884 };
+                var freeform = dark ? new[] { 0x0D0E17, 0x090A0C, 0x181C28, 0x0E0F12} : new[] { 0xDBDDBB, 0x6BA587, 0xD5D88D, 0x88B884 };
                 background = new Background(0, true, dark, string.Empty, null,
                     new BackgroundTypeFill(new BackgroundFillFreeformGradient(freeform)));
             }
