@@ -334,6 +334,7 @@ namespace Unigram.Controls
             Canvas.SetZIndex(container, -index);
 
             var child = ElementCompositionPreview.GetElementVisual(container);
+            child.CenterPoint = new Vector3((_itemSize + 4) / 2);
 
             var removingScale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
             removingScale.InsertKeyFrame(0.0f, new Vector3(1));
