@@ -37,7 +37,7 @@ namespace Unigram.Controls.Messages.Content
 
         private TextBlock Question;
         private TextBlock Type;
-        private StackPanel RecentVoters;
+        private RecentUserHeads RecentVoters;
         private StackPanel TimeoutLabel;
         private TextBlock Timeout;
         private TextBlock TimeoutGlyph;
@@ -52,7 +52,7 @@ namespace Unigram.Controls.Messages.Content
         {
             Question = GetTemplateChild(nameof(Question)) as TextBlock;
             Type = GetTemplateChild(nameof(Type)) as TextBlock;
-            RecentVoters = GetTemplateChild(nameof(RecentVoters)) as StackPanel;
+            RecentVoters = GetTemplateChild(nameof(RecentVoters)) as RecentUserHeads;
             TimeoutLabel = GetTemplateChild(nameof(TimeoutLabel)) as StackPanel;
             Timeout = GetTemplateChild(nameof(Timeout)) as TextBlock;
             TimeoutGlyph = GetTemplateChild(nameof(TimeoutGlyph)) as TextBlock;
@@ -62,6 +62,7 @@ namespace Unigram.Controls.Messages.Content
             Submit = GetTemplateChild(nameof(Submit)) as Button;
             View = GetTemplateChild(nameof(View)) as Button;
 
+            RecentVoters.RecentUserHeadChanged += RecentVoters_RecentUserHeadChanged;
             Explanation.Click += Explanation_Click;
             Submit.Click += Submit_Click;
             View.Click += View_Click;
@@ -78,6 +79,8 @@ namespace Unigram.Controls.Messages.Content
 
         public void UpdateMessage(MessageViewModel message)
         {
+            var recycled = _message?.Id == message.Id;
+
             _message = message;
 
             var poll = message.Content as MessagePoll;
@@ -203,31 +206,33 @@ namespace Unigram.Controls.Messages.Content
                 }
             }
 
-            RecentVoters.Children.Clear();
+            var destination = RecentVoters.Items;
+            var origin = poll.Poll.RecentVoterUserIds.Select(x => new MessageSenderUser(x));
 
-            foreach (var id in poll.Poll.RecentVoterUserIds)
+            if (destination.Count > 0 && recycled)
             {
-                var user = message.ProtoService.GetUser(id);
-                if (user == null)
-                {
-                    continue;
-                }
+                destination.ReplaceDiff(origin);
+            }
+            else
+            {
+                destination.Clear();
+                destination.AddRange(origin);
+            }
+        }
 
-                var picture = new ProfilePicture();
-                picture.SetUser(message.ProtoService, user, 16);
-                picture.Width = 16;
-                picture.Height = 16;
-
-                if (RecentVoters.Children.Count > 0)
-                {
-                    picture.Margin = new Thickness(-6, -1, 0, 0);
-                }
-                else
-                {
-                    picture.Margin = new Thickness(0, -1, 0, 0);
-                }
-
-                RecentVoters.Children.Add(picture);
+        private void RecentVoters_RecentUserHeadChanged(ProfilePicture photo, MessageSender sender)
+        {
+            if (_message.ProtoService.TryGetUser(sender, out User user))
+            {
+                photo.SetUser(_message.ProtoService, user, 20);
+            }
+            else if (_message.ProtoService.TryGetChat(sender, out Chat chat))
+            {
+                photo.SetChat(_message.ProtoService, chat, 20);
+            }
+            else
+            {
+                photo.Source = null;
             }
         }
 

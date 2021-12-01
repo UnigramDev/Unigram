@@ -1,18 +1,25 @@
-﻿using System;
+﻿using Rg.DiffUtils;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Numerics;
 using Telegram.Td.Api;
-using Unigram.Collections;
-using Windows.UI;
+using Unigram.Common;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls
 {
+    public delegate void RecentUserHeadChangedHandler(ProfilePicture sender, MessageSender messageSender);
+
+    public class RecentUserHeadChangedEventArgs : EventArgs
+    {
+
+    }
+
     public class RecentUserHeads : Control
     {
         private readonly RecentUserCollection _items = new RecentUserCollection();
@@ -23,19 +30,63 @@ namespace Unigram.Controls
         private readonly int _maxCount = 3;
         private readonly int _maxIndex = 2;
 
+        private int _itemSize = 32;
+        private int _itemOverlap = 10;
+
         public RecentUserHeads()
         {
             DefaultStyleKey = typeof(RecentUserHeads);
         }
 
+        #region ItemSize
+
+        public int ItemSize
+        {
+            get { return (int)GetValue(ItemSizeProperty); }
+            set { SetValue(ItemSizeProperty, value); }
+        }
+
+        public static readonly DependencyProperty ItemSizeProperty =
+            DependencyProperty.Register("ItemSize", typeof(int), typeof(RecentUserHeads), new PropertyMetadata(32, OnItemSizeChanged));
+
+        private static void OnItemSizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((RecentUserHeads)d)._itemSize = (int)e.NewValue;
+        }
+
+        #endregion
+
+        #region ItemOverlap
+
+
+
+        public int ItemOverlap
+        {
+            get { return (int)GetValue(ItemOverlapProperty); }
+            set { SetValue(ItemOverlapProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for ItemOverlap.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty ItemOverlapProperty =
+            DependencyProperty.Register("ItemOverlap", typeof(int), typeof(RecentUserHeads), new PropertyMetadata(10, OnItemOverlapChanged));
+
+        private static void OnItemOverlapChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((RecentUserHeads)d)._itemOverlap = (int)e.NewValue;
+        }
+
+        #endregion
+
         public RecentUserCollection Items => _items;
 
-        public Action<ProfilePicture, MessageSender> SetPicture { get; set; }
+        public event RecentUserHeadChangedHandler RecentUserHeadChanged;
 
         protected override void OnApplyTemplate()
         {
             _layoutRoot = GetTemplateChild("LayoutRoot") as Grid;
             _items.CollectionChanged += OnCollectionChanged;
+
+            Reset();
         }
 
         private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -65,15 +116,23 @@ namespace Unigram.Controls
             }
             else if (e.Action == NotifyCollectionChangedAction.Reset)
             {
-                _layoutRoot.Children.Clear();
+                Reset();
+            }
+        }
 
-                for (int i = 0; i < _items.Count; i++)
-                {
-                    var container = CreateContainer(_items[i]);
+        private void Reset()
+        {
+            _layoutRoot.Children.Clear();
 
-                    Canvas.SetZIndex(container, -i);
-                    _layoutRoot.Children.Insert(i, container);
-                }
+            for (int i = 0; i < _items.Count; i++)
+            {
+                var container = CreateContainer(_items[i]);
+                var visual = ElementCompositionPreview.GetElementVisual(container);
+
+                visual.Offset = new Vector3(i * (_itemSize + 4 - _itemOverlap), 0, 0);
+
+                Canvas.SetZIndex(container, -i);
+                _layoutRoot.Children.Insert(i, container);
             }
         }
 
@@ -101,6 +160,7 @@ namespace Unigram.Controls
                 else
                 {
                     AnimateMoving(_layoutRoot.Children[i], real, real + 1);
+                    UpdateContainer(_layoutRoot.Children[i], _items[real + 1]);
                     real++;
                 }
             }
@@ -118,6 +178,7 @@ namespace Unigram.Controls
         private void RemoveItem(int index, object item)
         {
             var batch = CreateScopedBatch();
+            var count = _layoutRoot.Children.Count;
 
             UIElement container = null;
             if (item != null)
@@ -136,6 +197,7 @@ namespace Unigram.Controls
                 if (real == index || real >= _maxCount)
                 {
                     _toBeRemoved.Add(_layoutRoot.Children[i]);
+                    count--;
 
                     AnimateRemoving(_layoutRoot.Children[i], real + 1);
                     real++;
@@ -143,14 +205,15 @@ namespace Unigram.Controls
                 else
                 {
                     AnimateMoving(_layoutRoot.Children[i], real, real - 1);
+                    UpdateContainer(_layoutRoot.Children[i], _items[real - 1]);
                     real++;
                 }
             }
 
-            if (container != null && _layoutRoot.Children.Count < _maxCount)
+            if (container != null && count < _maxCount)
             {
                 Canvas.SetZIndex(container, -_maxCount);
-                _layoutRoot.Children.Add(container);
+                _layoutRoot.Children.Insert(count, container);
             }
 
             AnimateAlignment();
@@ -185,26 +248,43 @@ namespace Unigram.Controls
         {
             var picture = new ProfilePicture();
             picture.IsEnabled = false;
-            picture.Width = 32;
-            picture.Height = 32;
+            picture.Width = _itemSize;
+            picture.Height = _itemSize;
 
             if (item is MessageSender sender)
             {
-                SetPicture?.Invoke(picture, sender);
+                RecentUserHeadChanged?.Invoke(picture, sender);
             }
 
+            var borderBrush = new Binding();
+            borderBrush.Source = this;
+            borderBrush.Path = new PropertyPath(nameof(BorderBrush));
+
             var container = new Border();
-            container.Width = 36;
-            container.Height = 36;
+            container.Width = _itemSize + 4;
+            container.Height = _itemSize + 4;
             container.VerticalAlignment = VerticalAlignment.Top;
             container.HorizontalAlignment = HorizontalAlignment.Left;
-            container.BorderBrush = new SolidColorBrush(Colors.White);
             container.BorderThickness = new Thickness(2);
-            container.CornerRadius = new CornerRadius(36 / 2);
+            container.CornerRadius = new CornerRadius((_itemSize + 4) / 2);
             container.Child = picture;
             container.Tag = item;
+            container.SetBinding(Border.BorderBrushProperty, borderBrush);
 
             return container;
+        }
+
+        private void UpdateContainer(UIElement container, object item)
+        {
+            if (container is Border border
+                && border.Child is ProfilePicture picture
+                && border.Tag is MessageSender previous)
+            {
+                if (item is MessageSender sender && !sender.IsEqual(previous))
+                {
+                    RecentUserHeadChanged?.Invoke(picture, sender);
+                }
+            }
         }
 
         private CompositionScopedBatch CreateScopedBatch()
@@ -231,8 +311,8 @@ namespace Unigram.Controls
             Canvas.SetZIndex(container, -index);
 
             var visual = ElementCompositionPreview.GetElementVisual(container);
-            visual.Offset = new Vector3(index * 26, 0, 0);
-            visual.CenterPoint = new Vector3(36 / 2);
+            visual.Offset = new Vector3(index * (_itemSize + 4 - _itemOverlap), 0, 0);
+            visual.CenterPoint = new Vector3((_itemSize + 4) / 2);
 
             var addingScale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
             addingScale.InsertKeyFrame(0.0f, new Vector3(0));
@@ -278,10 +358,10 @@ namespace Unigram.Controls
 
             if (oldIndex >= 0)
             {
-                offset.InsertKeyFrame(0, new Vector3(oldIndex * 26, 0, 0));
+                offset.InsertKeyFrame(0, new Vector3(oldIndex * (_itemSize + 4 - _itemOverlap), 0, 0));
             }
 
-            offset.InsertKeyFrame(1, new Vector3(newIndex * 26, 0, 0));
+            offset.InsertKeyFrame(1, new Vector3(newIndex * (_itemSize + 4 - _itemOverlap), 0, 0));
             //offset.Duration = TimeSpan.FromSeconds(1);
 
             child.StartAnimation("Offset", offset);
@@ -294,8 +374,10 @@ namespace Unigram.Controls
                 // Not needed in templated control
                 ElementCompositionPreview.SetIsTranslationEnabled(_layoutRoot, true);
 
+                var maxWidth = ((_itemSize + 4) * _maxCount) - (_itemOverlap * (_maxCount - 1));
+
                 var count = Math.Min(_maxCount, Math.Max(1, _items.Count));
-                var diff = 88f - (count * 36f - ((count - 1) * 10f));
+                var diff = maxWidth - (count * (float)(_itemSize + 4) - ((count - 1) * _itemOverlap));
 
                 var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
                 offset.InsertKeyFrame(1, new Vector3(diff / 2, 0, 0));
@@ -305,11 +387,27 @@ namespace Unigram.Controls
                 visual.StartAnimation("Translation", offset);
             }
         }
-
     }
 
-    public class RecentUserCollection : MvxObservableCollection<MessageSender>
+    public class RecentUserCollection : DiffObservableCollection<MessageSender>
     {
+        public RecentUserCollection()
+            : base(new RecentUserHandler())
+        {
 
+        }
+
+        class RecentUserHandler : IDiffHandler<MessageSender>
+        {
+            public bool CompareItems(MessageSender oldItem, MessageSender newItem)
+            {
+                return oldItem.IsEqual(newItem);
+            }
+
+            public void UpdateItem(MessageSender oldItem, MessageSender newItem)
+            {
+
+            }
+        }
     }
 }
