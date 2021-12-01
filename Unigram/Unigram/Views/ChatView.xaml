@@ -1009,14 +1009,14 @@
                                      Checked="ButtonMore_Checked"
                                      AutomationProperties.Name="{CustomResource AccDescrBotCommands}"
                                      ToolTipService.ToolTip="{CustomResource AccDescrBotCommands}"
+                                     VerticalAlignment="Bottom"
                                      Visibility="Collapsed"
-                                     Margin="8,0,0,0"
+                                     Margin="0,8,0,8"
                                      Grid.Row="1">
                     <controls:ProfilePicture x:Name="PhotoMore"
                                              IsEnabled="False"
                                              Width="32"
-                                             Height="32"
-                                             Margin="-8" />
+                                             Height="32" />
                 </controls:MenuButton>
 
 

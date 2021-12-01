@@ -4644,28 +4644,35 @@ namespace Unigram.Views
                 foreach (var messageSender in senders.Senders)
                 {
                     var picture = new ProfilePicture();
-                    picture.Width = 24;
-                    picture.Height = 24;
+                    picture.Width = 36;
+                    picture.Height = 36;
                     picture.IsEnabled = false;
                     picture.Margin = new Thickness(-4, -2, 0, -2);
 
                     if (ViewModel.ProtoService.TryGetUser(messageSender, out User senderUser))
                     {
-                        picture.SetUser(ViewModel.ProtoService, senderUser, 24);
+                        picture.SetUser(ViewModel.ProtoService, senderUser, 36);
 
                         var item = flyout.CreateFlyoutItem(ViewModel.SetDefaultSenderCommand, messageSender, senderUser.GetFullName());
-                        item.Style = App.Current.Resources["ProfilePictureMenuFlyoutItemStyle"] as Style;
+                        item.Style = App.Current.Resources["SendAsMenuFlyoutItemStyle"] as Style;
                         item.Icon = new FontIcon();
                         item.Tag = picture;
+
+                        ControlProperties.SetLabel(item, Strings.Resources.VoipGroupPersonalAccount);
                     }
                     else if (ViewModel.ProtoService.TryGetChat(messageSender, out Chat senderChat))
                     {
-                        picture.SetChat(ViewModel.ProtoService, senderChat, 24);
+                        picture.SetChat(ViewModel.ProtoService, senderChat, 36);
 
                         var item = flyout.CreateFlyoutItem(ViewModel.SetDefaultSenderCommand, messageSender, senderChat.Title);
-                        item.Style = App.Current.Resources["ProfilePictureMenuFlyoutItemStyle"] as Style;
+                        item.Style = App.Current.Resources["SendAsMenuFlyoutItemStyle"] as Style;
                         item.Icon = new FontIcon();
                         item.Tag = picture;
+
+                        if (ViewModel.CacheService.TryGetSupergroup(chat, out Supergroup supergroup))
+                        {
+                            ControlProperties.SetLabel(item, Locale.Declension("Subscribers", supergroup.MemberCount));
+                        }
                     }
                 }
             }

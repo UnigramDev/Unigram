@@ -1667,7 +1667,7 @@
         <Setter Property="BorderBrush"
                 Value="{ThemeResource ToggleButtonBorderBrushChecked}" />
         <Setter Property="Padding"
-                Value="8,8" />
+                Value="8,0,0,0" />
         <Setter Property="HorizontalAlignment"
                 Value="Left" />
         <Setter Property="VerticalAlignment"
@@ -1693,7 +1693,7 @@
                           BorderBrush="{TemplateBinding BorderBrush}"
                           BorderThickness="{TemplateBinding BorderThickness}"
                           CornerRadius="{TemplateBinding CornerRadius}"
-                          Padding="{TemplateBinding Padding}"
+                          Margin="{TemplateBinding Padding}"
                           AutomationProperties.AccessibilityView="Raw">
 
                         <VisualStateManager.VisualStateGroups>
