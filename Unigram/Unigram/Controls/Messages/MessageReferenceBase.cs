@@ -244,6 +244,8 @@ namespace Unigram.Controls.Messages
             {
                 case MessageText text:
                     return SetTextTemplate(message, text, title);
+                case MessageAnimatedEmoji animatedEmoji:
+                    return SetAnimatedEmojiTemplate(message, animatedEmoji, title);
                 case MessageAnimation animation:
                     return SetAnimationTemplate(message, animation, title);
                 case MessageAudio audio:
@@ -541,6 +543,19 @@ namespace Unigram.Controls.Messages
                 string.Empty);
 
             UpdateThumbnail(message, videoNote.VideoNote.Thumbnail, videoNote.VideoNote.Minithumbnail, new CornerRadius(18));
+
+            return true;
+        }
+
+        private bool SetAnimatedEmojiTemplate(MessageViewModel message, MessageAnimatedEmoji animatedEmoji, string title)
+        {
+            Visibility = Visibility.Visible;
+
+            SetText(GetFromLabel(message, title),
+                animatedEmoji.Emoji,
+                string.Empty);
+
+            HideThumbnail();
 
             return true;
         }

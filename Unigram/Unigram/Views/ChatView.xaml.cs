@@ -565,7 +565,7 @@ namespace Unigram.Views
                 var animateSendout = !message.IsChannelPost
                     && message.IsOutgoing
                     && message.SendingState is MessageSendingStatePending
-                    && message.Content is MessageText or MessageDice
+                    && message.Content is MessageText or MessageDice or MessageAnimatedEmoji
                     && message.GeneratedContent is MessageBigEmoji or MessageSticker or null
                     && ApiInfo.CanUseActualFloats;
 
@@ -2353,7 +2353,7 @@ namespace Unigram.Views
             {
                 return !string.IsNullOrEmpty(text.Text.Text);
             }
-            else if (message.Content is MessageContact)
+            else if (message.Content is MessageContact or MessageAnimatedEmoji)
             {
                 return true;
             }

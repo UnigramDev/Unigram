@@ -524,13 +524,13 @@ namespace Unigram.ViewModels
             }
 
             var input = message.Content.GetCaption();
-            if (message.Content is MessageText text)
-            {
-                input = text.Text;
-            }
-            else if (message.Content is MessageContact contact)
+            if (message.Content is MessageContact contact)
             {
                 input = new FormattedText(PhoneNumber.Format(contact.Contact.PhoneNumber), new TextEntity[0]);
+            }
+            else if (message.Content is MessageAnimatedEmoji animatedEmoji)
+            {
+                input = new FormattedText(animatedEmoji.Emoji, new TextEntity[0]);
             }
 
             if (input != null)

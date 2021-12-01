@@ -163,6 +163,10 @@ namespace Unigram.Views.Chats
                     {
                         title.Text = Strings.Resources.AttachContact;
                     }
+                    else if (message.Content is MessageAnimatedEmoji animatedEmoji)
+                    {
+                        title.Text = animatedEmoji.Emoji;
+                    }
                     else if (message.Content is MessageLocation location)
                     {
                         title.Text = location.LivePeriod > 0 ? Strings.Resources.AttachLiveLocation : Strings.Resources.AttachLocation;

@@ -1329,7 +1329,11 @@ namespace Unigram.Controls.Messages
             }
             else
             {
-                if (reply.Content is MessageAudio)
+                if (reply.Content is MessageAnimatedEmoji animatedEmoji)
+                {
+                    content = ReplaceWithLink(string.Format(Strings.Resources.ActionPinnedText, animatedEmoji.Emoji), "un1", sender, ref entities);
+                }
+                else if (reply.Content is MessageAudio)
                 {
                     content = ReplaceWithLink(Strings.Resources.ActionPinnedMusic, "un1", sender, ref entities);
                 }

@@ -888,6 +888,7 @@ namespace Unigram.Controls.Cells
                 MessageVideo video => video.Caption.Text.Replace('\n', ' '),
                 MessageVoiceNote voiceNote => voiceNote.Caption.Text.Replace('\n', ' '),
                 MessageText text => text.Text.Text.Replace('\n', ' '),
+                MessageAnimatedEmoji animatedEmoji => animatedEmoji.Emoji,
                 MessageDice dice => dice.Emoji,
                 _ => string.Empty,
             };
@@ -998,10 +999,6 @@ namespace Unigram.Controls.Cells
             else if (message.Content is MessageVideoNote)
             {
                 return result + Strings.Resources.AttachRound;
-            }
-            else if (message.Content is MessageAnimatedEmoji animatedEmoji)
-            {
-                return result + animatedEmoji.Emoji;
             }
             else if (message.Content is MessageSticker sticker)
             {
