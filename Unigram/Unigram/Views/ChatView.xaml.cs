@@ -10,7 +10,6 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -156,6 +155,7 @@ namespace Unigram.Views
             InitializeStickers();
 
             GroupCall.InitializeParent(ClipperOuter, ViewModel.ProtoService);
+            ActionBar.InitializeParent(ClipperActionBar);
             PinnedMessage.InitializeParent(Clipper);
 
             ElementCompositionPreview.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
@@ -3446,69 +3446,7 @@ namespace Unigram.Views
 
         public void UpdateChatActionBar(Chat chat)
         {
-            Button CreateButton(string text, ICommand command, object commandParameter = null, int column = 0)
-            {
-                var label = new TextBlock();
-                label.Style = BootStrapper.Current.Resources["CaptionTextBlockStyle"] as Style;
-                label.Foreground = BootStrapper.Current.Resources["SystemControlHighlightAccentBrush"] as Brush;
-                label.Text = text;
-
-                var button = new Button();
-                button.Style = BootStrapper.Current.Resources["EmptyButtonStyle"] as Style;
-                button.HorizontalContentAlignment = HorizontalAlignment.Center;
-                button.VerticalContentAlignment = VerticalAlignment.Center;
-                button.Content = label;
-                button.Command = command;
-                button.CommandParameter = commandParameter;
-
-                ActionBarRoot.ColumnDefinitions.Add(new ColumnDefinition());
-                Grid.SetColumn(button, column);
-
-                return button;
-            }
-
-            ActionBarRoot.ColumnDefinitions.Clear();
-            ActionBarRoot.Children.Clear();
-
-            if (chat.ActionBar is ChatActionBarAddContact)
-            {
-                var user = ViewModel.CacheService.GetUser(chat);
-                if (user != null)
-                {
-                    ActionBarRoot.Children.Add(CreateButton(string.Format(Strings.Resources.AddContactFullChat, user.FirstName.ToUpper()), ViewModel.AddContactCommand));
-                }
-                else
-                {
-                    ActionBarRoot.Children.Add(CreateButton(Strings.Resources.AddContactChat, ViewModel.AddContactCommand));
-                }
-            }
-            else if (chat.ActionBar is ChatActionBarReportAddBlock)
-            {
-                ActionBarRoot.Children.Add(CreateButton(Strings.Resources.ReportSpamUser, ViewModel.ReportSpamCommand));
-                ActionBarRoot.Children.Add(CreateButton(Strings.Resources.AddContactChat, ViewModel.AddContactCommand, column: 1));
-            }
-            else if (chat.ActionBar is ChatActionBarReportSpam)
-            {
-                var user = ViewModel.CacheService.GetUser(chat);
-                if (user != null)
-                {
-                    ActionBarRoot.Children.Add(CreateButton(Strings.Resources.ReportSpamUser, ViewModel.ReportSpamCommand));
-                }
-                else
-                {
-                    ActionBarRoot.Children.Add(CreateButton(Strings.Resources.ReportSpamAndLeave, ViewModel.ReportSpamCommand, new ChatReportReasonSpam()));
-                }
-            }
-            else if (chat.ActionBar is ChatActionBarReportUnrelatedLocation)
-            {
-                ActionBarRoot.Children.Add(CreateButton(Strings.Resources.ReportSpamLocation, ViewModel.ReportSpamCommand, new ChatReportReasonUnrelatedLocation()));
-            }
-            else if (chat.ActionBar is ChatActionBarSharePhoneNumber)
-            {
-                ActionBarRoot.Children.Add(CreateButton(Strings.Resources.ShareMyPhone, ViewModel.ShareContactCommand));
-            }
-
-            ActionBar.Visibility = ActionBarRoot.Children.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+            ActionBar.UpdateChatActionBar(chat);
         }
 
         public void UpdateChatDefaultDisableNotification(Chat chat, bool defaultDisableNotification)

@@ -133,6 +133,8 @@ namespace Unigram.ViewModels
             PinnedShowCommand = new RelayCommand(PinnedShowExecute);
             PinnedListCommand = new RelayCommand(PinnedListExecute);
             UnblockCommand = new RelayCommand(UnblockExecute);
+            UnarchiveCommand = new RelayCommand(UnarchiveExecute);
+            InviteCommand = new RelayCommand(InviteExecute);
             ShareContactCommand = new RelayCommand(ShareContactExecute);
             AddContactCommand = new RelayCommand(AddContactExecute);
             StartCommand = new RelayCommand(StartExecute);
@@ -2920,6 +2922,71 @@ namespace Unigram.ViewModels
             }
 
             ProtoService.Send(new SharePhoneNumber(user.Id));
+        }
+
+        #endregion
+
+        #region Unarchive
+
+        public RelayCommand UnarchiveCommand { get; }
+        private void UnarchiveExecute()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            ProtoService.Send(new AddChatToList(chat.Id, new ChatListMain()));
+            ProtoService.Send(new SetChatNotificationSettings(chat.Id, new ChatNotificationSettings
+            {
+                UseDefaultDisableMentionNotifications = true,
+                UseDefaultDisablePinnedMessageNotifications = true,
+                UseDefaultMuteFor = true,
+                UseDefaultShowPreview = true,
+                UseDefaultSound = true
+            }));
+        }
+
+        #endregion
+
+        #region Invite
+
+        public RelayCommand InviteCommand { get; }
+        private async void InviteExecute()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            if (chat.Type is ChatTypeSupergroup or ChatTypeBasicGroup)
+            {
+                var selected = await SharePopup.PickUsersAsync(CacheService, Strings.Resources.SelectContact);
+                if (selected == null || selected.Count == 0)
+                {
+                    return;
+                }
+
+                var userIds = selected.Select(x => x.Id).ToArray();
+                var count = Locale.Declension("Users", selected.Count);
+
+                var title = string.Format(Strings.Resources.AddMembersAlertTitle, count);
+                var message = string.Format(Strings.Resources.AddMembersAlertCountText, count, chat.Title);
+
+                var confirm = await MessagePopup.ShowAsync(message, title, Strings.Resources.Add, Strings.Resources.Cancel);
+                if (confirm != ContentDialogResult.Primary)
+                {
+                    return;
+                }
+
+                var response = await ProtoService.SendAsync(new AddChatMembers(chat.Id, userIds));
+                if (response is Error error)
+                {
+
+                }
+            }
         }
 
         #endregion

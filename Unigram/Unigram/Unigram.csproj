@@ -267,6 +267,9 @@
     <Compile Include="Controls\ChatStatisticsOverview.xaml.cs">
       <DependentUpon>ChatStatisticsOverview.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Chats\ChatActionBarView.xaml.cs">
+      <DependentUpon>ChatActionBarView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Chats\ChatActionIndicator.cs" />
     <Compile Include="Controls\Chats\ChatBackgroundPresenter.cs" />
     <Compile Include="Controls\Chats\ChatBottomButton.cs" />
@@ -1500,6 +1503,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\ChatStatisticsOverview.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Chats\ChatActionBarView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

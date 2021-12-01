@@ -514,67 +514,52 @@
                     Grid.Row="2">
             <controls:GroupCallHeader x:Name="GroupCall"
                                       JoinCommand="{x:Bind ViewModel.GroupCallJoinCommand}"
-                                      Visibility="Collapsed"
-                                      Grid.Row="1" />
+                                      Visibility="Collapsed" />
 
-            <Grid x:Name="Clipper">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <messages:MessagePinned x:Name="PinnedMessage"
-                                        Click="Reply_Click"
-                                        HideCommand="{x:Bind ViewModel.PinnedHideCommand}"
-                                        ListCommand="{x:Bind ViewModel.PinnedListCommand}"
-                                        Visibility="Collapsed" />
+            <StackPanel x:Name="ClipperActionBar">
+                <chats:ChatActionBarView x:Name="ActionBar"
+                                         Visibility="Collapsed" />
+                <Grid x:Name="Clipper">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <messages:MessagePinned x:Name="PinnedMessage"
+                                            Click="Reply_Click"
+                                            HideCommand="{x:Bind ViewModel.PinnedHideCommand}"
+                                            ListCommand="{x:Bind ViewModel.PinnedListCommand}"
+                                            Visibility="Collapsed" />
 
-                <Grid x:Name="CallbackQueryAnswerPanel"
-                      Visibility="{x:Bind ViewModel.InformativeMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}"
-                      Background="{ThemeResource PageSubHeaderBackgroundBrush}"
-                      MinHeight="{ThemeResource AppBarThemeCompactHeight}">
-                    <messages:MessageReference x:Name="CallbackQueryAnswer"
-                                               VerticalAlignment="Stretch"
-                                               Padding="12,6"
-                                               IsHitTestVisible="False" />
-                </Grid>
-
-                <Grid x:Name="ActionBar"
-                      Background="{ThemeResource PageSubHeaderBackgroundBrush}"
-                      Grid.Row="1">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition Width="48" />
-                    </Grid.ColumnDefinitions>
-
-                    <Grid x:Name="ActionBarRoot">
-
+                    <Grid x:Name="CallbackQueryAnswerPanel"
+                          Visibility="{x:Bind ViewModel.InformativeMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}"
+                          Background="{ThemeResource PageSubHeaderBackgroundBrush}"
+                          MinHeight="{ThemeResource AppBarThemeCompactHeight}">
+                        <messages:MessageReference x:Name="CallbackQueryAnswer"
+                                                   VerticalAlignment="Stretch"
+                                                   Padding="12,6"
+                                                   IsHitTestVisible="False" />
                     </Grid>
 
-                    <controls:GlyphButton Command="{x:Bind ViewModel.RemoveActionBarCommand}"
-                                          Glyph="&#xE711;"
-                                          Height="32"
-                                          Grid.Column="1" />
+                    <StackPanel x:Name="DateHeaderRelative"
+                                Grid.Row="2">
+                        <Border x:Name="DateHeaderPanel"
+                                Visibility="Collapsed"
+                                HorizontalAlignment="Center"
+                                SizeChanged="DateHeaderPanel_SizeChanged">
+                            <messages:MessageService x:Name="DateHeader"
+                                                     Click="Date_Click"
+                                                     BorderThickness="0,8,0,0">
+                                <TextBlock x:Name="DateHeaderLabel"
+                                           Text="31 dicembre 2017"
+                                           Foreground="White"
+                                           TextAlignment="Center"
+                                           Style="{StaticResource CaptionTextBlockStyle}" />
+                            </messages:MessageService>
+                        </Border>
+                    </StackPanel>
                 </Grid>
-
-                <StackPanel x:Name="DateHeaderRelative"
-                            Grid.Row="2">
-                    <Border x:Name="DateHeaderPanel"
-                            Visibility="Collapsed"
-                            HorizontalAlignment="Center"
-                            SizeChanged="DateHeaderPanel_SizeChanged">
-                        <messages:MessageService x:Name="DateHeader"
-                                                 Click="Date_Click"
-                                                 BorderThickness="0,8,0,0">
-                            <TextBlock x:Name="DateHeaderLabel"
-                                       Text="31 dicembre 2017"
-                                       Foreground="White"
-                                       TextAlignment="Center"
-                                       Style="{StaticResource CaptionTextBlockStyle}" />
-                        </messages:MessageService>
-                    </Border>
-                </StackPanel>
-            </Grid>
+            </StackPanel>
         </StackPanel>
 
         <Grid x:Name="ContentPanel"
