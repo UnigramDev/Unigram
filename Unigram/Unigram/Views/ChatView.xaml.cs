@@ -4649,31 +4649,33 @@ namespace Unigram.Views
                     picture.IsEnabled = false;
                     picture.Margin = new Thickness(-4, -2, 0, -2);
 
+                    var item = new MenuFlyoutProfile();
+                    item.CommandParameter = messageSender;
+                    item.Command = ViewModel.SetDefaultSenderCommand;
+                    item.Style = App.Current.Resources["SendAsMenuFlyoutItemStyle"] as Style;
+                    item.Icon = new FontIcon();
+                    item.Tag = picture;
+
                     if (ViewModel.ProtoService.TryGetUser(messageSender, out User senderUser))
                     {
                         picture.SetUser(ViewModel.ProtoService, senderUser, 36);
 
-                        var item = flyout.CreateFlyoutItem(ViewModel.SetDefaultSenderCommand, messageSender, senderUser.GetFullName());
-                        item.Style = App.Current.Resources["SendAsMenuFlyoutItemStyle"] as Style;
-                        item.Icon = new FontIcon();
-                        item.Tag = picture;
-
-                        ControlProperties.SetLabel(item, Strings.Resources.VoipGroupPersonalAccount);
+                        item.Text = senderUser.GetFullName();
+                        item.Info = Strings.Resources.VoipGroupPersonalAccount;
                     }
                     else if (ViewModel.ProtoService.TryGetChat(messageSender, out Chat senderChat))
                     {
                         picture.SetChat(ViewModel.ProtoService, senderChat, 36);
 
-                        var item = flyout.CreateFlyoutItem(ViewModel.SetDefaultSenderCommand, messageSender, senderChat.Title);
-                        item.Style = App.Current.Resources["SendAsMenuFlyoutItemStyle"] as Style;
-                        item.Icon = new FontIcon();
-                        item.Tag = picture;
+                        item.Text = senderChat.Title;
 
                         if (ViewModel.CacheService.TryGetSupergroup(chat, out Supergroup supergroup))
                         {
-                            ControlProperties.SetLabel(item, Locale.Declension("Subscribers", supergroup.MemberCount));
+                            item.Info = Locale.Declension("Subscribers", supergroup.MemberCount);
                         }
                     }
+
+                    flyout.Items.Add(item);
                 }
             }
 

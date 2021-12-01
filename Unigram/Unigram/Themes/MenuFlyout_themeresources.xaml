@@ -1,7 +1,7 @@
 ﻿<!-- Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT License. See LICENSE in the project root for license information. -->
 <ResourceDictionary xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:common="using:Unigram.Common"
+                    xmlns:controls="using:Unigram.Controls"
                     xmlns:contract6Present="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract,6)"
                     xmlns:contract7Present="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract,7)">
 
@@ -515,7 +515,7 @@
         </Setter>
     </Style>
 
-    <Style TargetType="MenuFlyoutItem"
+    <Style TargetType="controls:MenuFlyoutProfile"
            x:Key="SendAsMenuFlyoutItemStyle">
         <Setter Property="Background"
                 Value="{ThemeResource MenuFlyoutItemBackground}" />
@@ -541,7 +541,7 @@
                 Value="{ThemeResource ControlCornerRadius}" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="MenuFlyoutItem">
+                <ControlTemplate TargetType="controls:MenuFlyoutProfile">
                     <Grid x:Name="LayoutRoot"
                           Padding="{TemplateBinding Padding}"
                           Background="{TemplateBinding Background}"
@@ -671,7 +671,7 @@
                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                         <TextBlock x:Name="LabelBlock"
-                                   Text="{TemplateBinding common:ControlProperties.Label}"
+                                   Text="{TemplateBinding Info}"
                                    TextTrimming="Clip"
                                    Style="{StaticResource InfoCaptionTextBlockStyle}"
                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
