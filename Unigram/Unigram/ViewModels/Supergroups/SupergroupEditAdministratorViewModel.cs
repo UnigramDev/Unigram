@@ -136,7 +136,7 @@ namespace Unigram.ViewModels.Supergroups
                 }
 
                 var supergroup = CacheService.GetSupergroup(chat);
-                if (supergroup == null)
+                if (supergroup == null || supergroup.Status is not ChatMemberStatusCreator)
                 {
                     return false;
                 }
