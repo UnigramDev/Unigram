@@ -39,7 +39,6 @@ namespace Unigram.Controls.Messages
         public MessageBubble()
         {
             DefaultStyleKey = typeof(MessageBubble);
-
         }
 
         public void UpdateQuery(string text)

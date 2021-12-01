@@ -12,6 +12,7 @@
                     xmlns:microsoft="using:Microsoft.UI.Xaml.Controls">
 
     <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="ms-appx:///Controls/Cells/ChatCell.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/AnimatedStickerContent.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/AnimationContent.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/AudioContent.xaml" />

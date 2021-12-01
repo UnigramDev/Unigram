@@ -22,6 +22,7 @@ using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
+using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Controls.Cells
 {
@@ -34,7 +35,7 @@ namespace Unigram.Controls.Cells
         Read
     }
 
-    public sealed partial class ChatCell : UserControl, IMultipleElement
+    public sealed class ChatCell : Control, IMultipleElement
     {
         private Chat _chat;
         private ChatList _chatList;
@@ -57,10 +58,91 @@ namespace Unigram.Controls.Cells
 
         public ChatCell()
         {
-            InitializeComponent();
+            DefaultStyleKey = typeof(ChatCell);
+        }
+
+        #region InitializeComponent
+
+        private Grid PhotoPanel;
+        private TextBlock TypeIcon;
+        private TextBlock TitleLabel;
+        private Grid VerifiedIcon;
+        private FontIcon MutedIcon;
+        private FontIcon StateIcon;
+        private TextBlock TimeLabel;
+        private Border MinithumbnailPanel;
+        private TextBlock BriefInfo;
+        private TextBlock TypingLabel;
+        private Border PinnedIcon;
+        private Border UnreadMentionsBadge;
+        private Border UnreadBadge;
+        private Border FailedBadge;
+        private Rectangle DropVisual;
+        private TextBlock FailedLabel;
+        private TextBlock UnreadLabel;
+        private TextBlock UnreadMentionsLabel;
+        private Run FromLabel;
+        private Run DraftLabel;
+        private Run BriefLabel;
+        private Image Minithumbnail;
+        private Ellipse SelectionOutline;
+        private ProfilePicture Photo;
+        private Border OnlineBadge;
+        private Border OnlineHeart;
+        private bool _templateApplied;
+
+        protected override void OnApplyTemplate()
+        {
+            PhotoPanel = GetTemplateChild(nameof(PhotoPanel)) as Grid;
+            TypeIcon = GetTemplateChild(nameof(TypeIcon)) as TextBlock;
+            TitleLabel = GetTemplateChild(nameof(TitleLabel)) as TextBlock;
+            VerifiedIcon = GetTemplateChild(nameof(VerifiedIcon)) as Grid;
+            MutedIcon = GetTemplateChild(nameof(MutedIcon)) as FontIcon;
+            StateIcon = GetTemplateChild(nameof(StateIcon)) as FontIcon;
+            TimeLabel = GetTemplateChild(nameof(TimeLabel)) as TextBlock;
+            MinithumbnailPanel = GetTemplateChild(nameof(MinithumbnailPanel)) as Border;
+            BriefInfo = GetTemplateChild(nameof(BriefInfo)) as TextBlock;
+            TypingLabel = GetTemplateChild(nameof(TypingLabel)) as TextBlock;
+            PinnedIcon = GetTemplateChild(nameof(PinnedIcon)) as Border;
+            UnreadMentionsBadge = GetTemplateChild(nameof(UnreadMentionsBadge)) as Border;
+            UnreadBadge = GetTemplateChild(nameof(UnreadBadge)) as Border;
+            FailedBadge = GetTemplateChild(nameof(FailedBadge)) as Border;
+            DropVisual = GetTemplateChild(nameof(DropVisual)) as Rectangle;
+            FailedLabel = GetTemplateChild(nameof(FailedLabel)) as TextBlock;
+            UnreadLabel = GetTemplateChild(nameof(UnreadLabel)) as TextBlock;
+            UnreadMentionsLabel = GetTemplateChild(nameof(UnreadMentionsLabel)) as TextBlock;
+            FromLabel = GetTemplateChild(nameof(FromLabel)) as Run;
+            DraftLabel = GetTemplateChild(nameof(DraftLabel)) as Run;
+            BriefLabel = GetTemplateChild(nameof(BriefLabel)) as Run;
+            Minithumbnail = GetTemplateChild(nameof(Minithumbnail)) as Image;
+            SelectionOutline = GetTemplateChild(nameof(SelectionOutline)) as Ellipse;
+            Photo = GetTemplateChild(nameof(Photo)) as ProfilePicture;
+
+            var tooltip = new ToolTip();
+            tooltip.Opened += ToolTip_Opened;
+
+            ToolTipService.SetToolTip(BriefInfo, tooltip);
+
             InitializeSelection();
             InitializeTicks();
+
+            _templateApplied = true;
+
+            if (_chat != null)
+            {
+                UpdateChat(_protoService, _chat, _chatList);
+            }
+            else if (_chatList != null)
+            {
+                UpdateChatList(_protoService , _chatList);
+            }
+            else if (_message != null)
+            {
+                UpdateMessage(_protoService, _message);
+            }
         }
+
+        #endregion
 
         public void UpdateService(IProtoService protoService)
         {
@@ -78,6 +160,11 @@ namespace Unigram.Controls.Cells
         {
             _protoService = protoService;
             _message = message;
+
+            if (!_templateApplied)
+            {
+                return;
+            }
 
             var chat = protoService.GetChat(message.ChatId);
             if (chat == null)
@@ -106,6 +193,12 @@ namespace Unigram.Controls.Cells
         public async void UpdateChatList(IProtoService protoService, ChatList chatList)
         {
             _protoService = protoService;
+            _chatList = chatList;
+
+            if (!_templateApplied)
+            {
+                return;
+            }
 
             TitleLabel.Text = Strings.Resources.ArchivedChats;
             Photo.Source = PlaceholderHelper.GetGlyph(Icons.Archive, 0, 96);
@@ -261,7 +354,7 @@ namespace Unigram.Controls.Cells
                     builder.Append(fromUser.GetFullName());
                     builder.Append(": ");
                 }
-                else if (fromChat != null)
+                else if (fromChat != null && fromChat.Id != chat.Id)
                 {
                     builder.Append(fromChat.Title);
                     builder.Append(": ");
@@ -291,7 +384,7 @@ namespace Unigram.Controls.Cells
 
         public void UpdateChatLastMessage(Chat chat, ChatPosition position = null)
         {
-            if (chat == null)
+            if (chat == null || !_templateApplied)
             {
                 return;
             }
@@ -313,6 +406,11 @@ namespace Unigram.Controls.Cells
 
         public void UpdateChatReadInbox(Chat chat, ChatPosition position = null)
         {
+            if (!_templateApplied)
+            {
+                return;
+            }
+
             if (position == null)
             {
                 position = chat.GetPosition(_chatList);
@@ -327,6 +425,11 @@ namespace Unigram.Controls.Cells
 
         public void UpdateChatReadOutbox(Chat chat)
         {
+            if (!_templateApplied)
+            {
+                return;
+            }
+
             StateIcon.Glyph = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, chat.DraftMessage, chat.LastMessage, chat.LastMessage?.SendingState);
         }
 
@@ -337,12 +440,22 @@ namespace Unigram.Controls.Cells
 
         public void UpdateChatUnreadMentionCount(Chat chat, ChatPosition position = null)
         {
+            if (!_templateApplied)
+            {
+                return;
+            }
+
             UpdateChatReadInbox(chat, position);
             UnreadMentionsBadge.Visibility = chat.UnreadMentionCount > 0 ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public void UpdateNotificationSettings(Chat chat)
         {
+            if (!_templateApplied)
+            {
+                return;
+            }
+
             var muted = _protoService.Notifications.GetMutedFor(chat) > 0;
             VisualStateManager.GoToState(this, muted ? "Muted" : "Unmuted", false);
             MutedIcon.Visibility = muted ? Visibility.Visible : Visibility.Collapsed;
@@ -350,16 +463,31 @@ namespace Unigram.Controls.Cells
 
         public void UpdateChatTitle(Chat chat)
         {
+            if (!_templateApplied)
+            {
+                return;
+            }
+
             TitleLabel.Text = _protoService.GetTitle(chat);
         }
 
         public void UpdateChatPhoto(Chat chat)
         {
+            if (!_templateApplied)
+            {
+                return;
+            }
+
             Photo.SetChat(_protoService, chat, 48);
         }
 
         public void UpdateChatActions(Chat chat, IDictionary<MessageSender, ChatAction> actions)
         {
+            if (!_templateApplied)
+            {
+                return;
+            }
+
             if (actions != null && actions.Count > 0)
             {
                 TypingLabel.Text = InputChatActionManager.GetTypingString(chat, actions, _protoService.GetUser, _protoService.GetChat, out ChatAction commonAction);
@@ -396,11 +524,21 @@ namespace Unigram.Controls.Cells
 
         public void UpdateChatVideoChat(Chat chat)
         {
+            if (!_templateApplied)
+            {
+                return;
+            }
+
             UpdateOnlineBadge(chat.VideoChat?.HasParticipants ?? false, true);
         }
 
         public void UpdateUserStatus(Chat chat, UserStatus status)
         {
+            if (!_templateApplied)
+            {
+                return;
+            }
+
             UpdateOnlineBadge(status is UserStatusOnline, false);
         }
 
@@ -408,7 +546,8 @@ namespace Unigram.Controls.Cells
         {
             if (OnlineBadge == null)
             {
-                FindName(nameof(OnlineBadge));
+                OnlineBadge = GetTemplateChild(nameof(OnlineBadge)) as Border;
+                OnlineHeart = GetTemplateChild(nameof(OnlineHeart)) as Border;
 
                 _onlineBadge = ElementCompositionPreview.GetElementVisual(OnlineBadge);
                 _onlineBadge.CenterPoint = new Vector3(6.5f);
@@ -596,6 +735,11 @@ namespace Unigram.Controls.Cells
             _chatList = chatList;
 
             Tag = chat;
+
+            if (!_templateApplied)
+            {
+                return;
+            }
 
             var position = chat.GetPosition(chatList);
 
@@ -833,7 +977,7 @@ namespace Unigram.Controls.Cells
                         result = string.Format(format, fromUser.Id);
                     }
                 }
-                else if (fromChat != null)
+                else if (fromChat != null && fromChat.Id != chat.Id)
                 {
                     result = string.Format(format, fromChat.Title);
                 }
@@ -1263,6 +1407,8 @@ namespace Unigram.Controls.Cells
             var sender = d as ChatCell;
             var solid = e.NewValue as SolidColorBrush;
 
+            sender._selectionStrokeToken = solid.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, sender.OnSelectionStrokeChanged);
+            
             if (e.OldValue is SolidColorBrush old && sender._selectionStrokeToken != 0)
             {
                 old.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, sender._selectionStrokeToken);
@@ -1274,7 +1420,6 @@ namespace Unigram.Controls.Cells
             }
 
             sender._stroke.FillBrush = Window.Current.Compositor.CreateColorBrush(solid.Color);
-            sender._selectionStrokeToken = solid.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, sender.OnSelectionStrokeChanged);
         }
 
         private void OnSelectionStrokeChanged(DependencyObject sender, DependencyProperty dp)
@@ -1336,7 +1481,7 @@ namespace Unigram.Controls.Cells
 
             var shape2 = compositor.CreateSpriteShape();
             shape2.Geometry = ellipse;
-            shape2.FillBrush = compositor.CreateColorBrush(Colors.Black);
+            shape2.FillBrush = GetBrush(StrokeProperty);
 
             var outer = compositor.CreateEllipseGeometry();
             outer.Radius = new Vector2(10);
@@ -1344,7 +1489,7 @@ namespace Unigram.Controls.Cells
 
             var shape3 = compositor.CreateSpriteShape();
             shape3.Geometry = outer;
-            shape3.FillBrush = compositor.CreateColorBrush(Colors.White);
+            shape3.FillBrush = GetBrush(SelectionStrokeProperty);
 
             var visual = compositor.CreateShapeVisual();
             visual.Shapes.Add(shape3);
@@ -1463,6 +1608,8 @@ namespace Unigram.Controls.Cells
                 old.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, sender._strokeToken);
             }
 
+            sender._strokeToken = solid.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, sender.OnStrokeChanged);
+            
             if (solid == null || sender._container == null || sender._ellipse == null)
             {
                 return;
@@ -1476,7 +1623,6 @@ namespace Unigram.Controls.Cells
             }
 
             sender._ellipse.FillBrush = brush;
-            sender._strokeToken = solid.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, sender.OnStrokeChanged);
         }
 
         private void OnStrokeChanged(DependencyObject sender, DependencyProperty dp)
@@ -1498,6 +1644,18 @@ namespace Unigram.Controls.Cells
         }
 
         #endregion
+
+        private CompositionBrush GetBrush(DependencyProperty dp)
+        {
+            var value = GetValue(dp);
+            if (value is SolidColorBrush solid)
+            {
+                return Window.Current.Compositor.CreateColorBrush(solid.Color);
+            }
+
+            return Window.Current.Compositor.CreateColorBrush(Colors.Black);
+        }
+
 
         private void InitializeTicks()
         {
@@ -1525,12 +1683,12 @@ namespace Unigram.Controls.Cells
 
             var shape11 = Window.Current.Compositor.CreateSpriteShape(line11);
             shape11.StrokeThickness = 2;
-            shape11.StrokeBrush = Window.Current.Compositor.CreateColorBrush(Colors.Black);
+            shape11.StrokeBrush = GetBrush(StrokeProperty);
             shape11.IsStrokeNonScaling = true;
 
             var shape12 = Window.Current.Compositor.CreateSpriteShape(line12);
             shape12.StrokeThickness = 2;
-            shape12.StrokeBrush = Window.Current.Compositor.CreateColorBrush(Colors.Black);
+            shape12.StrokeBrush = GetBrush(StrokeProperty);
             shape12.IsStrokeNonScaling = true;
 
             var visual1 = Window.Current.Compositor.CreateShapeVisual();
@@ -1551,11 +1709,11 @@ namespace Unigram.Controls.Cells
 
             var shape21 = Window.Current.Compositor.CreateSpriteShape(line21);
             shape21.StrokeThickness = 2;
-            shape21.StrokeBrush = Window.Current.Compositor.CreateColorBrush(Colors.Black);
+            shape21.StrokeBrush = GetBrush(StrokeProperty);
 
             var shape22 = Window.Current.Compositor.CreateSpriteShape(line22);
             shape22.StrokeThickness = 2;
-            shape22.StrokeBrush = Window.Current.Compositor.CreateColorBrush(Colors.Black);
+            shape22.StrokeBrush = GetBrush(StrokeProperty);
 
             var visual2 = Window.Current.Compositor.CreateShapeVisual();
             visual2.Shapes.Add(shape22);
