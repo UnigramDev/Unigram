@@ -284,8 +284,8 @@ namespace Unigram.Common
             {
                 var bitmap = default(LoadedImageSurface);
 
-                var cache = System.IO.Path.ChangeExtension(file.Local.Path, ".cache.png");
-                var relative = System.IO.Path.GetRelativePath(ApplicationData.Current.LocalFolder.Path, cache);
+                var cache = $"{file.Remote.UniqueId}.cache.png";
+                var relative = System.IO.Path.Combine("wallpapers", cache);
 
                 var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(relative) as StorageFile;
                 if (item == null)

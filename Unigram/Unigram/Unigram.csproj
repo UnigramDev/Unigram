@@ -1311,6 +1311,7 @@
     <Content Include="Assets\Animations\DeviceSafari.json" />
     <Content Include="Assets\Animations\DeviceUbuntu.json" />
     <Content Include="Assets\Animations\DeviceWindows.json" />
+    <Content Include="Assets\Background.tgv" />
     <None Include="Assets\i420.hlsl" />
     <Content Include="Assets\Images\BoxArt.png" />
     <Content Include="Assets\Images\Reply.scale-100.png" />

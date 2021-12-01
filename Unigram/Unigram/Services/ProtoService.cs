@@ -1818,7 +1818,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
         }
     }
 
-    static class TdExtensions
+    static class TdClientExtensions
     {
         public static void Send(this Client client, Function function, Action<BaseObject> handler)
         {
