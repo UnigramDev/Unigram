@@ -77,12 +77,15 @@ namespace Unigram.Controls.Messages.Content
             //UpdateMessageContentOpened(message);
 
             var small = photo.GetSmall()?.Photo;
-            var big = photo.GetBig()?.Photo;
+            var big = photo.GetBig();
+
+            Texture.HorizontalAlignment = big.Width > big.Height ? HorizontalAlignment.Center : HorizontalAlignment.Stretch;
+            Texture.VerticalAlignment = big.Height > big.Width ? VerticalAlignment.Center : VerticalAlignment.Stretch;
 
             UpdateThumbnail(message, small, photo.Minithumbnail, true);
 
-            UpdateManager.Subscribe(this, message, big, ref _fileToken, UpdateFile);
-            UpdateFile(message, big);
+            UpdateManager.Subscribe(this, message, big.Photo, ref _fileToken, UpdateFile);
+            UpdateFile(message, big.Photo);
         }
 
         public void Mockup(MessagePhoto photo)
