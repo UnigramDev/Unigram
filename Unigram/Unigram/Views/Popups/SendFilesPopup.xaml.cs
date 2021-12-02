@@ -217,7 +217,7 @@ namespace Unigram.Views.Popups
                 CaptionInput.Document.GetRange(range.EndPosition, range.EndPosition).SetText(TextSetOptions.None, " ");
                 CaptionInput.Document.Selection.StartPosition = range.EndPosition + 1;
             }
-            else if (e.ClickedItem is EmojiData emoji && ChatTextBox.SearchByEmoji(text.Substring(0, Math.Min(CaptionInput.Document.Selection.EndPosition, text.Length)), out string replacement))
+            else if (e.ClickedItem is EmojiData emoji && ChatTextBox.SearchByEmoji(text.Substring(0, Math.Min(CaptionInput.Document.Selection.EndPosition, text.Length)), out string replacement, out _))
             {
                 var insert = $"{emoji.Value} ";
                 var start = CaptionInput.Document.Selection.StartPosition - 1 - replacement.Length + insert.Length;

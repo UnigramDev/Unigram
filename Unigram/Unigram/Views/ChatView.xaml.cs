@@ -2894,7 +2894,7 @@ namespace Unigram.Views
 
                 TextField.Document.Selection.StartPosition = start;
             }
-            else if (e.ClickedItem is EmojiData emoji && ChatTextBox.SearchByEmoji(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string replacement))
+            else if (e.ClickedItem is EmojiData emoji && ChatTextBox.SearchByEmoji(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string replacement, out _))
             {
                 var insert = $"{emoji.Value} ";
                 var start = TextField.Document.Selection.StartPosition - 1 - replacement.Length + insert.Length;
