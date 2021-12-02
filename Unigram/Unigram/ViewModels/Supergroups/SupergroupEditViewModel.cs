@@ -469,18 +469,7 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            Function function;
-            if (chat.Type is ChatTypeSupergroup)
-            {
-                function = new DeleteChat(chat.Id);
-            }
-            else
-            {
-                await ProtoService.SendAsync(new LeaveChat(chat.Id));
-                function = new DeleteChatHistory(chat.Id, true, false);
-            }
-
-            var response = await ProtoService.SendAsync(function);
+            var response = await ProtoService.SendAsync(new DeleteChat(chat.Id));
             if (response is Ok)
             {
                 NavigationService.RemovePeerFromStack(chat.Id);
