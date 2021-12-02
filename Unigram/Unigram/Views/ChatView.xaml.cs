@@ -4096,7 +4096,7 @@ namespace Unigram.Views
 
             // It would be cool to have shadow to respect text field corner radius
             //Separator.CornerRadius = new CornerRadius(radius);
-            ListAutocomplete.CornerRadius = ListInline.CornerRadius = new CornerRadius(radius, radius, 0, 0);
+            ListAutocomplete.CornerRadius = ListInline.CornerRadius = InlinePanel.CornerRadius = new CornerRadius(radius, radius, 0, 0);
             ListAutocomplete.Padding = new Thickness(0, 0, 0, radius);
             ListInline.UpdateCornerRadius(radius);
 
