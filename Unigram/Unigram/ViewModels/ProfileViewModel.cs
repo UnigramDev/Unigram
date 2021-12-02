@@ -25,7 +25,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {
-    public class ProfileViewModel : TLMultipleViewModelBase,
+    public class ProfileViewModel : ChatSharedMediaViewModel,
         IDelegable<IProfileDelegate>,
         IHandle<UpdateUser>,
         IHandle<UpdateUserFullInfo>,
@@ -45,21 +45,17 @@ namespace Unigram.ViewModels
         private readonly IVoipService _voipService;
         private readonly IGroupCallService _groupCallService;
         private readonly INotificationsService _notificationsService;
-        private readonly IStorageService _storageService;
 
-        private readonly ChatSharedMediaViewModel _chatSharedMediaViewModel;
         private readonly UserCommonChatsViewModel _userCommonChatsViewModel;
         private readonly SupergroupMembersViewModel _supergroupMembersVieModel;
 
-        public ProfileViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IVoipService voipService, IGroupCallService groupCallService, INotificationsService notificationsService, IStorageService storageService, ChatSharedMediaViewModel chatSharedMediaViewModel, UserCommonChatsViewModel userCommonChatsViewModel, SupergroupMembersViewModel supergroupMembersViewModel)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public ProfileViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IPlaybackService playbackService, IVoipService voipService, IGroupCallService groupCallService, INotificationsService notificationsService, IStorageService storageService, ChatSharedMediaViewModel chatSharedMediaViewModel, UserCommonChatsViewModel userCommonChatsViewModel, SupergroupMembersViewModel supergroupMembersViewModel)
+            : base(protoService, cacheService, settingsService, storageService, aggregator, playbackService)
         {
             _voipService = voipService;
             _groupCallService = groupCallService;
             _notificationsService = notificationsService;
-            _storageService = storageService;
 
-            _chatSharedMediaViewModel = chatSharedMediaViewModel;
             _userCommonChatsViewModel = userCommonChatsViewModel;
             _supergroupMembersVieModel = supergroupMembersViewModel;
             _supergroupMembersVieModel.IsEmbedded = true;
@@ -95,23 +91,12 @@ namespace Unigram.ViewModels
             BannedCommand = new RelayCommand(BannedExecute);
             KickedCommand = new RelayCommand(KickedExecute);
 
-            Children.Add(chatSharedMediaViewModel);
             Children.Add(userCommonChatsViewModel);
             Children.Add(supergroupMembersViewModel);
         }
 
-        public IStorageService StorageService => _storageService;
-
-        public ChatSharedMediaViewModel ChatSharedMedia => _chatSharedMediaViewModel;
         public UserCommonChatsViewModel UserCommonChats => _userCommonChatsViewModel;
         public SupergroupMembersViewModel SupergroupMembers => _supergroupMembersVieModel;
-
-        protected Chat _chat;
-        public Chat Chat
-        {
-            get => _chat;
-            set => Set(ref _chat, value);
-        }
 
         protected ObservableCollection<ChatMember> _members;
         public ObservableCollection<ChatMember> Members

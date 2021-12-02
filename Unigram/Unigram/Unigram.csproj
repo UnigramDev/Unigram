@@ -448,6 +448,9 @@
     </Compile>
     <Compile Include="Controls\PrefixTextBox.cs" />
     <Compile Include="Controls\PrivacyRadioButton.cs" />
+    <Compile Include="Controls\ProfileHeader.xaml.cs">
+      <DependentUpon>ProfileHeader.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ProfilePicture.cs" />
     <Compile Include="Controls\ProxyStatusControl.xaml.cs">
       <DependentUpon>ProxyStatusControl.xaml</DependentUpon>
@@ -519,8 +522,24 @@
     <Compile Include="Views\ChatPinnedPage.xaml.cs">
       <DependentUpon>ChatPinnedPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Chats\ChatSharedMediaView.xaml.cs">
-      <DependentUpon>ChatSharedMediaView.xaml</DependentUpon>
+    <Compile Include="Views\Chats\ChatSharedFilesPage.xaml.cs">
+      <DependentUpon>ChatSharedFilesPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Chats\ChatSharedLinksPage.xaml.cs">
+      <DependentUpon>ChatSharedLinksPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Chats\ChatSharedMediaPage.xaml.cs">
+      <DependentUpon>ChatSharedMediaPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Chats\ChatSharedMediaPageBase.cs" />
+    <Compile Include="Views\Chats\ChatSharedMembersPage.xaml.cs">
+      <DependentUpon>ChatSharedMembersPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Chats\ChatSharedMusicPage.xaml.cs">
+      <DependentUpon>ChatSharedMusicPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Chats\ChatSharedVoicePage.xaml.cs">
+      <DependentUpon>ChatSharedVoicePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ChatThreadPage.xaml.cs">
       <DependentUpon>ChatThreadPage.xaml</DependentUpon>
@@ -1062,17 +1081,14 @@
     <Compile Include="Views\Supergroups\SupergroupEditTypePage.xaml.cs">
       <DependentUpon>SupergroupEditTypePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Supergroups\SupergroupMembersPage.xaml.cs">
-      <DependentUpon>SupergroupMembersPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Supergroups\SupergroupMembersView.xaml.cs">
       <DependentUpon>SupergroupMembersView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Supergroups\SupergroupPermissionsPage.xaml.cs">
       <DependentUpon>SupergroupPermissionsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Users\UserCommonChatsView.xaml.cs">
-      <DependentUpon>UserCommonChatsView.xaml</DependentUpon>
+    <Compile Include="Views\Users\UserCommonChatsPage.xaml.cs">
+      <DependentUpon>UserCommonChatsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\VoIPPage.xaml.cs">
       <DependentUpon>VoIPPage.xaml</DependentUpon>
@@ -1666,6 +1682,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Controls\ProfileHeader.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\ProxyStatusControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1702,7 +1722,27 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Chats\ChatSharedMediaView.xaml">
+    <Page Include="Views\Chats\ChatSharedFilesPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Chats\ChatSharedLinksPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Chats\ChatSharedMediaPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Chats\ChatSharedMembersPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Chats\ChatSharedMusicPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Chats\ChatSharedVoicePage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -2218,10 +2258,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Supergroups\SupergroupMembersPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\Supergroups\SupergroupMembersView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2230,7 +2266,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Users\UserCommonChatsView.xaml">
+    <Page Include="Views\Users\UserCommonChatsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

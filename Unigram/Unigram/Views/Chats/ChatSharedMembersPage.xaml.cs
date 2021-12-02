@@ -1,78 +1,18 @@
-﻿using System.ComponentModel;
-using Telegram.Td.Api;
+﻿using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
-using Unigram.Navigation;
-using Unigram.ViewModels.Delegates;
-using Unigram.ViewModels.Supergroups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
-namespace Unigram.Views.Supergroups
+namespace Unigram.Views.Chats
 {
-    public sealed partial class SupergroupMembersPage : HostedPage, IBasicAndSupergroupDelegate, INavigablePage, ISearchablePage
+    public sealed partial class ChatSharedMembersPage : ChatSharedMediaPageBase
     {
-        public SupergroupMembersViewModel ViewModel => DataContext as SupergroupMembersViewModel;
-
-        public SupergroupMembersPage()
+        public ChatSharedMembersPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SupergroupMembersViewModel, ISupergroupDelegate>(this);
-
-            var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
-            debouncer.Invoked += (s, args) =>
-            {
-                if (string.IsNullOrWhiteSpace(SearchField.Text))
-                {
-                    ViewModel.Search?.Clear();
-                }
-                else
-                {
-                    ViewModel.Find(SearchField.Text);
-                }
-            };
-        }
-
-        public void Search()
-        {
-            SearchField.Focus(FocusState.Keyboard);
-        }
-
-        private bool _isLocked;
-
-        private bool _isEmbedded;
-        public bool IsEmbedded
-        {
-            get => _isEmbedded;
-            set => Update(value, _isLocked);
-        }
-
-        public void Update(bool embedded, bool locked)
-        {
-            _isEmbedded = embedded;
-            _isLocked = locked;
-
-            Header.Visibility = embedded ? Visibility.Collapsed : Visibility.Visible;
-            ListHeader.Visibility = embedded ? Visibility.Collapsed : Visibility.Visible;
-            ScrollingHost.Padding = new Thickness(0, embedded ? 12 : embedded ? 12 + 16 : 16, 0, 0);
-            ScrollingHost.ItemsPanelCornerRadius = new CornerRadius(embedded ? 0 : 8, embedded ? 0 : 8, 8, 8);
-            //ListHeader.Height = embedded && !locked ? 12 : embedded ? 12 + 16 : 16;
-
-            if (embedded)
-            {
-                Footer.Visibility = Visibility.Collapsed;
-            }
-        }
-
-        public void OnBackRequested(HandledEventArgs args)
-        {
-            if (ContentPanel.Visibility == Visibility.Collapsed)
-            {
-                SearchField.Text = string.Empty;
-                args.Handled = true;
-            }
         }
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
@@ -183,7 +123,7 @@ namespace Unigram.Views.Supergroups
 
         #region Recycle
 
-        private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+        protected override void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
         {
             if (args.ItemContainer == null)
             {
@@ -239,26 +179,18 @@ namespace Unigram.Views.Supergroups
                 var subtitle = content.Children[2] as TextBlock;
                 var label = content.Children[3] as TextBlock;
 
-                if (_isEmbedded)
-                {
-                    subtitle.Text = LastSeenConverter.GetLabel(user, false);
+                subtitle.Text = LastSeenConverter.GetLabel(user, false);
 
-                    if (member.Status is ChatMemberStatusAdministrator administrator)
-                    {
-                        label.Text = string.IsNullOrEmpty(administrator.CustomTitle) ? Strings.Resources.ChannelAdmin : administrator.CustomTitle;
-                    }
-                    else if (member.Status is ChatMemberStatusCreator creator)
-                    {
-                        label.Text = string.IsNullOrEmpty(creator.CustomTitle) ? Strings.Resources.ChannelCreator : creator.CustomTitle;
-                    }
-                    else
-                    {
-                        label.Text = string.Empty;
-                    }
+                if (member.Status is ChatMemberStatusAdministrator administrator)
+                {
+                    label.Text = string.IsNullOrEmpty(administrator.CustomTitle) ? Strings.Resources.ChannelAdmin : administrator.CustomTitle;
+                }
+                else if (member.Status is ChatMemberStatusCreator creator)
+                {
+                    label.Text = string.IsNullOrEmpty(creator.CustomTitle) ? Strings.Resources.ChannelCreator : creator.CustomTitle;
                 }
                 else
                 {
-                    subtitle.Text = ChannelParticipantToTypeConverter.Convert(ViewModel.ProtoService, member);
                     label.Text = string.Empty;
                 }
             }
@@ -275,48 +207,6 @@ namespace Unigram.Views.Supergroups
 
             args.Handled = true;
         }
-
-        #endregion
-
-        private void Search_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (string.IsNullOrEmpty(SearchField.Text))
-            {
-                ContentPanel.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                ContentPanel.Visibility = Visibility.Collapsed;
-            }
-        }
-
-        #region Delegate
-
-        public void UpdateSupergroup(Chat chat, Supergroup group)
-        {
-            SearchField.PlaceholderText = group.IsChannel ? Strings.Resources.ChannelSubscribers : Strings.Resources.ChannelMembers;
-
-            AddNew.Content = group.IsChannel ? Strings.Resources.AddSubscriber : Strings.Resources.AddMember;
-            AddNewPanel.Visibility = group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
-
-            Footer.Visibility = group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
-        }
-
-        public void UpdateBasicGroup(Chat chat, BasicGroup group)
-        {
-            SearchField.PlaceholderText = Strings.Resources.ChannelMembers;
-
-            AddNew.Content = Strings.Resources.AddMember;
-            AddNewPanel.Visibility = group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
-
-            Footer.Visibility = Visibility.Collapsed;
-        }
-
-        public void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo) { }
-        public void UpdateBasicGroupFullInfo(Chat chat, BasicGroup group, BasicGroupFullInfo fullInfo) { }
-        public void UpdateChat(Chat chat) { }
-        public void UpdateChatTitle(Chat chat) { }
-        public void UpdateChatPhoto(Chat chat) { }
 
         #endregion
     }

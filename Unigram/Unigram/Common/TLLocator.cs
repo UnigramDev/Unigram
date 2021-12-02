@@ -408,6 +408,11 @@ namespace Unigram.Views
                     _cacheService,
                     _settingsService,
                     _eventAggregator,
+                    _playbackService ??= new Unigram.Services.PlaybackService(
+                        _protoService,
+                        _cacheService,
+                        _settingsService,
+                        _eventAggregator),
                     _voipService ??= new Unigram.Services.VoipService(
                         _protoService,
                         _cacheService,

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
@@ -9,14 +10,29 @@ using Unigram.Common;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
+using Unigram.Views.Chats;
 using Unigram.Views.Popups;
+using Unigram.Views.Users;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Chats
 {
-    public class ChatSharedMediaViewModel : TLViewModelBase, IMessageDelegate, IHandle<UpdateDeleteMessages>
+    public class ProfileItem
+    {
+        public string Text { get; set; }
+
+        public Type Type { get; set; }
+
+        public ProfileItem(string text, Type type)
+        {
+            Text = text;
+            Type = type;
+        }
+    }
+
+    public class ChatSharedMediaViewModel : TLMultipleViewModelBase, IMessageDelegate, IHandle<UpdateDeleteMessages>
     {
         private readonly IPlaybackService _playbackService;
         private readonly IStorageService _storageService;
@@ -27,6 +43,8 @@ namespace Unigram.ViewModels.Chats
             _playbackService = playbackService;
             _storageService = storageService;
 
+            Items = new ObservableCollection<ProfileItem>();
+
             MessagesForwardCommand = new RelayCommand(MessagesForwardExecute, MessagesForwardCanExecute);
             MessagesDeleteCommand = new RelayCommand(MessagesDeleteExecute, MessagesDeleteCanExecute);
             MessagesUnselectCommand = new RelayCommand(MessagesUnselectExecute);
@@ -36,6 +54,8 @@ namespace Unigram.ViewModels.Chats
             MessageForwardCommand = new RelayCommand<Message>(MessageForwardExecute);
             MessageSelectCommand = new RelayCommand<Message>(MessageSelectExecute);
         }
+
+        public ObservableCollection<ProfileItem> Items { get; }
 
         public IPlaybackService PlaybackService => _playbackService;
 
@@ -71,7 +91,17 @@ namespace Unigram.ViewModels.Chats
 
             Aggregator.Subscribe(this);
 
-            await UpdateSharedCountAsync(chatId);
+            Items.Clear();
+
+            if (Chat.Type is ChatTypeBasicGroup || Chat.Type is ChatTypeSupergroup supergroup && !supergroup.IsChannel)
+            {
+                Items.Add(new ProfileItem(Strings.Resources.ChannelMembers, typeof(ChatSharedMembersPage)));
+                HasSharedMembers = true;
+                SelectedItem = Items.FirstOrDefault();
+            }
+
+            await base.OnNavigatedToAsync(parameter, mode, state);
+            await UpdateSharedCountAsync(Chat);
         }
 
         private int[] _sharedCount = new int[] { 0, 0, 0, 0, 0, 0 };
@@ -81,7 +111,20 @@ namespace Unigram.ViewModels.Chats
             set => Set(ref _sharedCount, value);
         }
 
-        private async Task UpdateSharedCountAsync(long chatId)
+        private ProfileItem _selectedItem;
+        public ProfileItem SelectedItem
+        {
+            get => _selectedItem;
+            set => Set(ref _selectedItem, value);
+        }
+
+        public double VerticalOffset { get; set; }
+
+        public bool HasSharedGroups { get; private set; }
+
+        public bool HasSharedMembers { get; private set; }
+
+        private async Task UpdateSharedCountAsync(Chat chat)
         {
             var filters = new SearchMessagesFilter[]
             {
@@ -95,7 +138,7 @@ namespace Unigram.ViewModels.Chats
 
             for (int i = 0; i < filters.Length; i++)
             {
-                var response = await ProtoService.SendAsync(new GetChatMessageCount(chatId, filters[i], false));
+                var response = await ProtoService.SendAsync(new GetChatMessageCount(chat.Id, filters[i], false));
                 if (response is Count count)
                 {
                     SharedCount[i] = count.CountValue;
@@ -104,6 +147,46 @@ namespace Unigram.ViewModels.Chats
 
             SharedCount[SharedCount.Length - 1] = 0;
 
+            if (SharedCount[0] > 0)
+            {
+                Items.Add(new ProfileItem(Strings.Resources.SharedMediaTab2, typeof(ChatSharedMediaPage)));
+            }
+            if (SharedCount[1] > 0)
+            {
+                Items.Add(new ProfileItem(Strings.Resources.SharedFilesTab2, typeof(ChatSharedFilesPage)));
+            }
+            if (SharedCount[2] > 0)
+            {
+                Items.Add(new ProfileItem(Strings.Resources.SharedLinksTab2, typeof(ChatSharedLinksPage)));
+            }
+            if (SharedCount[3] > 0)
+            {
+                Items.Add(new ProfileItem(Strings.Resources.SharedMusicTab2, typeof(ChatSharedMusicPage)));
+            }
+            if (SharedCount[4] > 0)
+            {
+                Items.Add(new ProfileItem(Strings.Resources.SharedVoiceTab2, typeof(ChatSharedVoicePage)));
+            }
+
+            if (chat.Type is ChatTypePrivate or ChatTypeSecret)
+            {
+                var user = ProtoService.GetUser(chat);
+
+                var cached = ProtoService.GetUserFull(chat);
+                if (cached == null)
+                {
+                    // This should really rarely happen
+                    cached = await ProtoService.SendAsync(new GetUserFullInfo(user.Id)) as UserFullInfo;
+                }
+
+                if (cached.GroupInCommonCount > 0)
+                {
+                    Items.Add(new ProfileItem(Strings.Resources.SharedGroupsTab2, typeof(UserCommonChatsPage)));
+                    HasSharedGroups = true;
+                }
+            }
+
+            SelectedItem ??= Items.FirstOrDefault();
             RaisePropertyChanged(nameof(SharedCount));
         }
 
@@ -144,7 +227,7 @@ namespace Unigram.ViewModels.Chats
             }
         }
 
-        private Chat _chat;
+        protected Chat _chat;
         public Chat Chat
         {
             get => _chat;

@@ -2991,16 +2991,4 @@ namespace Unigram.Views
         public static readonly DependencyProperty HeaderProperty =
             DependencyProperty.Register("Header", typeof(UIElement), typeof(HostedPage), new PropertyMetadata(null));
     }
-
-    public class HostedUserControl : UserControl
-    {
-        public UIElement Header
-        {
-            get => (UIElement)GetValue(HeaderProperty);
-            set => SetValue(HeaderProperty, value);
-        }
-
-        public static readonly DependencyProperty HeaderProperty =
-            DependencyProperty.Register("Header", typeof(UIElement), typeof(HostedUserControl), new PropertyMetadata(null));
-    }
 }

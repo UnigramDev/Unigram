@@ -879,7 +879,9 @@
                                                         Click="ArchivedChats_Click"
                                                         ContextRequested="ArchivedChats_ContextRequested"
                                                         AutomationProperties.Name="{CustomResource ArchivedChats}"
-                                                        Style="{StaticResource EmptyButtonStyle}">
+                                                        Style="{StaticResource EmptyButtonStyle}"
+                                                        Padding="4,2"
+                                                        CornerRadius="4">
                                                     <cells:ChatCell x:Name="ArchivedChats"
                                                                     Visibility="Collapsed"
                                                                     Stroke="{ThemeResource ChatLastMessageStateBrush}"
@@ -894,7 +896,7 @@
                                                                 ContextRequested="ArchivedChats_ContextRequested"
                                                                 Style="{StaticResource EmptyButtonStyle}"
                                                                 Visibility="{x:Bind ArchivedChats.Visibility, Mode=OneWay}"
-                                                                Padding="12,6" />
+                                                                BorderThickness="12,6" />
                                                     </Border>
                                                 </Border>
                                             </Grid>

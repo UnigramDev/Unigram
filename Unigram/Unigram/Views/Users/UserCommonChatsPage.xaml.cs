@@ -1,49 +1,16 @@
 ﻿using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.ViewModels.Users;
 using Unigram.Views.Chats;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Users
 {
-    public sealed partial class UserCommonChatsView : UserControl, IProfileTab
+    public sealed partial class UserCommonChatsPage : ChatSharedMediaPageBase
     {
-        public UserCommonChatsViewModel ViewModel => DataContext as UserCommonChatsViewModel;
-
-        public UserCommonChatsView()
+        public UserCommonChatsPage()
         {
             InitializeComponent();
-        }
-
-        public ListViewBase GetSelector()
-        {
-            return List;
-        }
-
-        public ScrollViewer GetScrollViewer()
-        {
-            return List.GetScrollViewer();
-        }
-
-        private bool _isLocked;
-
-        private bool _isEmbedded;
-        public bool IsEmbedded
-        {
-            get => _isEmbedded;
-            set => Update(value, _isLocked);
-        }
-
-        public void Update(bool embedded, bool locked)
-        {
-            _isEmbedded = embedded;
-            _isLocked = locked;
-
-            //Header.Visibility = embedded ? Visibility.Collapsed : Visibility.Visible;
-            ListHeader.Height = embedded ? 12 : embedded ? 12 + 16 : 16;
-            List.ItemsPanelCornerRadius = new CornerRadius(embedded ? 0 : 8, embedded ? 0 : 8, 8, 8);
         }
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
@@ -54,15 +21,15 @@ namespace Unigram.Views.Users
             }
         }
 
-        private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+        protected override void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
         {
             if (args.ItemContainer == null)
             {
                 args.ItemContainer = new TextListViewItem();
-                args.ItemContainer.Style = List.ItemContainerStyle;
+                args.ItemContainer.Style = ScrollingHost.ItemContainerStyle;
             }
 
-            args.ItemContainer.ContentTemplate = List.ItemTemplate;
+            args.ItemContainer.ContentTemplate = ScrollingHost.ItemTemplate;
 
             args.IsContainerPrepared = true;
         }
