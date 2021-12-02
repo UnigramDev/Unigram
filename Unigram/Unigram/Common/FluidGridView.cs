@@ -69,7 +69,7 @@ namespace Unigram.Common
             if (trigger != null)
             {
                 //var itemLength = trigger.GetItemLength(parentLength - paddingNear - paddingFar);
-                var itemLength = trigger.GetItemLength(parentLength);
+                var itemLength = trigger.GetItemLength(Math.Floor(parentLength));
 
                 if (reference.Orientation == Orientation.Horizontal)
                 {
