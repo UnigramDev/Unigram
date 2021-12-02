@@ -4607,7 +4607,7 @@ namespace Unigram.Views
 
                         item.Text = senderChat.Title;
 
-                        if (ViewModel.CacheService.TryGetSupergroup(chat, out Supergroup supergroup))
+                        if (ViewModel.CacheService.TryGetSupergroup(senderChat, out Supergroup supergroup))
                         {
                             item.Info = Locale.Declension("Subscribers", supergroup.MemberCount);
                         }
