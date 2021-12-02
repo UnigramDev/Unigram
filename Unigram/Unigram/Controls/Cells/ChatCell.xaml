@@ -15,7 +15,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ChatCell">
-                    <local:ChatCellPanel Height="64"
+                    <local:ChatCellPanel Height="60"
                                          Background="Transparent">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup>
@@ -84,7 +84,7 @@
                         <Grid x:Name="PhotoPanel"
                               Width="48"
                               Height="48"
-                              Margin="0,8">
+                              Margin="0,6">
                             <Ellipse x:Name="SelectionOutline"
                                      StrokeThickness="2"
                                      Stroke="{ThemeResource SystemControlBackgroundAccentBrush}" />

@@ -1856,7 +1856,7 @@ namespace Unigram.Controls.Cells
             VerifiedIcon.Measure(availableSize);
             MutedIcon.Measure(availableSize);
 
-            var line1Left = 12 + PhotoPanel.DesiredSize.Width + 12 + TypeIcon.DesiredSize.Width;
+            var line1Left = 8 + PhotoPanel.DesiredSize.Width + 12 + TypeIcon.DesiredSize.Width;
             var line1Right = availableSize.Width - 12 - TimeLabel.DesiredSize.Width - StateIcon.DesiredSize.Width;
 
             var titleWidth = Math.Max(0, line1Right - (line1Left + VerifiedIcon.DesiredSize.Width + MutedIcon.DesiredSize.Width));
@@ -1873,8 +1873,8 @@ namespace Unigram.Controls.Cells
 
             var line2RightPadding = Math.Max(Math.Max(PinnedIcon.DesiredSize.Width, UnreadBadge.DesiredSize.Width), FailedBadge.DesiredSize.Width);
 
-            var line2Left = 12 + PhotoPanel.DesiredSize.Width + 12 + MinithumbnailPanel.DesiredSize.Width;
-            var line2Right = availableSize.Width - 12 - line2RightPadding - UnreadMentionsBadge.DesiredSize.Width;
+            var line2Left = 8 + PhotoPanel.DesiredSize.Width + 12 + MinithumbnailPanel.DesiredSize.Width;
+            var line2Right = availableSize.Width - 8 - line2RightPadding - UnreadMentionsBadge.DesiredSize.Width;
 
             var briefWidth = Math.Max(0, line2Right - line2Left);
 
@@ -1911,34 +1911,34 @@ namespace Unigram.Controls.Cells
             var FailedBadge = Children[13];
 
             var rect = new Rect();
-            var min = 12 + PhotoPanel.DesiredSize.Width + 12;
+            var min = 8 + PhotoPanel.DesiredSize.Width + 12;
 
-            rect.X = 12;
+            rect.X = 8;
             rect.Y = 0;
             rect.Width = PhotoPanel.DesiredSize.Width;
             rect.Height = PhotoPanel.DesiredSize.Height;
             PhotoPanel.Arrange(rect);
 
-            rect.X = Math.Max(min, finalSize.Width - 12 - TimeLabel.DesiredSize.Width);
-            rect.Y = 32 - TitleLabel.DesiredSize.Height;
+            rect.X = Math.Max(min, finalSize.Width - 8 - TimeLabel.DesiredSize.Width);
+            rect.Y = 30 - TitleLabel.DesiredSize.Height;
             rect.Width = TimeLabel.DesiredSize.Width;
             rect.Height = TimeLabel.DesiredSize.Height;
             TimeLabel.Arrange(rect);
 
-            rect.X = Math.Max(min, finalSize.Width - 12 - TimeLabel.DesiredSize.Width - StateIcon.DesiredSize.Width);
-            rect.Y = 32 - TitleLabel.DesiredSize.Height;
+            rect.X = Math.Max(min, finalSize.Width - 8 - TimeLabel.DesiredSize.Width - StateIcon.DesiredSize.Width);
+            rect.Y = 30 - TitleLabel.DesiredSize.Height;
             rect.Width = StateIcon.DesiredSize.Width;
             rect.Height = StateIcon.DesiredSize.Height;
             StateIcon.Arrange(rect);
 
-            rect.X = 12 + PhotoPanel.DesiredSize.Width + 12;
-            rect.Y = 32 - TitleLabel.DesiredSize.Height;
+            rect.X = min;
+            rect.Y = 30 - TitleLabel.DesiredSize.Height;
             rect.Width = TypeIcon.DesiredSize.Width;
             rect.Height = TypeIcon.DesiredSize.Height;
             TypeIcon.Arrange(rect);
 
-            var line1Left = 12 + PhotoPanel.DesiredSize.Width + 12 + TypeIcon.DesiredSize.Width;
-            var line1Right = finalSize.Width - 12 - TimeLabel.DesiredSize.Width - StateIcon.DesiredSize.Width;
+            var line1Left = min + TypeIcon.DesiredSize.Width;
+            var line1Right = finalSize.Width - 8 - TimeLabel.DesiredSize.Width - StateIcon.DesiredSize.Width;
 
             double titleWidth;
             if (line1Left + TitleLabel.DesiredSize.Width + VerifiedIcon.DesiredSize.Width + MutedIcon.DesiredSize.Width > line1Right)
@@ -1950,71 +1950,71 @@ namespace Unigram.Controls.Cells
                 titleWidth = TitleLabel.DesiredSize.Width;
             }
 
-            rect.X = 12 + PhotoPanel.DesiredSize.Width + 12 + TypeIcon.DesiredSize.Width;
-            rect.Y = 32 - 2 - TitleLabel.DesiredSize.Height;
+            rect.X = min + TypeIcon.DesiredSize.Width;
+            rect.Y = 30 - 2 - TitleLabel.DesiredSize.Height;
             rect.Width = titleWidth;
             rect.Height = TitleLabel.DesiredSize.Height;
             TitleLabel.Arrange(rect);
 
-            rect.X = 12 + PhotoPanel.DesiredSize.Width + 12 + TypeIcon.DesiredSize.Width + titleWidth;
-            rect.Y = 32 - TitleLabel.DesiredSize.Height;
+            rect.X = min + TypeIcon.DesiredSize.Width + titleWidth;
+            rect.Y = 30 - TitleLabel.DesiredSize.Height;
             rect.Width = VerifiedIcon.DesiredSize.Width;
             rect.Height = VerifiedIcon.DesiredSize.Height;
             VerifiedIcon.Arrange(rect);
 
-            rect.X = 12 + PhotoPanel.DesiredSize.Width + 12 + TypeIcon.DesiredSize.Width + titleWidth + VerifiedIcon.DesiredSize.Width;
-            rect.Y = 32 - TitleLabel.DesiredSize.Height;
+            rect.X = min + TypeIcon.DesiredSize.Width + titleWidth + VerifiedIcon.DesiredSize.Width;
+            rect.Y = 30 - TitleLabel.DesiredSize.Height;
             rect.Width = MutedIcon.DesiredSize.Width;
             rect.Height = MutedIcon.DesiredSize.Height;
             MutedIcon.Arrange(rect);
 
 
 
-            rect.X = 12 + PhotoPanel.DesiredSize.Width + 12;
-            rect.Y = 35;
+            rect.X = min;
+            rect.Y = 33;
             rect.Width = MinithumbnailPanel.DesiredSize.Width;
             rect.Height = MinithumbnailPanel.DesiredSize.Height;
             MinithumbnailPanel.Arrange(rect);
 
-            rect.X = Math.Max(min, finalSize.Width - 12 - PinnedIcon.DesiredSize.Width);
-            rect.Y = 64 - 8 - PinnedIcon.DesiredSize.Height;
+            rect.X = Math.Max(min, finalSize.Width - 8 - PinnedIcon.DesiredSize.Width);
+            rect.Y = 60 - 8 - PinnedIcon.DesiredSize.Height;
             rect.Width = PinnedIcon.DesiredSize.Width;
             rect.Height = PinnedIcon.DesiredSize.Height;
             PinnedIcon.Arrange(rect);
 
-            rect.X = finalSize.Width - 12 - UnreadBadge.DesiredSize.Width;
-            rect.Y = 64 - 8 - UnreadBadge.DesiredSize.Height;
+            rect.X = finalSize.Width - 8 - UnreadBadge.DesiredSize.Width;
+            rect.Y = 60 - 8 - UnreadBadge.DesiredSize.Height;
             rect.Width = UnreadBadge.DesiredSize.Width;
             rect.Height = UnreadBadge.DesiredSize.Height;
             UnreadBadge.Arrange(rect);
 
-            rect.X = finalSize.Width - 12 - UnreadBadge.DesiredSize.Width - UnreadMentionsBadge.DesiredSize.Width;
-            rect.Y = 64 - 8 - UnreadMentionsBadge.DesiredSize.Height;
+            rect.X = finalSize.Width - 8 - UnreadBadge.DesiredSize.Width - UnreadMentionsBadge.DesiredSize.Width;
+            rect.Y = 60 - 8 - UnreadMentionsBadge.DesiredSize.Height;
             rect.Width = UnreadMentionsBadge.DesiredSize.Width;
             rect.Height = UnreadMentionsBadge.DesiredSize.Height;
             UnreadMentionsBadge.Arrange(rect);
 
-            rect.X = Math.Max(min, finalSize.Width - 12 - FailedBadge.DesiredSize.Width);
-            rect.Y = 64 - 8 - FailedBadge.DesiredSize.Height;
+            rect.X = Math.Max(min, finalSize.Width - 8 - FailedBadge.DesiredSize.Width);
+            rect.Y = 60 - 8 - FailedBadge.DesiredSize.Height;
             rect.Width = FailedBadge.DesiredSize.Width;
             rect.Height = FailedBadge.DesiredSize.Height;
             FailedBadge.Arrange(rect);
 
             var line2RightPadding = Math.Max(Math.Max(PinnedIcon.DesiredSize.Width, UnreadBadge.DesiredSize.Width), FailedBadge.DesiredSize.Width);
 
-            var line2Left = 12 + PhotoPanel.DesiredSize.Width + 12 + MinithumbnailPanel.DesiredSize.Width;
-            var line2Right = finalSize.Width - 12 - line2RightPadding - UnreadMentionsBadge.DesiredSize.Width;
+            var line2Left = min + MinithumbnailPanel.DesiredSize.Width;
+            var line2Right = finalSize.Width - 8 - line2RightPadding - UnreadMentionsBadge.DesiredSize.Width;
 
             var briefWidth = Math.Max(0, line2Right - line2Left);
 
-            rect.X = 12 + PhotoPanel.DesiredSize.Width + 12 + MinithumbnailPanel.DesiredSize.Width;
-            rect.Y = 64 - 12 - BriefInfo.DesiredSize.Height;
+            rect.X = min + MinithumbnailPanel.DesiredSize.Width;
+            rect.Y = 60 - 8 - BriefInfo.DesiredSize.Height;
             rect.Width = briefWidth;
             rect.Height = BriefInfo.DesiredSize.Height;
             BriefInfo.Arrange(rect);
 
-            rect.X = 12 + PhotoPanel.DesiredSize.Width + 12;
-            rect.Y = 64 - 12 - TypingLabel.DesiredSize.Height;
+            rect.X = min;
+            rect.Y = 60 - 8 - TypingLabel.DesiredSize.Height;
             rect.Width = briefWidth + MinithumbnailPanel.DesiredSize.Width;
             rect.Height = TypingLabel.DesiredSize.Height;
             TypingLabel.Arrange(rect);
