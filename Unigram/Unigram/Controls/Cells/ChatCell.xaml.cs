@@ -134,7 +134,7 @@ namespace Unigram.Controls.Cells
             }
             else if (_chatList != null)
             {
-                UpdateChatList(_protoService , _chatList);
+                UpdateChatList(_protoService, _chatList);
             }
             else if (_message != null)
             {
@@ -195,41 +195,42 @@ namespace Unigram.Controls.Cells
             _protoService = protoService;
             _chatList = chatList;
 
-            if (!_templateApplied)
-            {
-                return;
-            }
-
-            TitleLabel.Text = Strings.Resources.ArchivedChats;
-            Photo.Source = PlaceholderHelper.GetGlyph(Icons.Archive, 0, 96);
-
-            TypeIcon.Text = string.Empty;
-            TypeIcon.Visibility = Visibility.Collapsed;
-            VerifiedIcon.Visibility = Visibility.Collapsed;
-            UnreadMentionsBadge.Visibility = Visibility.Collapsed;
-            PinnedIcon.Visibility = Visibility.Collapsed;
-
-            DraftLabel.Text = string.Empty;
-            TimeLabel.Text = string.Empty;
-            StateIcon.Glyph = string.Empty;
-            FailedBadge.Visibility = Visibility.Collapsed;
-
-            MutedIcon.Visibility = Visibility.Collapsed;
-
-            MinithumbnailPanel.Visibility = Visibility.Collapsed;
-
-            VisualStateManager.GoToState(this, "Muted", false);
-
-            UpdateTicks(null);
-
-            var unreadCount = protoService.GetUnreadCount(chatList);
-            UnreadBadge.Visibility = unreadCount.UnreadChatCount.UnreadCount > 0 ? Visibility.Visible : Visibility.Collapsed;
-            UnreadLabel.Text = $"{unreadCount.UnreadChatCount.UnreadCount}";
-
             var response = await protoService.GetChatListAsync(chatList, 0, 20);
             if (response is Telegram.Td.Api.Chats chats)
             {
                 Visibility = chats.ChatIds.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+
+                if (!_templateApplied)
+                {
+                    return;
+                }
+
+                TitleLabel.Text = Strings.Resources.ArchivedChats;
+                Photo.Source = PlaceholderHelper.GetGlyph(Icons.Archive, 0, 96);
+
+                TypeIcon.Text = string.Empty;
+                TypeIcon.Visibility = Visibility.Collapsed;
+                VerifiedIcon.Visibility = Visibility.Collapsed;
+                UnreadMentionsBadge.Visibility = Visibility.Collapsed;
+                PinnedIcon.Visibility = Visibility.Collapsed;
+
+                DraftLabel.Text = string.Empty;
+                TimeLabel.Text = string.Empty;
+                StateIcon.Glyph = string.Empty;
+                FailedBadge.Visibility = Visibility.Collapsed;
+
+                MutedIcon.Visibility = Visibility.Collapsed;
+
+                MinithumbnailPanel.Visibility = Visibility.Collapsed;
+
+                VisualStateManager.GoToState(this, "Muted", false);
+
+                UpdateTicks(null);
+
+                var unreadCount = protoService.GetUnreadCount(chatList);
+                UnreadBadge.Visibility = unreadCount.UnreadChatCount.UnreadCount > 0 ? Visibility.Visible : Visibility.Collapsed;
+                UnreadLabel.Text = $"{unreadCount.UnreadChatCount.UnreadCount}";
+
                 BriefInfo.Inlines.Clear();
 
                 foreach (var id in chats.ChatIds)
@@ -245,7 +246,7 @@ namespace Unigram.Controls.Cells
                         BriefInfo.Inlines.Add(new Run { Text = ", " });
                     }
 
-                    var run = new Run { Text = chat.Title };
+                    var run = new Run { Text = _protoService.GetTitle(chat) };
                     if (chat.IsUnread())
                     {
                         run.Foreground = new SolidColorBrush(ActualTheme == ElementTheme.Dark ? Colors.White : Colors.Black);
@@ -1405,7 +1406,7 @@ namespace Unigram.Controls.Cells
             var solid = e.NewValue as SolidColorBrush;
 
             sender._selectionStrokeToken = solid.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, sender.OnSelectionStrokeChanged);
-            
+
             if (e.OldValue is SolidColorBrush old && sender._selectionStrokeToken != 0)
             {
                 old.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, sender._selectionStrokeToken);
@@ -1606,7 +1607,7 @@ namespace Unigram.Controls.Cells
             }
 
             sender._strokeToken = solid.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, sender.OnStrokeChanged);
-            
+
             if (solid == null || sender._container == null || sender._ellipse == null)
             {
                 return;
