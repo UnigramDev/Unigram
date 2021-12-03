@@ -884,7 +884,7 @@ namespace Unigram.Controls.Chats
                     return false;
                 }
 
-                command = text.StartsWith(c);
+                command = text[i] == c;
                 searchText = text.Substring(index).TrimStart(c);
             }
 
