@@ -62,6 +62,7 @@
                                 ItemsSource="{x:Bind ViewModel.Members, Mode=OneWay}"
                                 ItemClick="ListView_ItemClick"
                                 IsItemClickEnabled="True"
+                                Loaded="List_Loaded"
                                 ChoosingItemContainer="OnChoosingItemContainer"
                                 ContainerContentChanging="OnContainerContentChanging"
                                 SelectionMode="None"

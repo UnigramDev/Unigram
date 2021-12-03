@@ -37,7 +37,7 @@
                 </Style>
             </GridView.ItemContainerStyle>
             <GridView.Header>
-                <StackPanel>
+                <StackPanel Margin="-12,0">
                     <controls:ProfileHeader x:Name="ProfileHeader"
                                             Chat="{x:Bind ViewModel.Chat}"
                                             SizeChanged="ProfileHeader_SizeChanged"
