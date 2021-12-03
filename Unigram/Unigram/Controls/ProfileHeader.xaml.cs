@@ -47,7 +47,7 @@ namespace Unigram.Controls
             get => _chat;
             set => SetChat(value);
         }
-
+        
         private void SetChat(Chat chat)
         {
             _chat = chat;
@@ -81,7 +81,7 @@ namespace Unigram.Controls
                 UpdateSecretChat(chat, secret);
                 UpdateUser(chat, item, true);
 
-                if (cache == null)
+                if (cache != null)
                 {
                     UpdateUserFullInfo(chat, item, cache, true, false);
                 }
@@ -93,7 +93,7 @@ namespace Unigram.Controls
 
                 UpdateBasicGroup(chat, item);
 
-                if (cache == null)
+                if (cache != null)
                 {
                     UpdateBasicGroupFullInfo(chat, item, cache);
                 }
@@ -105,7 +105,7 @@ namespace Unigram.Controls
 
                 UpdateSupergroup(chat, item);
 
-                if (cache == null)
+                if (cache != null)
                 {
                     UpdateSupergroupFullInfo(chat, item, cache);
                 }
@@ -339,8 +339,6 @@ namespace Unigram.Controls
         {
             GetEntities(fullInfo.Description);
             Description.Visibility = string.IsNullOrEmpty(fullInfo.Description) ? Visibility.Collapsed : Visibility.Visible;
-
-            ViewModel.Members = new SortedObservableCollection<ChatMember>(new ChatMemberComparer(ViewModel.ProtoService, true), fullInfo.Members);
         }
 
 
@@ -375,11 +373,6 @@ namespace Unigram.Controls
             //Banned.Visibility = Visibility.Collapsed;
             //Restricted.Visibility = Visibility.Collapsed;
             //Members.Visibility = Visibility.Collapsed;
-
-            if (!group.IsChannel && (ViewModel.Members == null || group.MemberCount < 200 && group.MemberCount != ViewModel.Members.Count))
-            {
-                ViewModel.Members = ViewModel.CreateMembers(group.Id);
-            }
 
             // Unused:
             UserPhone.Visibility = Visibility.Collapsed;

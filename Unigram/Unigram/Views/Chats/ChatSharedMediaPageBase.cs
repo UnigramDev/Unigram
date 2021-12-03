@@ -19,6 +19,8 @@ namespace Unigram.Views.Chats
     {
         public ProfileViewModel ViewModel => DataContext as ProfileViewModel;
 
+        public ProfileHeader Header => ProfileHeader;
+
         private CompositionPropertySet _properties;
 
         protected void InitializeSearch(TextBox field, Func<SearchMessagesFilter> filter)

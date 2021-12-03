@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,7 +13,6 @@ using Unigram.ViewModels.Chats;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Supergroups;
 using Unigram.ViewModels.Users;
-using Unigram.Views;
 using Unigram.Views.Chats;
 using Unigram.Views.Popups;
 using Unigram.Views.Supergroups;
@@ -82,6 +80,7 @@ namespace Unigram.ViewModels
             InviteCommand = new RelayCommand(InviteExecute);
             ToggleMuteCommand = new RelayCommand(ToggleMuteExecute);
             StatisticsCommand = new RelayCommand(StatisticsExecute);
+
             MemberPromoteCommand = new RelayCommand<ChatMember>(MemberPromoteExecute);
             MemberRestrictCommand = new RelayCommand<ChatMember>(MemberRestrictExecute);
             MemberRemoveCommand = new RelayCommand<ChatMember>(MemberRemoveExecute);
@@ -1030,31 +1029,6 @@ namespace Unigram.ViewModels
             return new ChatMemberCollection(ProtoService, supergroupId, new SupergroupMembersFilterRecent());
         }
 
-        public void Find(string query)
-        {
-            var chat = _chat;
-            if (chat == null)
-            {
-                return;
-            }
-
-            if (chat.Type is ChatTypeSupergroup supergroup)
-            {
-                Search = new ChatMemberCollection(ProtoService, supergroup.SupergroupId, new SupergroupMembersFilterSearch(query));
-            }
-            else if (chat.Type is ChatTypeBasicGroup)
-            {
-                Search = new ChatMemberCollection(ProtoService, chat.Id, query, new ChatMembersFilterMembers());
-            }
-        }
-
-        private ChatMemberCollection _search;
-        public ChatMemberCollection Search
-        {
-            get => _search;
-            set => Set(ref _search, value);
-        }
-
         #endregion
 
         #region Context menu
@@ -1105,89 +1079,6 @@ namespace Unigram.ViewModels
 
         #endregion
 
-
-
-        public async void OpenUsername(string username)
-        {
-            var response = await ProtoService.SendAsync(new SearchPublicChat(username));
-            if (response is Chat chat)
-            {
-                if (chat.Type is ChatTypePrivate privata)
-                {
-                    var user = ProtoService.GetUser(privata.UserId);
-                    if (user?.Type is UserTypeBot)
-                    {
-                        NavigationService.NavigateToChat(chat);
-                    }
-                    else
-                    {
-                        NavigationService.Navigate(typeof(ProfilePage), chat.Id);
-                    }
-                }
-                else
-                {
-                    NavigationService.NavigateToChat(chat);
-                }
-            }
-        }
-
-        public async void OpenUser(long userId)
-        {
-            var response = await ProtoService.SendAsync(new CreatePrivateChat(userId, false));
-            if (response is Chat chat)
-            {
-                var user = ProtoService.GetUser(userId);
-                if (user?.Type is UserTypeBot)
-                {
-                    NavigationService.NavigateToChat(chat);
-                }
-                else
-                {
-                    NavigationService.Navigate(typeof(ProfilePage), chat.Id);
-                }
-            }
-        }
-
-        public async void OpenUrl(string url, bool untrust)
-        {
-            if (MessageHelper.TryCreateUri(url, out Uri uri))
-            {
-                if (MessageHelper.IsTelegramUrl(uri))
-                {
-                    MessageHelper.OpenTelegramUrl(ProtoService, NavigationService, uri);
-                }
-                else
-                {
-                    //if (message?.Media is TLMessageMediaWebPage webpageMedia)
-                    //{
-                    //    if (webpageMedia.WebPage is TLWebPage webpage && webpage.HasCachedPage && webpage.Url.Equals(navigation))
-                    //    {
-                    //        var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
-                    //        if (service != null)
-                    //        {
-                    //            service.Navigate(typeof(InstantPage), webpageMedia);
-                    //            return;
-                    //        }
-                    //    }
-                    //}
-
-                    if (untrust)
-                    {
-                        var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.OpenUrlAlert, url), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
-                        if (confirm != ContentDialogResult.Primary)
-                        {
-                            return;
-                        }
-                    }
-
-                    try
-                    {
-                        await Windows.System.Launcher.LaunchUriAsync(uri);
-                    }
-                    catch { }
-                }
-            }
-        }
     }
 
     public class ChatMemberCollection : IncrementalCollection<ChatMember>

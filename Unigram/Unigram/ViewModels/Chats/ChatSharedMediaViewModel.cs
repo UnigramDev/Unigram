@@ -7,9 +7,11 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
+using Unigram.Views;
 using Unigram.Views.Chats;
 using Unigram.Views.Popups;
 using Unigram.Views.Users;
@@ -568,8 +570,28 @@ namespace Unigram.ViewModels.Chats
         {
         }
 
-        public void OpenUsername(string username)
+        public async void OpenUsername(string username)
         {
+            var response = await ProtoService.SendAsync(new SearchPublicChat(username));
+            if (response is Chat chat)
+            {
+                if (chat.Type is ChatTypePrivate privata)
+                {
+                    var user = ProtoService.GetUser(privata.UserId);
+                    if (user?.Type is UserTypeBot)
+                    {
+                        NavigationService.NavigateToChat(chat);
+                    }
+                    else
+                    {
+                        NavigationService.Navigate(typeof(ProfilePage), chat.Id);
+                    }
+                }
+                else
+                {
+                    NavigationService.NavigateToChat(chat);
+                }
+            }
         }
 
         public void OpenHashtag(string hashtag)
@@ -580,8 +602,21 @@ namespace Unigram.ViewModels.Chats
         {
         }
 
-        public void OpenUser(long userId)
+        public async void OpenUser(long userId)
         {
+            var response = await ProtoService.SendAsync(new CreatePrivateChat(userId, false));
+            if (response is Chat chat)
+            {
+                var user = ProtoService.GetUser(userId);
+                if (user?.Type is UserTypeBot)
+                {
+                    NavigationService.NavigateToChat(chat);
+                }
+                else
+                {
+                    NavigationService.Navigate(typeof(ProfilePage), chat.Id);
+                }
+            }
         }
 
         public void OpenChat(long chatId, bool profile = false)
@@ -596,8 +631,32 @@ namespace Unigram.ViewModels.Chats
         {
         }
 
-        public void OpenUrl(string url, bool untrust)
+        public async void OpenUrl(string url, bool untrust)
         {
+            if (MessageHelper.TryCreateUri(url, out Uri uri))
+            {
+                if (MessageHelper.IsTelegramUrl(uri))
+                {
+                    MessageHelper.OpenTelegramUrl(ProtoService, NavigationService, uri);
+                }
+                else
+                {
+                    if (untrust)
+                    {
+                        var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.OpenUrlAlert, url), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+                        if (confirm != ContentDialogResult.Primary)
+                        {
+                            return;
+                        }
+                    }
+
+                    try
+                    {
+                        await Windows.System.Launcher.LaunchUriAsync(uri);
+                    }
+                    catch { }
+                }
+            }
         }
 
         public void SendBotCommand(string command)

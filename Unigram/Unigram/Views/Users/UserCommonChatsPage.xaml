@@ -14,6 +14,7 @@
                                 ItemsSource="{x:Bind ViewModel.UserCommonChats.Items}"
                                 ItemClick="ListView_ItemClick"
                                 IsItemClickEnabled="True"
+                                Loaded="List_Loaded"
                                 ChoosingItemContainer="OnChoosingItemContainer"
                                 ContainerContentChanging="OnContainerContentChanging"
                                 SelectionMode="None">
