@@ -160,7 +160,7 @@ namespace Unigram.Controls
                 else
                 {
                     AnimateMoving(_layoutRoot.Children[i], real, real + 1);
-                    UpdateContainer(_layoutRoot.Children[i], _items[real + 1]);
+                    UpdateContainer(_layoutRoot.Children[i], real + 1);
                     real++;
                 }
             }
@@ -205,7 +205,7 @@ namespace Unigram.Controls
                 else
                 {
                     AnimateMoving(_layoutRoot.Children[i], real, real - 1);
-                    UpdateContainer(_layoutRoot.Children[i], _items[real - 1]);
+                    UpdateContainer(_layoutRoot.Children[i], real - 1);
                     real++;
                 }
             }
@@ -274,13 +274,14 @@ namespace Unigram.Controls
             return container;
         }
 
-        private void UpdateContainer(UIElement container, object item)
+        private void UpdateContainer(UIElement container, int newIndex)
         {
-            if (container is Border border
+            if (_items.Count > newIndex &&
+                container is Border border
                 && border.Child is ProfilePicture picture
                 && border.Tag is MessageSender previous)
             {
-                if (item is MessageSender sender && !sender.IsEqual(previous))
+                if (_items[newIndex] is MessageSender sender && !sender.IsEqual(previous))
                 {
                     RecentUserHeadChanged?.Invoke(picture, sender);
                 }
