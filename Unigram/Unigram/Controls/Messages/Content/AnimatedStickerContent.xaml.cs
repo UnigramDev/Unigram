@@ -215,7 +215,7 @@ namespace Unigram.Controls.Messages.Content
             message.Interaction = null;
 
             var file = interaction.StickerValue;
-            if (file.Local.IsDownloadingCompleted)
+            if (file.Local.IsDownloadingCompleted && _interacting < 4)
             {
                 var dispatcher = DispatcherQueue.GetForCurrentThread();
                 var container = this.Ancestors<ListViewItem>().FirstOrDefault();
