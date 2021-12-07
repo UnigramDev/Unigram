@@ -923,16 +923,24 @@ namespace Unigram.Views
 
         private async void ProcessAppCommands(ShortcutCommand command, AcceleratorKeyEventArgs args)
         {
-            if (command == ShortcutCommand.Search)
+            if (command is ShortcutCommand.Search)
             {
-                if (MasterDetail.NavigationService.Frame.Content is ISearchablePage child && args.VirtualKey != Windows.System.VirtualKey.E)
+                if (MasterDetail.NavigationService.Frame.Content is ISearchablePage child)
                 {
                     child.Search();
                 }
                 else
                 {
+                    SearchField.Focus(FocusState.Keyboard);
                     Search_Click(null, null);
                 }
+
+                args.Handled = true;
+            }
+            else if (command is ShortcutCommand.SearchChats)
+            {
+                SearchField.Focus(FocusState.Keyboard);
+                Search_Click(null, null);
 
                 args.Handled = true;
             }
