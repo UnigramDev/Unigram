@@ -34,7 +34,7 @@ namespace Unigram.Views.Popups
 
             if (filters == null)
             {
-                filters = new ChatEventLogFilters(true, true, true, true, true, true, true, true, true, true, true, true, true);
+                filters = new ChatEventLogFilters(true, true, true, true, true, true, true, true, true, true, true, true);
             }
 
             MemberRestrictions.IsChecked = filters.MemberRestrictions;

@@ -98,12 +98,12 @@ namespace Unigram.Views.Supergroups
                     ? Strings.Resources.TypePublic
                     : Strings.Resources.TypePublicGroup
                 : group.IsChannel
-                    ? chat.AllowSavingContent
-                        ? Strings.Resources.TypePrivate
-                        : Strings.Resources.TypePrivateRestrictedForwards
-                    : chat.AllowSavingContent
-                        ? Strings.Resources.TypePrivateGroup
-                        : Strings.Resources.TypePrivateGroupRestrictedForwards;
+                    ? chat.HasProtectedContent
+                        ? Strings.Resources.TypePrivateRestrictedForwards
+                        : Strings.Resources.TypePrivate
+                    : chat.HasProtectedContent
+                        ? Strings.Resources.TypePrivateGroupRestrictedForwards
+                        : Strings.Resources.TypePrivateGroup;
 
             ChatHistory.Badge = null;
             ChatHistory.Visibility = group.CanChangeInfo() && string.IsNullOrEmpty(group.Username) && !group.IsChannel ? Visibility.Visible : Visibility.Collapsed;

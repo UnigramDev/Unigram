@@ -134,10 +134,10 @@
                          Margin="12,8,12,8" />
             </controls:HeaderedControl>
 
-            <controls:HeaderedControl Header="{CustomResource SavingContentTitle}"
-                                      Footer="{CustomResource RestrictSavingContentInfo}"
+            <controls:HeaderedControl x:Name="RestrictSavingContent"
+                                      Header="{CustomResource SavingContentTitle}"
                                       Grid.Row="2">
-                <CheckBox IsChecked="{x:Bind ViewModel.RestrictSavingContent, Mode=TwoWay}"
+                <CheckBox IsChecked="{x:Bind ViewModel.HasProtectedContent, Mode=TwoWay}"
                           Content="{CustomResource RestrictSavingContent}"
                           Margin="12,6,12,0" />
                 <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}"

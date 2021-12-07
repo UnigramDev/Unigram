@@ -13,17 +13,17 @@ namespace Unigram.ViewModels.Supergroups
         {
         }
 
-        private bool _restrictSavingContent;
-        public bool RestrictSavingContent
+        private bool _hasProtectedContent;
+        public bool HasProtectedContent
         {
-            get => _restrictSavingContent;
-            set => Set(ref _restrictSavingContent, value);
+            get => _hasProtectedContent;
+            set => Set(ref _hasProtectedContent, value);
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             await base.OnNavigatedToAsync(parameter, mode, state);
-            RestrictSavingContent = !(Chat?.AllowSavingContent ?? true);
+            HasProtectedContent = Chat?.HasProtectedContent ?? false;
         }
 
         protected override async void SendExecute()
@@ -34,9 +34,9 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            if (chat.AllowSavingContent != !RestrictSavingContent)
+            if (chat.HasProtectedContent != HasProtectedContent)
             {
-                await ProtoService.SendAsync(new ToggleChatAllowSavingContent(Chat.Id, !RestrictSavingContent));
+                await ProtoService.SendAsync(new ToggleChatHasProtectedContent(Chat.Id, HasProtectedContent));
             }
 
             var username = _isPublic ? (_username?.Trim() ?? string.Empty) : string.Empty;

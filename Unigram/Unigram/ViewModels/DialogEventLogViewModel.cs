@@ -27,7 +27,7 @@ namespace Unigram.ViewModels
 
         private long _minEventId = long.MaxValue;
 
-        private ChatEventLogFilters _filters = new ChatEventLogFilters(true, true, true, true, true, true, true, true, true, true, true, true, true);
+        private ChatEventLogFilters _filters = new ChatEventLogFilters(true, true, true, true, true, true, true, true, true, true, true, true);
         public ChatEventLogFilters Filters
         {
             get => _filters;
@@ -294,7 +294,7 @@ namespace Unigram.ViewModels
                         //message.Content = new MessageChatEvent(item, true);
                         message.Content = GetMessageContent(item, channel);
                         break;
-                    case ChatEventAllowSavingContentToggled:
+                    case ChatEventHasProtectedContentToggled:
                     case ChatEventSignMessagesToggled:
                     case ChatEventStickerSetChanged:
                     case ChatEventInvitesToggled:
