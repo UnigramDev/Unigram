@@ -112,6 +112,7 @@ namespace winrt::Unigram::Native::implementation
 	winrt::Unigram::Native::VideoAnimation VideoAnimation::LoadFromFile(IVideoAnimationSource file, bool preview, bool limitFps)
 	{
 		auto info = winrt::make_self<VideoAnimation>();
+		file.SeekCallback(0);
 
 		int ret;
 		info->file = file;
