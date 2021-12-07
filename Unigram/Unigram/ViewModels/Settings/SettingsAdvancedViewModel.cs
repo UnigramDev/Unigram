@@ -106,7 +106,7 @@ namespace Unigram.ViewModels.Settings
                 ProtoService.DownloadFile(update.Document.Id, 32);
             }
 
-            if (download)
+            if (download && file != null)
             {
                 UpdateManager.Subscribe(this, ProtoService, file, ref _fileToken, UpdateFile);
             }
@@ -139,7 +139,7 @@ namespace Unigram.ViewModels.Settings
                 Application.Current.Exit();
             }
 
-            UpdateFile(update, update.Document, true);
+            UpdateFile(update, update?.Document, true);
         }
 
         #endregion
