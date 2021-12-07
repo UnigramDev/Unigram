@@ -17,7 +17,7 @@
 
     <Page.Resources>
         <DataTemplate x:Key="MemberTemplate">
-            <Grid Margin="0,6"
+            <Grid Margin="12,6"
                   Background="Transparent">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -94,7 +94,8 @@
                   ContainerContentChanging="OnContainerContentChanging"
                   SelectionMode="None">
             <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
+                <Style TargetType="ListViewItem"
+                       BasedOn="{StaticResource DefaultListViewItemStyle}">
                     <Setter Property="Background"
                             Value="{ThemeResource ApplicationPageBackgroundThemeBrush}" />
                     <Setter Property="HorizontalContentAlignment"
@@ -123,7 +124,8 @@
                                     SelectionMode="None"
                                     Grid.Row="1">
                 <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
+                    <Style TargetType="ListViewItem"
+                           BasedOn="{StaticResource DefaultListViewItemStyle}">
                         <Setter Property="HorizontalContentAlignment"
                                 Value="Stretch" />
                     </Style>

@@ -18,7 +18,7 @@
 
     <UserControl.Resources>
         <DataTemplate x:Key="MemberTemplate">
-            <Grid Padding="0,6"
+            <Grid Padding="12,6"
                   Background="Transparent">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -83,7 +83,8 @@
                                 ContainerContentChanging="OnContainerContentChanging"
                                 SelectionMode="None">
             <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
+                <Style TargetType="ListViewItem"
+                       BasedOn="{StaticResource DefaultListViewItemStyle}">
                     <Setter Property="HorizontalContentAlignment"
                             Value="Stretch" />
                 </Style>
@@ -114,7 +115,8 @@
                     </Border>
                 </ListView.Header>
                 <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
+                    <Style TargetType="ListViewItem"
+                           BasedOn="{StaticResource DefaultListViewItemStyle}">
                         <Setter Property="HorizontalContentAlignment"
                                 Value="Stretch" />
                         <Setter Property="MinHeight"

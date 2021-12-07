@@ -140,7 +140,8 @@
                 <Border Height="32" />
             </ListView.Footer>
             <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
+                <Style TargetType="ListViewItem"
+                       BasedOn="{StaticResource DefaultListViewItemStyle}">
                     <Setter Property="HorizontalContentAlignment"
                             Value="Stretch" />
                     <Setter Property="Padding"
