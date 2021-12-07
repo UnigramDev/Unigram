@@ -212,33 +212,25 @@ namespace Unigram.Services
 
         #region App version
 
-        public const ulong CurrentVersion = (8UL << 48) | (1UL << 32) | (0UL << 16);
-        public const string CurrentChangelog = @"Chat Themes, Interactive Emoji, Read Receipts in Groups and Live Stream Recording
+        public const ulong CurrentVersion = (8UL << 48) | (3UL << 32) | (0UL << 16);
+        public const string CurrentChangelog = @"Protected Content, Delete by Date, Device Management and More
 
-**Chat Themes**
-• Choose one of 8 new preset themes for any individual private chat.
-• Tap the chat header > More (⋯) > 'Change Colors' to pick a theme.
-• Both chat participants will see the same theme in that chat – on all their devices.
-• Each new theme features colorful gradient message bubbles, beautifully animated backgrounds and unique background patterns.
-• All chat themes have day and night versions and will follow your overall dark mode settings.
-• More chat themes coming soon.
+**Protected Content in Groups and Channels**
+• Content creators can restrict the ability to forward messages from their groups and channels.
+• When forwarding is restricted, users will also be unable to directly save media from the chat or take screenshots.
+• Toggle this option on or off via Chat Info > Group / Channel Type.
 
-**Interactive Emoji**
-• Some animated emoji now have fullscreen effects.
-• Send 🎆 🎉 🎈 👍 💩 or ❤️ to any private chat, then tap on the animated emoji to launch the effect.
-• If your chat partner also has the chat open, you will both see the effects and feel the vibrations simultaneously.
-• See the ""Watching"" status when your chat partner is enjoying emoji effects with you.
-• More interactive emoji coming soon.
+**Delete Messages by Date**
+• Clear messages in one-on-one chats from a specific date or period of time.
+• Tap the date header in a chat to open the calendar and select a single day or range to delete.
 
-**Read Receipts in Small Groups**
-• Select one of your outgoing messages in small groups to see who recently viewed it.
-• To protect privacy, read receipts are only stored for 7 days after the message was sent.
+**Manage Connected Devices**
+• Choose how long a device may stay inactive before it's logged out automatically.
+• Select a device to control whether it is allowed to accept Calls or new Secret Chats.
 
-**Record Live Streams and Video Chats**
-• Record video and audio from live broadcasts in your group or channel.
-• Admins can start recording from the Settings menu (⋯).
-• Choose between recording in portrait or landscape orientation.
-• Finished recordings are sent to the admin's Saved Messages and can be easily shared.";
+**Anonymous Posting in Public Groups**
+• Comment as one of your channels in public groups and channel comments.
+• Tap the profile picture next to the message bar to choose which channel you will appear as when you send the message.";
 
         public int Session => _session;
 
