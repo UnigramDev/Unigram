@@ -72,6 +72,8 @@ namespace Unigram.ViewModels
             SelectedItems = messages;
         }
 
+        protected bool _wasScreenCaptureEnabled;
+
         protected readonly ConcurrentDictionary<long, MessageViewModel> _groupedMessages = new ConcurrentDictionary<long, MessageViewModel>();
 
         protected static readonly ConcurrentDictionary<long, IList<ChatAdministrator>> _admins = new ConcurrentDictionary<long, IList<ChatAdministrator>>();
@@ -1712,12 +1714,9 @@ namespace Unigram.ViewModels
                 return;
             }
 
-#if !DEBUG
-            if (chat.Type is ChatTypeSecret)
-            {
-                Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().IsScreenCaptureEnabled = false;
-            }
-#endif
+            var applicationView = Windows.UI.ViewManagement.ApplicationView.GetForCurrentView();
+            _wasScreenCaptureEnabled = applicationView.IsScreenCaptureEnabled;
+            applicationView.IsScreenCaptureEnabled = chat.Type is not ChatTypeSecret && !chat.HasProtectedContent;
 
             Chat = chat;
             SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
@@ -1973,12 +1972,7 @@ namespace Unigram.ViewModels
             IsLastSliceLoaded = null;
             IsFirstSliceLoaded = null;
 
-#if !DEBUG
-            if (chat.Type is ChatTypeSecret)
-            {
-                Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().IsScreenCaptureEnabled = true;
-            }
-#endif
+            Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().IsScreenCaptureEnabled = _wasScreenCaptureEnabled;
 
             ProtoService.Send(new CloseChat(chat.Id));
 
