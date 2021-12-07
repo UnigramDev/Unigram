@@ -64,7 +64,7 @@ namespace Unigram.Views.Popups
 
         private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
         {
-            _handler.UnloadVisibleItems();
+            _handler.UnloadVisibleItems(true);
 
             _zoomer.Opening = null;
             _zoomer.Closing = null;
