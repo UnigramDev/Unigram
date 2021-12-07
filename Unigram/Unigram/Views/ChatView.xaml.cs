@@ -505,6 +505,9 @@ namespace Unigram.Views
             TextField.IsSpellCheckEnabled = !SettingsService.Current.DisableHighlightWords;
             TextField.Focus(FocusState.Programmatic);
 
+            //Header.BackVisibility = ViewModel.NavigationService.CanGoBack
+            //    ? Visibility.Visible
+            //    : Visibility.Collapsed;
             Options.Visibility = ViewModel.Type == DialogType.History
                 ? Visibility.Visible
                 : Visibility.Collapsed;
@@ -2050,7 +2053,7 @@ namespace Unigram.Views
                 }), message, "Delete from disk", new FontIcon { Glyph = Icons.Delete });
 #endif
 
-                if (message.CanBeSaved is false)
+                if (message.CanBeSaved is false && flyout.Items.Count > 0)
                 {
                     flyout.CreateFlyoutSeparator();
                     flyout.Items.Add(new MenuFlyoutLabel
