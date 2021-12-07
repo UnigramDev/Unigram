@@ -1055,7 +1055,7 @@
                                           SelectionMode="None">
                                     <ListView.ItemTemplate>
                                         <DataTemplate>
-                                            <Grid Margin="qw,6">
+                                            <Grid Margin="12,6">
                                                 <Grid.RowDefinitions>
                                                     <RowDefinition Height="Auto" />
                                                     <RowDefinition Height="Auto" />
