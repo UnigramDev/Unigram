@@ -206,7 +206,7 @@ namespace Unigram.ViewModels.Settings
             }
 
             var dialog = new ChooseRadioPopup(items);
-            dialog.Title = Strings.Resources.DeleteAccountTitle;
+            dialog.Title = Strings.Resources.SessionsSelfDestruct;
             dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.SecondaryButtonText = Strings.Resources.Cancel;
 

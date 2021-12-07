@@ -22,7 +22,7 @@
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
 {
-    using Windows.ApplicationModel.Resources;
+    using Unigram.Services;
     
     
     public sealed partial class Resources
