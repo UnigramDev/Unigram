@@ -102,6 +102,8 @@ namespace Unigram.Views
                 ViewModel.Aggregator.Publish(update);
             }
 
+            Window.Current.SetTitleBar(TitleBarrr);
+
             InputPane.GetForCurrentView().Showing += (s, args) => args.EnsuredFocusedElementInView = true;
 
             DropShadowEx.Attach(UpdateShadow);
@@ -1313,9 +1315,6 @@ namespace Unigram.Views
                     ChatsList.SelectionMode = ListViewSelectionMode.None;
                 }
 
-                Separator.BorderThickness = new Thickness(0);
-                Separator.Visibility = Visibility.Collapsed;
-
                 SetTitleBarVisibility(Visibility.Visible);
                 Header.Visibility = Visibility.Visible;
                 StateLabel.Visibility = Visibility.Visible;
@@ -1327,9 +1326,6 @@ namespace Unigram.Views
                     ChatsList.SelectionMode = ListViewSelectionMode.Single;
                     ChatsList.SelectedItem = ViewModel.Chats.Items.FirstOrDefault(x => x.Id == ViewModel.Chats.SelectedItem);
                 }
-
-                Separator.BorderThickness = new Thickness(0, 0, 1, 0);
-                Separator.Visibility = Visibility.Visible;
 
                 SetTitleBarVisibility(MasterDetail.NavigationService.CurrentPageType == typeof(BlankPage) ? Visibility.Collapsed : Visibility.Visible);
                 Header.Visibility = MasterDetail.CurrentState == MasterDetailState.Expanded ? Visibility.Visible : Visibility.Collapsed;

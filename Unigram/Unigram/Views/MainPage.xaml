@@ -45,10 +45,12 @@
                     <ControlTemplate TargetType="controls:MasterDetailView">
                         <controls:MasterDetailPanel x:Name="AdaptivePanel"
                                                     IsBlank="{TemplateBinding IsBlank}"
-                                                    Background="{ThemeResource PageBackgroundDarkBrush}">
-                            <chats:ChatBackgroundPresenter Background="{ThemeResource ChatPageBackgroundBrush}"
-                                                           Opacity="{TemplateBinding BackgroundOpacity}"
-                                                           Loading="ChatBackgroundPresenter_Loading" />
+                                                    Background="Transparent">
+                            <Border Style="{ThemeResource ExpNavigationViewContentStyle}">
+                                <chats:ChatBackgroundPresenter Background="{ThemeResource ChatPageBackgroundBrush}"
+                                                               Opacity="{TemplateBinding BackgroundOpacity}"
+                                                               Loading="ChatBackgroundPresenter_Loading" />
+                            </Border>
 
                             <!--<Grid BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding Padding}" VerticalAlignment="Top"/>-->
 
@@ -61,7 +63,13 @@
                                             IsTabStop="False"
                                             HorizontalContentAlignment="Stretch"
                                             VerticalContentAlignment="Stretch"
-                                            VerticalAlignment="Top" />
+                                            VerticalAlignment="Top">
+                                <ContentControl.Template>
+                                    <ControlTemplate TargetType="ContentControl">
+                                        <ContentPresenter CornerRadius="{ThemeResource ExpNavigationViewCornerRadius}" />
+                                    </ControlTemplate>
+                                </ContentControl.Template>
+                            </ContentControl>
                             <ContentControl Content="{TemplateBinding Banner}"
                                             IsTabStop="False"
                                             HorizontalContentAlignment="Stretch"
@@ -77,6 +85,10 @@
                                 <Border VerticalAlignment="Top"
                                         Background="{TemplateBinding BorderBrush}"
                                         Height="{ThemeResource AppBarThemeCompactHeight}" />
+                                <Border Style="{ThemeResource ExpNavigationViewContentStyle}"
+                                        Background="{x:Null}"
+                                        Margin="0,-48,0,0"
+                                        Canvas.ZIndex="1" />
                             </Grid>
 
                             <ContentPresenter x:Name="MasterFrame"
@@ -124,8 +136,8 @@
         </Grid.ColumnDefinitions>
 
         <Grid x:Name="TitleBarrr"
-              Height="32"
-              Background="{ThemeResource PageTitleBackgroundBrush}"
+              Height="{ThemeResource ExpTitleBarHeight}"
+              Background="{ThemeResource ExpTitleBarBackground}"
               Grid.ColumnSpan="2">
             <contract7Present:Grid.BackgroundTransition>
                 <contract7Present:BrushTransition />
@@ -142,7 +154,7 @@
             <TextBlock x:Name="StateLabel"
                        VerticalAlignment="Center"
                        TextLineBounds="TrimToCapHeight"
-                       Margin="6,0,6,0"
+                       Margin="{ThemeResource ExpTitleBarPadding}"
                        AutomationProperties.LiveSetting="Assertive"
                        Foreground="{ThemeResource PageHeaderForegroundBrush}"
                        Style="{StaticResource CaptionTextBlockStyle}"
@@ -304,6 +316,7 @@
             </controls:MasterDetailView.Banner>
             <controls:MasterDetailView.MasterHeader>
                 <controls:ContentPageHeader x:Name="PageHeader"
+                                            Background="{ThemeResource ExpBackground}"
                                             BackVisibility="Collapsed"
                                             Grid.Row="1">
                     <Grid x:Name="Header">
@@ -312,7 +325,7 @@
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
                         <Grid x:Name="MainHeader"
-                              Padding="40,0,0,0"
+                              Padding="{ThemeResource ExpMainHeaderPadding}"
                               Grid.ColumnSpan="2">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition />
@@ -327,8 +340,7 @@
 
                             <TextBox x:Name="SearchField"
                                      PlaceholderText="{CustomResource Search}"
-                                     Background="{ThemeResource PageBackgroundDarkBrush}"
-                                     BorderBrush="{ThemeResource PageBackgroundDarkBrush}"
+                                     Style="{ThemeResource ExpSearchFieldStyle}"
                                      PreventKeyboardDisplayOnProgrammaticFocus="True"
                                      AutomationProperties.LandmarkType="Search"
                                      VerticalAlignment="Center"
@@ -507,7 +519,7 @@
                     </VisualState>
                 </VisualStateGroup>
             </VisualStateManager.VisualStateGroups>
-            <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+            <Grid Background="{ThemeResource ExpBackground}">
                 <contract7Present:Grid.BackgroundTransition>
                     <contract7Present:BrushTransition />
                 </contract7Present:Grid.BackgroundTransition>
@@ -798,7 +810,7 @@
                                 </ListView>
                             </Grid>
                             <Grid x:Name="DialogsPanel"
-                                  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                                  Background="{ThemeResource ExpBackground}">
                                 <Grid x:Name="ChatsPanel">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto" />
@@ -1158,15 +1170,6 @@
                         </Grid>
                     </PivotItem>
                 </Pivot>
-
-                <Border x:Name="Separator"
-                        BorderBrush="{ThemeResource PageHeaderBorderBrush}"
-                        BorderThickness="1,0,0,0"
-                        IsHitTestVisible="False"
-                        HorizontalAlignment="Right"
-                        Margin="0,-48,0,0"
-                        Grid.RowSpan="4"
-                        Grid.Row="1" />
             </Grid>
         </controls:MasterDetailView>
 

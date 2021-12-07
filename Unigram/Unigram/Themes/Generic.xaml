@@ -49,7 +49,7 @@
 
     <Style TargetType="local:NavigationView">
         <Setter Property="Padding"
-                Value="0,32,0,0" />
+                Value="{ThemeResource ExpNavigationViewPadding}" />
         <Setter Property="IsTabStop"
                 Value="False" />
         <Setter Property="Template">
@@ -101,7 +101,7 @@
                                         <Setter Property="Height"
                                                 Value="48" />
                                         <Setter Property="Width"
-                                                Value="40" />
+                                                Value="{ThemeResource ExpNavigationViewMenuButtonWidth}" />
                                         <Setter Property="FontWeight"
                                                 Value="Normal" />
                                         <Setter Property="FontSize"

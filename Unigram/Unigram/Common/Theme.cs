@@ -48,11 +48,35 @@ namespace Unigram.Common
             catch { }
 
             MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/ThemeGreen.xaml") });
+            UpdateMica();
 
             if (main)
             {
                 UpdateAcrylicBrushes();
                 Initialize();
+            }
+        }
+
+        private void UpdateMica()
+        {
+            var add = false;
+            if (MergedDictionaries.Count == 2 && _lastMica != SettingsService.Current.Diagnostics.Mica)
+            {
+                MergedDictionaries.RemoveAt(1);
+                add = true;
+            }
+            else if (MergedDictionaries.Count == 1)
+            {
+                add = true;
+            }
+
+            if (add)
+            {
+                _lastMica = SettingsService.Current.Diagnostics.Mica;
+                MergedDictionaries.Add(new ResourceDictionary
+                {
+                    Source = new Uri(string.Format("ms-appx:///Themes/Experimental_{0}.xaml", _lastMica ? "enabled" : "disabled"))
+                });
             }
         }
 
@@ -70,6 +94,8 @@ namespace Unigram.Common
 
         public void Initialize(ElementTheme requested)
         {
+            UpdateMica();
+
             if (_lastTheme != null)
             {
                 Update(requested, _lastTheme);
@@ -101,6 +127,8 @@ namespace Unigram.Common
         {
             Update(ThemeCustomInfo.FromFile(path));
         }
+
+        private bool _lastMica;
 
         private int? _lastAccent;
         private long? _lastBackground;

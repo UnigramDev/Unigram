@@ -3,10 +3,12 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:local="using:Unigram.Views"
       xmlns:controls="using:Unigram.Controls"
+      xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
       xmlns:services="using:Unigram.Services"
       xmlns:settings="using:Unigram.Views.Settings"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      muxc:BackdropMaterial.ApplyToRootOrPageBackground="{ThemeResource ExpBackdropMaterial}"
       mc:Ignorable="d"
       d:DesignHeight="300"
       d:DesignWidth="400">
@@ -203,6 +205,8 @@
                 </ListView>
             </controls:NavigationView.PaneFooter>
         </controls:NavigationView>
+
+        <Grid x:Name="Transition" />
 
         <controls:SwitchThemeButton x:Name="Theme"
                                     Click="Theme_Click"

@@ -1,0 +1,61 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Default">
+            <Thickness x:Key="ExpNavigationViewPadding">0,0,0,0</Thickness>
+            <x:Double x:Key="ExpNavigationViewMenuButtonWidth">48</x:Double>
+            <x:Boolean x:Key="ExpBackdropMaterial">True</x:Boolean>
+            <x:Double x:Key="ExpTitleBarHeight">48</x:Double>
+            <SolidColorBrush x:Key="ExpTitleBarBackground"
+                             Color="Transparent" />
+            <Thickness x:Key="ExpTitleBarPadding">40,0,6,0</Thickness>
+            <Thickness x:Key="ExpMainHeaderPadding">12,0,6,0</Thickness>
+            <Style x:Key="ExpSearchFieldStyle"
+                   TargetType="TextBox"
+                   BasedOn="{StaticResource DefaultTextBoxStyle}" />
+            <SolidColorBrush x:Key="ExpBackground"
+                             Color="Transparent" />
+            <CornerRadius x:Key="ExpNavigationViewCornerRadius">8,0,0,0</CornerRadius>
+            <Style x:Key="ExpNavigationViewContentStyle"
+                   TargetType="Border">
+                <Setter Property="BorderBrush"
+                        Value="{ThemeResource NavigationViewContentGridBorderBrush}" />
+                <Setter Property="BorderThickness"
+                        Value="{ThemeResource NavigationViewContentGridBorderThickness}" />
+                <Setter Property="Background"
+                        Value="{ThemeResource NavigationViewContentBackground}" />
+                <Setter Property="CornerRadius"
+                        Value="{ThemeResource NavigationViewContentGridCornerRadius}" />
+            </Style>
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Light">
+            <Thickness x:Key="ExpNavigationViewPadding">0,0,0,0</Thickness>
+            <x:Double x:Key="ExpNavigationViewMenuButtonWidth">48</x:Double>
+            <x:Boolean x:Key="ExpBackdropMaterial">True</x:Boolean>
+            <x:Double x:Key="ExpTitleBarHeight">48</x:Double>
+            <SolidColorBrush x:Key="ExpTitleBarBackground"
+                             Color="Transparent" />
+            <Thickness x:Key="ExpTitleBarPadding">40,0,6,0</Thickness>
+            <Thickness x:Key="ExpMainHeaderPadding">12,0,6,0</Thickness>
+            <Style x:Key="ExpSearchFieldStyle"
+                   TargetType="TextBox"
+                   BasedOn="{StaticResource DefaultTextBoxStyle}" />
+            <SolidColorBrush x:Key="ExpBackground"
+                             Color="Transparent" />
+            <CornerRadius x:Key="ExpNavigationViewCornerRadius">8,0,0,0</CornerRadius>
+            <Style x:Key="ExpNavigationViewContentStyle"
+                   TargetType="Border">
+                <Setter Property="BorderBrush"
+                        Value="{ThemeResource NavigationViewContentGridBorderBrush}" />
+                <Setter Property="BorderThickness"
+                        Value="{ThemeResource NavigationViewContentGridBorderThickness}" />
+                <Setter Property="Background"
+                        Value="{ThemeResource NavigationViewContentBackground}" />
+                <Setter Property="CornerRadius"
+                        Value="{ThemeResource NavigationViewContentGridCornerRadius}" />
+            </Style>
+        </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
+
+</ResourceDictionary>
