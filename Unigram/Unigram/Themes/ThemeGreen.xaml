@@ -1059,21 +1059,44 @@
             <Thickness x:Key="CommandBarOverflowPresenterBorderPadding">0</Thickness>
             <Thickness x:Key="CommandBarOverflowPresenterBorderDownPadding">0</Thickness>
             <Thickness x:Key="CommandBarOverflowPresenterBorderUpPadding">0</Thickness>
+            <CornerRadius x:Key='GridViewItemCornerRadius'>4</CornerRadius>
+            <CornerRadius x:Key='GridViewItemCheckBoxCornerRadius'>3</CornerRadius>
+            <Thickness x:Key='GridViewItemSelectedBorderThickness'>2</Thickness>
             <StaticResource x:Key="GridViewItemBackground" ResourceKey="SubtleFillColorTransparentBrush" />
             <StaticResource x:Key="GridViewItemBackgroundPointerOver" ResourceKey="SubtleFillColorSecondaryBrush" />
             <StaticResource x:Key="GridViewItemBackgroundPressed" ResourceKey="SubtleFillColorTertiaryBrush" />
-            <StaticResource x:Key="GridViewItemBackgroundSelected" ResourceKey="SubtleFillColorSecondaryBrush" />
+            <StaticResource x:Key="GridViewItemBackgroundSelected" ResourceKey="SubtleFillColorTertiaryBrush" />
             <StaticResource x:Key="GridViewItemBackgroundSelectedPointerOver" ResourceKey="SubtleFillColorTertiaryBrush" />
             <StaticResource x:Key="GridViewItemBackgroundSelectedPressed" ResourceKey="SubtleFillColorSecondaryBrush" />
             <StaticResource x:Key="GridViewItemForeground" ResourceKey="TextFillColorPrimaryBrush" />
-            <StaticResource x:Key="GridViewItemForegroundPointerOver" ResourceKey="TextFillColorPrimaryBrush" />
+            <StaticResource x:Key="GridViewItemForegroundPointerOver" ResourceKey="TextFillColorSecondaryBrush" />
             <StaticResource x:Key="GridViewItemForegroundSelected" ResourceKey="TextFillColorPrimaryBrush" />
+            <StaticResource x:Key="GridViewItemBackgroundSelectedDisabled" ResourceKey="SubtleFillColorSecondaryBrush" />
+            <StaticResource x:Key="GridViewItemPointerOverBorderBrush" ResourceKey="ControlStrokeColorOnAccentTertiaryBrush" />
+            <StaticResource x:Key="GridViewItemSelectedBorderBrush" ResourceKey="AccentFillColorDefaultBrush" />
+            <StaticResource x:Key="GridViewItemSelectedPointerOverBorderBrush" ResourceKey="AccentFillColorSecondaryBrush" />
+            <StaticResource x:Key="GridViewItemSelectedPressedBorderBrush" ResourceKey="AccentFillColorTertiaryBrush" />
+            <StaticResource x:Key="GridViewItemSelectedDisabledBorderBrush" ResourceKey="AccentFillColorDisabledBrush" />
+            <StaticResource x:Key="GridViewItemSelectedInnerBorderBrush" ResourceKey="ControlSolidFillColorDefaultBrush" />
+            <StaticResource x:Key="GridViewItemCheckPressedBrush" ResourceKey="TextOnAccentFillColorSecondaryBrush" />
+            <StaticResource x:Key="GridViewItemCheckDisabledBrush" ResourceKey="TextOnAccentFillColorDisabledBrush" />
+            <StaticResource x:Key="GridViewItemCheckBoxPointerOverBrush" ResourceKey="ControlOnImageFillColorSecondaryBrush" />
+            <StaticResource x:Key="GridViewItemCheckBoxPressedBrush" ResourceKey="ControlOnImageFillColorTertiaryBrush" />
+            <StaticResource x:Key="GridViewItemCheckBoxDisabledBrush" ResourceKey="ControlOnImageFillColorDisabledBrush" />
+            <StaticResource x:Key="GridViewItemCheckBoxSelectedBrush" ResourceKey="AccentFillColorDefaultBrush" />
+            <StaticResource x:Key="GridViewItemCheckBoxSelectedPointerOverBrush" ResourceKey="AccentFillColorSecondaryBrush" />
+            <StaticResource x:Key="GridViewItemCheckBoxSelectedPressedBrush" ResourceKey="AccentFillColorTertiaryBrush" />
+            <StaticResource x:Key="GridViewItemCheckBoxSelectedDisabledBrush" ResourceKey="AccentFillColorDisabledBrush" />
+            <StaticResource x:Key="GridViewItemCheckBoxBorderBrush" ResourceKey="ControlStrongStrokeColorDefaultBrush" />
+            <StaticResource x:Key="GridViewItemCheckBoxPointerOverBorderBrush" ResourceKey="ControlStrongStrokeColorDefaultBrush" />
+            <StaticResource x:Key="GridViewItemCheckBoxPressedBorderBrush" ResourceKey="ControlStrongStrokeColorDisabledBrush" />
+            <StaticResource x:Key="GridViewItemCheckBoxDisabledBorderBrush" ResourceKey="ControlStrongStrokeColorDisabledBrush" />
             <StaticResource x:Key="GridViewItemFocusVisualPrimaryBrush" ResourceKey="FocusStrokeColorOuterBrush" />
             <StaticResource x:Key="GridViewItemFocusVisualSecondaryBrush" ResourceKey="FocusStrokeColorInnerBrush" />
             <StaticResource x:Key="GridViewItemFocusBorderBrush" ResourceKey="FocusStrokeColorOuterBrush" />
             <StaticResource x:Key="GridViewItemFocusSecondaryBorderBrush" ResourceKey="TextFillColorPrimaryBrush" />
-            <StaticResource x:Key="GridViewItemCheckBrush" ResourceKey="TextFillColorSecondaryBrush" />
-            <StaticResource x:Key="GridViewItemCheckBoxBrush" ResourceKey="TextFillColorSecondaryBrush" />
+            <StaticResource x:Key="GridViewItemCheckBrush" ResourceKey="TextOnAccentFillColorPrimaryBrush" />
+            <StaticResource x:Key="GridViewItemCheckBoxBrush" ResourceKey="ControlOnImageFillColorDefaultBrush" />
             <StaticResource x:Key="GridViewItemDragBackground" ResourceKey="SubtleFillColorTransparentBrush" />
             <StaticResource x:Key="GridViewItemDragForeground" ResourceKey="TextOnAccentFillColorPrimaryBrush" />
             <StaticResource x:Key="GridViewItemPlaceholderBackground" ResourceKey="ControlStrongFillColorDisabledBrush" />
@@ -1105,12 +1128,12 @@
             <StaticResource x:Key="ListViewItemFocusVisualSecondaryBrush" ResourceKey="FocusStrokeColorInnerBrush" />
             <StaticResource x:Key="ListViewItemFocusBorderBrush" ResourceKey="FocusStrokeColorOuterBrush" />
             <StaticResource x:Key="ListViewItemFocusSecondaryBorderBrush" ResourceKey="TextFillColorPrimaryBrush" />
-            <StaticResource x:Key="ListViewItemCheckBrush" ResourceKey="TextFillColorSecondaryBrush" />
-            <StaticResource x:Key="ListViewItemCheckBoxBrush" ResourceKey="TextFillColorSecondaryBrush" />
+            <StaticResource x:Key="ListViewItemCheckBrush" ResourceKey="TextOnAccentFillColorPrimaryBrush" />
+            <StaticResource x:Key="ListViewItemCheckBoxBrush" ResourceKey="ControlAltFillColorSecondaryBrush" />
             <StaticResource x:Key="ListViewItemDragBackground" ResourceKey="SubtleFillColorTransparentBrush" />
             <StaticResource x:Key="ListViewItemDragForeground" ResourceKey="TextOnAccentFillColorPrimaryBrush" />
             <StaticResource x:Key="ListViewItemPlaceholderBackground" ResourceKey="ControlStrongFillColorDisabledBrush" />
-            <StaticResource x:Key="ListViewItemMultiArrangeOverlayTextBorder" ResourceKey="TextOnAccentFillColorPrimaryBrush" />
+            <StaticResource x:Key="ListViewItemMultiArrangeOverlayTextBorder" ResourceKey="TextOnAccentFillColorPrimaryBrush" />   
             <StaticResource x:Key="ListViewItemMultiArrangeOverlayTextBackground" ResourceKey="AccentFillColorDefaultBrush" />
             <x:Boolean x:Key="ListViewItemSelectionCheckMarkVisualEnabled">True</x:Boolean>
             <ListViewItemPresenterCheckMode x:Key="ListViewItemCheckMode">Inline</ListViewItemPresenterCheckMode>
@@ -1129,6 +1152,27 @@
             <SolidColorBrush x:Key="ListViewItemSelectedForegroundThemeBrush" Color="#FFFFFFFF" />
             <SolidColorBrush x:Key="ListViewItemSelectedPointerOverBackgroundThemeBrush" Color="#FF5F37BE" />
             <SolidColorBrush x:Key="ListViewItemSelectedPointerOverBorderThemeBrush" Color="#FF5F37BE" />
+            <CornerRadius x:Key="ListViewItemCornerRadius">4</CornerRadius>
+            <CornerRadius x:Key="ListViewItemCheckBoxCornerRadius">3</CornerRadius>
+            <CornerRadius x:Key="ListViewItemSelectionIndicatorCornerRadius">1.5</CornerRadius>
+            <StaticResource x:Key="ListViewItemCheckPressedBrush" ResourceKey="TextOnAccentFillColorSecondaryBrush" />
+            <StaticResource x:Key="ListViewItemCheckDisabledBrush" ResourceKey="TextOnAccentFillColorDisabledBrush" />
+            <StaticResource x:Key="ListViewItemCheckBoxPointerOverBrush" ResourceKey="ControlAltFillColorSecondaryBrush" />
+            <StaticResource x:Key="ListViewItemCheckBoxPressedBrush" ResourceKey="ControlAltFillColorSecondaryBrush" />
+            <StaticResource x:Key="ListViewItemCheckBoxDisabledBrush" ResourceKey="ControlAltFillColorSecondaryBrush" />
+            <StaticResource x:Key="ListViewItemCheckBoxSelectedBrush" ResourceKey="AccentFillColorDefaultBrush" />
+            <StaticResource x:Key="ListViewItemCheckBoxSelectedPointerOverBrush" ResourceKey="AccentFillColorSecondaryBrush" />
+            <StaticResource x:Key="ListViewItemCheckBoxSelectedPressedBrush" ResourceKey="AccentFillColorTertiaryBrush" />
+            <StaticResource x:Key="ListViewItemCheckBoxSelectedDisabledBrush" ResourceKey="AccentFillColorDisabledBrush" />
+            <StaticResource x:Key="ListViewItemCheckBoxBorderBrush" ResourceKey="ControlStrongStrokeColorDefaultBrush" />
+            <StaticResource x:Key="ListViewItemCheckBoxPointerOverBorderBrush" ResourceKey="ControlStrongStrokeColorDefaultBrush" />
+            <StaticResource x:Key="ListViewItemCheckBoxPressedBorderBrush" ResourceKey="ControlStrongStrokeColorDefaultBrush" />
+            <StaticResource x:Key="ListViewItemCheckBoxDisabledBorderBrush" ResourceKey="ControlStrongStrokeColorDisabledBrush" />
+            <StaticResource x:Key="ListViewItemBackgroundSelectedDisabled" ResourceKey="SubtleFillColorSecondaryBrush" />
+            <StaticResource x:Key="ListViewItemSelectionIndicatorBrush" ResourceKey="AccentFillColorDefaultBrush" />
+            <StaticResource x:Key="ListViewItemSelectionIndicatorPointerOverBrush" ResourceKey="AccentFillColorDefaultBrush" />
+            <StaticResource x:Key="ListViewItemSelectionIndicatorPressedBrush" ResourceKey="AccentFillColorDefaultBrush" />
+            <StaticResource x:Key="ListViewItemSelectionIndicatorDisabledBrush" ResourceKey="AccentFillColorDisabledBrush" />
             <SolidColorBrush x:Key="TextBoxForegroundHeaderThemeBrush" Color="#FFFFFFFF" />
             <SolidColorBrush x:Key="TextBoxPlaceholderTextThemeBrush" Color="#AB000000" />
             <SolidColorBrush x:Key="TextBoxBackgroundThemeBrush" Color="#FFFFFFFF" />
@@ -3272,21 +3316,44 @@
             <Thickness x:Key="CommandBarOverflowPresenterBorderPadding">0</Thickness>
             <Thickness x:Key="CommandBarOverflowPresenterBorderDownPadding">0</Thickness>
             <Thickness x:Key="CommandBarOverflowPresenterBorderUpPadding">0</Thickness>
+<CornerRadius x:Key='GridViewItemCornerRadius'>4</CornerRadius>
+            <CornerRadius x:Key='GridViewItemCheckBoxCornerRadius'>3</CornerRadius>
+            <Thickness x:Key='GridViewItemSelectedBorderThickness'>2</Thickness>
             <StaticResource x:Key="GridViewItemBackground" ResourceKey="SubtleFillColorTransparentBrush" />
+            <StaticResource x:Key="GridViewItemPointerOverBorderBrush" ResourceKey="ControlStrokeColorOnAccentTertiaryBrush" />
+            <StaticResource x:Key="GridViewItemSelectedBorderBrush" ResourceKey="AccentFillColorDefaultBrush" />
+            <StaticResource x:Key="GridViewItemSelectedPointerOverBorderBrush" ResourceKey="AccentFillColorSecondaryBrush" />
+            <StaticResource x:Key="GridViewItemSelectedPressedBorderBrush" ResourceKey="AccentFillColorTertiaryBrush" />
+            <StaticResource x:Key="GridViewItemSelectedDisabledBorderBrush" ResourceKey="AccentFillColorDisabledBrush" />
+            <StaticResource x:Key="GridViewItemSelectedInnerBorderBrush" ResourceKey="ControlSolidFillColorDefaultBrush" />
+            <StaticResource x:Key="GridViewItemCheckBrush" ResourceKey="TextOnAccentFillColorPrimaryBrush" />
+            <StaticResource x:Key="GridViewItemCheckPressedBrush" ResourceKey="TextOnAccentFillColorSecondaryBrush" />
+            <StaticResource x:Key="GridViewItemCheckDisabledBrush" ResourceKey="TextOnAccentFillColorDisabledBrush" />
+            <StaticResource x:Key="GridViewItemCheckBoxBrush" ResourceKey="ControlOnImageFillColorDefaultBrush" />
+            <StaticResource x:Key="GridViewItemCheckBoxPointerOverBrush" ResourceKey="ControlOnImageFillColorSecondaryBrush" />
+            <StaticResource x:Key="GridViewItemCheckBoxPressedBrush" ResourceKey="ControlOnImageFillColorTertiaryBrush" />
+            <StaticResource x:Key="GridViewItemCheckBoxDisabledBrush" ResourceKey="ControlOnImageFillColorDisabledBrush" />
+            <StaticResource x:Key="GridViewItemCheckBoxSelectedBrush" ResourceKey="AccentFillColorDefaultBrush" />
+            <StaticResource x:Key="GridViewItemCheckBoxSelectedPointerOverBrush" ResourceKey="AccentFillColorSecondaryBrush" />
+            <StaticResource x:Key="GridViewItemCheckBoxSelectedPressedBrush" ResourceKey="AccentFillColorTertiaryBrush" />
+            <StaticResource x:Key="GridViewItemCheckBoxSelectedDisabledBrush" ResourceKey="AccentFillColorDisabledBrush" />
+            <StaticResource x:Key="GridViewItemCheckBoxBorderBrush" ResourceKey="ControlStrongStrokeColorDefaultBrush" />
+            <StaticResource x:Key="GridViewItemCheckBoxPointerOverBorderBrush" ResourceKey="ControlStrongStrokeColorDefaultBrush" />
+            <StaticResource x:Key="GridViewItemCheckBoxPressedBorderBrush" ResourceKey="ControlStrongStrokeColorDisabledBrush" />
+            <StaticResource x:Key="GridViewItemCheckBoxDisabledBorderBrush" ResourceKey="ControlStrongStrokeColorDisabledBrush" />
             <StaticResource x:Key="GridViewItemBackgroundPointerOver" ResourceKey="SubtleFillColorSecondaryBrush" />
             <StaticResource x:Key="GridViewItemBackgroundPressed" ResourceKey="SubtleFillColorTertiaryBrush" />
-            <StaticResource x:Key="GridViewItemBackgroundSelected" ResourceKey="SubtleFillColorSecondaryBrush" />
-            <StaticResource x:Key="GridViewItemBackgroundSelectedPointerOver" ResourceKey="AccentFillColorSecondaryBrush" />
+            <StaticResource x:Key="GridViewItemBackgroundSelected" ResourceKey="SubtleFillColorTertiaryBrush" />
+            <StaticResource x:Key="GridViewItemBackgroundSelectedPointerOver" ResourceKey="SubtleFillColorTertiaryBrush" />
             <StaticResource x:Key="GridViewItemBackgroundSelectedPressed" ResourceKey="SubtleFillColorSecondaryBrush" />
             <StaticResource x:Key="GridViewItemForeground" ResourceKey="TextFillColorPrimaryBrush" />
-            <StaticResource x:Key="GridViewItemForegroundPointerOver" ResourceKey="TextFillColorPrimaryBrush" />
+            <StaticResource x:Key="GridViewItemForegroundPointerOver" ResourceKey="TextFillColorSecondaryBrush" />
             <StaticResource x:Key="GridViewItemForegroundSelected" ResourceKey="TextFillColorPrimaryBrush" />
+            <StaticResource x:Key="GridViewItemBackgroundSelectedDisabled" ResourceKey="SubtleFillColorSecondaryBrush" />
             <StaticResource x:Key="GridViewItemFocusVisualPrimaryBrush" ResourceKey="FocusStrokeColorOuterBrush" />
             <StaticResource x:Key="GridViewItemFocusVisualSecondaryBrush" ResourceKey="FocusStrokeColorInnerBrush" />
             <StaticResource x:Key="GridViewItemFocusBorderBrush" ResourceKey="FocusStrokeColorOuterBrush" />
             <StaticResource x:Key="GridViewItemFocusSecondaryBorderBrush" ResourceKey="TextFillColorPrimaryBrush" />
-            <StaticResource x:Key="GridViewItemCheckBrush" ResourceKey="TextFillColorSecondaryBrush" />
-            <StaticResource x:Key="GridViewItemCheckBoxBrush" ResourceKey="TextFillColorSecondaryBrush" />
             <StaticResource x:Key="GridViewItemDragBackground" ResourceKey="SubtleFillColorTransparentBrush" />
             <StaticResource x:Key="GridViewItemDragForeground" ResourceKey="TextOnAccentFillColorPrimaryBrush" />
             <StaticResource x:Key="GridViewItemPlaceholderBackground" ResourceKey="ControlStrongFillColorDisabledBrush" />
@@ -3306,7 +3373,7 @@
             <StaticResource x:Key="ListViewItemBackgroundPointerOver" ResourceKey="SubtleFillColorSecondaryBrush" />
             <StaticResource x:Key="ListViewItemBackgroundPressed" ResourceKey="SubtleFillColorTertiaryBrush" />
             <StaticResource x:Key="ListViewItemBackgroundSelected" ResourceKey="SubtleFillColorSecondaryBrush" />
-            <StaticResource x:Key="ListViewItemBackgroundSelectedPointerOver" ResourceKey="AccentFillColorSecondaryBrush" />
+            <StaticResource x:Key="ListViewItemBackgroundSelectedPointerOver" ResourceKey="SubtleFillColorTertiaryBrush" />
             <StaticResource x:Key="ListViewItemBackgroundSelectedPressed" ResourceKey="SubtleFillColorSecondaryBrush" />
             <StaticResource x:Key="ListViewItemForeground" ResourceKey="TextFillColorPrimaryBrush" />
             <StaticResource x:Key="ListViewItemForegroundPointerOver" ResourceKey="TextFillColorPrimaryBrush" />
@@ -3318,13 +3385,13 @@
             <StaticResource x:Key="ListViewItemFocusVisualSecondaryBrush" ResourceKey="FocusStrokeColorInnerBrush" />
             <StaticResource x:Key="ListViewItemFocusBorderBrush" ResourceKey="FocusStrokeColorOuterBrush" />
             <StaticResource x:Key="ListViewItemFocusSecondaryBorderBrush" ResourceKey="TextFillColorPrimaryBrush" />
-            <StaticResource x:Key="ListViewItemCheckBrush" ResourceKey="TextFillColorSecondaryBrush" />
-            <StaticResource x:Key="ListViewItemCheckBoxBrush" ResourceKey="TextFillColorSecondaryBrush" />
+            <StaticResource x:Key="ListViewItemCheckBrush" ResourceKey="TextOnAccentFillColorPrimaryBrush" />
+            <StaticResource x:Key="ListViewItemCheckBoxBrush" ResourceKey="ControlAltFillColorSecondaryBrush" />
             <StaticResource x:Key="ListViewItemDragBackground" ResourceKey="SubtleFillColorTransparentBrush" />
             <StaticResource x:Key="ListViewItemDragForeground" ResourceKey="TextOnAccentFillColorPrimaryBrush" />
             <StaticResource x:Key="ListViewItemPlaceholderBackground" ResourceKey="ControlStrongFillColorDisabledBrush" />
-            <StaticResource x:Key="ListViewItemMultiArrangeOverlayTextBorder" ResourceKey="TextOnAccentFillColorPrimaryBrush" />
-            <StaticResource x:Key="ListViewItemMultiArrangeOverlayTextBackground" ResourceKey="AccentFillColorDefaultBrush" />
+            <StaticResource x:Key="ListViewItemMultiArrangeOverlayTextBorder" ResourceKey="TextOnAccentFillColorPrimaryBrush" /> 
+            <StaticResource x:Key="ListViewItemMultiArrangeOverlayTextBackground" ResourceKey="AccentFillColorDefaultBrush" />  
             <x:Boolean x:Key="ListViewItemSelectionCheckMarkVisualEnabled">True</x:Boolean>
             <ListViewItemPresenterCheckMode x:Key="ListViewItemCheckMode">Inline</ListViewItemPresenterCheckMode>
             <SolidColorBrush x:Key="ListViewItemCheckHintThemeBrush" Color="#FF4617B4" />
@@ -3342,6 +3409,27 @@
             <SolidColorBrush x:Key="ListViewItemSelectedForegroundThemeBrush" Color="#FF000000" />
             <SolidColorBrush x:Key="ListViewItemSelectedPointerOverBackgroundThemeBrush" Color="#FF5F37BE" />
             <SolidColorBrush x:Key="ListViewItemSelectedPointerOverBorderThemeBrush" Color="#FF5F37BE" />
+            <CornerRadius x:Key="ListViewItemCornerRadius">4</CornerRadius>
+            <CornerRadius x:Key="ListViewItemCheckBoxCornerRadius">3</CornerRadius>
+            <CornerRadius x:Key="ListViewItemSelectionIndicatorCornerRadius">1.5</CornerRadius>
+            <StaticResource x:Key="ListViewItemCheckPressedBrush" ResourceKey="TextOnAccentFillColorSecondaryBrush" />
+            <StaticResource x:Key="ListViewItemCheckDisabledBrush" ResourceKey="TextOnAccentFillColorDisabledBrush" />
+            <StaticResource x:Key="ListViewItemCheckBoxPointerOverBrush" ResourceKey="ControlAltFillColorSecondaryBrush" />
+            <StaticResource x:Key="ListViewItemCheckBoxPressedBrush" ResourceKey="ControlAltFillColorSecondaryBrush" />
+            <StaticResource x:Key="ListViewItemCheckBoxDisabledBrush" ResourceKey="ControlAltFillColorSecondaryBrush" />
+            <StaticResource x:Key="ListViewItemCheckBoxSelectedBrush" ResourceKey="AccentFillColorDefaultBrush" />
+            <StaticResource x:Key="ListViewItemCheckBoxSelectedPointerOverBrush" ResourceKey="AccentFillColorSecondaryBrush" />
+            <StaticResource x:Key="ListViewItemCheckBoxSelectedPressedBrush" ResourceKey="AccentFillColorTertiaryBrush" />
+            <StaticResource x:Key="ListViewItemCheckBoxSelectedDisabledBrush" ResourceKey="AccentFillColorDisabledBrush" />
+            <StaticResource x:Key="ListViewItemCheckBoxBorderBrush" ResourceKey="ControlStrongStrokeColorDefaultBrush" />
+            <StaticResource x:Key="ListViewItemCheckBoxPointerOverBorderBrush" ResourceKey="ControlStrongStrokeColorDefaultBrush" />
+            <StaticResource x:Key="ListViewItemCheckBoxPressedBorderBrush" ResourceKey="ControlStrongStrokeColorDefaultBrush" />
+            <StaticResource x:Key="ListViewItemCheckBoxDisabledBorderBrush" ResourceKey="ControlStrongStrokeColorDisabledBrush" />
+            <StaticResource x:Key="ListViewItemBackgroundSelectedDisabled" ResourceKey="SubtleFillColorSecondaryBrush" />
+            <StaticResource x:Key="ListViewItemSelectionIndicatorBrush" ResourceKey="AccentFillColorDefaultBrush" />
+            <StaticResource x:Key="ListViewItemSelectionIndicatorPointerOverBrush" ResourceKey="AccentFillColorDefaultBrush" />
+            <StaticResource x:Key="ListViewItemSelectionIndicatorPressedBrush" ResourceKey="AccentFillColorDefaultBrush" />
+            <StaticResource x:Key="ListViewItemSelectionIndicatorDisabledBrush" ResourceKey="AccentFillColorDisabledBrush" />
             <SolidColorBrush x:Key="TextBoxForegroundHeaderThemeBrush" Color="#FF000000" />
             <SolidColorBrush x:Key="TextBoxPlaceholderTextThemeBrush" Color="#AB000000" />
             <SolidColorBrush x:Key="TextBoxBackgroundThemeBrush" Color="#FFFFFFFF" />

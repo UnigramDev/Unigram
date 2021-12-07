@@ -15,11 +15,8 @@ namespace Unigram.ViewModels.Gallery
         public IProtoService ProtoService => _protoService;
 
         public abstract File GetFile();
+
         public abstract File GetThumbnail();
-
-        public abstract (File File, string FileName) GetFileAndName();
-
-        public abstract bool UpdateFile(File file);
 
         public virtual object Constraint { get; private set; }
 

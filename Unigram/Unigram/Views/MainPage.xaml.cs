@@ -1,5 +1,4 @@
-﻿using LinqToVisualTree;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -19,11 +18,9 @@ using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
 using Unigram.Views.BasicGroups;
 using Unigram.Views.Channels;
-using Unigram.Views.Chats;
 using Unigram.Views.Host;
 using Unigram.Views.Popups;
 using Unigram.Views.Settings;
-using Unigram.Views.Supergroups;
 using Unigram.Views.Users;
 using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
@@ -58,7 +55,7 @@ namespace Unigram.Views
         IHandle<UpdateChatPhoto>,
         IHandle<UpdateChatVideoChat>,
         IHandle<UpdateUserStatus>,
-        IHandle<UpdateUserChatAction>,
+        IHandle<UpdateChatAction>,
         IHandle<UpdateMessageMentionRead>,
         IHandle<UpdateUnreadChatCount>,
         //IHandle<UpdateMessageContent>,
@@ -66,7 +63,6 @@ namespace Unigram.Views
         IHandle<UpdateChatFilters>,
         IHandle<UpdateChatNotificationSettings>,
         IHandle<UpdatePasscodeLock>,
-        IHandle<UpdateFile>,
         IHandle<UpdateConnectionState>,
         IHandle<UpdateOption>,
         IHandle<UpdateCallDialog>,
@@ -105,6 +101,8 @@ namespace Unigram.Views
                 Handle(update);
                 ViewModel.Aggregator.Publish(update);
             }
+
+            Window.Current.SetTitleBar(TitleBarrr);
 
             InputPane.GetForCurrentView().Showing += (s, args) => args.EnsuredFocusedElementInView = true;
 
@@ -250,7 +248,7 @@ namespace Unigram.Views
             }
         }
 
-        public void Handle(UpdateUserChatAction update)
+        public void Handle(UpdateChatAction update)
         {
             Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatActions(chat, ViewModel.ProtoService.GetChatActions(chat.Id)));
         }
@@ -371,39 +369,6 @@ namespace Unigram.Views
             this.BeginOnUIThread(() =>
             {
                 Lock.Visibility = update.IsEnabled ? Visibility.Visible : Visibility.Collapsed;
-            });
-        }
-
-        public void Handle(UpdateFile update)
-        {
-            this.BeginOnUIThread(() =>
-            {
-                if (update.File.Local.IsDownloadingCompleted && ViewModel.ProtoService.TryGetChatForFileId(update.File.Id, out Chat chat))
-                {
-                    var container = ChatsList.ContainerFromItem(chat) as SelectorItem;
-                    if (container != null)
-                    {
-                        var chatView = container.ContentTemplateRoot as ChatCell;
-                        if (chatView != null)
-                        {
-                            chatView.UpdateFile(chat, update.File);
-                        }
-                    }
-                }
-
-                if (update.File.Local.IsDownloadingCompleted && ViewModel.ProtoService.TryGetUserForFileId(update.File.Id, out User user))
-                {
-                    var container = ChatsList.ContainerFromItem(user) as SelectorItem;
-                    if (container != null)
-                    {
-                        var content = container.ContentTemplateRoot as Grid;
-
-                        var photo = content.Children[0] as ProfilePicture;
-                        photo.Source = PlaceholderHelper.GetUser(null, user, 36);
-                    }
-                }
-
-                SettingsView?.UpdateFile(update.File);
             });
         }
 
@@ -824,7 +789,7 @@ namespace Unigram.Views
             if (show && Playback == null)
             {
                 FindName(nameof(Playback));
-                Playback.Update(ViewModel.ProtoService, ViewModel.PlaybackService, ViewModel.NavigationService, ViewModel.Aggregator);
+                Playback.Update(ViewModel.ProtoService, ViewModel.PlaybackService, ViewModel.NavigationService);
             }
 
             return;
@@ -960,16 +925,24 @@ namespace Unigram.Views
 
         private async void ProcessAppCommands(ShortcutCommand command, AcceleratorKeyEventArgs args)
         {
-            if (command == ShortcutCommand.Search)
+            if (command is ShortcutCommand.Search)
             {
-                if (MasterDetail.NavigationService.Frame.Content is ISearchablePage child && args.VirtualKey != Windows.System.VirtualKey.E)
+                if (MasterDetail.NavigationService.Frame.Content is ISearchablePage child)
                 {
                     child.Search();
                 }
                 else
                 {
+                    SearchField.Focus(FocusState.Keyboard);
                     Search_Click(null, null);
                 }
+
+                args.Handled = true;
+            }
+            else if (command is ShortcutCommand.SearchChats)
+            {
+                SearchField.Focus(FocusState.Keyboard);
+                Search_Click(null, null);
 
                 args.Handled = true;
             }
@@ -1316,34 +1289,20 @@ namespace Unigram.Views
             UpdatePaneToggleButtonVisibility();
             UpdateListViewsSelectedItem(MasterDetail.NavigationService.GetPeerFromBackStack());
 
-            var profile = MasterDetail.Descendants<MasterDetailView>().FirstOrDefault();
-            if (profile?.NavigationService == null)
-            {
-                return;
-            }
-
-            var allowed = e.SourcePageType == typeof(ChatPage)
-                || e.SourcePageType == typeof(ChatEventLogPage)
-                || e.SourcePageType == typeof(ChatPinnedPage)
-                || e.SourcePageType == typeof(ChatScheduledPage)
-                || e.SourcePageType == typeof(ChatThreadPage);
-
-            allowed &= MasterDetail.CurrentState != MasterDetailState.Minimal && SettingsService.Current.IsSidebarOpen;
-
-            if (e.Parameter is long chatId && e.Content is Page page && page.DataContext is DialogViewModel dialogViewModel)
-            {
-                if (allowed)
-                {
-                    profile.NavigationService.Navigate(typeof(ProfilePage), chatId);
-                    profile.NavigationService.GoBackAt(0, false);
-                }
-
-                dialogViewModel.SecondaryNavigationService = profile.NavigationService;
-            }
-            else if (profile.NavigationService.Frame.CurrentSourcePageType == typeof(ProfilePage) && !allowed)
-            {
-                profile.NavigationService.GoBackAt(0);
-            }
+            //var allowed = e.SourcePageType == typeof(ChatPage)
+            //    || e.SourcePageType == typeof(ChatEventLogPage)
+            //    || e.SourcePageType == typeof(ChatPinnedPage)
+            //    || e.SourcePageType == typeof(ChatScheduledPage)
+            //    || e.SourcePageType == typeof(ChatThreadPage);
+            //if (allowed && e.Parameter is long chatId)
+            //{
+            //    var profile = MasterDetail.Descendants<ProfilePage>().FirstOrDefault();
+            //    if (profile != null)
+            //    {
+            //        profile.NavigatedTo(null);
+            //        profile.ViewModel.OnNavigatedToAsync(chatId, NavigationMode.New, new NavigationState());
+            //    }
+            //}
         }
 
         private void OnStateChanged(object sender, EventArgs e)
@@ -1356,9 +1315,6 @@ namespace Unigram.Views
                     ChatsList.SelectionMode = ListViewSelectionMode.None;
                 }
 
-                Separator.BorderThickness = new Thickness(0);
-                Separator.Visibility = Visibility.Collapsed;
-
                 SetTitleBarVisibility(Visibility.Visible);
                 Header.Visibility = Visibility.Visible;
                 StateLabel.Visibility = Visibility.Visible;
@@ -1370,9 +1326,6 @@ namespace Unigram.Views
                     ChatsList.SelectionMode = ListViewSelectionMode.Single;
                     ChatsList.SelectedItem = ViewModel.Chats.Items.FirstOrDefault(x => x.Id == ViewModel.Chats.SelectedItem);
                 }
-
-                Separator.BorderThickness = new Thickness(0, 0, 1, 0);
-                Separator.Visibility = Visibility.Visible;
 
                 SetTitleBarVisibility(MasterDetail.NavigationService.CurrentPageType == typeof(BlankPage) ? Visibility.Collapsed : Visibility.Visible);
                 Header.Visibility = MasterDetail.CurrentState == MasterDetailState.Expanded ? Visibility.Visible : Visibility.Collapsed;
@@ -1427,7 +1380,7 @@ namespace Unigram.Views
 
         private void SetTitleBarVisibility(Visibility visibility)
         {
-            //MasterDetail.IsBlank = visibility == Visibility.Collapsed;
+            MasterDetail.IsBlank = visibility == Visibility.Collapsed;
             VisualStateManager.GoToState(this, visibility == Visibility.Collapsed ? "Normal" : "TitleBar", false);
         }
 
@@ -2124,11 +2077,11 @@ namespace Unigram.Views
                     var photo = content.Children[0] as ProfilePicture;
                     if (result.Chat != null)
                     {
-                        photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, result.Chat, 36);
+                        photo.SetChat(ViewModel.ProtoService, result.Chat, 36);
                     }
                     else if (result.User != null)
                     {
-                        photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, result.User, 36);
+                        photo.SetUser(ViewModel.ProtoService, result.User, 36);
                     }
                 }
 
@@ -2190,7 +2143,7 @@ namespace Unigram.Views
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
+                photo.SetUser(ViewModel.ProtoService, user, 36);
             }
 
             if (args.Phase < 2)
@@ -2299,7 +2252,7 @@ namespace Unigram.Views
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
+                photo.SetUser(ViewModel.ProtoService, user, 36);
             }
 
             if (args.Phase < 2)
@@ -2328,7 +2281,7 @@ namespace Unigram.Views
             var photo = grid.Children[0] as ProfilePicture;
             var title = content.Children[1] as TextBlock;
 
-            photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 48);
+            photo.SetChat(ViewModel.ProtoService, chat, 48);
             title.Text = ViewModel.ProtoService.GetTitle(chat, true);
 
             var badge = grid.Children[1] as Border;
@@ -3029,88 +2982,6 @@ namespace Unigram.Views
         {
             ArchivedChats.UpdateChatList(ViewModel.ProtoService, new ChatListArchive());
         }
-
-        private void MasterDetailView_Loading(FrameworkElement sender, object args)
-        {
-            var masterDetail = sender as MasterDetailView;
-            if (masterDetail.NavigationService == null)
-            {
-                masterDetail.AllowCompact = false;
-                masterDetail.IsBlank = true;
-                //masterDetail.BlankPageType = typeof(ProfilePage);
-                masterDetail.ViewStateChanged += Profile_ViewStateChanged;
-                masterDetail.Initialize("Profile", Frame, ViewModel.ProtoService.SessionId);
-                masterDetail.NavigationService.Navigating += (s, args) =>
-                {
-                    // I'd consider this a temporary solution
-                    var allowed = args.TargetPageType == typeof(ProfilePage)
-                        || args.TargetPageType == typeof(BlankPage)
-                        || args.TargetPageType == typeof(ChatInviteLinkPage)
-                        || args.TargetPageType == typeof(ChatStatisticsPage)
-                        || args.TargetPageType == typeof(MessageStatisticsPage)
-                        || args.TargetPageType == typeof(SupergroupAddAdministratorPage)
-                        || args.TargetPageType == typeof(SupergroupAddRestrictedPage)
-                        || args.TargetPageType == typeof(SupergroupAdministratorsPage)
-                        || args.TargetPageType == typeof(SupergroupBannedPage)
-                        || args.TargetPageType == typeof(SupergroupEditAdministratorPage)
-                        || args.TargetPageType == typeof(SupergroupEditLinkedChatPage)
-                        || args.TargetPageType == typeof(SupergroupEditPage)
-                        || args.TargetPageType == typeof(SupergroupEditRestrictedPage)
-                        || args.TargetPageType == typeof(SupergroupEditStickerSetPage)
-                        || args.TargetPageType == typeof(SupergroupEditTypePage)
-                        || args.TargetPageType == typeof(SupergroupMembersPage)
-                        || args.TargetPageType == typeof(SupergroupPermissionsPage);
-
-                    if (args.NavigationMode == NavigationMode.New && !allowed)
-                    {
-                        args.Cancel = true;
-                        Windows.System.DispatcherQueue.GetForCurrentThread().TryEnqueue(() => MasterDetail.NavigationService.Navigate(args.TargetPageType, args.Parameter, args.TargetPageParameter as NavigationState));
-                    }
-                };
-                masterDetail.NavigationService.FrameFacade.Navigated += (s, args) =>
-                {
-                    masterDetail.IsBlank = args.SourcePageType == typeof(BlankPage);
-
-                    if (args.Content is HostedPage hosted)
-                    {
-                        MasterDetail.CorpusHeader = hosted.Header;
-                    }
-                    else
-                    {
-                        MasterDetail.CorpusHeader = null;
-                    }
-                };
-            }
-        }
-
-        private void Profile_ViewStateChanged(object sender, EventArgs e)
-        {
-            var allowed = MasterDetail.NavigationService.Frame.CurrentSourcePageType == typeof(ChatPage)
-                || MasterDetail.NavigationService.Frame.CurrentSourcePageType == typeof(ChatEventLogPage)
-                || MasterDetail.NavigationService.Frame.CurrentSourcePageType == typeof(ChatPinnedPage)
-                || MasterDetail.NavigationService.Frame.CurrentSourcePageType == typeof(ChatScheduledPage)
-                || MasterDetail.NavigationService.Frame.CurrentSourcePageType == typeof(ChatThreadPage);
-
-            allowed &= MasterDetail.CurrentState == MasterDetailState.Minimal || SettingsService.Current.IsSidebarOpen;
-
-            var masterDetail = sender as MasterDetailView;
-            if (masterDetail.CurrentState == MasterDetailState.Minimal)
-            {
-                if (masterDetail.NavigationService.Frame.CurrentSourcePageType == typeof(ProfilePage))
-                {
-                    masterDetail.NavigationService.GoBackAt(0);
-                }
-            }
-            else if (masterDetail.NavigationService.Frame.CurrentSourcePageType == typeof(BlankPage) && allowed)
-            {
-                masterDetail.NavigationService.Navigate(typeof(ProfilePage), MasterDetail.NavigationService.CurrentPageParam);
-            }
-            // This should be extended to all profile sub navigation
-            else if (masterDetail.NavigationService.Frame.CurrentSourcePageType == typeof(ProfilePage) && !allowed)
-            {
-                masterDetail.NavigationService.GoBackAt(0);
-            }
-        }
     }
 
     public class HostedPage : Page
@@ -3123,17 +2994,5 @@ namespace Unigram.Views
 
         public static readonly DependencyProperty HeaderProperty =
             DependencyProperty.Register("Header", typeof(UIElement), typeof(HostedPage), new PropertyMetadata(null));
-    }
-
-    public class HostedUserControl : UserControl
-    {
-        public UIElement Header
-        {
-            get => (UIElement)GetValue(HeaderProperty);
-            set => SetValue(HeaderProperty, value);
-        }
-
-        public static readonly DependencyProperty HeaderProperty =
-            DependencyProperty.Register("Header", typeof(UIElement), typeof(HostedUserControl), new PropertyMetadata(null));
     }
 }

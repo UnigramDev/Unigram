@@ -983,19 +983,19 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var fileInfo = header.EditingMessage.Get().GetFileAndName(true);
-            if (fileInfo.File == null || !fileInfo.File.Local.IsDownloadingCompleted)
+            var file = header.EditingMessage.GetFile();
+            if (file == null || !file.Local.IsDownloadingCompleted)
             {
                 return;
             }
 
-            var file = await ProtoService.GetFileAsync(fileInfo.File);
-            if (file == null)
+            var storageFile = await ProtoService.GetFileAsync(file);
+            if (storageFile == null)
             {
                 return;
             }
 
-            await EditMediaAsync(file);
+            await EditMediaAsync(storageFile);
         }
 
         public async Task EditMediaAsync(StorageFile file)

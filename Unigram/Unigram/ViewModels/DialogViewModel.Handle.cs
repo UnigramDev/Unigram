@@ -24,12 +24,13 @@ namespace Unigram.ViewModels
         IHandle<UpdateChatReadInbox>,
         IHandle<UpdateChatDraftMessage>,
         IHandle<UpdateChatDefaultDisableNotification>,
+        IHandle<UpdateChatDefaultMessageSenderId>,
         IHandle<UpdateChatActionBar>,
         IHandle<UpdateChatHasScheduledMessages>,
         IHandle<UpdateChatVideoChat>,
         IHandle<UpdateChatPendingJoinRequests>,
 
-        IHandle<UpdateUserChatAction>,
+        IHandle<UpdateChatAction>,
 
         IHandle<UpdateChatLastMessage>,
         IHandle<UpdateNewMessage>,
@@ -59,12 +60,10 @@ namespace Unigram.ViewModels
         IHandle<UpdateChatNotificationSettings>,
         IHandle<UpdateChatOnlineMemberCount>,
 
-        IHandle<UpdateGroupCall>,
-
-        IHandle<UpdateFile>
+        IHandle<UpdateGroupCall>
     {
 
-        public void Handle(UpdateUserChatAction update)
+        public void Handle(UpdateChatAction update)
         {
             if (update.ChatId == _chat?.Id && update.MessageThreadId == _threadId && (_type == DialogType.History || _type == DialogType.Thread))
             {
@@ -416,6 +415,14 @@ namespace Unigram.ViewModels
             }
         }
 
+        public void Handle(UpdateChatDefaultMessageSenderId update)
+        {
+            if (update.ChatId == _chat?.Id)
+            {
+                BeginOnUIThread(() => Delegate?.UpdateChatDefaultMessageSenderId(_chat, update.DefaultMessageSenderId));
+            }
+        }
+
 
 
         public void Handle(UpdateChatLastMessage update)
@@ -582,8 +589,6 @@ namespace Unigram.ViewModels
                             InsertMessageInOrder(Items, message);
                         }
                     }
-
-                    ProcessFiles(_chat, new[] { message });
                 }, (bubble, message, reply) =>
                 {
                     if (reply)
@@ -711,7 +716,6 @@ namespace Unigram.ViewModels
                 {
                     message.Replace(update.Message);
                     message.GeneratedContentUnread = true;
-                    ProcessFiles(_chat, new[] { message });
                 }, (bubble, message) =>
                 {
                     bubble.UpdateMessage(message);
@@ -747,8 +751,6 @@ namespace Unigram.ViewModels
             {
                 return;
             }
-
-            BeginOnUIThread(() => Delegate?.UpdateFile(update.File));
 
             var header = _composerHeader;
             if (header?.EditingMessageMedia != null && header?.EditingMessageFileId == update.File.Id && update.File.Size == update.File.Remote.UploadedSize)

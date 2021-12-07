@@ -18,6 +18,7 @@ namespace Unigram.Controls
             {
 #if DESKTOP_BRIDGE
                 FindName(nameof(ToggleMinimized));
+                FindName(nameof(ToggleMinimizedSeparator));
 #endif
 
                 OnLoaded();
@@ -30,22 +31,24 @@ namespace Unigram.Controls
 
         private async void OnLoaded()
         {
-            Toggle.Toggled -= OnToggled;
+            Toggle.Checked -= OnToggled;
+            Toggle.Unchecked -= OnToggled;
 
             if (ToggleMinimized != null)
             {
-                ToggleMinimized.Toggled -= Minimized_Toggled;
+                ToggleMinimized.Checked -= Minimized_Toggled;
+                ToggleMinimized.Unchecked -= Minimized_Toggled;
             }
 
             var task = await GetTaskAsync();
             if (task == null || task.State == StartupTaskState.DisabledByUser)
             {
-                Toggle.IsOn = false;
+                Toggle.IsChecked = false;
                 Toggle.IsEnabled = false;
 
                 if (ToggleMinimized != null)
                 {
-                    ToggleMinimized.IsOn = false;
+                    ToggleMinimized.IsChecked = false;
                     ToggleMinimized.Visibility = Visibility.Collapsed;
                 }
 
@@ -55,12 +58,12 @@ namespace Unigram.Controls
             }
             else if (task.State == StartupTaskState.Enabled)
             {
-                Toggle.IsOn = true;
+                Toggle.IsChecked = true;
                 Toggle.IsEnabled = true;
 
                 if (ToggleMinimized != null)
                 {
-                    ToggleMinimized.IsOn = SettingsService.Current.IsLaunchMinimized;
+                    ToggleMinimized.IsChecked = SettingsService.Current.IsLaunchMinimized;
                     ToggleMinimized.Visibility = Visibility.Visible;
                 }
 
@@ -70,12 +73,12 @@ namespace Unigram.Controls
             }
             else if (task.State == StartupTaskState.Disabled)
             {
-                Toggle.IsOn = false;
+                Toggle.IsChecked = false;
                 Toggle.IsEnabled = true;
 
                 if (ToggleMinimized != null)
                 {
-                    ToggleMinimized.IsOn = false;
+                    ToggleMinimized.IsChecked = false;
                     ToggleMinimized.Visibility = Visibility.Collapsed;
                 }
 
@@ -88,11 +91,13 @@ namespace Unigram.Controls
                 Visibility = Visibility.Collapsed;
             }
 
-            Toggle.Toggled += OnToggled;
+            Toggle.Checked += OnToggled;
+            Toggle.Unchecked += OnToggled;
 
             if (ToggleMinimized != null)
             {
-                ToggleMinimized.Toggled += Minimized_Toggled;
+                ToggleMinimized.Checked += Minimized_Toggled;
+                ToggleMinimized.Unchecked += Minimized_Toggled;
             }
         }
 
@@ -104,7 +109,7 @@ namespace Unigram.Controls
                 return;
             }
 
-            if (Toggle.IsOn)
+            if (Toggle.IsChecked is true)
             {
                 await task.RequestEnableAsync();
             }
@@ -130,7 +135,7 @@ namespace Unigram.Controls
 
         private void Minimized_Toggled(object sender, RoutedEventArgs e)
         {
-            SettingsService.Current.IsLaunchMinimized = ToggleMinimized.IsOn;
+            SettingsService.Current.IsLaunchMinimized = ToggleMinimized.IsChecked is true;
         }
     }
 }

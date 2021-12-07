@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
 using Unigram.Collections;
@@ -10,17 +9,15 @@ using Unigram.Navigation;
 using Unigram.Services;
 using Windows.ApplicationModel;
 using Windows.Foundation;
-using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Views.Popups
 {
-    public sealed partial class SettingsEmojiSetPopup : ContentPopup, IHandle<UpdateFile>
+    public sealed partial class SettingsEmojiSetPopup : ContentPopup
     {
         private readonly IProtoService _protoService;
         private readonly IEventAggregator _aggregator;
@@ -40,13 +37,11 @@ namespace Unigram.Views.Popups
             PrimaryButtonText = Strings.Resources.OK;
             SecondaryButtonText = Strings.Resources.Cancel;
 
-            _aggregator.Subscribe(this);
             List.ItemsSource = _collection = new ItemsCollection(emojiSetService);
         }
 
         private void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
         {
-            _aggregator.Unsubscribe(this);
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -98,9 +93,14 @@ namespace Unigram.Views.Popups
             {
 
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+            else
             {
-                _protoService.DownloadFile(file.Id, 32);
+                UpdateManager.Subscribe(radio, _protoService, file, UpdateFile);
+
+                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                {
+                    _protoService.DownloadFile(file.Id, 32);
+                }
             }
         }
 
@@ -173,10 +173,16 @@ namespace Unigram.Views.Popups
                 {
                     photo.Source = new BitmapImage { UriSource = UriEx.ToLocal(file.Local.Path), DecodePixelWidth = 40, DecodePixelHeight = 40 };
                 }
-                else if (file != null && file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                else if (file != null)
                 {
                     photo.Source = null;
-                    _protoService.DownloadFile(file.Id, 1);
+
+                    UpdateManager.Subscribe(photo, _protoService, file, UpdateThumbnail, true);
+
+                    if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                    {
+                        _protoService.DownloadFile(file.Id, 1);
+                    }
                 }
             }
 
@@ -188,91 +194,71 @@ namespace Unigram.Views.Popups
             args.Handled = true;
         }
 
-        public async void Handle(UpdateFile update)
+        private void UpdateFile(object target, File file)
         {
-            var emojiSet = _collection.FirstOrDefault(x => x.UpdateFile(update.File));
+            if (file.Id == _selectedSet?.Document.Id && !file.Local.IsDownloadingCompleted)
+            {
+                IsPrimaryButtonEnabled = false;
+            }
+            else
+            {
+                IsPrimaryButtonEnabled = true;
+            }
+
+            var radio = target as RadioButton;
+            if (radio == null)
+            {
+                return;
+            }
+
+            var emojiSet = radio.Tag as EmojiSet;
             if (emojiSet == null)
             {
                 return;
             }
 
-            var file = update.File;
-            var folder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("emoji", CreationCollisionOption.OpenIfExists);
-
-            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            var content = radio.Content as Grid;
+            if (content == null)
             {
-                if (file.Id == _selectedSet?.Document.Id && !file.Local.IsDownloadingCompleted)
+                return;
+            }
+
+            radio.IsChecked = (_selectedSet?.Id ?? SettingsService.Current.Appearance.EmojiSet.Id) == emojiSet.Id;
+
+            var subtitle = content.Children[2] as TextBlock;
+
+            var size = Math.Max(file.Size, file.ExpectedSize);
+            if (file.Local.IsDownloadingActive)
+            {
+                subtitle.Text = string.Format("{0} {1} / {2}", "Downloading", FileSizeConverter.Convert(file.Local.DownloadedSize, size), FileSizeConverter.Convert(size));
+                subtitle.Foreground = BootStrapper.Current.Resources["SystemControlDisabledChromeDisabledLowBrush"] as Brush;
+            }
+            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
+            {
+                subtitle.Text = string.Format("{0} {1}", Strings.Resources.AccActionDownload, FileSizeConverter.Convert(size));
+                subtitle.Foreground = BootStrapper.Current.Resources["SystemControlDisabledChromeDisabledLowBrush"] as Brush;
+            }
+            else
+            {
+                if (SettingsService.Current.Appearance.EmojiSet.Id == emojiSet.Id)
                 {
-                    IsPrimaryButtonEnabled = false;
+                    subtitle.Text = "Current Set";
+                    subtitle.Foreground = BootStrapper.Current.Resources["SystemControlForegroundAccentBrush"] as Brush;
                 }
                 else
                 {
-                    IsPrimaryButtonEnabled = true;
+                    subtitle.Text = emojiSet.IsDefault ? Strings.Resources.Default : "Downloaded";
+                    subtitle.Foreground = BootStrapper.Current.Resources["SystemControlDisabledChromeDisabledLowBrush"] as Brush;
                 }
+            }
+        }
 
-                var container = List.ContainerFromItem(emojiSet) as SelectorItem;
-                if (container == null)
-                {
-                    return;
-                }
-
-                var radio = container.ContentTemplateRoot as RadioButton;
-                if (radio == null)
-                {
-                    return;
-                }
-
-                var content = radio.Content as Grid;
-                if (content == null)
-                {
-                    return;
-                }
-
-                radio.IsChecked = (_selectedSet?.Id ?? SettingsService.Current.Appearance.EmojiSet.Id) == emojiSet.Id;
-
-                if (file.Id == emojiSet.Document.Id)
-                {
-                    var subtitle = content.Children[2] as TextBlock;
-
-                    var size = Math.Max(file.Size, file.ExpectedSize);
-                    if (file.Local.IsDownloadingActive)
-                    {
-                        subtitle.Text = string.Format("{0} {1} / {2}", "Downloading", FileSizeConverter.Convert(file.Local.DownloadedSize, size), FileSizeConverter.Convert(size));
-                        subtitle.Foreground = BootStrapper.Current.Resources["SystemControlDisabledChromeDisabledLowBrush"] as Brush;
-                    }
-                    else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
-                    {
-                        subtitle.Text = string.Format("{0} {1}", Strings.Resources.AccActionDownload, FileSizeConverter.Convert(size));
-                        subtitle.Foreground = BootStrapper.Current.Resources["SystemControlDisabledChromeDisabledLowBrush"] as Brush;
-                    }
-                    else
-                    {
-                        if (SettingsService.Current.Appearance.EmojiSet.Id == emojiSet.Id)
-                        {
-                            subtitle.Text = "Current Set";
-                            subtitle.Foreground = BootStrapper.Current.Resources["SystemControlForegroundAccentBrush"] as Brush;
-                        }
-                        else
-                        {
-                            subtitle.Text = emojiSet.IsDefault ? Strings.Resources.Default : "Downloaded";
-                            subtitle.Foreground = BootStrapper.Current.Resources["SystemControlDisabledChromeDisabledLowBrush"] as Brush;
-                        }
-                    }
-                }
-                if (file.Id == emojiSet.Thumbnail.Id)
-                {
-                    var photo = content.Children[0] as Image;
-
-                    if (file.Local.IsDownloadingCompleted)
-                    {
-                        photo.Source = new BitmapImage { UriSource = UriEx.ToLocal(file.Local.Path), DecodePixelWidth = 40, DecodePixelHeight = 40 };
-                    }
-                    else
-                    {
-                        photo.Source = null;
-                    }
-                }
-            });
+        private void UpdateThumbnail(object target, File file)
+        {
+            if (target is Image photo)
+            {
+                photo.Source = new BitmapImage { UriSource = UriEx.ToLocal(file.Local.Path), DecodePixelWidth = 40, DecodePixelHeight = 40 };
+            }
         }
 
         #endregion

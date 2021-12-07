@@ -215,12 +215,11 @@ namespace winrt::Unigram::Native::Calls::implementation
 	void VoipManager::SetIncomingVideoOutput(winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl canvas) {
 		if (m_impl) {
 			if (canvas != nullptr) {
-				//m_renderer = std::make_shared<VoipVideoRenderer>(canvas);
-				m_impl->setIncomingVideoOutput(std::make_shared<VoipVideoRenderer>(canvas));
+				m_renderer = std::make_shared<VoipVideoRenderer>(canvas);
+				m_impl->setIncomingVideoOutput(m_renderer);
 			}
 			else {
-				m_impl->setIncomingVideoOutput(nullptr);
-				//m_renderer = nullptr;
+				m_renderer.reset();
 			}
 		}
 	}

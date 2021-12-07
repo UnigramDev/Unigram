@@ -52,6 +52,7 @@
 
         <controls:RecentUserHeads
             x:Name="RecentUsers"
+            RecentUserHeadChanged="RecentUsers_RecentUserHeadChanged"
             Grid.ColumnSpan="2"/>
 
         <controls:BadgeButton

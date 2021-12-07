@@ -425,7 +425,7 @@ namespace Unigram.Views
             var user = _cacheService.GetUser(call.UserId);
             if (user != null)
             {
-                Image.Source = PlaceholderHelper.GetUser(_protoService, user, 144);
+                Image.SetUser(_protoService, user, 144);
 
                 //if (user.ProfilePhoto != null)
                 //{

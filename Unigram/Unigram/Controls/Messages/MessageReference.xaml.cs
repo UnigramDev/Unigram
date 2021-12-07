@@ -254,6 +254,9 @@ namespace Unigram.Controls.Messages
                 case MessageText text:
                     return text.Text.Text.Replace('\n', ' ');
 
+                case MessageAnimatedEmoji animatedEmoji:
+                    return animatedEmoji.Emoji;
+
                 case MessageDice dice:
                     return dice.Emoji;
             }

@@ -132,6 +132,17 @@ namespace Unigram.ViewModels
             }
         }
 
+        public bool Mica
+        {
+            get => Settings.Diagnostics.Mica;
+            set
+            {
+                Settings.Diagnostics.Mica = value;
+                Settings.Appearance.UpdateNightMode(true);
+                RaisePropertyChanged();
+            }
+        }
+
         public VerbosityLevel Verbosity
         {
             get => (VerbosityLevel)Settings.VerbosityLevel;

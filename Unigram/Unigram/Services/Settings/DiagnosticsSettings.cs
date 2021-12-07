@@ -7,6 +7,13 @@
         {
         }
 
+        private bool? _mica;
+        public bool Mica
+        {
+            get => _mica ??= GetValueOrDefault("Mica", false);
+            set => AddOrUpdateValue(ref _mica, "Mica", value);
+        }
+
         private bool? _minithumbnails;
         public bool Minithumbnails
         {

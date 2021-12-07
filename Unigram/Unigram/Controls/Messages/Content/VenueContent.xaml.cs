@@ -88,11 +88,11 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            if (_message.ProtoService.TryGetUser(_message.Sender, out User senderUser))
+            if (_message.ProtoService.TryGetUser(_message.SenderId, out User senderUser))
             {
                 _message.Delegate.OpenLocation(venue.Venue.Location, senderUser.GetFullName());
             }
-            else if (_message.ProtoService.TryGetChat(_message.Sender, out Chat senderChat))
+            else if (_message.ProtoService.TryGetChat(_message.SenderId, out Chat senderChat))
             {
                 _message.Delegate.OpenLocation(venue.Venue.Location, _message.ProtoService.GetTitle(senderChat));
             }

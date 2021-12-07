@@ -244,6 +244,8 @@ namespace Unigram.Controls.Messages
             {
                 case MessageText text:
                     return SetTextTemplate(message, text, title);
+                case MessageAnimatedEmoji animatedEmoji:
+                    return SetAnimatedEmojiTemplate(message, animatedEmoji, title);
                 case MessageAnimation animation:
                     return SetAnimationTemplate(message, animation, title);
                 case MessageAudio audio:
@@ -545,6 +547,19 @@ namespace Unigram.Controls.Messages
             return true;
         }
 
+        private bool SetAnimatedEmojiTemplate(MessageViewModel message, MessageAnimatedEmoji animatedEmoji, string title)
+        {
+            Visibility = Visibility.Visible;
+
+            SetText(GetFromLabel(message, title),
+                animatedEmoji.Emoji,
+                string.Empty);
+
+            HideThumbnail();
+
+            return true;
+        }
+
         private bool SetAnimationTemplate(MessageViewModel message, MessageAnimation animation, string title)
         {
             Visibility = Visibility.Visible;
@@ -670,7 +685,7 @@ namespace Unigram.Controls.Messages
                 return title;
             }
 
-            if (message.ProtoService.TryGetChat(message.Sender, out Chat senderChat))
+            if (message.ProtoService.TryGetChat(message.SenderId, out Chat senderChat))
             {
                 return message.ProtoService.GetTitle(senderChat);
             }
@@ -683,7 +698,7 @@ namespace Unigram.Controls.Messages
                 }
             }
 
-            if (message.ProtoService.TryGetUser(message.Sender, out User user))
+            if (message.ProtoService.TryGetUser(message.SenderId, out User user))
             {
                 return user.GetFullName();
             }

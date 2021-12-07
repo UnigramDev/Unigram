@@ -14,10 +14,13 @@ using Windows.UI.Xaml.Hosting;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed class AnimatedStickerContent : HyperlinkButton, IContentWithFile, IContentWithPlayback
+    public sealed class AnimatedStickerContent : HyperlinkButton, IContent, IContentWithPlayback
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
+
+        private string _fileToken;
+        private string _interactionToken;
 
         private CompositionAnimation _thumbnailShimmer;
 
@@ -68,7 +71,7 @@ namespace Unigram.Controls.Messages.Content
             {
                 Width = Player.Width = 200 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
                 Height = Player.Height = 200 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
-                Player.ColorReplacements = animatedEmoji.AnimatedEmoji.ColorReplacements.ToDictionary(x => x.OldColor, x => x.NewColor);
+                //Player.ColorReplacements = animatedEmoji.AnimatedEmoji.ColorReplacements.ToDictionary(x => x.OldColor, x => x.NewColor);
 
                 var sound = animatedEmoji.AnimatedEmoji.Sound;
                 if (sound != null && sound.Local.CanBeDownloaded && !sound.Local.IsDownloadingActive)
@@ -88,12 +91,16 @@ namespace Unigram.Controls.Messages.Content
                 UpdateThumbnail(message, sticker.Outline);
             }
 
+            UpdateManager.Subscribe(this, message, sticker.StickerValue, ref _fileToken, UpdateFile, true);
             UpdateFile(message, sticker.StickerValue);
         }
 
-        public void UpdateMessageContentOpened(MessageViewModel message) { }
+        private void UpdateFile(object target, File file)
+        {
+            UpdateFile(_message, file);
+        }
 
-        public void UpdateFile(MessageViewModel message, File file)
+        private void UpdateFile(MessageViewModel message, File file)
         {
             var sticker = GetContent(message);
             if (sticker == null || !_templateApplied)
@@ -115,6 +122,8 @@ namespace Unigram.Controls.Messages.Content
             {
                 Player.IsLoopingEnabled = message.Content is MessageSticker && SettingsService.Current.Stickers.IsLoopingEnabled;
                 Player.Source = UriEx.ToLocal(file.Local.Path);
+
+                message.Delegate.ViewVisibleMessages(false);
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
@@ -206,7 +215,7 @@ namespace Unigram.Controls.Messages.Content
             message.Interaction = null;
 
             var file = interaction.StickerValue;
-            if (file.Local.IsDownloadingCompleted)
+            if (file.Local.IsDownloadingCompleted && _interacting < 4)
             {
                 var dispatcher = DispatcherQueue.GetForCurrentThread();
                 var container = this.Ancestors<ListViewItem>().FirstOrDefault();
@@ -265,6 +274,8 @@ namespace Unigram.Controls.Messages.Content
             {
                 message.Interaction = interaction;
                 message.Delegate.DownloadFile(message, file);
+
+                UpdateManager.Subscribe(this, message, file, ref _interactionToken, UpdateFile, true);
             }
         }
     }

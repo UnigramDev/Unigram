@@ -57,7 +57,7 @@ namespace Unigram.Views.Popups
                 title.Text = user.GetFullName();
 
                 var photo = content.Children[0] as ProfilePicture;
-                photo.Source = PlaceholderHelper.GetUser(_protoService, user, 36);
+                photo.SetUser(_protoService, user, 36);
 
                 button.Click += User_Click;
             }

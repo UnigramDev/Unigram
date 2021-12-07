@@ -16,19 +16,152 @@
 -->
 
 <Directives xmlns="http://schemas.microsoft.com/netfx/2013/01/metadata">
-  <Application>
-    <!--
-      An Assembly element with Name="*Application*" applies to all assemblies in
-      the application package. The asterisks are not wildcards.
-    -->
-    <!--<Assembly Name="*Application*" Dynamic="Required All" />-->
-    <Type Name="Unigram.Services.IHandle`1" Dynamic="Required All">
-      <Method Name="Handle">
-        <TypeParameter Name="update" Dynamic="Required All"/>
-      </Method>
-    </Type>
+	<Application>
+		<!--
+			An Assembly element with Name="*Application*" applies to all assemblies in
+			the application package. The asterisks are not wildcards.
+		-->
+		<!--<Assembly Name="*Application*" Dynamic="Required All" />-->
+		<Type Name="Unigram.Services.IHandle`1" Dynamic="Required All">
+			<Method Name="Handle">
+				<TypeParameter Name="update" Dynamic="Required All"/>
+			</Method>
+		</Type>
 
-    <Type Name="Unigram.ViewModels.Drawers.SupergroupStickerSetViewModel" Dynamic="Required All"/>
+		<Type Name="Unigram.ViewModels.Drawers.SupergroupStickerSetViewModel" Dynamic="Required All"/>
 
-  </Application>
+		<Type Name="Unigram.Common.RemoteVideoSource">
+			<Method Name="UpdateFile" Dynamic="Required"/>
+		</Type>
+
+		<Type Name="Unigram.Controls.Cells.SharedAudioCell">
+			<Method Name="UpdateFile" Dynamic="Required"/>
+		</Type>
+
+		<Type Name="Unigram.Controls.Cells.SharedFileCell">
+			<Method Name="UpdateFile" Dynamic="Required"/>
+		</Type>
+
+		<Type Name="Unigram.Controls.Cells.SharedVoiceCell">
+			<Method Name="UpdateFile" Dynamic="Required"/>
+		</Type>
+
+		<Type Name="Unigram.Controls.Chats.ChatBackgroundPresenter">
+			<Method Name="UpdateFile" Dynamic="Required"/>
+		</Type>
+
+		<Type Name="Unigram.Controls.Drawers.AnimationDrawer">
+			<Method Name="UpdateFile" Dynamic="Required"/>
+			<Method Name="UpdateThumbnail" Dynamic="Required"/>
+		</Type>
+
+		<Type Name="Unigram.Controls.Drawers.StickerDrawer">
+			<Method Name="UpdateSticker" Dynamic="Required"/>
+			<Method Name="UpdateStickerSet" Dynamic="Required"/>
+		</Type>
+
+		<Type Name="Unigram.Controls.Gallery.GalleryContentView">
+			<Method Name="UpdateFile" Dynamic="Required"/>
+			<Method Name="UpdateThumbnail" Dynamic="Required"/>
+		</Type>
+
+		<Type Name="Unigram.Controls.ImageView">
+			<Method Name="UpdateSource" Dynamic="Required"/>
+		</Type>
+
+		<Type Name="Unigram.Controls.Messages.Content.AnimatedStickerContent">
+			<Method Name="UpdateFile" Dynamic="Required"/>
+		</Type>
+
+		<Type Name="Unigram.Controls.Messages.Content.AnimationContent">
+			<Method Name="UpdateFile" Dynamic="Required"/>
+			<Method Name="UpdateThumbnail" Dynamic="Required"/>
+		</Type>
+
+		<Type Name="Unigram.Controls.Messages.Content.AudioContent">
+			<Method Name="UpdateThumbnail" Dynamic="Required"/>
+			<Method Name="UpdateFile" Dynamic="Required"/>
+		</Type>
+
+		<Type Name="Unigram.Controls.Messages.Content.DiceContent">
+			<Method Name="UpdateFile" Dynamic="Required"/>
+		</Type>
+
+		<Type Name="Unigram.Controls.Messages.Content.DocumentContent">
+			<Method Name="UpdateThumbnail" Dynamic="Required"/>
+			<Method Name="UpdateFile" Dynamic="Required"/>
+		</Type>
+
+		<Type Name="Unigram.Controls.Messages.Content.InvoicePhotoContent">
+			<Method Name="UpdateFile" Dynamic="Required"/>
+		</Type>
+
+		<Type Name="Unigram.Controls.Messages.Content.PhotoContent">
+			<Method Name="UpdateFile" Dynamic="Required"/>
+			<Method Name="UpdateThumbnail" Dynamic="Required"/>
+		</Type>
+
+		<Type Name="Unigram.Controls.Messages.Content.StickerContent">
+			<Method Name="UpdateFile" Dynamic="Required"/>
+		</Type>
+
+		<Type Name="Unigram.Controls.Messages.Content.VideoContent">
+			<Method Name="UpdateFile" Dynamic="Required"/>
+			<Method Name="UpdateThumbnail" Dynamic="Required"/>
+		</Type>
+
+		<Type Name="Unigram.Controls.Messages.Content.VideoNoteContent">
+			<Method Name="UpdateFile" Dynamic="Required"/>
+			<Method Name="UpdateThumbnail" Dynamic="Required"/>
+		</Type>
+
+		<Type Name="Unigram.Controls.Messages.Content.VoiceNoteContent">
+			<Method Name="UpdateFile" Dynamic="Required"/>
+		</Type>
+
+		<Type Name="Unigram.Controls.Messages.Content.WebPageSmallPhotoContent">
+			<Method Name="UpdateFile" Dynamic="Required"/>
+		</Type>
+
+		<Type Name="Unigram.Controls.ProfilePicture" Dynamic="Required All"/>
+
+		<Type Name="Unigram.Services.CloudUpdateService">
+			<Method Name="UpdateFile" Dynamic="Required"/>
+		</Type>
+
+		<Type Name="Unigram.ViewModels.Settings.SettingsAdvancedViewModel">
+			<Method Name="UpdateFile" Dynamic="Required"/>
+		</Type>
+
+		<Type Name="Unigram.Views.BackgroundPopup">
+			<Method Name="UpdateFile" Dynamic="Required"/>
+			<Method Name="UpdatePattern" Dynamic="Required"/>
+		</Type>
+
+		<Type Name="Unigram.Views.ChatView">
+			<Method Name="UpdateSticker" Dynamic="Required"/>
+		</Type>
+
+		<Type Name="Unigram.Views.Popups.SettingsEmojiSetPopup">
+			<Method Name="UpdateFile" Dynamic="Required"/>
+			<Method Name="UpdateThumbnail" Dynamic="Required"/>
+		</Type>
+
+		<Type Name="Unigram.Views.Popups.StickerSetPopup">
+			<Method Name="UpdateFile" Dynamic="Required"/>
+		</Type>
+
+		<Type Name="Unigram.Views.Popups.ZoomableMediaPopup">
+			<Method Name="UpdateFile" Dynamic="Required"/>
+			<Method Name="UpdateThumbnail" Dynamic="Required"/>
+		</Type>
+
+		<Type Name="Unigram.Views.Settings.SettingsBackgroundsPage">
+			<Method Name="UpdateFile" Dynamic="Required"/>
+		</Type>
+
+		<Type Name="Unigram.Views.Settings.SettingsStickersPage">
+			<Method Name="UpdateFile" Dynamic="Required"/>
+		</Type>
+	</Application>
 </Directives>

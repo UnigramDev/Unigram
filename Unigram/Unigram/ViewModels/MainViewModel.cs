@@ -46,7 +46,7 @@ namespace Unigram.ViewModels
 
         public bool Refresh { get; set; }
 
-        public MainViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService pushService, IContactsService contactsService, IPasscodeService passcodeService, ILifetimeService lifecycle, ISessionService session, IVoipService voipService, IGroupCallService groupCallService, ISettingsSearchService settingsSearchService, IEmojiSetService emojiSetService, ICloudUpdateService cloudUpdateService, IPlaybackService playbackService, IShortcutsService shortcutService)
+        public MainViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IStorageService storageService, IEventAggregator aggregator, INotificationsService pushService, IContactsService contactsService, IPasscodeService passcodeService, ILifetimeService lifecycle, ISessionService session, IVoipService voipService, IGroupCallService groupCallService, ISettingsSearchService settingsSearchService, IEmojiSetService emojiSetService, ICloudUpdateService cloudUpdateService, IPlaybackService playbackService, IShortcutsService shortcutService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _pushService = pushService;
@@ -66,7 +66,7 @@ namespace Unigram.ViewModels
             Chats = new ChatListViewModel(protoService, cacheService, settingsService, aggregator, pushService, new ChatListMain());
             Contacts = new ContactsViewModel(protoService, cacheService, settingsService, aggregator, contactsService);
             Calls = new CallsViewModel(protoService, cacheService, settingsService, aggregator);
-            Settings = new SettingsViewModel(protoService, cacheService, settingsService, aggregator, settingsSearchService);
+            Settings = new SettingsViewModel(protoService, cacheService, settingsService, storageService, aggregator, settingsSearchService);
 
             // This must represent pivot tabs
             Children.Add(Chats);

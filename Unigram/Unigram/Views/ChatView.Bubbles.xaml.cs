@@ -96,9 +96,6 @@ namespace Unigram.Views
             var minDate = true;
             var minDateIndex = panel.FirstVisibleIndex;
 
-            var minOffset = new double?();
-            var maxOffset = true;
-
             var messages = new List<long>(panel.LastVisibleIndex - panel.FirstVisibleIndex);
             var animations = new List<(SelectorItem, MessageViewModel)>(panel.LastVisibleIndex - panel.FirstVisibleIndex);
 
@@ -150,14 +147,6 @@ namespace Unigram.Views
                             DateHeaderLabel.Text = Converter.DayGrouping(Utils.UnixTimestampToDateTime(message.Date));
                         }
                     }
-
-                    if (minOffset == null)
-                    {
-                        transform = container.TransformToVisual(FloatingPhoto);
-                        point = transform.TransformPoint(new Point());
-
-                        minOffset = point.Y;
-                    }
                 }
 
                 if (message.Content is MessageHeaderDate && minDate && i >= panel.FirstVisibleIndex)
@@ -191,79 +180,7 @@ namespace Unigram.Views
                 }
                 else
                 {
-                    //if (minOffset != null && minOffset + container.ActualHeight >= FloatingPhoto.ActualHeight)
-                    //{
-                    //    var content = container.ContentTemplateRoot as FrameworkElement;
-                    //    var photo = content?.FindName("Photo") as ProfilePicture;
-
-                    //    if (photo != null)
-                    //    {
-                    //        var height = (float)container.ActualHeight;
-                    //        var offset = (float)minOffset + height;
-
-                    //        if (offset + 6 >= height && offset + 6 < height * 2 && message.IsFirst)
-                    //        {
-                    //            if (maxOffset)
-                    //            {
-                    //                HideFloatingPhoto();
-                    //            }
-
-                    //            photo.Visibility = Visibility.Visible;
-                    //            photo.VerticalAlignment = VerticalAlignment.Top;
-                    //            photo.Margin = new Thickness(0, 4, 0, -4);
-                    //        }
-                    //        else
-                    //        {
-                    //            if (maxOffset)
-                    //            {
-                    //                if (!message.Sender.IsEqual(_floatingSender))
-                    //                {
-                    //                    _floatingSender = message.Sender;
-                    //                    FloatingPhoto.Source = photo.Source;
-                    //                }
-
-                    //                FloatingPhoto.Tag = message;
-                    //                FloatingPhoto.Visibility = Visibility.Visible;
-                    //            }
-
-                    //            photo.Visibility = Visibility.Collapsed;
-                    //            photo.VerticalAlignment = VerticalAlignment.Bottom;
-                    //            photo.Margin = new Thickness();
-                    //        }
-
-                    //        if (message.IsLast || i == panel.LastVisibleIndex)
-                    //        {
-                    //            minOffset = null;
-                    //        }
-                    //        else
-                    //        {
-                    //            maxOffset = false;
-                    //        }
-                    //    }
-                    //    else if (maxOffset)
-                    //    {
-                    //        HideFloatingPhoto();
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    var content = container.ContentTemplateRoot as FrameworkElement;
-                    //    var photo = content?.FindName("Photo") as ProfilePicture;
-
-                    //    if (photo != null)
-                    //    {
-                    //        photo.Visibility = message.IsLast ? Visibility.Visible : Visibility.Collapsed;
-                    //        photo.VerticalAlignment = VerticalAlignment.Bottom;
-                    //        photo.Margin = new Thickness();
-                    //    }
-                    //}
-
                     container.Opacity = 1;
-                }
-
-                if (minOffset != null)
-                {
-                    minOffset += container.ActualHeight;
                 }
 
                 // Read and play messages logic:
@@ -297,11 +214,6 @@ namespace Unigram.Views
             {
                 _dateHeader.Offset = Vector3.Zero;
             }
-
-            //if (minOffset != null && !intermediate)
-            //{
-            //    HideFloatingPhoto();
-            //}
 
             _dateHeaderTimer.Stop();
             _dateHeaderTimer.Start();
@@ -408,15 +320,6 @@ namespace Unigram.Views
             batch.End();
         }
 
-        private void HideFloatingPhoto()
-        {
-            //_floatingSender = null;
-            //FloatingPhoto.Source = null;
-
-            FloatingPhoto.Visibility = Visibility.Collapsed;
-            FloatingPhoto.Tag = null;
-        }
-
         private readonly Dictionary<long, IPlayerView> _prev = new Dictionary<long, IPlayerView>();
 
         public async void PlayMessage(MessageViewModel message, FrameworkElement target)
@@ -476,11 +379,11 @@ namespace Unigram.Views
                     GalleryViewModelBase viewModel;
                     if (message.Content is MessageAnimation)
                     {
-                        viewModel = new ChatGalleryViewModel(ViewModel.ProtoService, ViewModel.Aggregator, message.ChatId, ViewModel.ThreadId, message.Get());
+                        viewModel = new ChatGalleryViewModel(ViewModel.ProtoService, ViewModel.StorageService, ViewModel.Aggregator, message.ChatId, ViewModel.ThreadId, message.Get());
                     }
                     else
                     {
-                        viewModel = new SingleGalleryViewModel(ViewModel.ProtoService, ViewModel.Aggregator, new GalleryMessage(ViewModel.ProtoService, message.Get()));
+                        viewModel = new SingleGalleryViewModel(ViewModel.ProtoService, ViewModel.StorageService, ViewModel.Aggregator, new GalleryMessage(ViewModel.ProtoService, message.Get()));
                     }
 
                     await GalleryView.GetForCurrentView().ShowAsync(viewModel, () => target);
@@ -715,7 +618,7 @@ namespace Unigram.Views
                             var user = message.ProtoService.GetUser(fromUser.SenderUserId);
                             if (user != null)
                             {
-                                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 30);
+                                photo.SetUser(ViewModel.ProtoService, user, 30);
                             }
                         }
                         else if (message.ForwardInfo?.Origin is MessageForwardOriginChat fromChat)
@@ -723,7 +626,7 @@ namespace Unigram.Views
                             var chat = message.ProtoService.GetChat(fromChat.SenderChatId);
                             if (chat != null)
                             {
-                                photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 30);
+                                photo.SetChat(ViewModel.ProtoService, chat, 30);
                             }
                         }
                         else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel)
@@ -731,7 +634,7 @@ namespace Unigram.Views
                             var chat = message.ProtoService.GetChat(fromChannel.ChatId);
                             if (chat != null)
                             {
-                                photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 30);
+                                photo.SetChat(ViewModel.ProtoService, chat, 30);
                             }
                         }
                         else if (message.ForwardInfo?.Origin is MessageForwardOriginMessageImport fromImport)
@@ -743,13 +646,13 @@ namespace Unigram.Views
                             photo.Source = PlaceholderHelper.GetNameForUser(fromHiddenUser.SenderName, 30);
                         }
                     }
-                    else if (message.ProtoService.TryGetUser(message.Sender, out User senderUser))
+                    else if (message.ProtoService.TryGetUser(message.SenderId, out User senderUser))
                     {
-                        photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, senderUser, 30);
+                        photo.SetUser(ViewModel.ProtoService, senderUser, 30);
                     }
-                    else if (message.ProtoService.TryGetChat(message.Sender, out Chat senderChat))
+                    else if (message.ProtoService.TryGetChat(message.SenderId, out Chat senderChat))
                     {
-                        photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, senderChat, 30);
+                        photo.SetChat(ViewModel.ProtoService, senderChat, 30);
                     }
                 }
 

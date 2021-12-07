@@ -115,9 +115,9 @@ namespace Unigram.Controls
                     View.Autocomplete = null;
                 }
             }
-            else if (ChatTextBox.SearchByEmoji(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string replacement) && replacement.Length > 0)
+            else if (ChatTextBox.SearchByEmoji(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string replacement, out bool column) && replacement.Length > 0)
             {
-                View.Autocomplete = new ChatTextBox.EmojiCollection(viewModel.ProtoService, replacement.Length < 2 ? replacement : replacement.ToLower(), CoreTextServicesManager.GetForCurrentView().InputLanguage.LanguageTag);
+                View.Autocomplete = new ChatTextBox.EmojiCollection(viewModel.ProtoService, replacement.Length < 2 ? replacement : replacement.ToLower(), column, CoreTextServicesManager.GetForCurrentView().InputLanguage.LanguageTag);
             }
             else
             {

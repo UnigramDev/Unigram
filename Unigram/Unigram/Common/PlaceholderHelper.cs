@@ -227,94 +227,6 @@ namespace Unigram.Common
             return bitmap;
         }
 
-        public static ImageSource GetChat(IProtoService protoService, Chat chat, int side)
-        {
-            if (protoService != null)
-            {
-                if (chat.Type is ChatTypePrivate privata && protoService.IsSavedMessages(chat))
-                {
-                    return GetSavedMessages(privata.UserId, side);
-                }
-                else if (protoService.IsRepliesChat(chat))
-                {
-                    return GetGlyph(Icons.ArrowReply, 5, side);
-                }
-            }
-
-            var file = chat.Photo?.Small;
-            if (file != null)
-            {
-                if (file.Local.IsDownloadingCompleted)
-                {
-                    return UriEx.ToBitmap(file.Local.Path, side, side);
-                }
-                else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-                {
-                    protoService?.DownloadFile(file.Id, 1);
-                }
-            }
-            else if (protoService.TryGetUser(chat, out User user) && user.Type is UserTypeDeleted)
-            {
-                return GetDeletedUser(user, side);
-            }
-
-            if (chat.Photo?.Minithumbnail != null)
-            {
-                return GetBlurred(chat.Photo.Minithumbnail.Data);
-            }
-
-            return GetChat(chat, side);
-        }
-
-        public static ImageSource GetChat(IProtoService protoService, ChatInviteLinkInfo chat, int side)
-        {
-            var file = chat.Photo?.Small;
-            if (file != null)
-            {
-                if (file.Local.IsDownloadingCompleted)
-                {
-                    return UriEx.ToBitmap(file.Local.Path, side, side);
-                }
-                else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-                {
-                    protoService?.DownloadFile(file.Id, 1);
-                }
-            }
-
-            if (chat.Photo?.Minithumbnail != null)
-            {
-                return GetBlurred(chat.Photo.Minithumbnail.Data);
-            }
-
-            return GetChat(chat, side);
-        }
-
-        public static ImageSource GetUser(IProtoService protoService, User user, int side)
-        {
-            var file = user.ProfilePhoto?.Small;
-            if (file != null)
-            {
-                if (file.Local.IsDownloadingCompleted)
-                {
-                    return UriEx.ToBitmap(file.Local.Path, side, side);
-                }
-                else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-                {
-                    protoService?.DownloadFile(file.Id, 1);
-                }
-            }
-            else if (user.Type is UserTypeDeleted)
-            {
-                return GetDeletedUser(user, side);
-            }
-
-            if (user.ProfilePhoto?.Minithumbnail != null)
-            {
-                return GetBlurred(user.ProfilePhoto.Minithumbnail.Data);
-            }
-
-            return GetUser(user, side);
-        }
 
         public static ImageSource GetBitmap(IProtoService protoService, PhotoSize photoSize)
         {
@@ -372,8 +284,8 @@ namespace Unigram.Common
             {
                 var bitmap = default(LoadedImageSurface);
 
-                var cache = System.IO.Path.ChangeExtension(file.Local.Path, ".cache.png");
-                var relative = System.IO.Path.GetRelativePath(ApplicationData.Current.LocalFolder.Path, cache);
+                var cache = $"{file.Remote.UniqueId}.cache.png";
+                var relative = System.IO.Path.Combine("wallpapers", cache);
 
                 var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(relative) as StorageFile;
                 if (item == null)

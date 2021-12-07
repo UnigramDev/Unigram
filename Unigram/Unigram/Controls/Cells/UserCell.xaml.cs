@@ -32,7 +32,7 @@ namespace Unigram.Controls.Cells
             }
             else if (args.Phase == 2)
             {
-                Photo.Source = PlaceholderHelper.GetUser(protoService, user, 36);
+                Photo.SetUser(protoService, user, 36);
             }
 
             if (args.Phase < 2)

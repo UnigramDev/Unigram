@@ -1762,12 +1762,12 @@ namespace Unigram.Views
 
             if (_cacheService.TryGetUser(participant.ParticipantId, out User user))
             {
-                photo.Source = PlaceholderHelper.GetUser(_protoService, user, 36);
+                photo.SetUser(_protoService, user, 36);
                 title.Text = user.GetFullName();
             }
             else if (_cacheService.TryGetChat(participant.ParticipantId, out Chat chat))
             {
-                photo.Source = PlaceholderHelper.GetChat(_protoService, chat, 36);
+                photo.SetChat(_protoService, chat, 36);
                 title.Text = _protoService.GetTitle(chat);
             }
 
@@ -2589,28 +2589,6 @@ namespace Unigram.Views
             }
 
             view.Invalidate();
-        }
-    }
-
-    public class MessageSenderEqualityComparer : IEqualityComparer<MessageSender>
-    {
-        public bool Equals(MessageSender x, MessageSender y)
-        {
-            return x.IsEqual(y);
-        }
-
-        public int GetHashCode(MessageSender obj)
-        {
-            if (obj is MessageSenderUser user)
-            {
-                return user.UserId.GetHashCode();
-            }
-            else if (obj is MessageSenderChat chat)
-            {
-                return chat.ChatId.GetHashCode();
-            }
-
-            return obj.GetHashCode();
         }
     }
 

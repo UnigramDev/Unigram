@@ -179,7 +179,7 @@
     <value>گیف‌ها</value>
   </data>
   <data name="AccDescrGoBack" xml:space="preserve">
-    <value>رفتن به عقب</value>
+    <value>بازگشت</value>
   </data>
   <data name="AccDescrGoToMessage" xml:space="preserve">
     <value>رفتن به پیام</value>
@@ -487,6 +487,18 @@
   <data name="AcceptCall" xml:space="preserve">
     <value>پذیرفتن</value>
   </data>
+  <data name="AcceptCalls" xml:space="preserve">
+    <value>قبول تماس‌ها</value>
+  </data>
+  <data name="AcceptCallsChatsDescription" xml:space="preserve">
+    <value>استفاده از این دستگاه برای تماس‌ها</value>
+  </data>
+  <data name="AcceptSecretChats" xml:space="preserve">
+    <value>پذیرفتن گفتگوهای محرمانه</value>
+  </data>
+  <data name="AcceptSecretChatsDescription" xml:space="preserve">
+    <value>استفاده از این دستگاه برای گفتگوهای محرمانه</value>
+  </data>
   <data name="AccessError" xml:space="preserve">
     <value>خطای دسترسی</value>
   </data>
@@ -573,7 +585,7 @@
     <value>قرارداد اجاره</value>
   </data>
   <data name="ActionBotDocuments" xml:space="preserve">
-    <value>⁨{0}⁩ سندهای مقابل را دریافت کرد: ⁨{1}⁩</value>
+    <value>⁨{0}⁩ سندهای زیر را دریافت کرد: ⁨{1}⁩</value>
   </data>
   <data name="ActionBotDocumentTemporaryRegistration" xml:space="preserve">
     <value>ثبت نام موقت</value>
@@ -644,6 +656,18 @@
   <data name="ActionEditedInviteLinkToSameClickable" xml:space="preserve">
     <value>⁨un1⁩ لینک دعوت ⁨un2⁩ را ویرایش کرد</value>
   </data>
+  <data name="ActionForwardsEnabledChannel" xml:space="preserve">
+    <value>⁨un1⁩ هدایت از این کانال را فعال کرد</value>
+  </data>
+  <data name="ActionForwardsEnabledGroup" xml:space="preserve">
+    <value>⁨un1⁩ هدایت از این گروه را فعال کرد</value>
+  </data>
+  <data name="ActionForwardsRestrictedChannel" xml:space="preserve">
+    <value>⁨un1⁩ هدایت از این کانال را محدود کرد</value>
+  </data>
+  <data name="ActionForwardsRestrictedGroup" xml:space="preserve">
+    <value>⁨un1⁩ هدایت از این گروه را محدود کرد</value>
+  </data>
   <data name="ActionGroupCallEnded" xml:space="preserve">
     <value>گفتگوی ویدیویی به پایان رسید (⁨{0}⁩)</value>
   </data>
@@ -663,7 +687,7 @@
     <value>گفتگوی ویدیویی شروع شد</value>
   </data>
   <data name="ActionGroupCallScheduled" xml:space="preserve">
-    <value>گفتگوی ویدیویی در تاریخ ⁨{0}⁩ زمان‌بندی شد</value>
+    <value>گفتگوی ویدیویی برای تاریخ ⁨{0}⁩ زمان‌بندی شد</value>
   </data>
   <data name="ActionGroupCallStarted" xml:space="preserve">
     <value>⁨un1⁩ یک گفتگوی ویدیویی را شروع کرد</value>
@@ -1028,6 +1052,9 @@
   <data name="AllMedia" xml:space="preserve">
     <value>تمامی رسانه‌ها</value>
   </data>
+  <data name="Allow" xml:space="preserve">
+    <value>اجازه دادن</value>
+  </data>
   <data name="AllowCustomQuickReply" xml:space="preserve">
     <value>اجازه پیام سفارشی</value>
   </data>
@@ -1171,6 +1198,9 @@
   </data>
   <data name="AppFolderInfo" xml:space="preserve">
     <value>جستجو در پوشه برنامه</value>
+  </data>
+  <data name="Application" xml:space="preserve">
+    <value>برنامه</value>
   </data>
   <data name="ApplyLocalizationFile" xml:space="preserve">
     <value>اعمال فایل زبان</value>
@@ -1626,6 +1656,12 @@
   <data name="AuthAnotherClientInfo3" xml:space="preserve">
     <value>برای اتصال حساب کاربری خود کد QR را اسکن کنید.</value>
   </data>
+  <data name="AuthAnotherClientInfo4" xml:space="preserve">
+    <value>با اسکن کد QR، به *تلگرام دسکتاپ* یا *تلگرام وب* متصل شوید.</value>
+  </data>
+  <data name="AuthAnotherClientInfo5" xml:space="preserve">
+    <value>برای دریافت کد QR به *getdesktop.telegram.org* یا *web.telegram.org* مراجعه کنید</value>
+  </data>
   <data name="AuthAnotherClientNotFound" xml:space="preserve">
     <value>نشان احراز هویتی یافت نشد</value>
   </data>
@@ -1642,6 +1678,9 @@
     <value>این کد می‌تواند به افراد دیگر اجازه دهد تا به حساب کاربری تلگرام شما وارد شوند.
 
 برای تأیید ورود به حساب کاربری تلگرام، لطفاً به قسمت تنظیمات > دستگاه‌ها > اسکن QR مراجعه کرده و کد را اسکن کنید.</value>
+  </data>
+  <data name="AuthAnotherWebClientUrl" xml:space="preserve">
+    <value>https://web.telegram.org/</value>
   </data>
   <data name="AutoDelete1Month" xml:space="preserve">
     <value>1 ماه</value>
@@ -1701,7 +1740,7 @@
   <data name="AutoDownloadChannels" xml:space="preserve">
     <value>کانال‌ها</value>
   </data>
-  <data name="AutodownloadContacts" xml:space="preserve">
+  <data name="AutoDownloadContacts" xml:space="preserve">
     <value>مخاطبین</value>
   </data>
   <data name="AutoDownloadCustom" xml:space="preserve">
@@ -2338,7 +2377,7 @@
     <value>برداشتن سنجاق</value>
   </data>
   <data name="CameraPermissionText" xml:space="preserve">
-    <value>برای اجازه دسترسی به دوربین ضربه بزنید</value>
+    <value>برای اجازه دسترسی به دوربین خود، ضربه بزنید</value>
   </data>
   <data name="Cancel" xml:space="preserve">
     <value>لغو</value>
@@ -2635,7 +2674,7 @@
     <value>آیا از ترک **⁨{0}⁩** اطمینان دارید؟</value>
   </data>
   <data name="ChannelLinkInfo" xml:space="preserve">
-    <value>هر کسی که تلگرام را نصب کرده باشد، می‌تواند با استفاده از این لینک به کانال شما بپیوندد.</value>
+    <value>هر کسی که تلگرام را نصب کرده باشد، می‌تواند با دنبال کردن این لینک به کانال شما بپیوندد.</value>
   </data>
   <data name="ChannelLinkTitle" xml:space="preserve">
     <value>لینک عمومی</value>
@@ -2719,7 +2758,7 @@
     <value>سایر اعضا</value>
   </data>
   <data name="ChannelOtherSubscriberJoined" xml:space="preserve">
-    <value>به ⁨{0}⁩ پیوست</value>
+    <value>در تاریخ ⁨{0}⁩ پیوست </value>
   </data>
   <data name="ChannelOtherSubscribers" xml:space="preserve">
     <value>سایر مشترکین</value>
@@ -2743,7 +2782,7 @@
     <value>تنها از طریق لینک دعوت می‌توان به کانال‌های خصوصی پیوست.</value>
   </data>
   <data name="ChannelPrivateLinkHelp" xml:space="preserve">
-    <value>افراد می‌توانند با استفاده از این لینک به کانال شما بپیوندند. شما می‌توانید لینک را در هر زمانی باطل کنید.</value>
+    <value>افراد می‌توانند با دنبال کردن این لینک به کانال شما بپیوندند. شما می‌توانید لینک را در هر زمانی باطل کنید.</value>
   </data>
   <data name="ChannelPublic" xml:space="preserve">
     <value>کانال عمومی</value>
@@ -2802,7 +2841,7 @@
     <value>امضا کردن پیام‌ها</value>
   </data>
   <data name="ChannelSignMessagesInfo" xml:space="preserve">
-    <value>نام مدیران را به پیام‌هایی که ارسال می‌کنند اضافه کنید.</value>
+    <value>نام مدیران به پیام‌هایی که ارسال می‌کنند اضافه می‌شود.</value>
   </data>
   <data name="ChannelSilentBroadcast" xml:space="preserve">
     <value>اطلاع‌رسانی بی‌صدا</value>
@@ -2904,7 +2943,7 @@
     <value>دوربین </value>
   </data>
   <data name="chatDate" xml:space="preserve">
-    <value>MMMM d</value>
+    <value>d MMMM</value>
   </data>
   <data name="ChatDeletedUndo" xml:space="preserve">
     <value>گفتگو حذف شد</value>
@@ -3128,6 +3167,21 @@
   <data name="ChatWasMovedToMainList" xml:space="preserve">
     <value>گفتگو به فهرست اصلی شما انتقال یافت.</value>
   </data>
+  <data name="ChatWithAdminChannelTitle" xml:space="preserve">
+    <value>پاسخ به درخواست عضویت شما</value>
+  </data>
+  <data name="ChatWithAdminGroupTitle" xml:space="preserve">
+    <value>پاسخ به درخواست عضویت شما</value>
+  </data>
+  <data name="ChatWithAdminMessage" xml:space="preserve">
+    <value>از آنجا که شما در تاریخ ⁨{0}⁩ برای عضویت در ⁨{1}⁩ درخواست دادید، این پیام را دریافت کرده‌اید.</value>
+  </data>
+  <data name="ChatWithChannelAdmin" xml:space="preserve">
+    <value>**⁨{0}⁩** مدیر **⁨{1}⁩** است، کانالی که شما برای عضویت در آن درخواست داده‌اید.</value>
+  </data>
+  <data name="ChatWithGroupAdmin" xml:space="preserve">
+    <value>**⁨{0}⁩** مدیر **⁨{1}⁩** است، گروهی که شما برای عضویت در آن درخواست داده‌اید.</value>
+  </data>
   <data name="ChatYourSelf" xml:space="preserve">
     <value>جهت ذخیره به اینجا هدایت کنید</value>
   </data>
@@ -3271,6 +3325,12 @@
   </data>
   <data name="ClearHistoryCache" xml:space="preserve">
     <value>حذف از حافظه موقت</value>
+  </data>
+  <data name="ClearHistoryForTheseDays" xml:space="preserve">
+    <value>پاک کردن تاریخچه مربوط به این روزها</value>
+  </data>
+  <data name="ClearHistoryForThisDay" xml:space="preserve">
+    <value>پاک کردن تاریخچه مربوط به این روز</value>
   </data>
   <data name="ClearHistoryOptionAlso" xml:space="preserve">
     <value>همچنین پاک کردن تاریخچه برای ⁨{0}⁩</value>
@@ -3986,6 +4046,24 @@
   <data name="DeleteContact" xml:space="preserve">
     <value>حذف مخاطب</value>
   </data>
+  <data name="DeleteDays_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="DeleteDays_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="DeleteDays_one" xml:space="preserve">
+    <value>حذف ⁨{0}⁩ روز</value>
+  </data>
+  <data name="DeleteDays_other" xml:space="preserve">
+    <value>حذف ⁨{0}⁩ روز</value>
+  </data>
+  <data name="DeleteDays_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="DeleteDays_zero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="DeletedFromYourContacts" xml:space="preserve">
     <value>⁨{0}⁩ از مخاطبین شما حذف شد</value>
   </data>
@@ -4009,6 +4087,9 @@
   </data>
   <data name="DeleteGroupForAll" xml:space="preserve">
     <value>حذف گروه برای تمامی اعضا</value>
+  </data>
+  <data name="DeleteHistoryByDaysMessage" xml:space="preserve">
+    <value>آیا از حذف تمامی پیام‌های مربوط به روزهای انتخاب شده اطمینان دارید؟</value>
   </data>
   <data name="DeleteLink" xml:space="preserve">
     <value>حذف لینک</value>
@@ -4147,6 +4228,9 @@
   </data>
   <data name="DidNotGetTheCode" xml:space="preserve">
     <value>کد را دریافت نکردید؟</value>
+  </data>
+  <data name="DidNotGetTheCodePhone" xml:space="preserve">
+    <value>دریافت کد در این تلفن همراه</value>
   </data>
   <data name="DidNotGetTheCodeSms" xml:space="preserve">
     <value>ارسال کد به صورت پیامک</value>
@@ -4292,6 +4376,9 @@
   </data>
   <data name="DoNoSetTheme" xml:space="preserve">
     <value>تنظیم نکردن پوسته</value>
+  </data>
+  <data name="DontAskAgain" xml:space="preserve">
+    <value>دوباره نپرسید</value>
   </data>
   <data name="Draft" xml:space="preserve">
     <value>پیش‌نویس</value>
@@ -4772,18 +4859,16 @@
     <value>⁨un1⁩ این پیام را ویرایش کرد:</value>
   </data>
   <data name="EventLogEmpty" xml:space="preserve">
-    <value>**هنوز فعالیتی در اینجا موجود نیست**
+    <value>**فعالیتی اخیری وجود ندارد**
 
-اعضا و مدیران این گروه
-در 48 ساعت گذشته
-فعالیت سرویسی انجام نداده‌اند.</value>
+فعالیت خاصی توسط اعضا و مدیران این گروه در 48 ساعت گذشته انجام نشده است.</value>
   </data>
   <data name="EventLogEmptyChannel" xml:space="preserve">
-    <value>**هنوز فعالیتی در اینجا موجود نیست**
+    <value>**فعالیتی اخیری وجود ندارد**
 
-مدیران این کانال
-در 48 ساعت گذشته
-فعالیت سرویسی انجام نداده‌اند.</value>
+فعالیت خاصی توسط
+اعضا و مدیران این کانال
+در 48 ساعت گذشته انجام نشده است.</value>
   </data>
   <data name="EventLogEmptySearch" xml:space="preserve">
     <value>**فعالیتی یافت نشد**
@@ -4978,6 +5063,9 @@
   </data>
   <data name="EventLogSelectedEvents" xml:space="preserve">
     <value>فعالیت‌های انتخاب شده</value>
+  </data>
+  <data name="EventLogSendMessages" xml:space="preserve">
+    <value>⁨un1⁩ این پیام را ارسال کرد:</value>
   </data>
   <data name="EventLogStartedLiveStream" xml:space="preserve">
     <value>⁨un1⁩ یک پخش زنده را شروع کرد</value>
@@ -5441,20 +5529,44 @@
   <data name="FootsShort" xml:space="preserve">
     <value>⁨{0}⁩ فوت</value>
   </data>
+  <data name="ForceSetPasswordAlertMessage_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ForceSetPasswordAlertMessage_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ForceSetPasswordAlertMessage_one" xml:space="preserve">
+    <value>بدون گذرواژه ادامه می‌دهید؟ در صورتی که گذرواژه‌ای تنظیم نکنید، تنها می‌توانید از طریق پیامک **هر ⁨{0}⁩ روز** یک بار وارد حساب کاربری خود شوید.</value>
+  </data>
+  <data name="ForceSetPasswordAlertMessage_other" xml:space="preserve">
+    <value>بدون گذرواژه ادامه می‌دهید؟ در صورتی که گذرواژه‌ای تنظیم نکنید، تنها می‌توانید از طریق پیامک **هر ⁨{0}⁩ روز** یک بار وارد حساب کاربری خود شوید.</value>
+  </data>
+  <data name="ForceSetPasswordAlertMessage_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ForceSetPasswordAlertMessage_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ForceSetPasswordCancel" xml:space="preserve">
+    <value>بله، اطمینان دارم</value>
+  </data>
+  <data name="ForceSetPasswordContinue" xml:space="preserve">
+    <value>خیر، می‌خواهم گذرواژه‌ای تنظیم کنم</value>
+  </data>
   <data name="ForgotPassword" xml:space="preserve">
     <value>گذرواژه را فراموش کرده‌اید؟</value>
   </data>
   <data name="formatDateAtTime" xml:space="preserve">
-    <value>⁨{0}⁩ در ⁨{1}⁩</value>
+    <value>⁨{0}⁩ ساعت ⁨{1}⁩</value>
   </data>
   <data name="formatDateSchedule" xml:space="preserve">
-    <value>MMM d</value>
+    <value>d MMM</value>
   </data>
   <data name="formatDateScheduleDay" xml:space="preserve">
-    <value>EEE MMM d</value>
+    <value>EEE d MMM</value>
   </data>
   <data name="formatDateScheduleYear" xml:space="preserve">
-    <value>MMM d yyyy</value>
+    <value>d MMM yyyy</value>
   </data>
   <data name="formatterBannedUntil12H" xml:space="preserve">
     <value>dd MMM yyyy، h:mm a</value>
@@ -5738,6 +5850,12 @@
   <data name="ForwardSendMessages" xml:space="preserve">
     <value>ارسال پیام‌ها</value>
   </data>
+  <data name="ForwardsRestrictedInfoChannel" xml:space="preserve">
+    <value>کپی و هدایت در این کانال مجاز نیست.</value>
+  </data>
+  <data name="ForwardsRestrictedInfoGroup" xml:space="preserve">
+    <value>کپی و هدایت در این گروه مجاز نیست.</value>
+  </data>
   <data name="ForwardTo" xml:space="preserve">
     <value>هدایت به...</value>
   </data>
@@ -5808,7 +5926,7 @@
     <value>جهت ارسال تصاویر بدون فشرده‌سازی</value>
   </data>
   <data name="GalleryPermissionText" xml:space="preserve">
-    <value>برای اجازه دسترسی به گالری ضربه بزنید</value>
+    <value>برای اجازه دسترسی به گالری خود، ضربه بزنید</value>
   </data>
   <data name="GameCantSendSecretChat" xml:space="preserve">
     <value>متأسفانه بازی‌ها نمی‌توانند به گفتگوهای محرمانه ارسال شوند.</value>
@@ -6175,6 +6293,9 @@
   <data name="Hybrid" xml:space="preserve">
     <value>ترکیبی</value>
   </data>
+  <data name="IfInactiveFor" xml:space="preserve">
+    <value>در صورت غیرفعال بودن به مدت</value>
+  </data>
   <data name="ImagesTab" xml:space="preserve">
     <value>تصاویر</value>
   </data>
@@ -6523,6 +6644,9 @@
   <data name="InvoiceCantSendSecretChat" xml:space="preserve">
     <value>متأسفانه صورت‌حساب‌ها را نمی‌توان به گفتگوهای محرمانه ارسال کرد.</value>
   </data>
+  <data name="IpAddress" xml:space="preserve">
+    <value>آدرس IP</value>
+  </data>
   <data name="IsChoosingSticker" xml:space="preserve">
     <value>⁨{0}⁩ در حال انتخاب استیکر است</value>
   </data>
@@ -6586,6 +6710,9 @@
   <data name="items_zero" xml:space="preserve">
     <value/>
   </data>
+  <data name="IUnderstand" xml:space="preserve">
+    <value>متوجه‌ام</value>
+  </data>
   <data name="IVInteractionsChartTitle" xml:space="preserve">
     <value>تعاملات IV</value>
   </data>
@@ -6620,10 +6747,10 @@
     <value/>
   </data>
   <data name="JoinRequests_one" xml:space="preserve">
-    <value>⁨{0}⁩ درخواست عضویت داد</value>
+    <value>⁨{0}⁩ درخواست عضویت</value>
   </data>
   <data name="JoinRequests_other" xml:space="preserve">
-    <value>⁨{0}⁩ درخواست عضویت دادند</value>
+    <value>⁨{0}⁩ درخواست عضویت</value>
   </data>
   <data name="JoinRequests_two" xml:space="preserve">
     <value/>
@@ -6644,10 +6771,10 @@
     <value/>
   </data>
   <data name="JoinUsersRequests_one" xml:space="preserve">
-    <value>⁨{0}⁩ کاربر درخواست عضویت داد</value>
+    <value>⁨{0}⁩ درخواست عضویت</value>
   </data>
   <data name="JoinUsersRequests_other" xml:space="preserve">
-    <value>⁨{0}⁩ کاربر درخواست عضویت دادند</value>
+    <value>⁨{0}⁩ درخواست عضویت</value>
   </data>
   <data name="JoinUsersRequests_two" xml:space="preserve">
     <value/>
@@ -6855,6 +6982,9 @@
   <data name="LinkCreatedeBy" xml:space="preserve">
     <value>لینک ایجاد شده توسط</value>
   </data>
+  <data name="LinkDesktopDevice" xml:space="preserve">
+    <value>وصل کردن دستگاه دسکتاپ</value>
+  </data>
   <data name="LinkedChannel" xml:space="preserve">
     <value>کانال متصل</value>
   </data>
@@ -6868,7 +6998,7 @@
     <value>لینک دیگر فعال نیست</value>
   </data>
   <data name="LinkInfo" xml:space="preserve">
-    <value>هر کسی که تلگرام را نصب کرده باشد، می‌تواند با استفاده از این لینک به گروه شما بپیوندد.</value>
+    <value>هر کسی که تلگرام را نصب کرده باشد، می‌تواند با دنبال کردن این لینک به گروه شما بپیوندد.</value>
   </data>
   <data name="LinkInfoChannel" xml:space="preserve">
     <value>هر کسی که تلگرام را نصب کرده باشد می‌تواند با دنبال کردن این لینک به کانال شما بپیوندد.</value>
@@ -6907,7 +7037,7 @@
     <value>به سقف مجاز رسیده است</value>
   </data>
   <data name="LinkNameHelp" xml:space="preserve">
-    <value>فقط شما و مدیران دیگر این نام را خواهید دید.</value>
+    <value>فقط مدیران این نام را خواهند دید.</value>
   </data>
   <data name="LinkNameHint" xml:space="preserve">
     <value>نام لینک (اختیاری)</value>
@@ -7015,6 +7145,9 @@
   </data>
   <data name="LocatedChannelsTooMuch" xml:space="preserve">
     <value>متأسفانه کاربر موردنظر مالک تعداد زیادی گروه بر اساس موقعیت مکانی است. لطفاً ابتدا از او بخواهید تا یکی از گروه‌های فعلی خود را حذف یا منتقل کند.</value>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>موقعیت مکانی بر اساس آدرس IP</value>
   </data>
   <data name="LocationNotifiation" xml:space="preserve">
     <value>اعلان مجاورت</value>
@@ -7299,7 +7432,7 @@
     <value>تنها با دعوت شدن یا داشتن لینک دعوت می‌توان به گروه‌های خصوصی پیوست.</value>
   </data>
   <data name="MegaPrivateLinkHelp" xml:space="preserve">
-    <value>افراد می‌توانند با استفاده از این لینک به گروه شما بپیوندند. شما می‌توانید لینک را در هر زمانی باطل کنید.</value>
+    <value>افراد می‌توانند با دنبال کردن این لینک به گروه شما بپیوندند. شما می‌توانید لینک را در هر زمانی باطل کنید.</value>
   </data>
   <data name="MegaPublic" xml:space="preserve">
     <value>گروه عمومی</value>
@@ -7553,6 +7686,24 @@
   <data name="MessagesDeletedHint_zero" xml:space="preserve">
     <value/>
   </data>
+  <data name="MessagesDeletedUndo_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagesDeletedUndo_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagesDeletedUndo_one" xml:space="preserve">
+    <value>پیام‌های مربوط به ⁨{0}⁩ روز حذف شد</value>
+  </data>
+  <data name="MessagesDeletedUndo_other" xml:space="preserve">
+    <value>پیام‌های مربوط به ⁨{0}⁩ روز حذف شد</value>
+  </data>
+  <data name="MessagesDeletedUndo_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagesDeletedUndo_zero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="MessageSeen_few" xml:space="preserve">
     <value/>
   </data>
@@ -7696,6 +7847,15 @@
   </data>
   <data name="MinutesSchedule_zero" xml:space="preserve">
     <value/>
+  </data>
+  <data name="MissedCallDescriptionSubtitle" xml:space="preserve">
+    <value>طی چند ثانیه دیگر، شما تماس کوتاهی دریافت خواهید کرد. از طرف:</value>
+  </data>
+  <data name="MissedCallDescriptionSubtitle2" xml:space="preserve">
+    <value>لطفاً آخرین ارقام مربوط به شماره تلفنی که با شما تماس گرفت را وارد کنید</value>
+  </data>
+  <data name="MissedCallDescriptionTitle" xml:space="preserve">
+    <value>ارقام را تکمیل کنید</value>
   </data>
   <data name="MobileHidden" xml:space="preserve">
     <value>شماره تلفن پنهان</value>
@@ -8049,10 +8209,13 @@
   </data>
   <data name="NoMemberRequestsDescription" xml:space="preserve">
     <value>درخواست معلقی برای عضویت
-در گروهتان ندارید.</value>
+در گروه وجود ندارد.</value>
   </data>
   <data name="NoMessages" xml:space="preserve">
     <value>هنوز پیامی در اینجا موجود نیست...</value>
+  </data>
+  <data name="NoMessagesForThisDay" xml:space="preserve">
+    <value>هیچ پیامی برای این روز وجود ندارد</value>
   </data>
   <data name="NoMessagesGreetingsDescription" xml:space="preserve">
     <value>پیامی ارسال کنید یا بر روی خوش‌آمدگویی زیر بزنید.</value>
@@ -8159,7 +8322,7 @@
   </data>
   <data name="NoSubscribeRequestsDescription" xml:space="preserve">
     <value>درخواست معلقی برای عضویت
-به این کانال وجود ندارد.</value>
+در این کانال وجود ندارد.</value>
   </data>
   <data name="NotificationActionPinnedContact" xml:space="preserve">
     <value>⁨{0}⁩ یک مخاطب را در گروه ⁨{1}⁩ سنجاق کرد</value>
@@ -8823,6 +8986,9 @@
   </data>
   <data name="OpenChannel2" xml:space="preserve">
     <value>باز کردن کانال</value>
+  </data>
+  <data name="OpenChannelPost" xml:space="preserve">
+    <value>مشاهده پست</value>
   </data>
   <data name="OpenFile" xml:space="preserve">
     <value>باز کردن فایل</value>
@@ -9978,7 +10144,7 @@
     <value>تلگرام باید به موقعیت مکانی شما دسترسی داشته باشد تا بتوانید آن را با دوستانتان به اشتراک بگذارید.</value>
   </data>
   <data name="PermissionNoLocationPosition" xml:space="preserve">
-    <value>تلگرام نیازمند دسترسی به موقعیت مکانی شماست.</value>
+    <value>تلگرام باید به موقعیت مکانی شما دسترسی داشته باشد.</value>
   </data>
   <data name="PermissionOpenSettings" xml:space="preserve">
     <value>تنظیمات</value>
@@ -10515,7 +10681,7 @@
     <value>پیام قبلی</value>
   </data>
   <data name="PrimaryLinkHelp" xml:space="preserve">
-    <value>همه افراد در تلگرام می‌توانند با دنبال کردن این لینک به گروه شما بپیوندند.</value>
+    <value>هر کسی در تلگرام می‌تواند با دنبال کردن این لینک به گروه شما بپیوندد.</value>
   </data>
   <data name="PrimaryLinkHelpChannel" xml:space="preserve">
     <value>هر کسی در تلگرام می‌تواند با دنبال کردن این لینک به کانال شما بپیوندد.</value>
@@ -10946,16 +11112,16 @@ https://telegram.org/blog/coronavirus</value>
     <value>برای رفتن به پوشه خوانده نشده بعدی، رها کنید</value>
   </data>
   <data name="RemindDayAt" xml:space="preserve">
-    <value> 'یادآوری در تاریخ' MMM d 'در' HH:mm</value>
+    <value> 'یادآوری' d MMM 'ساعت' HH:mm</value>
   </data>
   <data name="RemindDayYearAt" xml:space="preserve">
-    <value> 'یادآوری در تاریخ' MMM d yyy 'در' HH:mm</value>
+    <value> 'یادآوری' d MMM yyy 'ساعت' HH:mm</value>
   </data>
   <data name="Reminders" xml:space="preserve">
     <value>یادآورها</value>
   </data>
   <data name="RemindTodayAt" xml:space="preserve">
-    <value>'یادآوری امروز در' HH:mm</value>
+    <value>'یادآوری امروز ساعت' HH:mm</value>
   </data>
   <data name="RemovedFromFavorites" xml:space="preserve">
     <value>استیکر از مورد علاقه‌ها حذف شد</value>
@@ -11325,6 +11491,15 @@ https://telegram.org/blog/coronavirus</value>
   <data name="Restrictions_zero" xml:space="preserve">
     <value/>
   </data>
+  <data name="RestrictSavingContent" xml:space="preserve">
+    <value>محدود کردن ذخیره محتوا</value>
+  </data>
+  <data name="RestrictSavingContentInfoChannel" xml:space="preserve">
+    <value>مشترکین قادر به کپی، ذخیره و هدایت محتوای این کانال نخواهند بود.</value>
+  </data>
+  <data name="RestrictSavingContentInfoGroup" xml:space="preserve">
+    <value>اعضا قادر به کپی، ذخیره و هدایت محتوای این گروه نخواهند بود.</value>
+  </data>
   <data name="Retry" xml:space="preserve">
     <value>تلاش مجدد</value>
   </data>
@@ -11335,7 +11510,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>بازگشت به تماس</value>
   </data>
   <data name="ReverseOrder" xml:space="preserve">
-    <value>جهت مخالف</value>
+    <value>جهت معکوس</value>
   </data>
   <data name="RevokeAlert" xml:space="preserve">
     <value>آیا از باطل کردن این لینک اطمینان دارید؟ با این کار، هیچ‌کس قادر نخواهد بود با استفاده از آن بپیوندد.</value>
@@ -11416,6 +11591,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="SaveToMusic" xml:space="preserve">
     <value>ذخیره در موسیقی‌ها</value>
   </data>
+  <data name="SavingContentTitle" xml:space="preserve">
+    <value>ذخیره محتوا</value>
+  </data>
   <data name="ScamMessage" xml:space="preserve">
     <value>کلاهبرداری</value>
   </data>
@@ -11464,7 +11642,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>جستجوی اموجی</value>
   </data>
   <data name="SearchEmptyViewFilteredSubtitle2" xml:space="preserve">
-    <value>عبارت دیگری را جستجو کنید.</value>
+    <value>جستجوی دیگری انجام دهید.</value>
   </data>
   <data name="SearchEmptyViewFilteredSubtitleFiles" xml:space="preserve">
     <value>فایل‌های مربوط به تمامی گفتگوهای شما، اینجا نمایش داده خواهند شد.</value>
@@ -11661,6 +11839,12 @@ https://telegram.org/blog/coronavirus</value>
   <data name="SelectContacts" xml:space="preserve">
     <value>انتخاب مخاطبین</value>
   </data>
+  <data name="SelectDays" xml:space="preserve">
+    <value>انتخاب روزها</value>
+  </data>
+  <data name="SelectDaysTooltip" xml:space="preserve">
+    <value>لطفاً ابتدا یک یا چند روز را انتخاب کنید.</value>
+  </data>
   <data name="SelectFile" xml:space="preserve">
     <value>انتخاب فایل</value>
   </data>
@@ -11681,6 +11865,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="SelectTheme" xml:space="preserve">
     <value>انتخاب پوسته</value>
+  </data>
+  <data name="SelectThisDay" xml:space="preserve">
+    <value>انتخاب این روز</value>
   </data>
   <data name="Send" xml:space="preserve">
     <value>ارسال</value>
@@ -11713,10 +11900,10 @@ https://telegram.org/blog/coronavirus</value>
     <value>آیا می‌خواهید این مخاطب را برای **⁨{0}⁩** ارسال کنید؟</value>
   </data>
   <data name="SendDayAt" xml:space="preserve">
-    <value> 'ارسال در تاریخ' MMM d 'در' HH:mm</value>
+    <value> 'ارسال' MMM d 'ساعت' HH:mm</value>
   </data>
   <data name="SendDayYearAt" xml:space="preserve">
-    <value> 'ارسال در تاریخ' MMM d yyy 'در' HH:mm</value>
+    <value> 'ارسال' d MMM yyyy 'ساعت' HH:mm</value>
   </data>
   <data name="SendDice" xml:space="preserve">
     <value>ارسال</value>
@@ -11787,6 +11974,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="SendMessage" xml:space="preserve">
     <value>ارسال پیام</value>
   </data>
+  <data name="SendMessageAsTitle" xml:space="preserve">
+    <value>ارسال پیام به عنوان...</value>
+  </data>
   <data name="SendMessageLocation" xml:space="preserve">
     <value>ارسال پیام</value>
   </data>
@@ -11824,7 +12014,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>ارسال استیکر</value>
   </data>
   <data name="SendTodayAt" xml:space="preserve">
-    <value> 'ارسال امروز در' HH:mm</value>
+    <value> 'ارسال امروز ساعت' HH:mm</value>
   </data>
   <data name="SendWithoutCompression" xml:space="preserve">
     <value>ارسال بدون فشرده‌سازی</value>
@@ -11863,6 +12053,12 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="SessionsInfo" xml:space="preserve">
     <value>نشست‌های خود را بر روی سایر دستگاه‌ها کنترل کنید.</value>
+  </data>
+  <data name="SessionsListInfo" xml:space="preserve">
+    <value>برنامه رسمی تلگرام برای اندروید، آیفون، آیپد، ویندوز، macOS و لینوکس در دسترس است.</value>
+  </data>
+  <data name="SessionsSelfDestruct" xml:space="preserve">
+    <value>نشست‌ها به صورت خودکار پایان می‌یابند</value>
   </data>
   <data name="SessionsTitle" xml:space="preserve">
     <value>نشست‌های فعال</value>
@@ -11924,7 +12120,7 @@ https://telegram.org/blog/coronavirus</value>
   <data name="SetTimer" xml:space="preserve">
     <value>تنظیم زمان‌سنج نابود کننده</value>
   </data>
-  <data name="SETTINGS" xml:space="preserve">
+  <data name="Settings" xml:space="preserve">
     <value>تنظیمات</value>
   </data>
   <data name="SettingsBrowseThemes" xml:space="preserve">
@@ -11950,6 +12146,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="SettingsSearchFaq" xml:space="preserve">
     <value>پرسش‌های متداول</value>
+  </data>
+  <data name="SettingsSwitchToDayMode" xml:space="preserve">
+    <value>تغییر به حالت روز</value>
   </data>
   <data name="SettingsSwitchToNightMode" xml:space="preserve">
     <value>تغییر به حالت شب</value>
@@ -12399,10 +12598,10 @@ https://telegram.org/blog/coronavirus</value>
     <value>شروع</value>
   </data>
   <data name="StartDayAt" xml:space="preserve">
-    <value>'شروع در تاریخ' MMM d 'در' HH:mm</value>
+    <value>'شروع' d MMM 'ساعت' HH:mm</value>
   </data>
   <data name="StartDayYearAt" xml:space="preserve">
-    <value>'شروع در تاریخ' MMM d yyyy 'در' HH:mm</value>
+    <value>'شروع' d MMM yyyy 'ساعت' HH:mm</value>
   </data>
   <data name="StartEncryptedChat" xml:space="preserve">
     <value>شروع گفتگوی محرمانه</value>
@@ -12411,10 +12610,10 @@ https://telegram.org/blog/coronavirus</value>
     <value>شروع پیام‌رسانی</value>
   </data>
   <data name="StartsDayAt" xml:space="preserve">
-    <value>'شروع در تاریخ' MMM d 'در' HH:mm</value>
+    <value>'شروع' d MMM 'ساعت' HH:mm</value>
   </data>
   <data name="StartsDayYearAt" xml:space="preserve">
-    <value>'شروع در تاریخ' MMM d yyyy 'در' HH:mm</value>
+    <value>'شروع' d MMM yyyy 'ساعت' HH:mm</value>
   </data>
   <data name="StartShortDayAt" xml:space="preserve">
     <value>MMM d'،' HH:mm</value>
@@ -12426,13 +12625,13 @@ https://telegram.org/blog/coronavirus</value>
     <value>'امروز،' HH:mm</value>
   </data>
   <data name="StartsTodayAt" xml:space="preserve">
-    <value>'شروع امروز در' HH:mm</value>
+    <value>'شروع امروز ساعت' HH:mm</value>
   </data>
   <data name="StartText" xml:space="preserve">
     <value>لطفاً کد کشور خود را تأیید کرده و شماره تلفن خود را وارد کنید.</value>
   </data>
   <data name="StartTodayAt" xml:space="preserve">
-    <value>'زمان شروع امروز در' HH:mm</value>
+    <value>'زمان شروع امروز ساعت' HH:mm</value>
   </data>
   <data name="StartVoipChannel" xml:space="preserve">
     <value>شروع پخش زنده</value>
@@ -12839,7 +13038,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>قابلیت‌های تلگرام</value>
   </data>
   <data name="TelegramFeaturesUrl" xml:space="preserve">
-    <value>https://t.me/TelegramTips</value>
+    <value>https://t.me/TelegramTipsFA</value>
   </data>
   <data name="TelegramPassport" xml:space="preserve">
     <value>پاسپورت تلگرام</value>
@@ -12872,6 +13071,12 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="TerminateAllWebSessions" xml:space="preserve">
     <value>قطع اتصال تمامی وبسایت‌ها</value>
+  </data>
+  <data name="TerminateOldSessionHeader" xml:space="preserve">
+    <value>پایان دادن خودکار به نشست‌های قدیمی</value>
+  </data>
+  <data name="TerminateSession" xml:space="preserve">
+    <value>پایان دادن به نشست</value>
   </data>
   <data name="TerminateSessionInfo" xml:space="preserve">
     <value>برای پایان دادن به یک نشست بر روی آن بزنید.</value>
@@ -13139,7 +13344,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>در ⁨{0}⁩</value>
   </data>
   <data name="TodayAtFormattedWithToday" xml:space="preserve">
-    <value>امروز در ⁨{0}⁩</value>
+    <value>امروز ساعت ⁨{0}⁩</value>
   </data>
   <data name="TooManyCommunities" xml:space="preserve">
     <value>کانال‌ها و گروه‌های بیش از حد</value>
@@ -13254,6 +13459,12 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="TypePrivateGroup" xml:space="preserve">
     <value>خصوصی</value>
+  </data>
+  <data name="TypePrivateGroupRestrictedForwards" xml:space="preserve">
+    <value>خصوصی محدود</value>
+  </data>
+  <data name="TypePrivateRestrictedForwards" xml:space="preserve">
+    <value>خصوصی محدود</value>
   </data>
   <data name="TypePublic" xml:space="preserve">
     <value>عمومی</value>
@@ -13417,6 +13628,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="UseDifferentThemeInfo" xml:space="preserve">
     <value>شما همچنین می‌توانید از یک پوسته سفارشی موجود به عنوان پایه پوسته خود استفاده کنید.</value>
   </data>
+  <data name="UseFileManger" xml:space="preserve">
+    <value>استفاده از برنامه دیگر</value>
+  </data>
   <data name="UseLessDataAlways" xml:space="preserve">
     <value>همیشه</value>
   </data>
@@ -13476,6 +13690,15 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="UseProxyUsername" xml:space="preserve">
     <value>نام کاربری</value>
+  </data>
+  <data name="UserAcceptedToGroupAction" xml:space="preserve">
+    <value>⁨un1⁩ به گروه پذیرفته شد</value>
+  </data>
+  <data name="UserAcceptedToGroupPush" xml:space="preserve">
+    <value>⁨{0}⁩ به گروه پذیرفته شد</value>
+  </data>
+  <data name="UserAcceptedToGroupPushWithGroup" xml:space="preserve">
+    <value>⁨{1}⁩|⁨{0}⁩ به گروه پذیرفته شد</value>
   </data>
   <data name="UserBio" xml:space="preserve">
     <value>بیوگرافی</value>
@@ -14718,6 +14941,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="Warmth" xml:space="preserve">
     <value>گرما</value>
+  </data>
+  <data name="Warning" xml:space="preserve">
+    <value>هشدار</value>
   </data>
   <data name="WebSessionsTitle" xml:space="preserve">
     <value>وارد شده با حساب کاربری تلگرام</value>

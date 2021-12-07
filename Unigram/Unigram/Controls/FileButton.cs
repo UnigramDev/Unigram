@@ -1,7 +1,6 @@
 ﻿using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Numerics;
-using Unigram.Controls.Messages.Content;
 using Unigram.Converters;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -11,6 +10,22 @@ using Windows.UI.Xaml.Hosting;
 
 namespace Unigram.Controls
 {
+    public enum MessageContentState
+    {
+        None,
+        Download,
+        Downloading,
+        Uploading,
+        Confirm,
+        Document,
+        Photo,
+        Animation,
+        Ttl,
+        Play,
+        Pause,
+        Theme,
+    }
+
     public class FileButton : GlyphHyperlinkButton
     {
         private TextBlock _label1;

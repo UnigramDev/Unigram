@@ -11315,7 +11315,7 @@ Neem niet op, Telegram verwerkt alles automatisch.</value>
   <data name="SetTimer" xml:space="preserve">
     <value>Zelfvernietigingstimer instellen</value>
   </data>
-  <data name="SETTINGS" xml:space="preserve">
+  <data name="Settings" xml:space="preserve">
     <value>Instellingen</value>
   </data>
   <data name="SettingsDebug" xml:space="preserve">

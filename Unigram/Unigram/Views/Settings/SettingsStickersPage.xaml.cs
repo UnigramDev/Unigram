@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
-using Unigram.Services;
 using Unigram.Services.Settings;
 using Unigram.ViewModels.Settings;
 using Windows.UI.Composition;
@@ -20,11 +18,9 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Settings
 {
-    public sealed partial class SettingsStickersPage : HostedPage, IHandle<UpdateFile>
+    public sealed partial class SettingsStickersPage : HostedPage
     {
         public SettingsStickersViewModel ViewModel => DataContext as SettingsStickersViewModel;
-
-        private readonly FileContext<StickerSetInfo> _filesMap = new FileContext<StickerSetInfo>();
 
         private readonly Dictionary<string, DataTemplate> _typeToTemplateMapping = new Dictionary<string, DataTemplate>();
         private readonly Dictionary<string, HashSet<SelectorItem>> _typeToItemHashSetMapping = new Dictionary<string, HashSet<SelectorItem>>();
@@ -181,7 +177,7 @@ namespace Unigram.Views.Settings
                     lottie.Source = UriEx.ToLocal(file.Local.Path);
                 }
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+            else
             {
                 if (content.Children[0] is Image photo)
                 {
@@ -195,8 +191,12 @@ namespace Unigram.Views.Settings
                 CompositionPathParser.ParseThumbnail(outline, out ShapeVisual visual, false);
                 ElementCompositionPreview.SetElementChildVisual(content.Children[0], visual);
 
-                _filesMap[file.Id].Add(stickerSet);
-                ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                UpdateManager.Subscribe(content, ViewModel.ProtoService, file, UpdateFile, true);
+
+                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                {
+                    ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                }
             }
 
             args.Handled = true;
@@ -235,45 +235,23 @@ namespace Unigram.Views.Settings
 
         #region Handle
 
-        public void Handle(UpdateFile update)
+        private async void UpdateFile(object target, File file)
         {
-            if (!update.File.Local.IsDownloadingCompleted)
+            var content = target as Grid;
+            if (content == null)
             {
                 return;
             }
 
-            if (_filesMap.TryGetValue(update.File.Id, out List<StickerSetInfo> stickers))
+            if (content.Children[0] is Image photo)
             {
-                this.BeginOnUIThread(async () =>
-                {
-                    foreach (var stickerSet in stickers.ToImmutableHashSet())
-                    {
-                        stickerSet.UpdateFile(update.File);
-
-                        var container = List.ContainerFromItem(stickerSet) as SelectorItem;
-                        if (container == null)
-                        {
-                            continue;
-                        }
-
-                        var content = container.ContentTemplateRoot as Grid;
-                        if (content == null)
-                        {
-                            continue;
-                        }
-
-                        if (content.Children[0] is Image photo)
-                        {
-                            photo.Source = await PlaceholderHelper.GetWebPFrameAsync(update.File.Local.Path, 48);
-                            ElementCompositionPreview.SetElementChildVisual(content.Children[0], null);
-                        }
-                        else if (content.Children[0] is LottieView lottie)
-                        {
-                            lottie.Source = UriEx.ToLocal(update.File.Local.Path);
-                            _handler.ThrottleVisibleItems();
-                        }
-                    }
-                });
+                photo.Source = await PlaceholderHelper.GetWebPFrameAsync(file.Local.Path, 48);
+                ElementCompositionPreview.SetElementChildVisual(content.Children[0], null);
+            }
+            else if (content.Children[0] is LottieView lottie)
+            {
+                lottie.Source = UriEx.ToLocal(file.Local.Path);
+                _handler.ThrottleVisibleItems();
             }
         }
 

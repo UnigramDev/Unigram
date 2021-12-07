@@ -12,7 +12,7 @@ using Windows.UI.Xaml.Documents;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed class WebPageContent : WebPageContentBase, IContentWithFile, IContentWithPlayback
+    public sealed class WebPageContent : WebPageContentBase, IContent, IContentWithPlayback
     {
         private CancellationTokenSource _instantViewToken;
 
@@ -104,8 +104,6 @@ namespace Unigram.Controls.Messages.Content
             }
         }
 
-        public void UpdateMessageContentOpened(MessageViewModel message) { }
-
         private void UpdateContent(MessageViewModel message, WebPage webPage)
         {
             if (Media.Child is IContent content && content.IsValid(message.Content, false))
@@ -196,14 +194,6 @@ namespace Unigram.Controls.Messages.Content
                 {
                     Media.Child = null;
                 }
-            }
-        }
-
-        public void UpdateFile(MessageViewModel message, File file)
-        {
-            if (Media?.Child is IContentWithFile content && content.IsValid(message.Content, false))
-            {
-                content.UpdateFile(message, file);
             }
         }
 

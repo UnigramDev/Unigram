@@ -1,7 +1,6 @@
 ﻿using System;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls.Messages.Content;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Gallery;
@@ -21,6 +20,10 @@ namespace Unigram.Controls.Gallery
         private GalleryContent _item;
 
         public GalleryContent Item => _item;
+
+        private string _fileToken;
+        private string _thumbnailToken;
+
         public Grid Presenter => Panel;
 
         private bool _areInteractionsEnabled = true;
@@ -53,31 +56,30 @@ namespace Unigram.Controls.Gallery
                 return;
             }
 
-            var data = item.GetFile();
-            var thumb = item.GetThumbnail();
+            var file = item.GetFile();
+            var thumbnail = item.GetThumbnail();
 
             Panel.Constraint = item.Constraint;
             Panel.InvalidateMeasure();
 
-            if (thumb != null && (item.IsVideo || (item.IsPhoto && !data.Local.IsDownloadingCompleted)))
-            {
-                UpdateThumbnail(item, thumb);
-            }
+            UpdateManager.Subscribe(this, delegato.ProtoService, file, ref _fileToken, UpdateFile);
+            UpdateFile(item, file);
 
-            UpdateFile(item, data);
+            if (thumbnail != null && (item.IsVideo || (item.IsPhoto && !file.Local.IsDownloadingCompleted)))
+            {
+                UpdateThumbnail(item, thumbnail, true);
+            }
         }
 
-        public async void UpdateFile(GalleryContent item, File file)
+        private void UpdateFile(object target, File file)
         {
-            var data = item.GetFile();
-            var thumb = item.GetThumbnail();
+            UpdateFile(_item, file);
+        }
 
-            if (thumb != null && thumb.Id != data.Id && thumb.Id == file.Id)
-            {
-                UpdateThumbnail(item, file);
-                return;
-            }
-            else if (data == null || data.Id != file.Id)
+        private async void UpdateFile(GalleryContent item, File file)
+        {
+            var reference = item.GetFile();
+            if (reference == null || reference.Id != file.Id)
             {
                 return;
             }
@@ -140,16 +142,26 @@ namespace Unigram.Controls.Gallery
             }
         }
 
-        private void UpdateThumbnail(GalleryContent item, File file)
+        private void UpdateThumbnail(object target, File file)
+        {
+            UpdateThumbnail(_item, file, false);
+        }
+
+        private void UpdateThumbnail(GalleryContent item, File file, bool download)
         {
             if (file.Local.IsDownloadingCompleted)
             {
                 //Texture.Source = new BitmapImage(UriEx.GetLocal(file.Local.Path));
                 Panel.Background = new ImageBrush { ImageSource = PlaceholderHelper.GetBlurred(file.Local.Path), Stretch = Stretch.UniformToFill };
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+            else if (download)
             {
-                item.ProtoService.DownloadFile(file.Id, 1);
+                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                {
+                    item.ProtoService.DownloadFile(file.Id, 1);
+                }
+
+                UpdateManager.Subscribe(this, _delegate.ProtoService, file, ref _thumbnailToken, UpdateThumbnail, true);
             }
         }
 

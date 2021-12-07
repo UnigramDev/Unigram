@@ -498,7 +498,7 @@ namespace Unigram.Views.Popups
             var photo = content.Photo;
             var title = content.Children[1] as TextBlock;
 
-            photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 36);
+            photo.SetChat(ViewModel.ProtoService, chat, 36);
             title.Text = ViewModel.ProtoService.GetTitle(chat);
         }
 
@@ -605,11 +605,11 @@ namespace Unigram.Views.Popups
                     var photo = content.Children[0] as ProfilePicture;
                     if (result.Chat != null)
                     {
-                        photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, result.Chat, 36);
+                        photo.SetChat(ViewModel.ProtoService, result.Chat, 36);
                     }
                     else if (result.User != null)
                     {
-                        photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, result.User, 36);
+                        photo.SetUser(ViewModel.ProtoService, result.User, 36);
                     }
                 }
 
@@ -637,7 +637,7 @@ namespace Unigram.Views.Popups
             var photo = grid.Children[0] as ProfilePicture;
             var title = content.Children[1] as TextBlock;
 
-            photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 48);
+            photo.SetChat(ViewModel.ProtoService, chat, 48);
             title.Text = ViewModel.ProtoService.GetTitle(chat, true);
 
             var badge = grid.Children[1] as Border;

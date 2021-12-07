@@ -30,20 +30,18 @@ namespace Unigram.Controls
 
             _parent = parent;
             ElementCompositionPreview.SetIsTranslationEnabled(parent, true);
+        }
 
-            RecentUsers.GetPicture = sender =>
+        private void RecentUsers_RecentUserHeadChanged(ProfilePicture sender, MessageSender messageSender)
+        {
+            if (_protoService.TryGetUser(messageSender, out User user))
             {
-                if (protoService.TryGetUser(sender, out User user))
-                {
-                    return PlaceholderHelper.GetUser(protoService, user, 32);
-                }
-                else if (protoService.TryGetChat(sender, out Chat chat))
-                {
-                    return PlaceholderHelper.GetChat(protoService, chat, 32);
-                }
-
-                return null;
-            };
+                sender.SetUser(_protoService, user, 32);
+            }
+            else if (_protoService.TryGetChat(messageSender, out Chat chat))
+            {
+                sender.SetChat(_protoService, chat, 32);
+            }
         }
 
         public bool UpdateChat(Chat chat)
@@ -72,56 +70,14 @@ namespace Unigram.Controls
                 var destination = RecentUsers.Items;
                 var origin = chat.PendingJoinRequests.UserIds;
 
-                if (_chat?.Id == chat.Id)
+                if (destination.Count > 0 && _chat?.Id == chat.Id)
                 {
-                    for (int i = 0; i < origin.Count; i++)
-                    {
-                        var item = origin[i];
-                        var index = -1;
-
-                        for (int j = 0; j < destination.Count; j++)
-                        {
-                            if (destination[j] is MessageSenderUser senderUser && senderUser.UserId == item)
-                            {
-                                index = j;
-                                break;
-                            }
-                        }
-
-                        if (index > -1 && index != i)
-                        {
-                            destination.Move(index, Math.Min(i, destination.Count));
-                        }
-                        else if (index == -1)
-                        {
-                            destination.Insert(Math.Min(i, destination.Count), new MessageSenderUser(item));
-                        }
-                    }
-
-                    for (int i = 0; i < destination.Count; i++)
-                    {
-                        var item = destination[i] as MessageSenderUser;
-                        var index = -1;
-
-                        for (int j = 0; j < origin.Count; j++)
-                        {
-                            if (origin[j] == item.UserId)
-                            {
-                                index = j;
-                                break;
-                            }
-                        }
-
-                        if (index == -1)
-                        {
-                            destination.Remove(item);
-                            i--;
-                        }
-                    }
+                    destination.ReplaceDiff(origin.Select(x => new MessageSenderUser(x)));
                 }
                 else
                 {
-                    RecentUsers.Items.ReplaceWith(origin.Select(x => new MessageSenderUser(x)));
+                    destination.Clear();
+                    destination.AddRange(origin.Select(x => new MessageSenderUser(x)));
                 }
             }
             else

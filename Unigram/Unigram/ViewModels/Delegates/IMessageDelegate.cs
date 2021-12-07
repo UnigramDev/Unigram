@@ -9,7 +9,7 @@ namespace Unigram.ViewModels.Delegates
     {
         IEventAggregator Aggregator { get; }
 
-        bool CanBeDownloaded(MessageViewModel message);
+        bool CanBeDownloaded(object content, File file);
         void DownloadFile(MessageViewModel message, File file);
 
         void ReplyToMessage(MessageViewModel message);
@@ -29,6 +29,8 @@ namespace Unigram.ViewModels.Delegates
         void Call(MessageViewModel message, bool video);
 
         void VotePoll(MessageViewModel message, IList<PollOption> option);
+
+        void ViewVisibleMessages(bool intermediate);
 
         void OpenUsername(string username);
         void OpenUser(long userId);

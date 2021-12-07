@@ -444,7 +444,7 @@
     <value>Fes una foto més</value>
   </data>
   <data name="AccDescrUploadProgress" xml:space="preserve">
-    <value>Carregat {0} de {1}</value>
+    <value>S'han pujat {0} de {1}</value>
   </data>
   <data name="AccDescrUserOptions" xml:space="preserve">
     <value>Opcions de l'usuari</value>
@@ -487,6 +487,18 @@
   </data>
   <data name="AcceptCall" xml:space="preserve">
     <value>Accepta</value>
+  </data>
+  <data name="AcceptCalls" xml:space="preserve">
+    <value>Accepta trucades</value>
+  </data>
+  <data name="AcceptCallsChatsDescription" xml:space="preserve">
+    <value>Usa el dispositiu per a les trucades</value>
+  </data>
+  <data name="AcceptSecretChats" xml:space="preserve">
+    <value>Accepta xats secrets</value>
+  </data>
+  <data name="AcceptSecretChatsDescription" xml:space="preserve">
+    <value>Useu el dispositiu per als xats secrets</value>
   </data>
   <data name="AccessError" xml:space="preserve">
     <value>Error d'accés</value>
@@ -643,6 +655,18 @@
   </data>
   <data name="ActionEditedInviteLinkToSameClickable" xml:space="preserve">
     <value>un1 ha editat l’enllaç un2</value>
+  </data>
+  <data name="ActionForwardsEnabledChannel" xml:space="preserve">
+    <value>un1 ha activat el reenviament des del canal</value>
+  </data>
+  <data name="ActionForwardsEnabledGroup" xml:space="preserve">
+    <value>un1 ha activat el reenviament des del grup</value>
+  </data>
+  <data name="ActionForwardsRestrictedChannel" xml:space="preserve">
+    <value>un1 ha restringit el reenviament des del canal</value>
+  </data>
+  <data name="ActionForwardsRestrictedGroup" xml:space="preserve">
+    <value>un1 ha restringit el reenviament des del grup</value>
   </data>
   <data name="ActionGroupCallEnded" xml:space="preserve">
     <value>El xat de vídeo ha finalitzat ({0})</value>
@@ -912,7 +936,7 @@
     <value>S'ha afegit {0} a les màscares.</value>
   </data>
   <data name="AddMember" xml:space="preserve">
-    <value>Afegeix un membre</value>
+    <value>Afegeix membres</value>
   </data>
   <data name="AddMembersAlertCountText" xml:space="preserve">
     <value>Segur que voleu afegir {0} al **{1}**?</value>
@@ -1027,6 +1051,9 @@
   </data>
   <data name="AllMedia" xml:space="preserve">
     <value>Tots els fitxers</value>
+  </data>
+  <data name="Allow" xml:space="preserve">
+    <value>Permet</value>
   </data>
   <data name="AllowCustomQuickReply" xml:space="preserve">
     <value>Permet personalitzar</value>
@@ -1172,6 +1199,9 @@
   <data name="AppFolderInfo" xml:space="preserve">
     <value>Navega per la carpeta de l'aplicació</value>
   </data>
+  <data name="Application" xml:space="preserve">
+    <value>Aplicació</value>
+  </data>
   <data name="ApplyLocalizationFile" xml:space="preserve">
     <value>Aplica el paquet de llengua</value>
   </data>
@@ -1186,6 +1216,9 @@
   </data>
   <data name="AppNameBeta" xml:space="preserve">
     <value>Telegram</value>
+  </data>
+  <data name="ApproveNewMembers" xml:space="preserve">
+    <value>Sol·licita aprovació</value>
   </data>
   <data name="ApproveNewMembersDescription" xml:space="preserve">
     <value>Activeu-ho si voleu que els usuaris entrin només quan els administradors ho aprovin.</value>
@@ -1622,6 +1655,12 @@ Vegeu les <![CDATA[<a href="https://telegram.org/faq#general-questions">PMF del 
   <data name="AuthAnotherClientInfo3" xml:space="preserve">
     <value>Escanegeu el codi QR per a connectar el compte.</value>
   </data>
+  <data name="AuthAnotherClientInfo4" xml:space="preserve">
+    <value>Enllaceu el *Telegram Desktop* o el *Telegram Web* escanejant el QR.</value>
+  </data>
+  <data name="AuthAnotherClientInfo5" xml:space="preserve">
+    <value>Aneu a *getdesktop.telegram.org* o *web.telegram.org* per a obtenir un codi QR</value>
+  </data>
   <data name="AuthAnotherClientNotFound" xml:space="preserve">
     <value>No s'ha trobat cap testimoni d'autorització</value>
   </data>
@@ -1638,6 +1677,9 @@ Vegeu les <![CDATA[<a href="https://telegram.org/faq#general-questions">PMF del 
     <value>Qualsevol pot iniciar sessió en el vostre compte del Telegram amb aquest codi.
 
 Per a confirmar-ho, aneu a la Configuració > Dispositius > Escaneja el QR i escanegeu el codi.</value>
+  </data>
+  <data name="AuthAnotherWebClientUrl" xml:space="preserve">
+    <value>https://web.telegram.org/</value>
   </data>
   <data name="AutoDelete1Month" xml:space="preserve">
     <value>1 mes</value>
@@ -2183,8 +2225,14 @@ Ocàs: {1}</value>
   <data name="Brown" xml:space="preserve">
     <value>Marró</value>
   </data>
+  <data name="BrowseThemes" xml:space="preserve">
+    <value>Exploreu els temes</value>
+  </data>
   <data name="BubbleRadius" xml:space="preserve">
     <value>Cantons del missatges</value>
+  </data>
+  <data name="BuildMyOwnTheme" xml:space="preserve">
+    <value>Crea un tema propi</value>
   </data>
   <data name="BuiltInThemes" xml:space="preserve">
     <value>Temes integrats</value>
@@ -2356,7 +2404,7 @@ Si no en sabeu res, introduïu el codi que us hem enviat per SMS. També ho pode
     <value>Cancel·lació</value>
   </data>
   <data name="CancelForwardChat" xml:space="preserve">
-    <value>Què voleu fer amb {0} de {1}?</value>
+    <value>Què voleu fer amb {0} de **{1}**?</value>
   </data>
   <data name="CancelForwarding" xml:space="preserve">
     <value>Cancel·la el reenviament</value>
@@ -2407,10 +2455,10 @@ Si no en sabeu res, introduïu el codi que us hem enviat per SMS. També ho pode
     <value/>
   </data>
   <data name="CanJoin_one" xml:space="preserve">
-    <value>se n'hi pot unir {0}</value>
+    <value>{0} ús</value>
   </data>
   <data name="CanJoin_other" xml:space="preserve">
-    <value>se n'hi poden unir {0}</value>
+    <value>{0} usos</value>
   </data>
   <data name="CanJoin_two" xml:space="preserve">
     <value/>
@@ -3117,6 +3165,21 @@ Longitud mínima: 5 caràcters.</value>
   <data name="ChatWasMovedToMainList" xml:space="preserve">
     <value>El xat s'ha mogut a la llista principal.</value>
   </data>
+  <data name="ChatWithAdminChannelTitle" xml:space="preserve">
+    <value>Resposta a la sol·licitud</value>
+  </data>
+  <data name="ChatWithAdminGroupTitle" xml:space="preserve">
+    <value>Resposta a la sol·licitud</value>
+  </data>
+  <data name="ChatWithAdminMessage" xml:space="preserve">
+    <value>Heu rebut aquest missatge perquè vau demanar entrar a **{0}** {1}.</value>
+  </data>
+  <data name="ChatWithChannelAdmin" xml:space="preserve">
+    <value>{0} és administrador en {1}, un canal al qual heu demanat entrar.</value>
+  </data>
+  <data name="ChatWithGroupAdmin" xml:space="preserve">
+    <value>{0} és administrador en {1}, un grup al qual heu demanat entrar.</value>
+  </data>
   <data name="ChatYourSelf" xml:space="preserve">
     <value>reenvieu aquí per a desar</value>
   </data>
@@ -3260,6 +3323,12 @@ Longitud mínima: 5 caràcters.</value>
   </data>
   <data name="ClearHistoryCache" xml:space="preserve">
     <value>Buida la memòria</value>
+  </data>
+  <data name="ClearHistoryForTheseDays" xml:space="preserve">
+    <value>Esborra l'historial d'aquests dies</value>
+  </data>
+  <data name="ClearHistoryForThisDay" xml:space="preserve">
+    <value>Esborra l'historial d'aquest dia</value>
   </data>
   <data name="ClearHistoryOptionAlso" xml:space="preserve">
     <value>Esborra'l també per a {0}</value>
@@ -3772,10 +3841,10 @@ Sempre podreu tornar al tema predeterminat de Telegram aquí.</value>
     <value/>
   </data>
   <data name="DaysLeft_one" xml:space="preserve">
-    <value>resta {0} dia</value>
+    <value>queda {0} dia</value>
   </data>
   <data name="DaysLeft_other" xml:space="preserve">
-    <value>resten {0} dies</value>
+    <value>queden {0} dies</value>
   </data>
   <data name="DaysLeft_two" xml:space="preserve">
     <value/>
@@ -3922,13 +3991,13 @@ Sempre podreu tornar al tema predeterminat de Telegram aquí.</value>
     <value>Això eliminarà tots els enllaços revocats.</value>
   </data>
   <data name="DeleteAllRevokedLinks" xml:space="preserve">
-    <value>Eliminació dels revocats</value>
+    <value>Elimina els enllaços revocats</value>
   </data>
   <data name="DeleteAndExit" xml:space="preserve">
-    <value>Elimina i surt del grup</value>
+    <value>Elimina i abandona el grup</value>
   </data>
   <data name="DeleteAndExitButton" xml:space="preserve">
-    <value>Elimina i deixa el grup</value>
+    <value>Elimina i abandona el grup</value>
   </data>
   <data name="DeleteAndStop" xml:space="preserve">
     <value>Elimina i atura</value>
@@ -3975,6 +4044,24 @@ Sempre podreu tornar al tema predeterminat de Telegram aquí.</value>
   <data name="DeleteContact" xml:space="preserve">
     <value>Elimina el contacte</value>
   </data>
+  <data name="DeleteDays_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="DeleteDays_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="DeleteDays_one" xml:space="preserve">
+    <value>Elimina {0} dia</value>
+  </data>
+  <data name="DeleteDays_other" xml:space="preserve">
+    <value>Elimina {0} dies</value>
+  </data>
+  <data name="DeleteDays_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="DeleteDays_zero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="DeletedFromYourContacts" xml:space="preserve">
     <value>S'ha eliminat {0} dels contactes</value>
   </data>
@@ -3998,6 +4085,9 @@ Sempre podreu tornar al tema predeterminat de Telegram aquí.</value>
   </data>
   <data name="DeleteGroupForAll" xml:space="preserve">
     <value>Elimina el grup per a tothom</value>
+  </data>
+  <data name="DeleteHistoryByDaysMessage" xml:space="preserve">
+    <value>Segur que voleu eliminar tots els missatges dels dies seleccionats?</value>
   </data>
   <data name="DeleteLink" xml:space="preserve">
     <value>Eliminació</value>
@@ -4136,6 +4226,9 @@ Sempre podreu tornar al tema predeterminat de Telegram aquí.</value>
   </data>
   <data name="DidNotGetTheCode" xml:space="preserve">
     <value>No heu rebut el codi?</value>
+  </data>
+  <data name="DidNotGetTheCodePhone" xml:space="preserve">
+    <value>Obteniu el codi en aquest telèfon</value>
   </data>
   <data name="DidNotGetTheCodeSms" xml:space="preserve">
     <value>Envia el codi per SMS</value>
@@ -4282,6 +4375,9 @@ Qualsevol subscriptor podrà veure els missatges d'aquest grup.</value>
   <data name="DoNoSetTheme" xml:space="preserve">
     <value>No l'estableixis</value>
   </data>
+  <data name="DontAskAgain" xml:space="preserve">
+    <value>No ho tornis a demanar</value>
+  </data>
   <data name="Draft" xml:space="preserve">
     <value>Esborrany</value>
   </data>
@@ -4399,11 +4495,14 @@ Qualsevol subscriptor podrà veure els missatges d'aquest grup.</value>
   <data name="EditContact" xml:space="preserve">
     <value>Edita el contacte</value>
   </data>
+  <data name="EditCurrentTheme" xml:space="preserve">
+    <value>Edita el tema actual</value>
+  </data>
   <data name="EditedMessage" xml:space="preserve">
     <value>editat</value>
   </data>
   <data name="EditLink" xml:space="preserve">
-    <value>Edició de l'enllaç</value>
+    <value>Edita l'enllaç</value>
   </data>
   <data name="EditMessage" xml:space="preserve">
     <value>Edita el missatge</value>
@@ -4610,7 +4709,7 @@ Més informació a telegram.org</value>
     <value>Millora</value>
   </data>
   <data name="EnjoyngAnimations" xml:space="preserve">
-    <value>**oo** mirant els {0}</value>
+    <value>**oo** mirant {0}</value>
   </data>
   <data name="EnterChannelName" xml:space="preserve">
     <value>Nom del canal</value>
@@ -4759,17 +4858,15 @@ Introduïu el nom del tema:</value>
     <value>un1 ha editat aquest missatge:</value>
   </data>
   <data name="EventLogEmpty" xml:space="preserve">
-    <value>**Encara no hi ha cap acció**
+    <value>**No hi ha accions recents**
 
-Els administradors del grup
-no han fet cap acció de servei
-en les últimes 48 hores.</value>
+Ningú ha fet cap acció destacada en el grup en les últimes 48 hores.</value>
   </data>
   <data name="EventLogEmptyChannel" xml:space="preserve">
-    <value>**Encara no hi ha cap acció**
+    <value>**No hi ha accions recents**
 
-Els administradors del canal
-no han fet cap acció de servei
+L'administració del canal
+no ha fet cap acció destacada
 en les últimes 48 hores.</value>
   </data>
   <data name="EventLogEmptySearch" xml:space="preserve">
@@ -4827,7 +4924,7 @@ que coincideixi amb la cerca.</value>
     <value>un1 s'ha unit al grup</value>
   </data>
   <data name="EventLogInfoDetail" xml:space="preserve">
-    <value>És una llista de les accions destacades dels membres i administradors en les últimes 48 hores.</value>
+    <value>És una llista de les accions destacades dels membres i l'administració en les últimes 48 hores.</value>
   </data>
   <data name="EventLogInfoDetailChannel" xml:space="preserve">
     <value>Això és una llista de totes les accions del servei fetes pels administradors del canal en les últimes 48 hores.</value>
@@ -4965,6 +5062,9 @@ Durada: {1}</value>
   </data>
   <data name="EventLogSelectedEvents" xml:space="preserve">
     <value>accions seleccionades</value>
+  </data>
+  <data name="EventLogSendMessages" xml:space="preserve">
+    <value>un1 ha enviat:</value>
   </data>
   <data name="EventLogStartedLiveStream" xml:space="preserve">
     <value>un1 ha iniciat un directe</value>
@@ -5428,6 +5528,30 @@ Durada: {1}</value>
   <data name="FootsShort" xml:space="preserve">
     <value>{0} ft</value>
   </data>
+  <data name="ForceSetPasswordAlertMessage_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ForceSetPasswordAlertMessage_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ForceSetPasswordAlertMessage_one" xml:space="preserve">
+    <value>Voleu continuar sense contrasenya? Si no n'establiu una, només podreu iniciar sessió via SMS una vegada al dia.</value>
+  </data>
+  <data name="ForceSetPasswordAlertMessage_other" xml:space="preserve">
+    <value>Voleu continuar sense contrasenya? Si no n'establiu una, només podreu iniciar sessió via SMS una vegada cada {0} dies.</value>
+  </data>
+  <data name="ForceSetPasswordAlertMessage_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ForceSetPasswordAlertMessage_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ForceSetPasswordCancel" xml:space="preserve">
+    <value>Sí, endavant</value>
+  </data>
+  <data name="ForceSetPasswordContinue" xml:space="preserve">
+    <value>No, vull definir una contrasenya</value>
+  </data>
   <data name="ForgotPassword" xml:space="preserve">
     <value>Heu oblidat la contrasenya?</value>
   </data>
@@ -5725,6 +5849,12 @@ Durada: {1}</value>
   <data name="ForwardSendMessages" xml:space="preserve">
     <value>Envia els missatges</value>
   </data>
+  <data name="ForwardsRestrictedInfoChannel" xml:space="preserve">
+    <value>No es permet copiar ni reenviar en aquest canal.</value>
+  </data>
+  <data name="ForwardsRestrictedInfoGroup" xml:space="preserve">
+    <value>No es permet copiar ni reenviar en aquest grup.</value>
+  </data>
   <data name="ForwardTo" xml:space="preserve">
     <value>Reenvia a...</value>
   </data>
@@ -5865,7 +5995,7 @@ Aquesta acció **no** es pot desfer.</value>
     <value>Deixa'l com a grup normal</value>
   </data>
   <data name="GigagroupConvertCancelHint" xml:space="preserve">
-    <value>Si canvieu d'opinió, aneu a la onfiguració del grup > Permisos.</value>
+    <value>Si canvieu d'opinió, aneu a la configuració del grup > Permisos.</value>
   </data>
   <data name="GigagroupConvertInfo1" xml:space="preserve">
     <value>No hi ha límit de membres.</value>
@@ -6028,9 +6158,9 @@ amb el Telegram?</value>
     <value>Hi ha massa bots en aquest grup.</value>
   </data>
   <data name="GroupUserLeftError" xml:space="preserve">
-    <value>Si una persona ja no forma part d'un grup, heu d'estar en els seus contactes del Telegram per a tornar a afegir-la-hi.
+    <value>Si una persona ja no forma part d'un grup, heu d'afegir-vos mutuament a les vostres agendes per a tornar-la a afegir.
 
-Tingueu present que encara s'hi pot unir amb l'enllaç d'invitació, sempre que no estigui a la llista d'usuaris eliminats.</value>
+Tingueu en compte que s’hi podria unir amb l’enllaç d’invitació del grup sempre que no sigui als usuaris eliminats.</value>
   </data>
   <data name="GrowthChartTitle" xml:space="preserve">
     <value>Creixement</value>
@@ -6161,6 +6291,9 @@ Tingueu present que encara s'hi pot unir amb l'enllaç d'invitació, sempre que 
   <data name="Hybrid" xml:space="preserve">
     <value>Híbrid</value>
   </data>
+  <data name="IfInactiveFor" xml:space="preserve">
+    <value>Si són inactives durant</value>
+  </data>
   <data name="ImagesTab" xml:space="preserve">
     <value>IMATGES</value>
   </data>
@@ -6169,6 +6302,9 @@ Tingueu present que encara s'hi pot unir amb l'enllaç d'invitació, sempre que 
   </data>
   <data name="ImporImportingService" xml:space="preserve">
     <value>S'estan important missatges i fitxers...</value>
+  </data>
+  <data name="ImporImportingStickersService" xml:space="preserve">
+    <value>S'estan important adhesius...</value>
   </data>
   <data name="Import" xml:space="preserve">
     <value>IMPORTA</value>
@@ -6249,20 +6385,50 @@ fins que finalitzi la importació.</value>
   <data name="ImportStickers" xml:space="preserve">
     <value>IMPORTA {0}</value>
   </data>
+  <data name="ImportStickersDoneInfo" xml:space="preserve">
+    <value>Importeu més adhesius al Telegram i compartiu-los amb els amics.</value>
+  </data>
+  <data name="ImportStickersDoneTitle" xml:space="preserve">
+    <value>Els adhesius s'han importat correctament!</value>
+  </data>
+  <data name="ImportStickersEnterName" xml:space="preserve">
+    <value>Introduïu el nom</value>
+  </data>
   <data name="ImportStickersEnterNameInfo" xml:space="preserve">
     <value>Trieu un nom per al paquet.</value>
   </data>
   <data name="ImportStickersEnterUrlInfo" xml:space="preserve">
     <value>Podeu usar a-z, 0-9 i guions baixos.</value>
   </data>
+  <data name="ImportStickersImportingTitle" xml:space="preserve">
+    <value>Importació d'adhesius</value>
+  </data>
   <data name="ImportStickersLinkAvailable" xml:space="preserve">
     <value>Enllaç disponible.</value>
+  </data>
+  <data name="ImportStickersLinkChecking" xml:space="preserve">
+    <value>S'està comprovant l'enllaç...</value>
   </data>
   <data name="ImportStickersLinkInvalid" xml:space="preserve">
     <value>L'enllaç no és vàlid.</value>
   </data>
+  <data name="ImportStickersLinkInvalidLong" xml:space="preserve">
+    <value>L'enllaç no pot excedir els 32 caràcters.</value>
+  </data>
+  <data name="ImportStickersLinkInvalidShort" xml:space="preserve">
+    <value>L'enllaç ha de tenir 5 caràcters com a mínim.</value>
+  </data>
   <data name="ImportStickersLinkTaken" xml:space="preserve">
     <value>L'enllaç ja es troba en ús.</value>
+  </data>
+  <data name="ImportStickersProcessing" xml:space="preserve">
+    <value>S'estan processant els adhesius...</value>
+  </data>
+  <data name="ImportStickersRemove" xml:space="preserve">
+    <value>ELIMINA DE LA IMPORTACIÓ</value>
+  </data>
+  <data name="ImportStickersRemoveMenu" xml:space="preserve">
+    <value>Elimina dels importats</value>
   </data>
   <data name="ImportToChat" xml:space="preserve">
     <value>Do you want to import messages from **{0}** to the group **{1}**?
@@ -6477,11 +6643,14 @@ Els missatges s'importaran amb la data actual, però també inclouran les marque
   <data name="InvoiceCantSendSecretChat" xml:space="preserve">
     <value>No es poden enviar factures als xats secrets.</value>
   </data>
+  <data name="IpAddress" xml:space="preserve">
+    <value>Adreça IP</value>
+  </data>
   <data name="IsChoosingSticker" xml:space="preserve">
     <value>{0} està triant un adhesiu</value>
   </data>
   <data name="IsEnjoyngAnimations" xml:space="preserve">
-    <value>{0} està **oo** mirant els {1}</value>
+    <value>{0} està **oo** mirant {1}</value>
   </data>
   <data name="IsRecordingAudio" xml:space="preserve">
     <value>{0} està enregistrant un missatge de veu...</value>
@@ -6539,6 +6708,9 @@ Els missatges s'importaran amb la data actual, però també inclouran les marque
   </data>
   <data name="items_zero" xml:space="preserve">
     <value/>
+  </data>
+  <data name="IUnderstand" xml:space="preserve">
+    <value>Ho entenc</value>
   </data>
   <data name="IVInteractionsChartTitle" xml:space="preserve">
     <value>Interaccions VI</value>
@@ -6809,6 +6981,9 @@ Aquest enllaç només funcionarà per als membres del xat.</value>
   <data name="LinkCreatedeBy" xml:space="preserve">
     <value>Enllaç creat per</value>
   </data>
+  <data name="LinkDesktopDevice" xml:space="preserve">
+    <value>Enllaça un dispositiu</value>
+  </data>
   <data name="LinkedChannel" xml:space="preserve">
     <value>Canal enllaçat</value>
   </data>
@@ -6969,6 +7144,9 @@ Això pot trigar uns minuts.</value>
   </data>
   <data name="LocatedChannelsTooMuch" xml:space="preserve">
     <value>L'usuari ja té massa grups basats en la ubicació. Demaneu-li que primer elimini alguns dels que té.</value>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>Ubicació basada en l'adreça IP</value>
   </data>
   <data name="LocationNotifiation" xml:space="preserve">
     <value>Alerta de proximitat</value>
@@ -7369,10 +7547,10 @@ Longitud mínima: 5 caràcters.</value>
     <value>Autodestrucció</value>
   </data>
   <data name="MessageLifetimeChanged" xml:space="preserve">
-    <value>{0} ha establert l'autodestrucció a {1}</value>
+    <value>{0} ha definit l'autodestrucció en {1}</value>
   </data>
   <data name="MessageLifetimeChangedOutgoing" xml:space="preserve">
-    <value>Heu establert l'autodestrucció a {0}</value>
+    <value>Heu definit l'autodestrucció en {0}</value>
   </data>
   <data name="MessageLifetimePhoto" xml:space="preserve">
     <value>Si establiu un temps, la foto s'autodestruirà en mostrar-se.</value>
@@ -7506,6 +7684,24 @@ Longitud mínima: 5 caràcters.</value>
   <data name="MessagesDeletedHint_zero" xml:space="preserve">
     <value/>
   </data>
+  <data name="MessagesDeletedUndo_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagesDeletedUndo_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagesDeletedUndo_one" xml:space="preserve">
+    <value>Missatges d'1 dia eliminats</value>
+  </data>
+  <data name="MessagesDeletedUndo_other" xml:space="preserve">
+    <value>Missatges d'{0} dies eliminats</value>
+  </data>
+  <data name="MessagesDeletedUndo_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagesDeletedUndo_zero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="MessageSeen_few" xml:space="preserve">
     <value/>
   </data>
@@ -7552,7 +7748,7 @@ Longitud mínima: 5 caràcters.</value>
     <value/>
   </data>
   <data name="MessageUnpinnedHint" xml:space="preserve">
-    <value>Missatge no fixat</value>
+    <value>S'ha deixat de fixar</value>
   </data>
   <data name="Meters_few" xml:space="preserve">
     <value/>
@@ -7649,6 +7845,15 @@ Longitud mínima: 5 caràcters.</value>
   </data>
   <data name="MinutesSchedule_zero" xml:space="preserve">
     <value/>
+  </data>
+  <data name="MissedCallDescriptionSubtitle" xml:space="preserve">
+    <value>En uns segons rebreu una trucada breu del:</value>
+  </data>
+  <data name="MissedCallDescriptionSubtitle2" xml:space="preserve">
+    <value>Introduïu els últims dígits del número que us ha trucat</value>
+  </data>
+  <data name="MissedCallDescriptionTitle" xml:space="preserve">
+    <value>Introduïu els dígits que falten</value>
   </data>
   <data name="MobileHidden" xml:space="preserve">
     <value>Mòbil ocult</value>
@@ -8007,11 +8212,14 @@ d'unió al grup.</value>
   <data name="NoMessages" xml:space="preserve">
     <value>Encara no hi ha cap missatge...</value>
   </data>
+  <data name="NoMessagesForThisDay" xml:space="preserve">
+    <value>No hi ha missatges aquest dia</value>
+  </data>
   <data name="NoMessagesGreetingsDescription" xml:space="preserve">
     <value>Envieu un missatge o toqueu la salutació de sota.</value>
   </data>
   <data name="NoOneJoined" xml:space="preserve">
-    <value>No s’ha usat</value>
+    <value>No es va usar</value>
   </data>
   <data name="NoOneJoinedYet" xml:space="preserve">
     <value>No l'ha usat ningú</value>
@@ -8775,6 +8983,9 @@ L'equip del Telegram</value>
   <data name="OpenChannel2" xml:space="preserve">
     <value>Obre el canal</value>
   </data>
+  <data name="OpenChannelPost" xml:space="preserve">
+    <value>MOSTRA LA PUBLICACIÓ</value>
+  </data>
   <data name="OpenFile" xml:space="preserve">
     <value>OBRE EL FITXER</value>
   </data>
@@ -9214,7 +9425,7 @@ La vostra informació, dades personals i documents estan protegits amb xifratge 
 Podeu visitar les *PMF* per a més informació.</value>
   </data>
   <data name="PassportInfoTitle" xml:space="preserve">
-    <value>Què és Telegram Passport?</value>
+    <value>Què és el Telegram Passport?</value>
   </data>
   <data name="PassportInfoUrl" xml:space="preserve">
     <value>https://telegram.org/faq#passport</value>
@@ -11087,7 +11298,7 @@ Gràcies per cooperar!</value>
     <value>Notifica</value>
   </data>
   <data name="RequestedToJoinAt" xml:space="preserve">
-    <value>ha sol·licitat entrar a {0}</value>
+    <value>data de sol·licitud: {0}</value>
   </data>
   <data name="RequestToJoinChannel" xml:space="preserve">
     <value>Sol·licita accés al canal</value>
@@ -11272,6 +11483,15 @@ Si restabliu el compte, tots els vostres missatges i xats s'eliminaran.</value>
   <data name="Restrictions_zero" xml:space="preserve">
     <value/>
   </data>
+  <data name="RestrictSavingContent" xml:space="preserve">
+    <value>No permetis desar el contingut</value>
+  </data>
+  <data name="RestrictSavingContentInfoChannel" xml:space="preserve">
+    <value>Ningú podrà copiar, desar ni reenviar el contingut d'aquest canal.</value>
+  </data>
+  <data name="RestrictSavingContentInfoGroup" xml:space="preserve">
+    <value>Ningú podrà copiar, desar ni reenviar el contingut d'aquest grup.</value>
+  </data>
   <data name="Retry" xml:space="preserve">
     <value>Reintenta</value>
   </data>
@@ -11362,6 +11582,9 @@ El canal «**{1}**» es convertirà en privat.</value>
   </data>
   <data name="SaveToMusic" xml:space="preserve">
     <value>Desa-ho a la música</value>
+  </data>
+  <data name="SavingContentTitle" xml:space="preserve">
+    <value>Desar contingut</value>
   </data>
   <data name="ScamMessage" xml:space="preserve">
     <value>ESTAFA</value>
@@ -11608,6 +11831,12 @@ Potse calgui reiniciar l'aplicació per a aplicar-ho.</value>
   <data name="SelectContacts" xml:space="preserve">
     <value>Seleccioneu contactes</value>
   </data>
+  <data name="SelectDays" xml:space="preserve">
+    <value>Selecció</value>
+  </data>
+  <data name="SelectDaysTooltip" xml:space="preserve">
+    <value>Primer trieu un o més dies.</value>
+  </data>
   <data name="SelectFile" xml:space="preserve">
     <value>Trieu un fitxer</value>
   </data>
@@ -11628,6 +11857,9 @@ Potse calgui reiniciar l'aplicació per a aplicar-ho.</value>
   </data>
   <data name="SelectTheme" xml:space="preserve">
     <value>Seleccioneu</value>
+  </data>
+  <data name="SelectThisDay" xml:space="preserve">
+    <value>Selecciona aquest dia</value>
   </data>
   <data name="Send" xml:space="preserve">
     <value>Envia</value>
@@ -11734,6 +11966,9 @@ Potse calgui reiniciar l'aplicació per a aplicar-ho.</value>
   <data name="SendMessage" xml:space="preserve">
     <value>Envia un missatge</value>
   </data>
+  <data name="SendMessageAsTitle" xml:space="preserve">
+    <value>Escriu com a...</value>
+  </data>
   <data name="SendMessageLocation" xml:space="preserve">
     <value>Envia un missatge</value>
   </data>
@@ -11811,6 +12046,12 @@ No respongueu la trucada, el Telegram ho processarà tot automàticament.</value
   <data name="SessionsInfo" xml:space="preserve">
     <value>Controleu les sessions en altres dispositius.</value>
   </data>
+  <data name="SessionsListInfo" xml:space="preserve">
+    <value>L'aplicació oficial de Telegram està disponible per a Android, iPhone, iPad, Windows, macOS i Linux.</value>
+  </data>
+  <data name="SessionsSelfDestruct" xml:space="preserve">
+    <value>Sessions amb autodestrucció</value>
+  </data>
   <data name="SessionsTitle" xml:space="preserve">
     <value>Sessions actives</value>
   </data>
@@ -11869,10 +12110,13 @@ No respongueu la trucada, el Telegram ho processarà tot automàticament.</value
     <value>Estableix el límit</value>
   </data>
   <data name="SetTimer" xml:space="preserve">
-    <value>Estableix l'autodestrucció</value>
+    <value>Autodestrucció</value>
   </data>
-  <data name="SETTINGS" xml:space="preserve">
+  <data name="Settings" xml:space="preserve">
     <value>Configuració</value>
+  </data>
+  <data name="SettingsBrowseThemes" xml:space="preserve">
+    <value>Explora els temes</value>
   </data>
   <data name="SettingsDebug" xml:space="preserve">
     <value>Depuració</value>
@@ -11894,6 +12138,9 @@ No respongueu la trucada, el Telegram ho processarà tot automàticament.</value
   </data>
   <data name="SettingsSearchFaq" xml:space="preserve">
     <value>PMF</value>
+  </data>
+  <data name="SettingsSwitchToDayMode" xml:space="preserve">
+    <value>Canvia al mode diürn</value>
   </data>
   <data name="SettingsSwitchToNightMode" xml:space="preserve">
     <value>Canvia al mode nocturn</value>
@@ -11992,7 +12239,7 @@ No respongueu la trucada, el Telegram ho processarà tot automàticament.</value
     <value>MULTIMÈDIA</value>
   </data>
   <data name="SharedMediaTab2" xml:space="preserve">
-    <value>Fotos</value>
+    <value>Fotos i vídeos</value>
   </data>
   <data name="SharedMediaTabFull2" xml:space="preserve">
     <value>Fitxers compartits</value>
@@ -12400,7 +12647,7 @@ Els anuncis no haurien de ser sinònim d’abús de la privadesa dels usuaris. R
     <value>Xat de vídeo</value>
   </data>
   <data name="StatisticOpenProfile" xml:space="preserve">
-    <value>Perfil obert</value>
+    <value>Obre el perfil</value>
   </data>
   <data name="StatisticOverview" xml:space="preserve">
     <value>Resum</value>
@@ -12774,7 +13021,7 @@ Si «**Sincronitza els contactes**» està activat, es tornaran a sincronitzar.<
     <value/>
   </data>
   <data name="TelegramFAQ" xml:space="preserve">
-    <value>PMF del Telegram</value>
+    <value>Preguntes freqüents</value>
   </data>
   <data name="TelegramFaqUrl" xml:space="preserve">
     <value>https://telegram.org/faq/es</value>
@@ -12816,6 +13063,12 @@ Aquesta contrasenya també se us demanarà cada vegada que inicieu sessió a Tel
   </data>
   <data name="TerminateAllWebSessions" xml:space="preserve">
     <value>Desconnecta tots els llocs web</value>
+  </data>
+  <data name="TerminateOldSessionHeader" xml:space="preserve">
+    <value>Tanca les sessions automàticament</value>
+  </data>
+  <data name="TerminateSession" xml:space="preserve">
+    <value>Tanca la sessió</value>
   </data>
   <data name="TerminateSessionInfo" xml:space="preserve">
     <value>Toqueu sobre una sessió per finalitzar-la.</value>
@@ -13199,6 +13452,12 @@ Però si no esteu a gust amb les modestes necessitats de Telegram, no ens serà 
   <data name="TypePrivateGroup" xml:space="preserve">
     <value>Privat</value>
   </data>
+  <data name="TypePrivateGroupRestrictedForwards" xml:space="preserve">
+    <value>Privat restringit</value>
+  </data>
+  <data name="TypePrivateRestrictedForwards" xml:space="preserve">
+    <value>Privat restringit</value>
+  </data>
   <data name="TypePublic" xml:space="preserve">
     <value>Públic</value>
   </data>
@@ -13361,6 +13620,9 @@ Però si no esteu a gust amb les modestes necessitats de Telegram, no ens serà 
   <data name="UseDifferentThemeInfo" xml:space="preserve">
     <value>També podeu emprar un tema ja creat com a base per al vostre.</value>
   </data>
+  <data name="UseFileManger" xml:space="preserve">
+    <value>Usa una altra aplicació</value>
+  </data>
   <data name="UseLessDataAlways" xml:space="preserve">
     <value>Sempre</value>
   </data>
@@ -13420,6 +13682,15 @@ Però si no esteu a gust amb les modestes necessitats de Telegram, no ens serà 
   </data>
   <data name="UseProxyUsername" xml:space="preserve">
     <value>Nom d'usuari</value>
+  </data>
+  <data name="UserAcceptedToGroupAction" xml:space="preserve">
+    <value>S'ha acceptat un1 al grup</value>
+  </data>
+  <data name="UserAcceptedToGroupPush" xml:space="preserve">
+    <value>S'ha acceptat {0} al grup</value>
+  </data>
+  <data name="UserAcceptedToGroupPushWithGroup" xml:space="preserve">
+    <value>{1}|S'ha acceptat {0} al grup</value>
   </data>
   <data name="UserBio" xml:space="preserve">
     <value>Biografia</value>
@@ -14659,6 +14930,9 @@ la pantalla</value>
   </data>
   <data name="Warmth" xml:space="preserve">
     <value>Calidesa</value>
+  </data>
+  <data name="Warning" xml:space="preserve">
+    <value>Atenció</value>
   </data>
   <data name="WebSessionsTitle" xml:space="preserve">
     <value>Sessions iniciades amb el Telegram</value>

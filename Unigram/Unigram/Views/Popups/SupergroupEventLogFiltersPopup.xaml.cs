@@ -199,7 +199,7 @@ namespace Unigram.Views.Popups
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.Source = PlaceholderHelper.GetUser(_protoService, user, 32);
+                photo.SetUser(_protoService, user, 32);
             }
 
             if (args.Phase < 2)

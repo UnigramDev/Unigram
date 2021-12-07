@@ -2,7 +2,7 @@
 
 namespace Unigram.ViewModels.Delegates
 {
-    public interface IProfileDelegate : IChatDelegate, IUserDelegate, ISupergroupDelegate, IBasicGroupDelegate, IFileDelegate
+    public interface IProfileDelegate : IChatDelegate, IUserDelegate, ISupergroupDelegate, IBasicGroupDelegate
     {
         void UpdateSecretChat(Chat chat, SecretChat secretChat);
 

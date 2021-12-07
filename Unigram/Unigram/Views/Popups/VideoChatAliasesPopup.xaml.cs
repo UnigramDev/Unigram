@@ -82,12 +82,12 @@ namespace Unigram.Views.Popups
 
             if (_protoService.TryGetUser(messageSender, out User user))
             {
-                photo.Source = PlaceholderHelper.GetUser(_protoService, user, 36);
+                photo.SetUser(_protoService, user, 36);
                 title.Text = user.GetFullName();
             }
             else if (_protoService.TryGetChat(messageSender, out Chat chat))
             {
-                photo.Source = PlaceholderHelper.GetChat(_protoService, chat, 36);
+                photo.SetChat(_protoService, chat, 36);
                 title.Text = _protoService.GetTitle(chat);
             }
         }

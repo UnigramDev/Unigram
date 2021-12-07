@@ -53,6 +53,7 @@ namespace Unigram.ViewModels
         public bool CanBeDeletedOnlyForSelf => _message.CanBeDeletedOnlyForSelf;
         public bool CanBeForwarded => _message.CanBeForwarded;
         public bool CanBeEdited => _message.CanBeEdited;
+        public bool CanBeSaved => _message.CanBeSaved;
         public bool CanGetMessageThread => _message.CanGetMessageThread;
         public bool CanGetStatistics => _message.CanGetStatistics;
         public bool CanGetViewers => _message.CanGetViewers;
@@ -62,11 +63,10 @@ namespace Unigram.ViewModels
         public MessageSendingState SendingState => _message.SendingState;
         public long ChatId => _message.ChatId;
         public long MessageThreadId => _message.MessageThreadId;
-        public MessageSender Sender => _message.Sender;
+        public MessageSender SenderId => _message.SenderId;
         public long Id => _message.Id;
 
         public Photo GetPhoto() => _message.GetPhoto();
-        public File GetAnimation() => _message.GetAnimation();
 
         public bool IsService() => _message.IsService();
         public bool IsSaved() => _message.IsSaved(_protoService.Options.MyId);
@@ -83,11 +83,11 @@ namespace Unigram.ViewModels
 
         public BaseObject GetSender()
         {
-            if (_message.Sender is MessageSenderUser user)
+            if (_message.SenderId is MessageSenderUser user)
             {
                 return ProtoService.GetUser(user.UserId);
             }
-            else if (_message.Sender is MessageSenderChat chat)
+            else if (_message.SenderId is MessageSenderChat chat)
             {
                 return ProtoService.GetChat(chat.ChatId);
             }
@@ -102,7 +102,7 @@ namespace Unigram.ViewModels
                 return ProtoService.GetUser(_message.ViaBotUserId);
             }
 
-            if (ProtoService.TryGetUser(_message.Sender, out User user) && user.Type is UserTypeBot)
+            if (ProtoService.TryGetUser(_message.SenderId, out User user) && user.Type is UserTypeBot)
             {
                 return user;
             }
@@ -123,51 +123,6 @@ namespace Unigram.ViewModels
         public void Replace(Message message)
         {
             _message = message;
-        }
-
-        public bool UpdateFile(File file)
-        {
-            var message = _message.UpdateFile(file);
-            var generated = UpdateGeneratedFile(file);
-            var interaction = Interaction?.UpdateFile(file) ?? false;
-            var reply = ReplyToMessage?.UpdateFile(file) ?? false;
-
-            return message || generated || interaction || reply;
-        }
-
-        private bool UpdateGeneratedFile(File file)
-        {
-            switch (GeneratedContent)
-            {
-                case MessageAlbum album:
-                    return album.UpdateFile(file);
-                case MessageAnimation animation:
-                    return animation.UpdateFile(file);
-                case MessageAudio audio:
-                    return audio.UpdateFile(file);
-                case MessageDocument document:
-                    return document.UpdateFile(file);
-                case MessageGame game:
-                    return game.UpdateFile(file);
-                case MessageInvoice invoice:
-                    return invoice.UpdateFile(file);
-                case MessagePhoto photo:
-                    return photo.UpdateFile(file);
-                case MessageSticker sticker:
-                    return sticker.UpdateFile(file);
-                case MessageText text:
-                    return text.UpdateFile(file);
-                case MessageVideo video:
-                    return video.UpdateFile(file);
-                case MessageVideoNote videoNote:
-                    return videoNote.UpdateFile(file);
-                case MessageVoiceNote voiceNote:
-                    return voiceNote.UpdateFile(file);
-                case MessageChatChangePhoto chatChangePhoto:
-                    return chatChangePhoto.UpdateFile(file);
-                default:
-                    return false;
-            }
         }
 
         public bool IsShareable()
@@ -192,7 +147,7 @@ namespace Unigram.ViewModels
             {
                 return true;
             }
-            else if (Sender is MessageSenderUser senderUser)
+            else if (SenderId is MessageSenderUser senderUser)
             {
                 if (Content is MessageText text && text.WebPage == null)
                 {
@@ -266,6 +221,7 @@ namespace Unigram.ViewModels
             _message.CanBeDeletedForAllUsers = message.CanBeDeletedForAllUsers;
             _message.CanBeDeletedOnlyForSelf = message.CanBeDeletedOnlyForSelf;
             _message.CanBeEdited = message.CanBeEdited;
+            _message.CanBeSaved = message.CanBeSaved;
             _message.CanBeForwarded = message.CanBeForwarded;
             _message.CanGetMessageThread = message.CanGetMessageThread;
             _message.CanGetStatistics = message.CanGetStatistics;
@@ -284,7 +240,7 @@ namespace Unigram.ViewModels
             _message.ReplyMarkup = message.ReplyMarkup;
             _message.ReplyInChatId = message.ReplyInChatId;
             _message.ReplyToMessageId = message.ReplyToMessageId;
-            _message.Sender = message.Sender;
+            _message.SenderId = message.SenderId;
             _message.SendingState = message.SendingState;
             _message.Ttl = message.Ttl;
             _message.TtlExpiresIn = message.TtlExpiresIn;

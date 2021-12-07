@@ -192,7 +192,9 @@ namespace Unigram.Controls.Chats
                     }
                 }
             }
-            else if ((e.Key == VirtualKey.Tab || e.Key == VirtualKey.Enter) && Autocomplete != null && Autocomplete.Items.Count > 0 && ViewModel.Autocomplete != null && ((ViewModel.Autocomplete is SearchStickersCollection && Autocomplete.SelectedItem != null) || ViewModel.Autocomplete is not SearchStickersCollection))
+            else if ((e.Key == VirtualKey.Tab || e.Key == VirtualKey.Enter) && Autocomplete != null && Autocomplete.Items.Count > 0 && ViewModel.Autocomplete != null
+                && ((ViewModel.Autocomplete is EmojiCollection emojiCollection && (emojiCollection.HasColumn || Autocomplete.SelectedItem != null))
+                || (ViewModel.Autocomplete is SearchStickersCollection && Autocomplete.SelectedItem != null) || ViewModel.Autocomplete is not SearchStickersCollection and not EmojiCollection))
             {
                 var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
                 if (shift)
@@ -411,11 +413,11 @@ namespace Unigram.Controls.Chats
                     autocomplete = prev;
                     return true;
                 }
-
+                
                 autocomplete = new SearchHashtagsCollection(ViewModel.ProtoService, hashtag);
                 return true;
             }
-            else if (SearchByEmoji(query, out string replacement) && replacement.Length > 0)
+            else if (SearchByEmoji(query, out string replacement, out bool column) && replacement.Length > 0)
             {
                 if (prev is EmojiCollection && prev.Query.Equals(replacement))
                 {
@@ -423,7 +425,7 @@ namespace Unigram.Controls.Chats
                     return true;
                 }
 
-                autocomplete = new EmojiCollection(ViewModel.ProtoService, replacement, CoreTextServicesManager.GetForCurrentView().InputLanguage.LanguageTag);
+                autocomplete = new EmojiCollection(ViewModel.ProtoService, replacement, column, CoreTextServicesManager.GetForCurrentView().InputLanguage.LanguageTag);
                 return true;
             }
             else if (SearchByCommand(query, out string command))
@@ -535,14 +537,16 @@ namespace Unigram.Controls.Chats
         {
             private readonly IProtoService _protoService;
             private readonly string _query;
+            private readonly bool _column;
             private readonly string _inputLanguage;
 
             private bool _hasMore = true;
 
-            public EmojiCollection(IProtoService protoService, string query, string inputLanguage)
+            public EmojiCollection(IProtoService protoService, string query, bool column, string inputLanguage)
             {
                 _protoService = protoService;
                 _query = query;
+                _column = column;
                 _inputLanguage = inputLanguage;
             }
 
@@ -593,6 +597,8 @@ namespace Unigram.Controls.Chats
             public bool HasMoreItems => _hasMore;
 
             public string Query => _query;
+
+            public bool HasColumn => _column;
 
             public Orientation Orientation => Orientation.Horizontal;
         }
@@ -683,6 +689,11 @@ namespace Unigram.Controls.Chats
             get => _isMenuExpanded;
             set
             {
+                if (ViewModel?.Chat?.Type is not ChatTypePrivate)
+                {
+                    return;
+                }
+
                 _isMenuExpanded = value ?? false;
                 OnSelectionChanged(null, null);
             }
@@ -834,8 +845,9 @@ namespace Unigram.Controls.Chats
             return flag;
         }
 
-        public static bool SearchByEmoji(string text, out string searchText)
+        public static bool SearchByEmoji(string text, out string searchText, out bool command)
         {
+            command = true;
             searchText = string.Empty;
 
             var c = ':';
@@ -845,7 +857,7 @@ namespace Unigram.Controls.Chats
 
             while (i >= 0)
             {
-                if (text[i] == c)
+                if (text[i] == c || (i == 0 && (char.IsLetter(text[i]) || char.IsNumber(text[i]))))
                 {
                     if (i == 0 || text[i - 1] == ' ' || text[i - 1] == '\n' || text[i - 1] == '\r' || text[i - 1] == '\v' || !char.IsLetterOrDigit(text[i - 1]))
                     {
@@ -872,6 +884,7 @@ namespace Unigram.Controls.Chats
                     return false;
                 }
 
+                command = text[i] == c;
                 searchText = text.Substring(index).TrimStart(c);
             }
 

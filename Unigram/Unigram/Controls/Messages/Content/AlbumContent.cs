@@ -202,27 +202,6 @@ namespace Unigram.Controls.Messages.Content
         {
         }
 
-        public void UpdateFile(MessageViewModel message, File file)
-        {
-            var album = message.Content as MessageAlbum;
-            if (album == null)
-            {
-                return;
-            }
-
-            foreach (var child in Children)
-            {
-                if (child is IContentWithFile content)
-                {
-                    var media = album.Messages.FirstOrDefault(x => x.Id == content.Message?.Id);
-                    if (media != null)
-                    {
-                        content.UpdateFile(media, file);
-                    }
-                }
-            }
-        }
-
         #region Caption
 
         private bool ReplaceEntities(MessageViewModel message, RichTextBlock rich, Span span, FormattedText text, out bool adjust)

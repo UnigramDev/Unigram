@@ -19,6 +19,7 @@ namespace Unigram.Controls
         private CompositionSpriteShape _shape1;
         private CompositionSpriteShape _shape2;
         private CompositionSpriteShape _shape3;
+        private Visual _content;
         private Visual _visual;
 
         public MenuButton()
@@ -103,6 +104,12 @@ namespace Unigram.Controls
             {
                 ElementCompositionPreview.SetElementChildVisual(layoutRoot, visual1);
             }
+
+            var presenter = GetTemplateChild("Presenter") as UIElement;
+            if (presenter != null)
+            {
+                _content = ElementCompositionPreview.GetElementVisual(presenter);
+            }
         }
 
         protected override void OnToggle()
@@ -182,6 +189,12 @@ namespace Unigram.Controls
                 var opacity3 = Window.Current.Compositor.CreateColorKeyFrameAnimation();
                 opacity3.InsertKeyFrame(show ? 0 : 1, Color.FromArgb(0xff, 0xff, 0xff, 0xff));
                 opacity3.InsertKeyFrame(show ? 1 : 0, Color.FromArgb(0x00, 0xff, 0xff, 0xff));
+
+                var opacityContent = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                opacityContent.InsertKeyFrame(show ? 0 : 1, 1);
+                opacityContent.InsertKeyFrame(show ? 1 : 0, 0);
+
+                _content?.StartAnimation("Opacity", opacityContent);
 
                 _shape3.StrokeBrush.StartAnimation("Color", opacity3);
 

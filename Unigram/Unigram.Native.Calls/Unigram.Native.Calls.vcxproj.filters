@@ -107,9 +107,6 @@
     <ClCompile Include="C:\tgcalls\tgcalls\platform\uwp\UwpScreenCapturer.cpp">
       <Filter>tgcalls\platform\uwp</Filter>
     </ClCompile>
-    <ClCompile Include="UwpScreenAudioCapturer.cpp">
-      <Filter>tgcalls\platform\uwp</Filter>
-    </ClCompile>
     <ClCompile Include="C:\tgcalls\tgcalls\SctpDataChannelProviderInterfaceImpl.cpp">
       <Filter>tgcalls</Filter>
     </ClCompile>
@@ -268,9 +265,6 @@
       <Filter>tgcalls\platform\uwp</Filter>
     </ClInclude>
     <ClInclude Include="C:\tgcalls\tgcalls\platform\uwp\UwpContext.h">
-      <Filter>tgcalls\platform\uwp</Filter>
-    </ClInclude>
-    <ClInclude Include="UwpScreenAudioCapturer.h">
       <Filter>tgcalls\platform\uwp</Filter>
     </ClInclude>
     <ClInclude Include="C:\tgcalls\tgcalls\SctpDataChannelProviderInterfaceImpl.h">

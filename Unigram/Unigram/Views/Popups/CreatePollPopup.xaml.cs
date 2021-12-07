@@ -31,25 +31,25 @@ namespace Unigram.Views.Popups
 
             if (forceQuiz)
             {
-                Quiz.IsOn = true;
+                Quiz.IsChecked = true;
                 Quiz.Visibility = Visibility.Collapsed;
                 Multiple.Visibility = Visibility.Collapsed;
             }
             else if (forceRegular)
             {
-                Quiz.IsOn = false;
+                Quiz.IsChecked = false;
                 Quiz.Visibility = Visibility.Collapsed;
                 Settings.Footer = string.Empty;
             }
 
             if (forceAnonymous)
             {
-                Anonymous.IsOn = true;
+                Anonymous.IsChecked = true;
                 Anonymous.Visibility = Visibility.Collapsed;
             }
             else
             {
-                Anonymous.IsOn = true;
+                Anonymous.IsChecked = true;
                 Anonymous.Visibility = Visibility.Visible;
             }
         }
@@ -74,7 +74,7 @@ namespace Unigram.Views.Popups
         {
             get
             {
-                return Anonymous.IsOn;
+                return Anonymous.IsChecked == true;
             }
         }
 
@@ -82,12 +82,12 @@ namespace Unigram.Views.Popups
         {
             get
             {
-                if (Quiz.IsOn)
+                if (Quiz.IsChecked == true)
                 {
                     return new PollTypeQuiz(Items.IndexOf(Items.FirstOrDefault(x => x.IsChecked)), QuizExplanation.GetFormattedText());
                 }
 
-                return new PollTypeRegular(Multiple.IsOn);
+                return new PollTypeRegular(Multiple.IsChecked == true);
             }
         }
 
@@ -112,7 +112,7 @@ namespace Unigram.Views.Popups
             var condition = !string.IsNullOrEmpty(Question);
             condition = condition && Items.Count(x => !string.IsNullOrEmpty(x.Text)) >= 2;
 
-            if (Quiz.IsOn)
+            if (Quiz.IsChecked == true)
             {
                 condition = condition && Items.Count(x => x.IsChecked) == 1;
             }
@@ -135,7 +135,7 @@ namespace Unigram.Views.Popups
         {
             if (Items.Count < MAXIMUM_OPTIONS)
             {
-                Items.Add(new PollOptionViewModel(Quiz.IsOn, true, option => Remove_Click(option)));
+                Items.Add(new PollOptionViewModel(Quiz.IsChecked == true, true, option => Remove_Click(option)));
             }
         }
 
@@ -212,23 +212,25 @@ namespace Unigram.Views.Popups
 
         private void Multiple_Toggled(object sender, RoutedEventArgs e)
         {
-
+            if (Multiple.IsChecked == true)
+            {
+                Quiz.IsChecked = false;
+            }
         }
 
         private void Quiz_Toggled(object sender, RoutedEventArgs e)
         {
-            Multiple.IsEnabled = !Quiz.IsOn;
-            QuizSettings.Visibility = Quiz.IsOn ? Visibility.Visible : Visibility.Collapsed;
+            QuizSettings.Visibility = Quiz.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
 
-            if (Quiz.IsOn)
+            if (Quiz.IsChecked == true)
             {
-                Multiple.IsOn = false;
+                Multiple.IsChecked = false;
             }
 
             foreach (var item in Items)
             {
                 item.IsChecked = false;
-                item.IsQuiz = Quiz.IsOn;
+                item.IsQuiz = Quiz.IsChecked == true;
             }
 
             UpdatePrimaryButton();

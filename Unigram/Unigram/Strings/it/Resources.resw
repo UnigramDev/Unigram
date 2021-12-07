@@ -487,6 +487,18 @@
   <data name="AcceptCall" xml:space="preserve">
     <value>Accetta</value>
   </data>
+  <data name="AcceptCalls" xml:space="preserve">
+    <value>Accetta chiamate</value>
+  </data>
+  <data name="AcceptCallsChatsDescription" xml:space="preserve">
+    <value>Usa il dispositivo per le chiamate</value>
+  </data>
+  <data name="AcceptSecretChats" xml:space="preserve">
+    <value>Accetta chat segrete</value>
+  </data>
+  <data name="AcceptSecretChatsDescription" xml:space="preserve">
+    <value>Usa il dispositivo per le chat segrete</value>
+  </data>
   <data name="AccessError" xml:space="preserve">
     <value>Errore di accesso </value>
   </data>
@@ -642,6 +654,18 @@
   </data>
   <data name="ActionEditedInviteLinkToSameClickable" xml:space="preserve">
     <value>un1 ha modificato il link d'invito un2</value>
+  </data>
+  <data name="ActionForwardsEnabledChannel" xml:space="preserve">
+    <value>un1 ha attivato l'inoltro da questo canale</value>
+  </data>
+  <data name="ActionForwardsEnabledGroup" xml:space="preserve">
+    <value>un1 ha attivato l'inoltro da questo gruppo</value>
+  </data>
+  <data name="ActionForwardsRestrictedChannel" xml:space="preserve">
+    <value>un1 ha vietato l'inoltro da questo canale</value>
+  </data>
+  <data name="ActionForwardsRestrictedGroup" xml:space="preserve">
+    <value>un1 ha vietato l'inoltro da questo gruppo</value>
   </data>
   <data name="ActionGroupCallEnded" xml:space="preserve">
     <value>Chat video terminata ({0})</value>
@@ -1027,6 +1051,9 @@
   <data name="AllMedia" xml:space="preserve">
     <value>Tutti i media</value>
   </data>
+  <data name="Allow" xml:space="preserve">
+    <value>Permetti</value>
+  </data>
   <data name="AllowCustomQuickReply" xml:space="preserve">
     <value>Consenti personalizzazione</value>
   </data>
@@ -1173,6 +1200,9 @@
   </data>
   <data name="AppFolderInfo" xml:space="preserve">
     <value>Sfoglia la cartella dell'app</value>
+  </data>
+  <data name="Application" xml:space="preserve">
+    <value>Applicazione</value>
   </data>
   <data name="ApplyLocalizationFile" xml:space="preserve">
     <value>Applica traduzione</value>
@@ -1477,7 +1507,7 @@ Ricorda, uscendo eliminerai tutte le chat segrete.</value>
     <value>Fai una domanda</value>
   </data>
   <data name="AskAQuestionInfo" xml:space="preserve">
-    <value>Per favore nota che il supporto di Telegram è gestito da volontari. Proviamo a rispondere quanto prima, ma potrebbe volerci del tempo.
+    <value>Per favore ricorda che il supporto di Telegram è gestito da volontari. Proviamo a rispondere quanto prima, ma potrebbe volerci del tempo.
 
 Dai un'occhiata alle <![CDATA[<a href="https://telegram.org/faq/it#domande-generali">FAQ di Telegram</a>]]>: contengono suggerimenti importanti per <![CDATA[<a href="https://telegram.org/faq/it#risoluzione-dei-problemi">risolvere i problemi</a>]]> e risposte a quasi tutte le domande.</value>
   </data>
@@ -1628,6 +1658,12 @@ Dai un'occhiata alle <![CDATA[<a href="https://telegram.org/faq/it#domande-gener
   <data name="AuthAnotherClientInfo3" xml:space="preserve">
     <value>Scansiona il codice QR per connettere il tuo account.</value>
   </data>
+  <data name="AuthAnotherClientInfo4" xml:space="preserve">
+    <value>Collega *Telegram Desktop* o *Telegram Web* tramite codice QR.</value>
+  </data>
+  <data name="AuthAnotherClientInfo5" xml:space="preserve">
+    <value>Vai su *getdesktop.telegram.org* o *web.telegram.org* per ottenere il QR</value>
+  </data>
   <data name="AuthAnotherClientNotFound" xml:space="preserve">
     <value>Nessun token di autenticazione trovato</value>
   </data>
@@ -1644,6 +1680,9 @@ Dai un'occhiata alle <![CDATA[<a href="https://telegram.org/faq/it#domande-gener
     <value>Questo codice può essere usato per consentire a qualcuno di accedere al tuo account Telegram.
 
 Per confermare l'accesso a Telegram, vai in Impostazioni > Dispositivi > Scansiona QR e scansiona il codice.</value>
+  </data>
+  <data name="AuthAnotherWebClientUrl" xml:space="preserve">
+    <value>https://web.telegram.org/</value>
   </data>
   <data name="AutoDelete1Month" xml:space="preserve">
     <value>1 mese</value>
@@ -2637,7 +2676,7 @@ Nota: se ti dimentichi il codice, dovrai eliminare e reinstallare l'app. Tutte l
     <value>Vuoi davvero lasciare **{0}**?</value>
   </data>
   <data name="ChannelLinkInfo" xml:space="preserve">
-    <value>Chiunque abbia Telegram installato potrà unirsi al tuo canale aprendo questo link.</value>
+    <value>Chiunque su Telegram potrà unirsi al tuo canale tramite questo link.</value>
   </data>
   <data name="ChannelLinkTitle" xml:space="preserve">
     <value>Link pubblico</value>
@@ -3129,6 +3168,21 @@ La lunghezza minima è 5 caratteri.</value>
   <data name="ChatWasMovedToMainList" xml:space="preserve">
     <value>La chat è stata spostata nella tua lista principale.</value>
   </data>
+  <data name="ChatWithAdminChannelTitle" xml:space="preserve">
+    <value>Risposta alla richiesta di accesso</value>
+  </data>
+  <data name="ChatWithAdminGroupTitle" xml:space="preserve">
+    <value>Risposta alla richiesta di accesso</value>
+  </data>
+  <data name="ChatWithAdminMessage" xml:space="preserve">
+    <value>Hai ricevuto questo messaggio perché hai richiesto l'accesso a **{0}** {1}</value>
+  </data>
+  <data name="ChatWithChannelAdmin" xml:space="preserve">
+    <value>**{0}** è un amministratore di **{1}**, un canale a cui hai richiesto l'accesso.</value>
+  </data>
+  <data name="ChatWithGroupAdmin" xml:space="preserve">
+    <value>**{0}** è un amministratore di **{1}**, un gruppo a cui hai richiesto l'accesso.</value>
+  </data>
   <data name="ChatYourSelf" xml:space="preserve">
     <value>inoltra qui per salvare</value>
   </data>
@@ -3272,6 +3326,12 @@ La lunghezza minima è 5 caratteri.</value>
   </data>
   <data name="ClearHistoryCache" xml:space="preserve">
     <value>Elimina dalla cache</value>
+  </data>
+  <data name="ClearHistoryForTheseDays" xml:space="preserve">
+    <value>Cancella cronologia per questi giorni</value>
+  </data>
+  <data name="ClearHistoryForThisDay" xml:space="preserve">
+    <value>Cancella cronologia per questo giorno</value>
   </data>
   <data name="ClearHistoryOptionAlso" xml:space="preserve">
     <value>Elimina la cronologia anche per {0}</value>
@@ -3987,6 +4047,24 @@ Cancella i log</value>
   <data name="DeleteContact" xml:space="preserve">
     <value>Elimina contatto</value>
   </data>
+  <data name="DeleteDays_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="DeleteDays_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="DeleteDays_one" xml:space="preserve">
+    <value>Elimina {0} giorno</value>
+  </data>
+  <data name="DeleteDays_other" xml:space="preserve">
+    <value>Elimina {0} giorni</value>
+  </data>
+  <data name="DeleteDays_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="DeleteDays_zero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="DeletedFromYourContacts" xml:space="preserve">
     <value>{0} eliminato dai tuoi contatti</value>
   </data>
@@ -4010,6 +4088,9 @@ Cancella i log</value>
   </data>
   <data name="DeleteGroupForAll" xml:space="preserve">
     <value>Elimina il gruppo per tutti i membri</value>
+  </data>
+  <data name="DeleteHistoryByDaysMessage" xml:space="preserve">
+    <value>Vuoi davvero eliminare tutti i messaggi per i giorni selezionati?</value>
   </data>
   <data name="DeleteLink" xml:space="preserve">
     <value>Elimina il link</value>
@@ -4148,6 +4229,9 @@ Cancella i log</value>
   </data>
   <data name="DidNotGetTheCode" xml:space="preserve">
     <value>Non hai ricevuto il codice?</value>
+  </data>
+  <data name="DidNotGetTheCodePhone" xml:space="preserve">
+    <value>Ricevi il codice su questo telefono</value>
   </data>
   <data name="DidNotGetTheCodeSms" xml:space="preserve">
     <value>Invia il codice come SMS</value>
@@ -4293,6 +4377,9 @@ Chiunque dal canale potrà vedere i messaggi in questo gruppo.</value>
   </data>
   <data name="DoNoSetTheme" xml:space="preserve">
     <value>Non impostare il tema</value>
+  </data>
+  <data name="DontAskAgain" xml:space="preserve">
+    <value>Non chiedere più</value>
   </data>
   <data name="Draft" xml:space="preserve">
     <value>Bozza</value>
@@ -4719,7 +4806,7 @@ Per favore inserisci il nome del tema:</value>
     <value>un1 si è unito al canale</value>
   </data>
   <data name="EventLogChannelRestricted" xml:space="preserve">
-    <value>ha bloccato {0}</value>
+    <value>ha bannato {0}</value>
   </data>
   <data name="EventLogChannelUnrestricted" xml:space="preserve">
     <value>ha sbloccato {0}</value>
@@ -4785,18 +4872,18 @@ Per favore inserisci il nome del tema:</value>
     <value>Hai rinominato il gruppo in "{0}"</value>
   </data>
   <data name="EventLogEmpty" xml:space="preserve">
-    <value>**Ancora nessuna azione**
+    <value>**Nessuna azione recente**
 
-I membri e gli amministratori del
-gruppo non hanno eseguito azioni
-di servizio nelle ultime 48 ore.</value>
+Nessuna azione di rilievo dai
+membri e dagli amministratori del
+gruppo nelle ultime 48 ore.</value>
   </data>
   <data name="EventLogEmptyChannel" xml:space="preserve">
-    <value>**Ancora nessuna azione**
+    <value>**Nessuna azione recente**
 
-Gli amministratori del canale non
-hanno eseguito azioni di servizio
-nelle ultime 48 ore.</value>
+Nessuna azione di rilievo
+dagli amministratori del
+canale nelle ultime 48 ore.</value>
   </data>
   <data name="EventLogEmptySearch" xml:space="preserve">
     <value>**Nessuna azione trovata**
@@ -4856,7 +4943,7 @@ che rispondono alla tua richiesta.</value>
     <value>un1 si è unito al gruppo</value>
   </data>
   <data name="EventLogInfoDetail" xml:space="preserve">
-    <value>Questa è una lista delle azioni importanti da parte di membri e amministratori nelle ultime 48 ore.</value>
+    <value>Questa è una lista delle azioni di rilievo da parte di membri e amministratori nelle ultime 48 ore.</value>
   </data>
   <data name="EventLogInfoDetailChannel" xml:space="preserve">
     <value>Questa è una lista di tutte le azioni di servizio eseguite dagli amministratori del canale nelle ultime 48 ore.</value>
@@ -5018,6 +5105,9 @@ Durata: {1}</value>
   </data>
   <data name="EventLogSelectedEvents" xml:space="preserve">
     <value>azioni selezionate</value>
+  </data>
+  <data name="EventLogSendMessages" xml:space="preserve">
+    <value>un1 ha inviato questo messaggio:</value>
   </data>
   <data name="EventLogStartedLiveStream" xml:space="preserve">
     <value>un1 ha avviato una diretta streaming</value>
@@ -5496,6 +5586,30 @@ Durata: {1}</value>
   <data name="FootsShort" xml:space="preserve">
     <value>{0} ft</value>
   </data>
+  <data name="ForceSetPasswordAlertMessage_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ForceSetPasswordAlertMessage_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ForceSetPasswordAlertMessage_one" xml:space="preserve">
+    <value>Procedere senza una password? Se non imposti una password, potrai accedere al tuo account tramite SMS una volta al giorno.</value>
+  </data>
+  <data name="ForceSetPasswordAlertMessage_other" xml:space="preserve">
+    <value>Procedere senza una password? Se non imposti una password, potrai accedere al tuo account tramite SMS una volta ogni {0} giorni.</value>
+  </data>
+  <data name="ForceSetPasswordAlertMessage_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ForceSetPasswordAlertMessage_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ForceSetPasswordCancel" xml:space="preserve">
+    <value>Sì, sono sicuro</value>
+  </data>
+  <data name="ForceSetPasswordContinue" xml:space="preserve">
+    <value>No, lasciami impostare una password</value>
+  </data>
   <data name="ForgotPassword" xml:space="preserve">
     <value>Password dimenticata?</value>
   </data>
@@ -5792,6 +5906,12 @@ Durata: {1}</value>
   </data>
   <data name="ForwardSendMessages" xml:space="preserve">
     <value>Invia messaggi</value>
+  </data>
+  <data name="ForwardsRestrictedInfoChannel" xml:space="preserve">
+    <value>Copia e inoltro non sono permessi in questo canale.</value>
+  </data>
+  <data name="ForwardsRestrictedInfoGroup" xml:space="preserve">
+    <value>Copia e inoltro non sono permessi in questo gruppo.</value>
   </data>
   <data name="ForwardTo" xml:space="preserve">
     <value>Inoltra a...</value>
@@ -6230,6 +6350,9 @@ Tieni presente che può comunque unirsi con il link d'invito del gruppo purché 
   <data name="Hybrid" xml:space="preserve">
     <value>Ibrido</value>
   </data>
+  <data name="IfInactiveFor" xml:space="preserve">
+    <value>Se inattive per</value>
+  </data>
   <data name="ImagesTab" xml:space="preserve">
     <value>IMMAGINI</value>
   </data>
@@ -6578,6 +6701,9 @@ I messaggi saranno importati nel giorno corrente ma includeranno anche date e 
   <data name="InvoiceCantSendSecretChat" xml:space="preserve">
     <value>Spiacenti, le fatture non possono essere inviate nelle chat segrete.</value>
   </data>
+  <data name="IpAddress" xml:space="preserve">
+    <value>Indirizzo IP</value>
+  </data>
   <data name="IsChoosingSticker" xml:space="preserve">
     <value>{0} sta scegliendo uno sticker</value>
   </data>
@@ -6640,6 +6766,9 @@ I messaggi saranno importati nel giorno corrente ma includeranno anche date e 
   </data>
   <data name="items_zero" xml:space="preserve">
     <value/>
+  </data>
+  <data name="IUnderstand" xml:space="preserve">
+    <value>Capisco</value>
   </data>
   <data name="IVInteractionsChartTitle" xml:space="preserve">
     <value>Interazioni AR</value>
@@ -6898,7 +7027,7 @@ Puoi cambiare la tua lingua in qualsiasi momento nelle Impostazioni.</value>
     <value>{0} è disponibile.</value>
   </data>
   <data name="LinkChecking" xml:space="preserve">
-    <value>Controllo il nome...</value>
+    <value>Controllo il nome…</value>
   </data>
   <data name="LinkCopied" xml:space="preserve">
     <value>Link copiato negli appunti</value>
@@ -6913,6 +7042,9 @@ Questo link funzionerà solo per i membri di questa chat.</value>
   <data name="LinkCreatedeBy" xml:space="preserve">
     <value>Link creato da</value>
   </data>
+  <data name="LinkDesktopDevice" xml:space="preserve">
+    <value>Collega dispositivo desktop</value>
+  </data>
   <data name="LinkedChannel" xml:space="preserve">
     <value>Canale collegato</value>
   </data>
@@ -6926,7 +7058,7 @@ Questo link funzionerà solo per i membri di questa chat.</value>
     <value>Link non più attivo</value>
   </data>
   <data name="LinkInfo" xml:space="preserve">
-    <value>Chiunque abbia Telegram installato potrà unirsi al tuo gruppo tramite questo link.</value>
+    <value>Chiunque su Telegram potrà unirsi al tuo gruppo tramite questo link.</value>
   </data>
   <data name="LinkInfoChannel" xml:space="preserve">
     <value>Chiunque abbia Telegram installato potrà unirsi al tuo canale tramite questo link.</value>
@@ -7074,6 +7206,9 @@ Questa operazione può richiedere alcuni minuti.</value>
   <data name="LocatedChannelsTooMuch" xml:space="preserve">
     <value>Spiacenti, l'utente selezionato ha già troppi gruppi basati sulla posizione. Per favore chiedigli di eliminarne o trasferirne uno prima.</value>
   </data>
+  <data name="Location" xml:space="preserve">
+    <value>Posizione basata sull'indirizzo IP</value>
+  </data>
   <data name="LocationNotifiation" xml:space="preserve">
     <value>Avviso di prossimità</value>
   </data>
@@ -7123,7 +7258,7 @@ Questa operazione può richiedere alcuni minuti.</value>
     <value>Lunga</value>
   </data>
   <data name="LoopAnimatedStickers" xml:space="preserve">
-    <value>Riproduci sticker animati in loop</value>
+    <value>Sticker animati in loop</value>
   </data>
   <data name="LoopAnimatedStickersInfo" xml:space="preserve">
     <value>Gli sticker animati saranno riprodotti in modo continuo nella chat.</value>
@@ -7610,6 +7745,24 @@ La lunghezza minima è 5 caratteri.</value>
   <data name="MessagesDeletedHint_zero" xml:space="preserve">
     <value/>
   </data>
+  <data name="MessagesDeletedUndo_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagesDeletedUndo_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagesDeletedUndo_one" xml:space="preserve">
+    <value>Messaggi di {0} giorno eliminati</value>
+  </data>
+  <data name="MessagesDeletedUndo_other" xml:space="preserve">
+    <value>Messaggi di {0} giorni eliminati</value>
+  </data>
+  <data name="MessagesDeletedUndo_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagesDeletedUndo_zero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="MessageSeen_few" xml:space="preserve">
     <value/>
   </data>
@@ -7754,6 +7907,15 @@ La lunghezza minima è 5 caratteri.</value>
   <data name="MinutesSchedule_zero" xml:space="preserve">
     <value/>
   </data>
+  <data name="MissedCallDescriptionSubtitle" xml:space="preserve">
+    <value>Nei prossimi istanti dovresti ricevere una breve chiamata da:</value>
+  </data>
+  <data name="MissedCallDescriptionSubtitle2" xml:space="preserve">
+    <value>Per favore inserisci le ultime cifre del numero che ha chiamato</value>
+  </data>
+  <data name="MissedCallDescriptionTitle" xml:space="preserve">
+    <value>Inserisci le cifre mancanti</value>
+  </data>
   <data name="MobileHidden" xml:space="preserve">
     <value>Numero nascosto</value>
   </data>
@@ -7827,7 +7989,7 @@ La lunghezza minima è 5 caratteri.</value>
     <value>Chiunque si trovi in ​​questa posizione (vicini, colleghi, studenti, partecipanti a un evento, visitatori) vedrà il tuo gruppo nella sezione Persone vicine.</value>
   </data>
   <data name="NearbyCreateGroupInfo2" xml:space="preserve">
-    <value>Se avvii un gruppo non legato a questa posizione, potresti essere limitato nella creazione di nuovi gruppi basati sulla posizione.</value>
+    <value>Se crei un gruppo non legato a questa posizione, potresti essere limitato nella creazione di nuovi gruppi basati sulla posizione.</value>
   </data>
   <data name="NearbyPeopleGreetingsDescription" xml:space="preserve">
     <value>Invia un messaggio o tocca il saluto qui sotto per mostrare che sei pronto a chattare.</value>
@@ -7839,7 +8001,7 @@ La lunghezza minima è 5 caratteri.</value>
     <value>O scegli un luogo</value>
   </data>
   <data name="NearbyStartGroup" xml:space="preserve">
-    <value>Avvia gruppo</value>
+    <value>Crea gruppo</value>
   </data>
   <data name="NearbyVenue" xml:space="preserve">
     <value>O scegli un luogo</value>
@@ -8001,13 +8163,13 @@ La lunghezza minima è 5 caratteri.</value>
     <value>Ancora nessun utente bloccato</value>
   </data>
   <data name="NoBlockedChannel" xml:space="preserve">
-    <value>Gli utenti bloccati sono rimossi dal canale e possono rientrare solamente se aggiunti da un amministratore. I link di invito non funzionano per loro.</value>
+    <value>Gli utenti bannati sono rimossi dal canale e possono rientrare solamente se aggiunti da un amministratore. I link di invito non funzionano per loro.</value>
   </data>
   <data name="NoBlockedChannel2" xml:space="preserve">
     <value>Gli utenti rimossi dal canale dagli amministratori non possono rientrare tramite link d'invito.</value>
   </data>
   <data name="NoBlockedGroup" xml:space="preserve">
-    <value>Gli utenti bloccati sono rimossi dal gruppo e possono rientrare solamente se aggiunti da un amministratore. I link di invito non funzionano per loro.</value>
+    <value>Gli utenti bannati sono rimossi dal gruppo e possono rientrare solamente se aggiunti da un amministratore. I link di invito non funzionano per loro.</value>
   </data>
   <data name="NoBlockedGroup2" xml:space="preserve">
     <value>Gli utenti rimossi dal gruppo dagli amministratori non possono rientrare tramite link d'invito.</value>
@@ -8105,11 +8267,14 @@ Puoi personalizzare le notifiche per una chat aprendo il suo profilo e scegliend
     <value>Nessuna richiesta di accesso</value>
   </data>
   <data name="NoMemberRequestsDescription" xml:space="preserve">
-    <value>Non ci sono richieste di accesso
+    <value>Nessuna richiesta di accesso
 in sospeso per il gruppo.</value>
   </data>
   <data name="NoMessages" xml:space="preserve">
     <value>Ancora nessun messaggio...</value>
+  </data>
+  <data name="NoMessagesForThisDay" xml:space="preserve">
+    <value>Nessun messaggio per questo giorno</value>
   </data>
   <data name="NoMessagesGreetingsDescription" xml:space="preserve">
     <value>Invia un messaggio o tocca il saluto qui sotto.</value>
@@ -8672,10 +8837,10 @@ in sospeso per il canale.</value>
     <value>Eccezioni</value>
   </data>
   <data name="NotificationsExceptionsAlert" xml:space="preserve">
-    <value>Per favore nota che **{0}** sono nella lista delle eccezioni e questa modifica non avrà effetto.</value>
+    <value>Per favore ricorda che **{0}** sono nella lista delle eccezioni e questa modifica non avrà effetto.</value>
   </data>
   <data name="NotificationsExceptionsSingleAlert" xml:space="preserve">
-    <value>Per favore nota che **{0}** è nella lista delle eccezioni e questa modifica non avrà effetto.</value>
+    <value>Per favore ricorda che **{0}** è nella lista delle eccezioni e questa modifica non avrà effetto.</value>
   </data>
   <data name="NotificationsForChannels" xml:space="preserve">
     <value>Notifiche per i canali</value>
@@ -8879,6 +9044,9 @@ il team di Telegram</value>
   </data>
   <data name="OpenChannel2" xml:space="preserve">
     <value>Apri canale</value>
+  </data>
+  <data name="OpenChannelPost" xml:space="preserve">
+    <value>VISUALIZZA POST</value>
   </data>
   <data name="OpenFile" xml:space="preserve">
     <value>APRI FILE</value>
@@ -10969,7 +11137,7 @@ Accederemo alla tua posizione solo per la durata da te scelta, e potrai smettere
     <value>sta registrando un videomessaggio...</value>
   </data>
   <data name="RecordingVideoStatus" xml:space="preserve">
-    <value>registrando un video…</value>
+    <value>registrando un video...</value>
   </data>
   <data name="RecoveryEmail" xml:space="preserve">
     <value>Email di recupero</value>
@@ -11382,6 +11550,15 @@ Se ripristini il tuo account, tutti i tuoi messaggi e le tue chat saranno elimin
   <data name="Restrictions_zero" xml:space="preserve">
     <value/>
   </data>
+  <data name="RestrictSavingContent" xml:space="preserve">
+    <value>Vieta salvataggio contenuti</value>
+  </data>
+  <data name="RestrictSavingContentInfoChannel" xml:space="preserve">
+    <value>Gli iscritti non potranno copiare, salvare e inoltrare i contenuti da questo canale.</value>
+  </data>
+  <data name="RestrictSavingContentInfoGroup" xml:space="preserve">
+    <value>I membri non potranno copiare, salvare e inoltrare i contenuti da questo gruppo.</value>
+  </data>
   <data name="Retry" xml:space="preserve">
     <value>Reinvia</value>
   </data>
@@ -11392,7 +11569,7 @@ Se ripristini il tuo account, tutti i tuoi messaggi e le tue chat saranno elimin
     <value>RITORNA ALLA CHIAMATA</value>
   </data>
   <data name="ReverseOrder" xml:space="preserve">
-    <value>Inverti ordine</value>
+    <value>Ordine inverso</value>
   </data>
   <data name="RevokeAlert" xml:space="preserve">
     <value>Vuoi davvero revocare questo link? Una volta fatto, nessuno potrà unirsi usandolo.</value>
@@ -11472,6 +11649,9 @@ Il canale "**{1}**" diventerà privato.</value>
   </data>
   <data name="SaveToMusic" xml:space="preserve">
     <value>Salva nella musica</value>
+  </data>
+  <data name="SavingContentTitle" xml:space="preserve">
+    <value>Salvataggio contenuti</value>
   </data>
   <data name="ScamMessage" xml:space="preserve">
     <value>TRUFFA</value>
@@ -11662,7 +11842,7 @@ Potrebbe essere necessario riavviare l'applicazione affinché questo abbia effet
     <value>Chat segrete</value>
   </data>
   <data name="SecretChatContextBotAlert" xml:space="preserve">
-    <value>Per favore nota che i bot inline sono forniti da sviluppatori di terze parti. Per far funzionare il bot, i caratteri che digiti dopo l'username del bot sono inviati al suo sviluppatore.</value>
+    <value>Per favore ricorda che i bot inline sono forniti da sviluppatori di terze parti. Per far funzionare il bot, i caratteri che digiti dopo l'username del bot sono inviati al rispettivo sviluppatore.</value>
   </data>
   <data name="SecretChatName" xml:space="preserve">
     <value>Telegram</value>
@@ -11718,6 +11898,12 @@ Potrebbe essere necessario riavviare l'applicazione affinché questo abbia effet
   <data name="SelectContacts" xml:space="preserve">
     <value>Seleziona contatti</value>
   </data>
+  <data name="SelectDays" xml:space="preserve">
+    <value>Seleziona giorni</value>
+  </data>
+  <data name="SelectDaysTooltip" xml:space="preserve">
+    <value>Per favore seleziona prima uno o più giorni.</value>
+  </data>
   <data name="SelectFile" xml:space="preserve">
     <value>Seleziona file</value>
   </data>
@@ -11738,6 +11924,9 @@ Potrebbe essere necessario riavviare l'applicazione affinché questo abbia effet
   </data>
   <data name="SelectTheme" xml:space="preserve">
     <value>Seleziona tema</value>
+  </data>
+  <data name="SelectThisDay" xml:space="preserve">
+    <value>Seleziona questo giorno</value>
   </data>
   <data name="Send" xml:space="preserve">
     <value>Invia</value>
@@ -11844,6 +12033,9 @@ Potrebbe essere necessario riavviare l'applicazione affinché questo abbia effet
   <data name="SendMessage" xml:space="preserve">
     <value>Invia messaggio</value>
   </data>
+  <data name="SendMessageAsTitle" xml:space="preserve">
+    <value>Invia messaggio come...</value>
+  </data>
   <data name="SendMessageLocation" xml:space="preserve">
     <value>Invia messaggio</value>
   </data>
@@ -11921,6 +12113,12 @@ Non rispondere alla chiamata, Telegram farà tutto in automatico.</value>
   <data name="SessionsInfo" xml:space="preserve">
     <value>Controlla le tue sessioni sugli altri dispositivi.</value>
   </data>
+  <data name="SessionsListInfo" xml:space="preserve">
+    <value>L'app ufficiale di Telegram è disponibile per Android, iPhone, iPad, Windows, macOS e Linux.</value>
+  </data>
+  <data name="SessionsSelfDestruct" xml:space="preserve">
+    <value>Autodistruzione sessioni</value>
+  </data>
   <data name="SessionsTitle" xml:space="preserve">
     <value>Sessioni attive</value>
   </data>
@@ -11981,7 +12179,7 @@ Non rispondere alla chiamata, Telegram farà tutto in automatico.</value>
   <data name="SetTimer" xml:space="preserve">
     <value>Timer di autodistruzione</value>
   </data>
-  <data name="SETTINGS" xml:space="preserve">
+  <data name="Settings" xml:space="preserve">
     <value>Impostazioni</value>
   </data>
   <data name="SettingsBrowseThemes" xml:space="preserve">
@@ -12008,6 +12206,9 @@ Non rispondere alla chiamata, Telegram farà tutto in automatico.</value>
   <data name="SettingsSearchFaq" xml:space="preserve">
     <value>FAQ</value>
   </data>
+  <data name="SettingsSwitchToDayMode" xml:space="preserve">
+    <value>Passa alla modalità giorno</value>
+  </data>
   <data name="SettingsSwitchToNightMode" xml:space="preserve">
     <value>Passa alla modalità notte</value>
   </data>
@@ -12018,7 +12219,7 @@ Non rispondere alla chiamata, Telegram farà tutto in automatico.</value>
     <value>Controllo il link...</value>
   </data>
   <data name="SetUrlInUse" xml:space="preserve">
-    <value>Spiacenti, questo link è già stato preso.</value>
+    <value>Spiacenti, questo link è già occupato.</value>
   </data>
   <data name="SetUrlInvalid" xml:space="preserve">
     <value>Spiacenti, questo link non è valido.</value>
@@ -12656,7 +12857,7 @@ Le pubblicità online non dovrebbero più essere sinonimo di abuso della privacy
     <value>Terminare il quiz?</value>
   </data>
   <data name="StopShowingMe" xml:space="preserve">
-    <value>Interrompi visibilità</value>
+    <value>Nascondimi</value>
   </data>
   <data name="StopVerification" xml:space="preserve">
     <value>Vuoi terminare il processo di verifica?</value>
@@ -12928,6 +13129,12 @@ Questa password sarà inoltre richiesta ogni volta che accedi a Telegram su un n
   </data>
   <data name="TerminateAllWebSessions" xml:space="preserve">
     <value>Disconnetti tutti i siti web</value>
+  </data>
+  <data name="TerminateOldSessionHeader" xml:space="preserve">
+    <value>Termina automaticamente le sessioni</value>
+  </data>
+  <data name="TerminateSession" xml:space="preserve">
+    <value>Termina sessione</value>
   </data>
   <data name="TerminateSessionInfo" xml:space="preserve">
     <value>Tocca su una sessione per terminarla.</value>
@@ -13311,6 +13518,12 @@ Ma se in genere non sei d'accordo con le modeste esigenze di Telegram, non sarà
   <data name="TypePrivateGroup" xml:space="preserve">
     <value>Privato</value>
   </data>
+  <data name="TypePrivateGroupRestrictedForwards" xml:space="preserve">
+    <value>Privato con restrizioni</value>
+  </data>
+  <data name="TypePrivateRestrictedForwards" xml:space="preserve">
+    <value>Privato con restrizioni</value>
+  </data>
   <data name="TypePublic" xml:space="preserve">
     <value>Pubblico</value>
   </data>
@@ -13473,6 +13686,9 @@ Ma se in genere non sei d'accordo con le modeste esigenze di Telegram, non sarà
   <data name="UseDifferentThemeInfo" xml:space="preserve">
     <value>Puoi anche usare un tema personalizzato esistente come base per il tuo tema.</value>
   </data>
+  <data name="UseFileManger" xml:space="preserve">
+    <value>Usa un'altra app</value>
+  </data>
   <data name="UseLessDataAlways" xml:space="preserve">
     <value>Sempre</value>
   </data>
@@ -13533,6 +13749,15 @@ Ma se in genere non sei d'accordo con le modeste esigenze di Telegram, non sarà
   </data>
   <data name="UseProxyUsername" xml:space="preserve">
     <value>Username</value>
+  </data>
+  <data name="UserAcceptedToGroupAction" xml:space="preserve">
+    <value>un1 è stato accettato nel gruppo</value>
+  </data>
+  <data name="UserAcceptedToGroupPush" xml:space="preserve">
+    <value>{0} è stato accettato nel gruppo</value>
+  </data>
+  <data name="UserAcceptedToGroupPushWithGroup" xml:space="preserve">
+    <value>{1}|{0} è stato accettato nel gruppo</value>
   </data>
   <data name="UserBio" xml:space="preserve">
     <value>Bio</value>
@@ -14773,6 +14998,9 @@ il tuo schermo</value>
   </data>
   <data name="Warmth" xml:space="preserve">
     <value>Calore</value>
+  </data>
+  <data name="Warning" xml:space="preserve">
+    <value>Attenzione</value>
   </data>
   <data name="WebSessionsTitle" xml:space="preserve">
     <value>Connessi con Telegram</value>

@@ -71,7 +71,7 @@ namespace Unigram.Views.Supergroups
 
         public void UpdateChatPhoto(Chat chat)
         {
-            Photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 64);
+            Photo.SetChat(ViewModel.ProtoService, chat, 64);
         }
 
         public void UpdateSupergroup(Chat chat, Supergroup group)
@@ -92,10 +92,18 @@ namespace Unigram.Views.Supergroups
             About.IsReadOnly = !group.CanChangeInfo();
 
             ChatType.Content = group.IsChannel ? Strings.Resources.ChannelType : Strings.Resources.GroupType;
-            ChatType.Badge = group.Username.Length > 0
-                ? group.IsChannel ? Strings.Resources.TypePublic : Strings.Resources.TypePublicGroup
-                : group.IsChannel ? Strings.Resources.TypePrivate : Strings.Resources.TypePrivateGroup;
             ChatType.Visibility = Visibility.Collapsed;
+            ChatType.Badge = group.Username.Length > 0
+                ? group.IsChannel
+                    ? Strings.Resources.TypePublic
+                    : Strings.Resources.TypePublicGroup
+                : group.IsChannel
+                    ? chat.HasProtectedContent
+                        ? Strings.Resources.TypePrivateRestrictedForwards
+                        : Strings.Resources.TypePrivate
+                    : chat.HasProtectedContent
+                        ? Strings.Resources.TypePrivateGroupRestrictedForwards
+                        : Strings.Resources.TypePrivateGroup;
 
             ChatHistory.Badge = null;
             ChatHistory.Visibility = group.CanChangeInfo() && string.IsNullOrEmpty(group.Username) && !group.IsChannel ? Visibility.Visible : Visibility.Collapsed;

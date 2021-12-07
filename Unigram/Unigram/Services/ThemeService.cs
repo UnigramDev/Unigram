@@ -165,7 +165,7 @@ namespace Unigram.Services
                 return;
             }
 
-            _settingsService.Appearance.UpdateNightMode(true);
+            _settingsService.Appearance.UpdateNightMode();
         }
     }
 }

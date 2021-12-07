@@ -11,7 +11,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed class GameContent : Control, IContentWithFile, IContentWithPlayback
+    public sealed class GameContent : Control, IContent, IContentWithPlayback
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
@@ -72,8 +72,6 @@ namespace Unigram.Controls.Messages.Content
             UpdateContent(message, game.Game);
         }
 
-        public void UpdateMessageContentOpened(MessageViewModel message) { }
-
         private void UpdateContent(MessageViewModel message, Game game)
         {
             if (Media.Child is IContent content && content.IsValid(message.Content, false))
@@ -95,14 +93,6 @@ namespace Unigram.Controls.Messages.Content
                 {
                     Media.Child = null;
                 }
-            }
-        }
-
-        public void UpdateFile(MessageViewModel message, File file)
-        {
-            if (Media?.Child is IContentWithFile content && content.IsValid(message.Content, false))
-            {
-                content.UpdateFile(message, file);
             }
         }
 

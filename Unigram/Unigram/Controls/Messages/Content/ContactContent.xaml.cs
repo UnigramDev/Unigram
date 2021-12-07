@@ -10,7 +10,7 @@ using Point = Windows.Foundation.Point;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed class ContactContent : Control, IContent
+    public sealed class ContactContent : Windows.UI.Xaml.Controls.Control, IContent
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
@@ -63,7 +63,7 @@ namespace Unigram.Controls.Messages.Content
             var user = message.ProtoService.GetUser(contact.Contact.UserId);
             if (user != null)
             {
-                Photo.Source = PlaceholderHelper.GetUser(message.ProtoService, user, 48);
+                Photo.SetUser(message.ProtoService, user, 48);
             }
             else
             {

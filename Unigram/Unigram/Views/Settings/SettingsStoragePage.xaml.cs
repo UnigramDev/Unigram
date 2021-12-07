@@ -73,8 +73,16 @@ namespace Unigram.Views.Settings
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.Source = chat == null ? null : PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 36);
-                photo.Visibility = chat == null ? Visibility.Collapsed : Visibility.Visible;
+                if (chat == null)
+                {
+                    photo.Source = null;
+                    photo.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    photo.SetChat(ViewModel.ProtoService, chat, 36);
+                    photo.Visibility = Visibility.Visible;
+                }
             }
 
             if (args.Phase < 2)

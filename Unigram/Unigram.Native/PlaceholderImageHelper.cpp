@@ -269,14 +269,17 @@ namespace winrt::Unigram::Native::implementation
 		struct NSVGimage* image;
 		image = nsvgParse((char*)data.c_str(), "px", 96);
 
-		size = Windows::Foundation::Size(image->width, image->height);
+		auto imageWidth = image->width / 2;
+		auto imageHeight = image->height / 2;
+		size = Windows::Foundation::Size(imageWidth, imageHeight);
 
 		winrt::com_ptr<ID2D1Bitmap1> targetBitmap;
 		D2D1_BITMAP_PROPERTIES1 properties = { { DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED }, 96, 96, D2D1_BITMAP_OPTIONS_TARGET, 0 };
-		ReturnIfFailed(result, m_d2dContext->CreateBitmap(D2D1_SIZE_U{ (uint32_t)image->width, (uint32_t)image->height }, nullptr, 0, &properties, targetBitmap.put()));
+		ReturnIfFailed(result, m_d2dContext->CreateBitmap(D2D1_SIZE_U{ (uint32_t)imageWidth, (uint32_t)imageHeight }, nullptr, 0, &properties, targetBitmap.put()));
 
 		m_d2dContext->SetTarget(targetBitmap.get());
 		m_d2dContext->BeginDraw();
+		m_d2dContext->SetTransform(D2D1::Matrix3x2F::Scale(0.5f, 0.5f));
 
 		winrt::com_ptr<ID2D1SolidColorBrush> blackBrush;
 		ReturnIfFailed(result, m_d2dContext->CreateSolidColorBrush(
@@ -370,6 +373,8 @@ namespace winrt::Unigram::Native::implementation
 		}
 
 		nsvgDelete(image);
+
+		m_d2dContext->SetTransform(D2D1::Matrix3x2F::Identity());
 
 		if ((result = m_d2dContext->EndDraw()) == D2DERR_RECREATE_TARGET)
 		{
