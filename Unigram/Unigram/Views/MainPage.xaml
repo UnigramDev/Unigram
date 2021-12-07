@@ -950,6 +950,7 @@
                             <ListView x:Name="ContactsSearchListView"
                                       x:Load="False"
                                       ItemsSource="{x:Bind ContactsResults.View, Mode=OneWay}"
+                                      ItemContainerStyle="{StaticResource DefaultListViewItemStyle}"
                                       IsItemClickEnabled="True"
                                       SelectionMode="None"
                                       ItemClick="ListView_ItemClick"
@@ -957,7 +958,7 @@
                                       ContainerContentChanging="ContactsSearchListView_ContainerContentChanging">
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
-                                        <Grid Margin="0,4,0,8">
+                                        <Grid Margin="12,4,12,8">
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="Auto" />
                                                 <RowDefinition Height="Auto" />
@@ -987,12 +988,6 @@
                                         </Grid>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
-                                <ListView.ItemContainerStyle>
-                                    <Style TargetType="ListViewItem">
-                                        <Setter Property="HorizontalContentAlignment"
-                                                Value="Stretch" />
-                                    </Style>
-                                </ListView.ItemContainerStyle>
                                 <ListView.ItemContainerTransitions>
                                     <TransitionCollection />
                                 </ListView.ItemContainerTransitions>
@@ -1052,6 +1047,7 @@
                             <Grid x:Name="ContactsPanel">
                                 <ListView x:Name="UsersListView"
                                           ItemsSource="{x:Bind ViewModel.Contacts.Items, Mode=OneWay}"
+                                          ItemContainerStyle="{StaticResource DefaultListViewItemStyle}"
                                           IsItemClickEnabled="True"
                                           ItemClick="ListView_ItemClick"
                                           ChoosingItemContainer="UsersListView_ChoosingItemContainer"
@@ -1059,7 +1055,7 @@
                                           SelectionMode="None">
                                     <ListView.ItemTemplate>
                                         <DataTemplate>
-                                            <Grid Margin="0,6">
+                                            <Grid Margin="qw,6">
                                                 <Grid.RowDefinitions>
                                                     <RowDefinition Height="Auto" />
                                                     <RowDefinition Height="Auto" />
@@ -1120,6 +1116,7 @@
                         <Grid x:Name="CallsRoot"
                               x:Load="False">
                             <ListView ItemsSource="{x:Bind ViewModel.Calls.Items}"
+                                      ItemContainerStyle="{StaticResource DefaultListViewItemStyle}"
                                       ItemClick="ListView_ItemClick"
                                       IsItemClickEnabled="True"
                                       ContainerContentChanging="Calls_ContainerContentChanging"
@@ -1129,14 +1126,6 @@
                                         <cells:CallCell ContextRequested="Call_ContextRequested" />
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
-                                <ListView.ItemContainerStyle>
-                                    <Style TargetType="ListViewItem">
-                                        <Setter Property="HorizontalContentAlignment"
-                                                Value="Stretch" />
-                                        <Setter Property="Padding"
-                                                Value="0" />
-                                    </Style>
-                                </ListView.ItemContainerStyle>
                                 <!--<ListView.ItemContainerTransitions>
                                      <TransitionCollection/>
                                      </ListView.ItemContainerTransitions>-->
