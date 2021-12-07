@@ -163,12 +163,12 @@ namespace Unigram.Services.Settings
                         if (window.Content is FrameworkElement element)
                         {
                             // This should be no longer needed
-                            //if (element.RequestedTheme == theme && state is true)
-                            //{
-                            //    element.RequestedTheme = theme == ElementTheme.Dark
-                            //        ? ElementTheme.Light
-                            //        : ElementTheme.Dark;
-                            //}
+                            if (state is true)
+                            {
+                                element.RequestedTheme = theme == ElementTheme.Dark
+                                    ? ElementTheme.Light
+                                    : ElementTheme.Dark;
+                            }
 
                             element.RequestedTheme = theme;
                         }
