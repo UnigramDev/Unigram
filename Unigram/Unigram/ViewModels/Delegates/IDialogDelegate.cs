@@ -18,6 +18,7 @@ namespace Unigram.ViewModels.Delegates
         void UpdateChatUnreadMentionCount(Chat chat, int unreadMentionCount);
         void UpdateChatDefaultDisableNotification(Chat chat, bool defaultDisableNotification);
         void UpdateChatDefaultMessageSenderId(Chat chat, MessageSender defaultMessageSenderId);
+        void UpdateChatPendingJoinRequests(Chat chat);
 
         void UpdatePinnedMessage();
         void UpdatePinnedMessage(Chat chat, bool known);

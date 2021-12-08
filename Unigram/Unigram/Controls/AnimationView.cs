@@ -102,6 +102,11 @@ namespace Unigram.Controls
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
+            Unload();
+        }
+
+        public void Unload()
+        {
             _shouldPlay = false;
             _unloaded = true;
             Subscribe(false);
@@ -221,8 +226,7 @@ namespace Unigram.Controls
 
             if (newValue == null)
             {
-                _source = null;
-                Subscribe(false);
+                Unload();
                 return;
             }
 

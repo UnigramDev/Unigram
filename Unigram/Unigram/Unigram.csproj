@@ -186,6 +186,7 @@
     <Compile Include="Common\LoopThreadPool.cs" />
     <Compile Include="Common\MenuFlyoutHelper.cs" />
     <Compile Include="Common\RemoteFileStream.cs" />
+    <Compile Include="Common\ScreenshotManager.cs" />
     <Compile Include="Common\Scrim.cs" />
     <Compile Include="Common\SoundEffects.cs" />
     <Compile Include="Common\UpdateManager.cs" />
@@ -262,6 +263,9 @@
     </Compile>
     <Compile Include="Controls\Cells\WebSessionCell.xaml.cs">
       <DependentUpon>WebSessionCell.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ChatJoinRequestsHeader.xaml.cs">
+      <DependentUpon>ChatJoinRequestsHeader.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ChatListListView.cs" />
     <Compile Include="Controls\ChatStatisticsOverview.xaml.cs">
@@ -561,6 +565,9 @@
     </Compile>
     <Compile Include="Views\Popups\BackgroundPopup.xaml.cs">
       <DependentUpon>BackgroundPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Popups\ChatJoinRequestsPopup.xaml.cs">
+      <DependentUpon>ChatJoinRequestsPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\ChooseColorPopup.xaml.cs">
       <DependentUpon>ChooseColorPopup.xaml</DependentUpon>
@@ -1518,6 +1525,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\ChatJoinRequestsHeader.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\ChatStatisticsOverview.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1706,6 +1717,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Themes\Experimental_disabled.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Experimental_enabled.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Themes\MenuFlyout_themeresources.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1771,6 +1790,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Popups\BackgroundPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Popups\ChatJoinRequestsPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

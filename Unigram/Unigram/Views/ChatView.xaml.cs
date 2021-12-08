@@ -155,6 +155,7 @@ namespace Unigram.Views
             InitializeStickers();
 
             GroupCall.InitializeParent(ClipperOuter, ViewModel.ProtoService);
+            JoinRequests.InitializeParent(ClipperJoinRequests, ViewModel.ProtoService);
             ActionBar.InitializeParent(ClipperActionBar);
             PinnedMessage.InitializeParent(Clipper);
 
@@ -3345,6 +3346,7 @@ namespace Unigram.Views
             }
 
             UpdateChatDefaultMessageSenderId(chat, chat.DefaultMessageSenderId);
+            UpdateChatPendingJoinRequests(chat);
             UpdateChatPermissions(chat);
             UpdateChatTheme(chat);
         }
@@ -3392,6 +3394,11 @@ namespace Unigram.Views
         {
             StickersPanel.UpdateChatPermissions(ViewModel.CacheService, chat);
             ListInline.UpdateChatPermissions(chat);
+        }
+
+        public void UpdateChatPendingJoinRequests(Chat chat)
+        {
+            JoinRequests.UpdateChat(chat);
         }
 
         public void UpdateChatTitle(Chat chat)

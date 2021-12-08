@@ -38,7 +38,7 @@ namespace Unigram.Common
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            UnloadVisibleItems();
+            UnloadVisibleItems(true);
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
@@ -98,7 +98,7 @@ namespace Unigram.Common
 
             if (lastVisibleIndex < firstVisibleIndex || firstVisibleIndex < 0)
             {
-                UnloadVisibleItems();
+                UnloadVisibleItems(false);
                 return;
             }
 
@@ -195,11 +195,23 @@ namespace Unigram.Common
 
         public void UnloadVisibleItems()
         {
+            UnloadVisibleItems(false);
+        }
+
+        public void UnloadVisibleItems(bool dispose)
+        {
             foreach (var item in _prev.Values)
             {
                 try
                 {
-                    item.Pause();
+                    if (dispose)
+                    {
+                        item.Unload();
+                    }
+                    else
+                    {
+                        item.Pause();
+                    }
                 }
                 catch { }
             }
