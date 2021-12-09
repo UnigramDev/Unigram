@@ -1389,6 +1389,8 @@ namespace Unigram.ViewModels
                     {
                         await AddHeaderAsync();
                     }
+
+                    await AddSponsoredMessagesAsync();
                 }
 
                 _isLoadingNextSlice = false;
@@ -1399,6 +1401,24 @@ namespace Unigram.ViewModels
             }
 
             await LoadMessageSliceAsync(previousId, maxId, alignment, pixel, direction, disableAnimation, true);
+        }
+
+        private async Task AddSponsoredMessagesAsync()
+        {
+            var chat = _chat;
+            if (chat == null || chat.Type is not ChatTypeSupergroup supergroup || !supergroup.IsChannel)
+            {
+                return;
+            }
+
+            var response = await ProtoService.SendAsync(new GetChatSponsoredMessages(chat.Id));
+            if (response is SponsoredMessages messages)
+            {
+                foreach (var sponsored in messages.Messages)
+                {
+                    Items.Add(_messageFactory.Create(this, new Message(0, new MessageSenderChat(sponsored.SponsorChatId), sponsored.SponsorChatId, null, null, false, false, false, false, false, false, false, false, false, false, false, false, true, false, 0, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, sponsored.Content, null)));
+                }
+            }
         }
 
 

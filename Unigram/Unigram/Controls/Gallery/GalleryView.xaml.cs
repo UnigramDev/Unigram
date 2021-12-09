@@ -815,7 +815,7 @@ namespace Unigram.Controls.Gallery
                 var viewModel = ViewModel;
                 if (viewModel == null)
                 {
-                    // Page is most likey being closed, just reset the view
+                    // Page is most likely being closed, just reset the view
                     LayoutRoot_HorizontalSnapPointsChanged(LayoutRoot, null);
                     return;
                 }
