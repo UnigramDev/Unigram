@@ -184,7 +184,8 @@ namespace Unigram.Services
 
         private bool _initializeAfterClose;
 
-        private static Task _longRunningTask;
+        private static volatile Task _longRunningTask;
+        private static volatile object _longRunningLock = new object();
 
         public ProtoService(int session, bool online, IDeviceInfoService deviceInfoService, ISettingsService settings, ILocaleService locale, IEventAggregator aggregator)
         {
@@ -324,6 +325,11 @@ namespace Unigram.Services
             _chats[10] = new Chat(10, new ChatTypeSecret(1, 7), "Eileen Lockhard \uD83D\uDC99", ChatPhoto("a5.png"),    permissions, null,             new [] { new ChatPosition(new ChatListMain(), 0, false, null) },                    false, false, false, false, false, false, 0, 0, long.MaxValue, 0, new ChatNotificationSettings(false, 0, false, string.Empty, false, true, true, true, true, true), null, 0, 0, null, string.Empty);
 #endif
 
+            lock (_longRunningLock)
+            {
+                _longRunningTask ??= Task.Factory.StartNew(Client.Run, TaskCreationOptions.LongRunning);
+            }
+
             Task.Factory.StartNew(async () =>
             {
                 if (_settings.FilesDirectory != null && StorageApplicationPermissions.MostRecentlyUsedList.ContainsItem("FilesDirectory"))
@@ -347,8 +353,6 @@ namespace Unigram.Services
                 _client.Send(new SetTdlibParameters(parameters));
                 _client.Send(new CheckDatabaseEncryptionKey(new byte[0]));
                 _client.Send(new GetApplicationConfig(), UpdateConfig);
-
-                _longRunningTask ??= Task.Factory.StartNew(Client.Run, TaskCreationOptions.LongRunning);
             });
         }
 
