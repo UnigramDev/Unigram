@@ -314,7 +314,7 @@ namespace Unigram.Common
                         try
                         {
                             var props = await item.Properties.GetImagePropertiesAsync();
-                            bitmap = LoadedImageSurface.StartLoadFromStream(stream, new Size(props.Width / 3d, props.Height / 3d));
+                            bitmap = LoadedImageSurface.StartLoadFromStream(stream, new Size(props.Width / 2d, props.Height / 2d));
                         }
                         catch { }
                     }
