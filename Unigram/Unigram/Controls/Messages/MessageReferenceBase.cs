@@ -289,6 +289,7 @@ namespace Unigram.Controls.Messages
                 case MessageChatDeleteMember:
                 case MessageChatDeletePhoto:
                 case MessageChatJoinByLink:
+                case MessageChatJoinByRequest:
                 case MessageChatSetTtl:
                 case MessageChatUpgradeFrom:
                 case MessageChatUpgradeTo:

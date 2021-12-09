@@ -68,6 +68,8 @@ namespace Unigram.Controls.Messages
                     return UpdateChatDeletePhoto(message, chatDeletePhoto, active);
                 case MessageChatJoinByLink chatJoinByLink:
                     return UpdateChatJoinByLink(message, chatJoinByLink, active);
+                case MessageChatJoinByRequest chatJoinByRequest:
+                    return UpdateChatJoinByRequest(message, chatJoinByRequest, active);
                 case MessageChatSetTtl chatSetTtl:
                     return UpdateChatSetTtl(message, chatSetTtl, active);
                 case MessageChatUpgradeFrom chatUpgradeFrom:
@@ -939,6 +941,24 @@ namespace Unigram.Controls.Messages
             else if (message.ProtoService.TryGetUser(message.SenderId, out User senderUser))
             {
                 content = ReplaceWithLink(Strings.Resources.ActionInviteUser, "un1", senderUser, ref entities);
+            }
+
+            return (content, entities);
+        }
+
+        private static (string, IList<TextEntity>) UpdateChatJoinByRequest(MessageViewModel message, MessageChatJoinByRequest chatJoinByRequest, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            //if (message.IsOutgoing)
+            //{
+            //    content = Strings.Resources.ActionInviteYou;
+            //}
+            //else
+            if (message.ProtoService.TryGetUser(message.SenderId, out User senderUser))
+            {
+                content = ReplaceWithLink(Strings.Resources.UserAcceptedToGroupAction, "un1", senderUser, ref entities);
             }
 
             return (content, entities);
