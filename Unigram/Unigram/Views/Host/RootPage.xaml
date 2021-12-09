@@ -8,6 +8,7 @@
       xmlns:settings="using:Unigram.Views.Settings"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:contract13NotPresent="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractNotPresent(Windows.Foundation.UniversalApiContract, 13)"
       muxc:BackdropMaterial.ApplyToRootOrPageBackground="{ThemeResource ExpBackdropMaterial}"
       mc:Ignorable="d"
       d:DesignHeight="300"
@@ -141,6 +142,8 @@
             <ColumnDefinition x:Name="MainColumn" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
+        <Border contract13NotPresent:Background="{ThemeResource ExpBackdropMaterialBrush}" />
+
         <controls:NavigationView x:Name="Navigation"
                                  BackRequested="Navigation_BackRequested"
                                  PaneOpening="Navigation_PaneOpening"

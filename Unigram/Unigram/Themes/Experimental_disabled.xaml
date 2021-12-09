@@ -3,6 +3,8 @@
 
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Default">
+            <SolidColorBrush x:Key="ExpBackdropMaterialBrush"
+                             Color="Transparent" />
             <Thickness x:Key="ExpNavigationViewPadding">0,32,0,0</Thickness>
             <x:Double x:Key="ExpNavigationViewMenuButtonWidth">40</x:Double>
             <x:Boolean x:Key="ExpBackdropMaterial">False</x:Boolean>
@@ -26,6 +28,8 @@
                    TargetType="Border" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="Light">
+            <SolidColorBrush x:Key="ExpBackdropMaterialBrush"
+                             Color="Transparent" />
             <Thickness x:Key="ExpNavigationViewPadding">0,32,0,0</Thickness>
             <x:Double x:Key="ExpNavigationViewMenuButtonWidth">40</x:Double>
             <x:Boolean x:Key="ExpBackdropMaterial">False</x:Boolean>

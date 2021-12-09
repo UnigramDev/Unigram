@@ -1,8 +1,15 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:Windows10version1903="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)">
 
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Default">
+            <AcrylicBrush x:Key="ExpBackdropMaterialBrush"
+                          TintColor="#2C2C2C"
+                          TintOpacity="0.15"
+                          Windows10version1903:TintLuminosityOpacity="0.96"
+                          FallbackColor="#202020"
+                          BackgroundSource="HostBackdrop" />
             <Thickness x:Key="ExpNavigationViewPadding">0,0,0,0</Thickness>
             <x:Double x:Key="ExpNavigationViewMenuButtonWidth">48</x:Double>
             <x:Boolean x:Key="ExpBackdropMaterial">True</x:Boolean>
@@ -30,6 +37,12 @@
             </Style>
         </ResourceDictionary>
         <ResourceDictionary x:Key="Light">
+            <AcrylicBrush x:Key="ExpBackdropMaterialBrush"
+                          TintColor="#FCFCFC"
+                          TintOpacity="0.0"
+                          Windows10version1903:TintLuminosityOpacity="0.85"
+                          FallbackColor="#F3F3F3"
+                          BackgroundSource="HostBackdrop" />
             <Thickness x:Key="ExpNavigationViewPadding">0,0,0,0</Thickness>
             <x:Double x:Key="ExpNavigationViewMenuButtonWidth">48</x:Double>
             <x:Boolean x:Key="ExpBackdropMaterial">True</x:Boolean>
