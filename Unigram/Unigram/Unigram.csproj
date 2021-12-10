@@ -186,7 +186,6 @@
     <Compile Include="Common\LoopThreadPool.cs" />
     <Compile Include="Common\MenuFlyoutHelper.cs" />
     <Compile Include="Common\RemoteFileStream.cs" />
-    <Compile Include="Common\ScreenshotManager.cs" />
     <Compile Include="Common\Scrim.cs" />
     <Compile Include="Common\SoundEffects.cs" />
     <Compile Include="Common\UpdateManager.cs" />
@@ -504,6 +503,11 @@
     <Compile Include="Services\Theme\ThemeBundledInfo.cs" />
     <Compile Include="Services\Theme\ThemeCustomInfo.cs" />
     <Compile Include="Services\ThemeService.Defaults.cs" />
+    <Compile Include="Strings\en\Resources.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resw</DependentUpon>
+    </Compile>
     <Compile Include="ViewModels\ChatListViewModel.cs" />
     <Compile Include="ViewModels\Delegates\IChatListDelegate.cs" />
     <Compile Include="ViewModels\Delegates\IGroupCallDelegate.cs" />
@@ -685,11 +689,6 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Additional.resw</DependentUpon>
-    </Compile>
-    <Compile Include="Strings\en\Resources.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resw</DependentUpon>
     </Compile>
     <Compile Include="Triggers\EnumTrigger.cs" />
     <Compile Include="ViewModels\AttachedStickersViewModel.cs" />
@@ -1289,9 +1288,9 @@
     </PRIResource>
     <PRIResource Include="Strings\en\Resources.resw">
       <Generator>ReswFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.cs</LastGenOutput>
       <CustomToolNamespace>Unigram.Strings</CustomToolNamespace>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.cs</LastGenOutput>
     </PRIResource>
     <PRIResource Include="Strings\es\Resources.resw">
       <SubType>Designer</SubType>
@@ -1718,12 +1717,12 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Themes\Experimental_disabled.xaml">
-      <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Themes\Experimental_enabled.xaml">
-      <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Themes\MenuFlyout_themeresources.xaml">
       <SubType>Designer</SubType>
@@ -2357,7 +2356,7 @@
     </Reference>
     <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\rlottie\$(Platform)\RLottie.dll" />
     <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\rlottie\$(Platform)\RLottie.pri" />
-    <!--<ReferenceCopyLocalPaths Condition=" '$(Configuration)' == 'Debug' " Include="$(ProjectDir)\..\Libraries\rlottie\$(Platform)\zlib1.dll" />-->
+    <ReferenceCopyLocalPaths Condition=" '$(Configuration)' == 'Debug' " Include="$(ProjectDir)\..\Libraries\rlottie\$(Platform)\zlib1.dll" />
   </ItemGroup>
   <ItemGroup />
   <!--<ItemGroup>

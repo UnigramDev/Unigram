@@ -209,7 +209,7 @@
             </controls:NavigationView.PaneFooter>
         </controls:NavigationView>
 
-        <Grid x:Name="Transition" />
+        <Border x:Name="Transition" />
 
         <controls:SwitchThemeButton x:Name="Theme"
                                     Click="Theme_Click"

@@ -9,6 +9,7 @@ using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
+using Unigram.Native;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Services;
@@ -556,10 +557,10 @@ namespace Unigram.Views.Host
             view.TryResizeView(ApplicationView.PreferredLaunchViewSize);
         }
 
-        private async void Theme_Click(object sender, RoutedEventArgs e)
+        private void Theme_Click(object sender, RoutedEventArgs e)
         {
-            var bitmap = await ScreenshotManager.CaptureAsync();
-            Transition.Background = new ImageBrush { ImageSource = bitmap, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
+            var bitmap = ScreenshotManager.Capture();
+            Transition.Background = new ImageBrush { ImageSource = bitmap, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, RelativeTransform = new ScaleTransform { ScaleY = -1, CenterY = 0.5 } };
 
             var actualWidth = (float)ActualWidth;
             var actualHeight = (float)ActualHeight;

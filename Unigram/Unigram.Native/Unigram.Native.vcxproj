@@ -288,6 +288,10 @@
     <ClInclude Include="QR\BitBuffer.hpp" />
     <ClInclude Include="QR\QrCode.hpp" />
     <ClInclude Include="QR\QrSegment.hpp" />
+    <ClInclude Include="ScreenshotManager.h">
+      <DependentUpon>ScreenshotManager.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="StringUtils.h" />
     <ClInclude Include="SVG\nanosvg.h" />
     <ClInclude Include="TelegramGameProxy.h">
@@ -466,6 +470,10 @@
     <ClCompile Include="Qr\QrSegment.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="ScreenshotManager.cpp">
+      <DependentUpon>ScreenshotManager.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="SVG\nanosvg.cpp" />
     <ClCompile Include="TelegramGameProxy.cpp">
       <DependentUpon>TelegramGameProxy.idl</DependentUpon>
@@ -497,6 +505,9 @@
     </Midl>
     <Midl Include="NativeUtils.idl" />
     <Midl Include="PlaceholderImageHelper.idl" />
+    <Midl Include="ScreenshotManager.idl">
+      <SubType>Designer</SubType>
+    </Midl>
     <Midl Include="TelegramGameProxy.idl" />
     <Midl Include="TelegramPaymentProxy.idl" />
     <Midl Include="VideoAnimation.idl" />

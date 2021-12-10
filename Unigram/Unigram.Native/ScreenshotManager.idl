@@ -1,0 +1,8 @@
+namespace Unigram.Native
+{
+    [default_interface]
+    runtimeclass ScreenshotManager
+    {
+        static Windows.UI.Xaml.Media.ImageSource Capture();
+    }
+}

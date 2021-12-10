@@ -308,5 +308,6 @@
     <Midl Include="Composition\DirectRectangleClip.idl">
       <Filter>Composition</Filter>
     </Midl>
+    <Midl Include="ScreenshotManager.idl" />
   </ItemGroup>
 </Project>
