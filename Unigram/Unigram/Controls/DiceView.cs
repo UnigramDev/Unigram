@@ -109,7 +109,7 @@ namespace Unigram.Controls
             base.OnApplyTemplate();
         }
 
-        private void Load()
+        private bool Load()
         {
             if (_unloaded && _layoutRoot != null && _layoutRoot.IsLoaded)
             {
@@ -127,7 +127,11 @@ namespace Unigram.Controls
 
                 _unloaded = false;
                 SetValue(_previousState, _previous);
+
+                return true;
             }
+
+            return false;
         }
 
         private void OnLoading(FrameworkElement sender, object args)
@@ -324,7 +328,7 @@ namespace Unigram.Controls
         public async void SetValue(DiceStickers state, int newValue)
         {
             var canvas = _canvas;
-            if (canvas == null)
+            if (canvas == null  && !Load())
             {
                 _previous = newValue;
                 _previousState = state;
