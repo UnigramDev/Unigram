@@ -125,7 +125,7 @@ namespace Unigram.Controls.Chats
                 var freeform = dark ? new[] { 0x0D0E17, 0x090A0C, 0x181C28, 0x0E0F12} : new[] { 0xDBDDBB, 0x6BA587, 0xD5D88D, 0x88B884 };
                 background = new Background(0, true, dark, string.Empty, 
                     new Document(string.Empty, "application/x-tgwallpattern", null, null, TdExtensions.GetLocalFile("Assets\\Background.tgv", "Background")),
-                    new BackgroundTypePattern(new BackgroundFillFreeformGradient(freeform), 50, dark, false));
+                    new BackgroundTypePattern(new BackgroundFillFreeformGradient(freeform), dark ? 100 : 50, dark, false));
             }
 
             if (_oldDark == dark && BackgroundEquals(_oldBackground, background))
@@ -268,40 +268,7 @@ namespace Unigram.Controls.Chats
                 return next == null;
             }
 
-            if (prev.Type is BackgroundTypeFill prevFill && next.Type is BackgroundTypeFill nextFill)
-            {
-                return FillEquals(prevFill.Fill, nextFill.Fill);
-            }
-            else if (prev.Type is BackgroundTypePattern prevPattern && next.Type is BackgroundTypePattern nextPattern)
-            {
-
-            }
-            else if (prev.Type is BackgroundTypeWallpaper prevWallpaper && next.Type is BackgroundTypeWallpaper nextWallpaper)
-            {
-
-            }
-
-            return Equals(prev, next);
-        }
-
-        private bool FillEquals(BackgroundFill prev, BackgroundFill next)
-        {
-            if (prev is BackgroundFillSolid prevSolid && next is BackgroundFillSolid nextSolid)
-            {
-                return prevSolid.Color == nextSolid.Color;
-            }
-            else if (prev is BackgroundFillGradient prevGradient && next is BackgroundFillGradient nextGradient)
-            {
-                return prevGradient.TopColor == nextGradient.TopColor
-                    && prevGradient.BottomColor == nextGradient.BottomColor
-                    && prevGradient.RotationAngle == nextGradient.RotationAngle;
-            }
-            else if (prev is BackgroundFillFreeformGradient prevFreeform && next is BackgroundFillFreeformGradient nextFreeform)
-            {
-                return prevFreeform.Colors.SequenceEqual(nextFreeform.Colors);
-            }
-
-            return false;
+            return prev.Id == next.Id && prev.IsDark == next.IsDark;
         }
 
         private void UpdateBlurred(bool enabled, float amount = 12)
