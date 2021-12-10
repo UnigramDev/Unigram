@@ -2,6 +2,7 @@
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.ViewModels;
+using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -79,13 +80,43 @@ namespace Unigram.Controls.Messages.Content
             var small = photo.GetSmall()?.Photo;
             var big = photo.GetBig();
 
+            if (small == null || big == null)
+            {
+                return;
+            }
+
             Texture.HorizontalAlignment = big.Width > big.Height ? HorizontalAlignment.Center : HorizontalAlignment.Stretch;
             Texture.VerticalAlignment = big.Height > big.Width ? VerticalAlignment.Center : VerticalAlignment.Stretch;
 
-            UpdateThumbnail(message, small, photo.Minithumbnail, true);
+            if (!big.Photo.Local.IsDownloadingCompleted && !message.IsSecret())
+            {
+                UpdateThumbnail(message, small, photo.Minithumbnail, true);
+            }
 
             UpdateManager.Subscribe(this, message, big.Photo, ref _fileToken, UpdateFile);
             UpdateFile(message, big.Photo);
+        }
+
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            availableSize = base.MeasureOverride(availableSize);
+
+            var photo = GetContent(_message?.Content);
+            if (photo == null)
+            {
+                return availableSize;
+            }
+
+            var big = photo.GetBig();
+
+            Texture.HorizontalAlignment = big.Width > big.Height && availableSize.Height > availableSize.Width
+                ? HorizontalAlignment.Center
+                : HorizontalAlignment.Stretch;
+            Texture.VerticalAlignment = big.Height > big.Width && availableSize.Width > availableSize.Height
+                ? VerticalAlignment.Center
+                : VerticalAlignment.Stretch;
+
+            return availableSize;
         }
 
         public void Mockup(MessagePhoto photo)
@@ -122,9 +153,7 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            var small = photo.GetSmall();
             var big = photo.GetBig();
-
             if (big == null || big.Photo.Id != file.Id)
             {
                 return;
@@ -229,6 +258,12 @@ namespace Unigram.Controls.Messages.Content
                 Texture.Source = image = new BitmapImage { DecodePixelWidth = width, DecodePixelHeight = height }; // UriEx.GetLocal(file.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height };
 
                 var test = await message.ProtoService.GetFileAsync(file);
+                if (test == null)
+                {
+                    Texture.Source = null;
+                    return;
+                }
+
                 using (var stream = await test.OpenReadAsync())
                 {
                     await image.SetSourceAsync(stream);
