@@ -17,5 +17,12 @@ namespace Unigram.Services.Settings
             get => (MediaPlaybackAutoRepeatMode)(_repeatMode ??= GetValueOrDefault("RepeatMode", 0));
             set => AddOrUpdateValue(ref _repeatMode, "RepeatMode", (int)value);
         }
+
+        private double? _playbackRate;
+        public double PlaybackRate
+        {
+            get => _playbackRate ??= GetValueOrDefault("PlaybackRate", 1.0);
+            set => AddOrUpdateValue(ref _playbackRate, "PlaybackRate", value);
+        }
     }
 }

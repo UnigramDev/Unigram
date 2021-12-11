@@ -266,7 +266,7 @@ namespace Unigram.Controls
 
         private void UpdateRate()
         {
-            RateButton.Visibility = _playbackService.IsSupportedPlaybackRateRange(2.0, 2.0) ? Visibility.Visible : Visibility.Collapsed;
+            RateButton.Visibility = Visibility.Visible; //_playbackService.IsSupportedPlaybackRateRange(2.0, 2.0) ? Visibility.Visible : Visibility.Collapsed;
             RateButton.IsChecked = _playbackService.PlaybackRate != 1.0;
         }
 

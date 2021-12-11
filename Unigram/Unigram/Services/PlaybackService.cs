@@ -414,6 +414,7 @@ namespace Unigram.Services
             set
             {
                 _playbackRate = value;
+                _settingsService.Playback.PlaybackRate = value;
                 try
                 {
                     _mediaPlayer.PlaybackSession.PlaybackRate = value;
@@ -553,6 +554,10 @@ namespace Unigram.Services
             if (message.Content is not MessageAudio)
             {
                 PlaybackRate = 1;
+            }
+            else
+            {
+                PlaybackRate = _settingsService.Playback.PlaybackRate;
             }
 
             var item = GetPlaybackItem(message);
