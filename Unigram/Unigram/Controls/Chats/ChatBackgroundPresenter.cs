@@ -268,7 +268,46 @@ namespace Unigram.Controls.Chats
                 return next == null;
             }
 
-            return prev.Id == next.Id && prev.IsDark == next.IsDark;
+            if (prev.Type is BackgroundTypeFill prevFill && next.Type is BackgroundTypeFill nextFill)
+            {
+                return FillEquals(prevFill.Fill, nextFill.Fill);
+            }
+            else if (prev.Type is BackgroundTypePattern prevPattern && next.Type is BackgroundTypePattern nextPattern)
+            {
+                return prevPattern.IsMoving == nextPattern.IsMoving
+                    && prevPattern.IsInverted == nextPattern.IsInverted
+                    && prevPattern.Intensity == nextPattern.Intensity
+                    && prev.Document?.DocumentValue.Id == next.Document?.DocumentValue.Id
+                    && FillEquals(prevPattern.Fill, nextPattern.Fill);
+            }
+            else if (prev.Type is BackgroundTypeWallpaper prevWallpaper && next.Type is BackgroundTypeWallpaper nextWallpaper)
+            {
+                return prevWallpaper.IsBlurred == nextWallpaper.IsBlurred
+                    && prevWallpaper.IsMoving == nextWallpaper.IsMoving
+                    && prev.Document?.DocumentValue.Id == next.Document?.DocumentValue.Id;
+            }
+
+            return Equals(prev, next);
+        }
+
+        private bool FillEquals(BackgroundFill prev, BackgroundFill next)
+        {
+            if (prev is BackgroundFillSolid prevSolid && next is BackgroundFillSolid nextSolid)
+            {
+                return prevSolid.Color == nextSolid.Color;
+            }
+            else if (prev is BackgroundFillGradient prevGradient && next is BackgroundFillGradient nextGradient)
+            {
+                return prevGradient.TopColor == nextGradient.TopColor
+                    && prevGradient.BottomColor == nextGradient.BottomColor
+                    && prevGradient.RotationAngle == nextGradient.RotationAngle;
+            }
+            else if (prev is BackgroundFillFreeformGradient prevFreeform && next is BackgroundFillFreeformGradient nextFreeform)
+            {
+                return prevFreeform.Colors.SequenceEqual(nextFreeform.Colors);
+            }
+
+            return false;
         }
 
         private void UpdateBlurred(bool enabled, float amount = 12)
