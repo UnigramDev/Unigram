@@ -4,6 +4,7 @@
                                xmlns:local="using:Unigram.Views.Chats"
                                xmlns:cells="using:Unigram.Controls.Cells"
                                xmlns:controls="using:Unigram.Controls"
+                               xmlns:messages="using:Unigram.Controls.Messages"
                                xmlns:microsoft="using:Microsoft.UI.Xaml.Controls"
                                xmlns:selectors="using:Unigram.Selectors"
                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -36,9 +37,9 @@
                                             HorizontalContentAlignment="Stretch"
                                             VerticalContentAlignment="Stretch" />
 
-                    <Border x:Name="HeaderPanel"
-                            Background="{ThemeResource PageBackgroundDarkBrush}"
-                            Canvas.ZIndex="1">
+                    <Grid x:Name="HeaderPanel"
+                          Background="{ThemeResource PageBackgroundDarkBrush}"
+                          Canvas.ZIndex="1">
                         <Grid MaxWidth="640"
                               Margin="12,16,12,0"
                               CornerRadius="8,8,0,0">
@@ -52,7 +53,17 @@
                                                  DisplayMemberPath="Text"
                                                  Grid.RowSpan="1" />
                         </Grid>
-                    </Border>
+                        <messages:MessageService x:Name="DateHeader"
+                                                 Visibility="Collapsed"
+                                                 VerticalAlignment="Bottom"
+                                                 Margin="0,0,0,-30">
+                            <TextBlock x:Name="DateHeaderLabel"
+                                       Text="31 dicembre 2017"
+                                       Foreground="White"
+                                       TextAlignment="Center"
+                                       Style="{StaticResource CaptionTextBlockStyle}" />
+                        </messages:MessageService>
+                    </Grid>
 
                     <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                             MaxWidth="640"
@@ -69,24 +80,12 @@
                 <microsoft:ProgressBar Background="Transparent"
                                        IsIndeterminate="{x:Bind ViewModel.Music.IsLoading, Mode=OneWay}" />
             </ListView.Footer>
-            <ListView.ItemTemplateSelector>
-                <selectors:MessageContentTemplateSelector>
-                    <selectors:MessageContentTemplateSelector.MessageTemplate>
-                        <DataTemplate>
-                            <cells:SharedAudioCell Padding="12,6"
-                                                   Background="Transparent" />
-                        </DataTemplate>
-                    </selectors:MessageContentTemplateSelector.MessageTemplate>
-                    <selectors:MessageContentTemplateSelector.HeaderDateTemplate>
-                        <DataTemplate>
-                            <Border Background="{ThemeResource PageSubHeaderBackgroundBrush}">
-                                <TextBlock Margin="12,24,12,8"
-                                           Style="{StaticResource SettingsGroupTextBlockStyle}" />
-                            </Border>
-                        </DataTemplate>
-                    </selectors:MessageContentTemplateSelector.HeaderDateTemplate>
-                </selectors:MessageContentTemplateSelector>
-            </ListView.ItemTemplateSelector>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <cells:SharedAudioCell Padding="12,6"
+                                           Background="Transparent" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <ItemsStackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"

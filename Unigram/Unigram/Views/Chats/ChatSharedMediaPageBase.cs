@@ -3,12 +3,14 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Chats;
+using Unigram.Controls.Messages;
 using Unigram.Converters;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Chats;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media.Animation;
@@ -22,6 +24,72 @@ namespace Unigram.Views.Chats
         public ProfileHeader Header => ProfileHeader;
 
         private CompositionPropertySet _properties;
+
+        private readonly DispatcherTimer _dateHeaderTimer;
+        private bool _dateHeaderCollapsed = true;
+
+        public ChatSharedMediaPageBase()
+        {
+            _dateHeaderTimer = new DispatcherTimer();
+            _dateHeaderTimer.Interval = TimeSpan.FromMilliseconds(2000);
+            _dateHeaderTimer.Tick += (s, args) =>
+            {
+                _dateHeaderTimer.Stop();
+                ShowHideDateHeader(false, true);
+            };
+        }
+
+        #region Date visibility
+
+        private void ShowHideDateHeader(bool show, bool animate)
+        {
+            if ((show && DateHeader.Visibility == Visibility.Visible) || (!show && (DateHeader.Visibility == Visibility.Collapsed || _dateHeaderCollapsed)))
+            {
+                return;
+            }
+
+            if (show)
+            {
+                _dateHeaderCollapsed = false;
+            }
+            else
+            {
+                _dateHeaderCollapsed = true;
+            }
+
+            if (!animate)
+            {
+                DateHeader.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
+                return;
+            }
+
+            DateHeader.Visibility = Visibility.Visible;
+
+            var visual = ElementCompositionPreview.GetElementVisual(DateHeader);
+
+            var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
+                if (show)
+                {
+                    _dateHeaderCollapsed = false;
+                }
+                else
+                {
+                    DateHeader.Visibility = Visibility.Collapsed;
+                }
+            };
+
+            var opacity = visual.Compositor.CreateScalarKeyFrameAnimation();
+            opacity.InsertKeyFrame(0, show ? 0 : 1);
+            opacity.InsertKeyFrame(1, show ? 1 : 0);
+
+            visual.StartAnimation("Opacity", opacity);
+
+            batch.End();
+        }
+
+        #endregion
 
         protected void InitializeSearch(TextBox field, Func<SearchMessagesFilter> filter)
         {
@@ -117,10 +185,15 @@ namespace Unigram.Views.Chats
                 }
 
                 args.ItemContainer.Style = sender.ItemContainerStyle;
+                args.ItemContainer.ContentTemplate = sender.ItemTemplate;
                 args.ItemContainer.ContextRequested += Message_ContextRequested;
             }
 
-            args.ItemContainer.ContentTemplate = sender.ItemTemplateSelector.SelectTemplate(args.Item, args.ItemContainer);
+            if (sender.ItemTemplateSelector != null)
+            {
+                args.ItemContainer.ContentTemplate = sender.ItemTemplateSelector.SelectTemplate(args.Item, args.ItemContainer);
+            }
+
             args.IsContainerPrepared = true;
         }
 
@@ -132,8 +205,14 @@ namespace Unigram.Views.Chats
         private ProfileHeader _profileHeader;
         public ProfileHeader ProfileHeader => _profileHeader ??= FindName(nameof(ProfileHeader)) as ProfileHeader;
 
-        private Border _headerPanel;
-        public Border HeaderPanel => _headerPanel ??= FindName(nameof(HeaderPanel)) as Border;
+        private Grid _headerPanel;
+        public Grid HeaderPanel => _headerPanel ??= FindName(nameof(HeaderPanel)) as Grid;
+
+        private MessageService _dateHeader;
+        public MessageService DateHeader => _dateHeader ??= FindName(nameof(DateHeader)) as MessageService;
+
+        private TextBlock _dateHeaderLabel;
+        public TextBlock DateHeaderLabel => _dateHeaderLabel ??= FindName(nameof(DateHeaderLabel)) as TextBlock;
 
         protected void List_Loaded(object sender, RoutedEventArgs e)
         {
@@ -169,7 +248,7 @@ namespace Unigram.Views.Chats
                 //scrollingHost.ChangeView(null, ViewModel.VerticalOffset, null, true);
 
                 //scrollingHost.LayoutUpdated += handler;
-                //scrollingHost.ViewChanged += OnViewChanged;
+                scrollingHost.ViewChanged += OnViewChanged;
             }
         }
 
@@ -189,6 +268,25 @@ namespace Unigram.Views.Chats
             if (sender is ScrollViewer scrollingHost)
             {
                 ViewModel.VerticalOffset = scrollingHost.VerticalOffset;
+
+                var index = ScrollingHost.ItemsPanelRoot switch
+                {
+                    ItemsStackPanel stackPanel => stackPanel.FirstVisibleIndex,
+                    ItemsWrapGrid wrapGrid => wrapGrid.FirstVisibleIndex,
+                    _ => -1
+                };
+
+                var container = ScrollingHost.ContainerFromIndex(index) as SelectorItem;
+                if (container == null || container.Tag is not Message message)
+                {
+                    return;
+                }
+
+                DateHeaderLabel.Text = Converter.MonthGrouping(Utils.UnixTimestampToDateTime(message.Date));
+
+                _dateHeaderTimer.Stop();
+                _dateHeaderTimer.Start();
+                ShowHideDateHeader(scrollingHost.VerticalOffset > ProfileHeader.ActualHeight, true);
             }
         }
 

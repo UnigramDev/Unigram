@@ -3,7 +3,6 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Gallery;
-using Unigram.Converters;
 using Unigram.ViewModels.Chats;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
@@ -40,6 +39,7 @@ namespace Unigram.Views.Chats
             {
                 var photo = content.Children[0] as ImageView;
                 photo.Tag = message;
+                content.Tag = message;
 
                 if (message.Content is MessagePhoto photoMessage)
                 {
@@ -54,15 +54,6 @@ namespace Unigram.Views.Chats
                     var duration = panel.Children[1] as TextBlock;
                     duration.Text = videoMessage.Video.GetDuration();
                 }
-            }
-            else if (message.Content is MessageHeaderDate && args.ItemContainer.ContentTemplateRoot is Border border && border.Child is TextBlock header)
-            {
-                header.Text = Converter.MonthGrouping(Utils.UnixTimestampToDateTime(message.Date));
-            }
-
-            if (args.ItemContainer.ContentTemplateRoot is FrameworkElement element)
-            {
-                element.Tag = message;
             }
         }
 
