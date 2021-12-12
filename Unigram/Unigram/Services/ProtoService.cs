@@ -82,6 +82,8 @@ namespace Unigram.Services
         bool TryGetChat(long chatId, out Chat chat);
         bool TryGetChat(MessageSender sender, out Chat value);
 
+        bool TryGetChatFromUser(long userId, out long value);
+
         SecretChat GetSecretChat(int id);
         SecretChat GetSecretChat(Chat chat);
         SecretChat GetSecretChatForUser(long id);
@@ -147,6 +149,8 @@ namespace Unigram.Services
         private readonly ConcurrentDictionary<long, ConcurrentDictionary<MessageSender, ChatAction>> _chatActions = new ConcurrentDictionary<long, ConcurrentDictionary<MessageSender, ChatAction>>();
 
         private readonly Dictionary<int, SecretChat> _secretChats = new Dictionary<int, SecretChat>();
+
+        private readonly Dictionary<long, long> _usersToChats = new Dictionary<long, long>();
 
         private readonly Dictionary<long, User> _users = new Dictionary<long, User>();
         private readonly Dictionary<long, UserFullInfo> _usersFull = new Dictionary<long, UserFullInfo>();
@@ -494,6 +498,8 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             _chatActions.Clear();
 
             _secretChats.Clear();
+
+            _usersToChats.Clear();
 
             _users.Clear();
             _usersFull.Clear();
@@ -998,6 +1004,11 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 
             value = null;
             return false;
+        }
+
+        public bool TryGetChatFromUser(long userId, out long value)
+        {
+            return _usersToChats.TryGetValue(userId, out value);
         }
 
         public IList<Chat> GetChats(IList<long> ids)
@@ -1691,6 +1702,11 @@ Read more about how to update your device [here](https://support.microsoft.com/h
                 Monitor.Enter(updateNewChat.Chat);
                 SetChatPositions(updateNewChat.Chat, updateNewChat.Chat.Positions);
                 Monitor.Exit(updateNewChat.Chat);
+
+                if (updateNewChat.Chat.Type is ChatTypePrivate privata)
+                {
+                    _usersToChats[privata.UserId] = updateNewChat.Chat.Id;
+                }
             }
             else if (update is UpdateNewMessage updateNewMessage)
             {

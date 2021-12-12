@@ -235,16 +235,11 @@ namespace Unigram.Views
             Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatVideoChat(chat));
         }
 
-        public async void Handle(UpdateUserStatus update)
+        public void Handle(UpdateUserStatus update)
         {
-            var response = await _protoService.SendAsync(new CreatePrivateChat(update.UserId, true));
-            if (response is Chat result)
+            if (update.UserId != _cacheService.Options.MyId && update.UserId != 777000 && _protoService.TryGetChatFromUser(update.UserId, out long chatId))
             {
-                var user = _cacheService.GetUser(update.UserId);
-                if (user != null && user.Type is UserTypeRegular && user.Id != _cacheService.Options.MyId && user.Id != 777000)
-                {
-                    Handle(result.Id, (chatView, chat) => chatView.UpdateUserStatus(chat, update.Status));
-                }
+                Handle(chatId, (chatView, chat) => chatView.UpdateUserStatus(chat, update.Status));
             }
         }
 
