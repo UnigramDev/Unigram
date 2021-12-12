@@ -35,6 +35,15 @@ namespace Unigram.Common
             }
         }
 
+        public static void Update(ItemsControl owner)
+        {
+            var triggers = GetTriggers(owner);
+            if (triggers != null && triggers.Owner != null)
+            {
+                SetActive(triggers, GetReference(triggers.Owner));
+            }
+        }
+
         private static void SetActive(FluidGridViewTriggerCollection triggers, WrapGridReference reference)
         {
             if (triggers.Owner.ItemsPanelRoot == null || reference == null)

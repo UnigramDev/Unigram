@@ -4507,8 +4507,6 @@ namespace Unigram.Views
 
         public void UpdateFile(File file)
         {
-            ListInline.UpdateFile(file);
-
             var header = ViewModel.ComposerHeader;
             if (header?.EditingMessageFileId == file.Id)
             {
