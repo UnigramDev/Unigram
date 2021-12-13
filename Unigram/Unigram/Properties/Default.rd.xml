@@ -69,6 +69,11 @@
 			<Method Name="UpdateSource" Dynamic="Required"/>
 		</Type>
 
+		<Type Name="Unigram.Controls.InlineBotResultsView">
+			<Method Name="UpdateThumbnail" Dynamic="Required"/>
+			<Method Name="UpdateFile" Dynamic="Required"/>
+		</Type>
+
 		<Type Name="Unigram.Controls.Messages.Content.AnimatedStickerContent">
 			<Method Name="UpdateFile" Dynamic="Required"/>
 		</Type>
