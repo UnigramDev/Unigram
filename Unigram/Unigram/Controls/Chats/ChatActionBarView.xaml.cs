@@ -31,8 +31,11 @@ namespace Unigram.Controls.Chats
 
         public void UpdateChatActionBar(Chat chat)
         {
-            LayoutRoot.ColumnDefinitions.Clear();
-            LayoutRoot.Children.Clear();
+            if (chat.ActionBar != null)
+            {
+                LayoutRoot.ColumnDefinitions.Clear();
+                LayoutRoot.Children.Clear();
+            }
 
             //ChatActionBarAddContact;
             //ChatActionBarInviteMembers;
@@ -96,7 +99,7 @@ namespace Unigram.Controls.Chats
                 CreateButton(Strings.Resources.ShareMyPhone, ViewModel.ShareContactCommand);
             }
 
-            ShowHide(LayoutRoot.Children.Count > 0);
+            ShowHide(chat.ActionBar != null);
         }
 
         private Button CreateButton(string text, ICommand command, object commandParameter = null, int column = 0, bool danger = false)
