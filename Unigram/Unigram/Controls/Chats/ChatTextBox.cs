@@ -857,7 +857,7 @@ namespace Unigram.Controls.Chats
 
             while (i >= 0)
             {
-                if (text[i] == c || (i == 0 && (char.IsLetter(text[i]) || char.IsNumber(text[i]))))
+                if (text[i] == c /*|| (i == 0 && (char.IsLetter(text[i]) || char.IsNumber(text[i])))*/)
                 {
                     if (i == 0 || text[i - 1] == ' ' || text[i - 1] == '\n' || text[i - 1] == '\r' || text[i - 1] == '\v' || !char.IsLetterOrDigit(text[i - 1]))
                     {
