@@ -55,7 +55,7 @@ namespace Unigram
         /// </summary>
         public App()
         {
-            TLContainer.Current.Configure(/*session*/);
+            TLContainer.Current.Configure(out int count);
 
             RequestedTheme = SettingsService.Current.Appearance.GetCalculatedApplicationTheme();
             InitializeComponent();
@@ -100,6 +100,12 @@ namespace Unigram
                 {
                     { "DeviceFamily", AnalyticsInfo.VersionInfo.DeviceFamily },
                     { "Architecture", Package.Current.Id.Architecture.ToString() }
+                });
+
+            Microsoft.AppCenter.Analytics.Analytics.TrackEvent("Instance",
+                new System.Collections.Generic.Dictionary<string, string>
+                {
+                    { "ActiveSessions", $"{count}" },
                 });
 
             Client.SetLogMessageCallback(0, FatalErrorCallback);

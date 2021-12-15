@@ -62,7 +62,7 @@ namespace Unigram.Controls
                 EventAggregator.Default.Unregister<File>(this, fileToken);
             }
 
-            if (_referenceId != chat.Id || Source == null || download)
+            if (_referenceId != chat.Id || Source == null || !download)
             {
                 _referenceId = chat.Id;
                 Source = GetChat(protoService, chat, file, side, download);
@@ -126,7 +126,7 @@ namespace Unigram.Controls
                 EventAggregator.Default.Unregister<File>(this, fileToken);
             }
 
-            if (_referenceId != user.Id || Source == null || download)
+            if (_referenceId != user.Id || Source == null || !download)
             {
                 _referenceId = user.Id;
                 Source = GetUser(protoService, user, file, side, download);
