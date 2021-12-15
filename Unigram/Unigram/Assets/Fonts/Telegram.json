@@ -2,7 +2,7 @@
   "metadata": {
     "name": "Telegram",
     "lastOpened": 0,
-    "created": 1638034966900
+    "created": 1639508260918
   },
   "iconSets": [
     {
@@ -5160,12 +5160,20 @@
     {
       "selection": [
         {
+          "order": 513,
+          "id": 92,
+          "name": "ic_fluent_dismiss_24_regular",
+          "prevSize": 32,
+          "code": 59768,
+          "tempChar": ""
+        },
+        {
           "order": 497,
           "id": 91,
           "name": "Seen",
           "prevSize": 32,
           "code": 59755,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 494,
@@ -5173,7 +5181,7 @@
           "name": "ArrowDownSmall",
           "prevSize": 32,
           "code": 60892,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 492,
@@ -5181,7 +5189,7 @@
           "name": "ArrowLeftSmall",
           "prevSize": 32,
           "code": 60889,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 491,
@@ -5189,7 +5197,7 @@
           "name": "ArrowRightSmall",
           "prevSize": 32,
           "code": 60890,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 493,
@@ -5197,7 +5205,7 @@
           "name": "ArrowUpSmall",
           "prevSize": 32,
           "code": 60891,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 489,
@@ -5205,7 +5213,7 @@
           "name": "DismissSmall",
           "prevSize": 32,
           "code": 57610,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 403,
@@ -5213,7 +5221,7 @@
           "name": "VoiceChat",
           "prevSize": 32,
           "code": 59648,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 397,
@@ -5221,7 +5229,7 @@
           "name": "uniE768",
           "prevSize": 32,
           "code": 59240,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 394,
@@ -5229,7 +5237,7 @@
           "name": "uniE769",
           "prevSize": 32,
           "code": 59241,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 393,
@@ -5237,7 +5245,7 @@
           "name": "uniEC57",
           "prevSize": 32,
           "code": 60503,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 392,
@@ -5245,7 +5253,7 @@
           "name": "uniEC58",
           "prevSize": 32,
           "code": 60504,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 391,
@@ -5253,7 +5261,7 @@
           "name": "uniE8ED",
           "prevSize": 32,
           "code": 59629,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 262,
@@ -5261,7 +5269,7 @@
           "name": "Compact",
           "prevSize": 32,
           "code": 59692,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 263,
@@ -5269,7 +5277,7 @@
           "name": "CompactFull",
           "prevSize": 32,
           "code": 59693,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 261,
@@ -5277,7 +5285,7 @@
           "name": "Pinned",
           "prevSize": 32,
           "code": 59711,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 259,
@@ -5285,7 +5293,7 @@
           "name": "Replies",
           "prevSize": 32,
           "code": 59710,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 0,
@@ -5317,7 +5325,7 @@
           "name": "CancelSmall",
           "prevSize": 32,
           "code": 59688,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 237,
@@ -5325,7 +5333,7 @@
           "name": "DownloadSmall",
           "prevSize": 32,
           "code": 59690,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 0,
@@ -5405,7 +5413,7 @@
           "prevSize": 32,
           "code": 58880,
           "name": "uniE600",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 9,
@@ -5414,7 +5422,7 @@
           "prevSize": 32,
           "code": 58881,
           "name": "uniE601",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 10,
@@ -5423,7 +5431,7 @@
           "prevSize": 32,
           "code": 58882,
           "name": "uniE602",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 11,
@@ -5432,7 +5440,7 @@
           "prevSize": 32,
           "code": 58883,
           "name": "uniE603",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 12,
@@ -5441,7 +5449,7 @@
           "prevSize": 32,
           "code": 58885,
           "name": "uniE605",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 13,
@@ -5450,7 +5458,7 @@
           "prevSize": 32,
           "code": 58887,
           "name": "uniE607",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 14,
@@ -5459,7 +5467,7 @@
           "prevSize": 32,
           "code": 58888,
           "name": "uniE608",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 15,
@@ -5468,7 +5476,7 @@
           "prevSize": 32,
           "code": 58891,
           "name": "uniE60B",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 16,
@@ -5477,7 +5485,7 @@
           "prevSize": 32,
           "code": 58892,
           "name": "uniE60C",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 235,
@@ -5485,7 +5493,7 @@
           "name": "Trending",
           "prevSize": 32,
           "code": 58893,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 18,
@@ -5494,7 +5502,7 @@
           "prevSize": 32,
           "code": 58894,
           "name": "uniE60E",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 19,
@@ -5503,7 +5511,7 @@
           "prevSize": 32,
           "code": 58895,
           "name": "uniE60F",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 20,
@@ -5529,7 +5537,7 @@
           "prevSize": 32,
           "code": 58897,
           "name": "uniE611",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 23,
@@ -5538,7 +5546,7 @@
           "prevSize": 32,
           "code": 58898,
           "name": "uniE612",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 381,
@@ -5546,7 +5554,7 @@
           "name": "BotCommands",
           "prevSize": 32,
           "code": 58899,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 24,
@@ -5564,7 +5572,7 @@
           "prevSize": 32,
           "code": 58900,
           "name": "uniE614",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 26,
@@ -5636,7 +5644,7 @@
           "prevSize": 32,
           "code": 59654,
           "name": "uniE906",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 34,
@@ -5654,7 +5662,7 @@
           "prevSize": 32,
           "code": 59656,
           "name": "uniE908",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 36,
@@ -5672,7 +5680,7 @@
           "prevSize": 32,
           "code": 59658,
           "name": "uniE90A",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 38,
@@ -5681,7 +5689,7 @@
           "prevSize": 32,
           "code": 59659,
           "name": "uniE90B",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 39,
@@ -5744,7 +5752,7 @@
           "prevSize": 32,
           "code": 59666,
           "name": "uniE912",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 46,
@@ -5753,7 +5761,7 @@
           "prevSize": 32,
           "code": 59667,
           "name": "uniE913",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 47,
@@ -5762,7 +5770,7 @@
           "prevSize": 32,
           "code": 59668,
           "name": "uniE914",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 48,
@@ -5816,7 +5824,7 @@
           "prevSize": 32,
           "code": 59674,
           "name": "uniE91A",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 54,
@@ -5825,7 +5833,7 @@
           "prevSize": 32,
           "code": 59675,
           "name": "uniE91B",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 55,
@@ -5852,7 +5860,7 @@
           "prevSize": 32,
           "code": 59678,
           "name": "uniE91E",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 58,
@@ -5870,20 +5878,40 @@
           "prevSize": 32,
           "code": 942080,
           "name": "uE6000",
-          "tempChar": ""
+          "tempChar": ""
         }
       ],
       "id": 2,
       "metadata": {
         "name": "Telegram",
         "importSize": {
-          "width": 20,
-          "height": 20
+          "width": 24,
+          "height": 24
         }
       },
       "height": 1024,
       "prevSize": 32,
       "icons": [
+        {
+          "id": 92,
+          "paths": [
+            "M187.607 194.295l3.098-3.589c11.361-11.361 29.138-12.393 41.666-3.098l3.589 3.098 276.039 276.025 276.041-276.025c12.497-12.497 32.755-12.497 45.252 0s12.497 32.758 0 45.255l-276.023 276.039 276.023 276.041c11.362 11.358 12.395 29.137 3.098 41.664l-3.098 3.588c-11.358 11.362-29.137 12.395-41.664 3.098l-3.588-3.098-276.041-276.023-276.039 276.023c-12.497 12.497-32.758 12.497-45.255 0s-12.497-32.755 0-45.252l276.025-276.041-276.025-276.039c-11.361-11.361-12.393-29.138-3.098-41.666v0z"
+          ],
+          "attrs": [
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 0,
+          "tags": [
+            "ic_fluent_dismiss_24_regular"
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
+        },
         {
           "id": 91,
           "paths": [
@@ -7443,7 +7471,7 @@
       "metadata": {
         "fontFamily": "Telegram",
         "majorVersion": 2,
-        "minorVersion": 19
+        "minorVersion": 20
       },
       "metrics": {
         "emSize": 1024,

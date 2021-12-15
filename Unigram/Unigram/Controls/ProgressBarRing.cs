@@ -62,7 +62,8 @@ namespace Unigram.Controls
 
             var easing = Window.Current.Compositor.CreateLinearEasingFunction();
             var forever = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-            forever.InsertKeyFrame(1, 360, easing);
+            forever.InsertKeyFrame(0, 240, easing);
+            forever.InsertKeyFrame(1, 599, easing);
             forever.IterationBehavior = AnimationIterationBehavior.Forever;
             forever.Duration = TimeSpan.FromSeconds(3);
 
@@ -128,14 +129,19 @@ namespace Unigram.Controls
                 newValue = 0;
             }
 
+            if (newValue > 0 && newValue < 0.05)
+            {
+                newValue = 0.05;
+            }
+
             if (_foreverAnimation != null)
             {
-                if (/*newValue > 0 &&*/ newValue < 1)
+                if (newValue > 0 && newValue < 1)
                 {
                     if (!_spinning)
                     {
                         _spinning = true;
-                        _visual.RotationAngleInDegrees = 0;
+                        _visual.RotationAngleInDegrees = 230; // 202
                         _visual.StartAnimation("RotationAngleInDegrees", _foreverAnimation);
                     }
                 }

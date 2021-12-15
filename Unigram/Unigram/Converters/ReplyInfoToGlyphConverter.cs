@@ -22,6 +22,7 @@ namespace Unigram.Converters
         public const string ArrowDownload = "\uE118";
         public const string DownloadSmall = "\uE92A";
         public const string Dismiss = "\uE711";
+        public const string Cancel = "\uE978";
         public const string CancelSmall = "\uE928";
         public const string Play = "\uE768";
         public const string Pause = "\uE769";
