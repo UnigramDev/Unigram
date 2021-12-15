@@ -107,7 +107,7 @@ namespace Unigram.Controls
                 banner.Measure(availableSize);
 
                 master.Measure(new Size(availableSize.Width, Math.Max(0, availableSize.Height - banner.DesiredSize.Height - masterHeader.DesiredSize.Height)));
-                detail.Measure(new Size(availableSize.Width, Math.Max(0, availableSize.Height - banner.DesiredSize.Height - detailHeader.DesiredSize.Height)));
+                detail.Measure(new Size(availableSize.Width, Math.Max(0, availableSize.Height - banner.DesiredSize.Height - Math.Max(48, detailHeader.DesiredSize.Height))));
 
                 grip.Measure(new Size(0, 0));
             }
@@ -129,7 +129,7 @@ namespace Unigram.Controls
                 background.Measure(new Size(availableSize.Width - result, availableSize.Height));
 
                 master.Measure(new Size(result, availableSize.Height - masterHeader.DesiredSize.Height));
-                detail.Measure(new Size(availableSize.Width - result, availableSize.Height - banner.DesiredSize.Height - detailHeader.DesiredSize.Height));
+                detail.Measure(new Size(availableSize.Width - result, availableSize.Height - banner.DesiredSize.Height - Math.Max(48, detailHeader.DesiredSize.Height)));
 
                 grip.Measure(new Size(8, availableSize.Height));
             }
@@ -158,7 +158,7 @@ namespace Unigram.Controls
                 banner.Arrange(new Rect(new Point(0, Math.Max(detailHeader.DesiredSize.Height, masterHeader.DesiredSize.Height)), finalSize));
 
                 master.Arrange(new Rect(0, banner.DesiredSize.Height + masterHeader.DesiredSize.Height, finalSize.Width, finalSize.Height - banner.DesiredSize.Height - masterHeader.DesiredSize.Height));
-                detail.Arrange(new Rect(0, banner.DesiredSize.Height + detailHeader.DesiredSize.Height, finalSize.Width, finalSize.Height - banner.DesiredSize.Height - detailHeader.DesiredSize.Height));
+                detail.Arrange(new Rect(0, banner.DesiredSize.Height + Math.Max(48, detailHeader.DesiredSize.Height), finalSize.Width, finalSize.Height - banner.DesiredSize.Height - Math.Max(48, detailHeader.DesiredSize.Height)));
 
                 grip.Arrange(new Rect(0, 0, 0, 0));
             }
@@ -182,7 +182,7 @@ namespace Unigram.Controls
                 banner.Arrange(new Rect(result, detailHeader.DesiredSize.Height, finalSize.Width - result, finalSize.Height));
 
                 master.Arrange(new Rect(0, masterHeader.DesiredSize.Height, result, finalSize.Height - masterHeader.DesiredSize.Height));
-                detail.Arrange(new Rect(result, banner.DesiredSize.Height + detailHeader.DesiredSize.Height, finalSize.Width - result, finalSize.Height - banner.DesiredSize.Height - detailHeader.DesiredSize.Height));
+                detail.Arrange(new Rect(result, banner.DesiredSize.Height + Math.Max(48, detailHeader.DesiredSize.Height), finalSize.Width - result, finalSize.Height - banner.DesiredSize.Height - detailHeader.DesiredSize.Height));
 
                 grip.Arrange(new Rect(result, 0, 8, finalSize.Height));
             }
