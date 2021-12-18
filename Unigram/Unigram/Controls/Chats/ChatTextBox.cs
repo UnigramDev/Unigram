@@ -724,7 +724,7 @@ namespace Unigram.Controls.Chats
                 }
                 else
                 {
-                    if (!MessageHelper.IsValidUsernameSymbol(text[i]))
+                    if (!MessageHelper.IsValidUsernameSymbol(text[i]) && !char.IsLetter(text[i]))
                     {
                         found = false;
                         break;
