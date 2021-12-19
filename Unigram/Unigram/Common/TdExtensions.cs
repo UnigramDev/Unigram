@@ -1067,9 +1067,14 @@ namespace Unigram.Common
             var performer = string.IsNullOrEmpty(audio.Performer) ? null : audio.Performer;
             var title = string.IsNullOrEmpty(audio.Title) ? null : audio.Title;
 
-            if (performer == null || title == null)
+            if (performer == null)
             {
-                return audio.FileName;
+                if (title == null)
+                {
+                    return audio.FileName;
+                }
+
+                return title;
             }
             else
             {
