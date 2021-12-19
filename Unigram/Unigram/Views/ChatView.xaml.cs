@@ -3355,7 +3355,7 @@ namespace Unigram.Views
         {
             if (defaultMessageSenderId == null)
             {
-                PhotoMore.Source = null;
+                //PhotoMore.Source = null;
                 ShowHideBotCommands(false);
             }
             else
@@ -4036,7 +4036,18 @@ namespace Unigram.Views
             offset.InsertKeyFrame(show ? 1 : 0, new Vector3());
             offset.Duration = TimeSpan.FromMilliseconds(150);
 
-            more.StartAnimation("Translation", offset);
+            var scale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            scale.InsertKeyFrame(show ? 0 : 1, Vector3.Zero);
+            scale.InsertKeyFrame(show ? 1 : 0, Vector3.One);
+            scale.Duration = TimeSpan.FromMilliseconds(150);
+
+            var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            opacity.InsertKeyFrame(show ? 0 : 1, 0);
+            opacity.InsertKeyFrame(show ? 1 : 0, 1);
+
+            more.CenterPoint = new Vector3(20, 16, 0);
+            more.StartAnimation("Scale", scale);
+            more.StartAnimation("Opacity", opacity);
             field.StartAnimation("Translation", offset);
             attach.StartAnimation("Translation", offset);
 
