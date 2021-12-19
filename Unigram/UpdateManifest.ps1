@@ -24,6 +24,8 @@ if ($config -eq "RELEASE") {
     elseif ("store" -eq "false") {
         $config = "DEBUG"
     }
+
+    #$config = "DIRECT"
 }
 
 
@@ -53,14 +55,14 @@ $h["DEBUG"] = @{
 $h["RELEASE"] = @{
     Name = "38833FF26BA1D.UnigramPreview";
     Publisher = "CN=D89C87B4-2758-402A-8F40-3571D00882AB";
-    DisplayName = "Unigram - Telegram for Windows 10";
+    DisplayName = "Unigram—Telegram for Windows";
     PublisherDisplayName = "Unigram, Inc.";
     AppName = "Unigram"
 }
 $h["DIRECT"] = @{
     Name = "TelegramFZ-LLC.Unigram";
     Publisher = 'CN=Telegram FZ-LLC, O=Telegram FZ-LLC, POBox=501, L=Dubai, C=AE, OID.2.5.4.15=Private Organization, OID.1.3.6.1.4.1.311.60.2.1.3=AE, SERIALNUMBER=94349';
-    DisplayName = "Unigram - Telegram for Windows 10";
+    DisplayName = "Unigram—Telegram for Windows";
     PublisherDisplayName = "Telegram FZ-LLC";
     AppName = "Unigram"
 }

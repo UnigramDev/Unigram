@@ -1,7 +1,7 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <StoreAssociation xmlns="http://schemas.microsoft.com/appx/2010/storeassociation">
-  <Publisher>CN=D89C87B4-2758-402A-8F40-3571D00882AB</Publisher>
-  <PublisherDisplayName>Unigram, Inc.</PublisherDisplayName>
+  <Publisher>CN=Telegram FZ-LLC, O=Telegram FZ-LLC, POBox=501, L=Dubai, C=AE, OID.2.5.4.15=Private Organization, OID.1.3.6.1.4.1.311.60.2.1.3=AE, SERIALNUMBER=94349</Publisher>
+  <PublisherDisplayName>Telegram FZ-LLC</PublisherDisplayName>
   <DeveloperAccountType>MSA</DeveloperAccountType>
   <GeneratePackageHash>http://www.w3.org/2001/04/xmlenc#sha256</GeneratePackageHash>
   <SupportedLocales>
@@ -361,257 +361,19 @@
   <ProductReservedInfo>
     <MainPackageIdentityName>38833FF26BA1D.UnigramPreview</MainPackageIdentityName>
     <ReservedNames>
+      <ReservedName>Unigram Experimental</ReservedName>
       <ReservedName>Unigram Preview</ReservedName>
       <ReservedName>Unigram (Alpha)</ReservedName>
       <ReservedName>Unigram (Beta)</ReservedName>
       <ReservedName>Unigram Alpha</ReservedName>
       <ReservedName>Unigram Beta</ReservedName>
       <ReservedName>Unigram</ReservedName>
-      <ReservedName>Unigram for Telegram</ReservedName>
-      <ReservedName>Unigram - Telegram, universal</ReservedName>
-      <ReservedName>Unigram - A Telegram immersive experience</ReservedName>
-      <ReservedName>Unigram - A Telegram universal experience</ReservedName>
-      <ReservedName>Unigram X</ReservedName>
+      <ReservedName>Unigram—Telegram for Windows</ReservedName>
     </ReservedNames>
   </ProductReservedInfo>
   <AccountPackageIdentityNames>
     <MainPackageIdentityName>38833FF26BA1D.TelegramX</MainPackageIdentityName>
     <MainPackageIdentityName>38833FF26BA1D.UnigramExperimental</MainPackageIdentityName>
   </AccountPackageIdentityNames>
-  <PackageInfoList LandingUrl="https://developer.microsoft.com/dashboard/Application?appId=9N97ZCKPD60Q">
-    <BundleInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>X86</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.6.2286.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>X64</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.6.2286.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>Arm</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.6.2286.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>Neutral</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.6.2286.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>Neutral</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.6.2286.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>Neutral</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.6.2286.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>Neutral</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.6.2286.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>Neutral</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.6.2286.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>Neutral</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.6.2286.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>Neutral</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.6.2286.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>Neutral</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.6.2286.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>Neutral</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.6.2286.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>Neutral</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.6.2286.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>Neutral</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.6.2286.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>Neutral</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.6.2286.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>Neutral</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.6.2286.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>Neutral</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.6.2286.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>Neutral</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.6.2286.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>Neutral</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.6.2286.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>Neutral</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.6.2286.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>Neutral</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.6.2286.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>Neutral</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.6.2286.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>Neutral</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.6.2286.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-    </BundleInfo>
-    <BundleInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>X86</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.7.2337.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>X64</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.7.2337.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>Arm</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.7.2337.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>Neutral</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.7.2337.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>Neutral</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.7.2337.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>Neutral</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.7.2337.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>Neutral</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.7.2337.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>Neutral</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.7.2337.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>Neutral</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.7.2337.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>Neutral</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.7.2337.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>Neutral</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.7.2337.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>Neutral</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.7.2337.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>Neutral</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.7.2337.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>Neutral</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.7.2337.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>Neutral</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.7.2337.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>Neutral</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.7.2337.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>Neutral</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.7.2337.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>Neutral</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.7.2337.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>Neutral</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.7.2337.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>Neutral</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.7.2337.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>Neutral</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.7.2337.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>Neutral</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.7.2337.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>0.0.0.0</OsMinVersion>
-        <PackageArchitecture>Neutral</PackageArchitecture>
-        <PackageMaxArchitectureVersion>3.7.2337.0</PackageMaxArchitectureVersion>
-      </PackageInfo>
-    </BundleInfo>
-  </PackageInfoList>
+  <PackageInfoList LandingUrl="https://developer.microsoft.com/dashboard/Application?appId=9N97ZCKPD60Q" />
 </StoreAssociation>

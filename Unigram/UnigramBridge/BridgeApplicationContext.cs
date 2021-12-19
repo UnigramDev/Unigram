@@ -14,11 +14,11 @@ namespace UnigramBridge
         private AppServiceConnection _connection = null;
         private NotifyIcon _notifyIcon = null;
 
-        private InterceptKeys _intercept;
+        //private InterceptKeys _intercept;
 
         public BridgeApplicationContext()
         {
-            _intercept = new InterceptKeys();
+            //_intercept = new InterceptKeys();
 
             MenuItem openMenuItem = new MenuItem("Open Unigram", new EventHandler(OpenApp));
             MenuItem exitMenuItem = new MenuItem("Quit Unigram", new EventHandler(Exit));
@@ -31,7 +31,7 @@ namespace UnigramBridge
 #if DEBUG
             _notifyIcon.Text = "Telegram";
 #else
-            notifyIcon.Text = "Unigram";
+            _notifyIcon.Text = "Unigram";
 #endif
 
             try
@@ -98,11 +98,7 @@ namespace UnigramBridge
 
             _connection = new AppServiceConnection();
             _connection.PackageFamilyName = Package.Current.Id.FamilyName;
-#if DEBUG
             _connection.AppServiceName = "org.telegram.bridge";
-#else
-            connection.AppServiceName = "org.unigram.bridge";
-#endif
             _connection.RequestReceived += Connection_RequestReceived;
             _connection.ServiceClosed += Connection_ServiceClosed;
 
@@ -186,14 +182,14 @@ namespace UnigramBridge
             {
                 if (unread is int unreadCount && unreadUnmuted is int unreadUnmutedCount)
                 {
-                    if (unreadCount > 0 || unreadUnmutedCount > 0)
-                    {
-                        _notifyIcon.Icon = unreadUnmutedCount > 0 ? Properties.Resources.Unmuted : Properties.Resources.Muted;
-                    }
-                    else
-                    {
-                        _notifyIcon.Icon = Properties.Resources.Default;
-                    }
+                    //if (unreadCount > 0 || unreadUnmutedCount > 0)
+                    //{
+                    //    _notifyIcon.Icon = unreadUnmutedCount > 0 ? Properties.Resources.Unmuted : Properties.Resources.Muted;
+                    //}
+                    //else
+                    //{
+                    //    _notifyIcon.Icon = Properties.Resources.Default;
+                    //}
                 }
             }
             else if (args.Request.Message.TryGetValue("IsTrayVisible", out object value) && value is bool visible)
@@ -206,6 +202,7 @@ namespace UnigramBridge
             else if (args.Request.Message.TryGetValue("Exit", out object exit))
             {
                 _connection.ServiceClosed -= Connection_ServiceClosed;
+                _connection.Dispose();
 
                 _notifyIcon.Dispose();
                 Application.Exit();
@@ -215,6 +212,7 @@ namespace UnigramBridge
         private void Connection_ServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
         {
             _connection.ServiceClosed -= Connection_ServiceClosed;
+            _connection.Dispose();
             _connection = null;
 
             //Application.Exit();
