@@ -240,18 +240,18 @@ namespace Unigram
         {
             base.OnBackgroundActivated(args);
 
-            //if (args.TaskInstance.TriggerDetails is AppServiceTriggerDetails appService && string.Equals(appService.CallerPackageFamilyName, Package.Current.Id.FamilyName))
-            //{
-            //    Connection = appService.AppServiceConnection;
-            //    Deferral = args.TaskInstance.GetDeferral();
+            if (args.TaskInstance.TriggerDetails is AppServiceTriggerDetails appService && string.Equals(appService.CallerPackageFamilyName, Package.Current.Id.FamilyName))
+            {
+                Connection = appService.AppServiceConnection;
+                Deferral = args.TaskInstance.GetDeferral();
 
-            //    appService.AppServiceConnection.RequestReceived += AppServiceConnection_RequestReceived;
-            //    args.TaskInstance.Canceled += (s, e) =>
-            //    {
-            //        Deferral.Complete();
-            //    };
-            //}
-            //else
+                appService.AppServiceConnection.RequestReceived += AppServiceConnection_RequestReceived;
+                args.TaskInstance.Canceled += (s, e) =>
+                {
+                    Deferral.Complete();
+                };
+            }
+            else
             {
                 var deferral = args.TaskInstance.GetDeferral();
 
@@ -445,7 +445,7 @@ namespace Unigram
             }
             catch { }
 
-#if DESKTOP_BRIDGE
+#if !DESKTOP_BRIDGE
             if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.ApplicationModel.FullTrustProcessLauncher"))
             {
                 try
