@@ -54,9 +54,9 @@
                                             HorizontalContentAlignment="Stretch"
                                             VerticalContentAlignment="Stretch" />
 
-                    <Border x:Name="HeaderPanel"
-                            Background="{ThemeResource PageBackgroundDarkBrush}"
-                            Canvas.ZIndex="1">
+                    <Grid x:Name="HeaderPanel"
+                          Background="{ThemeResource PageBackgroundDarkBrush}"
+                          Canvas.ZIndex="1">
                         <Grid MaxWidth="640"
                               Margin="12,16,12,0"
                               CornerRadius="8,8,0,0">
@@ -70,7 +70,7 @@
                                                  DisplayMemberPath="Text"
                                                  Grid.RowSpan="1" />
                         </Grid>
-                    </Border>
+                    </Grid>
 
                     <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                             MaxWidth="640"

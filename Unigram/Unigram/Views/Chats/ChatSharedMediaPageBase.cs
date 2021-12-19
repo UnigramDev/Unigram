@@ -269,6 +269,11 @@ namespace Unigram.Views.Chats
             {
                 ViewModel.VerticalOffset = scrollingHost.VerticalOffset;
 
+                if (DateHeaderLabel == null)
+                {
+                    return;
+                }
+
                 var index = ScrollingHost.ItemsPanelRoot switch
                 {
                     ItemsStackPanel stackPanel => stackPanel.FirstVisibleIndex,
