@@ -4583,7 +4583,7 @@ namespace Unigram.Views
         private async void ButtonMore_Checked(object sender, RoutedEventArgs e)
         {
             var chat = ViewModel.Chat;
-            if (chat == null)
+            if (chat == null || chat.Type is ChatTypePrivate or ChatTypeSecret)
             {
                 return;
             }
