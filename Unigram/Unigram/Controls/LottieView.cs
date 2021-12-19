@@ -379,21 +379,8 @@ namespace Unigram.Controls
             _source = newValue;
 
             var shouldPlay = _shouldPlay;
-            var frameSize = _frameSize;
 
-            if (_decodeFrameType == DecodePixelType.Logical)
-            {
-                // TODO: subscribe for DPI changed event
-                var dpi = DisplayInformation.GetForCurrentView().LogicalDpi / 96.0f;
-
-                frameSize = new SizeInt32
-                {
-                    Width = (int)(_frameSize.Width * dpi),
-                    Height = (int)(_frameSize.Height * dpi)
-                };
-            }
-
-            var animation = await Task.Run(() => LottieAnimation.LoadFromFile(newValue, frameSize, _isCachingEnabled, ColorReplacements));
+            var animation = await Task.Run(() => LottieAnimation.LoadFromFile(newValue, _frameSize, _isCachingEnabled, ColorReplacements));
             if (animation == null || !string.Equals(newValue, _source, StringComparison.OrdinalIgnoreCase))
             {
                 // The app can't access the file specified
@@ -615,7 +602,7 @@ namespace Unigram.Controls
 
         private static void OnFrameSizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((LottieView)d)._frameSize = (SizeInt32)e.NewValue;
+            ((LottieView)d).OnFrameSizeChanged((SizeInt32)e.NewValue, ((LottieView)d)._decodeFrameType);
         }
 
         #endregion
@@ -633,10 +620,31 @@ namespace Unigram.Controls
 
         private static void OnDecodeFrameTypeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((LottieView)d)._decodeFrameType = (DecodePixelType)e.NewValue;
+            ((LottieView)d).OnFrameSizeChanged(((LottieView)d)._frameSize, (DecodePixelType)e.NewValue);
         }
 
         #endregion
+
+        private void OnFrameSizeChanged(SizeInt32 frameSize, DecodePixelType decodeFrameType)
+        {
+            if (decodeFrameType == DecodePixelType.Logical)
+            {
+                // TODO: subscribe for DPI changed event
+                var dpi = DisplayInformation.GetForCurrentView().LogicalDpi / 96.0f;
+
+                _decodeFrameType = decodeFrameType;
+                _frameSize = new SizeInt32
+                {
+                    Width = (int)(frameSize.Width * dpi),
+                    Height = (int)(frameSize.Height * dpi)
+                };
+            }
+            else
+            {
+                _decodeFrameType = decodeFrameType;
+                _frameSize = frameSize;
+            }
+        }
 
         #region AutoPlay
 
