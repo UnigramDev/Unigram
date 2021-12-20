@@ -25,7 +25,7 @@ namespace UnigramBridge
             openMenuItem.DefaultItem = true;
 
             _notifyIcon = new NotifyIcon();
-            _notifyIcon.Click += new EventHandler(OpenApp);
+            _notifyIcon.DoubleClick += new EventHandler(OpenApp);
             _notifyIcon.Icon = Properties.Resources.Default;
             _notifyIcon.ContextMenu = new ContextMenu(new MenuItem[] { openMenuItem, exitMenuItem });
 #if DEBUG
@@ -164,19 +164,19 @@ namespace UnigramBridge
         {
             if (args.Request.Message.TryGetValue("FlashWindow", out object flash))
             {
-#if DEBUG
-                var handle = FindWindow("ApplicationFrameWindow", "Telegram");
-#else
-                var handle = FindWindow("ApplicationFrameWindow", "Unigram");
-#endif
+//#if DEBUG
+//                var handle = FindWindow("ApplicationFrameWindow", "Telegram");
+//#else
+//                var handle = FindWindow("ApplicationFrameWindow", "Unigram");
+//#endif
 
-                FLASHWINFO info = new FLASHWINFO();
-                info.cbSize = Convert.ToUInt32(Marshal.SizeOf(info));
-                info.hwnd = handle;
-                info.dwFlags = FlashWindow.FLASHW_ALL;
-                info.dwTimeout = 0;
-                info.uCount = 1;
-                FlashWindowEx(ref info);
+//                FLASHWINFO info = new FLASHWINFO();
+//                info.cbSize = Convert.ToUInt32(Marshal.SizeOf(info));
+//                info.hwnd = handle;
+//                info.dwFlags = FlashWindow.FLASHW_ALL;
+//                info.dwTimeout = 0;
+//                info.uCount = 1;
+//                FlashWindowEx(ref info);
             }
             else if (args.Request.Message.TryGetValue("UnreadCount", out object unread) && args.Request.Message.TryGetValue("UnreadUnmutedCount", out object unreadUnmuted))
             {
