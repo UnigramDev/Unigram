@@ -66,7 +66,7 @@ namespace Unigram.Controls.Cells
         private Grid PhotoPanel;
         private TextBlock TypeIcon;
         private TextBlock TitleLabel;
-        private Grid VerifiedIcon;
+        private FontIcon VerifiedIcon;
         private FontIcon MutedIcon;
         private FontIcon StateIcon;
         private TextBlock TimeLabel;
@@ -96,7 +96,7 @@ namespace Unigram.Controls.Cells
             PhotoPanel = GetTemplateChild(nameof(PhotoPanel)) as Grid;
             TypeIcon = GetTemplateChild(nameof(TypeIcon)) as TextBlock;
             TitleLabel = GetTemplateChild(nameof(TitleLabel)) as TextBlock;
-            VerifiedIcon = GetTemplateChild(nameof(VerifiedIcon)) as Grid;
+            VerifiedIcon = GetTemplateChild(nameof(VerifiedIcon)) as FontIcon;
             MutedIcon = GetTemplateChild(nameof(MutedIcon)) as FontIcon;
             StateIcon = GetTemplateChild(nameof(StateIcon)) as FontIcon;
             TimeLabel = GetTemplateChild(nameof(TimeLabel)) as TextBlock;
@@ -1683,11 +1683,13 @@ namespace Unigram.Controls.Cells
             shape11.StrokeThickness = 2;
             shape11.StrokeBrush = GetBrush(StrokeProperty);
             shape11.IsStrokeNonScaling = true;
+            //shape11.StrokeStartCap = CompositionStrokeCap.Round;
 
             var shape12 = Window.Current.Compositor.CreateSpriteShape(line12);
             shape12.StrokeThickness = 2;
             shape12.StrokeBrush = GetBrush(StrokeProperty);
             shape12.IsStrokeNonScaling = true;
+            //shape12.StrokeEndCap = CompositionStrokeCap.Round;
 
             var visual1 = Window.Current.Compositor.CreateShapeVisual();
             visual1.Shapes.Add(shape12);
@@ -1708,10 +1710,12 @@ namespace Unigram.Controls.Cells
             var shape21 = Window.Current.Compositor.CreateSpriteShape(line21);
             shape21.StrokeThickness = 2;
             shape21.StrokeBrush = GetBrush(StrokeProperty);
+            //shape21.StrokeStartCap = CompositionStrokeCap.Round;
 
             var shape22 = Window.Current.Compositor.CreateSpriteShape(line22);
             shape22.StrokeThickness = 2;
             shape22.StrokeBrush = GetBrush(StrokeProperty);
+            //shape22.StrokeEndCap = CompositionStrokeCap.Round;
 
             var visual2 = Window.Current.Compositor.CreateShapeVisual();
             visual2.Shapes.Add(shape22);
@@ -1920,19 +1924,19 @@ namespace Unigram.Controls.Cells
             PhotoPanel.Arrange(rect);
 
             rect.X = Math.Max(min, finalSize.Width - 8 - TimeLabel.DesiredSize.Width);
-            rect.Y = 30 - TitleLabel.DesiredSize.Height;
+            rect.Y = 13;
             rect.Width = TimeLabel.DesiredSize.Width;
             rect.Height = TimeLabel.DesiredSize.Height;
             TimeLabel.Arrange(rect);
 
             rect.X = Math.Max(min, finalSize.Width - 8 - TimeLabel.DesiredSize.Width - StateIcon.DesiredSize.Width);
-            rect.Y = 30 - TitleLabel.DesiredSize.Height;
+            rect.Y = 13;
             rect.Width = StateIcon.DesiredSize.Width;
             rect.Height = StateIcon.DesiredSize.Height;
             StateIcon.Arrange(rect);
 
             rect.X = min;
-            rect.Y = 30 - TitleLabel.DesiredSize.Height;
+            rect.Y = 13;
             rect.Width = TypeIcon.DesiredSize.Width;
             rect.Height = TypeIcon.DesiredSize.Height;
             TypeIcon.Arrange(rect);
@@ -1951,19 +1955,19 @@ namespace Unigram.Controls.Cells
             }
 
             rect.X = min + TypeIcon.DesiredSize.Width;
-            rect.Y = 30 - 2 - TitleLabel.DesiredSize.Height;
+            rect.Y = 12;
             rect.Width = titleWidth;
             rect.Height = TitleLabel.DesiredSize.Height;
             TitleLabel.Arrange(rect);
 
             rect.X = min + TypeIcon.DesiredSize.Width + titleWidth;
-            rect.Y = 30 - TitleLabel.DesiredSize.Height;
+            rect.Y = 13;
             rect.Width = VerifiedIcon.DesiredSize.Width;
             rect.Height = VerifiedIcon.DesiredSize.Height;
             VerifiedIcon.Arrange(rect);
 
             rect.X = min + TypeIcon.DesiredSize.Width + titleWidth + VerifiedIcon.DesiredSize.Width;
-            rect.Y = 30 - TitleLabel.DesiredSize.Height;
+            rect.Y = 13;
             rect.Width = MutedIcon.DesiredSize.Width;
             rect.Height = MutedIcon.DesiredSize.Height;
             MutedIcon.Arrange(rect);
@@ -1971,31 +1975,31 @@ namespace Unigram.Controls.Cells
 
 
             rect.X = min;
-            rect.Y = 33;
+            rect.Y = 36;
             rect.Width = MinithumbnailPanel.DesiredSize.Width;
             rect.Height = MinithumbnailPanel.DesiredSize.Height;
             MinithumbnailPanel.Arrange(rect);
 
             rect.X = Math.Max(min, finalSize.Width - 8 - PinnedIcon.DesiredSize.Width);
-            rect.Y = 60 - 8 - PinnedIcon.DesiredSize.Height;
+            rect.Y = 34;
             rect.Width = PinnedIcon.DesiredSize.Width;
             rect.Height = PinnedIcon.DesiredSize.Height;
             PinnedIcon.Arrange(rect);
 
             rect.X = finalSize.Width - 8 - UnreadBadge.DesiredSize.Width;
-            rect.Y = 60 - 8 - UnreadBadge.DesiredSize.Height;
+            rect.Y = 36;
             rect.Width = UnreadBadge.DesiredSize.Width;
             rect.Height = UnreadBadge.DesiredSize.Height;
             UnreadBadge.Arrange(rect);
 
             rect.X = finalSize.Width - 8 - UnreadBadge.DesiredSize.Width - UnreadMentionsBadge.DesiredSize.Width;
-            rect.Y = 60 - 8 - UnreadMentionsBadge.DesiredSize.Height;
+            rect.Y = 36;
             rect.Width = UnreadMentionsBadge.DesiredSize.Width;
             rect.Height = UnreadMentionsBadge.DesiredSize.Height;
             UnreadMentionsBadge.Arrange(rect);
 
             rect.X = Math.Max(min, finalSize.Width - 8 - FailedBadge.DesiredSize.Width);
-            rect.Y = 60 - 8 - FailedBadge.DesiredSize.Height;
+            rect.Y = 36;
             rect.Width = FailedBadge.DesiredSize.Width;
             rect.Height = FailedBadge.DesiredSize.Height;
             FailedBadge.Arrange(rect);
@@ -2008,13 +2012,13 @@ namespace Unigram.Controls.Cells
             var briefWidth = Math.Max(0, line2Right - line2Left);
 
             rect.X = min + MinithumbnailPanel.DesiredSize.Width;
-            rect.Y = 60 - 8 - BriefInfo.DesiredSize.Height;
+            rect.Y = 34;
             rect.Width = briefWidth;
             rect.Height = BriefInfo.DesiredSize.Height;
             BriefInfo.Arrange(rect);
 
             rect.X = min;
-            rect.Y = 60 - 8 - TypingLabel.DesiredSize.Height;
+            rect.Y = 34;
             rect.Width = briefWidth + MinithumbnailPanel.DesiredSize.Width;
             rect.Height = TypingLabel.DesiredSize.Height;
             TypingLabel.Arrange(rect);
