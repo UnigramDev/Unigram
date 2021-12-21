@@ -257,6 +257,11 @@ namespace Unigram.Controls
             {
                 Monitor.Exit(_subscribeLock);
             }
+
+            if (!_limitFps)
+            {
+                sender.Invalidate();
+            }
         }
 
         public void Invalidate()
