@@ -31,6 +31,7 @@
                             <controls:AnimationView
                                 x:Name="Player"
                                 AutoPlay="False"
+                                LimitFps="False"
                                 IsHitTestVisible="False"/>
                         </Border>
 

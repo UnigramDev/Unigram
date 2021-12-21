@@ -112,6 +112,11 @@ namespace winrt::Unigram::Native::implementation
 			return pixelHeight;
 		}
 
+		int FrameRate()
+		{
+			return framerate;
+		}
+
 	private:
 		int decode_packet(VideoAnimation* info, int* got_frame);
 		static void requestFd(VideoAnimation* info);
