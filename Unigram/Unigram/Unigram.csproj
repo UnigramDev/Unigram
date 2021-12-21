@@ -115,6 +115,21 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Assets\Animations\ChatArchivedAnimation.cs" />
+    <Compile Include="Assets\Icons\Advanced.cs" />
+    <Compile Include="Assets\Icons\Appearance.cs" />
+    <Compile Include="Assets\Icons\AskQ.cs" />
+    <Compile Include="Assets\Icons\Data.cs" />
+    <Compile Include="Assets\Icons\Devices.cs" />
+    <Compile Include="Assets\Icons\FAQ.cs" />
+    <Compile Include="Assets\Icons\Folders.cs" />
+    <Compile Include="Assets\Icons\Info.cs" />
+    <Compile Include="Assets\Icons\Language.cs" />
+    <Compile Include="Assets\Icons\Notifications.cs" />
+    <Compile Include="Assets\Icons\Phone.cs" />
+    <Compile Include="Assets\Icons\Privacy.cs" />
+    <Compile Include="Assets\Icons\PrivacyPolicy.cs" />
+    <Compile Include="Assets\Icons\Stickers.cs" />
+    <Compile Include="Assets\Icons\Username.cs" />
     <Compile Include="Charts\Animator.cs" />
     <Compile Include="Charts\BarChartView.cs" />
     <Compile Include="Charts\BaseChartView.cs" />

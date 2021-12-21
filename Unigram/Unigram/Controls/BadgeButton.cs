@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.UI.Xaml.Controls;
+using System.Collections.Generic;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Automation.Peers;
@@ -81,6 +82,19 @@ namespace Unigram.Controls
 
         public static readonly DependencyProperty BadgeLabelProperty =
             DependencyProperty.Register("BadgeLabel", typeof(string), typeof(BadgeButton), new PropertyMetadata(null, OnBadgeChanged));
+
+        #endregion
+
+        #region IconSource
+
+        public IAnimatedVisualSource2 IconSource
+        {
+            get { return (IAnimatedVisualSource2)GetValue(IconSourceProperty); }
+            set { SetValue(IconSourceProperty, value); }
+        }
+
+        public static readonly DependencyProperty IconSourceProperty =
+            DependencyProperty.Register("IconSource", typeof(IAnimatedVisualSource2), typeof(BadgeButton), new PropertyMetadata(null));
 
         #endregion
 

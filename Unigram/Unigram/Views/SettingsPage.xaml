@@ -3,22 +3,19 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:local="using:Unigram.Views"
       xmlns:controls="using:Unigram.Controls"
+      xmlns:icons="using:Unigram.Assets.Icons"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:contract7Present="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 7)"
       mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+    <Grid>
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
-            <StackPanel Padding="0,16,0,24">
-                <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-                    <contract7Present:Grid.BackgroundTransition>
-                        <contract7Present:BrushTransition />
-                    </contract7Present:Grid.BackgroundTransition>
-
+            <StackPanel Padding="0,4,0,24">
+                <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
@@ -88,91 +85,129 @@
                     </Border>
                 </Grid>
 
-                <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-                    <contract7Present:StackPanel.BackgroundTransition>
-                        <contract7Present:BrushTransition />
-                    </contract7Present:StackPanel.BackgroundTransition>
-                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}"
-                               Height="1"
-                               Margin="12,0,0,0" />
-
+                <StackPanel>
                     <controls:BadgeButton x:Name="PhoneNumber"
                                           Content="{CustomResource Phone}"
-                                          Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
-                                          Glyph="&#xE717;"
-                                          Click="Phone_Click" />
+                                          Style="{StaticResource IconSubtitleBadgeButtonStyle}"
+                                          Click="Phone_Click">
+                        <controls:BadgeButton.IconSource>
+                            <icons:Phone />
+                        </controls:BadgeButton.IconSource>
+                    </controls:BadgeButton>
                     <controls:BadgeButton x:Name="Username"
                                           Content="{CustomResource Username}"
-                                          Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
-                                          Glyph="&#xE168;"
-                                          Click="Username_Click" />
+                                          Style="{StaticResource IconSubtitleBadgeButtonStyle}"
+                                          Click="Username_Click">
+                        <controls:BadgeButton.IconSource>
+                            <icons:Username />
+                        </controls:BadgeButton.IconSource>
+                    </controls:BadgeButton>
                     <controls:BadgeButton x:Name="Bio"
                                           Content="{CustomResource UserBio}"
-                                          Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
-                                          Glyph="&#xE946;"
-                                          Click="About_Click" />
+                                          Style="{StaticResource IconSubtitleBadgeButtonStyle}"
+                                          Click="About_Click">
+                        <controls:BadgeButton.IconSource>
+                            <icons:Info />
+                        </controls:BadgeButton.IconSource>
+                    </controls:BadgeButton>
                 </StackPanel>
 
-                <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                            Margin="0,16,0,0">
-                    <contract7Present:StackPanel.BackgroundTransition>
-                        <contract7Present:BrushTransition />
-                    </contract7Present:StackPanel.BackgroundTransition>
+                <Rectangle Fill="{ThemeResource NavigationViewItemSeparatorForeground}"
+                           Margin="12,2"
+                           Height="1" />
+
+                <StackPanel>
                     <controls:BadgeButton Content="{CustomResource NotificationsAndSounds}"
-                                          Glyph="&#xEA8F;"
                                           Click="Notifications_Click"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}" />
+                                          Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:BadgeButton.IconSource>
+                            <icons:Notifications />
+                        </controls:BadgeButton.IconSource>
+                    </controls:BadgeButton>
                     <controls:BadgeButton Content="{CustomResource PrivacySettings}"
-                                          Glyph="&#xE72E;"
                                           Click="Privacy_Click"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}" />
+                                          Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:BadgeButton.IconSource>
+                            <icons:Privacy />
+                        </controls:BadgeButton.IconSource>
+                    </controls:BadgeButton>
                     <controls:BadgeButton Content="{CustomResource DataSettings}"
-                                          Glyph="&#xEB05;"
                                           Click="Data_Click"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}" />
+                                          Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:BadgeButton.IconSource>
+                            <icons:Data />
+                        </controls:BadgeButton.IconSource>
+                    </controls:BadgeButton>
                     <controls:BadgeButton Content="{CustomResource StickersName}"
-                                          Glyph="&#xF4AA;"
                                           Click="Stickers_Click"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}" />
+                                          Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:BadgeButton.IconSource>
+                            <icons:Stickers />
+                        </controls:BadgeButton.IconSource>
+                    </controls:BadgeButton>
                     <controls:BadgeButton Content="{CustomResource ChatSettings}"
-                                          Glyph="&#xE90F;"
                                           Click="Appearance_Click"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}" />
+                                          Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:BadgeButton.IconSource>
+                            <icons:Appearance />
+                        </controls:BadgeButton.IconSource>
+                    </controls:BadgeButton>
                     <controls:BadgeButton Content="{CustomResource Filters}"
-                                          Glyph="&#xF12B;"
                                           Click="Folders_Click"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}" />
+                                          Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:BadgeButton.IconSource>
+                            <icons:Folders />
+                        </controls:BadgeButton.IconSource>
+                    </controls:BadgeButton>
                     <controls:BadgeButton Content="{CustomResource Devices}"
-                                          Glyph="&#xE975;"
                                           Click="Sessions_Click"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}" />
+                                          Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:BadgeButton.IconSource>
+                            <icons:Devices />
+                        </controls:BadgeButton.IconSource>
+                    </controls:BadgeButton>
                     <controls:BadgeButton Content="{CustomResource Language}"
-                                          Glyph="&#xE774;"
                                           Click="Language_Click"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}" />
+                                          Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:BadgeButton.IconSource>
+                            <icons:Language />
+                        </controls:BadgeButton.IconSource>
+                    </controls:BadgeButton>
                     <controls:BadgeButton Content="{CustomResource PrivacyAdvanced}"
-                                          Glyph="&#xE9E9;"
                                           Click="Advanced_Click"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}" />
+                                          Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:BadgeButton.IconSource>
+                            <icons:Advanced />
+                        </controls:BadgeButton.IconSource>
+                    </controls:BadgeButton>
                 </StackPanel>
 
-                <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                            Margin="0,16,0,0">
-                    <contract7Present:StackPanel.BackgroundTransition>
-                        <contract7Present:BrushTransition />
-                    </contract7Present:StackPanel.BackgroundTransition>
+                <Rectangle Fill="{ThemeResource NavigationViewItemSeparatorForeground}"
+                           Margin="12,2"
+                           Height="1" />
+
+                <StackPanel>
                     <controls:BadgeButton Content="{CustomResource AskAQuestion}"
-                                          Glyph="&#xE783;"
                                           Command="{x:Bind ViewModel.AskCommand}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}" />
+                                          Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:BadgeButton.IconSource>
+                            <icons:AskQ />
+                        </controls:BadgeButton.IconSource>
+                    </controls:BadgeButton>
                     <controls:BadgeButton Content="{CustomResource TelegramFAQ}"
-                                          Glyph="&#xED15;"
                                           Click="Questions_Click"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}" />
+                                          Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:BadgeButton.IconSource>
+                            <icons:FAQ />
+                        </controls:BadgeButton.IconSource>
+                    </controls:BadgeButton>
                     <controls:BadgeButton Content="{CustomResource PrivacyPolicy}"
-                                          Glyph="&#xEA1A;"
                                           Click="PrivacyPolicy_Click"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}" />
+                                          Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:BadgeButton.IconSource>
+                            <icons:PrivacyPolicy />
+                        </controls:BadgeButton.IconSource>
+                    </controls:BadgeButton>
                 </StackPanel>
 
                 <Grid>
