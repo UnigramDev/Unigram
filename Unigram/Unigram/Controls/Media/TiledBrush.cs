@@ -34,7 +34,7 @@ namespace Unigram.Controls.Media
 
                 IGraphicsEffect effect;
                 if (IsInverted)
-                { 
+                {
                     //var matrix = new ColorMatrixEffect
                     //{
                     //    ColorMatrix = new Matrix5x4
@@ -47,6 +47,7 @@ namespace Unigram.Controls.Media
                     //    },
                     //    Source = borderEffect
                     //};
+                    _tintEffect = null;
 
                     effect = new GammaTransferEffect()
                     {

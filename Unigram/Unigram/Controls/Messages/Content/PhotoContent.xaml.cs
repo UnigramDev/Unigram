@@ -102,12 +102,12 @@ namespace Unigram.Controls.Messages.Content
             availableSize = base.MeasureOverride(availableSize);
 
             var photo = GetContent(_message?.Content);
-            if (photo == null)
+            var big = photo?.GetBig();
+
+            if (big == null)
             {
                 return availableSize;
             }
-
-            var big = photo.GetBig();
 
             Texture.HorizontalAlignment = big.Width > big.Height && availableSize.Height > availableSize.Width
                 ? HorizontalAlignment.Center

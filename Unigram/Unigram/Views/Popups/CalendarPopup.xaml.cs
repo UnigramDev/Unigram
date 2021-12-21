@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Unigram.Controls;
+using Unigram.Navigation;
 using Windows.System.UserProfile;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Popups
@@ -26,9 +28,10 @@ namespace Unigram.Views.Popups
 
             View.SelectedDatesChanged += OnSelectedDatesChanged;
 
+            var multiple = true;
 
-            PrimaryButtonText = Strings.Resources.OK;
-            SecondaryButtonText = Strings.Resources.Cancel;
+            PrimaryButtonText = multiple ? Strings.Resources.SelectDays : Strings.Resources.OK;
+            SecondaryButtonText = Strings.Resources.Close;
         }
 
         private void OnSelectedDatesChanged(CalendarView sender, CalendarViewSelectedDatesChangedEventArgs args)
@@ -97,13 +100,26 @@ namespace Unigram.Views.Popups
 
         public IList<DateTimeOffset> SelectedDates => View.SelectedDates;
 
+        public bool ClearHistory { get; private set; }
+
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             if (View.SelectionMode == CalendarViewSelectionMode.Single && !_programmaticChange)
             {
+                SetValue(PrimaryButtonStyleProperty, BootStrapper.Current.Resources["DangerButtonStyle"] as Style);
+
+                PrimaryButtonText = Strings.Resources.ClearHistory;
+                SecondaryButtonText = Strings.Resources.Cancel;
+
+                DefaultButton = ContentDialogButton.None;
+
                 View.SelectedDates.Clear();
                 View.SelectionMode = CalendarViewSelectionMode.Multiple;
                 args.Cancel = true;
+            }
+            else if (View.SelectionMode == CalendarViewSelectionMode.Multiple && SelectedDates.Count > 1)
+            {
+                ClearHistory = true;
             }
         }
 
@@ -111,9 +127,15 @@ namespace Unigram.Views.Popups
         {
             if (View.SelectionMode == CalendarViewSelectionMode.Multiple)
             {
+                ClearValue(PrimaryButtonStyleProperty);
+
+                PrimaryButtonText = Strings.Resources.SelectDays;
+                SecondaryButtonText = Strings.Resources.Close;
+
+                DefaultButton = ContentDialogButton.Primary;
+
                 View.SelectionMode = CalendarViewSelectionMode.Single;
                 View.SelectedDates.Clear();
-                View.SelectedDates.Add(DateTimeOffset.Now);
                 args.Cancel = true;
             }
         }

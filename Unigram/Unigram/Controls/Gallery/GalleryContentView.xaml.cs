@@ -78,7 +78,7 @@ namespace Unigram.Controls.Gallery
 
         private async void UpdateFile(GalleryContent item, File file)
         {
-            var reference = item.GetFile();
+            var reference = item?.GetFile();
             if (reference == null || reference.Id != file.Id)
             {
                 return;
