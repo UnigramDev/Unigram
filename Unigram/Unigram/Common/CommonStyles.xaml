@@ -2174,7 +2174,7 @@
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                     <VisualState.Setters>
-                                        <Setter Target="LayoutRoot.(muxc:AnimatedIcon.State)"
+                                        <Setter Target="Icon.(muxc:AnimatedIcon.State)"
                                                 Value="PointerOver" />
                                     </VisualState.Setters>
                                 </VisualState>
@@ -2198,9 +2198,7 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <Grid x:Name="LayoutRoot"
-                              Background="{TemplateBinding Background}"
-                              muxc:AnimatedIcon.State="Normal">
+                        <Grid Background="{TemplateBinding Background}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="48" />
                                 <ColumnDefinition />
@@ -2215,7 +2213,9 @@
                                     Grid.ColumnSpan="2"
                                     Grid.RowSpan="2" />
 
-                            <muxc:AnimatedIcon Source="{TemplateBinding IconSource}"
+                            <muxc:AnimatedIcon x:Name="Icon"
+                                               muxc:AnimatedIcon.State="Normal"
+                                               Source="{TemplateBinding IconSource}"
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"
                                                AutomationProperties.AccessibilityView="Raw"
@@ -2779,7 +2779,7 @@
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                     <VisualState.Setters>
-                                        <Setter Target="LayoutRoot.(muxc:AnimatedIcon.State)"
+                                        <Setter Target="Icon.(muxc:AnimatedIcon.State)"
                                                 Value="PointerOver" />
                                     </VisualState.Setters>
                                 </VisualState>
@@ -2803,9 +2803,7 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <Grid x:Name="LayoutRoot"
-                              Background="{TemplateBinding Background}"
-                              muxc:AnimatedIcon.State="Normal">
+                        <Grid Background="{TemplateBinding Background}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="48" />
                                 <ColumnDefinition />
@@ -2815,7 +2813,9 @@
                                     Margin="4,2"
                                     Grid.ColumnSpan="2" />
 
-                            <muxc:AnimatedIcon Source="{TemplateBinding IconSource}"
+                            <muxc:AnimatedIcon x:Name="Icon"
+                                               muxc:AnimatedIcon.State="Normal"
+                                               Source="{TemplateBinding IconSource}"
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"
                                                AutomationProperties.AccessibilityView="Raw"
