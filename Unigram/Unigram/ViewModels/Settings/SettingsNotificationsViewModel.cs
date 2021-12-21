@@ -5,6 +5,7 @@ using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Converters;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views;
@@ -21,9 +22,9 @@ namespace Unigram.ViewModels.Settings
         {
             Scopes = new MvxObservableCollection<SettingsNotificationsScope>
             {
-                new SettingsNotificationsScope(protoService, typeof(NotificationSettingsScopePrivateChats), Strings.Resources.NotificationsForPrivateChats),
-                new SettingsNotificationsScope(protoService, typeof(NotificationSettingsScopeGroupChats), Strings.Resources.NotificationsForGroups),
-                new SettingsNotificationsScope(protoService, typeof(NotificationSettingsScopeChannelChats), Strings.Resources.NotificationsForChannels),
+                new SettingsNotificationsScope(protoService, typeof(NotificationSettingsScopePrivateChats), Strings.Resources.NotificationsPrivateChats, Icons.Person),
+                new SettingsNotificationsScope(protoService, typeof(NotificationSettingsScopeGroupChats), Strings.Resources.NotificationsGroups, Icons.People),
+                new SettingsNotificationsScope(protoService, typeof(NotificationSettingsScopeChannelChats), Strings.Resources.NotificationsChannels, Icons.Megaphone),
             };
 
             foreach (var scope in Scopes)
@@ -34,16 +35,6 @@ namespace Unigram.ViewModels.Settings
             ResetCommand = new RelayCommand(ResetExecute);
 
             Aggregator.Subscribe(this);
-        }
-
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
-        {
-            foreach (var scope in Scopes)
-            {
-                scope.Update();
-            }
-
-            return Task.CompletedTask;
         }
 
         public MvxObservableCollection<SettingsNotificationsScope> Scopes { get; private set; }
@@ -174,15 +165,19 @@ namespace Unigram.ViewModels.Settings
     {
         private readonly Type _type;
         private readonly string _title;
+        private readonly string _glyph;
 
-        public SettingsNotificationsScope(IProtoService protoService, Type type, string title)
+        public SettingsNotificationsScope(IProtoService protoService, Type type, string title, string glyph)
             : base(protoService, null, null, null)
         {
             _type = type;
             _title = title;
+            _glyph = glyph;
         }
 
         public string Title => _title;
+
+        public string Glyph => _glyph;
 
         private bool _alert;
         public bool Alert
@@ -237,33 +232,24 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public void Update()
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            ProtoService.Send(new GetScopeNotificationSettings(GetScope()), result =>
+            var settings = await ProtoService.SendAsync(new GetScopeNotificationSettings(GetScope())) as ScopeNotificationSettings;
+            if (settings != null)
             {
-                if (result is ScopeNotificationSettings settings)
-                {
-                    BeginOnUIThread(() =>
-                    {
-                        Alert = settings.MuteFor == 0;
-                        Preview = settings.ShowPreview;
-                        Sound = string.Empty;
-                        _disablePinnedMessage = settings.DisablePinnedMessageNotifications;
-                        _disableMention = settings.DisableMentionNotifications;
-                    });
-                }
-            });
+                Alert = settings.MuteFor == 0;
+                Preview = settings.ShowPreview;
+                Sound = string.Empty;
 
-            ProtoService.Send(new GetChatNotificationSettingsExceptions(GetScope(), false), result =>
+                _disablePinnedMessage = settings.DisablePinnedMessageNotifications;
+                _disableMention = settings.DisableMentionNotifications;
+            }
+
+            var chats = await ProtoService.SendAsync(new GetChatNotificationSettingsExceptions(GetScope(), false)) as Telegram.Td.Api.Chats;
+            if (chats != null)
             {
-                if (result is Telegram.Td.Api.Chats chats)
-                {
-                    BeginOnUIThread(() =>
-                    {
-                        ExceptionsCount = Locale.Declension("Chats", chats.ChatIds.Count);
-                    });
-                }
-            });
+                ExceptionsCount = string.Format("{0}, {1}", Alert ? Strings.Resources.NotificationsOn : Strings.Resources.NotificationsOff, Locale.Declension("Exception", chats.ChatIds.Count));
+            }
         }
 
         public RelayCommand SendCommand { get; }

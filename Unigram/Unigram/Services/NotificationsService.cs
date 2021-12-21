@@ -519,12 +519,12 @@ namespace Unigram.Services
             string actions = "";
             if (!string.IsNullOrEmpty(group) && canReply)
             {
-                actions = "<actions><input id='input' type='text' placeHolderContent='ms-resource:Reply' /><action activationType='background' arguments='action=markAsRead&amp;";
+                actions = string.Format("<actions><input id='input' type='text' placeHolderContent='{0}' /><action activationType='background' arguments='action=markAsRead&amp;", Strings.Resources.Reply);
                 actions += launch;
                 //actions += L"' hint-inputId='QuickMessage' content='ms-resource:Send' imageUri='ms-appx:///Assets/Icons/Toast/Send.png'/></actions>";
-                actions += "' content='ms-resource:MarkAsRead'/><action activationType='background' arguments='action=reply&amp;";
+                actions += string.Format("' content='{0}'/><action activationType='background' arguments='action=reply&amp;", Strings.Resources.MarkAsRead);
                 actions += launch;
-                actions += "' content='ms-resource:Send'/></actions>";
+                actions += string.Format("' hint-inputId='input' content='{0}'/></actions>", Strings.Resources.Send);
             }
 
             string audio = "";

@@ -943,7 +943,7 @@ namespace Unigram.Views
             }
             else if (command is ShortcutCommand.Quit or ShortcutCommand.Close)
             {
-                if (args.VirtualKey == Windows.System.VirtualKey.Q && App.Connection != null)
+                if (command is ShortcutCommand.Quit && App.Connection != null)
                 {
                     await App.Connection.SendMessageAsync(new Windows.Foundation.Collections.ValueSet { { "Exit", string.Empty } });
                 }
