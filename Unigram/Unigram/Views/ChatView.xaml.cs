@@ -3378,7 +3378,7 @@ namespace Unigram.Views
             }
 
             var theme = ViewModel.CacheService.GetChatTheme(chat.ThemeName);
-            if (Theme.Current.Update(ActualTheme, theme))
+            if (LocalTheme.Update(ActualTheme, theme))
             {
                 var background = ActualTheme == ElementTheme.Light ? theme?.LightSettings.Background : theme?.DarkSettings.Background;
                 if (background == null)

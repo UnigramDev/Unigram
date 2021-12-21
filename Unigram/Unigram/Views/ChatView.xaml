@@ -583,6 +583,9 @@
                                 ContainerContentChanging="OnContainerContentChanging"
                                 Padding="0,0,0,6"
                                 Grid.ColumnSpan="2">
+                <ListView.Resources>
+                    <common:Theme x:Name="LocalTheme" />
+                </ListView.Resources>
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <ItemsStackPanel Loading="ItemsStackPanel_Loading"
