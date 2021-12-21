@@ -14,7 +14,7 @@
             <StaticResource x:Key="ExpTitleBarBackground"
                             ResourceKey="PageTitleBackgroundBrush" />
             <Thickness x:Key="ExpTitleBarPadding">6,0,12,0</Thickness>
-            <Thickness x:Key="ExpMainHeaderPadding">48,0,0,0</Thickness>
+            <Thickness x:Key="ExpMainHeaderPadding">40,0,6,0</Thickness>
             <Style x:Key="ExpSearchFieldStyle"
                    TargetType="TextBox"
                    BasedOn="{StaticResource DefaultTextBoxStyle}">
