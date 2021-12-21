@@ -42,6 +42,10 @@ namespace Unigram.Controls
             visual.Size = new Vector2((float)Center * 2);
             visual.CenterPoint = new Vector3((float)Center);
 
+            var trimStart = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            trimStart.Target = nameof(CompositionGeometry.TrimStart);
+            trimStart.InsertExpressionKeyFrame(1.0f, "this.FinalValue", Window.Current.Compositor.CreateLinearEasingFunction());
+
             var trimEnd = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
             trimEnd.Target = nameof(CompositionGeometry.TrimEnd);
             trimEnd.InsertExpressionKeyFrame(1.0f, "this.FinalValue", Window.Current.Compositor.CreateLinearEasingFunction());
@@ -50,10 +54,11 @@ namespace Unigram.Controls
             visibility.SetReferenceParameter("target", ellipse);
 
             var animations = Window.Current.Compositor.CreateImplicitAnimationCollection();
+            animations[nameof(CompositionGeometry.TrimStart)] = trimStart;
             animations[nameof(CompositionGeometry.TrimEnd)] = trimEnd;
 
             ellipse.ImplicitAnimations = animations;
-            visual.StartAnimation("IsVisible", visibility);
+            //visual.StartAnimation("IsVisible", visibility);
             //visual.StartAnimation("RotationAngleInDegrees", forever);
 
             _visual = visual;
@@ -154,17 +159,26 @@ namespace Unigram.Controls
 
             if (_ellipse != null)
             {
-                _ellipse.TrimEnd = MathF.Max(0, MathF.Min(1, (float)newValue));
+                if (newValue < 1)
+                {
+                    _ellipse.TrimStart = 0;
+                    _ellipse.TrimEnd = MathF.Max(0, MathF.Min(1, (float)newValue));
+                }
+                else
+                {
+                    _ellipse.TrimStart = 1;
+                    _ellipse.TrimEnd = 1;
+                }
             }
 
-            if (newValue is >= 1.0 or <= 0.0)
-            {
-                Visibility = Visibility.Collapsed;
-            }
-            else
-            {
-                Visibility = Visibility.Visible;
-            }
+            //if (newValue is >= 1.0 or <= 0.0)
+            //{
+            //    Visibility = Visibility.Collapsed;
+            //}
+            //else
+            //{
+            //    Visibility = Visibility.Visible;
+            //}
         }
     }
 }
