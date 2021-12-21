@@ -137,6 +137,7 @@
 
         <Grid x:Name="TitleBarrr"
               Height="{ThemeResource ExpTitleBarHeight}"
+              Margin="{ThemeResource ExpTitleBarMargin}"
               Background="{ThemeResource ExpTitleBarBackground}"
               Grid.ColumnSpan="2">
             <contract7Present:Grid.BackgroundTransition>
@@ -640,12 +641,6 @@
                                           Grid.Row="1">
                                     <ListView.Header>
                                         <StackPanel Visibility="{x:Bind ViewModel.Chats.TopChats, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
-                                            <Border Visibility="{x:Bind ViewModel.Chats.TopChats.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                                    Background="{ThemeResource PageBackgroundDarkBrush}">
-                                                <TextBlock Text="{CustomResource ChatHints}"
-                                                           Style="{StaticResource SettingsGroupTextBlockStyle}"
-                                                           Margin="12,16,12,6" />
-                                            </Border>
                                             <controls:TextListView SelectionMode="None"
                                                                    IsItemClickEnabled="True"
                                                                    ItemClick="ListView_ItemClick"
@@ -713,8 +708,7 @@
                                                 </ListView.ItemContainerTransitions>
                                             </controls:TextListView>
 
-                                            <Grid Visibility="{x:Bind ViewModel.Chats.Search.Local.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                                  Background="{ThemeResource PageBackgroundDarkBrush}">
+                                            <Grid Visibility="{x:Bind ViewModel.Chats.Search.Local.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition />
                                                     <ColumnDefinition Width="Auto" />
@@ -814,7 +808,7 @@
                                             <GroupStyle.HeaderContainerStyle>
                                                 <Style TargetType="ListViewHeaderItem">
                                                     <Setter Property="Background"
-                                                            Value="{ThemeResource PageBackgroundDarkBrush}" />
+                                                            Value="Transparent" />
                                                     <Setter Property="FontFamily"
                                                             Value="{ThemeResource ContentControlThemeFontFamily}" />
                                                     <Setter Property="FontSize"

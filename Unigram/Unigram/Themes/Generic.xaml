@@ -70,7 +70,8 @@
                             <local:MenuButton x:Name="TogglePaneButton"
                                               Grid.Row="1"
                                               Foreground="{ThemeResource PageHeaderForegroundBrush}"
-                                              Height="{ThemeResource AppBarThemeCompactHeight}"
+                                              Width="{ThemeResource ExpNavigationViewMenuButtonWidth}"
+                                              Height="{ThemeResource ExpNavigationViewMenuButtonHeight}"
                                               AutomationProperties.LandmarkType="Navigation"
                                               AutomationProperties.Name="{CustomResource AccDescrOpenMenu}"
                                               ToolTipService.ToolTip="{CustomResource AccDescrOpenMenu}"
@@ -99,7 +100,7 @@
                                         <Setter Property="FontFamily"
                                                 Value="{StaticResource SymbolThemeFontFamily}" />
                                         <Setter Property="Height"
-                                                Value="48" />
+                                                Value="{ThemeResource ExpNavigationViewMenuButtonHeight}" />
                                         <Setter Property="Width"
                                                 Value="{ThemeResource ExpNavigationViewMenuButtonWidth}" />
                                         <Setter Property="FontWeight"
@@ -852,6 +853,13 @@
                                    Visibility="{Binding Header, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource NullToVisibilityConverter}}"
                                    Grid.Column="1" />
 
+                        <!--<Border x:Name="ContentPanel"
+                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                CornerRadius="{TemplateBinding CornerRadius}"
+                                Grid.Column="1"
+                                Grid.Row="1">-->
                         <Border x:Name="ContentPanel"
                                 Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                 CornerRadius="{TemplateBinding CornerRadius}"
