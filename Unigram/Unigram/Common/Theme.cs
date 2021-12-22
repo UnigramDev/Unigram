@@ -259,43 +259,43 @@ namespace Unigram.Common
 
         private void UpdateAcrylicBrushesLightTheme(ResourceDictionary dictionary)
         {
-            if (dictionary.TryGet("AcrylicBackgroundFillColorDefaultBrush", out AcrylicBrush acrylicBackgroundFillColorDefaultBrush))
+            if (dictionary.TryGet("AcrylicBackgroundFillColorDefaultBrush", out Microsoft.UI.Xaml.Media.AcrylicBrush acrylicBackgroundFillColorDefaultBrush))
             {
                 acrylicBackgroundFillColorDefaultBrush.TintLuminosityOpacity = 0.85;
             }
-            if (dictionary.TryGet("AcrylicInAppFillColorDefaultBrush", out AcrylicBrush acrylicInAppFillColorDefaultBrush))
+            if (dictionary.TryGet("AcrylicInAppFillColorDefaultBrush", out Microsoft.UI.Xaml.Media.AcrylicBrush acrylicInAppFillColorDefaultBrush))
             {
                 acrylicInAppFillColorDefaultBrush.TintLuminosityOpacity = 0.85;
             }
-            if (dictionary.TryGet("AcrylicBackgroundFillColorDefaultInverseBrush", out AcrylicBrush acrylicBackgroundFillColorDefaultInverseBrush))
+            if (dictionary.TryGet("AcrylicBackgroundFillColorDefaultInverseBrush", out Microsoft.UI.Xaml.Media.AcrylicBrush acrylicBackgroundFillColorDefaultInverseBrush))
             {
                 acrylicBackgroundFillColorDefaultInverseBrush.TintLuminosityOpacity = 0.96;
             }
-            if (dictionary.TryGet("AcrylicInAppFillColorDefaultInverseBrush", out AcrylicBrush acrylicInAppFillColorDefaultInverseBrush))
+            if (dictionary.TryGet("AcrylicInAppFillColorDefaultInverseBrush", out Microsoft.UI.Xaml.Media.AcrylicBrush acrylicInAppFillColorDefaultInverseBrush))
             {
                 acrylicInAppFillColorDefaultInverseBrush.TintLuminosityOpacity = 0.96;
             }
-            if (dictionary.TryGet("AcrylicBackgroundFillColorBaseBrush", out AcrylicBrush acrylicBackgroundFillColorBaseBrush))
+            if (dictionary.TryGet("AcrylicBackgroundFillColorBaseBrush", out Microsoft.UI.Xaml.Media.AcrylicBrush acrylicBackgroundFillColorBaseBrush))
             {
                 acrylicBackgroundFillColorBaseBrush.TintLuminosityOpacity = 0.9;
             }
-            if (dictionary.TryGet("AcrylicInAppFillColorBaseBrush", out AcrylicBrush acrylicInAppFillColorBaseBrush))
+            if (dictionary.TryGet("AcrylicInAppFillColorBaseBrush", out Microsoft.UI.Xaml.Media.AcrylicBrush acrylicInAppFillColorBaseBrush))
             {
                 acrylicInAppFillColorBaseBrush.TintLuminosityOpacity = 0.9;
             }
-            if (dictionary.TryGet("AccentAcrylicBackgroundFillColorDefaultBrush", out AcrylicBrush accentAcrylicBackgroundFillColorDefaultBrush))
+            if (dictionary.TryGet("AccentAcrylicBackgroundFillColorDefaultBrush", out Microsoft.UI.Xaml.Media.AcrylicBrush accentAcrylicBackgroundFillColorDefaultBrush))
             {
                 accentAcrylicBackgroundFillColorDefaultBrush.TintLuminosityOpacity = 0.9;
             }
-            if (dictionary.TryGet("AccentAcrylicInAppFillColorDefaultBrush", out AcrylicBrush accentAcrylicInAppFillColorDefaultBrush))
+            if (dictionary.TryGet("AccentAcrylicInAppFillColorDefaultBrush", out Microsoft.UI.Xaml.Media.AcrylicBrush accentAcrylicInAppFillColorDefaultBrush))
             {
                 accentAcrylicInAppFillColorDefaultBrush.TintLuminosityOpacity = 0.9;
             }
-            if (dictionary.TryGet("AccentAcrylicBackgroundFillColorBaseBrush", out AcrylicBrush accentAcrylicBackgroundFillColorBaseBrush))
+            if (dictionary.TryGet("AccentAcrylicBackgroundFillColorBaseBrush", out Microsoft.UI.Xaml.Media.AcrylicBrush accentAcrylicBackgroundFillColorBaseBrush))
             {
                 accentAcrylicBackgroundFillColorBaseBrush.TintLuminosityOpacity = 0.9;
             }
-            if (dictionary.TryGet("AccentAcrylicInAppFillColorBaseBrush", out AcrylicBrush accentAcrylicInAppFillColorBaseBrush))
+            if (dictionary.TryGet("AccentAcrylicInAppFillColorBaseBrush", out Microsoft.UI.Xaml.Media.AcrylicBrush accentAcrylicInAppFillColorBaseBrush))
             {
                 accentAcrylicInAppFillColorBaseBrush.TintLuminosityOpacity = 0.9;
             }
@@ -303,43 +303,43 @@ namespace Unigram.Common
 
         private void UpdateAcrylicBrushesDarkTheme(ResourceDictionary dictionary)
         {
-            if (dictionary.TryGet("AcrylicBackgroundFillColorDefaultBrush", out AcrylicBrush acrylicBackgroundFillColorDefaultBrush))
+            if (dictionary.TryGet("AcrylicBackgroundFillColorDefaultBrush", out Microsoft.UI.Xaml.Media.AcrylicBrush acrylicBackgroundFillColorDefaultBrush))
             {
                 acrylicBackgroundFillColorDefaultBrush.TintLuminosityOpacity = 0.96;
             }
-            if (dictionary.TryGet("AcrylicInAppFillColorDefaultBrush", out AcrylicBrush acrylicInAppFillColorDefaultBrush))
+            if (dictionary.TryGet("AcrylicInAppFillColorDefaultBrush", out Microsoft.UI.Xaml.Media.AcrylicBrush acrylicInAppFillColorDefaultBrush))
             {
                 acrylicInAppFillColorDefaultBrush.TintLuminosityOpacity = 0.96;
             }
-            if (dictionary.TryGet("AcrylicBackgroundFillColorDefaultInverseBrush", out AcrylicBrush acrylicBackgroundFillColorDefaultInverseBrush))
+            if (dictionary.TryGet("AcrylicBackgroundFillColorDefaultInverseBrush", out Microsoft.UI.Xaml.Media.AcrylicBrush acrylicBackgroundFillColorDefaultInverseBrush))
             {
                 acrylicBackgroundFillColorDefaultInverseBrush.TintLuminosityOpacity = 0.85;
             }
-            if (dictionary.TryGet("AcrylicInAppFillColorDefaultInverseBrush", out AcrylicBrush acrylicInAppFillColorDefaultInverseBrush))
+            if (dictionary.TryGet("AcrylicInAppFillColorDefaultInverseBrush", out Microsoft.UI.Xaml.Media.AcrylicBrush acrylicInAppFillColorDefaultInverseBrush))
             {
                 acrylicInAppFillColorDefaultInverseBrush.TintLuminosityOpacity = 0.85;
             }
-            if (dictionary.TryGet("AcrylicBackgroundFillColorBaseBrush", out AcrylicBrush acrylicBackgroundFillColorBaseBrush))
+            if (dictionary.TryGet("AcrylicBackgroundFillColorBaseBrush", out Microsoft.UI.Xaml.Media.AcrylicBrush acrylicBackgroundFillColorBaseBrush))
             {
                 acrylicBackgroundFillColorBaseBrush.TintLuminosityOpacity = 0.96;
             }
-            if (dictionary.TryGet("AcrylicInAppFillColorBaseBrush", out AcrylicBrush acrylicInAppFillColorBaseBrush))
+            if (dictionary.TryGet("AcrylicInAppFillColorBaseBrush", out Microsoft.UI.Xaml.Media.AcrylicBrush acrylicInAppFillColorBaseBrush))
             {
                 acrylicInAppFillColorBaseBrush.TintLuminosityOpacity = 0.96;
             }
-            if (dictionary.TryGet("AccentAcrylicBackgroundFillColorDefaultBrush", out AcrylicBrush accentAcrylicBackgroundFillColorDefaultBrush))
+            if (dictionary.TryGet("AccentAcrylicBackgroundFillColorDefaultBrush", out Microsoft.UI.Xaml.Media.AcrylicBrush accentAcrylicBackgroundFillColorDefaultBrush))
             {
                 accentAcrylicBackgroundFillColorDefaultBrush.TintLuminosityOpacity = 0.8;
             }
-            if (dictionary.TryGet("AccentAcrylicInAppFillColorDefaultBrush", out AcrylicBrush accentAcrylicInAppFillColorDefaultBrush))
+            if (dictionary.TryGet("AccentAcrylicInAppFillColorDefaultBrush", out Microsoft.UI.Xaml.Media.AcrylicBrush accentAcrylicInAppFillColorDefaultBrush))
             {
                 accentAcrylicInAppFillColorDefaultBrush.TintLuminosityOpacity = 0.8;
             }
-            if (dictionary.TryGet("AccentAcrylicBackgroundFillColorBaseBrush", out AcrylicBrush accentAcrylicBackgroundFillColorBaseBrush))
+            if (dictionary.TryGet("AccentAcrylicBackgroundFillColorBaseBrush", out Microsoft.UI.Xaml.Media.AcrylicBrush accentAcrylicBackgroundFillColorBaseBrush))
             {
                 accentAcrylicBackgroundFillColorBaseBrush.TintLuminosityOpacity = 0.8;
             }
-            if (dictionary.TryGet("AccentAcrylicInAppFillColorBaseBrush", out AcrylicBrush accentAcrylicInAppFillColorBaseBrush))
+            if (dictionary.TryGet("AccentAcrylicInAppFillColorBaseBrush", out Microsoft.UI.Xaml.Media.AcrylicBrush accentAcrylicInAppFillColorBaseBrush))
             {
                 accentAcrylicInAppFillColorBaseBrush.TintLuminosityOpacity = 0.8;
             }
