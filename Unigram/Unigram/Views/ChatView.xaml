@@ -383,7 +383,9 @@
                                     <chats:ChatActionIndicator x:Name="ChatActionIndicator"
                                                                Fill="{ThemeResource PageHeaderHighlightBrush}"
                                                                VerticalAlignment="Bottom"
-                                                               Margin="0,0,0,-2" />
+                                                               Width="20"
+                                                               Height="20"
+                                                               Margin="0,-2,4,-2" />
                                     <TextBlock x:Name="ChatActionLabel"
                                                TextWrapping="NoWrap"
                                                TextTrimming="CharacterEllipsis"

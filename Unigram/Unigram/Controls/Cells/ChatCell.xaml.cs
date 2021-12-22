@@ -6,6 +6,7 @@ using System.Text;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Common.Chats;
+using Unigram.Controls.Chats;
 using Unigram.Controls.Messages;
 using Unigram.Converters;
 using Unigram.Native;
@@ -72,6 +73,7 @@ namespace Unigram.Controls.Cells
         private TextBlock TimeLabel;
         private Border MinithumbnailPanel;
         private TextBlock BriefInfo;
+        private ChatActionIndicator ChatActionIndicator;
         private TextBlock TypingLabel;
         private Border PinnedIcon;
         private Border UnreadMentionsBadge;
@@ -102,6 +104,7 @@ namespace Unigram.Controls.Cells
             TimeLabel = GetTemplateChild(nameof(TimeLabel)) as TextBlock;
             MinithumbnailPanel = GetTemplateChild(nameof(MinithumbnailPanel)) as Border;
             BriefInfo = GetTemplateChild(nameof(BriefInfo)) as TextBlock;
+            ChatActionIndicator = GetTemplateChild(nameof(ChatActionIndicator)) as ChatActionIndicator;
             TypingLabel = GetTemplateChild(nameof(TypingLabel)) as TextBlock;
             PinnedIcon = GetTemplateChild(nameof(PinnedIcon)) as Border;
             UnreadMentionsBadge = GetTemplateChild(nameof(UnreadMentionsBadge)) as Border;
@@ -492,12 +495,15 @@ namespace Unigram.Controls.Cells
             if (actions != null && actions.Count > 0)
             {
                 TypingLabel.Text = InputChatActionManager.GetTypingString(chat, actions, _protoService.GetUser, _protoService.GetChat, out ChatAction commonAction);
+                ChatActionIndicator.UpdateAction(commonAction);
+                ChatActionIndicator.Visibility = Visibility.Visible;
                 TypingLabel.Visibility = Visibility.Visible;
                 BriefInfo.Visibility = Visibility.Collapsed;
                 Minithumbnail.Visibility = Visibility.Collapsed;
             }
             else
             {
+                ChatActionIndicator.Visibility = Visibility.Collapsed;
                 TypingLabel.Visibility = Visibility.Collapsed;
                 BriefInfo.Visibility = Visibility.Visible;
                 Minithumbnail.Visibility = Visibility.Visible;
@@ -1846,11 +1852,12 @@ namespace Unigram.Controls.Cells
 
             var MinithumbnailPanel = Children[7];
             var BriefInfo = Children[8];
-            var TypingLabel = Children[9];
-            var PinnedIcon = Children[10];
-            var UnreadMentionsBadge = Children[11];
-            var UnreadBadge = Children[12];
-            var FailedBadge = Children[13];
+            var ChatActionIndicator = Children[9];
+            var TypingLabel = Children[10];
+            var PinnedIcon = Children[11];
+            var UnreadMentionsBadge = Children[12];
+            var UnreadBadge = Children[13];
+            var FailedBadge = Children[14];
 
             PhotoPanel.Measure(availableSize);
 
@@ -1870,6 +1877,7 @@ namespace Unigram.Controls.Cells
 
 
             MinithumbnailPanel.Measure(availableSize);
+            ChatActionIndicator.Measure(availableSize);
             PinnedIcon.Measure(availableSize);
             UnreadBadge.Measure(availableSize);
             UnreadMentionsBadge.Measure(availableSize);
@@ -1883,7 +1891,7 @@ namespace Unigram.Controls.Cells
             var briefWidth = Math.Max(0, line2Right - line2Left);
 
             BriefInfo.Measure(new Size(briefWidth, availableSize.Height));
-            TypingLabel.Measure(new Size(briefWidth + MinithumbnailPanel.DesiredSize.Width, availableSize.Height));
+            TypingLabel.Measure(new Size(briefWidth + MinithumbnailPanel.DesiredSize.Width + ChatActionIndicator.DesiredSize.Width, availableSize.Height));
 
             if (Children.Count > 14)
             {
@@ -1908,11 +1916,12 @@ namespace Unigram.Controls.Cells
 
             var MinithumbnailPanel = Children[7];
             var BriefInfo = Children[8];
-            var TypingLabel = Children[9];
-            var PinnedIcon = Children[10];
-            var UnreadMentionsBadge = Children[11];
-            var UnreadBadge = Children[12];
-            var FailedBadge = Children[13];
+            var ChatActionIndicator = Children[9];
+            var TypingLabel = Children[10];
+            var PinnedIcon = Children[11];
+            var UnreadMentionsBadge = Children[12];
+            var UnreadBadge = Children[13];
+            var FailedBadge = Children[14];
 
             var rect = new Rect();
             var min = 8 + PhotoPanel.DesiredSize.Width + 12;
@@ -2018,6 +2027,12 @@ namespace Unigram.Controls.Cells
             BriefInfo.Arrange(rect);
 
             rect.X = min;
+            rect.Y = 34;
+            rect.Width = ChatActionIndicator.DesiredSize.Width;
+            rect.Height = ChatActionIndicator.DesiredSize.Height;
+            ChatActionIndicator.Arrange(rect);
+
+            rect.X = min + ChatActionIndicator.DesiredSize.Width;
             rect.Y = 34;
             rect.Width = briefWidth + MinithumbnailPanel.DesiredSize.Width;
             rect.Height = TypingLabel.DesiredSize.Height;
