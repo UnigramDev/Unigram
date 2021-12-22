@@ -124,6 +124,10 @@ namespace Unigram.Controls
                 {
                     _enqueuedProgress = value;
                 }
+                else if (_state is MessageContentState.Downloading or MessageContentState.Uploading)
+                {
+                    InternalProgress = Math.Max(0.05, value);
+                }
                 else
                 {
                     InternalProgress = value;
@@ -153,7 +157,7 @@ namespace Unigram.Controls
                 case MessageContentState.Downloading:
                     if (IsSmall || (_state != MessageContentState.Download && _state != MessageContentState.Downloading))
                     {
-                        OnGlyphChanged(IsSmall ? Icons.CancelSmall : Icons.Cancel, Glyph, _state != state && _state != MessageContentState.None, Strings.Resources.AccActionCancelDownload);
+                        OnGlyphChanged(IsSmall ? Icons.CancelSmall : Icons.Cancel, Glyph, _state != state && _state != MessageContentState.None, Strings.Resources.AccActionCancelDownload, false);
                     }
                     else if (_state != MessageContentState.Downloading)
                     {
@@ -193,7 +197,7 @@ namespace Unigram.Controls
             _state = state;
         }
 
-        private void OnGlyphChanged(string newValue, string oldValue, bool animate, string automation)
+        private void OnGlyphChanged(string newValue, string oldValue, bool animate, string automation, bool clearContainer = true)
         {
             //if (string.IsNullOrEmpty(oldValue) || string.IsNullOrEmpty(newValue))
             //{
@@ -262,11 +266,7 @@ namespace Unigram.Controls
             _visual = visualShow;
             _label = labelShow;
 
-            if (animate)
-            {
-
-            }
-            else
+            if (clearContainer || !animate)
             {
                 _container.Children.RemoveAll();
             }
@@ -350,7 +350,7 @@ namespace Unigram.Controls
             //var anim11 = compositor.CreatePathKeyFrameAnimation();
             //anim11.InsertKeyFrame(1, GetLine(new Vector2(1, 18), new Vector2(1, 2)));
             //anim11.InsertKeyFrame(0, GetLine(new Vector2(1, 2), new Vector2(10, 2)));
-            OnGlyphChanged(string.Empty, Glyph, true, Strings.Resources.AccActionDownload);
+            OnGlyphChanged(string.Empty, Glyph, true, Strings.Resources.AccActionDownload, false);
 
             if (downloading)
             {
@@ -364,7 +364,7 @@ namespace Unigram.Controls
                 {
                     if (_state == MessageContentState.Downloading)
                     {
-                        OnGlyphChanged(Icons.Cancel, Icons.ArrowDownload, true, Strings.Resources.AccActionCancelDownload);
+                        OnGlyphChanged(Icons.Cancel, Icons.ArrowDownload, true, Strings.Resources.AccActionCancelDownload, false);
                         InternalProgress = _enqueuedProgress;
                     }
 
