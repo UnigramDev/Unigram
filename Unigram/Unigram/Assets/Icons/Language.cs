@@ -135,8 +135,6 @@ namespace Unigram.Assets.Icons
             {
                 { "NormalToPointerOver_Start", 0.0 },
                 { "NormalToPointerOver_End", 1 },
-                { "PointerOverToNormal_Start", 0 },
-                { "PointerOverToNormal_End", 0 },
             };
 
         /// <summary>
