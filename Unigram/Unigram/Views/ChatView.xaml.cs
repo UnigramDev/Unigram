@@ -434,7 +434,7 @@ namespace Unigram.Views
                 && sourcePageType != typeof(ChatScheduledPage)
                 && sourcePageType != typeof(ChatThreadPage);
 
-            if (unallowed && LocalTheme.Update(ActualTheme, null))
+            if (unallowed && Theme.Current.Update(ActualTheme, null))
             {
                 var background = ViewModel.ProtoService.GetSelectedBackground(ActualTheme == ElementTheme.Dark);
                 ViewModel.Aggregator.Publish(new UpdateSelectedBackground(ActualTheme == ElementTheme.Dark, background));
@@ -3378,7 +3378,7 @@ namespace Unigram.Views
             }
 
             var theme = ViewModel.CacheService.GetChatTheme(chat.ThemeName);
-            if (LocalTheme.Update(ActualTheme, theme))
+            if (Theme.Current.Update(ActualTheme, theme))
             {
                 var background = ActualTheme == ElementTheme.Light ? theme?.LightSettings.Background : theme?.DarkSettings.Background;
                 if (background == null)

@@ -260,7 +260,11 @@
                     <ColumnDefinition />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <messages:MessageBubble x:Name="Bubble" />
+                <messages:MessageBubble x:Name="Bubble">
+                    <FrameworkElement.Resources>
+                        <common:ThemeIncoming />
+                    </FrameworkElement.Resources>
+                </messages:MessageBubble>
 
                 <Border x:Name="Action"
                         Background="{ThemeResource MessageServiceBackgroundBrush}"
@@ -295,7 +299,11 @@
                                          Width="30"
                                          Height="30" />
                 <messages:MessageBubble x:Name="Bubble"
-                                        Grid.Column="1" />
+                                        Grid.Column="1">
+                    <FrameworkElement.Resources>
+                        <common:ThemeIncoming />
+                    </FrameworkElement.Resources>
+                </messages:MessageBubble>
 
                 <Border x:Name="Action"
                         Background="{ThemeResource MessageServiceBackgroundBrush}"
@@ -585,9 +593,6 @@
                                 ContainerContentChanging="OnContainerContentChanging"
                                 Padding="0,0,0,6"
                                 Grid.ColumnSpan="2">
-                <ListView.Resources>
-                    <common:Theme x:Name="LocalTheme" />
-                </ListView.Resources>
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <ItemsStackPanel Loading="ItemsStackPanel_Loading"

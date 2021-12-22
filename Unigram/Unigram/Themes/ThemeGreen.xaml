@@ -50,23 +50,6 @@
             <SolidColorBrush x:Key="ChatUnreadBadgeBrush" Color="{StaticResource SystemAccentColor}" />
             <SolidColorBrush x:Key="ChatUnreadLabelBrush" Color="#FFFFFF" />
 
-            <!-- Messages -->
-            <SolidColorBrush x:Key="MessageForegroundBrush" Color="#F5F5F5" />
-            <SolidColorBrush x:Key="MessageForegroundLinkBrush" Color="#70BAF5" />
-            <SolidColorBrush x:Key="MessageBackgroundBrush" Color="#182533" />
-            <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#6D7F8F" />
-            <SolidColorBrush x:Key="MessageSubtleGlyphBrush" Color="#6D7F8F" />
-            <SolidColorBrush x:Key="MessageSubtleForegroundBrush" Color="#6D7F8F" />
-            <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#71BAFA" />
-            <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#429BDB" />
-            <SolidColorBrush x:Key="MessagePollCorrectBrush" Color="#5DC452" />
-            <SolidColorBrush x:Key="MessagePollWrongBrush" Color="#ED5050" />
-            <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="#FFFFFF" />
-            <SolidColorBrush x:Key="MessageMediaBackgroundBrush" Color="#3F96D0" />
-            <SolidColorBrush x:Key="MessageOverlayBackgroundBrush" Color="#54000000" />
-            <SolidColorBrush x:Key="MessageCallForegroundBrush" Color="#49A2F0" />
-            <SolidColorBrush x:Key="MessageCallMissedForegroundBrush" Color="#ED5050" />
-
 
 
             <!-- Begin Windows.UI.Xaml.Controls.dll resources - DO NOT MANUALLY EDIT BELOW THIS LINE! -->
@@ -2304,25 +2287,6 @@
 
             <SolidColorBrush x:Key="ChatUnreadBadgeBrush" Color="{StaticResource SystemAccentColor}" />
             <SolidColorBrush x:Key="ChatUnreadLabelBrush" Color="#FFFFFF" />
-
-            <!-- Messages -->
-            <SolidColorBrush x:Key="MessageForegroundBrush" Color="#000000" />
-            <SolidColorBrush x:Key="MessageForegroundLinkBrush" Color="#168ACD" />
-            <SolidColorBrush x:Key="MessageBackgroundBrush" Color="#FFFFFF" />
-            <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#A1ADB6" />
-            <SolidColorBrush x:Key="MessageSubtleGlyphBrush" Color="#A1ADB6" />
-            <SolidColorBrush x:Key="MessageSubtleForegroundBrush" Color="#A1ADB6" />
-            <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#158DCD" />
-            <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#37A4DE" />
-            <SolidColorBrush x:Key="MessagePollCorrectBrush" Color="#5DC452" />
-            <SolidColorBrush x:Key="MessagePollWrongBrush" Color="#DD5849" />
-            <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="#FFFFFF" />
-            <SolidColorBrush x:Key="MessageMediaBackgroundBrush" Color="#40A7E3" />
-            <SolidColorBrush x:Key="MessageOverlayBackgroundBrush" Color="#54000000" />
-            <SolidColorBrush x:Key="MessageCallForegroundBrush" Color="#2AB32A" />
-            <SolidColorBrush x:Key="MessageCallMissedForegroundBrush" Color="#DD5849" />
-
-
 
             <!-- Begin Windows.UI.Xaml.Controls.dll resources - DO NOT MANUALLY EDIT BELOW THIS LINE! -->
             <Color x:Key="SystemAltHighColor">#FFFFFFFF</Color>

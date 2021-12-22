@@ -49,7 +49,7 @@ namespace Unigram.Controls.Cells
             }
 
             Outgoing.Fill = settings.OutgoingMessageFill;
-            Incoming.Fill = new SolidColorBrush(ThemeAccentInfo.Colorize(ActualTheme == ElementTheme.Light ? TelegramThemeType.Day : TelegramThemeType.Tinted, settings.AccentColor.ToColor(), "MessageBackgroundBrush"));
+            Incoming.Fill = new SolidColorBrush(ThemeAccentInfo.Colorize(ActualTheme == ElementTheme.Light ? TelegramThemeType.Day : TelegramThemeType.Tinted, settings.AccentColor.ToColor(), "MessageBackgroundIncoming"));
         }
 
         private void OnActualThemeChanged(FrameworkElement sender, object args)
