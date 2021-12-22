@@ -49,12 +49,6 @@ namespace Unigram.Controls
             var visible = true;
             var channel = chat.Type is ChatTypeSupergroup super && super.IsChannel;
 
-            //if (chat.VideoChat.GroupCallId != call?.Id || !chat.VideoChat.HasParticipants || call == null || call.IsJoined)
-            //{
-            //    ShowHide(false);
-            //    visible = false;
-            //}
-            //else
             if (chat.PendingJoinRequests?.TotalCount > 0)
             {
                 ShowHide(true);
@@ -144,12 +138,6 @@ namespace Unigram.Controls
             visual.StartAnimation("Translation", offset);
 
             batch.End();
-        }
-
-        public ICommand JoinCommand
-        {
-            get => JoinButton.Command;
-            set => JoinButton.Command = Command = value;
         }
     }
 }
