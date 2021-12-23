@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using Telegram.Td.Api;
 using Unigram.Services;
 using Unigram.Services.Settings;
-using Windows.Foundation.Metadata;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Xaml;
@@ -268,11 +267,8 @@ namespace Unigram.Common
 
         private void UpdateAcrylicBrushes()
         {
-            if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Media.AcrylicBrush", "TintLuminosityOpacity"))
-            {
-                UpdateAcrylicBrushesLightTheme(MergedDictionaries[0].ThemeDictionaries["Light"] as ResourceDictionary);
-                UpdateAcrylicBrushesDarkTheme(MergedDictionaries[0].ThemeDictionaries["Dark"] as ResourceDictionary);
-            }
+            UpdateAcrylicBrushesLightTheme(MergedDictionaries[0].ThemeDictionaries["Light"] as ResourceDictionary);
+            UpdateAcrylicBrushesDarkTheme(MergedDictionaries[0].ThemeDictionaries["Dark"] as ResourceDictionary);
         }
 
         private void UpdateAcrylicBrushesLightTheme(ResourceDictionary dictionary)
