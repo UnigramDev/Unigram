@@ -50,8 +50,12 @@
             <SolidColorBrush x:Key="ChatUnreadBadgeBrush" Color="{StaticResource SystemAccentColor}" />
             <SolidColorBrush x:Key="ChatUnreadLabelBrush" Color="#FFFFFF" />
 
+            <!-- Messages -->
+            <SolidColorBrush x:Key="MessagePollCorrectBrush" Color="#5DC452" />
+            <SolidColorBrush x:Key="MessagePollWrongBrush" Color="#ED5050" />
 
-
+            
+            
             <!-- Begin Windows.UI.Xaml.Controls.dll resources - DO NOT MANUALLY EDIT BELOW THIS LINE! -->
             <Color x:Key="SystemAltHighColor">#FF000000</Color>
             <Color x:Key="SystemAltLowColor">#33000000</Color>
@@ -2288,6 +2292,12 @@
             <SolidColorBrush x:Key="ChatUnreadBadgeBrush" Color="{StaticResource SystemAccentColor}" />
             <SolidColorBrush x:Key="ChatUnreadLabelBrush" Color="#FFFFFF" />
 
+            <!-- Messages -->
+            <SolidColorBrush x:Key="MessagePollCorrectBrush" Color="#5DC452" />
+            <SolidColorBrush x:Key="MessagePollWrongBrush" Color="#ED5050" />
+
+            
+            
             <!-- Begin Windows.UI.Xaml.Controls.dll resources - DO NOT MANUALLY EDIT BELOW THIS LINE! -->
             <Color x:Key="SystemAltHighColor">#FFFFFFFF</Color>
             <Color x:Key="SystemAltLowColor">#33FFFFFF</Color>
