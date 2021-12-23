@@ -76,8 +76,8 @@ namespace Unigram.Services
                 return colorizer.Colorize(color);
             }
 
-            var lookup = ThemeService.GetLookup(type == TelegramThemeType.Day ? TelegramTheme.Light : TelegramTheme.Dark);
-            return colorizer.Colorize((Color)lookup[key]);
+            var lookup = type == TelegramThemeType.Day ? ThemeIncoming.Light : ThemeIncoming.Dark;
+            return colorizer.Colorize(lookup[key].Color);
         }
 
         public override Color AccentColor { get; }
