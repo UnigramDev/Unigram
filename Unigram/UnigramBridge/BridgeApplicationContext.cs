@@ -37,15 +37,6 @@ namespace UnigramBridge
             try
             {
                 var local = ApplicationData.Current.LocalSettings;
-                if (local.Values.TryGetValue("IsTrayVisible", out object value) && value is bool visible)
-                {
-                    _notifyIcon.Visible = visible;
-                }
-                else
-                {
-                    _notifyIcon.Visible = true;
-                }
-
                 if (local.Values.TryGetValue("IsLaunchMinimized", out object minimizedV) && minimizedV is bool minimized && !minimized)
                 {
                     OpenApp(null, null);
@@ -190,13 +181,6 @@ namespace UnigramBridge
                     //{
                     //    _notifyIcon.Icon = Properties.Resources.Default;
                     //}
-                }
-            }
-            else if (args.Request.Message.TryGetValue("IsTrayVisible", out object value) && value is bool visible)
-            {
-                if (_notifyIcon != null)
-                {
-                    _notifyIcon.Visible = visible;
                 }
             }
             else if (args.Request.Message.TryGetValue("Exit", out object exit))

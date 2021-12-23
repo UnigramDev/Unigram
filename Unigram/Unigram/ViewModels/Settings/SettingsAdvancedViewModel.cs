@@ -6,6 +6,7 @@ using Unigram.Converters;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Services.Updates;
+using Windows.ApplicationModel;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Navigation;
@@ -167,18 +168,33 @@ namespace Unigram.ViewModels.Settings
         public bool IsTrayVisible
         {
             get => Settings.IsTrayVisible;
-            set
-            {
-                if (Settings.IsTrayVisible != value)
-                {
-                    Settings.IsTrayVisible = value;
-                    RaisePropertyChanged();
+            set => SetTrayVisible(value);
+        }
 
-                    if (App.Connection != null)
-                    {
-                        App.Connection.SendMessageAsync(new Windows.Foundation.Collections.ValueSet { { "IsTrayVisible", value } });
-                    }
+        private async void SetTrayVisible(bool value)
+        {
+            if (Settings.IsTrayVisible == value)
+            {
+                return;
+            }
+
+            Settings.IsTrayVisible = value;
+            RaisePropertyChanged();
+
+            if (value)
+            {
+                try
+                {
+                    await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
                 }
+                catch
+                {
+                    // The app has been compiled without desktop bridge
+                }
+            }
+            else if (App.Connection != null)
+            {
+                await App.Connection.SendMessageAsync(new Windows.Foundation.Collections.ValueSet { { "Exit", string.Empty } });
             }
         }
     }
