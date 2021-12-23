@@ -3655,6 +3655,9 @@ Koʻproq joy va qoʻshimcha funksiyalar uchun superguruhga aylantiring:
   <data name="CopyCardNumber" xml:space="preserve">
     <value>Nusxa olish</value>
   </data>
+  <data name="CopyContext" xml:space="preserve">
+    <value>Copy</value>
+  </data>
   <data name="CopyLink" xml:space="preserve">
     <value>Havoladan nusxa olish</value>
   </data>
@@ -3788,6 +3791,9 @@ Istalgan vaqtda esa Telegramning odatiy mavzusiga ushbu joydan qaytishingiz mumk
   </data>
   <data name="CustomThemes" xml:space="preserve">
     <value>Maxsus mavzular</value>
+  </data>
+  <data name="CutContext" xml:space="preserve">
+    <value>Cut</value>
   </data>
   <data name="DartInfo" xml:space="preserve">
     <value>Omadingizni sinab koʻrish uchun **:darts:** emojisini yuboring.</value>
@@ -4043,6 +4049,9 @@ Istalgan vaqtda esa Telegramning odatiy mavzusiga ushbu joydan qaytishingiz mumk
   </data>
   <data name="DeleteContact" xml:space="preserve">
     <value>Kontaktni oʻchirish</value>
+  </data>
+  <data name="DeleteContext" xml:space="preserve">
+    <value>Delete</value>
   </data>
   <data name="DeleteDays_few" xml:space="preserve">
     <value/>
@@ -4503,6 +4512,9 @@ Kanalning barcha aʼzolari ushbu guruh xabarlarini koʻrish imkoniga ega boʻlad
   </data>
   <data name="EditLink" xml:space="preserve">
     <value>Havolani tahrirlash</value>
+  </data>
+  <data name="EditLinkContext" xml:space="preserve">
+    <value>Edit Link</value>
   </data>
   <data name="EditMessage" xml:space="preserve">
     <value>Xabarni tahrirlash</value>
@@ -5613,6 +5625,9 @@ Muddati: {1}</value>
   <data name="formatterYearMax" xml:space="preserve">
     <value>dd.MM.yyyy</value>
   </data>
+   <data name="FormattingContext" xml:space="preserve">
+    <value>Formatting</value>
+  </data>
   <data name="Forward" xml:space="preserve">
     <value>Uzatish</value>
   </data>
@@ -6189,6 +6204,9 @@ Unutmang, u qora roʻyxatda boʻlmasa, guruhning taklif havolasi orqali qayta qo
   </data>
   <data name="HideCaption" xml:space="preserve">
     <value>Izohni berkitish</value>
+  </data>
+   <data name="HideFormattingContext" xml:space="preserve">
+    <value>Hide Formatting</value>
   </data>
   <data name="HideNewChatsAlertText" xml:space="preserve">
     <value>Sizga kontaktlar roʻyxatingizda boʻlmaganlar tez-tez yozishmoqda. Bunday chatlarni *avtomatik sukut qilish** va **arxivlashni** xohlaysizmi?</value>
@@ -9807,6 +9825,9 @@ Tafsilotlar uchun Savol-javoblarimizga kirishingiz mumkin.</value>
   <data name="PasswordReset" xml:space="preserve">
     <value>Parol faolsizlantirildi</value>
   </data>
+   <data name="PasteContext" xml:space="preserve">
+    <value>Paste</value>
+  </data>
   <data name="PasteFromClipboard" xml:space="preserve">
     <value>Vaqtincha xotiradan qoʻyish</value>
   </data>
@@ -11083,6 +11104,9 @@ Bu tashabbus tafsilotlarini bilish uchun quyidagi manzilga kiring: https://teleg
   <data name="Red" xml:space="preserve">
     <value>Qizil</value>
   </data>
+  <data name="RedoContext" xml:space="preserve">
+    <value>Redo</value>
+  </data>
   <data name="ReEnterYourPasscode" xml:space="preserve">
     <value>Kirish kodingizni qayta kiriting</value>
   </data>
@@ -11817,6 +11841,9 @@ Bu oʻzgarish kuchga kirishi uchun ilovani qayta ishga tushirishingiz kerak boʻ
   <data name="SelectAccount" xml:space="preserve">
     <value>Hisobni tanlang</value>
   </data>
+  <data name="SelectAllContext" xml:space="preserve">
+    <value>Select All</value>
+  </data>
   <data name="SelectChat" xml:space="preserve">
     <value>Chatni tanlang</value>
   </data>
@@ -12388,6 +12415,9 @@ Chaqiruvga javob bermang, Telegram hammasini avtomatik amalga oshiradi.</value>
   </data>
   <data name="ShowCaption" xml:space="preserve">
     <value>Izohni koʻrsatish</value>
+  </data>
+   <data name="ShowFormattingContext" xml:space="preserve">
+    <value>Show Formatting</value>
   </data>
   <data name="ShowForwardingOptions" xml:space="preserve">
     <value>Uzatish parametrlarini chiqarish</value>
@@ -13498,6 +13528,9 @@ Agar minimal muhim maʼlumotlarni taqdim etishga tayyor boʻlmasangiz, biz Teleg
   </data>
   <data name="UndoAllCustom" xml:space="preserve">
     <value>Barcha kontakt, guruh va kanallaringiz uchun alohida bildirishnoma sozlamalarini asliga qaytarish.</value>
+  </data>
+  <data name="UndoContext" xml:space="preserve">
+    <value>Undo</value>
   </data>
   <data name="UnhideFromTop" xml:space="preserve">
     <value>Qadash</value>

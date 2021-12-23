@@ -3653,6 +3653,9 @@ Daha fazla alan ve ek özellikler için bir süper gruba yükseltin:
   <data name="CopyCardNumber" xml:space="preserve">
     <value>Kopyala</value>
   </data>
+  <data name="CopyContext" xml:space="preserve">
+    <value>Copy</value>
+  </data>
   <data name="CopyLink" xml:space="preserve">
     <value>Bağlantıyı kopyala</value>
   </data>
@@ -3786,6 +3789,9 @@ Buradan her zaman varsayılan Telegram temasına geri dönebilirsiniz.</value>
   </data>
   <data name="CustomThemes" xml:space="preserve">
     <value>Özel temalar</value>
+  </data>
+  <data name="CutContext" xml:space="preserve">
+    <value>Cut</value>
   </data>
   <data name="DartInfo" xml:space="preserve">
     <value>Şansınızı denemek için **:dart** ifadesi gönderin.</value>
@@ -4041,6 +4047,9 @@ Buradan her zaman varsayılan Telegram temasına geri dönebilirsiniz.</value>
   </data>
   <data name="DeleteContact" xml:space="preserve">
     <value>Kişiyi sil</value>
+  </data>
+  <data name="DeleteContext" xml:space="preserve">
+    <value>Delete</value>
   </data>
   <data name="DeleteDays_few" xml:space="preserve">
     <value/>
@@ -4501,6 +4510,9 @@ Kanaldaki herkes bu gruptaki mesajları görebilir.</value>
   </data>
   <data name="EditLink" xml:space="preserve">
     <value>Bağlantıyı düzenle</value>
+  </data>
+  <data name="EditLinkContext" xml:space="preserve">
+    <value>Edit Link</value>
   </data>
   <data name="EditMessage" xml:space="preserve">
     <value>Mesajı Düzenle</value>
@@ -5609,6 +5621,9 @@ Süre: {1}</value>
   <data name="formatterYearMax" xml:space="preserve">
     <value>dd/MM/yyyy</value>
   </data>
+  <data name="FormattingContext" xml:space="preserve">
+    <value>Formatting</value>
+  </data>
   <data name="Forward" xml:space="preserve">
     <value>İlet</value>
   </data>
@@ -6186,6 +6201,9 @@ bir sorunuz mu var?</value>
   </data>
   <data name="HideCaption" xml:space="preserve">
     <value>Başlığı gizle</value>
+  </data>
+  <data name="HideFormattingContext" xml:space="preserve">
+    <value>Hide Formatting</value>
   </data>
   <data name="HideNewChatsAlertText" xml:space="preserve">
     <value>Kişiler Listeniz dışındaki kullanıcılardan birçok yeni sohbet alıyorsunuz. Bu tür sohbetlerin **otomatik sessize alınmasını** ve **arşivlenmesini** ister misiniz?</value>
@@ -9807,6 +9825,9 @@ Daha fazla bilgi için *SSS* sayfamızı ziyaret edebilirsiniz.</value>
   <data name="PasswordReset" xml:space="preserve">
     <value>Parola devre dışı bırakıldı</value>
   </data>
+  <data name="PasteContext" xml:space="preserve">
+    <value>Paste</value>
+  </data>
   <data name="PasteFromClipboard" xml:space="preserve">
     <value>Panodan yapıştır</value>
   </data>
@@ -11081,6 +11102,9 @@ Konumunuza yalnızca seçtiğiniz süre boyunca erişeceğiz ve istediğiniz zam
   <data name="Red" xml:space="preserve">
     <value>Kırmızı</value>
   </data>
+  <data name="RedoContext" xml:space="preserve">
+    <value>Redo</value>
+  </data>
   <data name="ReEnterYourPasscode" xml:space="preserve">
     <value>Yeni parolanızı tekrar girin</value>
   </data>
@@ -11813,6 +11837,9 @@ Bunun etkili olması için uygulamayı yeniden başlatmanız gerekebilir.</value
   <data name="SelectAccount" xml:space="preserve">
     <value>Hesap Seç</value>
   </data>
+  <data name="SelectAllContext" xml:space="preserve">
+    <value>Select All</value>
+  </data>
   <data name="SelectChat" xml:space="preserve">
     <value>Sohbet Seçin</value>
   </data>
@@ -12384,6 +12411,9 @@ Cevaplamayın, Telegram her şeyi otomatik olarak yapacak.</value>
   </data>
   <data name="ShowCaption" xml:space="preserve">
     <value>Başlığı göster</value>
+  </data>
+  <data name="ShowFormattingContext" xml:space="preserve">
+    <value>Show Formatting</value>
   </data>
   <data name="ShowForwardingOptions" xml:space="preserve">
     <value>İletme seçeneklerini göster</value>
@@ -13497,6 +13527,9 @@ Ancak Telegram'ın mütevazı ihtiyaçlarını kabul etmiyorsanız, bu hizmeti b
   </data>
   <data name="UndoAllCustom" xml:space="preserve">
     <value>Tüm kişileriniz, gruplarınız ve kanallarınız için tüm özel bildirim ayarlarını sıfırlayın.</value>
+  </data>
+  <data name="UndoContext" xml:space="preserve">
+    <value>Undo</value>
   </data>
   <data name="UnhideFromTop" xml:space="preserve">
     <value>Sabitle</value>

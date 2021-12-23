@@ -3656,6 +3656,9 @@
   <data name="CopyCardNumber" xml:space="preserve">
     <value>کپی</value>
   </data>
+  <data name="CopyContext" xml:space="preserve">
+    <value>Copy</value>
+  </data>
   <data name="CopyLink" xml:space="preserve">
     <value>کپی لینک</value>
   </data>
@@ -3790,6 +3793,9 @@
   </data>
   <data name="CustomThemes" xml:space="preserve">
     <value>پوسته‌های سفارشی</value>
+  </data>
+  <data name="CutContext" xml:space="preserve">
+    <value>Cut</value>
   </data>
   <data name="DartInfo" xml:space="preserve">
     <value>برای امتحان کردن شانستان یک اموجی **دارت** ارسال کنید.</value>
@@ -4045,6 +4051,9 @@
   </data>
   <data name="DeleteContact" xml:space="preserve">
     <value>حذف مخاطب</value>
+  </data>
+  <data name="DeleteContext" xml:space="preserve">
+    <value>Delete</value>
   </data>
   <data name="DeleteDays_few" xml:space="preserve">
     <value/>
@@ -4505,6 +4514,9 @@
   </data>
   <data name="EditLink" xml:space="preserve">
     <value>ویرایش لینک</value>
+  </data>
+  <data name="EditLinkContext" xml:space="preserve">
+    <value>Edit Link</value>
   </data>
   <data name="EditMessage" xml:space="preserve">
     <value>ویرایش پیام</value>
@@ -5616,6 +5628,9 @@
   <data name="formatterYearMax" xml:space="preserve">
     <value>dd.MM.yyyy</value>
   </data>
+  <data name="FormattingContext" xml:space="preserve">
+    <value>Formatting</value>
+  </data>
   <data name="Forward" xml:space="preserve">
     <value>هدایت</value>
   </data>
@@ -6193,6 +6208,9 @@
   </data>
   <data name="HideCaption" xml:space="preserve">
     <value>پنهان کردن عنوان</value>
+  </data>
+  <data name="HideFormattingContext" xml:space="preserve">
+    <value>Hide Formatting</value>
   </data>
   <data name="HideNewChatsAlertText" xml:space="preserve">
     <value>شما در حال دریافت گفتگوهای جدید زیادی از کاربرانی هستید که در فهرست مخاطبین شما نیستند. آیا تمایل دارید چنین گفتگوهایی **به صورت خودکار بی‌صدا** و **بایگانی** شوند؟</value>
@@ -9814,6 +9832,9 @@
   <data name="PasswordReset" xml:space="preserve">
     <value>گذرواژه غیرفعال شد</value>
   </data>
+  <data name="PasteContext" xml:space="preserve">
+    <value>Paste</value>
+  </data>
   <data name="PasteFromClipboard" xml:space="preserve">
     <value>چسباندن از حافظه</value>
   </data>
@@ -11090,6 +11111,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="Red" xml:space="preserve">
     <value>قرمز</value>
   </data>
+  <data name="RedoContext" xml:space="preserve">
+    <value>Redo</value>
+  </data>
   <data name="ReEnterYourPasscode" xml:space="preserve">
     <value>گذرواژه جدید خود را دوباره وارد کنید </value>
   </data>
@@ -11821,6 +11845,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="SelectAccount" xml:space="preserve">
     <value>انتخاب حساب کاربری</value>
   </data>
+  <data name="SelectAllContext" xml:space="preserve">
+    <value>Select All</value>
+  </data>
   <data name="SelectChat" xml:space="preserve">
     <value>انتخاب گفتگو</value>
   </data>
@@ -12392,6 +12419,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="ShowCaption" xml:space="preserve">
     <value>نمایش عنوان</value>
+  </data>
+  <data name="ShowFormattingContext" xml:space="preserve">
+    <value>Show Formatting</value>
   </data>
   <data name="ShowForwardingOptions" xml:space="preserve">
     <value>نمایش گزینه‌های هدایت</value>
@@ -13504,6 +13534,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="UndoAllCustom" xml:space="preserve">
     <value>تمامی تنظیمات اعلان‌‌های سفارشی برای تمامی مخاطبین، گروه‌ها و کانال‌های خود را به حالت قبلی بازگردانید.</value>
+  </data>
+  <data name="UndoContext" xml:space="preserve">
+    <value>Undo</value>
   </data>
   <data name="UnhideFromTop" xml:space="preserve">
     <value>سنجاق کردن</value>

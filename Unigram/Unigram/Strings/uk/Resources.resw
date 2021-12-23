@@ -3649,6 +3649,9 @@
   <data name="CopyCardNumber" xml:space="preserve">
     <value>Копіювати</value>
   </data>
+  <data name="CopyContext" xml:space="preserve">
+    <value>Copy</value>
+  </data>
   <data name="CopyLink" xml:space="preserve">
     <value>Копіювати посилання</value>
   </data>
@@ -3782,6 +3785,9 @@
   </data>
   <data name="CustomThemes" xml:space="preserve">
     <value>Користувацькі теми</value>
+  </data>
+  <data name="CutContext" xml:space="preserve">
+    <value>Cut</value>
   </data>
   <data name="DartInfo" xml:space="preserve">
     <value>Надішліть емодзі **:дартс:**, щоб випробувати удачу.</value>
@@ -4037,6 +4043,9 @@
   </data>
   <data name="DeleteContact" xml:space="preserve">
     <value>Видалити контакт</value>
+  </data>
+  <data name="DeleteContext" xml:space="preserve">
+    <value>Delete</value>
   </data>
   <data name="DeleteDays_few" xml:space="preserve">
     <value>Видалити {0} дні</value>
@@ -4497,6 +4506,9 @@
   </data>
   <data name="EditLink" xml:space="preserve">
     <value>Редагувати посилання</value>
+  </data>
+  <data name="EditLinkContext" xml:space="preserve">
+    <value>Edit Link</value>
   </data>
   <data name="EditMessage" xml:space="preserve">
     <value>Редагувати повідомлення</value>
@@ -5609,6 +5621,9 @@
   <data name="formatterYearMax" xml:space="preserve">
     <value>dd.MM.yyyy</value>
   </data>
+  <data name="FormattingContext" xml:space="preserve">
+    <value>Formatting</value>
+  </data>
   <data name="Forward" xml:space="preserve">
     <value>Переслати</value>
   </data>
@@ -6185,6 +6200,9 @@
   </data>
   <data name="HideCaption" xml:space="preserve">
     <value>Без опису</value>
+  </data>
+  <data name="HideFormattingContext" xml:space="preserve">
+    <value>Hide Formatting</value>
   </data>
   <data name="HideNewChatsAlertText" xml:space="preserve">
     <value>Вам часто пишуть користувачі не зі списку контактів. Бажаєте, щоб нові чати з ними **автоматично архівувалися**, а **сповіщення** про них були **вимкнені**?</value>
@@ -9806,6 +9824,9 @@
   <data name="PasswordReset" xml:space="preserve">
     <value>Пароль деактивовано</value>
   </data>
+  <data name="PasteContext" xml:space="preserve">
+    <value>Paste</value>
+  </data>
   <data name="PasteFromClipboard" xml:space="preserve">
     <value>Вставити з буфера обміну</value>
   </data>
@@ -11082,6 +11103,9 @@
   <data name="Red" xml:space="preserve">
     <value>Червоний</value>
   </data>
+  <data name="RedoContext" xml:space="preserve">
+    <value>Redo</value>
+  </data>
   <data name="ReEnterYourPasscode" xml:space="preserve">
     <value>Введіть новий код блокування ще раз</value>
   </data>
@@ -11814,6 +11838,9 @@
   <data name="SelectAccount" xml:space="preserve">
     <value>Виберіть акаунт</value>
   </data>
+  <data name="SelectAllContext" xml:space="preserve">
+    <value>Select All</value>
+  </data>
   <data name="SelectChat" xml:space="preserve">
     <value>Виберіть чат</value>
   </data>
@@ -12385,6 +12412,9 @@
   </data>
   <data name="ShowCaption" xml:space="preserve">
     <value>З описом</value>
+  </data>
+   <data name="ShowFormattingContext" xml:space="preserve">
+    <value>Show Formatting</value>
   </data>
   <data name="ShowForwardingOptions" xml:space="preserve">
     <value>Показати опції пересилання</value>
@@ -13497,6 +13527,9 @@
   </data>
   <data name="UndoAllCustom" xml:space="preserve">
     <value>Скасувати всі власні налаштування сповіщень для всіх контактів, груп і каналів.</value>
+  </data>
+  <data name="UndoContext" xml:space="preserve">
+    <value>Undo</value>
   </data>
   <data name="UnhideFromTop" xml:space="preserve">
     <value>Прикріпити</value>

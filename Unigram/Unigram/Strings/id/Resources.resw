@@ -3646,6 +3646,9 @@ Untuk menambah dan mendapat fitur tambahan, tingkatkan ke supergrup:
   <data name="CopyCardNumber" xml:space="preserve">
     <value>Salin</value>
   </data>
+  <data name="CopyContext" xml:space="preserve">
+    <value>Copy</value>
+  </data>
   <data name="CopyLink" xml:space="preserve">
     <value>Salin Tautan</value>
   </data>
@@ -3779,6 +3782,9 @@ Anda selalu dapat beralih kembali ke tema bawaan Telegram di sini.</value>
   </data>
   <data name="CustomThemes" xml:space="preserve">
     <value>Tema Khusus</value>
+  </data>
+  <data name="CutContext" xml:space="preserve">
+    <value>Cut</value>
   </data>
   <data name="DartInfo" xml:space="preserve">
     <value>Kirim emoji bidik panah untuk uji keberuntungan Anda.</value>
@@ -4034,6 +4040,9 @@ Anda selalu dapat beralih kembali ke tema bawaan Telegram di sini.</value>
   </data>
   <data name="DeleteContact" xml:space="preserve">
     <value>Hapus kontak</value>
+  </data>
+  <data name="DeleteContext" xml:space="preserve">
+    <value>Delete</value>
   </data>
   <data name="DeleteDays_few" xml:space="preserve">
     <value/>
@@ -4494,6 +4503,9 @@ Pelanggan dari channel akan dapat melihat semua pesan di grup ini.</value>
   </data>
   <data name="EditLink" xml:space="preserve">
     <value>Edit tautan</value>
+  </data>
+  <data name="EditLinkContext" xml:space="preserve">
+    <value>Edit Link</value>
   </data>
   <data name="EditMessage" xml:space="preserve">
     <value>Edit pesan</value>
@@ -5610,6 +5622,9 @@ Durasi: {1}</value>
   <data name="formatterYearMax" xml:space="preserve">
     <value>dd.MM.yyyy</value>
   </data>
+  <data name="FormattingContext" xml:space="preserve">
+    <value>Formatting</value>
+  </data>
   <data name="Forward" xml:space="preserve">
     <value>Teruskan</value>
   </data>
@@ -6184,6 +6199,9 @@ Mereka tetap dapat bergabung dengan tautan selama mereka tidak ada dalam daftar 
   </data>
   <data name="HideCaption" xml:space="preserve">
     <value>Sembunyikan teks</value>
+  </data>
+  <data name="HideFormattingContext" xml:space="preserve">
+    <value>Hide Formatting</value>
   </data>
   <data name="HideNewChatsAlertText" xml:space="preserve">
     <value>Anda menerima banyak obrolan baru dari pengguna non-kontak. Apakah Anda ingin **menyembunyikan obrolan ini ke arsip** dan **senyapkan** secara **otomatis**?</value>
@@ -9802,6 +9820,9 @@ Anda dapat mengunjungi * FAQ * kami untuk mempelajari lebih lanjut.</value>
   <data name="PasswordReset" xml:space="preserve">
     <value>Kata Sandi dinonaktifkan</value>
   </data>
+  <data name="PasteContext" xml:space="preserve">
+    <value>Paste</value>
+  </data>
   <data name="PasteFromClipboard" xml:space="preserve">
     <value>Salin dari Papan Klip</value>
   </data>
@@ -11078,6 +11099,9 @@ Anda dapat menambahkan pengguna atau seluruh grup sebagai pengecualian yang akan
   <data name="Red" xml:space="preserve">
     <value>Merah</value>
   </data>
+  <data name="RedoContext" xml:space="preserve">
+    <value>Redo</value>
+  </data>
   <data name="ReEnterYourPasscode" xml:space="preserve">
     <value>Masukkan ulang kode sandi baru Anda</value>
   </data>
@@ -11812,6 +11836,9 @@ Anda mungkin perlu memulai ulang aplikasi agar ini berlaku.</value>
   <data name="SelectAccount" xml:space="preserve">
     <value>Pilih Akun</value>
   </data>
+  <data name="SelectAllContext" xml:space="preserve">
+    <value>Select All</value>
+  </data>
   <data name="SelectChat" xml:space="preserve">
     <value>Pilih Obrolan</value>
   </data>
@@ -12380,6 +12407,9 @@ INGAT! Jangan diangkat, Telegram akan memproses secara otomatis.</value>
   </data>
   <data name="ShowCaption" xml:space="preserve">
     <value>Tampilkan Teks</value>
+  </data>
+  <data name="ShowFormattingContext" xml:space="preserve">
+    <value>Show Formatting</value>
   </data>
   <data name="ShowForwardingOptions" xml:space="preserve">
     <value>Tampilkan Opsi Terusan</value>
@@ -13490,6 +13520,9 @@ Tetapi jika Anda tidak cocok dengan penyesuaian Telegram, Anda tidak dapat mengg
   </data>
   <data name="UndoAllCustom" xml:space="preserve">
     <value>Kembalikan semua pengaturan notifikasi untuk semua kontak, grup dan channel. </value>
+  </data>
+  <data name="UndoContext" xml:space="preserve">
+    <value>Undo</value>
   </data>
   <data name="UnhideFromTop" xml:space="preserve">
     <value>Pin</value>

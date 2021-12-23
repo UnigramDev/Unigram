@@ -3660,6 +3660,9 @@ For more space and additional features, upgrade to a supergroup:
   <data name="CopyCardNumber" xml:space="preserve">
     <value>Copy</value>
   </data>
+  <data name="CopyContext" xml:space="preserve">
+    <value>Copy</value>
+  </data>
   <data name="CopyLink" xml:space="preserve">
     <value>Copy Link</value>
   </data>
@@ -3793,6 +3796,9 @@ You can always switch back to the default Telegram theme here.</value>
   </data>
   <data name="CustomThemes" xml:space="preserve">
     <value>Custom themes</value>
+  </data>
+  <data name="CutContext" xml:space="preserve">
+    <value>Cut</value>
   </data>
   <data name="DartInfo" xml:space="preserve">
     <value>Send a **:darts:** emoji to try your luck.</value>
@@ -4048,6 +4054,9 @@ You can always switch back to the default Telegram theme here.</value>
   </data>
   <data name="DeleteContact" xml:space="preserve">
     <value>Delete contact</value>
+  </data>
+  <data name="DeleteContext" xml:space="preserve">
+    <value>Delete</value>
   </data>
   <data name="DeleteDays_few" xml:space="preserve">
     <value/>
@@ -4508,6 +4517,9 @@ Anyone from the channel will be able to see messages in this group.</value>
   </data>
   <data name="EditLink" xml:space="preserve">
     <value>Edit link</value>
+  </data>
+  <data name="EditLinkContext" xml:space="preserve">
+    <value>Edit Link</value>
   </data>
   <data name="EditMessage" xml:space="preserve">
     <value>Edit Message</value>
@@ -5674,6 +5686,9 @@ Duration: {1}</value>
   <data name="formatterYearMax" xml:space="preserve">
     <value>dd.MM.yyyy</value>
   </data>
+  <data name="FormattingContext" xml:space="preserve">
+    <value>Formatting</value>
+  </data>
   <data name="Forward" xml:space="preserve">
     <value>Forward</value>
   </data>
@@ -6251,6 +6266,9 @@ Note that they can still join via the group's invite link as long as they are no
   </data>
   <data name="HideCaption" xml:space="preserve">
     <value>Hide caption</value>
+  </data>
+  <data name="HideFormattingContext" xml:space="preserve">
+    <value>Hide Formatting</value>
   </data>
   <data name="HideNewChatsAlertText" xml:space="preserve">
     <value>You are receiving many new chats from users who are not in your Contacts List. Do you want to have such chats **automatically muted** and **archived**?</value>
@@ -9874,6 +9892,9 @@ You can visit our *FAQ* to learn more.</value>
   <data name="PasswordReset" xml:space="preserve">
     <value>Password deactivated</value>
   </data>
+  <data name="PasteContext" xml:space="preserve">
+    <value>Paste</value>
+  </data>
   <data name="PasteFromClipboard" xml:space="preserve">
     <value>Paste from clipboard</value>
   </data>
@@ -11148,6 +11169,9 @@ We will access your location only for the duration you choose, and you can stop 
   <data name="Red" xml:space="preserve">
     <value>Red</value>
   </data>
+  <data name="RedoContext" xml:space="preserve">
+    <value>Redo</value>
+  </data>
   <data name="ReEnterYourPasscode" xml:space="preserve">
     <value>Re-enter your new passcode</value>
   </data>
@@ -11880,6 +11904,9 @@ You may need to restart the app for this to take effect.</value>
   <data name="SelectAccount" xml:space="preserve">
     <value>Select Account</value>
   </data>
+  <data name="SelectAllContext" xml:space="preserve">
+    <value>Select All</value>
+  </data>
   <data name="SelectChat" xml:space="preserve">
     <value>Select Chat</value>
   </data>
@@ -12451,6 +12478,9 @@ Don't accept the call, Telegram will process everything automatically.</value>
   </data>
   <data name="ShowCaption" xml:space="preserve">
     <value>Show caption</value>
+  </data>
+  <data name="ShowFormattingContext" xml:space="preserve">
+    <value>Show Formatting</value>
   </data>
   <data name="ShowForwardingOptions" xml:space="preserve">
     <value>Show forwarding options</value>
@@ -13563,6 +13593,9 @@ But if you're generally not OK with Telegram's modest needs, it won't be possibl
   </data>
   <data name="UndoAllCustom" xml:space="preserve">
     <value>Undo all custom notification settings for all your contacts, groups and channels.</value>
+  </data>
+  <data name="UndoContext" xml:space="preserve">
+    <value>Undo</value>
   </data>
   <data name="UnhideFromTop" xml:space="preserve">
     <value>Pin</value>

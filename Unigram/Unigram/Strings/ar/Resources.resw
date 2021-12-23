@@ -3664,6 +3664,9 @@
   <data name="CopyCardNumber" xml:space="preserve">
     <value>نسخ</value>
   </data>
+  <data name="CopyContext" xml:space="preserve">
+    <value>Copy</value>
+  </data>
   <data name="CopyLink" xml:space="preserve">
     <value>نسخ الرابط</value>
   </data>
@@ -3797,6 +3800,9 @@
   </data>
   <data name="CustomThemes" xml:space="preserve">
     <value>الأنماط المخصصة</value>
+  </data>
+  <data name="CutContext" xml:space="preserve">
+    <value>Cut</value>
   </data>
   <data name="DartInfo" xml:space="preserve">
     <value>أرسل الرمز التعبيري **🎯** لتجربة حظك.</value>
@@ -4052,6 +4058,9 @@
   </data>
   <data name="DeleteContact" xml:space="preserve">
     <value>حذف الجهة</value>
+  </data>
+  <data name="DeleteContext" xml:space="preserve">
+    <value>Delete</value>
   </data>
   <data name="DeleteDays_few" xml:space="preserve">
     <value>حذف ⁨{0}⁩ أيام</value>
@@ -4512,6 +4521,9 @@
   </data>
   <data name="EditLink" xml:space="preserve">
     <value>تعديل الرابط</value>
+  </data>
+  <data name="EditLinkContext" xml:space="preserve">
+    <value>Edit Link</value>
   </data>
   <data name="EditMessage" xml:space="preserve">
     <value>تعديل الرسالة</value>
@@ -5678,6 +5690,9 @@
   <data name="formatterYearMax" xml:space="preserve">
     <value>yyyy.MM.dd</value>
   </data>
+  <data name="FormattingContext" xml:space="preserve">
+    <value>Formatting</value>
+  </data>
   <data name="Forward" xml:space="preserve">
     <value>تحويل</value>
   </data>
@@ -6255,6 +6270,9 @@
   </data>
   <data name="HideCaption" xml:space="preserve">
     <value>إخفاء الوصف</value>
+  </data>
+  <data name="HideFormattingContext" xml:space="preserve">
+    <value>Hide Formatting</value>
   </data>
   <data name="HideNewChatsAlertText" xml:space="preserve">
     <value>أنت تتلقى الكثير من المحادثات الجديدة من مستخدمين ليسوا في قائمة جهات اتصالك، هل تريد أن تكون مثل هذه المحادثات **مكتومة تلقائيًا** و **مؤرشفة**؟</value>
@@ -9876,6 +9894,9 @@
   <data name="PasswordReset" xml:space="preserve">
     <value>تم تعطيل كلمة المرور</value>
   </data>
+  <data name="PasteContext" xml:space="preserve">
+    <value>Paste</value>
+  </data>
   <data name="PasteFromClipboard" xml:space="preserve">
     <value>لصق من الحافظة</value>
   </data>
@@ -11150,6 +11171,8 @@
   <data name="Red" xml:space="preserve">
     <value>الأحمر</value>
   </data>
+  <data name="RedoContext" xml:space="preserve">
+    <value>Redo</value>
   <data name="ReEnterYourPasscode" xml:space="preserve">
     <value>أعد إدخالَ رمز قفلك الجديد</value>
   </data>
@@ -11882,6 +11905,9 @@
   <data name="SelectAccount" xml:space="preserve">
     <value>اختيار حساب</value>
   </data>
+  <data name="SelectAllContext" xml:space="preserve">
+    <value>Select All</value>
+  </data>
   <data name="SelectChat" xml:space="preserve">
     <value>اختر محادثة</value>
   </data>
@@ -12453,6 +12479,9 @@
   </data>
   <data name="ShowCaption" xml:space="preserve">
     <value>إظهار الوصف</value>
+  </data>
+  <data name="ShowFormattingContext" xml:space="preserve">
+    <value>Show Formatting</value>
   </data>
   <data name="ShowForwardingOptions" xml:space="preserve">
     <value>عرض خيارات التحويل</value>
@@ -13565,6 +13594,9 @@
   </data>
   <data name="UndoAllCustom" xml:space="preserve">
     <value>إعادة تعيين كافة إعدادات الإشعارات المخصصة لجميع جهات الاتصال، المجموعات والقنوات.</value>
+  </data>
+  <data name="UndoContext" xml:space="preserve">
+    <value>Undo</value>
   </data>
   <data name="UnhideFromTop" xml:space="preserve">
     <value>تثبيت</value>

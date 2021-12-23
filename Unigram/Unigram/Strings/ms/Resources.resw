@@ -3652,6 +3652,9 @@ Untuk jimatkan ruang dan ciri-ciri tambahan, naik taraf ke grupsuper:
   <data name="CopyCardNumber" xml:space="preserve">
     <value>Salin</value>
   </data>
+   <data name="CopyContext" xml:space="preserve">
+    <value>Copy</value>
+  </data>
   <data name="CopyLink" xml:space="preserve">
     <value>Salin Link</value>
   </data>
@@ -3785,6 +3788,9 @@ Anda boleh tukar ke tema asal Telegram pada bila-bila masa di sini.</value>
   </data>
   <data name="CustomThemes" xml:space="preserve">
     <value>Tema khusus</value>
+  </data>
+   <data name="CutContext" xml:space="preserve">
+    <value>Cut</value>
   </data>
   <data name="DartInfo" xml:space="preserve">
     <value>Kirim emoji **:dart:** utuk mencuba nasib anda.</value>
@@ -4040,6 +4046,9 @@ Anda boleh tukar ke tema asal Telegram pada bila-bila masa di sini.</value>
   </data>
   <data name="DeleteContact" xml:space="preserve">
     <value>Hapus kenalan</value>
+  </data>
+  <data name="DeleteContext" xml:space="preserve">
+    <value>Delete</value>
   </data>
   <data name="DeleteDays_few" xml:space="preserve">
     <value/>
@@ -4501,6 +4510,9 @@ Sesiapa dari saluran akan dapat lihat mesej dalam grup ini.</value>
   </data>
   <data name="EditLink" xml:space="preserve">
     <value>Sunting link</value>
+  </data>
+  <data name="EditLinkContext" xml:space="preserve">
+    <value>Edit Link</value>
   </data>
   <data name="EditMessage" xml:space="preserve">
     <value>Sunting Mesej</value>
@@ -5612,6 +5624,9 @@ Tempoh: {1}</value>
   <data name="formatterYearMax" xml:space="preserve">
     <value>dd.MM.yyyy </value>
   </data>
+  <data name="FormattingContext" xml:space="preserve">
+    <value>Formatting</value>
+  </data>
   <data name="Forward" xml:space="preserve">
     <value>Majukan</value>
   </data>
@@ -6188,6 +6203,9 @@ Ambil perhatian mereka masih boleh sertai melalui link jemputan grup selagi mere
   </data>
   <data name="HideCaption" xml:space="preserve">
     <value>Sembunyi kapsyen</value>
+  </data>
+  <data name="HideFormattingContext" xml:space="preserve">
+    <value>Hide Formatting</value>
   </data>
   <data name="HideNewChatsAlertText" xml:space="preserve">
     <value>Anda menerima banyak bual baru dari pengguna bukan dari senarai Kenalan Anda. Anda ingin bual tersebut **disenyapkan secara automatik** dan **diarkib**?</value>
@@ -9804,6 +9822,9 @@ Anda boleh melawat *FAQ* kami untuk maklumat lanjut.</value>
   <data name="PasswordReset" xml:space="preserve">
     <value>Kata laluan dibatalkan</value>
   </data>
+   <data name="PasteContext" xml:space="preserve">
+    <value>Paste</value>
+  </data>
   <data name="PasteFromClipboard" xml:space="preserve">
     <value>Tampal dari papan klip</value>
   </data>
@@ -11080,6 +11101,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="Red" xml:space="preserve">
     <value>Merah</value>
   </data>
+   <data name="RedoContext" xml:space="preserve">
+    <value>Redo</value>
+  </data>
   <data name="ReEnterYourPasscode" xml:space="preserve">
     <value>Masukan semula kod laluan baru anda</value>
   </data>
@@ -11812,6 +11836,9 @@ Anda mungkin perlu mula semula aplikasi sebelum ianya berkuatkuasa.</value>
   <data name="SelectAccount" xml:space="preserve">
     <value>Pilih Akaun</value>
   </data>
+  <data name="SelectAllContext" xml:space="preserve">
+    <value>Select All</value>
+  </data>
   <data name="SelectChat" xml:space="preserve">
     <value>Pilih Bual</value>
   </data>
@@ -12383,6 +12410,9 @@ Jangan jawab, Telegram akan proses semuanya secara automatik. </value>
   </data>
   <data name="ShowCaption" xml:space="preserve">
     <value>Tunjuk kapsyen</value>
+  </data>
+  <data name="ShowFormattingContext" xml:space="preserve">
+    <value>Show Formatting</value>
   </data>
   <data name="ShowForwardingOptions" xml:space="preserve">
     <value>Tunjuk Opsyen Memajukan</value>
@@ -13492,6 +13522,9 @@ Namun sekiranya anda tidak bersetuju dengan keperluan kecil Telegram, kami tak a
   </data>
   <data name="UndoAllCustom" xml:space="preserve">
     <value>Tukar balik aturan notifikasi khusus untuk semua kenalan, grup dan saluran.</value>
+  </data>
+  <data name="UndoContext" xml:space="preserve">
+    <value>Undo</value>
   </data>
   <data name="UnhideFromTop" xml:space="preserve">
     <value>Semat</value>

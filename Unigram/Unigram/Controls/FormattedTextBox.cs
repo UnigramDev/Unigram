@@ -250,30 +250,30 @@ namespace Unigram.Controls
             clone.StartOf(TextRangeUnit.Link, true);
             var mention = TryGetUserId(clone, out long userId);
 
-            var formatting = new MenuFlyoutSubItem { Text = "Formatting" };
+            var formatting = new MenuFlyoutSubItem { Text = Strings.Resources.FormattingContext };
             formatting.CreateFlyoutItem(length && format.Bold == FormatEffect.Off, ContextBold_Click, Strings.Resources.Bold, new FontIcon { Glyph = Icons.TextBold }, VirtualKey.B);
             formatting.CreateFlyoutItem(length && format.Italic == FormatEffect.Off, ContextItalic_Click, Strings.Resources.Italic, new FontIcon { Glyph = Icons.TextItalic }, VirtualKey.I);
             formatting.CreateFlyoutItem(length && format.Underline == UnderlineType.None, ContextUnderline_Click, Strings.Resources.Underline, new FontIcon { Glyph = Icons.TextUnderline }, VirtualKey.U);
             formatting.CreateFlyoutItem(length && format.Strikethrough == FormatEffect.Off, ContextStrikethrough_Click, Strings.Resources.Strike, new FontIcon { Glyph = Icons.TextStrikethrough, FontFamily = Navigation.BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily }, VirtualKey.X, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
             formatting.CreateFlyoutItem(length && format.Name != "Consolas", ContextMonospace_Click, Strings.Resources.Mono, new FontIcon { Glyph = Icons.Code }, VirtualKey.M, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
             formatting.Items.Add(new MenuFlyoutSeparator());
-            formatting.CreateFlyoutItem(!mention, ContextLink_Click, clone.Link.Length > 0 ? "Edit link" : Strings.Resources.CreateLink, new FontIcon { Glyph = Icons.Link }, VirtualKey.K);
+            formatting.CreateFlyoutItem(!mention, ContextLink_Click, clone.Link.Length > 0 ? Strings.Resources.EditLinkContext : Strings.Resources.CreateLink, new FontIcon { Glyph = Icons.Link }, VirtualKey.K);
             formatting.Items.Add(new MenuFlyoutSeparator());
             formatting.CreateFlyoutItem(length && !IsDefault(format), ContextPlain_Click, Strings.Resources.Regular, null, VirtualKey.N, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
             formatting.Items.Add(new MenuFlyoutSeparator());
-            formatting.CreateFlyoutItem(true, () => IsFormattingVisible = !_isFormattingVisible, _isFormattingVisible ? "Hide formatting" : "Show formatting", new FontIcon { Glyph = Icons.TextFont });
+            formatting.CreateFlyoutItem(true, () => IsFormattingVisible = !_isFormattingVisible, _isFormattingVisible ? Strings.Resources.HideFormattingContext : Strings.Resources.ShowFormattingContext, new FontIcon { Glyph = Icons.TextFont });
 
-            flyout.CreateFlyoutItem(Document.CanUndo(), ContextUndo_Click, "Undo", new FontIcon { Glyph = Icons.ArrowUndo }, VirtualKey.Z);
-            flyout.CreateFlyoutItem(Document.CanRedo(), ContextRedo_Click, "Redo", new FontIcon { Glyph = Icons.ArrowRedo }, VirtualKey.Y);
+            flyout.CreateFlyoutItem(Document.CanUndo(), ContextUndo_Click, Strings.Resources.UndoContext, new FontIcon { Glyph = Icons.ArrowUndo }, VirtualKey.Z);
+            flyout.CreateFlyoutItem(Document.CanRedo(), ContextRedo_Click, Strings.Resources.RedoContext, new FontIcon { Glyph = Icons.ArrowRedo }, VirtualKey.Y);
             flyout.Items.Add(new MenuFlyoutSeparator());
-            flyout.CreateFlyoutItem(length && Document.CanCopy(), ContextCut_Click, "Cut", new FontIcon { Glyph = Icons.Cut }, VirtualKey.X);
-            flyout.CreateFlyoutItem(length && Document.CanCopy(), ContextCopy_Click, "Copy", new FontIcon { Glyph = Icons.DocumentCopy }, VirtualKey.C);
-            flyout.CreateFlyoutItem(Document.CanPaste(), ContextPaste_Click, "Paste", new FontIcon { Glyph = Icons.ClipboardPaste }, VirtualKey.V);
-            flyout.CreateFlyoutItem(length, ContextDelete_Click, "Delete");
+            flyout.CreateFlyoutItem(length && Document.CanCopy(), ContextCut_Click, Strings.Resources.CutContext, new FontIcon { Glyph = Icons.Cut }, VirtualKey.X);
+            flyout.CreateFlyoutItem(length && Document.CanCopy(), ContextCopy_Click, Strings.Resources.CopyContext, new FontIcon { Glyph = Icons.DocumentCopy }, VirtualKey.C);
+            flyout.CreateFlyoutItem(Document.CanPaste(), ContextPaste_Click, Strings.Resources.PasteContext, new FontIcon { Glyph = Icons.ClipboardPaste }, VirtualKey.V);
+            flyout.CreateFlyoutItem(length, ContextDelete_Click, Strings.Resources.DeleteContext, new FontIcon { Glyph = Icons.Delete });
             flyout.Items.Add(new MenuFlyoutSeparator());
             flyout.Items.Add(formatting);
             flyout.Items.Add(new MenuFlyoutSeparator());
-            flyout.CreateFlyoutItem(!IsEmpty, ContextSelectAll_Click, "Select All", null, VirtualKey.A);
+            flyout.CreateFlyoutItem(!IsEmpty, ContextSelectAll_Click, Strings.Resources.SelectAllContext, null, VirtualKey.A);
 
             if (ProofingMenuFlyout is MenuFlyout proofing && proofing.Items.Count > 0)
             {

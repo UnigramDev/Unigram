@@ -3654,6 +3654,9 @@ Per a més espai i característiques, actualitzeu a un supergrup:
   <data name="CopyCardNumber" xml:space="preserve">
     <value>Copia</value>
   </data>
+  <data name="CopyContext" xml:space="preserve">
+    <value>Copy</value>
+  </data>
   <data name="CopyLink" xml:space="preserve">
     <value>Copia l'enllaç</value>
   </data>
@@ -3788,6 +3791,9 @@ Sempre podreu tornar al tema predeterminat de Telegram aquí.</value>
   </data>
   <data name="CustomThemes" xml:space="preserve">
     <value>Temes propis</value>
+  </data>
+  <data name="CutContext" xml:space="preserve">
+    <value>Cut</value>
   </data>
   <data name="DartInfo" xml:space="preserve">
     <value>Envieu l’emoji d’un **:dard:** i proveu sort.</value>
@@ -4043,6 +4049,9 @@ Sempre podreu tornar al tema predeterminat de Telegram aquí.</value>
   </data>
   <data name="DeleteContact" xml:space="preserve">
     <value>Elimina el contacte</value>
+  </data>
+  <data name="DeleteContext" xml:space="preserve">
+    <value>Delete</value>
   </data>
   <data name="DeleteDays_few" xml:space="preserve">
     <value/>
@@ -4503,6 +4512,9 @@ Qualsevol subscriptor podrà veure els missatges d'aquest grup.</value>
   </data>
   <data name="EditLink" xml:space="preserve">
     <value>Edita l'enllaç</value>
+  </data>
+  <data name="EditLinkContext" xml:space="preserve">
+    <value>Edit Link</value>
   </data>
   <data name="EditMessage" xml:space="preserve">
     <value>Edita el missatge</value>
@@ -5615,6 +5627,9 @@ Durada: {1}</value>
   <data name="formatterYearMax" xml:space="preserve">
     <value>dd-MM-yyyy</value>
   </data>
+  <data name="FormattingContext" xml:space="preserve">
+    <value>Formatting</value>
+  </data>
   <data name="Forward" xml:space="preserve">
     <value>Reenvia</value>
   </data>
@@ -6191,6 +6206,9 @@ Tingueu en compte que s’hi podria unir amb l’enllaç d’invitació del grup
   </data>
   <data name="HideCaption" xml:space="preserve">
     <value>Amaga la llegenda</value>
+  </data>
+  <data name="HideFormattingContext" xml:space="preserve">
+    <value>Hide Formatting</value>
   </data>
   <data name="HideNewChatsAlertText" xml:space="preserve">
     <value>Esteu rebent molts xats nous d’usuaris que no són a la vostra llista de contactes. Voleu que se silenciïn i s’arxivin de manera automàtica?</value>
@@ -9807,6 +9825,9 @@ Podeu visitar les *PMF* per a més informació.</value>
   <data name="PasswordReset" xml:space="preserve">
     <value>Contrasenya desactivada</value>
   </data>
+  <data name="PasteContext" xml:space="preserve">
+    <value>Paste</value>
+  </data>
   <data name="PasteFromClipboard" xml:space="preserve">
     <value>Enganxa del porta-retalls</value>
   </data>
@@ -11081,6 +11102,9 @@ Hi accedirem només durant el temps que estipuleu, i ho podeu aturar en qualsevo
   <data name="Red" xml:space="preserve">
     <value>Vermell</value>
   </data>
+  <data name="RedoContext" xml:space="preserve">
+    <value>Redo</value>
+  </data>
   <data name="ReEnterYourPasscode" xml:space="preserve">
     <value>Torneu a introduir el codi d'accés nou</value>
   </data>
@@ -11813,6 +11837,9 @@ Potse calgui reiniciar l'aplicació per a aplicar-ho.</value>
   <data name="SelectAccount" xml:space="preserve">
     <value>Seleccioneu un compte</value>
   </data>
+  <data name="SelectAllContext" xml:space="preserve">
+    <value>Select All</value>
+  </data>
   <data name="SelectChat" xml:space="preserve">
     <value>Trieu un xat</value>
   </data>
@@ -12384,6 +12411,9 @@ No respongueu la trucada, el Telegram ho processarà tot automàticament.</value
   </data>
   <data name="ShowCaption" xml:space="preserve">
     <value>Mostra la llegenda</value>
+  </data>
+  <data name="ShowFormattingContext" xml:space="preserve">
+    <value>Show Formatting</value>
   </data>
   <data name="ShowForwardingOptions" xml:space="preserve">
     <value>Mostra les opcions</value>
@@ -13496,6 +13526,9 @@ Però si no esteu a gust amb les modestes necessitats de Telegram, no ens serà 
   </data>
   <data name="UndoAllCustom" xml:space="preserve">
     <value>Desfà la configuració de les notificacions per a tots els contactes, grups i canals.</value>
+  </data>
+  <data name="UndoContext" xml:space="preserve">
+    <value>Undo</value>
   </data>
   <data name="UnhideFromTop" xml:space="preserve">
     <value>Fixa</value>

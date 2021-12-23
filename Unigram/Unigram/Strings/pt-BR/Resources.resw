@@ -3656,6 +3656,9 @@ Para mais espaço e funções adicionais, converta em supergrupo:
   <data name="CopyCardNumber" xml:space="preserve">
     <value>Copiar</value>
   </data>
+  <data name="CopyContext" xml:space="preserve">
+    <value>Copy</value>
+  </data>
   <data name="CopyLink" xml:space="preserve">
     <value>Copiar Link</value>
   </data>
@@ -3789,6 +3792,9 @@ Você sempre pode voltar para o tema padrão do Telegram aqui.</value>
   </data>
   <data name="CustomThemes" xml:space="preserve">
     <value>Temas personalizados</value>
+  </data>
+   <data name="CutContext" xml:space="preserve">
+    <value>Cut</value>
   </data>
   <data name="DartInfo" xml:space="preserve">
     <value>Envie o emoji do **:dardo:** e tente a sorte.</value>
@@ -4044,6 +4050,9 @@ Você sempre pode voltar para o tema padrão do Telegram aqui.</value>
   </data>
   <data name="DeleteContact" xml:space="preserve">
     <value>Apagar contato</value>
+  </data>
+  <data name="DeleteContext" xml:space="preserve">
+    <value>Delete</value>
   </data>
   <data name="DeleteDays_few" xml:space="preserve">
     <value/>
@@ -4504,6 +4513,9 @@ Qualquer pessoa do canal poderá ver mensagens neste grupo.</value>
   </data>
   <data name="EditLink" xml:space="preserve">
     <value>Editar link</value>
+  </data>
+  <data name="EditLinkContext" xml:space="preserve">
+    <value>Edit Link</value>
   </data>
   <data name="EditMessage" xml:space="preserve">
     <value>Editar Mensagem</value>
@@ -5667,6 +5679,9 @@ pasta no momento.</value>
   <data name="formatterYearMax" xml:space="preserve">
     <value>dd.MM.yyyy</value>
   </data>
+  <data name="FormattingContext" xml:space="preserve">
+    <value>Formatting</value>
+  </data>
   <data name="Forward" xml:space="preserve">
     <value>Encaminhar</value>
   </data>
@@ -6245,6 +6260,9 @@ Note que ainda é possível que essa pessoa entre usando um link de convite do g
   </data>
   <data name="HideCaption" xml:space="preserve">
     <value>Ocultar legenda</value>
+  </data>
+  <data name="HideFormattingContext" xml:space="preserve">
+    <value>Hide Formatting</value>
   </data>
   <data name="HideNewChatsAlertText" xml:space="preserve">
     <value>Parece que você está recebendo muitas mensagens de pessoas que não estão na sua agenda. Quer **silenciar** e **arquivar** essas conversas automaticamente?</value>
@@ -9867,6 +9885,9 @@ Você pode visitar nossas *Perguntas Frequentes* para saber mais.</value>
   <data name="PasswordReset" xml:space="preserve">
     <value>Senha desativada</value>
   </data>
+  <data name="PasteContext" xml:space="preserve">
+    <value>Paste</value>
+  </data>
   <data name="PasteFromClipboard" xml:space="preserve">
     <value>Colar</value>
   </data>
@@ -11141,6 +11162,9 @@ O Telegram acessará a sua localização somente pela duração que você escolh
   <data name="Red" xml:space="preserve">
     <value>Vermelho</value>
   </data>
+  <data name="RedoContext" xml:space="preserve">
+    <value>Redo</value>
+  </data>
   <data name="ReEnterYourPasscode" xml:space="preserve">
     <value>Re-insira a sua nova senha</value>
   </data>
@@ -11873,6 +11897,9 @@ Pode ser necessário reiniciar o aplicativo para que isso entre em vigor.</value
   <data name="SelectAccount" xml:space="preserve">
     <value>Selecionar Conta</value>
   </data>
+  <data name="SelectAllContext" xml:space="preserve">
+    <value>Select All</value>
+  </data>
   <data name="SelectChat" xml:space="preserve">
     <value>Selecione um Chat</value>
   </data>
@@ -12444,6 +12471,9 @@ Não atenda, o Telegram processará tudo automaticamente.</value>
   </data>
   <data name="ShowCaption" xml:space="preserve">
     <value>Mostrar legenda</value>
+  </data>
+  <data name="ShowFormattingContext" xml:space="preserve">
+    <value>Show Formatting</value>
   </data>
   <data name="ShowForwardingOptions" xml:space="preserve">
     <value>Opções de encaminhamento</value>
@@ -13560,6 +13590,9 @@ Se de forma geral você não concorda com os requisitos modestos do Telegram, n�
   </data>
   <data name="UndoAllCustom" xml:space="preserve">
     <value>Desfaz todas as configurações de notificação para todos os seus chats.</value>
+  </data>
+  <data name="UndoContext" xml:space="preserve">
+    <value>Undo</value>
   </data>
   <data name="UnhideFromTop" xml:space="preserve">
     <value>Fixar</value>

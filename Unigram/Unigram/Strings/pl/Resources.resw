@@ -3652,6 +3652,9 @@ Aby uzyskać więcej miejsca i dodatkowe funkcje, przejdź na super grupę:
   <data name="CopyCardNumber" xml:space="preserve">
     <value>Kopiuj</value>
   </data>
+   <data name="CopyContext" xml:space="preserve">
+    <value>Copy</value>
+  </data>
   <data name="CopyLink" xml:space="preserve">
     <value>Kopiuj link</value>
   </data>
@@ -3785,6 +3788,9 @@ W każdej chwili z tego miejsca możesz przywrócić domyślny motyw.</value>
   </data>
   <data name="CustomThemes" xml:space="preserve">
     <value>Własne motywy</value>
+  </data>
+  <data name="CutContext" xml:space="preserve">
+    <value>Cut</value>
   </data>
   <data name="DartInfo" xml:space="preserve">
     <value>Wyślij emoji **:rzutka:**, żeby spróbować szczęścia.</value>
@@ -4040,6 +4046,9 @@ W każdej chwili z tego miejsca możesz przywrócić domyślny motyw.</value>
   </data>
   <data name="DeleteContact" xml:space="preserve">
     <value>Usuń kontakt</value>
+  </data>
+   <data name="DeleteContext" xml:space="preserve">
+    <value>Delete</value>
   </data>
   <data name="DeleteDays_few" xml:space="preserve">
     <value>Usuń {0} dni</value>
@@ -4497,6 +4506,9 @@ Każdy subskrybent kanału będzie mógł zobaczyć wiadomości w tej grupie.</v
   </data>
   <data name="EditLink" xml:space="preserve">
     <value>Edytuj link</value>
+  </data>
+  <data name="EditLinkContext" xml:space="preserve">
+    <value>Edit Link</value>
   </data>
   <data name="EditMessage" xml:space="preserve">
     <value>Edytuj wiadomość</value>
@@ -5605,6 +5617,9 @@ Czas trwania: {1}</value>
   <data name="formatterYearMax" xml:space="preserve">
     <value>dd.MM.yyyy</value>
   </data>
+  <data name="FormattingContext" xml:space="preserve">
+    <value>Formatting</value>
+  </data>
   <data name="Forward" xml:space="preserve">
     <value>Przekaż</value>
   </data>
@@ -6178,6 +6193,9 @@ Zauważ, że nadal może się przyłączyć za pośrednictwem linku zaproszenia 
   </data>
   <data name="HideCaption" xml:space="preserve">
     <value>Ukryj podpis</value>
+  </data>
+  <data name="HideFormattingContext" xml:space="preserve">
+    <value>Hide Formatting</value>
   </data>
   <data name="HideNewChatsAlertText" xml:space="preserve">
     <value>Otrzymujesz wiele nowych czatów od użytkowników, którzy nie znajdują się na twojej liście kontaktów. Czy chcesz, aby takie czaty były **automatycznie wyciszane** i **archiwizowane**?</value>
@@ -9752,6 +9770,9 @@ Więcej informacji na ten temat możesz znaleźć w naszym dziale *FAQ*.</value>
   <data name="PasswordReset" xml:space="preserve">
     <value>Hasło zostało zdezaktywowane</value>
   </data>
+  <data name="PasteContext" xml:space="preserve">
+    <value>Paste</value>
+  </data>
   <data name="PasteFromClipboard" xml:space="preserve">
     <value>Wklej ze schowka</value>
   </data>
@@ -11023,6 +11044,9 @@ Będziemy mieć dostęp do twojej lokalizacji tylko przez wybrany przez ciebie c
   <data name="Red" xml:space="preserve">
     <value>Czerwony</value>
   </data>
+   <data name="RedoContext" xml:space="preserve">
+    <value>Redo</value>
+  </data>
   <data name="ReEnterYourPasscode" xml:space="preserve">
     <value>Powtórz nowy kod dostępu</value>
   </data>
@@ -11756,6 +11780,9 @@ Aby to zadziałało, może być konieczne ponowne uruchomienie aplikacji.</value
   <data name="SelectAccount" xml:space="preserve">
     <value>Wybierz konto</value>
   </data>
+   <data name="SelectAllContext" xml:space="preserve">
+    <value>Select All</value>
+  </data>
   <data name="SelectChat" xml:space="preserve">
     <value>Wybierz czat</value>
   </data>
@@ -12321,6 +12348,9 @@ Nie odbieraj połączenia, Telegram automatycznie przetworzy wszystko.</value>
   </data>
   <data name="ShowCaption" xml:space="preserve">
     <value>Pokaż podpis</value>
+  </data>
+   <data name="ShowFormattingContext" xml:space="preserve">
+    <value>Show Formatting</value>
   </data>
   <data name="ShowForwardingOptions" xml:space="preserve">
     <value>Pokaż opcje przekazywania</value>
@@ -13434,6 +13464,9 @@ Jeśli jednak nie odpowiadają ci te skromne wymagania Telegrama, nie będziemy 
   </data>
   <data name="UndoAllCustom" xml:space="preserve">
     <value>Przywróć ustawienia domyślne powiadomień dla wszystkich twoich kontaktów, grup i kanałów.</value>
+  </data>
+  <data name="UndoContext" xml:space="preserve">
+    <value>Undo</value>
   </data>
   <data name="UnhideFromTop" xml:space="preserve">
     <value>Przypnij</value>

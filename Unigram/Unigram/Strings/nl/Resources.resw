@@ -3452,6 +3452,9 @@ Wil je extra functies en een hogere limiet? Waardeer op naar een supergroep:
   <data name="CopyCardNumber" xml:space="preserve">
     <value>Kopiëren</value>
   </data>
+   <data name="CopyContext" xml:space="preserve">
+    <value>Copy</value>
+  </data>
   <data name="CopyLink" xml:space="preserve">
     <value>Link kopiëren</value>
   </data>
@@ -3582,6 +3585,9 @@ Je kunt hier altijd het standaardthema weer instellen.</value>
   </data>
   <data name="CustomThemes" xml:space="preserve">
     <value>Aangepaste thema's</value>
+  </data>
+   <data name="CutContext" xml:space="preserve">
+    <value>Cut</value>
   </data>
   <data name="DartInfo" xml:space="preserve">
     <value>Stuur een **:darts:**-emoji om je geluk te beproeven</value>
@@ -3834,6 +3840,9 @@ Je kunt hier altijd het standaardthema weer instellen.</value>
   </data>
   <data name="DeleteContact" xml:space="preserve">
     <value>Verwijder</value>
+  </data>
+  <data name="DeleteContext" xml:space="preserve">
+    <value>Delete</value>
   </data>
   <data name="DeletedFromYourContacts" xml:space="preserve">
     <value>{0} verwijderd uit je contacten</value>
@@ -4255,6 +4264,9 @@ Alle abonnees van het kanaal kunnen de berichten in deze groep zien.</value>
   </data>
   <data name="EditLink" xml:space="preserve">
     <value>Link bewerken</value>
+  </data>
+  <data name="EditLinkContext" xml:space="preserve">
+    <value>Edit Link</value>
   </data>
   <data name="EditMessage" xml:space="preserve">
     <value>Bericht wijzigen</value>
@@ -5372,6 +5384,9 @@ voor je zoekopdracht.</value>
   <data name="formatterYearMax" xml:space="preserve">
     <value>dd-MM-yyyy</value>
   </data>
+  <data name="FormattingContext" xml:space="preserve">
+    <value>Formatting</value>
+  </data>
   <data name="Forward" xml:space="preserve">
     <value>Doorsturen</value>
   </data>
@@ -5907,6 +5922,12 @@ Zolang deze gebruiker niet in de lijst met verwijderde gebruikers staat kan hij/
   </data>
   <data name="HideAboveTheList" xml:space="preserve">
     <value>Verberg boven de lijst</value>
+  </data>
+  <data name="HideCaption" xml:space="preserve">
+    <value>Hide caption</value>
+  </data>
+  <data name="HideFormattingContext" xml:space="preserve">
+    <value>Hide Formatting</value>
   </data>
   <data name="HideNewChatsAlertText" xml:space="preserve">
     <value>Je ontvangt veel nieuwe chats van mensen die geen contact van je zijn. Wil je deze chats **automatisch dempen** en **archiveren**?</value>
@@ -9330,6 +9351,9 @@ Je kunt onze *Veelgestelde vragen* bekijken voor meer informatie.</value>
   <data name="PasswordReset" xml:space="preserve">
     <value>Wachtwoord uitgeschakeld</value>
   </data>
+  <data name="PasteContext" xml:space="preserve">
+    <value>Paste</value>
+  </data>
   <data name="PasteFromClipboard" xml:space="preserve">
     <value>Plakken uit klembord</value>
   </data>
@@ -10392,6 +10416,9 @@ We gebruiken je locatie alleen voor de periode die jij instelt en je kunt het de
   <data name="Red" xml:space="preserve">
     <value>Rood</value>
   </data>
+   <data name="RedoContext" xml:space="preserve">
+    <value>Redo</value>
+  </data>
   <data name="ReEnterYourPasscode" xml:space="preserve">
     <value>Toegangscode opnieuw invoeren</value>
   </data>
@@ -11043,6 +11070,9 @@ Het kan zijn dat je de app moet herstarten voordat dit actief is.</value>
   <data name="SelectAccount" xml:space="preserve">
     <value>Account kiezen</value>
   </data>
+  <data name="SelectAllContext" xml:space="preserve">
+    <value>Select All</value>
+  </data>
   <data name="SelectChat" xml:space="preserve">
     <value>Kies een chat</value>
   </data>
@@ -11572,6 +11602,15 @@ Neem niet op, Telegram verwerkt alles automatisch.</value>
   </data>
   <data name="ShowAsList" xml:space="preserve">
     <value>Weergeven als lijst</value>
+  </data>
+  <data name="ShowCaption" xml:space="preserve">
+    <value>Show caption</value>
+  </data>
+  <data name="ShowFormattingContext" xml:space="preserve">
+    <value>Show Formatting</value>
+  </data>
+  <data name="ShowForwardingOptions" xml:space="preserve">
+    <value>Show forwarding options</value>
   </data>
   <data name="ShowInChat" xml:space="preserve">
     <value>In chat weergeven</value>
@@ -12624,6 +12663,9 @@ Helaas is het wel zo dat als je niet akkoord gaat met het beperkte gebruik van j
   </data>
   <data name="UndoAllCustom" xml:space="preserve">
     <value>Alle aangepaste meldingsinstellingen wissen voor contacten, groepen en kanalen.</value>
+  </data>
+  <data name="UndoContext" xml:space="preserve">
+    <value>Undo</value>
   </data>
   <data name="UnhideFromTop" xml:space="preserve">
     <value>Vastzetten</value>
