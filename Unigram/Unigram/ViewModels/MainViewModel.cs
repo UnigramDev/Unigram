@@ -401,6 +401,11 @@ namespace Unigram.ViewModels
                 return;
             }
 
+            if (App.Connection != null)
+            {
+                await App.Connection.SendMessageAsync(new Windows.Foundation.Collections.ValueSet { { "Exit", string.Empty } });
+            }
+
             await Launcher.LaunchFileAsync(file);
             Application.Current.Exit();
         }
