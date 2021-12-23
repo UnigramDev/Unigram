@@ -274,7 +274,7 @@ namespace Unigram.Controls
 
         private void SetDownloadGlyph(bool downloading, bool animate)
         {
-            if (_container == null)
+            if (_container == null || !IsLoaded)
             {
                 return;
             }
