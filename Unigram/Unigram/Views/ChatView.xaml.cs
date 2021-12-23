@@ -3345,13 +3345,13 @@ namespace Unigram.Views
                 GroupCall.ShowHide(false);
             }
 
-            UpdateChatDefaultMessageSenderId(chat, chat.DefaultMessageSenderId);
+            UpdateChatMessageSender(chat, chat.MessageSenderId);
             UpdateChatPendingJoinRequests(chat);
             UpdateChatPermissions(chat);
             UpdateChatTheme(chat);
         }
 
-        public void UpdateChatDefaultMessageSenderId(Chat chat, MessageSender defaultMessageSenderId)
+        public void UpdateChatMessageSender(Chat chat, MessageSender defaultMessageSenderId)
         {
             if (defaultMessageSenderId == null)
             {
@@ -4609,7 +4609,7 @@ namespace Unigram.Views
 
                     var item = new MenuFlyoutProfile();
                     item.CommandParameter = messageSender;
-                    item.Command = ViewModel.SetDefaultSenderCommand;
+                    item.Command = ViewModel.SetSenderCommand;
                     item.Style = App.Current.Resources["SendAsMenuFlyoutItemStyle"] as Style;
                     item.Icon = new FontIcon();
                     item.Tag = picture;

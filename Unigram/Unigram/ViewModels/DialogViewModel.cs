@@ -153,7 +153,7 @@ namespace Unigram.ViewModels
             OpenMessageCommand = new RelayCommand<Message>(OpenMessageExecute);
             ScheduledCommand = new RelayCommand(ScheduledExecute);
             OpenUserCommand = new RelayCommand<long>(OpenUser);
-            SetDefaultSenderCommand = new RelayCommand<MessageSender>(SetDefaultSenderExecute);
+            SetSenderCommand = new RelayCommand<MessageSender>(SetSenderExecute);
 
             MessagesForwardCommand = new RelayCommand(MessagesForwardExecute, MessagesForwardCanExecute);
             MessagesDeleteCommand = new RelayCommand(MessagesDeleteExecute, MessagesDeleteCanExecute);
@@ -1411,13 +1411,10 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new GetChatSponsoredMessages(chat.Id));
-            if (response is SponsoredMessages messages)
+            var response = await ProtoService.SendAsync(new GetChatSponsoredMessage(chat.Id));
+            if (response is SponsoredMessage sponsored)
             {
-                foreach (var sponsored in messages.Messages)
-                {
-                    Items.Add(_messageFactory.Create(this, new Message(0, new MessageSenderChat(sponsored.SponsorChatId), sponsored.SponsorChatId, null, null, false, false, false, false, false, false, false, false, false, false, false, false, true, false, 0, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, sponsored.Content, null)));
-                }
+                Items.Add(_messageFactory.Create(this, new Message(0, new MessageSenderChat(sponsored.SponsorChatId), sponsored.SponsorChatId, null, null, false, false, false, false, false, false, false, false, false, false, false, false, true, false, 0, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, sponsored.Content, null)));
             }
         }
 
@@ -2543,8 +2540,8 @@ namespace Unigram.ViewModels
 
         #region Set default message sender
 
-        public RelayCommand<MessageSender> SetDefaultSenderCommand;
-        public void SetDefaultSenderExecute(MessageSender messageSender)
+        public RelayCommand<MessageSender> SetSenderCommand;
+        public void SetSenderExecute(MessageSender messageSender)
         {
             var chat = _chat;
             if (chat == null)
@@ -2552,7 +2549,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            ProtoService.Send(new SetChatDefaultMessageSender(chat.Id, messageSender));
+            ProtoService.Send(new SetChatMessageSender(chat.Id, messageSender));
         }
 
         #endregion
@@ -3257,12 +3254,12 @@ namespace Unigram.ViewModels
             }
 
             var dialog = new ChatTtlPopup(chat.Type is ChatTypeSecret);
-            dialog.Value = chat.MessageTtlSetting;
+            dialog.Value = chat.MessageTtl;
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
-                ProtoService.Send(new SetChatMessageTtlSetting(chat.Id, dialog.Value));
+                ProtoService.Send(new SetChatMessageTtl(chat.Id, dialog.Value));
             }
         }
 

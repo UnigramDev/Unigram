@@ -1994,7 +1994,7 @@ namespace Telegram.Td.Api
         /// <summary>
         /// Identifier of the user who performed the action that triggered the event.
         /// </summary>
-        public long UserId { get; set; }
+        public MessageSender MemberId { get; set; }
 
         /// <summary>
         /// Point in time (Unix timestamp) when the event happened.
@@ -2009,7 +2009,7 @@ namespace Telegram.Td.Api
         public MessageChatEvent(ChatEvent chatEvent)
         {
             Action = chatEvent.Action;
-            UserId = chatEvent.UserId;
+            MemberId = chatEvent.MemberId;
             Date = chatEvent.Date;
             Id = chatEvent.Id;
         }

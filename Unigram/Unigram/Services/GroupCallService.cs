@@ -662,7 +662,7 @@ namespace Unigram.Services
         {
             if (_call != null && discard is true)
             {
-                ProtoService.Send(new DiscardGroupCall(_call.Id));
+                ProtoService.Send(new EndGroupCall(_call.Id));
             }
             else if (_call != null && discard is false)
             {

@@ -961,7 +961,7 @@ namespace Unigram.ViewModels
             }
 
             var dialog = new ChatTtlPopup(chat.Type is ChatTypeSecret);
-            dialog.Value = chat.MessageTtlSetting;
+            dialog.Value = chat.MessageTtl;
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm != ContentDialogResult.Primary)
@@ -969,7 +969,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            ProtoService.Send(new SetChatMessageTtlSetting(chat.Id, dialog.Value));
+            ProtoService.Send(new SetChatMessageTtl(chat.Id, dialog.Value));
         }
 
         #endregion

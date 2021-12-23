@@ -132,8 +132,8 @@ namespace Unigram.Controls.Messages
                             return UpdateMessageDeleted(message, messageDeleted, active);
                         case ChatEventMessageEdited messageEdited:
                             return UpdateMessageEdited(message, messageEdited, active);
-                        case ChatEventMessageTtlSettingChanged messageTtlSettingChanged:
-                            return UpdateMessageTtlSettingChanged(message, messageTtlSettingChanged, active);
+                        case ChatEventMessageTtlChanged messageTtlChanged:
+                            return UpdateMessageTtlChanged(message, messageTtlChanged, active);
                         case ChatEventDescriptionChanged descriptionChanged:
                             return UpdateDescriptionChanged(message, descriptionChanged, active);
                         case ChatEventInviteLinkDeleted inviteLinkDeleted:
@@ -152,8 +152,8 @@ namespace Unigram.Controls.Messages
                             return UpdateSlowModeDelayChanged(message, slowModeDelayChanged, active);
                         case ChatEventVideoChatCreated videoChatCreated:
                             return UpdateVideoChatCreated(message, videoChatCreated, active);
-                        case ChatEventVideoChatDiscarded videoChatDiscarded:
-                            return UpdateVideoChatDiscarded(message, videoChatDiscarded, active);
+                        case ChatEventVideoChatEnded videoChatEnded:
+                            return UpdateVideoChatEnded(message, videoChatEnded, active);
                         case ChatEventVideoChatMuteNewParticipantsToggled videoChatMuteNewParticipantsToggled:
                             return UpdateVideoChatMuteNewParticipantsToggled(message, videoChatMuteNewParticipantsToggled, active);
                         case ChatEventVideoChatParticipantIsMutedToggled videoChatParticipantIsMutedToggled:
@@ -418,16 +418,16 @@ namespace Unigram.Controls.Messages
             return (content, entities);
         }
 
-        private static (string Text, IList<TextEntity> Entities) UpdateMessageTtlSettingChanged(MessageViewModel message, ChatEventMessageTtlSettingChanged messageTtlSettingChanged, bool active)
+        private static (string Text, IList<TextEntity> Entities) UpdateMessageTtlChanged(MessageViewModel message, ChatEventMessageTtlChanged messageTtlChanged, bool active)
         {
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
             var fromUser = message.GetSender();
 
-            if (messageTtlSettingChanged.NewMessageTtlSetting > 0)
+            if (messageTtlChanged.NewMessageTtl > 0)
             {
-                content = ReplaceWithLink(string.Format(Strings.Resources.ActionTTLChanged, Locale.FormatTtl(messageTtlSettingChanged.NewMessageTtlSetting)), "un1", fromUser, ref entities);
+                content = ReplaceWithLink(string.Format(Strings.Resources.ActionTTLChanged, Locale.FormatTtl(messageTtlChanged.NewMessageTtl)), "un1", fromUser, ref entities);
             }
             else
             {
@@ -567,7 +567,7 @@ namespace Unigram.Controls.Messages
             return (content, entities);
         }
 
-        private static (string, IList<TextEntity>) UpdateVideoChatDiscarded(MessageViewModel message, ChatEventVideoChatDiscarded videoChatDiscarded, bool active)
+        private static (string, IList<TextEntity>) UpdateVideoChatEnded(MessageViewModel message, ChatEventVideoChatEnded videoChatEnded, bool active)
         {
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;

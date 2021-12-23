@@ -1281,13 +1281,6 @@ namespace Unigram.Services
                     ProcessFiles(sponsoredMessage.Content);
                 }
             }
-            else if (target is SponsoredMessages sponsoredMessages)
-            {
-                foreach (var item in sponsoredMessages.Messages)
-                {
-                    ProcessFiles(item);
-                }
-            }
             else if (target is MessageThreadInfo messageThreadInfo)
             {
                 foreach (var item in messageThreadInfo.Messages)
