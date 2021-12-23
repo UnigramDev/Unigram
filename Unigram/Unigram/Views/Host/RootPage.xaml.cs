@@ -285,7 +285,11 @@ namespace Unigram.Views.Host
             if (show && items != null)
             {
                 _navigationViewItems.Insert(0, RootDestination.Separator);
-                _navigationViewItems.Insert(0, RootDestination.AddAccount);
+
+                if (TLContainer.Current.Count < 3)
+                {
+                    _navigationViewItems.Insert(0, RootDestination.AddAccount);
+                }
 
                 foreach (var item in items.OrderByDescending(x => { int index = Array.IndexOf(SettingsService.Current.AccountsSelectorOrder, x.Id); return index < 0 ? x.Id : index; }))
                 {
