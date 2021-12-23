@@ -24,6 +24,8 @@ namespace Unigram.Views
             _locale = LocaleService.Current;
         }
 
+        public int Count => _containers.Count;
+
         public void Configure(out int count)
         {
             count = 0;
