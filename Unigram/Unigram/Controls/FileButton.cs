@@ -28,6 +28,8 @@ namespace Unigram.Controls
 
     public class FileButton : GlyphHyperlinkButton
     {
+        private Grid _root;
+
         private TextBlock _label1;
         private TextBlock _label2;
 
@@ -53,6 +55,8 @@ namespace Unigram.Controls
 
         protected override void OnApplyTemplate()
         {
+            _root = GetTemplateChild("RootGrid") as Grid;
+
             _label1 = _label = GetTemplateChild("ContentPresenter1") as TextBlock;
             _label2 = GetTemplateChild("ContentPresenter2") as TextBlock;
 
@@ -80,7 +84,7 @@ namespace Unigram.Controls
                 SetDownloadGlyph(false, false);
             }
 
-            ElementCompositionPreview.SetElementChildVisual(GetTemplateChild("RootGrid") as Grid, _container);
+            ElementCompositionPreview.SetElementChildVisual(_root, _container);
 
             base.OnApplyTemplate();
         }
@@ -274,7 +278,7 @@ namespace Unigram.Controls
 
         private void SetDownloadGlyph(bool downloading, bool animate)
         {
-            if (_container == null || !IsLoaded)
+            if (_container == null)
             {
                 return;
             }
