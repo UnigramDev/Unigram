@@ -80,7 +80,10 @@ namespace Unigram.Views
                         var filter = filters.FirstOrDefault(x => x.Id == chatList.ChatFilterId);
                         if (filter != null)
                         {
-                            item.CreateFlyoutItem(ViewModel.FolderAddCommand, (filter.Id, chat), filter.Title);
+                            var icon = Icons.ParseFilter(filter.IconName);
+                            var glyph = Icons.FilterToGlyph(icon);
+
+                            item.CreateFlyoutItem(ViewModel.FolderAddCommand, (filter.Id, chat), filter.Title, new FontIcon { Glyph = glyph.Item1 });
                         }
                     }
 
