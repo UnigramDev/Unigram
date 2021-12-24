@@ -23,8 +23,7 @@ namespace Unigram.Services
 {
     public interface INotificationsService
     {
-        Task RegisterAsync();
-        Task UnregisterAsync();
+        void Register();
         Task CloseAsync();
 
         Task ProcessAsync(Dictionary<string, string> data);
@@ -682,68 +681,34 @@ namespace Unigram.Services
             return string.Format(CultureInfo.InvariantCulture, "{0}&amp;session={1}", launch, _protoService.SessionId);
         }
 
-        public async Task RegisterAsync()
+        public void Register()
         {
-            using (await _registrationLock.WaitAsync())
+            var userId = _protoService.Options.MyId;
+            if (userId == 0)
             {
-                var userId = _protoService.Options.MyId;
-                if (userId == 0)
+                return;
+            }
+
+            if (_alreadyRegistered)
+            {
+                return;
+            }
+
+            _alreadyRegistered = true;
+
+            try
+            {
+                if (_settings.PushToken != null)
                 {
-                    return;
-                }
-
-                if (_alreadyRegistered)
-                {
-                    return;
-                }
-
-                _alreadyRegistered = true;
-
-                try
-                {
-                    var channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
-                    if (channel.Uri != _settings.PushToken)
-                    {
-                        var ids = new List<long>();
-
-                        foreach (var settings in TLContainer.Current.ResolveAll<ISettingsService>())
-                        {
-                            if (settings.UseTestDC != _settings.UseTestDC || settings.UserId == _settings.UserId)
-                            {
-                                continue;
-                            }
-
-                            ids.Add(settings.UserId);
-                        }
-
-                        var result = await _protoService.SendAsync(new RegisterDevice(new DeviceTokenWindowsPush(channel.Uri), ids));
-                        if (result is PushReceiverId receiverId)
-                        {
-                            _settings.PushReceiverId = receiverId.Id;
-                            _settings.PushToken = channel.Uri;
-                        }
-                        else
-                        {
-                            _settings.PushReceiverId = 0;
-                            _settings.PushToken = null;
-                        }
-                    }
-
-                    channel.PushNotificationReceived += OnPushNotificationReceived;
-                }
-                catch (Exception)
-                {
-                    _alreadyRegistered = false;
+                    _protoService.Send(new RegisterDevice(new DeviceTokenWindowsPush(string.Empty), new long[0]));
+                    _settings.PushReceiverId = 0;
                     _settings.PushToken = null;
                 }
             }
-        }
-
-        private void OnPushNotificationReceived(PushNotificationChannel sender, PushNotificationReceivedEventArgs args)
-        {
-            if (args.NotificationType == PushNotificationType.Raw)
+            catch (Exception)
             {
-                args.Cancel = true;
+                _alreadyRegistered = false;
+                _settings.PushToken = null;
             }
         }
 
@@ -781,17 +746,6 @@ namespace Unigram.Services
             {
                 return ToastNotificationManager.History;
             }
-        }
-
-        public async Task UnregisterAsync()
-        {
-            _ = _settings.PushToken;
-            //var response = await _protoService.UnregisterDeviceAsync(8, channel);
-            //if (response.IsSucceeded)
-            //{
-            //}
-
-            _settings.PushToken = null;
         }
 
         public async Task CloseAsync()

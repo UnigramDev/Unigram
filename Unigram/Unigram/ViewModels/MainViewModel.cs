@@ -375,7 +375,9 @@ namespace Unigram.ViewModels
 
             if (mode == NavigationMode.New)
             {
-                Task.Run(() => _pushService.RegisterAsync());
+                // Actually unregisters the app
+                _pushService.Register();
+
                 Task.Run(() => _contactsService.JumpListAsync());
                 Task.Run(() => _emojiSetService.UpdateAsync());
                 Task.Run(() => _cloudUpdateService.UpdateAsync(false));

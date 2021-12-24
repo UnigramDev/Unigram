@@ -21,8 +21,6 @@ using Windows.ApplicationModel.DataTransfer.ShareTarget;
 using Windows.ApplicationModel.ExtendedExecution;
 using Windows.Foundation;
 using Windows.Media;
-using Windows.Networking.PushNotifications;
-using Windows.Storage;
 using Windows.System.Profile;
 using Windows.UI.Core;
 using Windows.UI.Notifications;
@@ -273,42 +271,6 @@ namespace Unigram
                     if (TLContainer.Current.TryResolve(session, out INotificationsService service))
                     {
                         await service.ProcessAsync(data);
-                    }
-                }
-                else if (args.TaskInstance.TriggerDetails is RawNotification notification)
-                {
-                    static int? GetSession(long id)
-                    {
-                        if (ApplicationData.Current.LocalSettings.Values.TryGet($"User{id}", out int value))
-                        {
-                            return value;
-                        }
-
-                        return null;
-                    }
-
-                    var receiver = Client.Execute(new GetPushReceiverId(notification.Content)) as PushReceiverId;
-                    if (receiver == null)
-                    {
-                        deferral.Complete();
-                        return;
-                    }
-
-                    var session = GetSession(receiver.Id);
-                    if (session == null)
-                    {
-                        deferral.Complete();
-                        return;
-                    }
-
-                    if (TLContainer.Current.TryResolve(session.Value, out IProtoService service))
-                    {
-                        var response = await service.SendAsync(new ProcessPushNotification(notification.Content));
-                        if (response is Error error && error.Code == 406)
-                        {
-                            // xd memes
-                            await Task.Delay(5000);
-                        }
                     }
                 }
 

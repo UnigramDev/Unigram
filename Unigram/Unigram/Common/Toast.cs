@@ -19,7 +19,7 @@ namespace Unigram.Common
 
                 foreach (var t in BackgroundTaskRegistration.AllTasks)
                 {
-                    if (t.Value.Name is "NotificationTask" or "NewNotificationTask")
+                    if (t.Value.Name is "NotificationTask" or "NewNotificationTask" or "InProcessNotificationTask")
                     {
                         t.Value.Unregister(false);
                     }
@@ -41,8 +41,7 @@ namespace Unigram.Common
                     return;
                 }
 
-                Register("InProcessNotificationTask", null, () => new PushNotificationTrigger());
-                //Register("NewNotificationTask2", null, () => new PushNotificationTrigger());
+                //Register("InProcessNotificationTask", null, () => new PushNotificationTrigger());
                 Register("NewInteractiveTask", null, () => new ToastNotificationActionTrigger());
                 //BackgroundTaskManager.Register("InteractiveTask", "Unigram.Tasks.InteractiveTask", new ToastNotificationActionTrigger());
             }
