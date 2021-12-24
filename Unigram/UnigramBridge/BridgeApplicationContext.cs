@@ -34,6 +34,8 @@ namespace UnigramBridge
             _notifyIcon.Text = "Unigram";
 #endif
 
+            _notifyIcon.Visible = true;
+
             try
             {
                 var local = ApplicationData.Current.LocalSettings;
