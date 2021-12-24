@@ -380,6 +380,9 @@
     <Compile Include="Controls\Messages\Content\VoiceNoteContent.xaml.cs">
       <DependentUpon>VoiceNoteContent.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Messages\MenuFlyoutReactions.xaml.cs">
+      <DependentUpon>MenuFlyoutReactions.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Messages\MessageBubble.xaml.cs">
       <DependentUpon>MessageBubble.xaml</DependentUpon>
     </Compile>
@@ -1626,6 +1629,10 @@
     <Page Include="Controls\Messages\Content\VoiceNoteContent.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Messages\MenuFlyoutReactions.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Messages\MessageBubble.xaml">
       <SubType>Designer</SubType>

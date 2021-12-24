@@ -9,6 +9,7 @@ using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Entities;
+using Unigram.ViewModels;
 using Windows.Storage;
 using Windows.Storage.AccessCache;
 using Windows.System.Profile;
@@ -45,6 +46,8 @@ namespace Unigram.Services
 
     public interface ICacheService
     {
+        List<AvailableReaction> Reactions { get; }
+
         IOptionsService Options { get; }
         JsonValueObject Config { get; }
 
@@ -388,6 +391,64 @@ namespace Unigram.Services
             Send(new LoadChats(new ChatListMain(), 20));
 
             UpdateVersion();
+
+            InitializeRandomReactions();
+        }
+
+        private List<AvailableReaction> _reactions = new List<AvailableReaction>();
+        public List<AvailableReaction> Reactions => _reactions;
+
+        private async void InitializeRandomReactions()
+        {
+            var reactions = new Dictionary<string, int>
+            {
+                { "👍", 1 },
+                { "👎", 2 },
+                { "😂", 3 },
+                { "😭", 4 },
+                { "💩", 5 },
+                { "🎉", 6 },
+                { "🔥", 7 },
+                { "😱", 8 },
+                { "❤️", 9 },
+                { "🤮", 10 },
+                { "🤩", 11 },
+            };
+
+            static Sticker FromSet(StickerSet set, string emoji)
+            {
+                foreach (var item in set.Stickers)
+                {
+                    if (item.Emoji == emoji)
+                    {
+                        return item;
+                    }
+                }
+
+                return null;
+            }
+
+            var selectionStickers = await SendAsync(new SearchStickerSet("EmojiShortAnimations")) as StickerSet;
+            var activeStickers = await SendAsync(new SearchStickerSet("AnimatedEmojies")) as StickerSet;
+            var effectStickers = await SendAsync(new SearchStickerSet("EmojiAnimations")) as StickerSet;
+
+            foreach (var item in reactions)
+            {
+                var staticIcon = new Sticker(0, 71, 71, item.Key, false, false, null, new ClosedVectorPath[0], null, Common.TdExtensions.GetLocalFile($"Assets\\Reactions\\Reaction {item.Value}.webp"));
+                var selectionSticker = FromSet(selectionStickers, item.Key);
+                var activeSticker = FromSet(activeStickers, item.Key);
+                var effectSticker = FromSet(effectStickers, item.Key);
+
+                _reactions.Add(new AvailableReaction
+                {
+                    Emoji = item.Key,
+                    Title = $"Random text {item.Key}",
+                    StaticIcon = staticIcon,
+                    SelectAnimation = selectionSticker,
+                    ActivateAnimation = activeSticker,
+                    EffectAnimation = effectSticker,
+                });
+            }
         }
 
         private void InitializeFlush()

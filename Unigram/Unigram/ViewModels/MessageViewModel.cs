@@ -1,4 +1,5 @@
-﻿using Telegram.Td.Api;
+﻿using System.Collections.Generic;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
@@ -286,5 +287,29 @@ namespace Unigram.ViewModels
         Loading,
         Deleted,
         Hidden
+    }
+
+    public class MessageReactionInfo
+    {
+        public AvailableReaction Reaction { get; set; }
+
+        public int TotalCount { get; set; }
+
+        public List<MessageSender> RecentIds { get; set; }
+    }
+
+    public class AvailableReaction
+    {
+        public string Emoji { get; set; }
+
+        public string Title { get; set; }
+
+        public Sticker StaticIcon { get; set; }
+
+        public Sticker SelectAnimation { get; set; }
+
+        public Sticker ActivateAnimation { get; set; }
+
+        public Sticker EffectAnimation { get; set; }
     }
 }

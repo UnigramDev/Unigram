@@ -1,0 +1,65 @@
+﻿<UserControl x:Class="Unigram.Controls.Messages.MenuFlyoutReactions"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:Unigram.Controls.Messages"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignHeight="300"
+             d:DesignWidth="400">
+
+    <Grid x:Name="LayoutRoot">
+        <Border x:Name="Shadow"
+                Width="272"
+                Height="46" />
+        <Rectangle x:Name="BubbleSmall"
+                   Fill="{ThemeResource MenuFlyoutPresenterBackground}"
+                   Stroke="{ThemeResource MenuFlyoutPresenterBorderBrush}"
+                   HorizontalAlignment="Left"
+                   Width="8"
+                   Height="8"
+                   RadiusX="4"
+                   RadiusY="4"
+                   StrokeThickness="1" />
+        <Rectangle x:Name="BubbleMedium"
+                   Fill="{ThemeResource MenuFlyoutPresenterBackground}"
+                   Stroke="{ThemeResource MenuFlyoutPresenterBorderBrush}"
+                   HorizontalAlignment="Left"
+                   Width="16"
+                   Height="16"
+                   RadiusX="8"
+                   RadiusY="8"
+                   StrokeThickness="1" />
+
+        <Rectangle x:Name="Pill"
+                   Fill="{ThemeResource MenuFlyoutPresenterBackground}"
+                   Stroke="{ThemeResource MenuFlyoutPresenterBorderBrush}"
+                   Width="272"
+                   Height="46"
+                   RadiusX="23"
+                   RadiusY="23"
+                   StrokeThickness="1" />
+
+        <Rectangle x:Name="BubbleOverlay"
+                   Fill="{ThemeResource MenuFlyoutPresenterBackground}"
+                   HorizontalAlignment="Left"
+                   Width="16"
+                   Height="16"
+                   RadiusX="8"
+                   RadiusY="8"
+                   StrokeThickness="1" />
+
+        <ScrollViewer VerticalScrollBarVisibility="Disabled"
+                      VerticalScrollMode="Disabled"
+                      HorizontalScrollBarVisibility="Hidden"
+                      HorizontalScrollMode="Auto"
+                      Width="270"
+                      Height="44"
+                      CornerRadius="22"
+                      Margin="1">
+            <StackPanel x:Name="Presenter"
+                        Orientation="Horizontal"
+                        Padding="16,8,8,6" />
+        </ScrollViewer>
+    </Grid>
+</UserControl>
