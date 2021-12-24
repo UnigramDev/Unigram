@@ -93,6 +93,8 @@ namespace Unigram.Converters
 
         public const string Delete = "\uE74D";
         public const string Share = "\uE72D";
+        public const string ArrowForward = "\uE97D";
+        public const string CheckmarkCircle = "\uE97C";
         public const string Multiselect = "\uE762";
         public const string SaveAs = "\uE792";
         public const string FolderOpen = "\uE838";
