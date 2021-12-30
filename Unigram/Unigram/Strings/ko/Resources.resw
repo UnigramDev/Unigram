@@ -766,6 +766,11 @@
   <data name="ActionPinnedVoice" xml:space="preserve">
     <value>un1 님이 음성 메시지를 고정했습니다</value>
   </data>
+  <data name="ActionReactionsChanged" xml:space="preserve">
+    <value>un1 님이 대화 반응을 변경함
+기존: {0} 
+변경: {1}</value>
+  </data>
   <data name="ActionRemovedPhoto" xml:space="preserve">
     <value>un1 님이 그룹 사진을 제거했습니다</value>
   </data>
@@ -1876,6 +1881,9 @@
   <data name="AutomaticMediaDownload" xml:space="preserve">
     <value>미디어 자동 다운로드</value>
   </data>
+  <data name="AutomaticTranslation" xml:space="preserve">
+    <value>자동 번역</value>
+  </data>
   <data name="AutoNightAdaptive" xml:space="preserve">
     <value>조정</value>
   </data>
@@ -1947,6 +1955,9 @@
   </data>
   <data name="Available" xml:space="preserve">
     <value>사용 가능</value>
+  </data>
+  <data name="AvailableReactions" xml:space="preserve">
+    <value>사용 가능한 반응</value>
   </data>
   <data name="AwaitingEncryption" xml:space="preserve">
     <value>{0} 님의 접속을 기다리고 있습니다...</value>
@@ -2105,7 +2116,7 @@
     <value/>
   </data>
   <data name="BlockedUsersInfo" xml:space="preserve">
-    <value>차단된 사용자는 회원님에게 연락하거나 회원님의 마지막 접속 시간을 볼 수 없습니다.</value>
+    <value>차단된 사용자는 회원님에게 연락하거나 그룹에 초대를 할 수 없습니다. 그들은 회원님의 프로필 사진, 온라인 상태 및 마지막 접속 시간을 볼 수 없습니다.</value>
   </data>
   <data name="BlockUser" xml:space="preserve">
     <value>사용자 차단</value>
@@ -3257,6 +3268,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="ChooseFromYourStickers" xml:space="preserve">
     <value>내 스티커에서 선택</value>
   </data>
+  <data name="ChooseLanguages" xml:space="preserve">
+    <value>언어 선택</value>
+  </data>
   <data name="ChooseMapPreviewProvider" xml:space="preserve">
     <value>지도 미리보기 제공 기관을 선택하세요</value>
   </data>
@@ -3382,6 +3396,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   </data>
   <data name="CloseEditor" xml:space="preserve">
     <value>편집기 닫기</value>
+  </data>
+  <data name="CloseTranslation" xml:space="preserve">
+    <value>번역 닫기</value>
   </data>
   <data name="Code" xml:space="preserve">
     <value>코드</value>
@@ -3876,6 +3893,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   </data>
   <data name="DebugClearLogs" xml:space="preserve">
     <value>로그 초기화</value>
+  </data>
+  <data name="DebugDrawSnowInChat" xml:space="preserve">
+    <value>대화에 눈 내리기</value>
   </data>
   <data name="DebugMenu" xml:space="preserve">
     <value>디버그 메뉴</value>
@@ -4377,8 +4397,23 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="DoNoSetTheme" xml:space="preserve">
     <value>테마 설정 안함</value>
   </data>
+  <data name="DoNotTranslate" xml:space="preserve">
+    <value>번역 안함</value>
+  </data>
   <data name="DontAskAgain" xml:space="preserve">
     <value>다시 묻지 않기</value>
+  </data>
+  <data name="DoubleTapPreviewMessage" xml:space="preserve">
+    <value>제가 오늘을 즐기는 것만큼 당신도 즐겁기를 바라요.</value>
+  </data>
+  <data name="DoubleTapPreviewRational" xml:space="preserve">
+    <value>메시지를 이중 탭하여 빠른 반응을 추가하실 수 있습니다.</value>
+  </data>
+  <data name="DoubleTapPreviewSenderName" xml:space="preserve">
+    <value>디노</value>
+  </data>
+  <data name="DoubleTapSetting" xml:space="preserve">
+    <value>빠른 반응</value>
   </data>
   <data name="Draft" xml:space="preserve">
     <value>임시 저장</value>
@@ -4654,6 +4689,15 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="EnableProxyAlert2" xml:space="preserve">
     <value>프록시 서버는 '설정' > '데이터 및 저장 공간'에서 바꾸실 수 있습니다.</value>
   </data>
+  <data name="EnableReactions" xml:space="preserve">
+    <value>반응 허용</value>
+  </data>
+  <data name="EnableReactionsChannelInfo" xml:space="preserve">
+    <value>구독자들이 채널 게시글에 대해 반응을 할 수 있도록 허용을 합니다.</value>
+  </data>
+  <data name="EnableReactionsGroupInfo" xml:space="preserve">
+    <value>참가자들이 그룹 메시지에 반응하도록 허용합니다.</value>
+  </data>
   <data name="EnableStreaming" xml:space="preserve">
     <value>동영상 및 음악 파일 스트리밍</value>
   </data>
@@ -4883,7 +4927,7 @@ telegram.org에서 자세히 알아보세요.</value>
 
 지난 48시간 사이에
 채널 관리자가 취한
-서비스 활동이 없습니다.</value>
+유의미한 활동이 없습니다.</value>
   </data>
   <data name="EventLogEmptySearch" xml:space="preserve">
     <value>**검색하신 활동이 없습니다**
@@ -6912,6 +6956,24 @@ telegram.org에서 자세히 알아보세요.</value>
   <data name="LanguageNameInEnglish" xml:space="preserve">
     <value>한국어</value>
   </data>
+  <data name="Languages_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Languages_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Languages_one" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Languages_other" xml:space="preserve">
+    <value>언어 {0}개</value>
+  </data>
+  <data name="Languages_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Languages_zero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="LanguageSame" xml:space="preserve">
     <value>이미 이 언어 묶음(**{0}**)을 사용하고 계십니다. 언제든 설정에서 언어를 바꾸실 수 있습니다.</value>
   </data>
@@ -6937,7 +6999,7 @@ telegram.org에서 자세히 알아보세요.</value>
     <value>해당 언어가 없습니다.</value>
   </data>
   <data name="LargeEmoji" xml:space="preserve">
-    <value>대용량 이모지</value>
+    <value>큰 이모지</value>
   </data>
   <data name="LastName" xml:space="preserve">
     <value>성 (선택)</value>
@@ -7593,7 +7655,7 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
     <value/>
   </data>
   <data name="MembersTalkingNobody" xml:space="preserve">
-    <value>들어가려면 누르세요</value>
+    <value>눌러서 들어가기</value>
   </data>
   <data name="Mention" xml:space="preserve">
     <value>언급</value>
@@ -7843,6 +7905,23 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   </data>
   <data name="Mi" xml:space="preserve">
     <value>mi</value>
+  </data>
+  <data name="MigrateOldFolderButton" xml:space="preserve">
+    <value>지금 파일들 이동</value>
+  </data>
+  <data name="MigrateOldFolderDescription" xml:space="preserve">
+    <value>**구글**의 정책변경으로 인해, **텔레그램**을 통해 다운로드 받은 파일들을 새로운 폴더로 옮겨야 합니다.
+
+이 작업은 몇 분 정도 걸릴 수 있습니다. 파일이 옮겨지는 동안에도 앱은 사용할 수 있습니다.</value>
+  </data>
+  <data name="MigrateOldFolderTitle" xml:space="preserve">
+    <value>파일들을 범위지정 저장소로 이관</value>
+  </data>
+  <data name="MigratingFiles" xml:space="preserve">
+    <value>파일들 이관 중</value>
+  </data>
+  <data name="MigrationNotification" xml:space="preserve">
+    <value>이관</value>
   </data>
   <data name="MilesAway" xml:space="preserve">
     <value>{0} mi 떨어짐</value>
@@ -8185,6 +8264,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   </data>
   <data name="NobodyLikesSpam3" xml:space="preserve">
     <value>죄송합니다. 현재 회원님은 공개 그룹에 게시하실 수 없습니다.</value>
+  </data>
+  <data name="NobodyViewed" xml:space="preserve">
+    <value>아무도 안 읽음</value>
   </data>
   <data name="NoCallLog" xml:space="preserve">
     <value>아직 전화 내역이 없습니다...</value>
@@ -11014,6 +11096,105 @@ https://telegram.org/blog/coronavirus</value>
   <data name="Purple" xml:space="preserve">
     <value>보라색</value>
   </data>
+  <data name="PushChatReactAudio" xml:space="preserve">
+    <value>{0}: {1}에서 내 음성 메시지에 대해 {2}</value>
+  </data>
+  <data name="PushChatReactContact" xml:space="preserve">
+    <value>{0}: {1}에서 연락처 {3}에 대해 {2}</value>
+  </data>
+  <data name="PushChatReactDoc" xml:space="preserve">
+    <value>{0}: {1}에서 내 파일에 대해 {2}</value>
+  </data>
+  <data name="PushChatReactGame" xml:space="preserve">
+    <value>{0}: {1}에서 내 게임에 대해 {2}</value>
+  </data>
+  <data name="PushChatReactGeo" xml:space="preserve">
+    <value>{0}: {1}에서 내 지도에 대해 {2}</value>
+  </data>
+  <data name="PushChatReactGeoLive" xml:space="preserve">
+    <value>{0}: {1}에서 내 실시간 위치에 대해 {2}</value>
+  </data>
+  <data name="PushChatReactGif" xml:space="preserve">
+    <value>{0}: {1}에서 내 GIF에 대해 {2}</value>
+  </data>
+  <data name="PushChatReactInvoice" xml:space="preserve">
+    <value>{0}: {1}에서 내 인보이스에 대해 {2}</value>
+  </data>
+  <data name="PushChatReactNotext" xml:space="preserve">
+    <value>{0}:  {1}에서 내 메시지에 대해 {2}</value>
+  </data>
+  <data name="PushChatReactPhoto" xml:space="preserve">
+    <value>{0}: {1}에서 내 사진에 대해 {2}</value>
+  </data>
+  <data name="PushChatReactPoll" xml:space="preserve">
+    <value>{0}: {1}에서 내 투표 "{3}"에 대해 {2}</value>
+  </data>
+  <data name="PushChatReactQuiz" xml:space="preserve">
+    <value>{0}:  {1}에서 내 퀴즈 "{3}"에 대해 {2}</value>
+  </data>
+  <data name="PushChatReactRound" xml:space="preserve">
+    <value>{0}: {1}에서 내 영상 메시지에 대해 {2}</value>
+  </data>
+  <data name="PushChatReactSticker" xml:space="preserve">
+    <value>{0}: {1}에서 {3} 스티커에 대해 {2}</value>
+  </data>
+  <data name="PushChatReactText" xml:space="preserve">
+    <value>{0}: {1}에서 내 "{3}"에 대해 {2}</value>
+  </data>
+  <data name="PushChatReactVideo" xml:space="preserve">
+    <value>{0}: {1}에서 내 영상에 대해 {2}</value>
+  </data>
+  <data name="PushReactAudio" xml:space="preserve">
+    <value>{0}: 내 음성 메시지에 대해 {1}</value>
+  </data>
+  <data name="PushReactContect" xml:space="preserve">
+    <value>{0}: 내 연락처 {2}에 대해 {1}</value>
+  </data>
+  <data name="PushReactDoc" xml:space="preserve">
+    <value>{0}: 내 파일에 대해 {1}</value>
+  </data>
+  <data name="PushReactGame" xml:space="preserve">
+    <value>{0}: 내 게임에 대해 {1}</value>
+  </data>
+  <data name="PushReactGeo" xml:space="preserve">
+    <value>{0}: 내 지도에 대해 {1}</value>
+  </data>
+  <data name="PushReactGeoLocation" xml:space="preserve">
+    <value>{0}: 내 실시간 위치에 대해 {1}</value>
+  </data>
+  <data name="PushReactGif" xml:space="preserve">
+    <value>{0}: 내 GIF에 대해 {1}</value>
+  </data>
+  <data name="PushReactInvoice" xml:space="preserve">
+    <value>{0}: 내 인보이스에 대해 {1}</value>
+  </data>
+  <data name="PushReactNoText" xml:space="preserve">
+    <value>{0}: 내 메시지에 대해 {1}</value>
+  </data>
+  <data name="PushReactPhoto" xml:space="preserve">
+    <value>{0}: 내 사진에 대해 {1}</value>
+  </data>
+  <data name="PushReactPoll" xml:space="preserve">
+    <value>{0}: 내 투표 {2}에 대해 {1}</value>
+  </data>
+  <data name="PushReactQuiz" xml:space="preserve">
+    <value>{0}: 내 퀴즈 "{2}"에 대해 {1}</value>
+  </data>
+  <data name="PushReactRound" xml:space="preserve">
+    <value>{0}: 내 영상 메시지에 대해 {1}</value>
+  </data>
+  <data name="PushReactSticker" xml:space="preserve">
+    <value>{0}: 내 스티커 {2}에 대해 {1}</value>
+  </data>
+  <data name="PushReactText" xml:space="preserve">
+    <value>{0}: 내 "{2}"에 대해 {1}</value>
+  </data>
+  <data name="PushReactVideo" xml:space="preserve">
+    <value>{0}: 내 영상에 대해 {1}</value>
+  </data>
+  <data name="QrCode" xml:space="preserve">
+    <value>QR 코드</value>
+  </data>
   <data name="QRCodeLinkHelpChannel" xml:space="preserve">
     <value>텔레그램에 있는 누구나 이 코드를 스캔하여 채널에 입장 할 수 있습니다.</value>
   </data>
@@ -11094,6 +11275,48 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="RateCallVideoPixelated" xml:space="preserve">
     <value>동영상이 깨져 보임</value>
+  </data>
+  <data name="Reacted_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Reacted_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Reacted_one" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Reacted_other" xml:space="preserve">
+    <value>{0}명 반응함</value>
+  </data>
+  <data name="Reacted_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Reacted_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Reactions" xml:space="preserve">
+    <value>반응</value>
+  </data>
+  <data name="ReactionsCount_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ReactionsCount_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ReactionsCount_one" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ReactionsCount_other" xml:space="preserve">
+    <value>반응 {0}건</value>
+  </data>
+  <data name="ReactionsCount_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ReactionsCount_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ReactionsOff" xml:space="preserve">
+    <value>비활성화</value>
   </data>
   <data name="Recent" xml:space="preserve">
     <value>최근</value>
@@ -12482,6 +12705,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="ShowStickers" xml:space="preserve">
     <value>스티커 보기</value>
   </data>
+  <data name="ShowTranslateButton" xml:space="preserve">
+    <value>번역 버튼 보기</value>
+  </data>
   <data name="ShowVotes_few" xml:space="preserve">
     <value/>
   </data>
@@ -12624,6 +12850,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="SpeedVerySlow" xml:space="preserve">
     <value>매우 느리게</value>
+  </data>
+  <data name="Spoiler" xml:space="preserve">
+    <value>스포일러</value>
   </data>
   <data name="SponsoredMessage" xml:space="preserve">
     <value>스폰서</value>
@@ -12788,7 +13017,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>보관</value>
   </data>
   <data name="StickersName" xml:space="preserve">
-    <value>스티커 및 마스크</value>
+    <value>스티커 및 이모지</value>
   </data>
   <data name="StickersRemove" xml:space="preserve">
     <value>삭제</value>
@@ -13475,6 +13704,27 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="TotalDeviceSize" xml:space="preserve">
     <value>{0} 기타 앱</value>
+  </data>
+  <data name="TranslateMessage" xml:space="preserve">
+    <value>번역</value>
+  </data>
+  <data name="TranslateMessages" xml:space="preserve">
+    <value>메시지 번역</value>
+  </data>
+  <data name="TranslateMessagesInfo1" xml:space="preserve">
+    <value>텍스트 메시지를 한번 탭 할 경우 '번역' 버튼이 나타나게 됩니다.</value>
+  </data>
+  <data name="TranslateMessagesInfo2" xml:space="preserve">
+    <value>번역하는 메시지에 대해 구글이 접근을 할 수도 있습니다.</value>
+  </data>
+  <data name="TranslateMore" xml:space="preserve">
+    <value>더 번역하기...</value>
+  </data>
+  <data name="TranslationFailedAlert1" xml:space="preserve">
+    <value>번역이 실패하였습니다. 다시 시도해주세요.</value>
+  </data>
+  <data name="TranslationFailedAlert2" xml:space="preserve">
+    <value>번역이 실패하였습니다.</value>
   </data>
   <data name="TurnPasswordOff" xml:space="preserve">
     <value>비밀번호 끄기</value>
@@ -14785,7 +15035,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>저희가 발언자들에게 알렸습니다</value>
   </data>
   <data name="VoipMutedTapForSpeak" xml:space="preserve">
-    <value>발언 희망시 탭해주세요</value>
+    <value>발언하고 싶다면 누르세요</value>
   </data>
   <data name="VoipNeedCameraPermission" xml:space="preserve">
     <value>텔레그램이 영상 통화를 하려면 카메라 접근 권한이 필요합니다.</value>

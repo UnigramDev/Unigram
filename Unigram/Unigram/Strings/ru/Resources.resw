@@ -766,6 +766,11 @@
   <data name="ActionPinnedVoice" xml:space="preserve">
     <value>un1 закрепил(а) голосовое сообщение</value>
   </data>
+  <data name="ActionReactionsChanged" xml:space="preserve">
+    <value>un1 изменил(а) реакции чата
+с: {0} 
+на: {1}</value>
+  </data>
   <data name="ActionRemovedPhoto" xml:space="preserve">
     <value>un1 удалил(а) фото группы</value>
   </data>
@@ -1875,6 +1880,9 @@
   <data name="AutomaticMediaDownload" xml:space="preserve">
     <value>Автозагрузка медиа</value>
   </data>
+  <data name="AutomaticTranslation" xml:space="preserve">
+    <value>Автоматический перевод</value>
+  </data>
   <data name="AutoNightAdaptive" xml:space="preserve">
     <value>Адаптивная</value>
   </data>
@@ -1946,6 +1954,9 @@
   </data>
   <data name="Available" xml:space="preserve">
     <value>Доступен</value>
+  </data>
+  <data name="AvailableReactions" xml:space="preserve">
+    <value>Доступные реакции</value>
   </data>
   <data name="AwaitingEncryption" xml:space="preserve">
     <value>Ждём, когда {0} появится в сети...</value>
@@ -2104,7 +2115,7 @@
     <value/>
   </data>
   <data name="BlockedUsersInfo" xml:space="preserve">
-    <value>Заблокированные пользователи не смогут связаться с Вами и не будут видеть время Вашей последней активности.</value>
+    <value>Заблокированные пользователи не смогут связаться с Вами и не будут видеть время Вашей последней активности, статус в сети и фотографии профиля.</value>
   </data>
   <data name="BlockUser" xml:space="preserve">
     <value>Заблокировать</value>
@@ -3258,6 +3269,9 @@
   <data name="ChooseFromYourStickers" xml:space="preserve">
     <value>Выберите из своих наборов</value>
   </data>
+  <data name="ChooseLanguages" xml:space="preserve">
+    <value>Выберите языки</value>
+  </data>
   <data name="ChooseMapPreviewProvider" xml:space="preserve">
     <value>Выберите сервис для предпросмотра карты</value>
   </data>
@@ -3383,6 +3397,9 @@
   </data>
   <data name="CloseEditor" xml:space="preserve">
     <value>ЗАКРЫТЬ РЕДАКТОР</value>
+  </data>
+  <data name="CloseTranslation" xml:space="preserve">
+    <value>Закрыть перевод</value>
   </data>
   <data name="Code" xml:space="preserve">
     <value>Код</value>
@@ -3877,6 +3894,9 @@
   </data>
   <data name="DebugClearLogs" xml:space="preserve">
     <value>Очистить лог</value>
+  </data>
+  <data name="DebugDrawSnowInChat" xml:space="preserve">
+    <value>Снег в чате</value>
   </data>
   <data name="DebugMenu" xml:space="preserve">
     <value>Меню отладки</value>
@@ -4377,8 +4397,23 @@
   <data name="DoNoSetTheme" xml:space="preserve">
     <value>Не менять тему</value>
   </data>
+  <data name="DoNotTranslate" xml:space="preserve">
+    <value>Не переводить</value>
+  </data>
   <data name="DontAskAgain" xml:space="preserve">
     <value>Не спрашивать больше</value>
+  </data>
+  <data name="DoubleTapPreviewMessage" xml:space="preserve">
+    <value>У меня всё отлично — надеюсь, и у вас тоже.</value>
+  </data>
+  <data name="DoubleTapPreviewRational" xml:space="preserve">
+    <value>Для быстрой реакции нажмите дважды.</value>
+  </data>
+  <data name="DoubleTapPreviewSenderName" xml:space="preserve">
+    <value>Дино</value>
+  </data>
+  <data name="DoubleTapSetting" xml:space="preserve">
+    <value>Быстрая реакция</value>
   </data>
   <data name="Draft" xml:space="preserve">
     <value>Черновик</value>
@@ -4653,6 +4688,15 @@
   </data>
   <data name="EnableProxyAlert2" xml:space="preserve">
     <value>Вы всегда можете изменить прокси-сервер в настройках > Данные и память.</value>
+  </data>
+  <data name="EnableReactions" xml:space="preserve">
+    <value>Включить реакции</value>
+  </data>
+  <data name="EnableReactionsChannelInfo" xml:space="preserve">
+    <value>Подписчики канала смогут отправлять реакции на публикации.</value>
+  </data>
+  <data name="EnableReactionsGroupInfo" xml:space="preserve">
+    <value>Участники группы смогут отправлять реакции на сообщения.</value>
   </data>
   <data name="EnableStreaming" xml:space="preserve">
     <value>Стриминг аудиофайлов и видео</value>
@@ -6909,6 +6953,24 @@
   <data name="LanguageNameInEnglish" xml:space="preserve">
     <value>Russian</value>
   </data>
+  <data name="Languages_few" xml:space="preserve">
+    <value>{0} языка</value>
+  </data>
+  <data name="Languages_many" xml:space="preserve">
+    <value>{0} языков</value>
+  </data>
+  <data name="Languages_one" xml:space="preserve">
+    <value>{0} язык</value>
+  </data>
+  <data name="Languages_other" xml:space="preserve">
+    <value>{0} языка</value>
+  </data>
+  <data name="Languages_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Languages_zero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="LanguageSame" xml:space="preserve">
     <value>Вы уже используете этот язык (**{0}**). Вы можете сменить язык в любое время в Настройках.</value>
   </data>
@@ -7840,6 +7902,23 @@
   <data name="Mi" xml:space="preserve">
     <value>мл</value>
   </data>
+  <data name="MigrateOldFolderButton" xml:space="preserve">
+    <value>Перенести файлы</value>
+  </data>
+  <data name="MigrateOldFolderDescription" xml:space="preserve">
+    <value>Из-за системных изменений **Google** необходимо перенести файлы, загруженные через **Telegram**, в новую папку.
+
+Это займёт некоторое время. Вы сможете использовать приложение, пока файлы переносятся.</value>
+  </data>
+  <data name="MigrateOldFolderTitle" xml:space="preserve">
+    <value>Перенести файлы в хранилище</value>
+  </data>
+  <data name="MigratingFiles" xml:space="preserve">
+    <value>Перенос файлов</value>
+  </data>
+  <data name="MigrationNotification" xml:space="preserve">
+    <value>Перенос файлов</value>
+  </data>
   <data name="MilesAway" xml:space="preserve">
     <value>{0} мл отсюда</value>
   </data>
@@ -8181,6 +8260,9 @@
   </data>
   <data name="NobodyLikesSpam3" xml:space="preserve">
     <value>К сожалению, в данный момент Вы не можете отправлять сообщения в публичные группы.</value>
+  </data>
+  <data name="NobodyViewed" xml:space="preserve">
+    <value>Нет просмотров</value>
   </data>
   <data name="NoCallLog" xml:space="preserve">
     <value>Вы пока никому не звонили.</value>
@@ -10999,6 +11081,105 @@
   <data name="Purple" xml:space="preserve">
     <value>Фиолетовый</value>
   </data>
+  <data name="PushChatReactAudio" xml:space="preserve">
+    <value>{0}: {2} на Ваше аудиосообщение в «{1}»</value>
+  </data>
+  <data name="PushChatReactContact" xml:space="preserve">
+    <value>{0}: {2} на Ваш контакт {3} в «{1}» </value>
+  </data>
+  <data name="PushChatReactDoc" xml:space="preserve">
+    <value>{0}: {2} на Ваш файл в «{1}»</value>
+  </data>
+  <data name="PushChatReactGame" xml:space="preserve">
+    <value>{0}: {2} на Вашу игру в «{1}»</value>
+  </data>
+  <data name="PushChatReactGeo" xml:space="preserve">
+    <value>{0}: {2} на Вашу карту в «{1}»</value>
+  </data>
+  <data name="PushChatReactGeoLive" xml:space="preserve">
+    <value>{0}: {2} на Вашу геопозицию в «{1}»</value>
+  </data>
+  <data name="PushChatReactGif" xml:space="preserve">
+    <value>{0}: {2} на Ваш GIF в «{1}»</value>
+  </data>
+  <data name="PushChatReactInvoice" xml:space="preserve">
+    <value>{0}: {2} на счёт от Вас в «{1}»</value>
+  </data>
+  <data name="PushChatReactNotext" xml:space="preserve">
+    <value>{0}: {2} на Ваше сообщение в «{1}»</value>
+  </data>
+  <data name="PushChatReactPhoto" xml:space="preserve">
+    <value>{0}: {2} на Ваше фото в «{1}»</value>
+  </data>
+  <data name="PushChatReactPoll" xml:space="preserve">
+    <value>{0}: {2} на Ваш опрос «{3}» в «{1}»</value>
+  </data>
+  <data name="PushChatReactQuiz" xml:space="preserve">
+    <value>{0}: {2} на Вашу викторину «{3}» в «{1}»</value>
+  </data>
+  <data name="PushChatReactRound" xml:space="preserve">
+    <value>{0}: {2} на Ваше видеосообщение в «{1}» </value>
+  </data>
+  <data name="PushChatReactSticker" xml:space="preserve">
+    <value>{0}: {2} на Ваш стикер {3} в «{1}»</value>
+  </data>
+  <data name="PushChatReactText" xml:space="preserve">
+    <value>{0}: {2} в «{1}» на Ваше «{3}»</value>
+  </data>
+  <data name="PushChatReactVideo" xml:space="preserve">
+    <value>{0}: {2} на Ваше видео в «{1}» </value>
+  </data>
+  <data name="PushReactAudio" xml:space="preserve">
+    <value>{0}: {1} на Ваше голосовое сообщение</value>
+  </data>
+  <data name="PushReactContect" xml:space="preserve">
+    <value>{0}: {1} на Ваш контакт {2}</value>
+  </data>
+  <data name="PushReactDoc" xml:space="preserve">
+    <value>{0}: {1} на Ваш файл</value>
+  </data>
+  <data name="PushReactGame" xml:space="preserve">
+    <value>{0}: на Вашу игру {1}</value>
+  </data>
+  <data name="PushReactGeo" xml:space="preserve">
+    <value>{0}: {1} на Вашу карту</value>
+  </data>
+  <data name="PushReactGeoLocation" xml:space="preserve">
+    <value>{0}: {1} на Вашу геопозицию</value>
+  </data>
+  <data name="PushReactGif" xml:space="preserve">
+    <value>{0}: {1} на Ваш GIF</value>
+  </data>
+  <data name="PushReactInvoice" xml:space="preserve">
+    <value>{0}: {1} на счёт от Вас</value>
+  </data>
+  <data name="PushReactNoText" xml:space="preserve">
+    <value>{0}: {1} на Ваше сообщение</value>
+  </data>
+  <data name="PushReactPhoto" xml:space="preserve">
+    <value>{0}: {1} на Ваше фото</value>
+  </data>
+  <data name="PushReactPoll" xml:space="preserve">
+    <value>{0}: {1} на Ваш опрос «{2}»</value>
+  </data>
+  <data name="PushReactQuiz" xml:space="preserve">
+    <value>{0}: {1} на Вашу викторину «{2}»</value>
+  </data>
+  <data name="PushReactRound" xml:space="preserve">
+    <value>{0}: {1} на Ваше видеосообщение</value>
+  </data>
+  <data name="PushReactSticker" xml:space="preserve">
+    <value>{0}: {1} на Ваш стикер {2}</value>
+  </data>
+  <data name="PushReactText" xml:space="preserve">
+    <value>{0}: {1} на Ваше "{2}"</value>
+  </data>
+  <data name="PushReactVideo" xml:space="preserve">
+    <value>{0}: {1} на Ваше видео</value>
+  </data>
+  <data name="QrCode" xml:space="preserve">
+    <value>QR-код</value>
+  </data>
   <data name="QRCodeLinkHelpChannel" xml:space="preserve">
     <value>Пользователи смогут подписаться на канал, считав этот код камерой телефона.</value>
   </data>
@@ -11079,6 +11260,48 @@
   </data>
   <data name="RateCallVideoPixelated" xml:space="preserve">
     <value>Видео низкого качества</value>
+  </data>
+  <data name="Reacted_few" xml:space="preserve">
+    <value>{0} реакции</value>
+  </data>
+  <data name="Reacted_many" xml:space="preserve">
+    <value>{0} реакций</value>
+  </data>
+  <data name="Reacted_one" xml:space="preserve">
+    <value>{0} реакция</value>
+  </data>
+  <data name="Reacted_other" xml:space="preserve">
+    <value>{0} реакции</value>
+  </data>
+  <data name="Reacted_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Reacted_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Reactions" xml:space="preserve">
+    <value>Реакции</value>
+  </data>
+  <data name="ReactionsCount_few" xml:space="preserve">
+    <value>{0} реакции</value>
+  </data>
+  <data name="ReactionsCount_many" xml:space="preserve">
+    <value>{0} реакций</value>
+  </data>
+  <data name="ReactionsCount_one" xml:space="preserve">
+    <value>{0} реакция</value>
+  </data>
+  <data name="ReactionsCount_other" xml:space="preserve">
+    <value>{0} реакции</value>
+  </data>
+  <data name="ReactionsCount_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ReactionsCount_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ReactionsOff" xml:space="preserve">
+    <value>Нет</value>
   </data>
   <data name="Recent" xml:space="preserve">
     <value>Недавние</value>
@@ -12468,6 +12691,9 @@
   <data name="ShowStickers" xml:space="preserve">
     <value>Показать стикеры</value>
   </data>
+  <data name="ShowTranslateButton" xml:space="preserve">
+    <value>Показать кнопку «Перевести»</value>
+  </data>
   <data name="ShowVotes_few" xml:space="preserve">
     <value>Показать больше ({0})</value>
   </data>
@@ -12611,6 +12837,9 @@
   </data>
   <data name="SpeedVerySlow" xml:space="preserve">
     <value>Очень медленно</value>
+  </data>
+  <data name="Spoiler" xml:space="preserve">
+    <value>Скрытый</value>
   </data>
   <data name="SponsoredMessage" xml:space="preserve">
     <value>спонсировано</value>
@@ -12774,7 +13003,7 @@
     <value>Архивировать</value>
   </data>
   <data name="StickersName" xml:space="preserve">
-    <value>Стикеры и маски</value>
+    <value>Стикеры и эмодзи</value>
   </data>
   <data name="StickersRemove" xml:space="preserve">
     <value>Удалить</value>
@@ -13463,6 +13692,27 @@
   </data>
   <data name="TotalDeviceSize" xml:space="preserve">
     <value>{0} других приложений</value>
+  </data>
+  <data name="TranslateMessage" xml:space="preserve">
+    <value>Перевести</value>
+  </data>
+  <data name="TranslateMessages" xml:space="preserve">
+    <value>Перевести сообщения</value>
+  </data>
+  <data name="TranslateMessagesInfo1" xml:space="preserve">
+    <value>Кнопка «Перевести» появится в меню по нажатию на текстовое сообщение.</value>
+  </data>
+  <data name="TranslateMessagesInfo2" xml:space="preserve">
+    <value>Google может иметь доступ к сообщениям, которые Вы переводите.</value>
+  </data>
+  <data name="TranslateMore" xml:space="preserve">
+    <value>Перевести больше...</value>
+  </data>
+  <data name="TranslationFailedAlert1" xml:space="preserve">
+    <value>Не удалось перевести. Попробуйте позже.</value>
+  </data>
+  <data name="TranslationFailedAlert2" xml:space="preserve">
+    <value>Не удалось перевести.</value>
   </data>
   <data name="TurnPasswordOff" xml:space="preserve">
     <value>Отключить пароль</value>

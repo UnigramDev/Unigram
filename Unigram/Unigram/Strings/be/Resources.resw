@@ -487,6 +487,18 @@
   <data name="AcceptCall" xml:space="preserve">
     <value>Прыняць</value>
   </data>
+  <data name="AcceptCalls" xml:space="preserve">
+    <value>Прымаць выклікі</value>
+  </data>
+  <data name="AcceptCallsChatsDescription" xml:space="preserve">
+    <value>Выкарыстоўваць гэтую прыладу для выклікаў</value>
+  </data>
+  <data name="AcceptSecretChats" xml:space="preserve">
+    <value>Прымаць сакрэтныя чаты</value>
+  </data>
+  <data name="AcceptSecretChatsDescription" xml:space="preserve">
+    <value>Выкарыстоўваць гэтую прыладу для сакрэтных чатаў</value>
+  </data>
   <data name="AccessError" xml:space="preserve">
     <value>Памылка доступу</value>
   </data>
@@ -643,6 +655,18 @@
   <data name="ActionEditedInviteLinkToSameClickable" xml:space="preserve">
     <value>un1 адрэдагаваў(-ла) запрашальную спасылку un2</value>
   </data>
+  <data name="ActionForwardsEnabledChannel" xml:space="preserve">
+    <value>un1 дазволіў(-ла) перасылку з гэтага канала</value>
+  </data>
+  <data name="ActionForwardsEnabledGroup" xml:space="preserve">
+    <value>un1 дазволіў(-ла) перасылку з гэтай суполкі</value>
+  </data>
+  <data name="ActionForwardsRestrictedChannel" xml:space="preserve">
+    <value>un1 абмежаваў(-ла) перасылку з гэтага канала</value>
+  </data>
+  <data name="ActionForwardsRestrictedGroup" xml:space="preserve">
+    <value>un1 абмежаваў(-ла) перасылку з гэтай суполкі</value>
+  </data>
   <data name="ActionGroupCallEnded" xml:space="preserve">
     <value>Відэачат завершаны ({0})</value>
   </data>
@@ -741,6 +765,11 @@
   </data>
   <data name="ActionPinnedVoice" xml:space="preserve">
     <value>un1 замацаваў(-ла) галасавое паведамленне</value>
+  </data>
+  <data name="ActionReactionsChanged" xml:space="preserve">
+    <value>un1 змяніў(-ла) рэакцыі чата
+з: {0} 
+на: {1}</value>
   </data>
   <data name="ActionRemovedPhoto" xml:space="preserve">
     <value>un1 выдаліў(-ла) аватар суполкі</value>
@@ -1633,6 +1662,12 @@
   <data name="AuthAnotherClientInfo3" xml:space="preserve">
     <value>Адскануйце QR-код, каб злучыцца з вашым уліковым запісам.</value>
   </data>
+  <data name="AuthAnotherClientInfo4" xml:space="preserve">
+    <value>Прывяжыце свой *Telegram Desktop* або *Telegram Web*, прасканаваўшы QR-код.</value>
+  </data>
+  <data name="AuthAnotherClientInfo5" xml:space="preserve">
+    <value>Перайдзіце на *getdesktop.telegram.org* ці *web.telegram.org*, каб атрымаць QR-код</value>
+  </data>
   <data name="AuthAnotherClientNotFound" xml:space="preserve">
     <value>Маркёр праверкі сапраўднасці не знойдзены</value>
   </data>
@@ -1649,6 +1684,9 @@
     <value>Гэты код можа быць выкарыстаны, каб дазволіць камусьці ўвайсці ў ваш уліковы запіс Telegram.
 
 Каб пацвердзіць уваход у Telegram, перайдзіце ў «Налады > Прылады > Сканаваць QR-код» і адскануйце код.</value>
+  </data>
+  <data name="AuthAnotherWebClientUrl" xml:space="preserve">
+    <value>https://web.telegram.org/</value>
   </data>
   <data name="AutoDelete1Month" xml:space="preserve">
     <value>1 месяц</value>
@@ -1914,6 +1952,9 @@
   <data name="Available" xml:space="preserve">
     <value>Даступна</value>
   </data>
+  <data name="AvailableReactions" xml:space="preserve">
+    <value>ДАСТУПНЫЯ РЭАКЦЫІ</value>
+  </data>
   <data name="AwaitingEncryption" xml:space="preserve">
     <value>Чакаем, калі {0} з’явіцца ў сетцы...</value>
   </data>
@@ -2071,7 +2112,7 @@
     <value/>
   </data>
   <data name="BlockedUsersInfo" xml:space="preserve">
-    <value>Заблакіраваныя карыстальнікі не змогуць звязацца з вамі, а таксама бачыць час вашай апошняй актыўнасці.</value>
+    <value>Заблакіраваныя карыстальнікі не могуць адпраўляць вам паведамленні або запрашаць вас у суполкі. Яны таксама не могуць бачыць вашы аватар профілю, статус прысутнасці і апошнюю актыўнасць.</value>
   </data>
   <data name="BlockUser" xml:space="preserve">
     <value>Заблакіраваць</value>
@@ -2857,7 +2898,7 @@
   <data name="ChannelUsernameHelp" xml:space="preserve">
     <value>Калі вы прызначыце пастаянную спасылку, іншыя карыстальнікі могуць адшукаць ваш канал і далучыцца да яго.
 
-Вы можаце выкарыстоўваць a-z, 0-9 і сімвалы падкрэслівання. 
+Выкарыстоўвайце a-z, 0-9 і сімвалы падкрэслівання. 
 Мінімальная даўжыня — 5 сімвалаў.</value>
   </data>
   <data name="ChannelUsernamePlaceholder" xml:space="preserve">
@@ -3133,6 +3174,21 @@
   <data name="ChatWasMovedToMainList" xml:space="preserve">
     <value>Чат быў перанесены ў ваш асноўны спіс.</value>
   </data>
+  <data name="ChatWithAdminChannelTitle" xml:space="preserve">
+    <value>Чат з кіраўніком канала</value>
+  </data>
+  <data name="ChatWithAdminGroupTitle" xml:space="preserve">
+    <value>Чат з кіраўніком суполкі</value>
+  </data>
+  <data name="ChatWithAdminMessage" xml:space="preserve">
+    <value>Вы атрымалі гэтае паведамленне, таму што падалі запыт на далучэнне да **{0}** {1}</value>
+  </data>
+  <data name="ChatWithChannelAdmin" xml:space="preserve">
+    <value>**{0}** — кіраўнік канала **{1}**. Вы падалі запыт на далучэнне да гэтага канала.</value>
+  </data>
+  <data name="ChatWithGroupAdmin" xml:space="preserve">
+    <value>**{0}** — кіраўнік суполкі **{1}**. Вы падалі запыт на далучэнне да гэтай суполкі.</value>
+  </data>
   <data name="ChatYourSelf" xml:space="preserve">
     <value>перасылайце паведамленні сюды, каб захаваць іх</value>
   </data>
@@ -3276,6 +3332,12 @@
   </data>
   <data name="ClearHistoryCache" xml:space="preserve">
     <value>Выдаліць з кэшу</value>
+  </data>
+  <data name="ClearHistoryForTheseDays" xml:space="preserve">
+    <value>Ачысціць гісторыю за гэтыя дні</value>
+  </data>
+  <data name="ClearHistoryForThisDay" xml:space="preserve">
+    <value>Ачысціць гісторыю за гэты дзень</value>
   </data>
   <data name="ClearHistoryOptionAlso" xml:space="preserve">
     <value>Таксама ачысціць гісторыю для {0}</value>
@@ -3996,6 +4058,24 @@
   <data name="DeleteContact" xml:space="preserve">
     <value>Выдаліць кантакт</value>
   </data>
+  <data name="DeleteDays_few" xml:space="preserve">
+    <value>Выдаліць {0} дні</value>
+  </data>
+  <data name="DeleteDays_many" xml:space="preserve">
+    <value>Выдаліць {0} дзён</value>
+  </data>
+  <data name="DeleteDays_one" xml:space="preserve">
+    <value>Выдаліць {0} дзень</value>
+  </data>
+  <data name="DeleteDays_other" xml:space="preserve">
+    <value>Выдаліць {0} дня</value>
+  </data>
+  <data name="DeleteDays_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="DeleteDays_zero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="DeletedFromYourContacts" xml:space="preserve">
     <value>{0} выдалены(-а) з вашых кантактаў</value>
   </data>
@@ -4019,6 +4099,9 @@
   </data>
   <data name="DeleteGroupForAll" xml:space="preserve">
     <value>Выдаліць суполку для ўсіх удзельнікаў</value>
+  </data>
+  <data name="DeleteHistoryByDaysMessage" xml:space="preserve">
+    <value>Вы ўпэўнены, што хочаце выдаліць усе паведамленні за абраныя дні?</value>
   </data>
   <data name="DeleteLink" xml:space="preserve">
     <value>Выдаліць спасылку</value>
@@ -4157,6 +4240,9 @@
   </data>
   <data name="DidNotGetTheCode" xml:space="preserve">
     <value>Не атрымалі код?</value>
+  </data>
+  <data name="DidNotGetTheCodePhone" xml:space="preserve">
+    <value>Атрымаць код на гэтым тэлефоне</value>
   </data>
   <data name="DidNotGetTheCodeSms" xml:space="preserve">
     <value>Адправіць код праз SMS</value>
@@ -4302,6 +4388,24 @@
   </data>
   <data name="DoNoSetTheme" xml:space="preserve">
     <value>Не прызначаць тэму</value>
+  </data>
+  <data name="DoNotTranslate" xml:space="preserve">
+    <value>Не перакладаць</value>
+  </data>
+  <data name="DontAskAgain" xml:space="preserve">
+    <value>Больш не пытацца</value>
+  </data>
+  <data name="DoubleTapPreviewMessage" xml:space="preserve">
+    <value>Спадзяюся, не толькі ў мяне сёння выдатны дзень.</value>
+  </data>
+  <data name="DoubleTapPreviewRational" xml:space="preserve">
+    <value>Двойчы націскайце на паведамленне, каб пакінуць рэакцыю.</value>
+  </data>
+  <data name="DoubleTapPreviewSenderName" xml:space="preserve">
+    <value>Антось</value>
+  </data>
+  <data name="DoubleTapSetting" xml:space="preserve">
+    <value>Хуткая рэакцыя</value>
   </data>
   <data name="Draft" xml:space="preserve">
     <value>Чарнавік</value>
@@ -4578,6 +4682,12 @@
   </data>
   <data name="EnableProxyAlert2" xml:space="preserve">
     <value>Вы можаце змяніць проксі-сервер праз «Налады > Даныя і сховішча».</value>
+  </data>
+  <data name="EnableReactionsChannelInfo" xml:space="preserve">
+    <value>Дазваляць падпісчыкам пакідаць рэакцыі на допісы ў канале.</value>
+  </data>
+  <data name="EnableReactionsGroupInfo" xml:space="preserve">
+    <value>Дазваляць удзельнікам пакідаць рэакцыі на паведамленні ў суполцы.</value>
   </data>
   <data name="EnableStreaming" xml:space="preserve">
     <value>Патокава прайграваць відэа/аўдыя</value>
@@ -5456,6 +5566,30 @@
   <data name="FootsShort" xml:space="preserve">
     <value>{0} футы</value>
   </data>
+  <data name="ForceSetPasswordAlertMessage_few" xml:space="preserve">
+    <value>Працягнуць без пароля? Калі вы не задасце пароль, то зможаце ўвайсці ў свой уліковы запіс праз SMS толькі раз на {0} дні.</value>
+  </data>
+  <data name="ForceSetPasswordAlertMessage_many" xml:space="preserve">
+    <value>Працягнуць без пароля? Калі вы не задасце пароль, то зможаце ўвайсці ў свой уліковы запіс праз SMS толькі раз на {0} дзён.</value>
+  </data>
+  <data name="ForceSetPasswordAlertMessage_one" xml:space="preserve">
+    <value>Працягнуць без пароля? Калі вы не задасце пароль, то зможаце ўвайсці ў свой уліковы запіс праз SMS толькі раз на {0} дзень.</value>
+  </data>
+  <data name="ForceSetPasswordAlertMessage_other" xml:space="preserve">
+    <value>Працягнуць без пароля? Калі вы не задасце пароль, то зможаце ўвайсці ў свой уліковы запіс праз SMS толькі раз на {0} дня.</value>
+  </data>
+  <data name="ForceSetPasswordAlertMessage_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ForceSetPasswordAlertMessage_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ForceSetPasswordCancel" xml:space="preserve">
+    <value>Так, я ведаю, што раблю</value>
+  </data>
+  <data name="ForceSetPasswordContinue" xml:space="preserve">
+    <value>Не, дазвольце мне задаць пароль</value>
+  </data>
   <data name="ForgotPassword" xml:space="preserve">
     <value>Забыліся на пароль?</value>
   </data>
@@ -5752,6 +5886,12 @@
   </data>
   <data name="ForwardSendMessages" xml:space="preserve">
     <value>Адправіць паведамленні</value>
+  </data>
+  <data name="ForwardsRestrictedInfoChannel" xml:space="preserve">
+    <value>Капіяванне і перасыланне ў гэтым канале забаронена.</value>
+  </data>
+  <data name="ForwardsRestrictedInfoGroup" xml:space="preserve">
+    <value>Капіяванне і перасыланне ў гэтай суполцы забаронена</value>
   </data>
   <data name="ForwardTo" xml:space="preserve">
     <value>Пераслаць да…</value>
@@ -6189,6 +6329,9 @@
   <data name="Hybrid" xml:space="preserve">
     <value>Гібрыд</value>
   </data>
+  <data name="IfInactiveFor" xml:space="preserve">
+    <value>Калі неактыўны на працягу</value>
+  </data>
   <data name="ImagesTab" xml:space="preserve">
     <value>ВІДАРЫСЫ</value>
   </data>
@@ -6293,7 +6436,7 @@
     <value>Прыдумайце назву для вашага набора стыкераў.</value>
   </data>
   <data name="ImportStickersEnterUrlInfo" xml:space="preserve">
-    <value>Вы можаце выкарыстоўваць a-z, 0-9 і сімвалы падкрэслівання.</value>
+    <value>Выкарыстоўвайце a-z, 0-9 і сімвалы падкрэслівання.</value>
   </data>
   <data name="ImportStickersImportingTitle" xml:space="preserve">
     <value>Імпартаванне стыкераў</value>
@@ -6607,6 +6750,9 @@
   <data name="items_zero" xml:space="preserve">
     <value/>
   </data>
+  <data name="IUnderstand" xml:space="preserve">
+    <value>Зразумела</value>
+  </data>
   <data name="IVInteractionsChartTitle" xml:space="preserve">
     <value>Узаемадзеянні ў IV</value>
   </data>
@@ -6876,6 +7022,9 @@
   <data name="LinkCreatedeBy" xml:space="preserve">
     <value>Спасылку стварыў(-ла)</value>
   </data>
+  <data name="LinkDesktopDevice" xml:space="preserve">
+    <value>Прывязаць камп’ютар</value>
+  </data>
   <data name="LinkedChannel" xml:space="preserve">
     <value>Прывязаны канал</value>
   </data>
@@ -7036,6 +7185,9 @@
   </data>
   <data name="LocatedChannelsTooMuch" xml:space="preserve">
     <value>На жаль, у гэтага карыстальніка ўжо занадта шмат суполак з месцазнаходжаннем. Папрасіце яго выдаліць ці перадаць адну з ужо існуючых такіх суполак.</value>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>Месцазнаходжанне вызначаецца IP-адрасам</value>
   </data>
   <data name="LocationNotifiation" xml:space="preserve">
     <value>Абвестка аб збліжэнні</value>
@@ -7333,7 +7485,7 @@
   <data name="MegaUsernameHelp" xml:space="preserve">
     <value>Калі вы прызначыце публічную спасылку, іншыя карыстальнікі могуць адшукаць вашу суполку і далучыцца да яе.
 
-Вы можаце выкарыстоўваць a-z, 0-9 і сімвалы падкрэслівання. 
+Выкарыстоўвайце a-z, 0-9 і сімвалы падкрэслівання. 
 Мінімальная даўжыня — 5 сімвалаў.</value>
   </data>
   <data name="MemberRequests" xml:space="preserve">
@@ -7576,6 +7728,24 @@
   <data name="MessagesDeletedHint_zero" xml:space="preserve">
     <value/>
   </data>
+  <data name="MessagesDeletedUndo_few" xml:space="preserve">
+    <value>Паведамленні за {0} дні выдалены</value>
+  </data>
+  <data name="MessagesDeletedUndo_many" xml:space="preserve">
+    <value>Паведамленні за {0} дзён выдалены</value>
+  </data>
+  <data name="MessagesDeletedUndo_one" xml:space="preserve">
+    <value>Паведамленні за {0} дзень выдалены</value>
+  </data>
+  <data name="MessagesDeletedUndo_other" xml:space="preserve">
+    <value>Паведамленні за {0} дня выдалены</value>
+  </data>
+  <data name="MessagesDeletedUndo_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagesDeletedUndo_zero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="MessageSeen_few" xml:space="preserve">
     <value>{0} прачыталі</value>
   </data>
@@ -7657,6 +7827,23 @@
   <data name="Mi" xml:space="preserve">
     <value>мілі</value>
   </data>
+  <data name="MigrateOldFolderButton" xml:space="preserve">
+    <value>Перанесці файлы</value>
+  </data>
+  <data name="MigrateOldFolderDescription" xml:space="preserve">
+    <value>Праз змены, зробленыя кампаніяй **Google**, нам неабходна перанесці файлы, якія вы спампавалі праз **Telegram**, у новую папку.
+
+Гэта можа заняць некалькі хвілін. Вы можаце працягнуць карыстацца праграмай падчас пераносу файлаў.</value>
+  </data>
+  <data name="MigrateOldFolderTitle" xml:space="preserve">
+    <value>Перанос файлаў у абмежаванае сховішча</value>
+  </data>
+  <data name="MigratingFiles" xml:space="preserve">
+    <value>Перанос файлаў</value>
+  </data>
+  <data name="MigrationNotification" xml:space="preserve">
+    <value>Перанос</value>
+  </data>
   <data name="MilesAway" xml:space="preserve">
     <value>{0} міль ад вас</value>
   </data>
@@ -7719,6 +7906,15 @@
   </data>
   <data name="MinutesSchedule_zero" xml:space="preserve">
     <value/>
+  </data>
+  <data name="MissedCallDescriptionSubtitle" xml:space="preserve">
+    <value>На працягу наступных некалькіх секунд вы павінны атрымаць кароткі выклік ад:</value>
+  </data>
+  <data name="MissedCallDescriptionSubtitle2" xml:space="preserve">
+    <value>Увядзіце апошнія лічбы нумара, з якога быў выклік</value>
+  </data>
+  <data name="MissedCallDescriptionTitle" xml:space="preserve">
+    <value>Увядзіце прапушчаныя лічбы</value>
   </data>
   <data name="MobileHidden" xml:space="preserve">
     <value>Мабільны тэлефон схаваны</value>
@@ -7990,6 +8186,9 @@
   <data name="NobodyLikesSpam3" xml:space="preserve">
     <value>На жаль, зараз вы не можаце публікаваць паведамленні ў публічных суполках.</value>
   </data>
+  <data name="NobodyViewed" xml:space="preserve">
+    <value>Ніхто не праглядзеў</value>
+  </data>
   <data name="NoCallLog" xml:space="preserve">
     <value>Пакуль што няма выклікаў...</value>
   </data>
@@ -8075,6 +8274,9 @@
   </data>
   <data name="NoMessages" xml:space="preserve">
     <value>Пакуль тут няма паведамленняў...</value>
+  </data>
+  <data name="NoMessagesForThisDay" xml:space="preserve">
+    <value>Няма паведамленняў за гэты дзень</value>
   </data>
   <data name="NoMessagesGreetingsDescription" xml:space="preserve">
     <value>Адпраўце паведамленне або націсніце на прывітанне ніжэй.</value>
@@ -10808,6 +11010,27 @@ https://telegram.org/blog/coronavirus</value>
   <data name="Purple" xml:space="preserve">
     <value>Ліловы</value>
   </data>
+  <data name="PushChatReactContact" xml:space="preserve">
+    <value>{0}: {2} на ваш кантакт {3} у «{1}»</value>
+  </data>
+  <data name="PushChatReactGeoLive" xml:space="preserve">
+    <value>{0}: {2} на вашу трансляцыю месцазнаходжання «{1}»</value>
+  </data>
+  <data name="PushChatReactInvoice" xml:space="preserve">
+    <value>{0}: {2} на ваш рахунак у «{1}»</value>
+  </data>
+  <data name="PushChatReactNotext" xml:space="preserve">
+    <value>{0}: {2} на ваша паведамленне ў «{1}»</value>
+  </data>
+  <data name="PushChatReactSticker" xml:space="preserve">
+    <value>{0}: {2} на ваш стыкер {3} у «{1}»</value>
+  </data>
+  <data name="PushReactQuiz" xml:space="preserve">
+    <value>{0}: {1} на вашу віктарыну {2}</value>
+  </data>
+  <data name="QrCode" xml:space="preserve">
+    <value>QR-код</value>
+  </data>
   <data name="QRCodeLinkHelpChannel" xml:space="preserve">
     <value>Любы ў Telegram можа прасканаваць гэты код, каб далучыцца да вашага канала.</value>
   </data>
@@ -10888,6 +11111,12 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="RateCallVideoPixelated" xml:space="preserve">
     <value>Відэа нізкай якасці</value>
+  </data>
+  <data name="Reactions" xml:space="preserve">
+    <value>Рэакцыі</value>
+  </data>
+  <data name="ReactionsOff" xml:space="preserve">
+    <value>Адключаны</value>
   </data>
   <data name="Recent" xml:space="preserve">
     <value>Нядаўнія</value>
@@ -11350,6 +11579,15 @@ https://telegram.org/blog/coronavirus</value>
   <data name="Restrictions_zero" xml:space="preserve">
     <value/>
   </data>
+  <data name="RestrictSavingContent" xml:space="preserve">
+    <value>Абмежаваць захаванне змесціва</value>
+  </data>
+  <data name="RestrictSavingContentInfoChannel" xml:space="preserve">
+    <value>Падпісчыкі не змогуць капіяваць, захоўваць і перасылаць змесціва з гэтага канала.</value>
+  </data>
+  <data name="RestrictSavingContentInfoGroup" xml:space="preserve">
+    <value>Удзельнікі не змогуць капіяваць, захоўваць і перасылаць змесціва з гэтай суполкі.</value>
+  </data>
   <data name="Retry" xml:space="preserve">
     <value>Паўтарыць</value>
   </data>
@@ -11441,6 +11679,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="SaveToMusic" xml:space="preserve">
     <value>Захаваць у музыку</value>
   </data>
+  <data name="SavingContentTitle" xml:space="preserve">
+    <value>Захаванне змесціва</value>
+  </data>
   <data name="ScamMessage" xml:space="preserve">
     <value>МАХЛЯРСТВА</value>
   </data>
@@ -11483,7 +11724,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>Пошук фонаў</value>
   </data>
   <data name="SearchByColor" xml:space="preserve">
-    <value>Шукаць па колеру</value>
+    <value>Шукаць па колеры</value>
   </data>
   <data name="SearchEmojiHint" xml:space="preserve">
     <value>Шукаць эмодзі</value>
@@ -11689,6 +11930,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="SelectDays" xml:space="preserve">
     <value>Выбраць дні</value>
   </data>
+  <data name="SelectDaysTooltip" xml:space="preserve">
+    <value>Спачатку выберыце адзін або некалькі дзён.</value>
+  </data>
   <data name="SelectFile" xml:space="preserve">
     <value>Выберыце файл</value>
   </data>
@@ -11709,6 +11953,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="SelectTheme" xml:space="preserve">
     <value>Выбраць тэму</value>
+  </data>
+  <data name="SelectThisDay" xml:space="preserve">
+    <value>Абраць гэты дзень</value>
   </data>
   <data name="Send" xml:space="preserve">
     <value>Адправіць</value>
@@ -11894,6 +12141,12 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="SessionsInfo" xml:space="preserve">
     <value>Кіруйце вашымі сеансамі на іншых прыладах.</value>
+  </data>
+  <data name="SessionsListInfo" xml:space="preserve">
+    <value>Афіцыйная праграма Telegram даступная для iPhone, iPad, Android, macOS, Windows і Linux.</value>
+  </data>
+  <data name="SessionsSelfDestruct" xml:space="preserve">
+    <value>Аўтаматычна выходзіць праз</value>
   </data>
   <data name="SessionsTitle" xml:space="preserve">
     <value>Актыўныя сеансы</value>
@@ -12394,6 +12647,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="SpeedVerySlow" xml:space="preserve">
     <value>Вельмі павольна</value>
+  </data>
+  <data name="Spoiler" xml:space="preserve">
+    <value>Спойлер</value>
   </data>
   <data name="SponsoredMessage" xml:space="preserve">
     <value>ад спонсара</value>
@@ -12908,6 +13164,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="TerminateAllWebSessions" xml:space="preserve">
     <value>Адлучыць усе вэб-сайты</value>
   </data>
+  <data name="TerminateOldSessionHeader" xml:space="preserve">
+    <value>Аўтаматычна завяршаць старыя сеансы</value>
+  </data>
   <data name="TerminateSession" xml:space="preserve">
     <value>Скончыць сеанс</value>
   </data>
@@ -13126,7 +13385,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>Задаць спасылку</value>
   </data>
   <data name="ThemeSetUrlHelp" xml:space="preserve">
-    <value>Вы можаце выкарыстоўваць a-z, 0-9 і сімвалы падкрэслівання.
+    <value>Выкарыстоўвайце a-z, 0-9 і сімвалы падкрэслівання.
 Мінімальная даўжыня — 5 сімвалаў.</value>
   </data>
   <data name="ThemeUrl" xml:space="preserve">
@@ -13244,6 +13503,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="TotalDeviceSize" xml:space="preserve">
     <value>{0} Іншыя праграмы</value>
   </data>
+  <data name="TranslateMessage" xml:space="preserve">
+    <value>Перакласці</value>
+  </data>
   <data name="TurnPasswordOff" xml:space="preserve">
     <value>Адключыць пароль</value>
   </data>
@@ -13294,6 +13556,12 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="TypePrivateGroup" xml:space="preserve">
     <value>Прыватная</value>
+  </data>
+  <data name="TypePrivateGroupRestrictedForwards" xml:space="preserve">
+    <value>Прыватная, абмежаваная</value>
+  </data>
+  <data name="TypePrivateRestrictedForwards" xml:space="preserve">
+    <value>Прыватны, абмежаваны</value>
   </data>
   <data name="TypePublic" xml:space="preserve">
     <value>Публічны</value>
@@ -13457,6 +13725,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="UseDifferentThemeInfo" xml:space="preserve">
     <value>Вы таксама можаце выкарыстоўваць існуючую карыстальніцкую тэму як аснову для сваёй тэмы.</value>
   </data>
+  <data name="UseFileManger" xml:space="preserve">
+    <value>Выкарыстаць іншую праграму</value>
+  </data>
   <data name="UseLessDataAlways" xml:space="preserve">
     <value>Заўсёды</value>
   </data>
@@ -13562,7 +13833,7 @@ https://telegram.org/blog/coronavirus</value>
   <data name="UsernameHelp" xml:space="preserve">
     <value>Вы можаце выбраць імя карыстальніка ў **Telegram**. Калі вы зробіце гэта, карыстальнікі змогуць знайсці вас па ім і звязацца з вамі, не выкарыстоўваючы ваш нумар тэлефона.
 
-Вы можаце выкарыстоўваць **a–z**, **0–9** і сімвалы падкрэслівання. Мінімальная даўжыня — **5** сімвалаў.</value>
+Выкарыстоўвайце **a–z**, **0–9** і сімвалы падкрэслівання. Мінімальная даўжыня — **5** сімвалаў.</value>
   </data>
   <data name="UsernameHelpLink" xml:space="preserve">
     <value>Гэта спасылка адкрые чат з вамі:
