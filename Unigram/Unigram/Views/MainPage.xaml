@@ -152,7 +152,7 @@
             <microsoft:ProgressBar x:Name="State"
                                    VerticalAlignment="Top"
                                    Background="Transparent"
-                                   Grid.ColumnSpan="3" />
+                                   Grid.ColumnSpan="4" />
             <Canvas Width="16"
                     Height="14"
                     Margin="{ThemeResource ExpTitleBarPadding}"

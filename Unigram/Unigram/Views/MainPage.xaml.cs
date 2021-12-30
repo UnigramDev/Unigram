@@ -1783,6 +1783,11 @@ namespace Unigram.Views
                 //DialogsPanel.Visibility = Visibility.Collapsed;
                 ShowHideSearch(true);
 
+                if (string.Equals(ViewModel.Chats.Search?.Query, SearchField.Text))
+                {
+                    return;
+                }
+
                 if (ViewModel.Chats.SearchFilters.IsEmpty() && string.IsNullOrEmpty(SearchField.Text))
                 {
                     var top = ViewModel.Chats.TopChats = new TopChatsCollection(ViewModel.ProtoService, new TopChatCategoryUsers(), 30);
