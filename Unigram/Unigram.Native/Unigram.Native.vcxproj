@@ -128,12 +128,12 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PreprocessorDefinitions>_WINRT_DLL;NOMINMAX;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINRT_DLL;NOMINMAX;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;SAFTM_COMPACT_LOGGING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libwebp\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libwebp\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -147,12 +147,12 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PreprocessorDefinitions>_WINRT_DLL;NOMINMAX;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINRT_DLL;NOMINMAX;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;SAFTM_COMPACT_LOGGING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libwebp\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libwebp\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -166,12 +166,12 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PreprocessorDefinitions>_WINRT_DLL;NOMINMAX;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINRT_DLL;NOMINMAX;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;SAFTM_COMPACT_LOGGING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libwebp\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libwebp\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -185,12 +185,12 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PreprocessorDefinitions>_WINRT_DLL;NOMINMAX;NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINRT_DLL;NOMINMAX;NDEBUG;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;SAFTM_COMPACT_LOGGING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libwebp\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libwebp\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -204,12 +204,12 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PreprocessorDefinitions>_WINRT_DLL;NOMINMAX;NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINRT_DLL;NOMINMAX;NDEBUG;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;SAFTM_COMPACT_LOGGING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libwebp\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libwebp\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -223,12 +223,12 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PreprocessorDefinitions>_WINRT_DLL;NOMINMAX;NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINRT_DLL;NOMINMAX;NDEBUG;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;SAFTM_COMPACT_LOGGING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libwebp\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libwebp\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -257,6 +257,10 @@
     <ClInclude Include="Helpers\StringHelper.h" />
     <ClInclude Include="HttpProxyWatcher.h">
       <DependentUpon>HttpProxyWatcher.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="LanguageIdentification.h">
+      <DependentUpon>LanguageIdentification.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="libyuv\include\libyuv.h" />
@@ -307,6 +311,224 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\embedding-feature-extractor.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\embedding-feature-interface.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\embedding-network-params.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\embedding-network.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\fel\feature-descriptors.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\fel\feature-extractor.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\fel\feature-types.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\fel\fel-parser.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\fel\task-context.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\fel\workspace.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\file\file-utils.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\file\mmap.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\flatbuffers\embedding-network-params-from-flatbuffer.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\flatbuffers\embedding-network_generated.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\flatbuffers\model-utils.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\flatbuffers\model_generated.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\lite_base\attributes.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\lite_base\casts.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\lite_base\compact-logging-levels.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\lite_base\compact-logging-raw.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\lite_base\compact-logging.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\lite_base\endian.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\lite_base\float16.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\lite_base\integral-types.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\lite_base\logging.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\lite_base\macros.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\lite_strings\numbers.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\lite_strings\str-cat.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\lite_strings\str-split.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\lite_strings\stringpiece.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\math\algorithm.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\math\checksum.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\math\fastexp.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\math\hash.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\math\softmax.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\registry.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\stl-util.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\utf8.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\custom-tokenizer.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\fb_model\lang-id-from-fb.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\fb_model\model-provider-from-fb.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\features\char-ngram-feature.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\features\light-sentence-features.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\features\relevant-script-feature.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\lang-id-wrapper.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\lang-id.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\light-sentence.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\model-provider.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\script\approx-script-data.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\script\approx-script.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\script\script-detector.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\script\tiny-script-detector.h" />
+    <ClInclude Include="..\Libraries\libutf\runetypebody.h" />
+    <ClInclude Include="..\Libraries\libutf\utf.h" />
+    <ClInclude Include="..\Libraries\libutf\utfdef.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\common\embedding-feature-extractor.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\common\embedding-network-params.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\common\embedding-network.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\common\fel\feature-descriptors.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\common\fel\feature-extractor.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\common\fel\fel-parser.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\common\fel\task-context.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\common\fel\workspace.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\common\file\file-utils.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\common\file\mmap.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\common\flatbuffers\embedding-network-params-from-flatbuffer.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\common\flatbuffers\model-utils.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\common\lite_base\compact-logging-raw.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\common\lite_base\compact-logging.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\common\lite_strings\numbers.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\common\lite_strings\str-split.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\common\math\checksum.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\common\math\fastexp.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\common\math\hash.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\common\math\softmax.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\common\utf8.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\custom-tokenizer.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\fb_model\lang-id-from-fb.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\fb_model\model-provider-from-fb.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\features\char-ngram-feature.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\features\light-sentence-features.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\features\relevant-script-feature.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\lang-id-wrapper.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\lang-id.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\script\approx-script-data.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\script\approx-script.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\script\script-detector.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\script\tiny-script-detector.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libutf\rune.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libutf\runestrcat.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libutf\runestrchr.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libutf\runestrcmp.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libutf\runestrcpy.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libutf\runestrdup.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libutf\runestrecpy.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libutf\runestrlen.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libutf\runestrncat.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libutf\runestrncmp.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libutf\runestrncpy.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libutf\runestrrchr.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libutf\runestrstr.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libutf\runetype.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libutf\utfecpy.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libutf\utflen.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libutf\utfnlen.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libutf\utfrrune.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libutf\utfrune.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libutf\utfutf.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="AudioPitchEffect.cpp">
       <DependentUpon>AudioPitchEffect.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -321,6 +543,10 @@
     <ClCompile Include="Helpers\LibraryHelper.cpp" />
     <ClCompile Include="HttpProxyWatcher.cpp">
       <DependentUpon>HttpProxyWatcher.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="LanguageIdentification.cpp">
+      <DependentUpon>LanguageIdentification.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="libyuv\source\compare.cc">
@@ -501,6 +727,9 @@
     <Midl Include="Composition\CompositionDevice.idl" />
     <Midl Include="Composition\DirectRectangleClip.idl" />
     <Midl Include="HttpProxyWatcher.idl">
+      <SubType>Designer</SubType>
+    </Midl>
+    <Midl Include="LanguageIdentification.idl">
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="NativeUtils.idl" />
