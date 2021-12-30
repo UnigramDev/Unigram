@@ -521,10 +521,10 @@
     <value>Elenco messaggi fissati</value>
   </data>
   <data name="AccReleaseForArchive" xml:space="preserve">
-    <value>Rilascia per l’archivio</value>
+    <value>Rilascia per l'archivio</value>
   </data>
   <data name="AccSwipeForArchive" xml:space="preserve">
-    <value>Scorri in basso per l’archivio</value>
+    <value>Scorri in basso per l'archivio</value>
   </data>
   <data name="AccSwitchToFullscreen" xml:space="preserve">
     <value>Passa a schermo intero</value>
@@ -765,6 +765,11 @@
   </data>
   <data name="ActionPinnedVoice" xml:space="preserve">
     <value>un1 ha fissato un messaggio vocale</value>
+  </data>
+  <data name="ActionReactionsChanged" xml:space="preserve">
+    <value>un1 ha cambiato le reazioni nella chat
+da: {0} 
+a: {1}</value>
   </data>
   <data name="ActionRemovedPhoto" xml:space="preserve">
     <value>un1 ha rimosso la foto del gruppo</value>
@@ -1229,7 +1234,7 @@
     <value>Aggiorna Telegram</value>
   </data>
   <data name="AppUpdateChangelogEmpty" xml:space="preserve">
-    <value>**Cosa c’è di nuovo?**
+    <value>**Cosa c'è di nuovo?**
 
 • Risoluzione di problemi e miglioramenti.</value>
   </data>
@@ -1877,6 +1882,9 @@ automaticamente {0} dopo essere stati inviati.</value>
   <data name="AutomaticMediaDownload" xml:space="preserve">
     <value>Download automatico media</value>
   </data>
+  <data name="AutomaticTranslation" xml:space="preserve">
+    <value>Traduzione automatica</value>
+  </data>
   <data name="AutoNightAdaptive" xml:space="preserve">
     <value>Adattiva</value>
   </data>
@@ -1948,6 +1956,9 @@ Alba: {1}</value>
   </data>
   <data name="Available" xml:space="preserve">
     <value>Disponibile</value>
+  </data>
+  <data name="AvailableReactions" xml:space="preserve">
+    <value>Reazioni disponibili</value>
   </data>
   <data name="AwaitingEncryption" xml:space="preserve">
     <value>Attendo che {0} si colleghi...</value>
@@ -2043,7 +2054,7 @@ Alba: {1}</value>
     <value>Conta i messaggi non letti</value>
   </data>
   <data name="BanFromTheGroup" xml:space="preserve">
-    <value>RIMUOVI DAL GRUPPO</value>
+    <value>BANNA DAL GRUPPO</value>
   </data>
   <data name="BannedPhoneNumber" xml:space="preserve">
     <value>Questo numero è stato bloccato.</value>
@@ -2106,7 +2117,7 @@ Alba: {1}</value>
     <value/>
   </data>
   <data name="BlockedUsersInfo" xml:space="preserve">
-    <value>Gli utenti bloccati non potranno contattarti e non vedranno l'orario del tuo ultimo accesso.</value>
+    <value>Gli utenti bloccati non possono inviarti messaggi o aggiungerti ai gruppi. Non vedranno le tue foto del profilo, lo stato in linea e l'ultimo accesso.</value>
   </data>
   <data name="BlockUser" xml:space="preserve">
     <value>Blocca utente</value>
@@ -3258,6 +3269,9 @@ La lunghezza minima è 5 caratteri.</value>
   <data name="ChooseFromYourStickers" xml:space="preserve">
     <value>Scegli dai tuoi sticker</value>
   </data>
+  <data name="ChooseLanguages" xml:space="preserve">
+    <value>Scegli lingue</value>
+  </data>
   <data name="ChooseMapPreviewProvider" xml:space="preserve">
     <value>Scegli fornitore anteprima mappa</value>
   </data>
@@ -3383,6 +3397,9 @@ La lunghezza minima è 5 caratteri.</value>
   </data>
   <data name="CloseEditor" xml:space="preserve">
     <value>CHIUDI EDITOR</value>
+  </data>
+  <data name="CloseTranslation" xml:space="preserve">
+    <value>Chiudi traduzione</value>
   </data>
   <data name="Code" xml:space="preserve">
     <value>Codice</value>
@@ -3879,6 +3896,9 @@ Puoi sempre tornare al tema Telegram di default qui.</value>
     <value>
 Cancella i log</value>
   </data>
+  <data name="DebugDrawSnowInChat" xml:space="preserve">
+    <value>Neve nella chat</value>
+  </data>
   <data name="DebugMenu" xml:space="preserve">
     <value>Menu debug</value>
   </data>
@@ -4165,7 +4185,7 @@ Cancella i log</value>
     <value>Elimina il tema</value>
   </data>
   <data name="DeleteTheseChats" xml:space="preserve">
-    <value>Elimina la chat</value>
+    <value>Elimina le chat</value>
   </data>
   <data name="DeleteTheseChatsBothSides" xml:space="preserve">
     <value>Elimina la chat</value>
@@ -4378,8 +4398,23 @@ Chiunque dal canale potrà vedere i messaggi in questo gruppo.</value>
   <data name="DoNoSetTheme" xml:space="preserve">
     <value>Non impostare il tema</value>
   </data>
+  <data name="DoNotTranslate" xml:space="preserve">
+    <value>Non tradurre</value>
+  </data>
   <data name="DontAskAgain" xml:space="preserve">
     <value>Non chiedere più</value>
+  </data>
+  <data name="DoubleTapPreviewMessage" xml:space="preserve">
+    <value>Spero ti stia godendo questa giornata tanto quanto me.</value>
+  </data>
+  <data name="DoubleTapPreviewRational" xml:space="preserve">
+    <value>Tocca due volte un messaggio per aggiungere una reazione rapida.</value>
+  </data>
+  <data name="DoubleTapPreviewSenderName" xml:space="preserve">
+    <value>Dino</value>
+  </data>
+  <data name="DoubleTapSetting" xml:space="preserve">
+    <value>Reazione rapida</value>
   </data>
   <data name="Draft" xml:space="preserve">
     <value>Bozza</value>
@@ -4654,6 +4689,15 @@ Avrai bisogno della password che hai impostato per accedere al tuo account Teleg
   </data>
   <data name="EnableProxyAlert2" xml:space="preserve">
     <value>Puoi cambiare il tuo server proxy più tardi in Impostazioni > Dati e archivio.</value>
+  </data>
+  <data name="EnableReactions" xml:space="preserve">
+    <value>Attiva reazioni</value>
+  </data>
+  <data name="EnableReactionsChannelInfo" xml:space="preserve">
+    <value>Permetti agli iscritti di reagire ai post del canale.</value>
+  </data>
+  <data name="EnableReactionsGroupInfo" xml:space="preserve">
+    <value>Permetti ai membri di reagire ai messaggi del gruppo.</value>
   </data>
   <data name="EnableStreaming" xml:space="preserve">
     <value>Streaming file video e audio</value>
@@ -5536,7 +5580,7 @@ Durata: {1}</value>
     <value>Risultati finali</value>
   </data>
   <data name="FingerprintHelp" xml:space="preserve">
-    <value>Sensore touch</value>
+    <value>Tocca il sensore</value>
   </data>
   <data name="FingerprintInfo" xml:space="preserve">
     <value>Conferma impronta digitale per continuare</value>
@@ -6154,7 +6198,7 @@ su Telegram?</value>
     <value>Notifiche di gruppo</value>
   </data>
   <data name="GroupPhotosHelp" xml:space="preserve">
-    <value>Mostra i media come messaggio unico</value>
+    <value>Raggruppa i media in un messaggio</value>
   </data>
   <data name="Groups_few" xml:space="preserve">
     <value/>
@@ -6384,7 +6428,7 @@ Tieni presente che può comunque unirsi con il link d'invito del gruppo purché 
     <value>Chat importata con successo!</value>
   </data>
   <data name="ImportedInfo" xml:space="preserve">
-    <value>Messaggio importato da un’altra app. Non possiamo garantire che sia reale.</value>
+    <value>Messaggio importato da un'altra app. Non possiamo garantire che sia reale.</value>
   </data>
   <data name="ImportedMessage" xml:space="preserve">
     <value>Importato</value>
@@ -6417,7 +6461,7 @@ Tieni presente che può comunque unirsi con il link d'invito del gruppo purché 
     <value>Impossibile caricare il file.</value>
   </data>
   <data name="ImportFileTooLarge" xml:space="preserve">
-    <value>Il file è troppo grande per l’importazione.</value>
+    <value>Il file è troppo grande per l'importazione.</value>
   </data>
   <data name="ImportHeader" xml:space="preserve">
     <value>Importa messaggi e media in...</value>
@@ -6642,7 +6686,7 @@ I messaggi saranno importati nel giorno corrente ma includeranno anche date e 
     <value/>
   </data>
   <data name="InviteLinks" xml:space="preserve">
-    <value>Link d’invito</value>
+    <value>Link d'invito</value>
   </data>
   <data name="InviteRevokedHint" xml:space="preserve">
     <value>Questo link d'invito è stato revocato.</value>
@@ -6768,7 +6812,7 @@ I messaggi saranno importati nel giorno corrente ma includeranno anche date e 
     <value/>
   </data>
   <data name="IUnderstand" xml:space="preserve">
-    <value>Capisco</value>
+    <value>Ho capito</value>
   </data>
   <data name="IVInteractionsChartTitle" xml:space="preserve">
     <value>Interazioni AR</value>
@@ -6911,6 +6955,24 @@ Puoi cambiare la tua lingua in qualsiasi momento nelle Impostazioni.</value>
   </data>
   <data name="LanguageNameInEnglish" xml:space="preserve">
     <value>Italian</value>
+  </data>
+  <data name="Languages_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Languages_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Languages_one" xml:space="preserve">
+    <value>{0} lingua</value>
+  </data>
+  <data name="Languages_other" xml:space="preserve">
+    <value>{0} lingue</value>
+  </data>
+  <data name="Languages_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Languages_zero" xml:space="preserve">
+    <value/>
   </data>
   <data name="LanguageSame" xml:space="preserve">
     <value>Stai già usando questa lingua (**{0}**). Puoi cambiare la tua lingua in qualsiasi momento nelle Impostazioni.</value>
@@ -7844,6 +7906,23 @@ La lunghezza minima è 5 caratteri.</value>
   <data name="Mi" xml:space="preserve">
     <value>mi</value>
   </data>
+  <data name="MigrateOldFolderButton" xml:space="preserve">
+    <value>Sposta i file ora</value>
+  </data>
+  <data name="MigrateOldFolderDescription" xml:space="preserve">
+    <value>A causa di un cambiamento fatto da **Google**, abbiamo bisogno di spostare i file che hai scaricato usando **Telegram** in una nuova cartella.
+
+Questo potrebbe richiedere qualche istante. Puoi continuare ad usare l'app mentre i file vengono spostati.</value>
+  </data>
+  <data name="MigrateOldFolderTitle" xml:space="preserve">
+    <value>Sposta i file nell'archivio scoped</value>
+  </data>
+  <data name="MigratingFiles" xml:space="preserve">
+    <value>Spostamento file</value>
+  </data>
+  <data name="MigrationNotification" xml:space="preserve">
+    <value>Migrazione</value>
+  </data>
   <data name="MilesAway" xml:space="preserve">
     <value>distante {0} miglia</value>
   </data>
@@ -7908,7 +7987,7 @@ La lunghezza minima è 5 caratteri.</value>
     <value/>
   </data>
   <data name="MissedCallDescriptionSubtitle" xml:space="preserve">
-    <value>Nei prossimi istanti dovresti ricevere una breve chiamata da:</value>
+    <value>Tra pochi secondi dovresti ricevere una breve chiamata da:</value>
   </data>
   <data name="MissedCallDescriptionSubtitle2" xml:space="preserve">
     <value>Per favore inserisci le ultime cifre del numero che ha chiamato</value>
@@ -8186,6 +8265,9 @@ La lunghezza minima è 5 caratteri.</value>
   <data name="NobodyLikesSpam3" xml:space="preserve">
     <value>Spiacenti, al momento ti è vietato pubblicare nei gruppi pubblici.</value>
   </data>
+  <data name="NobodyViewed" xml:space="preserve">
+    <value>Nessuno ha letto</value>
+  </data>
   <data name="NoCallLog" xml:space="preserve">
     <value>Ancora nessuna chiamata...</value>
   </data>
@@ -8249,7 +8331,7 @@ Puoi personalizzare le notifiche per una chat aprendo il suo profilo e scegliend
     <value>∞</value>
   </data>
   <data name="NoMailInstalled" xml:space="preserve">
-    <value>Per favore invia un’email descrivendo il problema a reports@stel.com</value>
+    <value>Per favore invia un'email descrivendo il problema a reports@stel.com</value>
   </data>
   <data name="NoMasks" xml:space="preserve">
     <value>Ancora nessuna maschera</value>
@@ -9182,7 +9264,7 @@ velocemente di qualsiasi altra app.</value>
     <value>Veloce</value>
   </data>
   <data name="Page3Message" xml:space="preserve">
-    <value>**Telegram** sarà sempre gratuito.
+    <value>**Telegram** è gratis per sempre.
 Nessuna pubblicità. Nessun abbonamento.</value>
   </data>
   <data name="Page3Title" xml:space="preserve">
@@ -11007,6 +11089,105 @@ Accederemo alla tua posizione solo per la durata da te scelta, e potrai smettere
   <data name="Purple" xml:space="preserve">
     <value>Viola</value>
   </data>
+  <data name="PushChatReactAudio" xml:space="preserve">
+    <value>{0}: ha reagito con {2} al tuo messaggio vocale in {1}</value>
+  </data>
+  <data name="PushChatReactContact" xml:space="preserve">
+    <value>{0}: ha reagito con {2} al tuo contatto "{3}" in {1}</value>
+  </data>
+  <data name="PushChatReactDoc" xml:space="preserve">
+    <value>{0}: ha reagito con {2} al tuo file in {1}</value>
+  </data>
+  <data name="PushChatReactGame" xml:space="preserve">
+    <value>{0}: ha reagito con {2} al tuo gioco in {1}</value>
+  </data>
+  <data name="PushChatReactGeo" xml:space="preserve">
+    <value>{0}: ha reagito con {2} alla tua posizione in {1}</value>
+  </data>
+  <data name="PushChatReactGeoLive" xml:space="preserve">
+    <value>{0}: ha reagito con {2} alla tua posizione in tempo reale in {1}</value>
+  </data>
+  <data name="PushChatReactGif" xml:space="preserve">
+    <value>{0}: ha reagito con {2} alla tua GIF in {1}</value>
+  </data>
+  <data name="PushChatReactInvoice" xml:space="preserve">
+    <value>{0}: ha reagito con {2} alla tua fattura in {1}</value>
+  </data>
+  <data name="PushChatReactNotext" xml:space="preserve">
+    <value>{0}: ha reagito con {2} al tuo messaggio in {1}</value>
+  </data>
+  <data name="PushChatReactPhoto" xml:space="preserve">
+    <value>{0}: ha reagito con {2} alla tua foto in {1}</value>
+  </data>
+  <data name="PushChatReactPoll" xml:space="preserve">
+    <value>{0}: ha reagito con {2} al tuo sondaggio "{3}" in {1}</value>
+  </data>
+  <data name="PushChatReactQuiz" xml:space="preserve">
+    <value>{0}: ha reagito con {2} al tuo quiz "{3}" in {1}</value>
+  </data>
+  <data name="PushChatReactRound" xml:space="preserve">
+    <value>{0}: ha reagito con {2} al tuo videomessaggio in {1}</value>
+  </data>
+  <data name="PushChatReactSticker" xml:space="preserve">
+    <value>{0}: ha reagito con {2} al tuo sticker {3} in {1}</value>
+  </data>
+  <data name="PushChatReactText" xml:space="preserve">
+    <value>{0}: ha reagito con {2} in {1} al tuo "{3}"</value>
+  </data>
+  <data name="PushChatReactVideo" xml:space="preserve">
+    <value>{0}: ha reagito con {2} al tuo video in {1}</value>
+  </data>
+  <data name="PushReactAudio" xml:space="preserve">
+    <value>{0}: ha reagito con {1} al tuo messaggio vocale</value>
+  </data>
+  <data name="PushReactContect" xml:space="preserve">
+    <value>{0}: ha reagito con {1} al tuo contatto "{2}"</value>
+  </data>
+  <data name="PushReactDoc" xml:space="preserve">
+    <value>{0}: ha reagito con {1} al tuo file</value>
+  </data>
+  <data name="PushReactGame" xml:space="preserve">
+    <value>{0}: ha reagito con {1} al tuo gioco</value>
+  </data>
+  <data name="PushReactGeo" xml:space="preserve">
+    <value>{0}: ha reagito con {1} alla tua posizione</value>
+  </data>
+  <data name="PushReactGeoLocation" xml:space="preserve">
+    <value>{0}: ha reagito con {1} alla tua posizione in tempo reale</value>
+  </data>
+  <data name="PushReactGif" xml:space="preserve">
+    <value>{0}: ha reagito con {1} alla tua GIF</value>
+  </data>
+  <data name="PushReactInvoice" xml:space="preserve">
+    <value>{0}: ha reagito con {1} alla tua fattura</value>
+  </data>
+  <data name="PushReactNoText" xml:space="preserve">
+    <value>{0}: ha reagito con {1} al tuo messaggio</value>
+  </data>
+  <data name="PushReactPhoto" xml:space="preserve">
+    <value>{0}: ha reagito con {1} alla tua foto</value>
+  </data>
+  <data name="PushReactPoll" xml:space="preserve">
+    <value>{0}: ha reagito con {1} al tuo sondaggio "{2}"</value>
+  </data>
+  <data name="PushReactQuiz" xml:space="preserve">
+    <value>{0}: ha reagito con {1} al tuo quiz "{2}"</value>
+  </data>
+  <data name="PushReactRound" xml:space="preserve">
+    <value>{0}: ha reagito con {1} al tuo videomessaggio</value>
+  </data>
+  <data name="PushReactSticker" xml:space="preserve">
+    <value>{0}: ha reagito con {1} al tuo sticker {2}</value>
+  </data>
+  <data name="PushReactText" xml:space="preserve">
+    <value>{0}: ha reagito con {1} al tuo "{2}"</value>
+  </data>
+  <data name="PushReactVideo" xml:space="preserve">
+    <value>{0}: ha reagito con {1} al tuo video</value>
+  </data>
+  <data name="QrCode" xml:space="preserve">
+    <value>Codice QR</value>
+  </data>
   <data name="QRCodeLinkHelpChannel" xml:space="preserve">
     <value>Chiunque su Telegram può scansionare questo codice per unirsi al tuo canale.</value>
   </data>
@@ -11041,7 +11222,7 @@ Accederemo alla tua posizione solo per la durata da te scelta, e potrai smettere
     <value>Risposte quiz</value>
   </data>
   <data name="QuizInfo" xml:space="preserve">
-    <value>I sondaggi in modalità quiz hanno una risposta corretta. Gli utenti non possono ritirare le loro risposte.</value>
+    <value>I sondaggi in modalità quiz hanno una risposta corretta. Gli utenti non possono revocare le loro risposte.</value>
   </data>
   <data name="QuizPoll" xml:space="preserve">
     <value>Quiz</value>
@@ -11087,6 +11268,48 @@ Accederemo alla tua posizione solo per la durata da te scelta, e potrai smettere
   </data>
   <data name="RateCallVideoPixelated" xml:space="preserve">
     <value>Il video era pixellato</value>
+  </data>
+  <data name="Reacted_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Reacted_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Reacted_one" xml:space="preserve">
+    <value>{0} ha reagito</value>
+  </data>
+  <data name="Reacted_other" xml:space="preserve">
+    <value>{0} hanno reagito</value>
+  </data>
+  <data name="Reacted_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Reacted_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Reactions" xml:space="preserve">
+    <value>Reazioni</value>
+  </data>
+  <data name="ReactionsCount_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ReactionsCount_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ReactionsCount_one" xml:space="preserve">
+    <value>{0} reazione</value>
+  </data>
+  <data name="ReactionsCount_other" xml:space="preserve">
+    <value>{0} reazioni</value>
+  </data>
+  <data name="ReactionsCount_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ReactionsCount_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ReactionsOff" xml:space="preserve">
+    <value>Disattivate</value>
   </data>
   <data name="Recent" xml:space="preserve">
     <value>Recenti</value>
@@ -12476,6 +12699,9 @@ Non rispondere alla chiamata, Telegram farà tutto in automatico.</value>
   <data name="ShowStickers" xml:space="preserve">
     <value>Mostra sticker</value>
   </data>
+  <data name="ShowTranslateButton" xml:space="preserve">
+    <value>Mostra pulsante Traduci</value>
+  </data>
   <data name="ShowVotes_few" xml:space="preserve">
     <value/>
   </data>
@@ -12618,6 +12844,9 @@ La modalità lenta è attiva. Non puoi inviare più di un messaggio alla volta.<
   </data>
   <data name="SpeedVerySlow" xml:space="preserve">
     <value>Molto lenta</value>
+  </data>
+  <data name="Spoiler" xml:space="preserve">
+    <value>Spoiler</value>
   </data>
   <data name="SponsoredMessage" xml:space="preserve">
     <value>sponsorizzato</value>
@@ -12782,7 +13011,7 @@ Le pubblicità online non dovrebbero più essere sinonimo di abuso della privacy
     <value>Archivia</value>
   </data>
   <data name="StickersName" xml:space="preserve">
-    <value>Sticker e maschere</value>
+    <value>Sticker ed emoji</value>
   </data>
   <data name="StickersRemove" xml:space="preserve">
     <value>Rimuovi</value>
@@ -13467,6 +13696,27 @@ Ma se in genere non sei d'accordo con le modeste esigenze di Telegram, non sarà
   <data name="TotalDeviceSize" xml:space="preserve">
     <value>{0} Altre app</value>
   </data>
+  <data name="TranslateMessage" xml:space="preserve">
+    <value>Traduci</value>
+  </data>
+  <data name="TranslateMessages" xml:space="preserve">
+    <value>Traduci i messaggi</value>
+  </data>
+  <data name="TranslateMessagesInfo1" xml:space="preserve">
+    <value>Il pulsante ‘Traduci’ apparirà con un singolo tocco su un messaggio di testo.</value>
+  </data>
+  <data name="TranslateMessagesInfo2" xml:space="preserve">
+    <value>Google potrebbe avere accesso ai messaggi che traduci.</value>
+  </data>
+  <data name="TranslateMore" xml:space="preserve">
+    <value>Traduci di più...</value>
+  </data>
+  <data name="TranslationFailedAlert1" xml:space="preserve">
+    <value>Traduzione fallita. Riprova più tardi.</value>
+  </data>
+  <data name="TranslationFailedAlert2" xml:space="preserve">
+    <value>Traduzione fallita.</value>
+  </data>
   <data name="TurnPasswordOff" xml:space="preserve">
     <value>Disattiva password</value>
   </data>
@@ -13552,7 +13802,7 @@ Ma se in genere non sei d'accordo con le modeste esigenze di Telegram, non sarà
     <value>Sblocca</value>
   </data>
   <data name="UnblockText" xml:space="preserve">
-    <value>Tieni premuto sull’utente per sbloccarlo.</value>
+    <value>Tieni premuto sull'utente per sbloccarlo.</value>
   </data>
   <data name="Underline" xml:space="preserve">
     <value>Sottolineato</value>
@@ -14802,7 +15052,7 @@ I partecipanti vedranno che la chat viene registrata.</value>
     <value>Al momento non sei in linea. Connettiti a Internet per chiamare.</value>
   </data>
   <data name="VoipOfflineAirplane" xml:space="preserve">
-    <value>Al momento hai la modalità aereo attivata. Per favore disattivala o connettiti a una rete Wi-Fi per chiamare.</value>
+    <value>Al momento la modalità aereo è attiva. Per favore disattivala o connettiti a una rete Wi-Fi per chiamare.</value>
   </data>
   <data name="VoipOfflineAirplaneTitle" xml:space="preserve">
     <value>Modalità aereo</value>
@@ -14937,7 +15187,7 @@ I partecipanti vedranno che la chat viene registrata.</value>
     <value>Il microfono di {0} è spento</value>
   </data>
   <data name="VoipVideoNotAvailable" xml:space="preserve">
-    <value>Per vedere la trasmissione video, 
+    <value>Per vedere la trasmissione video,
 aggiorna Telegram all'ultima versione.</value>
   </data>
   <data name="VoipVideoNotAvailableAdmin" xml:space="preserve">

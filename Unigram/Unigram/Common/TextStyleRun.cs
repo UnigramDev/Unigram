@@ -92,10 +92,11 @@ namespace Unigram.Common
                 {
                     newRun.Flags = TextStyle.Underline;
                 }
-                //else if (entity.Type is TextEntityTypeBlockQuote)
-                //{
-                //    newRun.Flags = TextStyle.BlockQuote;
-                //}
+                else if (entity.Type is TextEntityTypeSpoiler)
+                {
+                    newRun.Flags = TextStyle.Spoiler;
+                    newRun.Type = entity.Type;
+                }
                 else if (entity.Type is TextEntityTypeBold)
                 {
                     newRun.Flags = TextStyle.Bold;
@@ -253,6 +254,10 @@ namespace Unigram.Common
                     {
                         CreateOrMerge(run.Offset, run.Length, results, new TextEntityTypeUnderline());
                     }
+                    if (run.HasFlag(TextStyle.Spoiler))
+                    {
+                        CreateOrMerge(run.Offset, run.Length, results, new TextEntityTypeSpoiler());
+                    }
 
                     if (run.Type != null)
                     {
@@ -300,7 +305,7 @@ namespace Unigram.Common
         Monospace = 4,
         Strikethrough = 8,
         Underline = 16,
-        //BlockQuote = 32,
+        Spoiler = 32,
         Mention = 64,
         Url = 128
     }

@@ -14,6 +14,7 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Storage.Streams;
 using Windows.System;
+using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
@@ -51,6 +52,7 @@ namespace Unigram.Controls
             CreateKeyboardAccelerator(VirtualKey.U);
             CreateKeyboardAccelerator(VirtualKey.X, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
             CreateKeyboardAccelerator(VirtualKey.M, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
+            CreateKeyboardAccelerator(VirtualKey.P, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
             CreateKeyboardAccelerator(VirtualKey.K);
             CreateKeyboardAccelerator(VirtualKey.N, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
 
@@ -256,6 +258,7 @@ namespace Unigram.Controls
             formatting.CreateFlyoutItem(length && format.Underline == UnderlineType.None, ContextUnderline_Click, Strings.Resources.Underline, new FontIcon { Glyph = Icons.TextUnderline }, VirtualKey.U);
             formatting.CreateFlyoutItem(length && format.Strikethrough == FormatEffect.Off, ContextStrikethrough_Click, Strings.Resources.Strike, new FontIcon { Glyph = Icons.TextStrikethrough, FontFamily = Navigation.BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily }, VirtualKey.X, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
             formatting.CreateFlyoutItem(length && format.Name != "Consolas", ContextMonospace_Click, Strings.Resources.Mono, new FontIcon { Glyph = Icons.Code }, VirtualKey.M, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
+            formatting.CreateFlyoutItem(length && format.BackgroundColor != Colors.Gray, ContextSpoiler_Click, Strings.Resources.Spoiler, new FontIcon { Glyph = Icons.TabInPrivate }, VirtualKey.P, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
             formatting.Items.Add(new MenuFlyoutSeparator());
             formatting.CreateFlyoutItem(!mention, ContextLink_Click, clone.Link.Length > 0 ? "Edit link" : Strings.Resources.CreateLink, new FontIcon { Glyph = Icons.Link }, VirtualKey.K);
             formatting.Items.Add(new MenuFlyoutSeparator());
@@ -392,6 +395,26 @@ namespace Unigram.Controls
             Document.BatchDisplayUpdates();
             ClearStyle(Document.Selection, true);
             Document.Selection.CharacterFormat.Name = "Consolas";
+            Document.ApplyDisplayUpdates();
+
+            _formatting?.Update(Document.Selection.CharacterFormat);
+        }
+
+        public void ToggleSpoiler()
+        {
+            ContextSpoiler_Click();
+        }
+
+        private void ContextSpoiler_Click()
+        {
+            //if (Math.Abs(Document.Selection.Length) < 1)
+            //{
+            //    return;
+            //}
+
+            Document.BatchDisplayUpdates();
+            ClearStyle(Document.Selection, true);
+            Document.Selection.CharacterFormat.BackgroundColor = Colors.Gray;
             Document.ApplyDisplayUpdates();
 
             _formatting?.Update(Document.Selection.CharacterFormat);
@@ -690,6 +713,10 @@ namespace Unigram.Controls
             {
                 ContextMonospace_Click();
             }
+            else if (sender.Key == VirtualKey.P && sender.Modifiers == (VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift) && length && format.Name != "Consolas")
+            {
+                ContextSpoiler_Click();
+            }
             else if (sender.Key == VirtualKey.K && sender.Modifiers == VirtualKeyModifiers.Control)
             {
                 ContextLink_Click();
@@ -758,6 +785,10 @@ namespace Unigram.Controls
                     if (range.CharacterFormat.Underline == UnderlineType.Single)
                     {
                         flags |= TextStyle.Underline;
+                    }
+                    if (range.CharacterFormat.BackgroundColor == Colors.Gray)
+                    {
+                        flags |= TextStyle.Spoiler;
                     }
 
                     if (range.Link.Length > 0 && TryGetEntityType(range.Link, out type))
@@ -901,6 +932,10 @@ namespace Unigram.Controls
                         else if (entity.Type is TextEntityTypeStrikethrough)
                         {
                             range.CharacterFormat.Strikethrough = FormatEffect.On;
+                        }
+                        else if (entity.Type is TextEntityTypeSpoiler)
+                        {
+                            range.CharacterFormat.BackgroundColor = Colors.Gray;
                         }
                         else if (entity.Type is TextEntityTypeCode or TextEntityTypePre or TextEntityTypePreCode)
                         {

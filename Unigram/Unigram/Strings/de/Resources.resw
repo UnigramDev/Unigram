@@ -766,6 +766,11 @@
   <data name="ActionPinnedVoice" xml:space="preserve">
     <value>un1 hat eine Sprachnachricht angeheftet</value>
   </data>
+  <data name="ActionReactionsChanged" xml:space="preserve">
+    <value>un1 hat Reaktionen im Chat geändert 
+von: {0} 
+auf: {1}</value>
+  </data>
   <data name="ActionRemovedPhoto" xml:space="preserve">
     <value>un1 hat das Gruppenbild entfernt</value>
   </data>
@@ -917,7 +922,7 @@
     <value>Kontakt hinzufügen</value>
   </data>
   <data name="AddedBy" xml:space="preserve">
-    <value>hinzugefügt von  {0} {1}</value>
+    <value>hinzugefügt von {0} {1}</value>
   </data>
   <data name="AddedToFavorites" xml:space="preserve">
     <value>Sticker wurde Favoriten hinzugefügt</value>
@@ -1882,6 +1887,9 @@ Versand gelöscht.</value>
   <data name="AutomaticMediaDownload" xml:space="preserve">
     <value>Automatischer Mediendownload</value>
   </data>
+  <data name="AutomaticTranslation" xml:space="preserve">
+    <value>Automatische Übersetzung</value>
+  </data>
   <data name="AutoNightAdaptive" xml:space="preserve">
     <value>Anpassbar</value>
   </data>
@@ -1954,6 +1962,9 @@ um Ton einzuschalten.</value>
   </data>
   <data name="Available" xml:space="preserve">
     <value>Verfügbar</value>
+  </data>
+  <data name="AvailableReactions" xml:space="preserve">
+    <value>Verfügbare Reaktionen</value>
   </data>
   <data name="AwaitingEncryption" xml:space="preserve">
     <value>Warte, bis {0} online geht...</value>
@@ -2112,7 +2123,7 @@ um Ton einzuschalten.</value>
     <value/>
   </data>
   <data name="BlockedUsersInfo" xml:space="preserve">
-    <value>Blockierte Nutzer können dich nicht kontaktieren und sehen deine "zuletzt gesehen"-Zeit nicht.</value>
+    <value>Blockierte Nutzer sehen weder dein Profilbild, noch deinen Zeitstempel. Sie können dir keine Nachricht im Einzelchat senden oder dich Gruppen hinzufügen. </value>
   </data>
   <data name="BlockUser" xml:space="preserve">
     <value>Nutzer blockieren</value>
@@ -3265,6 +3276,9 @@ um es zu verstecken.</value>
   <data name="ChooseFromYourStickers" xml:space="preserve">
     <value>Sticker-Paket auswählen</value>
   </data>
+  <data name="ChooseLanguages" xml:space="preserve">
+    <value>Sprachen wählen</value>
+  </data>
   <data name="ChooseMapPreviewProvider" xml:space="preserve">
     <value>Anbieter der Kartenvorschau</value>
   </data>
@@ -3390,6 +3404,9 @@ um es zu verstecken.</value>
   </data>
   <data name="CloseEditor" xml:space="preserve">
     <value>EDITOR SCHLIESSEN</value>
+  </data>
+  <data name="CloseTranslation" xml:space="preserve">
+    <value>Übersetzung schließen</value>
   </data>
   <data name="Code" xml:space="preserve">
     <value>Code</value>
@@ -3885,6 +3902,9 @@ Jederzeit kannst du hier zum Standard-Farbthema von Telegram zurückkehren.</val
   </data>
   <data name="DebugClearLogs" xml:space="preserve">
     <value>Protokolldateien leeren</value>
+  </data>
+  <data name="DebugDrawSnowInChat" xml:space="preserve">
+    <value>Schnee im Chat</value>
   </data>
   <data name="DebugMenu" xml:space="preserve">
     <value>Debug-Menü</value>
@@ -4386,8 +4406,23 @@ Jeder aus dem Kanal wird Nachrichten in dieser Gruppe sehen.</value>
   <data name="DoNoSetTheme" xml:space="preserve">
     <value>Kein Farbthema festlegen</value>
   </data>
+  <data name="DoNotTranslate" xml:space="preserve">
+    <value>Nicht übersetzen</value>
+  </data>
   <data name="DontAskAgain" xml:space="preserve">
     <value>Nicht mehr fragen</value>
+  </data>
+  <data name="DoubleTapPreviewMessage" xml:space="preserve">
+    <value>Ich hoffe, dir geht es genauso gut wie mir.</value>
+  </data>
+  <data name="DoubleTapPreviewRational" xml:space="preserve">
+    <value>Tippe doppelt auf die Nachricht, um zu reagieren.</value>
+  </data>
+  <data name="DoubleTapPreviewSenderName" xml:space="preserve">
+    <value>Dino</value>
+  </data>
+  <data name="DoubleTapSetting" xml:space="preserve">
+    <value>Schnelle Reaktion</value>
   </data>
   <data name="Draft" xml:space="preserve">
     <value>Entwurf</value>
@@ -4662,6 +4697,15 @@ Wenn du dich bei Telegram anmeldest, brauchst du dein Passwort.</value>
   </data>
   <data name="EnableProxyAlert2" xml:space="preserve">
     <value>Du kannst deinen Proxyserver später in den Einstellungen (unter Daten und Speicher) ändern.</value>
+  </data>
+  <data name="EnableReactions" xml:space="preserve">
+    <value>Reaktionen aktivieren</value>
+  </data>
+  <data name="EnableReactionsChannelInfo" xml:space="preserve">
+    <value>Abonnenten dürfen auf Kanalbeiträge reagieren.</value>
+  </data>
+  <data name="EnableReactionsGroupInfo" xml:space="preserve">
+    <value>Erlaube Mitgliedern auf Nachrichten der Gruppe zu reagieren.</value>
   </data>
   <data name="EnableStreaming" xml:space="preserve">
     <value>Videos und Audios streamen</value>
@@ -6924,6 +6968,24 @@ Die Sprache lässt sich jederzeit wieder in den Einstellungen ändern.</value>
   <data name="LanguageNameInEnglish" xml:space="preserve">
     <value>German</value>
   </data>
+  <data name="Languages_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Languages_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Languages_one" xml:space="preserve">
+    <value>{0} Sprache</value>
+  </data>
+  <data name="Languages_other" xml:space="preserve">
+    <value>{0} Sprachen</value>
+  </data>
+  <data name="Languages_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Languages_zero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="LanguageSame" xml:space="preserve">
     <value>Du benutzt bereits das Sprachpaket (**{0}**). In den Einstellungen kannst du die Sprache jederzeit wieder ändern.</value>
   </data>
@@ -7282,7 +7344,7 @@ Hinweis: Der Vorgang kann mehrere Minuten dauern.</value>
     <value>Niemals entfernen</value>
   </data>
   <data name="LowDiskSpaceTitle" xml:space="preserve">
-    <value>Achtung</value>
+    <value>Warnung</value>
   </data>
   <data name="LowDiskSpaceTitle2" xml:space="preserve">
     <value>Entferne Medien nach</value>
@@ -7856,6 +7918,23 @@ Die Mindestlänge beträgt 5 Zeichen.</value>
   <data name="Mi" xml:space="preserve">
     <value>mi</value>
   </data>
+  <data name="MigrateOldFolderButton" xml:space="preserve">
+    <value>Jetzt Dateien verschieben</value>
+  </data>
+  <data name="MigrateOldFolderDescription" xml:space="preserve">
+    <value>Aufgrund einer Änderung von **Google** müssen wir die Dateien, die du mit **Telegram** heruntergeladen hast, in einen neuen Ordner verschieben.
+
+Das kann einen kurzen Moment dauern. Du kannst die App weiter benutzen, während die Dateien verschoben werden.</value>
+  </data>
+  <data name="MigrateOldFolderTitle" xml:space="preserve">
+    <value>Verschiebe Daten in den Scoped Storage</value>
+  </data>
+  <data name="MigratingFiles" xml:space="preserve">
+    <value>Verschiebe Dateien</value>
+  </data>
+  <data name="MigrationNotification" xml:space="preserve">
+    <value>Übertragung</value>
+  </data>
   <data name="MilesAway" xml:space="preserve">
     <value>{0} mi entfernt</value>
   </data>
@@ -8197,6 +8276,9 @@ Die Mindestlänge beträgt 5 Zeichen.</value>
   </data>
   <data name="NobodyLikesSpam3" xml:space="preserve">
     <value>Leider kannst du derzeit nichts in öffentlichen Gruppen veröffentlichen.</value>
+  </data>
+  <data name="NobodyViewed" xml:space="preserve">
+    <value>Keiner hat es angesehen</value>
   </data>
   <data name="NoCallLog" xml:space="preserve">
     <value>Du hast noch keine Anrufe geführt.</value>
@@ -11029,6 +11111,105 @@ Wenn du mehr Ordnung brauchst, versuche einige Chats zu archivieren. Der Ordner 
   <data name="Purple" xml:space="preserve">
     <value>Violett</value>
   </data>
+  <data name="PushChatReactAudio" xml:space="preserve">
+    <value>{0} reagierte mit {2} auf deine Sprachnachricht in {1}</value>
+  </data>
+  <data name="PushChatReactContact" xml:space="preserve">
+    <value>{0} reagierte mit {2} auf deinen Kontakt {3} in {1}</value>
+  </data>
+  <data name="PushChatReactDoc" xml:space="preserve">
+    <value>{0} reagierte mit {2} auf deine Datei in {1}</value>
+  </data>
+  <data name="PushChatReactGame" xml:space="preserve">
+    <value>{0} reagierte mit {2} auf dein Spiel in {1}</value>
+  </data>
+  <data name="PushChatReactGeo" xml:space="preserve">
+    <value>{0} reagierte mit {2} auf deine Karte in {1}</value>
+  </data>
+  <data name="PushChatReactGeoLive" xml:space="preserve">
+    <value>{0} reagierte mit {2} auf deinen Live-Standort in {1}</value>
+  </data>
+  <data name="PushChatReactGif" xml:space="preserve">
+    <value>{0} reagierte mit {2} auf dein GIF in {1}</value>
+  </data>
+  <data name="PushChatReactInvoice" xml:space="preserve">
+    <value>{0} reagierte mit {2} auf deine Rechnung in {1}</value>
+  </data>
+  <data name="PushChatReactNotext" xml:space="preserve">
+    <value>{0} reagierte mit {2} auf deine Nachricht in {1}</value>
+  </data>
+  <data name="PushChatReactPhoto" xml:space="preserve">
+    <value>{0} reagierte mit {2} auf dein Bild in {1}</value>
+  </data>
+  <data name="PushChatReactPoll" xml:space="preserve">
+    <value>{0} reagierte mit {2} auf deine Umfrage "{3}" in {1}</value>
+  </data>
+  <data name="PushChatReactQuiz" xml:space="preserve">
+    <value>{0} reagierte mit {2} auf dein Quiz "{3}" in {1}</value>
+  </data>
+  <data name="PushChatReactRound" xml:space="preserve">
+    <value>{0} reagierte mit {2} auf deine Videonachricht in {1}</value>
+  </data>
+  <data name="PushChatReactSticker" xml:space="preserve">
+    <value>{0} reagierte mit {2} auf deinen {3}-Sticker in {1}</value>
+  </data>
+  <data name="PushChatReactText" xml:space="preserve">
+    <value>{0} reagierte mit {2} in {1} auf {3}</value>
+  </data>
+  <data name="PushChatReactVideo" xml:space="preserve">
+    <value>{0} reagierte mit {2} auf dein Video in {1}</value>
+  </data>
+  <data name="PushReactAudio" xml:space="preserve">
+    <value>{0} reagierte mit {1} auf deine Sprachnachricht</value>
+  </data>
+  <data name="PushReactContect" xml:space="preserve">
+    <value>{0} reagierte mit {1} auf deinen Kontakt {2}</value>
+  </data>
+  <data name="PushReactDoc" xml:space="preserve">
+    <value>{0} reagierte mit {1} auf deine Datei</value>
+  </data>
+  <data name="PushReactGame" xml:space="preserve">
+    <value>{0} reagierte mit {1} auf dein Spiel</value>
+  </data>
+  <data name="PushReactGeo" xml:space="preserve">
+    <value>{0} reagierte mit {1} auf deine Karte</value>
+  </data>
+  <data name="PushReactGeoLocation" xml:space="preserve">
+    <value>{0} reagierte mit {1} auf deinen Live-Standort</value>
+  </data>
+  <data name="PushReactGif" xml:space="preserve">
+    <value>{0} reagierte mit {1} auf dein GIF</value>
+  </data>
+  <data name="PushReactInvoice" xml:space="preserve">
+    <value>{0} reagierte mit {1} auf deine Rechnung</value>
+  </data>
+  <data name="PushReactNoText" xml:space="preserve">
+    <value>{0} reagierte mit {1} auf deine Nachricht</value>
+  </data>
+  <data name="PushReactPhoto" xml:space="preserve">
+    <value>{0} reagierte mit {1} auf dein Bild</value>
+  </data>
+  <data name="PushReactPoll" xml:space="preserve">
+    <value>{0} reagierte mit {1} auf deine Umfrage "{2}"</value>
+  </data>
+  <data name="PushReactQuiz" xml:space="preserve">
+    <value>{0} reagierte mit {1} auf dein Quiz "{2}"</value>
+  </data>
+  <data name="PushReactRound" xml:space="preserve">
+    <value>{0} reagierte mit {1} auf deine Videonachricht</value>
+  </data>
+  <data name="PushReactSticker" xml:space="preserve">
+    <value>{0} reagierte mit {1} auf deinen {2}-Sticker</value>
+  </data>
+  <data name="PushReactText" xml:space="preserve">
+    <value>{0} reagierte mit {1} auf {2}</value>
+  </data>
+  <data name="PushReactVideo" xml:space="preserve">
+    <value>{0} reagierte mit {1} auf dein Video</value>
+  </data>
+  <data name="QrCode" xml:space="preserve">
+    <value>QR-Code</value>
+  </data>
   <data name="QRCodeLinkHelpChannel" xml:space="preserve">
     <value>Mit diesem QR-Code kann man dem Kanal beitreten.</value>
   </data>
@@ -11109,6 +11290,48 @@ Wenn du mehr Ordnung brauchst, versuche einige Chats zu archivieren. Der Ordner 
   </data>
   <data name="RateCallVideoPixelated" xml:space="preserve">
     <value>Video war verpixelt</value>
+  </data>
+  <data name="Reacted_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Reacted_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Reacted_one" xml:space="preserve">
+    <value>{0} hat reagiert</value>
+  </data>
+  <data name="Reacted_other" xml:space="preserve">
+    <value>{0} haben reagiert</value>
+  </data>
+  <data name="Reacted_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Reacted_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Reactions" xml:space="preserve">
+    <value>Reaktionen</value>
+  </data>
+  <data name="ReactionsCount_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ReactionsCount_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ReactionsCount_one" xml:space="preserve">
+    <value>{0} Reaktion</value>
+  </data>
+  <data name="ReactionsCount_other" xml:space="preserve">
+    <value>{0} Reaktionen</value>
+  </data>
+  <data name="ReactionsCount_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ReactionsCount_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ReactionsOff" xml:space="preserve">
+    <value>Aus</value>
   </data>
   <data name="Recent" xml:space="preserve">
     <value>Letzte</value>
@@ -12502,6 +12725,9 @@ noch nichts gesucht</value>
   <data name="ShowStickers" xml:space="preserve">
     <value>Sticker zeigen</value>
   </data>
+  <data name="ShowTranslateButton" xml:space="preserve">
+    <value>Übersetzen-Knopf zeigen</value>
+  </data>
   <data name="ShowVotes_few" xml:space="preserve">
     <value/>
   </data>
@@ -12645,6 +12871,9 @@ Langsamer Modus ist aktiv, du kannst nicht mehr als eine gleichzeitig senden.</v
   </data>
   <data name="SpeedVerySlow" xml:space="preserve">
     <value>Sehr langsam</value>
+  </data>
+  <data name="Spoiler" xml:space="preserve">
+    <value>Spoiler</value>
   </data>
   <data name="SponsoredMessage" xml:space="preserve">
     <value>gesponsert</value>
@@ -12809,7 +13038,7 @@ Werbung sollte nicht länger ein Synonym für den Missbrauch der Privatsphäre v
     <value>Archivieren</value>
   </data>
   <data name="StickersName" xml:space="preserve">
-    <value>Sticker</value>
+    <value>Sticker und Emoji</value>
   </data>
   <data name="StickersRemove" xml:space="preserve">
     <value>Entfernen</value>
@@ -13495,6 +13724,27 @@ Wenn du dennoch mit unseren bescheidenen Anforderungen nicht einverstanden bist,
   </data>
   <data name="TotalDeviceSize" xml:space="preserve">
     <value>{0} Andere Apps</value>
+  </data>
+  <data name="TranslateMessage" xml:space="preserve">
+    <value>Übersetzen</value>
+  </data>
+  <data name="TranslateMessages" xml:space="preserve">
+    <value>Nachrichten übersetzen</value>
+  </data>
+  <data name="TranslateMessagesInfo1" xml:space="preserve">
+    <value>Der Übersetzen-Knopf erscheint in der App, sobald du eine einzelne Nachricht 1x kurz antippst.</value>
+  </data>
+  <data name="TranslateMessagesInfo2" xml:space="preserve">
+    <value>Google hat unter Umständen Zugriff auf die Nachrichten, die du im Chat übersetzt.</value>
+  </data>
+  <data name="TranslateMore" xml:space="preserve">
+    <value>Mehr übersetzen...</value>
+  </data>
+  <data name="TranslationFailedAlert1" xml:space="preserve">
+    <value>Übersetzung fehlgeschlagen. Probiere es später wieder.</value>
+  </data>
+  <data name="TranslationFailedAlert2" xml:space="preserve">
+    <value>Übersetzung fehlgeschlagen.</value>
   </data>
   <data name="TurnPasswordOff" xml:space="preserve">
     <value>Passwort deaktivieren</value>

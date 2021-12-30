@@ -1154,6 +1154,9 @@ un1 bewerkte uitnodigingslink un2</value>
   <data name="AppFolderInfo" xml:space="preserve">
     <value>Blader door de map van de App</value>
   </data>
+  <data name="Application" xml:space="preserve">
+    <value>Applicatie</value>
+  </data>
   <data name="ApplyLocalizationFile" xml:space="preserve">
     <value>Vertaling toepassen</value>
   </data>
@@ -2175,6 +2178,27 @@ Zonsopkomst: {1}</value>
   </data>
   <data name="CalculatingSize" xml:space="preserve">
     <value>Berekenen...</value>
+  </data>
+  <data name="CalendarWeekNameShortFriday" xml:space="preserve">
+    <value>V</value>
+  </data>
+  <data name="CalendarWeekNameShortMonday" xml:space="preserve">
+    <value>M</value>
+  </data>
+  <data name="CalendarWeekNameShortSaturday" xml:space="preserve">
+    <value>Z</value>
+  </data>
+  <data name="CalendarWeekNameShortSunday" xml:space="preserve">
+    <value>Z</value>
+  </data>
+  <data name="CalendarWeekNameShortThursday" xml:space="preserve">
+    <value>D</value>
+  </data>
+  <data name="CalendarWeekNameShortTuesday" xml:space="preserve">
+    <value>D</value>
+  </data>
+  <data name="CalendarWeekNameShortWednesday" xml:space="preserve">
+    <value>W</value>
   </data>
   <data name="Call" xml:space="preserve">
     <value>Bellen</value>
@@ -6348,6 +6372,9 @@ Berichten worden geïmporteerd naar de huidige dag maar zijn wel voorzien van de
   </data>
   <data name="InvoiceCantSendSecretChat" xml:space="preserve">
     <value>Sorry, facturen kunnen niet worden verstuurd naar geheime chats.</value>
+  </data>
+  <data name="IpAddress" xml:space="preserve">
+    <value>IP-adres</value>
   </data>
   <data name="IsRecordingAudio" xml:space="preserve">
     <value>{0} neemt een spraakbericht op...</value>

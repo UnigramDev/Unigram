@@ -303,7 +303,7 @@ namespace Unigram.Controls.Messages
             }
         }
 
-        protected override void SetText(string title, string service, string message)
+        protected override void SetText(string title, string service, FormattedText message)
         {
             TitleLabel.Text = title;
 
@@ -311,16 +311,7 @@ namespace Unigram.Controls.Messages
             serviceShow.Text = service;
 
             var messageShow = _textVisual == _textVisual1 ? MessageLabel2 : MessageLabel1;
-            messageShow.Text = message;
-        }
-
-        protected override void AppendText(string service, string message)
-        {
-            var serviceShow = _textVisual == _textVisual1 ? ServiceLabel2 : ServiceLabel1;
-            serviceShow.Text += service;
-
-            var messageShow = _textVisual == _textVisual1 ? MessageLabel2 : MessageLabel1;
-            messageShow.Text += message;
+            messageShow.Text = message?.Text.Replace('\n', ' ') ?? string.Empty;
         }
 
         #endregion

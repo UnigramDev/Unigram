@@ -146,7 +146,7 @@
     <value>ارسال به صورت بی‌صدا</value>
   </data>
   <data name="AccDescrCloseMenu" xml:space="preserve">
-    <value>بستن فهرست</value>
+    <value>بستن منو</value>
   </data>
   <data name="AccDescrClosePlayer" xml:space="preserve">
     <value>بستن پخش کننده صدا</value>
@@ -260,10 +260,10 @@
     <value>باز کردن در نمایشگر عکس</value>
   </data>
   <data name="AccDescrOpenMenu" xml:space="preserve">
-    <value>باز کردن فهرست مسیریابی</value>
+    <value>باز کردن منوی مسیریابی</value>
   </data>
   <data name="AccDescrOpenMenu2" xml:space="preserve">
-    <value>باز کردن فهرست</value>
+    <value>باز کردن منو</value>
   </data>
   <data name="AccDescrPageDown" xml:space="preserve">
     <value>رفتن به پایین صفحه</value>
@@ -766,6 +766,11 @@
   </data>
   <data name="ActionPinnedVoice" xml:space="preserve">
     <value>⁨un1⁩ یک پیام صوتی را سنجاق کرد</value>
+  </data>
+  <data name="ActionReactionsChanged" xml:space="preserve">
+    <value>⁨un1⁩ واکنش‌های گفتگو را تغییر داد
+از: ⁨{0}⁩
+به: ⁨{1}⁩</value>
   </data>
   <data name="ActionRemovedPhoto" xml:space="preserve">
     <value>⁨un1⁩ عکس گروه را حذف کرد</value>
@@ -1657,7 +1662,7 @@
     <value>برای اتصال حساب کاربری خود کد QR را اسکن کنید.</value>
   </data>
   <data name="AuthAnotherClientInfo4" xml:space="preserve">
-    <value>با اسکن کد QR، به *تلگرام دسکتاپ* یا *تلگرام وب* متصل شوید.</value>
+    <value>با اسکن یک کد QR، به *تلگرام دسکتاپ* یا *تلگرام وب* متصل شوید.</value>
   </data>
   <data name="AuthAnotherClientInfo5" xml:space="preserve">
     <value>برای دریافت کد QR به *getdesktop.telegram.org* یا *web.telegram.org* مراجعه کنید</value>
@@ -1875,6 +1880,9 @@
   <data name="AutomaticMediaDownload" xml:space="preserve">
     <value>دانلود خودکار رسانه‌ها </value>
   </data>
+  <data name="AutomaticTranslation" xml:space="preserve">
+    <value>ترجمه خودکار</value>
+  </data>
   <data name="AutoNightAdaptive" xml:space="preserve">
     <value>تطبیقی</value>
   </data>
@@ -1946,6 +1954,9 @@
   </data>
   <data name="Available" xml:space="preserve">
     <value>در دسترس</value>
+  </data>
+  <data name="AvailableReactions" xml:space="preserve">
+    <value>واکنش‌های قابل استفاده</value>
   </data>
   <data name="AwaitingEncryption" xml:space="preserve">
     <value>در انتظار آنلاین شدن ⁨{0}⁩...</value>
@@ -2104,7 +2115,7 @@
     <value/>
   </data>
   <data name="BlockedUsersInfo" xml:space="preserve">
-    <value>کاربران مسدود قادر به برقراری ارتباط با شما نخواهند بود و زمان آخرین بازدید شما را نخواهند دید.</value>
+    <value>کاربران مسدود شده نمی‌توانند برای شما پیام ارسال کرده یا شما را به گروه‌ها اضافه کنند. همچنین عکس‌های پروفایل، وضعیت آنلاین بودن و آخرین بازدید شما را نخواهند دید.</value>
   </data>
   <data name="BlockUser" xml:space="preserve">
     <value>مسدود کردن کاربر</value>
@@ -2191,7 +2202,7 @@
     <value>به اشتراک گذاشتن</value>
   </data>
   <data name="BotsMenuTitle" xml:space="preserve">
-    <value>فهرست</value>
+    <value>منو</value>
   </data>
   <data name="BotStart" xml:space="preserve">
     <value>شروع</value>
@@ -2881,7 +2892,7 @@
     <value>متأسفانه تعداد مدیران در این کانال بسیار زیاد است.</value>
   </data>
   <data name="ChannelUserCantBot" xml:space="preserve">
-    <value>متأسفانه تعداد مدیران در این کانال بسیار زیاد است.</value>
+    <value>متأسفانه تعداد ربات‌های این کانال بسیار زیاد است.</value>
   </data>
   <data name="ChannelUserLeftError" xml:space="preserve">
     <value>متأسفانه اگر شخصی دیگر عضو یک کانال نباشد، جهت بازگرداندن او، شما باید در مخاطبین تلگرام او باشید.
@@ -3257,6 +3268,9 @@
   <data name="ChooseFromYourStickers" xml:space="preserve">
     <value>از میان استیکرهای خودتان انتخاب کنید</value>
   </data>
+  <data name="ChooseLanguages" xml:space="preserve">
+    <value>انتخاب زبان‌ها</value>
+  </data>
   <data name="ChooseMapPreviewProvider" xml:space="preserve">
     <value>ارائه دهنده پیش‌نمایش نقشه را انتخاب کنید</value>
   </data>
@@ -3382,6 +3396,9 @@
   </data>
   <data name="CloseEditor" xml:space="preserve">
     <value>بستن ویرایشگر</value>
+  </data>
+  <data name="CloseTranslation" xml:space="preserve">
+    <value>بستن ترجمه</value>
   </data>
   <data name="Code" xml:space="preserve">
     <value>کد</value>
@@ -3878,8 +3895,11 @@
   <data name="DebugClearLogs" xml:space="preserve">
     <value>پاک کردن گزارشات</value>
   </data>
+  <data name="DebugDrawSnowInChat" xml:space="preserve">
+    <value>بارش برف در گفتگو</value>
+  </data>
   <data name="DebugMenu" xml:space="preserve">
-    <value>فهرست رفع اشکال</value>
+    <value>منوی رفع اشکال</value>
   </data>
   <data name="DebugMenuCallSettings" xml:space="preserve">
     <value>تنظیمات تماس</value>
@@ -4242,7 +4262,7 @@
     <value>به اشتراک گذاری مستقیم</value>
   </data>
   <data name="DirectShareInfo" xml:space="preserve">
-    <value>نمایش گفتگوهای اخیر در فهرست به اشتراک گذاری اندروید</value>
+    <value>نمایش گفتگوهای اخیر در منوی به اشتراک گذاری اندروید</value>
   </data>
   <data name="Disable" xml:space="preserve">
     <value>غیرفعال کردن</value>
@@ -4377,8 +4397,23 @@
   <data name="DoNoSetTheme" xml:space="preserve">
     <value>تنظیم نکردن پوسته</value>
   </data>
+  <data name="DoNotTranslate" xml:space="preserve">
+    <value>ترجمه نشود</value>
+  </data>
   <data name="DontAskAgain" xml:space="preserve">
     <value>دوباره نپرسید</value>
+  </data>
+  <data name="DoubleTapPreviewMessage" xml:space="preserve">
+    <value>امیدوارم از روزتون به اندازه‌ای که من دارم لذت می‌برم، لذت ببرید.</value>
+  </data>
+  <data name="DoubleTapPreviewRational" xml:space="preserve">
+    <value>برای واکنش سریع، دو بار روی این پیام بزنید.</value>
+  </data>
+  <data name="DoubleTapPreviewSenderName" xml:space="preserve">
+    <value>دانیال</value>
+  </data>
+  <data name="DoubleTapSetting" xml:space="preserve">
+    <value>واکنش سریع</value>
   </data>
   <data name="Draft" xml:space="preserve">
     <value>پیش‌نویس</value>
@@ -4653,6 +4688,15 @@
   </data>
   <data name="EnableProxyAlert2" xml:space="preserve">
     <value>شما می‌توانید سرور پروکسی خود را بعداً در قسمت تنظیمات > داده‌ها و ذخیره‌سازی تغییر دهید.</value>
+  </data>
+  <data name="EnableReactions" xml:space="preserve">
+    <value>فعال کردن واکنش‌ها</value>
+  </data>
+  <data name="EnableReactionsChannelInfo" xml:space="preserve">
+    <value>به مشترکین اجازه دهید برای پست‌های کانال واکنش بگذارند.</value>
+  </data>
+  <data name="EnableReactionsGroupInfo" xml:space="preserve">
+    <value>به اعضا اجازه دهید برای پیام‌های گروه واکنش بگذارند.</value>
   </data>
   <data name="EnableStreaming" xml:space="preserve">
     <value>پخش پیوسته ویدیوها و فایل‌های صوتی</value>
@@ -6855,6 +6899,24 @@
   <data name="LanguageNameInEnglish" xml:space="preserve">
     <value>Persian</value>
   </data>
+  <data name="Languages_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Languages_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Languages_one" xml:space="preserve">
+    <value>⁨{0}⁩ زبان</value>
+  </data>
+  <data name="Languages_other" xml:space="preserve">
+    <value>⁨{0}⁩ زبان</value>
+  </data>
+  <data name="Languages_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Languages_zero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="LanguageSame" xml:space="preserve">
     <value>شما در حال حاضر از این بسته زبان (**⁨{0}⁩**) استفاده می‌کنید. شما می‌توانید زبان خود را در هر زمانی در قسمت تنظیمات تغییر دهید.</value>
   </data>
@@ -7785,6 +7847,23 @@
   <data name="Mi" xml:space="preserve">
     <value>مایل</value>
   </data>
+  <data name="MigrateOldFolderButton" xml:space="preserve">
+    <value>انتقال فایل‌ها همین الان</value>
+  </data>
+  <data name="MigrateOldFolderDescription" xml:space="preserve">
+    <value>به دلیل تغییری که توسط **گوگل** انجام شده، ما باید فایل‌هایی که با استفاده از **تلگرام** دانلود کرده‌اید را به پوشه جدیدی انتقال دهیم.
+
+این کار ممکن است مدتی طول بکشد. شما می‌توانید در حین انتقال فایل‌ها به استفاده از برنامه ادامه دهید.</value>
+  </data>
+  <data name="MigrateOldFolderTitle" xml:space="preserve">
+    <value>انتقال فایل‌ها به پوشه اختصاصی</value>
+  </data>
+  <data name="MigratingFiles" xml:space="preserve">
+    <value>در حال انتقال فایل‌ها</value>
+  </data>
+  <data name="MigrationNotification" xml:space="preserve">
+    <value>انتقال</value>
+  </data>
   <data name="MilesAway" xml:space="preserve">
     <value>⁨{0}⁩ مایل دورتر</value>
   </data>
@@ -8127,6 +8206,9 @@
   <data name="NobodyLikesSpam3" xml:space="preserve">
     <value>متأسفانه شما در حال حاضر از ارسال پیام به گروه‌های عمومی محدود شده‌اید.</value>
   </data>
+  <data name="NobodyViewed" xml:space="preserve">
+    <value>کسی ندیده است</value>
+  </data>
   <data name="NoCallLog" xml:space="preserve">
     <value>هنوز تماسی در اینجا موجود نیست...</value>
   </data>
@@ -8205,7 +8287,7 @@
     <value>عکس‌ها و ویدیوهای این گفتگو، اینجا نمایش داده خواهند شد.</value>
   </data>
   <data name="NoMemberRequests" xml:space="preserve">
-    <value>درخواستی وجود ندارد</value>
+    <value>درخواست عضویتی وجود ندارد</value>
   </data>
   <data name="NoMemberRequestsDescription" xml:space="preserve">
     <value>درخواست معلقی برای عضویت
@@ -9131,8 +9213,8 @@
     <value>رایگان</value>
   </data>
   <data name="Page4Message" xml:space="preserve">
-    <value>**تلگرام** پیام‌های شما را در مقابل
-حملات هکرها حفظ می‌کند.</value>
+    <value>**تلگرام** از پیام‌های شما در برابر
+حملات هکرها محافظت می‌کند.</value>
   </data>
   <data name="Page4Title" xml:space="preserve">
     <value>امن</value>
@@ -9299,7 +9381,7 @@
     <value>اسکن‌هایی از ترجمه‌ انگلیسی معتبر سند انتخاب شده را آپلود کنید.</value>
   </data>
   <data name="PassportAuthorize" xml:space="preserve">
-    <value>اعتباردهی</value>
+    <value>اعتبارسنجی</value>
   </data>
   <data name="PassportBirthdate" xml:space="preserve">
     <value>تاریخ تولد</value>
@@ -10949,6 +11031,105 @@ https://telegram.org/blog/coronavirus</value>
   <data name="Purple" xml:space="preserve">
     <value>بنفش</value>
   </data>
+  <data name="PushChatReactAudio" xml:space="preserve">
+    <value>⁨{0}⁩: ⁨{2}⁩ به پیام صوتی شما در ⁨{1}⁩</value>
+  </data>
+  <data name="PushChatReactContact" xml:space="preserve">
+    <value>⁨{0}⁩: ⁨{2}⁩ به مخاطب شما ⁨{3}⁩ در ⁨{1}⁩</value>
+  </data>
+  <data name="PushChatReactDoc" xml:space="preserve">
+    <value>⁨{0}⁩: ⁨{2}⁩ به فایل شما در ⁨{1}⁩</value>
+  </data>
+  <data name="PushChatReactGame" xml:space="preserve">
+    <value>⁨{0}⁩: ⁨{2}⁩ به بازی شما در ⁨{1}⁩</value>
+  </data>
+  <data name="PushChatReactGeo" xml:space="preserve">
+    <value>⁨{0}⁩: ⁨{2}⁩ به نقشه شما در ⁨{1}⁩</value>
+  </data>
+  <data name="PushChatReactGeoLive" xml:space="preserve">
+    <value>⁨{0}⁩: ⁨{2}⁩ به موقعیت مکانی لحظه‌ای شما در ⁨{1}⁩</value>
+  </data>
+  <data name="PushChatReactGif" xml:space="preserve">
+    <value>⁨{0}⁩: ⁨{2}⁩ به گیف شما در ⁨{1}⁩</value>
+  </data>
+  <data name="PushChatReactInvoice" xml:space="preserve">
+    <value>⁨{0}⁩: ⁨{2}⁩ به صورت‌حساب شما در ⁨{1}⁩</value>
+  </data>
+  <data name="PushChatReactNotext" xml:space="preserve">
+    <value>⁨{0}⁩: ⁨{2}⁩ به پیام شما در ⁨{1}⁩</value>
+  </data>
+  <data name="PushChatReactPhoto" xml:space="preserve">
+    <value>⁨{0}⁩: ⁨{2}⁩ به عکس شما در ⁨{1}⁩</value>
+  </data>
+  <data name="PushChatReactPoll" xml:space="preserve">
+    <value>⁨{0}⁩: ⁨{2}⁩ به نظرسنجی «⁨{3}⁩» شما در ⁨{1}⁩</value>
+  </data>
+  <data name="PushChatReactQuiz" xml:space="preserve">
+    <value>⁨{0}⁩: ⁨{2}⁩ به آزمون «⁨{3}⁩» شما در ⁨{1}⁩</value>
+  </data>
+  <data name="PushChatReactRound" xml:space="preserve">
+    <value>⁨{0}⁩: ⁨{2}⁩ به پیام ویدیویی شما در ⁨{1}⁩</value>
+  </data>
+  <data name="PushChatReactSticker" xml:space="preserve">
+    <value>⁨{0}⁩: ⁨{2}⁩ به استیکر ⁨{3}⁩ شما در ⁨{1}⁩</value>
+  </data>
+  <data name="PushChatReactText" xml:space="preserve">
+    <value>⁨{0}⁩: ⁨{2}⁩ در ⁨{1}⁩ به «⁨{3}⁩» شما</value>
+  </data>
+  <data name="PushChatReactVideo" xml:space="preserve">
+    <value>⁨{0}⁩: ⁨{2}⁩ به ویدیوی شما در ⁨{1}⁩</value>
+  </data>
+  <data name="PushReactAudio" xml:space="preserve">
+    <value>⁨{0}⁩: ⁨{1}⁩ به پیام صوتی شما</value>
+  </data>
+  <data name="PushReactContect" xml:space="preserve">
+    <value>⁨{0}⁩: ⁨{1}⁩ به مخاطب شما ⁨{2}⁩</value>
+  </data>
+  <data name="PushReactDoc" xml:space="preserve">
+    <value>⁨{0}⁩: ⁨{1}⁩ به فایل شما</value>
+  </data>
+  <data name="PushReactGame" xml:space="preserve">
+    <value>⁨{0}⁩: ⁨{1}⁩ به بازی شما</value>
+  </data>
+  <data name="PushReactGeo" xml:space="preserve">
+    <value>⁨{0}⁩: ⁨{1}⁩ به نقشه شما</value>
+  </data>
+  <data name="PushReactGeoLocation" xml:space="preserve">
+    <value>⁨{0}⁩: ⁨{1}⁩ به موقعیت مکانی لحظه‌ای شما</value>
+  </data>
+  <data name="PushReactGif" xml:space="preserve">
+    <value>⁨{0}⁩: ⁨{1}⁩ به گیف شما</value>
+  </data>
+  <data name="PushReactInvoice" xml:space="preserve">
+    <value>⁨{0}⁩: ⁨{1}⁩ به صورت‌حساب شما</value>
+  </data>
+  <data name="PushReactNoText" xml:space="preserve">
+    <value>⁨{0}⁩: ⁨{1}⁩ به پیام شما</value>
+  </data>
+  <data name="PushReactPhoto" xml:space="preserve">
+    <value>⁨{0}⁩: ⁨{1}⁩ به عکس شما</value>
+  </data>
+  <data name="PushReactPoll" xml:space="preserve">
+    <value>⁨{0}⁩: ⁨{1}⁩ به نظرسنجی «⁨{2}⁩» شما</value>
+  </data>
+  <data name="PushReactQuiz" xml:space="preserve">
+    <value>⁨{0}⁩: ⁨{1}⁩ به آزمون «⁨{2}⁩» شما</value>
+  </data>
+  <data name="PushReactRound" xml:space="preserve">
+    <value>⁨{0}⁩: ⁨{1}⁩ به پیام ویدیویی شما</value>
+  </data>
+  <data name="PushReactSticker" xml:space="preserve">
+    <value>⁨{0}⁩: ⁨{1}⁩ به استیکر ⁨{2}⁩ شما</value>
+  </data>
+  <data name="PushReactText" xml:space="preserve">
+    <value>⁨{0}⁩: ⁨{1}⁩ به «⁨{2}⁩» شما</value>
+  </data>
+  <data name="PushReactVideo" xml:space="preserve">
+    <value>⁨{0}⁩: ⁨{1}⁩ به ویدیوی شما</value>
+  </data>
+  <data name="QrCode" xml:space="preserve">
+    <value>کد QR</value>
+  </data>
   <data name="QRCodeLinkHelpChannel" xml:space="preserve">
     <value>همه افراد در تلگرام می‌توانند این کد را اسکن کنند تا به کانال شما بپیوندند. </value>
   </data>
@@ -11029,6 +11210,48 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="RateCallVideoPixelated" xml:space="preserve">
     <value>ویدیو پیکسل پیکسل شده بود</value>
+  </data>
+  <data name="Reacted_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Reacted_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Reacted_one" xml:space="preserve">
+    <value>⁨{0}⁩ نفر واکنش گذاشت</value>
+  </data>
+  <data name="Reacted_other" xml:space="preserve">
+    <value>⁨{0}⁩ نفر واکنش گذاشتند</value>
+  </data>
+  <data name="Reacted_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Reacted_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Reactions" xml:space="preserve">
+    <value>واکنش‌ها</value>
+  </data>
+  <data name="ReactionsCount_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ReactionsCount_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ReactionsCount_one" xml:space="preserve">
+    <value>⁨{0}⁩ واکنش</value>
+  </data>
+  <data name="ReactionsCount_other" xml:space="preserve">
+    <value>⁨{0}⁩ واکنش</value>
+  </data>
+  <data name="ReactionsCount_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ReactionsCount_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ReactionsOff" xml:space="preserve">
+    <value>غیرفعال</value>
   </data>
   <data name="Recent" xml:space="preserve">
     <value>اخیراً</value>
@@ -12417,6 +12640,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="ShowStickers" xml:space="preserve">
     <value>نمایش استیکرها</value>
   </data>
+  <data name="ShowTranslateButton" xml:space="preserve">
+    <value>نمایش دکمه ترجمه</value>
+  </data>
   <data name="ShowVotes_few" xml:space="preserve">
     <value/>
   </data>
@@ -12560,6 +12786,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="SpeedVerySlow" xml:space="preserve">
     <value>خیلی کند</value>
+  </data>
+  <data name="Spoiler" xml:space="preserve">
+    <value>اسپویلر</value>
   </data>
   <data name="SponsoredMessage" xml:space="preserve">
     <value>حمایت شده</value>
@@ -12724,7 +12953,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>بایگانی کردن</value>
   </data>
   <data name="StickersName" xml:space="preserve">
-    <value>استیکر‌ها و ماسک‌ها</value>
+    <value>استیکر‌ها و اموجی</value>
   </data>
   <data name="StickersRemove" xml:space="preserve">
     <value>حذف</value>
@@ -13408,6 +13637,27 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="TotalDeviceSize" xml:space="preserve">
     <value>⁨{0}⁩ برنامه دیگر</value>
+  </data>
+  <data name="TranslateMessage" xml:space="preserve">
+    <value>ترجمه</value>
+  </data>
+  <data name="TranslateMessages" xml:space="preserve">
+    <value>ترجمه پیام‌‌ها</value>
+  </data>
+  <data name="TranslateMessagesInfo1" xml:space="preserve">
+    <value>اگر روی یک پیام متنی بزنید، دکمه‌ی «ترجمه» نمایش داده خواهد شد.</value>
+  </data>
+  <data name="TranslateMessagesInfo2" xml:space="preserve">
+    <value>گوگل می‌تواند به پیام‌هایی که ترجمه می‌کنید دسترسی داشته باشد.</value>
+  </data>
+  <data name="TranslateMore" xml:space="preserve">
+    <value>ترجمه بیشتر...</value>
+  </data>
+  <data name="TranslationFailedAlert1" xml:space="preserve">
+    <value>ترجمه انجام نشد. بعداً تلاش کنید.</value>
+  </data>
+  <data name="TranslationFailedAlert2" xml:space="preserve">
+    <value>ترجمه انجام نشد.</value>
   </data>
   <data name="TurnPasswordOff" xml:space="preserve">
     <value>غیرفعال کردن گذرواژه</value>
