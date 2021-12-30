@@ -780,15 +780,9 @@ namespace Unigram.Controls.Cells
 
         #endregion
 
-        public void UpdateViewState(Chat chat, bool selected, bool compact)
+        public void UpdateViewState(Chat chat, bool compact)
         {
-            VisualStateManager.GoToState(this, selected ? "Selected" : chat.Type is ChatTypeSecret ? "Secret" : "Normal", false);
-            VisualStateManager.GoToState(this, compact ? "Compact" : "Expanded", false);
-        }
-
-        public void UpdateViewState(ChatList chatList, bool selected, bool compact)
-        {
-            VisualStateManager.GoToState(this, selected ? "Selected" : "Normal", false);
+            VisualStateManager.GoToState(this, chat.Type is ChatTypeSecret ? "Secret" : "Normal", false);
             VisualStateManager.GoToState(this, compact ? "Compact" : "Expanded", false);
         }
 

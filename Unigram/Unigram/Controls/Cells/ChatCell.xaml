@@ -29,28 +29,6 @@
                                                 Value="{ThemeResource TelegramSecretChatForegroundBrush}" />
                                     </VisualState.Setters>
                                 </VisualState>
-                                <VisualState x:Name="Selected">
-                                    <VisualState.Setters>
-                                        <Setter Target="TypeIcon.Foreground"
-                                                Value="{ThemeResource ListViewItemForegroundSelected}" />
-                                        <Setter Target="TitleLabel.Foreground"
-                                                Value="{ThemeResource ListViewItemForegroundSelected}" />
-                                        <Setter Target="MutedIcon.Foreground"
-                                                Value="{ThemeResource ListViewItemForegroundSelected}" />
-                                        <Setter Target="StateIcon.Foreground"
-                                                Value="{ThemeResource ListViewItemForegroundSelected}" />
-                                        <Setter Target="TimeLabel.Foreground"
-                                                Value="{ThemeResource ListViewItemForegroundSelected}" />
-                                        <Setter Target="FromLabel.Foreground"
-                                                Value="{ThemeResource ListViewItemForegroundSelected}" />
-                                        <Setter Target="DraftLabel.Foreground"
-                                                Value="{ThemeResource ListViewItemForegroundSelected}" />
-                                        <Setter Target="BriefLabel.Foreground"
-                                                Value="{ThemeResource ListViewItemForegroundSelected}" />
-                                        <Setter Target="TypingLabel.Foreground"
-                                                Value="{ThemeResource ListViewItemForegroundSelected}" />
-                                    </VisualState.Setters>
-                                </VisualState>
                             </VisualStateGroup>
                             <VisualStateGroup>
                                 <VisualState x:Name="Expanded" />
