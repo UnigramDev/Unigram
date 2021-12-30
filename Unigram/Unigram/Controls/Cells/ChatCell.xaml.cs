@@ -190,6 +190,7 @@ namespace Unigram.Controls.Cells
             TimeLabel.Text = UpdateTimeLabel(message);
             StateIcon.Glyph = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, null, message, message.SendingState);
 
+            UpdateBriefSpoiler(chat.DraftMessage == null ? message : null);
             UpdateMinithumbnail(message);
         }
 
@@ -405,6 +406,7 @@ namespace Unigram.Controls.Cells
             StateIcon.Glyph = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, chat.DraftMessage, chat.LastMessage, chat.LastMessage?.SendingState);
             FailedBadge.Visibility = chat.LastMessage?.SendingState is MessageSendingStateFailed ? Visibility.Visible : Visibility.Collapsed;
 
+            UpdateBriefSpoiler(chat.DraftMessage == null ? chat.LastMessage : null);
             UpdateMinithumbnail(chat.LastMessage);
         }
 
@@ -818,6 +820,48 @@ namespace Unigram.Controls.Cells
                 MinithumbnailPanel.Visibility = Visibility.Collapsed;
                 Minithumbnail.Source = null;
             }
+        }
+
+        private void UpdateBriefSpoiler(Message message)
+        {
+            BriefInfo.TextHighlighters.Clear();
+            TextHighlighter spoiler = null;
+
+            var offset = FromLabel.Text.Length + DraftLabel.Text.Length;
+            var entities = message?.Content switch
+            {
+                MessageAnimation animation => animation.Caption.Entities,
+                MessageAudio audio => audio.Caption.Entities,
+                MessageDocument document => document.Caption.Entities,
+                MessagePhoto photo => photo.Caption.Entities,
+                MessageVideo video => video.Caption.Entities,
+                MessageVoiceNote voiceNote => voiceNote.Caption.Entities,
+                MessageText text => text.Text.Entities,
+                _ => null
+            };
+
+            if (entities == null)
+            {
+                return;
+            }
+
+            foreach (var entity in entities)
+            {
+                if (entity.Type is TextEntityTypeSpoiler)
+                {
+                    spoiler ??= new TextHighlighter();
+                    spoiler.Ranges.Add(new TextRange { StartIndex = offset + entity.Offset, Length = entity.Length });
+                }
+            }
+
+            if (spoiler?.Ranges.Count > 0)
+            {
+                spoiler.Foreground = BriefInfo.Foreground;
+                spoiler.Background = BriefInfo.Foreground;
+
+                BriefInfo.TextHighlighters.Add(spoiler);
+            }
+
         }
 
         private string UpdateBriefLabel(Chat chat, ChatPosition position)
@@ -1665,10 +1709,10 @@ namespace Unigram.Controls.Cells
         {
             var width = 18f;
             var height = 10f;
-            var stroke = 2f;
-            var distance = stroke * 2;
+            var stroke = 1.33f;
+            var distance = 4;
 
-            var sqrt = (float)Math.Sqrt(2);
+            var sqrt = MathF.Sqrt(2);
 
             var side = stroke / sqrt / 2f;
             var diagonal = height * sqrt;
@@ -1686,16 +1730,16 @@ namespace Unigram.Controls.Cells
             line12.End = new Vector2(width - side - distance, side);
 
             var shape11 = Window.Current.Compositor.CreateSpriteShape(line11);
-            shape11.StrokeThickness = 2;
+            shape11.StrokeThickness = stroke;
             shape11.StrokeBrush = GetBrush(StrokeProperty);
             shape11.IsStrokeNonScaling = true;
-            //shape11.StrokeStartCap = CompositionStrokeCap.Round;
+            shape11.StrokeStartCap = CompositionStrokeCap.Round;
 
             var shape12 = Window.Current.Compositor.CreateSpriteShape(line12);
-            shape12.StrokeThickness = 2;
+            shape12.StrokeThickness = stroke;
             shape12.StrokeBrush = GetBrush(StrokeProperty);
             shape12.IsStrokeNonScaling = true;
-            //shape12.StrokeEndCap = CompositionStrokeCap.Round;
+            shape12.StrokeEndCap = CompositionStrokeCap.Round;
 
             var visual1 = Window.Current.Compositor.CreateShapeVisual();
             visual1.Shapes.Add(shape12);
@@ -1714,14 +1758,14 @@ namespace Unigram.Controls.Cells
             line22.End = new Vector2(width - side, side);
 
             var shape21 = Window.Current.Compositor.CreateSpriteShape(line21);
-            shape21.StrokeThickness = 2;
+            shape21.StrokeThickness = stroke;
             shape21.StrokeBrush = GetBrush(StrokeProperty);
-            //shape21.StrokeStartCap = CompositionStrokeCap.Round;
+            shape21.StrokeStartCap = CompositionStrokeCap.Round;
 
             var shape22 = Window.Current.Compositor.CreateSpriteShape(line22);
-            shape22.StrokeThickness = 2;
+            shape22.StrokeThickness = stroke;
             shape22.StrokeBrush = GetBrush(StrokeProperty);
-            //shape22.StrokeEndCap = CompositionStrokeCap.Round;
+            shape22.StrokeEndCap = CompositionStrokeCap.Round;
 
             var visual2 = Window.Current.Compositor.CreateShapeVisual();
             visual2.Shapes.Add(shape22);

@@ -46,6 +46,7 @@ namespace Unigram.Converters
         public const string TextStrikethrough = "\uE8DE";
         public const string Code = "\uE943";
         public const string Link = "\uE71B";
+        public const string TabInPrivate = "\uE97C";
 
         public const string People = "\uE716";
         public const string Megaphone = "\uE789";

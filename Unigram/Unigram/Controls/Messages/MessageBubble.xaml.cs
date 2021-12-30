@@ -1223,6 +1223,9 @@ namespace Unigram.Controls.Messages
                 return false;
             }
 
+            Message.TextHighlighters.Clear();
+            TextHighlighter spoiler = null;
+
             var preformatted = false;
 
             var runs = TextStyleRun.GetRuns(text, entities);
@@ -1306,6 +1309,20 @@ namespace Unigram.Controls.Messages
                             span.Inlines.Add(hyperlink);
                             local = hyperlink;
                         }
+                    }
+                    else if (entity.HasFlag(TextStyle.Spoiler))
+                    {
+                        var hyperlink = new Hyperlink();
+                        hyperlink.Click += (s, args) => Entity_Click(message, entity.Type, null);
+                        hyperlink.Foreground = GetBrush("MessageForegroundBrush");
+                        hyperlink.UnderlineStyle = UnderlineStyle.None;
+                        //hyperlink.Foreground = foreground;
+
+                        spoiler ??= new TextHighlighter();
+                        spoiler.Ranges.Add(new TextRange { StartIndex = entity.Offset, Length = entity.Length });
+
+                        span.Inlines.Add(hyperlink);
+                        local = hyperlink;
                     }
 
                     var run = new Run { Text = text.Substring(entity.Offset, entity.Length) };
@@ -1398,6 +1415,14 @@ namespace Unigram.Controls.Messages
                 }
             }
 
+            if (spoiler?.Ranges.Count > 0)
+            {
+                spoiler.Foreground = new SolidColorBrush(Colors.Black);
+                spoiler.Background = new SolidColorBrush(Colors.Black);
+
+                Message.TextHighlighters.Add(spoiler);
+            }
+
             span.FontSize = Theme.Current.MessageFontSize;
 
             if (ApiInfo.FlowDirection == FlowDirection.LeftToRight && MessageHelper.IsAnyCharacterRightToLeft(text))
@@ -1434,11 +1459,11 @@ namespace Unigram.Controls.Messages
             return Navigation.BootStrapper.Current.Resources[key] as SolidColorBrush;
         }
 
-        private void Entity_Click(MessageViewModel message, TextEntityType type, string data)
+        private void Entity_Click(MessageViewModel message, TextEntityType type, object data)
         {
-            if (type is TextEntityTypeBotCommand)
+            if (type is TextEntityTypeBotCommand && data is string command)
             {
-                message.Delegate.SendBotCommand(data);
+                message.Delegate.SendBotCommand(command);
             }
             else if (type is TextEntityTypeEmailAddress)
             {
@@ -1448,13 +1473,13 @@ namespace Unigram.Controls.Messages
             {
                 message.Delegate.OpenUrl("tel:" + data, false);
             }
-            else if (type is TextEntityTypeHashtag or TextEntityTypeCashtag)
+            else if (type is TextEntityTypeHashtag or TextEntityTypeCashtag && data is string hashtag)
             {
-                message.Delegate.OpenHashtag(data);
+                message.Delegate.OpenHashtag(hashtag);
             }
-            else if (type is TextEntityTypeMention)
+            else if (type is TextEntityTypeMention && data is string username)
             {
-                message.Delegate.OpenUsername(data);
+                message.Delegate.OpenUsername(username);
             }
             else if (type is TextEntityTypeMentionName mentionName)
             {
@@ -1464,17 +1489,24 @@ namespace Unigram.Controls.Messages
             {
                 message.Delegate.OpenUrl(textUrl.Url, true);
             }
-            else if (type is TextEntityTypeUrl)
+            else if (type is TextEntityTypeUrl && data is string url)
             {
-                message.Delegate.OpenUrl(data, false);
+                message.Delegate.OpenUrl(url, false);
             }
-            else if (type is TextEntityTypeBankCardNumber)
+            else if (type is TextEntityTypeBankCardNumber && data is string cardNumber)
             {
-                message.Delegate.OpenBankCardNumber(data);
+                message.Delegate.OpenBankCardNumber(cardNumber);
             }
             else if (type is TextEntityTypeMediaTimestamp mediaTimestamp && message.ReplyToMessage != null)
             {
                 message.Delegate.OpenMedia(message.ReplyToMessage, null, mediaTimestamp.MediaTimestamp);
+            }
+            else if (type is TextEntityTypeSpoiler)
+            {
+                if (Message.TextHighlighters.Count > 0)
+                {
+                    Message.TextHighlighters.RemoveAt(Message.TextHighlighters.Count - 1);
+                }
             }
         }
 
