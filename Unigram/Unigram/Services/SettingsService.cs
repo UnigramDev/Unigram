@@ -214,25 +214,17 @@ namespace Unigram.Services
 
         #region App version
 
-        public const ulong CurrentVersion = (8UL << 48) | (3UL << 32) | (0UL << 16);
-        public const string CurrentChangelog = @"Protected Content, Delete by Date, Device Management and More
+        public const ulong CurrentVersion = (8UL << 48) | (4UL << 32) | (0UL << 16);
+        public const string CurrentChangelog = @"Spoilers and Translation
 
-**Protected Content in Groups and Channels**
-• Content creators can restrict the ability to forward messages from their groups and channels.
-• When forwarding is restricted, users will also be unable to directly save media from the chat or take screenshots.
-• Toggle this option on or off via Chat Info > Group / Channel Type.
+**Spoilers**
+• Select text when typing and choose 'Spoiler' formatting to hide some or all of the contents of a message.
+• Tap the spoiler animation in chat to reveal its hidden text.
+• Spoiler formatting hides text in chat, as well as in the chat list and notifications.
 
-**Delete Messages by Date**
-• Clear messages in one-on-one chats from a specific date or period of time.
-• Tap the date header in a chat to open the calendar and select a single day or range to delete.
-
-**Manage Connected Devices**
-• Choose how long a device may stay inactive before it's logged out automatically.
-• Select a device to control whether it is allowed to accept Calls or new Secret Chats.
-
-**Anonymous Posting in Public Groups**
-• Comment as one of your channels in public groups and channel comments.
-• Tap the profile picture next to the message bar to choose which channel you will appear as when you send the message.";
+**Translation**
+• Turn on the Translation option in Settings > Languages. 
+• Press and hold a message to translate it into another language.";
 
         public int Session => _session;
 
