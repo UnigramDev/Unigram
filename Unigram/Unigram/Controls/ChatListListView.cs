@@ -32,7 +32,7 @@ namespace Unigram.Controls
             if (content != null && args.Item is Chat chat)
             {
                 content.UpdateService(ViewModel.ProtoService);
-                content.UpdateViewState(chat, SelectedItem == args.Item && SelectionMode == ListViewSelectionMode.Single, _viewState == MasterDetailState.Compact);
+                content.UpdateViewState(chat, _viewState == MasterDetailState.Compact);
                 content.UpdateChat(ViewModel.ProtoService, chat, ViewModel.Items.ChatList);
                 args.Handled = true;
             }
@@ -74,7 +74,7 @@ namespace Unigram.Controls
                         continue;
                     }
 
-                    content.UpdateViewState(item, SelectedItem == item && SelectionMode == ListViewSelectionMode.Single, _viewState == MasterDetailState.Compact);
+                    content.UpdateViewState(item, _viewState == MasterDetailState.Compact);
                 }
             }
         }
@@ -112,7 +112,7 @@ namespace Unigram.Controls
             var content = ContentTemplateRoot as ChatCell;
             if (content != null)
             {
-                content.UpdateViewState(_list.ItemFromContainer(this) as Chat, IsSelected && _list.SelectionMode == ListViewSelectionMode.Single, _list._viewState == MasterDetailState.Compact);
+                content.UpdateViewState(_list.ItemFromContainer(this) as Chat, _list._viewState == MasterDetailState.Compact);
             }
         }
     }

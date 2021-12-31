@@ -416,6 +416,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:MenuFlyoutLabel">
                     <TextBlock Text="{TemplateBinding Text}"
+                               TextWrapping="Wrap"
                                Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                                Style="{StaticResource CaptionTextBlockStyle}"
                                Margin="{TemplateBinding Padding}" />
@@ -5190,12 +5191,12 @@
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderBackground"
                                                                        Storyboard.TargetProperty="Fill">
                                             <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource SystemControlHighlightListLowBrush}" />
+                                                                    Value="{ThemeResource ListViewItemBackgroundPointerOver}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
                                                                        Storyboard.TargetProperty="Foreground">
                                             <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}" />
+                                                                    Value="{ThemeResource ListViewItemForegroundPointerOver}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="MultiSelectSquare"
                                                                        Storyboard.TargetProperty="BorderBrush">
@@ -5220,12 +5221,12 @@
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderBackground"
                                                                        Storyboard.TargetProperty="Fill">
                                             <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource SystemControlHighlightListMediumBrush}" />
+                                                                    Value="{ThemeResource ListViewItemBackgroundPressed}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
                                                                        Storyboard.TargetProperty="Foreground">
                                             <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}" />
+                                                                    Value="{ThemeResource ListViewItemForegroundPressed}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="MultiSelectSquare"
                                                                        Storyboard.TargetProperty="BorderBrush">
@@ -5243,7 +5244,7 @@
                                 <VisualState x:Name="Selected">
 
                                     <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetName="MultiSelectCheck"
+                                        <DoubleAnimation Storyboard.TargetName="SelectionIndicator"
                                                          Storyboard.TargetProperty="Opacity"
                                                          Duration="0:0:0"
                                                          To="1" />
@@ -5254,12 +5255,12 @@
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderBackground"
                                                                        Storyboard.TargetProperty="Fill">
                                             <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource SystemControlHighlightListAccentLowBrush}" />
+                                                                    Value="{ThemeResource ListViewItemBackgroundSelected}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
                                                                        Storyboard.TargetProperty="Foreground">
                                             <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}" />
+                                                                    Value="{ThemeResource ListViewItemForegroundSelected}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="MultiSelectSquare"
                                                                        Storyboard.TargetProperty="BorderBrush">
@@ -5277,7 +5278,7 @@
                                 <VisualState x:Name="PointerOverSelected">
 
                                     <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetName="MultiSelectCheck"
+                                        <DoubleAnimation Storyboard.TargetName="SelectionIndicator"
                                                          Storyboard.TargetProperty="Opacity"
                                                          Duration="0:0:0"
                                                          To="1" />
@@ -5288,12 +5289,12 @@
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderBackground"
                                                                        Storyboard.TargetProperty="Fill">
                                             <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource SystemControlHighlightListAccentMediumBrush}" />
+                                                                    Value="{ThemeResource ListViewItemBackgroundSelectedPointerOver}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
                                                                        Storyboard.TargetProperty="Foreground">
                                             <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}" />
+                                                                    Value="{ThemeResource ListViewItemForegroundSelectedPointerOver}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="MultiSelectSquare"
                                                                        Storyboard.TargetProperty="BorderBrush">
@@ -5311,7 +5312,7 @@
                                 <VisualState x:Name="PressedSelected">
 
                                     <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetName="MultiSelectCheck"
+                                        <DoubleAnimation Storyboard.TargetName="SelectionIndicator"
                                                          Storyboard.TargetProperty="Opacity"
                                                          Duration="0:0:0"
                                                          To="1" />
@@ -5322,12 +5323,12 @@
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderBackground"
                                                                        Storyboard.TargetProperty="Fill">
                                             <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource SystemControlHighlightListAccentHighBrush}" />
+                                                                    Value="{ThemeResource ListViewItemBackgroundSelectedPressed}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
                                                                        Storyboard.TargetProperty="Foreground">
                                             <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}" />
+                                                                    Value="{ThemeResource ListViewItemForegroundSelectedPressed}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="MultiSelectSquare"
                                                                        Storyboard.TargetProperty="BorderBrush">
@@ -5596,6 +5597,16 @@
                         <Rectangle x:Name="PlaceholderRect"
                                    Visibility="Collapsed"
                                    Fill="{ThemeResource ListViewItemPlaceholderBackground}" />
+                        <Grid HorizontalAlignment="Left"
+                              VerticalAlignment="Center">
+                            <Rectangle x:Name="SelectionIndicator"
+                                       Width="3"
+                                       Height="36"
+                                       Fill="{ThemeResource NavigationViewSelectionIndicatorForeground}"
+                                       RadiusX="2"
+                                       RadiusY="2"
+                                       Opacity="0" />
+                        </Grid>
                         <Border x:Name="MultiSelectSquare"
                                 BorderBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
                                 BorderThickness="2"
