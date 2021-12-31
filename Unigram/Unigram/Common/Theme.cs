@@ -169,7 +169,6 @@ namespace Unigram.Common
                 if (_lastAccent != null)
                 {
                     _lastTheme = null;
-                    Initialize(requested);
 
                     var options = SettingsService.Current.Appearance;
                     if (options[requested].Type == TelegramThemeType.Custom && System.IO.File.Exists(options[requested].Custom))
@@ -256,7 +255,25 @@ namespace Unigram.Common
                             value = color;
                         }
 
-                        brush.Color = value;
+                        if (brush.Color == value)
+                        {
+                            continue;
+                        }
+
+                        try
+                        {
+                            brush.Color = value;
+                        }
+                        catch
+                        {
+                            // Some times access denied is thrown,
+                            // not sure why, but I can't see other options.
+                            target[item.Key] = new SolidColorBrush(value);
+
+                            // The best thing here would be to notify
+                            // AppearanceSettings about this and
+                            // refresh the whole theme by switching it.
+                        }
                     }
                 }
             }
