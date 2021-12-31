@@ -1104,6 +1104,54 @@ namespace winrt::Unigram::Native::implementation
 		return float2(metrics.left + metrics.width, metrics.top + metrics.height);
 	}
 
+	IVector<Windows::Foundation::Rect> PlaceholderImageHelper::LineMetrics(hstring text, double fontSize, double width, bool rtl)
+	{
+		winrt::check_hresult(m_dwriteFactory->CreateTextFormat(
+			L"Segoe UI Emoji",						// font family name
+			m_appleCollection.get(),				// system font collection
+			DWRITE_FONT_WEIGHT_NORMAL,				// font weight 
+			DWRITE_FONT_STYLE_NORMAL,				// font style
+			DWRITE_FONT_STRETCH_NORMAL,				// default font stretch
+			fontSize,								// font size
+			L"",									// locale name
+			m_appleFormat.put()
+		));
+		winrt::check_hresult(m_appleFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING));
+		winrt::check_hresult(m_appleFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR));
+		winrt::check_hresult(m_appleFormat->SetReadingDirection(rtl ? DWRITE_READING_DIRECTION_RIGHT_TO_LEFT : DWRITE_READING_DIRECTION_LEFT_TO_RIGHT));
+
+		winrt::com_ptr<IDWriteTextLayout> textLayout;
+		winrt::check_hresult(m_dwriteFactory->CreateTextLayout(
+			text.data(),					// The string to be laid out and formatted.
+			wcslen(text.data()),			// The length of the string.
+			m_appleFormat.get(),			// The text format to apply to the string (contains font information, etc).
+			width,							// The width of the layout box.
+			INFINITY,						// The height of the layout box.
+			textLayout.put()				// The IDWriteTextLayout interface pointer.
+		));
+
+		DWRITE_TEXT_METRICS metrics;
+		winrt::check_hresult(textLayout->GetMetrics(&metrics));
+
+		UINT32 maxHitTestMetricsCount = metrics.lineCount * metrics.maxBidiReorderingDepth;
+		UINT32 actualTestsCount;
+		DWRITE_HIT_TEST_METRICS* ranges = new DWRITE_HIT_TEST_METRICS[maxHitTestMetricsCount];
+		winrt::check_hresult(textLayout->HitTestTextRange(0, text.size(), 0, 0, ranges, maxHitTestMetricsCount, &actualTestsCount));
+
+		std::vector<Windows::Foundation::Rect> rects;
+
+		for (int i = 0; i < actualTestsCount; i++) {
+			float left = ranges[i].left;
+			float top = ranges[i].top;
+			float right = ranges[i].left + ranges[i].width;
+			float bottom = ranges[i].top + ranges[i].height;
+
+			rects.push_back({ left, top, right - left, bottom - top });
+		}
+
+		return winrt::single_threaded_vector<Windows::Foundation::Rect>(std::move(rects));
+	}
+
 	void PlaceholderImageHelper::WriteBytes(IVector<byte> hash, IRandomAccessStream randomAccessStream)
 	{
 		winrt::com_ptr<IStream> stream;

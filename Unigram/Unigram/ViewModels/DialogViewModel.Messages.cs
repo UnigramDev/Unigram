@@ -8,6 +8,8 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
+using Unigram.Native;
+using Unigram.Services;
 using Unigram.Views;
 using Unigram.Views.Chats;
 using Unigram.Views.Popups;
@@ -848,6 +850,24 @@ namespace Unigram.ViewModels
             }
 
             ProtoService.Send(new EditMessageSchedulingState(message.ChatId, message.Id, options.SchedulingState));
+        }
+
+        #endregion
+
+        #region Translate
+
+        public RelayCommand<MessageViewModel> MessageTranslateCommand { get; }
+        private async void MessageTranslateExecute(MessageViewModel message)
+        {
+            var caption = message.GetCaption();
+            if (string.IsNullOrEmpty(caption?.Text))
+            {
+                return;
+            }
+
+            var language = LanguageIdentification.IdentifyLanguage(caption.Text);
+            var popup = new TranslatePopup(new TranslateService(), caption.Text, language, LocaleService.Current.Language, !message.CanBeSaved);
+            await popup.ShowQueuedAsync();
         }
 
         #endregion

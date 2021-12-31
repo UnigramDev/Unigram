@@ -59,6 +59,7 @@ namespace winrt::Unigram::Native::implementation
 		void DrawThumbnailPlaceholder(IVector<uint8_t> bytes, float blurAmount, _In_ IRandomAccessStream randomAccessStream);
 
 		float2 ContentEnd(hstring text, double fontSize, double width);
+		IVector<Windows::Foundation::Rect> LineMetrics(hstring text, double fontSize, double width, bool rtl);
 
 	//internal:
 	//	PlaceholderImageHelper();

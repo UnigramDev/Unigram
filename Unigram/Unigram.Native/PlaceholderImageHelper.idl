@@ -23,5 +23,6 @@ namespace Unigram.Native
 		void DrawThumbnailPlaceholder(Windows.Foundation.Collections.IVector<byte> bytes, Single blurAmount, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
 
 		Windows.Foundation.Numerics.Vector2 ContentEnd(String text, Double fontSize, Double width);
+		Windows.Foundation.Collections.IVector<Windows.Foundation.Rect> LineMetrics(String text, Double fontSize, Double width, Boolean rtl);
 	}
 } // namespace Unigram.Native

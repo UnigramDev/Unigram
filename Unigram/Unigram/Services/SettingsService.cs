@@ -60,6 +60,8 @@ namespace Unigram.Services
 
         bool IsLeftTabsEnabled { get; set; }
 
+        bool IsTranslateEnabled { get; set; }
+
         Vector2 Pencil { get; set; }
 
         DistanceUnits DistanceUnits { get; set; }
@@ -460,6 +462,13 @@ namespace Unigram.Services
         {
             get => _isLeftTabsEnabled ??= GetValueOrDefault(_local, "IsLeftTabsEnabled", false);
             set => AddOrUpdateValue(ref _isLeftTabsEnabled, _local, "IsLeftTabsEnabled", value);
+        }
+
+        private static bool? _isTranslateEnabled;
+        public bool IsTranslateEnabled
+        {
+            get => _isTranslateEnabled ??= GetValueOrDefault(_local, "IsTranslateEnabled", false);
+            set => AddOrUpdateValue(ref _isTranslateEnabled, _local, "IsTranslateEnabled", value);
         }
 
         private static bool? _fullScreenGallery;

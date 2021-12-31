@@ -816,6 +816,11 @@ namespace Unigram.Common
             return null;
         }
 
+        public static FormattedText GetCaption(this MessageViewModel message)
+        {
+            return message.Content.GetCaption();
+        }
+
         public static FormattedText GetCaption(this Message message)
         {
             return message.Content.GetCaption();

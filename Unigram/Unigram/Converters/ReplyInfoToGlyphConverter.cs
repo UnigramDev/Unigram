@@ -40,6 +40,8 @@ namespace Unigram.Converters
         public const string DocumentCopy = "\uE8C8";
         public const string ClipboardPaste = "\uE77F";
 
+        public const string Translate = "\uE97D";
+
         public const string TextBold = "\uE8DD";
         public const string TextItalic = "\uE8DB";
         public const string TextUnderline = "\uE8DC";
@@ -94,8 +96,7 @@ namespace Unigram.Converters
 
         public const string Delete = "\uE74D";
         public const string Share = "\uE72D";
-        public const string ArrowForward = "\uE97D";
-        public const string CheckmarkCircle = "\uE97C";
+        public const string CheckmarkCircle = "\uE97E";
         public const string Multiselect = "\uE762";
         public const string SaveAs = "\uE792";
         public const string FolderOpen = "\uE838";

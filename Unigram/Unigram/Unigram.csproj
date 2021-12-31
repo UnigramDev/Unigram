@@ -352,6 +352,7 @@
     </Compile>
     <Compile Include="Controls\LazoListView.cs" />
     <Compile Include="Controls\LazoListViewItem.cs" />
+    <Compile Include="Controls\LoadingTextBlock.cs" />
     <Compile Include="Controls\MasterDetailPanel.cs" />
     <Compile Include="Controls\Media\SolidGaussianBrush.cs" />
     <Compile Include="Controls\Media\TiledBrush.cs" />
@@ -525,6 +526,7 @@
     <Compile Include="Services\Theme\ThemeBundledInfo.cs" />
     <Compile Include="Services\Theme\ThemeCustomInfo.cs" />
     <Compile Include="Services\ThemeService.Defaults.cs" />
+    <Compile Include="Services\TranslateService.cs" />
     <Compile Include="Strings\en\Resources.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -612,6 +614,9 @@
     </Compile>
     <Compile Include="Views\Popups\ChatThemePopup.xaml.cs">
       <DependentUpon>ChatThemePopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Popups\TranslatePopup.xaml.cs">
+      <DependentUpon>TranslatePopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\VideoChatAliasesPopup.xaml.cs">
       <DependentUpon>VideoChatAliasesPopup.xaml</DependentUpon>
@@ -1844,6 +1849,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Popups\ChatThemePopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Popups\TranslatePopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

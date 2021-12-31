@@ -65,7 +65,6 @@ namespace Unigram.Services
 
         public async Task<object> TranslateAsync(string input, string fromLanguage, string toLanguage)
         {
-            HttpResponseMessage response = null;
             Random random = new Random();
             try
             {
@@ -81,40 +80,59 @@ namespace Unigram.Services
                 request.Headers.TryAddWithoutValidation("Content-Type", "application/json");
 
                 using var client = new HttpClient();
-                response = await client.SendAsync(request);
-                var content = await response.Content.ReadAsStringAsync();
-
-                var tokener = JsonArray.Parse(content);
-                var array = tokener.GetArrayAt(0);
-
-                string sourceLanguage = null;
-                try
+                var response = await client.SendAsync(request);
+                if (response.IsSuccessStatusCode)
                 {
-                    sourceLanguage = tokener.GetStringAt(2);
-                }
-                catch { }
-                if (sourceLanguage != null && sourceLanguage.Contains("-"))
-                {
-                    sourceLanguage = sourceLanguage.Substring(0, sourceLanguage.IndexOf("-"));
-                }
-                string result = "";
-                for (uint i = 0; i < array.Count; ++i)
-                {
-                    string blockText = array.GetArrayAt(i).GetStringAt(0);
-                    if (blockText != null && !blockText.Equals("null"))
-                        result += /*(i > 0 ? "\n" : "") +*/ blockText;
-                }
-                if (input.Length > 0 && input[0] == '\n')
-                    result = "\n" + result;
+                    var content = await response.Content.ReadAsStringAsync();
 
-                return new Translation(result, sourceLanguage);
+                    if (JsonArray.TryParse(content, out JsonArray tokener))
+                    {
+                        var array = tokener.GetArrayAt(0);
+
+                        string sourceLanguage = null;
+                        try
+                        {
+                            sourceLanguage = tokener.GetStringAt(2);
+                        }
+                        catch { }
+                        if (sourceLanguage != null && sourceLanguage.Contains("-"))
+                        {
+                            sourceLanguage = sourceLanguage.Substring(0, sourceLanguage.IndexOf("-"));
+                        }
+                        string result = "";
+                        for (uint i = 0; i < array.Count; ++i)
+                        {
+                            var block = array.GetArrayAt(i)[0];
+                            if (block.ValueType != JsonValueType.String)
+                            {
+                                continue;
+                            }
+
+                            var blockText = block.GetString();
+                            if (blockText != null && !blockText.Equals("null"))
+                                result += /*(i > 0 ? "\n" : "") +*/ blockText;
+                        }
+                        if (input.Length > 0 && input[0] == '\n')
+                            result = "\n" + result;
+
+                        return new Translation(result, sourceLanguage);
+                    }
+                    else
+                    {
+                        return new Error(500, "WHATEVER");
+                    }
+                }
+                else
+                {
+                    var status = response != null ? (int)response.StatusCode : 500;
+                    var rateLimit = status == 429;
+
+                    return new Error(status, rateLimit ? "FLOOD_WAIT" : "WHATEVER");
+                }
             }
             catch
             {
-                var status = response != null ? (int)response.StatusCode : 500;
-                var rateLimit = status == 429;
-
-                return new Error(status, rateLimit ? "FLOOD_WAIT" : "WHATEVER");
+                return new Error(500, "WHATEVER");
             }
         }
     }

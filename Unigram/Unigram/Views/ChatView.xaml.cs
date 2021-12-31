@@ -2017,6 +2017,8 @@ namespace Unigram.Views
                 flyout.CreateFlyoutItem(MessageCopyLink_Loaded, ViewModel.MessageCopyLinkCommand, message, Strings.Resources.CopyLink, new FontIcon { Glyph = Icons.Link });
                 flyout.CreateFlyoutItem(MessageCopyMedia_Loaded, ViewModel.MessageCopyMediaCommand, message, Strings.Additional.CopyImage, new FontIcon { Glyph = Icons.Image });
 
+                flyout.CreateFlyoutItem(MessageTranslate_Loaded, ViewModel.MessageTranslateCommand, message, Strings.Resources.TranslateMessage, new FontIcon { Glyph = Icons.Translate });
+
                 flyout.CreateFlyoutSeparator();
 
                 // Stickers
@@ -2059,7 +2061,8 @@ namespace Unigram.Views
                     flyout.CreateFlyoutSeparator();
                     flyout.Items.Add(new MenuFlyoutLabel
                     {
-                        Padding = new Thickness(12, 8, 12, 4),
+                        Padding = new Thickness(12, 4, 12, 4),
+                        MaxWidth = 180,
                         Text = message.IsChannelPost
                             ? Strings.Resources.ForwardsRestrictedInfoChannel
                             : Strings.Resources.ForwardsRestrictedInfoGroup
@@ -2373,6 +2376,17 @@ namespace Unigram.Views
             }
 
             return message.Content.HasCaption();
+        }
+
+        private bool MessageTranslate_Loaded(MessageViewModel message)
+        {
+            var caption = message.GetCaption();
+            if (caption != null && ViewModel.Settings.IsTranslateEnabled)
+            {
+                return !LocaleService.Current.IsCurrentLanguage(caption.Text);
+            }
+
+            return false;
         }
 
         private bool MessageCopyMedia_Loaded(MessageViewModel message)

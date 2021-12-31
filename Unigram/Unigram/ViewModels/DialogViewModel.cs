@@ -190,6 +190,7 @@ namespace Unigram.ViewModels
             MessageStopPollCommand = new RelayCommand<MessageViewModel>(MessageStopPollExecute);
             MessageSendNowCommand = new RelayCommand<MessageViewModel>(MessageSendNowExecute);
             MessageRescheduleCommand = new RelayCommand<MessageViewModel>(MessageRescheduleExecute);
+            MessageTranslateCommand = new RelayCommand<MessageViewModel>(MessageTranslateExecute);
 
             SendDocumentCommand = new RelayCommand(SendDocumentExecute);
             SendCameraCommand = new RelayCommand(SendCameraExecute);

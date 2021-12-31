@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Native;
 using Unigram.Views;
 using Windows.ApplicationModel.Resources;
 using Windows.Storage;
@@ -22,6 +23,8 @@ namespace Unigram.Services
 
         string GetString(string key);
         string GetString(string key, int quantity);
+
+        bool IsCurrentLanguage(string text);
     }
 
     public class LocaleService : ILocaleService
@@ -57,6 +60,17 @@ namespace Unigram.Services
 
         private static ILocaleService _current;
         public static ILocaleService Current => _current ??= new LocaleService();
+
+        public bool IsCurrentLanguage(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                return true;
+            }
+
+            var language = LanguageIdentification.IdentifyLanguage(text);
+            return string.Equals(_languageCode, language, StringComparison.OrdinalIgnoreCase);
+        }
 
         public string Language => _languageCode;
 
