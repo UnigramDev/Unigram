@@ -2381,9 +2381,9 @@ namespace Unigram.Views
         private bool MessageTranslate_Loaded(MessageViewModel message)
         {
             var caption = message.GetCaption();
-            if (caption != null && ViewModel.Settings.IsTranslateEnabled)
+            if (caption != null)
             {
-                return !LocaleService.Current.IsCurrentLanguage(caption.Text);
+                return ViewModel.TranslateService.CanTranslate(caption.Text);
             }
 
             return false;

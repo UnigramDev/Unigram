@@ -80,7 +80,9 @@
                        Grid.Column="1" />
         </Grid>
 
-        <ScrollViewer Margin="-24,0"
+        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto"
+                      Margin="-24,0"
                       Padding="0,8,0,16"
                       Grid.Row="1">
             <StackPanel x:Name="Presenter">

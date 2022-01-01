@@ -76,6 +76,7 @@ namespace Unigram.Services
 
         string LanguagePackId { get; set; }
         string LanguagePluralId { get; set; }
+        string LanguageBaseId { get; set; }
         string LanguageShownId { get; set; }
 
         string PushToken { get; set; }
@@ -617,6 +618,13 @@ namespace Unigram.Services
         {
             get => _languagePluralId ??= GetValueOrDefault(_local, "LanguagePluralId", ApplicationLanguages.Languages[0].Split('-').First());
             set => AddOrUpdateValue(ref _languagePluralId, _local, "LanguagePluralId", value);
+        }
+
+        private string _languageBaseId;
+        public string LanguageBaseId
+        {
+            get => _languageBaseId ??= GetValueOrDefault(_local, "LanguageBaseId", ApplicationLanguages.Languages[0].Split('-').First());
+            set => AddOrUpdateValue(ref _languageBaseId, _local, "LanguageBaseId", value);
         }
 
         private string _languageShownId;

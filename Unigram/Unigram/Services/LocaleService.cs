@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -8,7 +9,6 @@ using System.Threading.Tasks;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Native;
 using Unigram.Views;
 using Windows.ApplicationModel.Resources;
 using Windows.Storage;
@@ -19,12 +19,10 @@ namespace Unigram.Services
     {
         Task<BaseObject> SetLanguageAsync(LanguagePackInfo info, bool refresh);
 
-        string Language { get; }
+        CultureInfo CurrentCulture { get; }
 
         string GetString(string key);
         string GetString(string key, int quantity);
-
-        bool IsCurrentLanguage(string text);
     }
 
     public class LocaleService : ILocaleService
@@ -42,7 +40,10 @@ namespace Unigram.Services
 
         private readonly ConcurrentDictionary<string, ConcurrentDictionary<string, string>> _languagePack = new ConcurrentDictionary<string, ConcurrentDictionary<string, string>>();
         private string _languageCode;
+        private string _languageBase;
         private string _languagePlural;
+
+        private CultureInfo _currentCulture;
 
         private readonly string _languagePath;
 
@@ -53,7 +54,31 @@ namespace Unigram.Services
             _languagePath = Path.Combine(ApplicationData.Current.LocalFolder.Path, "langpack");
 
             _languageCode = SettingsService.Current.LanguagePackId;
+            _languageBase = SettingsService.Current.LanguageBaseId;
             _languagePlural = SettingsService.Current.LanguagePluralId;
+
+            string[] args;
+            if (!string.IsNullOrEmpty(_languagePlural))
+            {
+                args = _languagePlural.Split('_');
+            }
+            else if (!string.IsNullOrEmpty(_languageBase))
+            {
+                args = _languageBase.Split('_');
+            }
+            else
+            {
+                args = _languageCode.Split('_');
+            }
+
+            if (args.Length == 1)
+            {
+                _currentCulture = new CultureInfo(args[0]);
+            }
+            else
+            {
+                _currentCulture = new CultureInfo($"{args[0]}_{args[1]}");
+            }
 
             Locale.SetRules(_languagePlural);
         }
@@ -61,18 +86,7 @@ namespace Unigram.Services
         private static ILocaleService _current;
         public static ILocaleService Current => _current ??= new LocaleService();
 
-        public bool IsCurrentLanguage(string text)
-        {
-            if (string.IsNullOrEmpty(text))
-            {
-                return true;
-            }
-
-            var language = LanguageIdentification.IdentifyLanguage(text);
-            return string.Equals(_languageCode, language, StringComparison.OrdinalIgnoreCase);
-        }
-
-        public string Language => _languageCode;
+        public CultureInfo CurrentCulture => _currentCulture;
 
         public async Task<BaseObject> SetLanguageAsync(LanguagePackInfo info, bool refresh)
         {
@@ -80,6 +94,7 @@ namespace Unigram.Services
             _languagePlural = info.PluralCode;
 
             SettingsService.Current.LanguagePackId = info.Id;
+            SettingsService.Current.LanguageBaseId = info.BaseLanguagePackId;
             SettingsService.Current.LanguagePluralId = info.PluralCode;
 
             Locale.SetRules(info.PluralCode);

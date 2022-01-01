@@ -38,6 +38,7 @@ namespace Unigram.Views
         private Unigram.Services.IPlaybackService _playbackService;
         private Unigram.Services.ViewService.IViewService _viewService;
         private Unigram.Services.IStorageService _storageService;
+        private Unigram.Services.ITranslateService _translateService;
 
         public TLLocator(Unigram.Services.ILifetimeService lifetimeService, Unigram.Services.ILocaleService localeService, Unigram.Services.IPasscodeService passcodeService, int session, bool active)
         {
@@ -225,6 +226,7 @@ namespace Unigram.Views
                         _viewService ??= new Unigram.Services.ViewService.ViewService()),
                     _networkService,
                     _storageService ??= new Unigram.Services.StorageService(_protoService),
+                    _translateService ??= new Unigram.Services.TranslateService(_localeService, _settingsService),
                     _messageFactory ??= new Unigram.Services.Factories.MessageFactory(
                         _protoService,
                         _playbackService ??= new Unigram.Services.PlaybackService(
@@ -263,6 +265,7 @@ namespace Unigram.Views
                         _viewService ??= new Unigram.Services.ViewService.ViewService()),
                     _networkService,
                     _storageService ??= new Unigram.Services.StorageService(_protoService),
+                    _translateService ??= new Unigram.Services.TranslateService(_localeService, _settingsService),
                     _messageFactory ??= new Unigram.Services.Factories.MessageFactory(
                         _protoService,
                         _playbackService ??= new Unigram.Services.PlaybackService(
@@ -301,6 +304,7 @@ namespace Unigram.Views
                         _viewService ??= new Unigram.Services.ViewService.ViewService()),
                     _networkService,
                     _storageService ??= new Unigram.Services.StorageService(_protoService),
+                    _translateService ??= new Unigram.Services.TranslateService(_localeService, _settingsService),
                     _messageFactory ??= new Unigram.Services.Factories.MessageFactory(
                         _protoService,
                         _playbackService ??= new Unigram.Services.PlaybackService(
@@ -339,6 +343,7 @@ namespace Unigram.Views
                         _viewService ??= new Unigram.Services.ViewService.ViewService()),
                     _networkService,
                     _storageService ??= new Unigram.Services.StorageService(_protoService),
+                    _translateService ??= new Unigram.Services.TranslateService(_localeService, _settingsService),
                     _messageFactory ??= new Unigram.Services.Factories.MessageFactory(
                         _protoService,
                         _playbackService ??= new Unigram.Services.PlaybackService(
@@ -377,6 +382,7 @@ namespace Unigram.Views
                         _viewService ??= new Unigram.Services.ViewService.ViewService()),
                     _networkService,
                     _storageService ??= new Unigram.Services.StorageService(_protoService),
+                    _translateService ??= new Unigram.Services.TranslateService(_localeService, _settingsService),
                     _messageFactory ??= new Unigram.Services.Factories.MessageFactory(
                         _protoService,
                         _playbackService ??= new Unigram.Services.PlaybackService(
@@ -972,9 +978,9 @@ namespace Unigram.Views
                         _settingsService,
                         _eventAggregator));
             }
-            else if (type == typeof(Unigram.ViewModels.Settings.SettingsThemeViewModel))
+            else if (type == typeof(Unigram.ViewModels.Settings.SettingsThemesViewModel))
             {
-                return (T)(object)new Unigram.ViewModels.Settings.SettingsThemeViewModel(
+                return (T)(object)new Unigram.ViewModels.Settings.SettingsThemesViewModel(
                     _protoService,
                     _cacheService,
                     _settingsService,
@@ -984,9 +990,9 @@ namespace Unigram.Views
                         _settingsService,
                         _eventAggregator));
             }
-            else if (type == typeof(Unigram.ViewModels.Settings.SettingsThemesViewModel))
+            else if (type == typeof(Unigram.ViewModels.Settings.SettingsThemeViewModel))
             {
-                return (T)(object)new Unigram.ViewModels.Settings.SettingsThemesViewModel(
+                return (T)(object)new Unigram.ViewModels.Settings.SettingsThemeViewModel(
                     _protoService,
                     _cacheService,
                     _settingsService,
@@ -1246,6 +1252,10 @@ namespace Unigram.Views
             else if (type == typeof(Unigram.Services.IStorageService))
             {
                 return (T)(_storageService ??= new Unigram.Services.StorageService(_protoService));
+            }
+            else if (type == typeof(Unigram.Services.ITranslateService))
+            {
+                return (T)(_translateService ??= new Unigram.Services.TranslateService(_localeService, _settingsService));
             }
 
             return default;

@@ -866,7 +866,7 @@ namespace Unigram.ViewModels
             }
 
             var language = LanguageIdentification.IdentifyLanguage(caption.Text);
-            var popup = new TranslatePopup(new TranslateService(), caption.Text, language, LocaleService.Current.Language, !message.CanBeSaved);
+            var popup = new TranslatePopup(_translateService, caption.Text, language, LocaleService.Current.CurrentCulture.TwoLetterISOLanguageName, !message.CanBeSaved);
             await popup.ShowQueuedAsync();
         }
 

@@ -90,17 +90,20 @@ namespace Unigram.ViewModels
         protected readonly IGroupCallService _groupCallService;
         protected readonly INetworkService _networkService;
         protected readonly IStorageService _storageService;
+        protected readonly ITranslateService _translateService;
         protected readonly IMessageFactory _messageFactory;
 
         public IPlaybackService PlaybackService => _playbackService;
 
         public IStorageService StorageService => _storageService;
 
+        public ITranslateService TranslateService => _translateService;
+
         //private UserActivitySession _timelineSession;
 
         public IDialogDelegate Delegate { get; set; }
 
-        public DialogViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ILocationService locationService, INotificationsService pushService, IPlaybackService playbackService, IVoipService voipService, IGroupCallService groupCallService, INetworkService networkService, IStorageService storageService, IMessageFactory messageFactory)
+        public DialogViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ILocationService locationService, INotificationsService pushService, IPlaybackService playbackService, IVoipService voipService, IGroupCallService groupCallService, INetworkService networkService, IStorageService storageService, ITranslateService translateService, IMessageFactory messageFactory)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _locationService = locationService;
@@ -110,6 +113,7 @@ namespace Unigram.ViewModels
             _groupCallService = groupCallService;
             _networkService = networkService;
             _storageService = storageService;
+            _translateService = translateService;
             _messageFactory = messageFactory;
 
             //_stickers = new DialogStickersViewModel(protoService, cacheService, settingsService, aggregator);
