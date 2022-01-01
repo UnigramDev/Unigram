@@ -34,7 +34,7 @@
           <tr class="row7">
             <td class="column0 style2 s style2" rowspan="2">Search</td>
             <td class="column1 style1 s">Chat search</td>
-            <td class="column2 style1 s">Ctrl + E</td>
+            <td class="column2 style1 s">Ctrl + K</td>
           </tr>
           <tr class="row8">
             <td class="column1 style1 s">Messages search per chat</td>
@@ -75,7 +75,7 @@
           </tr>
           <tr class="row17">
             <td class="column1 style1 s">Create Link</td>
-            <td class="column2 style1 s">Ctrl + K</td>
+            <td class="column2 style1 s">Unavaiable</td>
           </tr>
           <tr class="row18">
             <td class="column1 style1 s">Monospace</td>
