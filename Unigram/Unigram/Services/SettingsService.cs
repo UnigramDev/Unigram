@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Numerics;
 using Unigram.Native.Calls;
 using Unigram.Services.Settings;
@@ -78,6 +79,8 @@ namespace Unigram.Services
         string LanguagePluralId { get; set; }
         string LanguageBaseId { get; set; }
         string LanguageShownId { get; set; }
+
+        string[] DoNotTranslate { get; set; }
 
         string PushToken { get; set; }
 
@@ -632,6 +635,17 @@ namespace Unigram.Services
         {
             get => _languageShownId ??= GetValueOrDefault<string>(_local, "LanguageShownId", null);
             set => AddOrUpdateValue(ref _languageShownId, _local, "LanguageShownId", value);
+        }
+
+        private string[] _doNotTranslate;
+        public string[] DoNotTranslate
+        {
+            get => _doNotTranslate ??= GetValueOrDefault<string>(_local, "DoNotTranslate", null)?.Split(';', StringSplitOptions.RemoveEmptyEntries);
+            set
+            {
+                _doNotTranslate = value?.Length > 0 ? value : null;
+                AddOrUpdateValue(_local, "DoNotTranslate", value?.Length > 0 ? string.Join(';', value) : null);
+            }
         }
 
         private string _pushToken;

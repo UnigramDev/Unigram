@@ -61,9 +61,22 @@ namespace Unigram.Services
             var language = LanguageIdentification.IdentifyLanguage(text);
             var split = language.Split('-');
 
-            var current = _localeService.CurrentCulture;
+            var exclude = _settings.DoNotTranslate;
+            if (exclude == null)
+            {
+                exclude = new[] { _settings.LanguagePackId };
+            }
 
-            return !string.Equals(current.TwoLetterISOLanguageName, split[0], StringComparison.OrdinalIgnoreCase);
+            foreach (var item in exclude)
+            {
+                var args = item.Split('_');
+                if (string.Equals(args[0], split[0], StringComparison.OrdinalIgnoreCase))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         public IList<string> Tokenize(string full, int maxBlockSize)

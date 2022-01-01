@@ -35,6 +35,10 @@
                               Margin="12,6,12,0" />
                     <Rectangle Style="{StaticResource Separator}" />
 
+                    <controls:BadgeButton Content="{CustomResource DoNotTranslate}"
+                                          Badge="{x:Bind ViewModel.DoNotTranslate, Mode=OneWay}"
+                                          Command="{x:Bind ViewModel.DoNotTranslateCommand}"
+                                          Visibility="{x:Bind ViewModel.IsTranslateEnabled, Mode=OneWay}"/>
                 </controls:HeaderedControl>
             </ListView.Header>
             <ListView.GroupStyle>
