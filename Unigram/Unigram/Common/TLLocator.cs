@@ -674,14 +674,6 @@ namespace Unigram.Views
                         _networkService,
                         _eventAggregator));
             }
-            else if (type == typeof(Unigram.ViewModels.Settings.SettingsPhoneIntroViewModel))
-            {
-                return (T)(object)new Unigram.ViewModels.Settings.SettingsPhoneIntroViewModel(
-                    _protoService,
-                    _cacheService,
-                    _settingsService,
-                    _eventAggregator);
-            }
             else if (type == typeof(Unigram.ViewModels.Settings.SettingsPhoneViewModel))
             {
                 return (T)(object)new Unigram.ViewModels.Settings.SettingsPhoneViewModel(

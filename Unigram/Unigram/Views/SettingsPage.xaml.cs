@@ -33,8 +33,6 @@ namespace Unigram.Views
 
         public void Dispose()
         {
-            //DataContext = null;
-            //Bindings?.Update();
             Bindings?.StopTracking();
         }
 
@@ -76,10 +74,21 @@ namespace Unigram.Views
             MasterDetail.NavigationService.GoBackAt(0, false);
         }
 
-        private void Phone_Click(object sender, RoutedEventArgs e)
+        private async void Phone_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(SettingsPhoneIntroPage));
-            MasterDetail.NavigationService.GoBackAt(0, false);
+            var popup = new ChangePhoneNumberPopup();
+            var change = await popup.ShowQueuedAsync();
+            if (change != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            var confirm = await MessagePopup.ShowAsync(Strings.Resources.PhoneNumberAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            if (confirm == ContentDialogResult.Primary)
+            {
+                MasterDetail.NavigationService.Navigate(typeof(SettingsPhonePage));
+                MasterDetail.NavigationService.GoBackAt(0, false);
+            }
         }
 
         private void Username_Click(object sender, RoutedEventArgs e)

@@ -775,7 +775,6 @@
     <Compile Include="ViewModels\Settings\Password\SettingsPasswordEmailViewModel.cs" />
     <Compile Include="ViewModels\Settings\Password\SettingsPasswordHintViewModel.cs" />
     <Compile Include="ViewModels\Settings\Password\SettingsPasswordIntroViewModel.cs" />
-    <Compile Include="ViewModels\Settings\Phone\SettingsPhoneIntroViewModel.cs" />
     <Compile Include="ViewModels\Settings\Phone\SettingsPhoneSentCodeViewModel.cs" />
     <Compile Include="ViewModels\Settings\Phone\SettingsPhoneViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyAllowCallsViewModel.cs" />
@@ -994,8 +993,8 @@
     <Compile Include="Views\Settings\Password\SettingsPasswordDonePage.xaml.cs">
       <DependentUpon>SettingsPasswordDonePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Settings\Phone\SettingsPhoneIntroPage.xaml.cs">
-      <DependentUpon>SettingsPhoneIntroPage.xaml</DependentUpon>
+    <Compile Include="Views\Settings\Phone\ChangePhoneNumberPopup.xaml.cs">
+      <DependentUpon>ChangePhoneNumberPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\Phone\SettingsPhonePage.xaml.cs">
       <DependentUpon>SettingsPhonePage.xaml</DependentUpon>
@@ -2104,7 +2103,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Settings\Phone\SettingsPhoneIntroPage.xaml">
+    <Page Include="Views\Settings\Phone\ChangePhoneNumberPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
