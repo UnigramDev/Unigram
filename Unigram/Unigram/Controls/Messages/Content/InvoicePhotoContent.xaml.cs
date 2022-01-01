@@ -7,10 +7,12 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed class InvoicePhotoContent : Control, IContentWithFile
+    public sealed class InvoicePhotoContent : Control, IContent
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
+
+        private string _thumbnailToken;
 
         public InvoicePhotoContent(MessageViewModel message)
         {
@@ -67,13 +69,17 @@ namespace Unigram.Controls.Messages.Content
             var small = invoice.Photo.GetSmall();
             if (small != null)
             {
+                UpdateManager.Subscribe(this, message, small.Photo, ref _thumbnailToken, UpdateFile, true);
                 UpdateThumbnail(message, small.Photo);
             }
         }
 
-        public void UpdateMessageContentOpened(MessageViewModel message) { }
+        private void UpdateFile(object target, File file)
+        {
+            UpdateFile(_message, file);
+        }
 
-        public void UpdateFile(MessageViewModel message, File file)
+        private void UpdateFile(MessageViewModel message, File file)
         {
             var invoice = message.Content as MessageInvoice;
             if (invoice == null || !_templateApplied)

@@ -180,7 +180,6 @@ namespace Unigram.Collections
                 update.CanBeMutedForCurrentUser = participant.CanBeMutedForCurrentUser;
                 update.CanBeUnmutedForAllUsers = participant.CanBeUnmutedForAllUsers;
                 update.CanBeUnmutedForCurrentUser = participant.CanBeUnmutedForCurrentUser;
-                update.CanEnableVideo = participant.CanEnableVideo;
                 update.IsMutedForAllUsers = participant.IsMutedForAllUsers;
                 update.IsMutedForCurrentUser = participant.IsMutedForCurrentUser;
                 update.IsCurrentUser = participant.IsCurrentUser;
@@ -192,6 +191,7 @@ namespace Unigram.Collections
                 update.ScreenSharingVideoInfo = participant.ScreenSharingVideoInfo;
                 update.VideoInfo = participant.VideoInfo;
                 update.AudioSourceId = participant.AudioSourceId;
+                update.ScreenSharingAudioSourceId = participant.ScreenSharingAudioSourceId;
                 update.ParticipantId = participant.ParticipantId;
             }
             else if (index >= 0 && (participant.ScreenSharingVideoInfo != null || participant.VideoInfo != null))

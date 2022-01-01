@@ -1,13 +1,13 @@
 ﻿using Microsoft.Graphics.Canvas.Effects;
 using System;
 using System.Numerics;
+using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Controls.Media;
 using Unigram.Controls.Chats;
+using Unigram.Controls.Media;
 using Unigram.Converters;
-using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
 using Windows.Storage.AccessCache;
@@ -22,11 +22,9 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views
 {
-    public sealed partial class BackgroundPopup : ContentPopup, IHandle<UpdateFile>, IBackgroundDelegate
+    public sealed partial class BackgroundPopup : ContentPopup, IBackgroundDelegate
     {
         public BackgroundViewModel ViewModel => DataContext as BackgroundViewModel;
-
-        private readonly FlatFileContext<Background> _backgrounds = new();
 
         private readonly ChatBackgroundFreeform _freeform = new(false);
 
@@ -194,19 +192,56 @@ namespace Unigram.Views
 
                 if (wallpaper.Type is BackgroundTypeWallpaper)
                 {
-                    Presenter.Fill = new ImageBrush { ImageSource = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, big.DocumentValue, 0, 0), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
+                    SetBitmap(big.DocumentValue);
                 }
                 else if (wallpaper.Type is BackgroundTypePattern)
                 {
                     if (string.Equals(wallpaper.Document.MimeType, "application/x-tgwallpattern", StringComparison.OrdinalIgnoreCase))
                     {
-                        Presenter.Fill = new TiledBrush { SvgSource = PlaceholderHelper.GetVectorSurface(ViewModel.ProtoService, big.DocumentValue, ViewModel.GetPatternForeground()) };
+                        await SetPatternAsync(wallpaper.Document.DocumentValue, true);
                     }
                     else
                     {
-                        Presenter.Fill = new ImageBrush { ImageSource = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, big.DocumentValue, 0, 0), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
+                        SetBitmap(big.DocumentValue);
                     }
                 }
+            }
+        }
+
+        private void SetBitmap(File file)
+        {
+            if (file.Local.IsDownloadingCompleted)
+            {
+                Presenter.Fill = new ImageBrush { ImageSource =  UriEx.ToBitmap(file.Local.Path, 0, 0), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
+            }
+            else
+            {
+                UpdateManager.Subscribe(this, ViewModel.ProtoService, file, UpdateFile, true);
+
+                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                {
+                    ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                }
+            }
+        }
+
+        private async Task SetPatternAsync(File file, bool download)
+        {
+            if (Presenter.Fill is TiledBrush brush)
+            {
+                brush.Surface = await PlaceholderHelper.GetPatternSurfaceAsync(download ? ViewModel.ProtoService : null, file);
+                brush.FallbackColor = ViewModel.GetPatternForeground();
+                brush.IsInverted = ViewModel.Intensity < 0;
+                brush.Update();
+            }
+            else
+            {
+                Presenter.Fill = new TiledBrush
+                {
+                    Surface = await PlaceholderHelper.GetPatternSurfaceAsync(download ? ViewModel.ProtoService : null, file),
+                    FallbackColor = ViewModel.GetPatternForeground(),
+                    IsInverted = ViewModel.Intensity < 0,
+                };
             }
         }
 
@@ -269,9 +304,6 @@ namespace Unigram.Views
                     var wallpaper = ViewModel.Patterns[i];
                     var root = container.ContentTemplateRoot as Grid;
 
-                    var check = root.Children[1];
-                    check.Visibility = wallpaper.Id == ViewModel.SelectedPattern?.Id ? Visibility.Visible : Visibility.Collapsed;
-
                     var content = root.Children[0] as Image;
                     if (wallpaper.Document != null)
                     {
@@ -321,69 +353,71 @@ namespace Unigram.Views
             return !color3.IsEmpty && color4.IsEmpty ? Visibility.Visible : Visibility.Collapsed;
         }
 
+        private bool _negative;
+
         private double ConvertIntensity(int intensity)
         {
-            return intensity / 100d;
+            if (intensity < 0 && !_negative)
+            {
+                _negative = true;
+                UpdatePresenter(ViewModel.Item);
+            }
+            else if (intensity >= 0 && _negative)
+            {
+                _negative = false;
+                UpdatePresenter(ViewModel.Item);
+            }
+
+            return Math.Abs(intensity / 100d);
         }
 
         #endregion
 
-        public void Handle(UpdateFile update)
+        private async void UpdateFile(object target, File file)
         {
-            this.BeginOnUIThread(() =>
+            var wallpaper = ViewModel.Item;
+
+            var big = wallpaper?.Document;
+            if (big == null)
             {
-                if (ViewModel.Item is Background wallpaper && wallpaper.UpdateFile(update.File))
+                return;
+            }
+
+            if (wallpaper.Type is BackgroundTypeWallpaper)
+            {
+                Presenter.Fill = new ImageBrush { ImageSource = PlaceholderHelper.GetBitmap(null, big.DocumentValue, 0, 0), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
+            }
+            else if (wallpaper.Type is BackgroundTypePattern pattern)
+            {
+                //content.Background = pattern.Fill.ToBrush();
+                //rectangle.Opacity = pattern.Intensity / 100d;
+                if (string.Equals(wallpaper.Document.MimeType, "application/x-tgwallpattern", StringComparison.OrdinalIgnoreCase))
                 {
-                    var big = wallpaper.Document;
-                    if (big == null)
-                    {
-                        return;
-                    }
-
-                    if (wallpaper.Type is BackgroundTypeWallpaper)
-                    {
-                        Presenter.Fill = new ImageBrush { ImageSource = PlaceholderHelper.GetBitmap(null, big.DocumentValue, 0, 0), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
-                    }
-                    else if (wallpaper.Type is BackgroundTypePattern pattern)
-                    {
-                        //content.Background = pattern.Fill.ToBrush();
-                        //rectangle.Opacity = pattern.Intensity / 100d;
-                        if (string.Equals(wallpaper.Document.MimeType, "application/x-tgwallpattern", StringComparison.OrdinalIgnoreCase))
-                        {
-                            Presenter.Fill = new TiledBrush { SvgSource = PlaceholderHelper.GetVectorSurface(null, big.DocumentValue, ViewModel.GetPatternForeground()) };
-                        }
-                        else
-                        {
-                            Presenter.Fill = new ImageBrush { ImageSource = new BitmapImage(UriEx.ToLocal(big.DocumentValue.Local.Path)), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
-                        }
-                    }
+                    await SetPatternAsync(big.DocumentValue, false);
                 }
-
-                if (_backgrounds.TryGetValue(update.File.Id, out Background background))
+                else
                 {
-                    background.UpdateFile(update.File);
-
-                    var small = background.Document.Thumbnail;
-                    if (small == null)
-                    {
-                        return;
-                    }
-
-                    var container = PatternList.ContainerFromItem(background) as SelectorItem;
-                    if (container == null)
-                    {
-                        return;
-                    }
-
-                    var content = container.ContentTemplateRoot as Grid;
-                    var photo = content?.Children[0] as Image;
-
-                    if (photo != null)
-                    {
-                        photo.Source = PlaceholderHelper.GetBitmap(null, small.File, background.Document.Thumbnail.Width, background.Document.Thumbnail.Height);
-                    }
+                    Presenter.Fill = new ImageBrush { ImageSource = new BitmapImage(UriEx.ToLocal(big.DocumentValue.Local.Path)), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
                 }
-            });
+            }
+        }
+
+        private void UpdatePattern(object target, File file)
+        { 
+            var content = target as Grid;
+            var background = content?.Tag as Background;
+
+            var small = background?.Document.Thumbnail;
+            if (small == null)
+            {
+                return;
+            }
+
+            var photo = content?.Children[0] as Image;
+            if (photo != null)
+            {
+                photo.Source = PlaceholderHelper.GetBitmap(null, file, background.Document.Thumbnail.Width, background.Document.Thumbnail.Height);
+            }
         }
 
         private void RadioColor_Toggled(object sender, RoutedEventArgs e)
@@ -452,8 +486,7 @@ namespace Unigram.Views
             var wallpaper = args.Item as Background;
             var root = args.ItemContainer.ContentTemplateRoot as Grid;
 
-            var check = root.Children[1];
-            check.Visibility = wallpaper.Id == ViewModel.SelectedPattern?.Id ? Visibility.Visible : Visibility.Collapsed;
+            root.Tag = wallpaper;
 
             if (wallpaper.Document != null)
             {
@@ -464,15 +497,20 @@ namespace Unigram.Views
                 }
 
                 var content = root.Children[0] as Image;
+
                 var file = small.File;
                 if (file.Local.IsDownloadingCompleted)
                 {
                     content.Source = PlaceholderHelper.GetBitmap(null, small.File, wallpaper.Document.Thumbnail.Width, wallpaper.Document.Thumbnail.Height);
                 }
-                else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                else 
                 {
-                    _backgrounds[file.Id] = wallpaper;
-                    ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                    UpdateManager.Subscribe(root, ViewModel.ProtoService, file, UpdatePattern, true);
+
+                    if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                    {
+                        ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                    }
                 }
 
                 content.Opacity = ViewModel.Intensity / 100d;

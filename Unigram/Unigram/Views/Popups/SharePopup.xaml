@@ -59,8 +59,8 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <cells:ChatShareCell
-                            SelectionStroke="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                            Accent="{ThemeResource SystemAccentColor}"/>
+                            SelectionStroke="{ThemeResource ContentDialogBackground}"
+                            Stroke="{ThemeResource ChatLastMessageStateBrush}"/>
                     </DataTemplate>
                 </ListView.ItemTemplate>
                 <ListView.ItemContainerStyle>

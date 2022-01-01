@@ -56,9 +56,7 @@ namespace Unigram.ViewModels.Settings
 
         public async Task SetThemeAsync(ThemeInfoBase info)
         {
-            await _themeService.SetThemeAsync(info, !_darkOnly && NightMode == NightMode.Disabled);
-            RaisePropertyChanged(nameof(IsNightModeAvailable));
-
+            _themeService.SetTheme(info, !_darkOnly && NightMode == NightMode.Disabled);
             await RefreshThemesAsync();
         }
 
@@ -146,35 +144,7 @@ namespace Unigram.ViewModels.Settings
             }
         };
 
-        //public bool IsSystemTheme
-        //{
-        //    get
-        //    {
-        //        return !Settings.Appearance.RequestedTheme.HasFlag(TelegramTheme.Brand);
-        //    }
-        //    set
-        //    {
-        //        Settings.Appearance.RequestedTheme = value ? GetRawTheme() : (GetRawTheme() | TelegramTheme.Brand);
-        //        RaisePropertyChanged();
-        //        RaisePropertyChanged(() => RequestedTheme);
-        //    }
-        //}
-
-        public bool IsNightModeAvailable
-        {
-            get
-            {
-                return Settings.Appearance.RequestedTheme == TelegramTheme.Light;
-            }
-        }
-
-        public NightMode NightMode
-        {
-            get
-            {
-                return Settings.Appearance.NightMode;
-            }
-        }
+        public NightMode NightMode => Settings.Appearance.NightMode;
 
         private bool _areCustomThemesAvailable;
         public bool AreCustomThemesAvailable
@@ -218,10 +188,10 @@ namespace Unigram.ViewModels.Settings
                     accent = BootStrapper.Current.UISettings.GetColorValue(UIColorType.Accent);
                 }
 
-                var dialog = new SelectColorPopup();
+                var dialog = new ChooseColorPopup();
                 dialog.Color = accent;
 
-                var confirm = await dialog.ShowAsync();
+                var confirm = await dialog.ShowQueuedAsync();
                 if (confirm == ContentDialogResult.Primary)
                 {
                     await SetThemeAsync(ThemeAccentInfo.FromAccent(type, dialog.Color));
@@ -255,8 +225,18 @@ namespace Unigram.ViewModels.Settings
                 return;
             }
 
-            var preparing = new ThemeCustomInfo { Name = input.Text, Parent = theme.Parent };
+            var preparing = new ThemeCustomInfo(theme.Parent, theme.AccentColor, input.Text);
             var fileName = Client.Execute(new CleanFileName(theme.Name)) as Text;
+
+            var lookup = ThemeService.GetLookup(theme.Parent);
+
+            foreach (var value in lookup)
+            {
+                if (value.Value is Color color)
+                {
+                    preparing.Values[value.Key] = color;
+                }
+            }
 
             if (theme is ThemeCustomInfo custom)
             {

@@ -2,21 +2,21 @@
 #include <Windows.h>
 
 HMODULE GetKernelModule();
-HMODULE GetModuleHandle(_In_ LPCTSTR libFileName);
-HMODULE LoadLibrary(_In_ LPCTSTR lpFileName);
-HMODULE LoadLibraryEx(_In_ LPCTSTR lpFileName, _Reserved_ HANDLE hFile, _In_ DWORD flags);
+HMODULE GetModuleHandle2(_In_ LPCTSTR libFileName);
+HMODULE LoadLibrary2(_In_ LPCTSTR lpFileName);
+HMODULE LoadLibraryEx2(_In_ LPCTSTR lpFileName, _Reserved_ HANDLE hFile, _In_ DWORD flags);
 
 struct LibraryInstance
 {
 public:
 	LibraryInstance(LPCTSTR libFileName)
 	{
-		m_module = LoadLibrary(libFileName);
+		m_module = LoadLibrary2(libFileName);
 	}
 
 	LibraryInstance(LPCTSTR libFileName, DWORD flags)
 	{
-		m_module = LoadLibraryEx(libFileName, NULL, flags);
+		m_module = LoadLibraryEx2(libFileName, NULL, flags);
 	}
 
 	~LibraryInstance()

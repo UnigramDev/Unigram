@@ -118,7 +118,7 @@ namespace Unigram.Services
                 }
 
                 _capturer = new VoipVideoCapture(await _videoWatcher.GetAndUpdateAsync());
-                _manager.SetVideoCapture(_capturer);
+                _manager?.SetVideoCapture(_capturer);
             }
             else if (type == VoipCaptureType.Screencast && _capturer is not VoipScreenCapture)
             {
@@ -138,7 +138,7 @@ namespace Unigram.Services
                 }
 
                 _capturer = new VoipScreenCapture(item);
-                _manager.SetVideoCapture(_capturer);
+                _manager?.SetVideoCapture(_capturer);
             }
 
             return _capturer;
@@ -480,7 +480,7 @@ namespace Unigram.Services
                         return;
                     }
 
-                    ProtoService.Send(new SendMessage(chat.Id, 0, 0, new MessageSendOptions(false, false, null), null, new InputMessageDocument(new InputFileLocal(file.Path), null, false, null)));
+                    ProtoService.Send(new SendMessage(chat.Id, 0, 0, new MessageSendOptions(false, false, false, null), null, new InputMessageDocument(new InputFileLocal(file.Path), null, false, null)));
                 }
             }
         }

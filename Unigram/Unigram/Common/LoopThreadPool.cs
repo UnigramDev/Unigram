@@ -1,9 +1,25 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Unigram.Common
 {
     public class LoopThreadPool
     {
+        private static Dictionary<double, LoopThread> _specificFrameRate = new Dictionary<double, LoopThread>();
+
+        public static LoopThread Get(double frameRate)
+        {
+            if (_specificFrameRate.TryGetValue(frameRate, out LoopThread thread))
+            {
+                return thread;
+            }
+
+            thread = new LoopThread(TimeSpan.FromMilliseconds(1000 / Math.Min(60, frameRate)));
+            _specificFrameRate[frameRate] = thread;
+
+            return thread;
+        }
+
         private readonly LoopThread[] _pool;
         private int _lastUsed = -1;
 

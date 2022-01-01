@@ -148,7 +148,7 @@ namespace Unigram.ViewModels.Chats
         {
             if (inviteLink == null)
             {
-                ProtoService.Send(new CreateChatInviteLink(chat.Id, 0, 0));
+                ProtoService.Send(new CreateChatInviteLink(chat.Id, string.Empty, 0, 0, false));
             }
             else
             {
@@ -189,7 +189,7 @@ namespace Unigram.ViewModels.Chats
             private readonly ChatInviteLinkViewModel _viewModel;
             private readonly Chat _chat;
             private readonly string _inviteLink;
-            private readonly int _userId;
+            private readonly long _userId;
 
             private ItemsStage _stage = ItemsStage.Members;
             private bool _stageHeader;
@@ -210,7 +210,7 @@ namespace Unigram.ViewModels.Chats
                 Administrators
             }
 
-            public ItemsCollection(ChatInviteLinkViewModel viewModel, Chat chat, string inviteLink, int userId)
+            public ItemsCollection(ChatInviteLinkViewModel viewModel, Chat chat, string inviteLink, long userId)
             {
                 _viewModel = viewModel;
                 _chat = chat;

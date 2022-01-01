@@ -1,9 +1,12 @@
-﻿using System;
+﻿using LinqToVisualTree;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services;
 using Unigram.ViewModels;
+using Windows.System;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -11,12 +14,17 @@ using Windows.UI.Xaml.Hosting;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed class AnimatedStickerContent : HyperlinkButton, IContentWithFile, IContentWithPlayback
+    public sealed class AnimatedStickerContent : HyperlinkButton, IContent, IContentWithPlayback
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
+        private string _fileToken;
+        private string _interactionToken;
+
         private CompositionAnimation _thumbnailShimmer;
+
+        private int _interacting;
 
         public AnimatedStickerContent(MessageViewModel message)
         {
@@ -29,11 +37,13 @@ namespace Unigram.Controls.Messages.Content
         #region InitializeComponent
 
         private LottieView Player;
+        private Grid Interactions;
         private bool _templateApplied;
 
         protected override void OnApplyTemplate()
         {
             Player = GetTemplateChild(nameof(Player)) as LottieView;
+            Interactions = GetTemplateChild(nameof(Interactions)) as Grid;
 
             Player.FirstFrameRendered += Player_FirstFrameRendered;
 
@@ -57,13 +67,13 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            if (message.Content is MessageText text)
+            if (message.Content is MessageAnimatedEmoji animatedEmoji)
             {
                 Width = Player.Width = 200 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
                 Height = Player.Height = 200 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
-                Player.ColorReplacements = Emoji.GetColorReplacements(text.Text.Text);
+                //Player.ColorReplacements = animatedEmoji.AnimatedEmoji.ColorReplacements.ToDictionary(x => x.OldColor, x => x.NewColor);
 
-                var sound = message.ProtoService.GetEmojiSound(sticker.Emoji);
+                var sound = animatedEmoji.AnimatedEmoji.Sound;
                 if (sound != null && sound.Local.CanBeDownloaded && !sound.Local.IsDownloadingActive)
                 {
                     message.ProtoService.DownloadFile(sound.Id, 1);
@@ -81,12 +91,16 @@ namespace Unigram.Controls.Messages.Content
                 UpdateThumbnail(message, sticker.Outline);
             }
 
+            UpdateManager.Subscribe(this, message, sticker.StickerValue, ref _fileToken, UpdateFile, true);
             UpdateFile(message, sticker.StickerValue);
         }
 
-        public void UpdateMessageContentOpened(MessageViewModel message) { }
+        private void UpdateFile(object target, File file)
+        {
+            UpdateFile(_message, file);
+        }
 
-        public void UpdateFile(MessageViewModel message, File file)
+        private void UpdateFile(MessageViewModel message, File file)
         {
             var sticker = GetContent(message);
             if (sticker == null || !_templateApplied)
@@ -96,6 +110,11 @@ namespace Unigram.Controls.Messages.Content
 
             if (sticker.StickerValue.Id != file.Id)
             {
+                if (message.Interaction?.StickerValue.Id == file.Id && file.Local.IsDownloadingCompleted)
+                {
+                    PlayInteraction(message, message.Interaction);
+                }
+
                 return;
             }
 
@@ -103,6 +122,8 @@ namespace Unigram.Controls.Messages.Content
             {
                 Player.IsLoopingEnabled = message.Content is MessageSticker && SettingsService.Current.Stickers.IsLoopingEnabled;
                 Player.Source = UriEx.ToLocal(file.Local.Path);
+
+                message.Delegate.ViewVisibleMessages(false);
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
@@ -157,7 +178,7 @@ namespace Unigram.Controls.Messages.Content
             return Player;
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private async void Button_Click(object sender, RoutedEventArgs e)
         {
             var sticker = GetContent(_message);
             if (sticker == null)
@@ -165,21 +186,96 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            if (_message.Content is MessageText)
+            if (_message.Content is MessageAnimatedEmoji animatedEmoji)
             {
                 var started = Player.Play();
                 if (started)
                 {
-                    var sound = _message.ProtoService.GetEmojiSound(sticker.Emoji);
+                    var sound = animatedEmoji.AnimatedEmoji.Sound;
                     if (sound != null && sound.Local.IsDownloadingCompleted)
                     {
                         SoundEffects.Play(sound);
                     }
                 }
+
+                var response = await _message.ProtoService.SendAsync(new ClickAnimatedEmojiMessage(_message.ChatId, _message.Id));
+                if (response is Sticker interaction)
+                {
+                    PlayInteraction(_message, interaction);
+                }
             }
             else
             {
                 _message.Delegate.OpenSticker(sticker);
+            }
+        }
+
+        public void PlayInteraction(MessageViewModel message, Sticker interaction)
+        {
+            message.Interaction = null;
+
+            var file = interaction.StickerValue;
+            if (file.Local.IsDownloadingCompleted && _interacting < 4)
+            {
+                var dispatcher = DispatcherQueue.GetForCurrentThread();
+                var container = this.Ancestors<ListViewItem>().FirstOrDefault();
+
+                var player = new LottieView();
+                player.Width = Player.Width * 3;
+                player.Height = Player.Height * 3;
+                player.IsFlipped = !message.IsOutgoing;
+                player.IsLoopingEnabled = false;
+                player.IsHitTestVisible = false;
+                player.FrameSize = new Windows.Graphics.SizeInt32 { Width = 512, Height = 512 };
+                player.Source = UriEx.ToLocal(interaction.StickerValue.Local.Path);
+                player.PositionChanged += (s, args) =>
+                {
+                    if (args == 1)
+                    {
+                        dispatcher.TryEnqueue(() =>
+                        {
+                            Interactions.Children.Remove(player);
+
+                            if (_interacting-- > 1)
+                            {
+                                return;
+                            }
+
+                            Canvas.SetZIndex(container, 0);
+                        });
+                    }
+                };
+
+                var random = new Random();
+                var x = Player.Width * (0.08 - (0.16 * random.NextDouble()));
+                var y = Player.Height * (0.08 - (0.16 * random.NextDouble()));
+                var shift = Player.Width * 0.075;
+
+                var left = (Player.Width * 2) - shift + x;
+                var right = 0 + shift - x;
+                var top = Player.Height + y;
+                var bottom = Player.Height - y;
+
+                if (message.IsOutgoing)
+                {
+                    player.Margin = new Thickness(-left, -top, -right, -bottom);
+                }
+                else
+                {
+                    player.Margin = new Thickness(-right, -top, -left, -bottom);
+                }
+
+                Interactions.Children.Add(player);
+
+                _interacting++;
+                Canvas.SetZIndex(container, 1);
+            }
+            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+            {
+                message.Interaction = interaction;
+                message.Delegate.DownloadFile(message, file);
+
+                UpdateManager.Subscribe(this, message, file, ref _interactionToken, UpdateFile, true);
             }
         }
     }

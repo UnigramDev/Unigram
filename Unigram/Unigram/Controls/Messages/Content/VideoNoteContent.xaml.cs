@@ -15,6 +15,9 @@ namespace Unigram.Controls.Messages.Content
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
+        private string _fileToken;
+        private string _thumbnailToken;
+
         public VideoNoteContent(MessageViewModel message)
         {
             _message = message;
@@ -77,7 +80,9 @@ namespace Unigram.Controls.Messages.Content
                 Subtitle.Text = videoNote.GetDuration();
             }
 
-            UpdateThumbnail(message, videoNote.Thumbnail, videoNote.Minithumbnail);
+            UpdateThumbnail(message, videoNote, videoNote.Thumbnail?.File, true);
+
+            UpdateManager.Subscribe(this, message, videoNote.Video, ref _fileToken, UpdateFile);
             UpdateFile(message, videoNote.Video);
         }
 
@@ -89,7 +94,12 @@ namespace Unigram.Controls.Messages.Content
             }
         }
 
-        public void UpdateFile(MessageViewModel message, File file)
+        private void UpdateFile(object target, File file)
+        {
+            UpdateFile(_message, file);
+        }
+
+        private void UpdateFile(MessageViewModel message, File file)
         {
             var videoNote = GetContent(message.Content);
             if (videoNote == null || !_templateApplied)
@@ -97,12 +107,7 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            if (videoNote.Thumbnail != null && videoNote.Thumbnail.File.Id == file.Id)
-            {
-                UpdateThumbnail(message, videoNote.Thumbnail, null);
-                return;
-            }
-            else if (videoNote.Video.Id != file.Id)
+            if (videoNote.Video.Id != file.Id)
             {
                 return;
             }
@@ -132,7 +137,7 @@ namespace Unigram.Controls.Messages.Content
 
                 Player.Source = null;
 
-                if (message.Delegate.CanBeDownloaded(message))
+                if (message.Delegate.CanBeDownloaded(videoNote, file))
                 {
                     _message.ProtoService.DownloadFile(file.Id, 32);
                 }
@@ -154,33 +159,55 @@ namespace Unigram.Controls.Messages.Content
                     Button.Progress = 1;
 
                     Player.Source = new LocalVideoSource(file);
+                    message.Delegate.ViewVisibleMessages(false);
                 }
             }
         }
 
-        private void UpdateThumbnail(MessageViewModel message, Thumbnail thumbnail, Minithumbnail minithumbnail)
+        private void UpdateThumbnail(object target, File file)
         {
-            if (thumbnail != null)
+            var videoNote = GetContent(_message.Content);
+            if (videoNote == null || !_templateApplied)
             {
-                var file = thumbnail.File;
+                return;
+            }
+
+            UpdateThumbnail(_message, videoNote, file, false);
+        }
+
+        private void UpdateThumbnail(MessageViewModel message, VideoNote videoNote, File file, bool download)
+        {
+            var thumbnail = videoNote.Thumbnail;
+            var minithumbnail = videoNote.Minithumbnail;
+
+            if (thumbnail != null && thumbnail.Format is ThumbnailFormatJpeg)
+            {
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    //Texture.Source = new BitmapImage(UriEx.GetLocal(file.Local.Path));
                     Texture.ImageSource = PlaceholderHelper.GetBlurred(file.Local.Path);
                 }
-                else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                else if (download)
                 {
-                    if (minithumbnail != null)
+                    if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                     {
-                        Texture.ImageSource = PlaceholderHelper.GetBlurred(minithumbnail.Data);
+                        if (minithumbnail != null)
+                        {
+                            Texture.ImageSource = PlaceholderHelper.GetBlurred(minithumbnail.Data);
+                        }
+
+                        message.ProtoService.DownloadFile(file.Id, 1);
                     }
 
-                    message.ProtoService.DownloadFile(file.Id, 1);
+                    UpdateManager.Subscribe(this, message, file, ref _thumbnailToken, UpdateThumbnail, true);
                 }
             }
             else if (minithumbnail != null)
             {
                 Texture.ImageSource = PlaceholderHelper.GetBlurred(minithumbnail.Data);
+            }
+            else
+            {
+                Texture.ImageSource = null;
             }
         }
 

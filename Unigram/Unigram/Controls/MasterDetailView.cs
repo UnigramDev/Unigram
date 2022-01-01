@@ -18,7 +18,6 @@ namespace Unigram.Controls
         private Frame DetailFrame;
         private ContentPresenter MasterPresenter;
         private Grid DetailPresenter;
-        private bool IsMasterHidden;
 
         public NavigationService NavigationService { get; private set; }
         public Frame ParentFrame { get; private set; }
@@ -30,7 +29,6 @@ namespace Unigram.Controls
             DefaultStyleKey = typeof(MasterDetailView);
 
             Loaded += OnLoaded;
-            SizeChanged += OnSizeChanged;
         }
 
         #region Initialize
@@ -53,7 +51,6 @@ namespace Unigram.Controls
         public void Dispose()
         {
             Loaded -= OnLoaded;
-            SizeChanged -= OnSizeChanged;
 
             var service = NavigationService;
             if (service != null)
@@ -154,27 +151,9 @@ namespace Unigram.Controls
             Navigation
         }
 
-        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            UpdateVisualState();
-        }
-
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            UpdateVisualState();
-
-            if (CurrentState == MasterDetailState.Minimal && DetailFrame.CurrentSourcePageType == BlankPageType)
-            {
-                MasterPresenter.Visibility = Visibility.Visible;
-            }
-            else if (CurrentState is MasterDetailState.Compact or MasterDetailState.Expanded)
-            {
-                MasterPresenter.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                MasterPresenter.Visibility = Visibility.Collapsed;
-            }
+            UpdateMasterVisibility();
 
             if (CurrentState != MasterDetailState.Minimal && ViewStateChanged != null)
             {
@@ -182,32 +161,22 @@ namespace Unigram.Controls
             }
         }
 
-        private void UpdateVisualState()
+        private void UpdateMasterVisibility()
         {
-            // If there are previous pages, see the state of the MD.
-            // If it's narrow, show the back button in the titlebar,
-            // else hide it.
-            if (DetailFrame != null && DetailFrame.CanGoBack && !Windows.ApplicationModel.DesignMode.DesignModeEnabled)
+            if (CurrentState == MasterDetailState.Minimal && DetailFrame?.CurrentSourcePageType == BlankPageType)
             {
-                if (CurrentState != MasterDetailState.Minimal)
-                {
-                    //if (DetailFrame.SourcePageType == typeof(DialogPage) ||
-                    //    DetailFrame.SourcePageType == typeof(AboutPage) ||
-                    //    DetailFrame.SourcePageType == typeof(SettingsPage))
-                    //{
-                    //    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
-                    //        AppViewBackButtonVisibility.Collapsed;
-                    //}else
-                    //{
-                    //    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
-                    //    AppViewBackButtonVisibility.Visible;
-                    //}
-                }
-                else
-                {
-                    //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
-                    //    AppViewBackButtonVisibility.Visible;
-                }
+                MasterPresenter.Visibility = Visibility.Visible;
+                MasterHeader.Visibility = Visibility.Visible;
+            }
+            else if (CurrentState is MasterDetailState.Compact or MasterDetailState.Expanded)
+            {
+                MasterPresenter.Visibility = Visibility.Visible;
+                MasterHeader.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                MasterPresenter.Visibility = Visibility.Collapsed;
+                MasterHeader.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -222,11 +191,11 @@ namespace Unigram.Controls
 
             MasterPresenter.RegisterPropertyChangedCallback(VisibilityProperty, OnVisibilityChanged);
 
-            var detailVisual = ElementCompositionPreview.GetElementVisual(DetailPresenter);
-            detailVisual.Clip = Window.Current.Compositor.CreateInsetClip();
-
             if (DetailFrame != null)
             {
+                var detailVisual = ElementCompositionPreview.GetElementVisual(DetailFrame);
+                detailVisual.Clip = Window.Current.Compositor.CreateInsetClip();
+
                 var parent = VisualTreeHelper.GetParent(DetailFrame) as UIElement;
                 if (parent != null && parent != DetailPresenter)
                 {
@@ -253,8 +222,6 @@ namespace Unigram.Controls
 
             if (ActualWidth > 0)
             {
-                UpdateVisualState();
-
                 if (CurrentState != MasterDetailState.Minimal && ViewStateChanged != null)
                 {
                     ViewStateChanged(this, EventArgs.Empty);
@@ -286,149 +253,19 @@ namespace Unigram.Controls
                 return;
             }
 
-            //if (e.Content is Page page)
-            //{
-            //    PageHeader = GetHeader(page);
-            //}
-            //else
-            //{
-            //    PageHeader = null;
-            //}
-
             if (e.NavigationMode == NavigationMode.New && DetailFrame.CanGoBack)
             {
                 Push(false);
             }
 
-            if (CurrentState == MasterDetailState.Minimal && e.SourcePageType == BlankPageType)
-            {
-                MasterPresenter.Visibility = Visibility.Visible;
-            }
-            else if (CurrentState is MasterDetailState.Compact or MasterDetailState.Expanded)
-            {
-                MasterPresenter.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                MasterPresenter.Visibility = Visibility.Collapsed;
-            }
-
-            if (CurrentState == MasterDetailState.Minimal)
-            {
-                if (e.NavigationMode == NavigationMode.New && DetailFrame.BackStackDepth == 1)
-                {
-                    IsMasterHidden = true;
-
-                    //// Now that there is a backstack, show the back button in titlebar
-                    ////SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
-                    ////AppViewBackButtonVisibility.Visible;
-
-                    //var anim = new DrillInThemeAnimation();
-                    //anim.EntranceTarget = new Border();
-                    //anim.ExitTarget = MasterPresenter;
-
-                    //var board = new Storyboard();
-                    //board.Children.Add(anim);
-                    //board.Begin();
-                }
-                else if (e.NavigationMode == NavigationMode.Back && DetailFrame.BackStackDepth == 0)
-                {
-                    IsMasterHidden = false;
-
-                    //// No navigation backstack, hide back button in titlebar
-                    ////SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
-                    ////AppViewBackButtonVisibility.Collapsed;
-
-                    //var anim = new DrillOutThemeAnimation();
-                    //anim.EntranceTarget = MasterPresenter;
-                    //anim.ExitTarget = new Border();
-
-                    //var board = new Storyboard();
-                    //board.Children.Add(anim);
-                    //board.Begin();
-                }
-            }
-            else
-            {
-                // While in Filled (wide) state, if a page is already open remove it from backstack in
-                // some particular cases. 
-                if (e.NavigationMode == NavigationMode.New && DetailFrame.BackStackDepth > 1)
-                {
-
-                    // When the new page is a settings or about page.
-                    if (/*e.SourcePageType == typeof(AboutPage) ||*/ e.SourcePageType == typeof(SettingsPage))
-                    {
-                        // The user opened first a chat, then the userinfo. Remove them from backstack.
-                        //if (DetailFrame.BackStackDepth == 3)
-                        //{
-                        //    DetailFrame.BackStack.RemoveAt(DetailFrame.BackStackDepth - 2);
-                        //    DetailFrame.BackStack.RemoveAt(DetailFrame.BackStackDepth - 1);
-                        //}
-                        //// Simple case of about or settings page
-                        //else
-                        //{
-                        //    DetailFrame.BackStack.RemoveAt(DetailFrame.BackStackDepth - 1);
-                        //}
-                        UpdateVisualState();
-
-                    }
-                    // When the new page is a chat
-                    else if (e.SourcePageType == typeof(ChatPage))
-                    {
-                        // The user opened first a chat, then the userinfo. Remove them from backstack.
-                        //if (DetailFrame.BackStackDepth == 3)
-                        //{
-                        //    DetailFrame.BackStack.RemoveAt(DetailFrame.BackStackDepth - 2);
-                        //    DetailFrame.BackStack.RemoveAt(DetailFrame.BackStackDepth - 1);
-                        //}
-                        //// Simple case of consecutive chats open
-                        //else
-                        //{
-                        //    DetailFrame.BackStack.RemoveAt(DetailFrame.BackStackDepth - 1);
-                        //}
-                        UpdateVisualState();
-                    }
-                    // When the new page is user info show the back button in titlebar.
-                    else if (e.SourcePageType == typeof(ProfilePage))
-                    {
-                        UpdateVisualState();
-                    }
-                }
-                // Hide back button in filled (wide) state
-                else if (e.NavigationMode == NavigationMode.Back && DetailFrame.BackStackDepth <= 1)
-                {
-                    UpdateVisualState();
-                }
-            }
+            UpdateMasterVisibility();
         }
 
         private void OnViewStateChanged(object sender, EventArgs e)
         {
             ViewStateChanged?.Invoke(this, EventArgs.Empty);
 
-            if ((CurrentState == MasterDetailState.Compact || CurrentState == MasterDetailState.Expanded) && IsMasterHidden)
-            {
-                //var anim = new DrillOutThemeAnimation();
-                //anim.EntranceTarget = MasterPresenter;
-                //anim.ExitTarget = new Border();
-
-                //var board = new Storyboard();
-                //board.Children.Add(anim);
-                //board.Begin();
-            }
-
-            if (CurrentState == MasterDetailState.Minimal && BlankPageType == DetailFrame?.CurrentSourcePageType)
-            {
-                MasterPresenter.Visibility = Visibility.Visible;
-            }
-            else if (CurrentState is MasterDetailState.Compact or MasterDetailState.Expanded)
-            {
-                MasterPresenter.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                MasterPresenter.Visibility = Visibility.Collapsed;
-            }
+            UpdateMasterVisibility();
         }
 
         #region Public methods

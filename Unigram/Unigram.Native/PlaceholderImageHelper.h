@@ -14,6 +14,7 @@
 using namespace concurrency;
 using namespace winrt::Windows::UI;
 using namespace winrt::Windows::Foundation::Collections;
+using namespace winrt::Windows::Foundation::Numerics;
 using namespace winrt::Windows::Storage::Streams;
 
 namespace winrt::Unigram::Native::implementation
@@ -57,6 +58,9 @@ namespace winrt::Unigram::Native::implementation
 		void DrawThumbnailPlaceholder(hstring fileName, float blurAmount, _In_ IRandomAccessStream randomAccessStream);
 		void DrawThumbnailPlaceholder(IVector<uint8_t> bytes, float blurAmount, _In_ IRandomAccessStream randomAccessStream);
 
+		float2 ContentEnd(hstring text, double fontSize, double width);
+		IVector<Windows::Foundation::Rect> LineMetrics(hstring text, double fontSize, double width, bool rtl);
+
 	//internal:
 	//	PlaceholderImageHelper();
 
@@ -93,9 +97,11 @@ namespace winrt::Unigram::Native::implementation
 		winrt::com_ptr<IDWriteFactory1> m_dwriteFactory;
 		winrt::com_ptr<IDWriteFontCollectionLoader> m_customLoader;
 		winrt::com_ptr<IDWriteFontCollection> m_fontCollection;
+		winrt::com_ptr<IDWriteFontCollection> m_appleCollection;
 		winrt::com_ptr<IDWriteTextFormat> m_symbolFormat;
 		winrt::com_ptr<IDWriteTextFormat> m_mdl2Format;
 		winrt::com_ptr<IDWriteTextFormat> m_textFormat;
+		winrt::com_ptr<IDWriteTextFormat> m_appleFormat;
 		winrt::com_ptr<ID2D1SolidColorBrush> m_textBrush;
 		winrt::com_ptr<ID2D1SolidColorBrush> m_black;
 		winrt::com_ptr<ID2D1SolidColorBrush> m_transparent;

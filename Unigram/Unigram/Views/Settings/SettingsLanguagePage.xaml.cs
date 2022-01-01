@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
@@ -95,6 +96,15 @@ namespace Unigram.Views.Settings
             {
                 presenter.CornerRadius = new CornerRadius(first ? 8 : 0, first ? 8 : 0, last ? 8 : 0, last ? 8 : 0);
             }
+        }
+
+        #endregion
+
+        #region Binding
+
+        private string ConvertTranslateInfo(bool enabled)
+        {
+            return enabled ? Strings.Resources.TranslateMessagesInfo1 : Strings.Resources.TranslateMessagesInfo1 + Environment.NewLine + Environment.NewLine + Strings.Resources.TranslateMessagesInfo2;
         }
 
         #endregion

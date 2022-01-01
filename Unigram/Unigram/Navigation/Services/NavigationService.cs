@@ -24,6 +24,8 @@ namespace Unigram.Navigation.Services
 
         bool Navigate(Type page, object parameter = null, NavigationState state = null, NavigationTransitionInfo infoOverride = null);
 
+        event EventHandler<NavigatingEventArgs> Navigating;
+
         bool CanGoBack { get; }
         bool CanGoForward { get; }
 
@@ -243,6 +245,8 @@ namespace Unigram.Navigation.Services
             return viewService.OpenAsync(page, parameter, title, size, SessionId);
         }
 
+        public event EventHandler<NavigatingEventArgs> Navigating;
+
         public bool Navigate(Type page, object parameter = null, NavigationState state = null, NavigationTransitionInfo infoOverride = null)
         {
             Logger.Info($"Page: {page}, Parameter: {parameter}, NavigationTransitionInfo: {infoOverride}");
@@ -271,6 +275,12 @@ namespace Unigram.Navigation.Services
                 {
                     pageState[item.Key] = item.Value;
                 }
+            }
+
+            var handler = Navigating;
+            if (handler != null)
+            {
+                handler(this, new NavigatingEventArgs(page, parameter, state, null));
             }
 
             if (page == typeof(ChatPage))

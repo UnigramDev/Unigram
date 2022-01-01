@@ -3,6 +3,7 @@ using Unigram.ViewModels.Settings;
 using Unigram.Views.Settings.Privacy;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media.Animation;
 
 namespace Unigram.Views.Settings
 {
@@ -23,7 +24,7 @@ namespace Unigram.Views.Settings
 
         private void Sessions_Click(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(SettingsSessionsPage));
+            Frame.Navigate(typeof(SettingsSessionsPage), null, new DrillInNavigationTransitionInfo());
         }
 
         private void WebSessions_Click(object sender, RoutedEventArgs e)

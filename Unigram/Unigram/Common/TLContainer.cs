@@ -24,8 +24,12 @@ namespace Unigram.Views
             _locale = LocaleService.Current;
         }
 
-        public void Configure()
+        public int Count => _containers.Count;
+
+        public void Configure(out int count)
         {
+            count = 0;
+
             var fail = true;
             var first = 0;
 
@@ -36,6 +40,7 @@ namespace Unigram.Views
                     first = session;
                 }
 
+                count++;
                 fail = false;
                 Current.Build(session);
             }

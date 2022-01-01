@@ -16,7 +16,6 @@ namespace Unigram.Controls.Messages
     public interface IContentWithFile : IContent
     {
         void UpdateMessageContentOpened(MessageViewModel message);
-        void UpdateFile(MessageViewModel message, File file);
     }
 
     public interface IContentWithMask

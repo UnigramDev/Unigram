@@ -64,7 +64,7 @@ namespace Unigram.Views.Channels
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 36);
+                photo.SetChat(ViewModel.ProtoService, chat, 36);
             }
 
             if (args.Phase < 2)
@@ -103,7 +103,7 @@ namespace Unigram.Views.Channels
 
             if (fullInfo.InviteLink == null && string.IsNullOrEmpty(group.Username))
             {
-                ViewModel.ProtoService.Send(new CreateChatInviteLink(chat.Id, 0, 0));
+                ViewModel.ProtoService.Send(new CreateChatInviteLink(chat.Id, string.Empty, 0, 0, false));
             }
         }
 
@@ -131,7 +131,7 @@ namespace Unigram.Views.Channels
 
             if (fullInfo.InviteLink == null)
             {
-                ViewModel.ProtoService.Send(new CreateChatInviteLink(chat.Id, 0, 0));
+                ViewModel.ProtoService.Send(new CreateChatInviteLink(chat.Id, string.Empty, 0, 0, false));
             }
         }
 

@@ -1,77 +1,70 @@
-<local:HostedPage
-    x:Class="Unigram.Views.DiagnosticsPage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Unigram.Views"
-    xmlns:common="using:Unigram.Common"
-    xmlns:controls="using:Unigram.Controls"
-    xmlns:viewModels="using:Unigram.ViewModels"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+<local:HostedPage x:Class="Unigram.Views.DiagnosticsPage"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:local="using:Unigram.Views"
+                  xmlns:common="using:Unigram.Common"
+                  xmlns:controls="using:Unigram.Controls"
+                  xmlns:viewModels="using:Unigram.ViewModels"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  mc:Ignorable="d">
 
     <local:HostedPage.Header>
-        <controls:PageHeader Text="Diagnostics"/>
+        <controls:PageHeader Text="Diagnostics" />
     </local:HostedPage.Header>
-    
+
     <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <ScrollViewer VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
             <StackPanel>
-                <controls:HeaderedControl
-                    Header="Experimental">
-                    <ToggleSwitch
-                        IsOn="{x:Bind ViewModel.UseTestDC, Mode=TwoWay}"
-                        Visibility="{x:Bind ViewModel.CanUseTestDC}"
-                        Header="Use Test DC"
-                        Style="{StaticResource CheckButtonStyle}"/>
-                    <ToggleSwitch
-                        IsOn="{x:Bind ViewModel.Minithumbnails, Mode=TwoWay}"
-                        Header="Minithumbnails"
-                        Style="{StaticResource CheckButtonStyle}"/>
+                <controls:HeaderedControl Header="Experimental">
+                    <CheckBox IsChecked="{x:Bind ViewModel.UseTestDC, Mode=TwoWay}"
+                              Visibility="{x:Bind ViewModel.CanUseTestDC}"
+                              Content="Use Test DC"
+                              Margin="12,6,12,0" />
+                    <Rectangle Style="{StaticResource Separator}"
+                               Visibility="{x:Bind ViewModel.CanUseTestDC}" />
+                    <CheckBox IsChecked="{x:Bind ViewModel.Minithumbnails, Mode=TwoWay}"
+                              Content="Minithumbnails"
+                              Margin="12,6,12,0" />
+                    <Rectangle Style="{StaticResource Separator}" />
+                    <CheckBox IsChecked="{x:Bind ViewModel.Mica, Mode=TwoWay}"
+                              Content="Mica"
+                              Margin="12,6,12,0" />
+                    <Rectangle Style="{StaticResource Separator}" />
                 </controls:HeaderedControl>
 
-                <controls:HeaderedControl
-                    Header="Calls Logs">
-                    <controls:BadgeButton
-                        Content="tgcalls.txt"
-                        Click="Calls_Click"
-                        Badge="{x:Bind ConvertSize(ViewModel.LogCallsSize), Mode=OneWay}"/>
-                    <controls:BadgeButton
-                        Content="tgcalls_group.txt"
-                        Click="GroupCalls_Click"
-                        Badge="{x:Bind ConvertSize(ViewModel.LogGroupCallsSize), Mode=OneWay}"/>
-                    <controls:BadgeButton
-                        Content="Video informations"
-                        Command="{x:Bind ViewModel.VideoInfoCommand}"/>
+                <controls:HeaderedControl Header="Calls Logs">
+                    <controls:BadgeButton Content="tgcalls.txt"
+                                          Click="Calls_Click"
+                                          Badge="{x:Bind ConvertSize(ViewModel.LogCallsSize), Mode=OneWay}" />
+                    <controls:BadgeButton Content="tgcalls_group.txt"
+                                          Click="GroupCalls_Click"
+                                          Badge="{x:Bind ConvertSize(ViewModel.LogGroupCallsSize), Mode=OneWay}" />
+                    <controls:BadgeButton Content="Video informations"
+                                          Command="{x:Bind ViewModel.VideoInfoCommand}" />
                 </controls:HeaderedControl>
 
-                <controls:HeaderedControl
-                    Header="TDLib Logs"
-                    Footer="**Warning**: TDLib Logs will contain **private data** if Verbosity Level was ever set to VERBOSE or higher value.&#x0a;&#x0a;Using high Verbosity Level will dramatically slow down the app as well.">
-                    <controls:BadgeButton
-                        Content="Verbosity Level"
-                        Command="{x:Bind ViewModel.VerbosityCommand}"
-                        Badge="{x:Bind ConvertVerbosity(ViewModel.Verbosity), Mode=OneWay}"/>
-                    <controls:BadgeButton
-                        Content="tdlib_log.txt"
-                        Click="Log_Click"
-                        Badge="{x:Bind ConvertSize(ViewModel.LogSize), Mode=OneWay}"/>
-                    <controls:BadgeButton
-                        Content="tdlib_log.txt.old"
-                        Click="LogOld_Click"
-                        Badge="{x:Bind ConvertSize(ViewModel.LogOldSize), Mode=OneWay}"/>
+                <controls:HeaderedControl Header="TDLib Logs"
+                                          Footer="**Warning**: TDLib Logs will contain **private data** if Verbosity Level was ever set to VERBOSE or higher value.&#x0a;&#x0a;Using high Verbosity Level will dramatically slow down the app as well.">
+                    <controls:BadgeButton Content="Verbosity Level"
+                                          Command="{x:Bind ViewModel.VerbosityCommand}"
+                                          Badge="{x:Bind ConvertVerbosity(ViewModel.Verbosity), Mode=OneWay}" />
+                    <controls:BadgeButton Content="tdlib_log.txt"
+                                          Click="Log_Click"
+                                          Badge="{x:Bind ConvertSize(ViewModel.LogSize), Mode=OneWay}" />
+                    <controls:BadgeButton Content="tdlib_log.txt.old"
+                                          Click="LogOld_Click"
+                                          Badge="{x:Bind ConvertSize(ViewModel.LogOldSize), Mode=OneWay}" />
                 </controls:HeaderedControl>
 
-                <controls:HeaderedControl
-                    Header="TDLib Modules"
-                    ItemsSource="{x:Bind ViewModel.Tags}">
+                <controls:HeaderedControl Header="TDLib Modules"
+                                          ItemsSource="{x:Bind ViewModel.Tags}">
                     <controls:HeaderedControl.ItemTemplate>
                         <DataTemplate x:DataType="viewModels:DiagnosticsTag">
-                            <controls:BadgeButton
-                                Click="{x:Bind Change}"
-                                Content="{x:Bind Name}"
-                                Badge="{x:Bind Text, Mode=OneWay}"/>
+                            <controls:BadgeButton Click="{x:Bind Change}"
+                                                  Content="{x:Bind Name}"
+                                                  Badge="{x:Bind Text, Mode=OneWay}" />
                         </DataTemplate>
                     </controls:HeaderedControl.ItemTemplate>
                 </controls:HeaderedControl>
@@ -84,22 +77,19 @@
                         Style="{StaticResource CheckButtonStyle}"/>
                 </controls:HeaderedControl>-->
 
-                <controls:HeaderedControl
-                    Header="Options"
-                    ItemsSource="{x:Bind ViewModel.Options}">
+                <controls:HeaderedControl Header="Options"
+                                          ItemsSource="{x:Bind ViewModel.Options}">
                     <controls:HeaderedControl.ItemTemplate>
                         <DataTemplate x:DataType="viewModels:DiagnosticsOption">
-                            <controls:BadgeButton
-                                Content="{x:Bind Name}"
-                                Badge="{x:Bind Value}"/>
+                            <controls:BadgeButton Content="{x:Bind Name}"
+                                                  Badge="{x:Bind Value}" />
                         </DataTemplate>
                     </controls:HeaderedControl.ItemTemplate>
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl>
-                    <controls:BadgeButton
-                        Content="Crash the app &#x2620;"
-                        Click="Crash_Click"/>
+                    <controls:BadgeButton Content="Crash the app &#x2620;"
+                                          Click="Crash_Click" />
                 </controls:HeaderedControl>
             </StackPanel>
         </ScrollViewer>

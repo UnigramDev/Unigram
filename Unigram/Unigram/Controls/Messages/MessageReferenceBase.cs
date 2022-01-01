@@ -82,7 +82,7 @@ namespace Unigram.Controls.Messages
 
                 SetText(embedded.WebPagePreview.SiteName,
                     string.Empty,
-                    message);
+                    new FormattedText { Text = message });
             }
             else if (embedded.EditingMessage != null)
             {
@@ -100,7 +100,7 @@ namespace Unigram.Controls.Messages
 
         public void Mockup(string sender, string message)
         {
-            SetText(sender, string.Empty, message);
+            SetText(sender, string.Empty, new FormattedText { Text = message });
         }
 
         public void UpdateMessageReply(MessageViewModel message)
@@ -244,6 +244,8 @@ namespace Unigram.Controls.Messages
             {
                 case MessageText text:
                     return SetTextTemplate(message, text, title);
+                case MessageAnimatedEmoji animatedEmoji:
+                    return SetAnimatedEmojiTemplate(message, animatedEmoji, title);
                 case MessageAnimation animation:
                     return SetAnimationTemplate(message, animation, title);
                 case MessageAudio audio:
@@ -283,25 +285,27 @@ namespace Unigram.Controls.Messages
                 case MessageChatAddMembers:
                 case MessageChatChangePhoto:
                 case MessageChatChangeTitle:
+                case MessageChatSetTheme:
                 case MessageChatDeleteMember:
                 case MessageChatDeletePhoto:
                 case MessageChatJoinByLink:
+                case MessageChatJoinByRequest:
                 case MessageChatSetTtl:
                 case MessageChatUpgradeFrom:
                 case MessageChatUpgradeTo:
                 case MessageContactRegistered:
                 case MessageCustomServiceAction:
                 case MessageGameScore:
-                case MessageInviteVoiceChatParticipants:
+                case MessageInviteVideoChatParticipants:
                 case MessageProximityAlertTriggered:
                 case MessagePassportDataSent:
                 case MessagePaymentSuccessful:
                 case MessagePinMessage:
                 case MessageScreenshotTaken:
                 case MessageSupergroupChatCreate:
-                case MessageVoiceChatEnded:
-                case MessageVoiceChatScheduled:
-                case MessageVoiceChatStarted:
+                case MessageVideoChatEnded:
+                case MessageVideoChatScheduled:
+                case MessageVideoChatStarted:
                 case MessageWebsiteConnected:
                     return SetServiceTextTemplate(message, title);
                 case MessageExpiredPhoto:
@@ -321,7 +325,7 @@ namespace Unigram.Controls.Messages
 
             SetText(GetFromLabel(message, title),
                 string.Empty,
-                text.Text.Text.Replace("\r\n", "\n").Replace('\n', ' '));
+                text.Text);
 
             return true;
         }
@@ -333,8 +337,8 @@ namespace Unigram.Controls.Messages
             HideThumbnail();
 
             SetText(GetFromLabel(message, title),
-                string.Empty,
-                dice.Emoji);
+                dice.Emoji,
+                null);
 
             return true;
         }
@@ -347,7 +351,7 @@ namespace Unigram.Controls.Messages
 
             SetText(GetFromLabel(message, title),
                 Strings.Resources.AttachPhoto,
-                string.Empty);
+                photo.Caption);
 
             if (message.Ttl > 0)
             {
@@ -356,11 +360,6 @@ namespace Unigram.Controls.Messages
             else
             {
                 UpdateThumbnail(message, photo.Photo.GetSmall(), photo.Photo.Minithumbnail);
-            }
-
-            if (photo.Caption != null && !string.IsNullOrWhiteSpace(photo.Caption.Text))
-            {
-                AppendText(", ", photo.Caption.Text.Replace("\r\n", "\n").Replace('\n', ' '));
             }
 
             return true;
@@ -374,7 +373,7 @@ namespace Unigram.Controls.Messages
 
             SetText(GetFromLabel(message, title),
                 invoice.Title,
-                string.Empty);
+                null);
 
             return true;
         }
@@ -387,7 +386,7 @@ namespace Unigram.Controls.Messages
 
             SetText(GetFromLabel(message, title),
                 location.LivePeriod > 0 ? Strings.Resources.AttachLiveLocation : Strings.Resources.AttachLocation,
-                string.Empty);
+                null);
 
             return true;
         }
@@ -399,8 +398,8 @@ namespace Unigram.Controls.Messages
             HideThumbnail();
 
             SetText(GetFromLabel(message, title),
-                Strings.Resources.AttachLocation + ", " + venue.Venue.Title.Replace("\r\n", "\n").Replace('\n', ' '),
-                string.Empty);
+                Strings.Resources.AttachLocation + ", " + venue.Venue.Title.Replace('\n', ' '),
+                null);
 
             return true;
         }
@@ -413,7 +412,7 @@ namespace Unigram.Controls.Messages
 
             SetText(GetFromLabel(message, title),
                 call.ToOutcomeText(message.IsOutgoing),
-                string.Empty);
+                null);
 
             return true;
         }
@@ -424,7 +423,7 @@ namespace Unigram.Controls.Messages
 
             SetText(GetFromLabel(message, title),
                 $"\uD83C\uDFAE {game.Game.Title}",
-                string.Empty);
+                null);
 
             UpdateThumbnail(message, game.Game.Photo?.GetSmall(), game.Game.Photo?.Minithumbnail);
 
@@ -439,7 +438,7 @@ namespace Unigram.Controls.Messages
 
             SetText(GetFromLabel(message, title),
                 Strings.Resources.AttachContact,
-                string.Empty);
+                null);
 
             return true;
         }
@@ -465,12 +464,7 @@ namespace Unigram.Controls.Messages
 
             SetText(GetFromLabel(message, title),
                 service,
-                string.Empty);
-
-            if (audio.Caption != null && !string.IsNullOrWhiteSpace(audio.Caption.Text))
-            {
-                AppendText(", ", audio.Caption.Text.Replace('\n', ' '));
-            }
+                audio.Caption);
 
             return true;
         }
@@ -482,8 +476,8 @@ namespace Unigram.Controls.Messages
             HideThumbnail();
 
             SetText(GetFromLabel(message, title),
-                $"\uD83D\uDCCA {poll.Poll.Question.Replace("\r\n", "\n").Replace('\n', ' ')}",
-                string.Empty);
+                $"\uD83D\uDCCA {poll.Poll.Question.Replace('\n', ' ')}",
+                null);
 
             return true;
         }
@@ -496,12 +490,7 @@ namespace Unigram.Controls.Messages
 
             SetText(GetFromLabel(message, title),
                 Strings.Resources.AttachAudio,
-                string.Empty);
-
-            if (voiceNote.Caption != null && !string.IsNullOrWhiteSpace(voiceNote.Caption.Text))
-            {
-                AppendText(", ", voiceNote.Caption.Text.Replace("\r\n", "\n").Replace('\n', ' '));
-            }
+                voiceNote.Caption);
 
             return true;
         }
@@ -512,7 +501,7 @@ namespace Unigram.Controls.Messages
 
             SetText(GetFromLabel(message, title),
                 Strings.Resources.AttachVideo,
-                string.Empty);
+                video.Caption);
 
             if (message.Ttl > 0)
             {
@@ -521,11 +510,6 @@ namespace Unigram.Controls.Messages
             else
             {
                 UpdateThumbnail(message, video.Video.Thumbnail, video.Video.Minithumbnail);
-            }
-
-            if (video.Caption != null && !string.IsNullOrWhiteSpace(video.Caption.Text))
-            {
-                AppendText(", ", video.Caption.Text.Replace("\r\n", "\n").Replace('\n', ' '));
             }
 
             return true;
@@ -537,9 +521,22 @@ namespace Unigram.Controls.Messages
 
             SetText(GetFromLabel(message, title),
                 Strings.Resources.AttachRound,
-                string.Empty);
+                null);
 
             UpdateThumbnail(message, videoNote.VideoNote.Thumbnail, videoNote.VideoNote.Minithumbnail, new CornerRadius(18));
+
+            return true;
+        }
+
+        private bool SetAnimatedEmojiTemplate(MessageViewModel message, MessageAnimatedEmoji animatedEmoji, string title)
+        {
+            Visibility = Visibility.Visible;
+
+            SetText(GetFromLabel(message, title),
+                animatedEmoji.Emoji,
+                null);
+
+            HideThumbnail();
 
             return true;
         }
@@ -550,12 +547,7 @@ namespace Unigram.Controls.Messages
 
             SetText(GetFromLabel(message, title),
                 Strings.Resources.AttachGif,
-                string.Empty);
-
-            if (animation.Caption != null && !string.IsNullOrWhiteSpace(animation.Caption.Text))
-            {
-                AppendText(", ", animation.Caption.Text.Replace("\r\n", "\n").Replace('\n', ' '));
-            }
+                animation.Caption);
 
             UpdateThumbnail(message, animation.Animation.Thumbnail, animation.Animation.Minithumbnail);
 
@@ -570,7 +562,7 @@ namespace Unigram.Controls.Messages
 
             SetText(GetFromLabel(message, title),
                 string.IsNullOrEmpty(sticker.Sticker.Emoji) ? Strings.Resources.AttachSticker : $"{sticker.Sticker.Emoji} {Strings.Resources.AttachSticker}",
-                string.Empty);
+                null);
 
             return true;
         }
@@ -583,12 +575,7 @@ namespace Unigram.Controls.Messages
 
             SetText(GetFromLabel(message, title),
                 document.Document.FileName,
-                string.Empty);
-
-            if (document.Caption != null && !string.IsNullOrWhiteSpace(document.Caption.Text))
-            {
-                AppendText(", ", document.Caption.Text.Replace("\r\n", "\n").Replace('\n', ' '));
-            }
+                document.Caption);
 
             return true;
         }
@@ -601,7 +588,7 @@ namespace Unigram.Controls.Messages
 
             SetText(GetFromLabel(message, title),
                 MessageService.GetText(message),
-                string.Empty);
+                null);
 
             return true;
         }
@@ -614,7 +601,7 @@ namespace Unigram.Controls.Messages
 
             SetText(string.Empty,
                 Strings.Resources.Loading,
-                string.Empty);
+                null);
 
             return true;
         }
@@ -627,7 +614,7 @@ namespace Unigram.Controls.Messages
 
             SetText(string.Empty,
                 message == null ? Strings.Additional.DeletedMessage : string.Empty,
-                string.Empty);
+                null);
 
             return true;
         }
@@ -640,7 +627,7 @@ namespace Unigram.Controls.Messages
 
             SetText(GetFromLabel(message, title),
                 Strings.Resources.UnsupportedAttachment,
-                string.Empty);
+                null);
 
             return true;
         }
@@ -655,10 +642,7 @@ namespace Unigram.Controls.Messages
         protected abstract void ShowThumbnail(CornerRadius radius = default);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected abstract void SetText(string title, string service, string message);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected abstract void AppendText(string service, string message);
+        protected abstract void SetText(string title, string service, FormattedText message);
 
         #endregion
 
@@ -669,7 +653,7 @@ namespace Unigram.Controls.Messages
                 return title;
             }
 
-            if (message.ProtoService.TryGetChat(message.Sender, out Chat senderChat))
+            if (message.ProtoService.TryGetChat(message.SenderId, out Chat senderChat))
             {
                 return message.ProtoService.GetTitle(senderChat);
             }
@@ -682,7 +666,7 @@ namespace Unigram.Controls.Messages
                 }
             }
 
-            if (message.ProtoService.TryGetUser(message.Sender, out User user))
+            if (message.ProtoService.TryGetUser(message.SenderId, out User user))
             {
                 return user.GetFullName();
             }

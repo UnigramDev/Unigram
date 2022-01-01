@@ -42,7 +42,7 @@ namespace Unigram.ViewModels
 
     public class ImportedContact
     {
-        public int UserId { get; set; }
+        public long UserId { get; set; }
         public int ImporterCount { get; set; }
     }
 }

@@ -22,6 +22,7 @@ namespace Unigram.Converters
         public const string ArrowDownload = "\uE118";
         public const string DownloadSmall = "\uE92A";
         public const string Dismiss = "\uE711";
+        public const string Cancel = "\uE978";
         public const string CancelSmall = "\uE928";
         public const string Play = "\uE768";
         public const string Pause = "\uE769";
@@ -39,12 +40,15 @@ namespace Unigram.Converters
         public const string DocumentCopy = "\uE8C8";
         public const string ClipboardPaste = "\uE77F";
 
+        public const string Translate = "\uE97D";
+
         public const string TextBold = "\uE8DD";
         public const string TextItalic = "\uE8DB";
         public const string TextUnderline = "\uE8DC";
         public const string TextStrikethrough = "\uE8DE";
         public const string Code = "\uE943";
         public const string Link = "\uE71B";
+        public const string TabInPrivate = "\uE97C";
 
         public const string People = "\uE716";
         public const string Megaphone = "\uE789";
@@ -92,6 +96,7 @@ namespace Unigram.Converters
 
         public const string Delete = "\uE74D";
         public const string Share = "\uE72D";
+        public const string CheckmarkCircle = "\uE97E";
         public const string Multiselect = "\uE762";
         public const string SaveAs = "\uE792";
         public const string FolderOpen = "\uE838";
@@ -152,13 +157,19 @@ namespace Unigram.Converters
         public const string SpeakerNone = "\uE74F";
         public const string SendFilled = "\uE919";
 
-        public const string VoiceChat = "\uE900";
+        public const string VideoChat = "\uE900";
 
         public const string EmojiHand = "\uE901";
 
         public const string AppFolder = "\uF122";
 
         public const string ChatBubblesQuestion = "\uE783";
+
+        public const string TopSpeed = "\uE90D";
+
+        public const string PaintBrush = "\uE90E";
+
+        public const string Seen = "\uE96B";
 
         public static readonly ChatFilterIcon[] Filters = new ChatFilterIcon[]
         {

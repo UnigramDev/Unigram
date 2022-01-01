@@ -10,7 +10,7 @@ namespace Unigram.Services
     public interface ISessionService : INotifyPropertyChanged
     {
         int Id { get; }
-        int UserId { get; }
+        long UserId { get; }
 
         bool IsActive { get; set; }
 
@@ -46,7 +46,7 @@ namespace Unigram.Services
         }
 
         public int Id => _id;
-        public int UserId => ProtoService.Options.MyId;
+        public long UserId => ProtoService.Options.MyId;
 
         private int _unreadCount;
         public int UnreadCount

@@ -105,22 +105,45 @@ namespace Unigram.Controls.Messages
             }
         }
 
-        protected override void SetText(string title, string service, string message)
+        protected override void SetText(string title, string service, FormattedText message)
         {
             if (TitleLabel != null)
             {
                 TitleLabel.Text = title;
                 ServiceLabel.Text = service;
-                MessageLabel.Text = message;
-            }
-        }
+                MessageLabel.Text = message?.Text.Replace('\n', ' ') ?? string.Empty;
 
-        protected override void AppendText(string service, string message)
-        {
-            if (TitleLabel != null)
-            {
-                ServiceLabel.Text += service;
-                MessageLabel.Text += message;
+                if (!string.IsNullOrEmpty(message?.Text) && !string.IsNullOrEmpty(service))
+                {
+                    ServiceLabel.Text += ", ";
+                }
+
+                Label.TextHighlighters.Clear();
+                TextHighlighter spoiler = null;
+
+                if (message?.Entities == null)
+                {
+                    return;
+                }
+
+                var offset = title.Length + 1 + service.Length;
+
+                foreach (var entity in message.Entities)
+                {
+                    if (entity.Type is TextEntityTypeSpoiler)
+                    {
+                        spoiler ??= new TextHighlighter();
+                        spoiler.Ranges.Add(new TextRange { StartIndex = offset + entity.Offset, Length = entity.Length });
+                    }
+                }
+
+                if (spoiler?.Ranges.Count > 0)
+                {
+                    spoiler.Foreground = Label.Foreground;
+                    spoiler.Background = Label.Foreground;
+
+                    Label.TextHighlighters.Add(spoiler);
+                }
             }
         }
 
@@ -166,6 +189,10 @@ namespace Unigram.Controls.Messages
             else if (message.Content is MessageVideo video)
             {
                 return (video.IsSecret ? Strings.Resources.AttachDestructingVideo : Strings.Resources.AttachVideo) + GetCaption(video.Caption.Text);
+            }
+            else if (message.Content is MessageAnimatedEmoji animatedEmoji)
+            {
+                return animatedEmoji.Emoji;
             }
             else if (message.Content is MessageAnimation animation)
             {
@@ -249,6 +276,9 @@ namespace Unigram.Controls.Messages
 
                 case MessageText text:
                     return text.Text.Text.Replace('\n', ' ');
+
+                case MessageAnimatedEmoji animatedEmoji:
+                    return animatedEmoji.Emoji;
 
                 case MessageDice dice:
                     return dice.Emoji;

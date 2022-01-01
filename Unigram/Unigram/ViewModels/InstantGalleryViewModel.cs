@@ -13,14 +13,14 @@ namespace Unigram.ViewModels
     {
         private readonly bool _shouldGroup;
 
-        public InstantGalleryViewModel(IProtoService protoService, IEventAggregator aggregator)
-            : base(protoService, aggregator)
+        public InstantGalleryViewModel(IProtoService protoService, IStorageService storageService, IEventAggregator aggregator)
+            : base(protoService, storageService, aggregator)
         {
             Items = new MvxObservableCollection<GalleryContent>();
             Items.CollectionChanged += OnCollectionChanged;
         }
 
-        public static async Task<InstantGalleryViewModel> CreateAsync(IProtoService protoService, IEventAggregator aggregator, MessageViewModel message, WebPage webPage)
+        public static async Task<InstantGalleryViewModel> CreateAsync(IProtoService protoService, IStorageService storageService, IEventAggregator aggregator, MessageViewModel message, WebPage webPage)
         {
             var items = new List<GalleryContent>();
 
@@ -46,7 +46,7 @@ namespace Unigram.ViewModels
                 }
             }
 
-            var result = new InstantGalleryViewModel(protoService, aggregator);
+            var result = new InstantGalleryViewModel(protoService, storageService, aggregator);
             result.Items.ReplaceWith(items);
             result.FirstItem = items.FirstOrDefault();
             result.SelectedItem = items.FirstOrDefault();

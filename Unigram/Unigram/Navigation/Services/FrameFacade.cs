@@ -296,6 +296,7 @@ namespace Unigram.Navigation.Services
             }
 
             var args = new NavigatedEventArgs(e, Content as Page);
+            args.Parameter = CurrentPageParam;
 
             if (NavigationModeHint != NavigationMode.New)
             {

@@ -19,7 +19,6 @@ namespace Unigram.ViewModels.Supergroups
 {
     public class SupergroupEditViewModel : TLViewModelBase,
         IDelegable<ISupergroupEditDelegate>,
-        IHandle<UpdateFile>,
         IHandle<UpdateChatPhoto>,
         IHandle<UpdateSupergroup>,
         IHandle<UpdateSupergroupFullInfo>,
@@ -140,20 +139,6 @@ namespace Unigram.ViewModels.Supergroups
         {
             Aggregator.Unsubscribe(this);
             return Task.CompletedTask;
-        }
-
-        public void Handle(UpdateFile update)
-        {
-            var chat = _chat;
-            if (chat?.Photo == null)
-            {
-                return;
-            }
-
-            if (update.File.Local.IsDownloadingCompleted && chat.Photo.UpdateFile(update.File))
-            {
-                BeginOnUIThread(() => Delegate?.UpdateChatPhoto(chat));
-            }
         }
 
         public void Handle(UpdateChatPhoto update)
@@ -412,7 +397,7 @@ namespace Unigram.ViewModels.Supergroups
                 new SelectRadioItem(false, Strings.Resources.ChatHistoryHidden, !initialValue) { Footer = Strings.Resources.ChatHistoryHiddenInfo }
             };
 
-            var dialog = new SelectRadioPopup(items);
+            var dialog = new ChooseRadioPopup(items);
             dialog.Title = Strings.Resources.ChatHistory;
             dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.SecondaryButtonText = Strings.Resources.Cancel;
@@ -484,18 +469,7 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            Function function;
-            if (chat.Type is ChatTypeSupergroup)
-            {
-                function = new DeleteChat(chat.Id);
-            }
-            else
-            {
-                await ProtoService.SendAsync(new LeaveChat(chat.Id));
-                function = new DeleteChatHistory(chat.Id, true, false);
-            }
-
-            var response = await ProtoService.SendAsync(function);
+            var response = await ProtoService.SendAsync(new DeleteChat(chat.Id));
             if (response is Ok)
             {
                 NavigationService.RemovePeerFromStack(chat.Id);

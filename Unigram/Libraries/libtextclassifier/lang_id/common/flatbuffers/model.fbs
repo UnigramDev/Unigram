@@ -1,0 +1,79 @@
+//
+// Copyright (C) 2018 The Android Open Source Project
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+// Flatbuffer schema for SAFT models.
+//
+// For info on flatbuffers, see http://go/flatbuffers and
+// http://google.github.io/flatbuffers/, including info on writing schemas:
+// http://google.github.io/flatbuffers/flatbuffers_guide_writing_schema.html
+
+namespace libtextclassifier3.saft_fbs;
+
+// SM stands for Saft Model.  The next two digits are meant to identify
+// incompatible versions.  Ideally, we'll never have to go beyond 00.
+file_identifier "SM00";
+
+// Extension stands for Saft Model in FlatBuffer format.
+file_extension "smfb";
+
+table ModelParameter {
+  // Parameter name.
+  name:string;
+
+  // Parameter value.
+  value:string;
+}
+
+// Input for a SAFT model.  Inputs usually provide extra resources: e.g., the
+// parameters for a Neurosis FFNN with embeddings, or a word cluster structure,
+// etc.
+table ModelInput {
+  // Name of this input.  Different input of the same model should have
+  // different names, such that we can non-ambiguously look them up.
+  name:string;
+
+  // General description of the type of this input.  Required to parse the
+  // content of this input (see |data| below).  If |data| is a flatbuffer, use
+  // "flatbuffer".  If |data| is a proto, use "proto".  Otherwise, use your best
+  // judgment: use something human-readable, and look around to make sure you
+  // don't invent a new name for something that already exists.
+  type:string;
+
+  // More specific information about the type of this input.  E.g., if |type| is
+  // "flatbuffer", this should be the name of the root_type we should parse from
+  // the input bytes., e.g., "EmbeddingNetwork".  If |type| is proto, this
+  // should be the name of the proto serialized as |data|, e.g.,
+  // "EmbeddingNetworkProto".
+  sub_type:string;
+
+  // The content of this input.  With a generous alignment, such that we can
+  // accommodate mmap-friendly data structures.  E.g., the word clusters used by
+  // the Translate team require 8-byte alignment.
+  data:[ubyte] (force_align: 16);
+}
+
+// A Saft model.  A list of parameters with model settings (e.g., the
+// specification of the features to use) and a list of inputs.
+table Model {
+  parameters:[ModelParameter];
+  inputs:[ModelInput];
+
+  // Crc32 checksum of all parameters and inputs (including the bytes of the
+  // inputs).  Used to check that the model has not been corrupted.
+  crc32:uint32;
+}
+
+root_type Model;

@@ -22,6 +22,8 @@
                             AutoPlay="False"
                             Width="200"
                             Height="200"/>
+
+                        <Grid x:Name="Interactions"/>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

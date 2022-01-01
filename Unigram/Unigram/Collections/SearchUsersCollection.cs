@@ -14,7 +14,7 @@ namespace Unigram.Collections
         private readonly IProtoService _protoService;
         private readonly string _query;
 
-        private readonly List<int> _users = new List<int>();
+        private readonly List<long> _users = new List<long>();
 
         private readonly KeyedList<string, object> _local;
         private readonly KeyedList<string, object> _remote;

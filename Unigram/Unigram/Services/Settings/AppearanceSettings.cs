@@ -34,6 +34,17 @@ namespace Unigram.Services.Settings
         System
     }
 
+    public enum AccentShade
+    {
+        Default,
+        Light1,
+        Light2,
+        Light3,
+        Dark1,
+        Dark2,
+        Dark3
+    }
+
     public class InstalledEmojiSet
     {
         public string Id { get; set; }
@@ -151,7 +162,8 @@ namespace Unigram.Services.Settings
 
                         if (window.Content is FrameworkElement element)
                         {
-                            if (element.RequestedTheme == theme && state is true)
+                            // This should be no longer needed
+                            if (state is true)
                             {
                                 element.RequestedTheme = theme == ElementTheme.Dark
                                     ? ElementTheme.Light
@@ -216,7 +228,7 @@ namespace Unigram.Services.Settings
                 {
                     RequestedTheme = TelegramTheme.Dark;
                     this[TelegramTheme.Dark].Type = TelegramThemeType.Tinted;
-                    Accents[TelegramThemeType.Tinted] = ThemeAccentInfo.Accents[TelegramThemeType.Tinted];
+                    Accents[TelegramThemeType.Tinted] = ThemeInfoBase.Accents[TelegramThemeType.Tinted][AccentShade.Default];
                 }
                 else if (path.Length > 0 && System.IO.File.Exists(path))
                 {
@@ -550,7 +562,7 @@ namespace Unigram.Services.Settings
 
         public Color this[TelegramThemeType type]
         {
-            get => ColorEx.FromHex(GetValueOrDefault(ConvertToKey(type, "Accent"), ColorEx.ToHex(ThemeAccentInfo.Accents[type])));
+            get => ColorEx.FromHex(GetValueOrDefault(ConvertToKey(type, "Accent"), ColorEx.ToHex(ThemeInfoBase.Accents[type][AccentShade.Default])), true);
             set => AddOrUpdateValue(ConvertToKey(type, "Accent"), ColorEx.ToHex(value));
         }
 

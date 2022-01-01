@@ -24,7 +24,7 @@ namespace Unigram.Controls.Cells
             DateLabel.Text = Converter.DateExtended(call.Message.Date);
             TypeLabel.Text = call.DisplayType;
 
-            Photo.Source = PlaceholderHelper.GetUser(protoService, call.Peer, 36);
+            Photo.SetUser(protoService, call.Peer, 36);
 
             VisualStateManager.GoToState(LayoutRoot, call.IsFailed ? "Missed" : "Default", false);
         }

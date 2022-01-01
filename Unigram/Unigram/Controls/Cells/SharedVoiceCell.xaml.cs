@@ -1,7 +1,6 @@
 ﻿using System;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls.Messages.Content;
 using Unigram.Converters;
 using Unigram.Services;
 using Windows.Media.Playback;
@@ -16,6 +15,8 @@ namespace Unigram.Controls.Cells
         private IProtoService _protoService;
         private Message _message;
         public Message Message => _message;
+
+        private string _fileToken;
 
         public SharedVoiceCell()
         {
@@ -50,11 +51,11 @@ namespace Unigram.Controls.Cells
                 return;
             }
 
-            if (_protoService.TryGetUser(message.Sender, out User user))
+            if (_protoService.TryGetUser(message.SenderId, out User user))
             {
                 Title.Text = user.GetFullName();
             }
-            else if (_protoService.TryGetChat(message.Sender, out Chat chat))
+            else if (_protoService.TryGetChat(message.SenderId, out Chat chat))
             {
                 Title.Text = chat.Title;
             }
@@ -63,6 +64,7 @@ namespace Unigram.Controls.Cells
                 Title.Text = string.Empty;
             }
 
+            UpdateManager.Subscribe(this, _protoService, voiceNote.Voice, ref _fileToken, UpdateFile);
             UpdateFile(message, voiceNote.Voice);
         }
 
@@ -123,7 +125,12 @@ namespace Unigram.Controls.Cells
 
         #endregion
 
-        public void UpdateFile(Message message, File file)
+        private void UpdateFile(object target, File file)
+        {
+            UpdateFile(_message, file);
+        }
+
+        private void UpdateFile(Message message, File file)
         {
             _playbackService.PlaybackStateChanged -= OnPlaybackStateChanged;
             _playbackService.PositionChanged -= OnPositionChanged;

@@ -269,14 +269,17 @@ namespace winrt::Unigram::Native::implementation
 		struct NSVGimage* image;
 		image = nsvgParse((char*)data.c_str(), "px", 96);
 
-		size = Windows::Foundation::Size(image->width, image->height);
+		auto imageWidth = image->width / 2;
+		auto imageHeight = image->height / 2;
+		size = Windows::Foundation::Size(imageWidth, imageHeight);
 
 		winrt::com_ptr<ID2D1Bitmap1> targetBitmap;
 		D2D1_BITMAP_PROPERTIES1 properties = { { DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED }, 96, 96, D2D1_BITMAP_OPTIONS_TARGET, 0 };
-		ReturnIfFailed(result, m_d2dContext->CreateBitmap(D2D1_SIZE_U{ (uint32_t)image->width, (uint32_t)image->height }, nullptr, 0, &properties, targetBitmap.put()));
+		ReturnIfFailed(result, m_d2dContext->CreateBitmap(D2D1_SIZE_U{ (uint32_t)imageWidth, (uint32_t)imageHeight }, nullptr, 0, &properties, targetBitmap.put()));
 
 		m_d2dContext->SetTarget(targetBitmap.get());
 		m_d2dContext->BeginDraw();
+		m_d2dContext->SetTransform(D2D1::Matrix3x2F::Scale(0.5f, 0.5f));
 
 		winrt::com_ptr<ID2D1SolidColorBrush> blackBrush;
 		ReturnIfFailed(result, m_d2dContext->CreateSolidColorBrush(
@@ -370,6 +373,8 @@ namespace winrt::Unigram::Native::implementation
 		}
 
 		nsvgDelete(image);
+
+		m_d2dContext->SetTransform(D2D1::Matrix3x2F::Identity());
 
 		if ((result = m_d2dContext->EndDraw()) == D2DERR_RECREATE_TARGET)
 		{
@@ -923,18 +928,19 @@ namespace winrt::Unigram::Native::implementation
 
 
 		hstring path = Package::Current().InstalledLocation().Path() + L"\\Assets\\Fonts\\Telegram.ttf";
-		auto pathBegin = path.begin();
-		auto pathEnd = path.end();
-
-		//assert(pathBegin && pathEnd);
-
-		void const* key = pathBegin;
-		uint32_t keySize = static_cast<uint32_t>(std::distance(pathBegin, pathEnd) * sizeof(wchar_t));
+		void const* key = path.begin();
+		uint32_t keySize = static_cast<uint32_t>(std::distance(path.begin(), path.end()) * sizeof(wchar_t));
 
 		m_customLoader = winrt::make_self<CustomFontLoader>();
 
 		ReturnIfFailed(result, m_dwriteFactory->RegisterFontCollectionLoader(m_customLoader.get()));
 		ReturnIfFailed(result, m_dwriteFactory->CreateCustomFontCollection(m_customLoader.get(), key, keySize, m_fontCollection.put()));
+
+		path = Package::Current().InstalledLocation().Path() + L"\\Assets\\Emoji\\apple.ttf";
+		key = path.begin();
+		keySize = static_cast<uint32_t>(std::distance(path.begin(), path.end()) * sizeof(wchar_t));
+		ReturnIfFailed(result, m_dwriteFactory->CreateCustomFontCollection(m_customLoader.get(), key, keySize, m_appleCollection.put()));
+
 		ReturnIfFailed(result, m_dwriteFactory->CreateTextFormat(
 			L"Telegram",							// font family name
 			m_fontCollection.get(),					// system font collection
@@ -972,7 +978,6 @@ namespace winrt::Unigram::Native::implementation
 			m_textFormat.put()
 		));
 		ReturnIfFailed(result, m_textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING));
-
 		return m_textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 	}
 
@@ -983,6 +988,9 @@ namespace winrt::Unigram::Native::implementation
 
 		D3D_FEATURE_LEVEL featureLevels[] =
 		{
+			//D3D_FEATURE_LEVEL_12_2,
+			//D3D_FEATURE_LEVEL_12_1,
+			//D3D_FEATURE_LEVEL_12_0,
 			D3D_FEATURE_LEVEL_11_1,
 			D3D_FEATURE_LEVEL_11_0,
 			D3D_FEATURE_LEVEL_10_1,
@@ -1061,6 +1069,87 @@ namespace winrt::Unigram::Native::implementation
 		));
 
 		return textLayout->GetMetrics(textMetrics);
+	}
+
+	float2 PlaceholderImageHelper::ContentEnd(hstring text, double fontSize, double width)
+	{
+		winrt::check_hresult(m_dwriteFactory->CreateTextFormat(
+			L"Segoe UI Emoji",						// font family name
+			m_appleCollection.get(),				// system font collection
+			DWRITE_FONT_WEIGHT_NORMAL,				// font weight 
+			DWRITE_FONT_STYLE_NORMAL,				// font style
+			DWRITE_FONT_STRETCH_NORMAL,				// default font stretch
+			fontSize,								// font size
+			L"",									// locale name
+			m_appleFormat.put()
+		));
+		winrt::check_hresult(m_appleFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING));
+		winrt::check_hresult(m_appleFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR));
+
+		winrt::com_ptr<IDWriteTextLayout> textLayout;
+		winrt::check_hresult(m_dwriteFactory->CreateTextLayout(
+			text.data(),					// The string to be laid out and formatted.
+			wcslen(text.data()),			// The length of the string.
+			m_appleFormat.get(),			// The text format to apply to the string (contains font information, etc).
+			width,							// The width of the layout box.
+			INFINITY,						// The height of the layout box.
+			textLayout.put()				// The IDWriteTextLayout interface pointer.
+		));
+
+		FLOAT x;
+		FLOAT y;
+		DWRITE_HIT_TEST_METRICS metrics;
+		textLayout->HitTestTextPosition(text.size() - 1, false, &x, &y, &metrics);
+
+		return float2(metrics.left + metrics.width, metrics.top + metrics.height);
+	}
+
+	IVector<Windows::Foundation::Rect> PlaceholderImageHelper::LineMetrics(hstring text, double fontSize, double width, bool rtl)
+	{
+		winrt::check_hresult(m_dwriteFactory->CreateTextFormat(
+			L"Segoe UI Emoji",						// font family name
+			m_appleCollection.get(),				// system font collection
+			DWRITE_FONT_WEIGHT_NORMAL,				// font weight 
+			DWRITE_FONT_STYLE_NORMAL,				// font style
+			DWRITE_FONT_STRETCH_NORMAL,				// default font stretch
+			fontSize,								// font size
+			L"",									// locale name
+			m_appleFormat.put()
+		));
+		winrt::check_hresult(m_appleFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING));
+		winrt::check_hresult(m_appleFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR));
+		winrt::check_hresult(m_appleFormat->SetReadingDirection(rtl ? DWRITE_READING_DIRECTION_RIGHT_TO_LEFT : DWRITE_READING_DIRECTION_LEFT_TO_RIGHT));
+
+		winrt::com_ptr<IDWriteTextLayout> textLayout;
+		winrt::check_hresult(m_dwriteFactory->CreateTextLayout(
+			text.data(),					// The string to be laid out and formatted.
+			wcslen(text.data()),			// The length of the string.
+			m_appleFormat.get(),			// The text format to apply to the string (contains font information, etc).
+			width,							// The width of the layout box.
+			INFINITY,						// The height of the layout box.
+			textLayout.put()				// The IDWriteTextLayout interface pointer.
+		));
+
+		DWRITE_TEXT_METRICS metrics;
+		winrt::check_hresult(textLayout->GetMetrics(&metrics));
+
+		UINT32 maxHitTestMetricsCount = metrics.lineCount * metrics.maxBidiReorderingDepth;
+		UINT32 actualTestsCount;
+		DWRITE_HIT_TEST_METRICS* ranges = new DWRITE_HIT_TEST_METRICS[maxHitTestMetricsCount];
+		winrt::check_hresult(textLayout->HitTestTextRange(0, text.size(), 0, 0, ranges, maxHitTestMetricsCount, &actualTestsCount));
+
+		std::vector<Windows::Foundation::Rect> rects;
+
+		for (int i = 0; i < actualTestsCount; i++) {
+			float left = ranges[i].left;
+			float top = ranges[i].top;
+			float right = ranges[i].left + ranges[i].width;
+			float bottom = ranges[i].top + ranges[i].height;
+
+			rects.push_back({ left, top, right - left, bottom - top });
+		}
+
+		return winrt::single_threaded_vector<Windows::Foundation::Rect>(std::move(rects));
 	}
 
 	void PlaceholderImageHelper::WriteBytes(IVector<byte> hash, IRandomAccessStream randomAccessStream)

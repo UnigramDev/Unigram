@@ -1,8 +1,10 @@
 ﻿using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Text;
 using System;
+using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Native;
 using Unigram.Navigation;
 using Windows.Foundation;
 using Windows.UI.Text;
@@ -120,10 +122,10 @@ namespace Unigram.Controls.Messages
                 var width = text.DesiredSize.Width;
                 var rect = ContentEnd(availableWidth);
 
-                var diff = width - rect.Right;
+                var diff = width - rect.X;
                 if (diff < footerWidth /*|| _placeholderVertical*/)
                 {
-                    if (rect.Right + footerWidth < maxWidth /*&& !_placeholderVertical*/)
+                    if (rect.X + footerWidth < maxWidth /*&& !_placeholderVertical*/)
                     {
                         marginLeft = footerWidth - diff;
                     }
@@ -137,33 +139,29 @@ namespace Unigram.Controls.Messages
             return new Size(marginLeft, marginBottom);
         }
 
-        private Rect ContentEnd(double availableWidth)
+        private Vector2 ContentEnd(double availableWidth)
         {
             var caption = Content?.GetCaption();
             if (string.IsNullOrEmpty(caption?.Text))
             {
-                return Rect.Empty;
+                return Vector2.Zero;
             }
 
             var text = Children[0] as RichTextBlock;
-            var width = (float)(availableWidth - text.Margin.Left - text.Margin.Right);
+            var fontSize = Theme.Current.MessageFontSize * BootStrapper.Current.UISettings.TextScaleFactor;
+            var width = availableWidth - text.Margin.Left - text.Margin.Right;
 
             try
             {
-                var textLayout = GetTextLayout(caption, width);
-                if (textLayout != null)
+                var bounds = PlaceholderImageHelper.Current.ContentEnd(caption.Text, fontSize, width);
+                if (bounds.Y < text.DesiredSize.Height)
                 {
-                    textLayout.GetCaretPosition(caption.Text.Length - 1, false, out CanvasTextLayoutRegion region);
-
-                    if (region.LayoutBounds.Bottom < text.DesiredSize.Height)
-                    {
-                        return region.LayoutBounds;
-                    }
+                    return bounds;
                 }
             }
             catch { }
 
-            return new Rect(0, 0, int.MaxValue, 0);
+            return new Vector2(int.MaxValue, 0);
         }
 
         private CanvasTextFormat _format;

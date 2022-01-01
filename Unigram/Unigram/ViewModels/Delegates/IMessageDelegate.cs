@@ -9,7 +9,7 @@ namespace Unigram.ViewModels.Delegates
     {
         IEventAggregator Aggregator { get; }
 
-        bool CanBeDownloaded(MessageViewModel message);
+        bool CanBeDownloaded(object content, File file);
         void DownloadFile(MessageViewModel message, File file);
 
         void ReplyToMessage(MessageViewModel message);
@@ -23,18 +23,20 @@ namespace Unigram.ViewModels.Delegates
         void OpenLocation(Location location, string title);
         void OpenLiveLocation(MessageViewModel message);
         void OpenInlineButton(MessageViewModel message, InlineKeyboardButton button);
-        void OpenMedia(MessageViewModel message, FrameworkElement target);
+        void OpenMedia(MessageViewModel message, FrameworkElement target, int timestamp = 0);
         void PlayMessage(MessageViewModel message);
 
         void Call(MessageViewModel message, bool video);
 
         void VotePoll(MessageViewModel message, IList<PollOption> option);
 
+        void ViewVisibleMessages(bool intermediate);
+
         void OpenUsername(string username);
-        void OpenUser(int userId);
+        void OpenUser(long userId);
         void OpenChat(long chatId, bool profile = false);
         void OpenChat(long chatId, long messageId);
-        void OpenViaBot(int viaBotUserId);
+        void OpenViaBot(long viaBotUserId);
 
         void OpenUrl(string url, bool untrust);
         void OpenHashtag(string hashtag);

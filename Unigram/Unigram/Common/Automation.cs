@@ -346,11 +346,11 @@ namespace Unigram.Common
 
             if (!light && /*message.IsFirst &&*/ !message.IsOutgoing && !message.IsChannelPost && (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup))
             {
-                if (cacheService.TryGetUser(message.Sender, out User senderUser))
+                if (cacheService.TryGetUser(message.SenderId, out User senderUser))
                 {
                     title = senderUser.GetFullName();
                 }
-                else if (cacheService.TryGetChat(message.Sender, out Chat senderChat))
+                else if (cacheService.TryGetChat(message.SenderId, out Chat senderChat))
                 {
                     title = senderChat.Title;
                 }

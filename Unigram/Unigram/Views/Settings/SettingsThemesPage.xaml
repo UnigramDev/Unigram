@@ -55,7 +55,7 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate x:DataType="services:ThemeInfoBase">
                                 <StackPanel>
-                                    <RadioButton Click="Switch_Click" Content="{x:Bind Name}" Tag="{x:Bind}" GroupName="Theme" ContextRequested="Theme_ContextRequested"/>
+                                    <RadioButton Content="{x:Bind Name}" Tag="{x:Bind}" GroupName="Theme" ContextRequested="Theme_ContextRequested"/>
                                     <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="0,6,0,6"/>
                                 </StackPanel>
                             </DataTemplate>

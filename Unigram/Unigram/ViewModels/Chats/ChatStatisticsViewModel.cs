@@ -31,7 +31,7 @@ namespace Unigram.ViewModels.Chats
             TopSendersLeft = new MvxObservableCollection<ChatStatisticsMessageSenderInfo>();
 
             TopSendersCommand = new RelayCommand(TopSendersExecute);
-            OpenProfileCommand = new RelayCommand<int>(OpenProfileExecute);
+            OpenProfileCommand = new RelayCommand<long>(OpenProfileExecute);
             OpenPostCommand = new RelayCommand<Message>(OpenPostExecute);
         }
 
@@ -82,8 +82,8 @@ namespace Unigram.ViewModels.Chats
             TopSendersLeft.Clear();
         }
 
-        public RelayCommand<int> OpenProfileCommand { get; }
-        private async void OpenProfileExecute(int userId)
+        public RelayCommand<long> OpenProfileCommand { get; }
+        private async void OpenProfileExecute(long userId)
         {
             var response = await ProtoService.SendAsync(new CreatePrivateChat(userId, false));
             if (response is Chat chat)

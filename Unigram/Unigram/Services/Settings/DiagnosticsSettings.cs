@@ -7,6 +7,13 @@
         {
         }
 
+        private bool? _mica;
+        public bool Mica
+        {
+            get => _mica ??= GetValueOrDefault("Mica", false);
+            set => AddOrUpdateValue(ref _mica, "Mica", value);
+        }
+
         private bool? _minithumbnails;
         public bool Minithumbnails
         {
@@ -19,6 +26,13 @@
         {
             get => _lastErrorMessage ??= GetValueOrDefault("LastErrorMessage", string.Empty);
             set => AddOrUpdateValue(ref _lastErrorMessage, "LastErrorMessage", value);
+        }
+
+        private int? _lastErrorVersion;
+        public int LastErrorVersion
+        {
+            get => _lastErrorVersion ??= GetValueOrDefault("LastErrorVersion", 0);
+            set => AddOrUpdateValue(ref _lastErrorVersion, "LastErrorVersion", value);
         }
 
         public bool IsLastErrorDiskFull { get; set; }

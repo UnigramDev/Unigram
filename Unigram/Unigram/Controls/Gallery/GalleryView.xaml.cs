@@ -27,14 +27,17 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Gallery
 {
-    public sealed partial class GalleryView : OverlayPage, INavigatingPage, IGalleryDelegate, IFileDelegate, IHandle<UpdateFile>, IHandle<UpdateDeleteMessages>, IHandle<UpdateMessageContent>
+    public sealed partial class GalleryView : OverlayPage, INavigatingPage, IGalleryDelegate, IHandle<UpdateDeleteMessages>, IHandle<UpdateMessageContent>
     {
         public GalleryViewModelBase ViewModel => DataContext as GalleryViewModelBase;
+
+        public IProtoService ProtoService => ViewModel.ProtoService;
 
         private Func<FrameworkElement> _closing;
 
@@ -53,6 +56,14 @@ namespace Unigram.Controls.Gallery
 
         private bool _wasFullScreen;
         private bool _unloaded;
+
+        private int? _initialPosition;
+
+        public int InitialPosition
+        {
+            get => _initialPosition ?? 0;
+            set => _initialPosition = value > 0 ? value : null;
+        }
 
         private GalleryView()
         {
@@ -146,12 +157,6 @@ namespace Unigram.Controls.Gallery
             batch.End();
         }
 
-        public void Handle(UpdateFile update)
-        {
-            _fileStream?.UpdateFile(update.File);
-            this.BeginOnUIThread(() => UpdateFile(update.File));
-        }
-
         public void Handle(UpdateDeleteMessages update)
         {
             this.BeginOnUIThread(() =>
@@ -174,42 +179,6 @@ namespace Unigram.Controls.Gallery
                     Hide();
                 }
             });
-        }
-
-        public void UpdateFile(File file)
-        {
-            var viewModel = ViewModel;
-            if (viewModel == null)
-            {
-                return;
-            }
-
-            foreach (var item in viewModel.Items)
-            {
-                if (item.UpdateFile(file))
-                {
-                    if (Element0.Item == item)
-                    {
-                        Element0.UpdateFile(item, file);
-                    }
-
-                    if (Element1.Item == item)
-                    {
-                        Element1.UpdateFile(item, file);
-                    }
-
-                    if (Element2.Item == item)
-                    {
-                        Element2.UpdateFile(item, file);
-                    }
-
-                    if (_fileStream?.FileId == file.Id)
-                    {
-                        //Transport.DownloadMaximum = file.Size;
-                        //Transport.DownloadValue = file.Local.DownloadOffset + file.Local.DownloadedPrefixSize;
-                    }
-                }
-            }
         }
 
         public void OpenFile(GalleryContent item, File file)
@@ -300,7 +269,10 @@ namespace Unigram.Controls.Gallery
             {
                 _closing = closing;
 
-                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", _closing());
+                if (_closing != null)
+                {
+                    ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", _closing());
+                }
 
                 if (_compactLifetime != null)
                 {
@@ -313,7 +285,6 @@ namespace Unigram.Controls.Gallery
                     _compactLifetime = null;
                 }
 
-                parameter.Delegate = this;
                 parameter.Items.CollectionChanged -= OnCollectionChanged;
                 parameter.Items.CollectionChanged += OnCollectionChanged;
 
@@ -384,8 +355,6 @@ namespace Unigram.Controls.Gallery
             if (ViewModel != null)
             {
                 ViewModel.Aggregator.Unsubscribe(this);
-
-                ViewModel.Delegate = null;
                 ViewModel.Items.CollectionChanged -= OnCollectionChanged;
 
                 Bindings.StopTracking();
@@ -503,6 +472,7 @@ namespace Unigram.Controls.Gallery
             }
 
             _layer.Opacity = 1;
+            _bottom.Opacity = 1;
 
             Transport.Show();
             ScrollingHost.Opacity = 1;
@@ -639,6 +609,12 @@ namespace Unigram.Controls.Gallery
                 else
                 {
                     _mediaPlayer.Source = MediaSource.CreateFromUri(UriEx.ToLocal(file.Local.Path));
+                }
+
+                if (_initialPosition is int initialPosition)
+                {
+                    _initialPosition = null;
+                    _mediaPlayer.PlaybackSession.Position = TimeSpan.FromSeconds(initialPosition);
                 }
 
                 _mediaPlayer.IsLoopingEnabled = item.IsLoop;
@@ -839,7 +815,7 @@ namespace Unigram.Controls.Gallery
                 var viewModel = ViewModel;
                 if (viewModel == null)
                 {
-                    // Page is most likey being closed, just reset the view
+                    // Page is most likely being closed, just reset the view
                     LayoutRoot_HorizontalSnapPointsChanged(LayoutRoot, null);
                     return;
                 }
@@ -1054,12 +1030,7 @@ namespace Unigram.Controls.Gallery
 
             var flyout = new MenuFlyout();
 
-            flyout.CreateFlyoutItem(x => item.CanView, viewModel.ViewCommand, item, Strings.Resources.ShowInChat, new FontIcon { Glyph = Icons.Comment });
-            flyout.CreateFlyoutItem(x => item.CanShare, viewModel.ForwardCommand, item, Strings.Resources.Forward, new FontIcon { Glyph = Icons.Share });
-            flyout.CreateFlyoutItem(x => item.CanCopy, viewModel.CopyCommand, item, Strings.Resources.Copy, new FontIcon { Glyph = Icons.DocumentCopy }, Windows.System.VirtualKey.C);
-            flyout.CreateFlyoutItem(x => item.CanSave, viewModel.SaveCommand, item, Strings.Additional.SaveAs, new FontIcon { Glyph = Icons.SaveAs }, Windows.System.VirtualKey.S);
-            flyout.CreateFlyoutItem(x => viewModel.CanOpenWith, viewModel.OpenWithCommand, item, Strings.Resources.OpenInExternalApp, new FontIcon { Glyph = Icons.OpenIn });
-            flyout.CreateFlyoutItem(x => viewModel.CanDelete, viewModel.DeleteCommand, item, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
+            PopulateContextRequested(flyout, viewModel, item);
 
             flyout.ShowAt(sender as FrameworkElement, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedRight });
         }
@@ -1086,14 +1057,51 @@ namespace Unigram.Controls.Gallery
 
             var flyout = new MenuFlyout();
 
+            PopulateContextRequested(flyout, viewModel, item);
+
+            args.ShowAt(flyout, element);
+        }
+
+        private void PopulateContextRequested(MenuFlyout flyout, GalleryViewModelBase viewModel, GalleryContent item)
+        {
+            if (item.IsVideo && !item.IsLoop && _mediaPlayer != null)
+            {
+                var rates = new double[] { 0.25, 0.5, 1, 1.5, 2 };
+                var labels = new string[] { Strings.Resources.SpeedVerySlow, Strings.Resources.SpeedSlow, Strings.Resources.SpeedNormal, Strings.Resources.SpeedFast, Strings.Resources.SpeedVeryFast };
+
+                var command = new RelayCommand<double>(rate =>
+                {
+                    _mediaPlayer.PlaybackSession.PlaybackRate = rate;
+                });
+
+                var speed = new MenuFlyoutSubItem();
+                speed.Text = Strings.Resources.Speed;
+                speed.Icon = new FontIcon { Glyph = Icons.TopSpeed, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
+
+                for (int i = 0; i < rates.Length; i++)
+                {
+                    var rate = rates[i];
+                    var toggle = new ToggleMenuFlyoutItem
+                    {
+                        Text = labels[i],
+                        IsChecked = _mediaPlayer.PlaybackSession.PlaybackRate == rate,
+                        CommandParameter = rate,
+                        Command = command
+                    };
+
+                    speed.Items.Add(toggle);
+                }
+
+                flyout.Items.Add(speed);
+                flyout.CreateFlyoutSeparator();
+            }
+
             flyout.CreateFlyoutItem(x => item.CanView, viewModel.ViewCommand, item, Strings.Resources.ShowInChat, new FontIcon { Glyph = Icons.Comment });
             flyout.CreateFlyoutItem(x => item.CanShare, viewModel.ForwardCommand, item, Strings.Resources.Forward, new FontIcon { Glyph = Icons.Share });
             flyout.CreateFlyoutItem(x => item.CanCopy, viewModel.CopyCommand, item, Strings.Resources.Copy, new FontIcon { Glyph = Icons.DocumentCopy }, Windows.System.VirtualKey.C);
             flyout.CreateFlyoutItem(x => item.CanSave, viewModel.SaveCommand, item, Strings.Additional.SaveAs, new FontIcon { Glyph = Icons.SaveAs }, Windows.System.VirtualKey.S);
             flyout.CreateFlyoutItem(x => viewModel.CanOpenWith, viewModel.OpenWithCommand, item, Strings.Resources.OpenInExternalApp, new FontIcon { Glyph = Icons.OpenIn });
             flyout.CreateFlyoutItem(x => viewModel.CanDelete, viewModel.DeleteCommand, item, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
-
-            args.ShowAt(flyout, element);
         }
 
         #endregion

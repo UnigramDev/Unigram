@@ -68,6 +68,16 @@ namespace Unigram.ViewModels.Settings
             set => Set(ref _selectedItem, value);
         }
 
+        public bool IsTranslateEnabled
+        {
+            get => Settings.IsTranslateEnabled;
+            set
+            {
+                Settings.IsTranslateEnabled = value;
+                RaisePropertyChanged(nameof(IsTranslateEnabled));
+            }
+        }
+
         public RelayCommand<LanguagePackInfo> ChangeCommand { get; }
         private async void ChangeExecute(LanguagePackInfo info)
         {

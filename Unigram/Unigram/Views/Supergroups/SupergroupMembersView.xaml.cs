@@ -6,20 +6,20 @@ using Unigram.Converters;
 using Unigram.Navigation;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Supergroups;
-using Unigram.Views.Chats;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
 namespace Unigram.Views.Supergroups
 {
-    public sealed partial class SupergroupMembersView : HostedUserControl, IProfileTab, IBasicAndSupergroupDelegate, INavigablePage, ISearchablePage
+    public sealed partial class SupergroupMembersPage : HostedPage, IBasicAndSupergroupDelegate, INavigablePage, ISearchablePage
     {
         public SupergroupMembersViewModel ViewModel => DataContext as SupergroupMembersViewModel;
 
-        public SupergroupMembersView()
+        public SupergroupMembersPage()
         {
             InitializeComponent();
+            DataContext = TLContainer.Current.Resolve<SupergroupMembersViewModel, ISupergroupDelegate>(this);
 
             var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
             debouncer.Invoked += (s, args) =>
@@ -38,16 +38,6 @@ namespace Unigram.Views.Supergroups
         public void Search()
         {
             SearchField.Focus(FocusState.Keyboard);
-        }
-
-        public ListViewBase GetSelector()
-        {
-            return ScrollingHost;
-        }
-
-        public ScrollViewer GetScrollViewer()
-        {
-            return ScrollingHost.GetScrollViewer();
         }
 
         private bool _isLocked;
@@ -85,7 +75,7 @@ namespace Unigram.Views.Supergroups
             }
         }
 
-        private async void ListView_ItemClick(object sender, ItemClickEventArgs e)
+        private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
             if (e.ClickedItem is ChatMember member)
             {
@@ -275,7 +265,7 @@ namespace Unigram.Views.Supergroups
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
+                photo.SetUser(ViewModel.ProtoService, user, 36);
             }
 
             if (args.Phase < 2)

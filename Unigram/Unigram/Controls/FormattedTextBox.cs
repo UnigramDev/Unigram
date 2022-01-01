@@ -14,13 +14,13 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Storage.Streams;
 using Windows.System;
+using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls
 {
@@ -51,6 +51,7 @@ namespace Unigram.Controls
             CreateKeyboardAccelerator(VirtualKey.U);
             CreateKeyboardAccelerator(VirtualKey.X, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
             CreateKeyboardAccelerator(VirtualKey.M, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
+            CreateKeyboardAccelerator(VirtualKey.P, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
             CreateKeyboardAccelerator(VirtualKey.K);
             CreateKeyboardAccelerator(VirtualKey.N, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
 
@@ -248,14 +249,15 @@ namespace Unigram.Controls
 
             var clone = Document.Selection.GetClone();
             clone.StartOf(TextRangeUnit.Link, true);
-            var mention = TryGetUserId(clone, out int userId);
+            var mention = TryGetUserId(clone, out long userId);
 
             var formatting = new MenuFlyoutSubItem { Text = "Formatting" };
-            formatting.CreateFlyoutItem(length && format.Bold == FormatEffect.Off, ContextBold_Click, Strings.Resources.Bold, new FontIcon { Glyph = Icons.TextBold }, VirtualKey.B);
-            formatting.CreateFlyoutItem(length && format.Italic == FormatEffect.Off, ContextItalic_Click, Strings.Resources.Italic, new FontIcon { Glyph = Icons.TextItalic }, VirtualKey.I);
-            formatting.CreateFlyoutItem(length && format.Underline == UnderlineType.None, ContextUnderline_Click, Strings.Resources.Underline, new FontIcon { Glyph = Icons.TextUnderline }, VirtualKey.U);
-            formatting.CreateFlyoutItem(length && format.Strikethrough == FormatEffect.Off, ContextStrikethrough_Click, Strings.Resources.Strike, new FontIcon { Glyph = Icons.TextStrikethrough, FontFamily = Navigation.BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily }, VirtualKey.X, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
+            formatting.CreateFlyoutItem(length, ContextBold_Click, Strings.Resources.Bold, new FontIcon { Glyph = Icons.TextBold }, VirtualKey.B);
+            formatting.CreateFlyoutItem(length, ContextItalic_Click, Strings.Resources.Italic, new FontIcon { Glyph = Icons.TextItalic }, VirtualKey.I);
+            formatting.CreateFlyoutItem(length, ContextUnderline_Click, Strings.Resources.Underline, new FontIcon { Glyph = Icons.TextUnderline }, VirtualKey.U);
+            formatting.CreateFlyoutItem(length, ContextStrikethrough_Click, Strings.Resources.Strike, new FontIcon { Glyph = Icons.TextStrikethrough }, VirtualKey.X, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
             formatting.CreateFlyoutItem(length && format.Name != "Consolas", ContextMonospace_Click, Strings.Resources.Mono, new FontIcon { Glyph = Icons.Code }, VirtualKey.M, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
+            formatting.CreateFlyoutItem(length, ContextSpoiler_Click, Strings.Resources.Spoiler, new FontIcon { Glyph = Icons.TabInPrivate }, VirtualKey.P, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
             formatting.Items.Add(new MenuFlyoutSeparator());
             formatting.CreateFlyoutItem(!mention, ContextLink_Click, clone.Link.Length > 0 ? "Edit link" : Strings.Resources.CreateLink, new FontIcon { Glyph = Icons.Link }, VirtualKey.K);
             formatting.Items.Add(new MenuFlyoutSeparator());
@@ -397,6 +399,26 @@ namespace Unigram.Controls
             _formatting?.Update(Document.Selection.CharacterFormat);
         }
 
+        public void ToggleSpoiler()
+        {
+            ContextSpoiler_Click();
+        }
+
+        private void ContextSpoiler_Click()
+        {
+            //if (Math.Abs(Document.Selection.Length) < 1)
+            //{
+            //    return;
+            //}
+
+            Document.BatchDisplayUpdates();
+            ClearStyle(Document.Selection, false);
+            Document.Selection.CharacterFormat.BackgroundColor = Colors.Gray;
+            Document.ApplyDisplayUpdates();
+
+            _formatting?.Update(Document.Selection.CharacterFormat);
+        }
+
         public void CreateLink()
         {
             ContextLink_Click();
@@ -505,10 +527,10 @@ namespace Unigram.Controls
                 document.Weight == format.Weight;
         }
 
-        protected bool TryGetUserId(ITextRange range, out int userId)
+        protected bool TryGetUserId(ITextRange range, out long userId)
         {
             var link = range.Link.Trim('"');
-            if (link.StartsWith("tg-user://") && int.TryParse(link.Substring("tg-user://".Length), out userId))
+            if (link.StartsWith("tg-user://") && long.TryParse(link.Substring("tg-user://".Length), out userId))
             {
                 return true;
             }
@@ -526,7 +548,7 @@ namespace Unigram.Controls
                 type = new TextEntityTypeTextUrl(link);
                 return true;
             }
-            else if (link.StartsWith("tg-user://") && int.TryParse(link.Substring("tg-user://".Length), out int userId))
+            else if (link.StartsWith("tg-user://") && long.TryParse(link.Substring("tg-user://".Length), out long userId))
             {
                 type = new TextEntityTypeMentionName(userId);
                 return true;
@@ -690,6 +712,10 @@ namespace Unigram.Controls
             {
                 ContextMonospace_Click();
             }
+            else if (sender.Key == VirtualKey.P && sender.Modifiers == (VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift) && length && format.Name != "Consolas")
+            {
+                ContextSpoiler_Click();
+            }
             else if (sender.Key == VirtualKey.K && sender.Modifiers == VirtualKeyModifiers.Control)
             {
                 ContextLink_Click();
@@ -758,6 +784,10 @@ namespace Unigram.Controls
                     if (range.CharacterFormat.Underline == UnderlineType.Single)
                     {
                         flags |= TextStyle.Underline;
+                    }
+                    if (range.CharacterFormat.BackgroundColor == Colors.Gray)
+                    {
+                        flags |= TextStyle.Spoiler;
                     }
 
                     if (range.Link.Length > 0 && TryGetEntityType(range.Link, out type))
@@ -901,6 +931,10 @@ namespace Unigram.Controls
                         else if (entity.Type is TextEntityTypeStrikethrough)
                         {
                             range.CharacterFormat.Strikethrough = FormatEffect.On;
+                        }
+                        else if (entity.Type is TextEntityTypeSpoiler)
+                        {
+                            range.CharacterFormat.BackgroundColor = Colors.Gray;
                         }
                         else if (entity.Type is TextEntityTypeCode or TextEntityTypePre or TextEntityTypePreCode)
                         {

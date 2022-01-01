@@ -552,16 +552,6 @@ namespace Unigram.ViewModels.Drawers
         public IProtoService ProtoService => _protoService;
         public IEventAggregator Aggregator => _aggregator;
 
-        public bool UpdateFile(File file)
-        {
-            if (_sticker == null)
-            {
-                return false;
-            }
-
-            return _sticker.UpdateFile(file);
-        }
-
         public static implicit operator Sticker(StickerViewModel viewModel)
         {
             return viewModel._sticker;

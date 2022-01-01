@@ -33,20 +33,10 @@ namespace Unigram.ViewModels.Gallery
         {
             if (_animation.Thumbnail?.Format is ThumbnailFormatJpeg)
             {
-                return _animation.Thumbnail?.File;
+                return _animation.Thumbnail.File;
             }
 
             return null;
-        }
-
-        public override (File File, string FileName) GetFileAndName()
-        {
-            return (_animation.AnimationValue, _animation.FileName);
-        }
-
-        public override bool UpdateFile(File file)
-        {
-            return _animation.UpdateFile(file);
         }
 
         public override object Constraint => _animation;

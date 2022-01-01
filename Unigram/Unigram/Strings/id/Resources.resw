@@ -169,6 +169,9 @@
   <data name="AccDescrExpandPanel" xml:space="preserve">
     <value>Perbesar panel</value>
   </data>
+  <data name="AccDescrFingerprint" xml:space="preserve">
+    <value>Sidik Jari</value>
+  </data>
   <data name="AccDescrForwarding" xml:space="preserve">
     <value>Diteruskan dari</value>
   </data>
@@ -484,8 +487,20 @@
   <data name="AcceptCall" xml:space="preserve">
     <value>Terima</value>
   </data>
+  <data name="AcceptCalls" xml:space="preserve">
+    <value>Terima Panggilan</value>
+  </data>
+  <data name="AcceptCallsChatsDescription" xml:space="preserve">
+    <value>Gunakan perangkat ini untuk Panggilan</value>
+  </data>
+  <data name="AcceptSecretChats" xml:space="preserve">
+    <value>Terima Secret Chat</value>
+  </data>
+  <data name="AcceptSecretChatsDescription" xml:space="preserve">
+    <value>Gunakan perangkat ini untuk Secret Chat</value>
+  </data>
   <data name="AccessError" xml:space="preserve">
-    <value>Akses error</value>
+    <value>Kesalahan saat akses</value>
   </data>
   <data name="AccExitFullscreen" xml:space="preserve">
     <value>Tutup layar penuh</value>
@@ -586,6 +601,15 @@
   <data name="ActionChangedVideo" xml:space="preserve">
     <value>un1 mengganti video grup</value>
   </data>
+  <data name="ActionChannelCallEnded" xml:space="preserve">
+    <value>Tayangan Langsung selesai ({0})</value>
+  </data>
+  <data name="ActionChannelCallJustStarted" xml:space="preserve">
+    <value>Tayangan Langsung dimulai</value>
+  </data>
+  <data name="ActionChannelCallScheduled" xml:space="preserve">
+    <value>Tayangan langsung dijadalkan pada {0}</value>
+  </data>
   <data name="ActionChannelChangedPhoto" xml:space="preserve">
     <value>Foto channel diganti</value>
   </data>
@@ -631,26 +655,47 @@
   <data name="ActionEditedInviteLinkToSameClickable" xml:space="preserve">
     <value>un1 edit tautan undangan un2</value>
   </data>
+  <data name="ActionForwardsEnabledChannel" xml:space="preserve">
+    <value>un1 izinkan penerusan pesan dari channel ini</value>
+  </data>
+  <data name="ActionForwardsEnabledGroup" xml:space="preserve">
+    <value>un1 izinkan penerusan pesan dari grup ini</value>
+  </data>
+  <data name="ActionForwardsRestrictedChannel" xml:space="preserve">
+    <value>un1 batasi penerusan pesan dari channel ini</value>
+  </data>
+  <data name="ActionForwardsRestrictedGroup" xml:space="preserve">
+    <value>un1 batasi penerusan pesan dari grup ini</value>
+  </data>
   <data name="ActionGroupCallEnded" xml:space="preserve">
-    <value>Obrolan suara selesai ( {0} )</value>
+    <value>Obrolan video selesai ( {0} )</value>
+  </data>
+  <data name="ActionGroupCallEndedBy" xml:space="preserve">
+    <value>un1 mengakhiri obrolan video ({0})</value>
+  </data>
+  <data name="ActionGroupCallEndedByYou" xml:space="preserve">
+    <value>Anda mengakhiri obrolan video {0}</value>
   </data>
   <data name="ActionGroupCallInvited" xml:space="preserve">
-    <value>un1 mengundang un2 ke Obrolan Suara</value>
+    <value>un1 mengundang un2 ke Obrolan Video</value>
   </data>
   <data name="ActionGroupCallInvitedYou" xml:space="preserve">
-    <value> un1 mengundang Anda ke Obrolan Suara</value>
+    <value> un1 mengundang Anda ke Obrolan Video</value>
   </data>
   <data name="ActionGroupCallJustStarted" xml:space="preserve">
-    <value>Obrolan Suara dimulai</value>
+    <value>Obrolan Video dimulai</value>
+  </data>
+  <data name="ActionGroupCallScheduled" xml:space="preserve">
+    <value>Obrolan video dijadwalkan pada  {0}</value>
   </data>
   <data name="ActionGroupCallStarted" xml:space="preserve">
-    <value>un1 memulai Obrolan Suara</value>
+    <value>un1 memulai Obrolan Video</value>
   </data>
   <data name="ActionGroupCallStartedByYou" xml:space="preserve">
-    <value>Anda memulai Obrolan Suara</value>
+    <value>Anda memulai Obrolan Video</value>
   </data>
   <data name="ActionGroupCallYouInvited" xml:space="preserve">
-    <value>Anda mengundang un2 ke Obrolan Suara</value>
+    <value>Anda mengundang un2 ke Obrolan Video</value>
   </data>
   <data name="ActionInviteUser" xml:space="preserve">
     <value>un1 bergabung ke grup melalui tautan </value>
@@ -720,6 +765,9 @@
   </data>
   <data name="ActionPinnedVoice" xml:space="preserve">
     <value>un1 menyematkan pesan suara</value>
+  </data>
+  <data name="ActionReactionsChanged" xml:space="preserve">
+    <value>un1 mengubah reaksi obrolan dari: {0} menjadi: {1}</value>
   </data>
   <data name="ActionRemovedPhoto" xml:space="preserve">
     <value>un1 menghapus foto grup</value>
@@ -871,6 +919,9 @@
   <data name="AddContactTitle" xml:space="preserve">
     <value>Tambah kontak</value>
   </data>
+  <data name="AddedBy" xml:space="preserve">
+    <value>ditambahkan oleh {0} {1}</value>
+  </data>
   <data name="AddedToFavorites" xml:space="preserve">
     <value>Stiker telah ditambahkan ke Favorit</value>
   </data>
@@ -943,6 +994,9 @@
   <data name="AddSubscriber" xml:space="preserve">
     <value>Tambah pelanggan</value>
   </data>
+  <data name="AddToChannel" xml:space="preserve">
+    <value>Tambah ke Channel</value>
+  </data>
   <data name="AddToContacts" xml:space="preserve">
     <value>Tambah ke kontak</value>
   </data>
@@ -954,6 +1008,9 @@
   </data>
   <data name="AddToFavorites" xml:space="preserve">
     <value>Tambahkan ke Favorit</value>
+  </data>
+  <data name="AddToGroup" xml:space="preserve">
+    <value>Tambah ke grup</value>
   </data>
   <data name="AddToMasks" xml:space="preserve">
     <value>Tambahkan ke Mask</value>
@@ -996,6 +1053,9 @@
   </data>
   <data name="AllMedia" xml:space="preserve">
     <value>Semua media</value>
+  </data>
+  <data name="Allow" xml:space="preserve">
+    <value>Izinkan</value>
   </data>
   <data name="AllowCustomQuickReply" xml:space="preserve">
     <value>Izinkan Kustomisasi</value>
@@ -1141,6 +1201,9 @@
   <data name="AppFolderInfo" xml:space="preserve">
     <value>Cari daftar aplikasi Anda</value>
   </data>
+  <data name="Application" xml:space="preserve">
+    <value>Aplikasi</value>
+  </data>
   <data name="ApplyLocalizationFile" xml:space="preserve">
     <value>Terapkan berkas pelokalan</value>
   </data>
@@ -1155,6 +1218,35 @@
   </data>
   <data name="AppNameBeta" xml:space="preserve">
     <value>Telegram</value>
+  </data>
+  <data name="ApproveNewMembers" xml:space="preserve">
+    <value>Setujui Anggota Baru</value>
+  </data>
+  <data name="ApproveNewMembersDescription" xml:space="preserve">
+    <value>Aktifkan jika Anda ingin setiap anggota harus disetujui admin dahulu sebelum bergabung.</value>
+  </data>
+  <data name="AppUpdate" xml:space="preserve">
+    <value>Perbarui Telegram</value>
+  </data>
+  <data name="AppUpdateChangelogEmpty" xml:space="preserve">
+    <value>**Apa yang baru?**
+
+• Perbaikan bug dan peningkatan.</value>
+  </data>
+  <data name="AppUpdateDownloading" xml:space="preserve">
+    <value>Mengunduh {0}%...</value>
+  </data>
+  <data name="AppUpdateDownloadNow" xml:space="preserve">
+    <value>Unduh  </value>
+  </data>
+  <data name="AppUpdateNow" xml:space="preserve">
+    <value>Perbarui  </value>
+  </data>
+  <data name="AppUpdateRemindMeLater" xml:space="preserve">
+    <value>Ingatkan nanti</value>
+  </data>
+  <data name="AppUpdateVersionAndSize" xml:space="preserve">
+    <value>Versi  {0} • {1}</value>
   </data>
   <data name="April" xml:space="preserve">
     <value>April</value>
@@ -1398,7 +1490,7 @@ Ingat, log out akan menghapus semua Secret Chat Anda.</value>
     <value>Anda yakin ingin membagikan nomor telepon Anda {0} dengan {1}? </value>
   </data>
   <data name="AreYouSureUnblockContact" xml:space="preserve">
-    <value>Apakah Anda yakin ingin membuka blokir kontak ini?</value>
+    <value>Anda yakin ingin membuka blokir kontak ini?</value>
   </data>
   <data name="AreYouSureWebSessions" xml:space="preserve">
     <value>Apakah Anda yakin untuk melepas akses dari semua situs di mana Anda telah masuk dengan akun Telegram?</value>
@@ -1476,6 +1568,9 @@ Silakan berkunjung ke  <![CDATA[<a href="https://telegram.org/faq#general">Perta
   </data>
   <data name="AttachMediaRestrictedForever" xml:space="preserve">
     <value>Admin grup membatasi Anda untuk mengirim media di sini.</value>
+  </data>
+  <data name="AttachMenu" xml:space="preserve">
+    <value>Lampirkan...</value>
   </data>
   <data name="AttachMusic" xml:space="preserve">
     <value>Musik</value>
@@ -1561,6 +1656,12 @@ Silakan berkunjung ke  <![CDATA[<a href="https://telegram.org/faq#general">Perta
   <data name="AuthAnotherClientInfo3" xml:space="preserve">
     <value>Pindai kode QR untuk menghubungkan akun Anda.</value>
   </data>
+  <data name="AuthAnotherClientInfo4" xml:space="preserve">
+    <value>Hubungkan *Telegram Desktop* atau *Telegram Web* dengan memindai kode QR. </value>
+  </data>
+  <data name="AuthAnotherClientInfo5" xml:space="preserve">
+    <value>Silakan ke *getdesktop.telegram.org* atau *web.telegram.org* untuk mendapatkan kode QR.</value>
+  </data>
   <data name="AuthAnotherClientNotFound" xml:space="preserve">
     <value>Token asli tidak ditemukan</value>
   </data>
@@ -1578,11 +1679,17 @@ Silakan berkunjung ke  <![CDATA[<a href="https://telegram.org/faq#general">Perta
 
 Untuk mengonfirmasi login Telegram, silakan buka Pengaturan> Perangkat> Pindai QR dan pindai kodenya.</value>
   </data>
+  <data name="AuthAnotherWebClientUrl" xml:space="preserve">
+    <value>https://web.telegram.org/</value>
+  </data>
+  <data name="AutoDelete1Month" xml:space="preserve">
+    <value>1 bulan</value>
+  </data>
   <data name="AutoDelete24Hours" xml:space="preserve">
     <value>24 jam</value>
   </data>
   <data name="AutoDelete7Days" xml:space="preserve">
-    <value>7 hari</value>
+    <value>1 minggu</value>
   </data>
   <data name="AutoDeleteAlertChannelInfo" xml:space="preserve">
     <value>Hapus pesan baru otomatis setelah jangka waktu tertentu untuk pelanggan channel ini.</value>
@@ -1768,6 +1875,9 @@ dihapus pada {0} setelah pengiriman.</value>
   <data name="AutomaticMediaDownload" xml:space="preserve">
     <value>Unduh media otomatis</value>
   </data>
+  <data name="AutomaticTranslation" xml:space="preserve">
+    <value>Terjemahan Otomatis</value>
+  </data>
   <data name="AutoNightAdaptive" xml:space="preserve">
     <value>Adaptif</value>
   </data>
@@ -1837,6 +1947,9 @@ dihapus pada {0} setelah pengiriman.</value>
   <data name="Available" xml:space="preserve">
     <value>Tersedia</value>
   </data>
+  <data name="AvailableReactions" xml:space="preserve">
+    <value>Reaksi tersedia</value>
+  </data>
   <data name="AwaitingEncryption" xml:space="preserve">
     <value>Menunggu {0} online...</value>
   </data>
@@ -1845,6 +1958,12 @@ dihapus pada {0} setelah pengiriman.</value>
   </data>
   <data name="Back" xml:space="preserve">
     <value>Kembali</value>
+  </data>
+  <data name="BackgroundAnimate" xml:space="preserve">
+    <value>Animasi</value>
+  </data>
+  <data name="BackgroundAnimateInfo" xml:space="preserve">
+    <value>Warna akan bergerak saat Anda kirim pesan.</value>
   </data>
   <data name="BackgroundBlurred" xml:space="preserve">
     <value>Buram</value>
@@ -1863,6 +1982,9 @@ dihapus pada {0} setelah pengiriman.</value>
   </data>
   <data name="BackgroundColorPreviewLine2" xml:space="preserve">
     <value>Coklat adalah makanan, bukan cuma warna.</value>
+  </data>
+  <data name="BackgroundColors" xml:space="preserve">
+    <value>Warna</value>
   </data>
   <data name="BackgroundColorSinglePreviewLine1" xml:space="preserve">
     <value>Tekan 'Pasang' untuk menerapkan latar belakang.</value>
@@ -1896,6 +2018,18 @@ dihapus pada {0} setelah pengiriman.</value>
   </data>
   <data name="BackgroundSearchColor" xml:space="preserve">
     <value>Warna:</value>
+  </data>
+  <data name="BackgroundToChats" xml:space="preserve">
+    <value>Latar dibagikan ke **{0}**.</value>
+  </data>
+  <data name="BackgroundToGroup" xml:space="preserve">
+    <value>Latar dibagikan ke **{0}**.</value>
+  </data>
+  <data name="BackgroundToSavedMessages" xml:space="preserve">
+    <value>Latar dibagikan ke **Pesan Tersimpan**. </value>
+  </data>
+  <data name="BackgroundToUser" xml:space="preserve">
+    <value>Latar dibagikan dengan **{0}**.</value>
   </data>
   <data name="BadgeNumber" xml:space="preserve">
     <value>Penghitung Tanda</value>
@@ -1973,7 +2107,7 @@ dihapus pada {0} setelah pengiriman.</value>
     <value/>
   </data>
   <data name="BlockedUsersInfo" xml:space="preserve">
-    <value>Pengguna terblokir tidak dapat menghubungi dan melihat status terlihat Anda.</value>
+    <value>Pengguna yang diblokir tidak dapat mengirimi Anda pesan atau menambahkan Anda ke grup. Mereka tidak akan melihat gambar profil Anda, status online dan terakhir dilihat.</value>
   </data>
   <data name="BlockUser" xml:space="preserve">
     <value>Blokir pengguna</value>
@@ -2059,6 +2193,9 @@ dihapus pada {0} setelah pengiriman.</value>
   <data name="BotShare" xml:space="preserve">
     <value>Bagi</value>
   </data>
+  <data name="BotsMenuTitle" xml:space="preserve">
+    <value>Menu</value>
+  </data>
   <data name="BotStart" xml:space="preserve">
     <value>MULAI</value>
   </data>
@@ -2092,8 +2229,14 @@ dihapus pada {0} setelah pengiriman.</value>
   <data name="Brown" xml:space="preserve">
     <value>Coklat</value>
   </data>
+  <data name="BrowseThemes" xml:space="preserve">
+    <value>Cari Tema</value>
+  </data>
   <data name="BubbleRadius" xml:space="preserve">
     <value>Pojok pesan</value>
+  </data>
+  <data name="BuildMyOwnTheme" xml:space="preserve">
+    <value>Buat tema sendiri</value>
   </data>
   <data name="BuiltInThemes" xml:space="preserve">
     <value>Tema Terpasang</value>
@@ -2115,6 +2258,30 @@ dihapus pada {0} setelah pengiriman.</value>
   </data>
   <data name="CalculatingSize" xml:space="preserve">
     <value>Menghitung...</value>
+  </data>
+  <data name="Calendar" xml:space="preserve">
+    <value>Kalender</value>
+  </data>
+  <data name="CalendarWeekNameShortFriday" xml:space="preserve">
+    <value>J</value>
+  </data>
+  <data name="CalendarWeekNameShortMonday" xml:space="preserve">
+    <value>S</value>
+  </data>
+  <data name="CalendarWeekNameShortSaturday" xml:space="preserve">
+    <value>S</value>
+  </data>
+  <data name="CalendarWeekNameShortSunday" xml:space="preserve">
+    <value>M</value>
+  </data>
+  <data name="CalendarWeekNameShortThursday" xml:space="preserve">
+    <value>K</value>
+  </data>
+  <data name="CalendarWeekNameShortTuesday" xml:space="preserve">
+    <value>S</value>
+  </data>
+  <data name="CalendarWeekNameShortWednesday" xml:space="preserve">
+    <value>R</value>
   </data>
   <data name="Call" xml:space="preserve">
     <value>Telepon</value>
@@ -2204,6 +2371,15 @@ Tidak memperlihatkan konten obrolan dan membantu kami memperbaiki masalah lebih 
   <data name="CallViaTelegram" xml:space="preserve">
     <value>Panggilan Telegram</value>
   </data>
+  <data name="CallVideoPin" xml:space="preserve">
+    <value>Semat</value>
+  </data>
+  <data name="CallVideoPreviewTitle" xml:space="preserve">
+    <value>Tampilan</value>
+  </data>
+  <data name="CallVideoUnpin" xml:space="preserve">
+    <value>Lepas</value>
+  </data>
   <data name="CameraPermissionText" xml:space="preserve">
     <value>Ketuk untuk akses Kamera Anda</value>
   </data>
@@ -2232,11 +2408,17 @@ Jika ini bukan Anda, mohon untuk memasukkan kode yang sudah kami kirimkan untuk 
   <data name="CancelForward" xml:space="preserve">
     <value>Batal Teruskan</value>
   </data>
+  <data name="CancelForwardChat" xml:space="preserve">
+    <value>Apa yang ingin Anda lakukan untuk  {0} dari **{1}**?</value>
+  </data>
   <data name="CancelForwarding" xml:space="preserve">
     <value>Batal</value>
   </data>
   <data name="CancelForwardMessage" xml:space="preserve">
     <value>Anda ingin batalkan untuk meneruskan atau kirim pesan ke obrolan lain?</value>
+  </data>
+  <data name="CancelForwardPrivate" xml:space="preserve">
+    <value>Apa yang ingin Anda lakukan untuk {0} dari obrolan Anda dengan {1}?</value>
   </data>
   <data name="CancelLinkExpired" xml:space="preserve">
     <value>Tautan tidak valid atau kadaluwarsa.</value>
@@ -2247,6 +2429,15 @@ Jika ini bukan Anda, mohon untuk memasukkan kode yang sudah kami kirimkan untuk 
   <data name="CancelPasswordQuestion" xml:space="preserve">
     <value>Anda yakin untuk membatalkan pengaturan verifikasi dua langkah?</value>
   </data>
+  <data name="CancelPasswordReset" xml:space="preserve">
+    <value>Batalkan proses reset kata sandi? Jika Anda meminta reset baru nanti, itu memerlukan waktu 7 hari lagi.</value>
+  </data>
+  <data name="CancelPasswordResetNo" xml:space="preserve">
+    <value>TIDAK</value>
+  </data>
+  <data name="CancelPasswordResetYes" xml:space="preserve">
+    <value>YA</value>
+  </data>
   <data name="CancelPollAlertText" xml:space="preserve">
     <value>Anda ingin membatalkan pol Ini?</value>
   </data>
@@ -2255,6 +2446,9 @@ Jika ini bukan Anda, mohon untuk memasukkan kode yang sudah kami kirimkan untuk 
   </data>
   <data name="CancelRegistration" xml:space="preserve">
     <value>Batalkan pendaftaran</value>
+  </data>
+  <data name="CancelReset" xml:space="preserve">
+    <value>Batal reset</value>
   </data>
   <data name="CancelSending" xml:space="preserve">
     <value>Batal kirim</value>
@@ -2295,6 +2489,12 @@ Jika ini bukan Anda, mohon untuk memasukkan kode yang sudah kami kirimkan untuk 
   <data name="ChangeChatBackground" xml:space="preserve">
     <value>Ganti Latar Chat</value>
   </data>
+  <data name="ChangeColors" xml:space="preserve">
+    <value>Ganti Warna</value>
+  </data>
+  <data name="ChangeColorToColor" xml:space="preserve">
+    <value>Apakah Anda ingin menggunakan latar yang dipilih saat ini atau set ulang ke bawaan untuk tema ini? </value>
+  </data>
   <data name="ChangeLanguageLater" xml:space="preserve">
     <value>Anda dapat mengganti bahasa Anda di Pengaturan nanti. </value>
   </data>
@@ -2329,6 +2529,9 @@ Catatan: Jika Anda lupa kode sandi, Anda harus menghapus dan memasang ulang apli
   </data>
   <data name="ChangePublicLimitReached" xml:space="preserve">
     <value>Maaf, Anda telah memiliki banyak tautan publik. Coba untuk menghapus dari grup atau channel lama, atau membuat grup atau channel privat.</value>
+  </data>
+  <data name="ChangeRecipient" xml:space="preserve">
+    <value>Ganti Penerima</value>
   </data>
   <data name="ChangeRecoveryEmail" xml:space="preserve">
     <value>Ganti Surel Pemulihan</value>
@@ -2441,6 +2644,9 @@ ke pelanggan Anda tanpa batas.</value>
   </data>
   <data name="ChannelDeleteMenu" xml:space="preserve">
     <value>Hapus channel</value>
+  </data>
+  <data name="ChannelDescriptionChanged" xml:space="preserve">
+    <value>Deskripsi channel diperbarui.</value>
   </data>
   <data name="ChannelDiscuss" xml:space="preserve">
     <value>DISKUSI</value>
@@ -2640,13 +2846,16 @@ Jika Anda tidak tertarik, kami sarankan untuk membuat channel privat.</value>
     <value>Tandai Pesan</value>
   </data>
   <data name="ChannelSignMessagesInfo" xml:space="preserve">
-    <value>Tambahkan nama admin pada pesan yang mereka tulis.</value>
+    <value>Tambahkan nama admin pada pesan yang mereka kirim</value>
   </data>
   <data name="ChannelSilentBroadcast" xml:space="preserve">
     <value>Siaran Bisu</value>
   </data>
   <data name="ChannelSubscribers" xml:space="preserve">
     <value>Pelanggan</value>
+  </data>
+  <data name="ChannelTitleChanged" xml:space="preserve">
+    <value>Judul channel diperbarui.</value>
   </data>
   <data name="ChannelTooMuch" xml:space="preserve">
     <value>Maaf, Anda sudah terlalu banyak bergabung ke grup dan channel. Mohon untuk keluar dahulu sebelum membuat yang baru.</value>
@@ -2719,6 +2928,9 @@ Panjang minimum adalah 5 karakter.</value>
   </data>
   <data name="ChatAdmin" xml:space="preserve">
     <value>admin</value>
+  </data>
+  <data name="ChatApplyTheme" xml:space="preserve">
+    <value>Pasang Tema</value>
   </data>
   <data name="ChatArchived" xml:space="preserve">
     <value>Obrolan diarsipkan. </value>
@@ -2795,6 +3007,12 @@ Panjang minimum adalah 5 karakter.</value>
   <data name="ChatLocation" xml:space="preserve">
     <value>Lokasi</value>
   </data>
+  <data name="ChatNoTheme" xml:space="preserve">
+    <value>Tak ada tema</value>
+  </data>
+  <data name="ChatResetTheme" xml:space="preserve">
+    <value>Set ulang tema</value>
+  </data>
   <data name="Chats_few" xml:space="preserve">
     <value/>
   </data>
@@ -2815,6 +3033,9 @@ Panjang minimum adalah 5 karakter.</value>
   </data>
   <data name="ChatsArchived" xml:space="preserve">
     <value>Obrolan diarsipkan.</value>
+  </data>
+  <data name="ChatsDeletedUndo" xml:space="preserve">
+    <value>Obrolan dihapus</value>
   </data>
   <data name="ChatSetLocation" xml:space="preserve">
     <value>Set Lokasi</value>
@@ -2915,11 +3136,53 @@ Panjang minimum adalah 5 karakter.</value>
   <data name="ChatsUnmute" xml:space="preserve">
     <value>Bunyikan</value>
   </data>
+  <data name="ChatThemeChangedTo" xml:space="preserve">
+    <value>{0} ganti tema obrolan ke {1}</value>
+  </data>
+  <data name="ChatThemeChangedYou" xml:space="preserve">
+    <value>Anda ubah tema obrolan menjadi {0}</value>
+  </data>
+  <data name="ChatThemeDayNightSwitchTooltip" xml:space="preserve">
+    <value>Ketuk untuk cek bagaimana {0} melihat obrolan pada mode gelap.</value>
+  </data>
+  <data name="ChatThemeDisabled" xml:space="preserve">
+    <value>{0} non aktifkan tema obrolan</value>
+  </data>
+  <data name="ChatThemeDisabledYou" xml:space="preserve">
+    <value>Anda non aktifkan tema obrolan</value>
+  </data>
+  <data name="ChatThemeSaveDialogApply" xml:space="preserve">
+    <value>Pasang</value>
+  </data>
+  <data name="ChatThemeSaveDialogDiscard" xml:space="preserve">
+    <value>Buang</value>
+  </data>
+  <data name="ChatThemeSaveDialogText" xml:space="preserve">
+    <value>Anda ingin memasang tema yang dipilih di obrolan ini?</value>
+  </data>
+  <data name="ChatThemeSaveDialogTitle" xml:space="preserve">
+    <value>Simpan?</value>
+  </data>
   <data name="ChatVideo" xml:space="preserve">
     <value>Video</value>
   </data>
   <data name="ChatWasMovedToMainList" xml:space="preserve">
     <value>Obrolan sudah dipindahkan ke daftar utama.</value>
+  </data>
+  <data name="ChatWithAdminChannelTitle" xml:space="preserve">
+    <value>Respon Permintaan Masuk</value>
+  </data>
+  <data name="ChatWithAdminGroupTitle" xml:space="preserve">
+    <value>Respon permintaan masuk</value>
+  </data>
+  <data name="ChatWithAdminMessage" xml:space="preserve">
+    <value>Anda menerima pesan ini karena Anda meminta untuk masuk ke {0} pada {1}.</value>
+  </data>
+  <data name="ChatWithChannelAdmin" xml:space="preserve">
+    <value>{0} adalah admin {1}, channel yang Anda minta untuk gabung.</value>
+  </data>
+  <data name="ChatWithGroupAdmin" xml:space="preserve">
+    <value>{0} adalah admin {1}, grup yang Anda minta untuk gabung.</value>
   </data>
   <data name="ChatYourSelf" xml:space="preserve">
     <value>teruskan di sini untuk disimpan</value>
@@ -2945,6 +3208,39 @@ Panjang minimum adalah 5 karakter.</value>
   <data name="Checking" xml:space="preserve">
     <value>Mengecek...</value>
   </data>
+  <data name="CheckPassword" xml:space="preserve">
+    <value>Periksa Kata Sandi</value>
+  </data>
+  <data name="CheckPasswordBackToSettings" xml:space="preserve">
+    <value>Kembali ke Pengaturan</value>
+  </data>
+  <data name="CheckPasswordInfo" xml:space="preserve">
+    <value>Apakah Anda masih ingat kata sandi Anda?</value>
+  </data>
+  <data name="CheckPasswordPerfect" xml:space="preserve">
+    <value>Sempurna!</value>
+  </data>
+  <data name="CheckPasswordPerfectInfo" xml:space="preserve">
+    <value>Anda masih ingat kata sandi Anda.</value>
+  </data>
+  <data name="CheckPasswordWrong" xml:space="preserve">
+    <value>Anda memasukkan kata sandi yang salah.</value>
+  </data>
+  <data name="CheckPhoneNumber" xml:space="preserve">
+    <value>Apakah  {0} masih nomor Anda?</value>
+  </data>
+  <data name="CheckPhoneNumberInfo" xml:space="preserve">
+    <value>Pastikan nomor Anda yang terkini agar Anda tetap dapat masuk ke Telegram. **Selengkapnya**</value>
+  </data>
+  <data name="CheckPhoneNumberLearnMoreUrl" xml:space="preserve">
+    <value>https://telegram.org/faq#q-i-have-a-new-phone-number-what-do-i-do</value>
+  </data>
+  <data name="CheckPhoneNumberNo" xml:space="preserve">
+    <value>Tidak</value>
+  </data>
+  <data name="CheckPhoneNumberYes" xml:space="preserve">
+    <value>Ya</value>
+  </data>
   <data name="ChooseCountry" xml:space="preserve">
     <value>Pilih negara</value>
   </data>
@@ -2962,6 +3258,9 @@ Panjang minimum adalah 5 karakter.</value>
   </data>
   <data name="ChooseFromYourStickers" xml:space="preserve">
     <value>Pilih dari stiker Anda</value>
+  </data>
+  <data name="ChooseLanguages" xml:space="preserve">
+    <value>Pilih bahasa</value>
   </data>
   <data name="ChooseMapPreviewProvider" xml:space="preserve">
     <value>Pilih Penyedia Tampilan Peta</value>
@@ -3002,6 +3301,9 @@ Panjang minimum adalah 5 karakter.</value>
   <data name="ChooseYourLanguageOther" xml:space="preserve">
     <value>Lainnya</value>
   </data>
+  <data name="ChoosingSticker" xml:space="preserve">
+    <value>pilih stiker</value>
+  </data>
   <data name="ChromeCustomTabs" xml:space="preserve">
     <value>Peramban intra Apl</value>
   </data>
@@ -3029,8 +3331,14 @@ Panjang minimum adalah 5 karakter.</value>
   <data name="ClearHistoryCache" xml:space="preserve">
     <value>Hapus dari cache</value>
   </data>
+  <data name="ClearHistoryForTheseDays" xml:space="preserve">
+    <value>Hapus riwayat untuk hari yang dipilih</value>
+  </data>
+  <data name="ClearHistoryForThisDay" xml:space="preserve">
+    <value>Hapus Riwayat Untuk Hari Ini</value>
+  </data>
   <data name="ClearHistoryOptionAlso" xml:space="preserve">
-    <value>Bersihkan riwayat untuk {0}</value>
+    <value>Hapus riwayat untuk {0}</value>
   </data>
   <data name="ClearLocalDatabase" xml:space="preserve">
     <value>Hapus Pangkalan Data Lokal</value>
@@ -3048,7 +3356,7 @@ Panjang minimum adalah 5 karakter.</value>
     <value>Bersihkan emoji terkini?</value>
   </data>
   <data name="ClearRecentHistory" xml:space="preserve">
-    <value>Bersihkan riwayat</value>
+    <value>Hapus riwayat</value>
   </data>
   <data name="ClearSearch" xml:space="preserve">
     <value>Bersihkan riwayat pencarian?</value>
@@ -3079,6 +3387,9 @@ Panjang minimum adalah 5 karakter.</value>
   </data>
   <data name="CloseEditor" xml:space="preserve">
     <value>TUTUP EDITOR</value>
+  </data>
+  <data name="CloseTranslation" xml:space="preserve">
+    <value>Tutup Terjemahan</value>
   </data>
   <data name="Code" xml:space="preserve">
     <value>Kode</value>
@@ -3395,6 +3706,9 @@ Untuk menambah dan mendapat fitur tambahan, tingkatkan ke supergrup:
   <data name="CreateLink" xml:space="preserve">
     <value>Buat Tautan</value>
   </data>
+  <data name="CreateLinkHeader" xml:space="preserve">
+    <value>BUAT</value>
+  </data>
   <data name="CreateNewContact" xml:space="preserve">
     <value>Buat Kontak Baru</value>
   </data>
@@ -3491,7 +3805,7 @@ Anda selalu dapat beralih kembali ke tema bawaan Telegram di sini.</value>
     <value>Data dan Penyimpanan</value>
   </data>
   <data name="DataUsage" xml:space="preserve">
-    <value>Pemakaian Data dan Cakram</value>
+    <value>Penggunaan jaringan dan penyimpanan</value>
   </data>
   <data name="Days_few" xml:space="preserve">
     <value/>
@@ -3547,17 +3861,41 @@ Anda selalu dapat beralih kembali ke tema bawaan Telegram di sini.</value>
   <data name="DaysLeft_zero" xml:space="preserve">
     <value/>
   </data>
+  <data name="DaysSchedule_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="DaysSchedule_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="DaysSchedule_one" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="DaysSchedule_other" xml:space="preserve">
+    <value>{0} hari</value>
+  </data>
+  <data name="DaysSchedule_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="DaysSchedule_zero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="Deactivate" xml:space="preserve">
     <value>HAPUS SEKARANG</value>
   </data>
   <data name="DebugClearLogs" xml:space="preserve">
     <value>Hapus Log</value>
   </data>
+  <data name="DebugDrawSnowInChat" xml:space="preserve">
+    <value>Lihat di Obrolan</value>
+  </data>
   <data name="DebugMenu" xml:space="preserve">
     <value>Menu Debug</value>
   </data>
   <data name="DebugMenuCallSettings" xml:space="preserve">
     <value>Pengaturan Panggilan</value>
+  </data>
+  <data name="DebugMenuCheckAppUpdate" xml:space="preserve">
+    <value>Periksa pembaruan aplikasi</value>
   </data>
   <data name="DebugMenuClearMediaCache" xml:space="preserve">
     <value>Hapus cache media terkirim </value>
@@ -3601,6 +3939,9 @@ Anda selalu dapat beralih kembali ke tema bawaan Telegram di sini.</value>
   <data name="DebugMenuResetDialogs" xml:space="preserve">
     <value>Reset Obrolan</value>
   </data>
+  <data name="DebugSendLastLogs" xml:space="preserve">
+    <value>Kirim Logs Terakhir</value>
+  </data>
   <data name="DebugSendLogs" xml:space="preserve">
     <value>Kirim Log</value>
   </data>
@@ -3629,7 +3970,7 @@ Anda selalu dapat beralih kembali ke tema bawaan Telegram di sini.</value>
     <value>Jika Anda tidak aktif paling tidak hingga periode ini, akun Anda akan dihapus termasuk semua riwayat grup, pesan dan kontak.</value>
   </data>
   <data name="DeleteAccountIfAwayFor" xml:space="preserve">
-    <value>Jika Anda pergi selama</value>
+    <value>Jika non aktif selama</value>
   </data>
   <data name="DeleteAccountIfAwayFor2" xml:space="preserve">
     <value>Hapus akun saya jika tidak ada </value>
@@ -3715,6 +4056,24 @@ Anda selalu dapat beralih kembali ke tema bawaan Telegram di sini.</value>
   <data name="DeleteContact" xml:space="preserve">
     <value>Hapus kontak</value>
   </data>
+  <data name="DeleteDays_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="DeleteDays_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="DeleteDays_one" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="DeleteDays_other" xml:space="preserve">
+    <value>Hapus {0} hari</value>
+  </data>
+  <data name="DeleteDays_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="DeleteDays_zero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="DeletedFromYourContacts" xml:space="preserve">
     <value>{0} dihapus dari kontak Anda</value>
   </data>
@@ -3738,6 +4097,9 @@ Anda selalu dapat beralih kembali ke tema bawaan Telegram di sini.</value>
   </data>
   <data name="DeleteGroupForAll" xml:space="preserve">
     <value>Hapus grup untuk semua anggota</value>
+  </data>
+  <data name="DeleteHistoryByDaysMessage" xml:space="preserve">
+    <value>Anda yakin ingin hapus semua pesan untuk hari yang dipilih?</value>
   </data>
   <data name="DeleteLink" xml:space="preserve">
     <value>Hapus Tautan</value>
@@ -3877,6 +4239,9 @@ Anda selalu dapat beralih kembali ke tema bawaan Telegram di sini.</value>
   <data name="DidNotGetTheCode" xml:space="preserve">
     <value>Tidak mendapatkan kode?</value>
   </data>
+  <data name="DidNotGetTheCodePhone" xml:space="preserve">
+    <value>Ambil kode dari ponsel ini</value>
+  </data>
   <data name="DidNotGetTheCodeSms" xml:space="preserve">
     <value>Kirim kode via SMS</value>
   </data>
@@ -3992,6 +4357,12 @@ Pelanggan dari channel akan dapat melihat semua pesan di grup ini.</value>
   <data name="DiscussionUnlinkGroupAlert" xml:space="preserve">
     <value>Anda yakin ingin melepas **{0}** dari grup?</value>
   </data>
+  <data name="Dismiss" xml:space="preserve">
+    <value>Tolak</value>
+  </data>
+  <data name="DismissRequest" xml:space="preserve">
+    <value>Tolak permintaan</value>
+  </data>
   <data name="DistanceUnits" xml:space="preserve">
     <value>Satuan Jarak</value>
   </data>
@@ -4012,6 +4383,27 @@ Pelanggan dari channel akan dapat melihat semua pesan di grup ini.</value>
   </data>
   <data name="Done" xml:space="preserve">
     <value>Selesai</value>
+  </data>
+  <data name="DoNoSetTheme" xml:space="preserve">
+    <value>Jangan Pasang Tema</value>
+  </data>
+  <data name="DoNotTranslate" xml:space="preserve">
+    <value>Jangan Terjemahkan</value>
+  </data>
+  <data name="DontAskAgain" xml:space="preserve">
+    <value>Jangan tanya lagi</value>
+  </data>
+  <data name="DoubleTapPreviewMessage" xml:space="preserve">
+    <value>Semoga harimu menyenangkan! </value>
+  </data>
+  <data name="DoubleTapPreviewRational" xml:space="preserve">
+    <value>Ketuk dua kali pesan ini untuk reaksi cepat</value>
+  </data>
+  <data name="DoubleTapPreviewSenderName" xml:space="preserve">
+    <value>Dino</value>
+  </data>
+  <data name="DoubleTapSetting" xml:space="preserve">
+    <value>Reaksi Cepat</value>
   </data>
   <data name="Draft" xml:space="preserve">
     <value>Draf</value>
@@ -4130,6 +4522,9 @@ Pelanggan dari channel akan dapat melihat semua pesan di grup ini.</value>
   <data name="EditContact" xml:space="preserve">
     <value>Edit Kontak</value>
   </data>
+  <data name="EditCurrentTheme" xml:space="preserve">
+    <value>Edit Tema Saat Ini</value>
+  </data>
   <data name="EditedMessage" xml:space="preserve">
     <value>diedit</value>
   </data>
@@ -4241,6 +4636,9 @@ Jika tidak ada yang dipilih, obrolan terbaru Anda akan ditampilkan di widget ini
   <data name="EmojiBigSize" xml:space="preserve">
     <value>Gambar satu emoji besar</value>
   </data>
+  <data name="EmojiInteractionTapHint" xml:space="preserve">
+    <value>Jika {0} sedang membaca obrolan sekarang, mereka akan menikmati animasi ini.</value>
+  </data>
   <data name="EmojiSuggestions" xml:space="preserve">
     <value>Pilihan emoji</value>
   </data>
@@ -4283,6 +4681,15 @@ Jika tidak ada yang dipilih, obrolan terbaru Anda akan ditampilkan di widget ini
   </data>
   <data name="EnableProxyAlert2" xml:space="preserve">
     <value>Anda dapat mengganti server proxy di Pengaturan (Data dan Penyimpanan) lain waktu.</value>
+  </data>
+  <data name="EnableReactions" xml:space="preserve">
+    <value>Aktifkan Reaksi</value>
+  </data>
+  <data name="EnableReactionsChannelInfo" xml:space="preserve">
+    <value>Izinkan pelanggan untuk bereaksi pada postingan channel.</value>
+  </data>
+  <data name="EnableReactionsGroupInfo" xml:space="preserve">
+    <value>Izinkan anggota bereaksi pada pesan grup</value>
   </data>
   <data name="EnableStreaming" xml:space="preserve">
     <value>Aliran Musik dan Video</value>
@@ -4339,6 +4746,9 @@ Pahami lebih lanjut di telegram.org</value>
   <data name="Enhance" xml:space="preserve">
     <value>Tingkatkan </value>
   </data>
+  <data name="EnjoyngAnimations" xml:space="preserve">
+    <value>**oo** menyaksikan {0}</value>
+  </data>
   <data name="EnterChannelName" xml:space="preserve">
     <value>Nama Channel</value>
   </data>
@@ -4370,6 +4780,9 @@ Silakan masukkan nama tema:</value>
   </data>
   <data name="EnterYourPasscode" xml:space="preserve">
     <value>Masukkan kode sandi Anda</value>
+  </data>
+  <data name="EnterYourTelegramPasscode" xml:space="preserve">
+    <value>Masukkan Sandi Telegram anda</value>
   </data>
   <data name="ErrorOccurred" xml:space="preserve">
     <value>Terjadi error.</value>
@@ -4449,6 +4862,9 @@ Silakan masukkan nama tema:</value>
   <data name="EventLogEditedChannelPhoto" xml:space="preserve">
     <value>un1 memasang foto channel</value>
   </data>
+  <data name="EventLogEditedChannelTheme" xml:space="preserve">
+    <value>un1 ubah tema channel:</value>
+  </data>
   <data name="EventLogEditedChannelTitle" xml:space="preserve">
     <value>un1 mengubah nama channel menjadi "{0}"</value>
   </data>
@@ -4460,6 +4876,9 @@ Silakan masukkan nama tema:</value>
   </data>
   <data name="EventLogEditedGroupPhoto" xml:space="preserve">
     <value>un1 memasang foto grup</value>
+  </data>
+  <data name="EventLogEditedGroupTheme" xml:space="preserve">
+    <value>un1 ubah tema grup:</value>
   </data>
   <data name="EventLogEditedGroupTitle" xml:space="preserve">
     <value>un1 mengubah nama grup menjadi "{0}"</value>
@@ -4477,9 +4896,9 @@ Silakan masukkan nama tema:</value>
     <value>un1 mengedit pesan ini:</value>
   </data>
   <data name="EventLogEmpty" xml:space="preserve">
-    <value>**Belum ada tindakan di sini**
+    <value>**Belum ada perubahan di sini**
 
-Anggota dan admin group ini  
+Anggota dan admin grup ini  
 belum mengambil tindakan apapun
 dalam 48 jam terakhir.</value>
   </data>
@@ -4499,14 +4918,17 @@ perintah Anda ditemukan.</value>
   <data name="EventLogEmptyTextSearch" xml:space="preserve">
     <value>Tidak ada tindakan yang mengandung '**{0}**' ditemukan.</value>
   </data>
+  <data name="EventLogEndedLiveStream" xml:space="preserve">
+    <value>un1 akhiri tayangan langsung</value>
+  </data>
   <data name="EventLogEndedVoiceChat" xml:space="preserve">
-    <value>un1 mengakhiri Obrolan Suara</value>
+    <value>un1 mengakhiri Obrolan Video</value>
   </data>
   <data name="EventLogFilterAll" xml:space="preserve">
     <value>Semua tindakan</value>
   </data>
   <data name="EventLogFilterCalls" xml:space="preserve">
-    <value>Obrolan Suara</value>
+    <value>Obrolan Video</value>
   </data>
   <data name="EventLogFilterChannelInfo" xml:space="preserve">
     <value>Info channel</value>
@@ -4571,6 +4993,9 @@ perintah Anda ditemukan.</value>
   <data name="EventLogPreviousGroupDescription" xml:space="preserve">
     <value>Deskripsi sebelumnya</value>
   </data>
+  <data name="EventLogPreviousGroupTheme" xml:space="preserve">
+    <value>Tema sebelumnya</value>
+  </data>
   <data name="EventLogPreviousLink" xml:space="preserve">
     <value>Link sebelumnya</value>
   </data>
@@ -4599,7 +5024,7 @@ perintah Anda ditemukan.</value>
     <value>Edit pesan</value>
   </data>
   <data name="EventLogPromotedManageCall" xml:space="preserve">
-    <value>Kelola Obrolan Suara</value>
+    <value>Kelola Obrolan Video</value>
   </data>
   <data name="EventLogPromotedNoRights" xml:space="preserve">
     <value>angkat {0} </value>
@@ -4678,8 +5103,14 @@ Durasi: {1}</value>
   <data name="EventLogSelectedEvents" xml:space="preserve">
     <value>Tindakan terpilih</value>
   </data>
+  <data name="EventLogSendMessages" xml:space="preserve">
+    <value>un1 kirim pesan ini:</value>
+  </data>
+  <data name="EventLogStartedLiveStream" xml:space="preserve">
+    <value>un1 mulai tayangan langsung</value>
+  </data>
   <data name="EventLogStartedVoiceChat" xml:space="preserve">
-    <value>un1 memulai Obrolan Suara</value>
+    <value>un1 memulai Obrolan Video</value>
   </data>
   <data name="EventLogStopPoll" xml:space="preserve">
     <value>un1 menutup pol</value>
@@ -4715,16 +5146,16 @@ Durasi: {1}</value>
     <value>un1 melepas sematan</value>
   </data>
   <data name="EventLogVoiceChatAllowedToSpeak" xml:space="preserve">
-    <value>un1 mengizinkan peserta Obrolan Suara baru untuk bicara</value>
+    <value>un1 mengizinkan peserta Obrolan Video baru untuk bicara</value>
   </data>
   <data name="EventLogVoiceChatMuted" xml:space="preserve">
-    <value>un1 mensenyapkan un2 di Obrolan Suara</value>
+    <value>un1 senyapkan un2 di Obrolan Video</value>
   </data>
   <data name="EventLogVoiceChatNotAllowedToSpeak" xml:space="preserve">
-    <value>un1 mensenyapkan anggota baru Obrolan Suara</value>
+    <value>un1 senyapkan anggota baru Obrolan Video</value>
   </data>
   <data name="EventLogVoiceChatUnmuted" xml:space="preserve">
-    <value>un1 membatalkan senyap untuk un2 di Obrolan Suara</value>
+    <value>un1 membatalkan senyap untuk un2 di Obrolan Video</value>
   </data>
   <data name="Events" xml:space="preserve">
     <value>Events</value>
@@ -4777,6 +5208,9 @@ Durasi: {1}</value>
   <data name="FavoriteStickers" xml:space="preserve">
     <value>Favorit</value>
   </data>
+  <data name="FavoriteStickersShort" xml:space="preserve">
+    <value>Favorit</value>
+  </data>
   <data name="FeaturedGifs" xml:space="preserve">
     <value>TREN GIF</value>
   </data>
@@ -4785,6 +5219,9 @@ Durasi: {1}</value>
   </data>
   <data name="FeaturedStickersInfo" xml:space="preserve">
     <value>Stiker ini sedang tren di Telegram. Anda dapat menambah kustom stiker melalui bot @stickers.</value>
+  </data>
+  <data name="FeaturedStickersShort" xml:space="preserve">
+    <value>Tren</value>
   </data>
   <data name="February" xml:space="preserve">
     <value>Februari</value>
@@ -5131,6 +5568,30 @@ Durasi: {1}</value>
   <data name="FootsShort" xml:space="preserve">
     <value>{0} ft</value>
   </data>
+  <data name="ForceSetPasswordAlertMessage_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ForceSetPasswordAlertMessage_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ForceSetPasswordAlertMessage_one" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ForceSetPasswordAlertMessage_other" xml:space="preserve">
+    <value>Lanjutkan tanpa kata sandi? Jika Anda tidak memasang sandi, Anda hanya akan dapat masuk ke akun Anda via SMS setiap **{0}** hari. </value>
+  </data>
+  <data name="ForceSetPasswordAlertMessage_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ForceSetPasswordAlertMessage_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ForceSetPasswordCancel" xml:space="preserve">
+    <value>Ya, Saya yakin.</value>
+  </data>
+  <data name="ForceSetPasswordContinue" xml:space="preserve">
+    <value>Tidak, izinkan saya mengatur sandi.</value>
+  </data>
   <data name="ForgotPassword" xml:space="preserve">
     <value>Lupa kata sandi?</value>
   </data>
@@ -5196,6 +5657,9 @@ Durasi: {1}</value>
   </data>
   <data name="Forward" xml:space="preserve">
     <value>Teruskan</value>
+  </data>
+  <data name="ForwardAnotherChat" xml:space="preserve">
+    <value>Teruskan ke obrolan lain</value>
   </data>
   <data name="ForwardedAudio_few" xml:space="preserve">
     <value/>
@@ -5398,6 +5862,39 @@ Durasi: {1}</value>
   <data name="ForwardedVideo_zero" xml:space="preserve">
     <value/>
   </data>
+  <data name="ForwardingFromNameAndMessage" xml:space="preserve">
+    <value>{0}: {0}</value>
+  </data>
+  <data name="ForwardingFromNames" xml:space="preserve">
+    <value>Dari {0}</value>
+  </data>
+  <data name="ForwardPreviewSendersNameHidden" xml:space="preserve">
+    <value>{0} tidak akan melihat pesan diteruskan</value>
+  </data>
+  <data name="ForwardPreviewSendersNameHiddenChannel" xml:space="preserve">
+    <value>Penerima tidak akan melihat bahwa pesan diteruskan</value>
+  </data>
+  <data name="ForwardPreviewSendersNameHiddenGroup" xml:space="preserve">
+    <value>Penerima tidak akan melihat bahwa pesan diteruskan</value>
+  </data>
+  <data name="ForwardPreviewSendersNameVisible" xml:space="preserve">
+    <value>{0} akan melihat bahwa pesan diteruskan</value>
+  </data>
+  <data name="ForwardPreviewSendersNameVisibleChannel" xml:space="preserve">
+    <value>Penerima akan melihat bahwa pesan diteruskan</value>
+  </data>
+  <data name="ForwardPreviewSendersNameVisibleGroup" xml:space="preserve">
+    <value>Penerima akan melihat bahwa pesan diteruskan</value>
+  </data>
+  <data name="ForwardSendMessages" xml:space="preserve">
+    <value>Kirim Pesan</value>
+  </data>
+  <data name="ForwardsRestrictedInfoChannel" xml:space="preserve">
+    <value>Tidak dapat menyalin dan meneruskan pesan dari channel ini.</value>
+  </data>
+  <data name="ForwardsRestrictedInfoGroup" xml:space="preserve">
+    <value>Tidak dapat salin dan teruskan pesan di grup ini.</value>
+  </data>
   <data name="ForwardTo" xml:space="preserve">
     <value>Teruskan ke</value>
   </data>
@@ -5469,6 +5966,9 @@ Durasi: {1}</value>
   </data>
   <data name="GalleryPermissionText" xml:space="preserve">
     <value>Ketuk untuk izinkan akses ke Galeri Anda</value>
+  </data>
+  <data name="GameCantSendSecretChat" xml:space="preserve">
+    <value>Maaf, permainan tidak dapat dikirim ke secret chat.</value>
   </data>
   <data name="General" xml:space="preserve">
     <value>Umum</value>
@@ -5703,6 +6203,12 @@ Mereka tetap dapat bergabung dengan tautan selama mereka tidak ada dalam daftar 
   <data name="GrowthChartTitle" xml:space="preserve">
     <value>Pertumbuhan</value>
   </data>
+  <data name="HasBeenAddedToChannel" xml:space="preserve">
+    <value>{0} telah ditambahkan ke channel</value>
+  </data>
+  <data name="HasBeenAddedToGroup" xml:space="preserve">
+    <value>{0} telah ditambahkan ke grup</value>
+  </data>
   <data name="HashtagCopied" xml:space="preserve">
     <value>Tagar disalin ke papan klip.</value>
   </data>
@@ -5715,8 +6221,14 @@ Mereka tetap dapat bergabung dengan tautan selama mereka tidak ada dalam daftar 
   <data name="HiddenName" xml:space="preserve">
     <value>Akun Terhapus</value>
   </data>
+  <data name="HiddenSendersNameDescription" xml:space="preserve">
+    <value>Nama pengirim dihapus</value>
+  </data>
   <data name="HideAboveTheList" xml:space="preserve">
     <value>Sembunyikan di atas daftar</value>
+  </data>
+  <data name="HideCaption" xml:space="preserve">
+    <value>Sembunyikan teks</value>
   </data>
   <data name="HideNewChatsAlertText" xml:space="preserve">
     <value>Anda menerima banyak obrolan baru dari pengguna non-kontak. Apakah Anda ingin **menyembunyikan obrolan ini ke arsip** dan **senyapkan** secara **otomatis**?</value>
@@ -5729,6 +6241,12 @@ Mereka tetap dapat bergabung dengan tautan selama mereka tidak ada dalam daftar 
   </data>
   <data name="HidePinnedMessages" xml:space="preserve">
     <value>SEMBUYIKAN PESAN SEMATAN</value>
+  </data>
+  <data name="HideSenderNames" xml:space="preserve">
+    <value>Sembunyikan nama pengirim</value>
+  </data>
+  <data name="HideSendersName" xml:space="preserve">
+    <value>Sembunyikan nama pengirim</value>
   </data>
   <data name="Highlights" xml:space="preserve">
     <value>Sorotan</value>
@@ -5790,8 +6308,29 @@ Mereka tetap dapat bergabung dengan tautan selama mereka tidak ada dalam daftar 
   <data name="HoursBold_zero" xml:space="preserve">
     <value/>
   </data>
+  <data name="HoursSchedule_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="HoursSchedule_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="HoursSchedule_one" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="HoursSchedule_other" xml:space="preserve">
+    <value>{0} jam</value>
+  </data>
+  <data name="HoursSchedule_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="HoursSchedule_zero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="Hybrid" xml:space="preserve">
     <value>Campur</value>
+  </data>
+  <data name="IfInactiveFor" xml:space="preserve">
+    <value>Jika tidak aktif selama</value>
   </data>
   <data name="ImagesTab" xml:space="preserve">
     <value>GAMBAR</value>
@@ -5801,6 +6340,9 @@ Mereka tetap dapat bergabung dengan tautan selama mereka tidak ada dalam daftar 
   </data>
   <data name="ImporImportingService" xml:space="preserve">
     <value>Mengimpor pesan dan media....</value>
+  </data>
+  <data name="ImporImportingStickersService" xml:space="preserve">
+    <value>Mengimpor stiker...</value>
   </data>
   <data name="Import" xml:space="preserve">
     <value>IMPOR</value>
@@ -5878,6 +6420,54 @@ sampai proses impor selesai.</value>
   <data name="ImportNotAdmin" xml:space="preserve">
     <value>Anda butuh menjadi admin di grup untuk impor pesan.</value>
   </data>
+  <data name="ImportStickers" xml:space="preserve">
+    <value>IMPOR {0}</value>
+  </data>
+  <data name="ImportStickersDoneInfo" xml:space="preserve">
+    <value>Impor lebih banyak stiker ke Telegram dan bagikan dengan teman Anda.</value>
+  </data>
+  <data name="ImportStickersDoneTitle" xml:space="preserve">
+    <value>Stiker berhasil diimpor!</value>
+  </data>
+  <data name="ImportStickersEnterName" xml:space="preserve">
+    <value>Masukkan nama</value>
+  </data>
+  <data name="ImportStickersEnterNameInfo" xml:space="preserve">
+    <value>Pilih nama untuk set Anda</value>
+  </data>
+  <data name="ImportStickersEnterUrlInfo" xml:space="preserve">
+    <value>Dapat menggunakan a-z, 0-9 dan garis bawah.</value>
+  </data>
+  <data name="ImportStickersImportingTitle" xml:space="preserve">
+    <value>Mengimpor Stiker</value>
+  </data>
+  <data name="ImportStickersLinkAvailable" xml:space="preserve">
+    <value>Tautan tersedia.</value>
+  </data>
+  <data name="ImportStickersLinkChecking" xml:space="preserve">
+    <value>Mengecek tautan...</value>
+  </data>
+  <data name="ImportStickersLinkInvalid" xml:space="preserve">
+    <value>Maaf, tautan salah.</value>
+  </data>
+  <data name="ImportStickersLinkInvalidLong" xml:space="preserve">
+    <value>Tautan tidak boleh lebih dari 32 karakter.</value>
+  </data>
+  <data name="ImportStickersLinkInvalidShort" xml:space="preserve">
+    <value>Minimal menggunakan 5 karakter.</value>
+  </data>
+  <data name="ImportStickersLinkTaken" xml:space="preserve">
+    <value>Maaf, tautan ini sudah digunakan.</value>
+  </data>
+  <data name="ImportStickersProcessing" xml:space="preserve">
+    <value>Stiker sedang dalam proses...</value>
+  </data>
+  <data name="ImportStickersRemove" xml:space="preserve">
+    <value>HAPUS DARI IMPOR</value>
+  </data>
+  <data name="ImportStickersRemoveMenu" xml:space="preserve">
+    <value>Hapus Dari Impor</value>
+  </data>
   <data name="ImportToChat" xml:space="preserve">
     <value>Anda ingin mengimpor pesan dari **{0}** ke grup **{1}**?
 
@@ -5929,7 +6519,7 @@ Pesan akan diimpor pada hari yang sama saat mengimpor dan disertakan stempel wak
     <value>Panggilan masuk</value>
   </data>
   <data name="IncorrectLocalization" xml:space="preserve">
-    <value>Berkas terjemahan salah</value>
+    <value>Kesalahan lokalisasi berkas</value>
   </data>
   <data name="IncorrectTheme" xml:space="preserve">
     <value>Berkas tema salah</value>
@@ -5941,7 +6531,7 @@ Pesan akan diimpor pada hari yang sama saat mengimpor dan disertakan stempel wak
     <value>Pasang Peta Google? </value>
   </data>
   <data name="InstantView" xml:space="preserve">
-    <value>INSTANT VIEW</value>
+    <value>TAMPILAN INSTAN</value>
   </data>
   <data name="InstantViewNightMode" xml:space="preserve">
     <value>Tema gelap akan betukar secara otomatis di waktu malam</value>
@@ -6084,11 +6674,35 @@ Pesan akan diimpor pada hari yang sama saat mengimpor dan disertakan stempel wak
   <data name="InvLinkToUser" xml:space="preserve">
     <value>Tautan dikirim ke **{0}**.</value>
   </data>
+  <data name="InvoiceCantForwardSecretChat" xml:space="preserve">
+    <value>Maaf, faktur tidak dapat diteruskan ke secret chat.</value>
+  </data>
+  <data name="InvoiceCantSendSecretChat" xml:space="preserve">
+    <value>Maaf, faktur tidak dapat dikirimkan via secret chat.</value>
+  </data>
+  <data name="IpAddress" xml:space="preserve">
+    <value>Alamat IP</value>
+  </data>
+  <data name="IsChoosingSticker" xml:space="preserve">
+    <value>{0} memilih stiker</value>
+  </data>
+  <data name="IsEnjoyngAnimations" xml:space="preserve">
+    <value>{0} sedang **oo** menyaksikan {1}</value>
+  </data>
   <data name="IsRecordingAudio" xml:space="preserve">
     <value>{0} merekam pesan suara...</value>
   </data>
   <data name="IsRecordingRound" xml:space="preserve">
     <value>{0} merekam pesan video...</value>
+  </data>
+  <data name="IsRecordingVideo" xml:space="preserve">
+    <value>{0} merekam video...</value>
+  </data>
+  <data name="IsSelectingContact" xml:space="preserve">
+    <value>{0} memilih kontak untuk dibagikan</value>
+  </data>
+  <data name="IsSelectingLocation" xml:space="preserve">
+    <value>{0} memilih lokasi untuk dibagikan.....</value>
   </data>
   <data name="IsSendingAudio" xml:space="preserve">
     <value>{0} mengirim audio...</value>
@@ -6132,6 +6746,9 @@ Pesan akan diimpor pada hari yang sama saat mengimpor dan disertakan stempel wak
   <data name="items_zero" xml:space="preserve">
     <value/>
   </data>
+  <data name="IUnderstand" xml:space="preserve">
+    <value>Saya mengerti</value>
+  </data>
   <data name="IVInteractionsChartTitle" xml:space="preserve">
     <value>Interaksi IV</value>
   </data>
@@ -6153,14 +6770,53 @@ Pesan akan diimpor pada hari yang sama saat mengimpor dan disertakan stempel wak
   <data name="JoinByPeekJoin" xml:space="preserve">
     <value>GABUNG</value>
   </data>
+  <data name="JoinedViaInviteLinkApproved" xml:space="preserve">
+    <value>un1 bergabung dengan tautan un2, disetujui  un3</value>
+  </data>
   <data name="JoinGroup" xml:space="preserve">
     <value>GABUNG GRUP</value>
+  </data>
+  <data name="JoinRequests_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="JoinRequests_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="JoinRequests_one" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="JoinRequests_other" xml:space="preserve">
+    <value> {0} permintaan masuk</value>
+  </data>
+  <data name="JoinRequests_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="JoinRequests_zero" xml:space="preserve">
+    <value/>
   </data>
   <data name="JoinToGroupErrorFull" xml:space="preserve">
     <value>Maaf, grup ini sudah penuh.</value>
   </data>
   <data name="JoinToGroupErrorNotExist" xml:space="preserve">
     <value>Maaf, obrolan ini sepertinya sudah tidak ada.</value>
+  </data>
+  <data name="JoinUsersRequests_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="JoinUsersRequests_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="JoinUsersRequests_one" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="JoinUsersRequests_other" xml:space="preserve">
+    <value> {0} mohon untuk masuk</value>
+  </data>
+  <data name="JoinUsersRequests_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="JoinUsersRequests_zero" xml:space="preserve">
+    <value/>
   </data>
   <data name="July" xml:space="preserve">
     <value>Juli</value>
@@ -6234,6 +6890,24 @@ Anda dapat mengganti set bahasa Anda kembali di Pengaturan kapan saja. </value>
   </data>
   <data name="LanguageNameInEnglish" xml:space="preserve">
     <value>Indonesian</value>
+  </data>
+  <data name="Languages_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Languages_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Languages_one" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Languages_other" xml:space="preserve">
+    <value>{0} Bahasa</value>
+  </data>
+  <data name="Languages_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Languages_zero" xml:space="preserve">
+    <value/>
   </data>
   <data name="LanguageSame" xml:space="preserve">
     <value>Anda telah menggunakan set bahasa ini (**{0}**). Anda dapat mengganti set bahasa Anda dari Pengaturan kapan pun. </value>
@@ -6362,6 +7036,9 @@ Tautan hanya berfungsi untuk anggota grup ini.</value>
   <data name="LinkCreatedeBy" xml:space="preserve">
     <value>Tautan dibuat oleh</value>
   </data>
+  <data name="LinkDesktopDevice" xml:space="preserve">
+    <value>Hubungkan ke desktop</value>
+  </data>
   <data name="LinkedChannel" xml:space="preserve">
     <value>Channel Tersambung</value>
   </data>
@@ -6412,6 +7089,12 @@ Tautan hanya berfungsi untuk anggota grup ini.</value>
   </data>
   <data name="LinkLimitReached" xml:space="preserve">
     <value>Batasan tercapai</value>
+  </data>
+  <data name="LinkNameHelp" xml:space="preserve">
+    <value>Hanya admin yang melihat nama ini.</value>
+  </data>
+  <data name="LinkNameHint" xml:space="preserve">
+    <value>Nama Tautan (opsional)</value>
   </data>
   <data name="LinkNotFound" xml:space="preserve">
     <value>Sayangnya, Anda tidak dapat mengakses pesan ini. Anda bukan anggota obrolan grup di mana pesan dikirim. </value>
@@ -6516,6 +7199,9 @@ Operasi Ini bisa memakan waktu beberapa menit untuk selesai.</value>
   </data>
   <data name="LocatedChannelsTooMuch" xml:space="preserve">
     <value>Maaf, pengguna target memiliki terlalu banyak grup berbasis lokasi. Silakan minta mereka untuk menghapus atau mengalihkan yang sudah ada terlebih dahulu.</value>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>Lokasi  berdasarkan alamat IP</value>
   </data>
   <data name="LocationNotifiation" xml:space="preserve">
     <value>Pemberitahuan jarak</value>
@@ -6759,6 +7445,18 @@ Nomor telepon Anda akan tetap disembunyikan.</value>
   <data name="MediaSelected_zero" xml:space="preserve">
     <value/>
   </data>
+  <data name="MediaShowPhotos" xml:space="preserve">
+    <value>Tampilkan foto</value>
+  </data>
+  <data name="MediaShowVideos" xml:space="preserve">
+    <value>Tampilkan Video</value>
+  </data>
+  <data name="MediaZoomIn" xml:space="preserve">
+    <value>Perbesar</value>
+  </data>
+  <data name="MediaZoomOut" xml:space="preserve">
+    <value>Perkecil</value>
+  </data>
   <data name="MegaAddedBy" xml:space="preserve">
     <value>un1 menambahkan Anda ke group ini.</value>
   </data>
@@ -6801,6 +7499,9 @@ Nomor telepon Anda akan tetap disembunyikan.</value>
 Anda dapat menggunakan a-z, 0-9 dan garis bawah.
 Panjang minimum adalah 5 karakter.</value>
   </data>
+  <data name="MemberRequests" xml:space="preserve">
+    <value>Permintaan Masuk</value>
+  </data>
   <data name="Members_few" xml:space="preserve">
     <value/>
   </data>
@@ -6817,6 +7518,24 @@ Panjang minimum adalah 5 karakter.</value>
     <value/>
   </data>
   <data name="Members_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MembersAreSpeakingToast_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MembersAreSpeakingToast_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MembersAreSpeakingToast_one" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MembersAreSpeakingToast_other" xml:space="preserve">
+    <value>un1 berbicara</value>
+  </data>
+  <data name="MembersAreSpeakingToast_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MembersAreSpeakingToast_zero" xml:space="preserve">
     <value/>
   </data>
   <data name="MembersCount" xml:space="preserve">
@@ -6909,6 +7628,24 @@ Panjang minimum adalah 5 karakter.</value>
   <data name="MessagePinnedHint" xml:space="preserve">
     <value>Pesan disematkan</value>
   </data>
+  <data name="MessagePlayed_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagePlayed_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagePlayed_one" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagePlayed_other" xml:space="preserve">
+    <value>{0} Memutar</value>
+  </data>
+  <data name="MessagePlayed_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagePlayed_zero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="MessagePreview" xml:space="preserve">
     <value>Pratinjau Pesan</value>
   </data>
@@ -6928,6 +7665,24 @@ Panjang minimum adalah 5 karakter.</value>
     <value/>
   </data>
   <data name="messages_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagesBold_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagesBold_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagesBold_one" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagesBold_other" xml:space="preserve">
+    <value>**{0}** pesan</value>
+  </data>
+  <data name="MessagesBold_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagesBold_zero" xml:space="preserve">
     <value/>
   </data>
   <data name="MessagesChartTitle" xml:space="preserve">
@@ -6983,6 +7738,45 @@ Panjang minimum adalah 5 karakter.</value>
   </data>
   <data name="MessagesDeletedHint_zero" xml:space="preserve">
     <value/>
+  </data>
+  <data name="MessagesDeletedUndo_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagesDeletedUndo_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagesDeletedUndo_one" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagesDeletedUndo_other" xml:space="preserve">
+    <value>Pesan untuk {0} hari dihapus.</value>
+  </data>
+  <data name="MessagesDeletedUndo_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagesDeletedUndo_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessageSeen_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessageSeen_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessageSeen_one" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessageSeen_other" xml:space="preserve">
+    <value>{0} Melihat</value>
+  </data>
+  <data name="MessageSeen_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessageSeen_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessageSeenTooltipMessage" xml:space="preserve">
+    <value>Untuk menjaga privasi, tanda akan disimpan selama 7 hari.</value>
   </data>
   <data name="MessagesOverview" xml:space="preserve">
     <value>Pesan</value>
@@ -7044,6 +7838,23 @@ Panjang minimum adalah 5 karakter.</value>
   <data name="Mi" xml:space="preserve">
     <value>mi</value>
   </data>
+  <data name="MigrateOldFolderButton" xml:space="preserve">
+    <value>Pindahkan Berkas Sekarang</value>
+  </data>
+  <data name="MigrateOldFolderDescription" xml:space="preserve">
+    <value>Karena perubahan yang dibuat oleh **Google**, kami perlu memindahkan berkas yang Anda unduh menggunakan **Telegram** ke folder baru.
+
+Ini mungkin memakan waktu beberapa saat. Anda dapat terus menggunakan aplikasi saat berkas dipindahkan.</value>
+  </data>
+  <data name="MigrateOldFolderTitle" xml:space="preserve">
+    <value>Pindahkan Data ke Penyimpanan Terbatas</value>
+  </data>
+  <data name="MigratingFiles" xml:space="preserve">
+    <value>Memindahkan berkas</value>
+  </data>
+  <data name="MigrationNotification" xml:space="preserve">
+    <value>Pemindahan</value>
+  </data>
   <data name="MilesAway" xml:space="preserve">
     <value>jarak {0} mil</value>
   </data>
@@ -7088,6 +7899,33 @@ Panjang minimum adalah 5 karakter.</value>
   </data>
   <data name="MinutesBold_zero" xml:space="preserve">
     <value/>
+  </data>
+  <data name="MinutesSchedule_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MinutesSchedule_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MinutesSchedule_one" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MinutesSchedule_other" xml:space="preserve">
+    <value>{0} menit</value>
+  </data>
+  <data name="MinutesSchedule_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MinutesSchedule_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MissedCallDescriptionSubtitle" xml:space="preserve">
+    <value>Dalam beberapa detik Anda akan menerima panggilan dari: </value>
+  </data>
+  <data name="MissedCallDescriptionSubtitle2" xml:space="preserve">
+    <value>Masukkan angka terakhir dari nomor yang dipanggil.</value>
+  </data>
+  <data name="MissedCallDescriptionTitle" xml:space="preserve">
+    <value>Masukkan angka yang hilang</value>
   </data>
   <data name="MobileHidden" xml:space="preserve">
     <value>Tersembunyi</value>
@@ -7150,7 +7988,7 @@ Panjang minimum adalah 5 karakter.</value>
     <value>Non Aktifkan</value>
   </data>
   <data name="MuteFor" xml:space="preserve">
-    <value>Senyapkan {0}</value>
+    <value>Senyapkan selama {0}</value>
   </data>
   <data name="MuteNotifications" xml:space="preserve">
     <value>Senyapkan Notifikasi</value>
@@ -7275,6 +8113,9 @@ Panjang minimum adalah 5 karakter.</value>
   <data name="NewMessageTitle" xml:space="preserve">
     <value>Pesan Baru</value>
   </data>
+  <data name="NewPassword" xml:space="preserve">
+    <value>Kata Sandi Baru</value>
+  </data>
   <data name="NewPoll" xml:space="preserve">
     <value>Pol Baru</value>
   </data>
@@ -7356,6 +8197,9 @@ Panjang minimum adalah 5 karakter.</value>
   <data name="NobodyLikesSpam3" xml:space="preserve">
     <value>Maaf, saat ini Anda dibatasi untuk mengirim pesan di grup publik. </value>
   </data>
+  <data name="NobodyViewed" xml:space="preserve">
+    <value>Nihil </value>
+  </data>
   <data name="NoCallLog" xml:space="preserve">
     <value>Belum ada panggilan</value>
   </data>
@@ -7419,7 +8263,7 @@ Anda dapat menyesuaikan notifikasi untuk obrolan dengan membuka profil dan memil
     <value>∞</value>
   </data>
   <data name="NoMailInstalled" xml:space="preserve">
-    <value>Mohon kirim surel dan jelaskan kendala Anda ke sms@stel.com</value>
+    <value>Mohon kirim surel dan jelaskan kendala Anda ke reports@stel.com.</value>
   </data>
   <data name="NoMasks" xml:space="preserve">
     <value>tidak ada mask</value>
@@ -7433,8 +8277,18 @@ Anda dapat menyesuaikan notifikasi untuk obrolan dengan membuka profil dan memil
   <data name="NoMediaSecret" xml:space="preserve">
     <value>Foto dan video dari obrolan ini akan tampil di sini.</value>
   </data>
+  <data name="NoMemberRequests" xml:space="preserve">
+    <value>Tidak ada permintaan</value>
+  </data>
+  <data name="NoMemberRequestsDescription" xml:space="preserve">
+    <value>Tidak ada permintaan masuk 
+ke grup.</value>
+  </data>
   <data name="NoMessages" xml:space="preserve">
     <value>Belum ada pesan di sini...</value>
+  </data>
+  <data name="NoMessagesForThisDay" xml:space="preserve">
+    <value>Tidak ada pesan untuk hari ini</value>
   </data>
   <data name="NoMessagesGreetingsDescription" xml:space="preserve">
     <value>Kirim pesan dan tekan sambutan di bawah.</value>
@@ -7474,6 +8328,12 @@ Anda dapat menyesuaikan notifikasi untuk obrolan dengan membuka profil dan memil
   </data>
   <data name="NoRecent" xml:space="preserve">
     <value>Tidak terkini</value>
+  </data>
+  <data name="NoRecentCalls" xml:space="preserve">
+    <value>Panggilan Terkini Kosong</value>
+  </data>
+  <data name="NoRecentCallsInfo" xml:space="preserve">
+    <value>Panggilan video dan audio terkini Anda akan ditampilkan di sini.</value>
   </data>
   <data name="NoRecentGIFs" xml:space="preserve">
     <value>Tidak ada GIF terbaru</value>
@@ -7528,6 +8388,13 @@ Anda dapat menyesuaikan notifikasi untuk obrolan dengan membuka profil dan memil
   </data>
   <data name="NoStickersFound" xml:space="preserve">
     <value>Stiker tidak ditemukan</value>
+  </data>
+  <data name="NoSubscribeRequests" xml:space="preserve">
+    <value>Tidak Ada Permintaan</value>
+  </data>
+  <data name="NoSubscribeRequestsDescription" xml:space="preserve">
+    <value>Tidak ada permintaan masuk 
+ke channel.</value>
   </data>
   <data name="NotificationActionPinnedContact" xml:space="preserve">
     <value>{0} menyematkan kontak di grup {1}</value>
@@ -7740,10 +8607,10 @@ Anda dapat menyesuaikan notifikasi untuk obrolan dengan membuka profil dan memil
     <value>{0} mengirim album ke grup  {1}</value>
   </data>
   <data name="NotificationGroupCreatedCall" xml:space="preserve">
-    <value>{0} memulai Obrolan Suara di {1}</value>
+    <value>{0} memulai Obrolan Video di {1}</value>
   </data>
   <data name="NotificationGroupEndedCall" xml:space="preserve">
-    <value>{0} mengakhiri Obrolan Suara di grup {1}</value>
+    <value>{0} mengakhiri Obrolan Video di grup {1}</value>
   </data>
   <data name="NotificationGroupFew" xml:space="preserve">
     <value>{0} mengirim  {2} ke dalam grup  {1}</value>
@@ -7752,10 +8619,10 @@ Anda dapat menyesuaikan notifikasi untuk obrolan dengan membuka profil dan memil
     <value>{0} meneruskan {2} ke dalam grup  {1}</value>
   </data>
   <data name="NotificationGroupInvitedToCall" xml:space="preserve">
-    <value> {0} mengundang {2} ke Obrolan Suara di {1}</value>
+    <value> {0} mengundang {2} ke Obrolan Video di {1}</value>
   </data>
   <data name="NotificationGroupInvitedYouToCall" xml:space="preserve">
-    <value>{0} mengundang Anda ke Obrolan Suara di {1}</value>
+    <value>{0} mengundang Anda ke Obrolan Video di {1}</value>
   </data>
   <data name="NotificationGroupKickMember" xml:space="preserve">
     <value>{0} mengeluarkan {2} dari grup {1}</value>
@@ -8180,11 +9047,17 @@ Tim Telegram</value>
   <data name="OpenBackground" xml:space="preserve">
     <value>LIHAT LATAR</value>
   </data>
+  <data name="OpenBot" xml:space="preserve">
+    <value>BUKA BOT</value>
+  </data>
   <data name="OpenChannel" xml:space="preserve">
     <value>BUKA CHANNEL</value>
   </data>
   <data name="OpenChannel2" xml:space="preserve">
     <value>Buka Channel</value>
+  </data>
+  <data name="OpenChannelPost" xml:space="preserve">
+    <value>LIHAT POSTINGAN</value>
   </data>
   <data name="OpenFile" xml:space="preserve">
     <value>BUKA BERKAS</value>
@@ -8214,7 +9087,7 @@ Tim Telegram</value>
     <value>LIHAT TEMA</value>
   </data>
   <data name="OpenUrlAlert" xml:space="preserve">
-    <value>Buka URL  {0}?</value>
+    <value>Buka tautan:  {0}?</value>
   </data>
   <data name="OpenUrlAlert2" xml:space="preserve">
     <value>Anda ingin membuka {0}?</value>
@@ -8227,6 +9100,16 @@ Tim Telegram</value>
   </data>
   <data name="OpenUrlTitle" xml:space="preserve">
     <value>Buka Tautan</value>
+  </data>
+  <data name="OptimizingTelegram" xml:space="preserve">
+    <value>Mengoptimalkan Telegram...</value>
+  </data>
+  <data name="OptimizingTelegramDescription1" xml:space="preserve">
+    <value>Hal ini akan  membutuhkan waktu, tergantung dari ukuran data. 
+Mohon untuk membuka aplikasi ini sampai proses selesai.</value>
+  </data>
+  <data name="OptimizingTelegramDescription2" xml:space="preserve">
+    <value>Maaf untuk ketidaknyamanannya.</value>
   </data>
   <data name="Option_few" xml:space="preserve">
     <value/>
@@ -8829,7 +9712,7 @@ Anda dapat mengunjungi * FAQ * kami untuk mempelajari lebih lanjut.</value>
     <value>Isi pada data diri Anda</value>
   </data>
   <data name="PassportPersonalUploadInfo" xml:space="preserve">
-    <value>Dokumen harus memuat foto Anda, nama depan dan belakang, tanggal lahir, nomor dokumen, negara masalah, dan tanggal kedaluwarsa.</value>
+    <value>Dokumen harus memuat foto Anda, nama depan dan belakang, tanggal lahir, nomor dokumen, negara penerbit, dan tanggal kedaluwarsa.</value>
   </data>
   <data name="PassportPhone" xml:space="preserve">
     <value>Nomor ponsel</value>
@@ -8987,6 +9870,9 @@ Anda dapat mengunjungi * FAQ * kami untuk mempelajari lebih lanjut.</value>
   <data name="PasswordHintText" xml:space="preserve">
     <value>Buat petunjuk untuk katasandi Anda</value>
   </data>
+  <data name="PasswordHintTextLogin" xml:space="preserve">
+    <value>Buat petunjuk untuk kata sandi Anda.</value>
+  </data>
   <data name="PasswordOff" xml:space="preserve">
     <value>Mati</value>
   </data>
@@ -9024,7 +9910,7 @@ Anda dapat mengunjungi * FAQ * kami untuk mempelajari lebih lanjut.</value>
     <value>Simpan Informasi Pembayaran</value>
   </data>
   <data name="PaymentCardSavePaymentInformationInfoLine1" xml:space="preserve">
-    <value>Anda dapat menyimpan informasi pengiriman Anda untuk penggunaan selanjutnya.</value>
+    <value>Anda dapat menyimpan informasi pengiriman Anda untuk penggunaan selanjutnya. Info ini akan disimpan langsung oleh penyedia pembayaran. Telegram tidak memiliki akses data kartu kredit Anda.</value>
   </data>
   <data name="PaymentCardSavePaymentInformationInfoLine2" xml:space="preserve">
     <value>Mohon *aktifkan Verifikasi Dua Langkah* untuk mengijinkan transaksi.</value>
@@ -9041,6 +9927,9 @@ Anda dapat mengunjungi * FAQ * kami untuk mempelajari lebih lanjut.</value>
   <data name="PaymentCheckoutMethod" xml:space="preserve">
     <value>Metode Pembayaran</value>
   </data>
+  <data name="PaymentCheckoutMethodNewCard" xml:space="preserve">
+    <value>Kartu Baru</value>
+  </data>
   <data name="PaymentCheckoutName" xml:space="preserve">
     <value>Nama</value>
   </data>
@@ -9048,10 +9937,10 @@ Anda dapat mengunjungi * FAQ * kami untuk mempelajari lebih lanjut.</value>
     <value>BAYAR {0}</value>
   </data>
   <data name="PaymentCheckoutPhoneNumber" xml:space="preserve">
-    <value>Nomor Ponsel</value>
+    <value>Nomor telepon</value>
   </data>
   <data name="PaymentCheckoutProvider" xml:space="preserve">
-    <value>Penyedia bayaran</value>
+    <value>Penyedia pembayaran</value>
   </data>
   <data name="PaymentCheckoutShippingMethod" xml:space="preserve">
     <value>Metode Pengiriman</value>
@@ -9071,6 +9960,9 @@ Anda dapat mengunjungi * FAQ * kami untuk mempelajari lebih lanjut.</value>
   <data name="PaymentFailed" xml:space="preserve">
     <value>Maaf, pembayaran gagal.</value>
   </data>
+  <data name="PaymentInfoHint" xml:space="preserve">
+    <value>Anda membayar **{0}** untuk **{1}**.</value>
+  </data>
   <data name="PaymentInvoice" xml:space="preserve">
     <value>FAKTUR</value>
   </data>
@@ -9084,7 +9976,7 @@ Anda dapat mengunjungi * FAQ * kami untuk mempelajari lebih lanjut.</value>
     <value>Surel Anda</value>
   </data>
   <data name="PaymentPasswordEmailInfo" xml:space="preserve">
-    <value>Mohon masukkan alamat surel yang benar. Ini satu-satunya cara untuk memulihkan katasandi. </value>
+    <value>Mohon masukkan alamat surel yang benar. Ini satu-satunya cara untuk memulihkan kata sandi. </value>
   </data>
   <data name="PaymentPasswordEmailTitle" xml:space="preserve">
     <value>Surel Pemulihan</value>
@@ -9093,7 +9985,7 @@ Anda dapat mengunjungi * FAQ * kami untuk mempelajari lebih lanjut.</value>
     <value>Masukan Kata Sandi</value>
   </data>
   <data name="PaymentPasswordInfo" xml:space="preserve">
-    <value>Buatlah kata sandi untuk melindungi info pembayaran Anda. Anda akan diminta untuk memasukkannya saat Anda masuk</value>
+    <value>Pasang sandi untuk melindungi info pembayaran Anda. Anda akan diminta untuk memasukkannya saat Anda masuk.</value>
   </data>
   <data name="PaymentPasswordReEnter" xml:space="preserve">
     <value>Masukan Kembali Kata Sandi Anda</value>
@@ -9102,16 +9994,16 @@ Anda dapat mengunjungi * FAQ * kami untuk mempelajari lebih lanjut.</value>
     <value>Kata Sandi</value>
   </data>
   <data name="PaymentPhoneEmailToProvider" xml:space="preserve">
-    <value>Nomer ponsel dan surel akan dikirimkan kepada {0}  sebagai info penagihan.</value>
+    <value>Nomer telepon dan surel akan dikirimkan kepada {0}  sebagai info penagihan.</value>
   </data>
   <data name="PaymentPhoneToProvider" xml:space="preserve">
-    <value>Nomer ponsel akan dikirimkan kepasa {0} sebagai info penagihan. </value>
+    <value>Nomer telepon akan dikirimkan kepada {0} sebagai info penagihan. </value>
   </data>
   <data name="PaymentPrecheckoutFailed" xml:space="preserve">
     <value>Maaf, pembayaran telah dibatalkan oleh bot.</value>
   </data>
   <data name="PaymentReceipt" xml:space="preserve">
-    <value>Resi</value>
+    <value>Nota Pesanan</value>
   </data>
   <data name="PaymentShippingAddress" xml:space="preserve">
     <value>Alamat Pengiriman</value>
@@ -9141,7 +10033,7 @@ Anda dapat mengunjungi * FAQ * kami untuk mempelajari lebih lanjut.</value>
     <value>Nama Lengkap</value>
   </data>
   <data name="PaymentShippingPhoneNumber" xml:space="preserve">
-    <value>Nomor Ponsel</value>
+    <value>Nomor Telepon</value>
   </data>
   <data name="PaymentShippingReceiver" xml:space="preserve">
     <value>Penerima</value>
@@ -9159,7 +10051,7 @@ Anda dapat mengunjungi * FAQ * kami untuk mempelajari lebih lanjut.</value>
     <value>Kode Pos</value>
   </data>
   <data name="PaymentSuccessfullyPaid" xml:space="preserve">
-    <value>Anda berhasil mengirim sebesar {0} ke {1} untuk {2}</value>
+    <value>Anda berhasil membayar sebesar {0} ke {1} untuk {2}</value>
   </data>
   <data name="PaymentSuccessfullyPaidNoItem" xml:space="preserve">
     <value>Anda telah berhasil mengirim  {0} ke {1}</value>
@@ -9167,8 +10059,17 @@ Anda dapat mengunjungi * FAQ * kami untuk mempelajari lebih lanjut.</value>
   <data name="PaymentTestInvoice" xml:space="preserve">
     <value>TES FAKTUR</value>
   </data>
+  <data name="PaymentTip" xml:space="preserve">
+    <value>Tip</value>
+  </data>
+  <data name="PaymentTipOptional" xml:space="preserve">
+    <value>Tip (Opsional)</value>
+  </data>
   <data name="PaymentTransactionMessage" xml:space="preserve">
-    <value>Apakah Anda yakin ingin mentransfer ke {0} to the {1} bot for {2}?</value>
+    <value>Apakah Anda yakin ingin membayar {0}  melalui bot  {1} untuk {2}?</value>
+  </data>
+  <data name="PaymentTransactionMessage2" xml:space="preserve">
+    <value>Transfer **{0}** ke bot {1}  untuk **{2}**?</value>
   </data>
   <data name="PaymentTransactionReview" xml:space="preserve">
     <value>Tinjauan Transaksi</value>
@@ -9180,9 +10081,9 @@ Anda dapat mengunjungi * FAQ * kami untuk mempelajari lebih lanjut.</value>
     <value>Peringatan</value>
   </data>
   <data name="PaymentWarningText" xml:space="preserve">
-    <value>Baik Telegram, maupun {0}  tidak akan memiliki akses informasi kartu kredit Anda. Detil kartu kredit akan ditangani oleh sistem pembayaran,{1}..
+    <value>Baik Telegram maupun {0} tidak akan memiliki akses informasi kartu kredit Anda. Detail kartu kredit akan ditangani oleh sistem pembayaran, {1}.
 
- Pembayaran akan diarahkan ke pengembang {0}. Telegram tidak memberikan jaminan apapun, resiko ditanggung oleh Anda. Jika butuh bantuan, silakan hubungi pengembang {0}atau bank Anda.</value>
+Pembayaran akan diarahkan ke pengembang {0}. Telegram tidak memberikan jaminan apapun, resiko ditanggung oleh Anda. Jika terdapat kendala, silakan hubungi pengembang {0} atau bank Anda.</value>
   </data>
   <data name="PendingEmailText" xml:space="preserve">
     <value>Surel pemulihan Anda {0} belum diaktifkan dan sedang menunggu konfirmasi.</value>
@@ -9297,7 +10198,7 @@ Kami akan mengakses lokasi Anda hanya selama durasi yang Anda pilih dan Anda dap
     <value>Mode melayang mengizinkan Anda saat tekan untuk bicara  dan melihat siapa yang berbicara saat Telegram bekerja di belakang layar.</value>
   </data>
   <data name="PermissionDrawAboveOtherAppsGroupCallTitle" xml:space="preserve">
-    <value>Mode Melayang Obrolan Suara</value>
+    <value>Mode Melayang Obrolan Video</value>
   </data>
   <data name="PermissionDrawAboveOtherAppsTitle" xml:space="preserve">
     <value>Gambar dalam Gambar</value>
@@ -9467,6 +10368,24 @@ Kami akan mengakses lokasi Anda hanya selama durasi yang Anda pilih dan Anda dap
   <data name="PinMessageAlertTitle" xml:space="preserve">
     <value>Semat pesan</value>
   </data>
+  <data name="PinnedDialogsCount_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PinnedDialogsCount_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PinnedDialogsCount_one" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PinnedDialogsCount_other" xml:space="preserve">
+    <value>{0} obrolan tersemat</value>
+  </data>
+  <data name="PinnedDialogsCount_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PinnedDialogsCount_zero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="PinnedMessage" xml:space="preserve">
     <value>Pesan Tersemat</value>
   </data>
@@ -9532,6 +10451,15 @@ Kami akan mengakses lokasi Anda hanya selama durasi yang Anda pilih dan Anda dap
   </data>
   <data name="PleaseEnterNewFirstPassword" xml:space="preserve">
     <value>Masukkan kata sandi baru</value>
+  </data>
+  <data name="PleaseEnterNewFirstPasswordHint" xml:space="preserve">
+    <value>Masukan kata sandi baru</value>
+  </data>
+  <data name="PleaseEnterNewFirstPasswordLogin" xml:space="preserve">
+    <value>Anda sekarang dapat mengatur kata sandi baru yang akan digunakan untuk masuk ke akun Anda.</value>
+  </data>
+  <data name="PleaseEnterNewSecondPasswordHint" xml:space="preserve">
+    <value>Masukkan kembali kata sandi baru</value>
   </data>
   <data name="PleaseEnterPassword" xml:space="preserve">
     <value>Mohon masukkan kata sandi Anda yang baru</value>
@@ -9623,6 +10551,204 @@ Kami akan mengakses lokasi Anda hanya selama durasi yang Anda pilih dan Anda dap
   <data name="PreviewFeedback2" xml:space="preserve">
     <value>Susunan salah?</value>
   </data>
+  <data name="PreviewForwardAudio_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardAudio_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardAudio_one" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardAudio_other" xml:space="preserve">
+    <value>Teruskan {0} pesan suara</value>
+  </data>
+  <data name="PreviewForwardAudio_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardAudio_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardContact_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardContact_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardContact_one" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardContact_other" xml:space="preserve">
+    <value>Teruskan {0} kontak</value>
+  </data>
+  <data name="PreviewForwardContact_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardContact_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardFile_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardFile_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardFile_one" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardFile_other" xml:space="preserve">
+    <value>Teruskan {0} berkas</value>
+  </data>
+  <data name="PreviewForwardFile_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardFile_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardLocation_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardLocation_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardLocation_one" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardLocation_other" xml:space="preserve">
+    <value>Teruskan {0} lokasi</value>
+  </data>
+  <data name="PreviewForwardLocation_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardLocation_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardMessagesCount_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardMessagesCount_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardMessagesCount_one" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardMessagesCount_other" xml:space="preserve">
+    <value>Teruskan {0} pesan</value>
+  </data>
+  <data name="PreviewForwardMessagesCount_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardMessagesCount_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardMusic_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardMusic_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardMusic_one" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardMusic_other" xml:space="preserve">
+    <value>Teruskan {0} audio</value>
+  </data>
+  <data name="PreviewForwardMusic_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardMusic_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardPhoto_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardPhoto_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardPhoto_one" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardPhoto_other" xml:space="preserve">
+    <value>Teruskan {0} foto</value>
+  </data>
+  <data name="PreviewForwardPhoto_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardPhoto_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardPoll_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardPoll_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardPoll_one" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardPoll_other" xml:space="preserve">
+    <value>Teruskan {0} pol</value>
+  </data>
+  <data name="PreviewForwardPoll_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardPoll_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardRound_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardRound_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardRound_one" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardRound_other" xml:space="preserve">
+    <value>Teruskan {0} pesan video</value>
+  </data>
+  <data name="PreviewForwardRound_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardRound_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardSticker_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardSticker_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardSticker_one" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardSticker_other" xml:space="preserve">
+    <value>Teruskan {0} stiker</value>
+  </data>
+  <data name="PreviewForwardSticker_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardSticker_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardVideo_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardVideo_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardVideo_one" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardVideo_other" xml:space="preserve">
+    <value>Teruskan {0} video</value>
+  </data>
+  <data name="PreviewForwardVideo_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PreviewForwardVideo_zero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="PreviousPinnedMessage" xml:space="preserve">
     <value>Pesan Sebelumnya</value>
   </data>
@@ -9708,7 +10834,7 @@ Kami akan mengakses lokasi Anda hanya selama durasi yang Anda pilih dan Anda dap
     <value>Pembayaran</value>
   </data>
   <data name="PrivacyPaymentsClear" xml:space="preserve">
-    <value>Hapus pembayaran &amp; info pengiriman</value>
+    <value>Hapus Pembayaran &amp; Info Pengiriman</value>
   </data>
   <data name="PrivacyPaymentsClearAlert" xml:space="preserve">
     <value>Hapus info pengiriman Anda dan instruksikan semua penyedia pembayaran untuk menghapus kartu kredit yang Anda simpan? Perhatikan bahwa Telegram tidak pernah menyimpan data kartu kredit Anda.</value>
@@ -9721,6 +10847,15 @@ Kami akan mengakses lokasi Anda hanya selama durasi yang Anda pilih dan Anda dap
   </data>
   <data name="PrivacyPaymentsClearInfo" xml:space="preserve">
     <value>Anda dapat menghapus info pengiriman Anda dan mengarahkan seluruh penyedia pembayaran untuk menghapus info kartu kredit Anda. Mohon diingat, Telegram tidak menyimpan data kartu Anda.</value>
+  </data>
+  <data name="PrivacyPaymentsPaymentInfoCleared" xml:space="preserve">
+    <value>Info pembayaran dikosongkan.</value>
+  </data>
+  <data name="PrivacyPaymentsPaymentShippingCleared" xml:space="preserve">
+    <value>Info pembayaran dan pengiriman dikosongkan.</value>
+  </data>
+  <data name="PrivacyPaymentsShippingInfoCleared" xml:space="preserve">
+    <value>Info pengiriman dikosongkan.</value>
   </data>
   <data name="PrivacyPhone" xml:space="preserve">
     <value>Nomor Telepon</value>
@@ -9885,6 +11020,105 @@ Anda dapat menambahkan pengguna atau seluruh grup sebagai pengecualian yang akan
   <data name="Purple" xml:space="preserve">
     <value>Ungu</value>
   </data>
+  <data name="PushChatReactAudio" xml:space="preserve">
+    <value>{0}: {2} ke pesan suara Anda di {1}</value>
+  </data>
+  <data name="PushChatReactContact" xml:space="preserve">
+    <value>{0}: {2} ke kontak Anda {3} di {1}</value>
+  </data>
+  <data name="PushChatReactDoc" xml:space="preserve">
+    <value>{0}: {2} ke berkas Anda di {1}</value>
+  </data>
+  <data name="PushChatReactGame" xml:space="preserve">
+    <value>{0}: {2} ke permainan Anda di {1}</value>
+  </data>
+  <data name="PushChatReactGeo" xml:space="preserve">
+    <value>{0}: {2} ke peta Anda di {1}</value>
+  </data>
+  <data name="PushChatReactGeoLive" xml:space="preserve">
+    <value>{0}: {2}  ke lokasi langsung Anda di {1}</value>
+  </data>
+  <data name="PushChatReactGif" xml:space="preserve">
+    <value>{0}: {2} ke GIF Anda di {1}</value>
+  </data>
+  <data name="PushChatReactInvoice" xml:space="preserve">
+    <value>{0}: {2} ke tagihan Anda di {1}</value>
+  </data>
+  <data name="PushChatReactNotext" xml:space="preserve">
+    <value>{0}: {2} ke pesan Anda di {1}</value>
+  </data>
+  <data name="PushChatReactPhoto" xml:space="preserve">
+    <value>{0}: {2} ke foto Anda di {1}</value>
+  </data>
+  <data name="PushChatReactPoll" xml:space="preserve">
+    <value>{0}: {2} ke pol Anda {3} di {1}</value>
+  </data>
+  <data name="PushChatReactQuiz" xml:space="preserve">
+    <value>{0}: {2} ke kuis Anda {3} di {1}</value>
+  </data>
+  <data name="PushChatReactRound" xml:space="preserve">
+    <value>{0}: {2} ke pesan video Anda di {1}</value>
+  </data>
+  <data name="PushChatReactSticker" xml:space="preserve">
+    <value>{0}: {2} untuk stiker {3} di {1}</value>
+  </data>
+  <data name="PushChatReactText" xml:space="preserve">
+    <value>{0}: {2} di  {1} ke "{3}"</value>
+  </data>
+  <data name="PushChatReactVideo" xml:space="preserve">
+    <value>{0}: {2} ke video Anda di {1}</value>
+  </data>
+  <data name="PushReactAudio" xml:space="preserve">
+    <value>{0}: {1} ke pesan suara Anda</value>
+  </data>
+  <data name="PushReactContect" xml:space="preserve">
+    <value>{0}: {1} ke kontak Anda {2}</value>
+  </data>
+  <data name="PushReactDoc" xml:space="preserve">
+    <value>{0}: {1} ke berkas Anda</value>
+  </data>
+  <data name="PushReactGame" xml:space="preserve">
+    <value>{0}: {1} ke permainan Anda</value>
+  </data>
+  <data name="PushReactGeo" xml:space="preserve">
+    <value>{0}: {1} ke peta Anda</value>
+  </data>
+  <data name="PushReactGeoLocation" xml:space="preserve">
+    <value>{0}: {1} ke lokasi langsung Anda</value>
+  </data>
+  <data name="PushReactGif" xml:space="preserve">
+    <value>{0}: {1} ke GIF Anda</value>
+  </data>
+  <data name="PushReactInvoice" xml:space="preserve">
+    <value>{0}: {1} ke tagihan Anda</value>
+  </data>
+  <data name="PushReactNoText" xml:space="preserve">
+    <value>{0}: {1} ke pesan Anda</value>
+  </data>
+  <data name="PushReactPhoto" xml:space="preserve">
+    <value>{0}: {1} ke foto Anda</value>
+  </data>
+  <data name="PushReactPoll" xml:space="preserve">
+    <value>{0}: {1} ke pol Anda {2}</value>
+  </data>
+  <data name="PushReactQuiz" xml:space="preserve">
+    <value>{0}: {1} ke kuis Anda {2}</value>
+  </data>
+  <data name="PushReactRound" xml:space="preserve">
+    <value>{0}: {1} ke pesan video Anda</value>
+  </data>
+  <data name="PushReactSticker" xml:space="preserve">
+    <value>{0}: {1} ke {2} stiker Anda</value>
+  </data>
+  <data name="PushReactText" xml:space="preserve">
+    <value>{0}: {1} terhadap "{2}"</value>
+  </data>
+  <data name="PushReactVideo" xml:space="preserve">
+    <value>{0}: {1} ke video Anda</value>
+  </data>
+  <data name="QrCode" xml:space="preserve">
+    <value>Kode QR</value>
+  </data>
   <data name="QRCodeLinkHelpChannel" xml:space="preserve">
     <value>Pengguna Telegram dapat memindai kode ini untuk bergabung ke channel Anda. </value>
   </data>
@@ -9966,6 +11200,48 @@ Anda dapat menambahkan pengguna atau seluruh grup sebagai pengecualian yang akan
   <data name="RateCallVideoPixelated" xml:space="preserve">
     <value>Kualitas video rendah</value>
   </data>
+  <data name="Reacted_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Reacted_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Reacted_one" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Reacted_other" xml:space="preserve">
+    <value>{0} Bereaksi</value>
+  </data>
+  <data name="Reacted_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Reacted_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Reactions" xml:space="preserve">
+    <value>Reaksi</value>
+  </data>
+  <data name="ReactionsCount_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ReactionsCount_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ReactionsCount_one" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ReactionsCount_other" xml:space="preserve">
+    <value>{0} reaksi</value>
+  </data>
+  <data name="ReactionsCount_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ReactionsCount_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ReactionsOff" xml:space="preserve">
+    <value>Non aktif</value>
+  </data>
   <data name="Recent" xml:space="preserve">
     <value>Terkini</value>
   </data>
@@ -9986,6 +11262,9 @@ Anda dapat menambahkan pengguna atau seluruh grup sebagai pengecualian yang akan
   </data>
   <data name="RecentStickers" xml:space="preserve">
     <value>Terakhir Digunakan</value>
+  </data>
+  <data name="RecentStickersShort" xml:space="preserve">
+    <value>Terkini</value>
   </data>
   <data name="Recipient_few" xml:space="preserve">
     <value/>
@@ -10011,6 +11290,9 @@ Anda dapat menambahkan pengguna atau seluruh grup sebagai pengecualian yang akan
   <data name="RecordingRound" xml:space="preserve">
     <value>merekam pesan video...</value>
   </data>
+  <data name="RecordingVideoStatus" xml:space="preserve">
+    <value>merekam video...</value>
+  </data>
   <data name="RecoveryEmail" xml:space="preserve">
     <value>Surel Pemulihan</value>
   </data>
@@ -10031,6 +11313,15 @@ Anda dapat menambahkan pengguna atau seluruh grup sebagai pengecualian yang akan
   </data>
   <data name="Regular" xml:space="preserve">
     <value>Reguler</value>
+  </data>
+  <data name="ReleaseToGoNextArchive" xml:space="preserve">
+    <value>Lepas untuk ke channel yang diarsip</value>
+  </data>
+  <data name="ReleaseToGoNextChannel" xml:space="preserve">
+    <value>Lepas untuk ke channel belum dibaca berikutnya</value>
+  </data>
+  <data name="ReleaseToGoNextFolder" xml:space="preserve">
+    <value>Lepas untuk ke channel belum dibaca berikutnya</value>
   </data>
   <data name="RemindDayAt" xml:space="preserve">
     <value>'Ingatkan pada' d MMM 'pukul' HH:mm</value>
@@ -10228,6 +11519,36 @@ Terima kasih atas bantuannya! </value>
   <data name="ReportUserLocation" xml:space="preserve">
     <value>Lapor</value>
   </data>
+  <data name="RequestedToJoinAt" xml:space="preserve">
+    <value>mohon untuk masuk  {0}</value>
+  </data>
+  <data name="RequestToJoinChannel" xml:space="preserve">
+    <value>Permintaan Masuk Channel</value>
+  </data>
+  <data name="RequestToJoinChannelApproved" xml:space="preserve">
+    <value>Permintaan untuk masuk channel disetujui</value>
+  </data>
+  <data name="RequestToJoinChannelDescription" xml:space="preserve">
+    <value>Channel ini hanya menerima pelanggan baru jika disetujui admin.</value>
+  </data>
+  <data name="RequestToJoinChannelSentDescription" xml:space="preserve">
+    <value>Anda akan ditambahkan ke channel setelah admin menyetujui permintaan Anda.</value>
+  </data>
+  <data name="RequestToJoinGroup" xml:space="preserve">
+    <value>Permintaan Masuk Grup</value>
+  </data>
+  <data name="RequestToJoinGroupApproved" xml:space="preserve">
+    <value>Permintaan masuk grup Anda disetujui.</value>
+  </data>
+  <data name="RequestToJoinGroupDescription" xml:space="preserve">
+    <value>Grup ini hanya menerima anggota baru jika disetujui oleh admin.</value>
+  </data>
+  <data name="RequestToJoinGroupSentDescription" xml:space="preserve">
+    <value>Anda akan ditambahkan ke grup setelah admin menyetujui permintaan Anda.</value>
+  </data>
+  <data name="RequestToJoinSent" xml:space="preserve">
+    <value>Permintaan Dikirim</value>
+  </data>
   <data name="ResendCode" xml:space="preserve">
     <value>Kirim ulang kode</value>
   </data>
@@ -10304,6 +11625,12 @@ Jika Anda me-reset akun Anda, semua pesan dan obrolan Anda akan dihapus.</value>
   <data name="ResetNotificationsText" xml:space="preserve">
     <value>Reset semua notifikasi ke standar</value>
   </data>
+  <data name="ResetPassword" xml:space="preserve">
+    <value>Reset Kata Sandi</value>
+  </data>
+  <data name="ResetPasswordWait" xml:space="preserve">
+    <value>Anda baru saja meminta reset ulang sandi dan telah dibatalkan. Harap tunggu {0} sebelum membuat permintaan baru.</value>
+  </data>
   <data name="ResetStatistics" xml:space="preserve">
     <value>Reset Statistik</value>
   </data>
@@ -10333,14 +11660,32 @@ Jika Anda me-reset akun Anda, semua pesan dan obrolan Anda akan dihapus.</value>
   <data name="RestoreEmailTroubleText" xml:space="preserve">
     <value>Jika Anda tidak dapat membuka surel, pilihan Anda adalah mengingat kata sandi atau set ulang akun.</value>
   </data>
+  <data name="RestoreEmailTroubleText2" xml:space="preserve">
+    <value>Jika Anda tidak memiliki akses ke email pemulihan, opsi yang tersisa adalah mengingat sandi atau menunggu 7 hari hingga sandi direset</value>
+  </data>
   <data name="RestorePasswordNoEmailText" xml:space="preserve">
     <value>Sejak Anda tidak menyediakan surel pemulihan ketika memasang sandi Anda, Anda hanya mempunyai pilihan untuk mengingat sandi Anda atau reset akun Anda.</value>
+  </data>
+  <data name="RestorePasswordNoEmailText2" xml:space="preserve">
+    <value>Karena Anda tidak memasukan email pemulihan saat menyetel kata sandi Anda, opsi yang tersisa adalah mengingat kata sandi Anda atau menunggu 7 hari hingga kata sandi Anda direset</value>
   </data>
   <data name="RestorePasswordNoEmailTitle" xml:space="preserve">
     <value>Maaf</value>
   </data>
   <data name="RestorePasswordResetAccount" xml:space="preserve">
     <value>Reset Akun</value>
+  </data>
+  <data name="RestorePasswordResetIn" xml:space="preserve">
+    <value>Anda dapat atur ulang sandi Anda dalam {0}</value>
+  </data>
+  <data name="RestorePasswordResetPassword" xml:space="preserve">
+    <value>RESET KATA SANDI</value>
+  </data>
+  <data name="RestorePasswordResetPasswordOk" xml:space="preserve">
+    <value>Sandi Verifikasi 2 Langkah Anda telah disetel ulang.</value>
+  </data>
+  <data name="RestorePasswordResetPasswordText" xml:space="preserve">
+    <value>Anda yakin ingin mereset sandi pada Verifikasi 2 Langkah?</value>
   </data>
   <data name="Restrictions_few" xml:space="preserve">
     <value/>
@@ -10359,6 +11704,15 @@ Jika Anda me-reset akun Anda, semua pesan dan obrolan Anda akan dihapus.</value>
   </data>
   <data name="Restrictions_zero" xml:space="preserve">
     <value/>
+  </data>
+  <data name="RestrictSavingContent" xml:space="preserve">
+    <value>Batasi konten untuk disimpan</value>
+  </data>
+  <data name="RestrictSavingContentInfoChannel" xml:space="preserve">
+    <value>Pelanggan tidak dapat menyalin, simpan atau meneruskan konten dari channel.</value>
+  </data>
+  <data name="RestrictSavingContentInfoGroup" xml:space="preserve">
+    <value>Anggota tidak dapat salin, simpan dan teruskan konten di grup ini.</value>
   </data>
   <data name="Retry" xml:space="preserve">
     <value>Ulang</value>
@@ -10430,6 +11784,9 @@ Channel "**{1}**" akan menjadi privat.</value>
   <data name="SaveLink" xml:space="preserve">
     <value>Simpan Tautan</value>
   </data>
+  <data name="SaveLinkHeader" xml:space="preserve">
+    <value>SIMPAN</value>
+  </data>
   <data name="SaveTheme" xml:space="preserve">
     <value>SIMPAN TEMA</value>
   </data>
@@ -10447,6 +11804,9 @@ Channel "**{1}**" akan menjadi privat.</value>
   </data>
   <data name="SaveToMusic" xml:space="preserve">
     <value>Simpan di musik</value>
+  </data>
+  <data name="SavingContentTitle" xml:space="preserve">
+    <value>Simpan konten</value>
   </data>
   <data name="ScamMessage" xml:space="preserve">
     <value>PENIPUAN</value>
@@ -10553,6 +11913,9 @@ Anda mungkin perlu memulai ulang aplikasi agar ini berlaku.</value>
   <data name="SearchInSettings" xml:space="preserve">
     <value>Cari Pengaturan dan FAQ</value>
   </data>
+  <data name="SearchMemberRequests" xml:space="preserve">
+    <value>Cari permintaan masuk</value>
+  </data>
   <data name="SearchMembers" xml:space="preserve">
     <value>Cari anggota</value>
   </data>
@@ -10613,6 +11976,24 @@ Anda mungkin perlu memulai ulang aplikasi agar ini berlaku.</value>
   <data name="SecondsBold_zero" xml:space="preserve">
     <value/>
   </data>
+  <data name="SecondsSchedule_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="SecondsSchedule_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="SecondsSchedule_one" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="SecondsSchedule_other" xml:space="preserve">
+    <value>{0} detik</value>
+  </data>
+  <data name="SecondsSchedule_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="SecondsSchedule_zero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="SecretChat" xml:space="preserve">
     <value>Secret chat</value>
   </data>
@@ -10630,6 +12011,9 @@ Anda mungkin perlu memulai ulang aplikasi agar ini berlaku.</value>
   </data>
   <data name="SecretChatTimerMinutes" xml:space="preserve">
     <value>mnt</value>
+  </data>
+  <data name="SecretChatTimerMonths" xml:space="preserve">
+    <value>B</value>
   </data>
   <data name="SecretChatTimerSeconds" xml:space="preserve">
     <value>dtk</value>
@@ -10670,6 +12054,12 @@ Anda mungkin perlu memulai ulang aplikasi agar ini berlaku.</value>
   <data name="SelectContacts" xml:space="preserve">
     <value>Pilih Kontak</value>
   </data>
+  <data name="SelectDays" xml:space="preserve">
+    <value>Pilih Hari</value>
+  </data>
+  <data name="SelectDaysTooltip" xml:space="preserve">
+    <value>Mohon pilih satu atau beberapa hari dahulu.</value>
+  </data>
   <data name="SelectFile" xml:space="preserve">
     <value>Pilih Berkas</value>
   </data>
@@ -10679,8 +12069,20 @@ Anda mungkin perlu memulai ulang aplikasi agar ini berlaku.</value>
   <data name="SelectImage" xml:space="preserve">
     <value>Pilih gambar</value>
   </data>
+  <data name="SelectingContact" xml:space="preserve">
+    <value>memilih kontak untuk dibagikan...</value>
+  </data>
+  <data name="SelectingLocation" xml:space="preserve">
+    <value>memilih lokasi untuk dibagikan...</value>
+  </data>
   <data name="SelectOtherChat" xml:space="preserve">
     <value>Pilih Obrolan Lain</value>
+  </data>
+  <data name="SelectTheme" xml:space="preserve">
+    <value>Pilih Tema</value>
+  </data>
+  <data name="SelectThisDay" xml:space="preserve">
+    <value>Pilih hari ini</value>
   </data>
   <data name="Send" xml:space="preserve">
     <value>Kirim</value>
@@ -10787,6 +12189,9 @@ Anda mungkin perlu memulai ulang aplikasi agar ini berlaku.</value>
   <data name="SendMessage" xml:space="preserve">
     <value>Kirim Pesan</value>
   </data>
+  <data name="SendMessageAsTitle" xml:space="preserve">
+    <value>Kirim Pesan Sebagai...</value>
+  </data>
   <data name="SendMessageLocation" xml:space="preserve">
     <value>Kirim Pesan</value>
   </data>
@@ -10797,7 +12202,7 @@ Anda mungkin perlu memulai ulang aplikasi agar ini berlaku.</value>
     <value>Admin grup membatasi Anda untuk mengirim pesan di sini.</value>
   </data>
   <data name="SendMessagesTo" xml:space="preserve">
-    <value>Kirim pesan ke {0}?</value>
+    <value>Kirim ke {0}?</value>
   </data>
   <data name="SendMessagesToGroup" xml:space="preserve">
     <value>Kirim pesan ke {0}?</value>
@@ -10864,6 +12269,12 @@ INGAT! Jangan diangkat, Telegram akan memproses secara otomatis.</value>
   <data name="SessionsInfo" xml:space="preserve">
     <value>Kontrol sesi aktif Anda pada perangkat lainnya.</value>
   </data>
+  <data name="SessionsListInfo" xml:space="preserve">
+    <value>Aplikasi Telegram resmi tersedia untuk iPhone, iPad, Android, macOS, Windows dan Linux. [Pelajari lagi]()</value>
+  </data>
+  <data name="SessionsSelfDestruct" xml:space="preserve">
+    <value>Sesi hancur otomatis</value>
+  </data>
   <data name="SessionsTitle" xml:space="preserve">
     <value>Sesi aktif</value>
   </data>
@@ -10924,8 +12335,11 @@ INGAT! Jangan diangkat, Telegram akan memproses secara otomatis.</value>
   <data name="SetTimer" xml:space="preserve">
     <value>Atur waktu penghancur otomatis</value>
   </data>
-  <data name="SETTINGS" xml:space="preserve">
+  <data name="Settings" xml:space="preserve">
     <value>Pengaturan</value>
+  </data>
+  <data name="SettingsBrowseThemes" xml:space="preserve">
+    <value>Cari Tema</value>
   </data>
   <data name="SettingsDebug" xml:space="preserve">
     <value>Debug</value>
@@ -10947,6 +12361,12 @@ INGAT! Jangan diangkat, Telegram akan memproses secara otomatis.</value>
   </data>
   <data name="SettingsSearchFaq" xml:space="preserve">
     <value>FAQ</value>
+  </data>
+  <data name="SettingsSwitchToDayMode" xml:space="preserve">
+    <value>Ganti ke Mode Terang</value>
+  </data>
+  <data name="SettingsSwitchToNightMode" xml:space="preserve">
+    <value>Ganti ke Mode Gelap</value>
   </data>
   <data name="SetUrlAvailable" xml:space="preserve">
     <value>{0} tersedia</value>
@@ -11034,6 +12454,9 @@ INGAT! Jangan diangkat, Telegram akan memproses secara otomatis.</value>
   </data>
   <data name="SharedMedia" xml:space="preserve">
     <value>Media Bersama</value>
+  </data>
+  <data name="SharedMediaFastScrollHint" xml:space="preserve">
+    <value>Anda dapat tahan dan pindahkan bilah untuk gulir lebih cepat</value>
   </data>
   <data name="SharedMediaTab" xml:space="preserve">
     <value>MEDIA</value>
@@ -11128,6 +12551,9 @@ INGAT! Jangan diangkat, Telegram akan memproses secara otomatis.</value>
   <data name="ShareTheme" xml:space="preserve">
     <value>Bagikan tema</value>
   </data>
+  <data name="ShareVideo" xml:space="preserve">
+    <value>Tampilkan Video</value>
+  </data>
   <data name="ShareYouLocationInfo" xml:space="preserve">
     <value>Ini akan mengirimkan lokasi Anda sekarang ke bot.</value>
   </data>
@@ -11179,8 +12605,14 @@ INGAT! Jangan diangkat, Telegram akan memproses secara otomatis.</value>
   <data name="ShowAsList" xml:space="preserve">
     <value>Tampilkan sebagai daftar</value>
   </data>
+  <data name="ShowCaption" xml:space="preserve">
+    <value>Tampilkan Teks</value>
+  </data>
+  <data name="ShowForwardingOptions" xml:space="preserve">
+    <value>Tampilkan Opsi Terusan</value>
+  </data>
   <data name="ShowInChat" xml:space="preserve">
-    <value>Tampilkan di Obrolan</value>
+    <value>Lihat di Obrolan</value>
   </data>
   <data name="ShowNearbyPlaces" xml:space="preserve">
     <value>Tarik untuk melihat lokasi terdekat</value>
@@ -11191,8 +12623,17 @@ INGAT! Jangan diangkat, Telegram akan memproses secara otomatis.</value>
   <data name="ShowNotificationsForInfo" xml:space="preserve">
     <value>Matikan jika ingin menerima notifikasi hanya dari akun yang saat ini Anda gunakan.</value>
   </data>
+  <data name="ShowSenderNames" xml:space="preserve">
+    <value>Tampilkan nama pengirim</value>
+  </data>
+  <data name="ShowSendersName" xml:space="preserve">
+    <value>Tampilkan nama pengirim</value>
+  </data>
   <data name="ShowStickers" xml:space="preserve">
     <value>Lihat stiker</value>
+  </data>
+  <data name="ShowTranslateButton" xml:space="preserve">
+    <value>Tampilkan Tombol Terjemahkan</value>
   </data>
   <data name="ShowVotes_few" xml:space="preserve">
     <value/>
@@ -11316,8 +12757,69 @@ Mode Lambat diaktifkan. Anda tidak dapat mengirim banyak pesan sekaligus. </valu
   <data name="Speaking" xml:space="preserve">
     <value>berbicara</value>
   </data>
+  <data name="SpeakingWithVolume" xml:space="preserve">
+    <value>{0}% berbicara</value>
+  </data>
+  <data name="Speed" xml:space="preserve">
+    <value>Kecepatan</value>
+  </data>
+  <data name="SpeedFast" xml:space="preserve">
+    <value>Cepat</value>
+  </data>
+  <data name="SpeedNormal" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="SpeedSlow" xml:space="preserve">
+    <value>Lambat</value>
+  </data>
+  <data name="SpeedVeryFast" xml:space="preserve">
+    <value>Sangat cepat</value>
+  </data>
+  <data name="SpeedVerySlow" xml:space="preserve">
+    <value>Sangat lambat</value>
+  </data>
+  <data name="Spoiler" xml:space="preserve">
+    <value>Spoiler</value>
+  </data>
+  <data name="SponsoredMessage" xml:space="preserve">
+    <value>sponsor</value>
+  </data>
+  <data name="SponsoredMessageAlertLearnMore" xml:space="preserve">
+    <value>LEBIH LANJUT</value>
+  </data>
+  <data name="SponsoredMessageAlertLearnMoreUrl" xml:space="preserve">
+    <value>https://promote.telegram.org</value>
+  </data>
+  <data name="SponsoredMessageAlertText" xml:space="preserve">
+    <value>Tidak seperti aplikasi lain, Telegram tidak pernah menggunakan data pribadi Anda untuk menargetkan iklan. Tidak ada data pengguna yang dikelola atau dianalisis untuk menampilkan iklan, dan setiap pengguna yang mengikuti channel di Telegram melihat pesan sponsor yang sama. Kami percaya bahwa setiap orang memiliki hak atas privasi, dan platform teknologi harus menghormati itu.</value>
+  </data>
+  <data name="SponsoredMessageAlertTitle" xml:space="preserve">
+    <value>Pesan bersponsor</value>
+  </data>
+  <data name="SponsoredMessageInfo" xml:space="preserve">
+    <value>Apa itu pesan
+bersponsor?</value>
+  </data>
+  <data name="SponsoredMessageInfoDescription1" xml:space="preserve">
+    <value>Tak seperti aplikasi lain, Telegram tidak pernah menggunakan data pribadi Anda untuk menargetkan iklan. Anda melihat pesan ini hanya karena seseorang memilih saluran publik ini sebagai ruang untuk mempromosikan pesan mereka. Ini berarti tidak ada data pengguna yang dikumpulkan atau dianalisis untuk menampilkan iklan, dan setiap pengguna yang melihat saluran di Telegram melihat pesan sponsor yang sama.</value>
+  </data>
+  <data name="SponsoredMessageInfoDescription2" xml:space="preserve">
+    <value>Berbeda dari aplikasi lainnya, Telegram tidak melacak apakah Anda mengetuk pesan sponsor dan tidak mengumpulkan profil pengguna berdasarkan aktivitas. Kami juga mencegah tautan eksternal dalam pesan sponsor untuk memastikan bahwa pihak ketiga tidak dapat memata-matai pengguna kami. Kami percaya bahwa setiap orang memiliki hak atas privasi, dan platform teknologi harus menghormati itu.</value>
+  </data>
+  <data name="SponsoredMessageInfoDescription3" xml:space="preserve">
+    <value>Telegram menawarkan layanan gratis dan tidak terbatas kepada ratusan juta pengguna, yang membutuhkan biaya server dan operasional yang signifikan. Agar tetap mandiri dan tetap setia dengan nilai-nilainya, Telegram mengembangkan fitur berbayar untuk mempromosikan pesan dengan mempertimbangkan privasi pengguna. Kami menyambut pengiklan yang bertanggung jawab di:</value>
+  </data>
+  <data name="SponsoredMessageInfoDescription4" xml:space="preserve">
+    <value>Iklan tidak boleh lagi identik dengan penyalahgunaan privasi pengguna. Mari kita definisikan kembali bagaimana perusahaan teknologi harus beroperasi  bersama -sama.</value>
+  </data>
   <data name="Start" xml:space="preserve">
     <value>Mulai</value>
+  </data>
+  <data name="StartDayAt" xml:space="preserve">
+    <value>'Mulai' pada MMM 'pukul' HH:mm</value>
+  </data>
+  <data name="StartDayYearAt" xml:space="preserve">
+    <value>'Mulai pada' d MMM yyyy 'pada' HH:mm</value>
   </data>
   <data name="StartEncryptedChat" xml:space="preserve">
     <value>Mulai Secret Chat</value>
@@ -11325,23 +12827,50 @@ Mode Lambat diaktifkan. Anda tidak dapat mengirim banyak pesan sekaligus. </valu
   <data name="StartMessaging" xml:space="preserve">
     <value>Mulai Percakapan</value>
   </data>
+  <data name="StartsDayAt" xml:space="preserve">
+    <value>'Mulai pada' d MMM 'pada' HH:mm</value>
+  </data>
+  <data name="StartsDayYearAt" xml:space="preserve">
+    <value>'Mulai pada' d MMM yyyy 'pukul' HH:mm</value>
+  </data>
+  <data name="StartShortDayAt" xml:space="preserve">
+    <value>d MMM',' HH:mm</value>
+  </data>
+  <data name="StartShortDayYearAt" xml:space="preserve">
+    <value>d MMM yyyy',' HH:mm</value>
+  </data>
+  <data name="StartShortTodayAt" xml:space="preserve">
+    <value>'Hari ini,' HH:mm</value>
+  </data>
+  <data name="StartsTodayAt" xml:space="preserve">
+    <value>'Mulai hari ini pada' HH:mm</value>
+  </data>
   <data name="StartText" xml:space="preserve">
     <value>Mohon konfirmasi kode negara dan masukkan nomor ponsel Anda.</value>
   </data>
+  <data name="StartTodayAt" xml:space="preserve">
+    <value>'Mulai hari ini pada' HH:mm</value>
+  </data>
+  <data name="StartVoipChannel" xml:space="preserve">
+    <value>Mulai Tayangan Langsung</value>
+  </data>
   <data name="StartVoipChannelAlertText" xml:space="preserve">
-    <value>Anda ingin mulai obrolan suara di channel ini?</value>
+    <value>Anda ingin mulai tayangan langsung di channel ini?</value>
+  </data>
+  <data name="StartVoipChannelTitle" xml:space="preserve">
+    <value>Tayangan Langsung</value>
   </data>
   <data name="StartVoipChat" xml:space="preserve">
-    <value>Mulai Obrolan Suara</value>
+    <value>Mulai Obrolan Video</value>
   </data>
   <data name="StartVoipChatAlertText" xml:space="preserve">
-    <value>Anda ingin mulai Obrolan Suara di grup ini?</value>
+    <value>Anda ingin mulai Obrolan Video di grup ini?</value>
   </data>
   <data name="StartVoipChatPermission" xml:space="preserve">
-    <value>Kelola Obrolan Suara</value>
+    <value>Kelola Obrolan Video</value>
   </data>
   <data name="StartVoipChatTitle" xml:space="preserve">
-    <value>Obrolan Suara</value>
+    <value>Obrolan Video</value>
   </data>
   <data name="StatisticOpenProfile" xml:space="preserve">
     <value>Buka Profil</value>
@@ -11505,6 +13034,9 @@ Mode Lambat diaktifkan. Anda tidak dapat mengirim banyak pesan sekaligus. </valu
   <data name="Strike" xml:space="preserve">
     <value>coret</value>
   </data>
+  <data name="SubscribeRequests" xml:space="preserve">
+    <value>Permintaan Masuk</value>
+  </data>
   <data name="Subscribers_few" xml:space="preserve">
     <value/>
   </data>
@@ -11586,6 +13118,18 @@ Mode Lambat diaktifkan. Anda tidak dapat mengirim banyak pesan sekaligus. </valu
   <data name="SwipeSettingsRead" xml:space="preserve">
     <value>Baca</value>
   </data>
+  <data name="SwipeToGoNextArchive" xml:space="preserve">
+    <value>Tarik ke atas untuk ke channel yang diarsipkan.</value>
+  </data>
+  <data name="SwipeToGoNextChannel" xml:space="preserve">
+    <value>Tarik ke atas untuk ke channel yang belum dibaca</value>
+  </data>
+  <data name="SwipeToGoNextChannelEnd" xml:space="preserve">
+    <value>Tidak ada channel yang belum dibaca</value>
+  </data>
+  <data name="SwipeToGoNextFolder" xml:space="preserve">
+    <value>Tarik ke atas untuk ke channel belum dibaca berikutnya</value>
+  </data>
   <data name="SwipeUnmute" xml:space="preserve">
     <value>Bunyi</value>
   </data>
@@ -11627,6 +13171,9 @@ Jika '** Sinkronisasi Kontak **' diaktifkan, kontak akan disinkronkan kembali.</
   <data name="SystemRoot" xml:space="preserve">
     <value>Sistem Root </value>
   </data>
+  <data name="TapForForwardingOptions" xml:space="preserve">
+    <value>Ketuk untuk opsi terusan</value>
+  </data>
   <data name="TapForVideo" xml:space="preserve">
     <value>Ketuk untuk foto, tekan untuk video</value>
   </data>
@@ -11635,6 +13182,21 @@ Jika '** Sinkronisasi Kontak **' diaktifkan, kontak akan disinkronkan kembali.</
   </data>
   <data name="TapOnThePencil" xml:space="preserve">
     <value>Tekan ikon pensil untuk buat obrolan baru</value>
+  </data>
+  <data name="TapToAddBio" xml:space="preserve">
+    <value>ketuk untuk pasang bio</value>
+  </data>
+  <data name="TapToAddDescription" xml:space="preserve">
+    <value>Ketuk untuk tambah deskripsi</value>
+  </data>
+  <data name="TapToAddPhoto" xml:space="preserve">
+    <value>ketuk untuk pasang foto</value>
+  </data>
+  <data name="TapToAddPhotoOrBio" xml:space="preserve">
+    <value>ketuk untuk ubah foto atau bio</value>
+  </data>
+  <data name="TapToAddPhotoOrDescription" xml:space="preserve">
+    <value>Ketuk untuk pasang foto atau deskripsi</value>
   </data>
   <data name="TapToChange" xml:space="preserve">
     <value>Ketuk untuk ganti</value>
@@ -11690,6 +13252,12 @@ Jika '** Sinkronisasi Kontak **' diaktifkan, kontak akan disinkronkan kembali.</
   <data name="TelegramFaqUrl" xml:space="preserve">
     <value>https://telegram.org/faq</value>
   </data>
+  <data name="TelegramFeatures" xml:space="preserve">
+    <value>Fitur Telegram</value>
+  </data>
+  <data name="TelegramFeaturesUrl" xml:space="preserve">
+    <value>https://t.me/TelegramTipsID</value>
+  </data>
   <data name="TelegramPassport" xml:space="preserve">
     <value>Telegram Passport</value>
   </data>
@@ -11721,6 +13289,12 @@ Kata sandi ini juga akan diperlukan setiap kali Anda masuk ke Telegram pada pera
   </data>
   <data name="TerminateAllWebSessions" xml:space="preserve">
     <value>Putus akses dari semua situs web. </value>
+  </data>
+  <data name="TerminateOldSessionHeader" xml:space="preserve">
+    <value>Hentikan Sesi Lama Otomatis</value>
+  </data>
+  <data name="TerminateSession" xml:space="preserve">
+    <value>Hentikan Sesi</value>
   </data>
   <data name="TerminateSessionInfo" xml:space="preserve">
     <value>Tekan pada sesi untuk memutus.</value>
@@ -11770,6 +13344,12 @@ Anda setuju dengan *Syarat dan Ketentuan*. </value>
   </data>
   <data name="Theme" xml:space="preserve">
     <value>Tema</value>
+  </data>
+  <data name="ThemeAlsoAppliedForHint" xml:space="preserve">
+    <value>Tema akan dipasang untuk **{0}**.</value>
+  </data>
+  <data name="ThemeAlsoDisabledForHint" xml:space="preserve">
+    <value>Tema akan nonaktif untuk  **{0}**.</value>
   </data>
   <data name="ThemeArcticBlue" xml:space="preserve">
     <value>Biru Arktik</value>
@@ -11936,6 +13516,9 @@ Minimum 5 karakter.</value>
   <data name="ThemeUrl" xml:space="preserve">
     <value>Tautan Tema</value>
   </data>
+  <data name="ThisIsYou" xml:space="preserve">
+    <value>Akun Anda</value>
+  </data>
   <data name="TimeLimitHelp" xml:space="preserve">
     <value>Anda dapat membuat tautan kedaluwarsa pada waktu tertentu.</value>
   </data>
@@ -12042,7 +13625,28 @@ Tetapi jika Anda tidak cocok dengan penyesuaian Telegram, Anda tidak dapat mengg
     <value>Kosong {0}  </value>
   </data>
   <data name="TotalDeviceSize" xml:space="preserve">
-    <value>{0} Data Lain</value>
+    <value>{0} Apl Lain</value>
+  </data>
+  <data name="TranslateMessage" xml:space="preserve">
+    <value>Terjemahkan</value>
+  </data>
+  <data name="TranslateMessages" xml:space="preserve">
+    <value>Terjemahkan Pesan</value>
+  </data>
+  <data name="TranslateMessagesInfo1" xml:space="preserve">
+    <value>Tombol 'Terjemahkan' akan muncul ketika Anda membuat satu ketukan pada pesan teks.</value>
+  </data>
+  <data name="TranslateMessagesInfo2" xml:space="preserve">
+    <value>Google mungkin memiliki akses ke pesan yang Anda terjemahkan.</value>
+  </data>
+  <data name="TranslateMore" xml:space="preserve">
+    <value>Terjemahkan selengkapnya...</value>
+  </data>
+  <data name="TranslationFailedAlert1" xml:space="preserve">
+    <value>Terjemahan gagal. Coba lagi nanti.</value>
+  </data>
+  <data name="TranslationFailedAlert2" xml:space="preserve">
+    <value>Terjemahan gagal.</value>
   </data>
   <data name="TurnPasswordOff" xml:space="preserve">
     <value>Matikan Sandi</value>
@@ -12094,6 +13698,12 @@ Tetapi jika Anda tidak cocok dengan penyesuaian Telegram, Anda tidak dapat mengg
   </data>
   <data name="TypePrivateGroup" xml:space="preserve">
     <value>Privat</value>
+  </data>
+  <data name="TypePrivateGroupRestrictedForwards" xml:space="preserve">
+    <value>Pribadi dibatasi</value>
+  </data>
+  <data name="TypePrivateRestrictedForwards" xml:space="preserve">
+    <value>Pribadi dibatasi</value>
   </data>
   <data name="TypePublic" xml:space="preserve">
     <value>Publik
@@ -12160,10 +13770,28 @@ Tetapi jika Anda tidak cocok dengan penyesuaian Telegram, Anda tidak dapat mengg
     <value>Lepas sematan</value>
   </data>
   <data name="UnpinMessageAlert" xml:space="preserve">
-    <value>Apakah Anda ingin melepas sematan ini?</value>
+    <value>Anda ingin melepas sematan ini?</value>
   </data>
   <data name="UnpinMessageAlertTitle" xml:space="preserve">
     <value>Lepas pesan sematan </value>
+  </data>
+  <data name="UnpinnedDialogsCount_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="UnpinnedDialogsCount_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="UnpinnedDialogsCount_one" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="UnpinnedDialogsCount_other" xml:space="preserve">
+    <value>{0} obrolan dilepas</value>
+  </data>
+  <data name="UnpinnedDialogsCount_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="UnpinnedDialogsCount_zero" xml:space="preserve">
+    <value/>
   </data>
   <data name="UnreadMessages" xml:space="preserve">
     <value>Pesan belum dibaca</value>
@@ -12240,6 +13868,9 @@ Tetapi jika Anda tidak cocok dengan penyesuaian Telegram, Anda tidak dapat mengg
   <data name="UseDifferentThemeInfo" xml:space="preserve">
     <value>Anda juga dapat menggunakan tema khusus yang sebagai dasar tema Anda. </value>
   </data>
+  <data name="UseFileManger" xml:space="preserve">
+    <value>Pilih Aplikasi Lain</value>
+  </data>
   <data name="UseLessDataAlways" xml:space="preserve">
     <value>Selalu</value>
   </data>
@@ -12300,6 +13931,15 @@ Tetapi jika Anda tidak cocok dengan penyesuaian Telegram, Anda tidak dapat mengg
   <data name="UseProxyUsername" xml:space="preserve">
     <value>Username</value>
   </data>
+  <data name="UserAcceptedToGroupAction" xml:space="preserve">
+    <value>un1 diterima ke dalam grup</value>
+  </data>
+  <data name="UserAcceptedToGroupPush" xml:space="preserve">
+    <value>{0} diterima ke dalam grup</value>
+  </data>
+  <data name="UserAcceptedToGroupPushWithGroup" xml:space="preserve">
+    <value>{1}|{0} diizinkan masuk grup</value>
+  </data>
   <data name="UserBio" xml:space="preserve">
     <value>Bio</value>
   </data>
@@ -12319,7 +13959,7 @@ Tetapi jika Anda tidak cocok dengan penyesuaian Telegram, Anda tidak dapat mengg
     <value>Maaf, pengguna ini terlalu banyak bergabung dalam grup dan channel. Silakan minta mereka untuk keluar beberapa grup atau channel terlebih dahulu.</value>
   </data>
   <data name="Username" xml:space="preserve">
-    <value>Username</value>
+    <value>Nama Pengguna</value>
   </data>
   <data name="UsernameAvailable" xml:space="preserve">
     <value>{0} masih tersedia.</value>
@@ -12558,6 +14198,12 @@ Anda dapat menggunakan a-z, 0-9 dan garis bawah. Karakter minimum adalah 5 karak
   <data name="VideoMessagesAutodownload" xml:space="preserve">
     <value>Pesan video</value>
   </data>
+  <data name="VideoPreview" xml:space="preserve">
+    <value>Tampilan Video</value>
+  </data>
+  <data name="VideoPreviewDesrciption" xml:space="preserve">
+    <value>Video dari kamera Anda akan dibagikan ke peserta lain di obrolan video ini.</value>
+  </data>
   <data name="VideoQualityIsTooLow" xml:space="preserve">
     <value>Kualitas video terlalu rendah untuk mengubah pengaturan kompresi.</value>
   </data>
@@ -12720,6 +14366,15 @@ Anda dapat menggunakan a-z, 0-9 dan garis bawah. Karakter minimum adalah 5 karak
   <data name="Voice_zero" xml:space="preserve">
     <value/>
   </data>
+  <data name="VoipAddBio" xml:space="preserve">
+    <value>Pasang Bio</value>
+  </data>
+  <data name="VoipAddDescription" xml:space="preserve">
+    <value>Pasang Deskripsi</value>
+  </data>
+  <data name="VoipAddPhoto" xml:space="preserve">
+    <value>Ganti Foto</value>
+  </data>
   <data name="VoipAnswerCall" xml:space="preserve">
     <value>Jawab</value>
   </data>
@@ -12735,8 +14390,14 @@ Anda dapat menggunakan a-z, 0-9 dan garis bawah. Karakter minimum adalah 5 karak
   <data name="VoipAudioRoutingHeadset" xml:space="preserve">
     <value>Perangkat  </value>
   </data>
+  <data name="VoipAudioRoutingPhone" xml:space="preserve">
+    <value>Ponsel</value>
+  </data>
   <data name="VoipAudioRoutingSpeaker" xml:space="preserve">
     <value>Speaker</value>
+  </data>
+  <data name="VoipBackCamera" xml:space="preserve">
+    <value>KAMERA BELAKANG</value>
   </data>
   <data name="VoipBusy" xml:space="preserve">
     <value>Jalur sibuk</value>
@@ -12744,14 +14405,173 @@ Anda dapat menggunakan a-z, 0-9 dan garis bawah. Karakter minimum adalah 5 karak
   <data name="VoipCallEnded" xml:space="preserve">
     <value>Panggilan usai</value>
   </data>
+  <data name="VoipCamera" xml:space="preserve">
+    <value>Kamera</value>
+  </data>
+  <data name="VoipChannelCancelChat" xml:space="preserve">
+    <value>Batal tayangan langsung</value>
+  </data>
+  <data name="VoipChannelChatJoined" xml:space="preserve">
+    <value>**{0}** bergabung ke tayangan langsung.</value>
+  </data>
+  <data name="VoipChannelEditTitle" xml:space="preserve">
+    <value>Edit Judul Tayangan Langsung</value>
+  </data>
+  <data name="VoipChannelEndAlertText" xml:space="preserve">
+    <value>Anda ingin akhiri tayangan langsung?</value>
+  </data>
+  <data name="VoipChannelEndAlertTitle" xml:space="preserve">
+    <value>Akhiri Tayangan Langsung</value>
+  </data>
+  <data name="VoipChannelEndChat" xml:space="preserve">
+    <value>Akhiri Tayangan Langsung</value>
+  </data>
+  <data name="VoipChannelInvitedUser" xml:space="preserve">
+    <value>Anda undang **{0}** ke tayangan langsung.</value>
+  </data>
+  <data name="VoipChannelInviteText" xml:space="preserve">
+    <value>Hai! Tonton tayangan langsung: {0}</value>
+  </data>
+  <data name="VoipChannelJoinAnonymousAdmin" xml:space="preserve">
+    <value>Maaf, Anda tidak dapat masuk ke tayangan langsung sebagai admin anonim.</value>
+  </data>
+  <data name="VoipChannelJoinAnonymouseAlert" xml:space="preserve">
+    <value>Anda yakin ingin tampil di tayangan langsung sebagai akun personal?</value>
+  </data>
+  <data name="VoipChannelJoinAs" xml:space="preserve">
+    <value>Tonton tayangan sebagai...</value>
+  </data>
+  <data name="VoipChannelJoinVoiceChatUrl" xml:space="preserve">
+    <value>Tonton Tayangan Langsung</value>
+  </data>
+  <data name="VoipChannelLeaveAlertEndChat" xml:space="preserve">
+    <value>Akhiri Tayangan Langsung</value>
+  </data>
+  <data name="VoipChannelLeaveAlertText" xml:space="preserve">
+    <value>Anda ingin keluar dari tayangan langsung?</value>
+  </data>
+  <data name="VoipChannelLeaveAlertTitle" xml:space="preserve">
+    <value>Keluar Tayangan Langsung</value>
+  </data>
+  <data name="VoipChannelOpenVoiceChat" xml:space="preserve">
+    <value>Buka tayangan langsung</value>
+  </data>
+  <data name="VoipChannelRecording" xml:space="preserve">
+    <value>Tayangan Langsung sedang direkam</value>
+  </data>
+  <data name="VoipChannelRecordVoiceChat" xml:space="preserve">
+    <value>Rekam Tayangan Langsung</value>
+  </data>
+  <data name="VoipChannelRemoveMemberAlertText2" xml:space="preserve">
+    <value>Anda ingin keluarkan {0} dari tayangan langsung dan blokir dari  {1}?</value>
+  </data>
+  <data name="VoipChannelScheduledVoiceChat" xml:space="preserve">
+    <value>Tayangan Langsung Terjadwal</value>
+  </data>
+  <data name="VoipChannelScheduleInfo" xml:space="preserve">
+    <value>Pelanggan channel ini akan diberi tahu saat tayangan langsung dimulai dalam {0}.</value>
+  </data>
+  <data name="VoipChannelScheduleVoiceChat" xml:space="preserve">
+    <value>Jadwalkan Tayangan Langsung</value>
+  </data>
+  <data name="VoipChannelSoundMuted" xml:space="preserve">
+    <value>Suara tayangan langsung disenyapkan.</value>
+  </data>
+  <data name="VoipChannelSoundUnmuted" xml:space="preserve">
+    <value>Suara tayangan langsung dibunyikan.</value>
+  </data>
+  <data name="VoipChannelStart2" xml:space="preserve">
+    <value>Pelanggan channel ini akan diberi tahu sesaat Anda memulai tayangan langsung.</value>
+  </data>
+  <data name="VoipChannelStartRecordingVideoText" xml:space="preserve">
+    <value>Anda ingin rekam tayangan langsung dan menyimpan dalam bentuk berkas video?
+
+Penonton akan melihat bahwa obrolan sedang direkam.</value>
+  </data>
+  <data name="VoipChannelStartVoiceChat" xml:space="preserve">
+    <value>Mulai Tayangan Langsung</value>
+  </data>
+  <data name="VoipChannelStopRecordingText" xml:space="preserve">
+    <value>Ingin hentikan rekaman tayangan langsung ini?</value>
+  </data>
+  <data name="VoipChannelTitle" xml:space="preserve">
+    <value>Judul Tayangan Langsung</value>
+  </data>
+  <data name="VoipChannelTooMuch" xml:space="preserve">
+    <value>Maaf, tayangan langsung penuh.</value>
+  </data>
+  <data name="VoipChannelUserChanged" xml:space="preserve">
+    <value>Penonton tayangan langsung akan melihat Anda sebagai ** {0}**.</value>
+  </data>
+  <data name="VoipChannelUserJoined" xml:space="preserve">
+    <value>**{0}** bergabung ke tayangan langsung.</value>
+  </data>
+  <data name="VoipChannelVideoNotAvailableAdmin" xml:space="preserve">
+    <value>Tayangan langsung lebih dari {0}.
+Peserta baru hanya dapat mendengar aliran suara.</value>
+  </data>
+  <data name="VoipChannelViewVoiceChat" xml:space="preserve">
+    <value>LIHAT TAYANGAN LANGSUNG</value>
+  </data>
+  <data name="VoipChannelVoiceChat" xml:space="preserve">
+    <value>Tayangan Langsung</value>
+  </data>
+  <data name="VoipChatActiveChats" xml:space="preserve">
+    <value>Obrolan video aktif</value>
+  </data>
+  <data name="VoipChatChatJoined" xml:space="preserve">
+    <value>**{0}** bergabung ke obrolan video.</value>
+  </data>
+  <data name="VoipChatDisplayedAs" xml:space="preserve">
+    <value>Anda akan tampil sebagai:</value>
+  </data>
   <data name="VoipChatJoin" xml:space="preserve">
     <value>Gabung</value>
+  </data>
+  <data name="VoipChatLateBy" xml:space="preserve">
+    <value>Tertunda selama</value>
+  </data>
+  <data name="VoipChatRecentCalls" xml:space="preserve">
+    <value>Panggilan terkini</value>
+  </data>
+  <data name="VoipChatReminderHint" xml:space="preserve">
+    <value>Kami akan beri tahu Anda saat obrolan dimulai.</value>
+  </data>
+  <data name="VoipChatShare" xml:space="preserve">
+    <value>Bagikan</value>
+  </data>
+  <data name="VoipChatStartScreenCapture" xml:space="preserve">
+    <value>Bagi Layar</value>
+  </data>
+  <data name="VoipChatStartsIn" xml:space="preserve">
+    <value>Mulai dalam</value>
+  </data>
+  <data name="VoipChatStopScreenCapture" xml:space="preserve">
+    <value>Stop Bagi Layar</value>
+  </data>
+  <data name="VoipChatUserJoined" xml:space="preserve">
+    <value> {0} bergabung ke Obrolan Video</value>
   </data>
   <data name="VoipConnecting" xml:space="preserve">
     <value>Menghubungkan</value>
   </data>
   <data name="VoipDeclineCall" xml:space="preserve">
     <value>Tolak</value>
+  </data>
+  <data name="VoipEditBio" xml:space="preserve">
+    <value>Edit Bio</value>
+  </data>
+  <data name="VoipEditDescription" xml:space="preserve">
+    <value>Edit Deskripsi</value>
+  </data>
+  <data name="VoipEditName" xml:space="preserve">
+    <value>Edit Nama</value>
+  </data>
+  <data name="VoipEditTitle" xml:space="preserve">
+    <value>Edit Judul</value>
+  </data>
+  <data name="VoipEditTitleHint" xml:space="preserve">
+    <value>Judul</value>
   </data>
   <data name="VoipEndCall" xml:space="preserve">
     <value>Tutup</value>
@@ -12771,6 +14591,9 @@ Anda dapat menggunakan a-z, 0-9 dan garis bawah. Karakter minimum adalah 5 karak
   <data name="VoipFlip" xml:space="preserve">
     <value>Balik</value>
   </data>
+  <data name="VoipFrontCamera" xml:space="preserve">
+    <value>KAMERA DEPAN</value>
+  </data>
   <data name="VoipGroupAdd" xml:space="preserve">
     <value>Ya</value>
   </data>
@@ -12786,14 +14609,29 @@ Anda dapat menggunakan a-z, 0-9 dan garis bawah. Karakter minimum adalah 5 karak
   <data name="VoipGroupAllowToSpeak" xml:space="preserve">
     <value>Izinkan Untuk Bicara</value>
   </data>
+  <data name="VoipGroupAudio" xml:space="preserve">
+    <value>Audio</value>
+  </data>
   <data name="VoipGroupAudioRecordSaved" xml:space="preserve">
     <value>Audio disimpan di **Pesan Tersimpan**.</value>
   </data>
   <data name="VoipGroupAudioRecordStarted" xml:space="preserve">
-    <value>Obrolan Suara mulai direkam.</value>
+    <value>Suara mulai direkam.</value>
+  </data>
+  <data name="VoipGroupBioEditAlertText" xml:space="preserve">
+    <value>Anda dapat mengisi info tentang diri Anda. Semua dapat melihat teks ini.</value>
+  </data>
+  <data name="VoipGroupBioEditTitle" xml:space="preserve">
+    <value>Bio</value>
+  </data>
+  <data name="VoipGroupCancelChat" xml:space="preserve">
+    <value>Batal Obrolan Video</value>
   </data>
   <data name="VoipGroupCancelRaiseHand" xml:space="preserve">
     <value>Batalkan Mohon Untuk Bicara</value>
+  </data>
+  <data name="VoipGroupCancelReminder" xml:space="preserve">
+    <value>Batal Pengingat</value>
   </data>
   <data name="VoipGroupConnecting" xml:space="preserve">
     <value>Menghubungkan...</value>
@@ -12814,7 +14652,7 @@ Anda dapat menggunakan a-z, 0-9 dan garis bawah. Karakter minimum adalah 5 karak
     <value>SALIN TAUTAN PEMBICARA</value>
   </data>
   <data name="VoipGroupDisplayAs" xml:space="preserve">
-    <value>Tampilkan Sebagai...</value>
+    <value>Tampil Sebagai</value>
   </data>
   <data name="VoipGroupEditPermissions" xml:space="preserve">
     <value>Edit Izin</value>
@@ -12826,28 +14664,28 @@ Anda dapat menggunakan a-z, 0-9 dan garis bawah. Karakter minimum adalah 5 karak
     <value>Ya</value>
   </data>
   <data name="VoipGroupEndAlertText" xml:space="preserve">
-    <value>Yakin ingin mengakhiri obrolan suara ini? </value>
+    <value>Yakin ingin mengakhiri obrolan video ini? </value>
   </data>
   <data name="VoipGroupEndAlertTitle" xml:space="preserve">
-    <value>Akhiri Obrolan Suara</value>
+    <value>Akhiri Obrolan Video</value>
   </data>
   <data name="VoipGroupEndChat" xml:space="preserve">
-    <value>Akhiri Obrolan Suara</value>
+    <value>Akhiri Obrolan Video</value>
   </data>
   <data name="VoipGroupEndedStartNew" xml:space="preserve">
-    <value>Obrolan Suara berakhir. Mulai yang baru?</value>
+    <value>Obrolan Video berakhir. Mulai yang baru?</value>
   </data>
   <data name="VoipGroupInviteAlreadyParticipant" xml:space="preserve">
-    <value>Pengguna dipilih sudah dalam Obrolan Suara ini.</value>
+    <value>Pengguna dipilih sudah dalam Obrolan Video ini.</value>
   </data>
   <data name="VoipGroupInviteCanSpeak" xml:space="preserve">
     <value>Dapat bicara</value>
   </data>
   <data name="VoipGroupInvitedToVoiceChat" xml:space="preserve">
-    <value>un1 mengundang un2 ke Obrolan Suara</value>
+    <value>un1 mengundang un2 ke Obrolan Video</value>
   </data>
   <data name="VoipGroupInvitedUser" xml:space="preserve">
-    <value>Anda mengundang **{0}** ke Obrolan Suara</value>
+    <value>Anda mengundang **{0}** ke Obrolan Video</value>
   </data>
   <data name="VoipGroupInviteListenOnly" xml:space="preserve">
     <value>Hanya dengar</value>
@@ -12856,16 +14694,16 @@ Anda dapat menggunakan a-z, 0-9 dan garis bawah. Karakter minimum adalah 5 karak
     <value>Undang Anggota</value>
   </data>
   <data name="VoipGroupInviteText" xml:space="preserve">
-    <value>Halo! Bergabung ke Obrolan Suara:{0}</value>
+    <value>Halo! Bergabung ke Obrolan Video:{0}</value>
   </data>
   <data name="VoipGroupJoinAnonymousAdmin" xml:space="preserve">
-    <value>Maaf, Anda tidak dapat bergabung ke Obrolan Suara sebagai admin anonim.</value>
+    <value>Maaf, Anda tidak dapat bergabung ke Obrolan Video sebagai admin anonim.</value>
   </data>
   <data name="VoipGroupJoinAnonymouseAlert" xml:space="preserve">
-    <value>Anda yakin ingin tampil ke obrolan suara dengan profil akun pribadi?</value>
+    <value>Anda yakin ingin tampil ke obrolan video dengan profil akun pribadi?</value>
   </data>
   <data name="VoipGroupJoinAs" xml:space="preserve">
-    <value>Masuk Obrolan Suara sebagai...</value>
+    <value>Masuk Obrolan Video sebagai...</value>
   </data>
   <data name="VoipGroupJoinAsLinstener" xml:space="preserve">
     <value>MASUK SEBAGAI PENDENGAR</value>
@@ -12874,22 +14712,22 @@ Anda dapat menggunakan a-z, 0-9 dan garis bawah. Karakter minimum adalah 5 karak
     <value>MASUK SEBAGAI PEMBICARA</value>
   </data>
   <data name="VoipGroupJoinCall" xml:space="preserve">
-    <value>Gabung Obrolan Suara</value>
+    <value>Gabung Obrolan Video</value>
   </data>
   <data name="VoipGroupJoinVoiceChatUrl" xml:space="preserve">
-    <value>Gabung Obrolan Suara</value>
+    <value>Gabung Obrolan Video</value>
   </data>
   <data name="VoipGroupLeave" xml:space="preserve">
     <value>Keluar</value>
   </data>
   <data name="VoipGroupLeaveAlertEndChat" xml:space="preserve">
-    <value>Akhiri Obrolan Suara</value>
+    <value>Akhiri Obrolan Video</value>
   </data>
   <data name="VoipGroupLeaveAlertText" xml:space="preserve">
-    <value>Anda yakin ingin keluar dari Obrolan Suara ini?</value>
+    <value>Anda yakin ingin keluar dari Obrolan Video ini?</value>
   </data>
   <data name="VoipGroupLeaveAlertTitle" xml:space="preserve">
-    <value>Keluar Obrolan Suara</value>
+    <value>Keluar Obrolan Video</value>
   </data>
   <data name="VoipGroupMute" xml:space="preserve">
     <value>Senyapkan</value>
@@ -12901,22 +14739,25 @@ Anda dapat menggunakan a-z, 0-9 dan garis bawah. Karakter minimum adalah 5 karak
     <value>Senyapkan Untuk Saya</value>
   </data>
   <data name="VoipGroupMuteMemberAlertText" xml:space="preserve">
-    <value>Anda yakin ingin senyapkan {0} di Obrolan Suara ini?</value>
+    <value>Anda yakin ingin senyapkan {0} di Obrolan Video ini?</value>
   </data>
   <data name="VoipGroupMuteMemberAlertTitle" xml:space="preserve">
     <value>Senyapkan mikrofon</value>
   </data>
   <data name="VoipGroupOffline" xml:space="preserve">
-    <value>Anda sedang tak terhubung. Sambungkan ke Internet untuk bergabung ke Obrolan Suara.</value>
+    <value>Anda sedang tak terhubung. Sambungkan ke Internet untuk bergabung ke Obrolan Video.</value>
   </data>
   <data name="VoipGroupOfflineAirplane" xml:space="preserve">
-    <value>Mode pesawat terbang diaktifkan. Mohon matikan atau sambungkan ke WI-FI untuk bergabung ke Obrolan Suara.</value>
+    <value>Mode pesawat terbang diaktifkan. Mohon matikan atau sambungkan ke WI-FI untuk bergabung ke Obrolan Video.</value>
   </data>
   <data name="VoipGroupOnlyAdminsCanSpeak" xml:space="preserve">
     <value>Peserta baru disenyapkan</value>
   </data>
   <data name="VoipGroupOpenChannel" xml:space="preserve">
     <value>Buka Channel</value>
+  </data>
+  <data name="VoipGroupOpenChat" xml:space="preserve">
+    <value>Buka Obrolan</value>
   </data>
   <data name="VoipGroupOpenGroup" xml:space="preserve">
     <value>Buka Grup</value>
@@ -12925,16 +14766,16 @@ Anda dapat menggunakan a-z, 0-9 dan garis bawah. Karakter minimum adalah 5 karak
     <value>Buka Profil</value>
   </data>
   <data name="VoipGroupOpenVoiceChat" xml:space="preserve">
-    <value>Buka Obrolan Suara</value>
+    <value>Buka Obrolan Video</value>
   </data>
   <data name="VoipGroupPersonalAccount" xml:space="preserve">
     <value>akun pribadi</value>
   </data>
   <data name="VoipGroupRecordCall" xml:space="preserve">
-    <value>Mulai rekam</value>
+    <value>Mulai Rekam</value>
   </data>
   <data name="VoipGroupRecording" xml:space="preserve">
-    <value>Obrolan Suara sedang direkam</value>
+    <value>Aliran audio sedang direkam</value>
   </data>
   <data name="VoipGroupRemovedFromGroup" xml:space="preserve">
     <value>**{0}** dikeluarkan dari grup.</value>
@@ -12943,22 +14784,49 @@ Anda dapat menggunakan a-z, 0-9 dan garis bawah. Karakter minimum adalah 5 karak
     <value>Anda ingin keluarkan {0} dari grup?</value>
   </data>
   <data name="VoipGroupRemoveMemberAlertText2" xml:space="preserve">
-    <value>Anda ingin mengeluarkan {0} dari obrolan suara dan blokir di {1}?</value>
+    <value>Anda ingin mengeluarkan {0} dari obrolan video dan blokir di {1}?</value>
   </data>
   <data name="VoipGroupRemoveMemberAlertTitle" xml:space="preserve">
     <value>Keluarkan Anggota</value>
   </data>
+  <data name="VoipGroupRemoveMemberAlertTitle2" xml:space="preserve">
+    <value>Keluarkan Peserta</value>
+  </data>
   <data name="VoipGroupSaveFileHint" xml:space="preserve">
     <value>Judul Rekaman</value>
+  </data>
+  <data name="VoipGroupScheduledVoiceChat" xml:space="preserve">
+    <value>Obrolan Video Terjadwal</value>
+  </data>
+  <data name="VoipGroupScheduleInfo" xml:space="preserve">
+    <value>Anggota grup ini akan diberi tahu saat obrolan video dimulai dalam {0}.</value>
+  </data>
+  <data name="VoipGroupScheduleVoiceChat" xml:space="preserve">
+    <value>Jadwal Obrolan Video</value>
   </data>
   <data name="VoipGroupSearchMembers" xml:space="preserve">
     <value>Cari anggota untuk diundang...</value>
   </data>
+  <data name="VoipGroupSetReminder" xml:space="preserve">
+    <value>Pasang Pengingat</value>
+  </data>
   <data name="VoipGroupShareInviteLink" xml:space="preserve">
-    <value>Kirim tautan</value>
+    <value>Kirim Tautan</value>
+  </data>
+  <data name="VoipGroupShareLink" xml:space="preserve">
+    <value>Bagi Tautan Undangan</value>
+  </data>
+  <data name="VoipGroupSoundMuted" xml:space="preserve">
+    <value>Suara pada obrolan disenyapkan.</value>
+  </data>
+  <data name="VoipGroupSoundUnmuted" xml:space="preserve">
+    <value>Suara pada Obrolan dibunyikan.</value>
+  </data>
+  <data name="VoipGroupStart2" xml:space="preserve">
+    <value>Anggota grup ini akan diberi tahu sesaat Anda memulai obrolan video.</value>
   </data>
   <data name="VoipGroupStartAs" xml:space="preserve">
-    <value>Mulai Obrolan Suara sebagai...</value>
+    <value>Mulai Obrolan Video sebagai...</value>
   </data>
   <data name="VoipGroupStartAsInfo" xml:space="preserve">
     <value>Pilih tampilan profil Anda sebagai akun pribadi atau channel Anda.</value>
@@ -12966,28 +14834,39 @@ Anda dapat menggunakan a-z, 0-9 dan garis bawah. Karakter minimum adalah 5 karak
   <data name="VoipGroupStartAsInfoGroup" xml:space="preserve">
     <value>Pilih tampilan profil Anda sebagai akun pribadi, grup atau salah satu channel Anda.</value>
   </data>
+  <data name="VoipGroupStartNow" xml:space="preserve">
+    <value>Mulai Sekarang</value>
+  </data>
   <data name="VoipGroupStartRecordingText" xml:space="preserve">
-    <value>Apakah Anda ingin mulai merekam obrolan ini dan menyimpan hasilnya menjadi berkas audio?
+    <value>Ingin merekam obrolan ini dan menyimpan hasilnya sebagai berkas audio?
 
 Peserta lain akan mengetahui obrolan sedang direkam.</value>
   </data>
   <data name="VoipGroupStartRecordingTitle" xml:space="preserve">
     <value>Mulai Rekam</value>
   </data>
+  <data name="VoipGroupStartRecordingVideoText" xml:space="preserve">
+    <value>Anda ingin rekam obrolan ini dan menyimpan dalam bentuk berkas video?
+
+Penonton akan melihat bahwa obrolan sedang direkam.</value>
+  </data>
+  <data name="VoipGroupStartVoiceChat" xml:space="preserve">
+    <value>Mulai Obrolan Video</value>
+  </data>
   <data name="VoipGroupStopRecordCall" xml:space="preserve">
     <value>Stop rekam</value>
   </data>
   <data name="VoipGroupStopRecordingText" xml:space="preserve">
-    <value>Anda ingin berhenti merekam obrolan ini?</value>
+    <value>Anda ingin berhenti merekam obrolan video ini?</value>
   </data>
   <data name="VoipGroupStopRecordingTitle" xml:space="preserve">
     <value>Berhenti merekam</value>
   </data>
   <data name="VoipGroupTitle" xml:space="preserve">
-    <value>Judul Obrolan Suara</value>
+    <value>Judul Obrolan Video</value>
   </data>
   <data name="VoipGroupTooMuch" xml:space="preserve">
-    <value>Maaf, obrolan suara sudah penuh.</value>
+    <value>Maaf, obrolan video sudah penuh.</value>
   </data>
   <data name="VoipGroupUnmute" xml:space="preserve">
     <value>Bunyikan</value>
@@ -13008,16 +14887,22 @@ Peserta lain akan mengetahui obrolan sedang direkam.</value>
     <value>**{0}** sekarang disenyapkan untuk Anda.</value>
   </data>
   <data name="VoipGroupUserChanged" xml:space="preserve">
-    <value>Peserta obrolan suara akan melihat Anda sebagai **{0}**.</value>
+    <value>Peserta obrolan video akan melihat Anda sebagai **{0}**.</value>
   </data>
   <data name="VoipGroupUserRemove" xml:space="preserve">
     <value>Keluarkan</value>
   </data>
+  <data name="VoipGroupVideoRecordSaved" xml:space="preserve">
+    <value>Video disimpan di **Pesan Tersimpan**.</value>
+  </data>
+  <data name="VoipGroupVideoRecordStarted" xml:space="preserve">
+    <value>Rekaman video dimulai.</value>
+  </data>
   <data name="VoipGroupViewVoiceChat" xml:space="preserve">
-    <value>LIHAT OBROLAN  </value>
+    <value>LIHAT OBROLAN VIDEO</value>
   </data>
   <data name="VoipGroupVoiceChat" xml:space="preserve">
-    <value>Obrolan Suara</value>
+    <value>Obrolan Video</value>
   </data>
   <data name="VoipGroupVolume" xml:space="preserve">
     <value>Volume</value>
@@ -13049,6 +14934,9 @@ Peserta lain akan mengetahui obrolan sedang direkam.</value>
   <data name="VoipInVideoCallBrandingWithName" xml:space="preserve">
     <value>Panggilan Video Telegram ke  {0}</value>
   </data>
+  <data name="VoipLiveStream" xml:space="preserve">
+    <value>Tayangan Berlangsung</value>
+  </data>
   <data name="VoipMute" xml:space="preserve">
     <value>Senyapkan</value>
   </data>
@@ -13070,11 +14958,23 @@ Peserta lain akan mengetahui obrolan sedang direkam.</value>
   <data name="VoipMutedTapForSpeak" xml:space="preserve">
     <value>Ketuk jika ingin bicara</value>
   </data>
+  <data name="VoipNeedCameraPermission" xml:space="preserve">
+    <value>Telegram butuh akses kamera di ponsel agar Anda dapat membuat panggilan video.</value>
+  </data>
   <data name="VoipNeedMicCameraPermission" xml:space="preserve">
     <value>Telegram membutuhkan akses ke mikrofon dan kamera agar Anda dapat membuat panggilan video. </value>
   </data>
   <data name="VoipNeedMicPermission" xml:space="preserve">
     <value>Telegram membutuhkan akses mikrofon sehingga Anda dapat memulai panggilan.</value>
+  </data>
+  <data name="VoipNoiseCancellation" xml:space="preserve">
+    <value>Peredam Bising</value>
+  </data>
+  <data name="VoipNoiseCancellationDisabled" xml:space="preserve">
+    <value>Non Aktif</value>
+  </data>
+  <data name="VoipNoiseCancellationEnabled" xml:space="preserve">
+    <value>Aktif</value>
   </data>
   <data name="VoipNotificationSettings" xml:space="preserve">
     <value>Panggilan  </value>
@@ -13098,19 +14998,19 @@ Peserta lain akan mengetahui obrolan sedang direkam.</value>
     <value>Akhiri panggilan dengan {0} dan memulai yang baru dengan {1}?</value>
   </data>
   <data name="VoipOngoingAlert2" xml:space="preserve">
-    <value>Akhiri panggilan dengan {0} dan mulai Obrolan Suara di {1}?</value>
+    <value>Akhiri panggilan dengan {0} dan mulai Obrolan Video di {1}?</value>
   </data>
   <data name="VoipOngoingAlertTitle" xml:space="preserve">
     <value>Panggilan lain masuk</value>
   </data>
   <data name="VoipOngoingChatAlert" xml:space="preserve">
-    <value>Keluar Obrolan Suara di  {0} dan bergabung di {1}?</value>
+    <value>Keluar Obrolan Video di  {0} dan bergabung di {1}?</value>
   </data>
   <data name="VoipOngoingChatAlert2" xml:space="preserve">
-    <value>Keluar Obrolan Suara di {0} dan hubungi {1}?</value>
+    <value>Keluar Obrolan Video di {0} dan hubungi {1}?</value>
   </data>
   <data name="VoipOngoingChatAlertTitle" xml:space="preserve">
-    <value>Obrolan suara lain berlangsung</value>
+    <value>Obrolan video lain berlangsung</value>
   </data>
   <data name="VoipOutgoingCall" xml:space="preserve">
     <value>Panggilan Telegram berlangsung</value>
@@ -13122,13 +15022,16 @@ Peserta lain akan mengetahui obrolan sedang direkam.</value>
     <value>Aplikasi **{0}** menggunakan protokol yang tidak kompatibel. Mereka harus memperbarui aplikasi sebelum Anda membuat panggilan.</value>
   </data>
   <data name="VoipPeerOutdated" xml:space="preserve">
-    <value>**{0}** menggunakan aplikasi tidak mendukung panggilan suara. Mereka harus memperbarui aplikasi sebelum Anda membuat panggilan.</value>
+    <value>Aplikasi **{0}** tidak mendukung panggilan. Mereka harus memperbarui aplikasi sebelum Anda dapat membuat panggilan.</value>
   </data>
   <data name="VoipPeerVideoOutdated" xml:space="preserve">
     <value>Maaf, **{0}** menggunakan Telegram versi lama yang tidak Mendukung Video Call</value>
   </data>
   <data name="VoipPeerVideoOutdatedMakeVoice" xml:space="preserve">
     <value>Buat panggilan suara</value>
+  </data>
+  <data name="VoipPhoneScreen" xml:space="preserve">
+    <value>LAYAR PONSEL</value>
   </data>
   <data name="VoipQuickReplies" xml:space="preserve">
     <value>Balas Cepat</value>
@@ -13142,6 +15045,24 @@ Peserta lain akan mengetahui obrolan sedang direkam.</value>
   <data name="VoipReconnecting" xml:space="preserve">
     <value>Menghubungkan...</value>
   </data>
+  <data name="VoipRecordAudio" xml:space="preserve">
+    <value>HANYA SUARA</value>
+  </data>
+  <data name="VoipRecordLandscape" xml:space="preserve">
+    <value>VIDEO LANSKAP</value>
+  </data>
+  <data name="VoipRecordPortrait" xml:space="preserve">
+    <value>VIDEO POTRET</value>
+  </data>
+  <data name="VoipRecordStart" xml:space="preserve">
+    <value>Mulai Rekaman</value>
+  </data>
+  <data name="VoipRecordVoiceChat" xml:space="preserve">
+    <value>Rekam obrolan video</value>
+  </data>
+  <data name="VoipRecordVoiceChatInfo" xml:space="preserve">
+    <value>Pilih bagaimana rekam obrolan ini</value>
+  </data>
   <data name="VoipRequesting" xml:space="preserve">
     <value>Memohon</value>
   </data>
@@ -13151,8 +15072,17 @@ Peserta lain akan mengetahui obrolan sedang direkam.</value>
   <data name="VoipRingtoneInfo" xml:space="preserve">
     <value>Kamu dapat menyesuaikan dering ketika kontak ini memanggil Anda di Telegram.</value>
   </data>
+  <data name="VoipSelectAudioOutput" xml:space="preserve">
+    <value>Pilih keluaran audio</value>
+  </data>
+  <data name="VoipSetNewPhoto" xml:space="preserve">
+    <value>Pasang Foto Baru</value>
+  </data>
   <data name="VoipSettingsRingtone" xml:space="preserve">
     <value>Dering</value>
+  </data>
+  <data name="VoipShareVideo" xml:space="preserve">
+    <value>Bagi Video</value>
   </data>
   <data name="VoipSpeaker" xml:space="preserve">
     <value>Pengeras </value>
@@ -13169,6 +15099,9 @@ Peserta lain akan mengetahui obrolan sedang direkam.</value>
   <data name="VoipSwitchToVideoCall" xml:space="preserve">
     <value>Pindah ke Panggilan Video?</value>
   </data>
+  <data name="VoipTapToAddBio" xml:space="preserve">
+    <value>Ketuk untuk pasang bio</value>
+  </data>
   <data name="VoipTapToMute" xml:space="preserve">
     <value>Mikrofon Nyala</value>
   </data>
@@ -13184,11 +15117,35 @@ Peserta lain akan mengetahui obrolan sedang direkam.</value>
   <data name="VoipUserMicrophoneIsOff" xml:space="preserve">
     <value>Mikrofon {0}  tidak aktif</value>
   </data>
+  <data name="VoipVideoNotAvailable" xml:space="preserve">
+    <value>Untuk menonton tayangan langsung,
+perbaru ke versi terbaru.</value>
+  </data>
+  <data name="VoipVideoNotAvailableAdmin" xml:space="preserve">
+    <value>Obrolan video lebih dari {0} anggota.
+Peserta baru hanya dapat akses audio. </value>
+  </data>
+  <data name="VoipVideoOnPause" xml:space="preserve">
+    <value>Video dijeda</value>
+  </data>
+  <data name="VoipVideoPrivateScreenSharing" xml:space="preserve">
+    <value>Semua di layar termasuk notifikasi akan terlihat.</value>
+  </data>
+  <data name="VoipVideoScreenSharing" xml:space="preserve">
+    <value>Anda sedang berbagi layar </value>
+  </data>
+  <data name="VoipVideoScreenSharingTwoLines" xml:space="preserve">
+    <value>Anda sedang
+berbagi layar</value>
+  </data>
+  <data name="VoipVideoScreenStopSharing" xml:space="preserve">
+    <value>STOP BAGIKAN</value>
+  </data>
   <data name="VoipVideoUnavailable" xml:space="preserve">
     <value>Video</value>
   </data>
   <data name="VoipVoiceChat" xml:space="preserve">
-    <value>Obrolan Suara Berlangsung</value>
+    <value>Obrolan Video Berlangsung</value>
   </data>
   <data name="VoipWaiting" xml:space="preserve">
     <value>Menunggu</value>
@@ -13222,6 +15179,9 @@ Peserta lain akan mengetahui obrolan sedang direkam.</value>
   </data>
   <data name="Warmth" xml:space="preserve">
     <value>Warmth</value>
+  </data>
+  <data name="Warning" xml:space="preserve">
+    <value>Warning</value>
   </data>
   <data name="WebSessionsTitle" xml:space="preserve">
     <value>Masuk Dengan Telegram</value>
@@ -13364,6 +15324,9 @@ Kode kunci aplikasi **tidak akan mempengaruhi** widget di layar beranda.</value>
   <data name="YouLeft" xml:space="preserve">
     <value>Anda keluar grup ini</value>
   </data>
+  <data name="YourBioChanged" xml:space="preserve">
+    <value>Bio diperbarui.</value>
+  </data>
   <data name="YourCode" xml:space="preserve">
     <value>Verifikasi telepon</value>
   </data>
@@ -13413,11 +15376,27 @@ Jika Anda lupa katasandi Anda, Anda akan kehilangan akses akun Telegram Anda. Ti
   <data name="YourName" xml:space="preserve">
     <value>Nama Anda</value>
   </data>
+  <data name="YourNameChanged" xml:space="preserve">
+    <value>Nama diperbarui.</value>
+  </data>
   <data name="YourPassword" xml:space="preserve">
     <value>Kata Sandi Anda</value>
   </data>
   <data name="YourPasswordChangedSuccessText" xml:space="preserve">
     <value>Kata sandi untuk Verifikasi Dua Langkah sudah diganti.</value>
+  </data>
+  <data name="YourPasswordHeader" xml:space="preserve">
+    <value>Kata sandi Anda</value>
+  </data>
+  <data name="YourPasswordRemember" xml:space="preserve">
+    <value>Akun Anda dilindungi oleh Verifikasi 2 Langkah.
+Apakah Anda masih ingat kata sandi Anda?</value>
+  </data>
+  <data name="YourPasswordRememberNo" xml:space="preserve">
+    <value>Tidak yakin</value>
+  </data>
+  <data name="YourPasswordRememberYes" xml:space="preserve">
+    <value>Iya, tentu saja</value>
   </data>
   <data name="YourPasswordSuccess" xml:space="preserve">
     <value>Berhasil!</value>
@@ -13427,6 +15406,12 @@ Jika Anda lupa katasandi Anda, Anda akan kehilangan akses akun Telegram Anda. Ti
   </data>
   <data name="YourPhone" xml:space="preserve">
     <value>No Telepon Anda</value>
+  </data>
+  <data name="YouSenderNameHidden" xml:space="preserve">
+    <value>Anda (nama pengirim disembuyikan)</value>
+  </data>
+  <data name="YouSendersNameHidden" xml:space="preserve">
+    <value>Anda (nama pengirim disembunyikan)</value>
   </data>
   <data name="YouWereKicked" xml:space="preserve">
     <value>Anda dikeluarkan dari grup</value>

@@ -42,7 +42,7 @@ namespace Unigram.Views.Supergroups
             }
 
             var photo = content.Children[0] as ProfilePicture;
-            photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 36);
+            photo.SetChat(ViewModel.ProtoService, chat, 36);
 
             button.Command = ViewModel.LinkCommand;
             button.CommandParameter = chat;

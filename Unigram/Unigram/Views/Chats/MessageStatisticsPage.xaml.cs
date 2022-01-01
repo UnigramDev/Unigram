@@ -35,7 +35,7 @@ namespace Unigram.Views.Chats
 
         public void UpdateChatPhoto(Chat chat)
         {
-            Photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 36);
+            Photo.SetChat(ViewModel.ProtoService, chat, 36);
         }
 
         #endregion
@@ -95,7 +95,7 @@ namespace Unigram.Views.Chats
             title.Text = chat.Title;
             subtitle.Text = Locale.Declension("Views", message.InteractionInfo?.ViewCount ?? 0);
 
-            photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 36);
+            photo.SetChat(ViewModel.ProtoService, chat, 36);
 
             button.CommandParameter = message;
             button.Command = ViewModel.OpenPostCommand;

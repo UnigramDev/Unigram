@@ -9,6 +9,7 @@ using Unigram.Native.Calls;
 using Unigram.Navigation;
 using Unigram.Services;
 using Windows.Devices.Enumeration;
+using Windows.System.Display;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.ViewManagement;
@@ -47,6 +48,8 @@ namespace Unigram.Views
 
         private readonly DispatcherTimer _debugTimer;
         private readonly DispatcherTimer _durationTimer;
+
+        private readonly DisplayRequest _displayRequest = new();
 
         private bool _viewfinderPressed;
         private Vector2 _viewfinderDelta;
@@ -253,6 +256,11 @@ namespace Unigram.Views
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                _displayRequest.RequestActive();
+            }
+            catch { }
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -261,6 +269,12 @@ namespace Unigram.Views
 
             BackgroundPanel.RemoveFromVisualTree();
             Viewfinder.RemoveFromVisualTree();
+
+            try
+            {
+                _displayRequest.RequestRelease();
+            }
+            catch { }
         }
 
         public void Dispose()
@@ -411,7 +425,7 @@ namespace Unigram.Views
             var user = _cacheService.GetUser(call.UserId);
             if (user != null)
             {
-                Image.Source = PlaceholderHelper.GetUser(_protoService, user, 144);
+                Image.SetUser(_protoService, user, 144);
 
                 //if (user.ProfilePhoto != null)
                 //{

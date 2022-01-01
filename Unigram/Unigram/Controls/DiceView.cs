@@ -109,7 +109,7 @@ namespace Unigram.Controls
             base.OnApplyTemplate();
         }
 
-        private void Load()
+        private bool Load()
         {
             if (_unloaded && _layoutRoot != null && _layoutRoot.IsLoaded)
             {
@@ -127,7 +127,11 @@ namespace Unigram.Controls
 
                 _unloaded = false;
                 SetValue(_previousState, _previous);
+
+                return true;
             }
+
+            return false;
         }
 
         private void OnLoading(FrameworkElement sender, object args)
@@ -141,6 +145,11 @@ namespace Unigram.Controls
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            Unload();
+        }
+
+        public void Unload()
         {
             _shouldPlay = false;
             _unloaded = true;
@@ -319,7 +328,7 @@ namespace Unigram.Controls
         public async void SetValue(DiceStickers state, int newValue)
         {
             var canvas = _canvas;
-            if (canvas == null)
+            if (canvas == null  && !Load())
             {
                 _previous = newValue;
                 _previousState = state;
@@ -373,13 +382,13 @@ namespace Unigram.Controls
             {
                 if (state is DiceStickersSlotMachine slotMachine)
                 {
-                    animations[0] = _backAnimation ??= LottieAnimation.LoadFromFile(slotMachine.Background.StickerValue.Local.Path, false, null);
-                    animations[1] = LottieAnimation.LoadFromData(MergeReels(slotMachine), $"{newValue}", false, null);
-                    animations[2] = _frontAnimation ??= LottieAnimation.LoadFromFile(slotMachine.Lever.StickerValue.Local.Path, false, null);
+                    animations[0] = _backAnimation ??= LottieAnimation.LoadFromFile(slotMachine.Background.StickerValue.Local.Path, _frameSize, false, null);
+                    animations[1] = LottieAnimation.LoadFromData(MergeReels(slotMachine), _frameSize, $"{newValue}", false, null);
+                    animations[2] = _frontAnimation ??= LottieAnimation.LoadFromFile(slotMachine.Lever.StickerValue.Local.Path, _frameSize, false, null);
                 }
                 else if (state is DiceStickersRegular regular)
                 {
-                    animations[1] = LottieAnimation.LoadFromFile(regular.Sticker.StickerValue.Local.Path, false, null);
+                    animations[1] = LottieAnimation.LoadFromFile(regular.Sticker.StickerValue.Local.Path, _frameSize, false, null);
                 }
             });
 

@@ -32,6 +32,9 @@ namespace Unigram.Common
         private static bool? _isMediaSupported;
         public static bool IsMediaSupported => _isMediaSupported ??= NativeUtils.IsMediaSupported();
 
+        private static bool? _isWindows11;
+        public static bool IsWindows11 => _isWindows11 ??= IsBuildOrGreater(22000);
+
         private static ulong? _build;
         public static bool IsBuildOrGreater(ulong compare)
         {

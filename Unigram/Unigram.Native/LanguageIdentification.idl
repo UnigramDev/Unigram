@@ -1,0 +1,8 @@
+namespace Unigram.Native
+{
+    [default_interface]
+    runtimeclass LanguageIdentification 
+    {
+        static String IdentifyLanguage(String text);
+    }
+}

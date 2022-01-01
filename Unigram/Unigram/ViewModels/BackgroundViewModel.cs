@@ -85,7 +85,7 @@ namespace Unigram.ViewModels
             else if (background.Type is BackgroundTypePattern typePattern)
             {
                 fill = typePattern.Fill;
-                Intensity = typePattern.Intensity;
+                Intensity = typePattern.IsInverted ? -typePattern.Intensity : typePattern.Intensity;
                 IsBlurEnabled = false;
             }
             else if (background.Type is BackgroundTypeWallpaper typeWallpaper)
@@ -231,6 +231,11 @@ namespace Unigram.ViewModels
 
         public Color GetPatternForeground()
         {
+            if (_intensity < 0)
+            {
+                return Colors.Black;
+            }
+
             if (!_color1.IsEmpty && !_color2.IsEmpty)
             {
                 return ColorEx.GetPatternColor(ColorEx.GetAverageColor(_color1, _color2));
@@ -297,7 +302,7 @@ namespace Unigram.ViewModels
             {
                 Set(ref _selectedPattern, value);
 
-                if (value != null && _item?.Type is BackgroundTypeFill || _item?.Type is BackgroundTypePattern)
+                if (value != _item && ((value != null && _item?.Type is BackgroundTypeFill) || _item?.Type is BackgroundTypePattern))
                 {
                     Set(ref _item, value, nameof(Item));
                     Delegate?.UpdateBackground(value);
@@ -408,7 +413,7 @@ namespace Unigram.ViewModels
                     }
                     else if (wallpaper.Type is BackgroundTypePattern)
                     {
-                        type = new BackgroundTypePattern(fill, _intensity, false);
+                        type = new BackgroundTypePattern(fill, Math.Abs(_intensity), _intensity < 0, false);
                     }
                     else if (wallpaper.Type is BackgroundTypeWallpaper)
                     {

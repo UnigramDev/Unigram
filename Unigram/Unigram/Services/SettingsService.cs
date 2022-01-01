@@ -29,7 +29,7 @@ namespace Unigram.Services
 
         DiagnosticsSettings Diagnostics { get; }
 
-        int UserId { get; set; }
+        long UserId { get; set; }
         long PushReceiverId { get; set; }
 
         string FilesDirectory { get; set; }
@@ -44,7 +44,6 @@ namespace Unigram.Services
         bool IsSendByEnterEnabled { get; set; }
         bool IsTextFormattingVisible { get; set; }
         bool IsReplaceEmojiEnabled { get; set; }
-        bool IsLargeEmojiEnabled { get; set; }
         bool IsContactsSyncEnabled { get; set; }
         bool IsContactsSyncRequested { get; set; }
         bool IsContactsSortedByEpoch { get; set; }
@@ -61,6 +60,8 @@ namespace Unigram.Services
 
         bool IsLeftTabsEnabled { get; set; }
 
+        bool IsTranslateEnabled { get; set; }
+
         Vector2 Pencil { get; set; }
 
         DistanceUnits DistanceUnits { get; set; }
@@ -75,6 +76,7 @@ namespace Unigram.Services
 
         string LanguagePackId { get; set; }
         string LanguagePluralId { get; set; }
+        string LanguageBaseId { get; set; }
         string LanguageShownId { get; set; }
 
         string PushToken { get; set; }
@@ -213,29 +215,17 @@ namespace Unigram.Services
 
         #region App version
 
-        public const ulong CurrentVersion = (7UL << 48) | (8UL << 32) | (0UL << 16);
-        public const string CurrentChangelog = @"GROUP VIDEO CALLS AND ANIMATED BACKGROUNDS
+        public const ulong CurrentVersion = (8UL << 48) | (4UL << 32) | (0UL << 16);
+        public const string CurrentChangelog = @"Spoilers and Translation
 
-**Group Video Calls**
-• Start video conferences from Voice Chats in any group.
-• Share your screen or video from your camera with up to 30 participants (limit to be increased soon).
-• Talk without video with an unlimited number of participants.
-• Create voice chats from the info page of any group where you are an admin.
-• Group video calls are supported natively on all devices, including iPads and laptops.
+**Spoilers**
+• Select text when typing and choose 'Spoiler' formatting to hide some or all of the contents of a message.
+• Tap the spoiler animation in chat to reveal its hidden text.
+• Spoiler formatting hides text in chat, as well as in the chat list and notifications.
 
-**Animated Backgrounds**
-• Meet animated backgrounds for chats – first time in a messaging app! These multi-color gradient backgrounds are generated algorithmically and move beautifully every time you send a message.
-• Create your own backgrounds in Appearance Settings by selecting unique combinations of colors and applying any of the dozens of patterns. 
-• Share your animated backgrounds with friends and family to upgrade them to a new level of messaging experience.
-• Choose between dozens of new gorgeous animated backgrounds in Appearance Settings > Background.
-
-**Message Sending Animations**
-• Send messages with improved animations­­ – your input text smoothly transforms into the message bubble as it flies into the chat.
-• Stickers and animated emoji you send jump into the chat from the sticker panel.
-
-**Login Info Reminders**
-• Confirm that your phone number is up to date from the new prompt in Settings.
-• You will now receive a notification from Telegram each time your 2-Step Verification settings are changed.";
+**Translation**
+• Turn on the Translation option in Settings > Languages. 
+• Press and hold a message to translate it into another language.";
 
         public int Session => _session;
 
@@ -331,10 +321,10 @@ namespace Unigram.Services
             set => AddOrUpdateValue(ref _useTestDC, _own, "UseTestDC", value);
         }
 
-        private int? _userId;
-        public int UserId
+        private long? _userId;
+        public long UserId
         {
-            get => _userId ??= GetValueOrDefault(_own, "UserId", 0);
+            get => _userId ??= GetValueOrDefault(_own, "UserId", 0L);
             set
             {
                 _userId = value;
@@ -467,6 +457,13 @@ namespace Unigram.Services
             set => AddOrUpdateValue(ref _isLeftTabsEnabled, _local, "IsLeftTabsEnabled", value);
         }
 
+        private static bool? _isTranslateEnabled;
+        public bool IsTranslateEnabled
+        {
+            get => _isTranslateEnabled ??= GetValueOrDefault(_local, "IsTranslateEnabled", false);
+            set => AddOrUpdateValue(ref _isTranslateEnabled, _local, "IsTranslateEnabled", value);
+        }
+
         private static bool? _fullScreenGallery;
         public bool FullScreenGallery
         {
@@ -500,13 +497,6 @@ namespace Unigram.Services
         {
             get => _isReplaceEmojiEnabled ??= GetValueOrDefault("IsReplaceEmojiEnabled", true);
             set => AddOrUpdateValue(ref _isReplaceEmojiEnabled, "IsReplaceEmojiEnabled", value);
-        }
-
-        private static bool? _isLargeEmojiEnabled;
-        public bool IsLargeEmojiEnabled
-        {
-            get => _isLargeEmojiEnabled ??= GetValueOrDefault(_local, "IsLargeEmojiEnabled", true);
-            set => AddOrUpdateValue(ref _isLargeEmojiEnabled, _local, "IsLargeEmojiEnabled", value);
         }
 
         private bool? _isContactsSyncEnabled;
@@ -628,6 +618,13 @@ namespace Unigram.Services
         {
             get => _languagePluralId ??= GetValueOrDefault(_local, "LanguagePluralId", ApplicationLanguages.Languages[0].Split('-').First());
             set => AddOrUpdateValue(ref _languagePluralId, _local, "LanguagePluralId", value);
+        }
+
+        private string _languageBaseId;
+        public string LanguageBaseId
+        {
+            get => _languageBaseId ??= GetValueOrDefault(_local, "LanguageBaseId", ApplicationLanguages.Languages[0].Split('-').First());
+            set => AddOrUpdateValue(ref _languageBaseId, _local, "LanguageBaseId", value);
         }
 
         private string _languageShownId;

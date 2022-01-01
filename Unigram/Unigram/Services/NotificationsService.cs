@@ -23,8 +23,7 @@ namespace Unigram.Services
 {
     public interface INotificationsService
     {
-        Task RegisterAsync();
-        Task UnregisterAsync();
+        void Register();
         Task CloseAsync();
 
         Task ProcessAsync(Dictionary<string, string> data);
@@ -290,10 +289,7 @@ namespace Unigram.Services
                 return;
             }
 
-            Task.Run(() =>
-            {
-                SoundEffects.Play(SoundEffect.Sent);
-            });
+            Task.Run(() => SoundEffects.Play(SoundEffect.Sent));
         }
 
         public async void Handle(UpdateActiveNotifications update)
@@ -522,12 +518,12 @@ namespace Unigram.Services
             string actions = "";
             if (!string.IsNullOrEmpty(group) && canReply)
             {
-                actions = "<actions><input id='input' type='text' placeHolderContent='ms-resource:Reply' /><action activationType='background' arguments='action=markAsRead&amp;";
+                actions = string.Format("<actions><input id='input' type='text' placeHolderContent='{0}' /><action activationType='background' arguments='action=markAsRead&amp;", Strings.Resources.Reply);
                 actions += launch;
                 //actions += L"' hint-inputId='QuickMessage' content='ms-resource:Send' imageUri='ms-appx:///Assets/Icons/Toast/Send.png'/></actions>";
-                actions += "' content='ms-resource:MarkAsRead'/><action activationType='background' arguments='action=reply&amp;";
+                actions += string.Format("' content='{0}'/><action activationType='background' arguments='action=reply&amp;", Strings.Resources.MarkAsRead);
                 actions += launch;
-                actions += "' content='ms-resource:Send'/></actions>";
+                actions += string.Format("' hint-inputId='input' content='{0}'/></actions>", Strings.Resources.Send);
             }
 
             string audio = "";
@@ -685,68 +681,34 @@ namespace Unigram.Services
             return string.Format(CultureInfo.InvariantCulture, "{0}&amp;session={1}", launch, _protoService.SessionId);
         }
 
-        public async Task RegisterAsync()
+        public void Register()
         {
-            using (await _registrationLock.WaitAsync())
+            var userId = _protoService.Options.MyId;
+            if (userId == 0)
             {
-                var userId = _protoService.Options.MyId;
-                if (userId == 0)
+                return;
+            }
+
+            if (_alreadyRegistered)
+            {
+                return;
+            }
+
+            _alreadyRegistered = true;
+
+            try
+            {
+                if (_settings.PushToken != null)
                 {
-                    return;
-                }
-
-                if (_alreadyRegistered)
-                {
-                    return;
-                }
-
-                _alreadyRegistered = true;
-
-                try
-                {
-                    var channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
-                    if (channel.Uri != _settings.PushToken)
-                    {
-                        var ids = new List<int>();
-
-                        foreach (var settings in TLContainer.Current.ResolveAll<ISettingsService>())
-                        {
-                            if (settings.UseTestDC != _settings.UseTestDC || settings.UserId == _settings.UserId)
-                            {
-                                continue;
-                            }
-
-                            ids.Add(settings.UserId);
-                        }
-
-                        var result = await _protoService.SendAsync(new RegisterDevice(new DeviceTokenWindowsPush(channel.Uri), ids));
-                        if (result is PushReceiverId receiverId)
-                        {
-                            _settings.PushReceiverId = receiverId.Id;
-                            _settings.PushToken = channel.Uri;
-                        }
-                        else
-                        {
-                            _settings.PushReceiverId = 0;
-                            _settings.PushToken = null;
-                        }
-                    }
-
-                    channel.PushNotificationReceived += OnPushNotificationReceived;
-                }
-                catch (Exception)
-                {
-                    _alreadyRegistered = false;
+                    _protoService.Send(new RegisterDevice(new DeviceTokenWindowsPush(string.Empty), new long[0]));
+                    _settings.PushReceiverId = 0;
                     _settings.PushToken = null;
                 }
             }
-        }
-
-        private void OnPushNotificationReceived(PushNotificationChannel sender, PushNotificationReceivedEventArgs args)
-        {
-            if (args.NotificationType == PushNotificationType.Raw)
+            catch (Exception)
             {
-                args.Cancel = true;
+                _alreadyRegistered = false;
+                _settings.PushToken = null;
             }
         }
 
@@ -784,17 +746,6 @@ namespace Unigram.Services
             {
                 return ToastNotificationManager.History;
             }
-        }
-
-        public async Task UnregisterAsync()
-        {
-            _ = _settings.PushToken;
-            //var response = await _protoService.UnregisterDeviceAsync(8, channel);
-            //if (response.IsSucceeded)
-            //{
-            //}
-
-            _settings.PushToken = null;
         }
 
         public async Task CloseAsync()
@@ -865,7 +816,7 @@ namespace Unigram.Services
                     var formatted = Client.Execute(new ParseMarkdown(new FormattedText(messageText, new TextEntity[0]))) as FormattedText;
 
                     var replyToMsgId = data.ContainsKey("msg_id") ? long.Parse(data["msg_id"]) << 20 : 0;
-                    var response = await _protoService.SendAsync(new SendMessage(chat.Id, 0, replyToMsgId, new MessageSendOptions(false, true, null), null, new InputMessageText(formatted, false, false)));
+                    var response = await _protoService.SendAsync(new SendMessage(chat.Id, 0, replyToMsgId, new MessageSendOptions(false, true, false, null), null, new InputMessageText(formatted, false, false)));
 
                     if (chat.Type is ChatTypePrivate && chat.LastMessage != null)
                     {
@@ -1131,7 +1082,7 @@ namespace Unigram.Services
 
             var result = string.Empty;
 
-            if (_protoService.TryGetUser(message.Sender, out User senderUser))
+            if (_protoService.TryGetUser(message.SenderId, out User senderUser))
             {
                 if (ShowFrom(chat))
                 {
@@ -1394,18 +1345,18 @@ namespace Unigram.Services
 
             if (message.IsOutgoing)
             {
-                return cacheService.TryGetUser(message.Sender, out senderUser);
+                return cacheService.TryGetUser(message.SenderId, out senderUser);
             }
 
             if (chat.Type is ChatTypeBasicGroup)
             {
-                return cacheService.TryGetUser(message.Sender, out senderUser);
+                return cacheService.TryGetUser(message.SenderId, out senderUser);
             }
 
             if (chat.Type is ChatTypeSupergroup supergroup)
             {
                 senderUser = null;
-                return !supergroup.IsChannel && cacheService.TryGetUser(message.Sender, out senderUser);
+                return !supergroup.IsChannel && cacheService.TryGetUser(message.SenderId, out senderUser);
             }
 
             senderUser = null;

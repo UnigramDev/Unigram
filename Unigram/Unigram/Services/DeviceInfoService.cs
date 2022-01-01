@@ -51,6 +51,11 @@ namespace Unigram.Services
                 ulong build = (version & 0x00000000FFFF0000L) >> 16;
                 ulong revision = version & 0x000000000000FFFFL;
 
+                if (build >= 22000)
+                {
+                    major = 11;
+                }
+
                 if (minor > 0)
                 {
                     return $"Windows {major}.{minor}";
@@ -61,24 +66,16 @@ namespace Unigram.Services
             }
         }
 
-        public string SystemLanguageCode
-        {
-            get
-            {
-                return GlobalizationPreferences.Languages.Count > 0 ? GlobalizationPreferences.Languages[0] : "en";
-            }
-        }
-
         public string ApplicationVersion
         {
             get
             {
-                //return "4.7";
-
                 var v = Package.Current.Id.Version;
-                return $"{v.Major}.{v.Minor}.{v.Build}";
-                return $"{v.Major}.{v.Minor}.{v.Build}.{v.Revision}";
+                return $"{v.Major}.{v.Minor} ({v.Build})";
             }
         }
+
+        public string SystemLanguageCode => GlobalizationPreferences.Languages.Count > 0
+            ? GlobalizationPreferences.Languages[0] : "en";
     }
 }

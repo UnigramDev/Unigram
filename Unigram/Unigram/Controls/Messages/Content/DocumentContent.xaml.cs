@@ -12,26 +12,13 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public enum MessageContentState
-    {
-        None,
-        Download,
-        Downloading,
-        Uploading,
-        Confirm,
-        Document,
-        Photo,
-        Animation,
-        Ttl,
-        Play,
-        Pause,
-        Theme,
-    }
-
-    public sealed class DocumentContent : Control, IContentWithFile
+    public sealed class DocumentContent : Control, IContent
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
+
+        private string _fileToken;
+        private string _thumbnailToken;
 
         public DocumentContent(MessageViewModel message)
         {
@@ -79,8 +66,9 @@ namespace Unigram.Controls.Messages.Content
 
             Title.Text = document.FileName;
 
-            if (document.Thumbnail != null)
+            if (document.Thumbnail?.File.Id != null)
             {
+                UpdateManager.Subscribe(this, message, document.Thumbnail.File, ref _thumbnailToken, UpdateThumbnail, true);
                 UpdateThumbnail(message, document.Thumbnail, document.Thumbnail.File);
             }
             else
@@ -89,19 +77,16 @@ namespace Unigram.Controls.Messages.Content
                 Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
             }
 
+            UpdateManager.Subscribe(this, message, document.DocumentValue, ref _fileToken, UpdateFile);
             UpdateFile(message, document.DocumentValue);
         }
 
-        public void UpdateMessageContentOpened(MessageViewModel message)
+        private void UpdateFile(object target, File file)
         {
-            if (message.Ttl > 0)
-            {
-                //Timer.Maximum = message.Ttl;
-                //Timer.Value = DateTime.Now.AddSeconds(message.TtlExpiresIn);
-            }
+            UpdateFile(_message, file);
         }
 
-        public void UpdateFile(MessageViewModel message, File file)
+        private void UpdateFile(MessageViewModel message, File file)
         {
             var document = GetContent(message.Content);
             if (document == null || !_templateApplied)
@@ -109,12 +94,7 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            if (document.Thumbnail != null && document.Thumbnail.File.Id == file.Id)
-            {
-                UpdateThumbnail(message, document.Thumbnail, file);
-                return;
-            }
-            else if (document.DocumentValue.Id != file.Id)
+            if (document.DocumentValue.Id != file.Id)
             {
                 return;
             }
@@ -141,7 +121,7 @@ namespace Unigram.Controls.Messages.Content
 
                 Subtitle.Text = FileSizeConverter.Convert(size);
 
-                if (message.Delegate.CanBeDownloaded(message))
+                if (message.Delegate.CanBeDownloaded(document, file))
                 {
                     _message.ProtoService.DownloadFile(file.Id, 32);
                 }
@@ -163,8 +143,24 @@ namespace Unigram.Controls.Messages.Content
             }
         }
 
+        private void UpdateThumbnail(object target, File file)
+        {
+            var document = GetContent(_message.Content);
+            if (document == null || !_templateApplied)
+            {
+                return;
+            }
+
+            UpdateThumbnail(_message, document.Thumbnail, file);
+        }
+
         private void UpdateThumbnail(MessageViewModel message, Thumbnail thumbnail, File file)
         {
+            if (thumbnail.File.Id != file.Id)
+            {
+                return;
+            }
+
             if (file.Local.IsDownloadingCompleted)
             {
                 double ratioX = (double)48 / thumbnail.Width;

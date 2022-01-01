@@ -97,57 +97,6 @@ namespace Unigram.Common
 
 
 
-        private static readonly Dictionary<string, Dictionary<uint, uint>> _replacements;
-
-        static Emoji()
-        {
-            _replacements = new Dictionary<string, Dictionary<uint, uint>>();
-            _replacements["\uD83C\uDFFB"] = new Dictionary<uint, uint>
-            {
-                { 0xf77e41U, 0xca907aU },
-                { 0xffb139U, 0xedc5a5U },
-                { 0xffd140U, 0xf7e3c3U },
-                { 0xffdf79U, 0xfbefd6U },
-            };
-            _replacements["\uD83C\uDFFC"] = new Dictionary<uint, uint>
-            {
-                { 0xf77e41U, 0xaa7c60U },
-                { 0xffb139U, 0xc8a987U },
-                { 0xffd140U, 0xddc89fU },
-                { 0xffdf79U, 0xe6d6b2U },
-            };
-            _replacements["\uD83C\uDFFD"] = new Dictionary<uint, uint>
-            {
-                { 0xf77e41U, 0x8c6148U },
-                { 0xffb139U, 0xad8562U },
-                { 0xffd140U, 0xc49e76U },
-                { 0xffdf79U, 0xd4b188U },
-            };
-            _replacements["\uD83C\uDFFE"] = new Dictionary<uint, uint>
-            {
-                { 0xf77e41U, 0x6e3c2cU },
-                { 0xffb139U, 0x925a34U },
-                { 0xffd140U, 0xa16e46U },
-                { 0xffdf79U, 0xac7a52U },
-            };
-            _replacements["\uD83C\uDFFF"] = new Dictionary<uint, uint>
-            {
-                { 0xf77e41U, 0x291c12U },
-                { 0xffb139U, 0x472a22U },
-                { 0xffd140U, 0x573b30U },
-                { 0xffdf79U, 0x68493cU },
-            };
-        }
-
-        public static Dictionary<uint, uint> GetColorReplacements(string emoji)
-        {
-            if (emoji.Length > 2 && EmojiGroupInternal._skinEmojis.Contains(RemoveModifiers(emoji)) && _replacements.TryGetValue(emoji.Substring(emoji.Length - 2), out Dictionary<uint, uint> replacements))
-            {
-                return replacements;
-            }
-
-            return null;
-        }
 
         private static readonly string[] _modifiers = new string[]
         {

@@ -49,7 +49,37 @@ namespace winrt::Unigram::Native::Calls::implementation
 				.as<winrt::default_interface<VoipVideoCapture>>())->m_impl;
 		}
 
-		impl.requestBroadcastPart = [this](int64_t time, int64_t period, std::function<void(tgcalls::BroadcastPart&&)> done) {
+		impl.requestVideoBroadcastPart = [this](int64_t time, int64_t period, int32_t channel, tgcalls::VideoChannelDescription::Quality quality, std::function<void(tgcalls::BroadcastPart&&)> done) {
+			int scale = 0;
+			switch (period) {
+			case 1000: scale = 0; break;
+			case 500: scale = 1; break;
+			case 250: scale = 2; break;
+			case 125: scale = 3; break;
+			}
+
+			Telegram::Td::Api::GroupCallVideoQuality qualityImpl;
+			switch (quality) {
+			case tgcalls::VideoChannelDescription::Quality::Thumbnail:
+				qualityImpl = Telegram::Td::Api::GroupCallVideoQualityThumbnail();
+				break;
+			case tgcalls::VideoChannelDescription::Quality::Medium:
+				qualityImpl = Telegram::Td::Api::GroupCallVideoQualityMedium();
+				break;
+			case tgcalls::VideoChannelDescription::Quality::Full:
+				qualityImpl = Telegram::Td::Api::GroupCallVideoQualityFull();
+				break;
+			}
+
+			auto task = std::make_shared<BroadcastPartTaskImpl>(time, scale, std::move(done));
+			auto args = winrt::make_self<BroadcastPartRequestedEventArgs>(scale, time, channel, qualityImpl,
+				[task](int64_t time, int64_t response, FilePart filePart) { task->done(time, response, filePart); });
+
+			m_broadcastPartRequested(*this, *args);
+			return task;
+		};
+
+		impl.requestAudioBroadcastPart = [this](int64_t time, int64_t period, std::function<void(tgcalls::BroadcastPart&&)> done) {
 			int scale = 0;
 			switch (period) {
 			case 1000: scale = 0; break;
@@ -59,7 +89,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 			}
 
 			auto task = std::make_shared<BroadcastPartTaskImpl>(time, scale, std::move(done));
-			auto args = winrt::make_self<BroadcastPartRequestedEventArgs>(scale, time,
+			auto args = winrt::make_self<BroadcastPartRequestedEventArgs>(scale, time, 0, nullptr,
 				[task](int64_t time, int64_t response, FilePart filePart) { task->done(time, response, filePart); });
 
 			m_broadcastPartRequested(*this, *args);
@@ -168,6 +198,12 @@ namespace winrt::Unigram::Native::Calls::implementation
 			}
 
 			m_impl->setVideoCapture(m_capturer);
+		}
+	}
+
+	void VoipGroupManager::AddExternalAudioSamples(std::vector<uint8_t>&& samples) {
+		if (m_impl) {
+			m_impl->addExternalAudioSamples(std::move(samples));
 		}
 	}
 

@@ -35,7 +35,8 @@ namespace Unigram.Controls
 
         private bool _isLoopingEnabled = true;
 
-        private readonly LoopThread _thread = LoopThreadPool.Animations.Get();
+        //private readonly LoopThread _thread = LoopThreadPool.Animations.Get();
+        private LoopThread _thread;
         private bool _subscribed;
 
         private bool _unloaded;
@@ -47,6 +48,8 @@ namespace Unigram.Controls
         {
             DefaultStyleKey = typeof(AnimationView);
         }
+
+        public bool LimitFps { get; set; } = true;
 
         protected override void OnApplyTemplate()
         {
@@ -71,7 +74,7 @@ namespace Unigram.Controls
             base.OnApplyTemplate();
         }
 
-        private void Load()
+        private bool Load()
         {
             if (_unloaded && _layoutRoot != null && _layoutRoot.IsLoaded)
             {
@@ -87,7 +90,11 @@ namespace Unigram.Controls
 
                 _unloaded = false;
                 OnSourceChanged(Source, _source);
+
+                return true;
             }
+
+            return false;
         }
 
         private void OnLoading(FrameworkElement sender, object args)
@@ -101,6 +108,11 @@ namespace Unigram.Controls
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            Unload();
+        }
+
+        public void Unload()
         {
             _shouldPlay = false;
             _unloaded = true;
@@ -120,6 +132,8 @@ namespace Unigram.Controls
 
             //_animation?.Dispose();
             _animation = null;
+
+            _thread = null;
         }
 
         private void OnTick(object sender, EventArgs args)
@@ -214,15 +228,14 @@ namespace Unigram.Controls
         private async void OnSourceChanged(IVideoAnimationSource newValue, IVideoAnimationSource oldValue)
         {
             var canvas = _canvas;
-            if (canvas == null)
+            if (canvas == null && !Load())
             {
                 return;
             }
 
             if (newValue == null)
             {
-                _source = null;
-                Subscribe(false);
+                Unload();
                 return;
             }
 
@@ -235,7 +248,7 @@ namespace Unigram.Controls
 
             var shouldPlay = _shouldPlay;
 
-            var animation = await Task.Run(() => VideoAnimation.LoadFromFile(newValue, false, true));
+            var animation = await Task.Run(() => VideoAnimation.LoadFromFile(newValue, false, LimitFps));
             if (animation == null || newValue?.Id != _source?.Id)
             {
                 // The app can't access the file specified
@@ -320,6 +333,22 @@ namespace Unigram.Controls
         private void Subscribe(bool subscribe)
         {
             _subscribed = subscribe;
+
+            if (_thread == null && !LimitFps)
+            {
+                if (_animation != null)
+                {
+                    _thread = LoopThreadPool.Get(_animation.FrameRate);
+                }
+                else
+                {
+                    return;
+                }
+            }
+            else
+            {
+                _thread ??= LoopThreadPool.Animations.Get();
+            }
 
             _thread.Tick -= OnTick;
             LoopThread.Animations.Invalidate -= OnInvalidate;

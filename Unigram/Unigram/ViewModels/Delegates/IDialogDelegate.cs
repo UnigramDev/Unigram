@@ -8,14 +8,17 @@ namespace Unigram.ViewModels.Delegates
 {
     public interface IDialogDelegate : IProfileDelegate
     {
-        void UpdateChatActions(Chat chat, IDictionary<int, ChatAction> actions);
+        void UpdateChatActions(Chat chat, IDictionary<MessageSender, ChatAction> actions);
 
+        void UpdateChatTheme(Chat chat);
         void UpdateChatPermissions(Chat chat);
         void UpdateChatActionBar(Chat chat);
         void UpdateChatHasScheduledMessages(Chat chat);
         void UpdateChatReplyMarkup(Chat chat, MessageViewModel message);
         void UpdateChatUnreadMentionCount(Chat chat, int unreadMentionCount);
         void UpdateChatDefaultDisableNotification(Chat chat, bool defaultDisableNotification);
+        void UpdateChatMessageSender(Chat chat, MessageSender defaultMessageSenderId);
+        void UpdateChatPendingJoinRequests(Chat chat);
 
         void UpdatePinnedMessage();
         void UpdatePinnedMessage(Chat chat, bool known);

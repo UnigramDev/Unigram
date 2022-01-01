@@ -21,8 +21,6 @@ using Windows.ApplicationModel.DataTransfer.ShareTarget;
 using Windows.ApplicationModel.ExtendedExecution;
 using Windows.Foundation;
 using Windows.Media;
-using Windows.Networking.PushNotifications;
-using Windows.Storage;
 using Windows.System.Profile;
 using Windows.UI.Core;
 using Windows.UI.Notifications;
@@ -55,7 +53,7 @@ namespace Unigram
         /// </summary>
         public App()
         {
-            TLContainer.Current.Configure(/*session*/);
+            TLContainer.Current.Configure(out int count);
 
             RequestedTheme = SettingsService.Current.Appearance.GetCalculatedApplicationTheme();
             InitializeComponent();
@@ -75,11 +73,9 @@ namespace Unigram
 
             UnhandledException += (s, args) =>
             {
-                if (args.Exception is NotSupportedException)
-                {
-                    args.Handled = true;
-                }
-                else
+                args.Handled = true;
+
+                if (args.Exception is not NotSupportedException)
                 {
                     Client.Execute(new AddLogMessage(1, "Unhandled exception:\n" + args.Exception.ToString()));
                 }
@@ -90,6 +86,13 @@ namespace Unigram
                 typeof(Microsoft.AppCenter.Analytics.Analytics),
                 typeof(Microsoft.AppCenter.Crashes.Crashes));
 
+            Microsoft.AppCenter.Crashes.Crashes.ShouldProcessErrorReport = error =>
+            {
+#pragma warning disable CS0618 // Type or member is obsolete
+                return error.Exception is not NotSupportedException;
+#pragma warning restore CS0618 // Type or member is obsolete
+            };
+
             Microsoft.AppCenter.Analytics.Analytics.TrackEvent("Windows",
                 new System.Collections.Generic.Dictionary<string, string>
                 {
@@ -97,10 +100,16 @@ namespace Unigram
                     { "Architecture", Package.Current.Id.Architecture.ToString() }
                 });
 
+            Microsoft.AppCenter.Analytics.Analytics.TrackEvent("Instance",
+                new System.Collections.Generic.Dictionary<string, string>
+                {
+                    { "ActiveSessions", $"{count}" },
+                });
+
             Client.SetLogMessageCallback(0, FatalErrorCallback);
 
             var lastMessage = SettingsService.Current.Diagnostics.LastErrorMessage;
-            if (lastMessage != null && lastMessage.Length > 0)
+            if (lastMessage != null && lastMessage.Length > 0 && SettingsService.Current.Diagnostics.LastErrorVersion == Package.Current.Id.Version.Build)
             {
                 SettingsService.Current.Diagnostics.LastErrorMessage = null;
                 SettingsService.Current.Diagnostics.IsLastErrorDiskFull = TdException.IsDiskFullError(lastMessage);
@@ -122,6 +131,7 @@ namespace Unigram
                 message += "Entered background: " + IsBackground;
 
                 SettingsService.Current.Diagnostics.LastErrorMessage = message;
+                SettingsService.Current.Diagnostics.LastErrorVersion = Package.Current.Id.Version.Build;
             }
         }
 
@@ -228,18 +238,18 @@ namespace Unigram
         {
             base.OnBackgroundActivated(args);
 
-            //if (args.TaskInstance.TriggerDetails is AppServiceTriggerDetails appService && string.Equals(appService.CallerPackageFamilyName, Package.Current.Id.FamilyName))
-            //{
-            //    Connection = appService.AppServiceConnection;
-            //    Deferral = args.TaskInstance.GetDeferral();
+            if (args.TaskInstance.TriggerDetails is AppServiceTriggerDetails appService && string.Equals(appService.CallerPackageFamilyName, Package.Current.Id.FamilyName))
+            {
+                Connection = appService.AppServiceConnection;
+                Deferral = args.TaskInstance.GetDeferral();
 
-            //    appService.AppServiceConnection.RequestReceived += AppServiceConnection_RequestReceived;
-            //    args.TaskInstance.Canceled += (s, e) =>
-            //    {
-            //        Deferral.Complete();
-            //    };
-            //}
-            //else
+                appService.AppServiceConnection.RequestReceived += AppServiceConnection_RequestReceived;
+                args.TaskInstance.Canceled += (s, e) =>
+                {
+                    Deferral.Complete();
+                };
+            }
+            else
             {
                 var deferral = args.TaskInstance.GetDeferral();
 
@@ -261,42 +271,6 @@ namespace Unigram
                     if (TLContainer.Current.TryResolve(session, out INotificationsService service))
                     {
                         await service.ProcessAsync(data);
-                    }
-                }
-                else if (args.TaskInstance.TriggerDetails is RawNotification notification)
-                {
-                    static int? GetSession(long id)
-                    {
-                        if (ApplicationData.Current.LocalSettings.Values.TryGet($"User{id}", out int value))
-                        {
-                            return value;
-                        }
-
-                        return null;
-                    }
-
-                    var receiver = Client.Execute(new GetPushReceiverId(notification.Content)) as PushReceiverId;
-                    if (receiver == null)
-                    {
-                        deferral.Complete();
-                        return;
-                    }
-
-                    var session = GetSession(receiver.Id);
-                    if (session == null)
-                    {
-                        deferral.Complete();
-                        return;
-                    }
-
-                    if (TLContainer.Current.TryResolve(session.Value, out IProtoService service))
-                    {
-                        var response = await service.SendAsync(new ProcessPushNotification(notification.Content));
-                        if (response is Error error && error.Code == 406)
-                        {
-                            // xd memes
-                            await Task.Delay(5000);
-                        }
                     }
                 }
 
@@ -433,8 +407,9 @@ namespace Unigram
             }
             catch { }
 
-#if DESKTOP_BRIDGE
-            if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.ApplicationModel.FullTrustProcessLauncher"))
+#if !DESKTOP_BRIDGE
+            if (SettingsService.Current.IsTrayVisible
+                && Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.ApplicationModel.FullTrustProcessLauncher"))
             {
                 try
                 {

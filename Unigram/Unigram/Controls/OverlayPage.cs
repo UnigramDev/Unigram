@@ -457,6 +457,8 @@ namespace Unigram.Controls
         public IDictionary<string, long> CacheKeyToChatId => throw new NotImplementedException();
 
         public event TypedEventHandler<INavigationService, Type> AfterRestoreSavedNavigation;
+        
+        public event EventHandler<NavigatingEventArgs> Navigating;
 
         public void ClearCache(bool removeCachedPagesInBackStack = false)
         {

@@ -51,7 +51,14 @@ namespace Unigram.Controls.Chats
         {
             base.OnApplyTemplate();
 
-            _presenter = GetTemplateChild("ContentBorder") as FrameworkElement;
+            if (ApiInfo.IsWindows11)
+            {
+                _presenter = VisualTreeHelper.GetChild(this, 0) as FrameworkElement;
+            }
+            else
+            {
+                _presenter = GetTemplateChild("ContentBorder") as FrameworkElement;
+            }
 
             DetachEventHandlers();
             AttachEventHandlers();
@@ -327,7 +334,7 @@ namespace Unigram.Controls.Chats
 
         public void IdleStateEntered(InteractionTracker sender, InteractionTrackerIdleStateEnteredArgs args)
         {
-
+            ConfigureAnimations(_visual, null);
         }
 
         public void InteractingStateEntered(InteractionTracker sender, InteractionTrackerInteractingStateEnteredArgs args)

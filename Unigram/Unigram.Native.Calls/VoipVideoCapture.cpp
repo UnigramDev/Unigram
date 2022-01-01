@@ -27,7 +27,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 
 	void VoipVideoCapture::SwitchToDevice(hstring deviceId) {
 		if (m_impl) {
-			m_impl->switchToDevice(string_to_unmanaged(deviceId));
+			m_impl->switchToDevice(string_to_unmanaged(deviceId), false);
 		}
 	}
 

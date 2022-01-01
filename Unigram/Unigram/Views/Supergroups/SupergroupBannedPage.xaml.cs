@@ -126,8 +126,8 @@ namespace Unigram.Views.Supergroups
             args.ItemContainer.Tag = args.Item;
             content.Tag = args.Item;
 
-            var user = ViewModel.ProtoService.GetMessageSender(member.MemberId) as User;
-            if (user == null)
+            var messageSender = ViewModel.ProtoService.GetMessageSender(member.MemberId);
+            if (messageSender == null)
             {
                 return;
             }
@@ -135,7 +135,14 @@ namespace Unigram.Views.Supergroups
             if (args.Phase == 0)
             {
                 var title = content.Children[1] as TextBlock;
-                title.Text = user.GetFullName();
+                if (messageSender is User user)
+                {
+                    title.Text = user.GetFullName();
+                }
+                else if (messageSender is Chat chat)
+                {
+                    title.Text = chat.Title;
+                }
             }
             else if (args.Phase == 1)
             {
@@ -145,7 +152,14 @@ namespace Unigram.Views.Supergroups
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
+                if (messageSender is User user)
+                {
+                    photo.SetUser(ViewModel.ProtoService, user, 36);
+                }
+                else if (messageSender is Chat chat)
+                {
+                    photo.SetChat(ViewModel.ProtoService, chat, 36);
+                }
             }
 
             if (args.Phase < 2)

@@ -8,7 +8,7 @@ using Windows.UI.Xaml.Documents;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed class CallContent : Control, IContent
+    public sealed class CallContent : Windows.UI.Xaml.Controls.Control, IContent
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;

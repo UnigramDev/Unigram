@@ -16,6 +16,9 @@ namespace Unigram.Controls.Messages.Content
 
         private RemoteVideoSource _source;
 
+        private string _fileToken;
+        private string _thumbnailToken;
+
         public VideoContent(MessageViewModel message)
         {
             _message = message;
@@ -69,7 +72,9 @@ namespace Unigram.Controls.Messages.Content
             LayoutRoot.Constraint = message;
             Texture.Source = null;
 
-            UpdateThumbnail(message, video.Thumbnail, video.Minithumbnail);
+            UpdateThumbnail(message, video, video.Thumbnail?.File, true);
+
+            UpdateManager.Subscribe(this, message, video.VideoValue, ref _fileToken, UpdateFile);
             UpdateFile(message, video.VideoValue);
         }
 
@@ -82,7 +87,12 @@ namespace Unigram.Controls.Messages.Content
             }
         }
 
-        public void UpdateFile(MessageViewModel message, File file)
+        private void UpdateFile(object target, File file)
+        {
+            UpdateFile(_message, file);
+        }
+
+        private void UpdateFile(MessageViewModel message, File file)
         {
             var video = GetContent(message.Content);
             if (video == null || !_templateApplied)
@@ -90,12 +100,7 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            if (video.Thumbnail != null && video.Thumbnail.File.Id == file.Id)
-            {
-                UpdateThumbnail(message, video.Thumbnail, null);
-                return;
-            }
-            else if (video.VideoValue.Id != file.Id)
+            if (video.VideoValue.Id != file.Id)
             {
                 return;
             }
@@ -135,7 +140,7 @@ namespace Unigram.Controls.Messages.Content
 
                     Subtitle.Text = string.Format("{0}, {1}", Locale.FormatTtl(message.Ttl, true), FileSizeConverter.Convert(size));
 
-                    if (message.Delegate.CanBeDownloaded(message))
+                    if (message.Delegate.CanBeDownloaded(video, file))
                     {
                         _message.ProtoService.DownloadFile(file.Id, 32);
                     }
@@ -153,7 +158,7 @@ namespace Unigram.Controls.Messages.Content
                 var size = Math.Max(file.Size, file.ExpectedSize);
                 if (file.Local.IsDownloadingActive)
                 {
-                    if (message.Delegate.CanBeDownloaded(message))
+                    if (message.Delegate.CanBeDownloaded(video, file))
                     {
                         UpdateSource(message, file, video.Duration);
                     }
@@ -198,7 +203,7 @@ namespace Unigram.Controls.Messages.Content
 
                     Subtitle.Text = video.GetDuration() + Environment.NewLine + FileSizeConverter.Convert(size);
 
-                    if (message.Delegate.CanBeDownloaded(message))
+                    if (message.Delegate.CanBeDownloaded(video, file))
                     {
                         _message.ProtoService.DownloadFile(file.Id, 32);
                         UpdateSource(message, file, video.Duration);
@@ -210,7 +215,7 @@ namespace Unigram.Controls.Messages.Content
                 }
                 else
                 {
-                    if (message.Delegate.CanBeDownloaded(message))
+                    if (message.Delegate.CanBeDownloaded(video, file))
                     {
                         UpdateSource(message, file, video.Duration);
                     }
@@ -225,29 +230,50 @@ namespace Unigram.Controls.Messages.Content
             }
         }
 
-        private void UpdateThumbnail(MessageViewModel message, Thumbnail thumbnail, Minithumbnail minithumbnail)
+        private void UpdateThumbnail(object target, File file)
         {
-            if (thumbnail != null)
+            var video = GetContent(_message.Content);
+            if (video == null || !_templateApplied)
             {
-                var file = thumbnail.File;
-                if (file.Local.IsDownloadingCompleted && thumbnail.Format is ThumbnailFormatJpeg)
+                return;
+            }
+
+            UpdateThumbnail(_message, video, file, false);
+        }
+
+        private void UpdateThumbnail(MessageViewModel message, Video video, File file, bool download)
+        {
+            var thumbnail = video.Thumbnail;
+            var minithumbnail = video.Minithumbnail;
+
+            if (thumbnail != null && thumbnail.Format is ThumbnailFormatJpeg)
+            {
+                if (file.Local.IsDownloadingCompleted)
                 {
-                    //Texture.Source = new BitmapImage(UriEx.GetLocal(file.Local.Path));
                     Texture.Source = PlaceholderHelper.GetBlurred(file.Local.Path);
                 }
-                else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                else if (download)
                 {
-                    if (minithumbnail != null)
+                    if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                     {
-                        Texture.Source = PlaceholderHelper.GetBlurred(minithumbnail.Data);
+                        if (minithumbnail != null)
+                        {
+                            Texture.Source = PlaceholderHelper.GetBlurred(minithumbnail.Data);
+                        }
+
+                        message.ProtoService.DownloadFile(file.Id, 1);
                     }
 
-                    message.ProtoService.DownloadFile(file.Id, 1);
+                    UpdateManager.Subscribe(this, message, file, ref _thumbnailToken, UpdateThumbnail, true);
                 }
             }
             else if (minithumbnail != null)
             {
                 Texture.Source = PlaceholderHelper.GetBlurred(minithumbnail.Data);
+            }
+            else
+            {
+                Texture.Source = null;
             }
         }
 
@@ -262,10 +288,6 @@ namespace Unigram.Controls.Messages.Content
                 if (_source?.Id != file.Id)
                 {
                     Player.Source = _source = new RemoteVideoSource(message.ProtoService, file, duration);
-                }
-                else
-                {
-                    _source.UpdateFile(file);
                 }
             }
         }
@@ -324,13 +346,13 @@ namespace Unigram.Controls.Messages.Content
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var video = GetContent(_message.Content);
-            if (video == null)
+            if (_message.IsSecret())
             {
                 return;
             }
 
-            if (_message.IsSecret())
+            var video = GetContent(_message.Content);
+            if (video == null)
             {
                 return;
             }

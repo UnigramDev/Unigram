@@ -1,13 +1,10 @@
-﻿using LinqToVisualTree;
-using System;
-using System.Linq;
+﻿using System;
 using System.Text;
 using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Navigation;
 using Unigram.Services;
 using Windows.Foundation;
-using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Input;
 using Windows.UI.ViewManagement;
@@ -129,26 +126,20 @@ namespace Unigram.Controls
                 button.Loaded += PrimaryButton_Loaded;
             }
 
-            var canvas = this.Ancestors().FirstOrDefault() as Canvas;
-            if (canvas == null)
-            {
-                return;
-            }
-
-            var rectangle = canvas.Children[0] as Rectangle;
+            var rectangle = GetTemplateChild("LightDismiss") as Rectangle;
             if (rectangle == null)
             {
                 return;
             }
 
-            if (ActualTheme == ElementTheme.Dark)
-            {
-                rectangle.Fill = new SolidColorBrush(Color.FromArgb(0x99, 0x00, 0x00, 0x00));
-            }
-            else
-            {
-                rectangle.Fill = new SolidColorBrush(Color.FromArgb(0x99, 0xFF, 0xFF, 0xFF));
-            }
+            //if (ActualTheme == ElementTheme.Dark)
+            //{
+            //    rectangle.Fill = new SolidColorBrush(Color.FromArgb(0x99, 0x00, 0x00, 0x00));
+            //}
+            //else
+            //{
+            //    rectangle.Fill = new SolidColorBrush(Color.FromArgb(0x99, 0xFF, 0xFF, 0xFF));
+            //}
 
             rectangle.PointerReleased += Rectangle_PointerReleased;
         }

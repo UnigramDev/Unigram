@@ -1,0 +1,117 @@
+//
+// Copyright (C) 2018 The Android Open Source Project
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+// Flatbuffer schema for Neurosis (FFNN with embeddings) parameters.
+//
+// Contains the same information as an EmbeddingNetworkProto.
+
+namespace libtextclassifier3.saft_fbs;
+
+// NS stands for NeurosiS.  The next two digits are meant to identify
+// incompatible versions.  Ideally, we'll never have to go beyond 00.
+file_identifier "NS00";
+
+// Should be kept in sync with the C++ enum nlp_saft::QuantizationType.
+enum QuantizationType : byte {
+  NONE = 0,
+  UINT8 = 1,
+  UINT4 = 2,
+  FLOAT16 = 3,
+}
+
+table Matrix {
+  // Number of rows of this matrix.
+  rows:int;
+
+  // Number of columns of this matrix.
+  cols:int;
+
+  // Type of quantization used for the values from this matrix.
+  //
+  // If this is QuantizationType_NONE, then the unquantized values should be
+  // stored in |values| below.  Otherwise, the bytes of the quantized values
+  // should be stored in |quantized_values| and the float16 quantization scales
+  // should be stored in |scales|.
+  quantization_type:QuantizationType = NONE;
+
+  // Non-quantized matrix elements, in row-major order.  See comments for
+  // |quantization_type|.
+  values:[float];
+
+  // Quantized matrix elements, in row-major order.  See comments for
+  // |quantization_type|.
+  quantized_values:[ubyte];
+
+  // Quantization factors (float16), one per matrix row.  There is no float16
+  // primitive type for flatbuffers, we just use another 16 bit type.  See
+  // comments for |quantization_type|.
+  scales:[ushort];
+}
+
+// The input layer for a Neurosis network is composed of several parts (named
+// "chunks" below, "embedding spaces" in some other parts, etc).  For each
+// chunk, we have |num_features| features that extract feature values in that
+// chunk.  All values extracted by a feature get projected via the embedding
+// matrix |embedding| and summed together, producing a vector of
+// |embedding.cols| elements.  The resulting vector gets concatenated with the
+// similar vectors for other |num_features| features, producing a "chunk" of
+// |num_features * embedding.cols| elements.  This chunk gets concatenated with
+// the other chunks.
+//
+// Note: the specification that indicates what those |num_features| features are
+// is stored elsewhere (usually in a ModelParameter, see model.fbs).  But we
+// need to know |num_features| here, in order to specify the geometry of the
+// Neurosis network.
+table InputChunk {
+  embedding:Matrix;
+  num_features:int;
+}
+
+// One layer of neurons from the Neurosis network.  This table can represent a
+// hidden layer or the final (output / softmax) layer.
+//
+// Our formalism is a bit different, but equivalent to the usual description
+// from the literature:
+//
+// Technically, in Neurosis, each layer takes an input (a vector of floats); if
+// this is not the first layer, we apply a nonlinear function (ReLU); for the
+// first layer, we skip ReLU.  Next, we multiply by |weights| and add |bias|,
+// get the input for the next level and so on.  The output from the last layer
+// is generally used for softmax classification.  That's why we say that the
+// last layer is the "softmax layer".
+table NeuralLayer {
+  // Weight matrix for this layer.  Geometry: num_inputs x num_neurons, where
+  // num_inputs is the number of values produced by previous layer (which can be
+  // the input layer, or another hidden layer) and num_neurons is the number of
+  // neurons from this layer.
+  weights:Matrix;
+
+  // Bias vector for this layer.
+  //
+  // NOTE: right now, we accept both 1 x num_neurons and num_neurons x 1
+  // geometries: the layout of the elements is the same in both cases.
+  bias:Matrix;
+}
+
+table EmbeddingNetwork {
+  // Specification of the chunks that compose the input layer.
+  input_chunks:[InputChunk];
+
+  // Hidden layers, followed by the final (softmax) layer.
+  layers:[NeuralLayer];
+}
+
+root_type EmbeddingNetwork;

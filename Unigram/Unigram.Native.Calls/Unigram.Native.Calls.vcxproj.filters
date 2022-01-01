@@ -25,9 +25,6 @@
     <ClCompile Include="C:\tgcalls\tgcalls\InstanceImpl.cpp">
       <Filter>tgcalls</Filter>
     </ClCompile>
-    <ClCompile Include="C:\tgcalls\tgcalls\reference\InstanceImplReference.cpp">
-      <Filter>tgcalls\reference</Filter>
-    </ClCompile>
     <ClCompile Include="C:\tgcalls\tgcalls\LogSinkImpl.cpp">
       <Filter>tgcalls</Filter>
     </ClCompile>
@@ -66,9 +63,6 @@
       <Filter>tgcalls\group</Filter>
     </ClCompile>
     <ClCompile Include="C:\tgcalls\tgcalls\group\GroupInstanceCustomImpl.cpp">
-      <Filter>tgcalls\group</Filter>
-    </ClCompile>
-    <ClCompile Include="C:\tgcalls\tgcalls\group\StreamingPart.cpp">
       <Filter>tgcalls\group</Filter>
     </ClCompile>
     <ClCompile Include="C:\tgcalls\tgcalls\AudioDeviceHelper.cpp">
@@ -113,6 +107,21 @@
     <ClCompile Include="C:\tgcalls\tgcalls\platform\uwp\UwpScreenCapturer.cpp">
       <Filter>tgcalls\platform\uwp</Filter>
     </ClCompile>
+    <ClCompile Include="C:\tgcalls\tgcalls\SctpDataChannelProviderInterfaceImpl.cpp">
+      <Filter>tgcalls</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\tgcalls\tgcalls\TurnCustomizerImpl.cpp">
+      <Filter>tgcalls</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\tgcalls\tgcalls\group\AudioStreamingPart.cpp">
+      <Filter>tgcalls\group</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\tgcalls\tgcalls\group\StreamingMediaContext.cpp">
+      <Filter>tgcalls\group</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\tgcalls\tgcalls\group\VideoStreamingPart.cpp">
+      <Filter>tgcalls\group</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -138,9 +147,6 @@
     </ClInclude>
     <ClInclude Include="C:\tgcalls\tgcalls\InstanceImpl.h">
       <Filter>tgcalls</Filter>
-    </ClInclude>
-    <ClInclude Include="C:\tgcalls\tgcalls\reference\InstanceImplReference.h">
-      <Filter>tgcalls\reference</Filter>
     </ClInclude>
     <ClInclude Include="C:\tgcalls\tgcalls\LogSinkImpl.h">
       <Filter>tgcalls</Filter>
@@ -196,9 +202,6 @@
       <Filter>tgcalls\group</Filter>
     </ClInclude>
     <ClInclude Include="C:\tgcalls\tgcalls\group\GroupInstanceCustomImpl.h">
-      <Filter>tgcalls\group</Filter>
-    </ClInclude>
-    <ClInclude Include="C:\tgcalls\tgcalls\group\StreamingPart.h">
       <Filter>tgcalls\group</Filter>
     </ClInclude>
     <ClInclude Include="C:\tgcalls\tgcalls\AudioDeviceHelper.h">
@@ -264,6 +267,21 @@
     <ClInclude Include="C:\tgcalls\tgcalls\platform\uwp\UwpContext.h">
       <Filter>tgcalls\platform\uwp</Filter>
     </ClInclude>
+    <ClInclude Include="C:\tgcalls\tgcalls\SctpDataChannelProviderInterfaceImpl.h">
+      <Filter>tgcalls</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\tgcalls\tgcalls\TurnCustomizerImpl.h">
+      <Filter>tgcalls</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\tgcalls\tgcalls\group\AudioStreamingPart.h">
+      <Filter>tgcalls\group</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\tgcalls\tgcalls\group\StreamingMediaContext.h">
+      <Filter>tgcalls\group</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\tgcalls\tgcalls\group\VideoStreamingPart.h">
+      <Filter>tgcalls\group</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="VoipManager.rc" />
@@ -291,9 +309,6 @@
   <ItemGroup>
     <Filter Include="tgcalls">
       <UniqueIdentifier>{31575539-48de-4331-9d2a-a81bfb48d4b4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="tgcalls\reference">
-      <UniqueIdentifier>{af6df8d7-572c-4870-9a95-a57e13536cdb}</UniqueIdentifier>
     </Filter>
     <Filter Include="tgcalls\platform">
       <UniqueIdentifier>{ed094891-5317-4064-8558-0596ddb40580}</UniqueIdentifier>

@@ -18,8 +18,7 @@ namespace UnigramBridge
         [STAThread]
         static void Main()
         {
-            Mutex mutex = null;
-            if (!Mutex.TryOpenExisting(MUTEX_NAME, out mutex))
+            if (!Mutex.TryOpenExisting(MUTEX_NAME, out Mutex mutex))
             {
                 mutex = new Mutex(false, MUTEX_NAME);
                 Application.EnableVisualStyles();

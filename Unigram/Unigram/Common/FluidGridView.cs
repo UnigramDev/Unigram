@@ -35,6 +35,15 @@ namespace Unigram.Common
             }
         }
 
+        public static void Update(ItemsControl owner)
+        {
+            var triggers = GetTriggers(owner);
+            if (triggers != null && triggers.Owner != null)
+            {
+                SetActive(triggers, GetReference(triggers.Owner));
+            }
+        }
+
         private static void SetActive(FluidGridViewTriggerCollection triggers, WrapGridReference reference)
         {
             if (triggers.Owner.ItemsPanelRoot == null || reference == null)
@@ -69,7 +78,7 @@ namespace Unigram.Common
             if (trigger != null)
             {
                 //var itemLength = trigger.GetItemLength(parentLength - paddingNear - paddingFar);
-                var itemLength = trigger.GetItemLength(parentLength);
+                var itemLength = trigger.GetItemLength(Math.Floor(parentLength));
 
                 if (reference.Orientation == Orientation.Horizontal)
                 {
@@ -443,11 +452,11 @@ namespace Unigram.Common
         {
             if (parentLength <= 400)
             {
-                return parentLength / 4d;
+                return parentLength / 3d;
             }
             else if (parentLength <= 500)
             {
-                return parentLength / 5d;
+                return parentLength / 4d;
             }
             else
             {

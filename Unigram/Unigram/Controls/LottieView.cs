@@ -7,6 +7,7 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
 using Unigram.Common;
@@ -14,11 +15,13 @@ using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.Graphics;
 using Windows.Graphics.DirectX;
+using Windows.Graphics.Display;
 using Windows.Storage;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Controls
 {
@@ -26,6 +29,8 @@ namespace Unigram.Controls
     {
         bool Play();
         void Pause();
+
+        void Unload();
 
         bool IsLoopingEnabled { get; }
 
@@ -66,11 +71,13 @@ namespace Unigram.Controls
 
         private int _index;
         private bool _backward;
+        private bool _flipped;
 
         private bool _isLoopingEnabled = true;
         private bool _isCachingEnabled = true;
 
         private SizeInt32 _frameSize = new SizeInt32 { Width = 256, Height = 256 };
+        private DecodePixelType _decodeFrameType = DecodePixelType.Physical;
 
         private readonly LoopThread _thread;
         private readonly LoopThread _threadUI;
@@ -116,7 +123,7 @@ namespace Unigram.Controls
             base.OnApplyTemplate();
         }
 
-        private void Load()
+        private bool Load()
         {
             if (_unloaded && _layoutRoot != null && _layoutRoot.IsLoaded)
             {
@@ -133,7 +140,11 @@ namespace Unigram.Controls
 
                 _unloaded = false;
                 OnSourceChanged(UriToPath(Source), _source);
+
+                return true;
             }
+
+            return false;
         }
 
         private void OnLoading(FrameworkElement sender, object args)
@@ -147,6 +158,11 @@ namespace Unigram.Controls
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            Unload();
+        }
+        
+        public void Unload()
         {
             _shouldPlay = false;
             _unloaded = true;
@@ -197,7 +213,7 @@ namespace Unigram.Controls
                 _bitmap.Dispose();
             }
 
-            var buffer = ArrayPool<byte>.Shared.Rent(256 * 256 * 4);
+            var buffer = ArrayPool<byte>.Shared.Rent(_frameSize.Width * _frameSize.Height * 4);
             _bitmap = CanvasBitmap.CreateFromBytes(sender, buffer, _frameSize.Width, _frameSize.Height, DirectXPixelFormat.B8G8R8A8UIntNormalized);
             ArrayPool<byte>.Shared.Return(buffer);
 
@@ -213,6 +229,11 @@ namespace Unigram.Controls
             if (_bitmap == null || _animation == null || _unloaded)
             {
                 return;
+            }
+
+            if (_flipped)
+            {
+                args.DrawingSession.Transform = Matrix3x2.CreateScale(-1, 1, sender.Size.ToVector2() / 2);
             }
 
             args.DrawingSession.DrawImage(_bitmap, new Rect(0, 0, sender.Size.Width, sender.Size.Height));
@@ -235,6 +256,11 @@ namespace Unigram.Controls
             else
             {
                 Monitor.Exit(_subscribeLock);
+            }
+
+            if (!_limitFps)
+            {
+                sender.Invalidate();
             }
         }
 
@@ -338,15 +364,14 @@ namespace Unigram.Controls
         private async void OnSourceChanged(string newValue, string oldValue)
         {
             var canvas = _canvas;
-            if (canvas == null)
+            if (canvas == null && !Load())
             {
                 return;
             }
 
             if (newValue == null)
             {
-                _source = null;
-                Subscribe(false);
+                Unload();
                 return;
             }
 
@@ -360,7 +385,7 @@ namespace Unigram.Controls
 
             var shouldPlay = _shouldPlay;
 
-            var animation = await Task.Run(() => LottieAnimation.LoadFromFile(newValue, _isCachingEnabled, ColorReplacements));
+            var animation = await Task.Run(() => LottieAnimation.LoadFromFile(newValue, _frameSize, _isCachingEnabled, ColorReplacements));
             if (animation == null || !string.Equals(newValue, _source, StringComparison.OrdinalIgnoreCase))
             {
                 // The app can't access the file specified
@@ -551,6 +576,24 @@ namespace Unigram.Controls
 
         #endregion
 
+        #region IsFlipped
+
+        public bool IsFlipped
+        {
+            get => (bool)GetValue(IsFlippedProperty);
+            set => SetValue(IsFlippedProperty, value);
+        }
+
+        public static readonly DependencyProperty IsFlippedProperty =
+            DependencyProperty.Register("IsFlipped", typeof(bool), typeof(LottieView), new PropertyMetadata(false, OnFlippedChanged));
+
+        private static void OnFlippedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((LottieView)d)._flipped = (bool)e.NewValue;
+        }
+
+        #endregion
+
         #region FrameSize
 
         public SizeInt32 FrameSize
@@ -564,10 +607,49 @@ namespace Unigram.Controls
 
         private static void OnFrameSizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((LottieView)d)._frameSize = (SizeInt32)e.NewValue;
+            ((LottieView)d).OnFrameSizeChanged((SizeInt32)e.NewValue, ((LottieView)d)._decodeFrameType);
         }
 
         #endregion
+
+        #region DecodeFrameType
+
+        public DecodePixelType DecodeFrameType
+        {
+            get { return (DecodePixelType)GetValue(DecodeFrameTypeProperty); }
+            set { SetValue(DecodeFrameTypeProperty, value); }
+        }
+
+        public static readonly DependencyProperty DecodeFrameTypeProperty =
+            DependencyProperty.Register("DecodeFrameType", typeof(DecodePixelType), typeof(LottieView), new PropertyMetadata(DecodePixelType.Physical, OnDecodeFrameTypeChanged));
+
+        private static void OnDecodeFrameTypeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((LottieView)d).OnFrameSizeChanged(((LottieView)d)._frameSize, (DecodePixelType)e.NewValue);
+        }
+
+        #endregion
+
+        private void OnFrameSizeChanged(SizeInt32 frameSize, DecodePixelType decodeFrameType)
+        {
+            if (decodeFrameType == DecodePixelType.Logical)
+            {
+                // TODO: subscribe for DPI changed event
+                var dpi = DisplayInformation.GetForCurrentView().LogicalDpi / 96.0f;
+
+                _decodeFrameType = decodeFrameType;
+                _frameSize = new SizeInt32
+                {
+                    Width = (int)(frameSize.Width * dpi),
+                    Height = (int)(frameSize.Height * dpi)
+                };
+            }
+            else
+            {
+                _decodeFrameType = decodeFrameType;
+                _frameSize = frameSize;
+            }
+        }
 
         #region AutoPlay
 
@@ -605,6 +687,6 @@ namespace Unigram.Controls
 
         public event EventHandler FirstFrameRendered;
 
-        public IReadOnlyDictionary<uint, uint> ColorReplacements { get; set; }
+        public IReadOnlyDictionary<int, int> ColorReplacements { get; set; }
     }
 }

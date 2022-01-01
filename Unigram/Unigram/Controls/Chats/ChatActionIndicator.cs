@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml.Controls;
+using System;
 using System.Numerics;
 using Telegram.Td.Api;
+using Unigram.Assets.Icons;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -15,7 +17,7 @@ namespace Unigram.Controls.Chats
         // This should be held in memory, or animation will stop
         private CompositionPropertySet _props;
 
-        private Visual _previous;
+        private IAnimatedVisual _previous;
         private AnimationType _action;
 
         private enum AnimationType
@@ -25,7 +27,8 @@ namespace Unigram.Controls.Chats
             Uploading,
             Playing,
             VideoRecording,
-            VoiceRecording
+            VoiceRecording,
+            Watching
         }
 
         public void UpdateAction(ChatAction action)
@@ -48,17 +51,14 @@ namespace Unigram.Controls.Chats
                 _props = null;
             }
 
-            var width = 18f;
-            var height = 8f;
             var color = Fill?.Color ?? Colors.Black;
-
-            var visual = GetVisual(type, Window.Current.Compositor, width, height, color);
+            var visual = GetVisual(type, Window.Current.Compositor, color, out _props);
 
             _action = type;
             _previous = visual;
 
-            ElementCompositionPreview.SetElementChildVisual(this, visual);
-            InvalidateMeasure();
+            ElementCompositionPreview.SetElementChildVisual(this, visual?.RootVisual);
+            InvalidateArrange();
         }
 
         #region Fill
@@ -93,443 +93,146 @@ namespace Unigram.Controls.Chats
                     return AnimationType.VideoRecording;
                 case ChatActionRecordingVoiceNote:
                     return AnimationType.VoiceRecording;
+                case ChatActionChoosingSticker:
+                case ChatActionWatchingAnimations:
+                    return AnimationType.Watching;
                 default:
                     return AnimationType.None;
             }
         }
 
-        private Visual GetVisual(AnimationType action, Compositor compositor, float width, float height, Color color)
+        private IAnimatedVisual GetVisual(AnimationType action, Compositor compositor, Color color, out CompositionPropertySet properties)
+        {
+            var source = GetVisual(action, compositor, color);
+            if (source == null)
+            {
+                properties = null;
+                return null;
+            }
+
+            var visual = source.TryCreateAnimatedVisual(compositor, out _);
+            if (visual == null)
+            {
+                properties = null;
+                return null;
+            }
+
+            var linearEasing = compositor.CreateLinearEasingFunction();
+            var animation = compositor.CreateScalarKeyFrameAnimation();
+            animation.Duration = visual.Duration;
+            animation.InsertKeyFrame(1, 1, linearEasing);
+            animation.IterationBehavior = AnimationIterationBehavior.Forever;
+
+            properties = compositor.CreatePropertySet();
+            properties.InsertScalar("Progress", 0);
+
+            var progressAnimation = compositor.CreateExpressionAnimation("_.Progress");
+            progressAnimation.SetReferenceParameter("_", _props);
+            visual.RootVisual.Properties.InsertScalar("Progress", 0.0F);
+            visual.RootVisual.Properties.StartAnimation("Progress", progressAnimation);
+
+            properties.StartAnimation("Progress", animation);
+
+            return visual;
+        }
+
+        private IAnimatedVisualSource2 GetVisual(AnimationType action, Compositor compositor, Color color)
         {
             switch (action)
             {
                 case AnimationType.Typing:
-                    return GetTyping(compositor, width, height, color);
+                    return new ActionTyping(color);
                 case AnimationType.Uploading:
-                    return GetUploading(compositor, width, height, color);
+                    return new ActionFile(color);
                 case AnimationType.Playing:
-                    return GetPlaying(compositor, 24, height, color);
+                    return new ActionGame(color);
                 case AnimationType.VideoRecording:
-                    return GetVideoRecording(compositor, 8, height, color);
+                    return new ActionVideo(color);
                 case AnimationType.VoiceRecording:
-                    return GetVoiceRecording(compositor, width, height, color);
+                    return new ActionVoice(color);
+                case AnimationType.Watching:
+                    return new ActionSticker(color);
             }
 
             return null;
         }
-        private Visual GetTyping(Compositor compositor, float width, float height, Color color)
-        {
-            float radius = 1.00f;
-
-            // Begin dot1
-            var dot1 = compositor.CreateEllipseGeometry();
-            dot1.Radius = new Vector2(radius, radius);
-
-            var spriteDot1 = compositor.CreateSpriteShape(dot1);
-            spriteDot1.FillBrush = compositor.CreateColorBrush(color);
-            spriteDot1.Offset = new Vector2(3, 3.5f);
-
-            // Begin dot2
-            var dot2 = compositor.CreateEllipseGeometry();
-            dot2.Radius = new Vector2(radius, radius);
-
-            var spriteDot2 = compositor.CreateSpriteShape(dot2);
-            spriteDot2.FillBrush = compositor.CreateColorBrush(color);
-            spriteDot2.Offset = new Vector2(8, 3.5f);
-
-            // Begin dot2
-            var dot3 = compositor.CreateEllipseGeometry();
-            dot3.Radius = new Vector2(radius, radius);
-
-            var spriteDot3 = compositor.CreateSpriteShape(dot3);
-            spriteDot3.FillBrush = compositor.CreateColorBrush(color);
-            spriteDot3.Offset = new Vector2(13, 3.5f);
-
-            // Begin shape
-            var shape = compositor.CreateShapeVisual();
-            shape.Shapes.Add(spriteDot1);
-            shape.Shapes.Add(spriteDot2);
-            shape.Shapes.Add(spriteDot3);
-            shape.Size = new Vector2(24, 16);
-            shape.Scale = new Vector3(2, 2, 0);
-
-            // Begin animation
-            var easing = compositor.CreateCubicBezierEasingFunction(new Vector2(0, 0), new Vector2(0.58f, 1));
-            var radiusDot1 = compositor.CreateVector2KeyFrameAnimation();
-            radiusDot1.InsertKeyFrame(0.0f, new Vector2(1.00f, 1.00f), easing);
-            radiusDot1.InsertKeyFrame(0.4f, new Vector2(1.80f, 1.80f), easing);
-            radiusDot1.InsertKeyFrame(0.8f, new Vector2(1.00f, 1.00f), easing);
-            radiusDot1.InsertKeyFrame(1.0f, new Vector2(1.00f, 1.00f), easing);
-            radiusDot1.Duration = TimeSpan.FromMilliseconds(800);
-            radiusDot1.IterationBehavior = AnimationIterationBehavior.Forever;
-
-            var radiusDot2 = compositor.CreateVector2KeyFrameAnimation();
-            radiusDot2.InsertKeyFrame(0.0f, new Vector2(1.00f, 1.00f), easing);
-            radiusDot2.InsertKeyFrame(0.4f, new Vector2(1.80f, 1.80f), easing);
-            radiusDot2.InsertKeyFrame(0.8f, new Vector2(1.00f, 1.00f), easing);
-            radiusDot2.InsertKeyFrame(1.0f, new Vector2(1.00f, 1.00f), easing);
-            radiusDot2.Duration = TimeSpan.FromMilliseconds(800);
-            radiusDot2.DelayTime = TimeSpan.FromMilliseconds(150);
-            radiusDot2.IterationBehavior = AnimationIterationBehavior.Forever;
-
-            var radiusDot3 = compositor.CreateVector2KeyFrameAnimation();
-            radiusDot3.InsertKeyFrame(0.0f, new Vector2(1.00f, 1.00f), easing);
-            radiusDot3.InsertKeyFrame(0.4f, new Vector2(1.80f, 1.80f), easing);
-            radiusDot3.InsertKeyFrame(0.8f, new Vector2(1.00f, 1.00f), easing);
-            radiusDot3.InsertKeyFrame(1.0f, new Vector2(1.00f, 1.00f), easing);
-            radiusDot3.Duration = TimeSpan.FromMilliseconds(800);
-            radiusDot3.DelayTime = TimeSpan.FromMilliseconds(300);
-            radiusDot3.IterationBehavior = AnimationIterationBehavior.Forever;
-
-            dot1.StartAnimation("Radius", radiusDot1);
-            dot2.StartAnimation("Radius", radiusDot2);
-            dot3.StartAnimation("Radius", radiusDot3);
-
-            _props = null;
-            return shape;
-        }
-
-        private Visual GetVoiceRecording(Compositor compositor, float width, float height, Color color)
-        {
-            float delta = 3.0f;
-            float x = 3.0f;
-            float y = height / 2.0f;
-
-            // Begin dot1
-            var dot1 = compositor.CreateEllipseGeometry();
-            dot1.TrimStart = 0.5f - 0.05f;
-            dot1.TrimEnd = 0.5f + 0.05f;
-
-            var spriteDot1 = compositor.CreateSpriteShape(dot1);
-            var brushDot1 = spriteDot1.StrokeBrush = compositor.CreateColorBrush(color);
-            spriteDot1.StrokeThickness = 1.5f;
-            spriteDot1.Offset = new Vector2(x, y);
-            spriteDot1.StrokeStartCap = CompositionStrokeCap.Round;
-            spriteDot1.StrokeEndCap = CompositionStrokeCap.Round;
-            spriteDot1.RotationAngleInDegrees = -90;
-
-            // Begin dot2
-            var dot2 = compositor.CreateEllipseGeometry();
-            dot2.TrimStart = 0.5f - 0.05f;
-            dot2.TrimEnd = 0.5f + 0.05f;
-
-            var spriteDot2 = compositor.CreateSpriteShape(dot2);
-            var brushDot2 = spriteDot2.StrokeBrush = compositor.CreateColorBrush(color);
-            spriteDot2.StrokeThickness = 1.5f;
-            spriteDot2.Offset = new Vector2(x, y);
-            spriteDot2.StrokeStartCap = CompositionStrokeCap.Round;
-            spriteDot2.StrokeEndCap = CompositionStrokeCap.Round;
-            spriteDot2.RotationAngleInDegrees = -90;
-
-            // Begin dot2
-            var dot3 = compositor.CreateEllipseGeometry();
-            dot3.TrimStart = 0.5f - 0.05f;
-            dot3.TrimEnd = 0.5f + 0.05f;
-
-            var spriteDot3 = compositor.CreateSpriteShape(dot3);
-            var brushDot3 = spriteDot3.StrokeBrush = compositor.CreateColorBrush(color);
-            spriteDot3.StrokeThickness = 1.5f;
-            spriteDot3.Offset = new Vector2(x, y);
-            spriteDot3.StrokeStartCap = CompositionStrokeCap.Round;
-            spriteDot3.StrokeEndCap = CompositionStrokeCap.Round;
-            spriteDot3.RotationAngleInDegrees = -90;
-
-            // Begin shape
-            var shape = compositor.CreateShapeVisual();
-            shape.Shapes.Add(spriteDot1);
-            shape.Shapes.Add(spriteDot2);
-            shape.Shapes.Add(spriteDot3);
-            shape.Size = new Vector2(width, height);
-            shape.Scale = new Vector3(2, 2, 0);
-
-            // Begin animation
-            var props = compositor.CreatePropertySet();
-            props.InsertScalar("animationValue", 0.0f);
-
-            var easing = compositor.CreateLinearEasingFunction();
-            var animationValueImpl = compositor.CreateScalarKeyFrameAnimation();
-            animationValueImpl.InsertKeyFrame(0, 0, easing);
-            animationValueImpl.InsertKeyFrame(1, 1, easing);
-            animationValueImpl.Duration = TimeSpan.FromMilliseconds(700);
-            animationValueImpl.IterationBehavior = AnimationIterationBehavior.Forever;
-
-            props.StartAnimation("animationValue", animationValueImpl);
-
-            var radius = $"props.animationValue * {delta}";
-
-            var radiusDot1 = compositor.CreateExpressionAnimation($"Vector2({radius}, {radius})");
-            radiusDot1.SetReferenceParameter("props", props);
-
-            var radiusDot2 = compositor.CreateExpressionAnimation($"Vector2({radius} + {delta}, {radius} + {delta})");
-            radiusDot2.SetReferenceParameter("props", props);
-
-            var radiusDot3 = compositor.CreateExpressionAnimation($"Vector2({radius} + {delta} * 2, {radius} + {delta} * 2)");
-            radiusDot3.SetReferenceParameter("props", props);
-
-            dot1.StartAnimation("Radius", radiusDot1);
-            dot2.StartAnimation("Radius", radiusDot2);
-            dot3.StartAnimation("Radius", radiusDot3);
-
-            var colorDot1 = compositor.CreateExpressionAnimation($"ColorRGB((1.0f - Pow(Cos(({radius}) / (3.0f * {delta}) * Pi), 10)) * 255, {color.R}, {color.G}, {color.B})");
-            colorDot1.SetReferenceParameter("props", props);
-
-            var colorDot2 = compositor.CreateExpressionAnimation($"ColorRGB((1.0f - Pow(Cos(({radius} + {delta}) / (3.0f * {delta}) * Pi), 10)) * 255, {color.R}, {color.G}, {color.B})");
-            colorDot2.SetReferenceParameter("props", props);
-
-            var colorDot3 = compositor.CreateExpressionAnimation($"ColorRGB((1.0f - Pow(Cos(({radius} + {delta} * 2) / (3.0f * {delta}) * Pi), 10)) * 255, {color.R}, {color.G}, {color.B})");
-            colorDot3.SetReferenceParameter("props", props);
-
-            brushDot1.StartAnimation("Color", colorDot1);
-            brushDot2.StartAnimation("Color", colorDot2);
-            brushDot3.StartAnimation("Color", colorDot3);
-
-            _props = props;
-            return shape;
-        }
-
-        private Visual GetVideoRecording(Compositor compositor, float width, float height, Color color)
-        {
-            // Begin ellipse
-            var ellipse = compositor.CreateEllipseGeometry();
-
-            var ellipseSprite = compositor.CreateSpriteShape(ellipse);
-            var ellipseBrush = ellipseSprite.FillBrush = compositor.CreateColorBrush(color);
-            ellipseSprite.Offset = new Vector2(width / 2, height / 2);
-
-            // Begin shape
-            var shape = compositor.CreateShapeVisual();
-            shape.Shapes.Add(ellipseSprite);
-            shape.Size = new Vector2(width, height);
-            shape.Scale = new Vector3(2, 2, 0);
-
-            // Begin animation
-            var props = compositor.CreatePropertySet();
-            props.InsertScalar("animationValue", 0.0f);
-
-            var easing = compositor.CreateCubicBezierEasingFunction(new Vector2(0.42f, 0), new Vector2(0.58f, 1));
-            var animationValueImpl = compositor.CreateScalarKeyFrameAnimation();
-            animationValueImpl.InsertKeyFrame(0, 0, easing);
-            animationValueImpl.InsertKeyFrame(1, 1, easing);
-            animationValueImpl.Duration = TimeSpan.FromMilliseconds(900);
-            animationValueImpl.IterationBehavior = AnimationIterationBehavior.Forever;
-
-            props.StartAnimation("animationValue", animationValueImpl);
-
-            var animValue = "(props.animationValue < 0.5f ? (props.animationValue / 0.5f) : ((1 - props.animationValue) / 0.5f))";
-
-            var alpha = $"1.0f - {animValue} * 0.6f";
-            var radius = $"3.5f - {animValue} * 0.66f";
-
-            var colorEllipse = compositor.CreateExpressionAnimation($"ColorRGB(({alpha}) * 255, {color.R}, {color.G}, {color.B})");
-            colorEllipse.SetReferenceParameter("props", props);
-
-            var radiusEllipse = compositor.CreateExpressionAnimation($"Vector2({radius}, {radius})");
-            radiusEllipse.SetReferenceParameter("props", props);
-
-            ellipseBrush.StartAnimation("Color", colorEllipse);
-            ellipse.StartAnimation("Radius", radiusEllipse);
-
-            _props = props;
-            return shape;
-        }
-
-        private Visual GetUploading(Compositor compositor, float width, float height, Color color)
-        {
-            float progressWidth = 26.0f / 2.0f;
-            float progressHeight = 8.0f / 2.0f;
-
-            float leftPadding = 0.0f;
-            float topPadding = height / 2.0f - progressHeight / 2.0f;
-
-            float round = 1.25f;
-
-            // Begin background
-            var background = compositor.CreateRoundedRectangleGeometry();
-            background.Offset = new Vector2(leftPadding, topPadding);
-            background.Size = new Vector2(progressWidth, progressHeight);
-            background.CornerRadius = new Vector2(round);
-
-            var spriteBackground = compositor.CreateSpriteShape(background);
-            spriteBackground.FillBrush = compositor.CreateColorBrush(color);
-
-            // Begin overlay
-            var overlay = compositor.CreateRoundedRectangleGeometry();
-            overlay.Offset = new Vector2(leftPadding, topPadding);
-            overlay.Size = new Vector2(progressWidth, progressHeight);
-            overlay.CornerRadius = new Vector2(round);
-
-            var spriteOverlay = compositor.CreateSpriteShape(overlay);
-            spriteOverlay.FillBrush = compositor.CreateColorBrush(Color.FromArgb(75, color.R, color.G, color.B));
-
-            // Begin bar
-            var bar = compositor.CreateRoundedRectangleGeometry();
-            bar.Offset = new Vector2(leftPadding - progressWidth + 0, topPadding);
-            bar.Size = new Vector2(progressWidth, progressHeight);
-            bar.CornerRadius = new Vector2(round);
-
-            var spriteBar = compositor.CreateSpriteShape(bar);
-            spriteBar.FillBrush = compositor.CreateColorBrush(color);
-
-            var shape = compositor.CreateShapeVisual();
-            //shape.Shapes.Add(spriteBackground);
-            shape.Shapes.Add(spriteOverlay);
-            shape.Shapes.Add(spriteBar);
-            shape.Size = new Vector2(width, height);
-            shape.Scale = new Vector3(2, 2, 0);
-            shape.Clip = compositor.CreateGeometricClip(background);
-
-            // Begin animation
-            var props = compositor.CreatePropertySet();
-            props.InsertScalar("animationValue", 0.0f);
-
-            var easing = compositor.CreateCubicBezierEasingFunction(new Vector2(0.42f, 0), new Vector2(0.58f, 1));
-            var animationValueImpl = compositor.CreateScalarKeyFrameAnimation();
-            animationValueImpl.InsertKeyFrame(1, 0, easing);
-            animationValueImpl.InsertKeyFrame(1, 1, easing);
-            animationValueImpl.Duration = TimeSpan.FromMilliseconds(1750);
-            animationValueImpl.IterationBehavior = AnimationIterationBehavior.Forever;
-
-            props.StartAnimation("animationValue", animationValueImpl);
-
-            var progress = $"(props.animationValue * ({progressWidth} * 2.0f))";
-            var moveBar = compositor.CreateExpressionAnimation($"Vector2({leftPadding} - {progressWidth} + {progress}, {topPadding})");
-            moveBar.SetReferenceParameter("props", props);
-
-            bar.StartAnimation("Offset", moveBar);
-
-            _props = props;
-            return shape;
-        }
-
-        private Visual GetPlaying(Compositor compositor, float width, float height, Color color)
-        {
-            float distance = 4.0f;
-            float x = (width - distance * 2) / 2.0f;
-            float y = height / 2.0f + 1;
-            float radius = 1.0f;
-            float mouthRadius = 3.5f;
-
-            // Begin dot1
-            var dot1 = compositor.CreateEllipseGeometry();
-            dot1.Radius = new Vector2(radius, radius);
-
-            var spriteDot1 = compositor.CreateSpriteShape(dot1);
-            spriteDot1.FillBrush = compositor.CreateColorBrush(color);
-
-            // Begin dot2
-            var dot2 = compositor.CreateEllipseGeometry();
-            dot2.Radius = new Vector2(radius, radius);
-
-            var spriteDot2 = compositor.CreateSpriteShape(dot2);
-            spriteDot2.FillBrush = compositor.CreateColorBrush(color);
-
-            // Begin dot2
-            var dot3 = compositor.CreateEllipseGeometry();
-            dot3.Radius = new Vector2(radius, radius);
-
-            var spriteDot3 = compositor.CreateSpriteShape(dot3);
-            var brushDot3 = spriteDot3.FillBrush = compositor.CreateColorBrush(Color.FromArgb(0, 0, 0, 0));
-
-            // Begin mouth
-            var mouth = compositor.CreateEllipseGeometry();
-            mouth.Radius = new Vector2(mouthRadius / 2, mouthRadius / 2);
-
-            var spriteMouth = compositor.CreateSpriteShape(mouth);
-            spriteMouth.StrokeThickness = mouthRadius;
-            spriteMouth.StrokeBrush = compositor.CreateColorBrush(color);
-            spriteMouth.RotationAngleInDegrees = 90;
-            spriteMouth.Offset = new Vector2(mouthRadius, y - 1);
-
-            // Begin shape
-            var shape = compositor.CreateShapeVisual();
-            shape.Shapes.Add(spriteDot1);
-            shape.Shapes.Add(spriteDot2);
-            shape.Shapes.Add(spriteDot3);
-            shape.Shapes.Add(spriteMouth);
-            shape.Size = new Vector2(width, height);
-            shape.Scale = new Vector3(2, 2, 0);
-
-            // Begin animation
-            var props = compositor.CreatePropertySet();
-            props.InsertScalar("animationValue", 0.0f);
-            props.InsertScalar("dotsProgress", 0.0f);
-            props.InsertScalar("dotsX", 0.0f);
-            props.InsertScalar("bite", 0.0f);
-
-            var easing = compositor.CreateLinearEasingFunction();
-            var animationValueImpl = compositor.CreateScalarKeyFrameAnimation();
-            animationValueImpl.InsertKeyFrame(0, 0, easing);
-            animationValueImpl.InsertKeyFrame(1, 1, easing);
-            animationValueImpl.Duration = TimeSpan.FromMilliseconds(700);
-            animationValueImpl.IterationBehavior = AnimationIterationBehavior.Forever;
-
-            var biteImpl = compositor.CreateScalarKeyFrameAnimation();
-            biteImpl.InsertKeyFrame(0.00f, 0, easing);
-            biteImpl.InsertKeyFrame(0.25f, 1, easing);
-            biteImpl.InsertKeyFrame(0.50f, 0, easing);
-            biteImpl.InsertKeyFrame(0.75f, 1, easing);
-            biteImpl.InsertKeyFrame(1.00f, 0, easing);
-            biteImpl.Duration = TimeSpan.FromMilliseconds(700);
-            biteImpl.IterationBehavior = AnimationIterationBehavior.Forever;
-
-            props.StartAnimation("animationValue", animationValueImpl);
-            props.StartAnimation("bite", biteImpl);
-
-            var animationDotsProgress = compositor.CreateExpressionAnimation("Ceil(props.animationValue * 100) % 50 / 50");
-            animationDotsProgress.SetReferenceParameter("props", props);
-
-            var animationDotsX = compositor.CreateExpressionAnimation($"1.5f + {x} - {distance} * props.dotsProgress");
-            animationDotsX.SetReferenceParameter("props", props);
-
-            props.StartAnimation("dotsProgress", animationDotsProgress);
-            props.StartAnimation("dotsX", animationDotsX);
-
-            var moveDot1 = compositor.CreateExpressionAnimation($"Vector2(props.dotsX - {radius}, {y} - {radius})");
-            moveDot1.SetReferenceParameter("props", props);
-
-            var moveDot2 = compositor.CreateExpressionAnimation($"Vector2(props.dotsX - {radius} + {distance}, {y} - {radius})");
-            moveDot2.SetReferenceParameter("props", props);
-
-            var moveDot3 = compositor.CreateExpressionAnimation($"Vector2(props.dotsX - {radius} + {distance} * 2, {y} - {radius})");
-            moveDot3.SetReferenceParameter("props", props);
-
-            var colorDot3 = compositor.CreateExpressionAnimation($"ColorRGB(props.dotsProgress * 255, {color.R}, {color.G}, {color.B})");
-            colorDot3.SetReferenceParameter("props", props);
-
-            spriteDot1.StartAnimation("Offset", moveDot1);
-            spriteDot2.StartAnimation("Offset", moveDot2);
-            spriteDot3.StartAnimation("Offset", moveDot3);
-            brushDot3.StartAnimation("Color", colorDot3);
-
-            var start = compositor.CreateExpressionAnimation("props.bite * 0.125f");
-            start.SetReferenceParameter("props", props);
-
-            var end = compositor.CreateExpressionAnimation("1 - props.bite * 0.125f");
-            end.SetReferenceParameter("props", props);
-
-            mouth.StartAnimation("TrimStart", start);
-            mouth.StartAnimation("TrimEnd", end);
-
-            _props = props;
-            return shape;
-        }
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            switch (_action)
+            var visual = _previous;
+            if (visual == null)
             {
-                case AnimationType.Typing:
-                    return new Size(36, 16);
-                case AnimationType.Uploading:
-                    return new Size(36, 16);
-                case AnimationType.Playing:
-                    return new Size(40, 16);
-                case AnimationType.VideoRecording:
-                    return new Size(22, 16);
-                case AnimationType.VoiceRecording:
-                    return new Size(34, 16);
+                // If we don't have a visual, we will show the fallback icon, so we need to do a traditional measure.
+                return base.MeasureOverride(availableSize);
             }
 
-            return new Size(0, 16);
+            // Animated Icon scales using the Uniform strategy, meaning that it scales the horizonal and vertical
+            // dimensions equally by the maximum amount that doesn't exceed the available size in either dimension.
+            // If the available size is infinite in both dimensions then we don't scale the visual. Otherwise, we
+            // calculate the scale factor by comparing the default visual size to the available size. This produces 2
+            // scale factors, one for each dimension. We choose the smaller of the scale factors to not exceed the
+            // available size in that dimension.
+            var visualSize = visual.Size;
+            if (visualSize != Vector2.Zero)
+            {
+                var widthScale = double.IsInfinity(availableSize.Width) ? double.PositiveInfinity : availableSize.Width / visualSize.X;
+                var heightScale = double.IsInfinity(availableSize.Height) ? double.PositiveInfinity : availableSize.Height / visualSize.Y;
+                if (double.IsInfinity(widthScale) && double.IsInfinity(heightScale))
+                {
+                    return visualSize.ToSize();
+                }
+                else if (double.IsInfinity(widthScale))
+                {
+                    return new Size(visualSize.X * heightScale, availableSize.Height);
+                }
+                else if (double.IsInfinity(heightScale))
+                {
+                    return new Size(availableSize.Width, visualSize.Y * widthScale);
+                }
+                else
+                {
+                    return heightScale > widthScale
+                        ? new Size(availableSize.Width, visualSize.Y * widthScale)
+                        : new Size(visualSize.X * heightScale, availableSize.Height);
+                }
+            }
+
+            return visualSize.ToSize();
+        }
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            var visual = _previous;
+            if (visual == null)
+            {
+                return base.ArrangeOverride(finalSize);
+            }
+
+            var visualSize = visual.Size;
+            Vector2 Scale()
+            {
+                var scale = finalSize.ToVector2() / visualSize;
+                if (scale.X < scale.Y)
+                {
+                    scale.Y = scale.X;
+                }
+                else
+                {
+                    scale.X = scale.Y;
+                }
+                return scale;
+            };
+
+            var scale = Scale();
+            var arrangedSize = new Vector2(
+                MathF.Min((float)finalSize.Width / scale.X, visualSize.X),
+                MathF.Min((float)finalSize.Height / scale.Y, visualSize.Y));
+            var offset = (finalSize.ToVector2() - (visualSize * scale)) / 2;
+            var rootVisual = visual.RootVisual;
+            rootVisual.Offset = new Vector3(offset, 0.0f);
+            rootVisual.Size = arrangedSize;
+            rootVisual.Scale = new Vector3(scale, 1.0f);
+            return finalSize;
         }
     }
 }

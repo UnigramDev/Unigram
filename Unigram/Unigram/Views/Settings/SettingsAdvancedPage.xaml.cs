@@ -1,5 +1,6 @@
 ﻿using Unigram.Common;
 using Unigram.ViewModels.Settings;
+using Windows.Foundation.Metadata;
 using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Settings
@@ -18,16 +19,19 @@ namespace Unigram.Views.Settings
                 FindName(nameof(UpdatePanel));
             }
 
-#if DESKTOP_BRIDGE
+#if !DESKTOP_BRIDGE
             FindName(nameof(TraySwitch));
+            FindName(nameof(TraySwitchSeparator));
 
             if (ApiInformation.IsTypePresent("Windows.ApplicationModel.FullTrustProcessLauncher"))
             {
                 TraySwitch.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                TraySwitchSeparator.Visibility = Windows.UI.Xaml.Visibility.Visible;
             }
             else
             {
                 TraySwitch.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                TraySwitchSeparator.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             }
 #endif
         }

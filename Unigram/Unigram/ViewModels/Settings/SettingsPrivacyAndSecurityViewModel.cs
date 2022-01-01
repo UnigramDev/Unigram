@@ -390,7 +390,7 @@ namespace Unigram.ViewModels.Settings
                 selected.IsChecked = true;
             }
 
-            var dialog = new SelectRadioPopup(items);
+            var dialog = new ChooseRadioPopup(items);
             dialog.Title = Strings.Resources.DeleteAccountTitle;
             dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.SecondaryButtonText = Strings.Resources.Cancel;

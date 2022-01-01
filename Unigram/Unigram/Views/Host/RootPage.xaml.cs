@@ -9,6 +9,7 @@ using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
+using Unigram.Native;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Services;
@@ -24,7 +25,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using Point = Windows.Foundation.Point;
 
@@ -175,12 +175,20 @@ namespace Unigram.Views.Host
                 detail.ClearCache();
             }
 
+            var corpus = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId($"Profile{master.FrameFacade.FrameId}");
+            if (corpus != null)
+            {
+                corpus.Navigate(typeof(BlankPage));
+                corpus.ClearCache();
+            }
+
             master.Frame.Navigating -= OnNavigating;
             master.Frame.Navigated -= OnNavigated;
             master.Frame.Navigate(typeof(BlankPage));
 
             WindowContext.GetForCurrentView().NavigationServices.Remove(master);
             WindowContext.GetForCurrentView().NavigationServices.Remove(detail);
+            WindowContext.GetForCurrentView().NavigationServices.Remove(corpus);
         }
 
         private void OnNavigating(object sender, NavigatingCancelEventArgs e)
@@ -277,7 +285,11 @@ namespace Unigram.Views.Host
             if (show && items != null)
             {
                 _navigationViewItems.Insert(0, RootDestination.Separator);
-                _navigationViewItems.Insert(0, RootDestination.AddAccount);
+
+                if (TLContainer.Current.Count < 3)
+                {
+                    _navigationViewItems.Insert(0, RootDestination.AddAccount);
+                }
 
                 foreach (var item in items.OrderByDescending(x => { int index = Array.IndexOf(SettingsService.Current.AccountsSelectorOrder, x.Id); return index < 0 ? x.Id : index; }))
                 {
@@ -369,7 +381,7 @@ namespace Unigram.Views.Host
                 else if (args.Phase == 2)
                 {
                     var photo = content.Children[0] as ProfilePicture;
-                    photo.Source = PlaceholderHelper.GetUser(session.ProtoService, user, 28);
+                    photo.SetUser(session.ProtoService, user, 28);
                 }
 
                 if (args.Phase < 2)
@@ -549,12 +561,10 @@ namespace Unigram.Views.Host
             view.TryResizeView(ApplicationView.PreferredLaunchViewSize);
         }
 
-        private async void Theme_Click(object sender, RoutedEventArgs e)
+        private void Theme_Click(object sender, RoutedEventArgs e)
         {
-            var target = new RenderTargetBitmap();
-            await target.RenderAsync(Navigation);
-
-            LayoutRoot.Background = new ImageBrush { ImageSource = target, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
+            var bitmap = ScreenshotManager.Capture();
+            Transition.Background = new ImageBrush { ImageSource = bitmap, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, RelativeTransform = new ScaleTransform { ScaleY = -1, CenterY = 0.5 } };
 
             var actualWidth = (float)ActualWidth;
             var actualHeight = (float)ActualHeight;
@@ -567,7 +577,7 @@ namespace Unigram.Views.Host
 
             var device = CanvasDevice.GetSharedDevice();
 
-            var rect1 = CanvasGeometry.CreateRectangle(device, 0, 0, ActualTheme == ElementTheme.Dark ? actualWidth : 0, ActualTheme == ElementTheme.Dark ? actualHeight : 0);
+            var rect1 = CanvasGeometry.CreateRectangle(device, 0, 0, ActualTheme == ElementTheme.Light ? actualWidth : 0, ActualTheme == ElementTheme.Light ? actualHeight : 0);
 
             var elli1 = CanvasGeometry.CreateCircle(device, point.X + 24, point.Y + 24, ActualTheme == ElementTheme.Dark ? 0 : diaginal);
             var group1 = CanvasGeometry.CreateGroup(device, new[] { elli1, rect1 }, CanvasFilledRegionDetermination.Alternate);
@@ -575,7 +585,7 @@ namespace Unigram.Views.Host
             var elli2 = CanvasGeometry.CreateCircle(device, point.X + 24, point.Y + 24, ActualTheme == ElementTheme.Dark ? diaginal : 0);
             var group2 = CanvasGeometry.CreateGroup(device, new[] { elli2, rect1 }, CanvasFilledRegionDetermination.Alternate);
 
-            var visual = ElementCompositionPreview.GetElementVisual(Navigation);
+            var visual = ElementCompositionPreview.GetElementVisual(Transition);
             var ellipse = visual.Compositor.CreatePathGeometry(new CompositionPath(group2));
             var clip = visual.Compositor.CreateGeometricClip(ellipse);
 
@@ -585,7 +595,7 @@ namespace Unigram.Views.Host
             batch.Completed += (s, args) =>
             {
                 visual.Clip = null;
-                LayoutRoot.Background = null;
+                Transition.Background = null;
             };
 
             CompositionEasingFunction ease;
@@ -617,6 +627,8 @@ namespace Unigram.Views.Host
             SettingsService.Current.Appearance.UpdateNightMode();
         }
 
+        private float TopPadding => (float)Navigation.Padding.Top;
+
         private void Navigation_PaneOpening(SplitView sender, object args)
         {
             Theme.Visibility = Visibility.Visible;
@@ -624,8 +636,8 @@ namespace Unigram.Views.Host
             var visual = ElementCompositionPreview.GetElementVisual(Theme);
             var ease = visual.Compositor.CreateCubicBezierEasingFunction(new Vector2(0.1f, 0.9f), new Vector2(0.2f, 1.0f));
             var anim = visual.Compositor.CreateVector3KeyFrameAnimation();
-            anim.InsertKeyFrame(0, new Vector3(-48, 32, 0), ease);
-            anim.InsertKeyFrame(1, new Vector3(192, 32, 0), ease);
+            anim.InsertKeyFrame(0, new Vector3(-48, TopPadding, 0), ease);
+            anim.InsertKeyFrame(1, new Vector3(192, TopPadding, 0), ease);
             anim.Duration = TimeSpan.FromMilliseconds(350);
 
             visual.StartAnimation("Offset", anim);
@@ -644,8 +656,8 @@ namespace Unigram.Views.Host
             var visual = ElementCompositionPreview.GetElementVisual(Theme);
             var ease = visual.Compositor.CreateCubicBezierEasingFunction(new Vector2(0.1f, 0.9f), new Vector2(0.2f, 1.0f));
             var anim = visual.Compositor.CreateVector3KeyFrameAnimation();
-            anim.InsertKeyFrame(0, new Vector3(192, 32, 0), ease);
-            anim.InsertKeyFrame(1, new Vector3(-48, 32, 0), ease);
+            anim.InsertKeyFrame(0, new Vector3(192, TopPadding, 0), ease);
+            anim.InsertKeyFrame(1, new Vector3(-48, TopPadding, 0), ease);
             anim.Duration = TimeSpan.FromMilliseconds(120);
 
             visual.StartAnimation("Offset", anim);

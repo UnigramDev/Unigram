@@ -33,8 +33,6 @@ namespace Unigram.Views
 
         public void Dispose()
         {
-            //DataContext = null;
-            //Bindings?.Update();
             Bindings?.StopTracking();
         }
 
@@ -48,7 +46,7 @@ namespace Unigram.Views
             {
                 PackageSignatureKind.Store => "",
                 PackageSignatureKind.Enterprise => " Direct",
-                _ => " Debug"
+                _ => " Direct"
             };
 
             if (version.Revision > 0)
@@ -76,10 +74,21 @@ namespace Unigram.Views
             MasterDetail.NavigationService.GoBackAt(0, false);
         }
 
-        private void Phone_Click(object sender, RoutedEventArgs e)
+        private async void Phone_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(SettingsPhoneIntroPage));
-            MasterDetail.NavigationService.GoBackAt(0, false);
+            var popup = new ChangePhoneNumberPopup();
+            var change = await popup.ShowQueuedAsync();
+            if (change != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            var confirm = await MessagePopup.ShowAsync(Strings.Resources.PhoneNumberAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            if (confirm == ContentDialogResult.Primary)
+            {
+                MasterDetail.NavigationService.Navigate(typeof(SettingsPhonePage));
+                MasterDetail.NavigationService.GoBackAt(0, false);
+            }
         }
 
         private void Username_Click(object sender, RoutedEventArgs e)
@@ -176,6 +185,12 @@ namespace Unigram.Views
             MasterDetail.NavigationService.GoBackAt(0, false);
         }
 
+        private void Sessions_Click(object sender, RoutedEventArgs e)
+        {
+            MasterDetail.NavigationService.Navigate(typeof(SettingsSessionsPage));
+            MasterDetail.NavigationService.GoBackAt(0, false);
+        }
+
         private void Language_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(SettingsLanguagePage));
@@ -185,6 +200,12 @@ namespace Unigram.Views
         private void Questions_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.NavigateToInstant(Strings.Resources.TelegramFaqUrl);
+            MasterDetail.NavigationService.GoBackAt(0, false);
+        }
+
+        private void PrivacyPolicy_Click(object sender, RoutedEventArgs e)
+        {
+            MasterDetail.NavigationService.NavigateToInstant(Strings.Resources.PrivacyPolicyUrl);
             MasterDetail.NavigationService.GoBackAt(0, false);
         }
 
@@ -210,7 +231,7 @@ namespace Unigram.Views
                     return;
                 }
 
-                var viewModel = new UserPhotosViewModel(ViewModel.ProtoService, ViewModel.Aggregator, user, userFull);
+                var viewModel = new UserPhotosViewModel(ViewModel.ProtoService, ViewModel.StorageService, ViewModel.Aggregator, user, userFull);
                 await GalleryView.GetForCurrentView().ShowAsync(viewModel, () => Photo);
             }
         }
@@ -243,7 +264,7 @@ namespace Unigram.Views
 
         public void UpdateUser(Chat chat, User user, bool secret)
         {
-            Photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 64);
+            Photo.SetUser(ViewModel.ProtoService, user, 64);
             Title.Text = user.GetFullName();
 
             Verified.Visibility = user.IsVerified ? Visibility.Visible : Visibility.Collapsed;
@@ -283,28 +304,6 @@ namespace Unigram.Views
 
         public void UpdateChatPhoto(Chat chat)
         {
-        }
-
-
-
-        public void UpdateFile(File file)
-        {
-            var chat = ViewModel.Chat;
-            if (chat == null)
-            {
-                return;
-            }
-
-            var user = ViewModel.CacheService.GetUser(chat);
-            if (user == null)
-            {
-                return;
-            }
-
-            if (user.UpdateFile(file))
-            {
-                Photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 64);
-            }
         }
 
         #endregion

@@ -248,7 +248,7 @@ namespace Unigram.ViewModels.Settings
                 new SelectRadioItem(StickersSuggestionMode.None, Strings.Resources.SuggestStickersNone, SuggestStickers == StickersSuggestionMode.None),
             };
 
-            var dialog = new SelectRadioPopup(items);
+            var dialog = new ChooseRadioPopup(items);
             dialog.Title = Strings.Resources.SuggestStickers;
             dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.SecondaryButtonText = Strings.Resources.Cancel;

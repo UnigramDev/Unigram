@@ -45,7 +45,7 @@ namespace Unigram.ViewModels.Supergroups
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             state.TryGet("chatId", out long chatId);
-            state.TryGet("senderUserId", out int userId);
+            state.TryGet("senderUserId", out long userId);
 
             Chat = ProtoService.GetChat(chatId);
 
@@ -85,7 +85,7 @@ namespace Unigram.ViewModels.Supergroups
                     CanPostMessages = administrator.CanPostMessages;
                     CanPromoteMembers = administrator.CanPromoteMembers;
                     CanRestrictMembers = administrator.CanRestrictMembers;
-                    CanManageVoiceChats = administrator.CanManageVoiceChats;
+                    CanManageVideoChats = administrator.CanManageVideoChats;
                     IsAnonymous = administrator.IsAnonymous;
 
                     CustomTitle = administrator.CustomTitle;
@@ -98,7 +98,7 @@ namespace Unigram.ViewModels.Supergroups
                     CanInviteUsers = true;
                     CanPinMessages = true;
                     CanPostMessages = true;
-                    CanManageVoiceChats = true;
+                    CanManageVideoChats = true;
                     CanPromoteMembers = member.Status is ChatMemberStatusCreator;
                     CanRestrictMembers = true;
 
@@ -136,7 +136,7 @@ namespace Unigram.ViewModels.Supergroups
                 }
 
                 var supergroup = CacheService.GetSupergroup(chat);
-                if (supergroup == null)
+                if (supergroup == null || supergroup.Status is not ChatMemberStatusCreator)
                 {
                     return false;
                 }
@@ -149,7 +149,7 @@ namespace Unigram.ViewModels.Supergroups
                     (supergroup.IsChannel ? true : _canPinMessages) &&
                     (supergroup.IsChannel ? _canPostMessages : true) &&
                     (supergroup.IsChannel ? true : _canRestrictMembers) &&
-                    (supergroup.IsChannel ? true : _canManageVoiceChats);
+                    (supergroup.IsChannel ? true : _canManageVideoChats);
             }
         }
 
@@ -232,13 +232,13 @@ namespace Unigram.ViewModels.Supergroups
             }
         }
 
-        private bool _canManageVoiceChats;
-        public bool CanManageVoiceChats
+        private bool _canManageVideoChats;
+        public bool CanManageVideoChats
         {
-            get => _canManageVoiceChats;
+            get => _canManageVideoChats;
             set
             {
-                Set(ref _canManageVoiceChats, value);
+                Set(ref _canManageVideoChats, value);
                 RaisePropertyChanged(nameof(CanTransferOwnership));
             }
         }
@@ -317,7 +317,7 @@ namespace Unigram.ViewModels.Supergroups
                     CanPostMessages = channel ? _canPostMessages : false,
                     CanPromoteMembers = _canPromoteMembers,
                     CanRestrictMembers = channel ? false : _canRestrictMembers,
-                    CanManageVoiceChats = channel ? false : _canManageVoiceChats,
+                    CanManageVideoChats = channel ? false : _canManageVideoChats,
                     CustomTitle = _customTitle ?? string.Empty
                 };
             }

@@ -20,6 +20,7 @@ using Unigram.Views.Popups;
 using Windows.Devices.Enumeration;
 using Windows.Foundation;
 using Windows.Graphics.Capture;
+using Windows.System.Display;
 using Windows.UI;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -54,6 +55,8 @@ namespace Unigram.Views
 
         private readonly DispatcherTimer _scheduledTimer;
         private readonly DispatcherTimer _debouncerTimer;
+
+        private readonly DisplayRequest _displayRequest = new();
 
         private ParticipantsGridMode _mode = ParticipantsGridMode.Compact;
         private bool _docked = true;
@@ -233,11 +236,22 @@ namespace Unigram.Views
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                _displayRequest.RequestActive();
+            }
+            catch { }
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             Dispose();
+
+            try
+            {
+                _displayRequest.RequestRelease();
+            }
+            catch { }
         }
 
         public void Dispose(bool? discard = null)
@@ -884,7 +898,7 @@ namespace Unigram.Views
                     }
 
                     FindName(nameof(ScheduledPanel));
-                    SubtitleInfo.Text = Strings.Resources.VoipGroupScheduledVoiceChat;
+                    SubtitleInfo.Text = _service.IsChannel ? Strings.Resources.VoipChannelScheduledVoiceChat : Strings.Resources.VoipGroupScheduledVoiceChat;
                     ParticipantsPanel.Visibility = Visibility.Collapsed;
                     ScheduledInfo.Text = duration < TimeSpan.Zero ? Strings.Resources.VoipChatLateBy : Strings.Resources.VoipChatStartsIn;
                     StartsAt.Text = call.GetStartsAt();
@@ -1062,11 +1076,11 @@ namespace Unigram.Views
                 var popup = new MessagePopup
                 {
                     RequestedTheme = ElementTheme.Dark,
-                    Title = Strings.Resources.VoipGroupLeaveAlertTitle,
-                    Message = Strings.Resources.VoipGroupLeaveAlertText,
+                    Title = _service.IsChannel ? Strings.Resources.VoipChannelLeaveAlertTitle : Strings.Resources.VoipGroupLeaveAlertTitle,
+                    Message = _service.IsChannel ? Strings.Resources.VoipChannelLeaveAlertText : Strings.Resources.VoipGroupLeaveAlertText,
                     PrimaryButtonText = Strings.Resources.VoipGroupLeave,
                     SecondaryButtonText = Strings.Resources.Cancel,
-                    CheckBoxLabel = Strings.Resources.VoipGroupLeaveAlertEndChat
+                    CheckBoxLabel = _service.IsChannel ? Strings.Resources.VoipChannelLeaveAlertEndChat : Strings.Resources.VoipGroupLeaveAlertEndChat
                 };
 
                 var confirm = await popup.ShowQueuedAsync();
@@ -1096,8 +1110,8 @@ namespace Unigram.Views
 
             var popup = new MessagePopup();
             popup.RequestedTheme = ElementTheme.Dark;
-            popup.Title = Strings.Resources.VoipGroupEndAlertTitle;
-            popup.Message = Strings.Resources.VoipGroupEndAlertText;
+            popup.Title = _service.IsChannel ? Strings.Resources.VoipChannelEndAlertTitle : Strings.Resources.VoipGroupEndAlertTitle;
+            popup.Message = _service.IsChannel ? Strings.Resources.VoipChannelEndAlertText : Strings.Resources.VoipGroupEndAlertText;
             popup.PrimaryButtonText = Strings.Resources.VoipGroupEnd;
             popup.SecondaryButtonText = Strings.Resources.Cancel;
 
@@ -1412,8 +1426,8 @@ namespace Unigram.Views
         {
             var flyout = new MenuFlyout();
 
-            var chat = _service.Chat;
-            var call = _service.Call;
+            var chat = _service?.Chat;
+            var call = _service?.Call;
 
             if (chat == null || call == null)
             {
@@ -1429,10 +1443,10 @@ namespace Unigram.Views
 
             if (call.CanBeManaged)
             {
-                flyout.CreateFlyoutItem(SetTitle, Strings.Resources.VoipGroupEditTitle, new FontIcon { Glyph = Icons.Edit });
+                flyout.CreateFlyoutItem(SetTitle, _service.IsChannel ? Strings.Resources.VoipChannelEditTitle : Strings.Resources.VoipGroupEditTitle, new FontIcon { Glyph = Icons.Edit });
             }
 
-            if (call.CanChangeMuteNewParticipants)
+            if (call.CanToggleMuteNewParticipants)
             {
                 var toggleFalse = new ToggleMenuFlyoutItem();
                 toggleFalse.Text = Strings.Resources.VoipGroupAllCanSpeak;
@@ -1576,7 +1590,7 @@ namespace Unigram.Views
             {
                 flyout.CreateFlyoutSeparator();
 
-                var discard = flyout.CreateFlyoutItem(Discard, Strings.Resources.VoipGroupEndChat, new FontIcon { Glyph = Icons.Dismiss });
+                var discard = flyout.CreateFlyoutItem(Discard, _service.IsChannel ? Strings.Resources.VoipChannelEndChat : Strings.Resources.VoipGroupEndChat, new FontIcon { Glyph = Icons.Dismiss });
                 discard.Foreground = new SolidColorBrush(Colors.IndianRed);
             }
 
@@ -1605,7 +1619,7 @@ namespace Unigram.Views
 
             var input = new InputPopup();
             input.RequestedTheme = ElementTheme.Dark;
-            input.Title = Strings.Resources.VoipGroupTitle;
+            input.Title = _service.IsChannel ? Strings.Resources.VoipChannelTitle : Strings.Resources.VoipGroupTitle;
             input.PrimaryButtonText = Strings.Resources.Save;
             input.SecondaryButtonText = Strings.Resources.Cancel;
             input.PlaceholderText = chat.Title;
@@ -1630,21 +1644,13 @@ namespace Unigram.Views
                 return;
             }
 
-            var input = new InputPopup();
+            var input = new RecordVideoChatPopup(call.Title);
             input.RequestedTheme = ElementTheme.Dark;
-            input.Title = Strings.Resources.VoipGroupStartRecordingTitle;
-            input.Header = Strings.Resources.VoipGroupStartRecordingText;
-            input.PrimaryButtonText = Strings.Resources.Start;
-            input.SecondaryButtonText = Strings.Resources.Cancel;
-            input.PlaceholderText = Strings.Resources.VoipGroupSaveFileHint;
-            input.Text = call.Title;
-            input.MaxLength = 64;
-            input.CanBeEmpty = true;
 
             var confirm = await input.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
-                _protoService.Send(new StartGroupCallRecording(call.Id, input.Text));
+                _protoService.Send(new StartGroupCallRecording(call.Id, input.FileName, input.RecordVideo, input.UsePortraitOrientation));
             }
         }
 
@@ -1659,7 +1665,7 @@ namespace Unigram.Views
             var popup = new MessagePopup();
             popup.RequestedTheme = ElementTheme.Dark;
             popup.Title = Strings.Resources.VoipGroupStopRecordingTitle;
-            popup.Message = Strings.Resources.VoipGroupStopRecordingText;
+            popup.Message = _service.IsChannel ? Strings.Resources.VoipChannelStopRecordingText : Strings.Resources.VoipGroupStopRecordingText;
             popup.PrimaryButtonText = Strings.Resources.Stop;
             popup.SecondaryButtonText = Strings.Resources.Cancel;
 
@@ -1756,12 +1762,12 @@ namespace Unigram.Views
 
             if (_cacheService.TryGetUser(participant.ParticipantId, out User user))
             {
-                photo.Source = PlaceholderHelper.GetUser(_protoService, user, 36);
+                photo.SetUser(_protoService, user, 36);
                 title.Text = user.GetFullName();
             }
             else if (_cacheService.TryGetChat(participant.ParticipantId, out Chat chat))
             {
-                photo.Source = PlaceholderHelper.GetChat(_protoService, chat, 36);
+                photo.SetChat(_protoService, chat, 36);
                 title.Text = _protoService.GetTitle(chat);
             }
 
@@ -2583,28 +2589,6 @@ namespace Unigram.Views
             }
 
             view.Invalidate();
-        }
-    }
-
-    public class MessageSenderEqualityComparer : IEqualityComparer<MessageSender>
-    {
-        public bool Equals(MessageSender x, MessageSender y)
-        {
-            return x.IsEqual(y);
-        }
-
-        public int GetHashCode(MessageSender obj)
-        {
-            if (obj is MessageSenderUser user)
-            {
-                return user.UserId.GetHashCode();
-            }
-            else if (obj is MessageSenderChat chat)
-            {
-                return chat.ChatId.GetHashCode();
-            }
-
-            return obj.GetHashCode();
         }
     }
 

@@ -23,7 +23,7 @@ namespace Unigram.Common
         public AnimatedListHandler(ListViewBase listView)
         {
             _listView = listView;
-            _listView.Loaded += OnLoaded;
+            _listView.SizeChanged += OnSizeChanged;
             _listView.Unloaded += OnUnloaded;
 
             _debouncer = new DispatcherTimer();
@@ -35,26 +35,35 @@ namespace Unigram.Common
             };
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            _listView.Items.VectorChanged += OnVectorChanged;
-
-            var scrollViewer = _listView.GetScrollViewer();
-            if (scrollViewer != null)
+            if (sender is ListViewBase)
             {
-                scrollViewer.ViewChanged += OnViewChanged;
+                _listView.SizeChanged -= OnSizeChanged;
+                _listView.Items.VectorChanged += OnVectorChanged;
+
+                var scrollViewer = _listView.GetScrollViewer();
+                if (scrollViewer != null)
+                {
+                    scrollViewer.ViewChanged += OnViewChanged;
+                }
+
+                var panel = _listView.ItemsPanelRoot;
+                if (panel != null)
+                {
+                    panel.SizeChanged += OnSizeChanged;
+                }
             }
-
-            var panel = _listView.ItemsPanelRoot;
-            if (panel != null)
+            else if (e.PreviousSize.Width < _listView.ActualWidth || e.PreviousSize.Height < _listView.ActualHeight)
             {
-                panel.SizeChanged += OnSizeChanged;
+                _debouncer.Stop();
+                _debouncer.Start();
             }
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            UnloadVisibleItems();
+            UnloadVisibleItems(true);
         }
 
         private void OnVectorChanged(IObservableVector<object> sender, IVectorChangedEventArgs e)
@@ -66,15 +75,6 @@ namespace Unigram.Common
 
             _debouncer.Stop();
             _debouncer.Start();
-        }
-
-        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            if (e.PreviousSize.Width < _listView.ActualWidth || e.PreviousSize.Height < _listView.ActualHeight)
-            {
-                _debouncer.Stop();
-                _debouncer.Start();
-            }
         }
 
         private void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
@@ -130,7 +130,7 @@ namespace Unigram.Common
 
             if (lastVisibleIndex < firstVisibleIndex || firstVisibleIndex < 0)
             {
-                UnloadVisibleItems();
+                UnloadVisibleItems(false);
                 return;
             }
 
@@ -170,6 +170,10 @@ namespace Unigram.Common
                 else if (item is InlineQueryResultAnimation inlineQueryResultAnimation)
                 {
                     file = inlineQueryResultAnimation.Animation.AnimationValue;
+                }
+                else if (item is InlineQueryResultSticker inlineQueryResultSticker && inlineQueryResultSticker.Sticker.IsAnimated)
+                {
+                    file = inlineQueryResultSticker.Sticker.StickerValue;
                 }
 
                 if (file == null || !file.Local.IsDownloadingCompleted)
@@ -225,11 +229,23 @@ namespace Unigram.Common
 
         public void UnloadVisibleItems()
         {
+            UnloadVisibleItems(false);
+        }
+
+        public void UnloadVisibleItems(bool dispose)
+        {
             foreach (var item in _prev.Values)
             {
                 try
                 {
-                    item.Pause();
+                    if (dispose)
+                    {
+                        item.Unload();
+                    }
+                    else
+                    {
+                        item.Pause();
+                    }
                 }
                 catch { }
             }

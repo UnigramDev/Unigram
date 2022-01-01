@@ -25,5 +25,7 @@ namespace Unigram.Native
 
 		Int32 PixelWidth{ get; };
 		Int32 PixelHeight{ get; };
+
+		Int32 FrameRate{ get; };
 	}
 } // namespace Unigram.Native

@@ -39,16 +39,6 @@ namespace Unigram.ViewModels.Gallery
             return null;
         }
 
-        public override (File File, string FileName) GetFileAndName()
-        {
-            return (_video.VideoValue, _video.FileName);
-        }
-
-        public override bool UpdateFile(File file)
-        {
-            return _video.UpdateFile(file);
-        }
-
         public override object Constraint => _video;
 
         public override string Caption => _caption;

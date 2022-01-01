@@ -22,6 +22,16 @@ namespace Unigram.Navigation.Services
             TargetPageParameter = targetPageParameter;
         }
 
+        public NavigatingEventArgs(Type targetPageType, object parameter, object state, object targetPageParameter)
+        {
+            NavigationMode = NavigationMode.New;
+            SourcePageType = null;
+            Content = null;
+            Parameter = parameter;
+            TargetPageType = targetPageType;
+            TargetPageParameter = state;
+        }
+
         public bool Cancel { get; set; } = false;
         public bool Suspending { get; set; } = false;
         public Type TargetPageType { get; set; }

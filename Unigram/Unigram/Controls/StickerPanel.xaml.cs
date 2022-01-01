@@ -6,7 +6,6 @@ using Unigram.Controls.Drawers;
 using Unigram.Services;
 using Unigram.Services.Settings;
 using Unigram.ViewModels;
-using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Drawers;
 using Unigram.Views;
 using Windows.Foundation;
@@ -15,7 +14,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls
 {
-    public sealed partial class StickerPanel : UserControl, IFileDelegate
+    public sealed partial class StickerPanel : UserControl
     {
         public new FrameworkElement Shadow => ShadowElement;
         public FrameworkElement Presenter => BackgroundElement;
@@ -24,11 +23,10 @@ namespace Unigram.Controls
 
         public Action<Sticker> StickerClick { get; set; }
         public event TypedEventHandler<UIElement, ItemContextRequestedEventArgs<Sticker>> StickerContextRequested;
+        public event EventHandler ChoosingSticker;
 
         public Action<Animation> AnimationClick { get; set; }
         public event TypedEventHandler<UIElement, ItemContextRequestedEventArgs<Animation>> AnimationContextRequested;
-
-        private StickersPanelMode _widget;
 
         public StickerPanel()
         {
@@ -50,27 +48,6 @@ namespace Unigram.Controls
                     Pivot.SelectedIndex = 2;
                     break;
             }
-        }
-
-        public void SetView(StickersPanelMode mode)
-        {
-            _widget = mode;
-            VisualStateManager.GoToState(this, mode == StickersPanelMode.Overlay
-                ? "FilledState"
-                : mode == StickersPanelMode.Sidebar
-                ? "SidebarState"
-                : "NarrowState", false);
-        }
-
-        public void UpdateFile(File file)
-        {
-            if (!file.Local.IsDownloadingCompleted)
-            {
-                return;
-            }
-
-            StickersRoot?.UpdateFile(file);
-            AnimationsRoot?.UpdateFile(file);
         }
 
         private void Emojis_ItemClick(object sender, ItemClickEventArgs e)
@@ -155,6 +132,7 @@ namespace Unigram.Controls
                     StickersRoot.DataContext = StickerDrawerViewModel.GetForCurrentView(TLContainer.Current.Resolve<IProtoService>().SessionId);
                     StickersRoot.ItemClick = Stickers_ItemClick;
                     StickersRoot.ItemContextRequested += (s, args) => StickerContextRequested?.Invoke(s, args);
+                    StickersRoot.ChoosingItem += (s, args) => ChoosingSticker?.Invoke(s, args);
                 }
 
                 StickersRoot.Activate();
@@ -167,31 +145,31 @@ namespace Unigram.Controls
             if (index == 0 && EmojisRoot != null)
             {
                 EmojisRoot.Deactivate();
-                UnloadObject(EmojisRoot);
+                //UnloadObject(EmojisRoot);
             }
             else if (index == 1 && AnimationsRoot != null)
             {
-                var viewModel = AnimationsRoot.DataContext as AnimationDrawerViewModel;
+                //var viewModel = AnimationsRoot.DataContext as AnimationDrawerViewModel;
 
                 AnimationsRoot.Deactivate();
-                UnloadObject(AnimationsRoot);
+                //UnloadObject(AnimationsRoot);
 
-                if (viewModel != null)
-                {
-                    viewModel.Search(string.Empty);
-                }
+                //if (viewModel != null)
+                //{
+                //    viewModel.Search(string.Empty);
+                //}
             }
             else if (index == 2 && StickersRoot != null)
             {
-                var viewModel = StickersRoot.DataContext as StickerDrawerViewModel;
+                //var viewModel = StickersRoot.DataContext as StickerDrawerViewModel;
 
                 StickersRoot.Deactivate();
-                UnloadObject(StickersRoot);
+                //UnloadObject(StickersRoot);
 
-                if (viewModel != null)
-                {
-                    viewModel.Search(string.Empty);
-                }
+                //if (viewModel != null)
+                //{
+                //    viewModel.Search(string.Empty);
+                //}
             }
         }
 

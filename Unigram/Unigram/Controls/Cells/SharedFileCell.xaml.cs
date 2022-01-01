@@ -1,7 +1,6 @@
 ﻿using System;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls.Messages.Content;
 using Unigram.Converters;
 using Unigram.Navigation;
 using Unigram.Services;
@@ -18,6 +17,8 @@ namespace Unigram.Controls.Cells
         private IProtoService _protoService;
         private IMessageDelegate _delegate;
         private Message _message;
+
+        private string _fileToken;
 
         public SharedFileCell()
         {
@@ -41,11 +42,11 @@ namespace Unigram.Controls.Cells
 
             if (string.IsNullOrEmpty(data.FileName))
             {
-                if (_protoService.TryGetUser(message.Sender, out User user))
+                if (_protoService.TryGetUser(message.SenderId, out User user))
                 {
                     Title.Text = user.GetFullName();
                 }
-                else if (_protoService.TryGetChat(message.Sender, out Chat chat))
+                else if (_protoService.TryGetChat(message.SenderId, out Chat chat))
                 {
                     Title.Text = chat.Title;
                 }
@@ -69,10 +70,16 @@ namespace Unigram.Controls.Cells
                 Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
             }
 
+            UpdateManager.Subscribe(this, protoService, data.File, ref _fileToken, UpdateFile);
             UpdateFile(message, data.File);
         }
 
-        public void UpdateFile(Message message, File file)
+        private void UpdateFile(object target, File file)
+        {
+            UpdateFile(_message, file);
+        }
+
+        private void UpdateFile(Message message, File file)
         {
             var data = message.GetFileAndThumbnailAndName(false);
             if (data.File == null)
@@ -147,12 +154,15 @@ namespace Unigram.Controls.Cells
                     Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
                 }
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+            else
             {
-                _protoService.DownloadFile(file.Id, 1);
-
                 Texture.Background = null;
                 Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
+
+                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                {
+                    _protoService.DownloadFile(file.Id, 1);
+                }
             }
         }
 
@@ -217,13 +227,12 @@ namespace Unigram.Controls.Cells
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var data = _message.GetFileAndName(false);
-            if (data.File == null)
+            var file = _message.GetFile();
+            if (file == null)
             {
                 return;
             }
 
-            var file = data.File;
             if (file.Local.IsDownloadingActive)
             {
                 _protoService.Send(new CancelDownloadFile(file.Id, false));

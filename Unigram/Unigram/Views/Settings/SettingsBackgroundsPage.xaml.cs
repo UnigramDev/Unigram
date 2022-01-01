@@ -1,38 +1,23 @@
-﻿using System.Collections.Generic;
-using Telegram.Td.Api;
+﻿using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls.Chats;
 using Unigram.Converters;
-using Unigram.Services;
 using Unigram.ViewModels.Settings;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Settings
 {
-    public sealed partial class SettingsBackgroundsPage : HostedPage, IHandle<UpdateFile>
+    public sealed partial class SettingsBackgroundsPage : HostedPage
     {
         public SettingsBackgroundsViewModel ViewModel => DataContext as SettingsBackgroundsViewModel;
-
-        private readonly FileContext<Background> _backgrounds = new FileContext<Background>();
 
         public SettingsBackgroundsPage()
         {
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<SettingsBackgroundsViewModel>();
-        }
-
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            ViewModel.Aggregator.Subscribe(this);
-        }
-
-        protected override void OnNavigatedFrom(NavigationEventArgs e)
-        {
-            ViewModel.Aggregator.Unsubscribe(this);
         }
 
         private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
@@ -106,12 +91,17 @@ namespace Unigram.Views.Settings
                 {
                     content.Source = UriEx.ToBitmap(file.Local.Path, wallpaper.Document.Thumbnail.Width, wallpaper.Document.Thumbnail.Height);
                 }
-                else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                else
                 {
                     content.Source = null;
+                    root.Tag = wallpaper;
 
-                    _backgrounds[file.Id].Add(wallpaper);
-                    ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                    UpdateManager.Subscribe(root, ViewModel.ProtoService, file, UpdateFile, true);
+
+                    if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                    {
+                        ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                    }
                 }
             }
             else if (wallpaper.Type is BackgroundTypeFill fill)
@@ -122,41 +112,24 @@ namespace Unigram.Views.Settings
             }
         }
 
-        public void Handle(UpdateFile update)
+        private void UpdateFile(object target, File file)
         {
-            var file = update.File;
-            if (!file.Local.IsDownloadingCompleted)
+            var root = target as Grid;
+            var wallpaper = root.Tag as Background;
+
+            var content = root?.Children[1] as Image;
+            if (content == null)
             {
                 return;
             }
 
-            if (_backgrounds.TryGetValue(update.File.Id, out List<Background> items))
+            var small = wallpaper.Document?.Thumbnail;
+            if (small == null)
             {
-                this.BeginOnUIThread(() =>
-                {
-                    foreach (var item in items)
-                    {
-                        item.UpdateFile(update.File);
-
-                        var small = item.Document?.Thumbnail;
-                        if (small == null)
-                        {
-                            continue;
-                        }
-
-                        var container = List.ContainerFromItem(item) as SelectorItem;
-                        var root = container?.ContentTemplateRoot as Grid;
-                        var content = root?.Children[1] as Image;
-
-                        if (content == null)
-                        {
-                            continue;
-                        }
-
-                        content.Source = UriEx.ToBitmap(file.Local.Path, small.Width, small.Height);
-                    }
-                });
+                return;
             }
+
+            content.Source = UriEx.ToBitmap(file.Local.Path, small.Width, small.Height);
         }
 
         private async void List_ItemClick(object sender, ItemClickEventArgs e)

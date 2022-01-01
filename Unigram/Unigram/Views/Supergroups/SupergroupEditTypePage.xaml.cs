@@ -64,7 +64,7 @@ namespace Unigram.Views.Supergroups
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 36);
+                photo.SetChat(ViewModel.ProtoService, chat, 36);
             }
 
             if (args.Phase < 2)
@@ -91,7 +91,7 @@ namespace Unigram.Views.Supergroups
             UsernameHelp.Footer = group.IsChannel ? Strings.Resources.ChannelUsernameHelp : Strings.Resources.MegaUsernameHelp;
             PrivateLinkHelp.Footer = group.IsChannel ? Strings.Resources.ChannelPrivateLinkHelp : Strings.Resources.MegaPrivateLinkHelp;
 
-
+            RestrictSavingContent.Footer = group.IsChannel ? Strings.Resources.RestrictSavingContentInfoChannel : Strings.Resources.RestrictSavingContentInfoGroup;
 
             ViewModel.Username = group.Username;
             ViewModel.IsPublic = !string.IsNullOrEmpty(group.Username);
@@ -103,7 +103,7 @@ namespace Unigram.Views.Supergroups
 
             if (fullInfo.InviteLink == null && string.IsNullOrEmpty(group.Username))
             {
-                ViewModel.ProtoService.Send(new CreateChatInviteLink(chat.Id, 0, 0));
+                ViewModel.ProtoService.Send(new CreateChatInviteLink(chat.Id, string.Empty, 0, 0, false));
             }
         }
 
@@ -131,7 +131,7 @@ namespace Unigram.Views.Supergroups
 
             if (fullInfo.InviteLink == null)
             {
-                ViewModel.ProtoService.Send(new CreateChatInviteLink(chat.Id, 0, 0));
+                ViewModel.ProtoService.Send(new CreateChatInviteLink(chat.Id, string.Empty, 0, 0, false));
             }
         }
 

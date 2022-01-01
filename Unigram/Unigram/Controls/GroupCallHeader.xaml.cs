@@ -19,6 +19,8 @@ namespace Unigram.Controls
     {
         private readonly DispatcherTimer _scheduledTimer;
 
+        private IProtoService _protoService;
+
         private UIElement _parent;
         private GroupCall _call;
 
@@ -45,39 +47,43 @@ namespace Unigram.Controls
 
         public void InitializeParent(UIElement parent, IProtoService protoService)
         {
+            _protoService = protoService;
             _parent = parent;
             ElementCompositionPreview.SetIsTranslationEnabled(parent, true);
+        }
 
-            RecentUsers.GetPicture = sender =>
+        private void RecentUsers_RecentUserHeadChanged(ProfilePicture photo, MessageSender sender)
+        {
+            if (_protoService.TryGetUser(sender, out User user))
             {
-                if (protoService.TryGetUser(sender, out User user))
-                {
-                    return PlaceholderHelper.GetUser(protoService, user, 32);
-                }
-                else if (protoService.TryGetChat(sender, out Chat chat))
-                {
-                    return PlaceholderHelper.GetChat(protoService, chat, 32);
-                }
-
-                return null;
-            };
+                photo.SetUser(_protoService, user, 32);
+            }
+            else if (_protoService.TryGetChat(sender, out Chat chat))
+            {
+                photo.SetChat(_protoService, chat, 32);
+            }
+            else
+            {
+                photo.Source = null;
+            }
         }
 
         public bool UpdateGroupCall(Chat chat, GroupCall call)
         {
             var visible = true;
+            var channel = chat.Type is ChatTypeSupergroup super && super.IsChannel;
 
-            //if (chat.VoiceChat.GroupCallId != call?.Id || !chat.VoiceChat.HasParticipants || call == null || call.IsJoined)
+            //if (chat.VideoChat.GroupCallId != call?.Id || !chat.VideoChat.HasParticipants || call == null || call.IsJoined)
             //{
             //    ShowHide(false);
             //    visible = false;
             //}
             //else
-            if (call != null && chat.VoiceChat.GroupCallId == call.Id && ((chat.VoiceChat.HasParticipants && !(call.IsJoined || call.NeedRejoin)) || call.ScheduledStartDate > 0))
+            if (call != null && chat.VideoChat.GroupCallId == call.Id && ((chat.VideoChat.HasParticipants && !(call.IsJoined || call.NeedRejoin)) || call.ScheduledStartDate > 0))
             {
                 ShowHide(true);
 
-                TitleLabel.Text = call.ScheduledStartDate > 0 && call.Title.Length > 0 ? call.Title : Strings.Resources.VoipGroupVoiceChat;
+                TitleLabel.Text = call.ScheduledStartDate > 0 && call.Title.Length > 0 ? call.Title : channel ? Strings.Resources.VoipChannelVoiceChat : Strings.Resources.VoipGroupVoiceChat;
                 ServiceLabel.Text = call.ParticipantCount > 0 ? Locale.Declension("Participants", call.ParticipantCount) : Strings.Resources.MembersTalkingNobody;
 
                 if (call.ScheduledStartDate != 0)
@@ -94,16 +100,16 @@ namespace Unigram.Controls
                         _scheduledTimer.Stop();
                     }
 
-                    TitleLabel.Text = call.Title.Length > 0 ? call.Title : Strings.Resources.VoipGroupScheduledVoiceChat;
+                    TitleLabel.Text = call.Title.Length > 0 ? call.Title : channel ? Strings.Resources.VoipChannelScheduledVoiceChat : Strings.Resources.VoipGroupScheduledVoiceChat;
 
-                    JoinButton.Background = BootStrapper.Current.Resources["VoiceChatPurpleBrush"] as Brush;
+                    JoinButton.Background = BootStrapper.Current.Resources["VideoChatPurpleBrush"] as Brush;
                     JoinButton.Content = call.GetStartsIn();
                 }
                 else
                 {
                     _scheduledTimer.Stop();
 
-                    TitleLabel.Text = Strings.Resources.VoipGroupVoiceChat;
+                    TitleLabel.Text = channel ? Strings.Resources.VoipChannelVoiceChat : Strings.Resources.VoipGroupVoiceChat;
 
                     JoinButton.Background = BootStrapper.Current.Resources["StartButtonBackground"] as Brush;
                     JoinButton.Content = Strings.Resources.VoipChatJoin;
@@ -112,56 +118,14 @@ namespace Unigram.Controls
                 var destination = RecentUsers.Items;
                 var origin = call.RecentSpeakers;
 
-                if (_call?.Id == call.Id)
+                if (destination.Count > 0 && _call?.Id == call.Id)
                 {
-                    for (int i = 0; i < origin.Count; i++)
-                    {
-                        var item = origin[i];
-                        var index = -1;
-
-                        for (int j = 0; j < destination.Count; j++)
-                        {
-                            if (destination[j].IsEqual(item.ParticipantId))
-                            {
-                                index = j;
-                                break;
-                            }
-                        }
-
-                        if (index > -1 && index != i)
-                        {
-                            destination.Move(index, Math.Min(i, destination.Count));
-                        }
-                        else if (index == -1)
-                        {
-                            destination.Insert(Math.Min(i, destination.Count), item.ParticipantId);
-                        }
-                    }
-
-                    for (int i = 0; i < destination.Count; i++)
-                    {
-                        var item = destination[i];
-                        var index = -1;
-
-                        for (int j = 0; j < origin.Count; j++)
-                        {
-                            if (origin[j].ParticipantId.IsEqual(item))
-                            {
-                                index = j;
-                                break;
-                            }
-                        }
-
-                        if (index == -1)
-                        {
-                            destination.Remove(item);
-                            i--;
-                        }
-                    }
+                    destination.ReplaceDiff(origin.Select(x => x.ParticipantId));
                 }
                 else
                 {
-                    RecentUsers.Items.ReplaceWith(origin.Select(x => x.ParticipantId));
+                    destination.Clear();
+                    destination.AddRange(origin.Select(x => x.ParticipantId));
                 }
             }
             else

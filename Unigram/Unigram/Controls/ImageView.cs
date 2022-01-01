@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
 using Telegram.Td.Api;
+using Unigram.Common;
+using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.UI.Xaml;
@@ -308,5 +310,49 @@ namespace Unigram.Controls
         public event ExceptionRoutedEventHandler ImageFailed;
 
         public event RoutedEventHandler ImageOpened;
+
+        #region Bitmap
+
+        private IProtoService _protoService;
+        private File _file;
+        private int _width;
+        private int _height;
+
+        public void SetSource(IProtoService protoService, File file, int width = 0, int height = 0)
+        {
+            _protoService = protoService;
+            _file = file;
+            _width = width;
+            _height = height;
+
+            Source = GetSource(protoService, file, width, height, true);
+        }
+
+        private ImageSource GetSource(IProtoService protoService, File file, int width, int height, bool download)
+        {
+            if (file.Local.IsDownloadingCompleted)
+            {
+                return UriEx.ToBitmap(file.Local.Path, width, height);
+            }
+            else if (download)
+            {
+                UpdateManager.Subscribe(this, protoService, file, UpdateSource, true);
+
+                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                {
+                    protoService.DownloadFile(file.Id, 1);
+                }
+            }
+
+            return null;
+        }
+
+        private void UpdateSource(object target, File file)
+        {
+            UpdateManager.Unsubscribe(this);
+            Source = GetSource(_protoService, _file, _width, _height, false);
+        }
+
+        #endregion
     }
 }
