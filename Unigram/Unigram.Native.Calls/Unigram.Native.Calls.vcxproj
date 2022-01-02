@@ -172,6 +172,10 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="BroadcastTimeRequestedEventArgs.h">
+      <DependentUpon>BroadcastTimeRequestedEventArgs.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="C:\tgcalls\tgcalls\group\AudioStreamingPart.h" />
     <ClInclude Include="C:\tgcalls\tgcalls\group\StreamingMediaContext.h" />
     <ClInclude Include="C:\tgcalls\tgcalls\group\VideoStreamingPart.h" />
@@ -270,6 +274,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BroadcastTimeRequestedEventArgs.cpp">
+      <DependentUpon>BroadcastTimeRequestedEventArgs.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="C:\tgcalls\tgcalls\group\AudioStreamingPart.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -436,6 +444,7 @@
     <Midl Include="BroadcastPartRequestedEventArgs.idl">
       <SubType>Designer</SubType>
     </Midl>
+    <Midl Include="BroadcastTimeRequestedEventArgs.idl" />
     <Midl Include="GroupNetworkStateChangedEventArgs.idl">
       <SubType>Designer</SubType>
     </Midl>

@@ -122,6 +122,7 @@
     <ClCompile Include="C:\tgcalls\tgcalls\group\VideoStreamingPart.cpp">
       <Filter>tgcalls\group</Filter>
     </ClCompile>
+    <ClCompile Include="BroadcastTimeRequestedEventArgs.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -282,6 +283,7 @@
     <ClInclude Include="C:\tgcalls\tgcalls\group\VideoStreamingPart.h">
       <Filter>tgcalls\group</Filter>
     </ClInclude>
+    <ClInclude Include="BroadcastTimeRequestedEventArgs.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="VoipManager.rc" />
@@ -300,6 +302,7 @@
     <Midl Include="VoipVideoRendererToken.idl" />
     <Midl Include="VoipScreenCapture.idl" />
     <Midl Include="VoipVideoChannelInfo.idl" />
+    <Midl Include="BroadcastTimeRequestedEventArgs.idl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

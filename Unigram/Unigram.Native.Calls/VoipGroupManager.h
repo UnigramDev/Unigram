@@ -57,6 +57,11 @@ namespace winrt::Unigram::Native::Calls::implementation
 			winrt::Unigram::Native::Calls::BroadcastPartRequestedEventArgs> const& value);
 		void BroadcastPartRequested(winrt::event_token const& token);
 
+		winrt::event_token BroadcastTimeRequested(Windows::Foundation::TypedEventHandler<
+			winrt::Unigram::Native::Calls::VoipGroupManager,
+			winrt::Unigram::Native::Calls::BroadcastTimeRequestedEventArgs> const& value);
+		void BroadcastTimeRequested(winrt::event_token const& token);
+
 	private:
 		std::unique_ptr<tgcalls::GroupInstanceCustomImpl> m_impl = nullptr;
 		std::shared_ptr<tgcalls::VideoCaptureInterface> m_capturer = nullptr;
@@ -73,6 +78,9 @@ namespace winrt::Unigram::Native::Calls::implementation
 		winrt::event<Windows::Foundation::TypedEventHandler<
 			winrt::Unigram::Native::Calls::VoipGroupManager,
 			winrt::Unigram::Native::Calls::BroadcastPartRequestedEventArgs>> m_broadcastPartRequested;
+		winrt::event<Windows::Foundation::TypedEventHandler<
+			winrt::Unigram::Native::Calls::VoipGroupManager,
+			winrt::Unigram::Native::Calls::BroadcastTimeRequestedEventArgs>> m_broadcastTimeRequested;
 	};
 
 
@@ -133,6 +141,40 @@ namespace winrt::Unigram::Native::Calls::implementation
 		webrtc::Mutex _mutex;
 
 	};
+
+	class BroadcastTimeTaskImpl final : public tgcalls::BroadcastPartTask {
+	public:
+		BroadcastTimeTaskImpl(
+			std::function<void(int64_t)> done)
+			: _done(std::move(done))
+		{
+
+		}
+
+		void done(int64_t time) {
+			webrtc::MutexLock lock(&_mutex);
+
+			if (_done) {
+				_done(time);
+			}
+		}
+
+		void cancel() override {
+			webrtc::MutexLock lock(&_mutex);
+
+			if (!_done) {
+				return;
+			}
+
+			_done = nullptr;
+		}
+
+	private:
+		std::function<void(int64_t)> _done;
+		webrtc::Mutex _mutex;
+
+	};
+
 }
 
 namespace winrt::Unigram::Native::Calls::factory_implementation

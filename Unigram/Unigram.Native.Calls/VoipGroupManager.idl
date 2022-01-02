@@ -4,6 +4,7 @@ import "VoipVideoCapture.idl";
 import "VoipVideoChannelInfo.idl";
 import "VoipVideoRendererToken.idl";
 import "GroupNetworkStateChangedEventArgs.idl";
+import "BroadcastTimeRequestedEventArgs.idl";
 import "BroadcastPartRequestedEventArgs.idl";
 
 namespace Unigram.Native.Calls
@@ -36,6 +37,7 @@ namespace Unigram.Native.Calls
         event Windows.Foundation.TypedEventHandler<VoipGroupManager, GroupNetworkStateChangedEventArgs> NetworkStateUpdated;
         event Windows.Foundation.TypedEventHandler<VoipGroupManager, Windows.Foundation.Collections.IMapView<Int32, Windows.Foundation.Collections.IKeyValuePair<Single, Boolean> > > AudioLevelsUpdated;
 
+        event Windows.Foundation.TypedEventHandler<VoipGroupManager, BroadcastTimeRequestedEventArgs> BroadcastTimeRequested;
         event Windows.Foundation.TypedEventHandler<VoipGroupManager, BroadcastPartRequestedEventArgs> BroadcastPartRequested;
     }
 }

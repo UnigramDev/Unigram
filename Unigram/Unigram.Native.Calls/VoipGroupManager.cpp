@@ -9,6 +9,7 @@
 #include "VoipVideoRendererToken.h"
 #include "GroupNetworkStateChangedEventArgs.h"
 #include "BroadcastPartRequestedEventArgs.h"
+#include "BroadcastTimeRequestedEventArgs.h"
 
 #include "StaticThreads.h"
 
@@ -48,6 +49,14 @@ namespace winrt::Unigram::Native::Calls::implementation
 			impl.videoCapture = winrt::get_self<VoipVideoCapture>(descriptor.VideoCapture()
 				.as<winrt::default_interface<VoipVideoCapture>>())->m_impl;
 		}
+
+		impl.requestCurrentTime = [this](std::function<void(int64_t)> done) {
+			auto task = std::make_shared<BroadcastTimeTaskImpl>(std::move(done));
+			auto args = winrt::make_self<BroadcastTimeRequestedEventArgs>([task](int64_t time) { task->done(time); });
+
+			m_broadcastTimeRequested(*this, *args);
+			return task;
+		};
 
 		impl.requestVideoBroadcastPart = [this](int64_t time, int64_t period, int32_t channel, tgcalls::VideoChannelDescription::Quality quality, std::function<void(tgcalls::BroadcastPart&&)> done) {
 			int scale = 0;
@@ -279,5 +288,19 @@ namespace winrt::Unigram::Native::Calls::implementation
 	void VoipGroupManager::BroadcastPartRequested(winrt::event_token const& token)
 	{
 		m_broadcastPartRequested.remove(token);
+	}
+
+
+
+	winrt::event_token VoipGroupManager::BroadcastTimeRequested(Windows::Foundation::TypedEventHandler<
+		winrt::Unigram::Native::Calls::VoipGroupManager,
+		winrt::Unigram::Native::Calls::BroadcastTimeRequestedEventArgs> const& value)
+	{
+		return m_broadcastTimeRequested.add(value);
+	}
+
+	void VoipGroupManager::BroadcastTimeRequested(winrt::event_token const& token)
+	{
+		m_broadcastTimeRequested.remove(token);
 	}
 }

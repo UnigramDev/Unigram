@@ -288,6 +288,7 @@ namespace Unigram.Services
                 _manager = new VoipGroupManager(descriptor);
                 _manager.NetworkStateUpdated += OnNetworkStateUpdated;
                 _manager.AudioLevelsUpdated += OnAudioLevelsUpdated;
+                _manager.BroadcastTimeRequested += OnBroadcastTimeRequested;
                 _manager.BroadcastPartRequested += OnBroadcastPartRequested;
 
                 // This must be set before, as updates might come
@@ -537,6 +538,17 @@ namespace Unigram.Services
 
         #endregion
 
+        private async void OnBroadcastTimeRequested(VoipGroupManager sender, BroadcastTimeRequestedEventArgs args)
+        {
+            var response = await ProtoService.SendAsync(new GetOption("unix_time")) as OptionValueInteger;
+            if (response == null)
+            {
+                return;
+            }
+
+            args.Deferral(response.Value * 1000);
+        }
+
         private async void OnBroadcastPartRequested(VoipGroupManager sender, BroadcastPartRequestedEventArgs args)
         {
             var call = _call;
@@ -688,6 +700,7 @@ namespace Unigram.Services
                 {
                     _manager.NetworkStateUpdated -= OnNetworkStateUpdated;
                     _manager.AudioLevelsUpdated -= OnAudioLevelsUpdated;
+                    _manager.BroadcastTimeRequested -= OnBroadcastTimeRequested;
                     _manager.BroadcastPartRequested -= OnBroadcastPartRequested;
 
                     _manager.SetVideoCapture(null);
