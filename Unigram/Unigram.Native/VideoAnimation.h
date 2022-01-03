@@ -112,7 +112,7 @@ namespace winrt::Unigram::Native::implementation
 			return pixelHeight;
 		}
 
-		int FrameRate()
+		double FrameRate()
 		{
 			return framerate;
 		}
@@ -164,7 +164,7 @@ namespace winrt::Unigram::Native::implementation
 
 		int32_t rotation;
 		int32_t duration;
-		int32_t framerate;
+		double framerate;
 	};
 } // namespace winrt::Unigram::Native::implementation
 

@@ -190,10 +190,10 @@ namespace winrt::Unigram::Native::implementation
 		//env->ReleaseIntArrayElements(data, dataArr, 0);
 
 		if (info->video_stream->codecpar->codec_id == AV_CODEC_ID_H264) {
-			info->framerate = (int)av_q2d(info->video_stream->avg_frame_rate);
+			info->framerate = av_q2d(info->video_stream->avg_frame_rate);
 		}
 		else {
-			info->framerate = (int)av_q2d(info->video_stream->r_frame_rate);
+			info->framerate = av_q2d(info->video_stream->r_frame_rate);
 		}
 
 		//OutputDebugStringFormat(L"successfully opened file %s", info->src);
