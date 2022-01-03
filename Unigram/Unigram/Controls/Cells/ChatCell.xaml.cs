@@ -555,13 +555,20 @@ namespace Unigram.Controls.Cells
         {
             if (OnlineBadge == null)
             {
-                OnlineBadge = GetTemplateChild(nameof(OnlineBadge)) as Border;
-                OnlineHeart = GetTemplateChild(nameof(OnlineHeart)) as Border;
+                if (visible)
+                {
+                    OnlineBadge = GetTemplateChild(nameof(OnlineBadge)) as Border;
+                    OnlineHeart = GetTemplateChild(nameof(OnlineHeart)) as Border;
 
-                _onlineBadge = ElementCompositionPreview.GetElementVisual(OnlineBadge);
-                _onlineBadge.CenterPoint = new Vector3(6.5f);
-                //_onlineBadge.Opacity = 0;
-                //_onlineBadge.Scale = new Vector3(0);
+                    _onlineBadge = ElementCompositionPreview.GetElementVisual(OnlineBadge);
+                    _onlineBadge.CenterPoint = new Vector3(6);
+                    //_onlineBadge.Opacity = 0;
+                    //_onlineBadge.Scale = new Vector3(0);
+                }
+                else
+                {
+                    return;
+                }
             }
             else if (OnlineBadge.Visibility == Visibility.Collapsed && !visible)
             {
@@ -582,13 +589,13 @@ namespace Unigram.Controls.Cells
                 }
                 else
                 {
-                    OnlineBadge.Margin = new Thickness(0, 0, 1, 1);
-                    OnlineBadge.Width = OnlineBadge.Height = 13;
-                    OnlineBadge.CornerRadius = new CornerRadius(6.5);
-                    OnlineHeart.Width = OnlineHeart.Height = 9;
-                    OnlineHeart.CornerRadius = new CornerRadius(4.5);
+                    OnlineBadge.Margin = new Thickness(0, 0, 3, 0);
+                    OnlineBadge.Width = OnlineBadge.Height = 12;
+                    OnlineBadge.CornerRadius = new CornerRadius(6);
+                    OnlineHeart.Width = OnlineHeart.Height = 8;
+                    OnlineHeart.CornerRadius = new CornerRadius(4);
 
-                    _onlineBadge.CenterPoint = new Vector3(6.5f);
+                    _onlineBadge.CenterPoint = new Vector3(6);
                 }
 
                 _onlineCall = activeCall;

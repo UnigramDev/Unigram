@@ -76,17 +76,17 @@
                                     x:Load="False"
                                     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                     UseLayoutRounding="False"
-                                    Width="13"
-                                    Height="13"
-                                    CornerRadius="6.5"
+                                    Width="12"
+                                    Height="12"
+                                    CornerRadius="6"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Bottom"
-                                    Margin="0,0,1,1">
+                                    Margin="0,0,3,0">
                                 <Border x:Name="OnlineHeart"
                                         Background="{ThemeResource ChatOnlineBadgeBrush}"
-                                        Width="9"
-                                        Height="9"
-                                        CornerRadius="4.5" />
+                                        Width="8"
+                                        Height="8"
+                                        CornerRadius="4" />
                             </Border>
                         </Grid>
 
