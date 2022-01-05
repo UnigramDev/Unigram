@@ -97,7 +97,7 @@
 
                         <CheckBox x:Name="EditMessages"
                                   IsChecked="{x:Bind ViewModel.CanEditMessages, Mode=TwoWay}"
-                                  Content="{CustomResource EditAdminPostMessages}"
+                                  Content="{CustomResource EditAdminEditMessages}"
                                   Margin="12,6,12,0" />
                         <Rectangle x:Name="EditMessagesSeparator"
                                    Style="{StaticResource Separator}" />
@@ -111,35 +111,35 @@
 
                         <CheckBox x:Name="BanUsers"
                                   IsChecked="{x:Bind ViewModel.CanRestrictMembers, Mode=TwoWay}"
-                                  Content="{CustomResource EditAdminGroupDeleteMessages}"
+                                  Content="{CustomResource EditAdminBanUsers}"
                                   Margin="12,6,12,0" />
                         <Rectangle x:Name="BanUsersSeparator"
                                    Style="{StaticResource Separator}" />
 
                         <CheckBox x:Name="AddUsers"
                                   IsChecked="{x:Bind ViewModel.CanInviteUsers, Mode=TwoWay}"
-                                  Content="{CustomResource EditAdminGroupDeleteMessages}"
+                                  Content="{CustomResource EditAdminAddUsers}"
                                   Margin="12,6,12,0" />
                         <Rectangle x:Name="AddUsersSeparator"
                                    Style="{StaticResource Separator}" />
 
                         <CheckBox x:Name="PinMessages"
                                   IsChecked="{x:Bind ViewModel.CanPinMessages, Mode=TwoWay}"
-                                  Content="{CustomResource EditAdminGroupDeleteMessages}"
+                                  Content="{CustomResource EditAdminPinMessages}"
                                   Margin="12,6,12,0" />
                         <Rectangle x:Name="PinMessagesSeparator"
                                    Style="{StaticResource Separator}" />
 
                         <CheckBox x:Name="ManageVideoChats"
                                   IsChecked="{x:Bind ViewModel.CanManageVideoChats, Mode=TwoWay}"
-                                  Content="{CustomResource EditAdminGroupDeleteMessages}"
+                                  Content="{CustomResource StartVoipChatPermission}"
                                   Margin="12,6,12,0" />
                         <Rectangle x:Name="ManageVideoChatsSeparator"
                                    Style="{StaticResource Separator}" />
 
                         <CheckBox x:Name="AddAdmins"
                                   IsChecked="{x:Bind ViewModel.CanPromoteMembers, Mode=TwoWay}"
-                                  Content="{CustomResource EditAdminGroupDeleteMessages}"
+                                  Content="{CustomResource EditAdminAddAdmins}"
                                   Margin="12,6,12,0" />
                         <Rectangle x:Name="AddAdminsSeparator"
                                    Style="{StaticResource Separator}" />
