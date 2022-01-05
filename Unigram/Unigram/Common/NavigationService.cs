@@ -159,19 +159,19 @@ namespace Unigram.Common
             }
         }
 
-        public static void NavigateToChat(this INavigationService service, Chat chat, long? message = null, long? thread = null, string accessToken = null, NavigationState state = null, bool scheduled = false, bool force = true)
+        public static void NavigateToChat(this INavigationService service, Chat chat, long? message = null, long? thread = null, string accessToken = null, NavigationState state = null, bool scheduled = false, bool force = true, bool createNewWindow = false)
         {
             if (service is TLNavigationService serviceEx)
             {
-                serviceEx.NavigateToChat(chat, message, thread, accessToken, state, scheduled, force);
+                serviceEx.NavigateToChat(chat, message, thread, accessToken, state, scheduled, force, createNewWindow);
             }
         }
 
-        public static void NavigateToChat(this INavigationService service, long chatId, long? message = null, long? thread = null, string accessToken = null, NavigationState state = null, bool scheduled = false, bool force = true)
+        public static void NavigateToChat(this INavigationService service, long chatId, long? message = null, long? thread = null, string accessToken = null, NavigationState state = null, bool scheduled = false, bool force = true, bool createNewWindow = false)
         {
             if (service is TLNavigationService serviceEx)
             {
-                serviceEx.NavigateToChat(chatId, message, thread, accessToken, state, scheduled, force);
+                serviceEx.NavigateToChat(chatId, message, thread, accessToken, state, scheduled, force, createNewWindow);
             }
         }
 

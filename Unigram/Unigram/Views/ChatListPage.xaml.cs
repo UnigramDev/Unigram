@@ -57,12 +57,14 @@ namespace Unigram.Views
             }
 
             var muted = ViewModel.CacheService.Notifications.GetMutedFor(chat) > 0;
+            flyout.CreateFlyoutItem(viewModel.ChatOpenCommand, chat, "Open in new window", new FontIcon { Glyph = Icons.WindowNew });
+            flyout.CreateFlyoutSeparator();
             flyout.CreateFlyoutItem(DialogArchive_Loaded, viewModel.ChatArchiveCommand, chat, chat.Positions.Any(x => x.List is ChatListArchive) ? Strings.Resources.Unarchive : Strings.Resources.Archive, new FontIcon { Glyph = Icons.Archive });
             flyout.CreateFlyoutItem(DialogPin_Loaded, viewModel.ChatPinCommand, chat, position.IsPinned ? Strings.Resources.UnpinFromTop : Strings.Resources.PinToTop, new FontIcon { Glyph = position.IsPinned ? Icons.PinOff : Icons.Pin });
 
             if (viewModel.Items.ChatList is ChatListFilter chatListFilter)
             {
-                flyout.CreateFlyoutItem(viewModel.FolderRemoveCommand, (chatListFilter.ChatFilterId, chat), Strings.Resources.FilterRemoveFrom, new FontIcon { Glyph = Icons.FolderMove, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily });
+                flyout.CreateFlyoutItem(viewModel.FolderRemoveCommand, (chatListFilter.ChatFilterId, chat), Strings.Resources.FilterRemoveFrom, new FontIcon { Glyph = Icons.FolderMove });
             }
             else
             {
@@ -108,7 +110,7 @@ namespace Unigram.Views
             if (viewModel.SelectionMode != ListViewSelectionMode.Multiple)
             {
                 flyout.CreateFlyoutSeparator();
-                flyout.CreateFlyoutItem(viewModel.ChatSelectCommand, chat, Strings.Additional.Select, new FontIcon { Glyph = Icons.CheckmarkCircle });
+                flyout.CreateFlyoutItem(viewModel.ChatSelectCommand, chat, Strings.Resources.lng_context_select_msg, new FontIcon { Glyph = Icons.CheckmarkCircle });
             }
 
             args.ShowAt(flyout, element);
