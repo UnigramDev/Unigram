@@ -37,6 +37,7 @@ namespace Unigram.ViewModels
 
             SearchFilters = new MvxObservableCollection<ISearchChatsFilter>();
 
+            ChatOpenCommand = new RelayCommand<Chat>(ChatOpenExecute);
             ChatPinCommand = new RelayCommand<Chat>(ChatPinExecute);
             ChatArchiveCommand = new RelayCommand<Chat>(ChatArchiveExecute);
             ChatMarkCommand = new RelayCommand<Chat>(ChatMarkExecute);
@@ -110,6 +111,16 @@ namespace Unigram.ViewModels
             get => _topChats;
             set => Set(ref _topChats, value);
         }
+
+        #region Open
+
+        public RelayCommand<Chat> ChatOpenCommand { get; }
+        private void ChatOpenExecute(Chat chat)
+        {
+            NavigationService.NavigateToChat(chat, createNewWindow: true);
+        }
+
+        #endregion
 
         #region Pin
 

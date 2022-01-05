@@ -12,8 +12,6 @@ using Unigram.Views.Payments;
 using Unigram.Views.Popups;
 using Unigram.Views.Settings;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.System;
-using Windows.UI.Core;
 using Windows.UI.WindowManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -110,7 +108,7 @@ namespace Unigram.Common
             }
         }
 
-        public async void NavigateToChat(Chat chat, long? message = null, long? thread = null, string accessToken = null, NavigationState state = null, bool scheduled = false, bool force = true)
+        public async void NavigateToChat(Chat chat, long? message = null, long? thread = null, string accessToken = null, NavigationState state = null, bool scheduled = false, bool force = true, bool createNewWindow = false)
         {
             if (chat == null)
             {
@@ -200,9 +198,7 @@ namespace Unigram.Common
                     state["access_token"] = accessToken;
                 }
 
-                var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
-                var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
-                if (shift && !ctrl)
+                if (createNewWindow)
                 {
                     Type target;
                     object parameter;
@@ -266,7 +262,7 @@ namespace Unigram.Common
             }
         }
 
-        public async void NavigateToChat(long chatId, long? message = null, long? thread = null, string accessToken = null, NavigationState state = null, bool scheduled = false, bool force = true)
+        public async void NavigateToChat(long chatId, long? message = null, long? thread = null, string accessToken = null, NavigationState state = null, bool scheduled = false, bool force = true, bool createNewWindow = false)
         {
             var chat = _protoService.GetChat(chatId);
             if (chat == null)
@@ -279,7 +275,7 @@ namespace Unigram.Common
                 return;
             }
 
-            NavigateToChat(chat, message, thread, accessToken, state, scheduled, force);
+            NavigateToChat(chat, message, thread, accessToken, state, scheduled, force, createNewWindow);
         }
 
         public async void NavigateToPasscode()

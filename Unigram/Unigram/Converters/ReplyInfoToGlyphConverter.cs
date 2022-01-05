@@ -89,6 +89,8 @@ namespace Unigram.Converters
 
         public const string Archive = "\uE7B8";
 
+        public const string WindowNew = "\uE97F";
+
         public const string Send = "\uE919";
 
         public const string Key = "\uE192";
