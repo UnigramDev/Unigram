@@ -613,7 +613,7 @@ namespace Unigram.Controls.Messages
             HideThumbnail();
 
             SetText(string.Empty,
-                message == null ? Strings.Additional.DeletedMessage : string.Empty,
+                message == null ? Strings.Resources.lng_deleted_message : string.Empty,
                 null);
 
             return true;

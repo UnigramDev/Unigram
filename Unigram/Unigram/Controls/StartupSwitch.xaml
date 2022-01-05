@@ -11,7 +11,7 @@
     <local:HeaderedControl x:Name="Headered">
         <CheckBox x:Name="Toggle"
                   x:Uid="StartupSwitch_Toggle"
-                  Content="Launch Unigram when system starts"
+                  Content="{CustomResource lng_settings_auto_start}"
                   Margin="12,6,12,0" />
         <Rectangle Style="{StaticResource Separator}" />
         <CheckBox x:Name="ToggleMinimized"

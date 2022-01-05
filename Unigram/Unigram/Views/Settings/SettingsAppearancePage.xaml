@@ -316,7 +316,7 @@
                     <Rectangle Style="{StaticResource Separator}" />
 
                     <CheckBox IsChecked="{x:Bind ViewModel.IsReplaceEmojiEnabled, Mode=TwoWay}"
-                              Content="Replace Emojis"
+                              Content="{CustomResource lng_settings_replace_emojis}"
                               Margin="12,6,12,0" />
                     <Rectangle Style="{StaticResource Separator}" />
 

@@ -23,19 +23,19 @@
 
                 <controls:HeaderedControl>
                     <CheckBox IsChecked="{x:Bind ViewModel.IsAdaptiveWideEnabled, Mode=TwoWay}"
-                              Content="Adaptive Layout for Wide Screens"
+                              Content="{CustomResource lng_settings_adaptive_wide}"
                               Margin="12,6,12,0" />
                     <Rectangle Style="{StaticResource Separator}" />
 
                     <CheckBox IsChecked="{x:Bind ViewModel.PreferIpv6, Mode=TwoWay}"
-                              Content="Try connecting through IPv6"
+                              Content="{CustomResource lng_connection_try_ipv6}"
                               Margin="12,6,12,0" />
                     <Rectangle Style="{StaticResource Separator}" />
 
                     <CheckBox x:Name="TraySwitch"
                               x:Load="False"
                               IsChecked="{x:Bind ViewModel.IsTrayVisible, Mode=TwoWay}"
-                              Content="Show Tray Icon"
+                              Content="{CustomResource lng_settings_workmode_tray}"
                               Margin="12,6,12,0" />
                     <Rectangle x:Name="TraySwitchSeparator"
                                x:Load="False"

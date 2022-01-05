@@ -52,7 +52,8 @@ namespace Unigram.Controls
                     ToggleMinimized.Visibility = Visibility.Collapsed;
                 }
 
-                Headered.Footer = "You can enable this in the Startup tab in Task Manager.";
+                Headered.Footer = Strings.Resources.lng_settings_auto_start_disabled_uwp
+                    .Replace("Telegram Desktop", "Unigram");
 
                 Visibility = Visibility.Visible;
             }
