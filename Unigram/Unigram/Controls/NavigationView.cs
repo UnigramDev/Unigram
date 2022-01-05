@@ -28,7 +28,7 @@ namespace Unigram.Controls
 
         public void ShowTeachingTip(string text)
         {
-            Window.Current.ShowTeachingTip(TogglePaneButton, text, Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode.BottomLeft);
+            Window.Current.ShowTeachingTip(TogglePaneButton, text, Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode.BottomRight);
         }
 
         protected override void OnApplyTemplate()
