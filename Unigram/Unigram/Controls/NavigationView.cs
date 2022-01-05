@@ -26,6 +26,11 @@ namespace Unigram.Controls
             DefaultStyleKey = typeof(NavigationView);
         }
 
+        public void ShowTeachingTip(string text)
+        {
+            Window.Current.ShowTeachingTip(TogglePaneButton, text, Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode.BottomLeft);
+        }
+
         protected override void OnApplyTemplate()
         {
             TogglePaneButtonRoot = GetTemplateChild("TogglePaneButtonRoot") as Grid;

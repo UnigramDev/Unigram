@@ -942,7 +942,7 @@
                                                                     SelectionStroke="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                                                     ActualThemeChanged="ArchivedChats_ActualThemeChanged" />
                                                 </Button>
-                                                <Border VerticalAlignment="Bottom">
+                                                <!--<Border VerticalAlignment="Bottom">
                                                     <Border x:Name="ArchivedChatsCompactPanel"
                                                             Background="{ThemeResource PageBackgroundDarkBrush}">
                                                         <Button Click="ArchivedChats_Click"
@@ -952,7 +952,7 @@
                                                                 Visibility="{x:Bind ArchivedChats.Visibility, Mode=OneWay}"
                                                                 BorderThickness="12,6" />
                                                     </Border>
-                                                </Border>
+                                                </Border>-->
                                             </Grid>
                                         </ListView.Header>
                                     </local:ChatListPage>

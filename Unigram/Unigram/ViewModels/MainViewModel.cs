@@ -123,23 +123,13 @@ namespace Unigram.ViewModels
         public RelayCommand ToggleArchiveCommand { get; }
         private void ToggleArchiveExecute()
         {
-            CollapseArchivedChats = !CollapseArchivedChats;
+            base.Settings.HideArchivedChats = !base.Settings.HideArchivedChats;
         }
 
         public RelayCommand SetupFiltersCommand { get; }
         private void SetupFiltersExecute()
         {
             NavigationService.Navigate(typeof(FoldersPage));
-        }
-
-        public bool CollapseArchivedChats
-        {
-            get => base.Settings.CollapseArchivedChats;
-            set
-            {
-                base.Settings.CollapseArchivedChats = value;
-                RaisePropertyChanged();
-            }
         }
 
         private int _unreadCount;

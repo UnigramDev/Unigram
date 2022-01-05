@@ -38,7 +38,7 @@ namespace Unigram.Services
         int VerbosityLevel { get; set; }
         bool UseTestDC { get; set; }
 
-        bool CollapseArchivedChats { get; set; }
+        bool HideArchivedChats { get; set; }
         bool IsAdaptiveWideEnabled { get; set; }
         bool IsTrayVisible { get; set; }
         bool IsLaunchMinimized { get; set; }
@@ -398,11 +398,11 @@ namespace Unigram.Services
             set => AddOrUpdateValue(ref _isLaunchMinimized, _local, "IsLaunchMinimized", value);
         }
 
-        private static bool? _collapseArchivedChats;
-        public bool CollapseArchivedChats
+        private static bool? _hideArchivedChats;
+        public bool HideArchivedChats
         {
-            get => _collapseArchivedChats ??= GetValueOrDefault(_local, "CollapseArchivedChats", false);
-            set => AddOrUpdateValue(ref _collapseArchivedChats, _local, "CollapseArchivedChats", value);
+            get => _hideArchivedChats ??= GetValueOrDefault(_local, "HideArchivedChats", false);
+            set => AddOrUpdateValue(ref _hideArchivedChats, _local, "HideArchivedChats", value);
         }
 
         private static bool? _isAccountsSelectorExpanded;

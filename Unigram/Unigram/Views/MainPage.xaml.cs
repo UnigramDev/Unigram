@@ -113,10 +113,11 @@ namespace Unigram.Views
             var header = ElementCompositionPreview.GetElementVisual(PageHeader);
             header.Clip = header.Compositor.CreateInsetClip();
 
-            var show = !((TLViewModelBase)ViewModel).Settings.CollapseArchivedChats;
+            //var show = !((TLViewModelBase)ViewModel).Settings.CollapseArchivedChats;
+            var show = !((TLViewModelBase)ViewModel).Settings.HideArchivedChats;
 
             ArchivedChatsPanel.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
-            ArchivedChatsCompactPanel.Visibility = show ? Visibility.Collapsed : Visibility.Visible;
+            //ArchivedChatsCompactPanel.Visibility = show ? Visibility.Collapsed : Visibility.Visible;
         }
 
         public void Dispose()
@@ -173,7 +174,7 @@ namespace Unigram.Views
 
         private void InitializeLocalization()
         {
-            TabChats.Header = Strings.Additional.Chats;
+            TabChats.Header = Strings.Resources.FilterChats;
         }
 
         private void InitializeLock()
@@ -2352,6 +2353,10 @@ namespace Unigram.Views
             {
                 MasterDetail.NavigationService.Navigate(typeof(InvitePage));
             }
+            else if (destination == RootDestination.ArchivedChats)
+            {
+                ArchivedChats_Click(null, null);
+            }
             else if (destination == RootDestination.SavedMessages)
             {
                 var response = await ViewModel.ProtoService.SendAsync(new CreatePrivateChat(ViewModel.CacheService.Options.MyId, false));
@@ -2481,30 +2486,31 @@ namespace Unigram.Views
             var element = sender as FrameworkElement;
             var chat = element.Tag as Chat;
 
-            if (((TLViewModelBase)ViewModel).Settings.CollapseArchivedChats)
-            {
-                flyout.CreateFlyoutItem(new RelayCommand(ToggleArchive), Strings.Resources.AccDescrExpandPanel, new FontIcon { Glyph = Icons.Expand });
-            }
-            else
-            {
-                flyout.CreateFlyoutItem(new RelayCommand(ToggleArchive), Strings.Resources.AccDescrCollapsePanel, new FontIcon { Glyph = Icons.Collapse });
-            }
+            //if (((TLViewModelBase)ViewModel).Settings.CollapseArchivedChats)
+            //{
+            //    flyout.CreateFlyoutItem(new RelayCommand(ToggleArchive), Strings.Resources.AccDescrExpandPanel, new FontIcon { Glyph = Icons.Expand });
+            //}
+            //else
+            //{
+            //    flyout.CreateFlyoutItem(new RelayCommand(ToggleArchive), Strings.Resources.AccDescrCollapsePanel, new FontIcon { Glyph = Icons.Collapse });
+            //}
 
+            flyout.CreateFlyoutItem(new RelayCommand(ToggleArchive), Strings.Resources.lng_context_archive_to_menu, new FontIcon { Glyph = Icons.Collapse });
             flyout.CreateFlyoutItem(ViewModel.FilterMarkAsReadCommand, ChatFilterViewModel.Archive, Strings.Resources.MarkAllAsRead, new FontIcon { Glyph = Icons.MarkAsRead });
 
             args.ShowAt(flyout, element);
         }
 
-        private async void ToggleArchive()
+        public async void ToggleArchive()
         {
             ViewModel.ToggleArchiveCommand.Execute();
 
             ArchivedChatsPanel.Visibility = Visibility.Visible;
-            ArchivedChatsCompactPanel.Visibility = Visibility.Visible;
+            //ArchivedChatsCompactPanel.Visibility = Visibility.Visible;
 
             await ArchivedChatsPanel.UpdateLayoutAsync();
 
-            var show = !((TLViewModelBase)ViewModel).Settings.CollapseArchivedChats;
+            var show = !((TLViewModelBase)ViewModel).Settings.HideArchivedChats;
 
             var element = VisualTreeHelper.GetChild(ChatsList, 0) as UIElement;
 
@@ -2513,7 +2519,7 @@ namespace Unigram.Views
 
             var chats = ElementCompositionPreview.GetElementVisual(element);
             var panel = ElementCompositionPreview.GetElementVisual(ArchivedChatsPanel);
-            var compact = ElementCompositionPreview.GetElementVisual(ArchivedChatsCompactPanel);
+            //var compact = ElementCompositionPreview.GetElementVisual(ArchivedChatsCompactPanel);
 
             presenter.Clip = chats.Compositor.CreateInsetClip();
             parent.Clip = chats.Compositor.CreateInsetClip();
@@ -2523,15 +2529,22 @@ namespace Unigram.Views
             {
                 chats.Offset = new Vector3();
                 panel.Offset = new Vector3();
-                compact.Offset = new Vector3();
+                //compact.Offset = new Vector3();
 
                 ArchivedChatsPanel.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
-                ArchivedChatsCompactPanel.Visibility = show ? Visibility.Collapsed : Visibility.Visible;
+                //ArchivedChatsCompactPanel.Visibility = show ? Visibility.Collapsed : Visibility.Visible;
                 ChatsList.Margin = new Thickness();
+
+                Root.UpdateSessions();
+
+                if (show is false)
+                {
+                    Root.ShowTeachingTip(Strings.Resources.lng_context_archive_to_menu_info);
+                }
             };
 
             var panelY = (float)ArchivedChatsPanel.ActualHeight;
-            var compactY = (float)ArchivedChatsCompactPanel.ActualHeight;
+            var compactY = 0; //(float)ArchivedChatsCompactPanel.ActualHeight;
 
             ChatsList.Margin = new Thickness(0, 0, 0, -(panelY - compactY));
 
@@ -2553,10 +2566,10 @@ namespace Unigram.Views
             offset0.InsertKeyFrame(1, new Vector3(0, y1, 0));
             chats.StartAnimation("Offset", offset0);
 
-            var offset1 = chats.Compositor.CreateVector3KeyFrameAnimation();
-            offset1.InsertKeyFrame(0, new Vector3(0, show ? 0 : compactY, 0));
-            offset1.InsertKeyFrame(1, new Vector3(0, show ? compactY : 0, 0));
-            compact.StartAnimation("Offset", offset1);
+            //var offset1 = chats.Compositor.CreateVector3KeyFrameAnimation();
+            //offset1.InsertKeyFrame(0, new Vector3(0, show ? 0 : compactY, 0));
+            //offset1.InsertKeyFrame(1, new Vector3(0, show ? compactY : 0, 0));
+            //compact.StartAnimation("Offset", offset1);
 
             var offset2 = chats.Compositor.CreateVector3KeyFrameAnimation();
             offset2.InsertKeyFrame(0, new Vector3(0, show ? -compactY : 0, 0));
@@ -2593,7 +2606,6 @@ namespace Unigram.Views
 
             var chats = ElementCompositionPreview.GetElementVisual(element);
             var panel = ElementCompositionPreview.GetElementVisual(ArchivedChatsPanel);
-            var compact = ElementCompositionPreview.GetElementVisual(ArchivedChatsCompactPanel);
 
             parent.Clip = chats.Compositor.CreateInsetClip();
 

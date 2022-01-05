@@ -48,6 +48,7 @@ namespace Unigram.Views.Host
             _navigationViewSelected = RootDestination.Chats;
             _navigationViewItems = new MvxObservableCollection<object>
             {
+                RootDestination.ArchivedChats,
                 RootDestination.SavedMessages,
                 // ------------
                 RootDestination.Separator,
@@ -269,17 +270,29 @@ namespace Unigram.Views.Host
                     _navigationViewItems.RemoveAt(i);
                     i--;
                 }
-                else if (_navigationViewItems[i] is RootDestination viewItem && viewItem == RootDestination.AddAccount)
+                else if (_navigationViewItems[i] is RootDestination.AddAccount)
                 {
                     _navigationViewItems.RemoveAt(i);
 
-                    if (i < _navigationViewItems.Count && _navigationViewItems[i] is RootDestination destination && destination == RootDestination.Separator)
+                    if (i < _navigationViewItems.Count && _navigationViewItems[i] is RootDestination.Separator)
                     {
                         _navigationViewItems.RemoveAt(i);
                     }
 
                     i--;
                 }
+            }
+
+            if (SettingsService.Current.HideArchivedChats is false)
+            {
+                if (_navigationViewItems[0] is RootDestination.ArchivedChats)
+                {
+                    _navigationViewItems.RemoveAt(0);
+                }
+            }
+            else if (_navigationViewItems[0] is not RootDestination.ArchivedChats)
+            {
+                _navigationViewItems.Insert(0, RootDestination.ArchivedChats);
             }
 
             if (show && items != null)
@@ -332,7 +345,7 @@ namespace Unigram.Views.Host
             {
 
             }
-            else if (container.Content is RootDestination destination && destination == RootDestination.AddAccount)
+            else if (container.Content is RootDestination.AddAccount)
             {
                 var alt = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
                 var ctrl = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
@@ -344,6 +357,18 @@ namespace Unigram.Views.Host
 
                     flyout.CreateFlyoutItem(new RelayCommand(() => Switch(_lifetime.Create(test: false))), "Production Server", new FontIcon { Glyph = Icons.Globe });
                     flyout.CreateFlyoutItem(new RelayCommand(() => Switch(_lifetime.Create(test: true))), "Test Server", new FontIcon { Glyph = Icons.Bug });
+
+                    args.ShowAt(flyout, container);
+                }
+            }
+            else if (container.Content is RootDestination.ArchivedChats)
+            {
+                if (_navigationService.Content is MainPage page)
+                {
+                    var flyout = new MenuFlyout();
+
+                    flyout.CreateFlyoutItem(new RelayCommand(() => { Navigation.IsPaneOpen = false; page.ToggleArchive(); }), Strings.Resources.lng_context_archive_to_list, new FontIcon { Glyph = Icons.Expand });
+                    flyout.CreateFlyoutItem(page.ViewModel.FilterMarkAsReadCommand, ChatFilterViewModel.Archive, Strings.Resources.MarkAllAsRead, new FontIcon { Glyph = Icons.MarkAsRead });
 
                     args.ShowAt(flyout, container);
                 }
@@ -443,6 +468,10 @@ namespace Unigram.Views.Host
                         content.Glyph = Icons.Settings;
                         break;
 
+                    case RootDestination.ArchivedChats:
+                        content.Text = Strings.Resources.ArchivedChats;
+                        content.Glyph = Icons.Archive;
+                        break;
                     case RootDestination.SavedMessages:
                         content.Text = Strings.Resources.SavedMessages;
                         content.Glyph = Icons.Bookmark;
@@ -505,6 +534,16 @@ namespace Unigram.Views.Host
         }
 
         #region Exposed
+
+        public void ShowTeachingTip(string text)
+        {
+            Navigation.ShowTeachingTip(text);
+        }
+
+        public void UpdateSessions()
+        {
+            InitializeSessions(SettingsService.Current.IsAccountsSelectorExpanded, _lifetime.Items);
+        }
 
         public void SetPaneToggleButtonVisibility(PaneToggleButtonVisibility value)
         {
@@ -727,6 +766,7 @@ namespace Unigram.Views.Host
     {
         AddAccount,
 
+        ArchivedChats,
         SavedMessages,
 
         Chats,
