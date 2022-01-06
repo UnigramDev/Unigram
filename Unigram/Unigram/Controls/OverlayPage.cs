@@ -485,7 +485,7 @@ namespace Unigram.Controls
             throw new NotImplementedException();
         }
 
-        public Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null, ViewSizePreference size = ViewSizePreference.UseHalf)
+        public Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null, Size size = default)
         {
             throw new NotImplementedException();
         }

@@ -15,7 +15,6 @@ namespace Unigram.Views.Channels
         public ChannelCreateStep2Page()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<ChannelCreateStep2ViewModel, ISupergroupEditDelegate>(this);
 
             var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => Username.TextChanged += new TextChangedEventHandler(handler));
             debouncer.Invoked += (s, args) =>

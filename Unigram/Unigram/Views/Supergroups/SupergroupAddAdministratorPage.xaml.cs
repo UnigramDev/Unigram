@@ -23,7 +23,6 @@ namespace Unigram.Views.Supergroups
         public SupergroupAddAdministratorPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SupergroupAddAdministratorViewModel>();
 
             var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
             debouncer.Invoked += async (s, args) =>

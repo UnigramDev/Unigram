@@ -14,7 +14,6 @@ namespace Unigram.Views
         public ChatsNearbyPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<ChatsNearbyViewModel>();
         }
 
         private void OnElementPrepared(Microsoft.UI.Xaml.Controls.ItemsRepeater sender, Microsoft.UI.Xaml.Controls.ItemsRepeaterElementPreparedEventArgs args)

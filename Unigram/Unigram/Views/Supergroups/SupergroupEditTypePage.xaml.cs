@@ -15,7 +15,6 @@ namespace Unigram.Views.Supergroups
         public SupergroupEditTypePage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SupergroupEditTypeViewModel, ISupergroupEditDelegate>(this);
 
             var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => Username.TextChanged += new TextChangedEventHandler(handler));
             debouncer.Invoked += (s, args) =>

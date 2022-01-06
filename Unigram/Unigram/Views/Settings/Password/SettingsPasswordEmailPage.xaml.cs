@@ -12,7 +12,6 @@ namespace Unigram.Views.Settings.Password
         public SettingsPasswordEmailPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsPasswordEmailViewModel>();
         }
 
         private void Walkthrough_Loaded(object sender, RoutedEventArgs e)

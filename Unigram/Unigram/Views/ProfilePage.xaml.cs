@@ -26,7 +26,6 @@ namespace Unigram.Views
         public ProfilePage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<ProfileViewModel, IProfileDelegate>(this);
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)

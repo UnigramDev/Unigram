@@ -17,7 +17,6 @@ namespace Unigram.Views.Settings
         public SettingsSessionsPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsSessionsViewModel>();
         }
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)

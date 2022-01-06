@@ -17,7 +17,6 @@ namespace Unigram.Views.Settings
         public SettingsBackgroundsPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsBackgroundsViewModel>();
         }
 
         private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)

@@ -2349,10 +2349,6 @@ namespace Unigram.Views
                 rpMasterTitlebar.SelectedIndex = 3;
                 MasterDetail.Push(true);
             }
-            else if (destination == RootDestination.InviteFriends)
-            {
-                MasterDetail.NavigationService.Navigate(typeof(InvitePage));
-            }
             else if (destination == RootDestination.ArchivedChats)
             {
                 ArchivedChats_Click(null, null);

@@ -17,7 +17,6 @@ namespace Unigram.Views.Settings
         public SettingsThemesPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsThemesViewModel>();
         }
 
         private async void Switch_Click(object sender, RoutedEventArgs e)

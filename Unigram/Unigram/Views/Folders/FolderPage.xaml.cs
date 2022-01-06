@@ -18,7 +18,6 @@ namespace Unigram.Views.Folders
         public FolderPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<FolderViewModel>();
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)

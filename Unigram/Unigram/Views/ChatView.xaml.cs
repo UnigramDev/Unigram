@@ -51,10 +51,10 @@ namespace Unigram.Views
 {
     public sealed partial class ChatView : HostedPage, INavigablePage, ISearchablePage, IDialogDelegate, IActivablePage
     {
-        public DialogViewModel ViewModel => DataContext as DialogViewModel;
-
-        private readonly Func<IDialogDelegate, DialogViewModel> _getViewModel;
         private DialogViewModel _viewModel;
+        public DialogViewModel ViewModel => _viewModel ??= DataContext as DialogViewModel;
+
+        private readonly Func<IDialogDelegate, int, DialogViewModel> _getViewModel;
 
         private readonly TLWindowContext _windowContext;
 
@@ -86,13 +86,13 @@ namespace Unigram.Views
 
         private TaskCompletionSource<bool> _updateThemeTask;
 
-        private MessageSender _floatingSender;
+        private ChatBackgroundPresenter _backgroundPresenter;
 
-        public ChatView(Func<IDialogDelegate, DialogViewModel> getViewModel)
+        public ChatView(Func<IDialogDelegate, int, DialogViewModel> getViewModel)
         {
             InitializeComponent();
-            DataContext = _viewModel = getViewModel(this);
-            ViewModel.Sticker_Click = Stickers_ItemClick;
+
+            _getViewModel = getViewModel;
 
             _autocompleteHandler = new AnimatedListHandler<Sticker>(ListAutocomplete);
 
@@ -101,10 +101,6 @@ namespace Unigram.Views
             _autocompleteZoomer.Closing = _autocompleteHandler.ThrottleVisibleItems;
             _autocompleteZoomer.DownloadFile = fileId => ViewModel.ProtoService.DownloadFile(fileId, 32);
             _autocompleteZoomer.SessionId = () => ViewModel.ProtoService.SessionId;
-
-            TextField.IsFormattingVisible = ViewModel.Settings.IsTextFormattingVisible;
-
-            _getViewModel = getViewModel;
 
             NavigationCacheMode = Windows.UI.Xaml.Navigation.NavigationCacheMode.Required;
 
@@ -130,34 +126,13 @@ namespace Unigram.Views
             {
                 _myPeople = true;
                 _windowContext.ContactPanel.LaunchFullAppRequested += ContactPanel_LaunchFullAppRequested;
-
-                Header.Visibility = Visibility.Collapsed;
-                FindName("BackgroundPresenter");
-                BackgroundPresenter.Update(ViewModel.SessionId, ViewModel.ProtoService, ViewModel.Aggregator);
-            }
-            else if (!Windows.ApplicationModel.Core.CoreApplication.GetCurrentView().IsMain)
-            {
-                FindName("BackgroundPresenter");
-                BackgroundPresenter.Update(ViewModel.SessionId, ViewModel.ProtoService, ViewModel.Aggregator);
             }
 
             Messages.ViewVisibleMessages = ViewVisibleMessages;
             Messages.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
 
-            ViewModel.TextField = TextField;
-            ViewModel.ListField = Messages;
-
-            CheckMessageBoxEmpty();
-
-            ViewModel.PropertyChanged += OnPropertyChanged;
-
             InitializeAutomation();
             InitializeStickers();
-
-            GroupCall.InitializeParent(ClipperOuter, ViewModel.ProtoService);
-            JoinRequests.InitializeParent(ClipperJoinRequests, ViewModel.ProtoService);
-            ActionBar.InitializeParent(ClipperActionBar);
-            PinnedMessage.InitializeParent(Clipper);
 
             ElementCompositionPreview.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
             ElementCompositionPreview.SetIsTranslationEnabled(Ellipse, true);
@@ -249,6 +224,41 @@ namespace Unigram.Views
             _drawable.Update((Color)BootStrapper.Current.Resources["SystemAccentColor"], true);
         }
 
+        private void OnNavigatedTo()
+        {
+            TextField.IsFormattingVisible = ViewModel.Settings.IsTextFormattingVisible;
+
+            if (_windowContext.ContactPanel != null)
+            {
+                Header.Visibility = Visibility.Collapsed;
+                FindName("BackgroundPresenter");
+                BackgroundPresenter.Update(ViewModel.SessionId, ViewModel.ProtoService, ViewModel.Aggregator);
+            }
+            else if (!Windows.ApplicationModel.Core.CoreApplication.GetCurrentView().IsMain)
+            {
+                FindName("BackgroundPresenter");
+                BackgroundPresenter.Update(ViewModel.SessionId, ViewModel.ProtoService, ViewModel.Aggregator);
+            }
+
+            GroupCall.InitializeParent(ClipperOuter, ViewModel.ProtoService);
+            JoinRequests.InitializeParent(ClipperJoinRequests, ViewModel.ProtoService);
+            ActionBar.InitializeParent(ClipperActionBar);
+            PinnedMessage.InitializeParent(Clipper);
+
+            switch (ViewModel.Settings.Stickers.SelectedTab)
+            {
+                case Services.Settings.StickersTab.Emoji:
+                    ButtonStickers.Glyph = Icons.Emoji;
+                    break;
+                case Services.Settings.StickersTab.Animations:
+                    ButtonStickers.Glyph = Icons.Gif;
+                    break;
+                case Services.Settings.StickersTab.Stickers:
+                    ButtonStickers.Glyph = Icons.Sticker;
+                    break;
+            }
+        }
+
         private void InitializeAutomation()
         {
             Title.RegisterPropertyChangedCallback(TextBlock.TextProperty, OnHeaderContentChanged);
@@ -313,19 +323,6 @@ namespace Unigram.Views
             StickersPanel.PointerExited += Stickers_PointerExited;
 
             StickersPanel.AllowFocusOnInteraction = true;
-
-            switch (ViewModel.Settings.Stickers.SelectedTab)
-            {
-                case Services.Settings.StickersTab.Emoji:
-                    ButtonStickers.Glyph = Icons.Emoji;
-                    break;
-                case Services.Settings.StickersTab.Animations:
-                    ButtonStickers.Glyph = Icons.Gif;
-                    break;
-                case Services.Settings.StickersTab.Stickers:
-                    ButtonStickers.Glyph = Icons.Sticker;
-                    break;
-            }
         }
 
         public void HideStickers()
@@ -437,8 +434,26 @@ namespace Unigram.Views
             if (unallowed && Theme.Current.Update(ActualTheme, null))
             {
                 var background = ViewModel.ProtoService.GetSelectedBackground(ActualTheme == ElementTheme.Dark);
-                ViewModel.Aggregator.Publish(new UpdateSelectedBackground(ActualTheme == ElementTheme.Dark, background));
+
+                _backgroundPresenter ??= FindBackgroundPresenter();
+                _backgroundPresenter?.Update(background, ActualTheme == ElementTheme.Dark);
             }
+        }
+
+        private ChatBackgroundPresenter FindBackgroundPresenter()
+        {
+            if (BackgroundPresenter != null)
+            {
+                return BackgroundPresenter;
+            }
+
+            var masterDetailPanel = this.Ancestors<MasterDetailPanel>().FirstOrDefault();
+            if (masterDetailPanel != null)
+            {
+                return masterDetailPanel.Descendants<ChatBackgroundPresenter>().FirstOrDefault();
+            }
+
+            return null;
         }
 
 #pragma warning disable CA1063 // Implement IDisposable Correctly
@@ -475,12 +490,12 @@ namespace Unigram.Views
             Bindings.Update();
         }
 
-        public void Activate()
+        public void Activate(int sessionId)
         {
-            DataContext = _viewModel = _getViewModel(this);
+            DataContext = _viewModel = _getViewModel(this, sessionId);
 
             _updateThemeTask = new TaskCompletionSource<bool>();
-            _viewModel.MessageSliceLoaded += OnMessageSliceLoaded;
+            ViewModel.MessageSliceLoaded += OnMessageSliceLoaded;
             ViewModel.TextField = TextField;
             ViewModel.ListField = Messages;
             ViewModel.Sticker_Click = Stickers_ItemClick;
@@ -512,6 +527,8 @@ namespace Unigram.Views
             Options.Visibility = ViewModel.Type == DialogType.History
                 ? Visibility.Visible
                 : Visibility.Collapsed;
+
+            OnNavigatedTo();
         }
 
         private MessageBubble _measurement;
@@ -716,7 +733,8 @@ namespace Unigram.Views
                     var background = ViewModel.ProtoService.GetSelectedBackground(dark);
                     if (background == null || background.IsFreeformGradient())
                     {
-                        ViewModel.Aggregator.Publish(new UpdateSelectedBackground(dark, background));
+                        _backgroundPresenter ??= FindBackgroundPresenter();
+                        _backgroundPresenter?.Update(background, ActualTheme == ElementTheme.Dark);
                     }
                 }
             }
@@ -3414,7 +3432,8 @@ namespace Unigram.Views
                     background = ViewModel.ProtoService.GetSelectedBackground(ActualTheme == ElementTheme.Dark);
                 }
 
-                ViewModel.Aggregator.Publish(new UpdateSelectedBackground(ActualTheme == ElementTheme.Dark, background));
+                _backgroundPresenter ??= FindBackgroundPresenter();
+                _backgroundPresenter?.Update(background, ActualTheme == ElementTheme.Dark);
             }
         }
 

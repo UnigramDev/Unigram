@@ -22,7 +22,6 @@ namespace Unigram.Views.Chats
         public ChatStatisticsPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<ChatStatisticsViewModel, IChatDelegate>(this);
         }
 
         #region Delegate

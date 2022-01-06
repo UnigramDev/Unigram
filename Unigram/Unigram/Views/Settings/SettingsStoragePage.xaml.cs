@@ -17,7 +17,6 @@ namespace Unigram.Views.Settings
         public SettingsStoragePage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsStorageViewModel>();
 
             InitializeKeepMediaTicks();
         }

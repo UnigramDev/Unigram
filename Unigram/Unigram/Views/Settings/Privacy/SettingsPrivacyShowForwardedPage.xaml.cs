@@ -7,6 +7,7 @@ using Windows.Foundation.Metadata;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Settings.Privacy
 {
@@ -17,15 +18,6 @@ namespace Unigram.Views.Settings.Privacy
         public SettingsPrivacyShowForwardedPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsPrivacyShowForwardedViewModel>();
-
-            var user = ViewModel.CacheService.GetUser(ViewModel.CacheService.Options.MyId);
-            if (user != null)
-            {
-                MessagePreview.Mockup(Strings.Resources.PrivacyForwardsMessageLine, user.GetFullName(), true, false, DateTime.Now);
-            }
-
-            BackgroundPresenter.Update(ViewModel.SessionId, ViewModel.ProtoService, ViewModel.Aggregator);
 
             if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "Shadow"))
             {
@@ -36,6 +28,17 @@ namespace Unigram.Views.Settings.Privacy
                 themeShadow.Receivers.Add(BackgroundPresenter);
                 themeShadow.Receivers.Add(MessagePreview);
             }
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            var user = ViewModel.CacheService.GetUser(ViewModel.CacheService.Options.MyId);
+            if (user != null)
+            {
+                MessagePreview.Mockup(Strings.Resources.PrivacyForwardsMessageLine, user.GetFullName(), true, false, DateTime.Now);
+            }
+
+            BackgroundPresenter.Update(ViewModel.SessionId, ViewModel.ProtoService, ViewModel.Aggregator);
         }
 
         #region Binding

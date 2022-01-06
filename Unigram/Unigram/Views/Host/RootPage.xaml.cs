@@ -778,8 +778,6 @@ namespace Unigram.Views.Host
         NewSecretChat,
         NewChannel,
 
-        InviteFriends,
-
         Tips,
         News,
 

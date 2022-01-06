@@ -11,7 +11,6 @@ namespace Unigram.Views.Settings.Privacy
         public SettingsPrivacyAllowP2PCallsPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsPrivacyAllowP2PCallsViewModel>();
         }
 
         #region Binding

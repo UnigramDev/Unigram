@@ -24,7 +24,7 @@ namespace Unigram.Navigation
         /// If a developer overrides this method, the developer can resolve DataContext or unwrap DataContext 
         /// available for the Page object when using a MVVM pattern that relies on a wrapped/porxy around ViewModels
         /// </summary>
-        public virtual INavigable ResolveForPage(Page page, INavigationService navigationService) => null;
+        public virtual INavigable ViewModelForPage(Page page, INavigationService navigationService) => null;
 
         public static new BootStrapper Current { get; private set; }
 
@@ -862,6 +862,6 @@ namespace Unigram.Navigation
 
     public interface IActivablePage : IDisposable
     {
-        void Activate();
+        void Activate(int sessionId);
     }
 }

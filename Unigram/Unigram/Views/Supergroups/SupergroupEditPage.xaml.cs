@@ -20,7 +20,6 @@ namespace Unigram.Views.Supergroups
         public SupergroupEditPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SupergroupEditViewModel, ISupergroupEditDelegate>(this);
         }
 
         private async void EditPhoto_Click(object sender, RoutedEventArgs e)

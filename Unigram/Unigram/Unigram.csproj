@@ -761,8 +761,6 @@
     <Compile Include="ViewModels\Delegates\IProfileDelegate.cs" />
     <Compile Include="ViewModels\Delegates\ISupergroupDelegate.cs" />
     <Compile Include="ViewModels\Delegates\IUserDelegate.cs" />
-    <Compile Include="ViewModels\InviteViewModel.cs" />
-    <Compile Include="ViewModels\LiveLocationViewModel.cs" />
     <Compile Include="ViewModels\LogOutViewModel.cs" />
     <Compile Include="ViewModels\MessageViewModel.cs" />
     <Compile Include="ViewModels\ProfileViewModel.cs" />
@@ -873,12 +871,6 @@
     </Compile>
     <Compile Include="Views\IdenticonPage.xaml.cs">
       <DependentUpon>IdenticonPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\InvitePage.xaml.cs">
-      <DependentUpon>InvitePage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\LiveLocationPage.xaml.cs">
-      <DependentUpon>LiveLocationPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\LogOutPage.xaml.cs">
       <DependentUpon>LogOutPage.xaml</DependentUpon>
@@ -1907,14 +1899,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\InvitePage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\LiveLocationPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\LogOutPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2373,7 +2357,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>powershell.exe -NoProfile -ExecutionPolicy RemoteSigned -file "$(SolutionDir)\MergeResources.ps1" -path "$(ProjectDir)" -compare
+    <PreBuildEvent>powershell.exe -NoProfile -ExecutionPolicy RemoteSigned -file "$(SolutionDir)\MergeResources.ps1" -path "$(ProjectDir)\" -compare
 powershell.exe -NoProfile -ExecutionPolicy RemoteSigned -file "$(SolutionDir)\UpdateManifest.ps1" -path "$(ProjectDir)\" -config "$(ConfigurationName)" -store "$(AppxPackageIsForStore)" -sign "$(AppxPackageSigningEnabled)"
 powershell.exe -NoProfile -ExecutionPolicy RemoteSigned -file "$(SolutionDir)\UpdateManifest.ps1" -path "$(ProjectDir)..\UnigramPackage" -config "$(ConfigurationName)" -store "$(AppxPackageIsForStore)" -sign "$(AppxPackageSigningEnabled)"</PreBuildEvent>
   </PropertyGroup>

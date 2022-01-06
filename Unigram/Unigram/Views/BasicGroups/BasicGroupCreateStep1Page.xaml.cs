@@ -19,7 +19,6 @@ namespace Unigram.Views.BasicGroups
         public BasicGroupCreateStep1Page()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<BasicGroupCreateStep1ViewModel>();
         }
 
         private void Title_Loaded(object sender, RoutedEventArgs e)

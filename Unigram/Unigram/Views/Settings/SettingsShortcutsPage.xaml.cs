@@ -12,7 +12,6 @@ namespace Unigram.Views.Settings
         public SettingsShortcutsPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsShortcutsViewModel>();
         }
 
         private void OnElementPrepared(ItemsRepeater sender, ItemsRepeaterElementPreparedEventArgs args)

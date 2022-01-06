@@ -17,7 +17,6 @@ namespace Unigram.Views.Settings
         public SettingsBlockedChatsPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsBlockedChatsViewModel>();
         }
 
         private async void ListView_ItemClick(object sender, ItemClickEventArgs e)

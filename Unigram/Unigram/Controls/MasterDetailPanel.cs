@@ -72,6 +72,10 @@ namespace Unigram.Controls
             }
         }
 
+        public double ActualMasterWidth => ((FrameworkElement)Children[5]).ActualWidth;
+
+        public double ActualDetailWidth => ((FrameworkElement)Children[4]).ActualWidth;
+
         private bool _registerEvents = true;
 
         protected override Size MeasureOverride(Size availableSize)

@@ -15,7 +15,6 @@ namespace Unigram.Views.Payments
         public PaymentFormPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<PaymentFormViewModel>();
 
             DropShadowEx.Attach(BuyShadow);
         }

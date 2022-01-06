@@ -77,7 +77,7 @@ namespace Unigram.Controls.Chats
                 _oldBackground.UpdateFile(file);
                 _oldBackground = null;
 
-                Update(background, ActualTheme == ElementTheme.Dark);
+                UpdateBackground(background, ActualTheme == ElementTheme.Dark);
             }
         }
 
@@ -96,7 +96,7 @@ namespace Unigram.Controls.Chats
                         background = chat;
                     }
 
-                    Update(background, update.ForDarkTheme);
+                    UpdateBackground(background, update.ForDarkTheme);
                 }
             });
         }
@@ -109,10 +109,25 @@ namespace Unigram.Controls.Chats
 
             aggregator.Subscribe(this);
             //Update(session, settings.Wallpaper);
-            Update(protoService.SelectedBackground, ActualTheme == ElementTheme.Dark);
+            UpdateBackground(protoService.SelectedBackground, ActualTheme == ElementTheme.Dark);
         }
 
-        private async void Update(Background background, bool dark)
+        public void Update(Background background, bool forDarkTheme)
+        {
+            if (forDarkTheme == (ActualTheme == ElementTheme.Dark))
+            {
+                // I'm not a big fan of this, but this is the easiest way to keep background in sync
+                var chat = forDarkTheme ? Theme.Current.ChatTheme?.DarkSettings.Background : Theme.Current.ChatTheme?.LightSettings.Background;
+                if (chat != null)
+                {
+                    background = chat;
+                }
+
+                UpdateBackground(background, forDarkTheme);
+            }
+        }
+
+        private async void UpdateBackground(Background background, bool dark)
         {
             if (_fileToken is string fileToken)
             {

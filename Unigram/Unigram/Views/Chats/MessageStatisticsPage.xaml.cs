@@ -17,7 +17,6 @@ namespace Unigram.Views.Chats
         public MessageStatisticsPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<MessageStatisticsViewModel, IChatDelegate>(this);
         }
 
         #region Delegate
@@ -105,6 +104,11 @@ namespace Unigram.Views.Chats
         {
             var root = sender as ChartCell;
             var data = args.NewValue as ChartViewData;
+
+            if (root == null || data == null)
+            {
+                return;
+            }
 
             var header = root.Items[0] as ChartHeaderView;
             var border = root.Items[1] as AspectView;

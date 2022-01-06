@@ -11,7 +11,6 @@ namespace Unigram.Views.Settings
         public SettingsDataAutoPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsDataAutoViewModel>();
         }
 
         #region Binding

@@ -9,7 +9,6 @@ namespace Unigram.Views.Settings.Password
         public SettingsPasswordHintPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsPasswordHintViewModel>();
         }
     }
 }

@@ -11,7 +11,6 @@ namespace Unigram.Views.Settings.Privacy
         public SettingsPrivacyShowPhotoPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsPrivacyShowPhotoViewModel>();
         }
 
         #region Binding

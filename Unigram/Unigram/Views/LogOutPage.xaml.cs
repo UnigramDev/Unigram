@@ -15,7 +15,6 @@ namespace Unigram.Views
         public LogOutPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<LogOutViewModel>();
         }
 
         private void AddAnotherAccount_Click(object sender, RoutedEventArgs e)

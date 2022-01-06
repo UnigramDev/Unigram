@@ -19,7 +19,6 @@ namespace Unigram.Views.Supergroups
         public SupergroupMembersPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SupergroupMembersViewModel, ISupergroupDelegate>(this);
 
             var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
             debouncer.Invoked += (s, args) =>

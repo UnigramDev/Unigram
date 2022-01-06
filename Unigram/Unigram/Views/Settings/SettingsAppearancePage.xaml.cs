@@ -21,19 +21,18 @@ namespace Unigram.Views.Settings
         public SettingsAppearancePage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsAppearanceViewModel>();
 
             var preview = ElementCompositionPreview.GetElementVisual(Preview);
             preview.Clip = preview.Compositor.CreateInsetClip();
 
             Message1.Mockup(Strings.Resources.FontSizePreviewLine1, Strings.Resources.FontSizePreviewName, Strings.Resources.FontSizePreviewReply, false, DateTime.Now.AddSeconds(-25));
             Message2.Mockup(Strings.Resources.FontSizePreviewLine2, true, DateTime.Now);
-
-            BackgroundPresenter.Update(ViewModel.SessionId, ViewModel.ProtoService, ViewModel.Aggregator);
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+            BackgroundPresenter.Update(ViewModel.SessionId, ViewModel.ProtoService, ViewModel.Aggregator);
+
             ViewModel.PropertyChanged += OnPropertyChanged;
         }
 

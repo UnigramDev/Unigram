@@ -21,7 +21,6 @@ namespace Unigram.Views.Supergroups
         public SupergroupPermissionsPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SupergroupPermissionsViewModel, ISupergroupDelegate>(this);
 
             InitializeTicks();
 

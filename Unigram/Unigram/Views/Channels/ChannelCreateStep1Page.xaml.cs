@@ -18,7 +18,6 @@ namespace Unigram.Views.Channels
         public ChannelCreateStep1Page()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<ChannelCreateStep1ViewModel>();
         }
 
         private void Title_Loaded(object sender, RoutedEventArgs e)

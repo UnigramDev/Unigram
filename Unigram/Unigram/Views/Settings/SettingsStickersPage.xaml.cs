@@ -30,7 +30,6 @@ namespace Unigram.Views.Settings
         public SettingsStickersPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsStickersViewModel>();
 
             _handler = new AnimatedListHandler<StickerSetInfo>(List);
 

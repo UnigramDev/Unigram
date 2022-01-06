@@ -12,7 +12,6 @@ namespace Unigram.Views.Settings.Privacy
         public SettingsPrivacyAllowCallsPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsPrivacyAllowCallsViewModel>();
         }
 
         #region Binding

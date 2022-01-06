@@ -115,11 +115,11 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            if (location.LivePeriod > 0)
-            {
-                _message.Delegate.OpenLiveLocation(_message);
-            }
-            else
+            //if (location.LivePeriod > 0)
+            //{
+            //    _message.Delegate.OpenLiveLocation(_message);
+            //}
+            //else
             {
                 if (_message.ProtoService.TryGetUser(_message.SenderId, out User senderUser))
                 {

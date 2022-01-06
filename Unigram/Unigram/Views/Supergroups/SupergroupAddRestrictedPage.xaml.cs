@@ -23,7 +23,6 @@ namespace Unigram.Views.Supergroups
         public SupergroupAddRestrictedPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SupergroupAddRestrictedViewModel>();
 
             var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
             debouncer.Invoked += async (s, args) =>

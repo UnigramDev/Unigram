@@ -15,7 +15,6 @@ namespace Unigram.Views
         public DiagnosticsPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<DiagnosticsViewModel>();
         }
 
         #region Binding

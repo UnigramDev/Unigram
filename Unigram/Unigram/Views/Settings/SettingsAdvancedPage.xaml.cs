@@ -12,7 +12,6 @@ namespace Unigram.Views.Settings
         public SettingsAdvancedPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsAdvancedViewModel>();
 
             if (ApiInfo.IsPackagedRelease)
             {
@@ -20,18 +19,10 @@ namespace Unigram.Views.Settings
             }
 
 #if !DESKTOP_BRIDGE
-            FindName(nameof(TraySwitch));
-            FindName(nameof(TraySwitchSeparator));
-
             if (ApiInformation.IsTypePresent("Windows.ApplicationModel.FullTrustProcessLauncher"))
             {
-                TraySwitch.Visibility = Windows.UI.Xaml.Visibility.Visible;
-                TraySwitchSeparator.Visibility = Windows.UI.Xaml.Visibility.Visible;
-            }
-            else
-            {
-                TraySwitch.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-                TraySwitchSeparator.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                FindName(nameof(TraySwitch));
+                FindName(nameof(TraySwitchSeparator));
             }
 #endif
         }

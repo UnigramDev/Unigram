@@ -1,5 +1,7 @@
-﻿using System;
+﻿using LinqToVisualTree;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Controls;
 using Unigram.Navigation;
@@ -150,7 +152,7 @@ namespace Unigram.Common
                 }
             }
 
-            if (Frame.Content is ChatPage page && chat.Id.Equals((long)CurrentPageParam) && thread == null && !scheduled)
+            if (Frame.Content is ChatPage page && chat.Id.Equals((long)CurrentPageParam) && thread == null && !scheduled && !createNewWindow)
             {
                 if (message != null)
                 {
@@ -219,7 +221,16 @@ namespace Unigram.Common
                         parameter = chat.Id;
                     }
 
-                    await OpenAsync(target, parameter);
+                    // This is horrible here but I don't want to bloat this method with dozens of parameters.
+                    var masterDetailPanel = Window.Current.Content.Descendants<MasterDetailPanel>().FirstOrDefault();
+                    if (masterDetailPanel != null)
+                    {
+                        await OpenAsync(target, parameter, size: new Windows.Foundation.Size(masterDetailPanel.ActualDetailWidth, masterDetailPanel.ActualHeight));
+                    }
+                    else
+                    {
+                        await OpenAsync(target, parameter);
+                    }
                 }
                 else
                 {
@@ -228,7 +239,7 @@ namespace Unigram.Common
                         chatPage.ViewModel.OnNavigatingFrom(null);
 
                         chatPage.Dispose();
-                        chatPage.Activate();
+                        chatPage.Activate(SessionId);
                         chatPage.ViewModel.NavigationService = this;
                         chatPage.ViewModel.Dispatcher = Dispatcher;
                         await chatPage.ViewModel.OnNavigatedToAsync(chat.Id, Windows.UI.Xaml.Navigation.NavigationMode.New, state);

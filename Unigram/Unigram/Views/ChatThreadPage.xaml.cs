@@ -15,9 +15,17 @@ namespace Unigram.Views
         {
             InitializeComponent();
 
-            Content = new ChatView(deleg => (DataContext = TLContainer.Current.Resolve<DialogThreadViewModel, IDialogDelegate>(deleg)) as DialogThreadViewModel);
+            Content = new ChatView(CreateViewModel);
             Header = View.Header;
             NavigationCacheMode = NavigationCacheMode.Required;
+        }
+
+        private DialogViewModel CreateViewModel(IDialogDelegate delegato, int sessionId)
+        {
+            var viewModel = TLContainer.Current.Resolve<DialogThreadViewModel, IDialogDelegate>(delegato, sessionId);
+            DataContext = viewModel;
+
+            return viewModel;
         }
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
@@ -40,9 +48,9 @@ namespace Unigram.Views
             View.Dispose();
         }
 
-        public void Activate()
+        public void Activate(int sessionId)
         {
-            View.Activate();
+            View.Activate(sessionId);
         }
     }
 }

@@ -14,7 +14,6 @@ namespace Unigram.Views.Supergroups
         public SupergroupEditRestrictedPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SupergroupEditRestrictedViewModel, IMemberDelegate>(this);
         }
 
         #region Binding

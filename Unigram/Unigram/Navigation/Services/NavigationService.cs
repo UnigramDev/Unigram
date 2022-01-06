@@ -8,7 +8,6 @@ using Unigram.Views;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.System;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
@@ -39,7 +38,7 @@ namespace Unigram.Navigation.Services
 
 
 
-        Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null, ViewSizePreference size = ViewSizePreference.UseHalf);
+        Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null, Size size = default);
 
         object CurrentPageParam { get; }
         Type CurrentPageType { get; }
@@ -112,7 +111,7 @@ namespace Unigram.Navigation.Services
                 if (page != null)
                 {
                     // call navagable override (navigating)
-                    var dataContext = ResolveForPage(page);
+                    var dataContext = ViewModelForPage(page);
                     if (dataContext != null)
                     {
                         // allow the viewmodel to cancel navigation
@@ -156,12 +155,12 @@ namespace Unigram.Navigation.Services
             };
         }
 
-        private INavigable ResolveForPage(Page page)
+        private INavigable ViewModelForPage(Page page)
         {
             if (page.DataContext is not INavigable or null)
             {
                 // to support dependency injection, but keeping it optional.
-                var viewModel = BootStrapper.Current.ResolveForPage(page, this);
+                var viewModel = BootStrapper.Current.ViewModelForPage(page, this);
                 if (viewModel != null)
                 {
                     page.DataContext = viewModel;
@@ -217,7 +216,7 @@ namespace Unigram.Navigation.Services
             {
                 if (page is IActivablePage cleanup)
                 {
-                    cleanup.Activate();
+                    cleanup.Activate(SessionId);
                 }
 
                 //if (mode == NavigationMode.New)
@@ -226,7 +225,7 @@ namespace Unigram.Navigation.Services
                 //    pageState?.Clear();
                 //}
 
-                var dataContext = ResolveForPage(page);
+                var dataContext = ViewModelForPage(page);
                 if (dataContext != null)
                 {
                     // prepare for state load
@@ -239,7 +238,7 @@ namespace Unigram.Navigation.Services
             }
         }
 
-        public Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null, ViewSizePreference size = ViewSizePreference.UseHalf)
+        public Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null, Size size = default)
         {
             Logger.Info($"Page: {page}, Parameter: {parameter}, Title: {title}, Size: {size}");
             return viewService.OpenAsync(page, parameter, title, size, SessionId);
@@ -407,7 +406,7 @@ namespace Unigram.Navigation.Services
             var page = FrameFacade.Content as Page;
             if (page != null)
             {
-                var dataContext = ResolveForPage(page);
+                var dataContext = ViewModelForPage(page);
                 if (dataContext != null)
                 {
                     dataContext.NavigationService = this;
@@ -428,7 +427,7 @@ namespace Unigram.Navigation.Services
             var page = FrameFacade.Content as Page;
             if (page != null)
             {
-                var dataContext = ResolveForPage(page);
+                var dataContext = ViewModelForPage(page);
                 if (dataContext != null)
                 {
                     await NavigateFromAsync(page, dataContext, true).ConfigureAwait(false);

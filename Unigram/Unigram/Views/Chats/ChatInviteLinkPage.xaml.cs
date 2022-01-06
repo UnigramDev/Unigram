@@ -18,7 +18,6 @@ namespace Unigram.Views.Chats
         public ChatInviteLinkPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<ChatInviteLinkViewModel>();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)

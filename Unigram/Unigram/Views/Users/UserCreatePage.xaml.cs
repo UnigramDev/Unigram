@@ -12,7 +12,6 @@ namespace Unigram.Views.Users
         public UserCreatePage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<UserCreateViewModel>();
         }
 
         private void FirstName_Loaded(object sender, RoutedEventArgs e)

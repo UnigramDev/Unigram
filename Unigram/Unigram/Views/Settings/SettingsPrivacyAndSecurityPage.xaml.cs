@@ -4,6 +4,7 @@ using Unigram.Views.Settings.Privacy;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Settings
 {
@@ -14,8 +15,10 @@ namespace Unigram.Views.Settings
         public SettingsPrivacyAndSecurityPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsPrivacyAndSecurityViewModel>();
+        }
 
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
             if (ApiInfo.IsPackagedRelease && ViewModel.CacheService.Options.CanIgnoreSensitiveContentRestrictions)
             {
                 FindName(nameof(SensitiveContent));

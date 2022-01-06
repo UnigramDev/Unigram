@@ -16,7 +16,6 @@ namespace Unigram.Views.Folders
         public FoldersPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<FoldersViewModel>();
         }
 
         private void Items_ElementPrepared(Microsoft.UI.Xaml.Controls.ItemsRepeater sender, Microsoft.UI.Xaml.Controls.ItemsRepeaterElementPreparedEventArgs args)

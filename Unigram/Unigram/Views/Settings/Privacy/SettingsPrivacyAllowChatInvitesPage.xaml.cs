@@ -11,7 +11,6 @@ namespace Unigram.Views.Settings.Privacy
         public SettingsPrivacyAllowChatInvitesPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsPrivacyAllowChatInvitesViewModel>();
         }
 
         #region Binding

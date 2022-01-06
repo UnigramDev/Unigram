@@ -517,14 +517,6 @@ namespace Unigram.Views
                     _settingsService,
                     _eventAggregator);
             }
-            else if (type == typeof(Unigram.ViewModels.LiveLocationViewModel))
-            {
-                return (T)(object)new Unigram.ViewModels.LiveLocationViewModel(
-                    _protoService,
-                    _cacheService,
-                    _settingsService,
-                    _eventAggregator);
-            }
             else if (type == typeof(Unigram.ViewModels.Chats.ChatInviteLinkViewModel))
             {
                 return (T)(object)new Unigram.ViewModels.Chats.ChatInviteLinkViewModel(
@@ -1085,19 +1077,6 @@ namespace Unigram.Views
                     _cacheService,
                     _settingsService,
                     _eventAggregator);
-            }
-            else if (type == typeof(Unigram.ViewModels.InviteViewModel))
-            {
-                return (T)(object)new Unigram.ViewModels.InviteViewModel(
-                    _protoService,
-                    _cacheService,
-                    _settingsService,
-                    _eventAggregator,
-                    _contactsService ??= new Unigram.Services.ContactsService(
-                        _protoService,
-                        _cacheService,
-                        _settingsService,
-                        _eventAggregator));
             }
             else if (type == typeof(Unigram.ViewModels.ChatsNearbyViewModel))
             {

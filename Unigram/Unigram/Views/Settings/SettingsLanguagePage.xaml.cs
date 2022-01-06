@@ -20,7 +20,6 @@ namespace Unigram.Views.Settings
         public SettingsLanguagePage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsLanguageViewModel>();
         }
 
         private void List_ItemClick(object sender, ItemClickEventArgs e)
