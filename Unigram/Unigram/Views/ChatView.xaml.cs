@@ -1974,7 +1974,7 @@ namespace Unigram.Views
                 flyout.CreateFlyoutItem(MessageSendNow_Loaded, ViewModel.MessageSendNowCommand, message, Strings.Resources.MessageScheduleSend, new FontIcon { Glyph = Icons.Send, FontFamily = new FontFamily("ms-appx:///Assets/Fonts/Telegram.ttf#Telegram") });
                 flyout.CreateFlyoutItem(MessageReschedule_Loaded, ViewModel.MessageRescheduleCommand, message, Strings.Resources.MessageScheduleEditTime, new FontIcon { Glyph = Icons.CalendarClock });
 
-                if (message.CanGetViewers)
+                if (message.CanGetViewers && CanGetMessageViewers(chat, message))
                 {
                     LoadMessageViewers(message, flyout);
                 }
@@ -2112,6 +2112,32 @@ namespace Unigram.Views
             args.ShowAt(flyout, sender as FrameworkElement);
         }
 
+        private bool CanGetMessageViewers(Chat chat, MessageViewModel message)
+        {
+            if (chat.LastReadOutboxMessageId < message.Id)
+            {
+                return false;
+            }
+
+            var viewed = message.Content switch
+            {
+                MessageVoiceNote voiceNote => voiceNote.IsListened,
+                MessageVideoNote videoNote => videoNote.IsViewed,
+                _ => true
+            };
+
+            if (viewed)
+            {
+                var expirePeriod = ViewModel.ProtoService.Config.GetNamedNumber("chat_read_mark_expire_period", 7 * 86400);
+                if (expirePeriod + message.Date > DateTime.UtcNow.ToTimestamp())
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         private async void LoadMessageViewers(MessageViewModel message, MenuFlyout flyout)
         {
             var played = message.Content is MessageVoiceNote or MessageVideoNote;
@@ -2120,7 +2146,7 @@ namespace Unigram.Views
             var separator = flyout.CreateFlyoutSeparator();
 
             // Width must be fixed because viewers are loaded asynchronously
-            placeholder.Width = 200;
+            placeholder.Width = 240;
 
             var final = new MenuFlyoutSubItem();
             final.Visibility = Visibility.Collapsed;
@@ -2156,7 +2182,7 @@ namespace Unigram.Views
                     final.Tag = pictures;
 
                     // Width must be fixed because viewers are loaded asynchronously
-                    final.Width = 200;
+                    final.Width = 240;
 
                     foreach (var user in message.ProtoService.GetUsers(users.UserIds))
                     {
@@ -2189,8 +2215,7 @@ namespace Unigram.Views
             }
             else
             {
-                flyout.Items.Remove(placeholder);
-                flyout.Items.Remove(separator);
+                placeholder.Text = Strings.Resources.NobodyViewed;
             }
         }
 
