@@ -58,6 +58,7 @@ namespace Unigram.Controls.Messages
             {
                 var view = new LottieView30Fps();
                 view.AutoPlay = true;
+                view.IsLoopingEnabled = false;
                 view.FrameSize = new Windows.Graphics.SizeInt32 { Width = 30, Height = 30 };
                 view.DecodeFrameType = DecodePixelType.Logical;
                 view.Width = 30;
@@ -157,6 +158,7 @@ namespace Unigram.Controls.Messages
             popup.Child = this;
             popup.Margin = new Thickness(x - 16, y - 16, 0, 0);
             popup.ShouldConstrainToRootBounds = false;
+            popup.RequestedTheme = presenter.ActualTheme;
             popup.IsOpen = true;
 
             var visualMedium = ElementCompositionPreview.GetElementVisual(BubbleMedium);
