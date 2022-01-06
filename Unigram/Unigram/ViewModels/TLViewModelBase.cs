@@ -4,9 +4,6 @@ using Unigram.Services;
 
 namespace Unigram.ViewModels
 {
-    /// <summary>
-    /// Base class for ViewModel
-    /// </summary>
     public class TLViewModelBase : ViewModelBase
     {
         private readonly IProtoService _protoService;
@@ -21,18 +18,6 @@ namespace Unigram.ViewModels
             _settingsService = settingsService;
             _aggregator = aggregator;
         }
-
-        //public override IDispatcherWrapper Dispatcher
-        //{
-        //    get
-        //    {
-        //        return _dispatcher;
-        //    }
-        //    set
-        //    {
-
-        //    }
-        //}
 
         public IProtoService ProtoService => _protoService;
         public ICacheService CacheService => _cacheService;
