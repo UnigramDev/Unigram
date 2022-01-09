@@ -268,6 +268,12 @@ namespace Unigram.Views.Host
                 if (_navigationViewItems[i] is ISessionService)
                 {
                     _navigationViewItems.RemoveAt(i);
+
+                    if (i < _navigationViewItems.Count && _navigationViewItems[i] is RootDestination.Separator)
+                    {
+                        _navigationViewItems.RemoveAt(i);
+                    }
+
                     i--;
                 }
                 else if (_navigationViewItems[i] is RootDestination.AddAccount)
