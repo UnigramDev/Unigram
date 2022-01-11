@@ -53,17 +53,21 @@ namespace Unigram.Controls.Messages
             Presenter.Children.Clear();
 
             var reactions = message.ProtoService.Reactions;
+            var width = 0;
 
             foreach (var item in reactions)
             {
                 var view = new LottieView30Fps();
-                view.AutoPlay = true;
+                view.AutoPlay = width < 270;
                 view.IsLoopingEnabled = false;
                 view.FrameSize = new Windows.Graphics.SizeInt32 { Width = 30, Height = 30 };
                 view.DecodeFrameType = DecodePixelType.Logical;
                 view.Width = 30;
                 view.Height = 30;
                 view.Margin = new Thickness(0, 0, 10, 0);
+                view.Tag = width < 270 ? null : new object();
+
+                width += 40;
 
                 var file = item.SelectAnimation.StickerValue;
                 if (file.Local.IsDownloadingCompleted)
@@ -244,6 +248,29 @@ namespace Unigram.Controls.Messages
             if (target is LottieView lottie)
             {
                 lottie.Source = UriEx.ToLocal(file.Local.Path);
+            }
+        }
+
+        private void OnViewChanging(object sender, ScrollViewerViewChangingEventArgs e)
+        {
+            var j = (int)Math.Floor(e.NextView.HorizontalOffset / 40);
+            var k = (int)Math.Ceiling((e.NextView.HorizontalOffset + 270) / 40);
+
+            for (int i = 0; i < Presenter.Children.Count; i++)
+            {
+                var view = Presenter.Children[i] as LottieView;
+                if (view != null)
+                {
+                    if (view.Tag != null && i >= j && i < k)
+                    {
+                        view.Play();
+                        view.Tag = null;
+                    }
+                    else if (view.Tag == null && (i < j || i >= k))
+                    {
+                        view.Tag = new object();
+                    }
+                }
             }
         }
     }

@@ -53,6 +53,7 @@
                       VerticalScrollMode="Disabled"
                       HorizontalScrollBarVisibility="Hidden"
                       HorizontalScrollMode="Auto"
+                      ViewChanging="OnViewChanging"
                       Width="270"
                       Height="44"
                       CornerRadius="22"
