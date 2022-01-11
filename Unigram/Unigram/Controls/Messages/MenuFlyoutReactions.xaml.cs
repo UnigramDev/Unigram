@@ -39,35 +39,35 @@ namespace Unigram.Controls.Messages
             var relativeLast = Math.Abs(absolute.Y - (position.Y + presenter.ActualHeight));
             var upsideDown = relativeLast < relativeFirst;
 
+            var width = presenter.ActualSize.X + 18 + 12 + 18;
+
+            Shadow.Width = width;
+            Pill.Width = width;
+            ScrollingHost.Width = width;
+
             BubbleMedium.VerticalAlignment = upsideDown ? VerticalAlignment.Top : VerticalAlignment.Bottom;
-            BubbleMedium.Margin = new Thickness(24, upsideDown ? -8 : 0, 0, upsideDown ? 0 : -8);
+            BubbleMedium.Margin = new Thickness(0, upsideDown ? -6 : 0, 18, upsideDown ? 0 : -6);
 
             BubbleOverlay.VerticalAlignment = upsideDown ? VerticalAlignment.Top : VerticalAlignment.Bottom;
-            BubbleOverlay.Margin = new Thickness(24, upsideDown ? -8 : 0, 0, upsideDown ? 0 : -8);
-
-            BubbleSmall.VerticalAlignment = upsideDown ? VerticalAlignment.Top : VerticalAlignment.Bottom;
-            BubbleSmall.Margin = new Thickness(20, upsideDown ? -18 : 0, 0, upsideDown ? 0 : -18);
+            BubbleOverlay.Margin = new Thickness(0, upsideDown ? -6 : 0, 18, upsideDown ? 0 : -6);
 
             LayoutRoot.Padding = new Thickness(16, upsideDown ? 32 : 16, 16, upsideDown ? 16 : 32);
 
-            Presenter.Children.Clear();
-
             var reactions = message.ProtoService.Reactions;
-            var width = 0;
+            var offset = 0;
+            var visible = Math.Ceiling((width - 8) / 34);
 
             foreach (var item in reactions)
             {
-                var view = new LottieView30Fps();
-                view.AutoPlay = width < 270;
+                var view = new LottieView();
+                view.AutoPlay = offset < visible;
                 view.IsLoopingEnabled = false;
-                view.FrameSize = new Windows.Graphics.SizeInt32 { Width = 30, Height = 30 };
+                view.FrameSize = new Windows.Graphics.SizeInt32 { Width = 24, Height = 24 };
                 view.DecodeFrameType = DecodePixelType.Logical;
-                view.Width = 30;
-                view.Height = 30;
+                view.Width = 24;
+                view.Height = 24;
                 view.Margin = new Thickness(0, 0, 10, 0);
-                view.Tag = width < 270 ? null : new object();
-
-                width += 40;
+                view.Tag = offset < visible ? null : new object();
 
                 var file = item.SelectAnimation.StickerValue;
                 if (file.Local.IsDownloadingCompleted)
@@ -88,21 +88,26 @@ namespace Unigram.Controls.Messages
 
                 Presenter.Children.Add(view);
 
-                var visual = ElementCompositionPreview.GetElementVisual(view);
-                visual.CenterPoint = new Vector3(14, 14, 0);
-                visual.Scale = Vector3.Zero;
+                if (offset < visible)
+                {
+                    var visual = ElementCompositionPreview.GetElementVisual(view);
+                    visual.CenterPoint = new Vector3(12, 12, 0);
+                    visual.Scale = Vector3.Zero;
 
-                var scale = visual.Compositor.CreateVector3KeyFrameAnimation();
-                scale.InsertKeyFrame(0, Vector3.Zero);
-                scale.InsertKeyFrame(1, Vector3.One);
-                scale.DelayTime = TimeSpan.FromMilliseconds(50 * Presenter.Children.Count);
+                    var scale = visual.Compositor.CreateVector3KeyFrameAnimation();
+                    scale.InsertKeyFrame(0, Vector3.Zero);
+                    scale.InsertKeyFrame(1, Vector3.One);
+                    scale.DelayTime = TimeSpan.FromMilliseconds(50 * (visible - Presenter.Children.Count));
 
-                visual.StartAnimation("Scale", scale);
+                    visual.StartAnimation("Scale", scale);
+                }
+
+                offset++;
             }
 
             var device = CanvasDevice.GetSharedDevice();
-            var rect1 = CanvasGeometry.CreateRectangle(device, 0, 0, 306, 96);
-            var elli1 = CanvasGeometry.CreateRoundedRectangle(device, 44 + 16, upsideDown ? -96 - 8 : 16 + 46 + 8, presenter.ActualSize.X, 96, 8, 8);
+            var rect1 = CanvasGeometry.CreateRectangle(device, 0, 0, 306, 86);
+            var elli1 = CanvasGeometry.CreateRoundedRectangle(device, 18 + 16, upsideDown ? -86 - 4 : 16 + 36 + 4, presenter.ActualSize.X, 86, 8, 8);
             var group1 = CanvasGeometry.CreateGroup(device, new[] { elli1, rect1 }, CanvasFilledRegionDetermination.Alternate);
 
             var rootVisual = ElementCompositionPreview.GetElementVisual(LayoutRoot);
@@ -116,7 +121,7 @@ namespace Unigram.Controls.Messages
 
             var pillReceiver = Window.Current.Compositor.CreateSpriteVisual();
             pillReceiver.Shadow = pillShadow;
-            pillReceiver.Size = new Vector2(272, 46);
+            pillReceiver.Size = new Vector2(width, 36);
             pillReceiver.Offset = new Vector3(0, 8, 0);
 
             var mediumShadow = Window.Current.Compositor.CreateDropShadow();
@@ -127,34 +132,22 @@ namespace Unigram.Controls.Messages
 
             var mediumReceiver = Window.Current.Compositor.CreateSpriteVisual();
             mediumReceiver.Shadow = mediumShadow;
-            mediumReceiver.Size = new Vector2(16, 16);
-            mediumReceiver.Offset = new Vector3(24, upsideDown ? -8 : 46 - 8, 0);
-
-            var smallShadow = Window.Current.Compositor.CreateDropShadow();
-            smallShadow.BlurRadius = 16;
-            smallShadow.Opacity = 0.14f;
-            smallShadow.Color = Colors.Black;
-            smallShadow.Mask = BubbleSmall.GetAlphaMask();
-
-            var smallReceiver = Window.Current.Compositor.CreateSpriteVisual();
-            smallReceiver.Shadow = smallShadow;
-            smallReceiver.Size = new Vector2(16, 16);
-            smallReceiver.Offset = new Vector3(20 - 4, upsideDown ? -22 : 46 + 6, 0);
+            mediumReceiver.Size = new Vector2(12, 12);
+            mediumReceiver.Offset = new Vector3(width - 18 - 12, upsideDown ? -8 : 36 - 8, 0);
 
             var receivers = Window.Current.Compositor.CreateContainerVisual();
             receivers.Children.InsertAtBottom(pillReceiver);
             receivers.Children.InsertAtBottom(mediumReceiver);
-            receivers.Children.InsertAtBottom(smallReceiver);
-            receivers.Size = new Vector2(272, 64);
+            receivers.Size = new Vector2(width, 54);
 
             ElementCompositionPreview.SetElementChildVisual(Shadow, receivers);
 
-            var x = position.X - 44;
-            var y = position.Y - (46 + 8);
+            var x = position.X - 18;
+            var y = position.Y - (36 + 4);
 
             if (upsideDown)
             {
-                y = position.Y + presenter.ActualHeight + 8;
+                y = position.Y + presenter.ActualHeight + 4;
                 y -= 16;
             }
 
@@ -167,17 +160,15 @@ namespace Unigram.Controls.Messages
 
             var visualMedium = ElementCompositionPreview.GetElementVisual(BubbleMedium);
             var visualOverlay = ElementCompositionPreview.GetElementVisual(BubbleOverlay);
-            visualMedium.CenterPoint = new Vector3(8, 8, 0);
-            visualOverlay.CenterPoint = new Vector3(8, 8, 0);
-
-            var visualSmall = ElementCompositionPreview.GetElementVisual(BubbleSmall);
-            visualSmall.CenterPoint = new Vector3(4, 4, 0);
+            visualMedium.CenterPoint = new Vector3(6, 6, 0);
+            visualOverlay.CenterPoint = new Vector3(6, 6, 0);
 
             var visualPill = ElementCompositionPreview.GetElementVisual(Pill);
-            visualPill.CenterPoint = new Vector3(46 / 2, 46 / 2, 0);
+            visualPill.CenterPoint = new Vector3(36 / 2, 36 / 2, 0);
+            visualPill.CenterPoint = new Vector3(width - 36 / 2, 36 / 2, 0);
 
             var clip = visualPill.Compositor.CreateRoundedRectangleGeometry();
-            clip.CornerRadius = new Vector2(46 / 2);
+            clip.CornerRadius = new Vector2(36 / 2);
 
             var batch = visualPill.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
 
@@ -207,15 +198,12 @@ namespace Unigram.Controls.Messages
             opacity.InsertKeyFrame(0, 0);
             opacity.InsertKeyFrame(1, 0.14f);
 
-            visualSmall.StartAnimation("Scale", scaleSmall);
             visualMedium.StartAnimation("Scale", scaleMedium);
             visualOverlay.StartAnimation("Scale", scaleMedium);
             visualPill.StartAnimation("Scale", scalePill);
 
             mediumShadow.StartAnimation("BlurRadius", translation);
             mediumShadow.StartAnimation("Opacity", opacity);
-            smallShadow.StartAnimation("BlurRadius", translation);
-            smallShadow.StartAnimation("Opacity", opacity);
 
             translation.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
             translation.DelayTime = scaleMedium.Duration + TimeSpan.FromMilliseconds(100);
@@ -226,14 +214,22 @@ namespace Unigram.Controls.Messages
             pillShadow.StartAnimation("Opacity", opacity);
 
             var resize = visualPill.Compositor.CreateVector2KeyFrameAnimation();
-            resize.InsertKeyFrame(0, new Vector2(46, 46));
-            resize.InsertKeyFrame(1, new Vector2(272, 46));
+            resize.InsertKeyFrame(0, new Vector2(36, 36));
+            resize.InsertKeyFrame(1, new Vector2(width, 36));
             resize.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
             resize.DelayTime = TimeSpan.FromMilliseconds(100);
             resize.Duration = TimeSpan.FromMilliseconds(150);
 
+            var move = visualPill.Compositor.CreateVector2KeyFrameAnimation();
+            move.InsertKeyFrame(0, new Vector2(width - 36, 0));
+            move.InsertKeyFrame(1, new Vector2());
+            move.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
+            move.DelayTime = TimeSpan.FromMilliseconds(100);
+            move.Duration = TimeSpan.FromMilliseconds(150);
+
             visualPill.Clip = visualPill.Compositor.CreateGeometricClip(clip);
             clip.StartAnimation("Size", resize);
+            clip.StartAnimation("Offset", move);
 
             batch.End();
 
@@ -253,8 +249,8 @@ namespace Unigram.Controls.Messages
 
         private void OnViewChanging(object sender, ScrollViewerViewChangingEventArgs e)
         {
-            var j = (int)Math.Floor(e.NextView.HorizontalOffset / 40);
-            var k = (int)Math.Ceiling((e.NextView.HorizontalOffset + 270) / 40);
+            var j = (int)Math.Floor((e.NextView.HorizontalOffset - 8) / 34);
+            var k = (int)Math.Ceiling(((e.NextView.HorizontalOffset - 8) + Shadow.ActualWidth) / 34);
 
             for (int i = 0; i < Presenter.Children.Count; i++)
             {

@@ -11,56 +11,47 @@
     <Grid x:Name="LayoutRoot">
         <Border x:Name="Shadow"
                 Width="272"
-                Height="46" />
-        <Rectangle x:Name="BubbleSmall"
-                   Fill="{ThemeResource MenuFlyoutPresenterBackground}"
-                   Stroke="{ThemeResource MenuFlyoutPresenterBorderBrush}"
-                   HorizontalAlignment="Left"
-                   Width="8"
-                   Height="8"
-                   RadiusX="4"
-                   RadiusY="4"
-                   StrokeThickness="1" />
+                Height="36" />
         <Rectangle x:Name="BubbleMedium"
                    Fill="{ThemeResource MenuFlyoutPresenterBackground}"
                    Stroke="{ThemeResource MenuFlyoutPresenterBorderBrush}"
-                   HorizontalAlignment="Left"
-                   Width="16"
-                   Height="16"
-                   RadiusX="8"
-                   RadiusY="8"
+                   HorizontalAlignment="Right"
+                   Width="12"
+                   Height="12"
+                   RadiusX="6"
+                   RadiusY="6"
                    StrokeThickness="1" />
 
         <Rectangle x:Name="Pill"
                    Fill="{ThemeResource MenuFlyoutPresenterBackground}"
                    Stroke="{ThemeResource MenuFlyoutPresenterBorderBrush}"
                    Width="272"
-                   Height="46"
-                   RadiusX="23"
-                   RadiusY="23"
+                   Height="36"
+                   RadiusX="18"
+                   RadiusY="18"
                    StrokeThickness="1" />
 
         <Rectangle x:Name="BubbleOverlay"
                    Fill="{ThemeResource MenuFlyoutPresenterBackground}"
-                   HorizontalAlignment="Left"
-                   Width="16"
-                   Height="16"
-                   RadiusX="8"
-                   RadiusY="8"
+                   HorizontalAlignment="Right"
+                   Width="12"
+                   Height="12"
+                   RadiusX="6"
+                   RadiusY="6"
                    StrokeThickness="1" />
 
-        <ScrollViewer VerticalScrollBarVisibility="Disabled"
+        <ScrollViewer x:Name="ScrollingHost"
+                      VerticalScrollBarVisibility="Disabled"
                       VerticalScrollMode="Disabled"
                       HorizontalScrollBarVisibility="Hidden"
                       HorizontalScrollMode="Auto"
                       ViewChanging="OnViewChanging"
-                      Width="270"
-                      Height="44"
-                      CornerRadius="22"
-                      Margin="1">
+                      Width="272"
+                      Height="36"
+                      CornerRadius="18">
             <StackPanel x:Name="Presenter"
                         Orientation="Horizontal"
-                        Padding="16,8,8,6" />
+                        Padding="8,6,-2,6" />
         </ScrollViewer>
     </Grid>
 </UserControl>
