@@ -80,8 +80,8 @@
             <local:InlineQueryTemplateSelector.AnimationTemplate>
                 <DataTemplate>
                     <Grid>
-                        <controls:AnimationView x:Name="Player"
-                                                AutoPlay="False" />
+                        <controls:AnimationView30Fps x:Name="Player"
+                                                     AutoPlay="False" />
                     </Grid>
                 </DataTemplate>
             </local:InlineQueryTemplateSelector.AnimationTemplate>

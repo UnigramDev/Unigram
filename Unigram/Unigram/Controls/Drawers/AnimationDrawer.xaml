@@ -49,8 +49,8 @@
             <GridView.ItemTemplate>
                 <DataTemplate>
                     <Border Margin="2">
-                        <controls:AnimationView x:Name="Player"
-                                                AutoPlay="False" />
+                        <controls:AnimationView30Fps x:Name="Player"
+                                                     AutoPlay="False" />
                     </Border>
                 </DataTemplate>
             </GridView.ItemTemplate>

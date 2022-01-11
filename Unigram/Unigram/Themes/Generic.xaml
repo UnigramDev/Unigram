@@ -531,9 +531,11 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:LottieView">
                     <Grid x:Name="LayoutRoot">
-                        <xaml:CanvasControl x:Name="Canvas"
-                                            HorizontalAlignment="Stretch"
-                                            VerticalAlignment="Stretch" />
+                        <Image x:Name="Canvas"
+                               Stretch="Fill"
+                               AutomationProperties.AccessibilityView="Raw"
+                               HorizontalAlignment="Stretch"
+                               VerticalAlignment="Stretch" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
@@ -563,11 +565,18 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:AnimationView">
                     <Grid x:Name="LayoutRoot">
-                        <Image x:Name="Thumbnail"
-                               Source="{TemplateBinding Thumbnail}" />
-                        <xaml:CanvasControl x:Name="Canvas"
-                                            HorizontalAlignment="Stretch"
-                                            VerticalAlignment="Stretch" />
+                        <Grid.Background>
+                            <ImageBrush x:Name="Thumbnail"
+                                        ImageSource="{TemplateBinding Thumbnail}"
+                                        AlignmentX="Center"
+                                        AlignmentY="Center"
+                                        Stretch="Fill" />
+                        </Grid.Background>
+                        <Image x:Name="Canvas"
+                               Stretch="Fill"
+                               AutomationProperties.AccessibilityView="Raw"
+                               HorizontalAlignment="Stretch"
+                               VerticalAlignment="Stretch" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
