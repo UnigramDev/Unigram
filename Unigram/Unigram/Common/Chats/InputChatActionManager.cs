@@ -19,41 +19,41 @@ namespace Unigram.Common.Chats
                     //    return "";
                     case ChatActionStartPlayingGame gamePlay:
                         commonAction = gamePlay;
-                        return Strings.Resources.SendingGame;
+                        return Strings.Resources.SendingGame.TrimEnd('.');
                     //case TLSendMessageGeoLocationAction geoLocation:
                     //    return "";
                     case ChatActionRecordingVoiceNote recordAudio:
                         commonAction = recordAudio;
-                        return Strings.Resources.RecordingAudio;
+                        return Strings.Resources.RecordingAudio.TrimEnd('.');
                     case ChatActionRecordingVideoNote:
                     case ChatActionUploadingVideoNote:
                         commonAction = new ChatActionRecordingVideoNote();
-                        return Strings.Resources.RecordingRound;
+                        return Strings.Resources.RecordingRound.TrimEnd('.');
                     //case TLSendMessageTypingAction typing:
                     //    return Strings.Resources.Typing;
                     case ChatActionUploadingVoiceNote uploadAudio:
                         commonAction = uploadAudio;
-                        return Strings.Resources.SendingAudio;
+                        return Strings.Resources.SendingAudio.TrimEnd('.');
                     case ChatActionUploadingDocument uploadDocument:
                         commonAction = uploadDocument;
-                        return Strings.Resources.SendingFile;
+                        return Strings.Resources.SendingFile.TrimEnd('.');
                     case ChatActionUploadingPhoto uploadPhoto:
                         commonAction = uploadPhoto;
-                        return Strings.Resources.SendingPhoto;
+                        return Strings.Resources.SendingPhoto.TrimEnd('.');
                     case ChatActionRecordingVideo:
                     case ChatActionUploadingVideo:
                         commonAction = new ChatActionUploadingVideo();
-                        return Strings.Resources.SendingVideoStatus;
+                        return Strings.Resources.SendingVideoStatus.TrimEnd('.');
                     case ChatActionChoosingSticker choosingSticker:
                         commonAction = choosingSticker;
-                        return Strings.Resources.ChoosingSticker.Replace("**", "");
+                        return Strings.Resources.ChoosingSticker.Replace("**", "").TrimEnd('.');
                     case ChatActionWatchingAnimations watchingAnimations:
                         commonAction = watchingAnimations;
                         return string.Format(Strings.Resources.EnjoyngAnimations.Replace("**oo**", string.Empty).Trim(' '), watchingAnimations.Emoji);
                 }
 
                 commonAction = new ChatActionTyping();
-                return Strings.Resources.Typing;
+                return Strings.Resources.Typing.TrimEnd('.');
             }
 
             if (typingUsers.Count == 1)
@@ -91,38 +91,38 @@ namespace Unigram.Common.Chats
                     //    return "";
                     case ChatActionStartPlayingGame gamePlay:
                         commonAction = gamePlay;
-                        return string.Format(Strings.Resources.IsSendingGame, userName);
+                        return string.Format(Strings.Resources.IsSendingGame.TrimEnd('.'), userName);
                     //case TLSendMessageGeoLocationAction geoLocation:
                     //    return "";
                     case ChatActionRecordingVoiceNote recordAudio:
                         commonAction = recordAudio;
-                        return string.Format(Strings.Resources.IsRecordingAudio, userName);
+                        return string.Format(Strings.Resources.IsRecordingAudio.TrimEnd('.'), userName);
                     case ChatActionRecordingVideoNote:
                     case ChatActionUploadingVideoNote:
                         commonAction = new ChatActionRecordingVideoNote();
-                        return string.Format(Strings.Resources.IsSendingVideo, userName);
+                        return string.Format(Strings.Resources.IsSendingVideo.TrimEnd('.'), userName);
                     //case TLSendMessageTypingAction typing:
                     //    return string.Format(Strings.Resources.IsTyping, userName);
                     case ChatActionUploadingVoiceNote uploadAudio:
                         commonAction = uploadAudio;
-                        return string.Format(Strings.Resources.IsSendingAudio, userName);
+                        return string.Format(Strings.Resources.IsSendingAudio.TrimEnd('.'), userName);
                     case ChatActionUploadingDocument uploadDocument:
                         commonAction = uploadDocument;
-                        return string.Format(Strings.Resources.IsSendingFile, userName);
+                        return string.Format(Strings.Resources.IsSendingFile.TrimEnd('.'), userName);
                     case ChatActionUploadingPhoto uploadPhoto:
                         commonAction = uploadPhoto;
-                        return string.Format(Strings.Resources.IsSendingPhoto, userName);
+                        return string.Format(Strings.Resources.IsSendingPhoto.TrimEnd('.'), userName);
                     case ChatActionRecordingVideo:
                     case ChatActionUploadingVideo:
                         commonAction = new ChatActionUploadingVideo();
-                        return string.Format(Strings.Resources.IsSendingVideo, userName);
+                        return string.Format(Strings.Resources.IsSendingVideo.TrimEnd('.'), userName);
                     case ChatActionChoosingSticker choosingSticker:
                         commonAction = choosingSticker;
-                        return string.Format(Strings.Resources.IsChoosingSticker.Replace("**", ""), userName);
+                        return string.Format(Strings.Resources.IsChoosingSticker.Replace("**", "").TrimEnd('.'), userName);
                 }
 
                 commonAction = new ChatActionTyping();
-                return string.Format("{0} {1}", userName, Strings.Resources.IsTyping);
+                return string.Format("{0} {1}", userName, Strings.Resources.IsTyping.TrimEnd('.'));
             }
             else
             {
@@ -175,12 +175,12 @@ namespace Unigram.Common.Chats
                         if (typingUsers.Count > 2)
                         {
                             commonAction = new ChatActionTyping();
-                            return string.Format("{0} {1}", label, Locale.Declension("AndMoreTyping", typingUsers.Count - 2));
+                            return string.Format("{0} {1}", label, Locale.Declension("AndMoreTyping", typingUsers.Count - 2).TrimEnd('.'));
                         }
                         else
                         {
                             commonAction = new ChatActionTyping();
-                            return string.Format("{0} {1}", label, Strings.Resources.AreTyping);
+                            return string.Format("{0} {1}", label, Strings.Resources.AreTyping.TrimEnd('.'));
                         }
                     }
                 }
