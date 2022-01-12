@@ -446,7 +446,12 @@ namespace Unigram.Controls
 
                     _subscribed = subscribe;
 
-                    _timer?.Cancel();
+                    if (_timer != null)
+                    {
+                        _timer.Cancel();
+                        _timer = null;
+                    }
+
                     CompositionTarget.Rendering -= OnRendering;
 
                     if (subscribe)

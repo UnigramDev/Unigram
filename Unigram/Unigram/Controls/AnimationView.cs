@@ -16,7 +16,7 @@ namespace Unigram.Controls
     public class AnimationView30Fps : AnimationView
     {
         public AnimationView30Fps()
-            : base(false)
+            : base(true)
         {
 
         }
@@ -67,11 +67,19 @@ namespace Unigram.Controls
 
         protected override CanvasBitmap CreateBitmap(ICanvasResourceCreator sender)
         {
-            var buffer = ArrayPool<byte>.Shared.Rent(_animation.PixelWidth * _animation.PixelHeight * 4);
-            var bitmap = CanvasBitmap.CreateFromBytes(sender, buffer, _animation.PixelWidth, _animation.PixelHeight, DirectXPixelFormat.R8G8B8A8UIntNormalized);
-            ArrayPool<byte>.Shared.Return(buffer);
+            bool needsCreate = _bitmap == null;
+            needsCreate |= _bitmap?.Size.Width != _animation.PixelWidth || _bitmap?.Size.Height != _animation.PixelHeight;
 
-            return bitmap;
+            if (needsCreate)
+            {
+                var buffer = ArrayPool<byte>.Shared.Rent(_animation.PixelWidth * _animation.PixelHeight * 4);
+                var bitmap = CanvasBitmap.CreateFromBytes(sender, buffer, _animation.PixelWidth, _animation.PixelHeight, DirectXPixelFormat.R8G8B8A8UIntNormalized);
+                ArrayPool<byte>.Shared.Return(buffer);
+
+                return bitmap;
+            }
+
+            return _bitmap;
         }
 
         protected override void DrawFrame(CanvasImageSource sender, CanvasDrawingSession args)

@@ -63,7 +63,7 @@ namespace Unigram.Common
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            UnloadVisibleItems(true);
+            UnloadItems();
         }
 
         private void OnVectorChanged(IObservableVector<object> sender, IVectorChangedEventArgs e)
@@ -130,7 +130,7 @@ namespace Unigram.Common
 
             if (lastVisibleIndex < firstVisibleIndex || firstVisibleIndex < 0)
             {
-                UnloadVisibleItems(false);
+                UnloadVisibleItems();
                 return;
             }
 
@@ -229,25 +229,33 @@ namespace Unigram.Common
 
         public void UnloadVisibleItems()
         {
-            UnloadVisibleItems(false);
-        }
-
-        public void UnloadVisibleItems(bool dispose)
-        {
             foreach (var item in _prev.Values)
             {
-                try
+                item.Pause();
+            }
+
+            _prev.Clear();
+            _unloaded = true;
+        }
+
+        public void UnloadItems()
+        {
+            var panel = _listView.ItemsPanelRoot;
+            if (panel == null)
+            {
+                return;
+            }
+
+            foreach (var item in panel.Children)
+            {
+                if (item is SelectorItem container && container.ContentTemplateRoot is FrameworkElement final)
                 {
-                    if (dispose)
+                    var lottie = final.FindName("Player") as IPlayerView;
+                    if (lottie != null)
                     {
-                        item.Unload();
-                    }
-                    else
-                    {
-                        item.Pause();
+                        lottie.Unload();
                     }
                 }
-                catch { }
             }
 
             _prev.Clear();

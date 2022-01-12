@@ -36,7 +36,7 @@ namespace Unigram.Controls
     public class LottieView30Fps : LottieView
     {
         public LottieView30Fps()
-            : base(false)
+            : base(true)
         {
 
         }
@@ -90,11 +90,19 @@ namespace Unigram.Controls
 
         protected override CanvasBitmap CreateBitmap(ICanvasResourceCreator sender)
         {
-            var buffer = ArrayPool<byte>.Shared.Rent(_frameSize.Width * _frameSize.Height * 4);
-            var bitmap = CanvasBitmap.CreateFromBytes(sender, buffer, _frameSize.Width, _frameSize.Height, DirectXPixelFormat.B8G8R8A8UIntNormalized);
-            ArrayPool<byte>.Shared.Return(buffer);
+            bool needsCreate = _bitmap == null;
+            needsCreate |= _bitmap?.Size.Width != _frameSize.Width || _bitmap?.Size.Height != _frameSize.Height;
 
-            return bitmap;
+            if (needsCreate)
+            {
+                var buffer = ArrayPool<byte>.Shared.Rent(_frameSize.Width * _frameSize.Height * 4);
+                var bitmap = CanvasBitmap.CreateFromBytes(sender, buffer, _frameSize.Width, _frameSize.Height, DirectXPixelFormat.B8G8R8A8UIntNormalized);
+                ArrayPool<byte>.Shared.Return(buffer);
+
+                return bitmap;
+            }
+
+            return _bitmap;
         }
 
         protected override void DrawFrame(CanvasImageSource sender, CanvasDrawingSession args)

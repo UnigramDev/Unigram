@@ -83,7 +83,7 @@ namespace Unigram.Controls.Drawers
         public void Deactivate()
         {
             _isActive = false;
-            _handler.UnloadVisibleItems(true);
+            _handler.UnloadItems();
         }
 
         public void LoadVisibleItems()
@@ -96,7 +96,7 @@ namespace Unigram.Controls.Drawers
 
         public void UnloadVisibleItems()
         {
-            _handler.UnloadVisibleItems(false);
+            _handler.UnloadVisibleItems();
         }
 
         private void OnItemClick(object sender, ItemClickEventArgs e)
