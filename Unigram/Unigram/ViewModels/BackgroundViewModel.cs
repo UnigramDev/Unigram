@@ -126,7 +126,16 @@ namespace Unigram.ViewModels
                 var response = await ProtoService.SendAsync(new GetBackgrounds());
                 if (response is Backgrounds backgrounds)
                 {
-                    Patterns.ReplaceWith(new[] { new Background(0, true, false, string.Empty, null, new BackgroundTypeFill(new BackgroundFillSolid())) }.Union(backgrounds.BackgroundsValue.Where(x => x.Type is BackgroundTypePattern)));
+                    var patterns = backgrounds.BackgroundsValue.Where(x => x.Type is BackgroundTypePattern)
+                                                               .Distinct(new EqualityComparerDelegate<Background>((x, y) =>
+                                                               {
+                                                                   return x.Document.DocumentValue.Id == y.Document.DocumentValue.Id;
+                                                               }, obj =>
+                                                               {
+                                                                   return obj.Document.DocumentValue.Id;
+                                                               }));
+
+                    Patterns.ReplaceWith(new[] { new Background(0, true, false, string.Empty, null, new BackgroundTypeFill(new BackgroundFillSolid())) }.Union(patterns));
                     SelectedPattern = backgrounds.BackgroundsValue.FirstOrDefault(x => x.Id == background.Id);
                 }
             }

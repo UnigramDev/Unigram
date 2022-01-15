@@ -227,21 +227,33 @@ namespace Unigram.Views
 
         private async Task SetPatternAsync(File file, bool download)
         {
-            if (Presenter.Fill is TiledBrush brush)
+            if (file.Local.IsDownloadingCompleted)
             {
-                brush.Surface = await PlaceholderHelper.GetPatternSurfaceAsync(download ? ViewModel.ProtoService : null, file);
-                brush.FallbackColor = ViewModel.GetPatternForeground();
-                brush.IsInverted = ViewModel.Intensity < 0;
-                brush.Update();
+                if (Presenter.Fill is TiledBrush brush)
+                {
+                    brush.Surface = await PlaceholderHelper.GetPatternSurfaceAsync(null, file);
+                    brush.FallbackColor = ViewModel.GetPatternForeground();
+                    brush.IsInverted = ViewModel.Intensity < 0;
+                    brush.Update();
+                }
+                else
+                {
+                    Presenter.Fill = new TiledBrush
+                    {
+                        Surface = await PlaceholderHelper.GetPatternSurfaceAsync(null, file),
+                        FallbackColor = ViewModel.GetPatternForeground(),
+                        IsInverted = ViewModel.Intensity < 0,
+                    };
+                }
             }
             else
             {
-                Presenter.Fill = new TiledBrush
+                UpdateManager.Subscribe(this, ViewModel.ProtoService, file, UpdateFile, true);
+
+                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && download)
                 {
-                    Surface = await PlaceholderHelper.GetPatternSurfaceAsync(download ? ViewModel.ProtoService : null, file),
-                    FallbackColor = ViewModel.GetPatternForeground(),
-                    IsInverted = ViewModel.Intensity < 0,
-                };
+                    ViewModel.ProtoService.DownloadFile(file.Id, 16);
+                }
             }
         }
 
