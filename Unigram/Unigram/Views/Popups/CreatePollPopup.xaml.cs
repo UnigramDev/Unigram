@@ -32,25 +32,26 @@ namespace Unigram.Views.Popups
             if (forceQuiz)
             {
                 Quiz.IsChecked = true;
-                Quiz.Visibility = Visibility.Collapsed;
-                Multiple.Visibility = Visibility.Collapsed;
+                Quiz.Visibility = QuizSeparator.Visibility = Visibility.Collapsed;
+                Multiple.Visibility = MultipleSeparator.Visibility = Visibility.Collapsed;
+                Settings.Footer = string.Empty;
             }
             else if (forceRegular)
             {
                 Quiz.IsChecked = false;
-                Quiz.Visibility = Visibility.Collapsed;
+                Quiz.Visibility = QuizSeparator.Visibility = Visibility.Collapsed;
                 Settings.Footer = string.Empty;
             }
 
             if (forceAnonymous)
             {
                 Anonymous.IsChecked = true;
-                Anonymous.Visibility = Visibility.Collapsed;
+                Anonymous.Visibility = AnonymousSeparator.Visibility = Visibility.Collapsed;
             }
             else
             {
                 Anonymous.IsChecked = true;
-                Anonymous.Visibility = Visibility.Visible;
+                Anonymous.Visibility = AnonymousSeparator.Visibility = Visibility.Visible;
             }
         }
 
