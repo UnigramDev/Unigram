@@ -13,6 +13,10 @@ namespace Unigram.Views.Popups
 {
     public sealed partial class TranslatePopup : ContentPopup
     {
+        private const string LANG_UND = "und";
+        private const string LANG_AUTO = "auto";
+        private const string LANG_LATN = "latn";
+
         private readonly ITranslateService _translateService;
         private readonly string _fromLanguage;
         private readonly string _toLanguage;
@@ -24,7 +28,7 @@ namespace Unigram.Views.Popups
             InitializeComponent();
 
             _translateService = translateService;
-            _fromLanguage = fromLanguage == "und" ? "auto" : fromLanguage;
+            _fromLanguage = fromLanguage == LANG_UND ? LANG_AUTO : fromLanguage;
             _toLanguage = toLanguage;
 
             Title = Strings.Resources.AutomaticTranslation;
@@ -70,9 +74,9 @@ namespace Unigram.Views.Popups
 
         private async void Block_EffectiveViewportChanged(FrameworkElement sender, EffectiveViewportChangedEventArgs args)
         {
-            System.Diagnostics.Debug.WriteLine(args.EffectiveViewport.Top);
+            //System.Diagnostics.Debug.WriteLine("Bring into view distance: " + (sender.ActualHeight + args.EffectiveViewport.Y) + " item index: " + Presenter.Children.IndexOf(sender));
 
-            if (args.EffectiveViewport.Y > -100)
+            if (sender.ActualHeight + args.EffectiveViewport.Y > 100)
             {
                 await TranslateTokenAsync(sender as LoadingTextBlock);
             }
@@ -80,7 +84,10 @@ namespace Unigram.Views.Popups
 
         private async void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
         {
-            await TranslateTokenAsync(Presenter.Children[0] as LoadingTextBlock);
+            if (Presenter.Children.Count > 0)
+            {
+                await TranslateTokenAsync(Presenter.Children[0] as LoadingTextBlock);
+            }
         }
 
         private async Task TranslateTokenAsync(LoadingTextBlock block)
@@ -115,26 +122,28 @@ namespace Unigram.Views.Popups
                 if (error.Code == 429)
                 {
                     block.Text = Strings.Resources.TranslationFailedAlert1;
-                    SubtitleFrom.Text = LanguageName(_fromLanguage == "auto" ? _toLanguage : _fromLanguage, out _);
+                    SubtitleFrom.Text = LanguageName(_fromLanguage == LANG_AUTO ? _toLanguage : _fromLanguage, out _);
                 }
                 else
                 {
                     block.Text = Strings.Resources.TranslationFailedAlert2;
-                    SubtitleFrom.Text = LanguageName(_fromLanguage == "auto" ? _toLanguage : _fromLanguage, out _);
+                    SubtitleFrom.Text = LanguageName(_fromLanguage == LANG_AUTO ? _toLanguage : _fromLanguage, out _);
                 }
             }
+
+            _loadingMore = false;
         }
 
         private string LanguageName(string locale, out bool rtl)
         {
-            if (locale == null || locale.Equals("und") || locale.Equals("auto"))
+            if (locale == null || locale.Equals(LANG_UND) || locale.Equals(LANG_AUTO))
             {
                 rtl = false;
                 return null;
             }
 
             var split = locale.Split('-');
-            var latin = split.Length > 1 && string.Equals(split[1], "latn", StringComparison.OrdinalIgnoreCase);
+            var latin = split.Length > 1 && string.Equals(split[1], LANG_LATN, StringComparison.OrdinalIgnoreCase);
 
             var culture = new CultureInfo(split[0]);
             rtl = culture.TextInfo.IsRightToLeft && !latin;
