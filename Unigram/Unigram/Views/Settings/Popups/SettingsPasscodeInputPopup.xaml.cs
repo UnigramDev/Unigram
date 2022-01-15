@@ -5,7 +5,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
-namespace Unigram.Views.Popups
+namespace Unigram.Views.Settings.Popups
 {
     public sealed partial class SettingsPasscodeInputPopup : ContentPopup
     {

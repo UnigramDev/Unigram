@@ -103,10 +103,10 @@
 
                 <controls:HeaderedControl x:Name="SensitiveContent"
                                           x:Load="False"
-                                          Header="Sensitive Content"
-                                          Footer="Display sensitive media in public channels on all your Telegram devices.">
+                                          Header="{CustomResource lng_settings_sensitive_title}"
+                                          Footer="{CustomResource lng_settings_sensitive_about}">
                     <CheckBox IsChecked="{x:Bind ViewModel.IgnoreSensitiveContentRestrictions, Mode=TwoWay}"
-                              Content="Disable Filtering"
+                              Content="{CustomResource lng_settings_sensitive_disable_filtering}"
                               Margin="12,6,12,0" />
                     <Rectangle Style="{StaticResource Separator}" />
                 </controls:HeaderedControl>

@@ -30,7 +30,7 @@
     <GenerateTestArtifacts>False</GenerateTestArtifacts>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
-    <LangVersion>9.0</LangVersion>
+    <LangVersion>10.0</LangVersion>
     <AppxPackageSigningEnabled>False</AppxPackageSigningEnabled>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
@@ -236,6 +236,7 @@
     <Compile Include="Common\ZoomableListHandler.cs" />
     <Compile Include="Constants.Secret.cs" />
     <Compile Include="Controls\AnimatedBitmapButton.cs" />
+    <Compile Include="Controls\AnimatedControl.cs" />
     <Compile Include="Controls\AnimatedGlyphButton.cs" />
     <Compile Include="Controls\AnimatedGlyphToggleButton.cs" />
     <Compile Include="Controls\AnimationView.cs" />
@@ -446,6 +447,7 @@
     <Compile Include="Controls\Messages\InvoiceFooter.xaml.cs">
       <DependentUpon>InvoiceFooter.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Messages\ReactionButton.cs" />
     <Compile Include="Controls\MoreButton.cs" />
     <Compile Include="Controls\MosaicLayout.cs" />
     <Compile Include="Controls\MultipleListView.cs" />
@@ -941,12 +943,6 @@
     <Compile Include="Views\Popups\SettingsEmojiSetPopup.xaml.cs">
       <DependentUpon>SettingsEmojiSetPopup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Popups\SettingsPasscodeConfirmPopup.xaml.cs">
-      <DependentUpon>SettingsPasscodeConfirmPopup.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Popups\SettingsPasscodeInputPopup.xaml.cs">
-      <DependentUpon>SettingsPasscodeInputPopup.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Popups\SharePopup.xaml.cs">
       <DependentUpon>SharePopup.xaml</DependentUpon>
     </Compile>
@@ -991,6 +987,15 @@
     </Compile>
     <Compile Include="Views\Settings\Phone\SettingsPhoneSentCodePage.xaml.cs">
       <DependentUpon>SettingsPhoneSentCodePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\Popups\SettingsPasscodeConfirmPopup.xaml.cs">
+      <DependentUpon>SettingsPasscodeConfirmPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\Popups\SettingsPasscodeInputPopup.xaml.cs">
+      <DependentUpon>SettingsPasscodeInputPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\Popups\SettingsPasscodePopup.xaml.cs">
+      <DependentUpon>SettingsPasscodePopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\Popups\SettingsSessionPopup.xaml.cs">
       <DependentUpon>SettingsSessionPopup.xaml</DependentUpon>
@@ -1312,6 +1317,7 @@
     <Content Include="Assets\Animations\DeviceUbuntu.json" />
     <Content Include="Assets\Animations\DeviceWindows.json" />
     <Content Include="Assets\Background.tgv" />
+    <Content Include="Assets\Animations\Passcode.tgs" />
     <None Include="Assets\i420.hlsl" />
     <Content Include="Assets\Images\BoxArt.png" />
     <Content Include="Assets\Images\Reply.scale-100.png" />
@@ -1991,14 +1997,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Popups\SettingsPasscodeConfirmPopup.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Popups\SettingsPasscodeInputPopup.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Views\Popups\SharePopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2058,6 +2056,18 @@
     <Page Include="Views\Settings\Phone\SettingsPhoneSentCodePage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\Popups\SettingsPasscodeConfirmPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\Popups\SettingsPasscodeInputPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\Popups\SettingsPasscodePopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\Popups\SettingsSessionPopup.xaml">
       <SubType>Designer</SubType>

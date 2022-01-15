@@ -9,10 +9,11 @@ using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Services.ViewService;
 using Unigram.ViewModels;
+using Unigram.ViewModels.Settings;
 using Unigram.Views;
 using Unigram.Views.Payments;
-using Unigram.Views.Popups;
 using Unigram.Views.Settings;
+using Unigram.Views.Settings.Popups;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.WindowManagement;
 using Windows.UI.Xaml;
@@ -303,7 +304,17 @@ namespace Unigram.Common
             }
             else
             {
-                Navigate(typeof(SettingsPasscodePage));
+                var popup = new SettingsPasscodePopup();
+
+                var confirm = await popup.ShowQueuedAsync();
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    var viewModel = TLContainer.Current.Resolve<SettingsPasscodeViewModel>(SessionId);
+                    if (viewModel != null)
+                    {
+                        viewModel.ToggleCommand.Execute();
+                    }
+                }
             }
         }
     }
