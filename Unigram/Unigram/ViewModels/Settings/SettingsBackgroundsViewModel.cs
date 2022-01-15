@@ -55,12 +55,14 @@ namespace Unigram.ViewModels.Settings
                 if (selected != null)
                 {
                     items.Remove(selected);
-                    items.Insert(0, selected);
                 }
-                else if (background == null)
+
+                if (background != null)
                 {
-                    selected = predefined;
+                    items.Insert(0, background);
                 }
+
+                selected = background ?? predefined;
 
                 SelectedItem = selected;
                 Items.ReplaceWith(items);

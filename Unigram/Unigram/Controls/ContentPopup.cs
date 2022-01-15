@@ -219,5 +219,18 @@ namespace Unigram.Controls
 
         #endregion
 
+        #region SecondaryBackground
+
+        public Brush SecondaryBackground
+        {
+            get { return (Brush)GetValue(SecondaryBackgroundProperty); }
+            set { SetValue(SecondaryBackgroundProperty, value); }
+        }
+
+        public static readonly DependencyProperty SecondaryBackgroundProperty =
+            DependencyProperty.Register("SecondaryBackground", typeof(Brush), typeof(ContentPopup), new PropertyMetadata(null));
+
+        #endregion
+
     }
 }

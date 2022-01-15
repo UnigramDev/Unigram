@@ -1542,7 +1542,8 @@
                                     <ScaleTransform x:Name="ScaleTransform" />
                                 </Border.RenderTransform>
                                 <Grid x:Name="DialogSpace"
-                                      Padding="{ThemeResource ContentDialogPadding}">
+                                      Padding="{ThemeResource ContentDialogPadding}"
+                                      Background="{TemplateBinding SecondaryBackground}">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="*" />
                                         <RowDefinition Height="Auto" />

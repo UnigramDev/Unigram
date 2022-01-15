@@ -136,7 +136,7 @@ namespace Unigram.ViewModels
                                                                }));
 
                     Patterns.ReplaceWith(new[] { new Background(0, true, false, string.Empty, null, new BackgroundTypeFill(new BackgroundFillSolid())) }.Union(patterns));
-                    SelectedPattern = backgrounds.BackgroundsValue.FirstOrDefault(x => x.Id == background.Id);
+                    SelectedPattern = backgrounds.BackgroundsValue.FirstOrDefault(x => x.Document.DocumentValue.Id == background.Document?.DocumentValue.Id);
                 }
             }
 

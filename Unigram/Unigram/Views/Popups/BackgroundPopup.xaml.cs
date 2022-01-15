@@ -104,7 +104,7 @@ namespace Unigram.Views
         {
             if (_fill is BackgroundFillFreeformGradient freeform)
             {
-                _freeform.UpdateLayout(Background as ImageBrush, e.NewSize.Width, e.NewSize.Height, freeform);
+                _freeform.UpdateLayout(SecondaryBackground as ImageBrush, e.NewSize.Width, e.NewSize.Height, freeform);
             }
 
             _blurVisual.Size = e.NewSize.ToVector2();
@@ -120,12 +120,12 @@ namespace Unigram.Views
 
                 if (value is BackgroundFillFreeformGradient freeform)
                 {
-                    Background = new ImageBrush { AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
-                    _freeform.UpdateLayout(Background as ImageBrush, ActualWidth, ActualHeight, freeform);
+                    SecondaryBackground = new ImageBrush { AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
+                    _freeform.UpdateLayout(SecondaryBackground as ImageBrush, ActualWidth, ActualHeight, freeform);
                 }
                 else
                 {
-                    Background = value?.ToBrush();
+                    SecondaryBackground = value?.ToBrush();
                 }
             }
         }
@@ -333,7 +333,7 @@ namespace Unigram.Views
                     }
 
                     content.Opacity = ViewModel.Intensity / 100d;
-                    root.Background = Background;
+                    root.Background = SecondaryBackground;
                 }
             }
 
@@ -380,7 +380,17 @@ namespace Unigram.Views
                 UpdatePresenter(ViewModel.Item);
             }
 
-            return Math.Abs(intensity / 100d);
+            if (SecondaryBackground != null)
+            {
+                SecondaryBackground.Opacity = intensity < 0 ? 1 - Math.Abs(intensity / 100d) : 1;
+            }
+
+            return intensity >= 0 ? Math.Abs(intensity / 100d) : 1;
+        }
+
+        private double ConvertMinimumIntensity(ElementTheme theme)
+        {
+            return theme == ElementTheme.Dark ? -100 : 0;
         }
 
         #endregion
@@ -526,7 +536,7 @@ namespace Unigram.Views
                 }
 
                 content.Opacity = ViewModel.Intensity / 100d;
-                root.Background = Background;
+                root.Background = SecondaryBackground;
             }
             else
             {
@@ -534,7 +544,7 @@ namespace Unigram.Views
                 content.Source = null;
 
                 content.Opacity = 1;
-                root.Background = Background;
+                root.Background = SecondaryBackground;
             }
         }
 
@@ -596,7 +606,7 @@ namespace Unigram.Views
         {
             if (_fill is BackgroundFillFreeformGradient freeform)
             {
-                _freeform.UpdateLayout(Background as ImageBrush, ActualWidth, ActualHeight, freeform, true);
+                _freeform.UpdateLayout(SecondaryBackground as ImageBrush, ActualWidth, ActualHeight, freeform, true);
             }
         }
     }

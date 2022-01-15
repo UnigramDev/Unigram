@@ -14,6 +14,7 @@
                        mc:Ignorable="d"
                        Loaded="OnLoaded"
                        Unloaded="OnUnloaded"
+                       Background="Black"
                        PrimaryButtonCommand="{x:Bind ViewModel.DoneCommand}">
 
     <ContentDialog.Resources>
@@ -881,8 +882,10 @@
 
                 <Slider Header="{CustomResource BackgroundIntensity}"
                         Value="{x:Bind ViewModel.Intensity, Mode=TwoWay}"
-                        Minimum="-100"
+                        Minimum="{x:Bind ConvertMinimumIntensity(ActualTheme), Mode=OneWay}"
                         Maximum="100"
+                        TickFrequency="100"
+                        TickPlacement="Outside"
                         Margin="12,12,12,0"
                         Grid.Row="2" />
             </Grid>
