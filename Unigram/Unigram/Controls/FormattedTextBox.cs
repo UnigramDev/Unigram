@@ -37,7 +37,7 @@ namespace Unigram.Controls
             Paste += OnPaste;
 
             _proofingMenu = new MenuFlyoutSubItem();
-            _proofingMenu.Text = "Spelling";
+            _proofingMenu.Text = Strings.Resources.lng_spellchecker_submenu;
 
             ContextFlyout = new MenuFlyout();
             ContextFlyout.Opening += OnContextFlyoutOpening;
@@ -54,6 +54,9 @@ namespace Unigram.Controls
             CreateKeyboardAccelerator(VirtualKey.P, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
             CreateKeyboardAccelerator(VirtualKey.K);
             CreateKeyboardAccelerator(VirtualKey.N, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
+
+            // Overridden but not used
+            CreateKeyboardAccelerator(VirtualKey.E);
 
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
@@ -251,7 +254,7 @@ namespace Unigram.Controls
             clone.StartOf(TextRangeUnit.Link, true);
             var mention = TryGetUserId(clone, out long userId);
 
-            var formatting = new MenuFlyoutSubItem { Text = "Formatting" };
+            var formatting = new MenuFlyoutSubItem { Text = Strings.Resources.lng_menu_formatting };
             formatting.CreateFlyoutItem(length, ContextBold_Click, Strings.Resources.Bold, new FontIcon { Glyph = Icons.TextBold }, VirtualKey.B);
             formatting.CreateFlyoutItem(length, ContextItalic_Click, Strings.Resources.Italic, new FontIcon { Glyph = Icons.TextItalic }, VirtualKey.I);
             formatting.CreateFlyoutItem(length, ContextUnderline_Click, Strings.Resources.Underline, new FontIcon { Glyph = Icons.TextUnderline }, VirtualKey.U);
@@ -259,23 +262,23 @@ namespace Unigram.Controls
             formatting.CreateFlyoutItem(length && format.Name != "Consolas", ContextMonospace_Click, Strings.Resources.Mono, new FontIcon { Glyph = Icons.Code }, VirtualKey.M, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
             formatting.CreateFlyoutItem(length, ContextSpoiler_Click, Strings.Resources.Spoiler, new FontIcon { Glyph = Icons.TabInPrivate }, VirtualKey.P, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
             formatting.Items.Add(new MenuFlyoutSeparator());
-            formatting.CreateFlyoutItem(!mention, ContextLink_Click, clone.Link.Length > 0 ? "Edit link" : Strings.Resources.CreateLink, new FontIcon { Glyph = Icons.Link }, VirtualKey.K);
+            formatting.CreateFlyoutItem(!mention, ContextLink_Click, clone.Link.Length > 0 ? Strings.Resources.EditLink : Strings.Resources.lng_menu_formatting_link_create, new FontIcon { Glyph = Icons.Link }, VirtualKey.K);
             formatting.Items.Add(new MenuFlyoutSeparator());
             formatting.CreateFlyoutItem(length && !IsDefault(format), ContextPlain_Click, Strings.Resources.Regular, null, VirtualKey.N, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
             formatting.Items.Add(new MenuFlyoutSeparator());
             formatting.CreateFlyoutItem(true, () => IsFormattingVisible = !_isFormattingVisible, _isFormattingVisible ? "Hide formatting" : "Show formatting", new FontIcon { Glyph = Icons.TextFont });
 
-            flyout.CreateFlyoutItem(Document.CanUndo(), ContextUndo_Click, "Undo", new FontIcon { Glyph = Icons.ArrowUndo }, VirtualKey.Z);
-            flyout.CreateFlyoutItem(Document.CanRedo(), ContextRedo_Click, "Redo", new FontIcon { Glyph = Icons.ArrowRedo }, VirtualKey.Y);
+            flyout.CreateFlyoutItem(Document.CanUndo(), ContextUndo_Click, Strings.Resources.lng_wnd_menu_undo, new FontIcon { Glyph = Icons.ArrowUndo }, VirtualKey.Z);
+            flyout.CreateFlyoutItem(Document.CanRedo(), ContextRedo_Click, Strings.Resources.lng_wnd_menu_redo, new FontIcon { Glyph = Icons.ArrowRedo }, VirtualKey.Y);
             flyout.Items.Add(new MenuFlyoutSeparator());
-            flyout.CreateFlyoutItem(length && Document.CanCopy(), ContextCut_Click, "Cut", new FontIcon { Glyph = Icons.Cut }, VirtualKey.X);
-            flyout.CreateFlyoutItem(length && Document.CanCopy(), ContextCopy_Click, "Copy", new FontIcon { Glyph = Icons.DocumentCopy }, VirtualKey.C);
-            flyout.CreateFlyoutItem(Document.CanPaste(), ContextPaste_Click, "Paste", new FontIcon { Glyph = Icons.ClipboardPaste }, VirtualKey.V);
-            flyout.CreateFlyoutItem(length, ContextDelete_Click, "Delete");
+            flyout.CreateFlyoutItem(length && Document.CanCopy(), ContextCut_Click, Strings.Resources.lng_mac_menu_cut, new FontIcon { Glyph = Icons.Cut }, VirtualKey.X);
+            flyout.CreateFlyoutItem(length && Document.CanCopy(), ContextCopy_Click, Strings.Resources.Copy, new FontIcon { Glyph = Icons.DocumentCopy }, VirtualKey.C);
+            flyout.CreateFlyoutItem(Document.CanPaste(), ContextPaste_Click, Strings.Resources.lng_mac_menu_paste, new FontIcon { Glyph = Icons.ClipboardPaste }, VirtualKey.V);
+            flyout.CreateFlyoutItem(length, ContextDelete_Click, Strings.Resources.Delete);
             flyout.Items.Add(new MenuFlyoutSeparator());
             flyout.Items.Add(formatting);
             flyout.Items.Add(new MenuFlyoutSeparator());
-            flyout.CreateFlyoutItem(!IsEmpty, ContextSelectAll_Click, "Select All", null, VirtualKey.A);
+            flyout.CreateFlyoutItem(!IsEmpty, ContextSelectAll_Click, Strings.Resources.lng_mac_menu_select_all, null, VirtualKey.A);
 
             if (ProofingMenuFlyout is MenuFlyout proofing && proofing.Items.Count > 0)
             {
@@ -692,19 +695,19 @@ namespace Unigram.Controls
 
             var length = Math.Abs(selection.Length) > 0;
 
-            if (sender.Key == VirtualKey.B && sender.Modifiers == VirtualKeyModifiers.Control)
+            if (sender.Key == VirtualKey.B && sender.Modifiers == VirtualKeyModifiers.Control && length)
             {
                 ContextBold_Click();
             }
-            else if (sender.Key == VirtualKey.I && sender.Modifiers == VirtualKeyModifiers.Control && length && format.Italic == FormatEffect.Off)
+            else if (sender.Key == VirtualKey.I && sender.Modifiers == VirtualKeyModifiers.Control && length)
             {
                 ContextItalic_Click();
             }
-            else if (sender.Key == VirtualKey.U && sender.Modifiers == VirtualKeyModifiers.Control && length && format.Underline == UnderlineType.None)
+            else if (sender.Key == VirtualKey.U && sender.Modifiers == VirtualKeyModifiers.Control && length)
             {
                 ContextUnderline_Click();
             }
-            else if (sender.Key == VirtualKey.X && sender.Modifiers == (VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift) && length && format.Strikethrough == FormatEffect.Off)
+            else if (sender.Key == VirtualKey.X && sender.Modifiers == (VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift) && length)
             {
                 ContextStrikethrough_Click();
             }
@@ -712,7 +715,7 @@ namespace Unigram.Controls
             {
                 ContextMonospace_Click();
             }
-            else if (sender.Key == VirtualKey.P && sender.Modifiers == (VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift) && length && format.Name != "Consolas")
+            else if (sender.Key == VirtualKey.P && sender.Modifiers == (VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift) && length && format.ForegroundColor != Colors.Gray)
             {
                 ContextSpoiler_Click();
             }

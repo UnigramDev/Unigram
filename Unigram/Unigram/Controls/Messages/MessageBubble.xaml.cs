@@ -34,6 +34,8 @@ namespace Unigram.Controls.Messages
 
         private bool _ignoreSizeChanged = true;
 
+        private bool _ignoreSpoilers = false;
+
         private DirectRectangleClip _cornerRadius;
 
         public MessageBubble()
@@ -111,6 +113,11 @@ namespace Unigram.Controls.Messages
 
         public void UpdateMessage(MessageViewModel message)
         {
+            if (_message?.Id != message?.Id)
+            {
+                _ignoreSpoilers = false;
+            }
+
             _message = message;
             Tag = message;
 
@@ -1228,7 +1235,7 @@ namespace Unigram.Controls.Messages
 
             var preformatted = false;
 
-            var runs = TextStyleRun.GetRuns(text, entities);
+            var runs = TextStyleRun.GetRuns(text, entities, !_ignoreSpoilers);
             var previous = 0;
 
             foreach (var entity in runs)
@@ -1248,7 +1255,7 @@ namespace Unigram.Controls.Messages
                 {
                     var data = text.Substring(entity.Offset, entity.Length);
 
-                    if (message.Delegate.Settings.Diagnostics.CopyFormattedCode)
+                    if (message.Delegate.Settings.Diagnostics.CopyFormattedCode && entity.Type is TextEntityTypeCode)
                     {
                         var hyperlink = new Hyperlink();
                         hyperlink.Click += (s, args) => Entity_Click(message, entity.Type, data);
@@ -1268,7 +1275,21 @@ namespace Unigram.Controls.Messages
                 {
                     var local = span;
 
-                    if (entity.HasFlag(TextStyle.Mention) || entity.HasFlag(TextStyle.Url))
+                    if (entity.HasFlag(TextStyle.Spoiler))
+                    {
+                        var hyperlink = new Hyperlink();
+                        hyperlink.Click += (s, args) => Entity_Click(message, entity.Type, null);
+                        hyperlink.Foreground = Message.Foreground;
+                        hyperlink.UnderlineStyle = UnderlineStyle.None;
+                        //hyperlink.Foreground = foreground;
+
+                        spoiler ??= new TextHighlighter();
+                        spoiler.Ranges.Add(new TextRange { StartIndex = entity.Offset, Length = entity.Length });
+
+                        span.Inlines.Add(hyperlink);
+                        local = hyperlink;
+                    }
+                    else if (entity.HasFlag(TextStyle.Mention) || entity.HasFlag(TextStyle.Url))
                     {
                         if (entity.Type is TextEntityTypeMentionName or TextEntityTypeTextUrl)
                         {
@@ -1319,20 +1340,6 @@ namespace Unigram.Controls.Messages
                             span.Inlines.Add(hyperlink);
                             local = hyperlink;
                         }
-                    }
-                    else if (entity.HasFlag(TextStyle.Spoiler))
-                    {
-                        var hyperlink = new Hyperlink();
-                        hyperlink.Click += (s, args) => Entity_Click(message, entity.Type, null);
-                        hyperlink.Foreground = Message.Foreground;
-                        hyperlink.UnderlineStyle = UnderlineStyle.None;
-                        //hyperlink.Foreground = foreground;
-
-                        spoiler ??= new TextHighlighter();
-                        spoiler.Ranges.Add(new TextRange { StartIndex = entity.Offset, Length = entity.Length });
-
-                        span.Inlines.Add(hyperlink);
-                        local = hyperlink;
                     }
 
                     var run = new Run { Text = text.Substring(entity.Offset, entity.Length) };
@@ -1511,12 +1518,14 @@ namespace Unigram.Controls.Messages
             {
                 message.Delegate.OpenMedia(message.ReplyToMessage, null, mediaTimestamp.MediaTimestamp);
             }
+            else if (type is TextEntityTypeCode or TextEntityTypePre or TextEntityTypePreCode && data is string code)
+            {
+                MessageHelper.CopyText(code);
+            }
             else if (type is TextEntityTypeSpoiler)
             {
-                if (Message.TextHighlighters.Count > 0)
-                {
-                    Message.TextHighlighters.RemoveAt(Message.TextHighlighters.Count - 1);
-                }
+                _ignoreSpoilers = true;
+                UpdateMessageText(message);
             }
         }
 

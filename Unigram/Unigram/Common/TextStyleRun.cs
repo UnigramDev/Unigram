@@ -44,15 +44,15 @@ namespace Unigram.Common
             }
         }
 
-        public static IList<TextStyleRun> GetRuns(FormattedText formatted)
+        public static IList<TextStyleRun> GetRuns(FormattedText formatted, bool includeSpoilers = true)
         {
-            return GetRuns(formatted.Text, formatted.Entities);
+            return GetRuns(formatted.Text, formatted.Entities, includeSpoilers);
         }
 
-        public static IList<TextStyleRun> GetRuns(string text, IList<TextEntity> entities)
+        public static IList<TextStyleRun> GetRuns(string text, IList<TextEntity> entities, bool includeSpoilers = true)
         {
             var runs = new List<TextStyleRun>();
-            var entitiesCopy = new List<TextEntity>(entities);
+            var entitiesCopy = new List<TextEntity>(includeSpoilers ? entities : entities.Where(x => x.Type is not TextEntityTypeSpoiler));
 
             entitiesCopy.Sort((x, y) =>
             {
