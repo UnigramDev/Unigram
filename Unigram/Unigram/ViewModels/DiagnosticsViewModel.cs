@@ -143,6 +143,16 @@ namespace Unigram.ViewModels
             }
         }
 
+        public bool CopyFormattedCode
+        {
+            get => Settings.Diagnostics.CopyFormattedCode;
+            set
+            {
+                Settings.Diagnostics.CopyFormattedCode = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public VerbosityLevel Verbosity
         {
             get => (VerbosityLevel)Settings.VerbosityLevel;

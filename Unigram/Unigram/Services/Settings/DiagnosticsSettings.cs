@@ -7,6 +7,13 @@
         {
         }
 
+        private bool? _copyFormattedCode;
+        public bool CopyFormattedCode
+        {
+            get => _copyFormattedCode ??= GetValueOrDefault("CopyFormattedCode", true);
+            set => AddOrUpdateValue(ref _copyFormattedCode, "CopyFormattedCode", value);
+        }
+
         private bool? _mica;
         public bool Mica
         {

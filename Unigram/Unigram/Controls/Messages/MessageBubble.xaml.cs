@@ -1247,11 +1247,21 @@ namespace Unigram.Controls.Messages
                 if (entity.HasFlag(TextStyle.Monospace))
                 {
                     var data = text.Substring(entity.Offset, entity.Length);
-                    span.Inlines.Add(new Run { Text = data, FontFamily = new FontFamily("Consolas") });
 
-                    if (entity.Type is TextEntityTypePre or TextEntityTypePreCode)
+                    if (message.Delegate.Settings.Diagnostics.CopyFormattedCode)
                     {
-                        preformatted = true;
+                        var hyperlink = new Hyperlink();
+                        hyperlink.Click += (s, args) => Entity_Click(message, entity.Type, data);
+                        hyperlink.Foreground = Message.Foreground;
+                        hyperlink.UnderlineStyle = UnderlineStyle.None;
+
+                        span.Inlines.Add(hyperlink);
+                        hyperlink.Inlines.Add(new Run { Text = data, FontFamily = new FontFamily("Consolas") });
+                    }
+                    else
+                    {
+                        span.Inlines.Add(new Run { Text = data, FontFamily = new FontFamily("Consolas") });
+                        preformatted = entity.Type is TextEntityTypePre or TextEntityTypePreCode;
                     }
                 }
                 else
@@ -1314,7 +1324,7 @@ namespace Unigram.Controls.Messages
                     {
                         var hyperlink = new Hyperlink();
                         hyperlink.Click += (s, args) => Entity_Click(message, entity.Type, null);
-                        hyperlink.Foreground = GetBrush("MessageForegroundBrush");
+                        hyperlink.Foreground = Message.Foreground;
                         hyperlink.UnderlineStyle = UnderlineStyle.None;
                         //hyperlink.Foreground = foreground;
 

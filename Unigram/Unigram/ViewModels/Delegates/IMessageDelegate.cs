@@ -7,6 +7,8 @@ namespace Unigram.ViewModels.Delegates
 {
     public interface IMessageDelegate : IViewModelDelegate
     {
+        public ISettingsService Settings { get; }
+
         IEventAggregator Aggregator { get; }
 
         bool CanBeDownloaded(object content, File file);

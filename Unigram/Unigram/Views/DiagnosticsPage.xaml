@@ -32,6 +32,10 @@
                               Content="Mica"
                               Margin="12,6,12,0" />
                     <Rectangle Style="{StaticResource Separator}" />
+                    <CheckBox IsChecked="{x:Bind ViewModel.CopyFormattedCode, Mode=TwoWay}"
+                              Content="Copy formatted code"
+                              Margin="12,6,12,0" />
+                    <Rectangle Style="{StaticResource Separator}" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="Calls Logs">
