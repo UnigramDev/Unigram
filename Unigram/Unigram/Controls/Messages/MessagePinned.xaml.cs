@@ -310,6 +310,11 @@ namespace Unigram.Controls.Messages
             var serviceShow = _textVisual == _textVisual1 ? ServiceLabel2 : ServiceLabel1;
             serviceShow.Text = service;
 
+            if (!string.IsNullOrEmpty(message?.Text) && !string.IsNullOrEmpty(service))
+            {
+                serviceShow.Text += ", ";
+            }
+
             var messageShow = _textVisual == _textVisual1 ? MessageLabel2 : MessageLabel1;
             messageShow.Text = message?.Text.Replace('\n', ' ') ?? string.Empty;
         }
