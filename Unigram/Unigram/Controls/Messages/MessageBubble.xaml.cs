@@ -390,8 +390,7 @@ namespace Unigram.Controls.Messages
 
             var content = message.GeneratedContent ?? message.Content;
 
-            var sticker = content is MessageSticker;
-            var light = sticker || content is MessageDice || content is MessageVideoNote || content is MessageBigEmoji;
+            var light = content is MessageSticker or MessageDice or MessageVideoNote or MessageBigEmoji;
             var shown = false;
 
             if (!light && message.IsFirst && !message.IsOutgoing && !message.IsChannelPost && (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup))
@@ -529,7 +528,7 @@ namespace Unigram.Controls.Messages
 
             var forward = false;
 
-            if (message.ForwardInfo != null && !sticker && !message.IsSaved())
+            if (message.ForwardInfo != null && !message.IsSaved())
             {
                 if (paragraph.Inlines.Count > 0)
                 {
