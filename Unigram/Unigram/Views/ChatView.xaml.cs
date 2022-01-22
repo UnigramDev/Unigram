@@ -2099,15 +2099,13 @@ namespace Unigram.Views
                 flyout.Items.RemoveAt(flyout.Items.Count - 1);
             }
 
-#if DEBUG
-            if (args.TryGetPosition(Window.Current.Content, out Point absolute))
+            if (chat.AvailableReactions.Count > 0 && args.TryGetPosition(Window.Current.Content, out Point absolute))
             {
                 flyout.Opened += (s, args) =>
                 {
-                    MenuFlyoutReactions.ShowAt(message, flyout, absolute);
+                    MenuFlyoutReactions.ShowAt(chat, message, flyout, absolute);
                 };
             }
-#endif
 
             args.ShowAt(flyout, sender as FrameworkElement);
         }

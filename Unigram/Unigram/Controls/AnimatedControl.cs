@@ -408,7 +408,7 @@ namespace Unigram.Controls
 
             _shouldPlay = false;
 
-            if (_subscribed)
+            if (_subscribed || !_visible)
             {
                 return false;
             }

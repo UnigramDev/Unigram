@@ -101,6 +101,7 @@ namespace Unigram.CodeGen
                 typeof(SupergroupBannedViewModel),
                 typeof(SupergroupPermissionsViewModel),
                 typeof(SupergroupMembersViewModel),
+                typeof(SupergroupReactionsViewModel),
                 typeof(ChatSharedMediaViewModel),
                 typeof(ChatStatisticsViewModel),
                 typeof(MessageStatisticsViewModel),

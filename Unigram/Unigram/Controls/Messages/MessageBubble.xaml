@@ -159,7 +159,7 @@
                                     Style="{StaticResource BodyRichTextBlockStyle}"
                                     Foreground="{ThemeResource MessageForegroundBrush}"
                                     FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                    TextAlignment="DetectFromContent"
+                                    TextReadingOrder="UseFlowDirection"
                                     OpticalMarginAlignment="None"
                                     Margin="10,0,10,6"
                                     Grid.Column="1"
@@ -173,6 +173,11 @@
                                     x:Name="Media"
                                     Grid.Column="1"
                                     Grid.Row="3"/>
+
+                                <local:ReactionsPanel x:Name="Reactions"
+                                                          HorizontalAlignment="Stretch"
+                                                          VerticalAlignment="Bottom"
+                                                          Padding="4,0,0,4" />
 
                                 <local:MessageFooter
                                     x:Name="Footer"
@@ -227,10 +232,14 @@
                                 </Grid>
                             </HyperlinkButton>
                         </Grid>
-                        
+
                         <controls:ReplyMarkupPanel
                             x:Name="Markup"
                             x:Load="False"/>
+
+                        <local:ReactionsPanel x:Name="MediaReactions"
+                                                  HorizontalAlignment="Stretch"
+                                                  Padding="0,2,0,0" />
                     </StackPanel>
                 </ControlTemplate>
             </Setter.Value>

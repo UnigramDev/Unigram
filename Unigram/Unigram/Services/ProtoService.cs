@@ -9,7 +9,6 @@ using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Entities;
-using Unigram.ViewModels;
 using Windows.Storage;
 using Windows.Storage.AccessCache;
 using Windows.System.Profile;
@@ -46,7 +45,7 @@ namespace Unigram.Services
 
     public interface ICacheService
     {
-        List<AvailableReaction> Reactions { get; }
+        IDictionary<string, Reaction> Reactions { get; }
 
         IOptionsService Options { get; }
         JsonValueObject Config { get; }
@@ -65,6 +64,8 @@ namespace Unigram.Services
 
         string GetTitle(Chat chat, bool tiny = false);
         string GetTitle(MessageForwardInfo info);
+
+        IList<Reaction> GetAvailableReactions(Chat chat);
 
         Chat GetChat(long id);
         IList<Chat> GetChats(IList<long> ids);
@@ -176,6 +177,8 @@ namespace Unigram.Services
         private IList<long> _installedMaskSets;
 
         private IList<ChatFilterInfo> _chatFilters = new ChatFilterInfo[0];
+
+        private IDictionary<string, Reaction> _reactions = new Dictionary<string, Reaction>();
 
         private UpdateAnimationSearchParameters _animationSearchParameters;
 
@@ -392,63 +395,8 @@ namespace Unigram.Services
 
             UpdateVersion();
 
-            InitializeRandomReactions();
-        }
-
-        private List<AvailableReaction> _reactions = new List<AvailableReaction>();
-        public List<AvailableReaction> Reactions => _reactions;
-
-        private async void InitializeRandomReactions()
-        {
-            var reactions = new Dictionary<string, int>
-            {
-                { "👍", 1 },
-                { "👎", 2 },
-                { "😂", 3 },
-                { "😭", 4 },
-                { "💩", 5 },
-                { "🎉", 6 },
-                { "🔥", 7 },
-                { "😱", 8 },
-                { "❤️", 9 },
-                { "🤮", 10 },
-                { "🤩", 11 },
-            };
-
-            static Sticker FromSet(StickerSet set, string emoji)
-            {
-                foreach (var item in set.Stickers)
-                {
-                    if (item.Emoji == emoji)
-                    {
-                        return item;
-                    }
-                }
-
-                return null;
-            }
-
-            var selectionStickers = await SendAsync(new SearchStickerSet("EmojiShortAnimations")) as StickerSet;
-            var activeStickers = await SendAsync(new SearchStickerSet("AnimatedEmojies")) as StickerSet;
-            var effectStickers = await SendAsync(new SearchStickerSet("EmojiAnimations")) as StickerSet;
-
-            foreach (var item in reactions)
-            {
-                var staticIcon = new Sticker(0, 71, 71, item.Key, false, false, null, new ClosedVectorPath[0], null, Common.TdExtensions.GetLocalFile($"Assets\\Reactions\\Reaction {item.Value}.webp"));
-                var selectionSticker = FromSet(selectionStickers, item.Key);
-                var activeSticker = FromSet(activeStickers, item.Key);
-                var effectSticker = FromSet(effectStickers, item.Key);
-
-                _reactions.Add(new AvailableReaction
-                {
-                    Emoji = item.Key,
-                    Title = $"Random text {item.Key}",
-                    StaticIcon = staticIcon,
-                    SelectAnimation = selectionSticker,
-                    ActivateAnimation = activeSticker,
-                    EffectAnimation = effectSticker,
-                });
-            }
+            Send(new SetOption("online", new OptionValueBoolean(true)));
+            Send(new TestGetDifference());
         }
 
         private void InitializeFlush()
@@ -554,6 +502,8 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             _options.Clear();
 
             _files.Clear();
+
+            _reactions.Clear();
 
             _chats.Clear();
             _chatActions.Clear();
@@ -857,38 +807,19 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             return _connectionState;
         }
 
-        public IOptionsService Options
-        {
-            get { return _options; }
-        }
+        public IOptionsService Options => _options;
 
-        public JsonValueObject Config
-        {
-            get { return _config; }
-        }
+        public JsonValueObject Config => _config;
 
-        public IList<ChatFilterInfo> ChatFilters
-        {
-            get { return _chatFilters; }
-        }
+        public IList<ChatFilterInfo> ChatFilters => _chatFilters;
 
-        public IList<string> AnimationSearchEmojis
-        {
-            get => _animationSearchParameters?.Emojis ?? new string[0];
-        }
+        public IDictionary<string, Reaction> Reactions => _reactions;
 
-        public string AnimationSearchProvider
-        {
-            get => _animationSearchParameters?.Provider;
-        }
+        public IList<string> AnimationSearchEmojis => _animationSearchParameters?.Emojis ?? new string[0];
 
-        public Background SelectedBackground
-        {
-            get
-            {
-                return GetSelectedBackground(_settings.Appearance.IsDarkTheme());
-            }
-        }
+        public string AnimationSearchProvider => _animationSearchParameters?.Provider;
+
+        public Background SelectedBackground => GetSelectedBackground(_settings.Appearance.IsDarkTheme());
 
         public Background GetSelectedBackground(bool darkTheme)
         {
@@ -955,6 +886,11 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             }
 
             return null;
+        }
+
+        public IList<Reaction> GetAvailableReactions(Chat chat)
+        {
+            return _reactions.Values.GroupJoin(chat.AvailableReactions, x => x.ReactionValue, y => y, (x, y) => x).ToArray();
         }
 
         public Chat GetChat(long id)
@@ -1474,11 +1410,30 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             {
 
             }
+            else if (update is UpdateChatAction updateUserChatAction)
+            {
+                var actions = _chatActions.GetOrAdd(updateUserChatAction.ChatId, x => new ConcurrentDictionary<MessageSender, ChatAction>(new MessageSenderEqualityComparer()));
+                if (updateUserChatAction.Action is ChatActionCancel)
+                {
+                    actions.TryRemove(updateUserChatAction.SenderId, out _);
+                }
+                else
+                {
+                    actions[updateUserChatAction.SenderId] = updateUserChatAction.Action;
+                }
+            }
             else if (update is UpdateChatActionBar updateChatActionBar)
             {
                 if (_chats.TryGetValue(updateChatActionBar.ChatId, out Chat value))
                 {
                     value.ActionBar = updateChatActionBar.ActionBar;
+                }
+            }
+            else if (update is UpdateChatAvailableReactions chatAvailableReactions)
+            {
+                if (_chats.TryGetValue(chatAvailableReactions.ChatId, out Chat value))
+                {
+                    value.AvailableReactions = chatAvailableReactions.AvailableReactions;
                 }
             }
             else if (update is UpdateChatHasProtectedContent updateChatHasProtectedContent)
@@ -1786,6 +1741,10 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 #endif
                 }
             }
+            else if (update is UpdateReactions updateReactions)
+            {
+                _reactions = updateReactions.Reactions.ToDictionary(x => x.ReactionValue);
+            }
             else if (update is UpdateRecentStickers updateRecentStickers)
             {
 
@@ -1848,18 +1807,6 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             else if (update is UpdateUser updateUser)
             {
                 _users[updateUser.User.Id] = updateUser.User;
-            }
-            else if (update is UpdateChatAction updateUserChatAction)
-            {
-                var actions = _chatActions.GetOrAdd(updateUserChatAction.ChatId, x => new ConcurrentDictionary<MessageSender, ChatAction>(new MessageSenderEqualityComparer()));
-                if (updateUserChatAction.Action is ChatActionCancel)
-                {
-                    actions.TryRemove(updateUserChatAction.SenderId, out _);
-                }
-                else
-                {
-                    actions[updateUserChatAction.SenderId] = updateUserChatAction.Action;
-                }
             }
             else if (update is UpdateUserFullInfo updateUserFullInfo)
             {

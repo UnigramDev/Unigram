@@ -3,6 +3,7 @@ using System.Numerics;
 using System.Text.RegularExpressions;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Hosting;
 
 namespace Unigram.Controls
@@ -54,7 +55,7 @@ namespace Unigram.Controls
             }
             else
             {
-                _beforePart.Text = newValue;
+                _beforePart.Text = newValue ?? string.Empty;
                 _afterPart.Text = string.Empty;
             }
         }
@@ -143,6 +144,14 @@ namespace Unigram.Controls
                 Text = $"{part}",
                 Style = TextStyle
             };
+
+            var binding = new Binding
+            {
+                Path = new PropertyPath("Foreground"),
+                Source = this
+            };
+
+            textBlock.SetBinding(ForegroundProperty, binding);
 
             Grid.SetColumn(textBlock, index);
             ElementCompositionPreview.SetIsTranslationEnabled(textBlock, true);

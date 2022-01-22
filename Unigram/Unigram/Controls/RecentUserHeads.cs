@@ -5,6 +5,7 @@ using System.Collections.Specialized;
 using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -170,6 +171,7 @@ namespace Unigram.Controls
             Canvas.SetZIndex(container, -index);
             _layoutRoot.Children.Insert(index, container);
 
+            InvalidateMeasure();
             AnimateAlignment();
 
             batch.End();
@@ -216,6 +218,7 @@ namespace Unigram.Controls
                 _layoutRoot.Children.Insert(count, container);
             }
 
+            InvalidateMeasure();
             AnimateAlignment();
 
             batch.End();
@@ -302,6 +305,8 @@ namespace Unigram.Controls
 
                     _toBeRemoved.Clear();
                 }
+
+                InvalidateMeasure();
             };
 
             return batch;
@@ -388,6 +393,20 @@ namespace Unigram.Controls
                 var visual = ElementCompositionPreview.GetElementVisual(_layoutRoot);
                 visual.StartAnimation("Translation", offset);
             }
+        }
+
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            var count = Math.Min(_maxCount, Math.Max(1, _items.Count));
+            var width = count * (float)(_itemSize + 4) - ((count - 1) * _itemOverlap);
+
+            base.MeasureOverride(availableSize);
+            return new Size(width, _itemSize + 4);
+        }
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            return base.ArrangeOverride(finalSize);
         }
     }
 

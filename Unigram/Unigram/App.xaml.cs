@@ -407,7 +407,7 @@ namespace Unigram
             }
             catch { }
 
-#if !DESKTOP_BRIDGE
+#if !DEBUG
             if (SettingsService.Current.IsTrayVisible
                 && Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.ApplicationModel.FullTrustProcessLauncher"))
             {
@@ -513,6 +513,7 @@ namespace Unigram
                 Unigram.Views.Supergroups.SupergroupEditPage supergroupEdit => TLContainer.Current.Resolve<Unigram.ViewModels.Supergroups.SupergroupEditViewModel, Unigram.ViewModels.Delegates.ISupergroupEditDelegate>(supergroupEdit, navigationService.SessionId),
                 Unigram.Views.Supergroups.SupergroupMembersPage supergroupMembers => TLContainer.Current.Resolve<Unigram.ViewModels.Supergroups.SupergroupMembersViewModel, Unigram.ViewModels.Delegates.ISupergroupDelegate>(supergroupMembers, navigationService.SessionId),
                 Unigram.Views.Supergroups.SupergroupPermissionsPage supergroupPermissions => TLContainer.Current.Resolve<Unigram.ViewModels.Supergroups.SupergroupPermissionsViewModel, Unigram.ViewModels.Delegates.ISupergroupDelegate>(supergroupPermissions, navigationService.SessionId),
+                Unigram.Views.Supergroups.SupergroupReactionsPage supergroupReactions => TLContainer.Current.Resolve<Unigram.ViewModels.Supergroups.SupergroupReactionsViewModel, Unigram.ViewModels.Delegates.IChatDelegate>(supergroupReactions, navigationService.SessionId),
                 //
                 Unigram.Views.SignIn.SignInRecoveryPage => TLContainer.Current.Resolve<Unigram.ViewModels.SignIn.SignInRecoveryViewModel>(navigationService.SessionId),
                 Unigram.Views.SignIn.SignUpPage => TLContainer.Current.Resolve<Unigram.ViewModels.SignIn.SignUpViewModel>(navigationService.SessionId),

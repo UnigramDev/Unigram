@@ -219,6 +219,13 @@ namespace Unigram.Services
                     ProcessFiles(supergroupFullInfo.Photo);
                 }
             }
+            else if (target is SponsoredMessage sponsoredMessage)
+            {
+                if (sponsoredMessage.SponsorChatInfo != null)
+                {
+                    ProcessFiles(sponsoredMessage.SponsorChatInfo);
+                }
+            }
             else if (target is Chat chat)
             {
                 if (chat.Photo != null)
@@ -837,6 +844,37 @@ namespace Unigram.Services
                     ProcessFiles(item);
                 }
             }
+            else if (target is Reaction reaction)
+            {
+                if (reaction.StaticIcon != null)
+                {
+                    ProcessFiles(reaction.StaticIcon);
+                }
+                if (reaction.AppearAnimation != null)
+                {
+                    ProcessFiles(reaction.AppearAnimation);
+                }
+                if (reaction.SelectAnimation != null)
+                {
+                    ProcessFiles(reaction.SelectAnimation);
+                }
+                if (reaction.ActivateAnimation != null)
+                {
+                    ProcessFiles(reaction.ActivateAnimation);
+                }
+                if (reaction.EffectAnimation != null)
+                {
+                    ProcessFiles(reaction.EffectAnimation);
+                }
+                if (reaction.AroundAnimation != null)
+                {
+                    ProcessFiles(reaction.AroundAnimation);
+                }
+                if (reaction.CenterAnimation != null)
+                {
+                    ProcessFiles(reaction.CenterAnimation);
+                }
+            }
             else if (target is Animations animations)
             {
                 foreach (var item in animations.AnimationsValue)
@@ -1232,6 +1270,13 @@ namespace Unigram.Services
                     ProcessFiles(item);
                 }
             }
+            else if (target is UpdateReactions updateReactions)
+            {
+                foreach (var item in updateReactions.Reactions)
+                {
+                    ProcessFiles(item);
+                }
+            }
             else if (target is UpdateAnimatedEmojiMessageClicked updateAnimatedEmojiMessageClicked)
             {
                 if (updateAnimatedEmojiMessageClicked.Sticker != null)
@@ -1272,13 +1317,6 @@ namespace Unigram.Services
                 foreach (var item in messageCalendar.Days)
                 {
                     ProcessFiles(item);
-                }
-            }
-            else if (target is SponsoredMessage sponsoredMessage)
-            {
-                if (sponsoredMessage.Content != null)
-                {
-                    ProcessFiles(sponsoredMessage.Content);
                 }
             }
             else if (target is MessageThreadInfo messageThreadInfo)
@@ -1408,13 +1446,6 @@ namespace Unigram.Services
                     ProcessFiles(chatEventMessageDeleted.Message);
                 }
             }
-            else if (target is ChatEventPollStopped chatEventPollStopped)
-            {
-                if (chatEventPollStopped.Message != null)
-                {
-                    ProcessFiles(chatEventPollStopped.Message);
-                }
-            }
             else if (target is ChatEventMessagePinned chatEventMessagePinned)
             {
                 if (chatEventMessagePinned.Message != null)
@@ -1427,6 +1458,13 @@ namespace Unigram.Services
                 if (chatEventMessageUnpinned.Message != null)
                 {
                     ProcessFiles(chatEventMessageUnpinned.Message);
+                }
+            }
+            else if (target is ChatEventPollStopped chatEventPollStopped)
+            {
+                if (chatEventPollStopped.Message != null)
+                {
+                    ProcessFiles(chatEventPollStopped.Message);
                 }
             }
             else if (target is NotificationTypeNewMessage notificationTypeNewMessage)

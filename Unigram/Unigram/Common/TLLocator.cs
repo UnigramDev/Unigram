@@ -557,6 +557,14 @@ namespace Unigram.Views
                     _settingsService,
                     _eventAggregator);
             }
+            else if (type == typeof(Unigram.ViewModels.Supergroups.SupergroupReactionsViewModel))
+            {
+                return (T)(object)new Unigram.ViewModels.Supergroups.SupergroupReactionsViewModel(
+                    _protoService,
+                    _cacheService,
+                    _settingsService,
+                    _eventAggregator);
+            }
             else if (type == typeof(Unigram.ViewModels.Chats.ChatSharedMediaViewModel))
             {
                 return (T)(object)new Unigram.ViewModels.Chats.ChatSharedMediaViewModel(

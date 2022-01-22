@@ -59,6 +59,7 @@ namespace Unigram.Controls.Messages
         private Span Span;
         private Border Media;
         private MessageFooter Footer;
+        private ReactionsPanel Reactions;
 
         // Lazy loaded
         private Border BackgroundPanel;
@@ -73,6 +74,7 @@ namespace Unigram.Controls.Messages
         private TextBlock ThreadGlyph;
         private TextBlock ThreadLabel;
 
+        private ReactionsPanel MediaReactions;
         private ReplyMarkupPanel Markup;
 
         private bool _templateApplied;
@@ -88,6 +90,8 @@ namespace Unigram.Controls.Messages
             Span = GetTemplateChild(nameof(Span)) as Span;
             Media = GetTemplateChild(nameof(Media)) as Border;
             Footer = GetTemplateChild(nameof(Footer)) as MessageFooter;
+            Reactions = GetTemplateChild(nameof(Reactions)) as ReactionsPanel;
+            MediaReactions = GetTemplateChild(nameof(MediaReactions)) as ReactionsPanel;
 
             ContentPanel.SizeChanged += OnSizeChanged;
             Message.ContextMenuOpening += Message_ContextMenuOpening;
@@ -850,6 +854,20 @@ namespace Unigram.Controls.Messages
             }
 
             Footer.UpdateMessageInteractionInfo(message);
+
+            var media = Grid.GetRow(Media);
+            var footer = Grid.GetRow(Footer);
+
+            if (media == footer)
+            {
+                Reactions.UpdateMessageReactions(null);
+                MediaReactions.UpdateMessageReactions(message);
+            }
+            else
+            {
+                Reactions.UpdateMessageReactions(message);
+                MediaReactions.UpdateMessageReactions(null);
+            }
         }
 
         public void UpdateMessageContentOpened(MessageViewModel message)
@@ -1443,21 +1461,16 @@ namespace Unigram.Controls.Messages
 
             if (ApiInfo.FlowDirection == FlowDirection.LeftToRight && MessageHelper.IsAnyCharacterRightToLeft(text))
             {
-                //Footer.HorizontalAlignment = HorizontalAlignment.Left;
-                //span.Inlines.Add(new LineBreak());
                 Message.FlowDirection = FlowDirection.RightToLeft;
                 adjust = true;
             }
             else if (ApiInfo.FlowDirection == FlowDirection.RightToLeft && !MessageHelper.IsAnyCharacterRightToLeft(text))
             {
-                //Footer.HorizontalAlignment = HorizontalAlignment.Left;
-                //span.Inlines.Add(new LineBreak());
                 Message.FlowDirection = FlowDirection.LeftToRight;
                 adjust = true;
             }
             else
             {
-                //Footer.HorizontalAlignment = HorizontalAlignment.Right;
                 Message.FlowDirection = ApiInfo.FlowDirection;
                 adjust = false;
             }
@@ -1802,6 +1815,7 @@ namespace Unigram.Controls.Messages
                 var text = ElementCompositionPreview.GetElementVisual(Message);
                 var media = ElementCompositionPreview.GetElementVisual(Media);
                 var footer = ElementCompositionPreview.GetElementVisual(Footer);
+                var reactions = ElementCompositionPreview.GetElementVisual(Reactions);
 
                 var headerLeft = (float)Header.Margin.Left;
                 var textLeft = (float)Message.Margin.Left;
@@ -1814,11 +1828,13 @@ namespace Unigram.Controls.Messages
                 text.CenterPoint = new Vector3(-textLeft, 0, 0);
                 media.CenterPoint = new Vector3(-mediaLeft, 0, 0);
                 footer.CenterPoint = new Vector3(Footer.ActualSize.X + footerRight, Footer.ActualSize.Y + footerBottom, 0);
+                reactions.CenterPoint = new Vector3(0, Reactions.ActualSize.Y, 0);
 
                 header.StartAnimation("Scale", factor);
                 text.StartAnimation("Scale", factor);
                 media.StartAnimation("Scale", factor);
                 footer.StartAnimation("Scale", factor);
+                reactions.StartAnimation("Scale", factor);
             }
         }
 
@@ -2452,7 +2468,7 @@ namespace Unigram.Controls.Messages
 
             return base.MeasureOverride(availableSize);
 
-            Calculate:
+        Calculate:
 
             if (Footer.DesiredSize.IsEmpty)
             {

@@ -38,7 +38,8 @@ namespace Unigram.Controls.Messages
         {
             var text = Children[0] as RichTextBlock;
             var media = Children[1] as FrameworkElement;
-            var footer = Children[2] as MessageFooter;
+            var footer = Children[3] as MessageFooter;
+            var reactions = Children[2] as ReactionsPanel;
 
             var textRow = Grid.GetRow(text);
             var mediaRow = Grid.GetRow(media);
@@ -48,7 +49,14 @@ namespace Unigram.Controls.Messages
             media.Measure(availableSize);
             footer.Measure(availableSize);
 
-            if (textRow == footerRow)
+            reactions.Footer = footer.DesiredSize;
+            reactions.Measure(availableSize);
+
+            if (reactions.HasReactions)
+            {
+                _margin = new Size(0, 0);
+            }
+            else if (textRow == footerRow)
             {
                 _margin = Margins(availableSize.Width);
             }
@@ -66,15 +74,16 @@ namespace Unigram.Controls.Messages
                 ? media.DesiredSize.Width
                 : Math.Max(media.DesiredSize.Width, text.DesiredSize.Width + margin.Width);
 
-            return new Size(Math.Max(footer.DesiredSize.Width, width),
-                text.DesiredSize.Height + media.DesiredSize.Height + margin.Height);
+            return new Size(Math.Max(Math.Max(reactions.DesiredSize.Width, footer.DesiredSize.Width), width),
+                text.DesiredSize.Height + media.DesiredSize.Height + reactions.DesiredSize.Height + margin.Height);
         }
 
         protected override Size ArrangeOverride(Size finalSize)
         {
             var text = Children[0] as RichTextBlock;
             var media = Children[1] as FrameworkElement;
-            var footer = Children[2] as MessageFooter;
+            var footer = Children[3] as MessageFooter;
+            var reactions = Children[2] as ReactionsPanel;
 
             var textRow = Grid.GetRow(text);
             var mediaRow = Grid.GetRow(media);
@@ -90,11 +99,13 @@ namespace Unigram.Controls.Messages
                 text.Arrange(new Rect(0, media.DesiredSize.Height, finalSize.Width, text.DesiredSize.Height));
             }
 
+            reactions.Arrange(new Rect(0, text.DesiredSize.Height + media.DesiredSize.Height, finalSize.Width, reactions.DesiredSize.Height));
+
             var margin = _margin;
             var footerWidth = footer.DesiredSize.Width /*- footer.Margin.Right + footer.Margin.Left*/;
             var footerHeight = footer.DesiredSize.Height /*- footer.Margin.Bottom + footer.Margin.Top*/;
             footer.Arrange(new Rect(finalSize.Width - footerWidth,
-                text.DesiredSize.Height + media.DesiredSize.Height - footerHeight + margin.Height,
+                text.DesiredSize.Height + media.DesiredSize.Height + reactions.DesiredSize.Height - footerHeight + margin.Height,
                 footer.DesiredSize.Width,
                 footer.DesiredSize.Height));
 
@@ -104,7 +115,8 @@ namespace Unigram.Controls.Messages
         private Size Margins(double availableWidth)
         {
             var text = Children[0] as RichTextBlock;
-            var footer = Children[2] as MessageFooter;
+            var footer = Children[3] as MessageFooter;
+            var reactions = Children[2] as ReactionsPanel;
 
             var marginLeft = 0d;
             var marginBottom = 0d;

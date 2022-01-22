@@ -39,7 +39,12 @@ namespace Unigram.Controls.Messages
             var relativeLast = Math.Abs(absolute.Y - (position.Y + presenter.ActualHeight));
             var upsideDown = relativeLast < relativeFirst;
 
-            var width = presenter.ActualSize.X + 18 + 12 + 18;
+            var reactions = message.ProtoService.GetAvailableReactions(chat);
+
+            var actualWidth = presenter.ActualSize.X + 18 + 12 + 18;
+            var width = Math.Min(8 + reactions.Count * 34 - 2, actualWidth);
+
+            var padding = Math.Max(actualWidth - width, 0);
 
             Shadow.Width = width;
             Pill.Width = width;
@@ -53,7 +58,6 @@ namespace Unigram.Controls.Messages
 
             LayoutRoot.Padding = new Thickness(16, upsideDown ? 32 : 16, 16, upsideDown ? 16 : 32);
 
-            var reactions = message.ProtoService.Reactions;
             var offset = 0;
             var visible = Math.Ceiling((width - 8) / 34);
 
@@ -69,7 +73,7 @@ namespace Unigram.Controls.Messages
                 view.Margin = new Thickness(0, 0, 10, 0);
                 view.Tag = offset < visible ? null : new object();
 
-                var file = item.SelectAnimation.StickerValue;
+                var file = item.AppearAnimation.StickerValue;
                 if (file.Local.IsDownloadingCompleted)
                 {
                     view.Source = UriEx.ToLocal(file.Local.Path);
@@ -106,8 +110,8 @@ namespace Unigram.Controls.Messages
             }
 
             var device = CanvasDevice.GetSharedDevice();
-            var rect1 = CanvasGeometry.CreateRectangle(device, 0, 0, 306, 86);
-            var elli1 = CanvasGeometry.CreateRoundedRectangle(device, 18 + 16, upsideDown ? -86 - 4 : 16 + 36 + 4, presenter.ActualSize.X, 86, 8, 8);
+            var rect1 = CanvasGeometry.CreateRectangle(device, width - actualWidth, 0, 306, 86);
+            var elli1 = CanvasGeometry.CreateRoundedRectangle(device, width - actualWidth + 18 + 16, upsideDown ? -86 - 4 : 16 + 36 + 4, presenter.ActualSize.X, 86, 8, 8);
             var group1 = CanvasGeometry.CreateGroup(device, new[] { elli1, rect1 }, CanvasFilledRegionDetermination.Alternate);
 
             var rootVisual = ElementCompositionPreview.GetElementVisual(LayoutRoot);
@@ -142,7 +146,7 @@ namespace Unigram.Controls.Messages
 
             ElementCompositionPreview.SetElementChildVisual(Shadow, receivers);
 
-            var x = position.X - 18;
+            var x = position.X - 18 + padding;
             var y = position.Y - (36 + 4);
 
             if (upsideDown)
