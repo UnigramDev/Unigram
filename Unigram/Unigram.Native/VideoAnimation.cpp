@@ -89,7 +89,7 @@ namespace winrt::Unigram::Native::implementation
 			BOOL result = ReadFile(info->fd, buf, buf_size, &bytesRead, NULL);
 
 			info->file.SeekCallback(bytesRead + info->file.Offset());
-			return bytesRead;
+			return bytesRead == 0 ? AVERROR_EOF : bytesRead;
 		}
 		return 0;
 	}
@@ -109,6 +109,13 @@ namespace winrt::Unigram::Native::implementation
 		return 0;
 	}
 
+	void VideoAnimation::RedirectLoggingOutputs(void* ptr, int level, const char* fmt, va_list vargs)
+	{
+		CHAR buffer[1024];
+		vsprintf_s(buffer, 1024, fmt, vargs);
+		OutputDebugStringA(buffer);
+	}
+
 	winrt::Unigram::Native::VideoAnimation VideoAnimation::LoadFromFile(IVideoAnimationSource file, bool preview, bool limitFps)
 	{
 		auto info = winrt::make_self<VideoAnimation>();
@@ -118,6 +125,9 @@ namespace winrt::Unigram::Native::implementation
 		info->file = file;
 		info->fileEvent = CreateEvent(NULL, TRUE, TRUE, NULL);
 		info->limitFps = limitFps;
+
+		//av_log_set_level(AV_LOG_DEBUG);
+		//av_log_set_callback(RedirectLoggingOutputs);
 
 		info->ioBuffer = (unsigned char*)av_malloc(64 * 1024);
 		info->ioContext = avio_alloc_context(info->ioBuffer, 64 * 1024, 0, (void*)info.get(), readCallback, nullptr, seekCallback);
@@ -355,7 +365,7 @@ namespace winrt::Unigram::Native::implementation
 				}
 
 				//OutputDebugStringFormat(L"decoded frame with w = %d, h = %d, format = %d", this->frame->width, this->frame->height, this->frame->format);
-				if (this->frame->format == AV_PIX_FMT_YUV420P || this->frame->format == AV_PIX_FMT_BGRA || this->frame->format == AV_PIX_FMT_YUVJ420P) {
+				if (this->frame->format == AV_PIX_FMT_YUV420P || this->frame->format == AV_PIX_FMT_YUVA420P || this->frame->format == AV_PIX_FMT_BGRA || this->frame->format == AV_PIX_FMT_YUVJ420P) {
 					//jint* dataArr = env->GetIntArrayElements(data, 0);
 
 					//void* pixels;
@@ -372,7 +382,7 @@ namespace winrt::Unigram::Native::implementation
 						}
 					}
 					if (this->sws_ctx == nullptr || ((intptr_t)pixels) % 16 != 0) {
-						if (this->frame->format == AV_PIX_FMT_YUV420P || this->frame->format == AV_PIX_FMT_YUVJ420P) {
+						if (this->frame->format == AV_PIX_FMT_YUV420P || this->frame->format == AV_PIX_FMT_YUVA420P || this->frame->format == AV_PIX_FMT_YUVJ420P) {
 							if (this->frame->colorspace == AVColorSpace::AVCOL_SPC_BT709) {
 								libyuv::H420ToARGB(this->frame->data[0], this->frame->linesize[0], this->frame->data[2], this->frame->linesize[2], this->frame->data[1], this->frame->linesize[1], (uint8_t*)pixels, this->frame->width * 4, this->frame->width, this->frame->height);
 							}

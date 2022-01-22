@@ -123,6 +123,8 @@ namespace winrt::Unigram::Native::implementation
 		static int readCallback(void* opaque, uint8_t* buf, int buf_size);
 		static int64_t seekCallback(void* opaque, int64_t offset, int whence);
 
+		static void RedirectLoggingOutputs(void* ptr, int level, const char* fmt, va_list vargs);
+
 
 
 		AVFormatContext* fmt_ctx = nullptr;

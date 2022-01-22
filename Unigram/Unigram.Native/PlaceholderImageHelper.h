@@ -10,8 +10,10 @@
 
 #include <winrt/Windows.UI.h>
 #include <winrt/Windows.Storage.Streams.h>
+//#include <winrt/Telegram.Td.Api.h>
 
 using namespace concurrency;
+//using namespace winrt::Telegram::Td::Api;
 using namespace winrt::Windows::UI;
 using namespace winrt::Windows::Foundation::Collections;
 using namespace winrt::Windows::Foundation::Numerics;
@@ -60,6 +62,7 @@ namespace winrt::Unigram::Native::implementation
 
 		float2 ContentEnd(hstring text, double fontSize, double width);
 		IVector<Windows::Foundation::Rect> LineMetrics(hstring text, double fontSize, double width, bool rtl);
+		//IVector<Windows::Foundation::Rect> EntityMetrics(hstring text, IVector<TextEntity> entities, double fontSize, double width, bool rtl);
 
 	//internal:
 	//	PlaceholderImageHelper();
