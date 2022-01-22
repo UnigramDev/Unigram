@@ -301,7 +301,7 @@ namespace Unigram.Controls.Chats
                 return;
             }
 
-            Document.GetText(TextGetOptions.None, out string text);
+            Document.GetText(TextGetOptions.NoHidden, out string text);
 
             // This needs to run before text empty check as it cleans up
             // some stuff it inline bot isn't found
