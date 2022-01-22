@@ -84,9 +84,16 @@ namespace Unigram.CodeGen
                         }
 
                         var pair1 = pair[1].CamelCase();
-                        if (pair[1] == "file" || typesToCross.Contains(pair[1]))
+                        if (pair1 == "file" || typesToCross.Contains(pair1))
                         {
-                            targets[pair[0]] = pair[1];
+                            if (match.Success)
+                            {
+                                targets[pair[0]] = match.Value;
+                            }
+                            else
+                            {
+                                targets[pair[0]] = pair1;
+                            }
                         }
                     }
 
@@ -101,7 +108,7 @@ namespace Unigram.CodeGen
                             addedSomething = true;
                         }
 
-                        var key = type.Key[..1].CamelCase();
+                        var key = type.Key.CamelCase();
                         if (!typesToCross.Contains(key))
                         {
                             typesToCross.Add(key);
@@ -112,7 +119,7 @@ namespace Unigram.CodeGen
             }
 
             var builder = new FormattedBuilder();
-            builder.AppendLine("public void MapFiles(object target)");
+            builder.AppendLine("public void ProcessFiles(object target)");
             builder.AppendLine("{");
 
             var first = true;
@@ -142,16 +149,27 @@ namespace Unigram.CodeGen
                         propertyKey += "Value";
                     }
 
-                    builder.AppendLine($"if ({name}.{propertyKey} != null)");
-                    builder.AppendLine("{");
-
-                    if (property.Value == "file")
+                    var match = vectorRegex.Match(property.Value);
+                    if (match.Success)
                     {
-                        builder.AppendLine($"_filesMap[{name}.{propertyKey}.Id] = {name}.{propertyKey};");
+                        builder.AppendLine($"foreach (var item in {name}.{propertyKey})");
+                        builder.AppendLine("{");
+
+                        builder.AppendLine($"ProcessFiles(item);");
                     }
                     else
                     {
-                        builder.AppendLine($"MapFiles({name}.{propertyKey});");
+                        builder.AppendLine($"if ({name}.{propertyKey} != null)");
+                        builder.AppendLine("{");
+
+                        if (property.Value == "file")
+                        {
+                            builder.AppendLine($"{name}.{propertyKey} = ProcessFile({name}.{propertyKey});");
+                        }
+                        else
+                        {
+                            builder.AppendLine($"ProcessFiles({name}.{propertyKey});");
+                        }
                     }
 
                     builder.AppendLine("}");
