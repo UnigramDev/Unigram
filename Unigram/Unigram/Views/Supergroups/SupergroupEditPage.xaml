@@ -129,6 +129,11 @@
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl x:Name="GroupMembersPanel">
+                    <controls:BadgeButton x:Name="Reactions"
+                                          Content="{CustomResource Reactions}"
+                                          Command="{x:Bind ViewModel.ReactionsCommand}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xE980;" />
                     <controls:BadgeButton x:Name="Permissions"
                                           Content="{CustomResource ChannelPermissions}"
                                           Command="{x:Bind ViewModel.KickedCommand}"

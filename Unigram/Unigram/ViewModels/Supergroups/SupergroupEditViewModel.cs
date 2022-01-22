@@ -41,6 +41,7 @@ namespace Unigram.ViewModels.Supergroups
 
             SendCommand = new RelayCommand(SendExecute);
 
+            ReactionsCommand = new RelayCommand(ReactionsExecute);
             MembersCommand = new RelayCommand(MembersExecute);
             AdminsCommand = new RelayCommand(AdminsExecute);
             BannedCommand = new RelayCommand(BannedExecute);
@@ -481,6 +482,18 @@ namespace Unigram.ViewModels.Supergroups
         }
 
         #region Navigation
+
+        public RelayCommand ReactionsCommand { get; }
+        private void ReactionsExecute()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            NavigationService.Navigate(typeof(SupergroupReactionsPage), chat.Id);
+        }
 
         public RelayCommand AdminsCommand { get; }
         private void AdminsExecute()

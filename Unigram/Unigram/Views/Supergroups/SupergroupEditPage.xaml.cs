@@ -61,6 +61,8 @@ namespace Unigram.Views.Supergroups
         {
             //UpdateChatTitle(chat);
             UpdateChatPhoto(chat);
+
+            Reactions.Badge = string.Format("{0}/{1}", chat.AvailableReactions.Count, ViewModel.CacheService.Reactions.Count(x => x.Value.IsActive));
         }
 
         public void UpdateChatTitle(Chat chat)

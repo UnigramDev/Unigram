@@ -82,6 +82,8 @@ namespace Unigram.Converters
         public const string Sticker = "\uF4AA";
         public const string Gif = "\uF4A9";
 
+        public const string Reactions = "\uE980";
+
         public const string Star = "\uE734";
         public const string StarOff = "\uE8D9";
 

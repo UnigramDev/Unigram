@@ -548,6 +548,7 @@
     <Compile Include="ViewModels\Settings\SettingsBlockedChatsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsStickersViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsThemeViewModel.cs" />
+    <Compile Include="ViewModels\Supergroups\SupergroupReactionsViewModel.cs" />
     <Compile Include="Views\ChatEventLogPage.xaml.cs">
       <DependentUpon>ChatEventLogPage.xaml</DependentUpon>
     </Compile>
@@ -1099,6 +1100,9 @@
     </Compile>
     <Compile Include="Views\Supergroups\SupergroupEditPage.xaml.cs">
       <DependentUpon>SupergroupEditPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Supergroups\SupergroupReactionsPage.xaml.cs">
+      <DependentUpon>SupergroupReactionsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Supergroups\SupergroupEditRestrictedPage.xaml.cs">
       <DependentUpon>SupergroupEditRestrictedPage.xaml</DependentUpon>
@@ -2257,6 +2261,10 @@
     <Page Include="Views\Supergroups\SupergroupEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Supergroups\SupergroupReactionsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Supergroups\SupergroupEditRestrictedPage.xaml">
       <Generator>MSBuild:Compile</Generator>
