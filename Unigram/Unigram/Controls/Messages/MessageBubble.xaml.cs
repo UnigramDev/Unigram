@@ -1095,7 +1095,12 @@ namespace Unigram.Controls.Messages
                 }
                 else if (content is MessageSticker sticker)
                 {
-                    if (sticker.Sticker.IsAnimated)
+                    // To be replaced with sticker.Format when available
+                    if (sticker.Sticker.IsAnimated && sticker.Sticker.IsMask)
+                    {
+                        Media.Child = new VideoStickerContent(message);
+                    }
+                    else if (sticker.Sticker.IsAnimated)
                     {
                         Media.Child = new AnimatedStickerContent(message);
                     }

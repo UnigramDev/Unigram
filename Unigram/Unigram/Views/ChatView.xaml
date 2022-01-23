@@ -1085,7 +1085,6 @@
                     <chats:ChatTextBox x:Name="TextField"
                                        FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                        Background="Transparent"
-                                       Formatting="{x:Bind TextFormatting}"
                                        Messages="{x:Bind Messages}"
                                        Autocomplete="{x:Bind ListAutocomplete}"
                                        IsMenuExpanded="{x:Bind ButtonMore.IsChecked, Mode=OneWay}"
@@ -1101,9 +1100,7 @@
                                        MaxHeight="192"
                                        TextChanged="TextField_TextChanged"
                                        Capture="TextField_Tapped"
-                                       Sending="TextField_Sending"
-                                       ShowFormatting="TextField_Formatting"
-                                       HideFormatting="TextField_Formatting" />
+                                       Sending="TextField_Sending" />
                 </Border>
                 <Border x:Name="btnAttach"
                         Grid.Column="1"
@@ -1307,13 +1304,6 @@
                                           ToolTipService.ToolTip="{CustomResource Done}"
                                           Visibility="Collapsed" />
                 </Grid>
-
-                <Border Grid.Column="2"
-                        Grid.Row="2">
-                    <chats:ChatTextFormatting x:Name="TextFormatting"
-                                              TextBox="{x:Bind TextField}"
-                                              Visibility="Collapsed" />
-                </Border>
             </Grid>
         </ContentControl>
 

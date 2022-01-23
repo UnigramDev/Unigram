@@ -3,34 +3,18 @@ using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Controls.Chats
+namespace Unigram.Controls
 {
-    public sealed partial class ChatTextFormatting : UserControl
+    public sealed partial class FormattedTextFlyout : StackPanel
     {
-        public ChatTextFormatting()
+        private readonly FormattedTextBox _textBox;
+
+        public FormattedTextFlyout(FormattedTextBox textBox)
         {
             InitializeComponent();
-        }
 
-        private FormattedTextBox _textBox;
-        public FormattedTextBox TextBox
-        {
-            get => _textBox;
-            set
-            {
-                if (_textBox != null)
-                {
-                    _textBox.SelectionChanged -= OnSelectionChanged;
-                }
-
-                _textBox = value;
-
-                if (_textBox != null)
-                {
-                    Update(_textBox.Document.Selection.CharacterFormat);
-                    _textBox.SelectionChanged += OnSelectionChanged;
-                }
-            }
+            _textBox = textBox;
+            _textBox.SelectionChanged += OnSelectionChanged;
         }
 
         private void OnSelectionChanged(object sender, RoutedEventArgs e)

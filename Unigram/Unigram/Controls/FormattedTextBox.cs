@@ -6,8 +6,8 @@ using System.Text;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls.Chats;
 using Unigram.Converters;
+using Unigram.Navigation;
 using Unigram.Services;
 using Unigram.Views.Popups;
 using Windows.ApplicationModel.DataTransfer;
@@ -21,12 +21,14 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls
 {
     public class FormattedTextBox : RichEditBox
     {
-        private readonly MenuFlyoutSubItem _proofingMenu;
+        private readonly FormattedTextFlyout _selectionFlyout;
+        private readonly MenuFlyoutSubItem _proofingFlyout;
 
         public FormattedTextBox()
         {
@@ -36,8 +38,17 @@ namespace Unigram.Controls
 
             Paste += OnPaste;
 
-            _proofingMenu = new MenuFlyoutSubItem();
-            _proofingMenu.Text = Strings.Resources.lng_spellchecker_submenu;
+            _proofingFlyout = new MenuFlyoutSubItem();
+            _proofingFlyout.Text = Strings.Resources.lng_spellchecker_submenu;
+
+            SelectionFlyout = new Flyout
+            {
+                Content = _selectionFlyout = new FormattedTextFlyout(this),
+
+                AllowFocusOnInteraction = false,
+                ShowMode = FlyoutShowMode.TransientWithDismissOnPointerMoveAway,
+                FlyoutPresenterStyle = App.Current.Resources["CommandFlyoutPresenterStyle"] as Style,
+            };
 
             ContextFlyout = new MenuFlyout();
             ContextFlyout.Opening += OnContextFlyoutOpening;
@@ -199,38 +210,6 @@ namespace Unigram.Controls
 
         public event TypedEventHandler<FormattedTextBox, EventArgs> Accept;
 
-        public event TypedEventHandler<FormattedTextBox, EventArgs> ShowFormatting;
-        public event TypedEventHandler<FormattedTextBox, EventArgs> HideFormatting;
-
-        private bool _isFormattingVisible = false;
-        public bool IsFormattingVisible
-        {
-            get => _isFormattingVisible;
-            set
-            {
-                if (_isFormattingVisible != value)
-                {
-                    _isFormattingVisible = value;
-
-                    if (value)
-                    {
-                        ShowFormatting?.Invoke(this, EventArgs.Empty);
-                    }
-                    else
-                    {
-                        HideFormatting?.Invoke(this, EventArgs.Empty);
-                    }
-                }
-            }
-        }
-
-        private ChatTextFormatting _formatting;
-        public ChatTextFormatting Formatting
-        {
-            get => _formatting;
-            set => _formatting = value;
-        }
-
         #region Context menu
 
         private void OnContextFlyoutOpening(object sender, object e)
@@ -254,30 +233,33 @@ namespace Unigram.Controls
             clone.StartOf(TextRangeUnit.Link, true);
             var mention = TryGetUserId(clone, out long userId);
 
-            var formatting = new MenuFlyoutSubItem { Text = Strings.Resources.lng_menu_formatting };
-            formatting.CreateFlyoutItem(length, ContextBold_Click, Strings.Resources.Bold, new FontIcon { Glyph = Icons.TextBold }, VirtualKey.B);
-            formatting.CreateFlyoutItem(length, ContextItalic_Click, Strings.Resources.Italic, new FontIcon { Glyph = Icons.TextItalic }, VirtualKey.I);
-            formatting.CreateFlyoutItem(length, ContextUnderline_Click, Strings.Resources.Underline, new FontIcon { Glyph = Icons.TextUnderline }, VirtualKey.U);
-            formatting.CreateFlyoutItem(length, ContextStrikethrough_Click, Strings.Resources.Strike, new FontIcon { Glyph = Icons.TextStrikethrough }, VirtualKey.X, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
-            formatting.CreateFlyoutItem(length && format.Name != "Consolas", ContextMonospace_Click, Strings.Resources.Mono, new FontIcon { Glyph = Icons.Code }, VirtualKey.M, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
-            formatting.CreateFlyoutItem(length, ContextSpoiler_Click, Strings.Resources.Spoiler, new FontIcon { Glyph = Icons.TabInPrivate }, VirtualKey.P, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
-            formatting.Items.Add(new MenuFlyoutSeparator());
-            formatting.CreateFlyoutItem(!mention, ContextLink_Click, clone.Link.Length > 0 ? Strings.Resources.EditLink : Strings.Resources.lng_menu_formatting_link_create, new FontIcon { Glyph = Icons.Link }, VirtualKey.K);
-            formatting.Items.Add(new MenuFlyoutSeparator());
-            formatting.CreateFlyoutItem(length && !IsDefault(format), ContextPlain_Click, Strings.Resources.Regular, null, VirtualKey.N, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
-            formatting.Items.Add(new MenuFlyoutSeparator());
-            formatting.CreateFlyoutItem(true, () => IsFormattingVisible = !_isFormattingVisible, _isFormattingVisible ? "Hide formatting" : "Show formatting", new FontIcon { Glyph = Icons.TextFont });
+            var formatting = new MenuFlyoutSubItem
+            {
+                Text = Strings.Resources.lng_menu_formatting,
+                Icon = new FontIcon { Glyph = Icons.TextFont, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily }
+            };
+
+            formatting.CreateFlyoutItem(length, ToggleBold, Strings.Resources.Bold, new FontIcon { Glyph = Icons.TextBold }, VirtualKey.B);
+            formatting.CreateFlyoutItem(length, ToggleItalic, Strings.Resources.Italic, new FontIcon { Glyph = Icons.TextItalic }, VirtualKey.I);
+            formatting.CreateFlyoutItem(length, ToggleUnderline, Strings.Resources.Underline, new FontIcon { Glyph = Icons.TextUnderline }, VirtualKey.U);
+            formatting.CreateFlyoutItem(length, ToggleStrikethrough, Strings.Resources.Strike, new FontIcon { Glyph = Icons.TextStrikethrough }, VirtualKey.X, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
+            formatting.CreateFlyoutItem(length && format.Name != "Consolas", ToggleMonospace, Strings.Resources.Mono, new FontIcon { Glyph = Icons.Code }, VirtualKey.M, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
+            formatting.CreateFlyoutItem(length, ToggleSpoiler, Strings.Resources.Spoiler, new FontIcon { Glyph = Icons.TabInPrivate }, VirtualKey.P, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
+            formatting.CreateFlyoutSeparator();
+            formatting.CreateFlyoutItem(!mention, CreateLink, clone.Link.Length > 0 ? Strings.Resources.EditLink : Strings.Resources.lng_menu_formatting_link_create, new FontIcon { Glyph = Icons.Link }, VirtualKey.K);
+            formatting.CreateFlyoutSeparator();
+            formatting.CreateFlyoutItem(length && !IsDefault(format), ToggleRegular, Strings.Resources.Regular, null, VirtualKey.N, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
 
             flyout.CreateFlyoutItem(Document.CanUndo(), ContextUndo_Click, Strings.Resources.lng_wnd_menu_undo, new FontIcon { Glyph = Icons.ArrowUndo }, VirtualKey.Z);
             flyout.CreateFlyoutItem(Document.CanRedo(), ContextRedo_Click, Strings.Resources.lng_wnd_menu_redo, new FontIcon { Glyph = Icons.ArrowRedo }, VirtualKey.Y);
-            flyout.Items.Add(new MenuFlyoutSeparator());
+            flyout.CreateFlyoutSeparator();
             flyout.CreateFlyoutItem(length && Document.CanCopy(), ContextCut_Click, Strings.Resources.lng_mac_menu_cut, new FontIcon { Glyph = Icons.Cut }, VirtualKey.X);
             flyout.CreateFlyoutItem(length && Document.CanCopy(), ContextCopy_Click, Strings.Resources.Copy, new FontIcon { Glyph = Icons.DocumentCopy }, VirtualKey.C);
             flyout.CreateFlyoutItem(Document.CanPaste(), ContextPaste_Click, Strings.Resources.lng_mac_menu_paste, new FontIcon { Glyph = Icons.ClipboardPaste }, VirtualKey.V);
             flyout.CreateFlyoutItem(length, ContextDelete_Click, Strings.Resources.Delete);
-            flyout.Items.Add(new MenuFlyoutSeparator());
+            flyout.CreateFlyoutSeparator();
             flyout.Items.Add(formatting);
-            flyout.Items.Add(new MenuFlyoutSeparator());
+            flyout.CreateFlyoutSeparator();
             flyout.CreateFlyoutItem(!IsEmpty, ContextSelectAll_Click, Strings.Resources.lng_mac_menu_select_all, null, VirtualKey.A);
 
             if (ProofingMenuFlyout is MenuFlyout proofing && proofing.Items.Count > 0)
@@ -294,7 +276,7 @@ namespace Unigram.Controls
 
         private void OnContextFlyoutClosing(FlyoutBase sender, FlyoutBaseClosingEventArgs args)
         {
-            _proofingMenu.Items.Clear();
+            _proofingFlyout.Items.Clear();
 
             if (sender is MenuFlyout flyout)
             {
@@ -304,130 +286,77 @@ namespace Unigram.Controls
 
         public void ToggleBold()
         {
-            ContextBold_Click();
-        }
-
-        private void ContextBold_Click()
-        {
-            //if (Math.Abs(Document.Selection.Length) < 1)
-            //{
-            //    return;
-            //}
-
             Document.BatchDisplayUpdates();
             ClearStyle(Document.Selection, false);
             Document.Selection.CharacterFormat.Bold = FormatEffect.Toggle;
             Document.ApplyDisplayUpdates();
 
-            _formatting?.Update(Document.Selection.CharacterFormat);
+            _selectionFlyout.Update(Document.Selection.CharacterFormat);
         }
 
         public void ToggleItalic()
         {
-            ContextItalic_Click();
-        }
-
-        private void ContextItalic_Click()
-        {
-            //if (Math.Abs(Document.Selection.Length) < 1)
-            //{
-            //    return;
-            //}
-
             Document.BatchDisplayUpdates();
             ClearStyle(Document.Selection, false);
             Document.Selection.CharacterFormat.Italic = FormatEffect.Toggle;
             Document.ApplyDisplayUpdates();
 
-            _formatting?.Update(Document.Selection.CharacterFormat);
+            _selectionFlyout.Update(Document.Selection.CharacterFormat);
         }
 
         public void ToggleUnderline()
         {
-            ContextUnderline_Click();
-        }
-
-        private void ContextUnderline_Click()
-        {
-            //if (Math.Abs(Document.Selection.Length) < 1)
-            //{
-            //    return;
-            //}
-
             Document.BatchDisplayUpdates();
             ClearStyle(Document.Selection, false);
             Document.Selection.CharacterFormat.Underline = Document.Selection.CharacterFormat.Underline != UnderlineType.Single ? UnderlineType.Single : UnderlineType.None;
             Document.ApplyDisplayUpdates();
 
-            _formatting?.Update(Document.Selection.CharacterFormat);
+            _selectionFlyout.Update(Document.Selection.CharacterFormat);
         }
 
         public void ToggleStrikethrough()
         {
-            ContextStrikethrough_Click();
-        }
-
-        private void ContextStrikethrough_Click()
-        {
-            //if (Math.Abs(Document.Selection.Length) < 1)
-            //{
-            //    return;
-            //}
-
             Document.BatchDisplayUpdates();
             ClearStyle(Document.Selection, false);
             Document.Selection.CharacterFormat.Strikethrough = FormatEffect.Toggle;
             Document.ApplyDisplayUpdates();
 
-            _formatting?.Update(Document.Selection.CharacterFormat);
+            _selectionFlyout.Update(Document.Selection.CharacterFormat);
         }
 
         public void ToggleMonospace()
         {
-            ContextMonospace_Click();
-        }
-
-        private void ContextMonospace_Click()
-        {
-            //if (Math.Abs(Document.Selection.Length) < 1)
-            //{
-            //    return;
-            //}
-
             Document.BatchDisplayUpdates();
             ClearStyle(Document.Selection, true);
             Document.Selection.CharacterFormat.Name = "Consolas";
             Document.ApplyDisplayUpdates();
 
-            _formatting?.Update(Document.Selection.CharacterFormat);
+            _selectionFlyout.Update(Document.Selection.CharacterFormat);
         }
 
-        public void ToggleSpoiler()
+        private void ToggleSpoiler()
         {
-            ContextSpoiler_Click();
-        }
-
-        private void ContextSpoiler_Click()
-        {
-            //if (Math.Abs(Document.Selection.Length) < 1)
-            //{
-            //    return;
-            //}
-
             Document.BatchDisplayUpdates();
             ClearStyle(Document.Selection, false);
             Document.Selection.CharacterFormat.BackgroundColor = Colors.Gray;
             Document.ApplyDisplayUpdates();
 
-            _formatting?.Update(Document.Selection.CharacterFormat);
+            _selectionFlyout.Update(Document.Selection.CharacterFormat);
         }
 
-        public void CreateLink()
+        public void ToggleRegular()
         {
-            ContextLink_Click();
+            if (Math.Abs(Document.Selection.Length) < 1)
+            {
+                return;
+            }
+
+            Document.BatchDisplayUpdates();
+            ClearStyle(Document.Selection, true);
+            Document.ApplyDisplayUpdates();
         }
 
-        private async void ContextLink_Click()
+        public async void CreateLink()
         {
             var range = Document.Selection.GetClone();
             var clone = Document.Selection.GetClone();
@@ -462,18 +391,6 @@ namespace Unigram.Controls
             range.Link = $"\"{dialog.Link}\"";
 
             Document.Selection.SetRange(range.EndPosition, range.EndPosition);
-            Document.ApplyDisplayUpdates();
-        }
-
-        private void ContextPlain_Click()
-        {
-            if (Math.Abs(Document.Selection.Length) < 1)
-            {
-                return;
-            }
-
-            Document.BatchDisplayUpdates();
-            ClearStyle(Document.Selection, true);
             Document.ApplyDisplayUpdates();
         }
 
@@ -697,35 +614,35 @@ namespace Unigram.Controls
 
             if (sender.Key == VirtualKey.B && sender.Modifiers == VirtualKeyModifiers.Control && length)
             {
-                ContextBold_Click();
+                ToggleBold();
             }
             else if (sender.Key == VirtualKey.I && sender.Modifiers == VirtualKeyModifiers.Control && length)
             {
-                ContextItalic_Click();
+                ToggleItalic();
             }
             else if (sender.Key == VirtualKey.U && sender.Modifiers == VirtualKeyModifiers.Control && length)
             {
-                ContextUnderline_Click();
+                ToggleUnderline();
             }
             else if (sender.Key == VirtualKey.X && sender.Modifiers == (VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift) && length)
             {
-                ContextStrikethrough_Click();
+                ToggleStrikethrough();
             }
             else if (sender.Key == VirtualKey.M && sender.Modifiers == (VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift) && length && format.Name != "Consolas")
             {
-                ContextMonospace_Click();
+                ToggleMonospace();
             }
             else if (sender.Key == VirtualKey.P && sender.Modifiers == (VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift) && length && format.ForegroundColor != Colors.Gray)
             {
-                ContextSpoiler_Click();
+                ToggleSpoiler();
             }
             else if (sender.Key == VirtualKey.K && sender.Modifiers == VirtualKeyModifiers.Control)
             {
-                ContextLink_Click();
+                CreateLink();
             }
             else if (sender.Key == VirtualKey.N && sender.Modifiers == (VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift) && length && !IsDefault(format))
             {
-                ContextPlain_Click();
+                ToggleRegular();
             }
         }
 

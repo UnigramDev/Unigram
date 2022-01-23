@@ -5,6 +5,58 @@
                     xmlns:contract6Present="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract,6)"
                     xmlns:contract7Present="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract,7)">
 
+    <Style TargetType="MenuFlyoutPresenter"
+           BasedOn="{StaticResource DefaultMenuFlyoutPresenterStyle}">
+        <Setter Property="MaxHeight"
+                Value="500" />
+    </Style>
+
+    <Style TargetType="FlyoutPresenter"
+           x:Key="CommandFlyoutPresenterStyle">
+        <Setter Property="Background"
+                Value="{ThemeResource MenuFlyoutPresenterBackground}" />
+        <Setter Property="BorderBrush"
+                Value="{ThemeResource MenuFlyoutPresenterBorderBrush}" />
+        <Setter Property="BorderThickness"
+                Value="{ThemeResource MenuFlyoutPresenterBorderThemeThickness}" />
+        <Setter Property="Padding"
+                Value="{StaticResource MenuFlyoutPresenterThemePadding}" />
+        <Setter Property="ScrollViewer.HorizontalScrollMode"
+                Value="Disabled" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility"
+                Value="Disabled" />
+        <Setter Property="ScrollViewer.VerticalScrollMode"
+                Value="Auto" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility"
+                Value="Auto" />
+        <Setter Property="ScrollViewer.IsHorizontalRailEnabled"
+                Value="False" />
+        <Setter Property="ScrollViewer.IsVerticalRailEnabled"
+                Value="False" />
+        <Setter Property="ScrollViewer.ZoomMode"
+                Value="Disabled" />
+        <Setter Property="MaxWidth"
+                Value="{ThemeResource FlyoutThemeMaxWidth}" />
+        <Setter Property="MinHeight"
+                Value="{StaticResource MenuFlyoutThemeMinHeight}" />
+        <Setter Property="CornerRadius"
+                Value="{ThemeResource OverlayCornerRadius}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="FlyoutPresenter">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}"
+                            Padding="{TemplateBinding Padding}"
+                            BackgroundSizing="InnerBorderEdge">
+                        <ContentPresenter AutomationProperties.AccessibilityView="Raw" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!-- Default styles -->
     <Style TargetType="MenuFlyoutItem"
            BasedOn="{StaticResource DefaultMenuFlyoutItemStyle}" />

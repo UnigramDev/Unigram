@@ -43,7 +43,6 @@ namespace Unigram.Services
         bool IsTrayVisible { get; set; }
         bool IsLaunchMinimized { get; set; }
         bool IsSendByEnterEnabled { get; set; }
-        bool IsTextFormattingVisible { get; set; }
         bool IsReplaceEmojiEnabled { get; set; }
         bool IsContactsSyncEnabled { get; set; }
         bool IsContactsSyncRequested { get; set; }
@@ -486,13 +485,6 @@ namespace Unigram.Services
         {
             get => _isSendByEnterEnabled ??= GetValueOrDefault(_local, "IsSendByEnterEnabled", true);
             set => AddOrUpdateValue(ref _isSendByEnterEnabled, _local, "IsSendByEnterEnabled", value);
-        }
-
-        private bool? _isTextFormattingVisible;
-        public bool IsTextFormattingVisible
-        {
-            get => _isTextFormattingVisible ??= GetValueOrDefault("IsTextFormattingVisible", false);
-            set => AddOrUpdateValue(ref _isTextFormattingVisible, "IsTextFormattingVisible", value);
         }
 
         private bool? _isReplaceEmojiEnabled;

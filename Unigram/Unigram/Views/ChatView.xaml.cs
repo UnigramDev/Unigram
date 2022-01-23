@@ -226,8 +226,6 @@ namespace Unigram.Views
 
         private void OnNavigatedTo()
         {
-            TextField.IsFormattingVisible = ViewModel.Settings.IsTextFormattingVisible;
-
             if (_windowContext.ContactPanel != null)
             {
                 Header.Visibility = Visibility.Collapsed;
@@ -3950,124 +3948,6 @@ namespace Unigram.Views
             }
         }
 
-        private void ShowHideTextFormatting(bool show)
-        {
-            //if (ButtonAction.Visibility == Visibility.Visible)
-            //{
-            //    _composerHeaderCollapsed = true;
-            //    ComposerHeader.Visibility = Visibility.Collapsed;
-
-            //    return;
-            //}
-
-            var composer = ElementCompositionPreview.GetElementVisual(ComposerHeader);
-            var messages = ElementCompositionPreview.GetElementVisual(Messages);
-            var textArea = ElementCompositionPreview.GetElementVisual(TextArea);
-            var textField = ElementCompositionPreview.GetElementVisual(TextField);
-            var textFormatting = ElementCompositionPreview.GetElementVisual(TextFormatting);
-            var textBackground = ElementCompositionPreview.GetElementVisual(TextBackground);
-
-            ////textArea.Clip?.StopAnimation("TopInset");
-            ////messages.Clip?.StopAnimation("TopInset");
-            ////composer.Clip?.StopAnimation("BottomInset");
-            ////messages.StopAnimation("Offset");
-            ////composer.StopAnimation("Offset");
-
-            if ((show && TextFormatting.Visibility == Visibility.Visible) || (!show && (TextFormatting.Visibility == Visibility.Collapsed || _textFormattingCollapsed)))
-            {
-                return;
-            }
-
-            var value = show ? 48 : 0;
-
-            var rect = textArea.Compositor.CreateRoundedRectangleGeometry();
-            rect.CornerRadius = new Vector2(SettingsService.Current.Appearance.BubbleRadius);
-            rect.Size = new Vector2((float)TextArea.ActualWidth, 144);
-            rect.Offset = new Vector2(0, value);
-
-            textArea.Clip = textArea.Compositor.CreateGeometricClip(rect);
-
-            messages.Clip = textArea.Compositor.CreateInsetClip(0, value, 0, 0);
-
-            var batch = composer.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-            batch.Completed += (s, args) =>
-            {
-                textArea.Clip = null;
-                messages.Clip = null;
-                composer.Offset = new Vector3();
-                messages.Offset = new Vector3();
-                textField.Offset = new Vector3();
-                textFormatting.Offset = new Vector3();
-                textBackground.Offset = new Vector3();
-
-                ContentPanel.Margin = new Thickness();
-
-                if (show)
-                {
-                    _textFormattingCollapsed = false;
-                }
-                else
-                {
-                    TextFormatting.Visibility = Visibility.Collapsed;
-                    TextBackground.Visibility = Visibility.Collapsed;
-
-                    Grid.SetRow(btnAttach, show ? 2 : 1);
-                    Grid.SetRow(ButtonsPanel, show ? 2 : 1);
-
-                    //TextField.Padding = new Thickness(48, 4, 0, 6);
-                    //Grid.SetColumnSpan(TextFieldPanel, 2);
-                }
-
-                UpdateTextAreaRadius();
-            };
-
-            var animClip2 = textArea.Compositor.CreateScalarKeyFrameAnimation();
-            animClip2.InsertKeyFrame(0, show ? 0 : 48);
-            animClip2.InsertKeyFrame(1, show ? 48 : 0);
-            animClip2.Duration = TimeSpan.FromMilliseconds(150);
-
-            var animClip3 = textArea.Compositor.CreateVector2KeyFrameAnimation();
-            animClip3.InsertKeyFrame(0, new Vector2(0, show ? 48 : 0));
-            animClip3.InsertKeyFrame(1, new Vector2(0, show ? 0 : 48));
-
-            var anim1 = textArea.Compositor.CreateVector3KeyFrameAnimation();
-            anim1.InsertKeyFrame(0, new Vector3(0, show ? 48 : 0, 0));
-            anim1.InsertKeyFrame(1, new Vector3(0, show ? 0 : 48, 0));
-            anim1.Duration = TimeSpan.FromMilliseconds(150);
-
-            //textArea.Clip.StartAnimation("TopInset", animClip);
-            rect.StartAnimation("Offset", animClip3);
-            messages.Clip.StartAnimation("TopInset", animClip2);
-            messages.StartAnimation("Offset", anim1);
-            composer.StartAnimation("Offset", anim1);
-            textField.StartAnimation("Offset", anim1);
-            textFormatting.StartAnimation("Offset", anim1);
-            textBackground.StartAnimation("Offset", anim1);
-
-            batch.End();
-
-
-
-            ContentPanel.Margin = new Thickness(0, -48, 0, 0);
-
-            if (show)
-            {
-                _textFormattingCollapsed = false;
-                TextFormatting.Visibility = Visibility.Visible;
-                TextBackground.Visibility = Visibility.Visible;
-
-                Grid.SetRow(btnAttach, show ? 2 : 1);
-                Grid.SetRow(ButtonsPanel, show ? 2 : 1);
-
-                //TextField.Padding = new Thickness(12, 4, 0, 6);
-                //Grid.SetColumnSpan(TextFieldPanel, 4);
-            }
-            else
-            {
-                _textFormattingCollapsed = true;
-            }
-        }
-
         private void ShowHideBotCommands(bool show)
         {
             if ((show && ButtonMore.Visibility == Visibility.Visible) || (!show && (ButtonMore.Visibility == Visibility.Collapsed || _botCommandsCollapsed)))
@@ -4172,8 +4052,7 @@ namespace Unigram.Views
         {
             var radius = SettingsService.Current.Appearance.BubbleRadius;
             var min = Math.Max(4, radius - 2);
-            var max = ComposerHeader.Visibility == Visibility.Visible
-                || TextFormatting.Visibility == Visibility.Visible ? 4 : min;
+            var max = ComposerHeader.Visibility == Visibility.Visible ? 4 : min;
 
             ButtonAttach.CornerRadius = new CornerRadius(_botCommandsCollapsed ? max : 4, 4, 4, _botCommandsCollapsed ? min : 4);
             btnVoiceMessage.CornerRadius = new CornerRadius(4, max, min, 4);
@@ -4617,12 +4496,6 @@ namespace Unigram.Views
         }
 
         #endregion
-
-        private void TextField_Formatting(FormattedTextBox sender, EventArgs args)
-        {
-            ViewModel.Settings.IsTextFormattingVisible = sender.IsFormattingVisible;
-            ShowHideTextFormatting(sender.IsFormattingVisible);
-        }
 
         private void TextField_Sending(object sender, EventArgs e)
         {

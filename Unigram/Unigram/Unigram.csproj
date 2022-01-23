@@ -307,9 +307,6 @@
     <Compile Include="Controls\Chats\ChatSendButton.cs" />
     <Compile Include="Controls\Chats\ChatStickerButton.cs" />
     <Compile Include="Controls\Chats\ChatTextBox.cs" />
-    <Compile Include="Controls\Chats\ChatTextFormatting.xaml.cs">
-      <DependentUpon>ChatTextFormatting.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\ColorPicker.cs" />
     <Compile Include="Controls\ColorSlider.cs" />
     <Compile Include="Controls\ColorTextBox.cs" />
@@ -331,6 +328,9 @@
     <Compile Include="Controls\FauxCheckBox.cs" />
     <Compile Include="Controls\FileButton.cs" />
     <Compile Include="Controls\FormattedTextBox.cs" />
+    <Compile Include="Controls\FormattedTextFlyout.xaml.cs">
+      <DependentUpon>FormattedTextFlyout.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Gallery\GalleryBottomPanel.cs" />
     <Compile Include="Controls\Gallery\GalleryCompactView.cs" />
     <Compile Include="Controls\Gallery\GalleryContentView.xaml.cs">
@@ -1526,10 +1526,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Controls\Chats\ChatTextFormatting.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Controls\CountryBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1545,6 +1541,10 @@
     <Page Include="Controls\Drawers\StickerDrawer.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\FormattedTextFlyout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Gallery\GalleryContentView.xaml">
       <Generator>MSBuild:Compile</Generator>
