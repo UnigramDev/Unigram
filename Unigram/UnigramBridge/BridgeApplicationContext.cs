@@ -175,14 +175,14 @@ namespace UnigramBridge
             {
                 if (unread is int unreadCount && unreadUnmuted is int unreadUnmutedCount)
                 {
-                    //if (unreadCount > 0 || unreadUnmutedCount > 0)
-                    //{
-                    //    _notifyIcon.Icon = unreadUnmutedCount > 0 ? Properties.Resources.Unmuted : Properties.Resources.Muted;
-                    //}
-                    //else
-                    //{
-                    //    _notifyIcon.Icon = Properties.Resources.Default;
-                    //}
+                    if (unreadCount > 0 || unreadUnmutedCount > 0)
+                    {
+                        _notifyIcon.Icon = unreadUnmutedCount > 0 ? Properties.Resources.Unmuted : Properties.Resources.Muted;
+                    }
+                    else
+                    {
+                        _notifyIcon.Icon = Properties.Resources.Default;
+                    }
                 }
             }
             else if (args.Request.Message.TryGetValue("Exit", out object exit))
