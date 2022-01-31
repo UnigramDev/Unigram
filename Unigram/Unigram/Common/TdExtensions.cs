@@ -615,7 +615,7 @@ namespace Unigram.Common
                 case MessageAnimation animation:
                     return animation.Animation.AnimationValue.Local.IsDownloadingCompleted;
                 case MessageSticker sticker:
-                    return sticker.Sticker.IsAnimated && sticker.Sticker.StickerValue.Local.IsDownloadingCompleted;
+                    return sticker.Sticker.Type is StickerTypeAnimated or StickerTypeVideo && sticker.Sticker.StickerValue.Local.IsDownloadingCompleted;
                 case MessageVideoNote videoNote:
                     return videoNote.VideoNote.Video.Local.IsDownloadingCompleted;
                 case MessageGame game:
@@ -631,7 +631,7 @@ namespace Unigram.Common
                     }
                     else if (text.WebPage?.Sticker != null)
                     {
-                        return text.WebPage.Sticker.IsAnimated && text.WebPage.Sticker.StickerValue.Local.IsDownloadingCompleted;
+                        return text.WebPage.Sticker.Type is StickerTypeAnimated or StickerTypeVideo && text.WebPage.Sticker.StickerValue.Local.IsDownloadingCompleted;
                     }
                     else if (text.WebPage?.VideoNote != null)
                     {
@@ -1021,12 +1021,12 @@ namespace Unigram.Common
             }
         }
 
-        public static File GetThumbnail(this StickerSetInfo stickerSet, out IList<ClosedVectorPath> outline, out bool animated)
+        public static File GetThumbnail(this StickerSetInfo stickerSet, out IList<ClosedVectorPath> outline, out StickerType type)
         {
             if (stickerSet.Thumbnail != null)
             {
                 outline = stickerSet.ThumbnailOutline;
-                animated = stickerSet.Thumbnail.Format is ThumbnailFormatTgs;
+                type = stickerSet.StickerType;
 
                 return stickerSet.Thumbnail.File;
             }
@@ -1035,13 +1035,13 @@ namespace Unigram.Common
             if (cover != null)
             {
                 outline = cover.Outline;
-                animated = cover.IsAnimated;
+                type = cover.Type;
 
                 return cover.StickerValue;
             }
 
             outline = null;
-            animated = false;
+            type = null;
 
             return null;
         }

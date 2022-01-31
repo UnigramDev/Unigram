@@ -50,7 +50,8 @@
                 <DataTemplate>
                     <Border Margin="2">
                         <controls:AnimationView30Fps x:Name="Player"
-                                                     AutoPlay="False" />
+                                                     AutoPlay="False"
+                                                     Stretch="UniformToFill" />
                     </Border>
                 </DataTemplate>
             </GridView.ItemTemplate>

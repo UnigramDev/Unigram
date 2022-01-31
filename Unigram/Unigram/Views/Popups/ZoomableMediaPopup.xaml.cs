@@ -133,11 +133,17 @@ namespace Unigram.Views.Popups
         {
             if (file.Local.IsDownloadingCompleted)
             {
-                if (sticker.IsAnimated)
+                if (sticker.Type is StickerTypeAnimated)
                 {
                     Thumbnail.Opacity = 0;
                     Texture.Source = null;
                     Container.Child = new LottieView { Source = UriEx.ToLocal(file.Local.Path) };
+                }
+                else if (sticker.Type is StickerTypeVideo)
+                {
+                    Thumbnail.Opacity = 0;
+                    Texture.Source = null;
+                    Container.Child = new AnimationView { Source = new LocalVideoSource(file) };
                 }
                 else
                 {

@@ -147,19 +147,19 @@ namespace Unigram.Common
                 File file = null;
 
                 var item = _listView.ItemFromContainer(container);
-                if (item is StickerViewModel viewModel && viewModel.IsAnimated)
+                if (item is StickerViewModel viewModel && viewModel.Type is StickerTypeAnimated or StickerTypeVideo)
                 {
                     file = viewModel.StickerValue;
                 }
-                else if (item is StickerSetViewModel setViewModel && setViewModel.IsAnimated)
+                else if (item is StickerSetViewModel setViewModel && setViewModel.StickerType is StickerTypeAnimated or StickerTypeVideo)
                 {
                     file = setViewModel.Thumbnail?.File ?? setViewModel.Covers.FirstOrDefault()?.Thumbnail?.File;
                 }
-                else if (item is Sticker sticker && sticker.IsAnimated)
+                else if (item is Sticker sticker && sticker.Type is StickerTypeAnimated or StickerTypeVideo)
                 {
                     file = sticker.StickerValue;
                 }
-                else if (item is StickerSetInfo set && set.IsAnimated)
+                else if (item is StickerSetInfo set && set.StickerType is StickerTypeAnimated or StickerTypeVideo)
                 {
                     file = set.Thumbnail?.File ?? set.Covers.FirstOrDefault()?.Thumbnail?.File;
                 }
@@ -171,7 +171,7 @@ namespace Unigram.Common
                 {
                     file = inlineQueryResultAnimation.Animation.AnimationValue;
                 }
-                else if (item is InlineQueryResultSticker inlineQueryResultSticker && inlineQueryResultSticker.Sticker.IsAnimated)
+                else if (item is InlineQueryResultSticker inlineQueryResultSticker && inlineQueryResultSticker.Sticker.Type is StickerTypeAnimated or StickerTypeVideo)
                 {
                     file = inlineQueryResultSticker.Sticker.StickerValue;
                 }

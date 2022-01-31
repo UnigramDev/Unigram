@@ -26,6 +26,13 @@
             </Border>
         </DataTemplate>
 
+        <DataTemplate x:Key="VideoItemTemplate">
+            <Border Margin="2">
+                <controls:AnimationView30Fps x:Name="Player"
+                                             AutoPlay="False" />
+            </Border>
+        </DataTemplate>
+
         <DataTemplate x:Key="ItemTemplate">
             <Border Margin="2">
                 <Border>

@@ -68,7 +68,7 @@ namespace Unigram.Common
         public static CompositionAnimation ParseThumbnail(IList<ClosedVectorPath> contours, out ShapeVisual visual, bool animated = true)
         {
             CompositionPath path;
-            if (contours.Count > 0)
+            if (contours?.Count > 0)
             {
                 path = Parse(contours);
             }

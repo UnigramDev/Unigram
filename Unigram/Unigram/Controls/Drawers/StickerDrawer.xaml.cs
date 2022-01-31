@@ -51,9 +51,11 @@ namespace Unigram.Controls.Drawers
             _zoomer.SessionId = () => ViewModel.ProtoService.SessionId;
 
             _typeToItemHashSetMapping.Add("AnimatedItemTemplate", new HashSet<SelectorItem>());
+            _typeToItemHashSetMapping.Add("VideoItemTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("ItemTemplate", new HashSet<SelectorItem>());
 
             _typeToTemplateMapping.Add("AnimatedItemTemplate", Resources["AnimatedItemTemplate"] as DataTemplate);
+            _typeToTemplateMapping.Add("VideoItemTemplate", Resources["VideoItemTemplate"] as DataTemplate);
             _typeToTemplateMapping.Add("ItemTemplate", Resources["ItemTemplate"] as DataTemplate);
 
             //_toolbarHandler = new AnimatedStickerHandler<StickerSetViewModel>(Toolbar);
@@ -117,6 +119,11 @@ namespace Unigram.Controls.Drawers
                 lottie.Source = UriEx.ToLocal(file.Local.Path);
                 _handler.ThrottleVisibleItems();
             }
+            else if (content.Child is AnimationView video)
+            {
+                video.Source = new LocalVideoSource(file);
+                _handler.ThrottleVisibleItems();
+            }
         }
 
         private void UpdateStickerSet(object target, File file)
@@ -130,11 +137,17 @@ namespace Unigram.Controls.Drawers
                 return;
             }
 
-            if (item.IsAnimated)
+            var cover = item.Thumbnail ?? item.Covers.FirstOrDefault()?.Thumbnail;
+            if (cover == null)
+            {
+                return;
+            }
+
+            if (cover.Format is ThumbnailFormatTgs)
             {
                 photo.Source = PlaceholderHelper.GetLottieFrame(file.Local.Path, 0, 36, 36);
             }
-            else
+            else if (cover.Format is ThumbnailFormatWebp)
             {
                 photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path, 36);
             }
@@ -233,7 +246,12 @@ namespace Unigram.Controls.Drawers
 
         private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
         {
-            var typeName = args.Item is StickerViewModel sticker && sticker.IsAnimated ? "AnimatedItemTemplate" : "ItemTemplate";
+            var typeName = args.Item is StickerViewModel sticker ? sticker.Type switch
+            {
+                StickerTypeAnimated => "AnimatedItemTemplate",
+                StickerTypeVideo => "VideoItemTemplate",
+                _ => "ItemTemplate"
+            } : "ItemTemplate";
             var relevantHashSet = _typeToItemHashSetMapping[typeName];
 
             // args.ItemContainer is used to indicate whether the ListView is proposing an
@@ -303,6 +321,10 @@ namespace Unigram.Controls.Drawers
                 {
                     lottie.Source = null;
                 }
+                else if (content.Child is AnimationView video)
+                {
+                    video.Source = null;
+                }
 
                 return;
             }
@@ -330,6 +352,10 @@ namespace Unigram.Controls.Drawers
                 {
                     lottie.Source = UriEx.ToLocal(file.Local.Path);
                 }
+                else if (content.Child is AnimationView video)
+                {
+                    video.Source = new LocalVideoSource(file);
+                }
             }
             else
             {
@@ -340,6 +366,10 @@ namespace Unigram.Controls.Drawers
                 else if (content.Child is LottieView lottie)
                 {
                     lottie.Source = null;
+                }
+                else if (content.Child is AnimationView video)
+                {
+                    video.Source = null;
                 }
 
                 content.Tag = sticker;
@@ -403,11 +433,11 @@ namespace Unigram.Controls.Drawers
                 var file = cover.File;
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    if (sticker.IsAnimated)
+                    if (cover.Format is ThumbnailFormatTgs)
                     {
                         photo.Source = PlaceholderHelper.GetLottieFrame(file.Local.Path, 0, 36, 36);
                     }
-                    else
+                    else if (cover.Format is ThumbnailFormatWebp)
                     {
                         photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path, 36);
                     }

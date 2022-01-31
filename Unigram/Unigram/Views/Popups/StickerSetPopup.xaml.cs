@@ -42,9 +42,11 @@ namespace Unigram.Views.Popups
             _zoomer.SessionId = () => ViewModel.ProtoService.SessionId;
 
             _typeToItemHashSetMapping.Add("AnimatedItemTemplate", new HashSet<SelectorItem>());
+            _typeToItemHashSetMapping.Add("VideoItemTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("ItemTemplate", new HashSet<SelectorItem>());
 
             _typeToTemplateMapping.Add("AnimatedItemTemplate", Resources["AnimatedItemTemplate"] as DataTemplate);
+            _typeToTemplateMapping.Add("VideoItemTemplate", Resources["VideoItemTemplate"] as DataTemplate);
             _typeToTemplateMapping.Add("ItemTemplate", Resources["ItemTemplate"] as DataTemplate);
 
             SecondaryButtonText = Strings.Resources.Close;
@@ -151,7 +153,12 @@ namespace Unigram.Views.Popups
 
         private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
         {
-            var typeName = args.Item is Sticker sticker && sticker.IsAnimated ? "AnimatedItemTemplate" : "ItemTemplate";
+            var typeName = args.Item is Sticker sticker ? sticker.Type switch
+            {
+                StickerTypeAnimated => "AnimatedItemTemplate",
+                StickerTypeVideo => "VideoItemTemplate",
+                _ => "ItemTemplate"
+            } : "ItemTemplate";
             var relevantHashSet = _typeToItemHashSetMapping[typeName];
 
             // args.ItemContainer is used to indicate whether the ListView is proposing an
@@ -226,6 +233,10 @@ namespace Unigram.Views.Popups
                 {
                     lottie.Source = UriEx.ToLocal(file.Local.Path);
                 }
+                else if (args.Phase == 0 && content.Children[0] is AnimationView video)
+                {
+                    video.Source = new LocalVideoSource(file);
+                }
             }
             else
             {
@@ -236,6 +247,10 @@ namespace Unigram.Views.Popups
                 else if (args.Phase == 0 && content.Children[0] is LottieView lottie)
                 {
                     lottie.Source = null;
+                }
+                else if (args.Phase == 0 && content.Children[0] is AnimationView video)
+                {
+                    video.Source = null;
                 }
 
                 CompositionPathParser.ParseThumbnail(sticker.Outline, out ShapeVisual visual, false);
@@ -256,12 +271,14 @@ namespace Unigram.Views.Popups
 
         #region Binding
 
-        private string ConvertIsInstalled(bool installed, bool archived, bool official, bool masks)
+        private string ConvertIsInstalled(bool installed, bool archived, bool official, StickerType type)
         {
             if (ViewModel == null || ViewModel.StickerSet == null || ViewModel.StickerSet.Stickers == null)
             {
                 return string.Empty;
             }
+
+            var masks = type is StickerTypeMask;
 
             if (installed && !archived)
             {
@@ -275,7 +292,7 @@ namespace Unigram.Views.Popups
                 : string.Format(masks ? Strings.Resources.AddMasks : Strings.Resources.AddStickers, ViewModel.StickerSet.Stickers.Count);
         }
 
-        private Style ConvertIsInstalledStyle(bool installed, bool archived, bool official, bool masks)
+        private Style ConvertIsInstalledStyle(bool installed, bool archived, bool official)
         {
             if (ViewModel == null || ViewModel.StickerSet == null || ViewModel.StickerSet.Stickers == null)
             {
@@ -310,6 +327,11 @@ namespace Unigram.Views.Popups
             else if (content.Children[0] is LottieView lottie)
             {
                 lottie.Source = UriEx.ToLocal(file.Local.Path);
+                _handler.ThrottleVisibleItems();
+            }
+            else if (content.Children[0] is AnimationView video)
+            {
+                video.Source = new LocalVideoSource(file);
                 _handler.ThrottleVisibleItems();
             }
         }

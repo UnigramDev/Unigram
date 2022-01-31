@@ -34,9 +34,11 @@ namespace Unigram.Views.Settings
             _handler = new AnimatedListHandler<StickerSetInfo>(List);
 
             _typeToItemHashSetMapping.Add("AnimatedItemTemplate", new HashSet<SelectorItem>());
+            _typeToItemHashSetMapping.Add("VideoItemTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("ItemTemplate", new HashSet<SelectorItem>());
 
             _typeToTemplateMapping.Add("AnimatedItemTemplate", Resources["AnimatedItemTemplate"] as DataTemplate);
+            _typeToTemplateMapping.Add("VideoItemTemplate", Resources["VideoItemTemplate"] as DataTemplate);
             _typeToTemplateMapping.Add("ItemTemplate", Resources["ItemTemplate"] as DataTemplate);
         }
 
@@ -88,9 +90,14 @@ namespace Unigram.Views.Settings
         private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
         {
             var stickerSet = args.Item as StickerSetInfo;
-            var cover = stickerSet.GetThumbnail(out _, out bool animated);
+            var cover = stickerSet.GetThumbnail(out _, out StickerType type);
 
-            var typeName = animated ? "AnimatedItemTemplate" : "ItemTemplate";
+            var typeName = type switch
+            {
+                StickerTypeAnimated => "AnimatedItemTemplate",
+                StickerTypeVideo => "VideoItemTemplate",
+                _ => "ItemTemplate"
+            };
             var relevantHashSet = _typeToItemHashSetMapping[typeName];
 
             // args.ItemContainer is used to indicate whether the ListView is proposing an
@@ -175,6 +182,10 @@ namespace Unigram.Views.Settings
                 {
                     lottie.Source = UriEx.ToLocal(file.Local.Path);
                 }
+                else if (args.Phase == 0 && content.Children[0] is AnimationView animation)
+                {
+                    animation.Source = new LocalVideoSource(file);
+                }
             }
             else
             {
@@ -185,6 +196,10 @@ namespace Unigram.Views.Settings
                 else if (args.Phase == 0 && content.Children[0] is LottieView lottie)
                 {
                     lottie.Source = null;
+                }
+                else if (args.Phase == 0 && content.Children[0] is AnimationView animation)
+                {
+                    animation.Source = null;
                 }
 
                 CompositionPathParser.ParseThumbnail(outline, out ShapeVisual visual, false);
@@ -250,6 +265,11 @@ namespace Unigram.Views.Settings
             else if (content.Children[0] is LottieView lottie)
             {
                 lottie.Source = UriEx.ToLocal(file.Local.Path);
+                _handler.ThrottleVisibleItems();
+            }
+            else if (content.Children[0] is AnimationView animation)
+            {
+                animation.Source = new LocalVideoSource(file);
                 _handler.ThrottleVisibleItems();
             }
         }

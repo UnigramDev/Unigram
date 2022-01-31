@@ -164,9 +164,13 @@ namespace Unigram.Controls.Messages.Content
                 }
                 else if (webPage.Sticker != null)
                 {
-                    if (webPage.Sticker.IsAnimated)
+                    if (webPage.Sticker.Type is StickerTypeAnimated)
                     {
                         Media.Child = new AnimatedStickerContent(message);
+                    }
+                    else if (webPage.Sticker.Type is StickerTypeVideo)
+                    {
+                        Media.Child = new VideoStickerContent(message);
                     }
                     else
                     {

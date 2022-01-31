@@ -7,6 +7,10 @@
 #include <Microsoft.Graphics.Canvas.h>
 #include <Microsoft.Graphics.Canvas.native.h>
 
+// divide by 255 and round to nearest
+// apply a fast variant: (X+127)/255 = ((X+127)*257+257)>>16 = ((X+128)*257)>>16
+#define FAST_DIV255(x) ((((x)+128) * 257) >> 16)
+
 namespace winrt::Unigram::Native::implementation
 {
 	static int open_codec_context(int* stream_idx, AVCodecContext** dec_ctx, AVFormatContext* fmt_ctx, enum AVMediaType type) {
@@ -124,7 +128,6 @@ namespace winrt::Unigram::Native::implementation
 		int ret;
 		info->file = file;
 		info->fileEvent = CreateEvent(NULL, TRUE, TRUE, NULL);
-		info->limitFps = limitFps;
 
 		//av_log_set_level(AV_LOG_DEBUG);
 		//av_log_set_callback(RedirectLoggingOutputs);
@@ -208,6 +211,7 @@ namespace winrt::Unigram::Native::implementation
 
 		//OutputDebugStringFormat(L"successfully opened file %s", info->src);
 
+		info->limitFps = limitFps && info->framerate > 30;
 		return info.as<winrt::Unigram::Native::VideoAnimation>();
 	}
 
@@ -395,10 +399,26 @@ namespace winrt::Unigram::Native::implementation
 						}
 					}
 					else {
-						this->dst_data[0] = (uint8_t*)pixels;
-						this->dst_linesize[0] = pixelWidth * 4;
-						sws_scale(this->sws_ctx, this->frame->data, this->frame->linesize, 0, this->frame->height, this->dst_data, this->dst_linesize);
+						if (this->frame->format == AV_PIX_FMT_YUVA420P) {
+							libyuv::I420AlphaToARGBMatrix(this->frame->data[0], this->frame->linesize[0], this->frame->data[2], this->frame->linesize[2], this->frame->data[1], this->frame->linesize[1], this->frame->data[3], this->frame->linesize[3], (uint8_t*)pixels, pixelWidth * 4, &libyuv::kYvuI601Constants, pixelWidth, pixelHeight, 50);
+						}
+						else {
+							this->dst_data[0] = (uint8_t*)pixels;
+							this->dst_linesize[0] = pixelWidth * 4;
+							sws_scale(this->sws_ctx, this->frame->data, this->frame->linesize, 0, this->frame->height, this->dst_data, this->dst_linesize);
+						}
 					}
+
+					// This is fine enough to premultiply straight alpha pixels
+					// but we use I420AlphaToARGBMatrix to do everything in a single pass.
+					//if (this->frame->format == AV_PIX_FMT_YUVA420P) {
+					//	for (int i = 0; i < pixelWidth * pixelHeight * 4; i += 4) {
+					//		auto alpha = pixels[i + 3];
+					//		pixels[i + 0] = FAST_DIV255(pixels[i + 0] * alpha);
+					//		pixels[i + 1] = FAST_DIV255(pixels[i + 1] * alpha);
+					//		pixels[i + 2] = FAST_DIV255(pixels[i + 2] * alpha);
+					//	}
+					//}
 
 					bitmap.SetPixelBytes(winrt::array_view(pixels, pixelWidth * pixelHeight * 4));
 					seconds = this->frame->best_effort_timestamp * av_q2d(this->video_stream->time_base);

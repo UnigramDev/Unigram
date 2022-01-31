@@ -365,6 +365,9 @@
       <DependentUpon>MessagePopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Messages\Content\AlbumContent.cs" />
+    <Compile Include="Controls\Messages\Content\VideoStickerContent.xaml.cs">
+      <DependentUpon>VideoStickerContent.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Messages\Content\AnimatedStickerContent.xaml.cs">
       <DependentUpon>AnimatedStickerContent.xaml</DependentUpon>
     </Compile>
@@ -1567,6 +1570,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\MessagePopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Messages\Content\VideoStickerContent.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

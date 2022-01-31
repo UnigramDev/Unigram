@@ -70,6 +70,14 @@
                     </Grid>
                 </DataTemplate>
             </local:InlineQueryTemplateSelector.AnimatedStickerTemplate>
+            <local:InlineQueryTemplateSelector.VideoStickerTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <controls:AnimationView30Fps x:Name="Player"
+                                                     AutoPlay="False" />
+                    </Grid>
+                </DataTemplate>
+            </local:InlineQueryTemplateSelector.VideoStickerTemplate>
             <local:InlineQueryTemplateSelector.StickerTemplate>
                 <DataTemplate>
                     <Grid>
@@ -81,7 +89,8 @@
                 <DataTemplate>
                     <Grid>
                         <controls:AnimationView30Fps x:Name="Player"
-                                                     AutoPlay="False" />
+                                                     AutoPlay="False"
+                                                     Stretch="UniformToFill" />
                     </Grid>
                 </DataTemplate>
             </local:InlineQueryTemplateSelector.AnimationTemplate>

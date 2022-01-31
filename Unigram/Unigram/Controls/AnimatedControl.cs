@@ -41,6 +41,7 @@ namespace Unigram.Controls
         protected bool _unloaded;
 
         protected bool _isLoopingEnabled = true;
+        protected Stretch _stretch = Stretch.Uniform;
 
         private readonly object _recreateLock = new();
         private readonly object _drawFrameLock = new();
@@ -495,6 +496,26 @@ namespace Unigram.Controls
 
         public static readonly DependencyProperty AutoPlayProperty =
             DependencyProperty.Register("AutoPlay", typeof(bool), typeof(AnimatedControl<TSource, TAnimation>), new PropertyMetadata(true));
+
+        #endregion
+
+        #region Stretch
+
+
+        public Stretch Stretch
+        {
+            get { return (Stretch)GetValue(StretchProperty); }
+            set { SetValue(StretchProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for Stretch.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty StretchProperty =
+            DependencyProperty.Register("Stretch", typeof(Stretch), typeof(AnimatedControl<TSource, TAnimation>), new PropertyMetadata(Stretch.Uniform, OnStretchChanged));
+
+        private static void OnStretchChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((AnimatedControl<TSource, TAnimation>)d)._stretch = (Stretch)e.NewValue;
+        }
 
         #endregion
     }

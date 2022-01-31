@@ -9,6 +9,7 @@ using Unigram.Native;
 using Windows.Foundation;
 using Windows.Graphics.DirectX;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls
@@ -86,10 +87,8 @@ namespace Unigram.Controls
         {
             var width = (double)_animation.PixelWidth;
             var height = (double)_animation.PixelHeight;
-            var x = 0d;
-            var y = 0d;
 
-            //if (width > sender.Size.Width || height > sender.Size.Height)
+            if (_stretch == Stretch.UniformToFill)
             {
                 double ratioX = (double)sender.Size.Width / width;
                 double ratioY = (double)sender.Size.Height / height;
@@ -98,17 +97,37 @@ namespace Unigram.Controls
                 {
                     width = sender.Size.Width;
                     height *= ratioX;
-                    y = (sender.Size.Height - height) / 2;
                 }
                 else
                 {
                     width *= ratioY;
                     height = sender.Size.Height;
-                    x = (sender.Size.Width - width) / 2;
+                }
+            }
+            else if (_stretch == Stretch.Uniform)
+            {
+                double ratioX = (double)sender.Size.Width / width;
+                double ratioY = (double)sender.Size.Height / height;
+
+                if (ratioX <= ratioY)
+                {
+                    width = sender.Size.Width;
+                    height *= ratioX;
+                }
+                else
+                {
+                    width *= ratioY;
+                    height = sender.Size.Height;
                 }
             }
 
-            args.DrawImage(_bitmap, new Rect(x, y, width, height));
+            var y = (sender.Size.Height - height) / 2;
+            var x = (sender.Size.Width - width) / 2;
+
+            args.DrawImage(_bitmap,
+                new Rect(x, y, width, height)/*,
+                new Rect(0, 0, _bitmap.Size.Width, _bitmap.Size.Height), 1,
+                CanvasImageInterpolation.MultiSampleLinear*/);
 
             if (_prevSeconds != _nextSeconds)
             {
@@ -120,6 +139,9 @@ namespace Unigram.Controls
             {
                 _hideThumbnail = false;
                 _thumbnail.Opacity = 0;
+
+                FirstFrameRendered?.Invoke(this, EventArgs.Empty);
+                ElementCompositionPreview.SetElementChildVisual(this, null);
             }
         }
 
@@ -185,6 +207,8 @@ namespace Unigram.Controls
 
         public event EventHandler<int> PositionChanged;
 
+        public event EventHandler FirstFrameRendered;
+
         #region Source
 
         public IVideoAnimationSource Source
@@ -215,6 +239,5 @@ namespace Unigram.Controls
             DependencyProperty.Register("Thumbnail", typeof(ImageSource), typeof(AnimationView), new PropertyMetadata(null));
 
         #endregion
-
     }
 }

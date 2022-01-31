@@ -7,8 +7,8 @@
                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        mc:Ignorable="d"
-                       PrimaryButtonStyle="{x:Bind ConvertIsInstalledStyle(ViewModel.StickerSet.IsInstalled, ViewModel.StickerSet.IsArchived, ViewModel.StickerSet.IsOfficial, ViewModel.StickerSet.IsMasks), Mode=OneWay}"
-                       PrimaryButtonText="{x:Bind ConvertIsInstalled(ViewModel.StickerSet.IsInstalled, ViewModel.StickerSet.IsArchived, ViewModel.StickerSet.IsOfficial, ViewModel.StickerSet.IsMasks), Mode=OneWay}"
+                       PrimaryButtonStyle="{x:Bind ConvertIsInstalledStyle(ViewModel.StickerSet.IsInstalled, ViewModel.StickerSet.IsArchived, ViewModel.StickerSet.IsOfficial), Mode=OneWay}"
+                       PrimaryButtonText="{x:Bind ConvertIsInstalled(ViewModel.StickerSet.IsInstalled, ViewModel.StickerSet.IsArchived, ViewModel.StickerSet.IsOfficial, ViewModel.StickerSet.StickerType), Mode=OneWay}"
                        PrimaryButtonCommand="{x:Bind ViewModel.SendCommand}"
                        Closing="OnClosing"
                        Loaded="OnLoaded"
@@ -19,6 +19,13 @@
             <Grid Margin="2">
                 <controls:LottieView30Fps x:Name="Player"
                                           AutoPlay="False" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="VideoItemTemplate">
+            <Grid Margin="2">
+                <controls:AnimationView30Fps x:Name="Player"
+                                             AutoPlay="False" />
             </Grid>
         </DataTemplate>
 

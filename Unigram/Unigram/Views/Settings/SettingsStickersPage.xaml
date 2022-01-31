@@ -47,6 +47,40 @@
             </Grid>
         </DataTemplate>
 
+        <DataTemplate x:Key="VideoItemTemplate">
+            <Grid Margin="0,6"
+                  Background="Transparent">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <controls:AnimationView30Fps x:Name="Player"
+                                             AutoPlay="False"
+                                             Width="48"
+                                             Height="48"
+                                             Margin="0,0,12,0"
+                                             VerticalAlignment="Top"
+                                             Grid.RowSpan="2" />
+
+                <TextBlock VerticalAlignment="Bottom"
+                           Style="{StaticResource BaseTextBlockStyle}"
+                           TextWrapping="NoWrap"
+                           TextTrimming="CharacterEllipsis"
+                           Grid.Column="1" />
+                <TextBlock Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                           VerticalAlignment="Top"
+                           TextWrapping="NoWrap"
+                           TextTrimming="CharacterEllipsis"
+                           Grid.Column="1"
+                           Grid.Row="1" />
+            </Grid>
+        </DataTemplate>
+
         <DataTemplate x:Key="ItemTemplate">
             <Grid Margin="0,6"
                   Background="Transparent">

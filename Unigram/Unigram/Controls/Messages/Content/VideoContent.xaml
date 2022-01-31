@@ -33,6 +33,7 @@
                         <Border>
                             <controls:AnimationView x:Name="Player"
                                                     AutoPlay="False"
+                                                    Stretch="UniformToFill"
                                                     IsHitTestVisible="False" />
                         </Border>
 

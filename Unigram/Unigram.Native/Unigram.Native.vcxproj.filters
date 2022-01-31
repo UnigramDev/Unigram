@@ -146,9 +146,6 @@
     <ClCompile Include="libyuv\source\rotate_gcc.cc">
       <Filter>libyuv\source</Filter>
     </ClCompile>
-    <ClCompile Include="libyuv\source\rotate_mips.cc">
-      <Filter>libyuv\source</Filter>
-    </ClCompile>
     <ClCompile Include="libyuv\source\rotate_neon.cc">
       <Filter>libyuv\source</Filter>
     </ClCompile>
@@ -165,9 +162,6 @@
       <Filter>libyuv\source</Filter>
     </ClCompile>
     <ClCompile Include="libyuv\source\row_gcc.cc">
-      <Filter>libyuv\source</Filter>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\row_mips.cc">
       <Filter>libyuv\source</Filter>
     </ClCompile>
     <ClCompile Include="libyuv\source\row_neon.cc">
@@ -192,9 +186,6 @@
       <Filter>libyuv\source</Filter>
     </ClCompile>
     <ClCompile Include="libyuv\source\scale_gcc.cc">
-      <Filter>libyuv\source</Filter>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\scale_mips.cc">
       <Filter>libyuv\source</Filter>
     </ClCompile>
     <ClCompile Include="libyuv\source\scale_neon.cc">
@@ -381,6 +372,33 @@
     </ClCompile>
     <ClCompile Include="..\Libraries\libutf\utfutf.c">
       <Filter>libtextclassifier\libutf</Filter>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\compare_mmi.cc">
+      <Filter>libyuv\source</Filter>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\compare_msa.cc">
+      <Filter>libyuv\source</Filter>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\rotate_mmi.cc">
+      <Filter>libyuv\source</Filter>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\rotate_msa.cc">
+      <Filter>libyuv\source</Filter>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\row_mmi.cc">
+      <Filter>libyuv\source</Filter>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\row_msa.cc">
+      <Filter>libyuv\source</Filter>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\scale_mmi.cc">
+      <Filter>libyuv\source</Filter>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\scale_msa.cc">
+      <Filter>libyuv\source</Filter>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\scale_uv.cc">
+      <Filter>libyuv\source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -651,6 +669,12 @@
     </ClInclude>
     <ClInclude Include="..\Libraries\libutf\utfdef.h">
       <Filter>libtextclassifier\libutf</Filter>
+    </ClInclude>
+    <ClInclude Include="libyuv\include\libyuv\macros_msa.h">
+      <Filter>libyuv\include\libyuv</Filter>
+    </ClInclude>
+    <ClInclude Include="libyuv\include\libyuv\scale_uv.h">
+      <Filter>libyuv\include\libyuv</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

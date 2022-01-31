@@ -267,28 +267,56 @@ namespace Unigram.Controls
                     }
                 }
             }
-            else if (content.Children[0] is LottieView stickerView && result is InlineQueryResultSticker sticker)
+            else if (result is InlineQueryResultSticker sticker)
             {
-                stickerView.Tag = args.Item;
-
-                var file = sticker.Sticker.StickerValue;
-                if (file == null)
+                if (content.Children[0] is LottieView stickerView)
                 {
-                    return;
-                }
+                    stickerView.Tag = args.Item;
 
-                if (file.Local.IsDownloadingCompleted)
-                {
-                    stickerView.Source = UriEx.ToLocal(file.Local.Path);
-                }
-                else
-                {
-                    stickerView.Source = null;
-                    UpdateManager.Subscribe(content, ViewModel.ProtoService, file, UpdateFile, true);
-
-                    if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                    var file = sticker.Sticker.StickerValue;
+                    if (file == null)
                     {
-                        ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                        return;
+                    }
+
+                    if (file.Local.IsDownloadingCompleted)
+                    {
+                        stickerView.Source = UriEx.ToLocal(file.Local.Path);
+                    }
+                    else
+                    {
+                        stickerView.Source = null;
+                        UpdateManager.Subscribe(content, ViewModel.ProtoService, file, UpdateFile, true);
+
+                        if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                        {
+                            ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                        }
+                    }
+                }
+                else if (content.Children[0] is AnimationView animationView)
+                {
+                    animationView.Tag = args.Item;
+
+                    var file = sticker.Sticker.StickerValue;
+                    if (file == null)
+                    {
+                        return;
+                    }
+
+                    if (file.Local.IsDownloadingCompleted)
+                    {
+                        animationView.Source = new LocalVideoSource(file);
+                    }
+                    else
+                    {
+                        animationView.Source = null;
+                        UpdateManager.Subscribe(content, ViewModel.ProtoService, file, UpdateFile, true);
+
+                        if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                        {
+                            ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                        }
                     }
                 }
             }
@@ -461,6 +489,7 @@ namespace Unigram.Controls
     public class InlineQueryTemplateSelector : DataTemplateSelector
     {
         public DataTemplate AnimatedStickerTemplate { get; set; }
+        public DataTemplate VideoStickerTemplate { get; set; }
         public DataTemplate StickerTemplate { get; set; }
         public DataTemplate AnimationTemplate { get; set; }
         public DataTemplate MediaTemplate { get; set; }
@@ -469,7 +498,12 @@ namespace Unigram.Controls
         {
             if (item is InlineQueryResultSticker sticker)
             {
-                return sticker.Sticker.IsAnimated ? AnimatedStickerTemplate : StickerTemplate;
+                return sticker.Sticker.Type switch
+                {
+                    StickerTypeAnimated => AnimatedStickerTemplate,
+                    StickerTypeVideo => VideoStickerTemplate,
+                    _ => StickerTemplate
+                };
             }
             else if (item is InlineQueryResultAnimation)
             {
