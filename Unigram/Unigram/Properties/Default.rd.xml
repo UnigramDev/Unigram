@@ -56,8 +56,8 @@
 		</Type>
 
 		<Type Name="Unigram.Controls.Drawers.StickerDrawer">
-			<Method Name="UpdateSticker" Dynamic="Required"/>
 			<Method Name="UpdateStickerSet" Dynamic="Required"/>
+			<Method Name="UpdateSticker" Dynamic="Required"/>
 		</Type>
 
 		<Type Name="Unigram.Controls.Gallery.GalleryContentView">
@@ -120,12 +120,24 @@
 			<Method Name="UpdateThumbnail" Dynamic="Required"/>
 		</Type>
 
+		<Type Name="Unigram.Controls.Messages.Content.VideoStickerContent">
+			<Method Name="UpdateFile" Dynamic="Required"/>
+		</Type>
+
 		<Type Name="Unigram.Controls.Messages.Content.VoiceNoteContent">
 			<Method Name="UpdateFile" Dynamic="Required"/>
 		</Type>
 
 		<Type Name="Unigram.Controls.Messages.Content.WebPageSmallPhotoContent">
 			<Method Name="UpdateFile" Dynamic="Required"/>
+		</Type>
+
+		<Type Name="Unigram.Controls.Messages.MenuFlyoutReactions">
+			<Method Name="UpdateFile" Dynamic="Required"/>
+		</Type>
+
+		<Type Name="Unigram.Controls.Messages.MessageBubble">
+			<Method Name="UpdateReaction" Dynamic="Required"/>
 		</Type>
 
 		<Type Name="Unigram.Controls.ProfilePicture" Dynamic="Required All"/>
@@ -139,8 +151,8 @@
 		</Type>
 
 		<Type Name="Unigram.Views.BackgroundPopup">
-			<Method Name="UpdateFile" Dynamic="Required"/>
 			<Method Name="UpdatePattern" Dynamic="Required"/>
+			<Method Name="UpdateFile" Dynamic="Required"/>
 		</Type>
 
 		<Type Name="Unigram.Views.ChatView">
@@ -166,6 +178,10 @@
 		</Type>
 
 		<Type Name="Unigram.Views.Settings.SettingsStickersPage">
+			<Method Name="UpdateFile" Dynamic="Required"/>
+		</Type>
+
+		<Type Name="Unigram.Views.Supergroups.SupergroupReactionsPage">
 			<Method Name="UpdateFile" Dynamic="Required"/>
 		</Type>
 	</Application>
