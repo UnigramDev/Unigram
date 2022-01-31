@@ -35,14 +35,29 @@ namespace Unigram.Controls.Messages
 
         private int _presenterId;
 
-        public async void SetReaction(MessageViewModel message, MessageReaction interaction, Reaction value, UnreadReaction unread)
+        public void SetUnread(UnreadReaction unread)
+        {
+            if (Presenter == null)
+            {
+                _unread = unread;
+                return;
+            }
+
+            _unread = unread;
+
+            if (unread != null)
+            {
+                Animate();
+            }
+        }
+
+        public async void SetReaction(MessageViewModel message, MessageReaction interaction, Reaction value)
         {
             if (Presenter == null)
             {
                 _message = message;
                 _interaction = interaction;
                 _reaction = value;
-                _unread = unread;
                 return;
             }
 
@@ -53,7 +68,6 @@ namespace Unigram.Controls.Messages
             _message = message;
             _interaction = interaction;
             _reaction = value;
-            _unread = null;
 
             IsChecked = interaction.IsChosen;
 
@@ -88,11 +102,6 @@ namespace Unigram.Controls.Messages
                 {
                     Count.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                 }
-            }
-
-            if (unread != null)
-            {
-                Animate();
             }
 
             var file = value.CenterAnimation.StickerValue;
@@ -182,7 +191,9 @@ namespace Unigram.Controls.Messages
             Presenter = GetTemplateChild(nameof(Presenter)) as Image;
             Overlay = GetTemplateChild(nameof(Overlay)) as Popup;
 
-            SetReaction(_message, _interaction, _reaction, _unread);
+            SetReaction(_message, _interaction, _reaction);
+            SetUnread(_unread);
+
             base.OnApplyTemplate();
         }
 

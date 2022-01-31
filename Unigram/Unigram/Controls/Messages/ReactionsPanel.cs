@@ -34,19 +34,14 @@ namespace Unigram.Controls.Messages
 
                         added.Add(item.Reaction);
 
-                        if (!animate || !unread.TryGetValue(item.Reaction, out UnreadReaction unreadReaction))
-                        {
-                            unreadReaction = null;
-                        }
-
                         if (_reactions.TryGetValue(item.Reaction, out ReactionButton button))
                         {
-                            button.SetReaction(message, item, reaction, unreadReaction);
+                            button.SetReaction(message, item, reaction);
                         }
                         else
                         {
                             button = new ReactionButton();
-                            button.SetReaction(message, item, reaction, unreadReaction);
+                            button.SetReaction(message, item, reaction);
 
                             _reactions[item.Reaction] = button;
                             Children.Add(button);
@@ -64,6 +59,17 @@ namespace Unigram.Controls.Messages
                     {
                         _reactions.Remove(reaction.Key);
                         Children.Remove(reaction.Value);
+                    }
+                }
+
+                if (animate && unread != null)
+                {
+                    foreach (var item in unread.GroupBy(x => x.Reaction))
+                    {
+                        if (_reactions.TryGetValue(item.Key, out ReactionButton button))
+                        {
+                            button.SetUnread(item.FirstOrDefault());
+                        }
                     }
                 }
             }
