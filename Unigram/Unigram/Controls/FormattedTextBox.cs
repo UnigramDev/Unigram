@@ -46,6 +46,7 @@ namespace Unigram.Controls
                 Content = _selectionFlyout = new FormattedTextFlyout(this),
 
                 AllowFocusOnInteraction = false,
+                ShouldConstrainToRootBounds = false,
                 ShowMode = FlyoutShowMode.TransientWithDismissOnPointerMoveAway,
                 FlyoutPresenterStyle = App.Current.Resources["CommandFlyoutPresenterStyle"] as Style,
             };
