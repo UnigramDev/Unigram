@@ -908,9 +908,6 @@ namespace Unigram.Views
         {
             if (Window.Current.CoreWindow.ActivationMode == CoreWindowActivationMode.ActivatedInForeground)
             {
-                ViewVisibleMessages(false);
-                StickersPanel.LoadVisibleItems();
-
                 var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
                 if (popups.Count > 0)
                 {
@@ -918,11 +915,6 @@ namespace Unigram.Views
                 }
 
                 TextField.Focus(FocusState.Programmatic);
-            }
-            else
-            {
-                UnloadVisibleMessages();
-                StickersPanel.UnloadVisibleItems();
             }
         }
 
