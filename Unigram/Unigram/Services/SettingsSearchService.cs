@@ -190,7 +190,7 @@ namespace Unigram.Services
 
         private SettingsSearchEntry BuildPrivacyAndSecurity()
         {
-            return new SettingsSearchPage(typeof(SettingsPrivacyAndSecurityPage), Strings.Resources.PrivacySettings, Icons.Lock, new SettingsSearchEntry[]
+            return new SettingsSearchPage(typeof(SettingsPrivacyAndSecurityPage), Strings.Resources.PrivacySettings, Icons.LockClosed, new SettingsSearchEntry[]
             {
                 new SettingsSearchPage(typeof(SettingsBlockedChatsPage), Strings.Resources.BlockedUsers),
                 new SettingsSearchPage(typeof(SettingsPrivacyShowStatusPage), Strings.Resources.PrivacyLastSeen),

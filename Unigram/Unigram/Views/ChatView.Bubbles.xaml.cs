@@ -191,7 +191,26 @@ namespace Unigram.Views
 
                 if (message.ContainsUnreadMention)
                 {
-                    ViewModel.SetLastViewedMention(message.Id);
+                    ViewModel.Mentions.SetLastViewedMessage(message.Id);
+                }
+
+                if (message.UnreadReactions?.Count > 0)
+                {
+                    ViewModel.Reactions.SetLastViewedMessage(message.Id);
+
+                    var root = container.ContentTemplateRoot as FrameworkElement;
+                    if (root != null)
+                    {
+                        if (root is MessageBubble == false)
+                        {
+                            root = root.FindName("Bubble") as FrameworkElement;
+                        }
+
+                        if (root is MessageBubble michaelBublé)
+                        {
+                            michaelBublé.UpdateMessageReactions(message, true);
+                        }
+                    }
                 }
 
                 if (message.Content is MessageAlbum album)

@@ -20,13 +20,18 @@ namespace Unigram.Controls.Messages
 {
     public sealed partial class MenuFlyoutReactions : UserControl
     {
-        public static MenuFlyoutReactions ShowAt(MessageViewModel message, MenuFlyout flyout, Point absolute)
+        private readonly MessageViewModel _message;
+        private readonly MenuFlyout _flyout;
+
+        public static MenuFlyoutReactions ShowAt(IList<Reaction> reactions, MessageViewModel message, MenuFlyout flyout, Point absolute)
         {
-            return new MenuFlyoutReactions(message, flyout, absolute);
+            return new MenuFlyoutReactions(reactions, message, flyout, absolute);
         }
 
-        private MenuFlyoutReactions(MessageViewModel message, MenuFlyout flyout, Point absolute)
+        private MenuFlyoutReactions(IList<Reaction> reactions, MessageViewModel message, MenuFlyout flyout, Point absolute)
         {
+            _message = message;
+            _flyout = flyout;
             InitializeComponent();
 
             var last = flyout.Items.LastOrDefault();
@@ -38,8 +43,6 @@ namespace Unigram.Controls.Messages
             var relativeFirst = Math.Abs(absolute.Y - position.Y);
             var relativeLast = Math.Abs(absolute.Y - (position.Y + presenter.ActualHeight));
             var upsideDown = relativeLast < relativeFirst;
-
-            var reactions = message.ProtoService.GetAvailableReactions(chat);
 
             var actualWidth = presenter.ActualSize.X + 18 + 12 + 18;
             var width = Math.Min(8 + reactions.Count * 34 - 2, actualWidth);
@@ -70,7 +73,6 @@ namespace Unigram.Controls.Messages
                 view.DecodeFrameType = DecodePixelType.Logical;
                 view.Width = 24;
                 view.Height = 24;
-                view.Margin = new Thickness(0, 0, 10, 0);
                 view.Tag = offset < visible ? null : new object();
 
                 var file = item.AppearAnimation.StickerValue;
@@ -90,7 +92,17 @@ namespace Unigram.Controls.Messages
                     }
                 }
 
-                Presenter.Children.Add(view);
+                var button = new HyperlinkButton
+                {
+                    Tag = item,
+                    Content = view,
+                    Margin = new Thickness(0, 0, 10, 0),
+                    Style = BootStrapper.Current.Resources["EmptyHyperlinkButtonStyle"] as Style
+                };
+
+                button.Click += Reaction_Click;
+
+                Presenter.Children.Add(button);
 
                 if (offset < visible)
                 {
@@ -237,10 +249,19 @@ namespace Unigram.Controls.Messages
 
             batch.End();
 
-            flyout.Closing += (s, args) =>
+            presenter.Unloaded += (s, args) =>
             {
                 popup.IsOpen = false;
             };
+        }
+
+        private void Reaction_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is HyperlinkButton button && button.Tag is Reaction reaction)
+            {
+                _flyout.Hide();
+                _message.ProtoService.Send(new SetMessageReaction(_message.ChatId, _message.Id, reaction.ReactionValue, false));
+            }
         }
 
         private void UpdateFile(object target, File file)
@@ -258,8 +279,8 @@ namespace Unigram.Controls.Messages
 
             for (int i = 0; i < Presenter.Children.Count; i++)
             {
-                var view = Presenter.Children[i] as LottieView;
-                if (view != null)
+                var button = Presenter.Children[i] as HyperlinkButton;
+                if (button.Content is LottieView view)
                 {
                     if (view.Tag != null && i >= j && i < k)
                     {

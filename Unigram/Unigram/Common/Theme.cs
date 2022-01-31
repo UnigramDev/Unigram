@@ -474,6 +474,10 @@ namespace Unigram.Common
             { "MessageOverlayBackgroundBrush", new SolidColorBrush(ColorEx.FromHex(0x54000000)) },
             { "MessageCallForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0x2AB32A)) },
             { "MessageCallMissedForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0xDD5849)) },
+            { "MessageReactionBackgroundBrush", new SolidColorBrush(ColorEx.FromHex(0xD5F1C9)) },
+            { "MessageReactionForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0x45A32D)) },
+            { "MessageReactionChosenBackgroundBrush", new SolidColorBrush(ColorEx.FromHex(0x5FBE67)) },
+            { "MessageReactionChosenForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0xFFFFFF)) },
         };
 
         [ThreadStatic]
@@ -493,6 +497,10 @@ namespace Unigram.Common
             { "MessageOverlayBackgroundBrush", new SolidColorBrush(ColorEx.FromHex(0x54000000)) },
             { "MessageCallForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0x49A2F0)) },
             { "MessageCallMissedForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0xED5050)) },
+            { "MessageReactionBackgroundBrush", new SolidColorBrush(ColorEx.FromHex(0x2B4153)) },
+            { "MessageReactionForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0x7AC3F4)) },
+            { "MessageReactionChosenBackgroundBrush", new SolidColorBrush(ColorEx.FromHex(0x318EE4)) },
+            { "MessageReactionChosenForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0x33393F)) },
         };
 
         public ThemeOutgoing()
@@ -555,6 +563,10 @@ namespace Unigram.Common
                 Light["MessageOverlayBackgroundBrush"].Color = ColorEx.FromHex(0x54000000);
                 Light["MessageCallForegroundBrush"].Color = ColorEx.FromHex(0x2AB32A);
                 Light["MessageCallMissedForegroundBrush"].Color = ColorEx.FromHex(0xDD5849);
+                Light["MessageReactionBackgroundBrush"].Color = ColorEx.FromHex(0xD5F1C9);
+                Light["MessageReactionForegroundBrush"].Color = ColorEx.FromHex(0x45A32D);
+                Light["MessageReactionChosenBackgroundBrush"].Color = ColorEx.FromHex(0x5FBE67);
+                Light["MessageReactionChosenForegroundBrush"].Color = ColorEx.FromHex(0xFFFFFF);
             }
             else
             {
@@ -571,6 +583,10 @@ namespace Unigram.Common
                 Dark["MessageOverlayBackgroundBrush"].Color = ColorEx.FromHex(0x54000000);
                 Dark["MessageCallForegroundBrush"].Color = ColorEx.FromHex(0x49A2F0);
                 Dark["MessageCallMissedForegroundBrush"].Color = ColorEx.FromHex(0xED5050);
+                Dark["MessageReactionBackgroundBrush"].Color = ColorEx.FromHex(0x2B4153);
+                Dark["MessageReactionForegroundBrush"].Color = ColorEx.FromHex(0x7AC3F4);
+                Dark["MessageReactionChosenBackgroundBrush"].Color = ColorEx.FromHex(0x318EE4);
+                Dark["MessageReactionChosenForegroundBrush"].Color = ColorEx.FromHex(0x33393F);
             }
         }
     }
@@ -594,6 +610,10 @@ namespace Unigram.Common
             { "MessageOverlayBackgroundBrush", new SolidColorBrush(ColorEx.FromHex(0x54000000)) },
             { "MessageCallForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0x2AB32A)) },
             { "MessageCallMissedForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0xDD5849)) },
+            { "MessageReactionBackgroundBrush", new SolidColorBrush(ColorEx.FromHex(0xE8F5FC)) },
+            { "MessageReactionForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0x168DCD)) },
+            { "MessageReactionChosenBackgroundBrush", new SolidColorBrush(ColorEx.FromHex(0x40A7E3)) },
+            { "MessageReactionChosenForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0xFFFFFF)) },
         };
 
         [ThreadStatic]
@@ -613,6 +633,10 @@ namespace Unigram.Common
             { "MessageOverlayBackgroundBrush", new SolidColorBrush(ColorEx.FromHex(0x54000000)) },
             { "MessageCallForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0x49A2F0)) },
             { "MessageCallMissedForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0xED5050)) },
+            { "MessageReactionBackgroundBrush", new SolidColorBrush(ColorEx.FromHex(0x3A4754)) },
+            { "MessageReactionForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0x67BBF3)) },
+            { "MessageReactionChosenBackgroundBrush", new SolidColorBrush(ColorEx.FromHex(0x6EB2EE)) },
+            { "MessageReactionChosenForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0x33393F)) },
         };
 
         public ThemeIncoming()
@@ -675,6 +699,10 @@ namespace Unigram.Common
                 Light["MessageOverlayBackgroundBrush"].Color = ColorEx.FromHex(0x54000000);
                 Light["MessageCallForegroundBrush"].Color = ColorEx.FromHex(0x2AB32A);
                 Light["MessageCallMissedForegroundBrush"].Color = ColorEx.FromHex(0xDD5849);
+                Light["MessageReactionBackgroundBrush"].Color = ColorEx.FromHex(0xE8F5FC);
+                Light["MessageReactionForegroundBrush"].Color = ColorEx.FromHex(0x168DCD);
+                Light["MessageReactionChosenBackgroundBrush"].Color = ColorEx.FromHex(0x40A7E3);
+                Light["MessageReactionChosenForegroundBrush"].Color = ColorEx.FromHex(0xFFFFFF);
             }
             else
             {
@@ -691,6 +719,10 @@ namespace Unigram.Common
                 Dark["MessageOverlayBackgroundBrush"].Color = ColorEx.FromHex(0x54000000);
                 Dark["MessageCallForegroundBrush"].Color = ColorEx.FromHex(0x49A2F0);
                 Dark["MessageCallMissedForegroundBrush"].Color = ColorEx.FromHex(0xED5050);
+                Dark["MessageReactionBackgroundBrush"].Color = ColorEx.FromHex(0x3A4754);
+                Dark["MessageReactionForegroundBrush"].Color = ColorEx.FromHex(0x67BBF3);
+                Dark["MessageReactionChosenBackgroundBrush"].Color = ColorEx.FromHex(0x6EB2EE);
+                Dark["MessageReactionChosenForegroundBrush"].Color = ColorEx.FromHex(0x33393F);
             }
         }
     }

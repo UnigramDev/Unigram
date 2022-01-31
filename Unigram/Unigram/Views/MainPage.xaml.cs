@@ -51,12 +51,14 @@ namespace Unigram.Views
         IHandle<UpdateChatReadInbox>,
         IHandle<UpdateChatReadOutbox>,
         IHandle<UpdateChatUnreadMentionCount>,
+        IHandle<UpdateChatUnreadReactionCount>,
         IHandle<UpdateChatTitle>,
         IHandle<UpdateChatPhoto>,
         IHandle<UpdateChatVideoChat>,
         IHandle<UpdateUserStatus>,
         IHandle<UpdateChatAction>,
         IHandle<UpdateMessageMentionRead>,
+        IHandle<UpdateMessageUnreadReactions>,
         IHandle<UpdateUnreadChatCount>,
         //IHandle<UpdateMessageContent>,
         IHandle<UpdateSecretChat>,
@@ -221,6 +223,11 @@ namespace Unigram.Views
             Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatUnreadMentionCount(chat));
         }
 
+        public void Handle(UpdateChatUnreadReactionCount update)
+        {
+            Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatUnreadMentionCount(chat));
+        }
+
         public void Handle(UpdateChatTitle update)
         {
             Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatTitle(chat));
@@ -250,6 +257,11 @@ namespace Unigram.Views
         }
 
         public void Handle(UpdateMessageMentionRead update)
+        {
+            Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatUnreadMentionCount(chat));
+        }
+
+        public void Handle(UpdateMessageUnreadReactions update)
         {
             Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatUnreadMentionCount(chat));
         }

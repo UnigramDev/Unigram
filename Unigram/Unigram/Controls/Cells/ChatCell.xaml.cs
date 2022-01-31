@@ -452,7 +452,8 @@ namespace Unigram.Controls.Cells
             }
 
             UpdateChatReadInbox(chat, position);
-            UnreadMentionsBadge.Visibility = chat.UnreadMentionCount > 0 ? Visibility.Visible : Visibility.Collapsed;
+            UnreadMentionsBadge.Visibility = chat.UnreadMentionCount > 0 || chat.UnreadReactionCount > 0 ? Visibility.Visible : Visibility.Collapsed;
+            UnreadMentionsLabel.Text = chat.UnreadMentionCount > 0 ? Icons.Address : Icons.Reactions;
         }
 
         public void UpdateNotificationSettings(Chat chat)

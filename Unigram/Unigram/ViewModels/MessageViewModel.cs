@@ -1,4 +1,6 @@
-﻿using Telegram.Td.Api;
+﻿using System.Collections.Generic;
+using System.Collections.Immutable;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
@@ -33,6 +35,9 @@ namespace Unigram.ViewModels
 
         // Used only by animated emojis
         public Sticker Interaction { get; set; }
+
+        private IDictionary<string, UnreadReaction> _unreadReactions;
+        public IDictionary<string, UnreadReaction> UnreadReactions { get => _unreadReactions ??= (_message.UnreadReactions?.ToImmutableDictionary(x => x.Reaction) ?? ImmutableDictionary<string, UnreadReaction>.Empty); set => _unreadReactions = value; }
 
         public ReplyMarkup ReplyMarkup { get => _message.ReplyMarkup; set => _message.ReplyMarkup = value; }
         public MessageContent Content { get => _message.Content; set => _message.Content = value; }

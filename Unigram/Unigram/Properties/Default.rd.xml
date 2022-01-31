@@ -140,6 +140,10 @@
 			<Method Name="UpdateReaction" Dynamic="Required"/>
 		</Type>
 
+		<Type Name="Unigram.Controls.Messages.ReactionButton">
+			<Method Name="UpdateFile" Dynamic="Required"/>
+		</Type>
+
 		<Type Name="Unigram.Controls.ProfilePicture" Dynamic="Required All"/>
 
 		<Type Name="Unigram.Services.CloudUpdateService">

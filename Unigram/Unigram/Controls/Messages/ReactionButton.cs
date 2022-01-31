@@ -29,18 +29,20 @@ namespace Unigram.Controls.Messages
         private MessageViewModel _message;
         private MessageReaction _interaction;
         private Reaction _reaction;
+        private UnreadReaction _unread;
 
         public MessageReaction Reaction => _interaction;
 
         private int _presenterId;
 
-        public async void SetReaction(MessageViewModel message, MessageReaction interaction, Reaction value)
+        public async void SetReaction(MessageViewModel message, MessageReaction interaction, Reaction value, UnreadReaction unread)
         {
             if (Presenter == null)
             {
                 _message = message;
                 _interaction = interaction;
                 _reaction = value;
+                _unread = unread;
                 return;
             }
 
@@ -51,13 +53,14 @@ namespace Unigram.Controls.Messages
             _message = message;
             _interaction = interaction;
             _reaction = value;
+            _unread = null;
 
             IsChecked = interaction.IsChosen;
 
-            if (interaction.ChooseCount > interaction.RecentChooserIds.Count)
+            if (interaction.TotalCount > interaction.RecentSenderIds.Count)
             {
                 Count ??= GetTemplateChild(nameof(Count)) as NumericTextBlock;
-                Count.Text = Converter.ShortNumber(interaction.ChooseCount);
+                Count.Text = Converter.ShortNumber(interaction.TotalCount);
 
                 if (RecentChoosers != null)
                 {
@@ -69,7 +72,7 @@ namespace Unigram.Controls.Messages
                 RecentChoosers ??= GetRecentChoosers();
 
                 var destination = RecentChoosers.Items;
-                var origin = interaction.RecentChooserIds;
+                var origin = interaction.RecentSenderIds;
 
                 if (destination.Count > 0 && recycled)
                 {
@@ -85,6 +88,11 @@ namespace Unigram.Controls.Messages
                 {
                     Count.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                 }
+            }
+
+            if (unread != null)
+            {
+                Animate();
             }
 
             var file = value.CenterAnimation.StickerValue;
@@ -103,11 +111,18 @@ namespace Unigram.Controls.Messages
             {
                 Presenter.Source = null;
 
+                UpdateManager.Subscribe(this, _message, file, UpdateFile, true);
+
                 if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
                     _message.ProtoService.DownloadFile(file.Id, 12);
                 }
             }
+        }
+
+        private async void UpdateFile(object target, File file)
+        {
+            Presenter.Source = await GetLottieFrame(file.Local.Path, 0, 32, 32);
         }
 
         private RecentUserHeads GetRecentChoosers()
@@ -167,7 +182,7 @@ namespace Unigram.Controls.Messages
             Presenter = GetTemplateChild(nameof(Presenter)) as Image;
             Overlay = GetTemplateChild(nameof(Overlay)) as Popup;
 
-            SetReaction(_message, _interaction, _reaction);
+            SetReaction(_message, _interaction, _reaction, _unread);
             base.OnApplyTemplate();
         }
 
@@ -179,94 +194,99 @@ namespace Unigram.Controls.Messages
         private void OnClick(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
             var chosen = _interaction;
-            var reaction = _reaction;
-
-            if (reaction == null || chosen == null || Presenter == null)
+            if (chosen == null || Presenter == null)
             {
                 return;
             }
 
-            if (chosen.IsChosen)
+            _message.ProtoService.Send(new SetMessageReaction(_message.ChatId, _message.Id, chosen.Reaction, false));
+
+            if (chosen.IsChosen is false)
             {
-                _message.ProtoService.Send(new SetMessageReaction(_message.ChatId, _message.Id, string.Empty));
+                Animate();
+            }
+        }
+
+        private void Animate()
+        {
+            var reaction = _reaction;
+            if (reaction == null)
+            {
+                return;
+            }
+
+            var file1 = reaction.CenterAnimation.StickerValue;
+            var file2 = reaction.AroundAnimation.StickerValue;
+
+            if (file1.Local.IsDownloadingCompleted && file2.Local.IsDownloadingCompleted)
+            {
+                var presenter = Presenter;
+                var popup = Overlay;
+
+                var dispatcher = DispatcherQueue.GetForCurrentThread();
+
+                var center = new LottieView();
+                center.Width = 32;
+                center.Height = 32;
+                center.IsLoopingEnabled = false;
+                center.FrameSize = new Windows.Graphics.SizeInt32 { Width = 32, Height = 32 };
+                center.DecodeFrameType = DecodePixelType.Logical;
+                center.Source = UriEx.ToLocal(file1.Local.Path);
+                center.FirstFrameRendered += (s, args) =>
+                {
+                    dispatcher.TryEnqueue(Start);
+                };
+                center.PositionChanged += (s, args) =>
+                {
+                    if (args == 1)
+                    {
+                        dispatcher.TryEnqueue(Continue1);
+                        //dispatcher.TryEnqueue(() => popup.IsOpen = false);
+                    }
+                };
+
+                var around = new LottieView();
+                around.Width = 32 * 3;
+                around.Height = 32 * 3;
+                around.IsLoopingEnabled = false;
+                around.FrameSize = new Windows.Graphics.SizeInt32 { Width = 32 * 3, Height = 32 * 3 };
+                around.DecodeFrameType = DecodePixelType.Logical;
+                around.Source = UriEx.ToLocal(file2.Local.Path);
+                around.PositionChanged += (s, args) =>
+                {
+                    if (args == 1)
+                    {
+                        dispatcher.TryEnqueue(Continue2);
+                        //dispatcher.TryEnqueue(() => popup.IsOpen = false);
+                    }
+                };
+
+                var root = new Grid();
+                //root.Background = new SolidColorBrush(Colors.Blue);
+                //root.Opacity = 0.5;
+                root.Width = 32 * 3;
+                root.Height = 32 * 3;
+                root.Children.Add(center);
+                root.Children.Add(around);
+
+                popup.Child = root;
+                //popup.PlacementTarget = this;
+                //popup.DesiredPlacement = PopupPlacementMode.BottomEdgeAlignedLeft;
+                popup.ShouldConstrainToRootBounds = false;
+                //popup.HorizontalOffset = -((71 * 3 - 71) / 2d);
+                //popup.VerticalOffset = -((71 * 3 + 71) / 2d);
+                popup.IsOpen = true;
             }
             else
             {
-                _message.ProtoService.Send(new SetMessageReaction(_message.ChatId, _message.Id, chosen.Reaction));
-
-                var file1 = reaction.CenterAnimation.StickerValue;
-                var file2 = reaction.AroundAnimation.StickerValue;
-
-                if (file1.Local.IsDownloadingCompleted && file2.Local.IsDownloadingCompleted)
+                if (file1.Local.CanBeDownloaded && !file1.Local.IsDownloadingActive)
                 {
-                    var presenter = Presenter;
-                    var popup = Overlay;
-
-                    var dispatcher = DispatcherQueue.GetForCurrentThread();
-
-                    var center = new LottieView();
-                    center.Width = 32;
-                    center.Height = 32;
-                    center.IsLoopingEnabled = false;
-                    center.FrameSize = new Windows.Graphics.SizeInt32 { Width = 32, Height = 32 };
-                    center.DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical;
-                    center.Source = UriEx.ToLocal(file1.Local.Path);
-                    center.FirstFrameRendered += (s, args) =>
-                    {
-                        dispatcher.TryEnqueue(Start);
-                    };
-                    center.PositionChanged += (s, args) =>
-                    {
-                        if (args == 1)
-                        {
-                            dispatcher.TryEnqueue(Continue1);
-                        //dispatcher.TryEnqueue(() => popup.IsOpen = false);
-                    }
-                    };
-
-                    var around = new LottieView();
-                    around.Width = 32 * 3;
-                    around.Height = 32 * 3;
-                    around.IsLoopingEnabled = false;
-                    around.FrameSize = new Windows.Graphics.SizeInt32 { Width = 32 * 3, Height = 32 * 3 };
-                    around.DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical;
-                    around.Source = UriEx.ToLocal(file2.Local.Path);
-                    around.PositionChanged += (s, args) =>
-                    {
-                        if (args == 1)
-                        {
-                            dispatcher.TryEnqueue(Continue2);
-                        //dispatcher.TryEnqueue(() => popup.IsOpen = false);
-                    }
-                    };
-
-                    var root = new Grid();
-                    //root.Background = new SolidColorBrush(Colors.Blue);
-                    //root.Opacity = 0.5;
-                    root.Width = 32 * 3;
-                    root.Height = 32 * 3;
-                    root.Children.Add(center);
-                    root.Children.Add(around);
-
-                    popup.Child = root;
-                    //popup.PlacementTarget = this;
-                    //popup.DesiredPlacement = PopupPlacementMode.BottomEdgeAlignedLeft;
-                    popup.ShouldConstrainToRootBounds = false;
-                    //popup.HorizontalOffset = -((71 * 3 - 71) / 2d);
-                    //popup.VerticalOffset = -((71 * 3 + 71) / 2d);
-                    popup.IsOpen = true;
+                    _message.ProtoService.DownloadFile(file1.Id, 12);
                 }
-                else
-                {
-                    if (file1.Local.CanBeDownloaded && !file1.Local.IsDownloadingActive)
-                    {
-                        _message.ProtoService.DownloadFile(file1.Id, 12);
-                    }
 
-                    if (file2.Local.CanBeDownloaded && !file2.Local.IsDownloadingActive)
-                    {
-                        _message.ProtoService.DownloadFile(file2.Id, 12);
-                    }
+                if (file2.Local.CanBeDownloaded && !file2.Local.IsDownloadingActive)
+                {
+                    _message.ProtoService.DownloadFile(file2.Id, 12);
                 }
             }
         }

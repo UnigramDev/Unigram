@@ -853,6 +853,44 @@
             <StackPanel VerticalAlignment="Bottom"
                         HorizontalAlignment="Right"
                         Margin="0,6">
+                <StackPanel x:Name="ReactionsPanel"
+                            Visibility="Collapsed"
+                            RightTapped="Reactions_RightTapped">
+                    <Border Background="{ThemeResource ChatUnreadBadgeBrush}"
+                            MinWidth="20"
+                            Height="20"
+                            CornerRadius="10"
+                            HorizontalAlignment="Center"
+                            Margin="0,0,0,-12"
+                            IsHitTestVisible="False"
+                            Canvas.ZIndex="1">
+                        <TextBlock x:Name="Reactions"
+                                   Style="{StaticResource CaptionTextBlockStyle}"
+                                   Foreground="{ThemeResource ChatUnreadLabelBrush}"
+                                   TextAlignment="Center"
+                                   Margin="4,2,4,0" />
+                    </Border>
+                    <Grid Margin="12,6">
+                        <Ellipse x:Name="ArrowReactionsShadow"
+                                 Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                 Width="36"
+                                 Height="36" />
+                        <Border Background="{ThemeResource PageSubHeaderBackgroundBrush}"
+                                CornerRadius="18"
+                                Height="36"
+                                Width="36">
+                            <controls:GlyphButton Command="{x:Bind ViewModel.Reactions.NextMessageCommand}"
+                                                  Width="36"
+                                                  Height="36"
+                                                  Glyph="&#xE980;"
+                                                  CornerRadius="24"
+                                                  AutomationProperties.Name="{CustomResource AccDescrReactionDown}"
+                                                  ToolTipService.ToolTip="{CustomResource AccDescrReactionDown}"
+                                                  Style="{StaticResource RoundGlyphButtonStyle}" />
+                        </Border>
+                    </Grid>
+                </StackPanel>
+
                 <StackPanel x:Name="MentionsPanel"
                             Visibility="Collapsed"
                             RightTapped="Mentions_RightTapped">
@@ -879,7 +917,7 @@
                                 CornerRadius="18"
                                 Height="36"
                                 Width="36">
-                            <controls:GlyphButton Command="{x:Bind ViewModel.NextMentionCommand}"
+                            <controls:GlyphButton Command="{x:Bind ViewModel.Mentions.NextMessageCommand}"
                                                   Width="36"
                                                   Height="36"
                                                   Glyph="&#xE168;"

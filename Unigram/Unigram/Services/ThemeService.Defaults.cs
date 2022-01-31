@@ -85,6 +85,13 @@ namespace Unigram.Services
                     { "MessageHeaderBorderOutgoing", ColorEx.FromHex(0xFF65BBF4) },
                     { "MessageMediaBackgroundIncoming", ColorEx.FromHex(0xFF3F96D0) },
                     { "MessageMediaBackgroundOutgoing", ColorEx.FromHex(0xFF4C9CE2) },
+                    { "MessageReactionBackgroundOutgoing", ColorEx.FromHex(0x2B4153) },
+                    { "MessageReactionForegroundOutgoing", ColorEx.FromHex(0x45A32D) },
+                    { "MessageReactionChosenBackgroundOutgoing", ColorEx.FromHex(0x318EE4) },
+                    { "MessageReactionBackgroundIncoming", ColorEx.FromHex(0x3A4754) },
+                    { "MessageReactionForegroundIncoming", ColorEx.FromHex(0x168DCD) },
+                    { "MessageReactionChosenBackgroundIncoming", ColorEx.FromHex(0x6EB2EE) },
+                    { "MessageReactionChosenForegroundIncoming", ColorEx.FromHex(0x33393F) },
                 }
             },
             {
@@ -111,6 +118,13 @@ namespace Unigram.Services
                     { "MessageHeaderBorderOutgoing", ColorEx.FromHex(0xFF86CAFF) },
                     { "MessageMediaBackgroundIncoming", ColorEx.FromHex(0xFF3F96D0) },
                     { "MessageMediaBackgroundOutgoing", ColorEx.FromHex(0xFF4C9CE2) },
+                    { "MessageReactionBackgroundOutgoing", ColorEx.FromHex(0x2B4153) },
+                    { "MessageReactionForegroundOutgoing", ColorEx.FromHex(0x45A32D) },
+                    { "MessageReactionChosenBackgroundOutgoing", ColorEx.FromHex(0x318EE4) },
+                    { "MessageReactionBackgroundIncoming", ColorEx.FromHex(0x3A4754) },
+                    { "MessageReactionForegroundIncoming", ColorEx.FromHex(0x168DCD) },
+                    { "MessageReactionChosenBackgroundIncoming", ColorEx.FromHex(0x6EB2EE) },
+                    { "MessageReactionChosenForegroundIncoming", ColorEx.FromHex(0x33393F) },
                 }
             },
             {
@@ -135,7 +149,10 @@ namespace Unigram.Services
                     { "MessageHeaderForegroundOutgoing", ColorEx.FromHex(0xFF168DCD) },
                     { "MessageHeaderBorderOutgoing", ColorEx.FromHex(0xFF05A0E8) },
                     { "MessageMediaBackgroundIncoming", ColorEx.FromHex(0xFF40A7E3) },
-                    { "MessageMediaBackgroundOutgoing", ColorEx.FromHex(0xFF40A7E3) }
+                    { "MessageMediaBackgroundOutgoing", ColorEx.FromHex(0xFF40A7E3) },
+                    { "MessageReactionBackgroundOutgoing", ColorEx.FromHex(0xC1E4F8) },
+                    { "MessageReactionForegroundOutgoing", ColorEx.FromHex(0x168DCD) },
+                    { "MessageReactionChosenBackgroundOutgoing", ColorEx.FromHex(0x40A7E3) },
                 }
             },
         };
@@ -145,6 +162,16 @@ namespace Unigram.Services
     {
         private static readonly Dictionary<string, object> _defaultLight = new Dictionary<string, object>
         {
+            { "MessageReactionBackgroundOutgoing", ColorEx.FromHex(0xD5F1C9) },
+            { "MessageReactionForegroundOutgoing", ColorEx.FromHex(0x45A32D) },
+            { "MessageReactionChosenBackgroundOutgoing", ColorEx.FromHex(0x5FBE67) },
+            { "MessageReactionChosenForegroundOutgoing", ColorEx.FromHex(0xFFFFFF) },
+
+            { "MessageReactionBackgroundIncoming", ColorEx.FromHex(0xE8F5FC) },
+            { "MessageReactionForegroundIncoming", ColorEx.FromHex(0x168DCD) },
+            { "MessageReactionChosenBackgroundIncoming", ColorEx.FromHex(0x40A7E3) },
+            { "MessageReactionChosenForegroundIncoming", ColorEx.FromHex(0xFFFFFF) },
+
             { "ApplicationPageBackgroundThemeBrush", Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF) },
             { "ChatPageBackgroundBrush", Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF) },
             { "ContentDialogBackground", Color.FromArgb(0xFF, 0xF3, 0xF3, 0xF3) },
@@ -612,6 +639,16 @@ namespace Unigram.Services
 
         private static readonly Dictionary<string, object> _defaultDark = new Dictionary<string, object>
         {
+            { "MessageReactionBackgroundOutgoing", ColorEx.FromHex(0x2B4153) },
+            { "MessageReactionForegroundOutgoing", ColorEx.FromHex(0x7AC3F4) },
+            { "MessageReactionChosenBackgroundOutgoing", ColorEx.FromHex(0x318EE4) },
+            { "MessageReactionChosenForegroundOutgoing", ColorEx.FromHex(0x33393F) },
+
+            { "MessageReactionBackgroundIncoming", ColorEx.FromHex(0x3A4754) },
+            { "MessageReactionForegroundIncoming", ColorEx.FromHex(0x67BBF3) },
+            { "MessageReactionChosenBackgroundIncoming", ColorEx.FromHex(0x6EB2EE) },
+            { "MessageReactionChosenForegroundIncoming", ColorEx.FromHex(0x33393F) },
+
             { "ApplicationPageBackgroundThemeBrush", Color.FromArgb(0xFF, 0x17, 0x17, 0x17) },
             { "ChatPageBackgroundBrush", Color.FromArgb(0xFF, 0x17, 0x17, 0x17) },
             { "ContentDialogBackground", Color.FromArgb(0xFF, 0x20, 0x20, 0x20) },

@@ -854,18 +854,22 @@ namespace Unigram.Controls.Messages
             }
 
             Footer.UpdateMessageInteractionInfo(message);
+            UpdateMessageReactions(message, false);
+        }
 
+        public void UpdateMessageReactions(MessageViewModel message, bool animate)
+        {
             var media = Grid.GetRow(Media);
             var footer = Grid.GetRow(Footer);
 
             if (media == footer)
             {
                 Reactions.UpdateMessageReactions(null);
-                MediaReactions.UpdateMessageReactions(message);
+                MediaReactions.UpdateMessageReactions(message, animate);
             }
             else
             {
-                Reactions.UpdateMessageReactions(message);
+                Reactions.UpdateMessageReactions(message, animate);
                 MediaReactions.UpdateMessageReactions(null);
             }
         }

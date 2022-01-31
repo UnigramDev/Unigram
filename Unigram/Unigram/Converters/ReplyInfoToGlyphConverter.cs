@@ -52,8 +52,13 @@ namespace Unigram.Converters
 
         public const string People = "\uE716";
         public const string Megaphone = "\uE789";
-        public const string Lock = "\uE72E";
+        public const string LockClosed = "\uE72E";
         public const string Bot = "\uE99A";
+
+        public const string PeopleFilled16 = "\uE983";
+        public const string MegaphoneFilled16 = "\uE982";
+        public const string LockClosedFilled16 = "\uE984";
+        public const string BotFilled = "\uE981";
 
         public const string PersonQuestionMark = "\uE897";
         public const string QuestionCircle = "\uE9CE";
@@ -83,6 +88,7 @@ namespace Unigram.Converters
         public const string Gif = "\uF4A9";
 
         public const string Reactions = "\uE980";
+        public const string Address = "\uE168";
 
         public const string Star = "\uE734";
         public const string StarOff = "\uE8D9";

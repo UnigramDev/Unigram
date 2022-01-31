@@ -66,6 +66,7 @@ namespace Unigram.Services
         string GetTitle(MessageForwardInfo info);
 
         IList<Reaction> GetAvailableReactions(Chat chat);
+        Task<IList<Reaction>> GetAvailableReactionsAsync(Message message);
 
         Chat GetChat(long id);
         IList<Chat> GetChats(IList<long> ids);
@@ -394,9 +395,6 @@ namespace Unigram.Services
             Send(new LoadChats(new ChatListMain(), 20));
 
             UpdateVersion();
-
-            Send(new SetOption("online", new OptionValueBoolean(true)));
-            Send(new TestGetDifference());
         }
 
         private void InitializeFlush()
@@ -891,6 +889,17 @@ Read more about how to update your device [here](https://support.microsoft.com/h
         public IList<Reaction> GetAvailableReactions(Chat chat)
         {
             return _reactions.Values.GroupJoin(chat.AvailableReactions, x => x.ReactionValue, y => y, (x, y) => x).ToArray();
+        }
+
+        public async Task<IList<Reaction>> GetAvailableReactionsAsync(Message message)
+        {
+            var response = await SendAsync(new GetMessageAvailableReactions(message.ChatId, message.Id));
+            if (response is AvailableReactions available)
+            {
+                return _reactions.Values.GroupJoin(available.Reactions, x => x.ReactionValue, y => y, (x, y) => x).ToArray();
+            }
+
+            return Array.Empty<Reaction>();
         }
 
         public Chat GetChat(long id)
@@ -1615,6 +1624,13 @@ Read more about how to update your device [here](https://support.microsoft.com/h
                     value.UnreadMentionCount = updateChatUnreadMentionCount.UnreadMentionCount;
                 }
             }
+            else if (update is UpdateChatUnreadReactionCount updateChatUnreadReactionCount)
+            {
+                if (_chats.TryGetValue(updateChatUnreadReactionCount.ChatId, out Chat value))
+                {
+                    value.UnreadReactionCount = updateChatUnreadReactionCount.UnreadReactionCount;
+                }
+            }
             else if (update is UpdateChatVideoChat updateChatVideoChat)
             {
                 if (_chats.TryGetValue(updateChatVideoChat.ChatId, out Chat value))
@@ -1699,17 +1715,12 @@ Read more about how to update your device [here](https://support.microsoft.com/h
                     value.UnreadMentionCount = updateMessageMentionRead.UnreadMentionCount;
                 }
             }
-            else if (update is UpdateMessageSendAcknowledged updateMessageSendAcknowledged)
+            else if (update is UpdateMessageUnreadReactions updateMessageUnreadReactions)
             {
-
-            }
-            else if (update is UpdateMessageSendFailed updateMessageSendFailed)
-            {
-
-            }
-            else if (update is UpdateMessageSendSucceeded updateMessageSendSucceeded)
-            {
-
+                if (_chats.TryGetValue(updateMessageUnreadReactions.ChatId, out Chat value))
+                {
+                    value.UnreadReactionCount = updateMessageUnreadReactions.UnreadReactionCount;
+                }
             }
             else if (update is UpdateNewChat updateNewChat)
             {
@@ -1723,10 +1734,6 @@ Read more about how to update your device [here](https://support.microsoft.com/h
                 {
                     _usersToChats[privata.UserId] = updateNewChat.Chat.Id;
                 }
-            }
-            else if (update is UpdateNewMessage updateNewMessage)
-            {
-
             }
             else if (update is UpdateOption updateOption)
             {

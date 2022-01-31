@@ -15,12 +15,13 @@ namespace Unigram.Controls.Messages
 
         public bool HasReactions => _reactions.Count > 0;
 
-        public void UpdateMessageReactions(MessageViewModel message)
+        public void UpdateMessageReactions(MessageViewModel message, bool animate = false)
         {
             var reactions = message?.InteractionInfo?.Reactions;
             if (reactions != null)
             {
                 var added = new HashSet<string>();
+                var unread = message.UnreadReactions;
 
                 foreach (var item in reactions)
                 {
@@ -33,14 +34,19 @@ namespace Unigram.Controls.Messages
 
                         added.Add(item.Reaction);
 
+                        if (!animate || !unread.TryGetValue(item.Reaction, out UnreadReaction unreadReaction))
+                        {
+                            unreadReaction = null;
+                        }
+
                         if (_reactions.TryGetValue(item.Reaction, out ReactionButton button))
                         {
-                            button.SetReaction(message, item, reaction);
+                            button.SetReaction(message, item, reaction, unreadReaction);
                         }
                         else
                         {
                             button = new ReactionButton();
-                            button.SetReaction(message, item, reaction);
+                            button.SetReaction(message, item, reaction, unreadReaction);
 
                             _reactions[item.Reaction] = button;
                             Children.Add(button);

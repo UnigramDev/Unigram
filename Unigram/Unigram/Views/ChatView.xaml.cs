@@ -200,6 +200,9 @@ namespace Unigram.Views
             visual = DropShadowEx.Attach(ArrowMentionsShadow, 2);
             visual.Offset = new Vector3(0, 1, 0);
 
+            visual = DropShadowEx.Attach(ArrowReactionsShadow, 2);
+            visual.Offset = new Vector3(0, 1, 0);
+
             //if (ApiInformation.IsMethodPresent("Windows.UI.Xaml.Hosting.ElementCompositionPreview", "SetImplicitShowAnimation"))
             //{
             //    var showShowAnimation = Window.Current.Compositor.CreateSpringScalarAnimation();
@@ -2056,7 +2059,7 @@ namespace Unigram.Views
 
                 // Polls
                 flyout.CreateFlyoutItem(MessageUnvotePoll_Loaded, ViewModel.MessageUnvotePollCommand, message, Strings.Resources.Unvote, new FontIcon { Glyph = Icons.ArrowUndo });
-                flyout.CreateFlyoutItem(MessageStopPoll_Loaded, ViewModel.MessageStopPollCommand, message, Strings.Resources.StopPoll, new FontIcon { Glyph = Icons.Lock });
+                flyout.CreateFlyoutItem(MessageStopPoll_Loaded, ViewModel.MessageStopPollCommand, message, Strings.Resources.StopPoll, new FontIcon { Glyph = Icons.LockClosed });
 
 #if DEBUG
                 var file = message.GetFile();
@@ -2097,11 +2100,15 @@ namespace Unigram.Views
                 flyout.Items.RemoveAt(flyout.Items.Count - 1);
             }
 
-            if (chat.AvailableReactions.Count > 0 && args.TryGetPosition(Window.Current.Content, out Point absolute))
+            if (args.TryGetPosition(Window.Current.Content, out Point absolute))
             {
-                flyout.Opened += (s, args) =>
+                flyout.Opened += async (s, args) =>
                 {
-                    MenuFlyoutReactions.ShowAt(chat, message, flyout, absolute);
+                    var response = await message.ProtoService.GetAvailableReactionsAsync(message.Get());
+                    if (response.Count > 0 && flyout.IsOpen)
+                    {
+                        MenuFlyoutReactions.ShowAt(response, message, flyout, absolute);
+                    }
                 };
             }
 
@@ -3198,6 +3205,11 @@ namespace Unigram.Views
             ViewModel.ReadMentionsCommand.Execute();
         }
 
+        private void Reactions_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            ViewModel.ReadMentionsCommand.Execute();
+        }
+
         private void Arrow_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
             ViewModel.RepliesStack.Clear();
@@ -3317,6 +3329,10 @@ namespace Unigram.Views
                     {
                         lottie.Source = null;
                     }
+                    else if (content.Children[0] is AnimationView video)
+                    {
+                        video.Source = null;
+                    }
 
                     return;
                 }
@@ -3332,6 +3348,10 @@ namespace Unigram.Views
                     {
                         lottie.Source = UriEx.ToLocal(file.Local.Path);
                     }
+                    else if (content.Children[0] is AnimationView video)
+                    {
+                        video.Source = new LocalVideoSource(file);
+                    }
                 }
                 else
                 {
@@ -3342,6 +3362,10 @@ namespace Unigram.Views
                     else if (content.Children[0] is LottieView lottie)
                     {
                         lottie.Source = null;
+                    }
+                    else if (content.Children[0] is AnimationView video)
+                    {
+                        video.Source = null;
                     }
 
                     CompositionPathParser.ParseThumbnail(sticker.Outline, out ShapeVisual visual, false);
@@ -3393,9 +3417,10 @@ namespace Unigram.Views
             UpdateChatActionBar(chat);
 
             UpdateChatUnreadMentionCount(chat, chat.UnreadMentionCount);
+            UpdateChatUnreadReactionCount(chat, chat.UnreadReactionCount);
             UpdateChatDefaultDisableNotification(chat, chat.DefaultDisableNotification);
 
-            TypeIcon.Text = chat.Type is ChatTypeSecret ? Icons.Lock : string.Empty;
+            TypeIcon.Text = chat.Type is ChatTypeSecret ? Icons.LockClosed : string.Empty;
             TypeIcon.Visibility = chat.Type is ChatTypeSecret ? Visibility.Visible : Visibility.Collapsed;
 
             ButtonScheduled.Visibility = chat.HasScheduledMessages && ViewModel.Type == DialogType.History ? Visibility.Visible : Visibility.Collapsed;
@@ -3605,6 +3630,19 @@ namespace Unigram.Views
             else
             {
                 MentionsPanel.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        public void UpdateChatUnreadReactionCount(Chat chat, int count)
+        {
+            if (ViewModel.Type == DialogType.History && count > 0)
+            {
+                ReactionsPanel.Visibility = Visibility.Visible;
+                Reactions.Text = count.ToString();
+            }
+            else
+            {
+                ReactionsPanel.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -4491,6 +4529,11 @@ namespace Unigram.Views
             else if (content.Children[0] is LottieView lottie)
             {
                 lottie.Source = UriEx.ToLocal(file.Local.Path);
+                _autocompleteHandler.ThrottleVisibleItems();
+            }
+            else if (content.Children[0] is AnimationView video)
+            {
+                video.Source = new LocalVideoSource(file);
                 _autocompleteHandler.ThrottleVisibleItems();
             }
         }
