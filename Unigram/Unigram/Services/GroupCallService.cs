@@ -90,6 +90,8 @@ namespace Unigram.Services
         private GroupCall _call;
         private GroupCallParticipant _currentUser;
 
+        private TimeSpan _timeDifference;
+
         private VoipGroupManager _manager;
         private VoipVideoCapture _capturer;
         private int _source;
@@ -270,6 +272,14 @@ namespace Unigram.Services
             var response = await ProtoService.SendAsync(new GetGroupCall(groupCallId));
             if (response is GroupCall groupCall)
             {
+                var unix = await ProtoService.SendAsync(new GetOption("unix_time")) as OptionValueInteger;
+                if (unix == null)
+                {
+                    return;
+                }
+
+                _timeDifference = DateTime.Now - Utils.UnixTimestampToDateTime(unix.Value);
+
                 _chat = chat;
                 _call = groupCall;
 
@@ -538,15 +548,12 @@ namespace Unigram.Services
 
         #endregion
 
-        private async void OnBroadcastTimeRequested(VoipGroupManager sender, BroadcastTimeRequestedEventArgs args)
+        private void OnBroadcastTimeRequested(VoipGroupManager sender, BroadcastTimeRequestedEventArgs args)
         {
-            var response = await ProtoService.SendAsync(new GetOption("unix_time")) as OptionValueInteger;
-            if (response == null)
-            {
-                return;
-            }
+            var now = DateTime.Now + _timeDifference;
+            var stamp = now.ToTimestampMilliseconds();
 
-            args.Deferral(response.Value * 1000);
+            args.Deferral(stamp);
         }
 
         private async void OnBroadcastPartRequested(VoipGroupManager sender, BroadcastPartRequestedEventArgs args)
@@ -557,25 +564,23 @@ namespace Unigram.Services
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new GetOption("unix_time")) as OptionValueInteger;
-            if (response == null)
-            {
-                return;
-            }
+            var now = DateTime.Now + _timeDifference;
+            var stamp = now.ToTimestampMilliseconds();
 
             var time = args.Time;
             if (time == 0)
             {
-                time = response.Value * 1000;
+                time = stamp;
             }
 
-            var stamp = DateTime.Now.ToTimestamp();
+            var test = args.VideoQuality;
 
-            ProtoService.Send(new GetGroupCallStreamSegment(call.Id, time, args.Scale, args.ChannelId, args.VideoQuality), result =>
-            {
-                stamp = DateTime.Now.ToTimestamp() - stamp;
-                args.Deferral(time, response.Value + stamp, result as FilePart);
-            });
+            var response = await ProtoService.SendAsync(new GetGroupCallStreamSegment(call.Id, time, args.Scale, args.ChannelId, args.VideoQuality));
+
+            now = DateTime.Now + _timeDifference;
+            stamp = now.ToTimestamp();
+
+            args.Deferral(time, stamp, response as FilePart);
         }
 
         private void OnNetworkStateUpdated(VoipGroupManager sender, GroupNetworkStateChangedEventArgs args)
