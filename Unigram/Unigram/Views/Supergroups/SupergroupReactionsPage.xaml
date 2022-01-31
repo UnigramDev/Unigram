@@ -61,6 +61,7 @@
                             <controls:LottieView30Fps x:Name="Player"
                                                       AutoPlay="False"
                                                       IsLoopingEnabled="False"
+                                                      DecodeFrameType="Logical"
                                                       Width="48"
                                                       Height="48" />
 

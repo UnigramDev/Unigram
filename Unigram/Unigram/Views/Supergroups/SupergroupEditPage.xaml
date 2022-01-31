@@ -133,7 +133,7 @@
                                           Content="{CustomResource Reactions}"
                                           Command="{x:Bind ViewModel.ReactionsCommand}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xE980;" />
+                                          Glyph="&#xE987;" />
                     <controls:BadgeButton x:Name="Permissions"
                                           Content="{CustomResource ChannelPermissions}"
                                           Command="{x:Bind ViewModel.KickedCommand}"
