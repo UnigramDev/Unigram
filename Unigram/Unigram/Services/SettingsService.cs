@@ -218,16 +218,22 @@ namespace Unigram.Services
         #region App version
 
         public const ulong CurrentVersion = (8UL << 48) | (4UL << 32) | (0UL << 16);
-        public const string CurrentChangelog = @"Spoilers and Translation
+        public const string CurrentChangelog = @"Video Stickers, Better Reactions and More
 
-**Spoilers**
-• Select text when typing and choose 'Spoiler' formatting to hide some or all of the contents of a message.
-• Tap the spoiler animation in chat to reveal its hidden text.
-• Spoiler formatting hides text in chat, as well as in the chat list and notifications.
+Video Stickers
+• Use a new type of detailed stickers with smooth animations.
+• Create new sets by sending .webm videos to @stickers.
+• Bring your custom animated stickers from other apps.
 
-**Translation**
-• Turn on the Translation option in Settings > Languages. 
-• Press and hold a message to translate it into another language.";
+Reactions
+• Right click a message for more reactions. 
+• Group and Channel admins can enable reactions in their chat via Chat Info > Edit > Reactions.
+• See real-time animations in chat when a user reacts to your message.
+• React with additional emoji: 🥰🤯🤔🤬👏. 
+
+Read Status for Reactions
+• Click the new button in chats to jump to your messages that have unseen reactions.
+• Watch the animations for unseen reactions play when you hit the button.";
 
         public int Session => _session;
 
