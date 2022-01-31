@@ -759,6 +759,7 @@ namespace Unigram.Controls
                 }
 
                 Document.LoadFromStream(TextSetOptions.None, new InMemoryRandomAccessStream());
+                SelectionFlyout.Hide();
             }
 
             Document.ApplyDisplayUpdates();
@@ -813,7 +814,9 @@ namespace Unigram.Controls
             else if (!IsEmpty)
             {
                 OnSettingText();
+
                 Document.LoadFromStream(TextSetOptions.None, new InMemoryRandomAccessStream());
+                SelectionFlyout.Hide();
             }
         }
 
