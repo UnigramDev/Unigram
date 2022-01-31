@@ -11,6 +11,7 @@ namespace Unigram.Controls
     public class ProfilePicture : HyperlinkButton
     {
         private string _fileToken;
+        private int? _fileId;
         private long? _referenceId;
 
         public ProfilePicture()
@@ -62,9 +63,10 @@ namespace Unigram.Controls
                 EventAggregator.Default.Unregister<File>(this, fileToken);
             }
 
-            if (_referenceId != chat.Id || Source == null || !download)
+            if (_referenceId != chat.Id || _fileId != file?.Id || Source == null || !download)
             {
                 _referenceId = chat.Id;
+                _fileId = file?.Id;
                 Source = GetChat(protoService, chat, file, side, download);
             }
         }
@@ -126,9 +128,10 @@ namespace Unigram.Controls
                 EventAggregator.Default.Unregister<File>(this, fileToken);
             }
 
-            if (_referenceId != user.Id || Source == null || !download)
+            if (_referenceId != user.Id || _fileId != file?.Id || Source == null || !download)
             {
                 _referenceId = user.Id;
+                _fileId = file?.Id;
                 Source = GetUser(protoService, user, file, side, download);
             }
         }
