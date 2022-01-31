@@ -29,7 +29,7 @@
     </StackPanel.Resources>
 
     <controls:GlyphToggleButton x:Name="Bold"
-                                Click="Bold_Click"
+                                Click="{x:Bind TextBox.ToggleBold}"
                                 AutomationProperties.Name="{CustomResource Bold}"
                                 ToolTipService.ToolTip="{CustomResource Bold}"
                                 AllowFocusOnInteraction="False"
@@ -38,7 +38,7 @@
                                 CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
                                 IsOneWay="False" />
     <controls:GlyphToggleButton x:Name="Italic"
-                                Click="Italic_Click"
+                                Click="{x:Bind TextBox.ToggleItalic}"
                                 AutomationProperties.Name="{CustomResource Italic}"
                                 ToolTipService.ToolTip="{CustomResource Italic}"
                                 AllowFocusOnInteraction="False"
@@ -47,7 +47,7 @@
                                 CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
                                 IsOneWay="False" />
     <controls:GlyphToggleButton x:Name="Underline"
-                                Click="Underline_Click"
+                                Click="{x:Bind TextBox.ToggleUnderline}"
                                 AutomationProperties.Name="{CustomResource Underline}"
                                 ToolTipService.ToolTip="{CustomResource Underline}"
                                 AllowFocusOnInteraction="False"
@@ -56,7 +56,7 @@
                                 CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
                                 IsOneWay="False" />
     <controls:GlyphToggleButton x:Name="Strikethrough"
-                                Click="Strikethrough_Click"
+                                Click="{x:Bind TextBox.ToggleStrikethrough}"
                                 AutomationProperties.Name="{CustomResource Strike}"
                                 ToolTipService.ToolTip="{CustomResource Strike}"
                                 AllowFocusOnInteraction="False"
@@ -67,7 +67,7 @@
                                 IsOneWay="False" />
 
     <controls:GlyphToggleButton x:Name="Monospace"
-                                Click="Monospace_Click"
+                                Click="{x:Bind TextBox.ToggleMonospace}"
                                 AutomationProperties.Name="{CustomResource Mono}"
                                 ToolTipService.ToolTip="{CustomResource Mono}"
                                 AllowFocusOnInteraction="False"
@@ -76,12 +76,22 @@
                                 CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
                                 IsOneWay="False" />
 
+    <controls:GlyphToggleButton x:Name="Spoiler"
+                                Click="{x:Bind TextBox.ToggleSpoiler}"
+                                AutomationProperties.Name="{CustomResource Spoiler}"
+                                ToolTipService.ToolTip="{CustomResource Spoiler}"
+                                AllowFocusOnInteraction="False"
+                                Glyph="&#xE97C;"
+                                CheckedGlyph="&#xE97C;"
+                                CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
+                                IsOneWay="False" />
+
     <Rectangle Fill="{ThemeResource MenuFlyoutSeparatorBackground}"
                Margin="1,-4,1,-4"
                Width="{ThemeResource MenuFlyoutSeparatorThemeHeight}" />
 
     <controls:GlyphButton x:Name="Link"
-                          Click="Link_Click"
+                          Click="{x:Bind TextBox.CreateLink}"
                           AutomationProperties.Name="{CustomResource CreateLink}"
                           ToolTipService.ToolTip="{CustomResource CreateLink}"
                           Glyph="&#xE71B;"

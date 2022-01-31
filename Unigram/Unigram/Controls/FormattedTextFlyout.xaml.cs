@@ -1,4 +1,5 @@
 ﻿using System;
+using Windows.UI;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -8,6 +9,8 @@ namespace Unigram.Controls
     public sealed partial class FormattedTextFlyout : StackPanel
     {
         private readonly FormattedTextBox _textBox;
+
+        public FormattedTextBox TextBox => _textBox;
 
         public FormattedTextFlyout(FormattedTextBox textBox)
         {
@@ -34,36 +37,7 @@ namespace Unigram.Controls
             Strikethrough.IsChecked = format.Strikethrough == FormatEffect.On;
             Underline.IsChecked = format.Underline == UnderlineType.Single;
             Monospace.IsChecked = string.Equals(format.Name, "Consolas", StringComparison.OrdinalIgnoreCase);
-        }
-
-        private void Bold_Click(object sender, RoutedEventArgs e)
-        {
-            _textBox?.ToggleBold();
-        }
-
-        private void Italic_Click(object sender, RoutedEventArgs e)
-        {
-            _textBox?.ToggleItalic();
-        }
-
-        private void Strikethrough_Click(object sender, RoutedEventArgs e)
-        {
-            _textBox?.ToggleStrikethrough();
-        }
-
-        private void Underline_Click(object sender, RoutedEventArgs e)
-        {
-            _textBox?.ToggleUnderline();
-        }
-
-        private void Monospace_Click(object sender, RoutedEventArgs e)
-        {
-            _textBox?.ToggleMonospace();
-        }
-
-        private void Link_Click(object sender, RoutedEventArgs e)
-        {
-            _textBox?.CreateLink();
+            Spoiler.IsChecked = format.BackgroundColor == Colors.Gray;
         }
     }
 }
