@@ -209,7 +209,8 @@
                                 Grid.Column="4"
                                 Grid.Row="1">
                             <TextBlock x:Name="UnreadMentionsLabel"
-                                       Text="&#xE168;"
+                                       Text="&#xE986;"
+                                       FontSize="16"
                                        FontFamily="{StaticResource SymbolThemeFontFamily}"
                                        Style="{StaticResource CaptionTextBlockStyle}"
                                        Foreground="{ThemeResource ChatUnreadLabelBrush}"
@@ -231,7 +232,9 @@
                                        Style="{StaticResource CaptionTextBlockStyle}"
                                        Foreground="{ThemeResource ChatUnreadLabelBrush}"
                                        TextAlignment="Center"
-                                       Margin="6,2,6,0" />
+                                       TextLineBounds="Tight"
+                                       VerticalAlignment="Center"
+                                       Margin="6,0,6,2" />
                         </Border>
 
                         <Border x:Name="FailedBadge"

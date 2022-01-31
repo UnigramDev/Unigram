@@ -88,7 +88,9 @@ namespace Unigram.Converters
         public const string Gif = "\uF4A9";
 
         public const string Reactions = "\uE980";
-        public const string Address = "\uE168";
+        public const string Mention16 = "\uE986";
+        public const string HeartFilled16 = "\uE985";
+        public const string Heart = "\uE987";
 
         public const string Star = "\uE734";
         public const string StarOff = "\uE8D9";
