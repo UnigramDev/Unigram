@@ -44,7 +44,7 @@ namespace Unigram.Controls.Messages
             var relativeLast = Math.Abs(absolute.Y - (position.Y + presenter.ActualHeight));
             var upsideDown = relativeLast < relativeFirst;
 
-            var actualWidth = presenter.ActualSize.X + 18 + 12 + 18;
+            var actualWidth = (float)presenter.ActualWidth + 18 + 12 + 18;
             var width = Math.Min(8 + reactions.Count * 34 - 2, actualWidth);
 
             var padding = Math.Max(actualWidth - width, 0);
@@ -123,7 +123,7 @@ namespace Unigram.Controls.Messages
 
             var device = CanvasDevice.GetSharedDevice();
             var rect1 = CanvasGeometry.CreateRectangle(device, width - actualWidth, 0, 306, 86);
-            var elli1 = CanvasGeometry.CreateRoundedRectangle(device, width - actualWidth + 18 + 16, upsideDown ? -86 - 4 : 16 + 36 + 4, presenter.ActualSize.X, 86, 8, 8);
+            var elli1 = CanvasGeometry.CreateRoundedRectangle(device, width - actualWidth + 18 + 16, upsideDown ? -86 - 4 : 16 + 36 + 4, (float)presenter.ActualWidth, 86, 8, 8);
             var group1 = CanvasGeometry.CreateGroup(device, new[] { elli1, rect1 }, CanvasFilledRegionDetermination.Alternate);
 
             var rootVisual = ElementCompositionPreview.GetElementVisual(LayoutRoot);
