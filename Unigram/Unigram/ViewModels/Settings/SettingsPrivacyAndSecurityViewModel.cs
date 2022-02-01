@@ -76,14 +76,6 @@ namespace Unigram.ViewModels.Settings
                 }
             });
 
-            ProtoService.Send(new GetActiveSessions(), result =>
-            {
-                if (result is Sessions sessions)
-                {
-                    BeginOnUIThread(() => ActiveSessions = sessions.SessionsValue.Count);
-                }
-            });
-
             ProtoService.Send(new GetPasswordState(), result =>
             {
                 if (result is PasswordState passwordState)
@@ -126,13 +118,6 @@ namespace Unigram.ViewModels.Settings
         {
             get => _blockedUsers;
             set => Set(ref _blockedUsers, value);
-        }
-
-        private int _activeSessions;
-        public int ActiveSessions
-        {
-            get => _activeSessions;
-            set => Set(ref _activeSessions, value);
         }
 
         private bool _isPasswordEnabled;

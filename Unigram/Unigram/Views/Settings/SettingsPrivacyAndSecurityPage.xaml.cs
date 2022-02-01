@@ -3,7 +3,6 @@ using Unigram.ViewModels.Settings;
 using Unigram.Views.Settings.Privacy;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Settings
@@ -25,11 +24,6 @@ namespace Unigram.Views.Settings
             }
         }
 
-        private void Sessions_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(SettingsSessionsPage), null, new DrillInNavigationTransitionInfo());
-        }
-
         private void WebSessions_Click(object sender, RoutedEventArgs e)
         {
             Frame.Navigate(typeof(SettingsWebSessionsPage));
@@ -42,7 +36,7 @@ namespace Unigram.Views.Settings
 
         private void ShowPhone_Click(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(SettingsPrivacyShowPhonePage));
+            Frame.Navigate(typeof(SettingsPrivacyPhonePage));
         }
 
         private void StatusTimestamp_Click(object sender, RoutedEventArgs e)

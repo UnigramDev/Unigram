@@ -557,7 +557,7 @@ namespace Unigram
                 Unigram.Views.Settings.Privacy.SettingsPrivacyAllowChatInvitesPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyAllowChatInvitesViewModel>(navigationService.SessionId),
                 Unigram.Views.Settings.Privacy.SettingsPrivacyAllowP2PCallsPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyAllowP2PCallsViewModel>(navigationService.SessionId),
                 Unigram.Views.Settings.Privacy.SettingsPrivacyShowForwardedPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyShowForwardedViewModel>(navigationService.SessionId),
-                Unigram.Views.Settings.Privacy.SettingsPrivacyShowPhonePage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyShowPhoneViewModel>(navigationService.SessionId),
+                Unigram.Views.Settings.Privacy.SettingsPrivacyPhonePage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyPhoneViewModel>(navigationService.SessionId),
                 Unigram.Views.Settings.Privacy.SettingsPrivacyShowPhotoPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyShowPhotoViewModel>(navigationService.SessionId),
                 Unigram.Views.Settings.Privacy.SettingsPrivacyShowStatusPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyShowStatusViewModel>(navigationService.SessionId),
                 Unigram.Views.Settings.Password.SettingsPasswordConfirmPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.Password.SettingsPasswordConfirmViewModel>(navigationService.SessionId),

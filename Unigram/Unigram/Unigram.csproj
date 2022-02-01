@@ -452,6 +452,7 @@
       <DependentUpon>InvoiceFooter.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Messages\ReactionButton.cs" />
+    <Compile Include="Controls\Messages\ReactionsPanel.cs" />
     <Compile Include="Controls\MoreButton.cs" />
     <Compile Include="Controls\MosaicLayout.cs" />
     <Compile Include="Controls\MultipleListView.cs" />
@@ -1017,8 +1018,8 @@
     <Compile Include="Views\Settings\Privacy\SettingsPrivacyShowForwardedPage.xaml.cs">
       <DependentUpon>SettingsPrivacyShowForwardedPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Settings\Privacy\SettingsPrivacyShowPhonePage.xaml.cs">
-      <DependentUpon>SettingsPrivacyShowPhonePage.xaml</DependentUpon>
+    <Compile Include="Views\Settings\Privacy\SettingsPrivacyPhonePage.xaml.cs">
+      <DependentUpon>SettingsPrivacyPhonePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\Privacy\SettingsPrivacyShowPhotoPage.xaml.cs">
       <DependentUpon>SettingsPrivacyShowPhotoPage.xaml</DependentUpon>
@@ -2101,7 +2102,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Settings\Privacy\SettingsPrivacyShowPhonePage.xaml">
+    <Page Include="Views\Settings\Privacy\SettingsPrivacyPhonePage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

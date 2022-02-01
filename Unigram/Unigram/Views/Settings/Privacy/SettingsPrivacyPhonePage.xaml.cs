@@ -4,11 +4,11 @@ using Windows.UI.Xaml;
 
 namespace Unigram.Views.Settings.Privacy
 {
-    public sealed partial class SettingsPrivacyShowPhonePage : HostedPage
+    public sealed partial class SettingsPrivacyPhonePage : HostedPage
     {
         public SettingsPrivacyPhoneViewModel ViewModel => DataContext as SettingsPrivacyPhoneViewModel;
 
-        public SettingsPrivacyShowPhonePage()
+        public SettingsPrivacyPhonePage()
         {
             InitializeComponent();
         }
