@@ -170,7 +170,12 @@ namespace Unigram.Controls.Messages
             var popup = new Popup();
             popup.Child = this;
             popup.Margin = new Thickness(x - 16, y - 16, 0, 0);
-            popup.ShouldConstrainToRootBounds = false;
+
+            if (ApiInfo.CanUnconstrainFromBounds)
+            {
+                popup.ShouldConstrainToRootBounds = false;
+            }
+
             popup.RequestedTheme = presenter.ActualTheme;
             popup.IsOpen = true;
 

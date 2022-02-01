@@ -74,6 +74,8 @@ namespace Unigram.Controls.Messages
             if (interaction.TotalCount > interaction.RecentSenderIds.Count)
             {
                 Count ??= GetTemplateChild(nameof(Count)) as NumericTextBlock;
+                Count.Visibility = Windows.UI.Xaml.Visibility.Visible;
+
                 Count.Text = Converter.ShortNumber(interaction.TotalCount);
 
                 if (RecentChoosers != null)
@@ -84,6 +86,7 @@ namespace Unigram.Controls.Messages
             else
             {
                 RecentChoosers ??= GetRecentChoosers();
+                RecentChoosers.Visibility = Windows.UI.Xaml.Visibility.Visible;
 
                 var destination = RecentChoosers.Items;
                 var origin = interaction.RecentSenderIds;
@@ -283,7 +286,12 @@ namespace Unigram.Controls.Messages
                 popup.Child = root;
                 //popup.PlacementTarget = this;
                 //popup.DesiredPlacement = PopupPlacementMode.BottomEdgeAlignedLeft;
-                popup.ShouldConstrainToRootBounds = false;
+
+                if (ApiInfo.CanUnconstrainFromBounds)
+                {
+                    popup.ShouldConstrainToRootBounds = false;
+                }
+
                 //popup.HorizontalOffset = -((71 * 3 - 71) / 2d);
                 //popup.VerticalOffset = -((71 * 3 + 71) / 2d);
                 popup.IsOpen = true;
