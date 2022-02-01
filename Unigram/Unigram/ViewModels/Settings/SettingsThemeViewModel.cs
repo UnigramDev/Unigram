@@ -49,7 +49,7 @@ namespace Unigram.ViewModels.Settings
         public void SetFilter(string value)
         {
             Set(ref _filter, value, nameof(Filter));
-            Items.ReplaceDiff(_index.Where(x => x.Key.Contains(value, StringComparison.OrdinalIgnoreCase)));
+            Items.ReplaceDiff(_index.Where(x => x != null && x.Key.Contains(value, StringComparison.OrdinalIgnoreCase)));
         }
 
         public DiffObservableCollection<ThemeBrush> Items { get; }
