@@ -206,9 +206,9 @@ namespace Unigram.Views
                             root = root.FindName("Bubble") as FrameworkElement;
                         }
 
-                        if (root is MessageBubble michaelBublé)
+                        if (root is MessageBubble bubble)
                         {
-                            michaelBublé.UpdateMessageReactions(message, true);
+                            bubble.UpdateMessageReactions(message, null);
                         }
                     }
                 }
@@ -805,8 +805,10 @@ namespace Unigram.Views
                 {
                     message.IsInitial = false;
                 }
-
-                return;
+                else
+                {
+                    return;
+                }
             }
 
             if (index >= panel.FirstVisibleIndex && index <= panel.LastVisibleIndex)
