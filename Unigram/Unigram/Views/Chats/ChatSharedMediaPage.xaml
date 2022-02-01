@@ -96,6 +96,7 @@
                                                     Stretch="UniformToFill" />
 
                                 <Grid Background="{ThemeResource MessageOverlayBackgroundBrush}"
+                                      IsHitTestVisible="False"
                                       VerticalAlignment="Bottom"
                                       Padding="4,4,8,4">
                                     <FontIcon Glyph="&#xE768;"
