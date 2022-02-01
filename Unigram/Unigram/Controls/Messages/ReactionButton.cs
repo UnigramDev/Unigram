@@ -127,7 +127,7 @@ namespace Unigram.Controls.Messages
 
                 if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
-                    _message.ProtoService.DownloadFile(file.Id, 12);
+                    _message.ProtoService.DownloadFile(file.Id, 32);
                 }
             }
         }
@@ -276,36 +276,25 @@ namespace Unigram.Controls.Messages
                 };
 
                 var root = new Grid();
-                //root.Background = new SolidColorBrush(Colors.Blue);
-                //root.Opacity = 0.5;
                 root.Width = 32 * 3;
                 root.Height = 32 * 3;
                 root.Children.Add(center);
                 root.Children.Add(around);
 
                 popup.Child = root;
-                //popup.PlacementTarget = this;
-                //popup.DesiredPlacement = PopupPlacementMode.BottomEdgeAlignedLeft;
 
-                if (ApiInfo.CanUnconstrainFromBounds)
-                {
-                    popup.ShouldConstrainToRootBounds = false;
-                }
-
-                //popup.HorizontalOffset = -((71 * 3 - 71) / 2d);
-                //popup.VerticalOffset = -((71 * 3 + 71) / 2d);
                 popup.IsOpen = true;
             }
             else
             {
                 if (file1.Local.CanBeDownloaded && !file1.Local.IsDownloadingActive)
                 {
-                    _message.ProtoService.DownloadFile(file1.Id, 12);
+                    _message.ProtoService.DownloadFile(file1.Id, 32);
                 }
 
                 if (file2.Local.CanBeDownloaded && !file2.Local.IsDownloadingActive)
                 {
-                    _message.ProtoService.DownloadFile(file2.Id, 12);
+                    _message.ProtoService.DownloadFile(file2.Id, 32);
                 }
             }
         }

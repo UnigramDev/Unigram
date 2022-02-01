@@ -857,12 +857,13 @@ namespace Unigram.Controls.Messages
             UpdateMessageReactions(message, false);
         }
 
-        public void UpdateMessageReactions(MessageViewModel message, bool animate)
+        public void UpdateMessageReactions(MessageViewModel message, bool? animate)
         {
             var media = Grid.GetRow(Media);
             var footer = Grid.GetRow(Footer);
 
-            if (media == footer)
+            var content = message.GeneratedContent ?? message.Content;
+            if (content is MessageSticker or MessageDice or MessageVideoNote or MessageBigEmoji || (media == footer && IsFullMedia(content)))
             {
                 Reactions.UpdateMessageReactions(null);
                 MediaReactions.UpdateMessageReactions(message, animate);
@@ -1229,7 +1230,7 @@ namespace Unigram.Controls.Messages
                     return ReplaceEntities(message, span, text, entities.Entities, out adjust);
                 }
 
-                Span.Inlines.Add(new Run { Text = text });
+                span.Inlines.Add(new Run { Text = text });
 
                 adjust = false;
                 return true;

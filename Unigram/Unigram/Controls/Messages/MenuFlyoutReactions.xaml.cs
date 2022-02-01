@@ -21,16 +21,18 @@ namespace Unigram.Controls.Messages
     public sealed partial class MenuFlyoutReactions : UserControl
     {
         private readonly MessageViewModel _message;
+        private readonly MessageBubble _bubble;
         private readonly MenuFlyout _flyout;
 
-        public static MenuFlyoutReactions ShowAt(IList<Reaction> reactions, MessageViewModel message, MenuFlyout flyout, Point absolute)
+        public static MenuFlyoutReactions ShowAt(IList<Reaction> reactions, MessageViewModel message, MessageBubble bubble, MenuFlyout flyout, Point absolute)
         {
-            return new MenuFlyoutReactions(reactions, message, flyout, absolute);
+            return new MenuFlyoutReactions(reactions, message, bubble, flyout, absolute);
         }
 
-        private MenuFlyoutReactions(IList<Reaction> reactions, MessageViewModel message, MenuFlyout flyout, Point absolute)
+        private MenuFlyoutReactions(IList<Reaction> reactions, MessageViewModel message, MessageBubble bubble, MenuFlyout flyout, Point absolute)
         {
             _message = message;
+            _bubble = bubble;
             _flyout = flyout;
             InitializeComponent();
 
@@ -260,12 +262,17 @@ namespace Unigram.Controls.Messages
             };
         }
 
-        private void Reaction_Click(object sender, RoutedEventArgs e)
+        private async void Reaction_Click(object sender, RoutedEventArgs e)
         {
             if (sender is HyperlinkButton button && button.Tag is Reaction reaction)
             {
                 _flyout.Hide();
-                _message.ProtoService.Send(new SetMessageReaction(_message.ChatId, _message.Id, reaction.ReactionValue, false));
+                await _message.ProtoService.SendAsync(new SetMessageReaction(_message.ChatId, _message.Id, reaction.ReactionValue, false));
+
+                if (_bubble != null)
+                {
+                    _bubble.UpdateMessageReactions(_message, true);
+                }
             }
         }
 
