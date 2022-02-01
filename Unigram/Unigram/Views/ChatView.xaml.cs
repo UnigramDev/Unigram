@@ -908,6 +908,8 @@ namespace Unigram.Views
         {
             if (Window.Current.CoreWindow.ActivationMode == CoreWindowActivationMode.ActivatedInForeground)
             {
+                ViewVisibleMessages(true);
+
                 var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
                 if (popups.Count > 0)
                 {
@@ -2092,14 +2094,14 @@ namespace Unigram.Views
                 flyout.Items.RemoveAt(flyout.Items.Count - 1);
             }
 
-            if (args.TryGetPosition(Window.Current.Content, out Point absolute))
+            if (element is MessageBubble bubble && args.TryGetPosition(Window.Current.Content, out Point absolute))
             {
                 flyout.Opened += async (s, args) =>
                 {
                     var response = await message.ProtoService.GetAvailableReactionsAsync(message.Get());
                     if (response.Count > 0 && flyout.IsOpen)
                     {
-                        MenuFlyoutReactions.ShowAt(response, message, flyout, absolute);
+                        MenuFlyoutReactions.ShowAt(response, message, bubble, flyout, absolute);
                     }
                 };
             }
