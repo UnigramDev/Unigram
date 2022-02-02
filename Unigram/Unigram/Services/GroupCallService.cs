@@ -13,10 +13,13 @@ using Unigram.Services.ViewService;
 using Unigram.ViewModels;
 using Unigram.Views;
 using Unigram.Views.Popups;
+using Windows.ApplicationModel.Core;
 using Windows.Data.Json;
 using Windows.Devices.Enumeration;
 using Windows.Foundation;
 using Windows.Graphics.Capture;
+using Windows.System;
+using Windows.System.Display;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -107,6 +110,9 @@ namespace Unigram.Services
 
         private ViewLifetimeControl _callLifetime;
 
+        private readonly DispatcherQueue _mainDispatcher;
+        private DisplayRequest _request;
+
         public GroupCallService(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IViewService viewService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
@@ -115,6 +121,8 @@ namespace Unigram.Services
             _videoWatcher = new MediaDeviceWatcher(DeviceClass.VideoCapture, id => _capturer?.SwitchToDevice(id));
             _inputWatcher = new MediaDeviceWatcher(DeviceClass.AudioCapture, id => _manager?.SetAudioInputDevice(id));
             _outputWatcher = new MediaDeviceWatcher(DeviceClass.AudioRender, id => _manager?.SetAudioOutputDevice(id));
+
+            _mainDispatcher = CoreApplication.MainView.CoreWindow.DispatcherQueue;
 
             aggregator.Subscribe(this);
         }
@@ -313,6 +321,7 @@ namespace Unigram.Services
                 }
                 else
                 {
+                    RequestActive();
                     Rejoin(groupCall, alias);
                 }
             }
@@ -699,6 +708,8 @@ namespace Unigram.Services
             Participants?.Dispose();
             Participants = null;
 
+            RequestRelease();
+
             return Task.Run(() =>
             {
                 if (_manager != null)
@@ -786,6 +797,46 @@ namespace Unigram.Services
             }
 
             Aggregator.Publish(new UpdateCallDialog(update.GroupCall));
+        }
+
+        private void RequestActive()
+        {
+            if (_request == null)
+            {
+                if (_mainDispatcher.HasThreadAccess)
+                {
+                    try
+                    {
+                        _request = new DisplayRequest();
+                        _request.RequestActive();
+                    }
+                    catch { }
+                }
+                else
+                {
+                    _mainDispatcher.TryEnqueue(RequestActive);
+                }
+            }
+        }
+
+        private void RequestRelease()
+        {
+            if (_request != null)
+            {
+                if (_mainDispatcher.HasThreadAccess)
+                {
+                    try
+                    {
+                        _request.RequestRelease();
+                        _request = null;
+                    }
+                    catch { }
+                }
+                else
+                {
+                    _mainDispatcher.TryEnqueue(RequestRelease);
+                }
+            }
         }
 
         public void Handle(UpdateGroupCallParticipant update)
