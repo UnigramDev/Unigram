@@ -46,7 +46,10 @@
                         <controls:MasterDetailPanel x:Name="AdaptivePanel"
                                                     IsBlank="{TemplateBinding IsBlank}"
                                                     Background="Transparent">
-                            <Border Style="{ThemeResource ExpNavigationViewContentStyle}">
+                            <Border BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
+                                    BorderThickness="{ThemeResource NavigationViewContentGridBorderThickness}"
+                                    Background="{ThemeResource NavigationViewContentBackground}"
+                                    CornerRadius="{ThemeResource NavigationViewContentGridCornerRadius}">
                                 <chats:ChatBackgroundPresenter Background="{ThemeResource ChatPageBackgroundBrush}"
                                                                Opacity="{TemplateBinding BackgroundOpacity}"
                                                                Loading="ChatBackgroundPresenter_Loading" />
@@ -66,7 +69,7 @@
                                             VerticalAlignment="Top">
                                 <ContentControl.Template>
                                     <ControlTemplate TargetType="ContentControl">
-                                        <ContentPresenter CornerRadius="{ThemeResource ExpNavigationViewCornerRadius}" />
+                                        <ContentPresenter CornerRadius="8,0,0,0" />
                                     </ControlTemplate>
                                 </ContentControl.Template>
                             </ContentControl>
@@ -85,8 +88,9 @@
                                 <Border VerticalAlignment="Top"
                                         Background="{TemplateBinding BorderBrush}"
                                         Height="{ThemeResource AppBarThemeCompactHeight}" />
-                                <Border Style="{ThemeResource ExpNavigationViewContentStyle}"
-                                        Background="{x:Null}"
+                                <Border BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
+                                        BorderThickness="{ThemeResource NavigationViewContentGridBorderThickness}"
+                                        CornerRadius="{ThemeResource NavigationViewContentGridCornerRadius}"
                                         Margin="0,-48,0,0"
                                         Canvas.ZIndex="1" />
                             </Grid>
@@ -136,9 +140,9 @@
         </Grid.ColumnDefinitions>
 
         <Grid x:Name="TitleBarrr"
-              Height="{ThemeResource ExpTitleBarHeight}"
-              Margin="{ThemeResource ExpTitleBarMargin}"
-              Background="{ThemeResource ExpTitleBarBackground}"
+              Height="40"
+              Margin="0,0,0,-8"
+              Background="Transparent"
               Grid.ColumnSpan="2">
             <contract7Present:Grid.BackgroundTransition>
                 <contract7Present:BrushTransition />
@@ -155,7 +159,7 @@
                                    Grid.ColumnSpan="4" />
             <Canvas Width="16"
                     Height="14"
-                    Margin="{ThemeResource ExpTitleBarPadding}"
+                    Margin="6,0,12,0"
                     VerticalAlignment="Center"
                     Grid.Column="1">
                 <Path Data="M14.6025 0.109437C9.96891 1.86558 5.33409 3.61851 0.69863 5.36857L0.69863 5.36857C0.391755 5.48441 0.151119 5.65913 0.0247189 5.96984L0.0247189 5.96984C-0.00823964 6.06584 -0.00823964 6.14328 0.0247189 6.21976L0.0247189 6.21976C0.169358 6.5228 0.426634 6.67031 0.735112 6.77303L0.735112 6.77303C1.51366 7.03255 2.29669 7.28279 3.0586 7.58486L3.0586 7.58486C3.77315 7.8687 4.38978 7.77046 5.0301 7.35575L5.0301 7.35575C7.12511 5.99896 9.23964 4.67322 11.3497 3.34011L11.3497 3.34011C11.5299 3.22651 11.7417 2.98396 11.9478 3.23324L11.9478 3.23324C12.1769 3.51067 11.8617 3.65819 11.7062 3.80859L11.7062 3.80859C10.158 5.30617 8.60157 6.79479 7.05087 8.28949L7.05087 8.28949C6.55616 8.76629 6.57984 9.14804 7.12959 9.54644L7.12959 9.54644C8.67037 10.6648 10.2121 11.781 11.7619 12.8869L11.7619 12.8869C11.9414 13.0152 12.165 13.1211 12.381 13.1531L12.381 13.1531C12.9948 13.2437 13.4037 12.8773 13.5663 12.1429L13.5663 12.1429C13.7676 11.2299 13.9692 10.3167 14.1692 9.4034L14.1692 9.4034C14.7685 6.66327 15.3653 3.92219 15.9685 1.18303L15.9685 1.18303C16.0463 0.82847 15.9852 0.522555 15.7272 0.264637L15.7272 0.264637C15.5365 0.0742392 15.3317 0 15.1148 0L15.1148 0C14.9506 0 14.7794 0.0425605 14.6025 0.109439"
@@ -365,7 +369,7 @@
             </controls:MasterDetailView.Banner>
             <controls:MasterDetailView.MasterHeader>
                 <controls:ContentPageHeader x:Name="PageHeader"
-                                            Background="{ThemeResource ExpBackground}"
+                                            Background="Transparent"
                                             BackVisibility="Collapsed"
                                             Grid.Row="1">
                     <Grid x:Name="Header">
@@ -374,7 +378,7 @@
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
                         <Grid x:Name="MainHeader"
-                              Padding="{ThemeResource ExpMainHeaderPadding}"
+                              Padding="40,0,0,0"
                               Grid.ColumnSpan="2">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition />
@@ -389,7 +393,6 @@
 
                             <TextBox x:Name="SearchField"
                                      PlaceholderText="{CustomResource Search}"
-                                     Style="{ThemeResource ExpSearchFieldStyle}"
                                      PreventKeyboardDisplayOnProgrammaticFocus="True"
                                      AutomationProperties.LandmarkType="Search"
                                      VerticalAlignment="Center"
@@ -568,10 +571,7 @@
                     </VisualState>
                 </VisualStateGroup>
             </VisualStateManager.VisualStateGroups>
-            <Grid Background="{ThemeResource ExpBackground}">
-                <contract7Present:Grid.BackgroundTransition>
-                    <contract7Present:BrushTransition />
-                </contract7Present:Grid.BackgroundTransition>
+            <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -851,8 +851,7 @@
                                     </ListView.GroupStyle>
                                 </ListView>
                             </Grid>
-                            <Grid x:Name="DialogsPanel"
-                                  Background="{ThemeResource ExpBackground}">
+                            <Grid x:Name="DialogsPanel">
                                 <Grid x:Name="ChatsPanel">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto" />
