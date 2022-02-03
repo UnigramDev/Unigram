@@ -439,7 +439,7 @@ namespace Unigram.ViewModels
         {
             if (update.ChatId == _chat?.Id && update.LastMessage == null)
             {
-                IsFirstSliceLoaded = IsEndReached();
+                IsFirstSliceLoaded = null;
             }
 
             if (update.ChatId == _chat?.Id && _chat.Type is ChatTypePrivate privata)
@@ -672,7 +672,7 @@ namespace Unigram.ViewModels
 
                 Handle(update.MessageId, message =>
                 {
-                    message.UnreadReactions = update.UnreadReactions?.ToImmutableDictionary(x => x.Reaction) ?? ImmutableDictionary<string, UnreadReaction>.Empty;
+                    message.UnreadReactions = update.UnreadReactions;
                 }, (bubble, message) =>
                 {
                     Delegate?.ViewVisibleMessages(false);
@@ -785,42 +785,43 @@ namespace Unigram.ViewModels
             }
         }
 
-        private void Handle(long messageId, Action<MessageViewModel> update, Action<MessageBubble, MessageViewModel> action = null)
+        private async void Handle(long messageId, Action<MessageViewModel> update, Action<MessageBubble, MessageViewModel> action = null)
         {
-            BeginOnUIThread(async () =>
+            var field = ListField;
+            if (field == null)
             {
-                var field = ListField;
-                if (field == null)
-                {
-                    return;
-                }
+                return;
+            }
 
-                using (await _loadMoreLock.WaitAsync())
+            using (await _loadMoreLock.WaitAsync())
+            {
+                for (int i = 0; i < Items.Count; i++)
                 {
-                    for (int i = 0; i < Items.Count; i++)
+                    var message = Items[i];
+                    if (message.Content is MessageAlbum album)
                     {
-                        var message = Items[i];
-                        if (message.Content is MessageAlbum album)
+                        var found = false;
+
+                        if (album.Messages.TryGetValue(messageId, out MessageViewModel child))
                         {
-                            var found = false;
+                            update?.Invoke(child);
+                            found = true;
 
-                            if (album.Messages.TryGetValue(messageId, out MessageViewModel child))
+                            message.UpdateWith(album.Messages[0]);
+                            album.Invalidate();
+
+                            if (action == null)
                             {
-                                update?.Invoke(child);
-                                found = true;
+                                break;
+                            }
 
-                                message.UpdateWith(album.Messages[0]);
-                                album.Invalidate();
-
-                                if (action == null)
-                                {
-                                    break;
-                                }
-
+                            BeginOnUIThread(() =>
+                            {
                                 var container = field.ContainerFromItem(message) as ListViewItem;
                                 if (container == null)
                                 {
-                                    break;
+                                    //break;
+                                    return;
                                 }
 
                                 var content = container.ContentTemplateRoot as FrameworkElement;
@@ -833,23 +834,26 @@ namespace Unigram.ViewModels
                                 {
                                     action(bubble, message);
                                 }
-                            }
-
-                            if (found)
-                            {
-                                return;
-                            }
+                            });
                         }
 
-                        if (message.Id == messageId)
+                        if (found)
                         {
-                            update?.Invoke(message);
+                            return;
+                        }
+                    }
 
-                            if (action == null)
-                            {
-                                return;
-                            }
+                    if (message.Id == messageId)
+                    {
+                        update?.Invoke(message);
 
+                        if (action == null)
+                        {
+                            return;
+                        }
+
+                        BeginOnUIThread(() =>
+                        {
                             var container = field.ContainerFromItem(message) as ListViewItem;
                             if (container == null)
                             {
@@ -866,10 +870,10 @@ namespace Unigram.ViewModels
                             {
                                 action(bubble, message);
                             }
-                        }
+                        });
                     }
                 }
-            });
+            }
         }
 
         private void Handle(long messageId, Action<MessageViewModel> update, Action<MessageBubble, MessageViewModel, bool> action)
@@ -1032,7 +1036,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            LoadMessage:
+        LoadMessage:
             await LoadMessageSliceAsync(null, message.Id, VerticalAlignment.Bottom);
         }
 
