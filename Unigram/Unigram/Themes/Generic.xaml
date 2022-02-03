@@ -50,7 +50,7 @@
 
     <Style TargetType="local:NavigationView">
         <Setter Property="Padding"
-                Value="{ThemeResource ExpNavigationViewPadding}" />
+                Value="0,36,0,0" />
         <Setter Property="IsTabStop"
                 Value="False" />
         <Setter Property="Template">
@@ -71,8 +71,8 @@
                             <local:MenuButton x:Name="TogglePaneButton"
                                               Grid.Row="1"
                                               Foreground="{ThemeResource PageHeaderForegroundBrush}"
-                                              Width="{ThemeResource ExpNavigationViewMenuButtonWidth}"
-                                              Height="{ThemeResource ExpNavigationViewMenuButtonHeight}"
+                                              Width="40"
+                                              Height="40"
                                               AutomationProperties.LandmarkType="Navigation"
                                               AutomationProperties.Name="{CustomResource AccDescrOpenMenu}"
                                               ToolTipService.ToolTip="{CustomResource AccDescrOpenMenu}"
@@ -101,9 +101,9 @@
                                         <Setter Property="FontFamily"
                                                 Value="{StaticResource SymbolThemeFontFamily}" />
                                         <Setter Property="Height"
-                                                Value="{ThemeResource ExpNavigationViewMenuButtonHeight}" />
+                                                Value="40" />
                                         <Setter Property="Width"
-                                                Value="{ThemeResource ExpNavigationViewMenuButtonWidth}" />
+                                                Value="40" />
                                         <Setter Property="FontWeight"
                                                 Value="Normal" />
                                         <Setter Property="FontSize"
