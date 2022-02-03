@@ -145,31 +145,31 @@ namespace Unigram.Controls
             if (index == 0 && EmojisRoot != null)
             {
                 EmojisRoot.Deactivate();
-                //UnloadObject(EmojisRoot);
+                UnloadObject(EmojisRoot);
             }
             else if (index == 1 && AnimationsRoot != null)
             {
-                //var viewModel = AnimationsRoot.DataContext as AnimationDrawerViewModel;
+                var viewModel = AnimationsRoot.DataContext as AnimationDrawerViewModel;
 
                 AnimationsRoot.Deactivate();
-                //UnloadObject(AnimationsRoot);
+                UnloadObject(AnimationsRoot);
 
-                //if (viewModel != null)
-                //{
-                //    viewModel.Search(string.Empty);
-                //}
+                if (viewModel != null)
+                {
+                    viewModel.Search(string.Empty);
+                }
             }
             else if (index == 2 && StickersRoot != null)
             {
-                //var viewModel = StickersRoot.DataContext as StickerDrawerViewModel;
+                var viewModel = StickersRoot.DataContext as StickerDrawerViewModel;
 
                 StickersRoot.Deactivate();
-                //UnloadObject(StickersRoot);
+                UnloadObject(StickersRoot);
 
-                //if (viewModel != null)
-                //{
-                //    viewModel.Search(string.Empty);
-                //}
+                if (viewModel != null)
+                {
+                    viewModel.Search(string.Empty);
+                }
             }
         }
 
