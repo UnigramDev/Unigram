@@ -112,6 +112,8 @@ namespace Unigram.Controls.Messages
                 case MessageChatEvent chatEvent:
                     switch (chatEvent.Action)
                     {
+                        case ChatEventAvailableReactionsChanged availableReactionsChanged:
+                            return UpdateAvailableReactionsChanged(message, availableReactionsChanged, active);
                         case ChatEventHasProtectedContentToggled hasProtectedContentToggled:
                             return UpdateHasProtectedContentToggled(message, hasProtectedContentToggled, active);
                         case ChatEventSignMessagesToggled signMessagesToggled:
@@ -215,6 +217,29 @@ namespace Unigram.Controls.Messages
             else
             {
                 content = ReplaceWithLink(Strings.Resources.EventLogToggledSlowmodeOff, "un1", fromUser, ref entities);
+            }
+
+            return (content, entities);
+        }
+
+        private static (string Text, IList<TextEntity> Entities) UpdateAvailableReactionsChanged(MessageViewModel message, ChatEventAvailableReactionsChanged availableReactionsChanged, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            var fromUser = message.GetSender();
+
+            if (availableReactionsChanged.NewAvailableReactions.Count > 0)
+            {
+                content = ReplaceWithLink(string.Format(Strings.Resources.ActionReactionsChanged,
+                    string.Join(", ", availableReactionsChanged.OldAvailableReactions),
+                    string.Join(", ", availableReactionsChanged.NewAvailableReactions)), "un1", fromUser, ref entities);
+            }
+            else
+            {
+                content = ReplaceWithLink(string.Format(Strings.Resources.ActionReactionsChanged,
+                    string.Join(", ", availableReactionsChanged.OldAvailableReactions),
+                    string.Join(", ", availableReactionsChanged.NewAvailableReactions)), "un1", fromUser, ref entities);
             }
 
             return (content, entities);

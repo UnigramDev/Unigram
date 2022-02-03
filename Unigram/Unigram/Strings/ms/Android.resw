@@ -304,6 +304,9 @@
   <data name="AccDescrQuizExplanation" xml:space="preserve">
     <value>Keterangan</value>
   </data>
+  <data name="AccDescrReactionMentionDown" xml:space="preserve">
+    <value>Sila ke reaksi belum dilihat</value>
+  </data>
   <data name="AccDescrReceivedDate" xml:space="preserve">
     <value>Terima {0}</value>
   </data>
@@ -2145,6 +2148,9 @@ Matahari naik: {1}</value>
   </data>
   <data name="Blue" xml:space="preserve">
     <value>Biru</value>
+  </data>
+  <data name="BlurInChat" xml:space="preserve">
+    <value>Tak terang di bual</value>
   </data>
   <data name="BlurLinear" xml:space="preserve">
     <value>Liniar</value>
@@ -4214,6 +4220,9 @@ Anda boleh tukar ke tema asal Telegram pada bila-bila masa di sini.</value>
   <data name="DescriptionInfo" xml:space="preserve">
     <value>Anda boleh memberi keterangan pilihan untuk saluran anda.</value>
   </data>
+  <data name="DescriptionMore" xml:space="preserve">
+    <value>lagi</value>
+  </data>
   <data name="DescriptionOptionalPlaceholder" xml:space="preserve">
     <value>Keterangan (pilihan)</value>
   </data>
@@ -5001,7 +5010,7 @@ telah dijumpai.</value>
     <value>Link sebelum ini</value>
   </data>
   <data name="EventLogPromoted" xml:space="preserve">
-    <value>tukar keistimewaan untuk {0}</value>
+    <value>tukar kuasa untuk {0}</value>
   </data>
   <data name="EventLogPromotedAddAdmins" xml:space="preserve">
     <value>Tambah pentadbir</value>
@@ -5028,7 +5037,7 @@ telah dijumpai.</value>
     <value>Urus bual video</value>
   </data>
   <data name="EventLogPromotedNoRights" xml:space="preserve">
-    <value>dinaik taraf {0}</value>
+    <value>naik taraf {0}</value>
   </data>
   <data name="EventLogPromotedPinMessages" xml:space="preserve">
     <value>Semat mesej </value>
@@ -5037,13 +5046,13 @@ telah dijumpai.</value>
     <value>Pos mesej</value>
   </data>
   <data name="EventLogPromotedRemovedTitle" xml:space="preserve">
-    <value>Tajuk</value>
+    <value>Pangkat</value>
   </data>
   <data name="EventLogPromotedSendAnonymously" xml:space="preserve">
     <value>Kekal Tanpa Pengenalan</value>
   </data>
   <data name="EventLogPromotedTitle" xml:space="preserve">
-    <value>Tajuk: {0}</value>
+    <value>Pangkat: {0}</value>
   </data>
   <data name="EventLogRemovedChannelLink" xml:space="preserve">
     <value>un1 keluarkan link saluran</value>
@@ -5246,7 +5255,7 @@ Tempoh: {1}</value>
     <value/>
   </data>
   <data name="FileSavedHint" xml:space="preserve">
-    <value>Fail disimpan ke muat turun</value>
+    <value>Fail disimpan ke Muat Turun</value>
   </data>
   <data name="FilesDataUsage" xml:space="preserve">
     <value>Fail</value>
@@ -5261,7 +5270,7 @@ Tempoh: {1}</value>
     <value/>
   </data>
   <data name="FilesSavedHint_other" xml:space="preserve">
-    <value>{0} fail disimpan ke muat turun</value>
+    <value>{0} fail disimpan ke Muat Turun</value>
   </data>
   <data name="FilesSavedHint_two" xml:space="preserve">
     <value/>
@@ -5890,6 +5899,9 @@ Tempoh: {1}</value>
   <data name="ForwardSendMessages" xml:space="preserve">
     <value>Kirim Mesej</value>
   </data>
+  <data name="ForwardsRestrictedInfoBot" xml:space="preserve">
+    <value>Menyalin dan memaju tak dibenar dari bot ini.</value>
+  </data>
   <data name="ForwardsRestrictedInfoChannel" xml:space="preserve">
     <value>Menyalin dan memajukan dilarang di saluran ini</value>
   </data>
@@ -6002,7 +6014,7 @@ Tempoh: {1}</value>
     <value/>
   </data>
   <data name="GifSavedToDownloadsHint" xml:space="preserve">
-    <value>GIF disimpan ke muat turun</value>
+    <value>GIF disimpan ke Muat  Turun</value>
   </data>
   <data name="GifsTab" xml:space="preserve">
     <value>GIF</value>
@@ -6246,7 +6258,7 @@ Ambil perhatian mereka masih boleh sertai melalui link jemputan grup selagi mere
     <value>SEMBUNYI MESEJ DISEMAT</value>
   </data>
   <data name="HideSenderNames" xml:space="preserve">
-    <value>Sembunyi nama pengirim\</value>
+    <value>Sembunyi nama pengirim</value>
   </data>
   <data name="HideSendersName" xml:space="preserve">
     <value>Sembunyi nama pengirim</value>
@@ -10300,7 +10312,7 @@ Kami akan akses lokasi anda hanya untuk masa yang anda pilih, dan anda boleh hen
     <value>Foto disimpan di galeri</value>
   </data>
   <data name="PhotoSavedToDownloadsHint" xml:space="preserve">
-    <value>Foto disimpan ke muat turun</value>
+    <value>Foto disimpan ke Muat Turun</value>
   </data>
   <data name="PhotosSavedHint_few" xml:space="preserve">
     <value/>
@@ -11791,7 +11803,7 @@ Saluran ini &quot;**{1}**&quot; akan bertukar ke peribadi.</value>
     <value>SIMPAN TEMA</value>
   </data>
   <data name="SaveToDownloads" xml:space="preserve">
-    <value>Simpan ke muat turun</value>
+    <value>Simpan ke Muat Turun</value>
   </data>
   <data name="SaveToGallery" xml:space="preserve">
     <value>Simpan di galeri</value>
@@ -12613,6 +12625,12 @@ Jangan jawab, Telegram akan proses semuanya secara automatik. </value>
   <data name="ShowInChat" xml:space="preserve">
     <value>Tunjuk dalam bual</value>
   </data>
+  <data name="ShowLess" xml:space="preserve">
+    <value>Tunjuk kurang</value>
+  </data>
+  <data name="ShowMore" xml:space="preserve">
+    <value>Tunjuk lebih</value>
+  </data>
   <data name="ShowNearbyPlaces" xml:space="preserve">
     <value>Tarik ke atas untuk lihat tempat berhampiran</value>
   </data>
@@ -12623,7 +12641,7 @@ Jangan jawab, Telegram akan proses semuanya secara automatik. </value>
     <value>Padam ini jika anda mahu terima notifikasi hanya dari akaun aktif anda.</value>
   </data>
   <data name="ShowSenderNames" xml:space="preserve">
-    <value>Tunjuk nama pengirim\</value>
+    <value>Tunjuk nama pengirim</value>
   </data>
   <data name="ShowSendersName" xml:space="preserve">
     <value>Tunjuk nama pengirim</value>
@@ -14227,7 +14245,7 @@ Anda boleh guna **a–z**, **0–9** dan _. Panjang minima adalah **5** abjad.</
     <value>Video disimpan di galeri</value>
   </data>
   <data name="VideoSavedToDownloadsHint" xml:space="preserve">
-    <value>Video disimpan ke muat turun</value>
+    <value>Video disimpan ke Muat Turun</value>
   </data>
   <data name="VideosSavedHint_few" xml:space="preserve">
     <value/>

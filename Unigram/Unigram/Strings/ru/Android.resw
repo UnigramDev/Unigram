@@ -304,6 +304,9 @@
   <data name="AccDescrQuizExplanation" xml:space="preserve">
     <value>Объяснение</value>
   </data>
+  <data name="AccDescrReactionMentionDown" xml:space="preserve">
+    <value>Перейти к следующим реакциям</value>
+  </data>
   <data name="AccDescrReceivedDate" xml:space="preserve">
     <value>Получено {0}</value>
   </data>
@@ -5948,6 +5951,9 @@
   </data>
   <data name="ForwardSendMessages" xml:space="preserve">
     <value>Отправить сообщения</value>
+  </data>
+  <data name="ForwardsRestrictedInfoBot" xml:space="preserve">
+    <value>Копирование и пересылка от этого бота запрещены.</value>
   </data>
   <data name="ForwardsRestrictedInfoChannel" xml:space="preserve">
     <value>Копирование и пересылка из канала запрещены.</value>
@@ -12672,6 +12678,12 @@
   </data>
   <data name="ShowInChat" xml:space="preserve">
     <value>Показать в чате</value>
+  </data>
+  <data name="ShowLess" xml:space="preserve">
+    <value>Показать меньше</value>
+  </data>
+  <data name="ShowMore" xml:space="preserve">
+    <value>Показать больше</value>
   </data>
   <data name="ShowNearbyPlaces" xml:space="preserve">
     <value>Потяните, чтобы выбрать место</value>

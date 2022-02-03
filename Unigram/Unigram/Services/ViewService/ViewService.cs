@@ -79,7 +79,7 @@ namespace Unigram.Services.ViewService
 
                 newAppView.Title = parameters.Title ?? string.Empty;
 
-                if (ApiInformation.IsPropertyPresent("Windows.UI.ViewManagement.ApplicationView", "PersistedStateId"))
+                if (parameters.PersistentId != null && ApiInformation.IsPropertyPresent("Windows.UI.ViewManagement.ApplicationView", "PersistedStateId"))
                 {
                     newAppView.PersistedStateId = parameters.PersistentId;
                 }
@@ -94,7 +94,10 @@ namespace Unigram.Services.ViewService
                 newWindow.Activate();
 
                 var preferences = ViewModePreferences.CreateDefault(parameters.ViewMode);
-                preferences.CustomSize = new Size(parameters.Width, parameters.Height);
+                if (parameters.Width != 0 && parameters.Height != 0)
+                {
+                    preferences.CustomSize = new Size(parameters.Width, parameters.Height);
+                }
 
                 await ApplicationViewSwitcher.TryShowAsViewModeAsync(newAppView.Id, parameters.ViewMode, preferences);
                 //newAppView.TryResizeView(new Size(parameters.Width, parameters.Height));

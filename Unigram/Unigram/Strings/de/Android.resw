@@ -304,6 +304,9 @@
   <data name="AccDescrQuizExplanation" xml:space="preserve">
     <value>Erklärung</value>
   </data>
+  <data name="AccDescrReactionMentionDown" xml:space="preserve">
+    <value>Wechsle zur nächsten ungesehenen Reaktion</value>
+  </data>
   <data name="AccDescrReceivedDate" xml:space="preserve">
     <value>Empfangen {0}</value>
   </data>
@@ -2157,6 +2160,9 @@ um Ton einzuschalten.</value>
   </data>
   <data name="Blue" xml:space="preserve">
     <value>Blau</value>
+  </data>
+  <data name="BlurInChat" xml:space="preserve">
+    <value>Unschärfe im Chat</value>
   </data>
   <data name="BlurLinear" xml:space="preserve">
     <value>Linear</value>
@@ -4227,6 +4233,9 @@ Jederzeit kannst du hier zum Standard-Farbthema von Telegram zurückkehren.</val
   <data name="DescriptionInfo" xml:space="preserve">
     <value>Beschreibe deinen Kanal (optional).</value>
   </data>
+  <data name="DescriptionMore" xml:space="preserve">
+    <value>mehr</value>
+  </data>
   <data name="DescriptionOptionalPlaceholder" xml:space="preserve">
     <value>Beschreibung (optional)</value>
   </data>
@@ -5963,6 +5972,9 @@ Chats in diesem Ordner.</value>
   </data>
   <data name="ForwardSendMessages" xml:space="preserve">
     <value>Nachrichten senden</value>
+  </data>
+  <data name="ForwardsRestrictedInfoBot" xml:space="preserve">
+    <value>Kopieren und Weiterleiten ist von diesem Bot nicht erlaubt.</value>
   </data>
   <data name="ForwardsRestrictedInfoChannel" xml:space="preserve">
     <value>Kopieren und Weiterleiten ist in diesem Kanal nicht erlaubt.</value>
@@ -12706,6 +12718,12 @@ noch nichts gesucht</value>
   </data>
   <data name="ShowInChat" xml:space="preserve">
     <value>Im Chat zeigen</value>
+  </data>
+  <data name="ShowLess" xml:space="preserve">
+    <value>Weniger zeigen</value>
+  </data>
+  <data name="ShowMore" xml:space="preserve">
+    <value>Mehr zeigen</value>
   </data>
   <data name="ShowNearbyPlaces" xml:space="preserve">
     <value>Hochziehen, für Orte in der Nähe</value>

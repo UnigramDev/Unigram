@@ -226,7 +226,9 @@ namespace Unigram.Views
                         _viewService ??= new Unigram.Services.ViewService.ViewService()),
                     _networkService,
                     _storageService ??= new Unigram.Services.StorageService(_protoService),
-                    _translateService ??= new Unigram.Services.TranslateService(_localeService, _settingsService),
+                    _translateService ??= new Unigram.Services.TranslateService(
+                        _protoService,
+                        _settingsService),
                     _messageFactory ??= new Unigram.Services.Factories.MessageFactory(
                         _protoService,
                         _playbackService ??= new Unigram.Services.PlaybackService(
@@ -265,7 +267,9 @@ namespace Unigram.Views
                         _viewService ??= new Unigram.Services.ViewService.ViewService()),
                     _networkService,
                     _storageService ??= new Unigram.Services.StorageService(_protoService),
-                    _translateService ??= new Unigram.Services.TranslateService(_localeService, _settingsService),
+                    _translateService ??= new Unigram.Services.TranslateService(
+                        _protoService,
+                        _settingsService),
                     _messageFactory ??= new Unigram.Services.Factories.MessageFactory(
                         _protoService,
                         _playbackService ??= new Unigram.Services.PlaybackService(
@@ -304,7 +308,9 @@ namespace Unigram.Views
                         _viewService ??= new Unigram.Services.ViewService.ViewService()),
                     _networkService,
                     _storageService ??= new Unigram.Services.StorageService(_protoService),
-                    _translateService ??= new Unigram.Services.TranslateService(_localeService, _settingsService),
+                    _translateService ??= new Unigram.Services.TranslateService(
+                        _protoService,
+                        _settingsService),
                     _messageFactory ??= new Unigram.Services.Factories.MessageFactory(
                         _protoService,
                         _playbackService ??= new Unigram.Services.PlaybackService(
@@ -343,7 +349,9 @@ namespace Unigram.Views
                         _viewService ??= new Unigram.Services.ViewService.ViewService()),
                     _networkService,
                     _storageService ??= new Unigram.Services.StorageService(_protoService),
-                    _translateService ??= new Unigram.Services.TranslateService(_localeService, _settingsService),
+                    _translateService ??= new Unigram.Services.TranslateService(
+                        _protoService,
+                        _settingsService),
                     _messageFactory ??= new Unigram.Services.Factories.MessageFactory(
                         _protoService,
                         _playbackService ??= new Unigram.Services.PlaybackService(
@@ -382,7 +390,9 @@ namespace Unigram.Views
                         _viewService ??= new Unigram.Services.ViewService.ViewService()),
                     _networkService,
                     _storageService ??= new Unigram.Services.StorageService(_protoService),
-                    _translateService ??= new Unigram.Services.TranslateService(_localeService, _settingsService),
+                    _translateService ??= new Unigram.Services.TranslateService(
+                        _protoService,
+                        _settingsService),
                     _messageFactory ??= new Unigram.Services.Factories.MessageFactory(
                         _protoService,
                         _playbackService ??= new Unigram.Services.PlaybackService(
@@ -1242,7 +1252,9 @@ namespace Unigram.Views
             }
             else if (type == typeof(Unigram.Services.ITranslateService))
             {
-                return (T)(_translateService ??= new Unigram.Services.TranslateService(_localeService, _settingsService));
+                return (T)(_translateService ??= new Unigram.Services.TranslateService(
+                    _protoService,
+                    _settingsService));
             }
 
             return default;

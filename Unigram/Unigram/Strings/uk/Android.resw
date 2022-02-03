@@ -304,6 +304,9 @@
   <data name="AccDescrQuizExplanation" xml:space="preserve">
     <value>Пояснення</value>
   </data>
+  <data name="AccDescrReactionMentionDown" xml:space="preserve">
+    <value>Перейти до наступних непрочитаних реакцій</value>
+  </data>
   <data name="AccDescrReceivedDate" xml:space="preserve">
     <value>Отримано {0}</value>
   </data>
@@ -2148,6 +2151,9 @@
   </data>
   <data name="Blue" xml:space="preserve">
     <value>Синій</value>
+  </data>
+  <data name="BlurInChat" xml:space="preserve">
+    <value>Розмиття в чатах</value>
   </data>
   <data name="BlurLinear" xml:space="preserve">
     <value>Лінійне</value>
@@ -4217,6 +4223,9 @@
   <data name="DescriptionInfo" xml:space="preserve">
     <value>Додайте опис для каналу за бажанням.</value>
   </data>
+  <data name="DescriptionMore" xml:space="preserve">
+    <value>ще</value>
+  </data>
   <data name="DescriptionOptionalPlaceholder" xml:space="preserve">
     <value>Опис (необовʼязково)</value>
   </data>
@@ -5249,22 +5258,22 @@
     <value/>
   </data>
   <data name="FileSavedHint" xml:space="preserve">
-    <value>Файл збережено в завантаженнях</value>
+    <value>Файл збережено в Завантаженнях</value>
   </data>
   <data name="FilesDataUsage" xml:space="preserve">
     <value>Файли</value>
   </data>
   <data name="FilesSavedHint_few" xml:space="preserve">
-    <value>{0} файли збережено в завантаженнях</value>
+    <value>{0} файли збережено в Завантаженнях</value>
   </data>
   <data name="FilesSavedHint_many" xml:space="preserve">
-    <value>{0} файлів збережено в завантаженнях</value>
+    <value>{0} файлів збережено в Завантаженнях</value>
   </data>
   <data name="FilesSavedHint_one" xml:space="preserve">
-    <value>Файл збережено в завантаженнях</value>
+    <value>Файл збережено в Завантаженнях</value>
   </data>
   <data name="FilesSavedHint_other" xml:space="preserve">
-    <value>{0} файл збережено в завантаженнях</value>
+    <value>{0} файл збережено в Завантаженнях</value>
   </data>
   <data name="FilesSavedHint_two" xml:space="preserve">
     <value/>
@@ -5893,6 +5902,9 @@
   <data name="ForwardSendMessages" xml:space="preserve">
     <value>Надіслати повідомлення</value>
   </data>
+  <data name="ForwardsRestrictedInfoBot" xml:space="preserve">
+    <value>Цей бот не дозволяє копіювання та пересилання.</value>
+  </data>
   <data name="ForwardsRestrictedInfoChannel" xml:space="preserve">
     <value>Копіювання та пересилання не дозволено в цьому каналі.</value>
   </data>
@@ -6005,7 +6017,7 @@
     <value/>
   </data>
   <data name="GifSavedToDownloadsHint" xml:space="preserve">
-    <value>GIF збережено в завантаженнях</value>
+    <value>GIF збережено в Завантаженнях</value>
   </data>
   <data name="GifsTab" xml:space="preserve">
     <value>GIF</value>
@@ -7103,7 +7115,7 @@
     <value>Назва посилання (необовʼязково)</value>
   </data>
   <data name="LinkNotFound" xml:space="preserve">
-    <value>Ви не маєте доступу до цього повідомлення, позаяк ви не є учасником чату, де воно було опубліковане.</value>
+    <value>Ви не є учасником чату, де опубліковане це повідомлення.</value>
   </data>
   <data name="LinkPreview" xml:space="preserve">
     <value>Попередній перегляд посилання</value>
@@ -8288,8 +8300,8 @@
     <value>Немає запитів на приєднання</value>
   </data>
   <data name="NoMemberRequestsDescription" xml:space="preserve">
-    <value>У групі немає поточних запитів
-на приєднання.</value>
+    <value>Немає поточних запитів на
+приєднання до групи.</value>
   </data>
   <data name="NoMessages" xml:space="preserve">
     <value>Повідомлень ще немає...</value>
@@ -9772,7 +9784,7 @@
     <value>Адреса проживання</value>
   </data>
   <data name="PassportReverseSide" xml:space="preserve">
-    <value>Зворотній бік</value>
+    <value>Зворотний бік</value>
   </data>
   <data name="PassportReverseSideInfo" xml:space="preserve">
     <value>Завантажте фото зворотнього боку документа</value>
@@ -10308,7 +10320,7 @@
     <value>Фото збережено до галереї</value>
   </data>
   <data name="PhotoSavedToDownloadsHint" xml:space="preserve">
-    <value>Фото збережено в завантаженнях</value>
+    <value>Фото збережено в Завантаженнях</value>
   </data>
   <data name="PhotosSavedHint_few" xml:space="preserve">
     <value>{0} фото збережено до галереї</value>
@@ -11799,7 +11811,7 @@
     <value>ЗБЕРЕГТИ ТЕМУ</value>
   </data>
   <data name="SaveToDownloads" xml:space="preserve">
-    <value>Зберегти до завантажень</value>
+    <value>Зберегти до Завантажень</value>
   </data>
   <data name="SaveToGallery" xml:space="preserve">
     <value>Зберегти до галереї</value>
@@ -12391,7 +12403,7 @@
     <value>Посилання не може бути довшим за 64 символи.</value>
   </data>
   <data name="SetUrlInvalidShort" xml:space="preserve">
-    <value>Посилання має містити принаймні 5 символів</value>
+    <value>Посилання має містити принаймні 5 символів.</value>
   </data>
   <data name="SetUrlInvalidStartNumber" xml:space="preserve">
     <value>Посилання не може починатися з цифри.</value>
@@ -12620,6 +12632,12 @@
   </data>
   <data name="ShowInChat" xml:space="preserve">
     <value>Показати в чаті</value>
+  </data>
+  <data name="ShowLess" xml:space="preserve">
+    <value>Показати менше</value>
+  </data>
+  <data name="ShowMore" xml:space="preserve">
+    <value>Показати більше</value>
   </data>
   <data name="ShowNearbyPlaces" xml:space="preserve">
     <value>Потягніть, щоб побачити місця поблизу</value>
@@ -13619,9 +13637,9 @@
 Але якщо ви не погоджуєтеся зі скромними вимогами Telegram, ми не зможемо надати вам цей сервіс.</value>
   </data>
   <data name="TosDeclineDeleteAccount" xml:space="preserve">
-    <value>Попередження: ваш акаунт буде незворотньо видалено разом з усіма даними, які ви зберігаєте у хмарі Telegram.
+    <value>Увага: ваш акаунт буде незворотньо видалено разом з усіма даними, які ви зберігаєте в хмарі Telegram.
 
-Важливо: ви можете скасувати видалення зараз та експортувати свої дані, щоб не втратити їх, перш ніж видалити акаунт. (В останній версії Telegram Desktop відкрийте Налаштування &gt; Розширені &gt; Експортувати дані Telegram.)</value>
+Ви можете експортувати свої дані на комп&apos;ютер, перш ніж видаляти акаунт. Щоб це зробити, в останній версії Telegram Desktop відкрийте Налаштування &gt; Розширені &gt; Експортувати дані Telegram.</value>
   </data>
   <data name="TosUpdateDecline" xml:space="preserve">
     <value>Нам шкода, але тут наші шляхи розходяться. На відміну від інших, ми не використовуємо ваші дані для таргетингу реклами чи інших комерційних потреб. Telegram зберігає лише ту інформацію, яка потрібна для того, щоб він працював як потужний хмарний сервіс. У налаштуваннях Приватності й безпеки ви можете вибрати, як використовуються ваші дані (напр., видалити синхронізовані контакти).
@@ -14239,7 +14257,7 @@ http://telegram.org/update</value>
     <value>Відео збережено до галереї</value>
   </data>
   <data name="VideoSavedToDownloadsHint" xml:space="preserve">
-    <value>Відео збережено в завантаженнях</value>
+    <value>Відео збережено в Завантаженнях</value>
   </data>
   <data name="VideosSavedHint_few" xml:space="preserve">
     <value>{0} відео збережено в галереї</value>

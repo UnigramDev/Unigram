@@ -553,14 +553,9 @@ namespace Unigram.ViewModels
         public bool IsEndReached()
         {
             var chat = _chat;
-            if (chat == null)
+            if (chat?.LastMessage == null)
             {
                 return false;
-            }
-
-            if (chat.LastMessage == null)
-            {
-                return true;
             }
 
             var last = Items.LastOrDefault();

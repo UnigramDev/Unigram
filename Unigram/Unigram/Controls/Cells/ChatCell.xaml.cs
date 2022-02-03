@@ -1276,15 +1276,15 @@ namespace Unigram.Controls.Cells
         {
             if (chat.Type is ChatTypeSupergroup supergroup)
             {
-                return supergroup.IsChannel ? Icons.Megaphone : Icons.People;
+                return supergroup.IsChannel ? Icons.MegaphoneFilled16 : Icons.PeopleFilled16;
             }
             else if (chat.Type is ChatTypeBasicGroup)
             {
-                return Icons.People;
+                return Icons.PeopleFilled16;
             }
             else if (chat.Type is ChatTypeSecret)
             {
-                return Icons.Lock;
+                return Icons.LockClosedFilled16;
             }
             else if (chat.Type is ChatTypePrivate privata && _protoService != null)
             {
@@ -1296,7 +1296,7 @@ namespace Unigram.Controls.Cells
                 var user = _protoService.GetUser(privata.UserId);
                 if (user != null && user.Type is UserTypeBot)
                 {
-                    return Icons.Bot;
+                    return Icons.BotFilled;
                 }
             }
 

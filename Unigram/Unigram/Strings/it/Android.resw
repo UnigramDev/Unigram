@@ -304,6 +304,9 @@
   <data name="AccDescrQuizExplanation" xml:space="preserve">
     <value>Spiegazione</value>
   </data>
+  <data name="AccDescrReactionMentionDown" xml:space="preserve">
+    <value>Passa alle reazioni non lette successive</value>
+  </data>
   <data name="AccDescrReceivedDate" xml:space="preserve">
     <value>Ricevuto {0}</value>
   </data>
@@ -1699,7 +1702,7 @@ Per confermare l&apos;accesso a Telegram, vai in Impostazioni &gt; Dispositivi &
     <value>1 settimana</value>
   </data>
   <data name="AutoDeleteAlertChannelInfo" xml:space="preserve">
-    <value>Elimina automaticamente i nuovi messaggi dopo un certo periodo di tempo per gli iscritti del canale.</value>
+    <value>Elimina automaticamente i nuovi messaggi dopo un certo periodo di tempo per gli iscritti al canale.</value>
   </data>
   <data name="AutoDeleteAlertGroupInfo" xml:space="preserve">
     <value>Elimina automaticamente i nuovi messaggi dopo un certo periodo di tempo per i membri del gruppo.</value>
@@ -2151,6 +2154,9 @@ Alba: {1}</value>
   </data>
   <data name="Blue" xml:space="preserve">
     <value>Blu</value>
+  </data>
+  <data name="BlurInChat" xml:space="preserve">
+    <value>Sfocatura nella chat</value>
   </data>
   <data name="BlurLinear" xml:space="preserve">
     <value>Lineare</value>
@@ -4220,6 +4226,9 @@ Cancella i log</value>
   <data name="DescriptionInfo" xml:space="preserve">
     <value>Puoi inserire una descrizione opzionale per il tuo canale.</value>
   </data>
+  <data name="DescriptionMore" xml:space="preserve">
+    <value>altro</value>
+  </data>
   <data name="DescriptionOptionalPlaceholder" xml:space="preserve">
     <value>Descrizione (opzionale)</value>
   </data>
@@ -5950,6 +5959,9 @@ Durata: {1}</value>
   </data>
   <data name="ForwardSendMessages" xml:space="preserve">
     <value>Invia messaggi</value>
+  </data>
+  <data name="ForwardsRestrictedInfoBot" xml:space="preserve">
+    <value>Copia e inoltro non sono permessi da questo bot.</value>
   </data>
   <data name="ForwardsRestrictedInfoChannel" xml:space="preserve">
     <value>Copia e inoltro non sono permessi in questo canale.</value>
@@ -8340,7 +8352,7 @@ Puoi personalizzare le notifiche per una chat aprendo il suo profilo e scegliend
     <value>Condividi foto e video in questa chat e accedi a essi da ogni tuo dispositivo.</value>
   </data>
   <data name="NoMediaAutoDownload" xml:space="preserve">
-    <value>Nessun media</value>
+    <value>Disattivato</value>
   </data>
   <data name="NoMediaSecret" xml:space="preserve">
     <value>Le foto e i video di questa chat appariranno qui.</value>
@@ -12681,6 +12693,12 @@ Non rispondere alla chiamata, Telegram farà tutto in automatico.</value>
   <data name="ShowInChat" xml:space="preserve">
     <value>Visualizza in chat</value>
   </data>
+  <data name="ShowLess" xml:space="preserve">
+    <value>Mostra di meno</value>
+  </data>
+  <data name="ShowMore" xml:space="preserve">
+    <value>Mostra di più</value>
+  </data>
   <data name="ShowNearbyPlaces" xml:space="preserve">
     <value>Tira su per vedere i luoghi vicini</value>
   </data>
@@ -14538,7 +14556,7 @@ Puoi usare **a–z**, **0–9** e underscore. La lunghezza minima è **5** carat
     <value>Diretta streaming programmata</value>
   </data>
   <data name="VoipChannelScheduleInfo" xml:space="preserve">
-    <value>Gli iscritti del canale saranno avvisati che la diretta streaming inizierà tra {0}.</value>
+    <value>Gli iscritti al canale saranno avvisati che la diretta streaming inizierà tra {0}.</value>
   </data>
   <data name="VoipChannelScheduleVoiceChat" xml:space="preserve">
     <value>Programma diretta streaming</value>
@@ -14550,7 +14568,7 @@ Puoi usare **a–z**, **0–9** e underscore. La lunghezza minima è **5** carat
     <value>Suono diretta streaming riattivato.</value>
   </data>
   <data name="VoipChannelStart2" xml:space="preserve">
-    <value>Gli iscritti del canale saranno avvisati dell&apos;inizio della diretta streaming.</value>
+    <value>Gli iscritti al canale saranno avvisati dell&apos;inizio della diretta streaming.</value>
   </data>
   <data name="VoipChannelStartRecordingVideoText" xml:space="preserve">
     <value>Vuoi iniziare a registrare questa diretta streaming e salvare il risultato in un file video?

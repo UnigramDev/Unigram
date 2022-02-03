@@ -304,6 +304,9 @@
   <data name="AccDescrQuizExplanation" xml:space="preserve">
     <value>Explicación</value>
   </data>
+  <data name="AccDescrReactionMentionDown" xml:space="preserve">
+    <value>Ir a las siguientes reacciones sin leer</value>
+  </data>
   <data name="AccDescrReceivedDate" xml:space="preserve">
     <value>Recibido el {0}</value>
   </data>
@@ -829,7 +832,7 @@ a: {1}</value>
     <value>Ahora estás a {0} de un1</value>
   </data>
   <data name="ActionVolumeChanged" xml:space="preserve">
-    <value>un1 cambió el volumen de un2 a {0}%</value>
+    <value>un1 cambió el volumen de un2 al {0} %</value>
   </data>
   <data name="ActionYouAddUser" xml:space="preserve">
     <value>Añadiste a un2</value>
@@ -1239,7 +1242,7 @@ a: {1}</value>
 • Corrección de errores y mejoras.</value>
   </data>
   <data name="AppUpdateDownloading" xml:space="preserve">
-    <value>Descargando {0}%...</value>
+    <value>Descargando {0} %...</value>
   </data>
   <data name="AppUpdateDownloadNow" xml:space="preserve">
     <value>Descargar ahora</value>
@@ -1898,7 +1901,7 @@ automáticamente después de {0}.</value>
     <value>Nivel de luminosidad</value>
   </data>
   <data name="AutoNightBrightnessInfo" xml:space="preserve">
-    <value>Cambia a tu tema nocturno preferido cuando la luminosidad del entorno sea menor a un {0}%.</value>
+    <value>Cambia a tu tema nocturno preferido cuando la luminosidad del entorno sea menor a un {0} %.</value>
   </data>
   <data name="AutoNightDisabled" xml:space="preserve">
     <value>Desactivado</value>
@@ -2312,7 +2315,7 @@ Amanecer: {1}</value>
     <value>Devolver llamada</value>
   </data>
   <data name="CallEmojiKeyTooltip" xml:space="preserve">
-    <value>Si los emojis son los mismos para {0}, la llamada es 100% segura.</value>
+    <value>Si los emojis son los mismos para {0}, la llamada es 100 % segura.</value>
   </data>
   <data name="Calling" xml:space="preserve">
     <value>Te estamos llamando...</value>
@@ -2393,7 +2396,7 @@ Amanecer: {1}</value>
     <value>Desfijar</value>
   </data>
   <data name="CameraPermissionText" xml:space="preserve">
-    <value>Toca para permitir el acceso a tu cámara</value>
+    <value>Toca para permitir el acceso a la cámara</value>
   </data>
   <data name="Cancel" xml:space="preserve">
     <value>Cancelar</value>
@@ -5311,7 +5314,7 @@ Duración: {1}</value>
     <value/>
   </data>
   <data name="FileSavedHint" xml:space="preserve">
-    <value>Archivo guardado en descargas</value>
+    <value>Archivo guardado en Descargas</value>
   </data>
   <data name="FilesDataUsage" xml:space="preserve">
     <value>Archivos</value>
@@ -5323,10 +5326,10 @@ Duración: {1}</value>
     <value/>
   </data>
   <data name="FilesSavedHint_one" xml:space="preserve">
-    <value>Archivo guardado en descargas</value>
+    <value>Archivo guardado en Descargas</value>
   </data>
   <data name="FilesSavedHint_other" xml:space="preserve">
-    <value>{0} archivos guardados en descargas</value>
+    <value>{0} archivos guardados en Descargas</value>
   </data>
   <data name="FilesSavedHint_two" xml:space="preserve">
     <value/>
@@ -5956,6 +5959,9 @@ pertenezcan a esta carpeta.</value>
   <data name="ForwardSendMessages" xml:space="preserve">
     <value>Enviar mensajes</value>
   </data>
+  <data name="ForwardsRestrictedInfoBot" xml:space="preserve">
+    <value>No está permitido copiar y guardar desde este bot.</value>
+  </data>
   <data name="ForwardsRestrictedInfoChannel" xml:space="preserve">
     <value>No está permitido copiar ni reenviar en este canal.</value>
   </data>
@@ -6032,7 +6038,7 @@ pertenezcan a esta carpeta.</value>
     <value>Envía imágenes sin compresión</value>
   </data>
   <data name="GalleryPermissionText" xml:space="preserve">
-    <value>Toca para permitir el acceso a tu galería</value>
+    <value>Toca para permitir el acceso a la galería</value>
   </data>
   <data name="GameCantSendSecretChat" xml:space="preserve">
     <value>Lo sentimos, los juegos no pueden ser enviados a chats secretos.</value>
@@ -6068,7 +6074,7 @@ pertenezcan a esta carpeta.</value>
     <value/>
   </data>
   <data name="GifSavedToDownloadsHint" xml:space="preserve">
-    <value>GIF guardado en descargas</value>
+    <value>GIF guardado en Descargas</value>
   </data>
   <data name="GifsTab" xml:space="preserve">
     <value>GIF</value>
@@ -6559,7 +6565,7 @@ Los mensajes serán importados en el día actual pero también incluirán su fec
 Los mensajes serán importados en el día actual pero también incluirán su fecha original. Ambos verán los mensajes.</value>
   </data>
   <data name="ImportUploading" xml:space="preserve">
-    <value>Importando mensajes y multimedia… **%d%**</value>
+    <value>Importando mensajes y multimedia… **%d %**</value>
   </data>
   <data name="InactiveChannelSignature" xml:space="preserve">
     <value>canal, {0} inactivo</value>
@@ -6936,7 +6942,7 @@ Toda la multimedia permanecerá en la nube de Telegram y podrás descargarla de 
     <value>Idioma</value>
   </data>
   <data name="LanguageAlert" xml:space="preserve">
-    <value>Estás a punto de aplicar un pack de idioma (**{0}**) que está completo en un {1}%.
+    <value>Estás a punto de aplicar un pack de idioma (**{0}**) que está completo en un {1} %.
 
 Esto traducirá toda la interfaz. Puedes sugerir correcciones en la [plataforma de traducción].
 
@@ -6949,7 +6955,7 @@ Puedes cambiar el idioma cuando quieras en Ajustes.</value>
     <value>Personalizado</value>
   </data>
   <data name="LanguageCustomAlert" xml:space="preserve">
-    <value>Estás a punto de aplicar un pack de idioma personalizado (**{0}**) que está completo en un {1}%.
+    <value>Estás a punto de aplicar un pack de idioma personalizado (**{0}**) que está completo en un {1} %.
 
 Esto traducirá toda la interfaz. Puedes sugerir correcciones en la [plataforma de traducción].
 
@@ -7489,10 +7495,10 @@ Tu número permanecerá oculto.</value>
     <value/>
   </data>
   <data name="MediaSavedHint_one" xml:space="preserve">
-    <value>Ítem guardado en galería</value>
+    <value>Ítem guardado en Galería</value>
   </data>
   <data name="MediaSavedHint_other" xml:space="preserve">
-    <value>{0} ítems guardados en galería</value>
+    <value>{0} ítems guardados en Galería</value>
   </data>
   <data name="MediaSavedHint_two" xml:space="preserve">
     <value/>
@@ -8250,13 +8256,13 @@ Esto puede tomar un poco de tiempo. Puedes seguir usando la app mientras se tras
     <value>Los usuarios expulsados son eliminados del canal y sólo pueden volver si son añadidos por un administrador. Los enlaces de invitación no funcionan para ellos.</value>
   </data>
   <data name="NoBlockedChannel2" xml:space="preserve">
-    <value>Los usuarios que fueron eliminados del canal por los administradores no pueden volver a unirse con enlaces de invitación.</value>
+    <value>Los usuarios que fueron eliminados del canal por los admins. no pueden volver a unirse con enlaces de invitación.</value>
   </data>
   <data name="NoBlockedGroup" xml:space="preserve">
     <value>Los usuarios expulsados son eliminados del grupo y sólo pueden volver si son añadidos por un administrador. Los enlaces de invitación no funcionan para ellos.</value>
   </data>
   <data name="NoBlockedGroup2" xml:space="preserve">
-    <value>Los usuarios que fueron expulsados del grupo por los administradores no pueden volver a unirse con enlaces de invitación.</value>
+    <value>Los usuarios que fueron eliminados del grupo por los admins. no pueden volver a unirse con enlaces de invitación.</value>
   </data>
   <data name="NoBlockedUsers" xml:space="preserve">
     <value>Sin usuarios expulsados</value>
@@ -10375,7 +10381,7 @@ Accederemos a tu ubicación sólo durante el tiempo que elijas, y puedes dejar d
     <value>Foto guardada en Galería</value>
   </data>
   <data name="PhotoSavedToDownloadsHint" xml:space="preserve">
-    <value>Foto guardada en descargas</value>
+    <value>Foto guardada en Descargas</value>
   </data>
   <data name="PhotosSavedHint_few" xml:space="preserve">
     <value/>
@@ -10384,10 +10390,10 @@ Accederemos a tu ubicación sólo durante el tiempo que elijas, y puedes dejar d
     <value/>
   </data>
   <data name="PhotosSavedHint_one" xml:space="preserve">
-    <value>Foto guardada en galería</value>
+    <value>Foto guardada en Galería</value>
   </data>
   <data name="PhotosSavedHint_other" xml:space="preserve">
-    <value>{0} fotos guardadas en galería</value>
+    <value>{0} fotos guardadas en Galería</value>
   </data>
   <data name="PhotosSavedHint_two" xml:space="preserve">
     <value/>
@@ -11531,7 +11537,7 @@ otra vez si se fija uno nuevo.</value>
     <value>REPORTAR {0}</value>
   </data>
   <data name="ReportSelectMessages" xml:space="preserve">
-    <value>Seleccionar mensajes</value>
+    <value>Selecciona mensajes</value>
   </data>
   <data name="ReportSend" xml:space="preserve">
     <value>Enviar reporte</value>
@@ -11556,7 +11562,7 @@ otra vez si se fija uno nuevo.</value>
     <value>REPORTAR SPAM Y SALIR</value>
   </data>
   <data name="ReportSpamLocation" xml:space="preserve">
-    <value>¿NO RELACIONADO CON LA UBICACIÓN?</value>
+    <value>NO SE RELACIONA CON LA UBICACIÓN</value>
   </data>
   <data name="ReportSpamTitle" xml:space="preserve">
     <value>Reportar spam</value>
@@ -11865,13 +11871,13 @@ El canal “**{1}**” pasará a ser privado.</value>
     <value>GUARDAR TEMA</value>
   </data>
   <data name="SaveToDownloads" xml:space="preserve">
-    <value>Guardar en descargas</value>
+    <value>Guardar en Descargas</value>
   </data>
   <data name="SaveToGallery" xml:space="preserve">
-    <value>Guardar en galería</value>
+    <value>Guardar en Galería</value>
   </data>
   <data name="SaveToGallerySettings" xml:space="preserve">
-    <value>Guardar en galería</value>
+    <value>Guardar en Galería</value>
   </data>
   <data name="SaveToGIFs" xml:space="preserve">
     <value>Guardar GIF</value>
@@ -12687,6 +12693,12 @@ No contestes. Telegram hará todo el proceso automáticamente.</value>
   <data name="ShowInChat" xml:space="preserve">
     <value>Mostrar en el chat</value>
   </data>
+  <data name="ShowLess" xml:space="preserve">
+    <value>Mostrar menos</value>
+  </data>
+  <data name="ShowMore" xml:space="preserve">
+    <value>Mostrar más</value>
+  </data>
   <data name="ShowNearbyPlaces" xml:space="preserve">
     <value>Levanta para ver lugares cercanos</value>
   </data>
@@ -12833,7 +12845,7 @@ El modo lento está activo. No puedes enviar más de un mensaje a la vez.</value
     <value>hablando</value>
   </data>
   <data name="SpeakingWithVolume" xml:space="preserve">
-    <value>{0}% hablando</value>
+    <value>{0} % hablando</value>
   </data>
   <data name="Speed" xml:space="preserve">
     <value>Velocidad</value>
@@ -13762,7 +13774,7 @@ Pero si no estás de acuerdo con las modestas necesidades de Telegram, no podrem
     <value>Verificación en dos pasos</value>
   </data>
   <data name="TypeLocationGroup" xml:space="preserve">
-    <value>Enlace</value>
+    <value>Enlace público</value>
   </data>
   <data name="TypeLocationGroupEdit" xml:space="preserve">
     <value>Toca para añadir un enlace permanente</value>
@@ -14306,7 +14318,7 @@ La longitud mínima es de **5** caracteres.</value>
     <value>Video guardado en Galería</value>
   </data>
   <data name="VideoSavedToDownloadsHint" xml:space="preserve">
-    <value>Video guardado en descargas</value>
+    <value>Video guardado en Descargas</value>
   </data>
   <data name="VideosSavedHint_few" xml:space="preserve">
     <value/>
@@ -14315,10 +14327,10 @@ La longitud mínima es de **5** caracteres.</value>
     <value/>
   </data>
   <data name="VideosSavedHint_one" xml:space="preserve">
-    <value>Video guardado en galería</value>
+    <value>Video guardado en Galería</value>
   </data>
   <data name="VideosSavedHint_other" xml:space="preserve">
-    <value>{0} videos guardados en galería</value>
+    <value>{0} videos guardados en Galería</value>
   </data>
   <data name="VideosSavedHint_two" xml:space="preserve">
     <value/>
@@ -14501,7 +14513,7 @@ La longitud mínima es de **5** caracteres.</value>
     <value>Finalizar stream en directo</value>
   </data>
   <data name="VoipChannelEndChat" xml:space="preserve">
-    <value>Finalizar stream en directo</value>
+    <value>Finalizar stream</value>
   </data>
   <data name="VoipChannelInvitedUser" xml:space="preserve">
     <value>Invitaste a **{0}** al stream en directo.</value>
@@ -14522,7 +14534,7 @@ La longitud mínima es de **5** caracteres.</value>
     <value>Unirme al stream en directo</value>
   </data>
   <data name="VoipChannelLeaveAlertEndChat" xml:space="preserve">
-    <value>Finalizar stream en directo</value>
+    <value>Finalizar stream</value>
   </data>
   <data name="VoipChannelLeaveAlertText" xml:space="preserve">
     <value>¿Quieres salir de este stream en directo?</value>

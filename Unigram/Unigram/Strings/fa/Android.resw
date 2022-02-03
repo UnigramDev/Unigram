@@ -12123,7 +12123,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>آیا می‌خواهید این مخاطب را برای **⁨{0}⁩** ارسال کنید؟</value>
   </data>
   <data name="SendDayAt" xml:space="preserve">
-    <value> &apos;ارسال&apos; MMM d &apos;ساعت&apos; HH:mm</value>
+    <value> &apos;ارسال&apos; d MMM &apos;ساعت&apos; HH:mm</value>
   </data>
   <data name="SendDayYearAt" xml:space="preserve">
     <value> &apos;ارسال&apos; d MMM yyyy &apos;ساعت&apos; HH:mm</value>
@@ -12845,10 +12845,10 @@ https://telegram.org/blog/coronavirus</value>
     <value>&apos;شروع&apos; d MMM yyyy &apos;ساعت&apos; HH:mm</value>
   </data>
   <data name="StartShortDayAt" xml:space="preserve">
-    <value>MMM d&apos;،&apos; HH:mm</value>
+    <value>d MMM&apos;،&apos; HH:mm</value>
   </data>
   <data name="StartShortDayYearAt" xml:space="preserve">
-    <value>MMM d yyyy&apos;،&apos; HH:mm</value>
+    <value>d MMM yyyy&apos;،&apos; HH:mm</value>
   </data>
   <data name="StartShortTodayAt" xml:space="preserve">
     <value>&apos;امروز،&apos; HH:mm</value>

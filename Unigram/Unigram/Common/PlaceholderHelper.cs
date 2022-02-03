@@ -506,8 +506,8 @@ namespace Unigram.Common
                         double ratioY = maxWidth / size.Height;
                         double ratio = Math.Min(ratioX, ratioY);
 
-                        bitmap.DecodePixelWidth = (int)(size.Width * ratio);
-                        bitmap.DecodePixelHeight = (int)(size.Height * ratio);
+                        bitmap.DecodePixelWidth = (int)Math.Max(1, size.Width * ratio);
+                        bitmap.DecodePixelHeight = (int)Math.Max(1, size.Height * ratio);
                         bitmap.DecodePixelType = DecodePixelType.Logical;
                     }
 

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Collections.Immutable;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services;
@@ -36,8 +35,6 @@ namespace Unigram.ViewModels
         // Used only by animated emojis
         public Sticker Interaction { get; set; }
 
-        private IDictionary<string, UnreadReaction> _unreadReactions;
-        public IDictionary<string, UnreadReaction> UnreadReactions { get => _unreadReactions ??= (_message.UnreadReactions?.ToImmutableDictionary(x => x.Reaction) ?? ImmutableDictionary<string, UnreadReaction>.Empty); set => _unreadReactions = value; }
 
         public ReplyMarkup ReplyMarkup { get => _message.ReplyMarkup; set => _message.ReplyMarkup = value; }
         public MessageContent Content { get => _message.Content; set => _message.Content = value; }
@@ -50,6 +47,7 @@ namespace Unigram.ViewModels
         public long ReplyToMessageId { get => _message.ReplyToMessageId; set => _message.ReplyToMessageId = value; }
         public long ReplyInChatId => _message.ReplyInChatId;
         public MessageForwardInfo ForwardInfo => _message.ForwardInfo;
+        public IList<UnreadReaction> UnreadReactions { get => _message.UnreadReactions; set => _message.UnreadReactions = value; }
         public int EditDate { get => _message.EditDate; set => _message.EditDate = value; }
         public int Date => _message.Date;
         public bool ContainsUnreadMention { get => _message.ContainsUnreadMention; set => _message.ContainsUnreadMention = value; }
@@ -251,6 +249,7 @@ namespace Unigram.ViewModels
             _message.TtlExpiresIn = message.TtlExpiresIn;
             _message.ViaBotUserId = message.ViaBotUserId;
             _message.InteractionInfo = message.InteractionInfo;
+            _message.UnreadReactions = message.UnreadReactions;
 
             if (_message.Content is MessageAlbum album)
             {

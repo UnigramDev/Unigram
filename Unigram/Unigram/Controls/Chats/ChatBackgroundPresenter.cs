@@ -74,7 +74,6 @@ namespace Unigram.Controls.Chats
             if (file.Id == _oldBackground?.Document?.DocumentValue.Id)
             {
                 var background = _oldBackground;
-                _oldBackground.UpdateFile(file);
                 _oldBackground = null;
 
                 UpdateBackground(background, ActualTheme == ElementTheme.Dark);

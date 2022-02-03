@@ -1663,7 +1663,7 @@
     <value>Адскануйце QR-код, каб злучыцца з вашым уліковым запісам.</value>
   </data>
   <data name="AuthAnotherClientInfo4" xml:space="preserve">
-    <value>Прывяжыце свой *Telegram Desktop* або *Telegram Web*, прасканаваўшы QR-код.</value>
+    <value>Хутка ўваходзьце праз *Telegram Desktop* або *Telegram Web* з дапамогай QR-кода.</value>
   </data>
   <data name="AuthAnotherClientInfo5" xml:space="preserve">
     <value>Перайдзіце на *getdesktop.telegram.org* ці *web.telegram.org*, каб атрымаць QR-код</value>
@@ -1917,7 +1917,7 @@
     <value>Па раскладзе</value>
   </data>
   <data name="AutoNightSystemDefault" xml:space="preserve">
-    <value>Перадвызначана</value>
+    <value>Прадвызначана</value>
   </data>
   <data name="AutoNightTheme" xml:space="preserve">
     <value>Аўтаматычны начны рэжым</value>
@@ -2425,7 +2425,7 @@
     <value>Вы хочаце скасаваць перасылку або адпраўку паведамленняў у іншы чат?</value>
   </data>
   <data name="CancelForwardPrivate" xml:space="preserve">
-    <value>Што вы хочаце зрабіць з {0} з вашага чату з **{1}**?</value>
+    <value>Што вы хочаце зрабіць з {0} з вашага чата з **{1}**?</value>
   </data>
   <data name="CancelLinkExpired" xml:space="preserve">
     <value>Гэта спасылка няправільная або яе тэрмін дзеяння скончыўся.</value>
@@ -2500,7 +2500,7 @@
     <value>Змяніць колеры</value>
   </data>
   <data name="ChangeColorToColor" xml:space="preserve">
-    <value>Вы хочаце выкарыстоўваць выбраны вамі фон або скінуць яго на перадвызначаны для гэтай тэмы?</value>
+    <value>Вы хочаце выкарыстоўваць выбраны вамі фон або скінуць яго на прадвызначаны для гэтай тэмы?</value>
   </data>
   <data name="ChangeLanguageLater" xml:space="preserve">
     <value>Пазней вы можаце змяніць мову праз Налады.</value>
@@ -3741,13 +3741,13 @@
   <data name="CreateNewThemeAlert" xml:space="preserve">
     <value>Вы можаце стварыць уласную тэму, змяняючы колеры ў рэдактары.
 
-Тут вы заўсёды можаце вярнуцца да перадвызначанай тэмы.</value>
+Тут вы заўсёды можаце вярнуцца да прадвызначанай тэмы.</value>
   </data>
   <data name="CreateNewThemeHelp" xml:space="preserve">
     <value>Націсніце на значок палітры, каб праглядзець спіс аб’ектаў на кожным экране і рэдагаваць іх.</value>
   </data>
   <data name="CreateNewThemeInfo" xml:space="preserve">
-    <value>Вы можаце стварыць уласную тэму, змяняючы колеры ў рэдактары. Тут вы заўсёды можаце вярнуцца да перадвызначанай тэмы.</value>
+    <value>Вы можаце стварыць уласную тэму, змяняючы колеры ў рэдактары. Тут вы заўсёды можаце вярнуцца да прадвызначанай тэмы.</value>
   </data>
   <data name="CreateNewThemeMenu" xml:space="preserve">
     <value>Стварыць новую тэму</value>
@@ -3972,10 +3972,10 @@
     <value>Адхіліць і выдаліць</value>
   </data>
   <data name="Default" xml:space="preserve">
-    <value>Перадвызн.</value>
+    <value>Прадвызн.</value>
   </data>
   <data name="DefaultRingtone" xml:space="preserve">
-    <value>Перадвызначаная</value>
+    <value>Прадвызначаная</value>
   </data>
   <data name="Delete" xml:space="preserve">
     <value>Выдаліць</value>
@@ -4861,7 +4861,7 @@
     <value>разблакіраваў(-ла) {0}</value>
   </data>
   <data name="EventLogDefaultPermissions" xml:space="preserve">
-    <value>змяніў(-ла) перадвызначаныя паўнамоцтвы</value>
+    <value>змяніў(-ла) прадвызначаныя паўнамоцтвы</value>
   </data>
   <data name="EventLogDeletedMessages" xml:space="preserve">
     <value>un1 выдаліў(-ла) паведамленне:</value>
@@ -5885,19 +5885,19 @@
     <value>{0} не ўбачыць, што гэта перасланыя паведамленні</value>
   </data>
   <data name="ForwardPreviewSendersNameHiddenChannel" xml:space="preserve">
-    <value>Атрымальнікі не будуць бачыць, што гэта перасланыя паведамленні</value>
+    <value>Атрымальнікі не будуць бачыць, што яны перасланыя</value>
   </data>
   <data name="ForwardPreviewSendersNameHiddenGroup" xml:space="preserve">
-    <value>Атрымальнікі не будуць бачыць, што гэта перасланыя паведамленні</value>
+    <value>Атрымальнікі не будуць бачыць, што яны перасланыя</value>
   </data>
   <data name="ForwardPreviewSendersNameVisible" xml:space="preserve">
-    <value>{0} убачыць, што гэта перасланае паведамленне</value>
+    <value>{0} будзе бачыць, што яно перасланае</value>
   </data>
   <data name="ForwardPreviewSendersNameVisibleChannel" xml:space="preserve">
-    <value>Атрымальнікі ўбачаць, што гэта перасланае паведамленне</value>
+    <value>Атрымальнікі ўбачаць, што яно перасланае</value>
   </data>
   <data name="ForwardPreviewSendersNameVisibleGroup" xml:space="preserve">
-    <value>Атрымальнікі ўбачаць, што гэта перасланае паведамленне</value>
+    <value>Атрымальнікі ўбачаць, што яно перасланае</value>
   </data>
   <data name="ForwardSendMessages" xml:space="preserve">
     <value>Адправіць паведамленні</value>
@@ -6258,10 +6258,10 @@
     <value>СХАВАЦЬ ЗАМАЦАВАНЫЯ ПАВЕДАМЛЕННІ</value>
   </data>
   <data name="HideSenderNames" xml:space="preserve">
-    <value>Схаваць імёны адпраўнікоў</value>
+    <value>Хаваць імёны адпраўнікоў</value>
   </data>
   <data name="HideSendersName" xml:space="preserve">
-    <value>Схаваць імя адпраўніка</value>
+    <value>Хаваць імя адпраўніка</value>
   </data>
   <data name="Highlights" xml:space="preserve">
     <value>Зоны святла</value>
@@ -7690,16 +7690,16 @@
     <value/>
   </data>
   <data name="MessagesBold_few" xml:space="preserve">
-    <value>**{0}** паведамленні</value>
+    <value>**{0}** паведамленнямі</value>
   </data>
   <data name="MessagesBold_many" xml:space="preserve">
-    <value>**{0}** паведамленняў</value>
+    <value>**{0}** паведамленнямі</value>
   </data>
   <data name="MessagesBold_one" xml:space="preserve">
-    <value>**{0}** паведамленне</value>
+    <value>**{0}** паведамленнем</value>
   </data>
   <data name="MessagesBold_other" xml:space="preserve">
-    <value>**{0}** паведамленняў</value>
+    <value>**{0}** паведамленнем</value>
   </data>
   <data name="MessagesBold_two" xml:space="preserve">
     <value/>
@@ -7750,7 +7750,7 @@
     <value>{0} паведамленняў выдалена</value>
   </data>
   <data name="MessagesDeletedHint_one" xml:space="preserve">
-    <value>Паведамленне выдалена</value>
+    <value>{0} паведамленне выдалена</value>
   </data>
   <data name="MessagesDeletedHint_other" xml:space="preserve">
     <value>{0} паведамленні выдалена</value>
@@ -7929,7 +7929,7 @@
     <value>{0} хвілін</value>
   </data>
   <data name="MinutesSchedule_one" xml:space="preserve">
-    <value>{0} хвіліна</value>
+    <value>{0} хвіліну</value>
   </data>
   <data name="MinutesSchedule_other" xml:space="preserve">
     <value>{0} хвіліны</value>
@@ -8847,13 +8847,13 @@
     <value>Дапасаваць</value>
   </data>
   <data name="NotificationsDefault" xml:space="preserve">
-    <value>Перадвызначана</value>
+    <value>Прадвызначана</value>
   </data>
   <data name="NotificationsDefaultOff" xml:space="preserve">
-    <value>Перадвызначана (Выкл.)</value>
+    <value>Прадвызначана (Выкл.)</value>
   </data>
   <data name="NotificationsDefaultOn" xml:space="preserve">
-    <value>Перадвызначана (Укл.)</value>
+    <value>Прадвызначана (Укл.)</value>
   </data>
   <data name="NotificationsDeleteAllException" xml:space="preserve">
     <value>Выдаліць усе выключэнні</value>
@@ -8895,7 +8895,7 @@
     <value>Важнасць</value>
   </data>
   <data name="NotificationsInAppDefault" xml:space="preserve">
-    <value>Перадвызначаныя</value>
+    <value>Прадвызначаныя</value>
   </data>
   <data name="NotificationsLed" xml:space="preserve">
     <value>Святлодыёд</value>
@@ -8934,7 +8934,7 @@
     <value>Прыярытэт</value>
   </data>
   <data name="NotificationsPriorityDefault" xml:space="preserve">
-    <value>Перадвызначаны</value>
+    <value>Прадвызначаны</value>
   </data>
   <data name="NotificationsPriorityHigh" xml:space="preserve">
     <value>Вышэйшая</value>
@@ -10577,7 +10577,7 @@
     <value>Пераслаць {0} галасавых паведамленняў</value>
   </data>
   <data name="PreviewForwardAudio_one" xml:space="preserve">
-    <value>Пераслаць галасавое паведамленне</value>
+    <value>Пераслаць {0} галасавое паведамленне</value>
   </data>
   <data name="PreviewForwardAudio_other" xml:space="preserve">
     <value>Пераслаць {0} галасавых паведамленняў</value>
@@ -10649,7 +10649,7 @@
     <value>Пераслаць {0} паведамленняў</value>
   </data>
   <data name="PreviewForwardMessagesCount_one" xml:space="preserve">
-    <value>Пераслаць паведамленне</value>
+    <value>Пераслаць {0} паведамленне</value>
   </data>
   <data name="PreviewForwardMessagesCount_other" xml:space="preserve">
     <value>Пераслаць {0} паведамленняў</value>
@@ -10721,7 +10721,7 @@
     <value>Пераслаць {0} відэапаведамленняў</value>
   </data>
   <data name="PreviewForwardRound_one" xml:space="preserve">
-    <value>Пераслаць відэапаведамленне</value>
+    <value>Пераслаць {0} відэапаведамленне</value>
   </data>
   <data name="PreviewForwardRound_other" xml:space="preserve">
     <value>Пераслаць {0} відэапаведамленняў</value>
@@ -11131,7 +11131,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>{0}: {1} на ваша відэапаведамленне</value>
   </data>
   <data name="PushReactSticker" xml:space="preserve">
-    <value>{0}: {1} на ваш стыкер {2}</value>
+    <value>{0}: {1} на ваш {2} стыкер</value>
   </data>
   <data name="PushReactText" xml:space="preserve">
     <value>{0}: {1} на ваша «{2}»</value>
@@ -11644,7 +11644,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>Скінуць усе апавяшчэнні</value>
   </data>
   <data name="ResetNotificationsText" xml:space="preserve">
-    <value>Усе налады апавяшчэнняў скінуты на перадвызначаныя</value>
+    <value>Усе налады апавяшчэнняў скінуты на прадвызначаныя</value>
   </data>
   <data name="ResetPassword" xml:space="preserve">
     <value>Скінуць пароль</value>
@@ -11812,7 +11812,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>ЗАХАВАЦЬ ТЭМУ</value>
   </data>
   <data name="SaveToDownloads" xml:space="preserve">
-    <value>Спампаваць</value>
+    <value>Захаваць у cпампоўкі</value>
   </data>
   <data name="SaveToGallery" xml:space="preserve">
     <value>Захаваць у галерэю</value>
@@ -12769,7 +12769,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>Гук</value>
   </data>
   <data name="SoundDefault" xml:space="preserve">
-    <value>Перадвызначаны</value>
+    <value>Прадвызначаны</value>
   </data>
   <data name="SoundMuted" xml:space="preserve">
     <value>Гук выключаны</value>
@@ -13523,7 +13523,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>Рыгор</value>
   </data>
   <data name="ThemeResetToDefaults" xml:space="preserve">
-    <value>Скінуць на перадвызначаныя</value>
+    <value>Скінуць на прадвызначаныя</value>
   </data>
   <data name="ThemeResetToDefaultsText" xml:space="preserve">
     <value>Вы ўпэўнены, што хочаце скінуць памер тэксту і налады колеру?</value>
@@ -14197,7 +14197,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>Вібрацыя</value>
   </data>
   <data name="VibrationDefault" xml:space="preserve">
-    <value>Перадвызначаная</value>
+    <value>Прадвызначаная</value>
   </data>
   <data name="VibrationDisabled" xml:space="preserve">
     <value>Адключана</value>
@@ -14461,7 +14461,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>Вітанкі! Далучайцеся да нашага жывога эфіру: {0}</value>
   </data>
   <data name="VoipChannelJoinAnonymousAdmin" xml:space="preserve">
-    <value>Выбачайце, але вы не можаце далучыцца да жывых эфіраў як ананімны кіраўнік.</value>
+    <value>Вы не можаце далучацца да жывых эфіраў як ананімны кіраўнік.</value>
   </data>
   <data name="VoipChannelJoinAnonymouseAlert" xml:space="preserve">
     <value>Вы ўпэўнены, што хочаце, каб іншыя ўдзельнікі эфіру бачылі ваш уліковы запіс?</value>
@@ -14526,7 +14526,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>Загаловак жывога эфіру</value>
   </data>
   <data name="VoipChannelTooMuch" xml:space="preserve">
-    <value>Выбачайце, але гэты жывы эфір перапоўнены.</value>
+    <value>Гэты жывы эфір перапоўнены.</value>
   </data>
   <data name="VoipChannelUserChanged" xml:space="preserve">
     <value>Удзельнікі эфіру будуць бачыць вас як **{0}**</value>

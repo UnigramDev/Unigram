@@ -107,27 +107,33 @@ namespace Unigram.Controls.Messages
                 }
             }
 
-            var file = value.CenterAnimation.StickerValue;
-            if (file.Id == _presenterId)
+            var around = value.AroundAnimation.StickerValue;
+            if (around.Local.CanBeDownloaded && !around.Local.IsDownloadingActive && !around.Local.IsDownloadingCompleted)
+            {
+                _message.ProtoService.DownloadFile(around.Id, 32);
+            }
+
+            var center = value.CenterAnimation.StickerValue;
+            if (center.Id == _presenterId)
             {
                 return;
             }
 
-            _presenterId = file.Id;
+            _presenterId = center.Id;
 
-            if (file.Local.IsDownloadingCompleted)
+            if (center.Local.IsDownloadingCompleted)
             {
-                Presenter.Source = await GetLottieFrame(file.Local.Path, 0, 32, 32);
+                Presenter.Source = await GetLottieFrame(center.Local.Path, 0, 32, 32);
             }
             else
             {
                 Presenter.Source = null;
 
-                UpdateManager.Subscribe(this, _message, file, UpdateFile, true);
+                UpdateManager.Subscribe(this, _message, center, UpdateFile, true);
 
-                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                if (center.Local.CanBeDownloaded && !center.Local.IsDownloadingActive)
                 {
-                    _message.ProtoService.DownloadFile(file.Id, 32);
+                    _message.ProtoService.DownloadFile(center.Id, 32);
                 }
             }
         }
@@ -229,28 +235,28 @@ namespace Unigram.Controls.Messages
                 return;
             }
 
-            var file1 = reaction.CenterAnimation.StickerValue;
-            var file2 = reaction.AroundAnimation.StickerValue;
+            var center = reaction.CenterAnimation.StickerValue;
+            var around = reaction.AroundAnimation.StickerValue;
 
-            if (file1.Local.IsDownloadingCompleted && file2.Local.IsDownloadingCompleted)
+            if (center.Local.IsDownloadingCompleted && around.Local.IsDownloadingCompleted)
             {
                 var presenter = Presenter;
                 var popup = Overlay;
 
                 var dispatcher = DispatcherQueue.GetForCurrentThread();
 
-                var center = new LottieView();
-                center.Width = 32;
-                center.Height = 32;
-                center.IsLoopingEnabled = false;
-                center.FrameSize = new Windows.Graphics.SizeInt32 { Width = 32, Height = 32 };
-                center.DecodeFrameType = DecodePixelType.Logical;
-                center.Source = UriEx.ToLocal(file1.Local.Path);
-                center.FirstFrameRendered += (s, args) =>
+                var centerView = new LottieView();
+                centerView.Width = 32;
+                centerView.Height = 32;
+                centerView.IsLoopingEnabled = false;
+                centerView.FrameSize = new Windows.Graphics.SizeInt32 { Width = 32, Height = 32 };
+                centerView.DecodeFrameType = DecodePixelType.Logical;
+                centerView.Source = UriEx.ToLocal(center.Local.Path);
+                centerView.FirstFrameRendered += (s, args) =>
                 {
                     dispatcher.TryEnqueue(Start);
                 };
-                center.PositionChanged += (s, args) =>
+                centerView.PositionChanged += (s, args) =>
                 {
                     if (args == 1)
                     {
@@ -259,14 +265,14 @@ namespace Unigram.Controls.Messages
                     }
                 };
 
-                var around = new LottieView();
-                around.Width = 32 * 3;
-                around.Height = 32 * 3;
-                around.IsLoopingEnabled = false;
-                around.FrameSize = new Windows.Graphics.SizeInt32 { Width = 32 * 3, Height = 32 * 3 };
-                around.DecodeFrameType = DecodePixelType.Logical;
-                around.Source = UriEx.ToLocal(file2.Local.Path);
-                around.PositionChanged += (s, args) =>
+                var aroundView = new LottieView();
+                aroundView.Width = 32 * 3;
+                aroundView.Height = 32 * 3;
+                aroundView.IsLoopingEnabled = false;
+                aroundView.FrameSize = new Windows.Graphics.SizeInt32 { Width = 32 * 3, Height = 32 * 3 };
+                aroundView.DecodeFrameType = DecodePixelType.Logical;
+                aroundView.Source = UriEx.ToLocal(around.Local.Path);
+                aroundView.PositionChanged += (s, args) =>
                 {
                     if (args == 1)
                     {
@@ -278,8 +284,8 @@ namespace Unigram.Controls.Messages
                 var root = new Grid();
                 root.Width = 32 * 3;
                 root.Height = 32 * 3;
-                root.Children.Add(center);
-                root.Children.Add(around);
+                root.Children.Add(centerView);
+                root.Children.Add(aroundView);
 
                 popup.Child = root;
 
@@ -287,14 +293,14 @@ namespace Unigram.Controls.Messages
             }
             else
             {
-                if (file1.Local.CanBeDownloaded && !file1.Local.IsDownloadingActive)
+                if (center.Local.CanBeDownloaded && !center.Local.IsDownloadingActive)
                 {
-                    _message.ProtoService.DownloadFile(file1.Id, 32);
+                    _message.ProtoService.DownloadFile(center.Id, 32);
                 }
 
-                if (file2.Local.CanBeDownloaded && !file2.Local.IsDownloadingActive)
+                if (around.Local.CanBeDownloaded && !around.Local.IsDownloadingActive)
                 {
-                    _message.ProtoService.DownloadFile(file2.Id, 32);
+                    _message.ProtoService.DownloadFile(around.Id, 32);
                 }
             }
         }

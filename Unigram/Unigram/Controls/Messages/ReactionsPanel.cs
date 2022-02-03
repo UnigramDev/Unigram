@@ -15,7 +15,7 @@ namespace Unigram.Controls.Messages
 
         public bool HasReactions => _reactions.Count > 0;
 
-        public void UpdateMessageReactions(MessageViewModel message, bool animate = false)
+        public void UpdateMessageReactions(MessageViewModel message, bool? animate = false)
         {
             var reactions = message?.InteractionInfo?.Reactions;
             if (reactions != null)
@@ -46,6 +46,11 @@ namespace Unigram.Controls.Messages
                             _reactions[item.Reaction] = button;
                             Children.Add(button);
                         }
+
+                        if (animate is true && item.IsChosen)
+                        {
+                            button.SetUnread(new UnreadReaction(item.Reaction, null, false));
+                        }
                     }
                 }
 
@@ -53,16 +58,14 @@ namespace Unigram.Controls.Messages
                 {
                     if (added.Contains(reaction.Key))
                     {
+                        continue;
+                    }
 
-                    }
-                    else
-                    {
-                        _reactions.Remove(reaction.Key);
-                        Children.Remove(reaction.Value);
-                    }
+                    _reactions.Remove(reaction.Key);
+                    Children.Remove(reaction.Value);
                 }
 
-                if (animate && unread != null)
+                if (animate is null && unread != null)
                 {
                     foreach (var item in unread.GroupBy(x => x.Reaction))
                     {

@@ -304,6 +304,9 @@
   <data name="AccDescrQuizExplanation" xml:space="preserve">
     <value>Explicação</value>
   </data>
+  <data name="AccDescrReactionMentionDown" xml:space="preserve">
+    <value>Ir para as próximas reações não lidas</value>
+  </data>
   <data name="AccDescrReceivedDate" xml:space="preserve">
     <value>Recebido {0}</value>
   </data>
@@ -5298,7 +5301,7 @@ Duração: {1}</value>
     <value/>
   </data>
   <data name="FileSavedHint" xml:space="preserve">
-    <value>Arquivo salvo em downloads</value>
+    <value>Arquivo salvo em Downloads</value>
   </data>
   <data name="FilesDataUsage" xml:space="preserve">
     <value>Arquivos</value>
@@ -5310,10 +5313,10 @@ Duração: {1}</value>
     <value/>
   </data>
   <data name="FilesSavedHint_one" xml:space="preserve">
-    <value>Arquivo salvo em downloads</value>
+    <value>Arquivo salvo em Downloads</value>
   </data>
   <data name="FilesSavedHint_other" xml:space="preserve">
-    <value>{0} arquivos salvos em downloads</value>
+    <value>{0} arquivos salvos em Downloads</value>
   </data>
   <data name="FilesSavedHint_two" xml:space="preserve">
     <value/>
@@ -5943,6 +5946,9 @@ pasta no momento.</value>
   <data name="ForwardSendMessages" xml:space="preserve">
     <value>Enviar mensagens</value>
   </data>
+  <data name="ForwardsRestrictedInfoBot" xml:space="preserve">
+    <value>Não é permitido copiar ou encaminhar deste bot</value>
+  </data>
   <data name="ForwardsRestrictedInfoChannel" xml:space="preserve">
     <value>Não é permitido copiar ou encaminhar deste canal.</value>
   </data>
@@ -6055,7 +6061,7 @@ pasta no momento.</value>
     <value/>
   </data>
   <data name="GifSavedToDownloadsHint" xml:space="preserve">
-    <value>GIF salvo em downloads</value>
+    <value>GIF salvo em Downloads</value>
   </data>
   <data name="GifsTab" xml:space="preserve">
     <value>GIFS</value>
@@ -7200,10 +7206,10 @@ Ele só funciona para membros deste chat.</value>
     <value>Escolha por quanto tempo {0} verá sua localização precisa.</value>
   </data>
   <data name="LiveLocationContext" xml:space="preserve">
-    <value>Localiz. em Tempo Real</value>
+    <value>Localização Ao Vivo</value>
   </data>
   <data name="LiveLocations" xml:space="preserve">
-    <value>Localizações em Tempo Real</value>
+    <value>Localizações Ao Vivo</value>
   </data>
   <data name="Loading" xml:space="preserve">
     <value>Carregando...</value>
@@ -10361,7 +10367,7 @@ O Telegram acessará a sua localização somente pela duração que você escolh
     <value>Foto salva na galeria</value>
   </data>
   <data name="PhotoSavedToDownloadsHint" xml:space="preserve">
-    <value>Foto salva em downloads</value>
+    <value>Foto salva em Downloads</value>
   </data>
   <data name="PhotosSavedHint_few" xml:space="preserve">
     <value/>
@@ -11850,7 +11856,7 @@ O canal &quot;**{1}**&quot; se tornará privado.</value>
     <value>SALVAR TEMA</value>
   </data>
   <data name="SaveToDownloads" xml:space="preserve">
-    <value>Salvar em downloads</value>
+    <value>Salvar em Downloads</value>
   </data>
   <data name="SaveToGallery" xml:space="preserve">
     <value>Salvar na galeria</value>
@@ -12511,7 +12517,7 @@ Não atenda, o Telegram processará tudo automaticamente.</value>
     <value>Links</value>
   </data>
   <data name="SharedMedia" xml:space="preserve">
-    <value>Mídia Compartilhada</value>
+    <value>Mídias Compartilhadas</value>
   </data>
   <data name="SharedMediaFastScrollHint" xml:space="preserve">
     <value>Toque e segure aqui para rolar mais rápido</value>
@@ -12523,10 +12529,10 @@ Não atenda, o Telegram processará tudo automaticamente.</value>
     <value>Mídias</value>
   </data>
   <data name="SharedMediaTabFull2" xml:space="preserve">
-    <value>Mídia Compartilhada</value>
+    <value>Mídias Compartilhadas</value>
   </data>
   <data name="SharedMediaTitle" xml:space="preserve">
-    <value>Mídia Compartilhada</value>
+    <value>Mídias Compartilhadas</value>
   </data>
   <data name="SharedMusicTab" xml:space="preserve">
     <value>MÚSICAS</value>
@@ -12671,6 +12677,12 @@ Não atenda, o Telegram processará tudo automaticamente.</value>
   </data>
   <data name="ShowInChat" xml:space="preserve">
     <value>Mostrar na conversa</value>
+  </data>
+  <data name="ShowLess" xml:space="preserve">
+    <value>Mostrar menos</value>
+  </data>
+  <data name="ShowMore" xml:space="preserve">
+    <value>Mostrar mais</value>
   </data>
   <data name="ShowNearbyPlaces" xml:space="preserve">
     <value>Deslize para ver lugares próximos</value>
@@ -14294,7 +14306,7 @@ O tamanho mínimo é de **5** caracteres.</value>
     <value>Vídeo salvo na galeria</value>
   </data>
   <data name="VideoSavedToDownloadsHint" xml:space="preserve">
-    <value>Vídeo salvo em downloads</value>
+    <value>Vídeo salvo em Downloads</value>
   </data>
   <data name="VideosSavedHint_few" xml:space="preserve">
     <value/>

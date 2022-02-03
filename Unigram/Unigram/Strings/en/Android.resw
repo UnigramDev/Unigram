@@ -6309,10 +6309,10 @@ Note that they can still join via the group&apos;s invite link as long as they a
     <value>HIDE PINNED MESSAGES</value>
   </data>
   <data name="HideSenderNames" xml:space="preserve">
-    <value>Hide senders\’ names</value>
+    <value>Hide senders’ names</value>
   </data>
   <data name="HideSendersName" xml:space="preserve">
-    <value>Hide sender\’s name</value>
+    <value>Hide sender’s name</value>
   </data>
   <data name="Highlights" xml:space="preserve">
     <value>Highlights</value>
@@ -12691,10 +12691,10 @@ Don&apos;t accept the call, Telegram will process everything automatically.</val
     <value>Turn this off if you want to receive notifications only from the account you are currently using.</value>
   </data>
   <data name="ShowSenderNames" xml:space="preserve">
-    <value>Show senders\’ names</value>
+    <value>Show senders’ names</value>
   </data>
   <data name="ShowSendersName" xml:space="preserve">
-    <value>Show sender\’s name</value>
+    <value>Show sender’s name</value>
   </data>
   <data name="ShowStickers" xml:space="preserve">
     <value>Show stickers</value>

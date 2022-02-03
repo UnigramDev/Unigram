@@ -34,6 +34,8 @@ namespace Unigram.Views
     {
         public InstantViewModel ViewModel => DataContext as InstantViewModel;
 
+        public ISettingsService Settings => throw new NotImplementedException();
+
         public IEventAggregator Aggregator => throw new NotImplementedException();
 
         private readonly string _injectedJs;

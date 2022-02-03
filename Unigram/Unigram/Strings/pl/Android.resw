@@ -304,6 +304,9 @@
   <data name="AccDescrQuizExplanation" xml:space="preserve">
     <value>Wyjaśnienie</value>
   </data>
+  <data name="AccDescrReactionMentionDown" xml:space="preserve">
+    <value>Przejdź do następnych nieprzeczytanych reakcji</value>
+  </data>
   <data name="AccDescrReceivedDate" xml:space="preserve">
     <value>Odebrane {0}</value>
   </data>
@@ -2146,6 +2149,9 @@ Wschód słońca: {1}</value>
   </data>
   <data name="Blue" xml:space="preserve">
     <value>Niebieski</value>
+  </data>
+  <data name="BlurInChat" xml:space="preserve">
+    <value>Rozmycie na czacie</value>
   </data>
   <data name="BlurLinear" xml:space="preserve">
     <value>Liniowe</value>
@@ -4214,6 +4220,9 @@ W każdej chwili z tego miejsca możesz przywrócić domyślny motyw.</value>
   <data name="DescriptionInfo" xml:space="preserve">
     <value>Opcjonalnie możesz podać opis dla tego kanału.</value>
   </data>
+  <data name="DescriptionMore" xml:space="preserve">
+    <value>więcej</value>
+  </data>
   <data name="DescriptionOptionalPlaceholder" xml:space="preserve">
     <value>Opis (opcjonalny)</value>
   </data>
@@ -5239,22 +5248,22 @@ Czas trwania: {1}</value>
     <value/>
   </data>
   <data name="FileSavedHint" xml:space="preserve">
-    <value>Plik zapisany w pobranych</value>
+    <value>Plik zapisany w Pobranych</value>
   </data>
   <data name="FilesDataUsage" xml:space="preserve">
     <value>Pliki</value>
   </data>
   <data name="FilesSavedHint_few" xml:space="preserve">
-    <value>{0} pliki zapisane do pobranych</value>
+    <value>{0} pliki zapisane w Pobranych</value>
   </data>
   <data name="FilesSavedHint_many" xml:space="preserve">
-    <value>{0} plików zapisanych do pobranych</value>
+    <value>{0} plików zapisanych w Pobranych</value>
   </data>
   <data name="FilesSavedHint_one" xml:space="preserve">
-    <value>Plik zapisany do pobranych</value>
+    <value>Plik zapisany w Pobranych</value>
   </data>
   <data name="FilesSavedHint_other" xml:space="preserve">
-    <value>{0} pliku zapisano do pobranych</value>
+    <value>{0} pliku zapisano w Pobranych</value>
   </data>
   <data name="FilesSavedHint_two" xml:space="preserve">
     <value/>
@@ -5997,7 +6006,7 @@ Czas trwania: {1}</value>
     <value/>
   </data>
   <data name="GifSavedToDownloadsHint" xml:space="preserve">
-    <value>GIF zapisany w pobranych</value>
+    <value>GIF zapisany w Pobranych</value>
   </data>
   <data name="GifsTab" xml:space="preserve">
     <value>GIFY</value>
@@ -10303,7 +10312,7 @@ Będziemy mieć dostęp do twojej lokalizacji tylko przez wybrany przez ciebie c
     <value>Zdjęcie zapisane w galerii</value>
   </data>
   <data name="PhotoSavedToDownloadsHint" xml:space="preserve">
-    <value>Zdjęcie zapisane w pobranych</value>
+    <value>Zdjęcie zapisane w Pobranych</value>
   </data>
   <data name="PhotosSavedHint_few" xml:space="preserve">
     <value>{0} zdjęcia zapisane do galerii</value>
@@ -11793,7 +11802,7 @@ Kanał „**{1}**” stanie się kanałem prywatnym.</value>
     <value>ZAPISZ MOTYW</value>
   </data>
   <data name="SaveToDownloads" xml:space="preserve">
-    <value>Zapisz w pobranych</value>
+    <value>Zapisz w Pobranych</value>
   </data>
   <data name="SaveToGallery" xml:space="preserve">
     <value>Zapisz w galerii</value>
@@ -12614,6 +12623,12 @@ Nie odbieraj połączenia, Telegram automatycznie przetworzy wszystko.</value>
   </data>
   <data name="ShowInChat" xml:space="preserve">
     <value>Pokaż w czacie</value>
+  </data>
+  <data name="ShowLess" xml:space="preserve">
+    <value>Pokaż mniej</value>
+  </data>
+  <data name="ShowMore" xml:space="preserve">
+    <value>Pokaż więcej</value>
   </data>
   <data name="ShowNearbyPlaces" xml:space="preserve">
     <value>Pociągnij do góry, aby zobaczyć miejsca w pobliżu</value>
@@ -14234,7 +14249,7 @@ Możesz użyć **a–z**, **0–9** i podkreśleń. Minimalna długość nazwy t
     <value>Wideo zapisane w galerii</value>
   </data>
   <data name="VideoSavedToDownloadsHint" xml:space="preserve">
-    <value>Wideo zapisane do pobranych</value>
+    <value>Wideo zapisane w Pobranych</value>
   </data>
   <data name="VideosSavedHint_few" xml:space="preserve">
     <value>{0} widea zapisane do galerii</value>

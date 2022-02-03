@@ -304,6 +304,9 @@
   <data name="AccDescrQuizExplanation" xml:space="preserve">
     <value>الشرح</value>
   </data>
+  <data name="AccDescrReactionMentionDown" xml:space="preserve">
+    <value>الانتقال للتفاعلات غير المقروءة</value>
+  </data>
   <data name="AccDescrReceivedDate" xml:space="preserve">
     <value>تم التسليم ⁨{0}⁩</value>
   </data>
@@ -1491,7 +1494,7 @@
     <value>هل ترغب حقًا في مشاركة رقم هاتفك؟</value>
   </data>
   <data name="AreYouSureShareMyContactInfoBot" xml:space="preserve">
-    <value>سيطلع البوت على رقم هاتفك. ربما يكون هذا مفيدًا للتكامل مع خدمات أخرى.</value>
+    <value>سيطلع البوت على رقم هاتفك. قد يكون هذا مفيدًا عند التعامل مع خدماتٍ أخرى.</value>
   </data>
   <data name="AreYouSureShareMyContactInfoUser" xml:space="preserve">
     <value>هل ترغب حقًا في مشاركة رقم هاتفك ⁨{0}⁩ مع **⁨{1}⁩**؟</value>
@@ -2151,6 +2154,9 @@
   </data>
   <data name="Blue" xml:space="preserve">
     <value>الأزرق</value>
+  </data>
+  <data name="BlurInChat" xml:space="preserve">
+    <value>التمويه في المحادثة</value>
   </data>
   <data name="BlurLinear" xml:space="preserve">
     <value>طولي</value>
@@ -3196,7 +3202,7 @@
     <value>تظهر هذه الرسالة لأنك طلبت الانضمام إلى **⁨{0}⁩** في ⁨{1}⁩</value>
   </data>
   <data name="ChatWithChannelAdmin" xml:space="preserve">
-    <value>**⁨{0}⁩** من مشرفي قناة **⁨{1}⁩** التي طلبت أنت الانضمام لها.</value>
+    <value>**⁨{0}⁩** من مشرفي قناة **«⁨{1}⁩»** التي طلبت أنت الانضمام لها.</value>
   </data>
   <data name="ChatWithGroupAdmin" xml:space="preserve">
     <value>**⁨{0}⁩** من مشرفي مجموعة **«⁨{1}⁩»** التي طلبت أنت الانضمام لها.</value>
@@ -4225,6 +4231,9 @@
   </data>
   <data name="DescriptionInfo" xml:space="preserve">
     <value>يمكنك إضافة وصف اختياري لقناتك.</value>
+  </data>
+  <data name="DescriptionMore" xml:space="preserve">
+    <value>المزيد</value>
   </data>
   <data name="DescriptionOptionalPlaceholder" xml:space="preserve">
     <value>الوصف (اختياري)</value>
@@ -5321,13 +5330,13 @@
     <value>تم حفظ ⁨{0}⁩ ملفات في التنزيلات</value>
   </data>
   <data name="FilesSavedHint_many" xml:space="preserve">
-    <value>تم حفظ ١١ ملفًا في التنزيلات</value>
+    <value>تم حفظ ⁨{0}⁩ ملفًا في التنزيلات</value>
   </data>
   <data name="FilesSavedHint_one" xml:space="preserve">
-    <value>تم حفظ ملف في التنزيلات</value>
+    <value>تم حفظ الملف في التنزيلات</value>
   </data>
   <data name="FilesSavedHint_other" xml:space="preserve">
-    <value>تم حفظ ⁨{0}⁩ ملف في التنزيلات</value>
+    <value>تم حفظ ⁨{0}⁩ ملفٍ في التنزيلات</value>
   </data>
   <data name="FilesSavedHint_two" xml:space="preserve">
     <value>تم حفظ ملفين في التنزيلات</value>
@@ -5956,6 +5965,9 @@
   <data name="ForwardSendMessages" xml:space="preserve">
     <value>إرسال الرسائل</value>
   </data>
+  <data name="ForwardsRestrictedInfoBot" xml:space="preserve">
+    <value>النسخ والتحويل من هذا البوت غير مسموح.</value>
+  </data>
   <data name="ForwardsRestrictedInfoChannel" xml:space="preserve">
     <value>نسخ وتحويل المنشورات غير مسموح به في هذه القناة.</value>
   </data>
@@ -6068,7 +6080,7 @@
     <value>⁨{0}⁩ صور متحركة</value>
   </data>
   <data name="GifSavedToDownloadsHint" xml:space="preserve">
-    <value>تم حفظ الصورة المتحركة في التنزيلات</value>
+    <value>تم حفظ الـ GIF في التنزيلات</value>
   </data>
   <data name="GifsTab" xml:space="preserve">
     <value>الصور المتحركة</value>
@@ -6257,7 +6269,7 @@
     <value>عذرًا، المجموعة ممتلئة.</value>
   </data>
   <data name="GroupUserCantAdd" xml:space="preserve">
-    <value>المعذرة، لا يمكنك إضافة هذا المستخدم للمجموعات.</value>
+    <value>عذرًا، لا يمكنك إضافة هذا المستخدم إلى المجموعات.</value>
   </data>
   <data name="GroupUserCantAdmin" xml:space="preserve">
     <value>المعذرة، يوجد الكثير من المشرفين في هذه المجموعة.</value>
@@ -7292,7 +7304,7 @@
     <value>أنت أقرب من ⁨{0}⁩</value>
   </data>
   <data name="LocationUpdated" xml:space="preserve">
-    <value>تم تحديثه</value>
+    <value>مُحدَّث</value>
   </data>
   <data name="LocationUpdatedFormatted" xml:space="preserve">
     <value>تم تحديث الموقع ⁨{0}⁩</value>
@@ -9562,16 +9574,16 @@
     <value>قم برفع نسخة من جوازك</value>
   </data>
   <data name="PassportInfo" xml:space="preserve">
-    <value>مع جواز تيليجرام يمكنك التسجيل في المواقع والخدمات التي تتطلب توثيق الهوية الشخصية بسهولة.
+    <value>مع جواز تيليجرام يمكنك التسجيل بسهولة في المواقع والخدمات التي تتطلب التحقق من الهوية.
 
-معلوماتك، بياناتك الشخصية ومستنداتك محمية ومشفرة من البداية للنهاية. لا يمكن لأحد _بمن فيهم تيليجرام_ الوصول إليها دون إذنك. 
+معلوماتك، بياناتك الشخصية ومستنداتك محمية ومشفرة من الطرف إلى الطرف. لا يمكن لأحد _حتى تيليجرام_ الوصول إليها دون إذنك. 
 
 لمزيد من التفاصيل يمكنك زيارة الأسئلة الشائعة حول تيليجرام.</value>
   </data>
   <data name="PassportInfo2" xml:space="preserve">
-    <value>مع جواز تيليجرام يمْكنك التسجيل في المواقع والخدمات التي تتطلب توثيق الهوية الشخصية بسهولة.
+    <value>مع جواز تيليجرام يمكنك التسجيل في المواقع والخدمات التي تتطلب توثيق الهوية الشخصية بسهولة.
 
-معلوماتك، بياناتك الشخصية ووثائقك محمية ومشفرة من البداية للنهاية، لا أحد بما فيهم تيليجرام ذاتُه يمكنه الوصول إليها دون إذنك. 
+معلوماتك، بياناتك الشخصية ووثائقك محمية ومشفرة من الطرف إلى الطرف. لا أحد _حتى تيليجرام_ يمكنه الوصول إليها دون إذنك.
 
 لمزيد من التفاصيل يمكنك زيارة *الأسئلة الشائعة*.</value>
   </data>
@@ -9824,7 +9836,7 @@
     <value>المعلومات المطلوبة</value>
   </data>
   <data name="PassportRequestPasswordInfo" xml:space="preserve">
-    <value>أدخل كلمة مرورك في تيليجرام لفك تشفير بياناتك</value>
+    <value>يرجى إدخال كلمة مرورك في تليجرام لفك تشفير بياناتك</value>
   </data>
   <data name="PassportRequiredDocuments" xml:space="preserve">
     <value>الوثائق المطلوبة</value>
@@ -11861,7 +11873,7 @@
     <value>حفظ النمط</value>
   </data>
   <data name="SaveToDownloads" xml:space="preserve">
-    <value>حفظ في الجهاز</value>
+    <value>حفظ في التنزيلات</value>
   </data>
   <data name="SaveToGallery" xml:space="preserve">
     <value>حفظ في المعرض</value>
@@ -12683,6 +12695,12 @@
   <data name="ShowInChat" xml:space="preserve">
     <value>إظهار في المحادثة</value>
   </data>
+  <data name="ShowLess" xml:space="preserve">
+    <value>عرض أقل</value>
+  </data>
+  <data name="ShowMore" xml:space="preserve">
+    <value>عرض المزيد</value>
+  </data>
   <data name="ShowNearbyPlaces" xml:space="preserve">
     <value>اسحب للأعلى لمشاهدة الأماكن القريبة</value>
   </data>
@@ -13337,9 +13355,9 @@
     <value>إنشاء كلمة مرور</value>
   </data>
   <data name="TelegramPassportCreatePasswordInfo" xml:space="preserve">
-    <value>يرجى إنشاء كلمة مرور لحماية بياناتك الشخصية باستخدام التشفير من البداية للنهاية.
+    <value>يرجى إنشاء كلمة مرور لحماية بياناتك الشخصية بالتشفير من الطرف إلى الطرف.
 
-ستُطلب كلمة المرور هذه في كل مرة تقوم فيها بتسجيل الدخول لجهازٍ جديد. </value>
+ستُطلب كلمة المرور هذه في كل مرة تقومون فيها بتسجيل الدخول إلى تيليجرام على جهازٍ جديد. </value>
   </data>
   <data name="TelegramPassportDelete" xml:space="preserve">
     <value>حذف جواز تيليجرام</value>
@@ -13501,7 +13519,7 @@
     <value>سلمى منصور</value>
   </data>
   <data name="ThemePreviewDialog2" xml:space="preserve">
-    <value>وليد</value>
+    <value>راكان</value>
   </data>
   <data name="ThemePreviewDialog3" xml:space="preserve">
     <value>جاد غالي</value>
@@ -13513,22 +13531,22 @@
     <value>صور مضحكة</value>
   </data>
   <data name="ThemePreviewDialog6" xml:space="preserve">
-    <value>مريم خياط</value>
+    <value>ليلى البلوشي</value>
   </data>
   <data name="ThemePreviewDialog7" xml:space="preserve">
-    <value>علياء</value>
+    <value>نصائح تيليجرام</value>
   </data>
   <data name="ThemePreviewDialog8" xml:space="preserve">
-    <value>نيكولاس محمود</value>
+    <value>قناة تيليجرام</value>
   </data>
   <data name="ThemePreviewDialogMessage1" xml:space="preserve">
-    <value>كل سنة وأنتِ سالمة. 😊 ❤️ ✨</value>
+    <value>كل عام وأنتِ بخير. 😊❤️✨</value>
   </data>
   <data name="ThemePreviewDialogMessage2" xml:space="preserve">
     <value>سلّم على سلمى 👋</value>
   </data>
   <data name="ThemePreviewDialogMessage3" xml:space="preserve">
-    <value>موعدنا الساعة 2. لا تتأخر.</value>
+    <value>موعدنا الساعة 2:00 م. لا تتأخر.</value>
   </data>
   <data name="ThemePreviewDialogMessage4" xml:space="preserve">
     <value>لا تخبر الأهل، أنا قادم لأزوركم في الأيام القليلة المقبلة!</value>
@@ -13540,10 +13558,10 @@
     <value>ما رأيك بهذه الصور؟</value>
   </data>
   <data name="ThemePreviewDialogMessage7" xml:space="preserve">
-    <value>ملصق 😍</value>
+    <value>على مدى الـ 8 سنوات الماضية قام تيليجرام بحماية بيانات المستخدمين...</value>
   </data>
   <data name="ThemePreviewDialogMessage8" xml:space="preserve">
-    <value>كنافة؟! أنا قادم فورًا! 🏃</value>
+    <value>ينبغي على مستخدمي النسخ القديمة تحديث تيليجرام...</value>
   </data>
   <data name="ThemePreviewLine1" xml:space="preserve">
     <value>هل أنت جاهز أم أنك تحتاج لبعض الوقت؟</value>

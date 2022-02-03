@@ -304,6 +304,9 @@
   <data name="AccDescrQuizExplanation" xml:space="preserve">
     <value>설명</value>
   </data>
+  <data name="AccDescrReactionMentionDown" xml:space="preserve">
+    <value>다음 미확인 반응으로 이동</value>
+  </data>
   <data name="AccDescrReceivedDate" xml:space="preserve">
     <value>{0} 받음</value>
   </data>
@@ -5949,6 +5952,9 @@ telegram.org에서 자세히 알아보세요.</value>
   </data>
   <data name="ForwardSendMessages" xml:space="preserve">
     <value>메시지 보내기</value>
+  </data>
+  <data name="ForwardsRestrictedInfoBot" xml:space="preserve">
+    <value>이 봇에서 복사 및 전달이 허용되지 않습니다.</value>
   </data>
   <data name="ForwardsRestrictedInfoChannel" xml:space="preserve">
     <value>이 채널은 복사 및 전달이 허용되지 않습니다.</value>
@@ -12686,6 +12692,12 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="ShowInChat" xml:space="preserve">
     <value>대화 속에서 보기</value>
+  </data>
+  <data name="ShowLess" xml:space="preserve">
+    <value>간략히</value>
+  </data>
+  <data name="ShowMore" xml:space="preserve">
+    <value>더 보기</value>
   </data>
   <data name="ShowNearbyPlaces" xml:space="preserve">
     <value>근처 장소를 보려면 끌어올리세요</value>

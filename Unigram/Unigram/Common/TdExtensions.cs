@@ -1271,29 +1271,6 @@ namespace Unigram.Common
             return thumbnail ? photo.GetSmall() : photo.GetBig();
         }
 
-        public static bool UpdateFile(this Background background, File file)
-        {
-            var any = false;
-            if (background.Document == null)
-            {
-                return false;
-            }
-
-            if (background.Document.Thumbnail != null && background.Document.Thumbnail.File.Id == file.Id)
-            {
-                background.Document.Thumbnail.File = file;
-                any = true;
-            }
-
-            if (background.Document.DocumentValue.Id == file.Id)
-            {
-                background.Document.DocumentValue = file;
-                any = true;
-            }
-
-            return any;
-        }
-
         public static PhotoSize GetSmall(this Photo photo)
         {
             //var local = photo.Sizes.FirstOrDefault(x => string.Equals(x.Type, "t"));
@@ -1675,10 +1652,6 @@ namespace Unigram.Common
             return basicGroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator or ChatMemberStatusMember;
         }
 
-        public static bool UpdateFile(this InlineQueryResult result, File file)
-        {
-            return false;
-        }
         public static void Update(this File file, File update)
         {
             file.ExpectedSize = update.ExpectedSize;

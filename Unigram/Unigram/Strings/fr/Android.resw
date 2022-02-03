@@ -304,6 +304,9 @@
   <data name="AccDescrQuizExplanation" xml:space="preserve">
     <value>Explication</value>
   </data>
+  <data name="AccDescrReactionMentionDown" xml:space="preserve">
+    <value>Aller aux prochaines réactions non lues</value>
+  </data>
   <data name="AccDescrReceivedDate" xml:space="preserve">
     <value>Reçu {0}</value>
   </data>
@@ -2148,6 +2151,9 @@ Lever : {1}</value>
   </data>
   <data name="Blue" xml:space="preserve">
     <value>Bleu</value>
+  </data>
+  <data name="BlurInChat" xml:space="preserve">
+    <value>Flouter dans l’échange</value>
   </data>
   <data name="BlurLinear" xml:space="preserve">
     <value>Linéaire</value>
@@ -4217,6 +4223,9 @@ Vous pouvez toujours revenir au thème par défaut ici.</value>
   <data name="DescriptionInfo" xml:space="preserve">
     <value>Vous pouvez fournir une description facultative pour votre canal.</value>
   </data>
+  <data name="DescriptionMore" xml:space="preserve">
+    <value>plus</value>
+  </data>
   <data name="DescriptionOptionalPlaceholder" xml:space="preserve">
     <value>Description (facultative)</value>
   </data>
@@ -5893,6 +5902,9 @@ Durée : {1}</value>
   </data>
   <data name="ForwardSendMessages" xml:space="preserve">
     <value>Envoyer les messages</value>
+  </data>
+  <data name="ForwardsRestrictedInfoBot" xml:space="preserve">
+    <value>La copie et le transfert ne sont pas autorisés par ce bot.</value>
   </data>
   <data name="ForwardsRestrictedInfoChannel" xml:space="preserve">
     <value>Vous ne pouvez pas copier et transférer du contenu depuis ce canal.</value>
@@ -9923,7 +9935,7 @@ Vous pouvez consulter notre *FAQ* pour plus d&apos;informations.</value>
     <value>Garder les infos de paiement</value>
   </data>
   <data name="PaymentCardSavePaymentInformationInfoLine1" xml:space="preserve">
-    <value>Vous pouvez enregistrer vos informations de paiement pour une utilisation ultérieure. Elles seront stockées directement avec le fournisseur de paiement. Telegram n&apos;a aucun accès à vos données de carte bancaire.</value>
+    <value>Vous pouvez enregistrer vos informations de paiement pour une utilisation ultérieure. Elles seront stockées directement par le fournisseur de paiement. Telegram n&apos;a aucun accès à vos données de carte bancaire.</value>
   </data>
   <data name="PaymentCardSavePaymentInformationInfoLine2" xml:space="preserve">
     <value>Veuillez *activez la double authentification* pour cela.</value>
@@ -11300,7 +11312,7 @@ Vous pouvez les modifier dans Paramètres &gt; Confidentialité et Sécurité &g
     <value>enregistre un vocal…</value>
   </data>
   <data name="RecordingRound" xml:space="preserve">
-    <value>enregistre un message vidéo…</value>
+    <value>enregistre une vidéo…</value>
   </data>
   <data name="RecordingVideoStatus" xml:space="preserve">
     <value>enregistrement d&apos;une vidéo...</value>
@@ -11802,7 +11814,7 @@ Le canal &quot;**{1}**&quot; deviendra privé.</value>
     <value>ENREGISTRER LE THÈME</value>
   </data>
   <data name="SaveToDownloads" xml:space="preserve">
-    <value>Télécharger</value>
+    <value>Enregistrer</value>
   </data>
   <data name="SaveToGallery" xml:space="preserve">
     <value>Ajouter à la galerie</value>
@@ -12623,6 +12635,12 @@ Ne répondez pas, Telegram traitera tout automatiquement.</value>
   </data>
   <data name="ShowInChat" xml:space="preserve">
     <value>Afficher dans l&apos;échange</value>
+  </data>
+  <data name="ShowLess" xml:space="preserve">
+    <value>Afficher moins</value>
+  </data>
+  <data name="ShowMore" xml:space="preserve">
+    <value>Afficher plus</value>
   </data>
   <data name="ShowNearbyPlaces" xml:space="preserve">
     <value>Faites défiler pour voir les lieux à proximité</value>

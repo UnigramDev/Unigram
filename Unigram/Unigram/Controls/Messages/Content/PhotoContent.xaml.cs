@@ -85,8 +85,12 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            Texture.HorizontalAlignment = big.Width > big.Height ? HorizontalAlignment.Center : HorizontalAlignment.Stretch;
-            Texture.VerticalAlignment = big.Height > big.Width ? VerticalAlignment.Center : VerticalAlignment.Stretch;
+            Texture.HorizontalAlignment = big.Width > big.Height && ActualHeight > ActualWidth
+                ? HorizontalAlignment.Center
+                : HorizontalAlignment.Stretch;
+            Texture.VerticalAlignment = big.Height > big.Width && ActualWidth > ActualHeight
+                ? VerticalAlignment.Center
+                : VerticalAlignment.Stretch;
 
             if (!big.Photo.Local.IsDownloadingCompleted && !message.IsSecret())
             {

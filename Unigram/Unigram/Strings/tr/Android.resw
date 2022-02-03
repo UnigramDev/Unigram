@@ -304,6 +304,9 @@
   <data name="AccDescrQuizExplanation" xml:space="preserve">
     <value>Açıklama</value>
   </data>
+  <data name="AccDescrReactionMentionDown" xml:space="preserve">
+    <value>Sonraki okunmamış tepkiye git</value>
+  </data>
   <data name="AccDescrReceivedDate" xml:space="preserve">
     <value>{0} tarihinde alındı</value>
   </data>
@@ -2147,6 +2150,9 @@ Gün doğumu: {1}</value>
   </data>
   <data name="Blue" xml:space="preserve">
     <value>Mavi</value>
+  </data>
+  <data name="BlurInChat" xml:space="preserve">
+    <value>Sohbette bulanıklık</value>
   </data>
   <data name="BlurLinear" xml:space="preserve">
     <value>Doğrusal</value>
@@ -4215,6 +4221,9 @@ Buradan her zaman varsayılan Telegram temasına geri dönebilirsiniz.</value>
   <data name="DescriptionInfo" xml:space="preserve">
     <value>Kanalınız için isteğe bağlı bir açıklama sağlayabilirsiniz.</value>
   </data>
+  <data name="DescriptionMore" xml:space="preserve">
+    <value>daha fazla</value>
+  </data>
   <data name="DescriptionOptionalPlaceholder" xml:space="preserve">
     <value>Açıklama (isteğe bağlı)</value>
   </data>
@@ -5243,7 +5252,7 @@ Süre: {1}</value>
     <value/>
   </data>
   <data name="FileSavedHint" xml:space="preserve">
-    <value>Dosya, indirilenlere kaydedildi</value>
+    <value>Dosya, İndirilenler&apos;e kaydedildi</value>
   </data>
   <data name="FilesDataUsage" xml:space="preserve">
     <value>Dosyalar</value>
@@ -5255,10 +5264,10 @@ Süre: {1}</value>
     <value/>
   </data>
   <data name="FilesSavedHint_one" xml:space="preserve">
-    <value>Dosya, indirilenlere kaydedildi</value>
+    <value>Dosya, İndirilenler&apos;e kaydedildi</value>
   </data>
   <data name="FilesSavedHint_other" xml:space="preserve">
-    <value>{0} dosya, indirilenlere kaydedildi</value>
+    <value>{0} dosya, İndirilenler&apos;e kaydedildi</value>
   </data>
   <data name="FilesSavedHint_two" xml:space="preserve">
     <value/>
@@ -5887,6 +5896,9 @@ Süre: {1}</value>
   <data name="ForwardSendMessages" xml:space="preserve">
     <value>Mesajları gönder</value>
   </data>
+  <data name="ForwardsRestrictedInfoBot" xml:space="preserve">
+    <value>Bu bottan kopyalama ve iletmeye izin verilmiyor.</value>
+  </data>
   <data name="ForwardsRestrictedInfoChannel" xml:space="preserve">
     <value>Bu kanalda kopyalama ve iletmeye izin verilmiyor.</value>
   </data>
@@ -5999,7 +6011,7 @@ Süre: {1}</value>
     <value/>
   </data>
   <data name="GifSavedToDownloadsHint" xml:space="preserve">
-    <value>GIF, indirilenlere kaydedildi</value>
+    <value>GIF, İndirilenler&apos;e kaydedildi</value>
   </data>
   <data name="GifsTab" xml:space="preserve">
     <value>GİFLER</value>
@@ -6244,10 +6256,10 @@ bir sorunuz mu var?</value>
     <value>SABİTLENMİŞ MESAJLARI GİZLE</value>
   </data>
   <data name="HideSenderNames" xml:space="preserve">
-    <value>Gönderici adlarını gizle</value>
+    <value>Göndericilerin adlarını gizle</value>
   </data>
   <data name="HideSendersName" xml:space="preserve">
-    <value>Gönderici adını gizle</value>
+    <value>Göndericinin adını gizle</value>
   </data>
   <data name="Highlights" xml:space="preserve">
     <value>Parlak alanlar</value>
@@ -10303,7 +10315,7 @@ Konumunuza yalnızca seçtiğiniz süre boyunca erişeceğiz ve istediğiniz zam
     <value>Fotoğraf, galeriye kaydedildi</value>
   </data>
   <data name="PhotoSavedToDownloadsHint" xml:space="preserve">
-    <value>Fotoğraf, indirilenlere kaydedildi</value>
+    <value>Fotoğraf, İndirilenler&apos;e kaydedildi</value>
   </data>
   <data name="PhotosSavedHint_few" xml:space="preserve">
     <value/>
@@ -11792,7 +11804,7 @@ Eğer hesabınızı sıfırlarsanız, bütün mesajlarınız ve konuşmalarını
     <value>TEMAYI KAYDET</value>
   </data>
   <data name="SaveToDownloads" xml:space="preserve">
-    <value>İndirilenlere kaydet</value>
+    <value>İndirilenlere Kaydet</value>
   </data>
   <data name="SaveToGallery" xml:space="preserve">
     <value>Galeriye kaydet</value>
@@ -12614,6 +12626,12 @@ Cevaplamayın, Telegram her şeyi otomatik olarak yapacak.</value>
   <data name="ShowInChat" xml:space="preserve">
     <value>Sohbette göster</value>
   </data>
+  <data name="ShowLess" xml:space="preserve">
+    <value>Daha az göster</value>
+  </data>
+  <data name="ShowMore" xml:space="preserve">
+    <value>Daha fazla göster</value>
+  </data>
   <data name="ShowNearbyPlaces" xml:space="preserve">
     <value>Yakındaki yerleri görmek için kaydırın</value>
   </data>
@@ -12624,10 +12642,10 @@ Cevaplamayın, Telegram her şeyi otomatik olarak yapacak.</value>
     <value>Yalnızca kullanmakta olduğunuz hesaptan bildirim almak istiyorsanız bunu kapatın.</value>
   </data>
   <data name="ShowSenderNames" xml:space="preserve">
-    <value>Gönderici adlarını göster</value>
+    <value>Göndericilerin adlarını göster</value>
   </data>
   <data name="ShowSendersName" xml:space="preserve">
-    <value>Gönderici adını göster</value>
+    <value>Göndericinin adını göster</value>
   </data>
   <data name="ShowStickers" xml:space="preserve">
     <value>Çıkartmaları göster</value>
@@ -12820,7 +12838,7 @@ Yavaş Mod etkin. Tek seferde birden fazla mesaj gönderemezsiniz.</value>
     <value>d MMM HH:mm &apos;tarihinde başlat&apos;</value>
   </data>
   <data name="StartDayYearAt" xml:space="preserve">
-    <value>d MMM yyyy HH:mm &apos;tarihinde başlayacak&apos;</value>
+    <value>&apos;Başlama tarihi:&apos; d MMM yyyy HH:mm</value>
   </data>
   <data name="StartEncryptedChat" xml:space="preserve">
     <value>Gizli sohbet başlat</value>
@@ -12829,10 +12847,10 @@ Yavaş Mod etkin. Tek seferde birden fazla mesaj gönderemezsiniz.</value>
     <value>Mesajlaşmaya Başlayın</value>
   </data>
   <data name="StartsDayAt" xml:space="preserve">
-    <value>d MMM HH:mm &apos;saatinde başlayacak&apos;</value>
+    <value>&apos;Başlama tarihi:&apos; d MMM yyyy HH:mm</value>
   </data>
   <data name="StartsDayYearAt" xml:space="preserve">
-    <value>d MMM yyyy HH:mm &apos;saatinde başlayacak&apos;</value>
+    <value>&apos;Başlama tarihi:&apos; d MMM yyyy HH:mm</value>
   </data>
   <data name="StartShortDayAt" xml:space="preserve">
     <value>d MMM&apos;,&apos; HH:mm</value>
@@ -12844,7 +12862,7 @@ Yavaş Mod etkin. Tek seferde birden fazla mesaj gönderemezsiniz.</value>
     <value>&apos;Bugün,&apos; HH:mm</value>
   </data>
   <data name="StartsTodayAt" xml:space="preserve">
-    <value>&apos;Bugün&apos; HH:mm &apos;saatinde başlayacak&apos;</value>
+    <value>&apos;Başlama saati bugün:&apos; HH:mm</value>
   </data>
   <data name="StartText" xml:space="preserve">
     <value>Lütfen ülke kodunuzu onaylayın ve telefon numaranızı girin.</value>
@@ -14232,7 +14250,7 @@ Ancak Telegram&apos;ın mütevazı ihtiyaçlarını kabul etmiyorsanız, bu hizm
     <value>Video, galeriye kaydedildi</value>
   </data>
   <data name="VideoSavedToDownloadsHint" xml:space="preserve">
-    <value>Video, indirilenlere kaydedildi</value>
+    <value>Video, İndirilenler&apos;e kaydedildi</value>
   </data>
   <data name="VideosSavedHint_few" xml:space="preserve">
     <value/>

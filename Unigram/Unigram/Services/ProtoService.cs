@@ -888,7 +888,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 
         public IList<Reaction> GetAvailableReactions(Chat chat)
         {
-            return _reactions.Values.GroupJoin(chat.AvailableReactions, x => x.ReactionValue, y => y, (x, y) => x).ToArray();
+            return chat.AvailableReactions.Join(_reactions.Values, x => x, y => y.ReactionValue, (x, y) => y).ToArray();
         }
 
         public async Task<IList<Reaction>> GetAvailableReactionsAsync(Message message)
@@ -896,7 +896,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             var response = await SendAsync(new GetMessageAvailableReactions(message.ChatId, message.Id));
             if (response is AvailableReactions available)
             {
-                return _reactions.Values.GroupJoin(available.Reactions, x => x.ReactionValue, y => y, (x, y) => x).ToArray();
+                return available.Reactions.Join(_reactions.Values, x => x, y => y.ReactionValue, (x, y) => y).ToArray();
             }
 
             return Array.Empty<Reaction>();

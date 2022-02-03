@@ -882,7 +882,7 @@
                             <controls:GlyphButton Command="{x:Bind ViewModel.Reactions.NextMessageCommand}"
                                                   Width="36"
                                                   Height="36"
-                                                  Glyph="&#xE980;"
+                                                  Glyph="&#xE987;"
                                                   CornerRadius="24"
                                                   AutomationProperties.Name="{CustomResource AccDescrReactionDown}"
                                                   ToolTipService.ToolTip="{CustomResource AccDescrReactionDown}"
@@ -1028,6 +1028,7 @@
         <controls:StickerPanel x:Name="StickersPanel"
                                Visibility="Collapsed"
                                Margin="0,48,0,56"
+                               MaxWidth="664"
                                Canvas.ZIndex="3"
                                Grid.Row="2"
                                Grid.RowSpan="2" />

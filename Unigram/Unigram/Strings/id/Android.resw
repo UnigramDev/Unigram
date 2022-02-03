@@ -767,7 +767,9 @@
     <value>un1 menyematkan pesan suara</value>
   </data>
   <data name="ActionReactionsChanged" xml:space="preserve">
-    <value>un1 mengubah reaksi obrolan dari: {0} menjadi: {1}</value>
+    <value>un1 mengubah reaksi obrolan 
+dari: {0} 
+menjadi: {1}</value>
   </data>
   <data name="ActionRemovedPhoto" xml:space="preserve">
     <value>un1 menghapus foto grup</value>
@@ -5245,7 +5247,7 @@ Durasi: {1}</value>
     <value/>
   </data>
   <data name="FileSavedHint" xml:space="preserve">
-    <value>Berkas disimpan di unduhan</value>
+    <value>Berkas disimpan di Unduhan</value>
   </data>
   <data name="FilesDataUsage" xml:space="preserve">
     <value>Berkas</value>
@@ -5260,7 +5262,7 @@ Durasi: {1}</value>
     <value/>
   </data>
   <data name="FilesSavedHint_other" xml:space="preserve">
-    <value>{0} berkas disimpan di unduhan</value>
+    <value>{0} berkas disimpan di Unduhan</value>
   </data>
   <data name="FilesSavedHint_two" xml:space="preserve">
     <value/>
@@ -6001,7 +6003,7 @@ Durasi: {1}</value>
     <value/>
   </data>
   <data name="GifSavedToDownloadsHint" xml:space="preserve">
-    <value>GIF disimpan di unduhan</value>
+    <value>GIF disimpan di Unduhan</value>
   </data>
   <data name="GifsTab" xml:space="preserve">
     <value>GIF</value>
@@ -10300,7 +10302,7 @@ Kami akan mengakses lokasi Anda hanya selama durasi yang Anda pilih dan Anda dap
     <value>Foto disimpan di galeri.</value>
   </data>
   <data name="PhotoSavedToDownloadsHint" xml:space="preserve">
-    <value>Foto disimpan di unduhan</value>
+    <value>Foto disimpan di Unduhan</value>
   </data>
   <data name="PhotosSavedHint_few" xml:space="preserve">
     <value/>
@@ -11791,7 +11793,7 @@ Channel &quot;**{1}**&quot; akan menjadi privat.</value>
     <value>SIMPAN TEMA</value>
   </data>
   <data name="SaveToDownloads" xml:space="preserve">
-    <value>Simpan ke unduhan</value>
+    <value>Simpan ke Unduhan</value>
   </data>
   <data name="SaveToGallery" xml:space="preserve">
     <value>Simpan ke galeri</value>
@@ -12942,7 +12944,7 @@ bersponsor?</value>
     <value>Arsip</value>
   </data>
   <data name="StickersName" xml:space="preserve">
-    <value>Stiker dan Mask</value>
+    <value>Stiker dan Emoji</value>
   </data>
   <data name="StickersRemove" xml:space="preserve">
     <value>Hapus</value>
@@ -14229,7 +14231,7 @@ Anda dapat menggunakan a-z, 0-9 dan garis bawah. Karakter minimum adalah 5 karak
     <value>Video disimpan di galeri.</value>
   </data>
   <data name="VideoSavedToDownloadsHint" xml:space="preserve">
-    <value>Video disimpan di unduhan</value>
+    <value>Video disimpan di Unduhan</value>
   </data>
   <data name="VideosSavedHint_few" xml:space="preserve">
     <value/>
