@@ -85,6 +85,7 @@ namespace Unigram.Views
         private readonly AnimatedListHandler<Sticker> _autocompleteHandler;
 
         private TaskCompletionSource<bool> _updateThemeTask;
+        private TaskCompletionSource<bool> _loadedThemeTask;
 
         private ChatBackgroundPresenter _backgroundPresenter;
 
@@ -496,6 +497,7 @@ namespace Unigram.Views
             DataContext = _viewModel = _getViewModel(this, sessionId);
 
             _updateThemeTask = new TaskCompletionSource<bool>();
+            _loadedThemeTask = new TaskCompletionSource<bool>();
             ViewModel.MessageSliceLoaded += OnMessageSliceLoaded;
             ViewModel.TextField = TextField;
             ViewModel.ListField = Messages;
@@ -852,6 +854,8 @@ namespace Unigram.Views
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
+            _loadedThemeTask?.TrySetResult(true);
+
             //Bindings.StopTracking();
             //Bindings.Update();
 
@@ -3470,6 +3474,11 @@ namespace Unigram.Views
                 if (background == null)
                 {
                     background = ViewModel.ProtoService.GetSelectedBackground(ActualTheme == ElementTheme.Dark);
+                }
+
+                if (_loadedThemeTask != null)
+                {
+                    await _loadedThemeTask.Task;
                 }
 
                 _backgroundPresenter ??= FindBackgroundPresenter();
