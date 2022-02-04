@@ -1265,9 +1265,7 @@ namespace Unigram.Views
         private void OnNavigating(object sender, NavigatingEventArgs e)
         {
             var frame = sender as Frame;
-
-            MasterDetail.BackgroundOpacity =
-                e.SourcePageType == typeof(ChatPage) ||
+            var allowed = e.SourcePageType == typeof(ChatPage) ||
                 e.SourcePageType == typeof(ChatPinnedPage) ||
                 e.SourcePageType == typeof(ChatThreadPage) ||
                 e.SourcePageType == typeof(ChatScheduledPage) ||
@@ -1278,7 +1276,14 @@ namespace Unigram.Views
                 frame.CurrentSourcePageType == typeof(ChatThreadPage) ||
                 frame.CurrentSourcePageType == typeof(ChatScheduledPage) ||
                 frame.CurrentSourcePageType == typeof(ChatEventLogPage) ||
-                frame.CurrentSourcePageType == typeof(BlankPage) ? 1 : 0;
+                frame.CurrentSourcePageType == typeof(BlankPage);
+
+            if (MasterDetail.CurrentState == MasterDetailState.Minimal)
+            {
+                allowed &= e.SourcePageType != typeof(BlankPage);
+            }
+
+            MasterDetail.BackgroundOpacity = allowed ? 1 : 0;
         }
 
         private void OnNavigated(object sender, NavigatedEventArgs e)
@@ -1343,6 +1348,21 @@ namespace Unigram.Views
             UpdatePaneToggleButtonVisibility();
 
             ChatsList.UpdateViewState(MasterDetail.CurrentState);
+
+            var frame = MasterDetail.NavigationService.Frame;
+            var allowed = frame.CurrentSourcePageType == typeof(ChatPage) ||
+                frame.CurrentSourcePageType == typeof(ChatPinnedPage) ||
+                frame.CurrentSourcePageType == typeof(ChatThreadPage) ||
+                frame.CurrentSourcePageType == typeof(ChatScheduledPage) ||
+                frame.CurrentSourcePageType == typeof(ChatEventLogPage) ||
+                frame.CurrentSourcePageType == typeof(BlankPage);
+
+            if (MasterDetail.CurrentState == MasterDetailState.Minimal)
+            {
+                allowed &= frame.CurrentSourcePageType != typeof(BlankPage);
+            }
+
+            MasterDetail.BackgroundOpacity = allowed ? 1 : 0;
         }
 
         private void UpdatePaneToggleButtonVisibility()

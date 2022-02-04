@@ -46,14 +46,26 @@
                         <controls:MasterDetailPanel x:Name="AdaptivePanel"
                                                     IsBlank="{TemplateBinding IsBlank}"
                                                     Background="Transparent">
-                            <Border BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
-                                    BorderThickness="{ThemeResource NavigationViewContentGridBorderThickness}"
-                                    Background="{ThemeResource NavigationViewContentBackground}"
-                                    CornerRadius="{ThemeResource NavigationViewContentGridCornerRadius}">
-                                <chats:ChatBackgroundPresenter Background="{ThemeResource ChatPageBackgroundBrush}"
-                                                               Opacity="{TemplateBinding BackgroundOpacity}"
-                                                               Loading="ChatBackgroundPresenter_Loading" />
-                            </Border>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Expanded" />
+                                    <VisualState x:Name="Minimal">
+                                        <VisualState.Setters>
+                                            <Setter Target="BackgroundPart.CornerRadius"
+                                                    Value="0" />
+                                            <Setter Target="BorderPart.CornerRadius"
+                                                    Value="0" />
+                                            <Setter Target="BorderPart.BorderThickness"
+                                                    Value="0" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <chats:ChatBackgroundPresenter x:Name="BackgroundPart"
+                                                           CornerRadius="{ThemeResource NavigationViewContentGridCornerRadius}"
+                                                           Background="{ThemeResource ChatPageBackgroundBrush}"
+                                                           Opacity="{TemplateBinding BackgroundOpacity}"
+                                                           Loading="ChatBackgroundPresenter_Loading" />
 
                             <!--<Grid BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding Padding}" VerticalAlignment="Top"/>-->
 
@@ -88,12 +100,13 @@
                                 <Border VerticalAlignment="Top"
                                         Background="{TemplateBinding BorderBrush}"
                                         Height="{ThemeResource AppBarThemeCompactHeight}" />
-                                <Border BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
-                                        BorderThickness="{ThemeResource NavigationViewContentGridBorderThickness}"
-                                        CornerRadius="{ThemeResource NavigationViewContentGridCornerRadius}"
-                                        Margin="0,-48,0,0"
-                                        Canvas.ZIndex="1" />
                             </Grid>
+
+                            <Border x:Name="BorderPart"
+                                    BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
+                                    BorderThickness="{ThemeResource NavigationViewContentGridBorderThickness}"
+                                    CornerRadius="{ThemeResource NavigationViewContentGridCornerRadius}"
+                                    Canvas.ZIndex="1" />
 
                             <ContentPresenter x:Name="MasterFrame"
                                               Content="{TemplateBinding Content}"
