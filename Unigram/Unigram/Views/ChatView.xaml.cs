@@ -524,6 +524,8 @@ namespace Unigram.Views
             TextField.IsSpellCheckEnabled = !SettingsService.Current.DisableHighlightWords;
             TextField.Focus(FocusState.Programmatic);
 
+            StickersPanel.MaxWidth = SettingsService.Current.IsAdaptiveWideEnabled ? 664 : double.PositiveInfinity;
+
             //Header.BackVisibility = ViewModel.NavigationService.CanGoBack
             //    ? Visibility.Visible
             //    : Visibility.Collapsed;
