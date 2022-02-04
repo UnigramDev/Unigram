@@ -72,7 +72,7 @@ namespace Unigram.Controls
             }
         }
 
-        public double ActualMasterWidth => ((FrameworkElement)Children[5]).ActualWidth;
+        public double ActualMasterWidth => ((FrameworkElement)Children[6]).ActualWidth;
 
         public double ActualDetailWidth => ((FrameworkElement)Children[4]).ActualWidth;
 
@@ -85,8 +85,9 @@ namespace Unigram.Controls
             var detailHeader = Children[2];
             var banner = Children[3];
             var detail = Children[4];
-            var master = Children[5];
-            var grip = Children[6] as FrameworkElement;
+            var border = Children[5];
+            var master = Children[6];
+            var grip = Children[7] as FrameworkElement;
 
             if (_registerEvents)
             {
@@ -112,6 +113,7 @@ namespace Unigram.Controls
 
                 master.Measure(new Size(availableSize.Width, Math.Max(0, availableSize.Height - banner.DesiredSize.Height - masterHeader.DesiredSize.Height)));
                 detail.Measure(new Size(availableSize.Width, Math.Max(0, availableSize.Height - banner.DesiredSize.Height - Math.Max(48, detailHeader.DesiredSize.Height))));
+                border.Measure(new Size(availableSize.Width, Math.Max(0, availableSize.Height)));
 
                 grip.Measure(new Size(0, 0));
             }
@@ -134,6 +136,7 @@ namespace Unigram.Controls
 
                 master.Measure(new Size(result, availableSize.Height - masterHeader.DesiredSize.Height));
                 detail.Measure(new Size(availableSize.Width - result, availableSize.Height - banner.DesiredSize.Height - Math.Max(48, detailHeader.DesiredSize.Height)));
+                border.Measure(new Size(availableSize.Width - result, availableSize.Height));
 
                 grip.Measure(new Size(8, availableSize.Height));
             }
@@ -148,8 +151,9 @@ namespace Unigram.Controls
             var detailHeader = Children[2];
             var banner = Children[3];
             var detail = Children[4];
-            var master = Children[5];
-            var grip = Children[6];
+            var border = Children[5];
+            var master = Children[6];
+            var grip = Children[7];
 
             // Single column mode
             if (finalSize.Width < columnMinimalWidthLeft + columnMinimalWidthMain)
@@ -163,6 +167,7 @@ namespace Unigram.Controls
 
                 master.Arrange(new Rect(0, banner.DesiredSize.Height + masterHeader.DesiredSize.Height, finalSize.Width, finalSize.Height - banner.DesiredSize.Height - masterHeader.DesiredSize.Height));
                 detail.Arrange(new Rect(0, banner.DesiredSize.Height + Math.Max(48, detailHeader.DesiredSize.Height), finalSize.Width, finalSize.Height - banner.DesiredSize.Height - Math.Max(48, detailHeader.DesiredSize.Height)));
+                border.Arrange(new Rect(0, banner.DesiredSize.Height + Math.Max(48, detailHeader.DesiredSize.Height), finalSize.Width, finalSize.Height));
 
                 grip.Arrange(new Rect(0, 0, 0, 0));
             }
@@ -187,6 +192,7 @@ namespace Unigram.Controls
 
                 master.Arrange(new Rect(0, masterHeader.DesiredSize.Height, result, finalSize.Height - masterHeader.DesiredSize.Height));
                 detail.Arrange(new Rect(result, banner.DesiredSize.Height + Math.Max(48, detailHeader.DesiredSize.Height), finalSize.Width - result, finalSize.Height - banner.DesiredSize.Height - detailHeader.DesiredSize.Height));
+                border.Arrange(new Rect(result, 0, finalSize.Width - result, finalSize.Height));
 
                 grip.Arrange(new Rect(result, 0, 8, finalSize.Height));
             }
@@ -229,8 +235,8 @@ namespace Unigram.Controls
 
         private void Grip_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            var master = Children[5] as FrameworkElement;
-            var grip = Children[6] as UserControl;
+            var master = Children[6] as FrameworkElement;
+            var grip = Children[7] as UserControl;
 
             _pointerPressed = true;
             _pointerDelta = e.GetCurrentPoint(this).Position.X - master.ActualWidth;
@@ -245,8 +251,8 @@ namespace Unigram.Controls
         {
             if (_pointerPressed)
             {
-                var master = Children[5] as FrameworkElement;
-                var grip = Children[6] as UserControl;
+                var master = Children[6] as FrameworkElement;
+                var grip = Children[7] as UserControl;
 
                 var point = e.GetCurrentPoint(this);
 
@@ -271,8 +277,8 @@ namespace Unigram.Controls
 
         private void Grip_PointerReleased(object sender, PointerRoutedEventArgs e)
         {
-            var master = Children[5] as FrameworkElement;
-            var grip = Children[6] as UserControl;
+            var master = Children[6] as FrameworkElement;
+            var grip = Children[7] as UserControl;
 
             _pointerPressed = false;
             VisualStateManager.GoToState(grip, "Normal", false);
@@ -286,7 +292,7 @@ namespace Unigram.Controls
             grip.ReleasePointerCapture(e.Pointer);
             e.Handled = true;
 
-            var point = e.GetCurrentPoint(Children[6]);
+            var point = e.GetCurrentPoint(grip);
             if (point.Position.X is < 0 or > 8)
             {
                 Window.Current.CoreWindow.PointerCursor = _defaultCursor;

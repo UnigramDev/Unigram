@@ -153,11 +153,9 @@ namespace Unigram.Controls
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            UpdateMasterVisibility();
-
-            if (CurrentState != MasterDetailState.Minimal && ViewStateChanged != null)
+            if (CurrentState != MasterDetailState.Minimal)
             {
-                ViewStateChanged(this, EventArgs.Empty);
+                OnViewStateChanged();
             }
         }
 
@@ -220,12 +218,9 @@ namespace Unigram.Controls
                 catch { }
             }
 
-            if (ActualWidth > 0)
+            if (ActualWidth > 0 && CurrentState != MasterDetailState.Minimal)
             {
-                if (CurrentState != MasterDetailState.Minimal && ViewStateChanged != null)
-                {
-                    ViewStateChanged(this, EventArgs.Empty);
-                }
+                OnViewStateChanged();
             }
         }
 
@@ -263,6 +258,12 @@ namespace Unigram.Controls
 
         private void OnViewStateChanged(object sender, EventArgs e)
         {
+            OnViewStateChanged();
+        }
+
+        private void OnViewStateChanged()
+        {
+            VisualStateManager.GoToState(this, AdaptivePanel.CurrentState == MasterDetailState.Minimal ? "Minimal" : "Expanded", false);
             ViewStateChanged?.Invoke(this, EventArgs.Empty);
 
             UpdateMasterVisibility();
