@@ -43,6 +43,11 @@ namespace Unigram.Controls
             DefaultStyleKey = typeof(AnimationView);
         }
 
+        ~AnimationView()
+        {
+            System.Diagnostics.Debug.WriteLine("~AnimationView");
+        }
+
         protected override void OnApplyTemplate()
         {
             _thumbnail = GetTemplateChild("Thumbnail") as ImageBrush;
@@ -124,10 +129,18 @@ namespace Unigram.Controls
             var y = (sender.Size.Height - height) / 2;
             var x = (sender.Size.Width - width) / 2;
 
-            args.DrawImage(_bitmap,
-                new Rect(x, y, width, height)/*,
-                new Rect(0, 0, _bitmap.Size.Width, _bitmap.Size.Height), 1,
-                CanvasImageInterpolation.MultiSampleLinear*/);
+            if (width >= _bitmap.Size.Width || height >= _bitmap.Size.Height)
+            {
+                args.DrawImage(_bitmap,
+                    new Rect(x, y, width, height));
+            }
+            else
+            {
+                args.DrawImage(_bitmap,
+                    new Rect(x, y, width, height),
+                    new Rect(0, 0, _bitmap.Size.Width, _bitmap.Size.Height), 1,
+                    CanvasImageInterpolation.MultiSampleLinear);
+            }
 
             if (_prevSeconds != _nextSeconds)
             {

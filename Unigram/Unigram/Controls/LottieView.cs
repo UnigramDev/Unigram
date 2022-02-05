@@ -117,7 +117,18 @@ namespace Unigram.Controls
                 args.Transform = Matrix3x2.CreateScale(-1, 1, sender.Size.ToVector2() / 2);
             }
 
-            args.DrawImage(_bitmap, new Rect(0, 0, sender.Size.Width, sender.Size.Height));
+            if (sender.Size >= _bitmap.Size)
+            {
+                args.DrawImage(_bitmap,
+                    new Rect(0, 0, sender.Size.Width, sender.Size.Height));
+            }
+            else
+            {
+                args.DrawImage(_bitmap,
+                    new Rect(0, 0, sender.Size.Width, sender.Size.Height),
+                    new Rect(0, 0, _bitmap.Size.Width, _bitmap.Size.Height), 1,
+                    CanvasImageInterpolation.MultiSampleLinear);
+            }
 
             if (_hideThumbnail)
             {
