@@ -117,7 +117,7 @@ namespace Unigram.Controls
                 args.Transform = Matrix3x2.CreateScale(-1, 1, sender.Size.ToVector2() / 2);
             }
 
-            if (sender.Size >= _bitmap.Size)
+            if (sender.Size.Width >= _bitmap.Size.Width || sender.Size.Height >= _bitmap.Size.Height)
             {
                 args.DrawImage(_bitmap,
                     new Rect(0, 0, sender.Size.Width, sender.Size.Height));
@@ -186,17 +186,18 @@ namespace Unigram.Controls
             {
                 if (index + framesPerUpdate < _animationTotalFrame)
                 {
-                    PositionChanged?.Invoke(this, Math.Min(1, Math.Max(0, (double)(index + 1) / _animationTotalFrame)));
-
                     _index += framesPerUpdate;
+                    PositionChanged?.Invoke(this, Math.Min(1, Math.Max(0, (double)(index + 1) / _animationTotalFrame)));
                 }
                 else
                 {
-                    _index = 0;
-
                     if (!_isLoopingEnabled)
                     {
                         Subscribe(false);
+                    }
+                    else
+                    {
+                        _index = 0;
                     }
 
                     PositionChanged?.Invoke(this, 1);
@@ -308,6 +309,11 @@ namespace Unigram.Controls
             if (_subscribed)
             {
                 return false;
+            }
+
+            if (_index == animation.TotalFrame - 1 && !_isLoopingEnabled)
+            {
+                _index = 0;
             }
 
             Subscribe(true);
