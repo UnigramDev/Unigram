@@ -66,6 +66,14 @@ namespace Unigram.Controls.Messages
             var offset = 0;
             var visible = Math.Ceiling((width - 8) / 34);
 
+            static void DownloadFile(MessageViewModel message, File file)
+            {
+                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
+                {
+                    message.ProtoService.DownloadFile(file.Id, 31);
+                }
+            }
+
             foreach (var item in reactions)
             {
                 var view = new LottieView();
@@ -90,9 +98,13 @@ namespace Unigram.Controls.Messages
 
                     if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                     {
-                        message.ProtoService.DownloadFile(file.Id, 16);
+                        message.ProtoService.DownloadFile(file.Id, 32);
                     }
                 }
+
+                // Pre-download additional assets
+                DownloadFile(message, item.CenterAnimation.StickerValue);
+                DownloadFile(message, item.AroundAnimation.StickerValue);
 
                 var button = new HyperlinkButton
                 {
