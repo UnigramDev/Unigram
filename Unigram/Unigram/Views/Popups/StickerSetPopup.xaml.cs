@@ -253,7 +253,7 @@ namespace Unigram.Views.Popups
                     video.Source = null;
                 }
 
-                CompositionPathParser.ParseThumbnail(sticker.Outline, out ShapeVisual visual, false);
+                CompositionPathParser.ParseThumbnail(sticker, out ShapeVisual visual, false);
                 ElementCompositionPreview.SetElementChildVisual(content.Children[0], visual);
 
                 UpdateManager.Subscribe(content, ViewModel.ProtoService, file, UpdateFile, true);
