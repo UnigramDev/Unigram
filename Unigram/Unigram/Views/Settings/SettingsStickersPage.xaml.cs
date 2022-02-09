@@ -90,9 +90,9 @@ namespace Unigram.Views.Settings
         private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
         {
             var stickerSet = args.Item as StickerSetInfo;
-            var cover = stickerSet.GetThumbnail(out _, out StickerType type);
+            var cover = stickerSet.GetThumbnail();
 
-            var typeName = type switch
+            var typeName = cover.Type switch
             {
                 StickerTypeAnimated => "AnimatedItemTemplate",
                 StickerTypeVideo => "VideoItemTemplate",
@@ -165,12 +165,13 @@ namespace Unigram.Views.Settings
             var subtitle = content.Children[2] as TextBlock;
             subtitle.Text = Locale.Declension("Stickers", stickerSet.Size);
 
-            var file = stickerSet.GetThumbnail(out var outline, out _);
-            if (file == null)
+            var cover = stickerSet.GetThumbnail();
+            if (cover == null)
             {
                 return;
             }
 
+            var file = cover.StickerValue;
             if (file.Local.IsDownloadingCompleted)
             {
                 if (content.Children[0] is Image photo)
@@ -202,7 +203,7 @@ namespace Unigram.Views.Settings
                     animation.Source = null;
                 }
 
-                CompositionPathParser.ParseThumbnail(outline, out ShapeVisual visual, false);
+                CompositionPathParser.ParseThumbnail(cover, out ShapeVisual visual, false);
                 ElementCompositionPreview.SetElementChildVisual(content.Children[0], visual);
 
                 UpdateManager.Subscribe(content, ViewModel.ProtoService, file, UpdateFile, true);
