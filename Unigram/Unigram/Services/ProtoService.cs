@@ -150,6 +150,8 @@ namespace Unigram.Services
         private readonly ILocaleService _locale;
         private readonly IEventAggregator _aggregator;
 
+        private readonly Action<BaseObject> _processFilesDelegate;
+
         private readonly Dictionary<long, Chat> _chats = new Dictionary<long, Chat>();
         private readonly ConcurrentDictionary<long, ConcurrentDictionary<MessageSender, ChatAction>> _chatActions = new ConcurrentDictionary<long, ConcurrentDictionary<MessageSender, ChatAction>>();
 
@@ -206,6 +208,8 @@ namespace Unigram.Services
             _locale = locale;
             _options = new OptionsService(this);
             _aggregator = aggregator;
+
+            _processFilesDelegate = new Action<BaseObject>(ProcessFiles);
 
             Initialize(online);
         }
@@ -360,6 +364,7 @@ namespace Unigram.Services
                 _client.Send(new SetOption("language_pack_id", new OptionValueString(SettingsService.Current.LanguagePackId)));
                 //_client.Send(new SetOption("online", new OptionValueBoolean(online)));
                 _client.Send(new SetOption("online", new OptionValueBoolean(false)));
+                _client.Send(new SetOption("use_pfs", new OptionValueBoolean(true)));
                 _client.Send(new SetOption("notification_group_count_max", new OptionValueInteger(25)));
                 _client.Send(new SetTdlibParameters(parameters));
                 _client.Send(new CheckDatabaseEncryptionKey(new byte[0]));
@@ -567,15 +572,11 @@ Read more about how to update your device [here](https://support.microsoft.com/h
         {
             if (handler != null)
             {
-                _client.Send(function, response =>
-                {
-                    ProcessFiles(response);
-                    handler(response);
-                });
+                _client.Send(function, _processFilesDelegate + handler);
             }
             else
             {
-                _client.Send(function);
+                _client.Send(function, _processFilesDelegate);
             }
         }
 
@@ -1951,7 +1952,16 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 
         public void OnResult(BaseObject result)
         {
-            _callback(result);
+            try
+            {
+                _callback(result);
+            }
+            catch
+            {
+                // We need to explicitly catch here because
+                // an exception on the handler thread will cause
+                // the app to no longer receive any update from TDLib.
+            }
         }
     }
 
