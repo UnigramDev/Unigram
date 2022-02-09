@@ -1,8 +1,5 @@
-﻿using LinqToVisualTree;
-using RLottie;
+﻿using RLottie;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services;
@@ -11,6 +8,7 @@ using Windows.System;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 
 namespace Unigram.Controls.Messages.Content
@@ -25,8 +23,6 @@ namespace Unigram.Controls.Messages.Content
 
         private CompositionAnimation _thumbnailShimmer;
 
-        private int _interacting;
-
         public AnimatedStickerContent(MessageViewModel message)
         {
             _message = message;
@@ -38,14 +34,13 @@ namespace Unigram.Controls.Messages.Content
         #region InitializeComponent
 
         private LottieView Player;
+        private Popup InteractionsPopup;
         private Grid Interactions;
         private bool _templateApplied;
 
         protected override void OnApplyTemplate()
         {
             Player = GetTemplateChild(nameof(Player)) as LottieView;
-            Interactions = GetTemplateChild(nameof(Interactions)) as Grid;
-
             Player.FirstFrameRendered += Player_FirstFrameRendered;
 
             _templateApplied = true;
@@ -213,13 +208,18 @@ namespace Unigram.Controls.Messages.Content
 
         public void PlayInteraction(MessageViewModel message, Sticker interaction)
         {
+            if (Interactions == null)
+            {
+                InteractionsPopup = GetTemplateChild(nameof(InteractionsPopup)) as Popup;
+                Interactions = GetTemplateChild(nameof(Interactions)) as Grid;
+            }
+
             message.Interaction = null;
 
             var file = interaction.StickerValue;
-            if (file.Local.IsDownloadingCompleted && _interacting < 4)
+            if (file.Local.IsDownloadingCompleted && Interactions.Children.Count < 4)
             {
                 var dispatcher = DispatcherQueue.GetForCurrentThread();
-                var container = this.Ancestors<ListViewItem>().FirstOrDefault();
 
                 var player = new LottieView();
                 player.Width = Player.Width * 3;
@@ -237,12 +237,12 @@ namespace Unigram.Controls.Messages.Content
                         {
                             Interactions.Children.Remove(player);
 
-                            if (_interacting-- > 1)
+                            if (Interactions.Children.Count > 0)
                             {
                                 return;
                             }
 
-                            Canvas.SetZIndex(container, 0);
+                            InteractionsPopup.IsOpen = false;
                         });
                     }
                 };
@@ -267,9 +267,7 @@ namespace Unigram.Controls.Messages.Content
                 }
 
                 Interactions.Children.Add(player);
-
-                _interacting++;
-                Canvas.SetZIndex(container, 1);
+                InteractionsPopup.IsOpen = true;
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
