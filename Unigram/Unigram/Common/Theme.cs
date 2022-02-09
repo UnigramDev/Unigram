@@ -433,49 +433,49 @@ namespace Unigram.Common
     public class ThemeOutgoing : ResourceDictionary
     {
         [ThreadStatic]
-        private static Dictionary<string, SolidColorBrush> _light;
-        public static Dictionary<string, SolidColorBrush> Light => _light ??= new()
+        private static Dictionary<string, (Color Color, SolidColorBrush Brush)> _light;
+        public static Dictionary<string, (Color Color, SolidColorBrush Brush)> Light => _light ??= new()
         {
-            { "MessageForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0x000000)) },
-            { "MessageForegroundLinkBrush", new SolidColorBrush(ColorEx.FromHex(0x168ACD)) },
-            { "MessageBackgroundBrush", new SolidColorBrush(ColorEx.FromHex(0xF0FDDF)) },
-            { "MessageSubtleLabelBrush", new SolidColorBrush(ColorEx.FromHex(0x6DC264)) },
-            { "MessageSubtleGlyphBrush", new SolidColorBrush(ColorEx.FromHex(0x5DC452)) },
-            { "MessageSubtleForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0x6DC264)) },
-            { "MessageHeaderForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0x3A8E26)) },
-            { "MessageHeaderBorderBrush", new SolidColorBrush(ColorEx.FromHex(0x5DC452)) },
-            { "MessageMediaForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0xF0FDDF)) },
-            { "MessageMediaBackgroundBrush", new SolidColorBrush(ColorEx.FromHex(0x78C67F)) },
-            { "MessageOverlayBackgroundBrush", new SolidColorBrush(ColorEx.FromHex(0x54000000)) },
-            { "MessageCallForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0x2AB32A)) },
-            { "MessageCallMissedForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0xDD5849)) },
-            { "MessageReactionBackgroundBrush", new SolidColorBrush(ColorEx.FromHex(0xD5F1C9)) },
-            { "MessageReactionForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0x45A32D)) },
-            { "MessageReactionChosenBackgroundBrush", new SolidColorBrush(ColorEx.FromHex(0x5FBE67)) },
-            { "MessageReactionChosenForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0xFFFFFF)) },
+            { "MessageForegroundBrush", (Color.FromArgb(0xFF, 0x00, 0x00, 0x00), new SolidColorBrush(Color.FromArgb(0xFF, 0x00, 0x00, 0x00))) },
+            { "MessageForegroundLinkBrush", (Color.FromArgb(0xFF, 0x16, 0x8A, 0xCD), new SolidColorBrush(Color.FromArgb(0xFF, 0x16, 0x8A, 0xCD))) },
+            { "MessageBackgroundBrush", (Color.FromArgb(0xFF, 0xF0, 0xFD, 0xDF), new SolidColorBrush(Color.FromArgb(0xFF, 0xF0, 0xFD, 0xDF))) },
+            { "MessageSubtleLabelBrush", (Color.FromArgb(0xFF, 0x6D, 0xC2, 0x64), new SolidColorBrush(Color.FromArgb(0xFF, 0x6D, 0xC2, 0x64))) },
+            { "MessageSubtleGlyphBrush", (Color.FromArgb(0xFF, 0x5D, 0xC4, 0x52), new SolidColorBrush(Color.FromArgb(0xFF, 0x5D, 0xC4, 0x52))) },
+            { "MessageSubtleForegroundBrush", (Color.FromArgb(0xFF, 0x6D, 0xC2, 0x64), new SolidColorBrush(Color.FromArgb(0xFF, 0x6D, 0xC2, 0x64))) },
+            { "MessageHeaderForegroundBrush", (Color.FromArgb(0xFF, 0x3A, 0x8E, 0x26), new SolidColorBrush(Color.FromArgb(0xFF, 0x3A, 0x8E, 0x26))) },
+            { "MessageHeaderBorderBrush", (Color.FromArgb(0xFF, 0x5D, 0xC4, 0x52), new SolidColorBrush(Color.FromArgb(0xFF, 0x5D, 0xC4, 0x52))) },
+            { "MessageMediaForegroundBrush", (Color.FromArgb(0xFF, 0xF0, 0xFD, 0xDF), new SolidColorBrush(Color.FromArgb(0xFF, 0xF0, 0xFD, 0xDF))) },
+            { "MessageMediaBackgroundBrush", (Color.FromArgb(0xFF, 0x78, 0xC6, 0x7F), new SolidColorBrush(Color.FromArgb(0xFF, 0x78, 0xC6, 0x7F))) },
+            { "MessageOverlayBackgroundBrush", (Color.FromArgb(0x54, 0x00, 0x00, 0x00), new SolidColorBrush(Color.FromArgb(0x54, 0x00, 0x00, 0x00))) },
+            { "MessageCallForegroundBrush", (Color.FromArgb(0xFF, 0x2A, 0xB3, 0x2A), new SolidColorBrush(Color.FromArgb(0xFF, 0x2A, 0xB3, 0x2A))) },
+            { "MessageCallMissedForegroundBrush", (Color.FromArgb(0xFF, 0xDD, 0x58, 0x49), new SolidColorBrush(Color.FromArgb(0xFF, 0xDD, 0x58, 0x49))) },
+            { "MessageReactionBackgroundBrush", (Color.FromArgb(0xFF, 0xD5, 0xF1, 0xC9), new SolidColorBrush(Color.FromArgb(0xFF, 0xD5, 0xF1, 0xC9))) },
+            { "MessageReactionForegroundBrush", (Color.FromArgb(0xFF, 0x45, 0xA3, 0x2D), new SolidColorBrush(Color.FromArgb(0xFF, 0x45, 0xA3, 0x2D))) },
+            { "MessageReactionChosenBackgroundBrush", (Color.FromArgb(0xFF, 0x5F, 0xBE, 0x67), new SolidColorBrush(Color.FromArgb(0xFF, 0x5F, 0xBE, 0x67))) },
+            { "MessageReactionChosenForegroundBrush", (Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF), new SolidColorBrush(Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF))) },
         };
 
         [ThreadStatic]
-        private static Dictionary<string, SolidColorBrush> _dark;
-        public static Dictionary<string, SolidColorBrush> Dark => _dark ??= new()
+        private static Dictionary<string, (Color Color, SolidColorBrush Brush)> _dark;
+        public static Dictionary<string, (Color Color, SolidColorBrush Brush)> Dark => _dark ??= new()
         {
-            { "MessageForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0xE4ECF2)) },
-            { "MessageForegroundLinkBrush", new SolidColorBrush(ColorEx.FromHex(0x83CAFF)) },
-            { "MessageBackgroundBrush", new SolidColorBrush(ColorEx.FromHex(0x2B5278)) },
-            { "MessageSubtleLabelBrush", new SolidColorBrush(ColorEx.FromHex(0x7DA8D3)) },
-            { "MessageSubtleGlyphBrush", new SolidColorBrush(ColorEx.FromHex(0x72BCFD)) },
-            { "MessageSubtleForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0x7DA8D3)) },
-            { "MessageHeaderForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0x90CAFF)) },
-            { "MessageHeaderBorderBrush", new SolidColorBrush(ColorEx.FromHex(0x65B9F4)) },
-            { "MessageMediaForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0xFFFFFF)) },
-            { "MessageMediaBackgroundBrush", new SolidColorBrush(ColorEx.FromHex(0x4C9CE2)) },
-            { "MessageOverlayBackgroundBrush", new SolidColorBrush(ColorEx.FromHex(0x54000000)) },
-            { "MessageCallForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0x49A2F0)) },
-            { "MessageCallMissedForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0xED5050)) },
-            { "MessageReactionBackgroundBrush", new SolidColorBrush(ColorEx.FromHex(0x2B4153)) },
-            { "MessageReactionForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0x7AC3F4)) },
-            { "MessageReactionChosenBackgroundBrush", new SolidColorBrush(ColorEx.FromHex(0x318EE4)) },
-            { "MessageReactionChosenForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0x33393F)) },
+            { "MessageForegroundBrush", (Color.FromArgb(0xFF, 0xE4, 0xEC, 0xF2), new SolidColorBrush(Color.FromArgb(0xFF, 0xE4, 0xEC, 0xF2))) },
+            { "MessageForegroundLinkBrush", (Color.FromArgb(0xFF, 0x83, 0xCA, 0xFF), new SolidColorBrush(Color.FromArgb(0xFF, 0x83, 0xCA, 0xFF))) },
+            { "MessageBackgroundBrush", (Color.FromArgb(0xFF, 0x2B, 0x52, 0x78), new SolidColorBrush(Color.FromArgb(0xFF, 0x2B, 0x52, 0x78))) },
+            { "MessageSubtleLabelBrush", (Color.FromArgb(0xFF, 0x7D, 0xA8, 0xD3), new SolidColorBrush(Color.FromArgb(0xFF, 0x7D, 0xA8, 0xD3))) },
+            { "MessageSubtleGlyphBrush", (Color.FromArgb(0xFF, 0x72, 0xBC, 0xFD), new SolidColorBrush(Color.FromArgb(0xFF, 0x72, 0xBC, 0xFD))) },
+            { "MessageSubtleForegroundBrush", (Color.FromArgb(0xFF, 0x7D, 0xA8, 0xD3), new SolidColorBrush(Color.FromArgb(0xFF, 0x7D, 0xA8, 0xD3))) },
+            { "MessageHeaderForegroundBrush", (Color.FromArgb(0xFF, 0x90, 0xCA, 0xFF), new SolidColorBrush(Color.FromArgb(0xFF, 0x90, 0xCA, 0xFF))) },
+            { "MessageHeaderBorderBrush", (Color.FromArgb(0xFF, 0x65, 0xB9, 0xF4), new SolidColorBrush(Color.FromArgb(0xFF, 0x65, 0xB9, 0xF4))) },
+            { "MessageMediaForegroundBrush", (Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF), new SolidColorBrush(Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF))) },
+            { "MessageMediaBackgroundBrush", (Color.FromArgb(0xFF, 0x4C, 0x9C, 0xE2), new SolidColorBrush(Color.FromArgb(0xFF, 0x4C, 0x9C, 0xE2))) },
+            { "MessageOverlayBackgroundBrush", (Color.FromArgb(0x54, 0x00, 0x00, 0x00), new SolidColorBrush(Color.FromArgb(0x54, 0x00, 0x00, 0x00))) },
+            { "MessageCallForegroundBrush", (Color.FromArgb(0xFF, 0x49, 0xA2, 0xF0), new SolidColorBrush(Color.FromArgb(0xFF, 0x49, 0xA2, 0xF0))) },
+            { "MessageCallMissedForegroundBrush", (Color.FromArgb(0xFF, 0xED, 0x50, 0x50), new SolidColorBrush(Color.FromArgb(0xFF, 0xED, 0x50, 0x50))) },
+            { "MessageReactionBackgroundBrush", (Color.FromArgb(0xFF, 0x2B, 0x41, 0x53), new SolidColorBrush(Color.FromArgb(0xFF, 0x2B, 0x41, 0x53))) },
+            { "MessageReactionForegroundBrush", (Color.FromArgb(0xFF, 0x7A, 0xC3, 0xF4), new SolidColorBrush(Color.FromArgb(0xFF, 0x7A, 0xC3, 0xF4))) },
+            { "MessageReactionChosenBackgroundBrush", (Color.FromArgb(0xFF, 0x31, 0x8E, 0xE4), new SolidColorBrush(Color.FromArgb(0xFF, 0x31, 0x8E, 0xE4))) },
+            { "MessageReactionChosenForegroundBrush", (Color.FromArgb(0xFF, 0x33, 0x39, 0x3F), new SolidColorBrush(Color.FromArgb(0xFF, 0x33, 0x39, 0x3F))) },
         };
 
         public ThemeOutgoing()
@@ -485,12 +485,12 @@ namespace Unigram.Common
 
             foreach (var item in Light)
             {
-                light[item.Key] = item.Value;
+                light[item.Key] = item.Value.Brush;
             }
 
             foreach (var item in Dark)
             {
-                dark[item.Key] = item.Value;
+                dark[item.Key] = item.Value.Brush;
             }
 
             ThemeDictionaries["Light"] = light;
@@ -507,16 +507,16 @@ namespace Unigram.Common
 
             var target = parent == TelegramTheme.Dark ? Dark : Light;
 
-            foreach (var value in values)
+            foreach (var value in target)
             {
-                if (value.Key.EndsWith("Outgoing"))
+                var key = value.Key.Substring(0, value.Key.Length - "Brush".Length);
+                if (values.TryGetValue($"{key}Outgoing", out Color color))
                 {
-                    var key = value.Key.Substring(0, value.Key.Length - "Outgoing".Length);
-
-                    if (target.TryGetValue($"{key}Brush", out SolidColorBrush brush))
-                    {
-                        brush.Color = value.Value;
-                    }
+                    value.Value.Brush.Color = color;
+                }
+                else
+                {
+                    value.Value.Brush.Color = value.Value.Color;
                 }
             }
         }
@@ -525,43 +525,17 @@ namespace Unigram.Common
         {
             if (parent == TelegramTheme.Light)
             {
-                Light["MessageForegroundBrush"].Color = ColorEx.FromHex(0x000000);
-                Light["MessageForegroundLinkBrush"].Color = ColorEx.FromHex(0x168ACD);
-                Light["MessageBackgroundBrush"].Color = ColorEx.FromHex(0xF0FDDF);
-                Light["MessageSubtleLabelBrush"].Color = ColorEx.FromHex(0x6DC264);
-                Light["MessageSubtleGlyphBrush"].Color = ColorEx.FromHex(0x5DC452);
-                Light["MessageSubtleForegroundBrush"].Color = ColorEx.FromHex(0x6DC264);
-                Light["MessageHeaderForegroundBrush"].Color = ColorEx.FromHex(0x3A8E26);
-                Light["MessageHeaderBorderBrush"].Color = ColorEx.FromHex(0x5DC452);
-                Light["MessageMediaForegroundBrush"].Color = ColorEx.FromHex(0xF0FDDF);
-                Light["MessageMediaBackgroundBrush"].Color = ColorEx.FromHex(0x78C67F);
-                Light["MessageOverlayBackgroundBrush"].Color = ColorEx.FromHex(0x54000000);
-                Light["MessageCallForegroundBrush"].Color = ColorEx.FromHex(0x2AB32A);
-                Light["MessageCallMissedForegroundBrush"].Color = ColorEx.FromHex(0xDD5849);
-                Light["MessageReactionBackgroundBrush"].Color = ColorEx.FromHex(0xD5F1C9);
-                Light["MessageReactionForegroundBrush"].Color = ColorEx.FromHex(0x45A32D);
-                Light["MessageReactionChosenBackgroundBrush"].Color = ColorEx.FromHex(0x5FBE67);
-                Light["MessageReactionChosenForegroundBrush"].Color = ColorEx.FromHex(0xFFFFFF);
+                foreach (var value in Light)
+                {
+                    value.Value.Brush.Color = value.Value.Color;
+                }
             }
             else
             {
-                Dark["MessageForegroundBrush"].Color = ColorEx.FromHex(0xE4ECF2);
-                Dark["MessageForegroundLinkBrush"].Color = ColorEx.FromHex(0x83CAFF);
-                Dark["MessageBackgroundBrush"].Color = ColorEx.FromHex(0x2B5278);
-                Dark["MessageSubtleLabelBrush"].Color = ColorEx.FromHex(0x7DA8D3);
-                Dark["MessageSubtleGlyphBrush"].Color = ColorEx.FromHex(0x72BCFD);
-                Dark["MessageSubtleForegroundBrush"].Color = ColorEx.FromHex(0x7DA8D3);
-                Dark["MessageHeaderForegroundBrush"].Color = ColorEx.FromHex(0x90CAFF);
-                Dark["MessageHeaderBorderBrush"].Color = ColorEx.FromHex(0x65B9F4);
-                Dark["MessageMediaForegroundBrush"].Color = ColorEx.FromHex(0xFFFFFF);
-                Dark["MessageMediaBackgroundBrush"].Color = ColorEx.FromHex(0x4C9CE2);
-                Dark["MessageOverlayBackgroundBrush"].Color = ColorEx.FromHex(0x54000000);
-                Dark["MessageCallForegroundBrush"].Color = ColorEx.FromHex(0x49A2F0);
-                Dark["MessageCallMissedForegroundBrush"].Color = ColorEx.FromHex(0xED5050);
-                Dark["MessageReactionBackgroundBrush"].Color = ColorEx.FromHex(0x2B4153);
-                Dark["MessageReactionForegroundBrush"].Color = ColorEx.FromHex(0x7AC3F4);
-                Dark["MessageReactionChosenBackgroundBrush"].Color = ColorEx.FromHex(0x318EE4);
-                Dark["MessageReactionChosenForegroundBrush"].Color = ColorEx.FromHex(0x33393F);
+                foreach (var value in Dark)
+                {
+                    value.Value.Brush.Color = value.Value.Color;
+                }
             }
         }
     }
@@ -569,49 +543,49 @@ namespace Unigram.Common
     public class ThemeIncoming : ResourceDictionary
     {
         [ThreadStatic]
-        private static Dictionary<string, SolidColorBrush> _light;
-        public static Dictionary<string, SolidColorBrush> Light => _light ??= new()
+        private static Dictionary<string, (Color Color, SolidColorBrush Brush)> _light;
+        public static Dictionary<string, (Color Color, SolidColorBrush Brush)> Light => _light ??= new()
         {
-            { "MessageForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0x000000)) },
-            { "MessageForegroundLinkBrush", new SolidColorBrush(ColorEx.FromHex(0x168ACD)) },
-            { "MessageBackgroundBrush", new SolidColorBrush(ColorEx.FromHex(0xFFFFFF)) },
-            { "MessageSubtleLabelBrush", new SolidColorBrush(ColorEx.FromHex(0xA1ADB6)) },
-            { "MessageSubtleGlyphBrush", new SolidColorBrush(ColorEx.FromHex(0xA1ADB6)) },
-            { "MessageSubtleForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0xA1ADB6)) },
-            { "MessageHeaderForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0x158DCD)) },
-            { "MessageHeaderBorderBrush", new SolidColorBrush(ColorEx.FromHex(0x37A4DE)) },
-            { "MessageMediaForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0xFFFFFF)) },
-            { "MessageMediaBackgroundBrush", new SolidColorBrush(ColorEx.FromHex(0x40A7E3)) },
-            { "MessageOverlayBackgroundBrush", new SolidColorBrush(ColorEx.FromHex(0x54000000)) },
-            { "MessageCallForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0x2AB32A)) },
-            { "MessageCallMissedForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0xDD5849)) },
-            { "MessageReactionBackgroundBrush", new SolidColorBrush(ColorEx.FromHex(0xE8F5FC)) },
-            { "MessageReactionForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0x168DCD)) },
-            { "MessageReactionChosenBackgroundBrush", new SolidColorBrush(ColorEx.FromHex(0x40A7E3)) },
-            { "MessageReactionChosenForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0xFFFFFF)) },
+            { "MessageForegroundBrush", (Color.FromArgb(0xFF, 0x00, 0x00, 0x00), new SolidColorBrush(Color.FromArgb(0xFF, 0x00, 0x00, 0x00))) },
+            { "MessageForegroundLinkBrush", (Color.FromArgb(0xFF, 0x16, 0x8A, 0xCD), new SolidColorBrush(Color.FromArgb(0xFF, 0x16, 0x8A, 0xCD))) },
+            { "MessageBackgroundBrush", (Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF), new SolidColorBrush(Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF))) },
+            { "MessageSubtleLabelBrush", (Color.FromArgb(0xFF, 0xA1, 0xAD, 0xB6), new SolidColorBrush(Color.FromArgb(0xFF, 0xA1, 0xAD, 0xB6))) },
+            { "MessageSubtleGlyphBrush", (Color.FromArgb(0xFF, 0xA1, 0xAD, 0xB6), new SolidColorBrush(Color.FromArgb(0xFF, 0xA1, 0xAD, 0xB6))) },
+            { "MessageSubtleForegroundBrush", (Color.FromArgb(0xFF, 0xA1, 0xAD, 0xB6), new SolidColorBrush(Color.FromArgb(0xFF, 0xA1, 0xAD, 0xB6))) },
+            { "MessageHeaderForegroundBrush", (Color.FromArgb(0xFF, 0x15, 0x8D, 0xCD), new SolidColorBrush(Color.FromArgb(0xFF, 0x15, 0x8D, 0xCD))) },
+            { "MessageHeaderBorderBrush", (Color.FromArgb(0xFF, 0x37, 0xA4, 0xDE), new SolidColorBrush(Color.FromArgb(0xFF, 0x37, 0xA4, 0xDE))) },
+            { "MessageMediaForegroundBrush", (Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF), new SolidColorBrush(Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF))) },
+            { "MessageMediaBackgroundBrush", (Color.FromArgb(0xFF, 0x40, 0xA7, 0xE3), new SolidColorBrush(Color.FromArgb(0xFF, 0x40, 0xA7, 0xE3))) },
+            { "MessageOverlayBackgroundBrush", (Color.FromArgb(0x54, 0x00, 0x00, 0x00), new SolidColorBrush(Color.FromArgb(0x54, 0x00, 0x00, 0x00))) },
+            { "MessageCallForegroundBrush", (Color.FromArgb(0xFF, 0x2A, 0xB3, 0x2A), new SolidColorBrush(Color.FromArgb(0xFF, 0x2A, 0xB3, 0x2A))) },
+            { "MessageCallMissedForegroundBrush", (Color.FromArgb(0xFF, 0xDD, 0x58, 0x49), new SolidColorBrush(Color.FromArgb(0xFF, 0xDD, 0x58, 0x49))) },
+            { "MessageReactionBackgroundBrush", (Color.FromArgb(0xFF, 0xE8, 0xF5, 0xFC), new SolidColorBrush(Color.FromArgb(0xFF, 0xE8, 0xF5, 0xFC))) },
+            { "MessageReactionForegroundBrush", (Color.FromArgb(0xFF, 0x16, 0x8D, 0xCD), new SolidColorBrush(Color.FromArgb(0xFF, 0x16, 0x8D, 0xCD))) },
+            { "MessageReactionChosenBackgroundBrush", (Color.FromArgb(0xFF, 0x40, 0xA7, 0xE3), new SolidColorBrush(Color.FromArgb(0xFF, 0x40, 0xA7, 0xE3))) },
+            { "MessageReactionChosenForegroundBrush", (Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF), new SolidColorBrush(Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF))) },
         };
 
         [ThreadStatic]
-        private static Dictionary<string, SolidColorBrush> _dark;
-        public static Dictionary<string, SolidColorBrush> Dark => _dark ??= new()
+        private static Dictionary<string, (Color Color, SolidColorBrush Brush)> _dark;
+        public static Dictionary<string, (Color Color, SolidColorBrush Brush)> Dark => _dark ??= new()
         {
-            { "MessageForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0xF5F5F5)) },
-            { "MessageForegroundLinkBrush", new SolidColorBrush(ColorEx.FromHex(0x70BAF5)) },
-            { "MessageBackgroundBrush", new SolidColorBrush(ColorEx.FromHex(0x182533)) },
-            { "MessageSubtleLabelBrush", new SolidColorBrush(ColorEx.FromHex(0x6D7F8F)) },
-            { "MessageSubtleGlyphBrush", new SolidColorBrush(ColorEx.FromHex(0x6D7F8F)) },
-            { "MessageSubtleForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0x6D7F8F)) },
-            { "MessageHeaderForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0x71BAFA)) },
-            { "MessageHeaderBorderBrush", new SolidColorBrush(ColorEx.FromHex(0x429BDB)) },
-            { "MessageMediaForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0xFFFFFF)) },
-            { "MessageMediaBackgroundBrush", new SolidColorBrush(ColorEx.FromHex(0x3F96D0)) },
-            { "MessageOverlayBackgroundBrush", new SolidColorBrush(ColorEx.FromHex(0x54000000)) },
-            { "MessageCallForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0x49A2F0)) },
-            { "MessageCallMissedForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0xED5050)) },
-            { "MessageReactionBackgroundBrush", new SolidColorBrush(ColorEx.FromHex(0x3A4754)) },
-            { "MessageReactionForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0x67BBF3)) },
-            { "MessageReactionChosenBackgroundBrush", new SolidColorBrush(ColorEx.FromHex(0x6EB2EE)) },
-            { "MessageReactionChosenForegroundBrush", new SolidColorBrush(ColorEx.FromHex(0x33393F)) },
+            { "MessageForegroundBrush", (Color.FromArgb(0xFF, 0xF5, 0xF5, 0xF5), new SolidColorBrush(Color.FromArgb(0xFF, 0xF5, 0xF5, 0xF5))) },
+            { "MessageForegroundLinkBrush", (Color.FromArgb(0xFF, 0x70, 0xBA, 0xF5), new SolidColorBrush(Color.FromArgb(0xFF, 0x70, 0xBA, 0xF5))) },
+            { "MessageBackgroundBrush", (Color.FromArgb(0xFF, 0x18, 0x25, 0x33), new SolidColorBrush(Color.FromArgb(0xFF, 0x18, 0x25, 0x33))) },
+            { "MessageSubtleLabelBrush", (Color.FromArgb(0xFF, 0x6D, 0x7F, 0x8F), new SolidColorBrush(Color.FromArgb(0xFF, 0x6D, 0x7F, 0x8F))) },
+            { "MessageSubtleGlyphBrush", (Color.FromArgb(0xFF, 0x6D, 0x7F, 0x8F), new SolidColorBrush(Color.FromArgb(0xFF, 0x6D, 0x7F, 0x8F))) },
+            { "MessageSubtleForegroundBrush", (Color.FromArgb(0xFF, 0x6D, 0x7F, 0x8F), new SolidColorBrush(Color.FromArgb(0xFF, 0x6D, 0x7F, 0x8F))) },
+            { "MessageHeaderForegroundBrush", (Color.FromArgb(0xFF, 0x71, 0xBA, 0xFA), new SolidColorBrush(Color.FromArgb(0xFF, 0x71, 0xBA, 0xFA))) },
+            { "MessageHeaderBorderBrush", (Color.FromArgb(0xFF, 0x42, 0x9B, 0xDB), new SolidColorBrush(Color.FromArgb(0xFF, 0x42, 0x9B, 0xDB))) },
+            { "MessageMediaForegroundBrush", (Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF), new SolidColorBrush(Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF))) },
+            { "MessageMediaBackgroundBrush", (Color.FromArgb(0xFF, 0x3F, 0x96, 0xD0), new SolidColorBrush(Color.FromArgb(0xFF, 0x3F, 0x96, 0xD0))) },
+            { "MessageOverlayBackgroundBrush", (Color.FromArgb(0x54, 0x00, 0x00, 0x00), new SolidColorBrush(Color.FromArgb(0x54, 0x00, 0x00, 0x00))) },
+            { "MessageCallForegroundBrush", (Color.FromArgb(0xFF, 0x49, 0xA2, 0xF0), new SolidColorBrush(Color.FromArgb(0xFF, 0x49, 0xA2, 0xF0))) },
+            { "MessageCallMissedForegroundBrush", (Color.FromArgb(0xFF, 0xED, 0x50, 0x50), new SolidColorBrush(Color.FromArgb(0xFF, 0xED, 0x50, 0x50))) },
+            { "MessageReactionBackgroundBrush", (Color.FromArgb(0xFF, 0x3A, 0x47, 0x54), new SolidColorBrush(Color.FromArgb(0xFF, 0x3A, 0x47, 0x54))) },
+            { "MessageReactionForegroundBrush", (Color.FromArgb(0xFF, 0x67, 0xBB, 0xF3), new SolidColorBrush(Color.FromArgb(0xFF, 0x67, 0xBB, 0xF3))) },
+            { "MessageReactionChosenBackgroundBrush", (Color.FromArgb(0xFF, 0x6E, 0xB2, 0xEE), new SolidColorBrush(Color.FromArgb(0xFF, 0x6E, 0xB2, 0xEE))) },
+            { "MessageReactionChosenForegroundBrush", (Color.FromArgb(0xFF, 0x33, 0x39, 0x3F), new SolidColorBrush(Color.FromArgb(0xFF, 0x33, 0x39, 0x3F))) },
         };
 
         public ThemeIncoming()
@@ -621,12 +595,12 @@ namespace Unigram.Common
 
             foreach (var item in Light)
             {
-                light[item.Key] = item.Value;
+                light[item.Key] = item.Value.Brush;
             }
 
             foreach (var item in Dark)
             {
-                dark[item.Key] = item.Value;
+                dark[item.Key] = item.Value.Brush;
             }
 
             ThemeDictionaries["Light"] = light;
@@ -643,16 +617,16 @@ namespace Unigram.Common
 
             var target = parent == TelegramTheme.Dark ? Dark : Light;
 
-            foreach (var value in values)
+            foreach (var value in target)
             {
-                if (value.Key.EndsWith("Incoming"))
+                var key = value.Key.Substring(0, value.Key.Length - "Brush".Length);
+                if (values.TryGetValue($"{key}Incoming", out Color color))
                 {
-                    var key = value.Key.Substring(0, value.Key.Length - "Incoming".Length);
-
-                    if (target.TryGetValue($"{key}Brush", out SolidColorBrush brush))
-                    {
-                        brush.Color = value.Value;
-                    }
+                    value.Value.Brush.Color = color;
+                }
+                else
+                {
+                    value.Value.Brush.Color = value.Value.Color;
                 }
             }
         }
@@ -661,43 +635,17 @@ namespace Unigram.Common
         {
             if (parent == TelegramTheme.Light)
             {
-                Light["MessageForegroundBrush"].Color = ColorEx.FromHex(0x000000);
-                Light["MessageForegroundLinkBrush"].Color = ColorEx.FromHex(0x168ACD);
-                Light["MessageBackgroundBrush"].Color = ColorEx.FromHex(0xFFFFFF);
-                Light["MessageSubtleLabelBrush"].Color = ColorEx.FromHex(0xA1ADB6);
-                Light["MessageSubtleGlyphBrush"].Color = ColorEx.FromHex(0xA1ADB6);
-                Light["MessageSubtleForegroundBrush"].Color = ColorEx.FromHex(0xA1ADB6);
-                Light["MessageHeaderForegroundBrush"].Color = ColorEx.FromHex(0x158DCD);
-                Light["MessageHeaderBorderBrush"].Color = ColorEx.FromHex(0x37A4DE);
-                Light["MessageMediaForegroundBrush"].Color = ColorEx.FromHex(0xFFFFFF);
-                Light["MessageMediaBackgroundBrush"].Color = ColorEx.FromHex(0x40A7E3);
-                Light["MessageOverlayBackgroundBrush"].Color = ColorEx.FromHex(0x54000000);
-                Light["MessageCallForegroundBrush"].Color = ColorEx.FromHex(0x2AB32A);
-                Light["MessageCallMissedForegroundBrush"].Color = ColorEx.FromHex(0xDD5849);
-                Light["MessageReactionBackgroundBrush"].Color = ColorEx.FromHex(0xE8F5FC);
-                Light["MessageReactionForegroundBrush"].Color = ColorEx.FromHex(0x168DCD);
-                Light["MessageReactionChosenBackgroundBrush"].Color = ColorEx.FromHex(0x40A7E3);
-                Light["MessageReactionChosenForegroundBrush"].Color = ColorEx.FromHex(0xFFFFFF);
+                foreach (var value in Light)
+                {
+                    value.Value.Brush.Color = value.Value.Color;
+                }
             }
             else
             {
-                Dark["MessageForegroundBrush"].Color = ColorEx.FromHex(0xF5F5F5);
-                Dark["MessageForegroundLinkBrush"].Color = ColorEx.FromHex(0x70BAF5);
-                Dark["MessageBackgroundBrush"].Color = ColorEx.FromHex(0x182533);
-                Dark["MessageSubtleLabelBrush"].Color = ColorEx.FromHex(0x6D7F8F);
-                Dark["MessageSubtleGlyphBrush"].Color = ColorEx.FromHex(0x6D7F8F);
-                Dark["MessageSubtleForegroundBrush"].Color = ColorEx.FromHex(0x6D7F8F);
-                Dark["MessageHeaderForegroundBrush"].Color = ColorEx.FromHex(0x71BAFA);
-                Dark["MessageHeaderBorderBrush"].Color = ColorEx.FromHex(0x429BDB);
-                Dark["MessageMediaForegroundBrush"].Color = ColorEx.FromHex(0xFFFFFF);
-                Dark["MessageMediaBackgroundBrush"].Color = ColorEx.FromHex(0x3F96D0);
-                Dark["MessageOverlayBackgroundBrush"].Color = ColorEx.FromHex(0x54000000);
-                Dark["MessageCallForegroundBrush"].Color = ColorEx.FromHex(0x49A2F0);
-                Dark["MessageCallMissedForegroundBrush"].Color = ColorEx.FromHex(0xED5050);
-                Dark["MessageReactionBackgroundBrush"].Color = ColorEx.FromHex(0x3A4754);
-                Dark["MessageReactionForegroundBrush"].Color = ColorEx.FromHex(0x67BBF3);
-                Dark["MessageReactionChosenBackgroundBrush"].Color = ColorEx.FromHex(0x6EB2EE);
-                Dark["MessageReactionChosenForegroundBrush"].Color = ColorEx.FromHex(0x33393F);
+                foreach (var value in Dark)
+                {
+                    value.Value.Brush.Color = value.Value.Color;
+                }
             }
         }
     }

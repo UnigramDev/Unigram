@@ -105,6 +105,8 @@ namespace Unigram.Views
 
             NavigationCacheMode = Windows.UI.Xaml.Navigation.NavigationCacheMode.Required;
 
+            _loadedThemeTask = new TaskCompletionSource<bool>();
+
             _typeToItemHashSetMapping.Add("UserMessageTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("ChatFriendMessageTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("FriendMessageTemplate", new HashSet<SelectorItem>());
@@ -497,7 +499,6 @@ namespace Unigram.Views
             DataContext = _viewModel = _getViewModel(this, sessionId);
 
             _updateThemeTask = new TaskCompletionSource<bool>();
-            _loadedThemeTask = new TaskCompletionSource<bool>();
             ViewModel.MessageSliceLoaded += OnMessageSliceLoaded;
             ViewModel.TextField = TextField;
             ViewModel.ListField = Messages;
@@ -3368,7 +3369,7 @@ namespace Unigram.Views
                         video.Source = null;
                     }
 
-                    CompositionPathParser.ParseThumbnail(sticker.Outline, out ShapeVisual visual, false);
+                    CompositionPathParser.ParseThumbnail(sticker, out ShapeVisual visual, false);
                     ElementCompositionPreview.SetElementChildVisual(content.Children[0], visual);
 
                     UpdateManager.Subscribe(content, ViewModel.ProtoService, file, UpdateSticker, true);
