@@ -2,10 +2,12 @@
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Navigation;
 using Unigram.ViewModels;
 using Windows.UI;
 using Windows.UI.Composition;
