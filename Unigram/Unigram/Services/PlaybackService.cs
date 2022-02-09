@@ -583,11 +583,11 @@ namespace Unigram.Services
                 {
                     foreach (var add in message.Content is MessageAudio ? messages.MessagesValue.OrderBy(x => x.Id) : messages.MessagesValue.OrderByDescending(x => x.Id))
                     {
-                        if (add.Id > message.Id && message.Content is MessageAudio)
+                        if (add.Id > message.Id && add.Content is MessageAudio)
                         {
                             items.Insert(0, GetPlaybackItem(add));
                         }
-                        else if (add.Id < message.Id && (message.Content is MessageVoiceNote || message.Content is MessageVideoNote))
+                        else if (add.Id < message.Id && (add.Content is MessageVoiceNote || add.Content is MessageVideoNote))
                         {
                             items.Insert(0, GetPlaybackItem(add));
                         }
@@ -595,11 +595,11 @@ namespace Unigram.Services
 
                     foreach (var add in message.Content is MessageAudio ? messages.MessagesValue.OrderByDescending(x => x.Id) : messages.MessagesValue.OrderBy(x => x.Id))
                     {
-                        if (add.Id < message.Id && message.Content is MessageAudio)
+                        if (add.Id < message.Id && add.Content is MessageAudio)
                         {
                             items.Add(GetPlaybackItem(add));
                         }
-                        else if (add.Id > message.Id && (message.Content is MessageVoiceNote || message.Content is MessageVideoNote))
+                        else if (add.Id > message.Id && (add.Content is MessageVoiceNote || add.Content is MessageVideoNote))
                         {
                             items.Add(GetPlaybackItem(add));
                         }
