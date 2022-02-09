@@ -73,7 +73,7 @@ namespace Unigram.Controls.Messages.Content
             {
                 if (!regular.Sticker.StickerValue.Local.IsDownloadingCompleted)
                 {
-                    UpdateThumbnail(message, regular.Sticker.Outline);
+                    UpdateThumbnail(message, regular.Sticker);
                 }
             }
 
@@ -146,9 +146,9 @@ namespace Unigram.Controls.Messages.Content
             }
         }
 
-        private void UpdateThumbnail(MessageViewModel message, IList<ClosedVectorPath> contours)
+        private void UpdateThumbnail(MessageViewModel message, Sticker sticker)
         {
-            _thumbnailShimmer = CompositionPathParser.ParseThumbnail(contours, out ShapeVisual visual);
+            _thumbnailShimmer = CompositionPathParser.ParseThumbnail(sticker, out ShapeVisual visual);
             ElementCompositionPreview.SetElementChildVisual(Player, visual);
         }
 

@@ -374,7 +374,7 @@ namespace Unigram.Controls.Drawers
 
                 content.Tag = sticker;
 
-                CompositionPathParser.ParseThumbnail(sticker.Outline, out ShapeVisual visual, false);
+                CompositionPathParser.ParseThumbnail(sticker, out ShapeVisual visual, false);
                 ElementCompositionPreview.SetElementChildVisual(content.Child, visual);
 
                 UpdateManager.Subscribe(content, ViewModel.ProtoService, file, UpdateSticker, true);

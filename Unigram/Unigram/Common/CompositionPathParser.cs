@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Telegram.Td.Api;
+using Unigram.ViewModels.Drawers;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -65,7 +66,17 @@ namespace Unigram.Common
             return new CompositionPath(CanvasGeometry.CreatePath(builder));
         }
 
-        public static CompositionAnimation ParseThumbnail(IList<ClosedVectorPath> contours, out ShapeVisual visual, bool animated = true)
+        public static CompositionAnimation ParseThumbnail(Sticker sticker, out ShapeVisual visual, bool animated = true)
+        {
+            return ParseThumbnail(sticker.Width, sticker.Height, sticker.Outline, out visual, animated);
+        }
+
+        public static CompositionAnimation ParseThumbnail(StickerViewModel sticker, out ShapeVisual visual, bool animated = true)
+        {
+            return ParseThumbnail(sticker.Width, sticker.Height, sticker.Outline, out visual, animated);
+        }
+
+        public static CompositionAnimation ParseThumbnail(int width, int height, IList<ClosedVectorPath> contours, out ShapeVisual visual, bool animated = true)
         {
             CompositionPath path;
             if (contours?.Count > 0)
@@ -74,7 +85,7 @@ namespace Unigram.Common
             }
             else
             {
-                path = new CompositionPath(CanvasGeometry.CreateRoundedRectangle(null, 0, 0, 512, 512, 80, 80));
+                path = new CompositionPath(CanvasGeometry.CreateRoundedRectangle(null, 0, 0, width, height, 80, 80));
             }
 
             var transparent = Color.FromArgb(0x00, 0x7A, 0x8A, 0x96);
@@ -89,18 +100,18 @@ namespace Unigram.Common
             gradient.ColorStops.Add(Window.Current.Compositor.CreateColorGradientStop(1.0f, transparent));
 
             var background = Window.Current.Compositor.CreateRectangleGeometry();
-            background.Size = new Vector2(512, 512);
+            background.Size = new Vector2(width, height);
             var backgroundShape = Window.Current.Compositor.CreateSpriteShape(background);
             backgroundShape.FillBrush = Window.Current.Compositor.CreateColorBrush(backgroundColor);
 
             var foreground = Window.Current.Compositor.CreateRectangleGeometry();
-            foreground.Size = new Vector2(512, 512);
+            foreground.Size = new Vector2(width, height);
             var foregroundShape = Window.Current.Compositor.CreateSpriteShape(foreground);
             foregroundShape.FillBrush = gradient;
 
             var clip = Window.Current.Compositor.CreateGeometricClip(Window.Current.Compositor.CreatePathGeometry(path));
             clip.ViewBox = Window.Current.Compositor.CreateViewBox();
-            clip.ViewBox.Size = new Vector2(512, 512);
+            clip.ViewBox.Size = new Vector2(512, height);
             clip.ViewBox.Stretch = CompositionStretch.UniformToFill;
 
             visual = Window.Current.Compositor.CreateShapeVisual();
@@ -112,8 +123,8 @@ namespace Unigram.Common
             if (animated)
             {
                 var animation = Window.Current.Compositor.CreateVector2KeyFrameAnimation();
-                animation.InsertKeyFrame(0, new Vector2(-512, 0));
-                animation.InsertKeyFrame(1, new Vector2(512, 0));
+                animation.InsertKeyFrame(0, new Vector2(-width, 0));
+                animation.InsertKeyFrame(1, new Vector2(width, 0));
                 animation.IterationBehavior = AnimationIterationBehavior.Forever;
                 animation.Duration = TimeSpan.FromSeconds(1);
 
