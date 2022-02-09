@@ -1021,27 +1021,18 @@ namespace Unigram.Common
             }
         }
 
-        public static File GetThumbnail(this StickerSetInfo stickerSet, out IList<ClosedVectorPath> outline, out StickerType type)
+        public static Sticker GetThumbnail(this StickerSetInfo stickerSet)
         {
             if (stickerSet.Thumbnail != null)
             {
-                outline = stickerSet.ThumbnailOutline;
-                type = stickerSet.StickerType;
-
-                return stickerSet.Thumbnail.File;
+                return new Sticker(stickerSet.Id, stickerSet.Thumbnail.Width, stickerSet.Thumbnail.Height, "", stickerSet.StickerType, stickerSet.ThumbnailOutline, stickerSet.Thumbnail, stickerSet.Thumbnail.File);
             }
 
             var cover = stickerSet.Covers.FirstOrDefault();
             if (cover != null)
             {
-                outline = cover.Outline;
-                type = cover.Type;
-
-                return cover.StickerValue;
+                return cover;
             }
-
-            outline = null;
-            type = null;
 
             return null;
         }
