@@ -323,7 +323,7 @@ namespace Unigram.ViewModels.Settings
                 return AsyncInfo.Run(async token =>
                 {
                     var recentResponse = await _protoService.SendAsync(new GetRecentStickers(_masks));
-                    if (recentResponse is Stickers stickers)
+                    if (recentResponse is Stickers stickers && stickers.StickersValue.Count > 0)
                     {
                         Add(new StickerSetInfo(0, Strings.Resources.RecentStickers, "tg/recentlyUsed", null, new ClosedVectorPath[0], false, false, false, null, false, stickers.StickersValue.Count, stickers.StickersValue));
                     }
