@@ -92,7 +92,7 @@ namespace Unigram.Views.Settings
             var stickerSet = args.Item as StickerSetInfo;
             var cover = stickerSet.GetThumbnail();
 
-            var typeName = cover.Type switch
+            var typeName = cover?.Type switch
             {
                 StickerTypeAnimated => "AnimatedItemTemplate",
                 StickerTypeVideo => "VideoItemTemplate",

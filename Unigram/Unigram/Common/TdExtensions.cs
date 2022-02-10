@@ -1025,7 +1025,20 @@ namespace Unigram.Common
         {
             if (stickerSet.Thumbnail != null)
             {
-                return new Sticker(stickerSet.Id, stickerSet.Thumbnail.Width, stickerSet.Thumbnail.Height, "", stickerSet.StickerType, stickerSet.ThumbnailOutline, stickerSet.Thumbnail, stickerSet.Thumbnail.File);
+                StickerType type = stickerSet.Thumbnail.Format switch
+                {
+                    ThumbnailFormatWebp => new StickerTypeStatic(),
+                    ThumbnailFormatWebm => new StickerTypeVideo(),
+                    ThumbnailFormatTgs => new StickerTypeAnimated(),
+                    _ => default
+                };
+
+                if (stickerSet.Thumbnail.Format is ThumbnailFormatTgs)
+                {
+                    return new Sticker(stickerSet.Id, 512, 512, "\U0001F4A9", type, stickerSet.ThumbnailOutline, stickerSet.Thumbnail, stickerSet.Thumbnail.File);
+                }
+
+                return new Sticker(stickerSet.Id, stickerSet.Thumbnail.Width, stickerSet.Thumbnail.Height, "\U0001F4A9", type, stickerSet.ThumbnailOutline, stickerSet.Thumbnail, stickerSet.Thumbnail.File);
             }
 
             var cover = stickerSet.Covers.FirstOrDefault();

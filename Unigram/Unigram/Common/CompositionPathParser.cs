@@ -111,7 +111,7 @@ namespace Unigram.Common
 
             var clip = Window.Current.Compositor.CreateGeometricClip(Window.Current.Compositor.CreatePathGeometry(path));
             clip.ViewBox = Window.Current.Compositor.CreateViewBox();
-            clip.ViewBox.Size = new Vector2(512, height);
+            clip.ViewBox.Size = new Vector2(width, height);
             clip.ViewBox.Stretch = CompositionStretch.UniformToFill;
 
             visual = Window.Current.Compositor.CreateShapeVisual();
