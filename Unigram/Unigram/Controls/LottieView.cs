@@ -231,11 +231,11 @@ namespace Unigram.Controls
 
         private async void OnSourceChanged(string newValue, string oldValue)
         {
-            var canvas = _canvas;
-            if (canvas == null && !Load())
-            {
-                return;
-            }
+            //var canvas = _canvas;
+            //if (canvas == null && !Load())
+            //{
+            //    return;
+            //}
 
             if (newValue == null)
             {

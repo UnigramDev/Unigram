@@ -74,9 +74,9 @@ namespace Unigram.Controls
         protected override CanvasBitmap CreateBitmap(ICanvasResourceCreator sender)
         {
             bool needsCreate = _bitmap == null;
-            needsCreate |= _bitmap?.Size.Width != _animation.PixelWidth || _bitmap?.Size.Height != _animation.PixelHeight;
+            needsCreate |= _bitmap?.Size.Width != _animation?.PixelWidth || _bitmap?.Size.Height != _animation?.PixelHeight;
 
-            if (needsCreate)
+            if (needsCreate && _animation != null)
             {
                 var buffer = ArrayPool<byte>.Shared.Rent(_animation.PixelWidth * _animation.PixelHeight * 4);
                 var bitmap = CanvasBitmap.CreateFromBytes(sender, buffer, _animation.PixelWidth, _animation.PixelHeight, DirectXPixelFormat.R8G8B8A8UIntNormalized);
@@ -177,11 +177,11 @@ namespace Unigram.Controls
 
         private async void OnSourceChanged(IVideoAnimationSource newValue, IVideoAnimationSource oldValue)
         {
-            var canvas = _canvas;
-            if (canvas == null && !Load())
-            {
-                return;
-            }
+            //var canvas = _canvas;
+            //if (canvas == null && !Load())
+            //{
+            //    return;
+            //}
 
             if (newValue == null)
             {
