@@ -149,7 +149,13 @@ namespace Unigram.Views.Host
                         break;
                 }
 
-                //WindowContext.GetForCurrentView().Handle(session, new UpdateConnectionState(session.ProtoService.GetConnectionState()));
+                var counters = session.ProtoService.GetUnreadCount(new ChatListMain());
+                if (counters != null)
+                {
+                    session.Aggregator.Publish(counters.UnreadChatCount);
+                    session.Aggregator.Publish(counters.UnreadMessageCount);
+                }
+
                 session.Aggregator.Publish(new UpdateConnectionState(session.ProtoService.GetConnectionState()));
             }
             else
@@ -450,7 +456,7 @@ namespace Unigram.Views.Host
                         break;
                     case RootDestination.NewSecretChat:
                         content.Text = Strings.Resources.NewSecretChat;
-                        content.Glyph = Icons.Lock;
+                        content.Glyph = Icons.LockClosed;
                         break;
                     case RootDestination.NewChannel:
                         content.Text = Strings.Resources.NewChannel;
