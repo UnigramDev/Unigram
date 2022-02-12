@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using Unigram.Services;
 using Windows.Foundation;
 using Windows.UI.Core;
@@ -111,11 +112,11 @@ namespace Unigram.Controls
                 detailHeader.Measure(availableSize);
                 banner.Measure(availableSize);
 
-                master.Measure(new Size(availableSize.Width, Math.Max(0, availableSize.Height - banner.DesiredSize.Height - masterHeader.DesiredSize.Height)));
-                detail.Measure(new Size(availableSize.Width, Math.Max(0, availableSize.Height - banner.DesiredSize.Height - Math.Max(48, detailHeader.DesiredSize.Height))));
-                border.Measure(new Size(availableSize.Width, Math.Max(0, availableSize.Height)));
+                master.Measure(CreateSize(availableSize.Width, Math.Max(0, availableSize.Height - banner.DesiredSize.Height - masterHeader.DesiredSize.Height)));
+                detail.Measure(CreateSize(availableSize.Width, Math.Max(0, availableSize.Height - banner.DesiredSize.Height - Math.Max(48, detailHeader.DesiredSize.Height))));
+                border.Measure(CreateSize(availableSize.Width, Math.Max(0, availableSize.Height)));
 
-                grip.Measure(new Size(0, 0));
+                grip.Measure(CreateSize(0, 0));
             }
             else
             {
@@ -129,16 +130,16 @@ namespace Unigram.Controls
                     result = dialogsWidthRatio > 0 ? CountDialogsWidthFromRatio(availableSize.Width, dialogsWidthRatio) : columnMinimalWidthLeft;
                 }
 
-                masterHeader.Measure(new Size(result, availableSize.Height));
-                detailHeader.Measure(new Size(availableSize.Width - result, availableSize.Height));
-                banner.Measure(new Size(availableSize.Width - result, availableSize.Height));
-                background.Measure(new Size(availableSize.Width - result, availableSize.Height));
+                masterHeader.Measure(CreateSize(result, availableSize.Height));
+                detailHeader.Measure(CreateSize(availableSize.Width - result, availableSize.Height));
+                banner.Measure(CreateSize(availableSize.Width - result, availableSize.Height));
+                background.Measure(CreateSize(availableSize.Width - result, availableSize.Height));
 
-                master.Measure(new Size(result, availableSize.Height - masterHeader.DesiredSize.Height));
-                detail.Measure(new Size(availableSize.Width - result, availableSize.Height - banner.DesiredSize.Height - Math.Max(48, detailHeader.DesiredSize.Height)));
-                border.Measure(new Size(availableSize.Width - result, availableSize.Height));
+                master.Measure(CreateSize(result, availableSize.Height - masterHeader.DesiredSize.Height));
+                detail.Measure(CreateSize(availableSize.Width - result, availableSize.Height - banner.DesiredSize.Height - Math.Max(48, detailHeader.DesiredSize.Height)));
+                border.Measure(CreateSize(availableSize.Width - result, availableSize.Height));
 
-                grip.Measure(new Size(8, availableSize.Height));
+                grip.Measure(CreateSize(8, availableSize.Height));
             }
 
             return availableSize;
@@ -160,16 +161,16 @@ namespace Unigram.Controls
             {
                 CurrentState = MasterDetailState.Minimal;
 
-                background.Arrange(new Rect(new Point(0, 0), finalSize));
-                masterHeader.Arrange(new Rect(new Point(0, 0), finalSize));
-                detailHeader.Arrange(new Rect(new Point(0, 0), finalSize));
-                banner.Arrange(new Rect(new Point(0, Math.Max(detailHeader.DesiredSize.Height, masterHeader.DesiredSize.Height)), finalSize));
+                background.Arrange(CreateRect(0, 0, finalSize.Width, finalSize.Height));
+                masterHeader.Arrange(CreateRect(0, 0, finalSize.Width, finalSize.Height));
+                detailHeader.Arrange(CreateRect(0, 0, finalSize.Width, finalSize.Height));
+                banner.Arrange(CreateRect(0, Math.Max(detailHeader.DesiredSize.Height, masterHeader.DesiredSize.Height), finalSize.Width, finalSize.Height));
 
-                master.Arrange(new Rect(0, banner.DesiredSize.Height + masterHeader.DesiredSize.Height, finalSize.Width, finalSize.Height - banner.DesiredSize.Height - masterHeader.DesiredSize.Height));
-                detail.Arrange(new Rect(0, banner.DesiredSize.Height + Math.Max(48, detailHeader.DesiredSize.Height), finalSize.Width, finalSize.Height - banner.DesiredSize.Height - Math.Max(48, detailHeader.DesiredSize.Height)));
-                border.Arrange(new Rect(0, banner.DesiredSize.Height + Math.Max(48, detailHeader.DesiredSize.Height), finalSize.Width, finalSize.Height));
+                master.Arrange(CreateRect(0, banner.DesiredSize.Height + masterHeader.DesiredSize.Height, finalSize.Width, finalSize.Height - banner.DesiredSize.Height - masterHeader.DesiredSize.Height));
+                detail.Arrange(CreateRect(0, banner.DesiredSize.Height + Math.Max(48, detailHeader.DesiredSize.Height), finalSize.Width, finalSize.Height - banner.DesiredSize.Height - Math.Max(48, detailHeader.DesiredSize.Height)));
+                border.Arrange(CreateRect(0, banner.DesiredSize.Height + Math.Max(48, detailHeader.DesiredSize.Height), finalSize.Width, finalSize.Height));
 
-                grip.Arrange(new Rect(0, 0, 0, 0));
+                grip.Arrange(CreateRect(0, 0, 0, 0));
             }
             else
             {
@@ -185,19 +186,31 @@ namespace Unigram.Controls
                     CurrentState = MasterDetailState.Expanded;
                 }
 
-                background.Arrange(new Rect(result, 0, finalSize.Width - result, finalSize.Height));
-                masterHeader.Arrange(new Rect(0, 0, result, finalSize.Height));
-                detailHeader.Arrange(new Rect(result, 0, finalSize.Width - result, finalSize.Height));
-                banner.Arrange(new Rect(result, detailHeader.DesiredSize.Height, finalSize.Width - result, finalSize.Height));
+                background.Arrange(CreateRect(result, 0, finalSize.Width - result, finalSize.Height));
+                masterHeader.Arrange(CreateRect(0, 0, result, finalSize.Height));
+                detailHeader.Arrange(CreateRect(result, 0, finalSize.Width - result, finalSize.Height));
+                banner.Arrange(CreateRect(result, detailHeader.DesiredSize.Height, finalSize.Width - result, finalSize.Height));
 
-                master.Arrange(new Rect(0, masterHeader.DesiredSize.Height, result, finalSize.Height - masterHeader.DesiredSize.Height));
-                detail.Arrange(new Rect(result, banner.DesiredSize.Height + Math.Max(48, detailHeader.DesiredSize.Height), finalSize.Width - result, finalSize.Height - banner.DesiredSize.Height - detailHeader.DesiredSize.Height));
-                border.Arrange(new Rect(result, 0, finalSize.Width - result, finalSize.Height));
+                master.Arrange(CreateRect(0, masterHeader.DesiredSize.Height, result, finalSize.Height - masterHeader.DesiredSize.Height));
+                detail.Arrange(CreateRect(result, banner.DesiredSize.Height + Math.Max(48, detailHeader.DesiredSize.Height), finalSize.Width - result, finalSize.Height - banner.DesiredSize.Height - detailHeader.DesiredSize.Height));
+                border.Arrange(CreateRect(result, 0, finalSize.Width - result, finalSize.Height));
 
-                grip.Arrange(new Rect(result, 0, 8, finalSize.Height));
+                grip.Arrange(CreateRect(result, 0, 8, finalSize.Height));
             }
 
             return finalSize;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static Size CreateSize(double width, double height)
+        {
+            return new Size(Math.Max(0, width), Math.Max(0, height));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static Rect CreateRect(double x, double y, double width, double height)
+        {
+            return new Rect(x, y, Math.Max(0, width), Math.Max(0, height));
         }
 
         private double CountDialogsWidthFromRatio(double width, double ratio)
