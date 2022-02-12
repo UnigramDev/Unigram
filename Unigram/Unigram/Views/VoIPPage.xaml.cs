@@ -358,7 +358,7 @@ namespace Unigram.Views
                 Video.IsChecked = true;
                 ViewfinderPanel.Visibility = Visibility.Visible;
 
-                capturer.SetOutput(Viewfinder);
+                capturer.SetOutput(Viewfinder, false);
             }
             else if (capturer == null && !_capturerWasNull)
             {
