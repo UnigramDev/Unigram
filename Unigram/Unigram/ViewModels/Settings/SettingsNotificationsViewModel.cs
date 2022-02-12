@@ -37,6 +37,12 @@ namespace Unigram.ViewModels.Settings
             Aggregator.Subscribe(this);
         }
 
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        {
+            await base.OnNavigatedToAsync(parameter, mode, state);
+            RaisePropertyChanged(nameof(IsPinnedEnabled));
+        }
+
         public MvxObservableCollection<SettingsNotificationsScope> Scopes { get; private set; }
 
         #region InApp
@@ -75,22 +81,28 @@ namespace Unigram.ViewModels.Settings
 
         public bool IsContactEnabled
         {
-            get => !CacheService.Options.DisableContactRegisteredNotifications && Settings.Notifications.IsContactEnabled;
+            get => !CacheService.Options.DisableContactRegisteredNotifications;
             set
             {
-                CacheService.Options.DisableContactRegisteredNotifications = !(Settings.Notifications.IsContactEnabled = value);
+                CacheService.Options.DisableContactRegisteredNotifications = !value;
                 RaisePropertyChanged();
             }
         }
 
         public bool IsPinnedEnabled
         {
-            get => !CacheService.Options.DisablePinnedMessageNotifications;
-            set
+            get => Scopes.All(x => !x.DisablePinnedMessage);
+            set => SetPinnedEnabled(value);
+        }
+        
+        private async void SetPinnedEnabled(bool value)
+        {
+            foreach (var scope in Scopes)
             {
-                CacheService.Options.DisablePinnedMessageNotifications = !value;
-                RaisePropertyChanged();
+                await scope.ToggleDisablePinnedMessage(!value);
             }
+
+            RaisePropertyChanged();
         }
 
         public bool IsAllAccountsAvailable => TLContainer.Current.GetSessions().Count() > 1;
@@ -208,7 +220,10 @@ namespace Unigram.ViewModels.Settings
         }
 
         private bool _disableMention;
+        public bool DisableMention => _disableMention;
+
         private bool _disablePinnedMessage;
+        public bool DisablePinnedMessage => _disablePinnedMessage;
 
         public void Reset()
         {
@@ -253,9 +268,18 @@ namespace Unigram.ViewModels.Settings
         }
 
         public RelayCommand SendCommand { get; }
-        public async void SendExecute()
+        public void SendExecute()
         {
-            await ProtoService.SendAsync(new SetScopeNotificationSettings(GetScope(), new ScopeNotificationSettings(_alert ? 0 : int.MaxValue, string.Empty, _preview, _disablePinnedMessage, _disableMention)));
+            ProtoService.Send(new SetScopeNotificationSettings(GetScope(), new ScopeNotificationSettings(_alert ? 0 : int.MaxValue, string.Empty, _preview, _disablePinnedMessage, _disableMention)));
+        }
+
+        public async Task ToggleDisablePinnedMessage(bool disable)
+        {
+            var settings = await ProtoService.SendAsync(new GetScopeNotificationSettings(GetScope())) as ScopeNotificationSettings;
+            if (settings != null)
+            {
+                await ProtoService.SendAsync(new SetScopeNotificationSettings(GetScope(), new ScopeNotificationSettings(settings.MuteFor, settings.Sound, settings.ShowPreview, disable, settings.DisableMentionNotifications)));
+            }
         }
 
         public RelayCommand ExceptionsCommand { get; }
