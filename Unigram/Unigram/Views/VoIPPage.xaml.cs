@@ -775,7 +775,7 @@ namespace Unigram.Views
             {
                 ViewfinderPanel.Visibility = Visibility.Visible;
 
-                capturer.SetOutput(Viewfinder);
+                capturer.SetOutput(Viewfinder, false);
             }
             else
             {

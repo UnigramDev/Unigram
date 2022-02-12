@@ -8,6 +8,7 @@ namespace Unigram.Native.Calls
     {
         void SetState(VoipVideoState state);
         void SetOutput(Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas);
+        void SetOutput(Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas, Boolean enableBlur);
     }
 
     [default_interface]
