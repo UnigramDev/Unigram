@@ -40,6 +40,7 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 	bool m_readyToDraw;
 
 	Stretch m_stretch{ Stretch::UniformToFill };
+	bool m_flip{ false };
 	bool m_enableBlur{ true };
 
 	winrt::event_token m_eventToken;
@@ -54,10 +55,11 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 	CanvasBitmap m_bitmapU{ nullptr };
 	CanvasBitmap m_bitmapV{ nullptr };
 
-	VoipVideoRenderer(CanvasControl canvas, /*Stretch stretch = Stretch::UniformToFill,*/ bool enableBlur = true) {
+	VoipVideoRenderer(CanvasControl canvas, /*Stretch stretch = Stretch::UniformToFill,*/ bool flip = false, bool enableBlur = true) {
 		m_canvasControl = std::make_shared<CanvasControl>(canvas);
 		m_readyToDraw = canvas.ReadyToDraw();
 		//m_stretch = stretch;
+		m_flip = flip;
 		m_enableBlur = enableBlur;
 
 		m_eventToken = canvas.Draw([this](const CanvasControl sender, CanvasDrawEventArgs const args) {
@@ -120,11 +122,13 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 						m_blur.BorderMode(EffectBorderMode::Hard);
 					}
 
-					args.DrawingSession().Transform(matrix * make_float3x2_scale(std::max(ratioX, ratioY), float2(width / 2, height / 2)));
+					auto blurScale = std::max(ratioX, ratioY);
+
+					args.DrawingSession().Transform(matrix * make_float3x2_scale(m_flip ? -blurScale : blurScale, blurScale, float2(width / 2, height / 2)));
 					args.DrawingSession().DrawImage(m_blur, x, y);
 				}
 
-				args.DrawingSession().Transform(matrix * make_float3x2_scale(scale, float2(width / 2, height / 2)));
+				args.DrawingSession().Transform(matrix * make_float3x2_scale(m_flip ? -scale : scale, scale, float2(width / 2, height / 2)));
 				args.DrawingSession().DrawImage(m_shader, x, y);
 			}
 			});
