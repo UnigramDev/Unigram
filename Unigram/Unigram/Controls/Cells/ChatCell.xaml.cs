@@ -1937,7 +1937,7 @@ namespace Unigram.Controls.Cells
             var briefWidth = Math.Max(0, line2Right - line2Left);
 
             BriefInfo.Measure(new Size(briefWidth, availableSize.Height));
-            TypingLabel.Measure(new Size(briefWidth + MinithumbnailPanel.DesiredSize.Width + ChatActionIndicator.DesiredSize.Width, availableSize.Height));
+            TypingLabel.Measure(new Size(briefWidth + MinithumbnailPanel.DesiredSize.Width, availableSize.Height));
 
             if (Children.Count > 14)
             {
@@ -2078,9 +2078,14 @@ namespace Unigram.Controls.Cells
             rect.Height = ChatActionIndicator.DesiredSize.Height;
             ChatActionIndicator.Arrange(rect);
 
+            line2Left = min + ChatActionIndicator.DesiredSize.Width;
+            line2Right = finalSize.Width - 8 - line2RightPadding - UnreadMentionsBadge.DesiredSize.Width;
+
+            var typingLabel = Math.Max(0, line2Right - line2Left);
+
             rect.X = min + ChatActionIndicator.DesiredSize.Width;
             rect.Y = 34;
-            rect.Width = briefWidth + MinithumbnailPanel.DesiredSize.Width;
+            rect.Width = typingLabel;
             rect.Height = TypingLabel.DesiredSize.Height;
             TypingLabel.Arrange(rect);
 
