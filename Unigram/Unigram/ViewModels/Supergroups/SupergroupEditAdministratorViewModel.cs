@@ -130,7 +130,7 @@ namespace Unigram.ViewModels.Supergroups
             get
             {
                 var chat = _chat;
-                if (chat == null)
+                if (chat == null || _member?.Status is ChatMemberStatusCreator)
                 {
                     return false;
                 }
