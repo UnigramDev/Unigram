@@ -53,6 +53,8 @@
                                         <VisualState.Setters>
                                             <Setter Target="BackgroundPart.CornerRadius"
                                                     Value="0" />
+                                            <Setter Target="DetailHeaderPresenter.CornerRadius"
+                                                    Value="0" />
                                             <Setter Target="BorderPart.CornerRadius"
                                                     Value="0" />
                                             <Setter Target="BorderPart.BorderThickness"
@@ -74,14 +76,16 @@
                                             HorizontalContentAlignment="Stretch"
                                             VerticalContentAlignment="Stretch"
                                             VerticalAlignment="Top" />
-                            <ContentControl Content="{TemplateBinding DetailHeader}"
+                            <ContentControl x:Name="DetailHeaderPresenter"
+                                            Content="{TemplateBinding DetailHeader}"
+                                            CornerRadius="{ThemeResource NavigationViewContentGridCornerRadius}"
                                             IsTabStop="False"
                                             HorizontalContentAlignment="Stretch"
                                             VerticalContentAlignment="Stretch"
                                             VerticalAlignment="Top">
                                 <ContentControl.Template>
                                     <ControlTemplate TargetType="ContentControl">
-                                        <ContentPresenter CornerRadius="8,0,0,0" />
+                                        <ContentPresenter CornerRadius="{TemplateBinding CornerRadius}" />
                                     </ControlTemplate>
                                 </ContentControl.Template>
                             </ContentControl>
