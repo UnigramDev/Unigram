@@ -50,8 +50,6 @@ namespace Unigram.Controls
         private double _animationFrameRate;
         private int _animationTotalFrame;
 
-        private bool _skipFrame;
-
         private int _index;
         private bool _backward;
         private bool _flipped;
@@ -142,24 +140,13 @@ namespace Unigram.Controls
         protected override void NextFrame()
         {
             var animation = _animation;
-            if (animation == null || _canvas == null || _bitmap == null || _unloaded)
+            if (animation == null || animation.IsCaching || _canvas == null || _bitmap == null || _unloaded)
             {
                 return;
             }
 
             var index = _index;
             var framesPerUpdate = _limitFps ? _animationFrameRate < 60 ? 1 : 2 : 1;
-
-            if (_animationFrameRate < 60 && !_limitFps)
-            {
-                if (_skipFrame)
-                {
-                    _skipFrame = false;
-                    return;
-                }
-
-                _skipFrame = true;
-            }
 
             animation.RenderSync(_bitmap, index);
 
