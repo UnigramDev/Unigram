@@ -9,6 +9,7 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Cells;
 using Unigram.Controls.Chats;
+using Unigram.Controls.Gallery;
 using Unigram.Converters;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
@@ -1232,6 +1233,19 @@ namespace Unigram.Views
                     if (response is Chat chat)
                     {
                         MasterDetail.NavigationService.NavigateToChat(chat, force: false);
+                    }
+                }
+            }
+
+            var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+            if (popups != null)
+            {
+                foreach (var popup in popups)
+                {
+                    if (popup.Child is GalleryView gallery)
+                    {
+                        gallery.OnBackRequested(new HandledEventArgs());
+                        break;
                     }
                 }
             }
