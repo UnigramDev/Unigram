@@ -395,7 +395,8 @@ namespace Unigram.Services
             Set("ctrl+m", ShortcutCommand.Minimize);
             Set("ctrl+q", ShortcutCommand.Quit);
 
-            Set("ctrl+k", ShortcutCommand.SearchChats);
+            Set("ctrl+shift+f", ShortcutCommand.SearchChats);
+            Set("ctrl+e", ShortcutCommand.SearchChats);
             Set("ctrl+f", ShortcutCommand.Search);
             Set("search", ShortcutCommand.Search);
 
