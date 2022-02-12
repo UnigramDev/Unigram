@@ -1000,7 +1000,6 @@ namespace winrt::Unigram::Native::implementation
 			D3D_FEATURE_LEVEL_9_1
 		};
 
-		winrt::com_ptr<ID3D11Device> device;
 		winrt::com_ptr<ID3D11DeviceContext> context;
 		ReturnIfFailed(result, D3D11CreateDevice(nullptr,	// specify null to use the default adapter
 			D3D_DRIVER_TYPE_HARDWARE, 0,
@@ -1008,12 +1007,12 @@ namespace winrt::Unigram::Native::implementation
 			featureLevels,									// list of feature levels this app can support
 			ARRAYSIZE(featureLevels),						// number of possible feature levels
 			D3D11_SDK_VERSION,
-			device.put(),									// returns the Direct3D device created
+			m_d3dDevice.put(),								// returns the Direct3D device created
 			&m_featureLevel,								// returns feature level of device created
 			context.put()									// returns the device immediate context
 		));
 
-		winrt::com_ptr<IDXGIDevice> dxgiDevice = device.as<IDXGIDevice>();
+		winrt::com_ptr<IDXGIDevice> dxgiDevice = m_d3dDevice.as<IDXGIDevice>();
 		ReturnIfFailed(result, m_d2dFactory->CreateDevice(dxgiDevice.get(), m_d2dDevice.put()));
 
 		winrt::com_ptr<ID2D1DeviceContext> d2dContext;

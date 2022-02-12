@@ -31,7 +31,15 @@ namespace winrt::Unigram::Native::implementation
 	public:
 		PlaceholderImageHelper();
 
-		//static PlaceholderImageHelper GetForCurrentView();
+		HRESULT HandleDeviceLost()
+		{
+			if (FAILED(m_d3dDevice->GetDeviceRemovedReason()))
+			{
+				return CreateDeviceResources();
+			}
+
+			return S_OK;
+		}
 
 		static winrt::Unigram::Native::PlaceholderImageHelper Current()
 		{
@@ -41,6 +49,7 @@ namespace winrt::Unigram::Native::implementation
 				s_current = winrt::make_self<PlaceholderImageHelper>();
 			}
 
+			s_current->HandleDeviceLost();
 			return s_current.as<winrt::Unigram::Native::PlaceholderImageHelper>();
 		}
 
@@ -93,6 +102,7 @@ namespace winrt::Unigram::Native::implementation
 
 		winrt::com_ptr<ID2D1Factory1> m_d2dFactory;
 		winrt::com_ptr<ID2D1Device> m_d2dDevice;
+		winrt::com_ptr<ID3D11Device> m_d3dDevice;
 		winrt::com_ptr<ID2D1DeviceContext2> m_d2dContext;
 		D3D_FEATURE_LEVEL m_featureLevel;
 		winrt::com_ptr<IWICImagingFactory2> m_wicFactory;
