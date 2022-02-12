@@ -16,11 +16,13 @@ namespace Unigram.ViewModels
 {
     public class InstantViewModel : TLViewModelBase
     {
+        private readonly ITranslateService _translateService;
         private readonly IMessageFactory _messageFactory;
 
-        public InstantViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IStorageService storageService, IMessageFactory messageFactory, IEventAggregator aggregator)
+        public InstantViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IStorageService storageService, ITranslateService translateService, IMessageFactory messageFactory, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
+            _translateService = translateService;
             _messageFactory = messageFactory;
             _gallery = new InstantGalleryViewModel(protoService, storageService, aggregator);
 
@@ -29,6 +31,8 @@ namespace Unigram.ViewModels
             BrowserCommand = new RelayCommand(BrowserExecute);
             CopyCommand = new RelayCommand(CopyExecute);
         }
+
+        public ITranslateService TranslateService => _translateService;
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {

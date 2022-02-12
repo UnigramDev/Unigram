@@ -4,10 +4,10 @@ using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Controls;
 using Unigram.Converters;
+using Unigram.Native;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Services;
-using Unigram.ViewModels;
 using Unigram.Views;
 using Unigram.Views.Host;
 using Unigram.Views.Popups;
@@ -760,82 +760,28 @@ namespace Unigram.Common
 
         #region Entity
 
-        public static void Hyperlink_ContextRequested(MessageViewModel message, UIElement sender, ContextRequestedEventArgs args)
+        public static void Hyperlink_ContextRequested(ITranslateService service, UIElement sender, ContextRequestedEventArgs args)
         {
             var text = sender as RichTextBlock;
             if (args.TryGetPosition(sender, out Point point))
             {
-                if (point.X < 0 || point.Y < 0)
+                var items = Hyperlink_ContextRequested(service, text, point);
+                if (items.Count > 0)
                 {
-                    point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
-                }
-
-                var length = text.SelectedText.Length;
-                if (length > 0)
-                {
-                    var link = text.SelectedText;
-
-                    var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.DocumentCopy, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
-                    copy.Click += LinkCopy_Click;
-
                     var flyout = new MenuFlyout();
-                    flyout.Items.Add(copy);
+
+                    foreach (var item in items)
+                    {
+                        flyout.Items.Add(item);
+                    }
 
                     // We don't want to unfocus the text are when the context menu gets opened
                     flyout.ShowAt(sender, new FlyoutShowOptions { Position = point, ShowMode = FlyoutShowMode.Transient });
-
                     args.Handled = true;
                 }
                 else
                 {
-                    var hyperlink = text.GetHyperlinkFromPoint(point);
-                    if (hyperlink == null)
-                    {
-                        args.Handled = false;
-                        return;
-                    }
-
-                    var link = GetEntityData(hyperlink);
-                    if (link == null)
-                    {
-                        args.Handled = false;
-                        return;
-                    }
-
-                    var type = GetEntityType(hyperlink);
-                    //if (type == null)
-                    //{
-                    //    args.Handled = false;
-                    //    return;
-                    //}
-
-                    var flyout = new MenuFlyout();
-
-                    if (type is null or TextEntityTypeUrl or TextEntityTypeTextUrl)
-                    {
-                        var open = new MenuFlyoutItem { Text = Strings.Resources.Open, DataContext = link, Icon = new FontIcon { Glyph = Icons.OpenIn, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
-
-                        var action = GetEntityAction(hyperlink);
-                        if (action != null)
-                        {
-                            open.Click += (s, args) => action();
-                        }
-                        else
-                        {
-                            open.Click += LinkOpen_Click;
-                        }
-
-                        flyout.Items.Add(open);
-                    }
-
-                    var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.DocumentCopy, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
-                    copy.Click += LinkCopy_Click;
-                    flyout.Items.Add(copy);
-
-                    // We don't want to unfocus the text when the context menu gets opened
-                    flyout.ShowAt(sender, new FlyoutShowOptions { Position = point, ShowMode = FlyoutShowMode.Transient });
-
-                    args.Handled = true;
+                    args.Handled = false;
                 }
             }
             else
@@ -844,7 +790,7 @@ namespace Unigram.Common
             }
         }
 
-        public static IList<MenuFlyoutItemBase> Hyperlink_ContextRequested(MessageViewModel message, RichTextBlock text, Point point)
+        public static IList<MenuFlyoutItemBase> Hyperlink_ContextRequested(ITranslateService service, RichTextBlock text, Point point)
         {
             if (point.X < 0 || point.Y < 0)
             {
@@ -862,6 +808,14 @@ namespace Unigram.Common
                 copy.Click += LinkCopy_Click;
 
                 items.Add(copy);
+
+                if (service != null && service.CanTranslate(link))
+                {
+                    var translate = new MenuFlyoutItem { Text = Strings.Resources.TranslateMessage, DataContext = link, Tag = service, Icon = new FontIcon { Glyph = Icons.Translate, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
+                    translate.Click += LinkTranslate_Click;
+
+                    items.Add(translate);
+                }
             }
             else
             {
@@ -897,6 +851,7 @@ namespace Unigram.Common
 
                 var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.DocumentCopy, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
                 copy.Click += LinkCopy_Click;
+
                 items.Add(copy);
             }
 
@@ -952,6 +907,17 @@ namespace Unigram.Common
             var dataPackage = new DataPackage();
             dataPackage.SetText(entity);
             ClipboardEx.TrySetContent(dataPackage);
+        }
+
+        private static async void LinkTranslate_Click(object sender, RoutedEventArgs e)
+        {
+            var item = sender as MenuFlyoutItem;
+            var entity = item.DataContext as string;
+            var service = item.Tag as ITranslateService;
+
+            var language = LanguageIdentification.IdentifyLanguage(entity);
+            var popup = new TranslatePopup(service, entity, language, LocaleService.Current.CurrentCulture.TwoLetterISOLanguageName, true);
+            await popup.ShowQueuedAsync();
         }
 
         public static void CopyText(string text)

@@ -43,16 +43,18 @@ namespace Unigram.ViewModels
         private readonly IVoipService _voipService;
         private readonly IGroupCallService _groupCallService;
         private readonly INotificationsService _notificationsService;
+        private readonly ITranslateService _translateService;
 
         private readonly UserCommonChatsViewModel _userCommonChatsViewModel;
         private readonly SupergroupMembersViewModel _supergroupMembersVieModel;
 
-        public ProfileViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IPlaybackService playbackService, IVoipService voipService, IGroupCallService groupCallService, INotificationsService notificationsService, IStorageService storageService, ChatSharedMediaViewModel chatSharedMediaViewModel, UserCommonChatsViewModel userCommonChatsViewModel, SupergroupMembersViewModel supergroupMembersViewModel)
+        public ProfileViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IPlaybackService playbackService, IVoipService voipService, IGroupCallService groupCallService, INotificationsService notificationsService, IStorageService storageService, ITranslateService translateService, ChatSharedMediaViewModel chatSharedMediaViewModel, UserCommonChatsViewModel userCommonChatsViewModel, SupergroupMembersViewModel supergroupMembersViewModel)
             : base(protoService, cacheService, settingsService, storageService, aggregator, playbackService)
         {
             _voipService = voipService;
             _groupCallService = groupCallService;
             _notificationsService = notificationsService;
+            _translateService = translateService;
 
             _userCommonChatsViewModel = userCommonChatsViewModel;
             _supergroupMembersVieModel = supergroupMembersViewModel;
@@ -93,6 +95,8 @@ namespace Unigram.ViewModels
             Children.Add(userCommonChatsViewModel);
             Children.Add(supergroupMembersViewModel);
         }
+
+        public ITranslateService TranslateService => _translateService;
 
         public UserCommonChatsViewModel UserCommonChats => _userCommonChatsViewModel;
         public SupergroupMembersViewModel SupergroupMembers => _supergroupMembersVieModel;
