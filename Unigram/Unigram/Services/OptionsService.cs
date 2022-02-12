@@ -30,12 +30,6 @@ namespace Unigram.Services
         /// <summary>
         /// TBD
         /// </summary>
-        /// <value>disable_pinned_message_notifications</value>
-        bool DisablePinnedMessageNotifications { get; set; }
-
-        /// <summary>
-        /// TBD
-        /// </summary>
         /// <value>calls_enabled</value>
         bool CallsEnabled { get; }
 
@@ -375,9 +369,6 @@ namespace Unigram.Services
                 case "storage_max_time_from_last_access":
                     _storageMaxTimeFromLastAccess = GetValue<long>(update.Value);
                     break;
-                case "disable_pinned_message_notifications":
-                    _disablePinnedMessageNotifications = GetValue<bool>(update.Value);
-                    break;
                 case "calls_enabled":
                     _callsEnabled = GetValue<bool>(update.Value);
                     break;
@@ -633,17 +624,6 @@ namespace Unigram.Services
             {
                 _storageMaxTimeFromLastAccess = value;
                 _protoService.Send(new SetOption("storage_max_time_from_last_access", new OptionValueInteger(value)));
-            }
-        }
-
-        private bool _disablePinnedMessageNotifications;
-        public bool DisablePinnedMessageNotifications
-        {
-            get { return _disablePinnedMessageNotifications; }
-            set
-            {
-                _disablePinnedMessageNotifications = value;
-                _protoService.Send(new SetOption("disable_pinned_message_notifications", new OptionValueBoolean(value)));
             }
         }
 

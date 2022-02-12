@@ -110,14 +110,5 @@ namespace Unigram.Services.Settings
             get => _countUnreadMessages ??= GetValueOrDefault("CountUnreadMessages", true);
             set => AddOrUpdateValue(ref _countUnreadMessages, "CountUnreadMessages", value);
         }
-
-        private bool? _isContactEnabled;
-        public bool IsContactEnabled
-        {
-            get => _isContactEnabled ??= GetValueOrDefault("IsContactEnabled", true);
-            set => AddOrUpdateValue(ref _isContactEnabled, "IsContactEnabled", value);
-        }
-
-
     }
 }
