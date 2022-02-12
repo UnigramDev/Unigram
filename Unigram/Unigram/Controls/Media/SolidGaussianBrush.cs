@@ -25,6 +25,8 @@ namespace Unigram.Controls.Media
 
         public SolidGaussianBrush()
         {
+            m_dispatcher = DispatcherQueue.GetForCurrentThread();
+
             try
             {
                 PowerManager.EnergySaverStatusChanged += PowerManager_EnergySaverStatusChanged;
@@ -40,8 +42,6 @@ namespace Unigram.Controls.Media
 
             m_uiSettings = new UISettings();
             m_uiSettings.AdvancedEffectsEnabledChanged += UISettings_AdvancedEffectsEnabledChanged;
-
-            m_dispatcher = DispatcherQueue.GetForCurrentThread();
 
             UpdatePolicy();
         }
