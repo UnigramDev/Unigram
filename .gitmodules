@@ -4,3 +4,6 @@
 [submodule "Unigram/Libraries/flatbuffers"]
 	path = Unigram/Libraries/flatbuffers
 	url = https://github.com/google/flatbuffers.git
+[submodule "Unigram/Libraries/tgcalls"]
+	path = Unigram/Libraries/tgcalls
+	url = https://github.com/TelegramMessenger/tgcalls
