@@ -146,14 +146,6 @@ namespace Unigram.Controls.Chats
                 UpdateManager.Unsubscribe(this);
             }
 
-            if (_oldDark == dark && BackgroundEquals(_oldBackground, background))
-            {
-                return;
-            }
-
-            _oldBackground = background;
-            _oldDark = dark;
-
             if (background == null)
             {
                 var freeform = dark ? new[] { 0x0D0E17, 0x090A0C, 0x181C28, 0x0E0F12} : new[] { 0xDBDDBB, 0x6BA587, 0xD5D88D, 0x88B884 };
@@ -161,6 +153,14 @@ namespace Unigram.Controls.Chats
                     new Document(string.Empty, "application/x-tgwallpattern", null, null, TdExtensions.GetLocalFile("Assets\\Background.tgv", "Background")),
                     new BackgroundTypePattern(new BackgroundFillFreeformGradient(freeform), dark ? 100 : 50, dark, false));
             }
+
+            if (_oldDark == dark && BackgroundEquals(_oldBackground, background))
+            {
+                return;
+            }
+
+            _oldBackground = background;
+            _oldDark = dark;
 
             if (background.Type is BackgroundTypeFill typeFill)
             {
