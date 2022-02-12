@@ -220,12 +220,15 @@ namespace Unigram.Services.Factories
                     var width = webp.PixelWidth;
                     var height = webp.PixelHeight;
 
-                    return new InputMessageFactory
+                    if ((width == 512 && height <= width) || (height == 512 && width <= height))
                     {
-                        InputFile = generated,
-                        Type = new FileTypeSticker(),
-                        Delegate = (inputFile, caption) => new InputMessageSticker(inputFile, null, width, height, string.Empty)
-                    };
+                        return new InputMessageFactory
+                        {
+                            InputFile = generated,
+                            Type = new FileTypeSticker(),
+                            Delegate = (inputFile, caption) => new InputMessageSticker(inputFile, null, width, height, string.Empty)
+                        };
+                    }
                 }
                 catch
                 {
