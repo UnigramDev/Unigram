@@ -23,7 +23,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 		void SwitchToDevice(hstring deviceId);
 		void SetState(VoipVideoState state);
 		void SetPreferredAspectRatio(float aspectRatio);
-		void SetOutput(winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl canvas);
+		void SetOutput(winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl canvas, bool enableBlur = true);
 
 		std::shared_ptr<tgcalls::VideoCaptureInterface> m_impl = nullptr;
 	private:

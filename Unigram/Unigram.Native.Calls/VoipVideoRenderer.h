@@ -39,7 +39,8 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 	bool m_disposed{ false };
 	bool m_readyToDraw;
 
-	Stretch m_stretch{ Stretch::Uniform };
+	Stretch m_stretch{ Stretch::UniformToFill };
+	bool m_enableBlur{ true };
 
 	winrt::event_token m_eventToken;
 	winrt::slim_mutex m_lock;
@@ -53,9 +54,11 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 	CanvasBitmap m_bitmapU{ nullptr };
 	CanvasBitmap m_bitmapV{ nullptr };
 
-	VoipVideoRenderer(CanvasControl canvas) {
+	VoipVideoRenderer(CanvasControl canvas, /*Stretch stretch = Stretch::UniformToFill,*/ bool enableBlur = true) {
 		m_canvasControl = std::make_shared<CanvasControl>(canvas);
 		m_readyToDraw = canvas.ReadyToDraw();
+		//m_stretch = stretch;
+		m_enableBlur = enableBlur;
 
 		m_eventToken = canvas.Draw([this](const CanvasControl sender, CanvasDrawEventArgs const args) {
 			winrt::slim_lock_guard const guard(m_drawLock);
@@ -109,7 +112,7 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 					scale = std::max(ratioX, ratioY);
 				}
 
-				if (bitmapWidth * scale < width || bitmapHeight * scale < height) {
+				if (m_enableBlur && (bitmapWidth * scale < width || bitmapHeight * scale < height)) {
 					if (m_blur == nullptr) {
 						m_blur = GaussianBlurEffect();
 						m_blur.BlurAmount(10);

@@ -43,10 +43,10 @@ namespace winrt::Unigram::Native::Calls::implementation
 		}
 	}
 
-	void VoipVideoCapture::SetOutput(winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl canvas) {
+	void VoipVideoCapture::SetOutput(winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl canvas, bool enableBlur) {
 		if (m_impl) {
 			if (canvas != nullptr) {
-				m_impl->setOutput(std::make_shared<VoipVideoRenderer>(canvas));
+				m_impl->setOutput(std::make_shared<VoipVideoRenderer>(canvas, enableBlur));
 			}
 			else {
 				m_impl->setOutput(nullptr);
