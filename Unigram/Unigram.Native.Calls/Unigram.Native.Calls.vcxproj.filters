@@ -7,80 +7,80 @@
     <ClCompile Include="VoipManager.cpp" />
     <ClCompile Include="RemoteMediaStateUpdatedEventArgs.cpp" />
     <ClCompile Include="VoipDescriptor.cpp" />
-    <ClCompile Include="C:\tgcalls\tgcalls\platform\tdesktop\DesktopInterface.cpp">
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\platform\tdesktop\DesktopInterface.cpp">
       <Filter>tgcalls\platform\tdesktop</Filter>
     </ClCompile>
-    <ClCompile Include="C:\tgcalls\tgcalls\CodecSelectHelper.cpp">
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\CodecSelectHelper.cpp">
       <Filter>tgcalls</Filter>
     </ClCompile>
-    <ClCompile Include="C:\tgcalls\tgcalls\CryptoHelper.cpp">
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\CryptoHelper.cpp">
       <Filter>tgcalls</Filter>
     </ClCompile>
-    <ClCompile Include="C:\tgcalls\tgcalls\EncryptedConnection.cpp">
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\EncryptedConnection.cpp">
       <Filter>tgcalls</Filter>
     </ClCompile>
-    <ClCompile Include="C:\tgcalls\tgcalls\Instance.cpp">
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\Instance.cpp">
       <Filter>tgcalls</Filter>
     </ClCompile>
-    <ClCompile Include="C:\tgcalls\tgcalls\InstanceImpl.cpp">
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\InstanceImpl.cpp">
       <Filter>tgcalls</Filter>
     </ClCompile>
-    <ClCompile Include="C:\tgcalls\tgcalls\LogSinkImpl.cpp">
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\LogSinkImpl.cpp">
       <Filter>tgcalls</Filter>
     </ClCompile>
-    <ClCompile Include="C:\tgcalls\tgcalls\Manager.cpp">
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\Manager.cpp">
       <Filter>tgcalls</Filter>
     </ClCompile>
-    <ClCompile Include="C:\tgcalls\tgcalls\MediaManager.cpp">
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\MediaManager.cpp">
       <Filter>tgcalls</Filter>
     </ClCompile>
-    <ClCompile Include="C:\tgcalls\tgcalls\Message.cpp">
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\Message.cpp">
       <Filter>tgcalls</Filter>
     </ClCompile>
-    <ClCompile Include="C:\tgcalls\tgcalls\NetworkManager.cpp">
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\NetworkManager.cpp">
       <Filter>tgcalls</Filter>
     </ClCompile>
-    <ClCompile Include="C:\tgcalls\tgcalls\ThreadLocalObject.cpp">
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\ThreadLocalObject.cpp">
       <Filter>tgcalls</Filter>
     </ClCompile>
-    <ClCompile Include="C:\tgcalls\tgcalls\platform\tdesktop\VideoCameraCapturer.cpp">
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\platform\tdesktop\VideoCameraCapturer.cpp">
       <Filter>tgcalls\platform\tdesktop</Filter>
     </ClCompile>
-    <ClCompile Include="C:\tgcalls\tgcalls\VideoCaptureInterface.cpp">
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\VideoCaptureInterface.cpp">
       <Filter>tgcalls</Filter>
     </ClCompile>
-    <ClCompile Include="C:\tgcalls\tgcalls\VideoCaptureInterfaceImpl.cpp">
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\VideoCaptureInterfaceImpl.cpp">
       <Filter>tgcalls</Filter>
     </ClCompile>
-    <ClCompile Include="C:\tgcalls\tgcalls\platform\tdesktop\VideoCapturerInterfaceImpl.cpp">
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\platform\tdesktop\VideoCapturerInterfaceImpl.cpp">
       <Filter>tgcalls\platform\tdesktop</Filter>
     </ClCompile>
-    <ClCompile Include="C:\tgcalls\tgcalls\platform\tdesktop\VideoCapturerTrackSource.cpp">
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\platform\tdesktop\VideoCapturerTrackSource.cpp">
       <Filter>tgcalls\platform\tdesktop</Filter>
     </ClCompile>
     <ClCompile Include="VoipVideoCapture.cpp" />
-    <ClCompile Include="C:\tgcalls\tgcalls\group\GroupNetworkManager.cpp">
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\group\GroupNetworkManager.cpp">
       <Filter>tgcalls\group</Filter>
     </ClCompile>
-    <ClCompile Include="C:\tgcalls\tgcalls\group\GroupInstanceCustomImpl.cpp">
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\group\GroupInstanceCustomImpl.cpp">
       <Filter>tgcalls\group</Filter>
     </ClCompile>
-    <ClCompile Include="C:\tgcalls\tgcalls\AudioDeviceHelper.cpp">
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\AudioDeviceHelper.cpp">
       <Filter>tgcalls</Filter>
     </ClCompile>
-    <ClCompile Include="C:\tgcalls\tgcalls\FakeAudioDeviceModule.cpp">
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\FakeAudioDeviceModule.cpp">
       <Filter>tgcalls</Filter>
     </ClCompile>
-    <ClCompile Include="C:\tgcalls\tgcalls\StaticThreads.cpp">
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\StaticThreads.cpp">
       <Filter>tgcalls</Filter>
     </ClCompile>
-    <ClCompile Include="C:\tgcalls\tgcalls\FakeVideoTrackSource.cpp">
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\FakeVideoTrackSource.cpp">
       <Filter>tgcalls</Filter>
     </ClCompile>
-    <ClCompile Include="C:\tgcalls\tgcalls\third-party\json11.cpp">
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\third-party\json11.cpp">
       <Filter>tgcalls\third-party</Filter>
     </ClCompile>
-    <ClCompile Include="C:\tgcalls\tgcalls\group\GroupJoinPayloadInternal.cpp">
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\group\GroupJoinPayloadInternal.cpp">
       <Filter>tgcalls\group</Filter>
     </ClCompile>
     <ClCompile Include="rnnoise\src\denoise.c">
@@ -104,22 +104,22 @@
     <ClCompile Include="rnnoise\src\pitch.c">
       <Filter>rnnoise\src</Filter>
     </ClCompile>
-    <ClCompile Include="C:\tgcalls\tgcalls\platform\uwp\UwpScreenCapturer.cpp">
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\platform\uwp\UwpScreenCapturer.cpp">
       <Filter>tgcalls\platform\uwp</Filter>
     </ClCompile>
-    <ClCompile Include="C:\tgcalls\tgcalls\SctpDataChannelProviderInterfaceImpl.cpp">
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\SctpDataChannelProviderInterfaceImpl.cpp">
       <Filter>tgcalls</Filter>
     </ClCompile>
-    <ClCompile Include="C:\tgcalls\tgcalls\TurnCustomizerImpl.cpp">
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\TurnCustomizerImpl.cpp">
       <Filter>tgcalls</Filter>
     </ClCompile>
-    <ClCompile Include="C:\tgcalls\tgcalls\group\AudioStreamingPart.cpp">
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\group\AudioStreamingPart.cpp">
       <Filter>tgcalls\group</Filter>
     </ClCompile>
-    <ClCompile Include="C:\tgcalls\tgcalls\group\StreamingMediaContext.cpp">
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\group\StreamingMediaContext.cpp">
       <Filter>tgcalls\group</Filter>
     </ClCompile>
-    <ClCompile Include="C:\tgcalls\tgcalls\group\VideoStreamingPart.cpp">
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\group\VideoStreamingPart.cpp">
       <Filter>tgcalls\group</Filter>
     </ClCompile>
     <ClCompile Include="BroadcastTimeRequestedEventArgs.cpp" />
@@ -131,102 +131,102 @@
     <ClInclude Include="VoipManager.h" />
     <ClInclude Include="RemoteMediaStateUpdatedEventArgs.h" />
     <ClInclude Include="VoipDescriptor.h" />
-    <ClInclude Include="C:\tgcalls\tgcalls\platform\tdesktop\DesktopInterface.h">
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\platform\tdesktop\DesktopInterface.h">
       <Filter>tgcalls\platform\tdesktop</Filter>
     </ClInclude>
-    <ClInclude Include="C:\tgcalls\tgcalls\CodecSelectHelper.h">
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\CodecSelectHelper.h">
       <Filter>tgcalls</Filter>
     </ClInclude>
-    <ClInclude Include="C:\tgcalls\tgcalls\CryptoHelper.h">
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\CryptoHelper.h">
       <Filter>tgcalls</Filter>
     </ClInclude>
-    <ClInclude Include="C:\tgcalls\tgcalls\EncryptedConnection.h">
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\EncryptedConnection.h">
       <Filter>tgcalls</Filter>
     </ClInclude>
-    <ClInclude Include="C:\tgcalls\tgcalls\Instance.h">
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\Instance.h">
       <Filter>tgcalls</Filter>
     </ClInclude>
-    <ClInclude Include="C:\tgcalls\tgcalls\InstanceImpl.h">
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\InstanceImpl.h">
       <Filter>tgcalls</Filter>
     </ClInclude>
-    <ClInclude Include="C:\tgcalls\tgcalls\LogSinkImpl.h">
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\LogSinkImpl.h">
       <Filter>tgcalls</Filter>
     </ClInclude>
-    <ClInclude Include="C:\tgcalls\tgcalls\Manager.h">
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\Manager.h">
       <Filter>tgcalls</Filter>
     </ClInclude>
-    <ClInclude Include="C:\tgcalls\tgcalls\MediaManager.h">
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\MediaManager.h">
       <Filter>tgcalls</Filter>
     </ClInclude>
-    <ClInclude Include="C:\tgcalls\tgcalls\Message.h">
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\Message.h">
       <Filter>tgcalls</Filter>
     </ClInclude>
-    <ClInclude Include="C:\tgcalls\tgcalls\NetworkManager.h">
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\NetworkManager.h">
       <Filter>tgcalls</Filter>
     </ClInclude>
-    <ClInclude Include="C:\tgcalls\tgcalls\PlatformContext.h">
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\PlatformContext.h">
       <Filter>tgcalls</Filter>
     </ClInclude>
-    <ClInclude Include="C:\tgcalls\tgcalls\ThreadLocalObject.h">
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\ThreadLocalObject.h">
       <Filter>tgcalls</Filter>
     </ClInclude>
-    <ClInclude Include="C:\tgcalls\tgcalls\platform\tdesktop\VideoCameraCapturer.h">
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\platform\tdesktop\VideoCameraCapturer.h">
       <Filter>tgcalls\platform\tdesktop</Filter>
     </ClInclude>
-    <ClInclude Include="C:\tgcalls\tgcalls\VideoCaptureInterface.h">
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\VideoCaptureInterface.h">
       <Filter>tgcalls</Filter>
     </ClInclude>
-    <ClInclude Include="C:\tgcalls\tgcalls\VideoCaptureInterfaceImpl.h">
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\VideoCaptureInterfaceImpl.h">
       <Filter>tgcalls</Filter>
     </ClInclude>
-    <ClInclude Include="C:\tgcalls\tgcalls\VideoCapturerInterface.h">
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\VideoCapturerInterface.h">
       <Filter>tgcalls</Filter>
     </ClInclude>
-    <ClInclude Include="C:\tgcalls\tgcalls\platform\tdesktop\VideoCapturerInterfaceImpl.h">
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\platform\tdesktop\VideoCapturerInterfaceImpl.h">
       <Filter>tgcalls\platform\tdesktop</Filter>
     </ClInclude>
-    <ClInclude Include="C:\tgcalls\tgcalls\Stats.h">
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\Stats.h">
       <Filter>tgcalls</Filter>
     </ClInclude>
-    <ClInclude Include="C:\tgcalls\tgcalls\platform\tdesktop\VideoCapturerTrackSource.h">
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\platform\tdesktop\VideoCapturerTrackSource.h">
       <Filter>tgcalls\platform\tdesktop</Filter>
     </ClInclude>
-    <ClInclude Include="C:\tgcalls\tgcalls\platform\PlatformInterface.h">
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\platform\PlatformInterface.h">
       <Filter>tgcalls\platform</Filter>
     </ClInclude>
     <ClInclude Include="VoipVideoCapture.h" />
     <ClInclude Include="VoipVideoRenderer.h" />
-    <ClInclude Include="C:\tgcalls\tgcalls\group\GroupInstanceImpl.h">
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\group\GroupInstanceImpl.h">
       <Filter>tgcalls\group</Filter>
     </ClInclude>
-    <ClInclude Include="C:\tgcalls\tgcalls\group\GroupNetworkManager.h">
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\group\GroupNetworkManager.h">
       <Filter>tgcalls\group</Filter>
     </ClInclude>
-    <ClInclude Include="C:\tgcalls\tgcalls\group\GroupInstanceCustomImpl.h">
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\group\GroupInstanceCustomImpl.h">
       <Filter>tgcalls\group</Filter>
     </ClInclude>
-    <ClInclude Include="C:\tgcalls\tgcalls\AudioDeviceHelper.h">
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\AudioDeviceHelper.h">
       <Filter>tgcalls</Filter>
     </ClInclude>
-    <ClInclude Include="C:\tgcalls\tgcalls\FakeAudioDeviceModule.h">
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\FakeAudioDeviceModule.h">
       <Filter>tgcalls</Filter>
     </ClInclude>
-    <ClInclude Include="C:\tgcalls\tgcalls\StaticThreads.h">
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\StaticThreads.h">
       <Filter>tgcalls</Filter>
     </ClInclude>
-    <ClInclude Include="C:\tgcalls\tgcalls\AudioFrame.h">
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\AudioFrame.h">
       <Filter>tgcalls</Filter>
     </ClInclude>
-    <ClInclude Include="C:\tgcalls\tgcalls\FakeVideoTrackSource.h">
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\FakeVideoTrackSource.h">
       <Filter>tgcalls</Filter>
     </ClInclude>
-    <ClInclude Include="C:\tgcalls\tgcalls\third-party\json11.hpp">
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\third-party\json11.hpp">
       <Filter>tgcalls\third-party</Filter>
     </ClInclude>
-    <ClInclude Include="C:\tgcalls\tgcalls\group\GroupJoinPayload.h">
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\group\GroupJoinPayload.h">
       <Filter>tgcalls\group</Filter>
     </ClInclude>
-    <ClInclude Include="C:\tgcalls\tgcalls\group\GroupJoinPayloadInternal.h">
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\group\GroupJoinPayloadInternal.h">
       <Filter>tgcalls\group</Filter>
     </ClInclude>
     <ClInclude Include="rnnoise\src\_kiss_fft_guts.h">
@@ -262,25 +262,25 @@
     <ClInclude Include="rnnoise\include\rnnoise.h">
       <Filter>rnnoise\include</Filter>
     </ClInclude>
-    <ClInclude Include="C:\tgcalls\tgcalls\platform\uwp\UwpScreenCapturer.h">
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\platform\uwp\UwpScreenCapturer.h">
       <Filter>tgcalls\platform\uwp</Filter>
     </ClInclude>
-    <ClInclude Include="C:\tgcalls\tgcalls\platform\uwp\UwpContext.h">
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\platform\uwp\UwpContext.h">
       <Filter>tgcalls\platform\uwp</Filter>
     </ClInclude>
-    <ClInclude Include="C:\tgcalls\tgcalls\SctpDataChannelProviderInterfaceImpl.h">
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\SctpDataChannelProviderInterfaceImpl.h">
       <Filter>tgcalls</Filter>
     </ClInclude>
-    <ClInclude Include="C:\tgcalls\tgcalls\TurnCustomizerImpl.h">
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\TurnCustomizerImpl.h">
       <Filter>tgcalls</Filter>
     </ClInclude>
-    <ClInclude Include="C:\tgcalls\tgcalls\group\AudioStreamingPart.h">
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\group\AudioStreamingPart.h">
       <Filter>tgcalls\group</Filter>
     </ClInclude>
-    <ClInclude Include="C:\tgcalls\tgcalls\group\StreamingMediaContext.h">
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\group\StreamingMediaContext.h">
       <Filter>tgcalls\group</Filter>
     </ClInclude>
-    <ClInclude Include="C:\tgcalls\tgcalls\group\VideoStreamingPart.h">
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\group\VideoStreamingPart.h">
       <Filter>tgcalls\group</Filter>
     </ClInclude>
     <ClInclude Include="BroadcastTimeRequestedEventArgs.h" />
