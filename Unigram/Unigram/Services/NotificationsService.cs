@@ -913,6 +913,8 @@ namespace Unigram.Services
                 case MessageText text:
                     return text.Text.Text;
 
+                case MessageAnimatedEmoji animatedEmoji:
+                    return animatedEmoji.Emoji;
                 case MessageDice dice:
                     return dice.Emoji;
             }

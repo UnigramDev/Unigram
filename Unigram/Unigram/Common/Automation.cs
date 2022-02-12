@@ -115,6 +115,10 @@ namespace Unigram.Common
             {
                 builder.Append(dice.Emoji);
             }
+            else if (message.Content is MessageAnimatedEmoji animatedEmoji)
+            {
+                builder.Append(animatedEmoji.Emoji);
+            }
 
             if (builder.Length > 0 && builder[builder.Length - 1] != '.')
             {
@@ -158,19 +162,23 @@ namespace Unigram.Common
                     return Locale.Declension("Files", album.Messages.Count) + ", ";
                 }
             }
-            if (message.Content is MessageText text)
+            else if (message.Content is MessageText text)
             {
                 return text.Text.Text + ", ";
             }
-            if (message.Content is MessageDice dice)
+            else if (message.Content is MessageDice dice)
             {
                 return dice.Emoji + ", ";
             }
-            if (message.Content is MessageGame gameMedia)
+            else if (message.Content is MessageAnimatedEmoji animatedEmoji)
+            {
+                return animatedEmoji.Emoji + ", ";
+            }
+            else if (message.Content is MessageGame gameMedia)
             {
                 return Strings.Resources.AttachGame + ", " + gameMedia.Game.Title + ", ";
             }
-            if (message.Content is MessageExpiredVideo)
+            else if (message.Content is MessageExpiredVideo)
             {
                 return Strings.Resources.AttachVideoExpired + ", ";
             }
