@@ -107,6 +107,7 @@ namespace Unigram.Controls
             lock (_drawFrameLock)
             {
                 _currentDpi = sender.LogicalDpi;
+
                 Changed();
             }
         }
@@ -116,6 +117,7 @@ namespace Unigram.Controls
             lock (_drawFrameLock)
             {
                 _currentSize = e.NewSize.ToVector2();
+
                 Changed();
             }
         }
@@ -125,6 +127,8 @@ namespace Unigram.Controls
             lock (_drawFrameLock)
             {
                 _surface = null;
+                _bitmap = null;
+
                 Changed();
             }
         }
@@ -330,7 +334,10 @@ namespace Unigram.Controls
             {
                 if (_surface != null && _surface.Device.IsDeviceLost(ex.HResult))
                 {
-                    Changed(true);
+                    _surface = null;
+                    _bitmap = null;
+
+                    Changed();
                 }
                 else
                 {
