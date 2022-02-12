@@ -408,7 +408,7 @@ namespace Unigram.Controls
 
         private void About_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            MessageHelper.Hyperlink_ContextRequested(null, sender, args);
+            MessageHelper.Hyperlink_ContextRequested(ViewModel.TranslateService, sender, args);
         }
 
         private void About_ContextMenuOpening(object sender, ContextMenuEventArgs e)

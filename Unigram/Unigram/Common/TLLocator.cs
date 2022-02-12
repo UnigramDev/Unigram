@@ -443,6 +443,9 @@ namespace Unigram.Views
                         _viewService ??= new Unigram.Services.ViewService.ViewService()),
                     _notificationsService,
                     _storageService ??= new Unigram.Services.StorageService(_protoService),
+                    _translateService ??= new Unigram.Services.TranslateService(
+                        _protoService,
+                        _settingsService),
                     Resolve<Unigram.ViewModels.Chats.ChatSharedMediaViewModel>(),
                     Resolve<Unigram.ViewModels.Users.UserCommonChatsViewModel>(),
                     Resolve<Unigram.ViewModels.Supergroups.SupergroupMembersViewModel>());
@@ -636,6 +639,9 @@ namespace Unigram.Views
                     _cacheService,
                     _settingsService,
                     _storageService ??= new Unigram.Services.StorageService(_protoService),
+                    _translateService ??= new Unigram.Services.TranslateService(
+                        _protoService,
+                        _settingsService),
                     _messageFactory ??= new Unigram.Services.Factories.MessageFactory(
                         _protoService,
                         _playbackService ??= new Unigram.Services.PlaybackService(

@@ -1891,7 +1891,7 @@ namespace Unigram.Views
                 var textBlock = children.FirstOrDefault() as RichTextBlock;
                 if (textBlock != null)
                 {
-                    MessageHelper.Hyperlink_ContextRequested(message, textBlock, args);
+                    MessageHelper.Hyperlink_ContextRequested(ViewModel.TranslateService, textBlock, args);
 
                     if (args.Handled)
                     {
