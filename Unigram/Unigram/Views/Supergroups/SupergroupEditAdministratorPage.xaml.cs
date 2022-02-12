@@ -53,25 +53,34 @@ namespace Unigram.Views.Supergroups
                 var canBeEdited = (member.Status is ChatMemberStatusCreator && member.MemberId.IsUser(ViewModel.CacheService.Options.MyId)) || (member.Status is ChatMemberStatusAdministrator administrator && administrator.CanBeEdited);
 
                 Header.CommandVisibility = canBeEdited ? Visibility.Visible : Visibility.Collapsed;
-                Dismiss.Visibility = canBeEdited ? Visibility.Visible : Visibility.Collapsed;
+                Dismiss.Visibility = member.Status is ChatMemberStatusAdministrator && canBeEdited ? Visibility.Visible : Visibility.Collapsed;
                 PermissionsRoot.Footer = canBeEdited ? null : Strings.Resources.EditAdminCantEdit;
-                PermissionsPanel.IsEnabled = canBeEdited;
                 EditRankField.PlaceholderText = member.Status is ChatMemberStatusCreator ? Strings.Resources.ChannelCreator : Strings.Resources.ChannelAdmin;
                 EditRankPanel.Footer = string.Format(Strings.Resources.EditAdminRankInfo, member.Status is ChatMemberStatusCreator ? Strings.Resources.ChannelCreator : Strings.Resources.ChannelAdmin);
+
+                ChangeInfo.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited;
+                PostMessages.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited;
+                EditMessages.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited;
+                DeleteMessages.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited;
+                BanUsers.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited;
+                AddUsers.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited;
+                PinMessages.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited;
+                ManageVideoChats.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited;
+                AddAdmins.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited;
+                IsAnonymous.IsEnabled = canBeEdited;
             }
             else
             {
                 Header.CommandVisibility = Visibility.Visible;
                 Dismiss.Visibility = Visibility.Collapsed;
                 PermissionsRoot.Footer = null;
-                PermissionsPanel.IsEnabled = true;
                 EditRankField.PlaceholderText = Strings.Resources.ChannelAdmin;
                 EditRankPanel.Footer = string.Format(Strings.Resources.EditAdminRankInfo, Strings.Resources.ChannelAdmin);
             }
 
             if (chat.Type is ChatTypeSupergroup group)
             {
-                PermissionsPanel.Visibility = Visibility.Visible;
+                PermissionsRoot.Visibility = Visibility.Visible;
 
                 ChangeInfo.Content = group.IsChannel ? Strings.Resources.EditAdminChangeChannelInfo : Strings.Resources.EditAdminChangeGroupInfo;
                 PostMessages.Visibility = PostMessagesSeparator.Visibility = group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
@@ -85,7 +94,7 @@ namespace Unigram.Views.Supergroups
             }
             else
             {
-                PermissionsPanel.Visibility = Visibility.Collapsed;
+                PermissionsRoot.Visibility = Visibility.Collapsed;
             }
 
             //TransferOwnership.Content = group.IsChannel ? Strings.Resources.EditAdminChannelTransfer : Strings.Resources.EditAdminGroupTransfer;
