@@ -182,7 +182,7 @@ namespace Unigram.Views
                 {
                     if (ViewModel.ShareLink?.Fragment?.Length > 0)
                     {
-                        Hyperlink_Click(new RichTextUrl { Url = ViewModel.ShareLink.AbsoluteUri });
+                        Hyperlink_Click(new RichTextAnchorLink { AnchorName = ViewModel.ShareLink.Fragment.TrimStart('#') });
                     }
                 };
             }
