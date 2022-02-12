@@ -245,7 +245,7 @@ namespace Unigram.Controls
                 }
                 else if (result is InlineQueryResultSticker sticker)
                 {
-                    var file = sticker.Sticker.Thumbnail.File;
+                    var file = sticker.Sticker.StickerValue;
                     if (file == null)
                     {
                         return;
