@@ -41,6 +41,23 @@ namespace Unigram.Controls.Messages
         public MessageBubble()
         {
             DefaultStyleKey = typeof(MessageBubble);
+            Unloaded += OnUnloaded;
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            if (IsLoaded)
+            {
+                return;
+            }
+
+            foreach (var element in Span.Inlines)
+            {
+                if (element is Hyperlink)
+                {
+                    ToolTipService.SetToolTip(element, null);
+                }
+            }
         }
 
         public void UpdateQuery(string text)
@@ -1148,6 +1165,14 @@ namespace Unigram.Controls.Messages
 
         private void UpdateMessageText(MessageViewModel message)
         {
+            foreach (var element in Span.Inlines)
+            {
+                if (element is Hyperlink)
+                {
+                    ToolTipService.SetToolTip(element, null);
+                }
+            }
+
             Span.Inlines.Clear();
 
             var result = false;
