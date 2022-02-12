@@ -734,14 +734,8 @@ namespace Unigram.Views
 
                 if (message.IsOutgoing && message.SendingState is MessageSendingStatePending)
                 {
-                    var dark = ActualTheme == ElementTheme.Dark;
-
-                    var background = ViewModel.ProtoService.GetSelectedBackground(dark);
-                    if (background == null || background.IsFreeformGradient())
-                    {
-                        _backgroundPresenter ??= FindBackgroundPresenter();
-                        _backgroundPresenter?.Update(background, ActualTheme == ElementTheme.Dark);
-                    }
+                    _backgroundPresenter ??= FindBackgroundPresenter();
+                    _backgroundPresenter?.UpdateBackground();
                 }
             }
         }
