@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml.Controls;
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Converters;
 using Unigram.ViewModels.Settings;
 using Unigram.Views;
 using Unigram.Views.Folders;
@@ -64,7 +64,7 @@ namespace Unigram.Services
                 }
                 else
                 {
-                    clone.Glyph = null;
+                    clone.Icon = null;
                 }
 
                 results.Add(clone);
@@ -90,9 +90,9 @@ namespace Unigram.Services
                 BuildDataAndStorage(),
                 BuildStickersAndMasks(),
                 BuildAppearance(),
-                new SettingsSearchPage(null, Strings.Resources.Language, Icons.Globe),
-                new SettingsSearchPage(null, Strings.Resources.AskAQuestion, Icons.QuestionCircle),
-                new SettingsSearchPage(typeof(FoldersPage), Strings.Resources.Filters, Icons.FolderOpen)
+                new SettingsSearchPage(null, Strings.Resources.Language, new Assets.Icons.Language()),
+                new SettingsSearchPage(null, Strings.Resources.AskAQuestion, new Assets.Icons.AskQ()),
+                new SettingsSearchPage(typeof(FoldersPage), Strings.Resources.Filters, new Assets.Icons.Folders())
             };
 
             // FAQ indexing is done asyncronously
@@ -110,15 +110,15 @@ namespace Unigram.Services
 
                         foreach (var item in list.Items)
                         {
-                            if (item.PageBlocks.Count == 1 && item.PageBlocks[0] is PageBlockParagraph paragraph && paragraph.Text is RichTextUrl url)
+                            if (item.PageBlocks.Count == 1 && item.PageBlocks[0] is PageBlockParagraph paragraph && paragraph.Text is RichTextAnchorLink anchorLink)
                             {
-                                items.Add(new SettingsSearchFaq(url.Url, url.ToPlainText()));
+                                items.Add(new SettingsSearchFaq(anchorLink.Url, anchorLink.ToPlainText()));
                             }
                         }
 
                         if (!string.IsNullOrEmpty(title) && items.Count > 0)
                         {
-                            cicci.Add(new SettingsSearchPage(null, title, Icons.ChatBubblesQuestion, items.ToArray()));
+                            cicci.Add(new SettingsSearchPage(null, title, new Assets.Icons.FAQ(), items.ToArray()));
                         }
                     }
                     else if (block is PageBlockParagraph para)
@@ -131,37 +131,37 @@ namespace Unigram.Services
                     }
                 }
 
-                _searchIndex.Add(new SettingsSearchPage(typeof(InstantPage), Strings.Resources.SettingsSearchFaq, Icons.ChatBubblesQuestion, cicci.ToArray()));
+                _searchIndex.Add(new SettingsSearchPage(typeof(InstantPage), Strings.Resources.SettingsSearchFaq, new Assets.Icons.FAQ(), cicci.ToArray()));
             }
         }
 
         private SettingsSearchEntry BuildNotificationsAndSounds()
         {
-            return new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.Resources.NotificationsAndSounds, Icons.Channel, new SettingsSearchEntry[]
+            return new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.Resources.NotificationsAndSounds, new Assets.Icons.Notifications(), new SettingsSearchEntry[]
             {
                 // Notifications for private chats
-                new SettingsSearchPage(null, Strings.Resources.NotificationsForPrivateChats, Icons.Channel, new SettingsSearchEntry[]
+                new SettingsSearchPage(null, Strings.Resources.NotificationsForPrivateChats, new Assets.Icons.Notifications(), new SettingsSearchEntry[]
                 {
                     new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.Resources.MessagePreview),
                     new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.Resources.Sound)
                 }),
 
                 // Notifications for groups
-                new SettingsSearchPage(null, Strings.Resources.NotificationsForGroups, Icons.Channel, new SettingsSearchEntry[]
+                new SettingsSearchPage(null, Strings.Resources.NotificationsForGroups, new Assets.Icons.Notifications(), new SettingsSearchEntry[]
                 {
                     new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.Resources.MessagePreview),
                     new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.Resources.Sound)
                 }),
 
                 // Notifications for channels
-                new SettingsSearchPage(null, Strings.Resources.NotificationsForChannels, Icons.Channel, new SettingsSearchEntry[]
+                new SettingsSearchPage(null, Strings.Resources.NotificationsForChannels, new Assets.Icons.Notifications(), new SettingsSearchEntry[]
                 {
                     new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.Resources.MessagePreview),
                     new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.Resources.Sound)
                 }),
 
                 // In-app notifications
-                new SettingsSearchPage(null, Strings.Resources.InAppNotifications, Icons.Channel, new SettingsSearchEntry[]
+                new SettingsSearchPage(null, Strings.Resources.InAppNotifications, new Assets.Icons.Notifications(), new SettingsSearchEntry[]
                 {
                     new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.Resources.InAppSounds),
                     new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.Resources.InAppVibrate),
@@ -169,14 +169,14 @@ namespace Unigram.Services
                 }),
 
                 // Events
-                new SettingsSearchPage(null, Strings.Resources.Events, Icons.Channel, new SettingsSearchEntry[]
+                new SettingsSearchPage(null, Strings.Resources.Events, new Assets.Icons.Notifications(), new SettingsSearchEntry[]
                 {
                     new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.Resources.ContactJoined),
                     new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.Resources.PinnedMessages)
                 }),
 
                 // Badge Counter
-                new SettingsSearchPage(null, Strings.Resources.BadgeNumber, Icons.Channel, new SettingsSearchEntry[]
+                new SettingsSearchPage(null, Strings.Resources.BadgeNumber, new Assets.Icons.Notifications(), new SettingsSearchEntry[]
                 {
                     new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.Resources.BadgeNumberShow),
                     new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.Resources.BadgeNumberMutedChats),
@@ -190,7 +190,7 @@ namespace Unigram.Services
 
         private SettingsSearchEntry BuildPrivacyAndSecurity()
         {
-            return new SettingsSearchPage(typeof(SettingsPrivacyAndSecurityPage), Strings.Resources.PrivacySettings, Icons.LockClosed, new SettingsSearchEntry[]
+            return new SettingsSearchPage(typeof(SettingsPrivacyAndSecurityPage), Strings.Resources.PrivacySettings, new Assets.Icons.Privacy(), new SettingsSearchEntry[]
             {
                 new SettingsSearchPage(typeof(SettingsBlockedChatsPage), Strings.Resources.BlockedUsers),
                 new SettingsSearchPage(typeof(SettingsPrivacyShowStatusPage), Strings.Resources.PrivacyLastSeen),
@@ -211,16 +211,16 @@ namespace Unigram.Services
 
         private SettingsSearchEntry BuildDataAndStorage()
         {
-            return new SettingsSearchPage(typeof(SettingsDataAndStoragePage), Strings.Resources.DataSettings, Icons.DataPie, new SettingsSearchEntry[]
+            return new SettingsSearchPage(typeof(SettingsDataAndStoragePage), Strings.Resources.DataSettings, new Assets.Icons.Data(), new SettingsSearchEntry[]
             {
                 // Storage Usage
-                new SettingsSearchPage(typeof(SettingsStoragePage), Strings.Resources.StorageUsage, Icons.DataPie, new SettingsSearchEntry[]
+                new SettingsSearchPage(typeof(SettingsStoragePage), Strings.Resources.StorageUsage, new Assets.Icons.Data(), new SettingsSearchEntry[]
                 {
                     new SettingsSearchPage(typeof(SettingsStoragePage), Strings.Resources.KeepMedia)
                 }),
 
                 // Data Usage
-                new SettingsSearchPage(typeof(SettingsNetworkPage), Strings.Resources.NetworkUsage, Icons.DataPie, new SettingsSearchEntry[]
+                new SettingsSearchPage(typeof(SettingsNetworkPage), Strings.Resources.NetworkUsage, new Assets.Icons.Data(), new SettingsSearchEntry[]
                 {
 
                 }),
@@ -229,20 +229,20 @@ namespace Unigram.Services
 
                 new SettingsSearchPage(typeof(SettingsDataAndStoragePage), Strings.Resources.ResetAutomaticMediaDownload),
 
-                new SettingsSearchPage(typeof(SettingsDataAndStoragePage), Strings.Resources.AutoplayMedia, Icons.DataPie, new SettingsSearchEntry[]
+                new SettingsSearchPage(typeof(SettingsDataAndStoragePage), Strings.Resources.AutoplayMedia, new Assets.Icons.Data(), new SettingsSearchEntry[]
                 {
                     new SettingsSearchPage(typeof(SettingsDataAndStoragePage), Strings.Resources.AutoplayGifs),
                     new SettingsSearchPage(typeof(SettingsDataAndStoragePage), Strings.Resources.AutoplayVideo)
                 }),
 
                 // Calls
-                new SettingsSearchPage(typeof(SettingsDataAndStoragePage), Strings.Resources.Calls, Icons.DataPie, new SettingsSearchEntry[]
+                new SettingsSearchPage(typeof(SettingsDataAndStoragePage), Strings.Resources.Calls, new Assets.Icons.Data(), new SettingsSearchEntry[]
                 {
                     new SettingsSearchPage(typeof(SettingsDataAndStoragePage), Strings.Resources.VoipUseLessData)
                 }),
 
                 // Proxy
-                new SettingsSearchPage(typeof(SettingsProxiesPage), Strings.Resources.Proxy, Icons.DataPie, new SettingsSearchEntry[]
+                new SettingsSearchPage(typeof(SettingsProxiesPage), Strings.Resources.Proxy, new Assets.Icons.Data(), new SettingsSearchEntry[]
                 {
                     new SettingsSearchPage(typeof(SettingsProxiesPage), Strings.Resources.AddProxy)
                 })
@@ -251,13 +251,13 @@ namespace Unigram.Services
 
         private SettingsSearchEntry BuildStickersAndMasks()
         {
-            return new SettingsSearchPage(typeof(SettingsStickersPage), (int)StickersType.Installed, Strings.Resources.StickersAndMasks, Icons.Sticker, new SettingsSearchEntry[]
+            return new SettingsSearchPage(typeof(SettingsStickersPage), (int)StickersType.Installed, Strings.Resources.StickersAndMasks, new Assets.Icons.Stickers(), new SettingsSearchEntry[]
             {
                 new SettingsSearchPage(typeof(SettingsStickersPage), (int)StickersType.Installed, Strings.Resources.SuggestStickers),
                 new SettingsSearchPage(typeof(SettingsStickersPage), (int)StickersType.Trending, Strings.Resources.FeaturedStickers),
 
                 // Masks
-                new SettingsSearchPage(typeof(SettingsStickersPage), (int)StickersType.Masks, Strings.Resources.Masks, Icons.Sticker, new SettingsSearchEntry[]
+                new SettingsSearchPage(typeof(SettingsStickersPage), (int)StickersType.Masks, Strings.Resources.Masks, new Assets.Icons.Stickers(), new SettingsSearchEntry[]
                 {
                     new SettingsSearchPage(typeof(SettingsStickersPage), (int)StickersType.MasksArchived, Strings.Resources.ArchivedMasks)
                 }),
@@ -268,11 +268,11 @@ namespace Unigram.Services
 
         private SettingsSearchEntry BuildAppearance()
         {
-            return new SettingsSearchPage(typeof(SettingsAppearancePage), Strings.Resources.Appearance, Icons.Color, new SettingsSearchEntry[]
+            return new SettingsSearchPage(typeof(SettingsAppearancePage), Strings.Resources.Appearance, new Assets.Icons.Appearance(), new SettingsSearchEntry[]
             {
                 new SettingsSearchPage(typeof(SettingsAppearancePage), Strings.Resources.TextSizeHeader),
 
-                new SettingsSearchPage(typeof(SettingsBackgroundsPage), Strings.Resources.ChatBackground, Icons.Color, new SettingsSearchEntry[]
+                new SettingsSearchPage(typeof(SettingsBackgroundsPage), Strings.Resources.ChatBackground, new Assets.Icons.Appearance(), new SettingsSearchEntry[]
                 {
                     new SettingsSearchPage(typeof(SettingsBackgroundsPage), Strings.Resources.SelectFromGallery),
                     new SettingsSearchPage(typeof(SettingsBackgroundsPage), Strings.Resources.SetColor)
@@ -285,8 +285,8 @@ namespace Unigram.Services
 
     public class SettingsSearchPage : SettingsSearchEntry
     {
-        public SettingsSearchPage(Type page, string text, string glyph = null, SettingsSearchEntry[] items = null)
-            : base(text, glyph)
+        public SettingsSearchPage(Type page, string text, IAnimatedVisualSource2 icon = null, SettingsSearchEntry[] items = null)
+            : base(text, icon)
         {
             Page = page;
             Items = items;
@@ -297,16 +297,16 @@ namespace Unigram.Services
                 {
                     item.Parent = this;
 
-                    if (item.Glyph == null)
+                    if (item.Icon == null)
                     {
-                        item.Glyph = glyph;
+                        item.Icon = icon;
                     }
                 }
             }
         }
 
-        public SettingsSearchPage(Type page, object parameter, string text, string glyph = null, SettingsSearchEntry[] items = null)
-            : base(text, glyph)
+        public SettingsSearchPage(Type page, object parameter, string text, IAnimatedVisualSource2 icon = null, SettingsSearchEntry[] items = null)
+            : base(text, icon)
         {
             Page = page;
             Parameter = parameter;
@@ -318,9 +318,9 @@ namespace Unigram.Services
                 {
                     item.Parent = this;
 
-                    if (item.Glyph == null)
+                    if (item.Icon == null)
                     {
-                        item.Glyph = glyph;
+                        item.Icon = icon;
                     }
                 }
             }
@@ -345,7 +345,7 @@ namespace Unigram.Services
 
         public override SettingsSearchEntry Clone()
         {
-            return new SettingsSearchPage(Page, Parameter, Text, Glyph) { Parent = Parent };
+            return new SettingsSearchPage(Page, Parameter, Text, Icon) { Parent = Parent };
         }
 
         public override bool IsValid => Page != null;
@@ -363,7 +363,7 @@ namespace Unigram.Services
 
         public override SettingsSearchEntry Clone()
         {
-            return new SettingsSearchAction(Action, Text) { Glyph = Glyph, Parent = Parent };
+            return new SettingsSearchAction(Action, Text) { Icon = Icon, Parent = Parent };
         }
 
         public override bool IsValid => true;
@@ -371,8 +371,8 @@ namespace Unigram.Services
 
     public class SettingsSearchFaq : SettingsSearchEntry
     {
-        public SettingsSearchFaq(string url, string text, string glyph = null)
-            : base(text, glyph)
+        public SettingsSearchFaq(string url, string text, IAnimatedVisualSource2 icon = null)
+            : base(text, icon)
         {
             Url = url;
         }
@@ -381,7 +381,7 @@ namespace Unigram.Services
 
         public override SettingsSearchEntry Clone()
         {
-            return new SettingsSearchFaq(Url, Text, Glyph) { Parent = Parent };
+            return new SettingsSearchFaq(Url, Text, Icon) { Parent = Parent };
         }
 
         public override bool IsValid => true;
@@ -389,14 +389,14 @@ namespace Unigram.Services
 
     public abstract class SettingsSearchEntry
     {
-        public SettingsSearchEntry(string text, string glyph)
+        public SettingsSearchEntry(string text, IAnimatedVisualSource2 icon)
         {
             Text = text;
-            Glyph = glyph;
+            Icon = icon;
         }
 
         public string Text { get; set; }
-        public string Glyph { get; set; }
+        public IAnimatedVisualSource2 Icon { get; set; }
 
         public SettingsSearchEntry Parent { get; set; }
 

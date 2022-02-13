@@ -2161,7 +2161,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:BadgeButton">
-                    <StackPanel>
+                    <Grid Background="{TemplateBinding Background}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -2202,67 +2202,62 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <Grid Background="{TemplateBinding Background}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="48" />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <Border x:Name="RootGrid"
-                                    CornerRadius="4"
-                                    Margin="4,2"
-                                    Grid.ColumnSpan="2"
-                                    Grid.RowSpan="2" />
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="48" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Border x:Name="RootGrid"
+                                CornerRadius="4"
+                                Margin="4,2"
+                                Grid.ColumnSpan="2"
+                                Grid.RowSpan="2" />
 
-                            <muxc:AnimatedIcon x:Name="Icon"
-                                               muxc:AnimatedIcon.State="Normal"
-                                               Source="{TemplateBinding IconSource}"
-                                               HorizontalAlignment="Center"
-                                               VerticalAlignment="Center"
-                                               AutomationProperties.AccessibilityView="Raw"
-                                               Width="20"
-                                               Height="20" />
+                        <muxc:AnimatedIcon x:Name="Icon"
+                                           muxc:AnimatedIcon.State="Normal"
+                                           Source="{TemplateBinding IconSource}"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           AutomationProperties.AccessibilityView="Raw"
+                                           Width="20"
+                                           Height="20" />
 
-                            <ContentPresenter x:Name="ContentPresenter"
-                                              FontSize="{ThemeResource ControlContentThemeFontSize}"
-                                              FontFamily="{ThemeResource ContentControlThemeFontFamily}"
-                                              AutomationProperties.AccessibilityView="Raw"
-                                              BorderBrush="{TemplateBinding BorderBrush}"
-                                              BorderThickness="{TemplateBinding BorderThickness}"
-                                              ContentTransitions="{TemplateBinding ContentTransitions}"
-                                              Content="{TemplateBinding Badge}"
-                                              ContentTemplate="{TemplateBinding BadgeTemplate}"
-                                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                              Padding="0,11,12,12"
-                                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                              Grid.Column="1" />
+                        <ContentPresenter x:Name="ContentPresenter"
+                                          FontSize="{ThemeResource ControlContentThemeFontSize}"
+                                          FontFamily="{ThemeResource ContentControlThemeFontFamily}"
+                                          AutomationProperties.AccessibilityView="Raw"
+                                          BorderBrush="{TemplateBinding BorderBrush}"
+                                          BorderThickness="{TemplateBinding BorderThickness}"
+                                          ContentTransitions="{TemplateBinding ContentTransitions}"
+                                          Content="{TemplateBinding Badge}"
+                                          ContentTemplate="{TemplateBinding BadgeTemplate}"
+                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          Padding="0,9,12,10"
+                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          Grid.Column="1" />
 
-                            <ContentControl x:Name="BadgePresenter"
-                                            FontSize="{ThemeResource ControlContentThemeFontSize}"
-                                            FontFamily="{ThemeResource ContentControlThemeFontFamily}"
-                                            Content="{TemplateBinding Content}"
-                                            Visibility="{TemplateBinding BadgeVisibility}"
-                                            Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                            Padding="0,-12,12,12"
-                                            IsTabStop="False"
-                                            Grid.Column="1"
-                                            Grid.Row="1">
-                                <ContentControl.ContentTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding}"
-                                                   Style="{StaticResource CaptionTextBlockStyle}"
-                                                   Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
-                                    </DataTemplate>
-                                </ContentControl.ContentTemplate>
-                            </ContentControl>
-                        </Grid>
-                        <Rectangle Fill="{TemplateBinding BorderBrush}"
-                                   Height="0"
-                                   Margin="{TemplateBinding Padding}" />
-                    </StackPanel>
+                        <ContentControl x:Name="BadgePresenter"
+                                        FontSize="{ThemeResource ControlContentThemeFontSize}"
+                                        FontFamily="{ThemeResource ContentControlThemeFontFamily}"
+                                        Content="{TemplateBinding Content}"
+                                        Visibility="{TemplateBinding BadgeVisibility}"
+                                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                        Padding="0,-10,12,10"
+                                        IsTabStop="False"
+                                        Grid.Column="1"
+                                        Grid.Row="1">
+                            <ContentControl.ContentTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding}"
+                                               Style="{StaticResource CaptionTextBlockStyle}"
+                                               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
+                                </DataTemplate>
+                            </ContentControl.ContentTemplate>
+                        </ContentControl>
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -2385,6 +2380,138 @@
                                    Height="1"
                                    Margin="{TemplateBinding Padding}" />
                     </StackPanel>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="IconSubbadgeBadgeButtonStyle"
+           TargetType="controls:BadgeButton">
+        <Setter Property="Background"
+                Value="Transparent" />
+        <!--<Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundAccentBrush}"/>-->
+        <Setter Property="BorderBrush"
+                Value="{ThemeResource TelegramSeparatorMediumBrush}" />
+        <Setter Property="BorderThickness"
+                Value="0" />
+        <Setter Property="Padding"
+                Value="12,0,0,0" />
+        <Setter Property="HorizontalContentAlignment"
+                Value="Stretch" />
+        <Setter Property="HorizontalAlignment"
+                Value="Stretch" />
+        <Setter Property="VerticalAlignment"
+                Value="Stretch" />
+        <Setter Property="FontFamily"
+                Value="{StaticResource SymbolThemeFontFamily}" />
+        <Setter Property="FontWeight"
+                Value="Normal" />
+        <Setter Property="FontSize"
+                Value="{StaticResource GlyphMediumFontSize}" />
+        <Setter Property="UseSystemFocusVisuals"
+                Value="True" />
+        <Setter Property="Width"
+                Value="Auto" />
+        <Setter Property="Height"
+                Value="Auto" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:BadgeButton">
+                    <Grid Background="{TemplateBinding Background}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
+                                                                       Storyboard.TargetName="RootGrid">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource NavigationViewItemBackgroundPointerOver}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                    <VisualState.Setters>
+                                        <Setter Target="Icon.(muxc:AnimatedIcon.State)"
+                                                Value="PointerOver" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
+                                                                       Storyboard.TargetName="RootGrid">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource NavigationViewItemBackgroundPressed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                    <VisualState.Setters>
+                                        <Setter Target="Icon.(muxc:AnimatedIcon.State)"
+                                                Value="Pressed" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
+                                                                       Storyboard.TargetName="ContentPresenter">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource SystemControlForegroundBaseLowBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="48" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Border x:Name="RootGrid"
+                                CornerRadius="4"
+                                Margin="4,2"
+                                Grid.ColumnSpan="2"
+                                Grid.RowSpan="2" />
+
+                        <muxc:AnimatedIcon x:Name="Icon"
+                                           muxc:AnimatedIcon.State="Normal"
+                                           Source="{TemplateBinding IconSource}"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           AutomationProperties.AccessibilityView="Raw"
+                                           Width="20"
+                                           Height="20" />
+
+                        <ContentPresenter x:Name="ContentPresenter"
+                                          FontSize="{ThemeResource ControlContentThemeFontSize}"
+                                          FontFamily="{ThemeResource ContentControlThemeFontFamily}"
+                                          AutomationProperties.AccessibilityView="Raw"
+                                          BorderBrush="{TemplateBinding BorderBrush}"
+                                          BorderThickness="{TemplateBinding BorderThickness}"
+                                          ContentTransitions="{TemplateBinding ContentTransitions}"
+                                          Content="{TemplateBinding Content}"
+                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          Padding="0,9,12,10"
+                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          Grid.Column="1" />
+                        <ContentControl x:Name="BadgePresenter"
+                                        FontSize="{ThemeResource ControlContentThemeFontSize}"
+                                        FontFamily="{ThemeResource ContentControlThemeFontFamily}"
+                                        Content="{TemplateBinding Badge}"
+                                        Visibility="{TemplateBinding BadgeVisibility}"
+                                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                        Padding="0,-10,12,10"
+                                        IsTabStop="False"
+                                        Grid.Column="1"
+                                        Grid.Row="1">
+                            <ContentControl.ContentTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding}"
+                                               Style="{StaticResource CaptionTextBlockStyle}"
+                                               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
+                                </DataTemplate>
+                            </ContentControl.ContentTemplate>
+                        </ContentControl>
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -2770,7 +2897,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:BadgeButton">
-                    <StackPanel>
+                    <Grid Background="{TemplateBinding Background}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -2811,61 +2938,56 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <Grid Background="{TemplateBinding Background}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="48" />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <Border x:Name="RootGrid"
-                                    CornerRadius="4"
-                                    Margin="4,2"
-                                    Grid.ColumnSpan="2" />
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="48" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Border x:Name="RootGrid"
+                                CornerRadius="4"
+                                Margin="4,2"
+                                Grid.ColumnSpan="2" />
 
-                            <muxc:AnimatedIcon x:Name="Icon"
-                                               muxc:AnimatedIcon.State="Normal"
-                                               Source="{TemplateBinding IconSource}"
-                                               HorizontalAlignment="Center"
-                                               VerticalAlignment="Center"
-                                               AutomationProperties.AccessibilityView="Raw"
-                                               Width="20"
-                                               Height="20" />
+                        <muxc:AnimatedIcon x:Name="Icon"
+                                           muxc:AnimatedIcon.State="Normal"
+                                           Source="{TemplateBinding IconSource}"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           AutomationProperties.AccessibilityView="Raw"
+                                           Width="20"
+                                           Height="20" />
 
-                            <ContentPresenter x:Name="ContentPresenter"
-                                              FontFamily="{ThemeResource ContentControlThemeFontFamily}"
-                                              AutomationProperties.AccessibilityView="Raw"
-                                              BorderBrush="{TemplateBinding BorderBrush}"
-                                              BorderThickness="{TemplateBinding BorderThickness}"
-                                              ContentTemplate="{TemplateBinding ContentTemplate}"
-                                              ContentTransitions="{TemplateBinding ContentTransitions}"
-                                              Content="{TemplateBinding Content}"
-                                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                              Padding="0,11,12,12"
-                                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                              Grid.Column="1" />
-                            <ContentControl x:Name="BadgePresenter"
-                                            FontFamily="{ThemeResource ContentControlThemeFontFamily}"
-                                            Content="{TemplateBinding Badge}"
-                                            Visibility="{TemplateBinding BadgeVisibility}"
-                                            Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
-                                            Height="44"
-                                            Padding="12,11,12,12"
-                                            HorizontalContentAlignment="Right"
-                                            IsTabStop="False"
-                                            Grid.Column="1">
-                                <ContentControl.ContentTransitions>
-                                    <TransitionCollection>
-                                        <EntranceThemeTransition />
-                                    </TransitionCollection>
-                                </ContentControl.ContentTransitions>
-                                <ContentControl.Clip>
-                                    <RectangleGeometry Rect="0,0,3600,44" />
-                                </ContentControl.Clip>
-                            </ContentControl>
-                        </Grid>
-                        <Rectangle Fill="{TemplateBinding BorderBrush}"
-                                   Height="0"
-                                   Margin="{TemplateBinding Padding}" />
-                    </StackPanel>
+                        <ContentPresenter x:Name="ContentPresenter"
+                                          FontFamily="{ThemeResource ContentControlThemeFontFamily}"
+                                          AutomationProperties.AccessibilityView="Raw"
+                                          BorderBrush="{TemplateBinding BorderBrush}"
+                                          BorderThickness="{TemplateBinding BorderThickness}"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          ContentTransitions="{TemplateBinding ContentTransitions}"
+                                          Content="{TemplateBinding Content}"
+                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          Padding="0,9,12,10"
+                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          Grid.Column="1" />
+                        <ContentControl x:Name="BadgePresenter"
+                                        FontFamily="{ThemeResource ContentControlThemeFontFamily}"
+                                        Content="{TemplateBinding Badge}"
+                                        Visibility="{TemplateBinding BadgeVisibility}"
+                                        Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                                        Height="40"
+                                        Padding="12,9,12,10"
+                                        HorizontalContentAlignment="Right"
+                                        IsTabStop="False"
+                                        Grid.Column="1">
+                            <ContentControl.ContentTransitions>
+                                <TransitionCollection>
+                                    <EntranceThemeTransition />
+                                </TransitionCollection>
+                            </ContentControl.ContentTransitions>
+                            <ContentControl.Clip>
+                                <RectangleGeometry Rect="0,0,3600,40" />
+                            </ContentControl.Clip>
+                        </ContentControl>
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
