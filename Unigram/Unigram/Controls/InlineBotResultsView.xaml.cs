@@ -375,7 +375,13 @@ namespace Unigram.Controls
                 File file = null;
                 Uri uri = null;
 
-                if (result is InlineQueryResultArticle article)
+                if (result is InlineQueryResultAnimation animation2)
+                {
+                    file = animation2.Animation.Thumbnail?.File;
+                    title.Text = animation2.Title;
+                    description.Text = string.Empty;
+                }
+                else if (result is InlineQueryResultArticle article)
                 {
                     file = article.Thumbnail?.File;
                     title.Text = article.Title;
@@ -480,8 +486,9 @@ namespace Unigram.Controls
             }
         }
 
-        private void ItemsWrapGrid_Loading(FrameworkElement sender, object args)
+        private async void ItemsWrapGrid_Loading(FrameworkElement sender, object args)
         {
+            await sender.UpdateLayoutAsync();
             FluidGridView.Update(ScrollingHost);
         }
     }
