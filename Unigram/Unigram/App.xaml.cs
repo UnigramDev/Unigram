@@ -102,7 +102,12 @@ namespace Unigram
             {
                 SettingsService.Current.Diagnostics.LastErrorMessage = null;
                 SettingsService.Current.Diagnostics.IsLastErrorDiskFull = TdException.IsDiskFullError(lastMessage);
-                Microsoft.AppCenter.Crashes.Crashes.TrackError(TdException.FromMessage(lastMessage));
+
+                var exception = TdException.FromMessage(lastMessage);
+                if (exception.IsUnhandled)
+                {
+                    Microsoft.AppCenter.Crashes.Crashes.TrackError(exception);
+                }
             }
 #endif
 
