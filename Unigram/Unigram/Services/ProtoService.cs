@@ -233,6 +233,15 @@ namespace Unigram.Services
 
         private void Initialize(bool online = true)
         {
+            lock (_longRunningLock)
+            {
+                if (_longRunningTask == null)
+                {
+                    InitializeDiagnostics();
+                    _longRunningTask = Task.Factory.StartNew(Client.Run, TaskCreationOptions.LongRunning);
+                }
+            }
+
             _client = Client.Create(this);
 
             var parameters = new TdlibParameters
@@ -340,11 +349,6 @@ namespace Unigram.Services
             _chats[10] = new Chat(10, new ChatTypeSecret(1, 7), "Eileen Lockhard \uD83D\uDC99", ChatPhoto("a5.png"),    permissions, null,             new [] { new ChatPosition(new ChatListMain(), 0, false, null) },                    false, false, false, false, false, false, 0, 0, long.MaxValue, 0, new ChatNotificationSettings(false, 0, false, string.Empty, false, true, true, true, true, true), null, 0, 0, null, string.Empty);
 #endif
 
-            lock (_longRunningLock)
-            {
-                _longRunningTask ??= Task.Factory.StartNew(Client.Run, TaskCreationOptions.LongRunning);
-            }
-
             Task.Factory.StartNew(async () =>
             {
                 if (_settings.FilesDirectory != null && StorageApplicationPermissions.MostRecentlyUsedList.ContainsItem("FilesDirectory"))
@@ -357,7 +361,6 @@ namespace Unigram.Services
                 }
 
                 InitializeDiagnostics();
-                InitializeFlush();
 
                 _client.Send(new SetOption("language_pack_database_path", new OptionValueString(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "langpack"))));
                 _client.Send(new SetOption("localization_target", new OptionValueString("android")));
@@ -388,6 +391,11 @@ namespace Unigram.Services
                 var level = Client.Execute(new GetLogTagVerbosityLevel(tag)) as LogVerbosityLevel;
 
                 var saved = _settings.Diagnostics.GetValueOrDefault(tag, -1);
+                if (tag == "td_init")
+                {
+                    saved = 1;
+                }
+
                 if (saved != level.VerbosityLevel && saved > -1)
                 {
                     Client.Execute(new SetLogTagVerbosityLevel(tag, saved));
