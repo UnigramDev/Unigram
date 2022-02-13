@@ -2175,7 +2175,7 @@ namespace Unigram.ViewModels
 
         public void SaveDraft(bool clear = false)
         {
-            if (_currentInlineBot != null || (_type != DialogType.History && _type != DialogType.Thread))
+            if (_type != DialogType.History && _type != DialogType.Thread)
             {
                 return;
             }
