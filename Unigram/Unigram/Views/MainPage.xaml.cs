@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LinqToVisualTree;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -2224,7 +2225,13 @@ namespace Unigram.Views
             button.CommandParameter = entry;
 
             button.Content = entry.Text;
-            button.Glyph = entry.Glyph ?? string.Empty;
+            button.IconSource = entry.Icon;
+
+            var icon = button.Descendants<Microsoft.UI.Xaml.Controls.AnimatedIcon>().FirstOrDefault() as UIElement;
+            if (icon != null)
+            {
+                icon.InvalidateMeasure();
+            }
 
             if (entry.Parent == null)
             {

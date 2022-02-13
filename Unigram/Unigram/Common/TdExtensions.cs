@@ -378,6 +378,8 @@ namespace Unigram.Common
                         builder.Append(ToPlainText(concat));
                     }
                     return builder.ToString();
+                case RichTextAnchorLink anchorLink:
+                    return ToPlainText(anchorLink.Text);
                 case RichTextBold boldText:
                     return ToPlainText(boldText.Text);
                 case RichTextEmailAddress emailText:
