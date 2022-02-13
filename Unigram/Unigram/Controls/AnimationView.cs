@@ -85,7 +85,7 @@ namespace Unigram.Controls
                 return bitmap;
             }
 
-            return _bitmap;
+            return needsCreate ? null : _bitmap;
         }
 
         protected override void DrawFrame(CanvasImageSource sender, CanvasDrawingSession args)
@@ -213,7 +213,7 @@ namespace Unigram.Controls
 
             _interval = TimeSpan.FromMilliseconds(1000d / Math.Min(60, animation.FrameRate));
             _animation = animation;
-            _bitmap = null;
+            _hideThumbnail = null;
 
             OnSourceChanged();
         }

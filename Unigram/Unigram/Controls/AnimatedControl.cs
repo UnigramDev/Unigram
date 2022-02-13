@@ -378,6 +378,8 @@ namespace Unigram.Controls
         {
             if (AutoPlay || _shouldPlay)
             {
+                _bitmap = CreateBitmap(CanvasDevice.GetSharedDevice());
+
                 _shouldPlay = false;
                 Subscribe(true);
             }

@@ -326,6 +326,8 @@ namespace Unigram.Controls.Drawers
                     video.Source = null;
                 }
 
+                var tag = args.ItemContainer.Tag as string;
+                var added = _typeToItemHashSetMapping[tag].Add(args.ItemContainer);
                 return;
             }
 
@@ -356,10 +358,12 @@ namespace Unigram.Controls.Drawers
                 {
                     video.Source = new LocalVideoSource(file);
                 }
+
+                UpdateManager.Unsubscribe(content);
             }
             else
             {
-                if (content.Child is Image photo)
+                if (content.Child is Border border && border.Child is Image photo)
                 {
                     photo.Source = null;
                 }

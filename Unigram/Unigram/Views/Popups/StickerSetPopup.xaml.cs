@@ -215,6 +215,8 @@ namespace Unigram.Views.Popups
         {
             if (args.InRecycleQueue)
             {
+                var tag = args.ItemContainer.Tag as string;
+                var added = _typeToItemHashSetMapping[tag].Add(args.ItemContainer);
                 return;
             }
 
@@ -237,6 +239,8 @@ namespace Unigram.Views.Popups
                 {
                     video.Source = new LocalVideoSource(file);
                 }
+
+                UpdateManager.Unsubscribe(content);
             }
             else
             {
