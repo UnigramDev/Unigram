@@ -45,7 +45,7 @@ namespace Unigram.Controls
     [TemplatePart(Name = "Canvas", Type = typeof(CanvasControl))]
     public class LottieView : AnimatedControl<string, LottieAnimation>, IPlayerView
     {
-        private bool _hideThumbnail = true;
+        private bool? _hideThumbnail;
 
         private double _animationFrameRate;
         private int _animationTotalFrame;
@@ -128,7 +128,7 @@ namespace Unigram.Controls
                     CanvasImageInterpolation.MultiSampleLinear);
             }
 
-            if (_hideThumbnail)
+            if (_hideThumbnail == true)
             {
                 _hideThumbnail = false;
 
@@ -151,6 +151,11 @@ namespace Unigram.Controls
             animation.RenderSync(_bitmap, index);
 
             IndexChanged?.Invoke(this, index);
+
+            if (_hideThumbnail == null)
+            {
+                _hideThumbnail = true;
+            }
 
             if (_backward)
             {
@@ -254,7 +259,7 @@ namespace Unigram.Controls
 
             _interval = TimeSpan.FromMilliseconds(Math.Floor(1000 / (_limitFps ? 30 : animation.FrameRate)));
             _animation = animation;
-            _hideThumbnail = true;
+            _hideThumbnail = null;
 
             _animationFrameRate = animation.FrameRate;
             _animationTotalFrame = animation.TotalFrame;
