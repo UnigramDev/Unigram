@@ -117,7 +117,7 @@ namespace Unigram.Services.Factories
 
                 if (transform != null)
                 {
-                    conversion.Transcode = true;
+                    //conversion.Transcode = true;
                     conversion.Transform = true;
                     conversion.Rotation = transform.Rotation;
                     conversion.OutputSize = transform.OutputSize;
@@ -179,7 +179,12 @@ namespace Unigram.Services.Factories
                 conversion.Transcode = true;
                 conversion.Width = profile.Video.Width;
                 conversion.Height = profile.Video.Height;
-                conversion.Bitrate = profile.Video.Bitrate;
+                conversion.VideoBitrate = profile.Video.Bitrate;
+
+                if (profile.Audio != null)
+                {
+                    conversion.AudioBitrate = profile.Audio.Bitrate;
+                }
 
                 if (transform != null)
                 {
