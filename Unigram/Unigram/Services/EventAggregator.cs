@@ -768,26 +768,28 @@ namespace Unigram.Services
 
             if (recipient == null
                 || lists == null
-                || lists.Count == 0
-                || !lists.ContainsKey(messageType))
+                || lists.Count == 0)
             {
                 return;
             }
 
             lock (lists)
             {
-                foreach (var item in lists[messageType])
+                if (lists.TryGetValue(messageType, out var value))
                 {
-                    var weakActionCasted = item.Action as WeakAction<TMessage>;
-
-                    if (weakActionCasted != null
-                        && recipient == weakActionCasted.Target
-                        && (action == null
-                            || action.Method.Name == weakActionCasted.MethodName)
-                        && (token == null
-                            || token.Equals(item.Token)))
+                    foreach (var item in value)
                     {
-                        item.Action.MarkForDeletion();
+                        var weakActionCasted = item.Action as WeakAction<TMessage>;
+
+                        if (weakActionCasted != null
+                            && recipient == weakActionCasted.Target
+                            && (action == null
+                                || action.Method.Name == weakActionCasted.MethodName)
+                            && (token == null
+                                || token.Equals(item.Token)))
+                        {
+                            item.Action.MarkForDeletion();
+                        }
                     }
                 }
             }
