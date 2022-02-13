@@ -164,13 +164,12 @@ namespace Unigram.Common
                 value = new WrapGridReference(sender.ItemsPanelRoot);
                 obj.SetValue(ReferenceProperty, value);
             }
+            else
+            {
+                value.Owner = sender.ItemsPanelRoot;
+            }
 
             return value;
-        }
-
-        private static void SetReference(DependencyObject obj, WrapGridReference value)
-        {
-            obj.SetValue(ReferenceProperty, value);
         }
 
         private static readonly DependencyProperty ReferenceProperty =
@@ -178,7 +177,7 @@ namespace Unigram.Common
 
         private class WrapGridReference
         {
-            public object Owner { get; private set; }
+            public object Owner { get; set; }
 
             public Orientation Orientation
             {
