@@ -2676,7 +2676,9 @@ namespace Unigram.Views
             ChatRecord.Visibility = Visibility.Visible;
 
             ChatRecordPopup.IsOpen = true;
-            ChatRecordGlyph.Text = Icons.MicOnFilled;
+            ChatRecordGlyph.Text = btnVoiceMessage.Mode == ChatRecordMode.Video
+                ? Icons.VideoFilled
+                : Icons.MicOnFilled;
 
             var slideWidth = (float)SlidePanel.ActualWidth;
             var elapsedWidth = (float)ElapsedPanel.ActualWidth;

@@ -252,7 +252,7 @@ namespace Unigram.Services
             try
             {
                 var conversion = JsonConvert.DeserializeObject<VideoConversion>(args[2]);
-                if (conversion.Mute)
+                if (conversion.Mute || conversion.Transcode)
                 {
                     var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(args[0]);
                     var temp = await _protoService.GetFileAsync(update.DestinationPath);
@@ -290,6 +290,16 @@ namespace Unigram.Services
                         transform.OutputSize = conversion.OutputSize;
                         transform.Mirror = conversion.Mirror;
                         transform.CropRectangle = conversion.CropRectangle.IsEmpty() ? Rect.Empty : conversion.CropRectangle;
+
+                        if (conversion.VideoBitrate != 0)
+                        {
+                            profile.Video.Bitrate = conversion.VideoBitrate;
+                        }
+
+                        if (conversion.AudioBitrate != 0 && profile.Audio != null)
+                        {
+                            profile.Audio.Bitrate = conversion.AudioBitrate;
+                        }
 
                         profile.Video.Width = (uint)conversion.OutputSize.Width;
                         profile.Video.Height = (uint)conversion.OutputSize.Height;
@@ -431,7 +441,8 @@ namespace Unigram.Services
             public bool Mute { get; set; }
             public uint Width { get; set; }
             public uint Height { get; set; }
-            public uint Bitrate { get; set; }
+            public uint VideoBitrate { get; set; }
+            public uint AudioBitrate { get; set; }
 
             public TimeSpan? TrimStartTime { get; set; }
             public TimeSpan? TrimStopTime { get; set; }
