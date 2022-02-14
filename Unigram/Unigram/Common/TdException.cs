@@ -7,13 +7,15 @@ namespace Unigram
         public TdException(string message)
             : base(message)
         {
-
+            IsUnhandled = true;
         }
 
         public TdException()
         {
-
+            IsUnhandled = false;
         }
+
+        public bool IsUnhandled { get; }
 
         public static TdException FromMessage(string message)
         {
