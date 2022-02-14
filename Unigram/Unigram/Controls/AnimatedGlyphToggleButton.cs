@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using Unigram.Common;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
@@ -65,21 +66,31 @@ namespace Unigram.Controls
             base.OnApplyTemplate();
         }
 
-        private void OnToggle(object sender, RoutedEventArgs e)
+        private async void OnToggle(object sender, RoutedEventArgs e)
         {
             if (_visual == null || _label == null)
             {
                 return;
             }
-
-            _visual1.CenterPoint = new Vector3((float)_label1.ActualWidth / 2f, (float)_label1.ActualHeight / 2f, 0);
-            _visual2.CenterPoint = new Vector3((float)_label2.ActualWidth / 2f, (float)_label2.ActualHeight / 2f, 0);
-
             var visualShow = _visual == _visual1 ? _visual2 : _visual1;
             var visualHide = _visual == _visual1 ? _visual1 : _visual2;
 
             var labelShow = _visual == _visual1 ? _label2 : _label1;
             var labelHide = _visual == _visual1 ? _label1 : _label2;
+
+            if (labelShow is TextBlock textShow)
+            {
+                textShow.Text = IsChecked == true ? CheckedGlyph : Glyph;
+            }
+            else if (labelShow is ContentPresenter presenterShow)
+            {
+                presenterShow.Content = IsChecked == true ? CheckedContent : Content;
+            }
+
+            await this.UpdateLayoutAsync();
+
+            _visual1.CenterPoint = new Vector3((float)_label1.ActualWidth / 2f, (float)_label1.ActualHeight / 2f, 0);
+            _visual2.CenterPoint = new Vector3((float)_label2.ActualWidth / 2f, (float)_label2.ActualHeight / 2f, 0);
 
             var hide1 = _visual.Compositor.CreateVector3KeyFrameAnimation();
             hide1.InsertKeyFrame(0, new Vector3(1));
@@ -91,15 +102,6 @@ namespace Unigram.Controls
 
             visualHide.StartAnimation("Scale", hide1);
             visualHide.StartAnimation("Opacity", hide2);
-
-            if (labelShow is TextBlock textShow)
-            {
-                textShow.Text = IsChecked == true ? CheckedGlyph : Glyph;
-            }
-            else if (labelShow is ContentPresenter presenterShow)
-            {
-                presenterShow.Content = IsChecked == true ? CheckedContent : Content;
-            }
 
             var show1 = _visual.Compositor.CreateVector3KeyFrameAnimation();
             show1.InsertKeyFrame(1, new Vector3(1));
