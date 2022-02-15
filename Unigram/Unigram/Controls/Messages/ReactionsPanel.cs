@@ -1,17 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using Telegram.Td.Api;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media.Animation;
 
 namespace Unigram.Controls.Messages
 {
     public partial class ReactionsPanel : Panel
     {
         private readonly Dictionary<string, ReactionButton> _reactions = new();
+
+        public ReactionsPanel()
+        {
+            ChildrenTransitions = new TransitionCollection
+            {
+                new RepositionThemeTransition()
+            };
+        }
 
         public bool HasReactions => _reactions.Count > 0;
 
@@ -65,6 +75,17 @@ namespace Unigram.Controls.Messages
                     Children.Remove(reaction.Value);
                 }
 
+                var order = Children.OfType<ReactionButton>().Select(x => x.Reaction).ToImmutableArray();
+                var diff = Rg.DiffUtils.DiffUtil.CalculateDiff(order, reactions, (x, y) => x.Reaction == y.Reaction, new Rg.DiffUtils.DiffOptions { AllowBatching = false, DetectMoves = true });
+
+                foreach (var step in diff.Steps)
+                {
+                    if (step.Status == Rg.DiffUtils.DiffStatus.Move)
+                    {
+                        Children.Move((uint)step.OldStartIndex, (uint)step.NewStartIndex);
+                    }
+                }
+
                 if (animate is null && unread != null)
                 {
                     foreach (var item in unread.GroupBy(x => x.Reaction))
@@ -80,6 +101,19 @@ namespace Unigram.Controls.Messages
             {
                 _reactions.Clear();
                 Children.Clear();
+            }
+        }
+
+        private class TestDiffHandler : Rg.DiffUtils.IDiffEqualityComparer<MessageReaction>
+        {
+            public bool CompareItems(MessageReaction oldItem, MessageReaction newItem)
+            {
+                return oldItem.Reaction == newItem.Reaction;
+            }
+
+            public void UpdateItem(MessageReaction oldItem, MessageReaction newItem)
+            {
+                //throw new NotImplementedException();
             }
         }
 
