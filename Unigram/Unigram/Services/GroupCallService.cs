@@ -18,7 +18,6 @@ using Windows.Data.Json;
 using Windows.Devices.Enumeration;
 using Windows.Foundation;
 using Windows.Graphics.Capture;
-using Windows.System;
 using Windows.System.Display;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -108,9 +107,8 @@ namespace Unigram.Services
         private bool _isConnected;
         private bool _isJoining;
 
-        private ViewLifetimeControl _callLifetime;
+        private ViewLifetimeControl _lifetime;
 
-        private readonly DispatcherQueue _mainDispatcher;
         private DisplayRequest _request;
 
         public GroupCallService(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IViewService viewService)
@@ -121,8 +119,6 @@ namespace Unigram.Services
             _videoWatcher = new MediaDeviceWatcher(DeviceClass.VideoCapture, id => _capturer?.SwitchToDevice(id));
             _inputWatcher = new MediaDeviceWatcher(DeviceClass.AudioCapture, id => _manager?.SetAudioInputDevice(id));
             _outputWatcher = new MediaDeviceWatcher(DeviceClass.AudioRender, id => _manager?.SetAudioOutputDevice(id));
-
-            _mainDispatcher = CoreApplication.MainView.CoreWindow.DispatcherQueue;
 
             aggregator.Subscribe(this);
         }
@@ -770,7 +766,7 @@ namespace Unigram.Services
                 {
                     _call = update.GroupCall;
 
-                    var lifetime = _callLifetime;
+                    var lifetime = _lifetime;
                     if (lifetime != null)
                     {
                         lifetime.Dispatcher.Dispatch(() =>
@@ -803,7 +799,7 @@ namespace Unigram.Services
         {
             if (_request == null)
             {
-                if (_mainDispatcher.HasThreadAccess)
+                if (ApiInfo.CanCheckThreadAccess && CoreApplication.MainView.DispatcherQueue.HasThreadAccess)
                 {
                     try
                     {
@@ -814,7 +810,7 @@ namespace Unigram.Services
                 }
                 else
                 {
-                    _mainDispatcher.TryEnqueue(RequestActive);
+                    CoreApplication.MainView.DispatcherQueue.TryEnqueue(RequestActive);
                 }
             }
         }
@@ -823,7 +819,7 @@ namespace Unigram.Services
         {
             if (_request != null)
             {
-                if (_mainDispatcher.HasThreadAccess)
+                if (ApiInfo.CanCheckThreadAccess && CoreApplication.MainView.DispatcherQueue.HasThreadAccess)
                 {
                     try
                     {
@@ -834,7 +830,7 @@ namespace Unigram.Services
                 }
                 else
                 {
-                    _mainDispatcher.TryEnqueue(RequestRelease);
+                    CoreApplication.MainView.DispatcherQueue.TryEnqueue(RequestRelease);
                 }
             }
         }
@@ -869,7 +865,7 @@ namespace Unigram.Services
 
                 _currentUser = update.Participant;
 
-                var lifetime = _callLifetime;
+                var lifetime = _lifetime;
                 if (lifetime != null)
                 {
                     lifetime.Dispatcher.Dispatch(() =>
@@ -910,7 +906,7 @@ namespace Unigram.Services
         {
             using (await _updateLock.WaitAsync())
             {
-                if (_callLifetime == null)
+                if (_lifetime == null)
                 {
                     var parameters = new ViewServiceParams
                     {
@@ -921,15 +917,15 @@ namespace Unigram.Services
                         Content = control => new GroupCallPage(ProtoService, CacheService, Aggregator, this)
                     };
 
-                    _callLifetime = await _viewService.OpenAsync(parameters);
-                    _callLifetime.Closed += ApplicationView_Released;
-                    _callLifetime.Released += ApplicationView_Released;
+                    _lifetime = await _viewService.OpenAsync(parameters);
+                    _lifetime.Closed += ApplicationView_Released;
+                    _lifetime.Released += ApplicationView_Released;
 
                     //Aggregator.Publish(new UpdateCallDialog(call, true));
                 }
                 else
                 {
-                    await ApplicationViewSwitcher.SwitchAsync(_callLifetime.Id);
+                    await ApplicationViewSwitcher.SwitchAsync(_lifetime.Id);
                 }
             }
         }
@@ -940,10 +936,10 @@ namespace Unigram.Services
             {
                 //Aggregator.Publish(new UpdateCallDialog(_call, true));
 
-                var lifetime = _callLifetime;
+                var lifetime = _lifetime;
                 if (lifetime != null)
                 {
-                    _callLifetime = null;
+                    _lifetime = null;
                     await lifetime.Dispatcher.DispatchAsync(() => ApplicationView.GetForCurrentView().ConsolidateAsync());
                 }
             }
@@ -953,7 +949,7 @@ namespace Unigram.Services
         {
             using (await _updateLock.WaitAsync())
             {
-                _callLifetime = null;
+                _lifetime = null;
                 //Aggregator.Publish(new UpdateCallDialog(_call, false));
             }
         }
