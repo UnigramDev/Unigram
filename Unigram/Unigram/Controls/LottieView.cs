@@ -56,6 +56,7 @@ namespace Unigram.Controls
 
         private bool _isCachingEnabled = true;
 
+        private SizeInt32 _logicalSize = new SizeInt32 { Width = 256, Height = 256 };
         private SizeInt32 _frameSize = new SizeInt32 { Width = 256, Height = 256 };
         private DecodePixelType _decodeFrameType = DecodePixelType.Physical;
 
@@ -115,7 +116,7 @@ namespace Unigram.Controls
                 args.Transform = Matrix3x2.CreateScale(-1, 1, sender.Size.ToVector2() / 2);
             }
 
-            if (sender.Size.Width >= _bitmap.Size.Width || sender.Size.Height >= _bitmap.Size.Height)
+            if (sender.Size.Width >= _logicalSize.Width || sender.Size.Height >= _logicalSize.Height)
             {
                 args.DrawImage(_bitmap,
                     new Rect(0, 0, sender.Size.Width, sender.Size.Height));
@@ -438,6 +439,7 @@ namespace Unigram.Controls
                 var dpi = DisplayInformation.GetForCurrentView().LogicalDpi / 96.0f;
 
                 _decodeFrameType = decodeFrameType;
+                _logicalSize = frameSize;
                 _frameSize = new SizeInt32
                 {
                     Width = (int)(frameSize.Width * dpi),
@@ -447,6 +449,7 @@ namespace Unigram.Controls
             else
             {
                 _decodeFrameType = decodeFrameType;
+                _logicalSize = frameSize;
                 _frameSize = frameSize;
             }
         }
