@@ -22,7 +22,12 @@ namespace Unigram.Navigation
                 }
 
                 //var mainDispatcher = CoreApplication.MainView.Dispatcher;
-                var mainDispatcher = CoreApplication.MainView.CoreWindow.Dispatcher;
+                var mainDispatcher = CoreApplication.MainView.CoreWindow?.Dispatcher;
+                if (mainDispatcher == null)
+                {
+                    return null;
+                }
+
                 return ActiveWrappers.FirstOrDefault(x => x.Window.Dispatcher == mainDispatcher) ??
                         ActiveWrappers.FirstOrDefault();
             }

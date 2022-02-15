@@ -136,22 +136,14 @@ namespace Unigram.Navigation.Services
                     parameter = CacheKeyToChatId[cacheKey];
                 }
 
-                var currentContent = FrameFacade.Frame.Content;
-                //await this.GetDispatcherWrapper().DispatchAsync(async () =>
-                //{
                 try
                 {
-                    if (currentContent == FrameFacade.Frame.Content)
-                    {
-                        await NavigateToAsync(e.NavigationMode, parameter, FrameFacade.Frame.Content).ConfigureAwait(false);
-                    }
+                    await NavigateToAsync(e.NavigationMode, parameter, FrameFacade.Frame.Content).ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error($"DispatchAsync/NavigateToAsync {ex.Message}");
-                    throw;
+                    Logger.Error($"NavigateToAsync {ex.Message}");
                 }
-                //}, 1).ConfigureAwait(false);
             };
         }
 
