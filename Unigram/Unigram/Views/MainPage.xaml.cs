@@ -838,7 +838,7 @@ namespace Unigram.Views
                 }
             };
 
-            var y = (float)Playback.ActualHeight;
+            var y = Playback.ActualSize.Y;
 
             MasterDetail.NavigationService.Frame.Margin = new Thickness(0, 0, 0, -y);
 
@@ -1749,7 +1749,7 @@ namespace Unigram.Views
             var chats = ElementCompositionPreview.GetElementVisual(DialogsPanel);
             var panel = ElementCompositionPreview.GetElementVisual(DialogsSearchPanel);
 
-            chats.CenterPoint = panel.CenterPoint = new Vector3((float)DialogsPanel.ActualWidth / 2, (float)DialogsPanel.ActualHeight / 2, 0);
+            chats.CenterPoint = panel.CenterPoint = new Vector3(DialogsPanel.ActualSize / 2, 0);
 
             var batch = panel.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
@@ -2590,7 +2590,7 @@ namespace Unigram.Views
                 }
             };
 
-            var panelY = (float)ArchivedChatsPanel.ActualHeight;
+            var panelY = ArchivedChatsPanel.ActualSize.Y;
             var compactY = 0; //(float)ArchivedChatsCompactPanel.ActualHeight;
 
             ChatsList.Margin = new Thickness(0, 0, 0, -(panelY - compactY));
@@ -2672,7 +2672,7 @@ namespace Unigram.Views
                 }
             };
 
-            var y = (float)ArchivedChatsPresenter.ActualHeight;
+            var y = ArchivedChatsPresenter.ActualSize.Y;
 
             ChatsList.Margin = new Thickness(0, 0, 0, -y);
 

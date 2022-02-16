@@ -46,14 +46,10 @@ namespace Unigram.Controls
                 Content = _selectionFlyout = new FormattedTextFlyout(this),
 
                 AllowFocusOnInteraction = false,
+                ShouldConstrainToRootBounds = false,
                 ShowMode = FlyoutShowMode.TransientWithDismissOnPointerMoveAway,
                 FlyoutPresenterStyle = App.Current.Resources["CommandFlyoutPresenterStyle"] as Style,
             };
-
-            if (ApiInfo.CanUnconstrainFromBounds)
-            {
-                SelectionFlyout.ShouldConstrainToRootBounds = false;
-            }
 
             ContextFlyout = new MenuFlyout();
             ContextFlyout.Opening += OnContextFlyoutOpening;

@@ -131,13 +131,13 @@ namespace Unigram.Controls
             }
         }
 
-        public bool IsConstrainedToRootBounds => ApiInfo.CanUnconstrainFromBounds ? _popupHost?.IsConstrainedToRootBounds ?? true : true;
+        public bool IsConstrainedToRootBounds => _popupHost?.IsConstrainedToRootBounds ?? true;
 
         public bool CanUnconstrainFromRootBounds
         {
             get
             {
-                if (ApiInfo.CanUseWindowManagement && ApiInfo.CanUnconstrainFromBounds && SettingsService.Current.FullScreenGallery)
+                if (SettingsService.Current.FullScreenGallery)
                 {
                     if (_displayRegion != null)
                     {

@@ -118,7 +118,7 @@ namespace Unigram.Views.Popups
             expression.SetReferenceParameter("ScrollManipulation", scrollerViewerManipulation);
 
             var heroVisual = ElementCompositionPreview.GetElementVisual(MapPresenter);
-            heroVisual.CenterPoint = new Vector3((float)(MapPresenter.ActualWidth / 2), (float)MapPresenter.ActualHeight, 0);
+            heroVisual.CenterPoint = new Vector3(MapPresenter.ActualSize.X / 2, MapPresenter.ActualSize.Y, 0);
             heroVisual.StartAnimation("Offset.Y", expression);
 
             mMap.Style = MapStyle.Road;

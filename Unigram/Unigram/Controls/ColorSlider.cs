@@ -58,7 +58,7 @@ namespace Unigram.Controls
                 return;
             }
 
-            var w = (float)_layoutRoot.ActualWidth;
+            var w = _layoutRoot.ActualSize.X;
             var weight = 4 + _current.Y * 16;
 
             _thumbVisual.Offset = new Vector3(_current.X * w, 0, 0);
@@ -158,7 +158,7 @@ namespace Unigram.Controls
                 return;
             }
 
-            var w = (float)_layoutRoot.ActualWidth;
+            var w = _layoutRoot.ActualSize.X;
             var h = 180f;
 
             var offsetX = position.X / w;

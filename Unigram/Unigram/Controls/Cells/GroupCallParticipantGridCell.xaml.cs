@@ -213,7 +213,7 @@ namespace Unigram.Controls.Cells
 
                 _pausedBrush = effectBrush;
                 _pausedVisual = Window.Current.Compositor.CreateSpriteVisual();
-                _pausedVisual.Size = this.GetActualSize();
+                _pausedVisual.Size = ActualSize;
                 _pausedVisual.Brush = effectBrush;
 
                 ElementCompositionPreview.SetElementChildVisual(CanvasRoot, _pausedVisual);

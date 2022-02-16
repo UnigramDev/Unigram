@@ -70,7 +70,7 @@ namespace Unigram.Controls
 
             Array.Fill(_visible, true);
 
-            var width = Math.Max(THICKNESS, Math.Min((float)ActualWidth, (float)ActualHeight));
+            var width = MathF.Max(THICKNESS, MathF.Min(ActualSize.X, ActualSize.Y));
 
             for (int i = 0; i < _values.Length; i++)
             {

@@ -62,11 +62,6 @@ namespace Unigram.Common
             return result.TrimEnd('&');
         }
 
-        public static Vector2 GetActualSize(this FrameworkElement element)
-        {
-            return new Vector2((float)element.ActualWidth, (float)element.ActualHeight);
-        }
-
         public static void ShowTeachingTip(this Window app, FrameworkElement target, string text, Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode placement = Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode.TopRight)
         {
             ShowTeachingTip(app, target, new FormattedText(text, new TextEntity[0]), placement);

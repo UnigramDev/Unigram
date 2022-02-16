@@ -153,7 +153,7 @@ namespace Unigram.Views
                 {
                     var transform = container.TransformToVisual(DateHeaderRelative);
                     var point = transform.TransformPoint(new Point());
-                    var height = (float)DateHeader.ActualHeight;
+                    var height = DateHeader.ActualSize.Y;
                     var offset = (float)point.Y + height;
 
                     minDate = false;

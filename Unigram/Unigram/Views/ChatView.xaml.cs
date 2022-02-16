@@ -593,8 +593,7 @@ namespace Unigram.Views
                     && message.IsOutgoing
                     && message.SendingState is MessageSendingStatePending
                     && message.Content is MessageText or MessageDice or MessageAnimatedEmoji
-                    && message.GeneratedContent is MessageBigEmoji or MessageSticker or null
-                    && ApiInfo.CanUseActualFloats;
+                    && message.GeneratedContent is MessageBigEmoji or MessageSticker or null;
 
                 await Messages.ItemsStack.UpdateLayoutAsync();
 
@@ -626,7 +625,7 @@ namespace Unigram.Views
                 }
 
                 var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-                var diff = (float)owner.ActualHeight;
+                var diff = owner.ActualSize.Y;
 
                 if (animateSendout)
                 {
@@ -2680,8 +2679,8 @@ namespace Unigram.Views
                 ? Icons.VideoFilled
                 : Icons.MicOnFilled;
 
-            var slideWidth = (float)SlidePanel.ActualWidth;
-            var elapsedWidth = (float)ElapsedPanel.ActualWidth;
+            var slideWidth = SlidePanel.ActualSize.X;
+            var elapsedWidth = ElapsedPanel.ActualSize.X;
 
             _slideVisual.Opacity = 1;
 
@@ -2732,8 +2731,8 @@ namespace Unigram.Views
 
             AttachExpression();
 
-            var slidePosition = (float)(LayoutRoot.ActualWidth - 48 - 36);
-            var difference = (float)(slidePosition - ElapsedPanel.ActualWidth);
+            var slidePosition = LayoutRoot.ActualSize.X - 48 - 36;
+            var difference = slidePosition - ElapsedPanel.ActualSize.X;
 
             var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
@@ -3894,7 +3893,7 @@ namespace Unigram.Views
 
             var rect = textArea.Compositor.CreateRoundedRectangleGeometry();
             rect.CornerRadius = new Vector2(SettingsService.Current.Appearance.BubbleRadius);
-            rect.Size = new Vector2((float)TextArea.ActualWidth, 144);
+            rect.Size = new Vector2(TextArea.ActualSize.X, 144);
             rect.Offset = new Vector2(0, value);
 
             textArea.Clip = textArea.Compositor.CreateGeometricClip(rect);
@@ -4078,7 +4077,7 @@ namespace Unigram.Views
             };
 
             var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-            offset.InsertKeyFrame(show ? 0 : 1, new Vector3(0, (float)ListAutocomplete.ActualHeight, 0));
+            offset.InsertKeyFrame(show ? 0 : 1, new Vector3(0, ListAutocomplete.ActualSize.Y, 0));
             offset.InsertKeyFrame(show ? 1 : 0, new Vector3());
             offset.Duration = TimeSpan.FromMilliseconds(150);
 

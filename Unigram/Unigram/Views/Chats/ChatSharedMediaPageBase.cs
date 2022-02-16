@@ -229,7 +229,7 @@ namespace Unigram.Views.Chats
                 ElementCompositionPreview.SetIsTranslationEnabled(HeaderPanel, true);
 
                 _properties = visual.Compositor.CreatePropertySet();
-                _properties.InsertScalar("ActualHeight", (float)ProfileHeader.ActualHeight);
+                _properties.InsertScalar("ActualHeight", ProfileHeader.ActualSize.Y);
 
                 var translation = visual.Compositor.CreateExpressionAnimation(
                     "scrollViewer.Translation.Y > -properties.ActualHeight ? 0 : -scrollViewer.Translation.Y - properties.ActualHeight");
