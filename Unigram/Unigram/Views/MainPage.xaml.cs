@@ -106,8 +106,6 @@ namespace Unigram.Views
                 ViewModel.Aggregator.Publish(update);
             }
 
-            Window.Current.SetTitleBar(TitleBarrr);
-
             InputPane.GetForCurrentView().Showing += (s, args) => args.EnsuredFocusedElementInView = true;
 
             DropShadowEx.Attach(UpdateShadow);
