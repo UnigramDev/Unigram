@@ -87,7 +87,7 @@ namespace Unigram.Controls.Chats
 
                 _container = _visual.Compositor.CreateContainerVisual();
                 _container.Children.InsertAtBottom(_hitTest);
-                _container.Size = _hitTest.Size = new Vector2((float)ActualWidth, (float)ActualHeight);
+                _container.Size = _hitTest.Size = ActualSize;
 
                 ElementCompositionPreview.SetElementChildVisual(this, _container);
 

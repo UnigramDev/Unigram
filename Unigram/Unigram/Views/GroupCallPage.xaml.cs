@@ -683,7 +683,7 @@ namespace Unigram.Views
         private void Participant_ToggleDocked(object sender, EventArgs e)
         {
             _docked = !_docked;
-            UpdateLayout(this.GetActualSize(), this.GetActualSize(), true);
+            UpdateLayout(ActualSize, ActualSize, true);
         }
 
         private void TransformBottomRoot(Vector2 prevSize, Vector2 nextSize, ParticipantsGridMode prev, ParticipantsGridMode next)
@@ -714,10 +714,10 @@ namespace Unigram.Views
             audio2.CenterPoint = new Vector3(expanded ? 24 : 48, expanded ? 24 : 48, 0);
 
             screen.CenterPoint = new Vector3(24, 24, 0);
-            screenInfo.CenterPoint = new Vector3((float)ScreenInfo.ActualWidth / 2, (float)ScreenInfo.ActualHeight / 2, 0);
+            screenInfo.CenterPoint = new Vector3(ScreenInfo.ActualSize / 2, 0);
 
             settings.CenterPoint = new Vector3(24, 24, 0);
-            settingsInfo.CenterPoint = new Vector3((float)SettingsInfo.ActualWidth / 2, (float)SettingsInfo.ActualHeight / 2, 0);
+            settingsInfo.CenterPoint = new Vector3(SettingsInfo.ActualSize / 2, 0);
 
             ElementCompositionPreview.SetIsTranslationEnabled(BottomRoot, true);
             ElementCompositionPreview.SetIsTranslationEnabled(List, true);
@@ -736,8 +736,8 @@ namespace Unigram.Views
             // Root
             var rootOffset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
 
-            var prevCenter = prevSize.X / 2 - (float)BottomRoot.ActualWidth / 2;
-            var nextCenter = nextSize.X / 2 - (float)BottomRoot.ActualWidth / 2;
+            var prevCenter = prevSize.X / 2 - BottomRoot.ActualSize.X / 2;
+            var nextCenter = nextSize.X / 2 - BottomRoot.ActualSize.X / 2;
 
             if (next == ParticipantsGridMode.Docked)
             {
@@ -975,7 +975,7 @@ namespace Unigram.Views
                 }
 
                 UpdateNetworkState(call, currentUser, _service.IsConnected);
-                UpdateLayout(this.GetActualSize(), this.GetActualSize(), true);
+                UpdateLayout(ActualSize, ActualSize, true);
             });
         }
 
@@ -1937,7 +1937,7 @@ namespace Unigram.Views
 
             ListViewport.Margin = new Thickness(-2, -2, -2, ListViewport.Children.Count > 0 ? 4 : 0);
 
-            UpdateLayout(this.GetActualSize(), this.GetActualSize(), true);
+            UpdateLayout(ActualSize, ActualSize, true);
         }
 
         private void RemoveGridItem(GroupCallParticipantGridCell cell)
@@ -1988,7 +1988,7 @@ namespace Unigram.Views
 
             ListViewport.Margin = new Thickness(-2, -2, -2, ListViewport.Children.Count > 0 ? 4 : 0);
 
-            UpdateLayout(this.GetActualSize(), this.GetActualSize(), true);
+            UpdateLayout(ActualSize, ActualSize, true);
         }
 
         private async void Participant_Click(object sender, RoutedEventArgs e)
@@ -2031,7 +2031,7 @@ namespace Unigram.Views
             _selectedEndpointId = cell.IsSelected ? cell.EndpointId : null;
             Viewport.InvalidateMeasure();
 
-            TransformList(this.GetActualSize(), this.GetActualSize(), _mode, _mode);
+            TransformList(ActualSize, ActualSize, _mode, _mode);
 
             // Wait for the UI to update to calculate correct quality
             await this.UpdateLayoutAsync();

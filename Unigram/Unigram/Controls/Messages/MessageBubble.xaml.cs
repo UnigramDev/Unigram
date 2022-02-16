@@ -1643,8 +1643,8 @@ namespace Unigram.Controls.Messages
             {
                 _cornerRadius.Left = 0;
                 _cornerRadius.Top = 0;
-                _cornerRadius.Right = (float)Math.Truncate(ContentPanel.ActualWidth);
-                _cornerRadius.Bottom = (float)Math.Truncate(ContentPanel.ActualHeight);
+                _cornerRadius.Right = MathF.Truncate(ContentPanel.ActualSize.X);
+                _cornerRadius.Bottom = MathF.Truncate(ContentPanel.ActualSize.Y);
             }
         }
 
@@ -1840,36 +1840,33 @@ namespace Unigram.Controls.Messages
             panel.CenterPoint = new Vector3(outgoing ? next.X : 0, 0, 0);
             panel.StartAnimation("Scale", anim);
 
-            if (ApiInfo.CanUseActualFloats)
-            {
-                var factor = Window.Current.Compositor.CreateExpressionAnimation("Vector3(1 / content.Scale.X, 1 / content.Scale.Y, 1)");
-                factor.SetReferenceParameter("content", panel);
+            var factor = Window.Current.Compositor.CreateExpressionAnimation("Vector3(1 / content.Scale.X, 1 / content.Scale.Y, 1)");
+            factor.SetReferenceParameter("content", panel);
 
-                var header = ElementCompositionPreview.GetElementVisual(Header);
-                var text = ElementCompositionPreview.GetElementVisual(Message);
-                var media = ElementCompositionPreview.GetElementVisual(Media);
-                var footer = ElementCompositionPreview.GetElementVisual(Footer);
-                var reactions = ElementCompositionPreview.GetElementVisual(Reactions);
+            var header = ElementCompositionPreview.GetElementVisual(Header);
+            var text = ElementCompositionPreview.GetElementVisual(Message);
+            var media = ElementCompositionPreview.GetElementVisual(Media);
+            var footer = ElementCompositionPreview.GetElementVisual(Footer);
+            var reactions = ElementCompositionPreview.GetElementVisual(Reactions);
 
-                var headerLeft = (float)Header.Margin.Left;
-                var textLeft = (float)Message.Margin.Left;
-                var mediaLeft = (float)Media.Margin.Left;
+            var headerLeft = (float)Header.Margin.Left;
+            var textLeft = (float)Message.Margin.Left;
+            var mediaLeft = (float)Media.Margin.Left;
 
-                var footerRight = (float)Footer.Margin.Right;
-                var footerBottom = (float)Footer.Margin.Bottom;
+            var footerRight = (float)Footer.Margin.Right;
+            var footerBottom = (float)Footer.Margin.Bottom;
 
-                header.CenterPoint = new Vector3(-headerLeft, 0, 0);
-                text.CenterPoint = new Vector3(-textLeft, 0, 0);
-                media.CenterPoint = new Vector3(-mediaLeft, 0, 0);
-                footer.CenterPoint = new Vector3(Footer.ActualSize.X + footerRight, Footer.ActualSize.Y + footerBottom, 0);
-                reactions.CenterPoint = new Vector3(0, Reactions.ActualSize.Y, 0);
+            header.CenterPoint = new Vector3(-headerLeft, 0, 0);
+            text.CenterPoint = new Vector3(-textLeft, 0, 0);
+            media.CenterPoint = new Vector3(-mediaLeft, 0, 0);
+            footer.CenterPoint = new Vector3(Footer.ActualSize.X + footerRight, Footer.ActualSize.Y + footerBottom, 0);
+            reactions.CenterPoint = new Vector3(0, Reactions.ActualSize.Y, 0);
 
-                header.StartAnimation("Scale", factor);
-                text.StartAnimation("Scale", factor);
-                media.StartAnimation("Scale", factor);
-                footer.StartAnimation("Scale", factor);
-                reactions.StartAnimation("Scale", factor);
-            }
+            header.StartAnimation("Scale", factor);
+            text.StartAnimation("Scale", factor);
+            media.StartAnimation("Scale", factor);
+            footer.StartAnimation("Scale", factor);
+            reactions.StartAnimation("Scale", factor);
         }
 
         private void Footer_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -1936,7 +1933,7 @@ namespace Unigram.Controls.Messages
                 }
             }
 
-            overlay.Size = new Vector2((float)target.ActualWidth, (float)target.ActualHeight);
+            overlay.Size = target.ActualSize;
             overlay.Opacity = 0f;
             overlay.Brush = brush;
 

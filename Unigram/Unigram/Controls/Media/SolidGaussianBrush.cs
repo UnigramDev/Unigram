@@ -63,7 +63,7 @@ namespace Unigram.Controls.Media
 
         private void UpdatePolicyByDispatcher()
         {
-            if (ApiInfo.CanCheckThreadAccess && m_dispatcher.HasThreadAccess)
+            if (m_dispatcher.HasThreadAccess)
             {
                 UpdatePolicy();
             }

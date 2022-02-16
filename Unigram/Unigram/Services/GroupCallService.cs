@@ -799,7 +799,7 @@ namespace Unigram.Services
         {
             if (_request == null)
             {
-                if (ApiInfo.CanCheckThreadAccess && CoreApplication.MainView.DispatcherQueue.HasThreadAccess)
+                if (CoreApplication.MainView.DispatcherQueue.HasThreadAccess)
                 {
                     try
                     {
@@ -819,7 +819,7 @@ namespace Unigram.Services
         {
             if (_request != null)
             {
-                if (ApiInfo.CanCheckThreadAccess && CoreApplication.MainView.DispatcherQueue.HasThreadAccess)
+                if (CoreApplication.MainView.DispatcherQueue.HasThreadAccess)
                 {
                     try
                     {

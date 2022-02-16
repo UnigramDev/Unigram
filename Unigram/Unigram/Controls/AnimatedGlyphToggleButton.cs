@@ -89,8 +89,8 @@ namespace Unigram.Controls
 
             await this.UpdateLayoutAsync();
 
-            _visual1.CenterPoint = new Vector3((float)_label1.ActualWidth / 2f, (float)_label1.ActualHeight / 2f, 0);
-            _visual2.CenterPoint = new Vector3((float)_label2.ActualWidth / 2f, (float)_label2.ActualHeight / 2f, 0);
+            _visual1.CenterPoint = new Vector3(_label1.ActualSize / 2f, 0);
+            _visual2.CenterPoint = new Vector3(_label2.ActualSize / 2f, 0);
 
             var hide1 = _visual.Compositor.CreateVector3KeyFrameAnimation();
             hide1.InsertKeyFrame(0, new Vector3(1));
