@@ -229,9 +229,9 @@ namespace winrt::Unigram::Native::implementation
 		winrt::check_hresult(InternalDrawSvg(path, foreground, randomAccessStream, size));
 	}
 
-	void PlaceholderImageHelper::DrawQr(hstring data, Color foreground, Color background, IRandomAccessStream randomAccessStream)
+	void PlaceholderImageHelper::DrawQr(hstring data, Color foreground, Color background, double scale, IRandomAccessStream randomAccessStream)
 	{
-		winrt::check_hresult(InternalDrawQr(data, foreground, background, randomAccessStream));
+		winrt::check_hresult(InternalDrawQr(data, foreground, background, scale, randomAccessStream));
 	}
 
 	void PlaceholderImageHelper::DrawIdenticon(IVector<uint8_t> hash, int side, IRandomAccessStream randomAccessStream)
@@ -399,8 +399,8 @@ namespace winrt::Unigram::Native::implementation
 		return SaveImageToStream(targetBitmap.get(), GUID_ContainerFormatPng, randomAccessStream);
 	}
 
-	constexpr auto kShareQrSize = 768;
-	constexpr auto kShareQrPadding = 16;
+	constexpr auto kShareQrSize = 259;
+	constexpr auto kShareQrPadding = 0;
 
 	inline int ReplaceElements(const QrData& data) {
 		const auto elements = (data.size / 4);
@@ -412,14 +412,14 @@ namespace winrt::Unigram::Native::implementation
 		return ReplaceElements(data) * pixel;
 	}
 
-	HRESULT PlaceholderImageHelper::InternalDrawQr(hstring text, Color foreground, Color background, IRandomAccessStream randomAccessStream)
+	HRESULT PlaceholderImageHelper::InternalDrawQr(hstring text, Color foreground, Color background, double scale, IRandomAccessStream randomAccessStream)
 	{
 		auto lock = critical_section::scoped_lock(m_criticalSection);
 
 		HRESULT result;
 
 		winrt::com_ptr<ID2D1Bitmap1> targetBitmap;
-		D2D1_BITMAP_PROPERTIES1 properties = { { DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED }, 96, 96, D2D1_BITMAP_OPTIONS_TARGET, 0 };
+		D2D1_BITMAP_PROPERTIES1 properties = { { DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED }, 96 * scale, 96 * scale, D2D1_BITMAP_OPTIONS_TARGET, 0 };
 		ReturnIfFailed(result, m_d2dContext->CreateBitmap(D2D1_SIZE_U{ kShareQrSize - 4 * kShareQrPadding, kShareQrSize - 4 * kShareQrPadding }, nullptr, 0, &properties, targetBitmap.put()));
 
 
@@ -439,7 +439,7 @@ namespace winrt::Unigram::Native::implementation
 		}
 
 		const auto size = (kShareQrSize - 2 * kShareQrPadding);
-		const auto pixel = size / data.size;
+		const auto pixel = text == L"" ? 7 : size / data.size;
 
 		const auto replaceElements = ReplaceElements(data);
 		const auto replaceFrom = (data.size - replaceElements) / 2;
@@ -501,18 +501,18 @@ namespace winrt::Unigram::Native::implementation
 				context->FillRoundedRectangle(D2D1_ROUNDED_RECT{ D2D1_RECT_F{
 					x,
 					y,
-					x + pixel * 7,
-					y + pixel * 7 }, pixel * 2.0f, pixel * 2.0f }, blackBrush.get());
+					x + pixel * 7 + 2,
+					y + pixel * 7 + 2 }, 15, 15 /*pixel * 2.0f, pixel * 2.0f*/ }, blackBrush.get());
 				context->FillRoundedRectangle(D2D1_ROUNDED_RECT{ D2D1_RECT_F{
 					x + pixel,
 					y + pixel,
-					x + pixel + pixel * 5,
-					y + pixel + pixel * 5 }, pixel * 1.5f, pixel * 1.5f }, whiteBrush.get());
+					x + pixel + pixel * 5 + 2,
+					y + pixel + pixel * 5 + 2 }, 9, 9 /*pixel * 1.5f, pixel * 1.5f*/ }, whiteBrush.get());
 				context->FillRoundedRectangle(D2D1_ROUNDED_RECT{ D2D1_RECT_F{
 					x + pixel * 2,
 					y + pixel * 2,
-					x + pixel * 2 + pixel * 3,
-					y + pixel * 2 + pixel * 3 }, (float)pixel, (float)pixel }, blackBrush.get());
+					x + pixel * 2 + pixel * 3 + 2,
+					y + pixel * 2 + pixel * 3 + 2 }, (float)pixel, (float)pixel }, blackBrush.get());
 			};
 			const auto white = [&](float x, float y) {
 				context->FillRectangle(D2D1_RECT_F{ x, y, x + pixel, y + pixel }, blackBrush.get());
@@ -523,6 +523,10 @@ namespace winrt::Unigram::Native::implementation
 				context->FillRoundedRectangle(D2D1_ROUNDED_RECT{ D2D1_RECT_F{ x, y, x + pixel, y + pixel }, pixel / 2.0f, pixel / 2.0f }, blackBrush.get());
 			};
 			for (auto row = 0; row != data.size; ++row) {
+				if (text == L"") {
+					continue;
+				}
+
 				for (auto column = 0; column != data.size; ++column) {
 					if ((row < 7 && (column < 7 || column >= data.size - 7))
 						|| (column < 7 && (row < 7 || row >= data.size - 7))) {
@@ -589,22 +593,29 @@ namespace winrt::Unigram::Native::implementation
 			}
 
 			//PrepareForRound(p);
-			large(0, 0);
-			large((data.size - 7) * pixel, 0);
-			large(0, (data.size - 7) * pixel);
+			if (text == L"") {
+				large(0, 0);
+				large((37 - 7) * pixel - 2, 0);
+				large(0, (37 - 7) * pixel - 2);
+			}
+			else {
+				//large(0, 0);
+				//large((data.size - 7) * pixel - 2, 0);
+				//large(0, (data.size - 7) * pixel - 2);
+			}
 		}
 
 		float diamond = ReplaceSize(data, pixel);
 		float x1 = (size - diamond) / 2.0f;
 		x1 -= kShareQrPadding / 2.0f;
 		//winrt::com_ptr<ID2D1SolidColorBrush> red;
-		//ReturnIfFailed(result, m_d2dContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Red), &red));
+		//ReturnIfFailed(result, m_d2dContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Green), red.put()));
 		//m_d2dContext->FillRectangle(D2D1_RECT_F{ x1, x1, x1 + diamond, x1 + diamond }, red.get());
 
 		if ((result = m_d2dContext->EndDraw()) == D2DERR_RECREATE_TARGET)
 		{
 			ReturnIfFailed(result, CreateDeviceResources());
-			return InternalDrawQr(text, foreground, background, randomAccessStream);
+			return InternalDrawQr(text, foreground, background, scale, randomAccessStream);
 		}
 
 		return SaveImageToStream(targetBitmap.get(), GUID_ContainerFormatPng, randomAccessStream);
