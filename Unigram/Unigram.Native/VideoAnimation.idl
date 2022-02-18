@@ -13,7 +13,7 @@ namespace Unigram.Native
 	};
 
 	[default_interface]
-	runtimeclass VideoAnimation
+	runtimeclass VideoAnimation : Windows.Foundation.IClosable
 	{
 		static VideoAnimation LoadFromFile(IVideoAnimationSource file, Boolean preview, Boolean limitFps);
 
