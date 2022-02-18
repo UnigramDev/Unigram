@@ -60,7 +60,7 @@ namespace winrt::Unigram::Native::implementation
 
 		winrt::Windows::Foundation::IAsyncAction DrawSvgAsync(hstring path, _In_ Color foreground, IRandomAccessStream randomAccessStream);
 		void DrawSvg(hstring path, _In_ Color foreground, IRandomAccessStream randomAccessStream, Windows::Foundation::Size& size);
-		void DrawQr(hstring data, _In_ Color foreground, _In_ Color background, IRandomAccessStream randomAccessStream);
+		void DrawQr(hstring data, _In_ Color foreground, _In_ Color background, double scale, IRandomAccessStream randomAccessStream);
 		void DrawIdenticon(_In_ IVector<uint8_t> hash, _In_ int side, _In_ IRandomAccessStream randomAccessStream);
 
 		void DrawGlyph(hstring glyph, _In_ Color top, _In_ Color bottom, IRandomAccessStream randomAccessStream);
@@ -82,7 +82,7 @@ namespace winrt::Unigram::Native::implementation
 		//PlaceholderImageHelper();
 
 		HRESULT InternalDrawSvg(hstring data, _In_ Color foreground, _In_ IRandomAccessStream randomAccessStream, _Out_ Windows::Foundation::Size& size);
-		HRESULT InternalDrawQr(hstring data, _In_ Color foreground, _In_ Color background, _In_ IRandomAccessStream randomAccessStream);
+		HRESULT InternalDrawQr(hstring data, _In_ Color foreground, _In_ Color background, double scale, _In_ IRandomAccessStream randomAccessStream);
 		HRESULT InternalDrawIdenticon(_In_ IVector<uint8_t> hash, _In_ int side, _In_ IRandomAccessStream randomAccessStream);
 		HRESULT InternalDrawGlyph(hstring glyph, Color top, _In_ Color bottom, IRandomAccessStream randomAccessStream);
 		HRESULT InternalDrawSavedMessages(Color top, _In_ Color bottom, IRandomAccessStream randomAccessStream);

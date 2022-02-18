@@ -51,7 +51,7 @@ namespace Unigram.Controls
                 return;
             }
 
-            if (string.IsNullOrEmpty(newValue))
+            if (string.IsNullOrEmpty(newValue) && !AllowEmpty)
             {
                 canvas.Source = null;
                 return;
@@ -80,7 +80,7 @@ namespace Unigram.Controls
                 background = backBrush.Color;
             }
 
-            canvas.Source = PlaceholderHelper.GetQr(newValue, foreground, background);
+            canvas.Source = PlaceholderHelper.GetQr(newValue ?? string.Empty, foreground, background, XamlRoot.RasterizationScale);
         }
 
         #region Text
@@ -98,6 +98,12 @@ namespace Unigram.Controls
         {
             ((QrCode)d).OnTextChanged((string)e.NewValue, (string)e.OldValue);
         }
+
+        #endregion
+
+        #region AllowEmpty
+
+        public bool AllowEmpty { get; set; } = false;
 
         #endregion
     }

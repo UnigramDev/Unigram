@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Numerics;
 using Unigram.Common;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.SignIn;
-using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -22,6 +22,9 @@ namespace Unigram.Views.SignIn
         {
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<SignInViewModel, ISignInDelegate>(this);
+
+            TokenPlaceholder.FrameSize = new Windows.Graphics.SizeInt32 { Width = 259, Height = 259 };
+            TokenPlaceholder.DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical;
 
             Diagnostics.Text = $"Unigram " + SettingsPage.GetVersion();
 
@@ -91,7 +94,7 @@ namespace Unigram.Views.SignIn
 
             var logo1 = ElementCompositionPreview.GetElementVisual(Logo1);
             var logo2 = ElementCompositionPreview.GetElementVisual(Logo2);
-            var token = ElementCompositionPreview.GetElementVisual(Token);
+            var token = ElementCompositionPreview.GetElementVisual(TokenRoot);
             var inner1 = ElementCompositionPreview.GetElementVisual(TokenInnerPanel);
             var inner2 = ElementCompositionPreview.GetElementVisual(PhoneInnerPanel);
 
@@ -170,7 +173,7 @@ namespace Unigram.Views.SignIn
 
             var logo1 = ElementCompositionPreview.GetElementVisual(Logo1);
             var logo2 = ElementCompositionPreview.GetElementVisual(Logo2);
-            var token = ElementCompositionPreview.GetElementVisual(Token);
+            var token = ElementCompositionPreview.GetElementVisual(TokenRoot);
             var inner1 = ElementCompositionPreview.GetElementVisual(TokenInnerPanel);
             var inner2 = ElementCompositionPreview.GetElementVisual(PhoneInnerPanel);
 
@@ -242,27 +245,35 @@ namespace Unigram.Views.SignIn
 
         public void UpdateQrCodeMode(QrCodeMode mode)
         {
-            if (mode == QrCodeMode.Loading)
+            if (mode is QrCodeMode.Loading or QrCodeMode.Primary)
             {
-                Loading.IsActive = true;
-                TokenPanel.Visibility = Visibility.Collapsed;
+                TokenPanel.Visibility = Visibility.Visible;
                 PhonePanel.Visibility = Visibility.Collapsed;
+                Switch2.Visibility = Visibility.Visible;
+
+                if (mode == QrCodeMode.Loading)
+                {
+                    if (TokenPlaceholder.ActualTheme == ElementTheme.Light)
+                    {
+                        TokenPlaceholder.ColorReplacements = new Dictionary<int, int>
+                        {
+                            { 0xffffff, 0x000000 }
+                        };
+                    }
+
+                    TokenPlaceholder.Source = new Uri("ms-appx:///Assets/Animations/Qr.tgs");
+                    TokenLarge.Visibility = Visibility.Collapsed;
+                }
             }
             else if (mode is QrCodeMode.Disabled or QrCodeMode.Secondary)
             {
-                Loading.IsActive = false;
                 TokenPanel.Visibility = Visibility.Collapsed;
                 PhonePanel.Visibility = Visibility.Visible;
                 Switch2.Visibility = mode == QrCodeMode.Secondary
                     ? Visibility.Visible
                     : Visibility.Collapsed;
-            }
-            else if (mode == QrCodeMode.Primary)
-            {
-                Loading.IsActive = false;
-                TokenPanel.Visibility = Visibility.Visible;
-                PhonePanel.Visibility = Visibility.Collapsed;
-                Switch2.Visibility = Visibility.Visible;
+
+                TokenPlaceholder.Unload();
             }
         }
 
@@ -279,10 +290,26 @@ namespace Unigram.Views.SignIn
                 return;
             }
 
+            TokenLarge.Visibility = Visibility.Visible;
+
+            var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
+                TokenPlaceholder.Unload();
+            };
+
             var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
             opacity.InsertKeyFrame(0.0f, 0);
             opacity.InsertKeyFrame(1.0f, 1);
             token.StartAnimation("Opacity", opacity);
+
+            var placeholder = ElementCompositionPreview.GetElementVisual(TokenPlaceholder);
+
+            opacity.InsertKeyFrame(0.0f, 1);
+            opacity.InsertKeyFrame(1.0f, 0);
+            placeholder.StartAnimation("Opacity", opacity);
+
+            batch.End();
         }
     }
 }

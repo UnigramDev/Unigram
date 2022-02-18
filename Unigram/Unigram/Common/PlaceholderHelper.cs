@@ -402,14 +402,14 @@ namespace Unigram.Common
             return bitmap;
         }
 
-        public static ImageSource GetQr(string data, Color foreground, Color background)
+        public static ImageSource GetQr(string data, Color foreground, Color background, double scale)
         {
             var bitmap = new BitmapImage();
             using (var stream = new InMemoryRandomAccessStream())
             {
                 try
                 {
-                    PlaceholderImageHelper.Current.DrawQr(data, foreground, background, stream);
+                    PlaceholderImageHelper.Current.DrawQr(data, foreground, background, scale, stream);
                     bitmap.SetSource(stream);
                 }
                 catch { }
