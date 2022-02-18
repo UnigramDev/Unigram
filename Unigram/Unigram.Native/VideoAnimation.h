@@ -51,6 +51,10 @@ namespace winrt::Unigram::Native::implementation
 	{
 	public:
 		virtual ~VideoAnimation() {
+			Close();
+		}
+
+		void Close() {
 			if (video_dec_ctx) {
 				avcodec_close(video_dec_ctx);
 				video_dec_ctx = nullptr;

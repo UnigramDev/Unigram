@@ -64,7 +64,7 @@ namespace Unigram.Controls
         {
             if (_animation != null)
             {
-
+                _animation.Dispose();
             }
 
             _source = null;
