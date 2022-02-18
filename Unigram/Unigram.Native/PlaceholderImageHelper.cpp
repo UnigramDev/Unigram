@@ -213,6 +213,17 @@ namespace winrt::Unigram::Native::implementation
 		free(buffer);
 	}
 
+	winrt::Windows::Foundation::IAsyncAction PlaceholderImageHelper::DrawSvgAsync(hstring path, Color foreground, IRandomAccessStream randomAccessStream)
+	{
+		winrt::apartment_context ui_thread;
+		co_await winrt::resume_background();
+
+		Windows::Foundation::Size size;
+		winrt::check_hresult(InternalDrawSvg(path, foreground, randomAccessStream, size));
+
+		co_await ui_thread;
+	}
+
 	void PlaceholderImageHelper::DrawSvg(hstring path, Color foreground, IRandomAccessStream randomAccessStream, Windows::Foundation::Size& size)
 	{
 		winrt::check_hresult(InternalDrawSvg(path, foreground, randomAccessStream, size));
@@ -268,6 +279,11 @@ namespace winrt::Unigram::Native::implementation
 
 		struct NSVGimage* image;
 		image = nsvgParse((char*)data.c_str(), "px", 96);
+
+		auto unique = std::shared_ptr<NSVGimage>(image, [](NSVGimage* p)
+			{
+				nsvgDelete(p);
+			});
 
 		auto imageWidth = image->width / 2;
 		auto imageHeight = image->height / 2;
@@ -371,8 +387,6 @@ namespace winrt::Unigram::Native::implementation
 				m_d2dContext->DrawGeometry(geometry.get(), blackBrush.get(), shape->strokeWidth, strokeStyle.get());
 			}
 		}
-
-		nsvgDelete(image);
 
 		m_d2dContext->SetTransform(D2D1::Matrix3x2F::Identity());
 

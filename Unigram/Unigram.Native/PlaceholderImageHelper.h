@@ -8,6 +8,7 @@
 #include <D2d1_3.h>
 #include <map>
 
+#include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.UI.h>
 #include <winrt/Windows.Storage.Streams.h>
 //#include <winrt/Telegram.Td.Api.h>
@@ -57,6 +58,7 @@ namespace winrt::Unigram::Native::implementation
 
 		void DrawWebP(hstring fileName, int32_t maxWidth, IRandomAccessStream randomAccessStream, Windows::Foundation::Size& size);
 
+		winrt::Windows::Foundation::IAsyncAction DrawSvgAsync(hstring path, _In_ Color foreground, IRandomAccessStream randomAccessStream);
 		void DrawSvg(hstring path, _In_ Color foreground, IRandomAccessStream randomAccessStream, Windows::Foundation::Size& size);
 		void DrawQr(hstring data, _In_ Color foreground, _In_ Color background, IRandomAccessStream randomAccessStream);
 		void DrawIdenticon(_In_ IVector<uint8_t> hash, _In_ int side, _In_ IRandomAccessStream randomAccessStream);

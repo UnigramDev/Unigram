@@ -247,33 +247,6 @@ namespace Unigram.Common
             return null;
         }
 
-        public static ImageSource GetVector(IProtoService protoService, File file, Color foreground)
-        {
-            if (file.Local.IsDownloadingCompleted)
-            {
-                var text = GetSvgXml(file);
-
-                var bitmap = new BitmapImage();
-                using (var stream = new InMemoryRandomAccessStream())
-                {
-                    try
-                    {
-                        PlaceholderImageHelper.Current.DrawSvg(text, foreground, stream, out _);
-                        bitmap.SetSource(stream);
-                    }
-                    catch { }
-                }
-
-                return bitmap;
-            }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-            {
-                protoService.DownloadFile(file.Id, 1);
-            }
-
-            return null;
-        }
-
         private static readonly DisposableMutex _patternSurfaceLock = new DisposableMutex();
 
         public static async Task<LoadedImageSurface> GetPatternSurfaceAsync(IProtoService protoService, File file)
@@ -296,12 +269,8 @@ namespace Unigram.Common
                     {
                         try
                         {
-                            Size size;
-                            await Task.Run(() =>
-                            {
-                                var text = GetSvgXml(file);
-                                PlaceholderImageHelper.Current.DrawSvg(text, Colors.White, stream, out size);
-                            });
+                            var text = await GetSvgXml(file);
+                            await PlaceholderImageHelper.Current.DrawSvgAsync(text, Colors.White, stream);
                         }
                         catch { }
                     }
@@ -330,7 +299,7 @@ namespace Unigram.Common
             return null;
         }
 
-        private static string GetSvgXml(File file)
+        private static async Task<string> GetSvgXml(File file)
         {
             var styles = new Dictionary<string, string>();
             var text = string.Empty;
@@ -339,7 +308,7 @@ namespace Unigram.Common
             using (var decompress = new GZipStream(source, CompressionMode.Decompress))
             using (var reader = new System.IO.StreamReader(decompress))
             {
-                text = reader.ReadToEnd();
+                text = await reader.ReadToEndAsync();
             }
 
             var document = XDocument.Parse(text);
