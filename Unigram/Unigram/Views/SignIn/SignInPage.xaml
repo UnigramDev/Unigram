@@ -117,11 +117,6 @@
                                      Text="{x:Bind ViewModel.Token, Mode=OneWay}"
                                      Width="259"
                                      Height="259" />
-                    <controls:QrCode x:Name="TokenLarge"
-                                     Visibility="Collapsed"
-                                     AllowEmpty="True"
-                                     Width="259"
-                                     Height="259" />
                 </Grid>
                 <Border x:Name="Logo1Panel"
                         Width="48"

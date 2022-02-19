@@ -674,13 +674,9 @@
     <Style TargetType="local:QrCode">
         <Setter Property="Foreground"
                 Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
-        <Setter Property="Background"
-                Value="{ThemeResource ApplicationPageBackgroundThemeBrush}" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="local:QrCode">
-                    <Image x:Name="Canvas" />
-                </ControlTemplate>
+                <ControlTemplate TargetType="local:QrCode" />
             </Setter.Value>
         </Setter>
     </Style>

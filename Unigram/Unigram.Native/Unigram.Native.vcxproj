@@ -291,6 +291,10 @@
     <ClInclude Include="PlaceholderImageHelper.h">
       <DependentUpon>PlaceholderImageHelper.idl</DependentUpon>
     </ClInclude>
+    <ClInclude Include="QrBuffer.h">
+      <DependentUpon>QrBuffer.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="QR\BitBuffer.hpp" />
     <ClInclude Include="QR\QrCode.hpp" />
     <ClInclude Include="QR\QrSegment.hpp" />
@@ -707,6 +711,10 @@
     <ClCompile Include="PlaceholderImageHelper.cpp">
       <DependentUpon>PlaceholderImageHelper.idl</DependentUpon>
     </ClCompile>
+    <ClCompile Include="QrBuffer.cpp">
+      <DependentUpon>QrBuffer.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="Qr\BitBuffer.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -754,6 +762,9 @@
     </Midl>
     <Midl Include="NativeUtils.idl" />
     <Midl Include="PlaceholderImageHelper.idl" />
+    <Midl Include="QrBuffer.idl">
+      <SubType>Designer</SubType>
+    </Midl>
     <Midl Include="ScreenshotManager.idl">
       <SubType>Designer</SubType>
     </Midl>

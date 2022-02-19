@@ -27,9 +27,6 @@ namespace Unigram.Views.SignIn
             TokenPlaceholder.DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical;
 
             Diagnostics.Text = $"Unigram " + SettingsPage.GetVersion();
-
-            var token = ElementCompositionPreview.GetElementVisual(Token);
-            token.Opacity = 0;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -262,7 +259,6 @@ namespace Unigram.Views.SignIn
                     }
 
                     TokenPlaceholder.Source = new Uri("ms-appx:///Assets/Animations/Qr.tgs");
-                    TokenLarge.Visibility = Visibility.Collapsed;
                 }
             }
             else if (mode is QrCodeMode.Disabled or QrCodeMode.Secondary)
@@ -277,20 +273,12 @@ namespace Unigram.Views.SignIn
             }
         }
 
-        public void UpdateQrCode(string code)
+        public void UpdateQrCode(string code, bool firstTime)
         {
-            //if (Token.Source != null)
-            //{
-            //    return;
-            //}
-
-            var token = ElementCompositionPreview.GetElementVisual(Token);
-            if (token.Opacity != 0)
+            if (firstTime is false)
             {
                 return;
             }
-
-            TokenLarge.Visibility = Visibility.Visible;
 
             var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
@@ -299,9 +287,9 @@ namespace Unigram.Views.SignIn
             };
 
             var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-            opacity.InsertKeyFrame(0.0f, 0);
-            opacity.InsertKeyFrame(1.0f, 1);
-            token.StartAnimation("Opacity", opacity);
+            //opacity.InsertKeyFrame(0.0f, 0);
+            //opacity.InsertKeyFrame(1.0f, 1);
+            //token.StartAnimation("Opacity", opacity);
 
             var placeholder = ElementCompositionPreview.GetElementVisual(TokenPlaceholder);
 

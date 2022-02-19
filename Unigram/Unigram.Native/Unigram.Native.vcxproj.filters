@@ -697,5 +697,6 @@
     </Midl>
     <Midl Include="ScreenshotManager.idl" />
     <Midl Include="LanguageIdentification.idl" />
+    <Midl Include="QrBuffer.idl" />
   </ItemGroup>
 </Project>

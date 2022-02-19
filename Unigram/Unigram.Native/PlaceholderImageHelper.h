@@ -22,11 +22,6 @@ using namespace winrt::Windows::Storage::Streams;
 
 namespace winrt::Unigram::Native::implementation
 {
-	struct QrData {
-		int size = 0;
-		std::vector<bool> values; // size x size
-	};
-
 	struct PlaceholderImageHelper : PlaceholderImageHelperT<PlaceholderImageHelper>
 	{
 	public:
@@ -60,7 +55,6 @@ namespace winrt::Unigram::Native::implementation
 
 		winrt::Windows::Foundation::IAsyncAction DrawSvgAsync(hstring path, _In_ Color foreground, IRandomAccessStream randomAccessStream);
 		void DrawSvg(hstring path, _In_ Color foreground, IRandomAccessStream randomAccessStream, Windows::Foundation::Size& size);
-		void DrawQr(hstring data, _In_ Color foreground, _In_ Color background, double scale, IRandomAccessStream randomAccessStream);
 		void DrawIdenticon(_In_ IVector<uint8_t> hash, _In_ int side, _In_ IRandomAccessStream randomAccessStream);
 
 		void DrawGlyph(hstring glyph, _In_ Color top, _In_ Color bottom, IRandomAccessStream randomAccessStream);
