@@ -88,8 +88,10 @@ namespace Unigram.ViewModels.SignIn
             }
             else if (authState is AuthorizationStateWaitOtherDeviceConfirmation waitOtherDeviceConfirmation)
             {
+                var firstTime = _token == null;
+
                 Token = waitOtherDeviceConfirmation.Link;
-                Delegate?.UpdateQrCode(waitOtherDeviceConfirmation.Link);
+                Delegate?.UpdateQrCode(waitOtherDeviceConfirmation.Link, firstTime);
 
                 if (mode != NavigationMode.Refresh)
                 {

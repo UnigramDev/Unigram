@@ -4,7 +4,6 @@
 #include "PlaceholderImageHelper.g.cpp"
 #endif
 
-#include "Qr/QrCode.hpp"
 #include "SVG/nanosvg.h"
 #include "StringUtils.h"
 #include "Helpers\COMHelper.h"
@@ -19,7 +18,6 @@
 
 using namespace D2D1;
 using namespace winrt::Windows::ApplicationModel;
-using namespace qrcodegen;
 
 namespace winrt::Unigram::Native::implementation
 {
@@ -229,11 +227,6 @@ namespace winrt::Unigram::Native::implementation
 		winrt::check_hresult(InternalDrawSvg(path, foreground, randomAccessStream, size));
 	}
 
-	void PlaceholderImageHelper::DrawQr(hstring data, Color foreground, Color background, double scale, IRandomAccessStream randomAccessStream)
-	{
-		winrt::check_hresult(InternalDrawQr(data, foreground, background, scale, randomAccessStream));
-	}
-
 	void PlaceholderImageHelper::DrawIdenticon(IVector<uint8_t> hash, int side, IRandomAccessStream randomAccessStream)
 	{
 		winrt::check_hresult(InternalDrawIdenticon(hash, side, randomAccessStream));
@@ -295,6 +288,7 @@ namespace winrt::Unigram::Native::implementation
 
 		m_d2dContext->SetTarget(targetBitmap.get());
 		m_d2dContext->BeginDraw();
+		m_d2dContext->Clear(D2D1::ColorF(0, 0, 0, 0));
 		m_d2dContext->SetTransform(D2D1::Matrix3x2F::Scale(0.5f, 0.5f));
 
 		winrt::com_ptr<ID2D1SolidColorBrush> blackBrush;
@@ -394,228 +388,6 @@ namespace winrt::Unigram::Native::implementation
 		{
 			ReturnIfFailed(result, CreateDeviceResources());
 			return InternalDrawSvg(path, foreground, randomAccessStream, size);
-		}
-
-		return SaveImageToStream(targetBitmap.get(), GUID_ContainerFormatPng, randomAccessStream);
-	}
-
-	constexpr auto kShareQrSize = 259;
-	constexpr auto kShareQrPadding = 0;
-
-	inline int ReplaceElements(const QrData& data) {
-		const auto elements = (data.size / 4);
-		const auto shift = (data.size - elements) % 2;
-		return (elements - shift);
-	}
-
-	inline int ReplaceSize(const QrData& data, int pixel) {
-		return ReplaceElements(data) * pixel;
-	}
-
-	HRESULT PlaceholderImageHelper::InternalDrawQr(hstring text, Color foreground, Color background, double scale, IRandomAccessStream randomAccessStream)
-	{
-		auto lock = critical_section::scoped_lock(m_criticalSection);
-
-		HRESULT result;
-
-		winrt::com_ptr<ID2D1Bitmap1> targetBitmap;
-		D2D1_BITMAP_PROPERTIES1 properties = { { DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED }, 96 * scale, 96 * scale, D2D1_BITMAP_OPTIONS_TARGET, 0 };
-		ReturnIfFailed(result, m_d2dContext->CreateBitmap(D2D1_SIZE_U{ kShareQrSize - 4 * kShareQrPadding, kShareQrSize - 4 * kShareQrPadding }, nullptr, 0, &properties, targetBitmap.put()));
-
-
-		m_d2dContext->SetTarget(targetBitmap.get());
-		m_d2dContext->BeginDraw();
-
-		auto data = QrData();
-		const auto utf8 = string_to_unmanaged(text);
-		const auto qr = QrCode::encodeText(utf8.c_str(), QrCode::Ecc::MEDIUM);
-		data.size = qr.getSize();
-
-		data.values.reserve(data.size * data.size);
-		for (auto row = 0; row != data.size; ++row) {
-			for (auto column = 0; column != data.size; ++column) {
-				data.values.push_back(qr.getModule(row, column));
-			}
-		}
-
-		const auto size = (kShareQrSize - 2 * kShareQrPadding);
-		const auto pixel = text == L"" ? 7 : size / data.size;
-
-		const auto replaceElements = ReplaceElements(data);
-		const auto replaceFrom = (data.size - replaceElements) / 2;
-		const auto replaceTill = (data.size - replaceFrom);
-		//const auto black = GenerateSingle(pixel, Qt::transparent, Qt::black);
-		//const auto white = GenerateSingle(pixel, Qt::black, Qt::transparent);
-		const auto value = [&](int row, int column) {
-			return (row >= 0)
-				&& (row < data.size)
-				&& (column >= 0)
-				&& (column < data.size)
-				&& (row < replaceFrom
-					|| row >= replaceTill
-					|| column < replaceFrom
-					|| column >= replaceTill)
-				&& data.values[row * data.size + column];
-		};
-		const auto blackFull = [&](int row, int column) {
-			return (value(row - 1, column) && value(row + 1, column))
-				|| (value(row, column - 1) && value(row, column + 1));
-		};
-		const auto whiteCorner = [&](int row, int column, int dx, int dy) {
-			return !value(row + dy, column)
-				|| !value(row, column + dx)
-				|| !value(row + dy, column + dx);
-		};
-		const auto whiteFull = [&](int row, int column) {
-			return whiteCorner(row, column, -1, -1)
-				&& whiteCorner(row, column, 1, -1)
-				&& whiteCorner(row, column, 1, 1)
-				&& whiteCorner(row, column, -1, 1);
-		};
-		//auto result = QImage(
-		//	data.size * pixel,
-		//	data.size * pixel,
-		//	QImage::Format_ARGB32_Premultiplied);
-		//result.fill(Qt::transparent);
-		{
-			//auto p = QPainter(&result);
-			//p.setCompositionMode(QPainter::CompositionMode_Source);
-			auto context = m_d2dContext;
-
-			winrt::com_ptr<ID2D1SolidColorBrush> blackBrush;
-			ReturnIfFailed(result, m_d2dContext->CreateSolidColorBrush(
-				D2D1::ColorF(foreground.R / 255.0f, foreground.G / 255.0f, foreground.B / 255.0f, foreground.A / 255.0f), blackBrush.put()));
-
-			winrt::com_ptr<ID2D1SolidColorBrush> whiteBrush;
-			ReturnIfFailed(result, m_d2dContext->CreateSolidColorBrush(
-				D2D1::ColorF(background.R / 255.0f, background.G / 255.0f, background.B / 255.0f, background.A / 255.0f), whiteBrush.put()));
-
-			const auto skip = pixel - pixel / 2;
-			const auto brect = [&](float x, float y, float width, float height) {
-				context->FillRectangle(D2D1_RECT_F{ x, y, x + width, y + height }, blackBrush.get());
-			};
-			const auto wrect = [&](float x, float y, float width, float height) {
-				context->FillRectangle(D2D1_RECT_F{ x, y, x + width, y + height }, whiteBrush.get());
-			};
-			const auto large = [&](float x, float y) {
-				context->FillRoundedRectangle(D2D1_ROUNDED_RECT{ D2D1_RECT_F{
-					x,
-					y,
-					x + pixel * 7 + 2,
-					y + pixel * 7 + 2 }, 15, 15 /*pixel * 2.0f, pixel * 2.0f*/ }, blackBrush.get());
-				context->FillRoundedRectangle(D2D1_ROUNDED_RECT{ D2D1_RECT_F{
-					x + pixel,
-					y + pixel,
-					x + pixel + pixel * 5 + 2,
-					y + pixel + pixel * 5 + 2 }, 9, 9 /*pixel * 1.5f, pixel * 1.5f*/ }, whiteBrush.get());
-				context->FillRoundedRectangle(D2D1_ROUNDED_RECT{ D2D1_RECT_F{
-					x + pixel * 2,
-					y + pixel * 2,
-					x + pixel * 2 + pixel * 3 + 2,
-					y + pixel * 2 + pixel * 3 + 2 }, (float)pixel, (float)pixel }, blackBrush.get());
-			};
-			const auto white = [&](float x, float y) {
-				context->FillRectangle(D2D1_RECT_F{ x, y, x + pixel, y + pixel }, blackBrush.get());
-				context->FillRoundedRectangle(D2D1_ROUNDED_RECT{ D2D1_RECT_F{ x, y, x + pixel, y + pixel }, pixel / 2.0f, pixel / 2.0f }, whiteBrush.get());
-			};
-			const auto black = [&](float x, float y) {
-				context->FillRectangle(D2D1_RECT_F{ x, y, x + pixel, y + pixel }, whiteBrush.get());
-				context->FillRoundedRectangle(D2D1_ROUNDED_RECT{ D2D1_RECT_F{ x, y, x + pixel, y + pixel }, pixel / 2.0f, pixel / 2.0f }, blackBrush.get());
-			};
-			for (auto row = 0; row != data.size; ++row) {
-				if (text == L"") {
-					continue;
-				}
-
-				for (auto column = 0; column != data.size; ++column) {
-					if ((row < 7 && (column < 7 || column >= data.size - 7))
-						|| (column < 7 && (row < 7 || row >= data.size - 7))) {
-						continue;
-					}
-					const auto x = column * pixel;
-					const auto y = row * pixel;
-					const auto index = row * data.size + column;
-					if (value(row, column)) {
-						if (blackFull(row, column)) {
-							brect(x, y, pixel, pixel);
-						}
-						else {
-							black(x, y);
-							if (value(row - 1, column)) {
-								brect(x, y, pixel, pixel / 2);
-							}
-							else if (value(row + 1, column)) {
-								brect(x, y + skip, pixel, pixel / 2);
-							}
-							if (value(row, column - 1)) {
-								brect(x, y, pixel / 2, pixel);
-							}
-							else if (value(row, column + 1)) {
-								brect(x + skip, y, pixel / 2, pixel);
-							}
-						}
-					}
-					else if (whiteFull(row, column)) {
-						wrect(x, y, pixel, pixel);
-					}
-					else {
-						white(x, y);
-						if (whiteCorner(row, column, -1, -1)
-							&& whiteCorner(row, column, 1, -1)) {
-							wrect(x, y, pixel, pixel / 2);
-						}
-						else if (whiteCorner(row, column, -1, 1)
-							&& whiteCorner(row, column, 1, 1)) {
-							wrect(x, y + skip, pixel, pixel / 2);
-						}
-						if (whiteCorner(row, column, -1, -1)
-							&& whiteCorner(row, column, -1, 1)) {
-							wrect(x, y, pixel / 2, pixel);
-						}
-						else if (whiteCorner(row, column, 1, -1)
-							&& whiteCorner(row, column, 1, 1)) {
-							wrect(x + skip, y, pixel / 2, pixel);
-						}
-						if (whiteCorner(row, column, -1, -1)) {
-							wrect(x, y, pixel / 2, pixel / 2);
-						}
-						if (whiteCorner(row, column, 1, -1)) {
-							wrect(x + skip, y, pixel / 2, pixel / 2);
-						}
-						if (whiteCorner(row, column, 1, 1)) {
-							wrect(x + skip, y + skip, pixel / 2, pixel / 2);
-						}
-						if (whiteCorner(row, column, -1, 1)) {
-							wrect(x, y + skip, pixel / 2, pixel / 2);
-						}
-					}
-				}
-			}
-
-			//PrepareForRound(p);
-			if (text == L"") {
-				large(0, 0);
-				large((37 - 7) * pixel - 2, 0);
-				large(0, (37 - 7) * pixel - 2);
-			}
-			else {
-				//large(0, 0);
-				//large((data.size - 7) * pixel - 2, 0);
-				//large(0, (data.size - 7) * pixel - 2);
-			}
-		}
-
-		float diamond = ReplaceSize(data, pixel);
-		float x1 = (size - diamond) / 2.0f;
-		x1 -= kShareQrPadding / 2.0f;
-		//winrt::com_ptr<ID2D1SolidColorBrush> red;
-		//ReturnIfFailed(result, m_d2dContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Green), red.put()));
-		//m_d2dContext->FillRectangle(D2D1_RECT_F{ x1, x1, x1 + diamond, x1 + diamond }, red.get());
-
-		if ((result = m_d2dContext->EndDraw()) == D2DERR_RECREATE_TARGET)
-		{
-			ReturnIfFailed(result, CreateDeviceResources());
-			return InternalDrawQr(text, foreground, background, scale, randomAccessStream);
 		}
 
 		return SaveImageToStream(targetBitmap.get(), GUID_ContainerFormatPng, randomAccessStream);
