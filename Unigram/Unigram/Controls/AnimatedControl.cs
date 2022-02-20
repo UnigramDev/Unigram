@@ -452,9 +452,32 @@ namespace Unigram.Controls
                     if (subscribe)
                     {
                         _unsubscribe = false;
+                        _timer ??= ThreadPoolTimer.CreatePeriodicTimer(PrepareNextFrame, _interval);
+
+                        CompositionTarget.Rendering -= OnRendering;
+                        CompositionTarget.Rendering += OnRendering;
+                    }
+                    else
+                    {
+                        if (_timer != null)
+                        {
+                            _timer.Cancel();
+                            _timer = null;
+                        }
+
+                        CompositionTarget.Rendering -= OnRendering;
                     }
 
                     _subscribed = subscribe;
+                }
+                else
+                {
+                    if (subscribe)
+                    {
+                        // This theoretically never happens because Subscribe
+                        // never gets invoked from a background thread
+                        return;
+                    }
 
                     if (_timer != null)
                     {
@@ -462,17 +485,7 @@ namespace Unigram.Controls
                         _timer = null;
                     }
 
-                    CompositionTarget.Rendering -= OnRendering;
-
-                    if (subscribe)
-                    {
-                        _timer = ThreadPoolTimer.CreatePeriodicTimer(PrepareNextFrame, _interval);
-                        CompositionTarget.Rendering += OnRendering;
-                    }
-                }
-                else
-                {
-                    _unsubscribe = !subscribe;
+                    _unsubscribe = true;
                 }
             }
         }

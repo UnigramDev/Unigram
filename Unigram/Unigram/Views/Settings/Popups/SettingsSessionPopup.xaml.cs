@@ -6,7 +6,7 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Cells;
 using Unigram.Converters;
-using Windows.Graphics;
+using Windows.Foundation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
@@ -26,7 +26,7 @@ namespace Unigram.Views.Settings.Popups
             if (icon.Animation != null)
             {
                 Icon.ColorReplacements = new Dictionary<int, int> { { 0x00000, icon.Backgroud.ToValue() } };
-                Icon.FrameSize = new SizeInt32 { Width = 50, Height = 50 };
+                Icon.FrameSize = new Size(50, 50);
                 Icon.DecodeFrameType = DecodePixelType.Logical;
                 Icon.Source = new Uri($"ms-appx:///Assets/Animations/Device{icon.Animation}.json");
             }
