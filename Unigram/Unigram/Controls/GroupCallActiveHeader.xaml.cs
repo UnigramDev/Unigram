@@ -79,7 +79,11 @@ namespace Unigram.Controls
 
         private void Audio_Click(object sender, RoutedEventArgs e)
         {
-            _service.Manager.IsMuted = Audio.IsChecked == false;
+            var service = _service;
+            if (service?.Manager != null)
+            {
+                service.Manager.IsMuted = Audio.IsChecked == false;
+            }
         }
 
         private async void Dismiss_Click(object sender, RoutedEventArgs e)

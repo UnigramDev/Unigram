@@ -84,15 +84,15 @@ namespace Unigram.Services
 
         public PlaybackService(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
         {
-            if (!ApiInfo.IsMediaSupported)
-            {
-                return;
-            }
-
             _protoService = protoService;
             _cacheService = cacheService;
             _settingsService = settingsService;
             _aggregator = aggregator;
+
+            if (!ApiInfo.IsMediaSupported)
+            {
+                return;
+            }
 
             _mediaPlayer = new MediaPlayer();
             _mediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;

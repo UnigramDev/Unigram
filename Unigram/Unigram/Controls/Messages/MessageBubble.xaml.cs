@@ -1643,8 +1643,8 @@ namespace Unigram.Controls.Messages
             {
                 _cornerRadius.Left = 0;
                 _cornerRadius.Top = 0;
-                _cornerRadius.Right = MathF.Truncate(ContentPanel.ActualSize.X);
-                _cornerRadius.Bottom = MathF.Truncate(ContentPanel.ActualSize.Y);
+                _cornerRadius.Right = (float)Math.Truncate(ContentPanel.ActualWidth);
+                _cornerRadius.Bottom = (float)Math.Truncate(ContentPanel.ActualHeight);
             }
         }
 
