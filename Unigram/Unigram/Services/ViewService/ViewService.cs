@@ -6,7 +6,6 @@ using Unigram.Logs;
 using Unigram.Navigation;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
-using Windows.Foundation.Metadata;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 
@@ -79,7 +78,7 @@ namespace Unigram.Services.ViewService
 
                 newAppView.Title = parameters.Title ?? string.Empty;
 
-                if (parameters.PersistentId != null && ApiInformation.IsPropertyPresent("Windows.UI.ViewManagement.ApplicationView", "PersistedStateId"))
+                if (parameters.PersistentId != null)
                 {
                     newAppView.PersistedStateId = parameters.PersistentId;
                 }
@@ -163,11 +162,7 @@ namespace Unigram.Services.ViewService
                     var newWindow = Window.Current;
                     var newAppView = ApplicationView.GetForCurrentView();
                     newAppView.Title = title;
-
-                    if (ApiInformation.IsPropertyPresent("Windows.UI.ViewManagement.ApplicationView", "PersistedStateId"))
-                    {
-                        newAppView.PersistedStateId = "Floating";
-                    }
+                    newAppView.PersistedStateId = "Floating";
 
                     var control = ViewLifetimeControl.GetForCurrentView();
                     control.Released += (s, args) =>

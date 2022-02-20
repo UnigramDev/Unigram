@@ -127,7 +127,7 @@ namespace Unigram.Controls.Chats
             properties.InsertScalar("Progress", 0);
 
             var progressAnimation = compositor.CreateExpressionAnimation("_.Progress");
-            progressAnimation.SetReferenceParameter("_", _props);
+            progressAnimation.SetReferenceParameter("_", properties);
             visual.RootVisual.Properties.InsertScalar("Progress", 0.0F);
             visual.RootVisual.Properties.StartAnimation("Progress", progressAnimation);
 
