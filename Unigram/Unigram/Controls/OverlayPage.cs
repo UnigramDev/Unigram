@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Unigram.Common;
+using Unigram.Native;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Services;
@@ -16,7 +16,6 @@ using Windows.Foundation;
 using Windows.Graphics.Display;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
-using Windows.UI.WindowManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -29,7 +28,7 @@ namespace Unigram.Controls
     public class OverlayPage : ContentControl, INavigablePage
     {
         private ApplicationView _applicationView;
-        private DisplayRegion _displayRegion;
+        private Rect? _displayRegion;
 
         private Popup _popupHost;
 
@@ -144,10 +143,8 @@ namespace Unigram.Controls
                         return true;
                     }
 
-                    var regions = ApplicationView.GetForCurrentView().GetDisplayRegions();
-
-                    var region = regions.FirstOrDefault(x => x.WindowingEnvironment.Kind != WindowingEnvironmentKind.Unknown);
-                    if (region != null && region.WorkAreaSize.Width > 0 && region.WorkAreaSize.Height > 0)
+                    var region = ScreenshotManager.GetWorkingArea();
+                    if (region.Width > 0 && region.Height > 0)
                     {
                         _displayRegion = region;
                         return true;
@@ -202,9 +199,8 @@ namespace Unigram.Controls
                 //    await Task.Delay(200);
                 //}
 
-                if (CanUnconstrainFromRootBounds && _displayRegion is DisplayRegion region)
+                if (CanUnconstrainFromRootBounds && _displayRegion is Rect region)
                 {
-                    region.Changed += DisplayRegion_Changed;
                     DisplayRegion_Changed(region, null);
                 }
                 else
@@ -222,15 +218,15 @@ namespace Unigram.Controls
             });
         }
 
-        private void DisplayRegion_Changed(DisplayRegion sender, object args)
+        private void DisplayRegion_Changed(Rect sender, object args)
         {
             var scaleFactor = DisplayInformation.GetForCurrentView().RawPixelsPerViewPixel;
 
-            var x = Window.Current.Bounds.X - sender.WorkAreaOffset.X / scaleFactor;
-            var y = Window.Current.Bounds.Y - sender.WorkAreaOffset.Y / scaleFactor;
+            var x = Window.Current.Bounds.X - sender.X / scaleFactor;
+            var y = Window.Current.Bounds.Y - sender.Y / scaleFactor;
 
-            var width = sender.WorkAreaSize.Width / scaleFactor;
-            var height = sender.WorkAreaSize.Height / scaleFactor;
+            var width = sender.Width / scaleFactor;
+            var height = sender.Height / scaleFactor;
 
             Width = width;
             Height = height;
