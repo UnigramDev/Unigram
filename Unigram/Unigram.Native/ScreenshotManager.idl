@@ -4,5 +4,7 @@ namespace Unigram.Native
     runtimeclass ScreenshotManager
     {
         static Windows.UI.Xaml.Media.ImageSource Capture();
+
+        static Windows.Foundation.Rect GetWorkingArea();
     }
 }

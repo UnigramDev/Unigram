@@ -23,6 +23,14 @@ struct
 	virtual HRESULT STDMETHODCALLTYPE put_MessageHandled(unsigned char value) = 0;
 };
 
+typedef struct tagMONITORINFO
+{
+	DWORD   cbSize;
+	RECT    rcMonitor;
+	RECT    rcWork;
+	DWORD   dwFlags;
+} MONITORINFO, * LPMONITORINFO;
+
 namespace winrt::Unigram::Native::implementation
 {
 	ImageSource ScreenshotManager::Capture()
@@ -98,5 +106,35 @@ namespace winrt::Unigram::Native::implementation
 		}
 
 		return lpBitmap;
+	}
+
+	winrt::Windows::Foundation::Rect ScreenshotManager::GetWorkingArea()
+	{
+		typedef HMONITOR(WINAPI* pMonitorFromWindow)(_In_ HWND hwnd, _In_ DWORD dwFlags);
+		typedef BOOL(WINAPI* pGetMonitorInfoW)(_In_ HMONITOR hMonitor, _Inout_ LPMONITORINFO lpmi);
+
+		static const LibraryInstance user32(L"User32.dll", 0x00000001);
+		static const auto monitorFromWindow = user32.GetMethod<pMonitorFromWindow>("MonitorFromWindow");
+		static const auto getMonitorInfoW = user32.GetMethod<pGetMonitorInfoW>("GetMonitorInfoW");
+
+		if (monitorFromWindow && getMonitorInfoW)
+		{
+			auto window = CoreWindow::GetForCurrentThread();
+			winrt::com_ptr<ICoreWindowInterop> interop{};
+			winrt::check_hresult(winrt::get_unknown(window)->QueryInterface(interop.put()));
+			HWND hWnd{};
+			winrt::check_hresult(interop->get_WindowHandle(&hWnd));
+
+			MONITORINFO mi;
+			HMONITOR monitor = monitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST);
+			mi.cbSize = sizeof(mi);
+
+			if (getMonitorInfoW(monitor, &mi))
+			{
+				return winrt::Windows::Foundation::Rect(mi.rcWork.left, mi.rcWork.top, mi.rcWork.right - mi.rcWork.left, mi.rcWork.bottom - mi.rcWork.top);
+			}
+		}
+
+		return winrt::Windows::Foundation::Rect();
 	}
 }

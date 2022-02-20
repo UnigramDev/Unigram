@@ -9,6 +9,8 @@ namespace winrt::Unigram::Native::implementation
     struct ScreenshotManager : ScreenshotManagerT<ScreenshotManager>
     {
         static winrt::Windows::UI::Xaml::Media::ImageSource Capture();
+
+        static winrt::Windows::Foundation::Rect GetWorkingArea();
     };
 }
 
