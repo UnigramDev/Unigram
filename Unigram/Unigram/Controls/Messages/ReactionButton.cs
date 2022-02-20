@@ -4,6 +4,7 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.ViewModels;
+using Windows.Foundation;
 using Windows.Graphics.Display;
 using Windows.System;
 using Windows.UI.Xaml.Controls;
@@ -249,7 +250,7 @@ namespace Unigram.Controls.Messages
                 centerView.Width = 32;
                 centerView.Height = 32;
                 centerView.IsLoopingEnabled = false;
-                centerView.FrameSize = new Windows.Graphics.SizeInt32 { Width = 32, Height = 32 };
+                centerView.FrameSize = new Size(32, 32);
                 centerView.DecodeFrameType = DecodePixelType.Logical;
                 centerView.Source = UriEx.ToLocal(center.Local.Path);
                 centerView.FirstFrameRendered += (s, args) =>
@@ -269,7 +270,7 @@ namespace Unigram.Controls.Messages
                 aroundView.Width = 32 * 3;
                 aroundView.Height = 32 * 3;
                 aroundView.IsLoopingEnabled = false;
-                aroundView.FrameSize = new Windows.Graphics.SizeInt32 { Width = 32 * 3, Height = 32 * 3 };
+                aroundView.FrameSize = new Size(32 * 3, 32 * 3);
                 aroundView.DecodeFrameType = DecodePixelType.Logical;
                 aroundView.Source = UriEx.ToLocal(around.Local.Path);
                 aroundView.PositionChanged += (s, args) =>

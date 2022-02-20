@@ -75,7 +75,7 @@ namespace Unigram.Controls
         {
             OnSourceChanged(UriToPath(Source), _source);
         }
-        
+
         protected override void Dispose()
         {
             if (_animation != null)
@@ -141,7 +141,7 @@ namespace Unigram.Controls
         protected override void NextFrame()
         {
             var animation = _animation;
-            if (animation == null || animation.IsCaching || _canvas == null || _bitmap == null || _unloaded)
+            if (animation == null || animation.IsCaching || _bitmap == null || _unloaded)
             {
                 return;
             }
@@ -152,6 +152,7 @@ namespace Unigram.Controls
             animation.RenderSync(_bitmap, index);
 
             IndexChanged?.Invoke(this, index);
+            PositionChanged?.Invoke(this, Math.Min(1, Math.Max(0, (double)index / (_animationTotalFrame - 1))));
 
             if (_hideThumbnail == null)
             {
@@ -160,7 +161,7 @@ namespace Unigram.Controls
 
             if (_backward)
             {
-                if (index - framesPerUpdate > 0)
+                if (index - framesPerUpdate >= 0)
                 {
                     _index -= framesPerUpdate;
                 }
@@ -180,7 +181,6 @@ namespace Unigram.Controls
                 if (index + framesPerUpdate < _animationTotalFrame)
                 {
                     _index += framesPerUpdate;
-                    PositionChanged?.Invoke(this, Math.Min(1, Math.Max(0, (double)(index + 1) / _animationTotalFrame)));
                 }
                 else
                 {
@@ -192,8 +192,6 @@ namespace Unigram.Controls
                     {
                         _index = 0;
                     }
-
-                    PositionChanged?.Invoke(this, 1);
                 }
             }
         }
@@ -211,11 +209,12 @@ namespace Unigram.Controls
                 return;
             }
 
-            _index = (int)Math.Min(_animation.TotalFrame - 1, Math.Ceiling(_animation.TotalFrame * position));
+            _index = (int)Math.Min(_animation.TotalFrame - 1, Math.Ceiling((_animation.TotalFrame - 1) * position));
         }
 
-        public int Ciccio => _animation.TotalFrame;
         public int Index => _index == int.MaxValue ? 0 : _index;
+
+        public double Offset => _index == int.MaxValue ? 0 : (double)_index / (_animation.TotalFrame - 1);
 
         private void OnSourceChanged(Uri newValue, Uri oldValue)
         {
@@ -397,18 +396,18 @@ namespace Unigram.Controls
 
         #region FrameSize
 
-        public SizeInt32 FrameSize
+        public Size FrameSize
         {
-            get => (SizeInt32)GetValue(FrameSizeProperty);
+            get => (Size)GetValue(FrameSizeProperty);
             set => SetValue(FrameSizeProperty, value);
         }
 
         public static readonly DependencyProperty FrameSizeProperty =
-            DependencyProperty.Register("FrameSize", typeof(SizeInt32), typeof(LottieView), new PropertyMetadata(new SizeInt32 { Width = 256, Height = 256 }, OnFrameSizeChanged));
+            DependencyProperty.Register("FrameSize", typeof(Size), typeof(LottieView), new PropertyMetadata(new Size(256, 256), OnFrameSizeChanged));
 
         private static void OnFrameSizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((LottieView)d).OnFrameSizeChanged((SizeInt32)e.NewValue, ((LottieView)d)._decodeFrameType);
+            ((LottieView)d).OnFrameSizeChanged((Size)e.NewValue, ((LottieView)d)._decodeFrameType);
         }
 
         #endregion
@@ -433,13 +432,22 @@ namespace Unigram.Controls
 
         private void OnFrameSizeChanged(SizeInt32 frameSize, DecodePixelType decodeFrameType)
         {
+            OnFrameSizeChanged(new Size(frameSize.Width, frameSize.Height), decodeFrameType);
+        }
+
+        private void OnFrameSizeChanged(Size frameSize, DecodePixelType decodeFrameType)
+        {
             if (decodeFrameType == DecodePixelType.Logical)
             {
                 // TODO: subscribe for DPI changed event
                 var dpi = DisplayInformation.GetForCurrentView().LogicalDpi / 96.0f;
 
                 _decodeFrameType = decodeFrameType;
-                _logicalSize = frameSize;
+                _logicalSize = new SizeInt32
+                {
+                    Width = (int)frameSize.Width,
+                    Height = (int)frameSize.Height
+                };
                 _frameSize = new SizeInt32
                 {
                     Width = (int)(frameSize.Width * dpi),
@@ -449,8 +457,16 @@ namespace Unigram.Controls
             else
             {
                 _decodeFrameType = decodeFrameType;
-                _logicalSize = frameSize;
-                _frameSize = frameSize;
+                _logicalSize = new SizeInt32
+                {
+                    Width = (int)frameSize.Width,
+                    Height = (int)frameSize.Height
+                };
+                _frameSize = new SizeInt32
+                {
+                    Width = (int)frameSize.Width,
+                    Height = (int)frameSize.Height
+                };
             }
         }
 

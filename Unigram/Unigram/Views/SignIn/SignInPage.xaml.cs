@@ -23,7 +23,7 @@ namespace Unigram.Views.SignIn
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<SignInViewModel, ISignInDelegate>(this);
 
-            TokenPlaceholder.FrameSize = new Windows.Graphics.SizeInt32 { Width = 259, Height = 259 };
+            TokenPlaceholder.FrameSize = new Size(259, 259);
             TokenPlaceholder.DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical;
 
             Diagnostics.Text = $"Unigram " + SettingsPage.GetVersion();

@@ -3,6 +3,7 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Supergroups;
+using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -31,7 +32,7 @@ namespace Unigram.Views.Supergroups
             var player = element.FindName("Player") as LottieView;
             if (player != null)
             {
-                player.FrameSize = new Windows.Graphics.SizeInt32 { Width = 48, Height = 48 };
+                player.FrameSize = new Size(48, 48);
 
                 var file = reaction.Reaction.CenterAnimation.StickerValue;
                 if (file.Local.IsDownloadingCompleted)

@@ -4,6 +4,7 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services;
 using Unigram.ViewModels;
+using Windows.Foundation;
 using Windows.System;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -227,7 +228,7 @@ namespace Unigram.Controls.Messages.Content
                 player.IsFlipped = !message.IsOutgoing;
                 player.IsLoopingEnabled = false;
                 player.IsHitTestVisible = false;
-                player.FrameSize = new Windows.Graphics.SizeInt32 { Width = 512, Height = 512 };
+                player.FrameSize = new Size(512, 512);
                 player.Source = UriEx.ToLocal(interaction.StickerValue.Local.Path);
                 player.PositionChanged += (s, args) =>
                 {

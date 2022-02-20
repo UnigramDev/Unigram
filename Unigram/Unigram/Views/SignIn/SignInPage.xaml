@@ -19,13 +19,12 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="Transparent">
         <Grid.RowDefinitions>
             <RowDefinition common:TitleBar.IsAttached="True" />
             <RowDefinition Height="{ThemeResource AppBarThemeCompactHeight}" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <Border Background="{ThemeResource PageTitleBackgroundBrush}" />
 
         <StackPanel x:Name="PhonePanel"
                     VerticalAlignment="Center"
@@ -56,6 +55,7 @@
                            Grid.Row="1" />
                 <TextBlock Text="{CustomResource StartText}"
                            Style="{StaticResource BodyTextBlockStyle}"
+                           TextAlignment="Center"
                            Padding="0,8,0,16"
                            Grid.Row="2" />
 
@@ -137,9 +137,10 @@
                         Margin="0,12,0,0">
                 <TextBlock Text="{CustomResource lng_intro_qr_title}"
                            Style="{StaticResource TitleTextBlockStyle}"
-                           TextAlignment="Center"/>
+                           TextAlignment="Center" />
 
-                <Grid Margin="0,8,0,0">
+                <Grid HorizontalAlignment="Center"
+                      Margin="0,8,0,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition />
