@@ -22,6 +22,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Point = Windows.Foundation.Point;
+using User = Telegram.Td.Api.User;
 
 namespace Unigram.Common
 {
@@ -261,6 +262,10 @@ namespace Unigram.Common
             else if (response is InternalLinkTypeUnknownDeepLink)
             {
                 NavigateToUnknownDeepLink(protoService, uri.ToString());
+            }
+            else if (response is InternalLinkTypeUserPhoneNumber phoneNumber)
+            {
+                NavigateToPhoneNumber(protoService, navigation, phoneNumber.PhoneNumber);
             }
             else if (response is InternalLinkTypeVideoChat videoChat)
             {
@@ -527,6 +532,27 @@ namespace Unigram.Common
         public static async void NavigateToStickerSet(string text)
         {
             await StickerSetPopup.GetForCurrentView().ShowAsync(text);
+        }
+        
+        public static async void NavigateToPhoneNumber(IProtoService protoService, INavigationService navigation, string phoneNumber)
+        {
+            var response = await protoService.SendAsync(new SearchUserByPhoneNumber(phoneNumber));
+            if (response is User user)
+            {
+                var chat = await protoService.SendAsync(new CreatePrivateChat(user.Id, false)) as Chat;
+                if (chat != null)
+                {
+                    navigation.Navigate(typeof(ProfilePage), chat.Id);
+                }
+                else
+                {
+                    await MessagePopup.ShowAsync(Strings.Resources.NoUsernameFound, Strings.Resources.AppName, Strings.Resources.OK);
+                }
+            }
+            else
+            {
+                await MessagePopup.ShowAsync(Strings.Resources.NoUsernameFound, Strings.Resources.AppName, Strings.Resources.OK);
+            }
         }
 
         public static async void NavigateToUsername(IProtoService protoService, INavigationService navigation, string username, string accessToken, string videoChat, string post, string comment, string game, PageKind kind = PageKind.Dialog)
