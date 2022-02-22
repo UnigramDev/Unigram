@@ -126,6 +126,7 @@
     <Compile Include="Assets\Icons\AskQ.cs" />
     <Compile Include="Assets\Icons\Data.cs" />
     <Compile Include="Assets\Icons\Devices.cs" />
+    <Compile Include="Assets\Icons\Downloading.cs" />
     <Compile Include="Assets\Icons\FAQ.cs" />
     <Compile Include="Assets\Icons\Folders.cs" />
     <Compile Include="Assets\Icons\Info.cs" />
@@ -316,6 +317,7 @@
       <DependentUpon>CountryBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\DiceView.cs" />
+    <Compile Include="Controls\DownloadHistoryButton.cs" />
     <Compile Include="Controls\Drawers\AnimationDrawer.xaml.cs">
       <DependentUpon>AnimationDrawer.xaml</DependentUpon>
     </Compile>
