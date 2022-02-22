@@ -513,7 +513,101 @@
         </Setter>
     </Style>
 
+    <Style TargetType="local:DownloadHistoryButton">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:DownloadHistoryButton">
+                    <Grid x:Name="ButtonLayoutGrid"
+                          BorderBrush="{ThemeResource TextControlButtonBorderBrush}"
+                          BorderThickness="{TemplateBinding BorderThickness}"
+                          Background="{ThemeResource TextControlButtonBackground}"
+                          contract7Present:BackgroundSizing="{TemplateBinding BackgroundSizing}"
+                          contract7Present:CornerRadius="{StaticResource ControlCornerRadius}"
+                          contract7NotPresent:CornerRadius="{Binding Source={ThemeResource ControlCornerRadius}, Converter={StaticResource RightCornerRadiusFilterConverter}}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
 
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <!--<ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid"
+                                                                       Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource TextControlButtonBackgroundPointerOver}" />
+                                        </ObjectAnimationUsingKeyFrames>-->
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid"
+                                                                       Storyboard.TargetProperty="BorderBrush">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource TextControlButtonBorderBrushPointerOver}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GlyphElement"
+                                                                       Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource TextControlButtonForegroundPointerOver}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <!--<ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid"
+                                                                       Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource TextControlButtonBackgroundPressed}" />
+                                        </ObjectAnimationUsingKeyFrames>-->
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid"
+                                                                       Storyboard.TargetProperty="BorderBrush">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource TextControlButtonBorderBrushPressed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GlyphElement"
+                                                                       Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource TextControlButtonForegroundPressed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+
+                                <VisualState x:Name="Disabled">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="ButtonLayoutGrid"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="0"
+                                                         Duration="0" />
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Border x:Name="Target"
+                                Width="24"
+                                Height="24" />
+
+                        <local:ProgressBarRing x:Name="Progress"
+                                               Value="{TemplateBinding Progress}"
+                                               Foreground="{ThemeResource TelegramForegroundAccentBrush}"
+                                               Background="Transparent"
+                                               ShrinkOut="False"
+                                               Thickness="1.5"
+                                               Radius="9.25"
+                                               Center="12"
+                                               Width="24"
+                                               Height="24" />
+
+                        <TextBlock x:Name="GlyphElement"
+                                   Visibility="Collapsed"
+                                   Foreground="{ThemeResource TextControlButtonForeground}"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   FontStyle="Normal"
+                                   FontSize="{ThemeResource TextBoxIconFontSize}"
+                                   Text="&#xE10A;"
+                                   FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                   AutomationProperties.AccessibilityView="Raw" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
     <Style TargetType="messages:MessageService">
         <Setter Property="Background"
