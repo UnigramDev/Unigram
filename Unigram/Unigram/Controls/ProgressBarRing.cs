@@ -57,7 +57,7 @@ namespace Unigram.Controls
             animations[nameof(CompositionGeometry.TrimStart)] = trimStart;
             animations[nameof(CompositionGeometry.TrimEnd)] = trimEnd;
 
-            ellipse.ImplicitAnimations = animations;
+            //ellipse.ImplicitAnimations = animations;
             //visual.StartAnimation("IsVisible", visibility);
             //visual.StartAnimation("RotationAngleInDegrees", forever);
 
@@ -84,7 +84,11 @@ namespace Unigram.Controls
         public double Radius { get; set; } = 21;
         public double Center { get; set; } = 24;
 
+        public double Thickness { get; set; } = 2;
+
         public bool Spin { get; set; } = true;
+
+        public bool ShrinkOut { get; set; } = true;
 
         protected override void OnApplyTemplate()
         {
@@ -92,6 +96,7 @@ namespace Unigram.Controls
             _ellipse.Center = new Vector2((float)Center);
 
             _shape.CenterPoint = new Vector2((float)Center);
+            _shape.StrokeThickness = (float)Thickness;
 
             _visual.Size = new Vector2((float)Center * 2);
             _visual.CenterPoint = new Vector3((float)Center);
@@ -150,24 +155,54 @@ namespace Unigram.Controls
                         _visual.StartAnimation("RotationAngleInDegrees", _foreverAnimation);
                     }
                 }
-                else if (_spinning)
-                {
-                    _spinning = false;
-                    _visual.StopAnimation("RotationAngleInDegrees");
-                }
+                //else if (_spinning)
+                //{
+                //    _spinning = false;
+                //    _visual.StopAnimation("RotationAngleInDegrees");
+                //}
             }
 
             if (_ellipse != null)
             {
+                var linear = Window.Current.Compositor.CreateLinearEasingFunction();
+                var trimStart = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                var trimEnd = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+
                 if (newValue < 1)
                 {
-                    _ellipse.TrimStart = 0;
-                    _ellipse.TrimEnd = MathF.Max(0, MathF.Min(1, (float)newValue));
+                    //_ellipse.TrimStart = 0;
+                    //_ellipse.TrimEnd = MathF.Max(0, MathF.Min(1, (float)newValue));
+
+                    trimStart.InsertKeyFrame(1, 0, linear);
+                    trimEnd.InsertKeyFrame(1, MathF.Max(0, MathF.Min(1, (float)newValue)), linear);
+
+                    _ellipse.StartAnimation("TrimStart", trimStart);
+                    _ellipse.StartAnimation("TrimEnd", trimEnd);
                 }
                 else
                 {
-                    _ellipse.TrimStart = 1;
-                    _ellipse.TrimEnd = 1;
+                    //_ellipse.TrimStart = 1;
+                    //_ellipse.TrimEnd = 1;
+
+                    trimStart.InsertKeyFrame(1, ShrinkOut ? 1 : 0, linear);
+                    trimEnd.InsertKeyFrame(1, 1, linear);
+
+                    var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+                    batch.Completed += (s, args) =>
+                    {
+                        if (_foreverAnimation != null && _spinning)
+                        {
+                            _spinning = false;
+                            _visual.StopAnimation("RotationAngleInDegrees");
+                        }
+
+                        Completed?.Invoke(this, EventArgs.Empty);
+                    };
+
+                    _ellipse.StartAnimation("TrimStart", trimStart);
+                    _ellipse.StartAnimation("TrimEnd", trimEnd);
+
+                    batch.End();
                 }
             }
 
@@ -180,5 +215,7 @@ namespace Unigram.Controls
             //    Visibility = Visibility.Visible;
             //}
         }
+
+        public event EventHandler Completed;
     }
 }

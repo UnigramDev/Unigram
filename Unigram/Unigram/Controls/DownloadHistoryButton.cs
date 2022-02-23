@@ -62,12 +62,6 @@ namespace Unigram.Controls
             visual.RootVisual.Properties.StartAnimation("Progress", progressAnimation);
 
             ActualThemeChanged += OnActualThemeChanged;
-            Click += OnClick;
-        }
-
-        private void OnClick(object sender, RoutedEventArgs e)
-        {
-            Progress = Progress == 1 ? 0 : Progress + 0.25;
         }
 
         protected override void OnApplyTemplate()

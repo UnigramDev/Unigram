@@ -506,6 +506,15 @@
                                                       Style="{StaticResource HeaderGlyphButtonStyle}"
                                                       AutomationProperties.Name="{CustomResource AccDescrPasscodeLock}"
                                                       ToolTipService.ToolTip="{CustomResource AccDescrPasscodeLock}" />
+
+                                <controls:DownloadHistoryButton x:Name="Downloads"
+                                                                Click="Downloads_Click"
+                                                                AutomationProperties.Name="{CustomResource DownloadsTabs}"
+                                                                ToolTipService.ToolTip="{CustomResource DownloadsTabs}"
+                                                                HorizontalAlignment="Center"
+                                                                VerticalAlignment="Center"
+                                                                Width="40"
+                                                                Height="40" />
                             </StackPanel>
                         </Grid>
 
