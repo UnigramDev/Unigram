@@ -2063,7 +2063,7 @@ namespace Unigram.Views
                 flyout.Items.RemoveAt(flyout.Items.Count - 1);
             }
 
-            if (element is MessageBubble bubble && args.TryGetPosition(Window.Current.Content, out Point absolute))
+            if (element is MessageBubble bubble && selected.Count == 0 && args.TryGetPosition(Window.Current.Content, out Point absolute))
             {
                 flyout.Opened += async (s, args) =>
                 {
