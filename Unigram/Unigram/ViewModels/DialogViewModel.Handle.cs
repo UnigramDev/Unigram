@@ -785,7 +785,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        private async void Handle(long messageId, Action<MessageViewModel> update, Action<MessageBubble, MessageViewModel> action = null)
+        private void Handle(long messageId, Action<MessageViewModel> update, Action<MessageBubble, MessageViewModel> action = null)
         {
             var field = ListField;
             if (field == null)
@@ -793,30 +793,30 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            using (await _loadMoreLock.WaitAsync())
+            BeginOnUIThread(async () =>
             {
-                for (int i = 0; i < Items.Count; i++)
+                using (await _loadMoreLock.WaitAsync())
                 {
-                    var message = Items[i];
-                    if (message.Content is MessageAlbum album)
+                    for (int i = 0; i < Items.Count; i++)
                     {
-                        var found = false;
-
-                        if (album.Messages.TryGetValue(messageId, out MessageViewModel child))
+                        var message = Items[i];
+                        if (message.Content is MessageAlbum album)
                         {
-                            update?.Invoke(child);
-                            found = true;
+                            var found = false;
 
-                            message.UpdateWith(album.Messages[0]);
-                            album.Invalidate();
-
-                            if (action == null)
+                            if (album.Messages.TryGetValue(messageId, out MessageViewModel child))
                             {
-                                break;
-                            }
+                                update?.Invoke(child);
+                                found = true;
 
-                            BeginOnUIThread(() =>
-                            {
+                                message.UpdateWith(album.Messages[0]);
+                                album.Invalidate();
+
+                                if (action == null)
+                                {
+                                    break;
+                                }
+
                                 var container = field.ContainerFromItem(message) as ListViewItem;
                                 if (container == null)
                                 {
@@ -834,26 +834,23 @@ namespace Unigram.ViewModels
                                 {
                                     action(bubble, message);
                                 }
-                            });
+                            }
+
+                            if (found)
+                            {
+                                return;
+                            }
                         }
 
-                        if (found)
+                        if (message.Id == messageId)
                         {
-                            return;
-                        }
-                    }
+                            update?.Invoke(message);
 
-                    if (message.Id == messageId)
-                    {
-                        update?.Invoke(message);
+                            if (action == null)
+                            {
+                                return;
+                            }
 
-                        if (action == null)
-                        {
-                            return;
-                        }
-
-                        BeginOnUIThread(() =>
-                        {
                             var container = field.ContainerFromItem(message) as ListViewItem;
                             if (container == null)
                             {
@@ -870,10 +867,10 @@ namespace Unigram.ViewModels
                             {
                                 action(bubble, message);
                             }
-                        });
+                        }
                     }
                 }
-            }
+            });
         }
 
         private void Handle(long messageId, Action<MessageViewModel> update, Action<MessageBubble, MessageViewModel, bool> action)
