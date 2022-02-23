@@ -1,17 +1,17 @@
-﻿<UserControl
-    x:Class="Unigram.Controls.ProfileHeader"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Unigram.Controls"
-    xmlns:controls="using:Unigram.Controls"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+﻿<UserControl x:Class="Unigram.Controls.ProfileHeader"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:Unigram.Controls"
+             xmlns:controls="using:Unigram.Controls"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <StackPanel>
         <controls:HeaderedControl>
-            <Grid x:Name="HeaderPanel">
+            <Grid x:Name="HeaderPanel"
+                  BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -91,13 +91,6 @@
                 </Border>
             </Grid>
 
-            <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}"
-                       Height="1"
-                       Margin="12,0,0,0" />
-
-            <!--</controls:HeaderedControl>
-                        
-                    <controls:HeaderedControl>-->
             <controls:BadgeButton x:Name="Description"
                                   Visibility="Collapsed"
                                   Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
@@ -189,7 +182,8 @@
                 </Button.ContextFlyout>
             </controls:BadgeButton>
 
-            <Grid x:Name="NotificationsPanel">
+            <Grid x:Name="NotificationsPanel"
+                  BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="48" />
                     <ColumnDefinition />

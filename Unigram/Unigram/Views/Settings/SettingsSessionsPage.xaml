@@ -9,8 +9,6 @@
                   mc:Ignorable="d">
 
     <Page.Resources>
-        <x:Boolean x:Key="ListViewBaseItemRoundedChromeEnabled">False</x:Boolean>
-
         <CollectionViewSource x:Name="ItemsSource"
                               Source="{x:Bind ViewModel.Items}"
                               IsSourceGrouped="True" />
@@ -21,11 +19,11 @@
     </local:HostedPage.Header>
 
     <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
-        <controls:TextListView ItemsSource="{x:Bind ItemsSource.View}"
-                               IsItemClickEnabled="True"
-                               SelectionMode="None"
-                               ContainerContentChanging="OnContainerContentChanging"
-                               ItemClick="ListView_ItemClick">
+        <controls:TableListView ItemsSource="{x:Bind ItemsSource.View}"
+                                IsItemClickEnabled="True"
+                                SelectionMode="None"
+                                ContainerContentChanging="OnContainerContentChanging"
+                                ItemClick="ListView_ItemClick">
             <ListView.GroupStyle>
                 <GroupStyle>
                     <GroupStyle.HeaderContainerStyle>
@@ -54,13 +52,12 @@
                                            Visibility="{Binding Key.Footer, Converter={StaticResource NullToVisibilityConverter}}"
                                            Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                                            Style="{StaticResource CaptionTextBlockStyle}"
-                                           Margin="12,8,12,8" />
+                                           Margin="0,8,0,8" />
 
                                 <TextBlock Text="{Binding Key.Title}"
-                                           Foreground="{ThemeResource TelegramForegroundAccentBrush}"
-                                           Style="{StaticResource CaptionTextBlockStyle}"
+                                           Style="{StaticResource BaseTextBlockStyle}"
                                            FontWeight="SemiBold"
-                                           Margin="12,16,12,8" />
+                                           Margin="0,16,0,8" />
                             </StackPanel>
                         </DataTemplate>
                     </GroupStyle.HeaderTemplate>
@@ -71,10 +68,6 @@
                     <controls:HeaderedControl Header="{CustomResource CurrentSession}"
                                               Footer="{CustomResource ClearOtherSessionsHelp}">
                         <cells:SessionCell Session="{x:Bind ViewModel.Current, Mode=OneWay}" />
-
-                        <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}"
-                                   Height="1"
-                                   Margin="12,0,0,0" />
 
                         <controls:BadgeButton Content="{CustomResource TerminateAllSessions}"
                                               Foreground="Red"
@@ -87,39 +80,32 @@
                     <cells:SessionCell />
                 </DataTemplate>
             </ListView.ItemTemplate>
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem"
-                       BasedOn="{StaticResource DefaultListViewItemStyle}">
-                    <Setter Property="Background"
-                            Value="{ThemeResource ApplicationPageBackgroundThemeBrush}" />
-                    <Setter Property="HorizontalContentAlignment"
-                            Value="Stretch" />
-                    <Setter Property="MaxWidth"
-                            Value="640" />
-                    <Setter Property="BorderThickness"
-                            Value="0" />
-                </Style>
-            </ListView.ItemContainerStyle>
             <ListView.Footer>
-                <StackPanel Margin="0,0,0,24">
+                <StackPanel Margin="0,0,0,32">
                     <Border MaxWidth="640">
                         <TextBlock Text="{CustomResource SessionsListInfo}"
                                    Style="{StaticResource InfoCaptionTextBlockStyle}"
-                                   Margin="12,8,12,8" />
+                                   Margin="0,8,0,8" />
                     </Border>
 
                     <controls:HeaderedControl Header="{CustomResource TerminateOldSessionHeader}">
-                        <controls:BadgeButton Content="{CustomResource IfInactiveFor}"
-                                              Badge="{x:Bind ConvertTtl(ViewModel.InactiveSessionTtlDays), Mode=OneWay}"
-                                              Command="{x:Bind ViewModel.SetInactiveSessionTtlCommand}" />
+                        <controls:BadgeButton Content="{CustomResource IfInactiveFor}">
+                            <controls:BadgeButton.Badge>
+                                <ComboBox ItemsSource="{x:Bind ViewModel.SessionTtlOptions}"
+                                          SelectedIndex="{x:Bind ViewModel.SessionTtl, Mode=TwoWay}"
+                                          DisplayMemberPath="Text"/>
+                            </controls:BadgeButton.Badge>
+                        </controls:BadgeButton>
                     </controls:HeaderedControl>
                 </StackPanel>
             </ListView.Footer>
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <ItemsStackPanel AreStickyGroupHeadersEnabled="False" />
+                    <ItemsStackPanel AreStickyGroupHeadersEnabled="False"
+                                     MaxWidth="640"
+                                     Margin="12,0" />
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
-        </controls:TextListView>
+        </controls:TableListView>
     </Grid>
 </local:HostedPage>

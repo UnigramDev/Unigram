@@ -24,8 +24,6 @@ namespace Unigram.ViewModels.Settings
 
             TerminateCommand = new RelayCommand<Session>(TerminateExecute);
             TerminateOthersCommand = new RelayCommand(TerminateOtherExecute);
-            
-            SetInactiveSessionTtlCommand = new RelayCommand(SetInactiveSessionTtlExecute);
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -41,19 +39,57 @@ namespace Unigram.ViewModels.Settings
         //    });
         //}
 
-        private int _inactiveSessionTtlDays;
-        public int InactiveSessionTtlDays
+        private int _sessionTtl;
+        public int SessionTtl
         {
-            get => _inactiveSessionTtlDays;
-            set => Set(ref _inactiveSessionTtlDays, value);
+            get => Array.IndexOf(_sessionTtlIndexer, _sessionTtl);
+            set
+            {
+                if (value >= 0 && value < _sessionTtlIndexer.Length && _sessionTtl != _sessionTtlIndexer[value])
+                {
+                    ProtoService.SendAsync(new SetInactiveSessionTtl(_sessionTtl = _sessionTtlIndexer[value]));
+                    RaisePropertyChanged();
+                }
+            }
         }
+
+        private readonly int[] _sessionTtlIndexer = new[]
+        {
+            30,
+            90,
+            180,
+            365
+        };
+
+        public List<SettingsOptionItem<int>> SessionTtlOptions => new List<SettingsOptionItem<int>>
+        {
+            new SettingsOptionItem<int>(7, Locale.Declension("Weeks", 1)),
+            new SettingsOptionItem<int>(30, Locale.Declension("Months", 1)),
+            new SettingsOptionItem<int>(90, Locale.Declension("Months", 3)),
+            new SettingsOptionItem<int>(180, Locale.Declension("Months", 6)),
+        };
+
 
         private async Task UpdateSessionsAsync()
         {
             var response = await ProtoService.SendAsync(new GetActiveSessions());
             if (response is Sessions sessions)
             {
-                InactiveSessionTtlDays = sessions.InactiveSessionTtlDays;
+                int? period = null;
+
+                var max = 2147483647;
+                foreach (var days in _sessionTtlIndexer)
+                {
+                    int abs = Math.Abs(sessions.InactiveSessionTtlDays - days);
+                    if (abs < max)
+                    {
+                        max = abs;
+                        period = days;
+                    }
+                }
+
+                _sessionTtl = period ?? _sessionTtlIndexer[2];
+                RaisePropertyChanged(nameof(SessionTtl));
 
                 var results = new List<Session>();
                 var pending = new List<Session>();
@@ -160,63 +196,6 @@ namespace Unigram.ViewModels.Settings
                 else if (response is Error error)
                 {
                     Logs.Logger.Error(Logs.LogTarget.API, "auth.resetAuthotizations error " + error);
-                }
-            }
-        }
-
-        public RelayCommand SetInactiveSessionTtlCommand { get; }
-        private async void SetInactiveSessionTtlExecute()
-        {
-            SelectRadioItem GetSelectedPeriod(SelectRadioItem[] periods, SelectRadioItem defaultPeriod)
-            {
-                if (_inactiveSessionTtlDays == 0)
-                {
-                    return defaultPeriod;
-                }
-
-                SelectRadioItem period = null;
-
-                var max = 2147483647;
-                foreach (var current in periods)
-                {
-                    var days = (int)current.Value;
-                    int abs = Math.Abs(_inactiveSessionTtlDays - days);
-                    if (abs < max)
-                    {
-                        max = abs;
-                        period = current;
-                    }
-                }
-
-                return period ?? defaultPeriod;
-            };
-
-            var items = new[]
-            {
-                new SelectRadioItem(7, Locale.Declension("Weeks", 1), false),
-                new SelectRadioItem(30, Locale.Declension("Months", 1), false),
-                new SelectRadioItem(90, Locale.Declension("Months", 3), false),
-                new SelectRadioItem(180, Locale.Declension("Months", 6), false)
-            };
-
-            var selected = GetSelectedPeriod(items, items[2]);
-            if (selected != null)
-            {
-                selected.IsChecked = true;
-            }
-
-            var dialog = new ChooseRadioPopup(items);
-            dialog.Title = Strings.Resources.SessionsSelfDestruct;
-            dialog.PrimaryButtonText = Strings.Resources.OK;
-            dialog.SecondaryButtonText = Strings.Resources.Cancel;
-
-            var confirm = await dialog.ShowQueuedAsync();
-            if (confirm == ContentDialogResult.Primary && dialog.SelectedIndex is int days)
-            {
-                var response = await ProtoService.SendAsync(new SetInactiveSessionTtl(days));
-                if (response is Ok)
-                {
-                    InactiveSessionTtlDays = days;
                 }
             }
         }

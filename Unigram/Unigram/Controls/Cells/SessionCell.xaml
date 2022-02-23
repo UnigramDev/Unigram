@@ -7,7 +7,9 @@
       mc:Ignorable="d"
       d:DesignHeight="300"
       d:DesignWidth="400"
-      Padding="12,8,0,12">
+      Padding="12,8,0,12"
+      Background="{ThemeResource SettingsItemBackground}"
+      BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
 
     <Grid.RowDefinitions>
         <RowDefinition Height="Auto" />

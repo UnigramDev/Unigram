@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -24,7 +25,6 @@ namespace Unigram.ViewModels.Settings
             AutoDownloadCommand = new RelayCommand<AutoDownloadType>(AutoDownloadExecute);
             ResetAutoDownloadCommand = new RelayCommand(ResetAutoDownloadExecute);
             StoragePathCommand = new RelayCommand<bool>(StoragePathExecute);
-            UseLessDataCommand = new RelayCommand(UseLessDataExecute);
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -32,15 +32,33 @@ namespace Unigram.ViewModels.Settings
             return Task.CompletedTask;
         }
 
-        public VoipDataSaving UseLessData
+        public int UseLessData
         {
-            get => Settings.UseLessData;
+            get => Array.IndexOf(_useLessDataIndexer, Settings.UseLessData);
             set
             {
-                Settings.UseLessData = value;
-                RaisePropertyChanged();
+                if (Settings.UseLessData != _useLessDataIndexer[value])
+                {
+                    Settings.UseLessData = _useLessDataIndexer[value];
+                    RaisePropertyChanged();
+                }
             }
         }
+
+        private readonly VoipDataSaving[] _useLessDataIndexer = new[]
+        {
+            VoipDataSaving.Never,
+            VoipDataSaving.Mobile,
+            VoipDataSaving.Always
+        };
+
+        public List<SettingsOptionItem<VoipDataSaving>> UseLessDataOptions => new List<SettingsOptionItem<VoipDataSaving>>
+        {
+            new SettingsOptionItem<VoipDataSaving>(VoipDataSaving.Never, Strings.Resources.UseLessDataNever),
+            new SettingsOptionItem<VoipDataSaving>(VoipDataSaving.Mobile, Strings.Resources.UseLessDataOnMobile),
+            new SettingsOptionItem<VoipDataSaving>(VoipDataSaving.Always, Strings.Resources.UseLessDataAlways),
+        };
+
 
         public Services.Settings.AutoDownloadSettings AutoDownload => Settings.AutoDownload;
 
@@ -92,28 +110,6 @@ namespace Unigram.ViewModels.Settings
             {
                 Settings.FilesDirectory = value;
                 RaisePropertyChanged();
-            }
-        }
-
-        public RelayCommand UseLessDataCommand { get; }
-        private async void UseLessDataExecute()
-        {
-            var items = new[]
-            {
-                new SelectRadioItem(VoipDataSaving.Never, Strings.Resources.UseLessDataNever, UseLessData == VoipDataSaving.Never),
-                new SelectRadioItem(VoipDataSaving.Mobile, Strings.Resources.UseLessDataOnMobile, UseLessData == VoipDataSaving.Mobile),
-                new SelectRadioItem(VoipDataSaving.Always, Strings.Resources.UseLessDataAlways, UseLessData == VoipDataSaving.Always),
-            };
-
-            var dialog = new ChooseRadioPopup(items);
-            dialog.Title = Strings.Resources.VoipUseLessData;
-            dialog.PrimaryButtonText = Strings.Resources.OK;
-            dialog.SecondaryButtonText = Strings.Resources.Cancel;
-
-            var confirm = await dialog.ShowQueuedAsync();
-            if (confirm == ContentDialogResult.Primary && dialog.SelectedIndex is VoipDataSaving index)
-            {
-                UseLessData = index;
             }
         }
 

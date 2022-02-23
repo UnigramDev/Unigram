@@ -25,14 +25,18 @@
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
             <StackPanel Margin="0,0,0,48">
+                <controls:LottieView Source="ms-appx:///Assets/Animations/Passcode.tgs"
+                                     IsLoopingEnabled="True"
+                                     IsCachingEnabled="False"
+                                     Width="140"
+                                     Height="140"
+                                     Margin="0,24,0,8" />
+
                 <controls:HeaderedControl Footer="{CustomResource ChangePasscodeInfo}">
                     <CheckBox IsChecked="{x:Bind ViewModel.IsEnabled, Mode=OneWay}"
                               Command="{x:Bind ViewModel.ToggleCommand}"
                               Content="{CustomResource Passcode}"
-                              Margin="12,6,12,0" />
-                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}"
-                               Height="1"
-                               Margin="12,6,0,0" />
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
 
                     <controls:BadgeButton Command="{x:Bind ViewModel.EditCommand}"
                                           IsEnabled="{x:Bind ViewModel.IsEnabled, Mode=OneWay}"
@@ -45,8 +49,7 @@
                               Visibility="Collapsed"
                               IsChecked="{x:Bind ViewModel.IsBiometricsEnabled, Mode=TwoWay}"
                               Content="{CustomResource UnlockFingerprint}"
-                              Margin="12,6,12,0" />
-                    <Rectangle Style="{StaticResource Separator}" />
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
 
                     <controls:BadgeButton Content="{CustomResource AutoLock}"
                                           Badge="{x:Bind ConvertAutolock(ViewModel.AutolockTimeout), Mode=OneWay}"

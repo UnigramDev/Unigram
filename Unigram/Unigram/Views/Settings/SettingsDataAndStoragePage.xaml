@@ -125,15 +125,29 @@
             <StackPanel Margin="0,0,0,24">
                 <controls:HeaderedControl Header="{CustomResource DataUsage}">
                     <controls:BadgeButton Content="{CustomResource StorageUsage}"
-                                          Click="Storage_Click" />
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xEB05;"
+                                          Click="Storage_Click"
+                                          IsChevronVisible="True" />
+
                     <controls:BadgeButton Content="{CustomResource NetworkUsage}"
-                                          Click="Stats_Click" />
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xE91F;"
+                                          Click="Stats_Click"
+                                          IsChevronVisible="True" />
+
+                    <!--<controls:BadgeButton Content="{CustomResource DownloadsTabs}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xE118;"
+                                          Click="Downloads_Click" />-->
 
                     <Grid>
                         <controls:BadgeButton Command="{x:Bind ViewModel.StoragePathCommand}"
                                               Content="{CustomResource StoragePath}"
                                               Badge="{x:Bind ConvertFilesDirectory(ViewModel.FilesDirectory), Mode=OneWay}"
-                                              Style="{StaticResource SubtitleBadgeButtonStyle}">
+                                              Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
+                                              Glyph="&#xF12B;"
+                                              IsChevronVisible="True">
                             <controls:BadgeButton.CommandParameter>
                                 <x:Boolean>False</x:Boolean>
                             </controls:BadgeButton.CommandParameter>
@@ -157,14 +171,15 @@
                                           Footer="{CustomResource AutoDownloadAudioInfo}">
                     <CheckBox IsChecked="{x:Bind ViewModel.AutoDownloadEnabled, Mode=TwoWay}"
                               Content="{CustomResource AutoDownloadMedia}"
-                              Margin="12,6,12,0" />
-                    <Rectangle Style="{StaticResource Separator}" />
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
 
                     <controls:BadgeButton Badge="{x:Bind ConvertAutoDownload(settings:AutoDownloadType.Photos, ViewModel.AutoDownload.Photos, 0), Mode=OneWay}"
                                           Command="{x:Bind ViewModel.AutoDownloadCommand}"
                                           IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
                                           Content="{CustomResource AutoDownloadPhotos}"
-                                          Style="{StaticResource SubtitleBadgeButtonStyle}">
+                                          Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
+                                          Glyph="&#xEB9F;"
+                                          IsChevronVisible="True">
                         <Button.CommandParameter>
                             <settings:AutoDownloadType>Photos</settings:AutoDownloadType>
                         </Button.CommandParameter>
@@ -174,7 +189,9 @@
                                           Command="{x:Bind ViewModel.AutoDownloadCommand}"
                                           IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
                                           Content="{CustomResource AutoDownloadVideos}"
-                                          Style="{StaticResource SubtitleBadgeButtonStyle}">
+                                          Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
+                                          Glyph="&#xE714;"
+                                          IsChevronVisible="True">
                         <Button.CommandParameter>
                             <settings:AutoDownloadType>Videos</settings:AutoDownloadType>
                         </Button.CommandParameter>
@@ -184,7 +201,9 @@
                                           Command="{x:Bind ViewModel.AutoDownloadCommand}"
                                           IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
                                           Content="{CustomResource AutoDownloadFiles}"
-                                          Style="{StaticResource SubtitleBadgeButtonStyle}">
+                                          Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
+                                          Glyph="&#xE7C3;"
+                                          IsChevronVisible="True">
                         <Button.CommandParameter>
                             <settings:AutoDownloadType>Documents</settings:AutoDownloadType>
                         </Button.CommandParameter>
@@ -192,38 +211,41 @@
 
                     <controls:BadgeButton Command="{x:Bind ViewModel.ResetAutoDownloadCommand}"
                                           Content="{CustomResource ResetAutomaticMediaDownload}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Foreground="Red" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="{CustomResource AutoplayMedia}">
                     <CheckBox IsChecked="{x:Bind ViewModel.IsAutoPlayAnimationsEnabled, Mode=TwoWay}"
                               Content="{CustomResource AutoplayGIF}"
-                              Margin="12,6,12,0" />
-                    <Rectangle Style="{StaticResource Separator}" />
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
 
                     <CheckBox IsChecked="{x:Bind ViewModel.IsAutoPlayVideosEnabled, Mode=TwoWay}"
                               Content="{CustomResource AutoplayVideo}"
-                              Margin="12,6,12,0" />
-                    <Rectangle Style="{StaticResource Separator}" />
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="{CustomResource Streaming}"
                                           Footer="{CustomResource EnableAllStreamingInfo}">
                     <CheckBox IsChecked="{x:Bind ViewModel.IsStreamingEnabled, Mode=TwoWay}"
                               Content="{CustomResource EnableStreaming}"
-                              Margin="12,6,12,0" />
-                    <Rectangle Style="{StaticResource Separator}" />
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="{CustomResource Calls}">
-                    <controls:BadgeButton Badge="{x:Bind ConvertUseLessData(ViewModel.UseLessData), Mode=OneWay}"
-                                          Command="{x:Bind ViewModel.UseLessDataCommand}"
-                                          Content="{CustomResource VoipUseLessData}" />
+                    <controls:BadgeButton Content="{CustomResource VoipUseLessData}">
+                        <controls:BadgeButton.Badge>
+                            <ComboBox ItemsSource="{x:Bind ViewModel.UseLessDataOptions}"
+                                      SelectedIndex="{x:Bind ViewModel.UseLessData, Mode=TwoWay}"
+                                      DisplayMemberPath="Text" />
+                        </controls:BadgeButton.Badge>
+                    </controls:BadgeButton>
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="{CustomResource Proxy}">
                     <controls:BadgeButton Content="{CustomResource ProxySettings}"
-                                          Click="Proxy_Click" />
+                                          Click="Proxy_Click"
+                                          IsChevronVisible="True" />
                 </controls:HeaderedControl>
             </StackPanel>
         </ScrollViewer>

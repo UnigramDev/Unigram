@@ -1717,6 +1717,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Themes\CheckBox_themeresources.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Themes\MenuFlyout_themeresources.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

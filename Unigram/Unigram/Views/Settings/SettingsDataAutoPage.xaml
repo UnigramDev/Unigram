@@ -30,23 +30,19 @@
                 <controls:HeaderedControl Header="{x:Bind ViewModel.Header, Mode=OneWay}">
                     <CheckBox IsChecked="{x:Bind ViewModel.Contacts, Mode=TwoWay}"
                               Content="{CustomResource AutodownloadContacts}"
-                              Margin="12,6,12,0" />
-                    <Rectangle Style="{StaticResource Separator}" />
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
                     
                     <CheckBox IsChecked="{x:Bind ViewModel.PrivateChats, Mode=TwoWay}"
                               Content="{CustomResource AutodownloadPrivateChats}"
-                              Margin="12,6,12,0" />
-                    <Rectangle Style="{StaticResource Separator}" />
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
                     
                     <CheckBox IsChecked="{x:Bind ViewModel.Groups, Mode=TwoWay}"
                               Content="{CustomResource AutodownloadGroupChats}"
-                              Margin="12,6,12,0" />
-                    <Rectangle Style="{StaticResource Separator}" />
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
                     
                     <CheckBox IsChecked="{x:Bind ViewModel.Channels, Mode=TwoWay}"
                               Content="{CustomResource AutodownloadChannels}"
-                              Margin="12,6,12,0" />
-                    <Rectangle Style="{StaticResource Separator}" />
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="{CustomResource AutoDownloadMaxFileSize}"

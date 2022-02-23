@@ -22,7 +22,6 @@ namespace Unigram.Views.Settings
             if (ApiInformation.IsTypePresent("Windows.ApplicationModel.FullTrustProcessLauncher"))
             {
                 FindName(nameof(TraySwitch));
-                FindName(nameof(TraySwitchSeparator));
             }
 #endif
         }

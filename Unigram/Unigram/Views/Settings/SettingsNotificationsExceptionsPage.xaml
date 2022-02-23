@@ -27,14 +27,13 @@
                                 ContainerContentChanging="OnContainerContentChanging"
                                 SelectionMode="None">
             <ListView.Header>
-                <StackPanel>
+                <StackPanel Spacing="16">
                     <controls:HeaderedControl>
                         <CheckBox x:Name="Alert"
                                   Click="{x:Bind ViewModel.Scope.SendExecute}"
                                   IsChecked="{x:Bind ViewModel.Scope.Alert, Mode=TwoWay}"
                                   Content="{CustomResource Alert}"
-                                  Margin="12,6,12,0" />
-                        <Rectangle Style="{StaticResource Separator}" />
+                                  Style="{StaticResource SettingsCheckBoxStyle}" />
                     </controls:HeaderedControl>
 
                     <controls:HeaderedControl Header="{CustomResource Settings}">
@@ -42,25 +41,29 @@
                                   Click="{x:Bind ViewModel.Scope.SendExecute}"
                                   IsChecked="{x:Bind ViewModel.Scope.Preview, Mode=TwoWay}"
                                   Content="{CustomResource MessagePreview}"
-                                  Margin="12,6,12,0" />
-                        <Rectangle Style="{StaticResource Separator}" />
+                                  Style="{StaticResource SettingsCheckBoxStyle}" />
 
                         <controls:BadgeButton IsEnabled="False"
                                               Content="{CustomResource Sound}"
                                               Badge="{CustomResource SoundDefault}" />
                     </controls:HeaderedControl>
 
-                    <Border MaxWidth="640">
+                    <Border MaxWidth="640"
+                            Margin="12,0">
                         <TextBlock x:Name="HeaderLabel"
                                    Text="{CustomResource NotificationsExceptions}"
-                                   Style="{StaticResource SettingsGroupTextBlockStyle}"
-                                   Margin="12,16,12,6" />
+                                   Style="{StaticResource BaseTextBlockStyle}"
+                                   Margin="0,16,0,8" />
                     </Border>
                 </StackPanel>
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Grid Margin="12,6">
+                    <Grid BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                          Background="{ThemeResource SettingsItemBackground}"
+                          BorderThickness="1,0,1,1"
+                          CornerRadius="4"
+                          Padding="12,6">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
@@ -76,15 +79,6 @@
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem"
-                       BasedOn="{StaticResource DefaultListViewItemStyle}">
-                    <Setter Property="HorizontalContentAlignment"
-                            Value="Stretch" />
-                    <Setter Property="Padding"
-                            Value="0,0,0,0" />
-                </Style>
-            </ListView.ItemContainerStyle>
             <ListView.Footer>
                 <Border Height="32" />
             </ListView.Footer>

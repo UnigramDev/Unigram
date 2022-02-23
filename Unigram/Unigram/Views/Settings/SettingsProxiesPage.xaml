@@ -1,20 +1,18 @@
-﻿<local:HostedPage
-    x:Class="Unigram.Views.Settings.SettingsProxiesPage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Unigram.Views"
-    xmlns:controls="using:Unigram.Controls"
-    xmlns:selectors="using:Unigram.Selectors"
-    xmlns:viewModels="using:Unigram.ViewModels.Settings"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+﻿<local:HostedPage x:Class="Unigram.Views.Settings.SettingsProxiesPage"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:local="using:Unigram.Views"
+                  xmlns:controls="using:Unigram.Controls"
+                  xmlns:selectors="using:Unigram.Selectors"
+                  xmlns:viewModels="using:Unigram.ViewModels.Settings"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  mc:Ignorable="d">
 
     <Page.Transitions>
         <TransitionCollection>
             <NavigationThemeTransition>
-                <DrillInNavigationTransitionInfo/>
+                <DrillInNavigationTransitionInfo />
             </NavigationThemeTransition>
         </TransitionCollection>
     </Page.Transitions>
@@ -24,51 +22,47 @@
     </local:HostedPage.Header>
 
     <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
-        <controls:TableListView
-            x:Name="List"
-            ItemsSource="{x:Bind ViewModel.Items}"
-            ItemClick="List_ItemClick"
-            IsItemClickEnabled="True"
-            SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
-            ChoosingItemContainer="OnChoosingItemContainer"
-            VerticalContentAlignment="Top">
+        <controls:TableListView x:Name="List"
+                                ItemsSource="{x:Bind ViewModel.Items}"
+                                ItemClick="List_ItemClick"
+                                IsItemClickEnabled="True"
+                                SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
+                                ChoosingItemContainer="OnChoosingItemContainer"
+                                VerticalContentAlignment="Top">
             <ListView.Header>
                 <StackPanel>
                     <controls:HeaderedControl>
-                        <controls:BadgeButton
-                            Content="{CustomResource AddProxy}"
-                            Command="{x:Bind ViewModel.AddCommand}"/>
+                        <controls:BadgeButton Content="{CustomResource AddProxy}"
+                                              Command="{x:Bind ViewModel.AddCommand}" />
                     </controls:HeaderedControl>
 
-                    <Border MaxWidth="640">
-                        <TextBlock
-                            Text="{CustomResource ProxyConnections}"
-                            Foreground="{ThemeResource TelegramForegroundAccentBrush}"
-                            Style="{StaticResource CaptionTextBlockStyle}"
-                            FontWeight="SemiBold"
-                            Margin="12,16,12,8"/>
+                    <Border MaxWidth="640"
+                            Margin="12,16,12,8">
+                        <TextBlock Text="{CustomResource ProxyConnections}"
+                                   Style="{StaticResource BaseTextBlockStyle}" />
                     </Border>
                 </StackPanel>
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="viewModels:ConnectionViewModel">
-                    <Grid Padding="0,12" Background="Transparent">
+                    <Grid Padding="12,12"
+                          Background="{ThemeResource SettingsItemBackground}"
+                          BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <TextBlock Text="{x:Bind DisplayName}" VerticalAlignment="Bottom" Style="{StaticResource BaseTextBlockStyle}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
-                        <controls:ProxyStatusControl Status="{x:Bind Status, Mode=OneWay}" VerticalAlignment="Top" Grid.Row="1"/>
+                        <TextBlock Text="{x:Bind DisplayName}"
+                                   VerticalAlignment="Bottom"
+                                   Style="{StaticResource BaseTextBlockStyle}"
+                                   TextWrapping="NoWrap"
+                                   TextTrimming="CharacterEllipsis" />
+                        <controls:ProxyStatusControl Status="{x:Bind Status, Mode=OneWay}"
+                                                     VerticalAlignment="Top"
+                                                     Grid.Row="1" />
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                    <Setter Property="MaxWidth" Value="640"/>
-                </Style>
-            </ListView.ItemContainerStyle>
         </controls:TableListView>
     </Grid>
 </local:HostedPage>

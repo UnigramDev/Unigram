@@ -1,4 +1,5 @@
-﻿using Windows.UI.Xaml;
+﻿using Windows.Foundation;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls
@@ -36,19 +37,61 @@ namespace Unigram.Controls
 
         #endregion
 
-        //protected override Size ArrangeOverride(Size finalSize)
-        //{
-        //    var size = base.ArrangeOverride(finalSize);
-        //    if (size.Width > 640)
-        //    {
-        //        VisualStateManager.GoToState(this, "WideState", false);
-        //    }
-        //    else
-        //    {
-        //        VisualStateManager.GoToState(this, "NarrowState", false);
-        //    }
+        #region ItemPresenterStyle
 
-        //    return size;
-        //}
+        public Style ItemPresenterStyle
+        {
+            get { return (Style)GetValue(ItemPresenterStyleProperty); }
+            set { SetValue(ItemPresenterStyleProperty, value); }
+        }
+
+        public static readonly DependencyProperty ItemPresenterStyleProperty =
+            DependencyProperty.Register("ItemPresenterStyle", typeof(Style), typeof(HeaderedControl), new PropertyMetadata(null));
+
+        #endregion
+
+        protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
+        {
+            if (element is ContentPresenter presenter)
+            {
+                presenter.Style = ItemPresenterStyle;
+            }
+
+            base.PrepareContainerForItemOverride(element, item);
+        }
+    }
+
+    public class HeaderedControlPanel : StackPanel
+    {
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            var last = true;
+
+            for (int i = Children.Count -1; i >= 0; i--)
+            {
+                if (Children[i].Visibility == Visibility.Visible)
+                {
+                    switch (Children[i])
+                    {
+                        case ContentPresenter presenter:
+                            presenter.BorderThickness = new Thickness(0, 0, 0, last ? 0 : 1);
+                            break;
+                        case Control control:
+                            control.BorderThickness = new Thickness(0, 0, 0, last ? 0 : 1);
+                            break;
+                        case Grid grid:
+                            grid.BorderThickness = new Thickness(0, 0, 0, last ? 0 : 1);
+                            break;
+                        case Border border:
+                            border.BorderThickness = new Thickness(0, 0, 0, last ? 0 : 1);
+                            break;
+                    }
+
+                    last = false;
+                }
+            }
+
+            return base.MeasureOverride(availableSize);
+        }
     }
 }

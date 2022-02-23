@@ -12,9 +12,22 @@ namespace Unigram.Controls
     {
         private BadgeButtonAutomationPeer _peer;
 
+        private UIElement Chevron;
+
         public BadgeButton()
         {
             DefaultStyleKey = typeof(BadgeButton);
+        }
+
+        protected override void OnApplyTemplate()
+        {
+            if (IsChevronVisible)
+            {
+                Chevron = GetTemplateChild(nameof(Chevron)) as UIElement;
+                Chevron.Visibility = Visibility.Visible;
+            }
+
+            base.OnApplyTemplate();
         }
 
         #region Badge
@@ -95,6 +108,30 @@ namespace Unigram.Controls
 
         public static readonly DependencyProperty IconSourceProperty =
             DependencyProperty.Register("IconSource", typeof(IAnimatedVisualSource2), typeof(BadgeButton), new PropertyMetadata(null));
+
+        #endregion
+
+        #region IsChevronVisible
+
+        public bool IsChevronVisible
+        {
+            get { return (bool)GetValue(IsChevronVisibleProperty); }
+            set { SetValue(IsChevronVisibleProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsChevronVisibleProperty =
+            DependencyProperty.Register("IsChevronVisible", typeof(bool), typeof(BadgeButton), new PropertyMetadata(false, OnChevronVisibleChanged));
+
+        private static void OnChevronVisibleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var sender = d as BadgeButton;
+            if (sender?.Chevron != null)
+            {
+                sender.Chevron.Visibility = (bool)e.NewValue
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            }
+        }
 
         #endregion
 

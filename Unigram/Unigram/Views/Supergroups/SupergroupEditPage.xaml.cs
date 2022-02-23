@@ -93,6 +93,7 @@ namespace Unigram.Views.Supergroups
             About.IsReadOnly = !group.CanChangeInfo();
 
             ChatType.Content = group.IsChannel ? Strings.Resources.ChannelType : Strings.Resources.GroupType;
+            ChatType.Glyph = group.IsChannel ? Icons.Megaphone : Icons.People;
             ChatType.Visibility = Visibility.Collapsed;
             ChatType.Badge = group.Username.Length > 0
                 ? group.IsChannel
@@ -115,6 +116,7 @@ namespace Unigram.Views.Supergroups
 
             ChatLinked.Visibility = group.IsChannel ? Visibility.Visible : group.HasLinkedChat ? Visibility.Visible : Visibility.Collapsed;
             ChatLinked.Content = group.IsChannel ? Strings.Resources.Discussion : Strings.Resources.LinkedChannel;
+            ChatLinked.Glyph = group.IsChannel ? Icons.Comment : Icons.Megaphone;
             ChatLinked.Badge = group.HasLinkedChat ? string.Empty : Strings.Resources.DiscussionInfo;
 
             Permissions.Badge = string.Format("{0}/{1}", chat.Permissions.Count(), chat.Permissions.Total());

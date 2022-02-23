@@ -76,7 +76,8 @@
                     </Grid>
 
                     <controls:BadgeButton Content="{CustomResource ChatBackground}"
-                                          Click="Wallpaper_Click" />
+                                          Click="Wallpaper_Click"
+                                          IsChevronVisible="True" />
 
                     <controls:BadgeButtonWithImage Content="Emoji Set"
                                                    Badge="{x:Bind ViewModel.EmojiSet, Mode=OneWay}"
@@ -91,11 +92,14 @@
 
                     <controls:BadgeButton Content="{CustomResource AutoNightTheme}"
                                           Badge="{x:Bind ConvertNightMode(ViewModel.NightMode), Mode=OneWay}"
-                                          Click="NightMode_Click" />
+                                          Click="NightMode_Click"
+                                          IsChevronVisible="True" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="{CustomResource ColorTheme}">
                     <ListView x:Name="List"
+                              Background="{ThemeResource SettingsItemBackground}"
+                              BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                               ItemsSource="{x:Bind ViewModel.Items}"
                               SelectionMode="None"
                               ChoosingItemContainer="OnChoosingItemContainer"
@@ -165,120 +169,114 @@
                         </ListView.Footer>
                     </ListView>
 
-                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}"
-                               Height="1"
-                               Margin="12,0,0,0" />
+                    <ListView ItemsSource="{x:Bind ViewModel.Accents, Mode=OneWay}"
+                              Visibility="{x:Bind ViewModel.Accents.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                              Background="{ThemeResource SettingsItemBackground}"
+                              BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                              SelectionMode="None"
+                              ContainerContentChanging="OnContainerContentChanging"
+                              Style="{StaticResource HorizontalListViewStyle}"
+                              ItemContainerTransitions="{x:Null}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="services:ThemeAccentInfo">
+                                <RadioButton Tag="{x:Bind}"
+                                             GroupName="Accent"
+                                             Margin="12,12,0,12"
+                                             Style="{StaticResource AccentRadioButtonStyle}">
+                                    <RadioButton.Background>
+                                        <SolidColorBrush Color="{x:Bind SelectionColor}" />
+                                    </RadioButton.Background>
+                                </RadioButton>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="MinWidth"
+                                        Value="0" />
+                                <Setter Property="MinHeight"
+                                        Value="0" />
+                                <Setter Property="Padding"
+                                        Value="0" />
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ItemsStackPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
+                        <ListView.Footer>
+                            <HyperlinkButton Command="{x:Bind ViewModel.AccentThemeCommand}"
+                                             Width="24"
+                                             Height="24"
+                                             Margin="12,12,12,12"
+                                             Style="{StaticResource EmptyHyperlinkButtonStyle}">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="9" />
+                                        <RowDefinition Height="6" />
+                                        <RowDefinition Height="9" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="9" />
+                                        <ColumnDefinition Width="6" />
+                                        <ColumnDefinition Width="9" />
+                                    </Grid.ColumnDefinitions>
 
-                    <StackPanel Visibility="{x:Bind ViewModel.Accents.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
-                        <ListView ItemsSource="{x:Bind ViewModel.Accents, Mode=OneWay}"
-                                  SelectionMode="None"
-                                  ContainerContentChanging="OnContainerContentChanging"
-                                  Style="{StaticResource HorizontalListViewStyle}"
-                                  ItemContainerTransitions="{x:Null}">
-                            <ListView.ItemTemplate>
-                                <DataTemplate x:DataType="services:ThemeAccentInfo">
-                                    <RadioButton Tag="{x:Bind}"
-                                                 GroupName="Accent"
-                                                 Margin="12,12,0,12"
-                                                 Style="{StaticResource AccentRadioButtonStyle}">
-                                        <RadioButton.Background>
-                                            <SolidColorBrush Color="{x:Bind SelectionColor}" />
-                                        </RadioButton.Background>
-                                    </RadioButton>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                            <ListView.ItemContainerStyle>
-                                <Style TargetType="ListViewItem">
-                                    <Setter Property="MinWidth"
-                                            Value="0" />
-                                    <Setter Property="MinHeight"
-                                            Value="0" />
-                                    <Setter Property="Padding"
-                                            Value="0" />
-                                </Style>
-                            </ListView.ItemContainerStyle>
-                            <ListView.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <ItemsStackPanel Orientation="Horizontal" />
-                                </ItemsPanelTemplate>
-                            </ListView.ItemsPanel>
-                            <ListView.Footer>
-                                <HyperlinkButton Command="{x:Bind ViewModel.AccentThemeCommand}"
-                                                 Width="24"
-                                                 Height="24"
-                                                 Margin="12,12,12,12"
-                                                 Style="{StaticResource EmptyHyperlinkButtonStyle}">
-                                    <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="9" />
-                                            <RowDefinition Height="6" />
-                                            <RowDefinition Height="9" />
-                                        </Grid.RowDefinitions>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="9" />
-                                            <ColumnDefinition Width="6" />
-                                            <ColumnDefinition Width="9" />
-                                        </Grid.ColumnDefinitions>
+                                    <Ellipse Fill="{x:Bind ConvertAccent(ViewModel.Accents, 5), Mode=OneWay}"
+                                             Width="6"
+                                             Height="6"
+                                             Margin="0,0,-2,1"
+                                             VerticalAlignment="Bottom"
+                                             HorizontalAlignment="Right" />
+                                    <Ellipse Fill="{x:Bind ConvertAccent(ViewModel.Accents, 6), Mode=OneWay}"
+                                             Width="6"
+                                             Height="6"
+                                             Margin="-2,0,0,1"
+                                             VerticalAlignment="Bottom"
+                                             HorizontalAlignment="Left"
+                                             Grid.Column="2" />
 
-                                        <Ellipse Fill="{x:Bind ConvertAccent(ViewModel.Accents, 5), Mode=OneWay}"
-                                                 Width="6"
-                                                 Height="6"
-                                                 Margin="0,0,-2,1"
-                                                 VerticalAlignment="Bottom"
-                                                 HorizontalAlignment="Right" />
-                                        <Ellipse Fill="{x:Bind ConvertAccent(ViewModel.Accents, 6), Mode=OneWay}"
-                                                 Width="6"
-                                                 Height="6"
-                                                 Margin="-2,0,0,1"
-                                                 VerticalAlignment="Bottom"
-                                                 HorizontalAlignment="Left"
-                                                 Grid.Column="2" />
+                                    <Ellipse Fill="{x:Bind ConvertAccent(ViewModel.Accents, 4), Mode=OneWay}"
+                                             Width="6"
+                                             Height="6"
+                                             Grid.Row="1"
+                                             HorizontalAlignment="Left" />
+                                    <Ellipse Fill="{x:Bind ConvertAccent(ViewModel.Accents, 0), Mode=OneWay}"
+                                             Width="6"
+                                             Height="6"
+                                             Grid.Row="1"
+                                             Grid.Column="1" />
+                                    <Ellipse Fill="{x:Bind ConvertAccent(ViewModel.Accents, 1), Mode=OneWay}"
+                                             Width="6"
+                                             Height="6"
+                                             Grid.Row="1"
+                                             HorizontalAlignment="Right"
+                                             Grid.Column="2" />
 
-                                        <Ellipse Fill="{x:Bind ConvertAccent(ViewModel.Accents, 4), Mode=OneWay}"
-                                                 Width="6"
-                                                 Height="6"
-                                                 Grid.Row="1"
-                                                 HorizontalAlignment="Left" />
-                                        <Ellipse Fill="{x:Bind ConvertAccent(ViewModel.Accents, 0), Mode=OneWay}"
-                                                 Width="6"
-                                                 Height="6"
-                                                 Grid.Row="1"
-                                                 Grid.Column="1" />
-                                        <Ellipse Fill="{x:Bind ConvertAccent(ViewModel.Accents, 1), Mode=OneWay}"
-                                                 Width="6"
-                                                 Height="6"
-                                                 Grid.Row="1"
-                                                 HorizontalAlignment="Right"
-                                                 Grid.Column="2" />
-
-                                        <Ellipse Fill="{x:Bind ConvertAccent(ViewModel.Accents, 3), Mode=OneWay}"
-                                                 Width="6"
-                                                 Height="6"
-                                                 Margin="0,1,-2,0"
-                                                 VerticalAlignment="Top"
-                                                 HorizontalAlignment="Right"
-                                                 Grid.Row="2" />
-                                        <Ellipse Fill="{x:Bind ConvertAccent(ViewModel.Accents, 2), Mode=OneWay}"
-                                                 Width="6"
-                                                 Height="6"
-                                                 Margin="-2,1,0,0"
-                                                 VerticalAlignment="Top"
-                                                 HorizontalAlignment="Left"
-                                                 Grid.Row="2"
-                                                 Grid.Column="2" />
-                                    </Grid>
-                                </HyperlinkButton>
-                            </ListView.Footer>
-                        </ListView>
-
-                        <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}"
-                                   Height="1"
-                                   Margin="12,0,0,0" />
-                    </StackPanel>
+                                    <Ellipse Fill="{x:Bind ConvertAccent(ViewModel.Accents, 3), Mode=OneWay}"
+                                             Width="6"
+                                             Height="6"
+                                             Margin="0,1,-2,0"
+                                             VerticalAlignment="Top"
+                                             HorizontalAlignment="Right"
+                                             Grid.Row="2" />
+                                    <Ellipse Fill="{x:Bind ConvertAccent(ViewModel.Accents, 2), Mode=OneWay}"
+                                             Width="6"
+                                             Height="6"
+                                             Margin="-2,1,0,0"
+                                             VerticalAlignment="Top"
+                                             HorizontalAlignment="Left"
+                                             Grid.Row="2"
+                                             Grid.Column="2" />
+                                </Grid>
+                            </HyperlinkButton>
+                        </ListView.Footer>
+                    </ListView>
 
                     <controls:BadgeButton Content="{CustomResource ShowAllThemes}"
                                           Visibility="{x:Bind ViewModel.AreCustomThemesAvailable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                          Click="Themes_Click" />
+                                          Click="Themes_Click"
+                                          IsChevronVisible="True" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="{CustomResource BubbleRadius}">
@@ -297,32 +295,31 @@
                 <controls:HeaderedControl Header="{CustomResource Settings}">
                     <CheckBox IsChecked="{x:Bind ViewModel.FullScreenGallery, Mode=TwoWay}"
                               Content="Enable full-screen gallery"
-                              Margin="12,6,12,0" />
-                    <Rectangle Style="{StaticResource Separator}" />
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
 
                     <CheckBox IsChecked="{x:Bind ViewModel.DisableHighlightWords, Mode=TwoWay}"
                               Content="Disable misspelled words highlight"
-                              Margin="12,6,12,0" />
-                    <Rectangle Style="{StaticResource Separator}" />
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
 
                     <CheckBox IsChecked="{x:Bind ViewModel.IsSendByEnterEnabled, Mode=TwoWay}"
                               Content="{CustomResource SendByEnter}"
-                              Margin="12,6,12,0" />
-                    <Rectangle Style="{StaticResource Separator}" />
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
 
                     <CheckBox IsChecked="{x:Bind ViewModel.IsLargeEmojiEnabled, Mode=TwoWay}"
                               Content="{CustomResource LargeEmoji}"
-                              Margin="12,6,12,0" />
-                    <Rectangle Style="{StaticResource Separator}" />
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
 
                     <CheckBox IsChecked="{x:Bind ViewModel.IsReplaceEmojiEnabled, Mode=TwoWay}"
                               Content="{CustomResource lng_settings_replace_emojis}"
-                              Margin="12,6,12,0" />
-                    <Rectangle Style="{StaticResource Separator}" />
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <controls:BadgeButton Content="{CustomResource DistanceUnits}"
-                                          Command="{x:Bind ViewModel.DistanceUnitsCommand}"
-                                          Badge="{x:Bind ConvertDistanceUnits(ViewModel.DistanceUnits), Mode=OneWay}" />
+                    <controls:BadgeButton Content="{CustomResource DistanceUnits}">
+                        <controls:BadgeButton.Badge>
+                            <ComboBox ItemsSource="{x:Bind ViewModel.DistanceUnitOptions}"
+                                      SelectedIndex="{x:Bind ViewModel.DistanceUnit, Mode=TwoWay}"
+                                      DisplayMemberPath="Text" />
+                        </controls:BadgeButton.Badge>
+                    </controls:BadgeButton>
                 </controls:HeaderedControl>
             </StackPanel>
         </ScrollViewer>

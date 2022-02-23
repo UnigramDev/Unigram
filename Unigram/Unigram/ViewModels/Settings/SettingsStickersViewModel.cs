@@ -1,5 +1,6 @@
 ﻿using Rg.DiffUtils;
 using System.Collections.Generic;
+using System;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
@@ -38,8 +39,6 @@ namespace Unigram.ViewModels.Settings
         {
             Items = new DiffObservableCollection<StickerSetInfo>(new StickerSetInfoDiffHandler());
             ReorderCommand = new RelayCommand<StickerSetInfo>(ReorderExecute);
-
-            SuggestCommand = new RelayCommand(SuggestExecute);
 
             StickerSetOpenCommand = new RelayCommand<StickerSetInfo>(StickerSetOpenExecute);
             StickerSetHideCommand = new RelayCommand<StickerSetInfo>(StickerSetHideExecute);
@@ -219,15 +218,32 @@ namespace Unigram.ViewModels.Settings
             _newOrder = Items.Where(x => x.Id != 0).Select(x => x.Id).ToList();
         }
 
-        public StickersSuggestionMode SuggestStickers
+        public int SuggestStickers
         {
-            get => Settings.Stickers.SuggestionMode;
+            get => Array.IndexOf(_suggestStickersIndexer, Settings.Stickers.SuggestionMode);
             set
             {
-                Settings.Stickers.SuggestionMode = value;
-                RaisePropertyChanged();
+                if (value >= 0 && value < _suggestStickersIndexer.Length && Settings.Stickers.SuggestionMode != _suggestStickersIndexer[value])
+                {
+                    Settings.Stickers.SuggestionMode = _suggestStickersIndexer[value];
+                    RaisePropertyChanged();
+                }
             }
         }
+
+        private readonly StickersSuggestionMode[] _suggestStickersIndexer = new[]
+        {
+            StickersSuggestionMode.All,
+            StickersSuggestionMode.Installed,
+            StickersSuggestionMode.None
+        };
+
+        public List<SettingsOptionItem<StickersSuggestionMode>> SuggestStickersOptions => new List<SettingsOptionItem<StickersSuggestionMode>>
+        {
+            new SettingsOptionItem<StickersSuggestionMode>(StickersSuggestionMode.All, Strings.Resources.SuggestStickersAll),
+            new SettingsOptionItem<StickersSuggestionMode>(StickersSuggestionMode.Installed, Strings.Resources.SuggestStickersInstalled),
+            new SettingsOptionItem<StickersSuggestionMode>(StickersSuggestionMode.None, Strings.Resources.SuggestStickersNone),
+        };
 
         public bool IsLoopingEnabled
         {
@@ -236,28 +252,6 @@ namespace Unigram.ViewModels.Settings
             {
                 Settings.Stickers.IsLoopingEnabled = value;
                 RaisePropertyChanged();
-            }
-        }
-
-        public RelayCommand SuggestCommand { get; }
-        private async void SuggestExecute()
-        {
-            var items = new[]
-            {
-                new SelectRadioItem(StickersSuggestionMode.All, Strings.Resources.SuggestStickersAll, SuggestStickers == StickersSuggestionMode.All),
-                new SelectRadioItem(StickersSuggestionMode.Installed, Strings.Resources.SuggestStickersInstalled, SuggestStickers == StickersSuggestionMode.Installed),
-                new SelectRadioItem(StickersSuggestionMode.None, Strings.Resources.SuggestStickersNone, SuggestStickers == StickersSuggestionMode.None),
-            };
-
-            var dialog = new ChooseRadioPopup(items);
-            dialog.Title = Strings.Resources.SuggestStickers;
-            dialog.PrimaryButtonText = Strings.Resources.OK;
-            dialog.SecondaryButtonText = Strings.Resources.Cancel;
-
-            var confirm = await dialog.ShowQueuedAsync();
-            if (confirm == ContentDialogResult.Primary && dialog.SelectedIndex is StickersSuggestionMode index)
-            {
-                SuggestStickers = index;
             }
         }
 

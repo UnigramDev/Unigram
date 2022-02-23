@@ -69,4 +69,16 @@ namespace Unigram.Views.Popups
 
         public string Footer { get; set; }
     }
+
+    public class SettingsOptionItem<T>
+    {
+        public SettingsOptionItem(T value, string text)
+        {
+            Value = value;
+            Text = text;
+        }
+
+        public T Value { get; set; }
+        public string Text { get; set; }
+    }
 }
