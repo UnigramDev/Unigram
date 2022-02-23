@@ -250,6 +250,14 @@ namespace Unigram.Controls.Chats
             var selectorItem = ContainerFromItem(item) as SelectorItem;
             if (selectorItem == null)
             {
+                ScrollIntoView(item, direction);
+                await this.UpdateLayoutAsync();
+
+                selectorItem = ContainerFromItem(item) as SelectorItem;
+            }
+
+            if (selectorItem == null)
+            {
                 _programmaticScrolling = _programmaticExternal = false;
                 ViewVisibleMessages?.Invoke(true);
 
