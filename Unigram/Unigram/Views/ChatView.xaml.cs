@@ -35,7 +35,7 @@ using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.Text;
-using Windows.UI.ViewManagement;
+using Windows.UI.ViewManagement.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
@@ -393,7 +393,7 @@ namespace Unigram.Views
             Focus(FocusState.Programmatic);
             TextField.Focus(FocusState.Programmatic);
 
-            InputPane.GetForCurrentView().TryHide();
+            CoreInputView.GetForCurrentView().TryHide();
 
             _stickersPanel.Opacity = 0;
             _stickersPanel.Clip = Window.Current.Compositor.CreateInsetClip(48, 48, 0, 0);
@@ -855,9 +855,6 @@ namespace Unigram.Views
             //Bindings.StopTracking();
             //Bindings.Update();
 
-            InputPane.GetForCurrentView().Showing += InputPane_Showing;
-            InputPane.GetForCurrentView().Hiding += InputPane_Hiding;
-
             Window.Current.Activated += Window_Activated;
             Window.Current.VisibilityChanged += Window_VisibilityChanged;
 
@@ -878,30 +875,11 @@ namespace Unigram.Views
 
             UnloadVisibleMessages();
 
-            InputPane.GetForCurrentView().Showing -= InputPane_Showing;
-            InputPane.GetForCurrentView().Hiding -= InputPane_Hiding;
-
             Window.Current.Activated -= Window_Activated;
             Window.Current.VisibilityChanged -= Window_VisibilityChanged;
 
             Window.Current.CoreWindow.CharacterReceived -= OnCharacterReceived;
             WindowContext.GetForCurrentView().AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
-        }
-
-        private void InputPane_Showing(InputPane sender, InputPaneVisibilityEventArgs args)
-        {
-            args.EnsuredFocusedElementInView = true;
-            KeyboardPlaceholder.Height = new GridLength(args.OccludedRect.Height);
-            ReplyMarkupPanel.MaxHeight = args.OccludedRect.Height;
-
-            Collapse_Click(null, null);
-            CollapseMarkup(false);
-        }
-
-        private void InputPane_Hiding(InputPane sender, InputPaneVisibilityEventArgs args)
-        {
-            args.EnsuredFocusedElementInView = true;
-            KeyboardPlaceholder.Height = new GridLength(1, GridUnitType.Auto);
         }
 
         private void Window_Activated(object sender, WindowActivatedEventArgs e)
@@ -1472,7 +1450,7 @@ namespace Unigram.Views
             ViewModel.NavigationService.Navigate(typeof(ProfilePage), chat.Id, infoOverride: new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
         }
 
-        private async void Attach_Click(object sender, RoutedEventArgs e)
+        private void Attach_Click(object sender, RoutedEventArgs e)
         {
             var chat = ViewModel.Chat;
             if (chat == null)
@@ -1485,15 +1463,6 @@ namespace Unigram.Views
             //{
             //    return;
             //}
-
-            var pane = InputPane.GetForCurrentView();
-            if (pane.OccludedRect != Rect.Empty)
-            {
-                pane.TryHide();
-
-                // TODO: Can't find any better solution
-                await Task.Delay(200);
-            }
 
             var flyout = FlyoutBase.GetAttachedFlyout(ButtonAttach) as MenuFlyout;
             if (flyout != null)
@@ -1602,7 +1571,7 @@ namespace Unigram.Views
                 Focus(FocusState.Programmatic);
                 TextField.Focus(FocusState.Keyboard);
 
-                InputPane.GetForCurrentView().TryShow();
+                CoreInputView.GetForCurrentView().TryShow();
             }
         }
 
@@ -1616,12 +1585,12 @@ namespace Unigram.Views
             Focus(FocusState.Programmatic);
             TextField.Focus(FocusState.Programmatic);
 
-            InputPane.GetForCurrentView().TryHide();
+            CoreInputView.GetForCurrentView().TryHide();
         }
 
         private void TextField_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            InputPane.GetForCurrentView().TryShow();
+            CoreInputView.GetForCurrentView().TryShow();
         }
 
         private void Participant_Click(object sender, RoutedEventArgs e)

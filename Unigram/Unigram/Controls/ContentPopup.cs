@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Navigation;
 using Unigram.Services;
-using Windows.Foundation;
 using Windows.UI.Core;
 using Windows.UI.Input;
 using Windows.UI.ViewManagement;
@@ -46,9 +45,6 @@ namespace Unigram.Controls
         {
             ApplicationView.GetForCurrentView().VisibleBoundsChanged += ApplicationView_VisibleBoundsChanged;
 
-            InputPane.GetForCurrentView().Showing += InputPane_Showing;
-            InputPane.GetForCurrentView().Hiding += InputPane_Hiding;
-
             Window.Current.CoreWindow.CharacterReceived += OnCharacterReceived;
 
             ApplicationView_VisibleBoundsChanged(ApplicationView.GetForCurrentView());
@@ -57,9 +53,6 @@ namespace Unigram.Controls
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             ApplicationView.GetForCurrentView().VisibleBoundsChanged -= ApplicationView_VisibleBoundsChanged;
-
-            InputPane.GetForCurrentView().Showing -= InputPane_Showing;
-            InputPane.GetForCurrentView().Hiding -= InputPane_Hiding;
 
             Window.Current.CoreWindow.CharacterReceived -= OnCharacterReceived;
         }
@@ -86,27 +79,6 @@ namespace Unigram.Controls
             {
                 element.MaxHeight = sender.VisibleBounds.Height - 32 - 32 - 48 - 48 - 48 - 48;
             }
-        }
-
-        private void InputPane_Showing(InputPane sender, InputPaneVisibilityEventArgs args)
-        {
-            var element = FocusManager.GetFocusedElement() as Control;
-            if (element is TextBox or RichEditBox)
-            {
-                var transform = element.TransformToVisual(Window.Current.Content);
-                var point = transform.TransformPoint(new Point());
-
-                var offset = point.Y + element.ActualHeight + 8;
-                if (offset > args.OccludedRect.Y)
-                {
-                    RenderTransform = new TranslateTransform { Y = args.OccludedRect.Y - offset };
-                }
-            }
-        }
-
-        private void InputPane_Hiding(InputPane sender, InputPaneVisibilityEventArgs args)
-        {
-            RenderTransform = null;
         }
 
         public bool IsFullWindow { get; set; } = false;

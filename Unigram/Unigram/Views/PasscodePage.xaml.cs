@@ -8,6 +8,7 @@ using Windows.Security.Credentials;
 using Windows.Security.Cryptography;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
+using Windows.UI.ViewManagement.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -152,7 +153,7 @@ namespace Unigram.Views
             {
                 Lock();
 
-                InputPane.GetForCurrentView().TryShow();
+                CoreInputView.GetForCurrentView().TryShow();
             }
         }
 
@@ -164,9 +165,6 @@ namespace Unigram.Views
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
             Window.Current.Activated += Window_Activated;
-
-            InputPane.GetForCurrentView().Showing += InputPane_Showing;
-            InputPane.GetForCurrentView().Hiding += InputPane_Hiding;
 
             if (_passcodeService.IsBiometricsEnabled && await KeyCredentialManager.IsSupportedAsync())
             {
@@ -180,16 +178,13 @@ namespace Unigram.Views
             else
             {
                 Field.Focus(FocusState.Keyboard);
-                InputPane.GetForCurrentView().TryShow();
+                CoreInputView.GetForCurrentView().TryShow();
             }
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             Window.Current.Activated -= Window_Activated;
-
-            InputPane.GetForCurrentView().Showing -= InputPane_Showing;
-            InputPane.GetForCurrentView().Hiding -= InputPane_Hiding;
         }
 
         private void Window_Activated(object sender, WindowActivatedEventArgs e)
@@ -198,18 +193,6 @@ namespace Unigram.Views
             {
                 Field.Focus(FocusState.Keyboard);
             }
-        }
-
-        private void InputPane_Showing(InputPane sender, InputPaneVisibilityEventArgs args)
-        {
-            args.EnsuredFocusedElementInView = true;
-            FieldPanel.Margin = new Thickness(0, 0, 0, Math.Max(args.OccludedRect.Height + 8, 120));
-        }
-
-        private void InputPane_Hiding(InputPane sender, InputPaneVisibilityEventArgs args)
-        {
-            args.EnsuredFocusedElementInView = true;
-            FieldPanel.Margin = new Thickness(0, 0, 0, 120);
         }
 
         private void Lock()
