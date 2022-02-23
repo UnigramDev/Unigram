@@ -4418,6 +4418,12 @@ Anyone from the channel will be able to see messages in this group.</value>
   <data name="DoubleTapSetting" xml:space="preserve">
     <value>Quick Reaction</value>
   </data>
+  <data name="Downloading" xml:space="preserve">
+    <value>Downloading</value>
+  </data>
+  <data name="DownloadsTabs" xml:space="preserve">
+    <value>Downloads</value>
+  </data>
   <data name="Draft" xml:space="preserve">
     <value>Draft</value>
   </data>
@@ -9959,6 +9965,9 @@ You can visit our *FAQ* to learn more.</value>
   <data name="PasteFromClipboard" xml:space="preserve">
     <value>Paste from clipboard</value>
   </data>
+  <data name="PauseAll" xml:space="preserve">
+    <value>Pause all</value>
+  </data>
   <data name="PaymentBillingAddress" xml:space="preserve">
     <value>Billing address</value>
   </data>
@@ -11335,6 +11344,9 @@ We will access your location only for the duration you choose, and you can stop 
   <data name="RecentStickersShort" xml:space="preserve">
     <value>Recent</value>
   </data>
+  <data name="RecentlyDownloaded" xml:space="preserve">
+    <value>Recently downloaded</value>
+  </data>
   <data name="Recipient_few" xml:space="preserve">
     <value/>
   </data>
@@ -11781,6 +11793,9 @@ If you reset your account, all your messages and chats will be deleted.</value>
   </data>
   <data name="RestrictSavingContentInfoGroup" xml:space="preserve">
     <value>Members won't be able to copy, save and forward content from this group.</value>
+  </data>
+  <data name="ResumeAll" xml:space="preserve">
+    <value>Resume all</value>
   </data>
   <data name="Retry" xml:space="preserve">
     <value>Retry</value>

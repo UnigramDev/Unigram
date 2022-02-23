@@ -1319,6 +1319,20 @@ namespace Unigram.Services
                     ProcessFiles(item);
                 }
             }
+            else if (target is FileDownload fileDownload)
+            {
+                if (fileDownload.Message != null)
+                {
+                    ProcessFiles(fileDownload.Message);
+                }
+            }
+            else if (target is FoundFileDownloads foundFileDownloads)
+            {
+                foreach (var item in foundFileDownloads.Files)
+                {
+                    ProcessFiles(item);
+                }
+            }
             else if (target is MessageThreadInfo messageThreadInfo)
             {
                 foreach (var item in messageThreadInfo.Messages)

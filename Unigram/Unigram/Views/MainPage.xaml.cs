@@ -3039,6 +3039,11 @@ namespace Unigram.Views
         {
             ArchivedChats.UpdateChatList(ViewModel.ProtoService, new ChatListArchive());
         }
+
+        private async void Downloads_Click(object sender, RoutedEventArgs e)
+        {
+            await new DownloadsPopup(ViewModel.SessionId).ShowQueuedAsync();
+        }
     }
 
     public class HostedPage : Page
