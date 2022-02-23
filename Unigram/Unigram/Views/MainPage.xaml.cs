@@ -106,8 +106,6 @@ namespace Unigram.Views
                 ViewModel.Aggregator.Publish(update);
             }
 
-            InputPane.GetForCurrentView().Showing += (s, args) => args.EnsuredFocusedElementInView = true;
-
             DropShadowEx.Attach(UpdateShadow);
 
             ChatsList.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);

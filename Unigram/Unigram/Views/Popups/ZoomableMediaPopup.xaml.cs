@@ -49,30 +49,6 @@ namespace Unigram.Views.Popups
             }
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
-        {
-            Padding = new Thickness(0, 0, 0, InputPane.GetForCurrentView().OccludedRect.Height);
-
-            InputPane.GetForCurrentView().Showing += InputPane_Showing;
-            InputPane.GetForCurrentView().Hiding += InputPane_Hiding;
-        }
-
-        private void OnUnloaded(object sender, RoutedEventArgs e)
-        {
-            InputPane.GetForCurrentView().Showing -= InputPane_Showing;
-            InputPane.GetForCurrentView().Hiding -= InputPane_Hiding;
-        }
-
-        private void InputPane_Showing(InputPane sender, InputPaneVisibilityEventArgs args)
-        {
-            Padding = new Thickness(0, 0, 0, args.OccludedRect.Height);
-        }
-
-        private void InputPane_Hiding(InputPane sender, InputPaneVisibilityEventArgs args)
-        {
-            Padding = new Thickness();
-        }
-
         public void SetSticker(Sticker sticker)
         {
             _lastItem = sticker;
