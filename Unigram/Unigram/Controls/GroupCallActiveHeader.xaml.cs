@@ -30,6 +30,7 @@ namespace Unigram.Controls
 
         public void Update(IGroupCallService service)
         {
+#if ENABLE_CALLS
             if (_service?.Manager != null)
             {
                 _service.Manager.AudioLevelsUpdated -= OnAudioLevelsUpdated;
@@ -58,10 +59,12 @@ namespace Unigram.Controls
 
                 _drawable.setAmplitude(MathF.Max(0, MathF.Log(average, short.MaxValue / 4000)));
             }
+#endif
         }
 
         private void CanvasControl_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
+#if ENABLE_CALLS
             if (_drawable == null)
             {
                 _drawable ??= new FragmentContextViewWavesDrawable(args.DrawingSession);
@@ -75,15 +78,18 @@ namespace Unigram.Controls
             }
 
             sender.Invalidate();
+#endif
         }
 
         private void Audio_Click(object sender, RoutedEventArgs e)
         {
+#if ENABLE_CALLS
             var service = _service;
             if (service?.Manager != null)
             {
                 service.Manager.IsMuted = Audio.IsChecked == false;
             }
+#endif
         }
 
         private async void Dismiss_Click(object sender, RoutedEventArgs e)

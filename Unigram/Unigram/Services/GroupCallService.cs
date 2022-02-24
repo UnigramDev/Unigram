@@ -33,9 +33,11 @@ namespace Unigram.Services
         string CurrentAudioInput { get; set; }
         string CurrentAudioOutput { get; set; }
 
+#if ENABLE_CALLS
         bool IsNoiseSuppressionEnabled { get; set; }
 
         VoipGroupManager Manager { get; }
+#endif
 
         GroupCallParticipantsCollection Participants { get; }
 
@@ -45,7 +47,10 @@ namespace Unigram.Services
         GroupCall Call { get; }
         GroupCallParticipant CurrentUser { get; }
 
+#if ENABLE_CALLS
         int Source { get; }
+#endif
+
         bool IsConnected { get; }
 
         Task ShowAsync();
@@ -59,6 +64,7 @@ namespace Unigram.Services
         Task CreateAsync(long chatId);
         Task DiscardAsync();
 
+#if ENABLE_CALLS
         bool CanEnableVideo { get; }
         bool IsVideoEnabled { get; }
         void ToggleCapturing();
@@ -68,6 +74,7 @@ namespace Unigram.Services
         bool IsScreenSharing { get; }
         void StartScreenSharing();
         void EndScreenSharing();
+#endif
 
         Task ConsolidateAsync();
     }
@@ -94,6 +101,7 @@ namespace Unigram.Services
 
         private TimeSpan _timeDifference;
 
+#if ENABLE_CALLS
         private VoipGroupManager _manager;
         private VoipVideoCapture _capturer;
         private int _source;
@@ -102,6 +110,7 @@ namespace Unigram.Services
         private VoipScreenCapture _screenCapturer;
         private EventDebouncer<bool> _screenDebouncer;
         private int _screenSource;
+#endif
 
         private bool _isScheduled;
         private bool _isConnected;
@@ -116,14 +125,18 @@ namespace Unigram.Services
         {
             _viewService = viewService;
 
+#if ENABLE_CALLS
             _videoWatcher = new MediaDeviceWatcher(DeviceClass.VideoCapture, id => _capturer?.SwitchToDevice(id));
             _inputWatcher = new MediaDeviceWatcher(DeviceClass.AudioCapture, id => _manager?.SetAudioInputDevice(id));
             _outputWatcher = new MediaDeviceWatcher(DeviceClass.AudioRender, id => _manager?.SetAudioOutputDevice(id));
+#endif
 
             aggregator.Subscribe(this);
         }
 
+#if ENABLE_CALLS
         public VoipGroupManager Manager => _manager;
+#endif
 
         private GroupCallParticipantsCollection _participants;
         public GroupCallParticipantsCollection Participants
@@ -236,7 +249,7 @@ namespace Unigram.Services
                     startDate = schedule.Value.ToTimestamp();
                 }
 
-                var response = await ProtoService.SendAsync(new CreateVideoChat(chat.Id, string.Empty, startDate));
+                var response = await ProtoService.SendAsync(new CreateVideoChat(chat.Id, string.Empty, startDate, false));
                 if (response is GroupCallId groupCallId)
                 {
                     await JoinAsyncInternal(chat, groupCallId.Id, participantId);
@@ -289,6 +302,7 @@ namespace Unigram.Services
 
                 _isScheduled = groupCall.ScheduledStartDate > 0;
 
+#if ENABLE_CALLS
                 var descriptor = new VoipGroupDescriptor
                 {
                     AudioInputId = await _inputWatcher.GetAndUpdateAsync(),
@@ -304,6 +318,7 @@ namespace Unigram.Services
                 _manager.AudioLevelsUpdated += OnAudioLevelsUpdated;
                 _manager.BroadcastTimeRequested += OnBroadcastTimeRequested;
                 _manager.BroadcastPartRequested += OnBroadcastPartRequested;
+#endif
 
                 // This must be set before, as updates might come
                 // between ShowAsync and Rejoin.
@@ -363,6 +378,7 @@ namespace Unigram.Services
             _isJoining = true;
             _alias = alias;
 
+#if ENABLE_CALLS
             _manager?.SetConnectionMode(VoipGroupConnectionMode.None, false);
             _manager?.EmitJoinPayload(async (ssrc, payload) =>
             {
@@ -395,11 +411,11 @@ namespace Unigram.Services
                     RejoinScreenSharing(groupCall);
                 }
             });
-
+#endif
         }
 
-        #region Capturing
-
+#region Capturing
+#if ENABLE_CALLS
         public bool CanEnableVideo
         {
             get
@@ -444,11 +460,11 @@ namespace Unigram.Services
 
             ProtoService.Send(new ToggleGroupCallIsMyVideoEnabled(call.Id, _capturer != null));
         }
+#endif
+#endregion
 
-        #endregion
-
-        #region Screencast
-
+#region Screencast
+#if ENABLE_CALLS
         public VoipGroupManager ScreenSharing => _screenManager;
         public bool IsScreenSharing => _screenManager != null && _screenCapturer != null;
 
@@ -550,8 +566,10 @@ namespace Unigram.Services
                 ProtoService.Send(new EndGroupCallScreenSharing(call.Id));
             }
         }
+#endif
+#endregion
 
-        #endregion
+#if ENABLE_CALLS
 
         private void OnBroadcastTimeRequested(VoipGroupManager sender, BroadcastTimeRequestedEventArgs args)
         {
@@ -675,6 +693,8 @@ namespace Unigram.Services
             _speakingParticipants = validSpeakers;
         }
 
+#endif
+
         public Task DiscardAsync()
         {
             return DisposeAsync(true);
@@ -706,6 +726,7 @@ namespace Unigram.Services
 
             RequestRelease();
 
+#if ENABLE_CALLS
             return Task.Run(() =>
             {
                 if (_manager != null)
@@ -732,6 +753,9 @@ namespace Unigram.Services
 
                 EndScreenSharing();
             });
+#else
+            return Task.CompletedTask;
+#endif
         }
 
         public string CurrentVideoInput
@@ -752,14 +776,19 @@ namespace Unigram.Services
             set => _outputWatcher.Set(value);
         }
 
+#if ENABLE_CALLS
+
         public bool IsNoiseSuppressionEnabled
         {
             get => _manager.IsNoiseSuppressionEnabled;
             set => _manager.IsNoiseSuppressionEnabled = Settings.VoIP.IsNoiseSuppressionEnabled = value;
         }
 
+#endif
+
         public async void Handle(UpdateGroupCall update)
         {
+#if ENABLE_CALLS
             if (_call?.Id == update.GroupCall.Id)
             {
                 if (update.GroupCall.IsJoined || update.GroupCall.NeedRejoin || _isJoining)
@@ -793,6 +822,7 @@ namespace Unigram.Services
             }
 
             Aggregator.Publish(new UpdateCallDialog(update.GroupCall));
+#endif
         }
 
         private void RequestActive()
@@ -837,6 +867,7 @@ namespace Unigram.Services
 
         public void Handle(UpdateGroupCallParticipant update)
         {
+#if ENABLE_CALLS
             if (_call?.Id == update.GroupCallId && update.Participant.IsCurrentUser)
             {
                 // User got muted by admins, update local state
@@ -892,18 +923,23 @@ namespace Unigram.Services
             {
                 manager.SetVolume(update.Participant.AudioSourceId, update.Participant.VolumeLevel / 10000d);
             }
+#endif
         }
 
         public Chat Chat => _chat;
         public bool IsChannel => _chat?.Type is ChatTypeSupergroup super && super.IsChannel;
         public GroupCall Call => _call;
         public GroupCallParticipant CurrentUser => _currentUser;
+
+#if ENABLE_CALLS
         public int Source => _source;
+#endif
 
         public bool IsConnected => _isConnected;
 
         public async Task ShowAsync()
         {
+#if ENABLE_CALLS
             using (await _updateLock.WaitAsync())
             {
                 if (_lifetime == null)
@@ -928,6 +964,7 @@ namespace Unigram.Services
                     await ApplicationViewSwitcher.SwitchAsync(_lifetime.Id);
                 }
             }
+#endif
         }
 
         public async Task ConsolidateAsync()

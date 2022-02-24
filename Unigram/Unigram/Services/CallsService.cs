@@ -30,8 +30,10 @@ namespace Unigram.Services
         string CurrentAudioOutput { get; set; }
         string CurrentVideoInput { get; set; }
 
+#if ENABLE_CALLS
         VoipManager Manager { get; }
         IVoipVideoCapture Capturer { get; set; }
+#endif
 
         Call Call { get; }
         DateTime CallStarted { get; }
@@ -42,8 +44,10 @@ namespace Unigram.Services
 
         CallProtocol GetProtocol();
 
+#if ENABLE_CALLS
         VoipCaptureType CaptureType { get; }
         Task<IVoipVideoCapture> ToggleCapturingAsync(VoipCaptureType type);
+#endif
     }
 
     public class VoipService : TLViewModelBase, IVoipService
@@ -59,10 +63,14 @@ namespace Unigram.Services
 
         private Call _call;
         private DateTime _callStarted;
+
+#if ENABLE_CALLS
         private VoipManager _manager;
         private IVoipVideoCapture _capturer;
 
         private VoIPPage _callPage;
+#endif
+
         private ViewLifetimeControl _callLifetime;
 
         public VoipService(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IViewService viewService)
@@ -70,12 +78,21 @@ namespace Unigram.Services
         {
             _viewService = viewService;
 
+#if ENABLE_CALLS
             _videoWatcher = new MediaDeviceWatcher(DeviceClass.VideoCapture, id => SetVideoInputDevice(id));
             _inputWatcher = new MediaDeviceWatcher(DeviceClass.AudioCapture, id => _manager?.SetAudioInputDevice(id));
             _outputWatcher = new MediaDeviceWatcher(DeviceClass.AudioRender, id => _manager?.SetAudioOutputDevice(id));
+#endif
 
             aggregator.Subscribe(this);
         }
+
+        public CallProtocol GetProtocol()
+        {
+            return new CallProtocol(true, true, 92, 92, new[] { "3.0.0" });
+        }
+
+#if ENABLE_CALLS
 
         private void SetVideoInputDevice(string id)
         {
@@ -83,11 +100,6 @@ namespace Unigram.Services
             {
                 capturer.SwitchToDevice(id);
             }
-        }
-
-        public CallProtocol GetProtocol()
-        {
-            return new CallProtocol(true, true, 92, 92, new[] { "3.0.0" });
         }
 
         public async Task<IVoipVideoCapture> ToggleCapturingAsync(VoipCaptureType type)
@@ -156,6 +168,8 @@ namespace Unigram.Services
             : _capturer is VoipScreenCapture
             ? VoipCaptureType.Screencast
             : VoipCaptureType.None;
+
+#endif
 
         public async void Start(long chatId, bool video)
         {
@@ -243,14 +257,17 @@ namespace Unigram.Services
 
         public void Handle(UpdateNewCallSignalingData update)
         {
+#if ENABLE_CALLS
             if (_manager != null)
             {
                 _manager.ReceiveSignalingData(update.Data);
             }
+#endif
         }
 
         public async void Handle(UpdateCall update)
         {
+#if ENABLE_CALLS
             using (await _updateLock.WaitAsync())
             {
                 if (_call != null && _call.Id != update.Call.Id)
@@ -297,21 +314,6 @@ namespace Unigram.Services
                         _manager = null;
                     }
 
-                    //var config = new VoIPConfig
-                    //{
-                    //    initTimeout = call_packet_timeout_ms / 1000.0,
-                    //    recvTimeout = call_connect_timeout_ms / 1000.0,
-                    //    dataSaving = base.Settings.UseLessData,
-                    //    enableAEC = true,
-                    //    enableNS = true,
-                    //    enableAGC = true,
-
-                    //    enableVolumeControl = true,
-
-                    //    logFilePath = logFile,
-                    //    statsDumpFilePath = statsDumpFile
-                    //};
-
                     _capturer = update.Call.IsVideo
                         ? new VoipVideoCapture(await _videoWatcher.GetAndUpdateAsync())
                         : null;
@@ -336,7 +338,7 @@ namespace Unigram.Services
                     _manager.Start();
 
                     await ShowAsync(update.Call, _manager, _capturer, _callStarted);
-                }
+        }
                 else if (update.Call.State is CallStateDiscarded discarded)
                 {
                     if (discarded.NeedDebugInformation)
@@ -348,6 +350,7 @@ namespace Unigram.Services
                     {
                         BeginOnUIThread(async () => await SendRatingAsync(update.Call.Id));
                     }
+
 
                     if (_manager != null)
                     {
@@ -365,6 +368,7 @@ namespace Unigram.Services
                         _capturer.Dispose();
                         _capturer = null;
                     }
+
 
                     _call = null;
                 }
@@ -454,6 +458,7 @@ namespace Unigram.Services
                     _capturer = null;
                 }
             }
+#endif
         }
 
         private async Task SendRatingAsync(int callId)
@@ -490,6 +495,7 @@ namespace Unigram.Services
 
         public async void Show()
         {
+#if ENABLE_CALLS
             if (_call != null)
             {
                 await ShowAsync(_call, _manager, _capturer, _callStarted);
@@ -560,6 +566,7 @@ namespace Unigram.Services
         {
             _callPage = null;
             _callLifetime = null;
+#endif
         }
     }
 }
