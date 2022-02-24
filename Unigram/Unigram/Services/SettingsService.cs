@@ -7,6 +7,20 @@ using Windows.Globalization;
 using Windows.Storage;
 using Windows.System.Profile;
 
+#if !ENABLE_CALLS
+
+namespace Unigram.Native.Calls
+{
+    public enum VoipDataSaving
+    {
+        Never,
+        Mobile,
+        Always,
+    }
+}
+
+#endif
+
 namespace Unigram.Services
 {
     public interface ISettingsService
@@ -215,7 +229,7 @@ namespace Unigram.Services
 
         public ApplicationDataContainer Container => _container;
 
-        #region App version
+#region App version
 
         public const ulong CurrentVersion = (8UL << 48) | (5UL << 32) | (0UL << 16);
         public const string CurrentChangelog = @"Video Stickers, Better Reactions and More
@@ -261,7 +275,7 @@ namespace Unigram.Services
             SystemVersion = build;
         }
 
-        #endregion
+#endregion
 
         private ChatSettingsBase _chats;
         public ChatSettingsBase Chats => _chats ??= new ChatSettingsBase(_own);
