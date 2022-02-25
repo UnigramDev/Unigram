@@ -115,9 +115,9 @@ namespace winrt::Unigram::Native::Calls::implementation
 		}
 	}
 
-	void VoipGroupManager::SetConnectionMode(VoipGroupConnectionMode connectionMode, bool keepBroadcastIfWasEnabled) {
+	void VoipGroupManager::SetConnectionMode(VoipGroupConnectionMode connectionMode, bool keepBroadcastIfWasEnabled, bool isUnifiedBroadcast) {
 		if (m_impl) {
-			m_impl->setConnectionMode((tgcalls::GroupConnectionMode)connectionMode, keepBroadcastIfWasEnabled);
+			m_impl->setConnectionMode((tgcalls::GroupConnectionMode)connectionMode, keepBroadcastIfWasEnabled, isUnifiedBroadcast);
 		}
 	}
 

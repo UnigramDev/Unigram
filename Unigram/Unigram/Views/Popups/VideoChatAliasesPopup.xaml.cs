@@ -43,11 +43,17 @@ namespace Unigram.Views.Popups
                 ? Visibility.Visible
                 : Visibility.Collapsed;
 
+            StartWith.Visibility = canSchedule
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
             PrimaryButtonText = Strings.Resources.Start;
             SecondaryButtonText = Strings.Resources.Close;
         }
 
         public bool IsScheduleSelected { get; private set; }
+
+        public bool IsStartWithSelected { get; private set; }
 
         public MessageSender SelectedSender => List.SelectedItem as MessageSender;
 
@@ -118,6 +124,12 @@ namespace Unigram.Views.Popups
         private void Schedule_Click(object sender, RoutedEventArgs e)
         {
             IsScheduleSelected = true;
+            Hide(ContentDialogResult.Primary);
+        }
+
+        private void StartWith_Click(object sender, RoutedEventArgs e)
+        {
+            IsStartWithSelected = true;
             Hide(ContentDialogResult.Primary);
         }
     }
