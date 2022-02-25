@@ -248,8 +248,18 @@ namespace Unigram.Services
 
                     startDate = schedule.Value.ToTimestamp();
                 }
+                else if (popup.IsStartWithSelected)
+                {
+                    var streams = new VideoChatStreamsPopup(ProtoService, chat.Id);
 
-                var response = await ProtoService.SendAsync(new CreateVideoChat(chat.Id, string.Empty, startDate, false));
+                    var again = await streams.ShowQueuedAsync();
+                    if (again != ContentDialogResult.Primary)
+                    {
+                        return;
+                    }
+                }
+
+                var response = await ProtoService.SendAsync(new CreateVideoChat(chat.Id, string.Empty, startDate, popup.IsStartWithSelected));
                 if (response is GroupCallId groupCallId)
                 {
                     await JoinAsyncInternal(chat, groupCallId.Id, participantId);
@@ -379,10 +389,10 @@ namespace Unigram.Services
             _alias = alias;
 
 #if ENABLE_CALLS
-            _manager?.SetConnectionMode(VoipGroupConnectionMode.None, false);
+            _manager?.SetConnectionMode(VoipGroupConnectionMode.None, false, groupCall.IsRtmpStream);
             _manager?.EmitJoinPayload(async (ssrc, payload) =>
             {
-                Participants ??= new GroupCallParticipantsCollection(ProtoService, Aggregator, groupCall);
+                Participants ??= new GroupCallParticipantsCollection(ProtoService, Aggregator, _chat, groupCall);
 
                 var response = await ProtoService.SendAsync(new JoinGroupCall(groupCall.Id, alias, ssrc, payload, _manager.IsMuted, _capturer != null, string.Empty));
                 if (response is Text json)
@@ -405,7 +415,7 @@ namespace Unigram.Services
                     }
 
                     _source = ssrc;
-                    _manager.SetConnectionMode(broadcast ? VoipGroupConnectionMode.Broadcast : VoipGroupConnectionMode.Rtc, true);
+                    _manager.SetConnectionMode(broadcast ? VoipGroupConnectionMode.Broadcast : VoipGroupConnectionMode.Rtc, true, groupCall.IsRtmpStream);
                     _manager.SetJoinResponsePayload(json.TextValue);
 
                     RejoinScreenSharing(groupCall);
@@ -519,7 +529,7 @@ namespace Unigram.Services
 
         private void RejoinScreenSharing(GroupCall groupCall)
         {
-            _screenManager?.SetConnectionMode(VoipGroupConnectionMode.None, false);
+            _screenManager?.SetConnectionMode(VoipGroupConnectionMode.None, false, groupCall.IsRtmpStream);
             _screenManager?.EmitJoinPayload(async (ssrc, payload) =>
             {
                 var response = await ProtoService.SendAsync(new StartGroupCallScreenSharing(groupCall.Id, ssrc, payload));
@@ -531,7 +541,7 @@ namespace Unigram.Services
                     }
 
                     _screenSource = ssrc;
-                    _screenManager.SetConnectionMode(VoipGroupConnectionMode.Rtc, true);
+                    _screenManager.SetConnectionMode(VoipGroupConnectionMode.Rtc, true, groupCall.IsRtmpStream);
                     _screenManager.SetJoinResponsePayload(json.TextValue);
                 }
             });
@@ -571,12 +581,33 @@ namespace Unigram.Services
 
 #if ENABLE_CALLS
 
-        private void OnBroadcastTimeRequested(VoipGroupManager sender, BroadcastTimeRequestedEventArgs args)
+        private async void OnBroadcastTimeRequested(VoipGroupManager sender, BroadcastTimeRequestedEventArgs args)
         {
-            var now = DateTime.Now + _timeDifference;
-            var stamp = now.ToTimestampMilliseconds();
+            var call = _call;
+            if (call == null)
+            {
+                return;
+            }
 
-            args.Deferral(stamp);
+            if (call.IsRtmpStream)
+            {
+                var response = await ProtoService.SendAsync(new GetGroupCallStreams(call.Id));
+                if (response is GroupCallStreams streams && streams.Streams.Count > 0)
+                {
+                    args.Deferral(streams.Streams[0].TimeOffset);
+                }
+                else
+                {
+                    args.Deferral(0);
+                }
+            }
+            else
+            {
+                var now = DateTime.Now + _timeDifference;
+                var stamp = now.ToTimestampMilliseconds();
+
+                args.Deferral(stamp);
+            }
         }
 
         private async void OnBroadcastPartRequested(VoipGroupManager sender, BroadcastPartRequestedEventArgs args)

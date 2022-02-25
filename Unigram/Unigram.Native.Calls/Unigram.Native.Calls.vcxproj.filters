@@ -123,6 +123,15 @@
       <Filter>tgcalls\group</Filter>
     </ClCompile>
     <ClCompile Include="BroadcastTimeRequestedEventArgs.cpp" />
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\group\AudioStreamingPartInternal.cpp">
+      <Filter>tgcalls\group</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\group\AudioStreamingPartPersistentDecoder.cpp">
+      <Filter>tgcalls\group</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\group\AVIOContextImpl.cpp">
+      <Filter>tgcalls\group</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -284,6 +293,15 @@
       <Filter>tgcalls\group</Filter>
     </ClInclude>
     <ClInclude Include="BroadcastTimeRequestedEventArgs.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\group\AudioStreamingPartInternal.h">
+      <Filter>tgcalls\group</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\group\AudioStreamingPartPersistentDecoder.h">
+      <Filter>tgcalls\group</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\group\AVIOContextImpl.h">
+      <Filter>tgcalls\group</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="VoipManager.rc" />

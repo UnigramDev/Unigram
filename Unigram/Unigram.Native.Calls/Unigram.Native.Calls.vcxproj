@@ -151,6 +151,9 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\group\AudioStreamingPartInternal.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\group\AudioStreamingPartPersistentDecoder.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\group\AVIOContextImpl.h" />
     <ClInclude Include="BroadcastTimeRequestedEventArgs.h">
       <DependentUpon>BroadcastTimeRequestedEventArgs.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -253,6 +256,15 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\group\AudioStreamingPartInternal.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\group\AudioStreamingPartPersistentDecoder.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\group\AVIOContextImpl.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="BroadcastTimeRequestedEventArgs.cpp">
       <DependentUpon>BroadcastTimeRequestedEventArgs.idl</DependentUpon>
       <SubType>Code</SubType>

@@ -16,7 +16,7 @@ namespace Unigram.Native.Calls
     {
         VoipGroupManager(VoipGroupDescriptor descriptor);
 
-        void SetConnectionMode(VoipGroupConnectionMode connectionMode, Boolean keepBroadcastIfWasEnabled);
+        void SetConnectionMode(VoipGroupConnectionMode connectionMode, Boolean keepBroadcastIfWasEnabled, Boolean isUnifiedBroadcast);
 
         void EmitJoinPayload(EmitJsonPayloadDelegate completion);
         void SetJoinResponsePayload(String payload);

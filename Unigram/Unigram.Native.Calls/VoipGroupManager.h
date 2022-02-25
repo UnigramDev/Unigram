@@ -19,7 +19,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 
 		void Close();
 
-		void SetConnectionMode(VoipGroupConnectionMode connectionMode, bool keepBroadcastIfWasEnabled);
+		void SetConnectionMode(VoipGroupConnectionMode connectionMode, bool keepBroadcastIfWasEnabled, bool isUnifiedBroadcast);
 
 		void EmitJoinPayload(EmitJsonPayloadDelegate completion);
 		void SetJoinResponsePayload(hstring payload);

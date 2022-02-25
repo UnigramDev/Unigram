@@ -2373,6 +2373,46 @@
         </Setter>
     </Style>
 
+    <Style TargetType="local:LoadingTextBlock">
+        <Setter Property="Background"
+                Value="{ThemeResource ApplicationPageBackgroundThemeBrush}" />
+        <Setter Property="BorderBrush"
+                Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
+        <Setter Property="Foreground"
+                Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+        <Setter Property="PlaceholderBrush"
+                Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+        <Setter Property="VerticalAlignment"
+                Value="Top" />
+        <Setter Property="HorizontalAlignment"
+                Value="Stretch" />
+        <Setter Property="Padding"
+                Value="4" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:LoadingTextBlock">
+                    <Grid>
+                        <TextBlock x:Name="Placeholder"
+                                   Text="{TemplateBinding PlaceholderText}"
+                                   Foreground="{TemplateBinding PlaceholderBrush}"
+                                   FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                   Padding="{TemplateBinding Padding}"
+                                   TextAlignment="DetectFromContent"
+                                   TextWrapping="Wrap" />
+                        <TextBlock x:Name="Presenter"
+                                   Text="{TemplateBinding Text}"
+                                   Foreground="{TemplateBinding Foreground}"
+                                   FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                   Padding="{TemplateBinding Padding}"
+                                   IsTextSelectionEnabled="{TemplateBinding IsTextSelectionEnabled}"
+                                   TextAlignment="DetectFromContent"
+                                   TextWrapping="Wrap" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="local:WalkthroughControl">
         <Setter Property="Background"
                 Value="{ThemeResource ApplicationPageBackgroundThemeBrush}" />
