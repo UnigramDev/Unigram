@@ -57,7 +57,10 @@ namespace Unigram.Controls
 
         protected override void SourceChanged()
         {
-            OnSourceChanged(Source, _source);
+            if (Source != null)
+            {
+                OnSourceChanged(Source, _source);
+            }
         }
 
         protected override void Dispose()
@@ -211,7 +214,7 @@ namespace Unigram.Controls
                 shouldPlay = true;
             }
 
-            _interval = TimeSpan.FromMilliseconds(1000d / Math.Min(60, animation.FrameRate));
+            _interval = TimeSpan.FromMilliseconds(1000d / Math.Min(30, animation.FrameRate));
             _animation = animation;
             _hideThumbnail = null;
 
