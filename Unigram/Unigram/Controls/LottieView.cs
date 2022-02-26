@@ -73,7 +73,10 @@ namespace Unigram.Controls
 
         protected override void SourceChanged()
         {
-            OnSourceChanged(UriToPath(Source), _source);
+            if (Source != null)
+            {
+                OnSourceChanged(UriToPath(Source), _source);
+            }
         }
 
         protected override void Dispose()

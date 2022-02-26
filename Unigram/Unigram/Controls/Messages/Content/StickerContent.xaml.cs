@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Telegram.Td.Api;
+﻿using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.ViewModels;
 using Windows.UI.Composition;
@@ -37,16 +36,7 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            Background = null;
-            Source = null;
             Constraint = message;
-
-            if (!sticker.StickerValue.Local.IsDownloadingCompleted)
-            {
-                UpdateThumbnail(message, sticker);
-            }
-
-            UpdateManager.Subscribe(this, message, sticker.StickerValue, ref _fileToken, UpdateFile, true);
             UpdateFile(message, sticker.StickerValue);
         }
 
@@ -72,10 +62,20 @@ namespace Unigram.Controls.Messages.Content
             {
                 Source = await PlaceholderHelper.GetWebPFrameAsync(file.Local.Path);
                 ElementCompositionPreview.SetElementChildVisual(this, null);
+
+                UpdateManager.Unsubscribe(this, ref _fileToken);
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+            else 
             {
-                message.ProtoService.DownloadFile(file.Id, 1);
+                Source = null;
+                UpdateThumbnail(message, sticker);
+
+                UpdateManager.Subscribe(this, message, sticker.StickerValue, ref _fileToken, UpdateFile, true);
+
+                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                {
+                    message.ProtoService.DownloadFile(file.Id, 1);
+                }
             }
         }
 
