@@ -21,6 +21,7 @@ namespace Unigram.Views.Supergroups
         public SupergroupPermissionsPage()
         {
             InitializeComponent();
+            Title = Strings.Resources.ChannelPermissions;
 
             InitializeTicks();
 
@@ -254,7 +255,7 @@ namespace Unigram.Views.Supergroups
         {
             if (args.ItemContainer == null)
             {
-                args.ItemContainer = new TextListViewItem();
+                args.ItemContainer = new TableListViewItem();
                 args.ItemContainer.Style = sender.ItemContainerStyle;
                 args.ItemContainer.ContentTemplate = sender.ItemTemplate;
                 args.ItemContainer.ContextRequested += Member_ContextRequested;

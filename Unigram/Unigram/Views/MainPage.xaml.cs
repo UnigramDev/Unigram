@@ -1281,13 +1281,13 @@ namespace Unigram.Views
                 e.SourcePageType == typeof(ChatThreadPage) ||
                 e.SourcePageType == typeof(ChatScheduledPage) ||
                 e.SourcePageType == typeof(ChatEventLogPage) ||
-                e.SourcePageType == typeof(BlankPage) ||
-                frame.CurrentSourcePageType == typeof(ChatPage) ||
-                frame.CurrentSourcePageType == typeof(ChatPinnedPage) ||
-                frame.CurrentSourcePageType == typeof(ChatThreadPage) ||
-                frame.CurrentSourcePageType == typeof(ChatScheduledPage) ||
-                frame.CurrentSourcePageType == typeof(ChatEventLogPage) ||
-                frame.CurrentSourcePageType == typeof(BlankPage);
+                e.SourcePageType == typeof(BlankPage); //||
+                //frame.CurrentSourcePageType == typeof(ChatPage) ||
+                //frame.CurrentSourcePageType == typeof(ChatPinnedPage) ||
+                //frame.CurrentSourcePageType == typeof(ChatThreadPage) ||
+                //frame.CurrentSourcePageType == typeof(ChatScheduledPage) ||
+                //frame.CurrentSourcePageType == typeof(ChatEventLogPage) ||
+                //frame.CurrentSourcePageType == typeof(BlankPage);
 
             if (MasterDetail.CurrentState == MasterDetailState.Minimal)
             {
@@ -3048,6 +3048,8 @@ namespace Unigram.Views
 
     public class HostedPage : Page
     {
+        #region Header
+
         public UIElement Header
         {
             get => (UIElement)GetValue(HeaderProperty);
@@ -3056,5 +3058,33 @@ namespace Unigram.Views
 
         public static readonly DependencyProperty HeaderProperty =
             DependencyProperty.Register("Header", typeof(UIElement), typeof(HostedPage), new PropertyMetadata(null));
+
+        #endregion
+
+        #region Footer
+
+        public UIElement Footer
+        {
+            get { return (UIElement)GetValue(FooterProperty); }
+            set { SetValue(FooterProperty, value); }
+        }
+
+        public static readonly DependencyProperty FooterProperty =
+            DependencyProperty.Register("Footer", typeof(UIElement), typeof(HostedPage), new PropertyMetadata(null));
+
+        #endregion
+
+        #region Title
+
+        public string Title
+        {
+            get { return (string)GetValue(TitleProperty); }
+            set { SetValue(TitleProperty, value); }
+        }
+
+        public static readonly DependencyProperty TitleProperty =
+            DependencyProperty.Register("Title", typeof(string), typeof(HostedPage), new PropertyMetadata(null));
+
+        #endregion
     }
 }

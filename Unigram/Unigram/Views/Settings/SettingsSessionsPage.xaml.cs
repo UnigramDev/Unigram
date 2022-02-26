@@ -17,6 +17,7 @@ namespace Unigram.Views.Settings
         public SettingsSessionsPage()
         {
             InitializeComponent();
+            Title = Strings.Resources.SessionsTitle;
         }
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)

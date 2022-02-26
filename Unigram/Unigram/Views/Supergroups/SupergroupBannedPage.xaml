@@ -17,8 +17,9 @@
 
     <Page.Resources>
         <DataTemplate x:Key="MemberTemplate">
-            <Grid Margin="12,6"
-                  Background="Transparent">
+            <Grid Padding="12,6"
+                  Background="{ThemeResource SettingsItemBackground}"
+                  BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -62,7 +63,7 @@
         </controls:ContentPageHeader>
     </local:HostedPage.Header>
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+    <Grid Background="{ThemeResource SettingsPageBackground}">
         <controls:TableListView ItemsSource="{x:Bind ViewModel.Search, Mode=OneWay}"
                                 ItemTemplate="{StaticResource MemberTemplate}"
                                 ItemClick="ListView_ItemClick"
@@ -70,12 +71,6 @@
                                 ChoosingItemContainer="OnChoosingItemContainer"
                                 ContainerContentChanging="OnContainerContentChanging"
                                 SelectionMode="None">
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="HorizontalContentAlignment"
-                            Value="Stretch" />
-                </Style>
-            </ListView.ItemContainerStyle>
             <ListView.Header>
                 <Border Height="16" />
             </ListView.Header>
@@ -84,8 +79,7 @@
             </ListView.Footer>
         </controls:TableListView>
 
-        <Grid x:Name="ContentPanel"
-              Background="{ThemeResource PageBackgroundDarkBrush}">
+        <Grid x:Name="ContentPanel">
             <controls:TableListView x:Name="ScrollingHost"
                                     ItemsSource="{x:Bind ViewModel.Members}"
                                     ItemTemplate="{StaticResource MemberTemplate}"
@@ -95,13 +89,6 @@
                                     ContainerContentChanging="OnContainerContentChanging"
                                     SelectionMode="None"
                                     Grid.Row="1">
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem"
-                           BasedOn="{StaticResource DefaultListViewItemStyle}">
-                        <Setter Property="HorizontalContentAlignment"
-                                Value="Stretch" />
-                    </Style>
-                </ListView.ItemContainerStyle>
                 <ListView.Header>
                     <controls:HeaderedControl x:Name="AddNewPanel"
                                               Visibility="Collapsed"
@@ -112,12 +99,10 @@
                     </controls:HeaderedControl>
                 </ListView.Header>
                 <ListView.Footer>
-                    <Border MaxWidth="640">
-                        <TextBlock x:Name="Footer"
-                                   Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                   Style="{StaticResource CaptionTextBlockStyle}"
-                                   Margin="12,8,12,32" />
-                    </Border>
+                    <TextBlock x:Name="Footer"
+                                Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                Style="{StaticResource CaptionTextBlockStyle}"
+                                Margin="24,8,24,32" />
                 </ListView.Footer>
             </controls:TableListView>
         </Grid>

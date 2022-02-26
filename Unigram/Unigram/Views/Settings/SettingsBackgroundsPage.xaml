@@ -30,11 +30,7 @@
         </Style>
     </Page.Resources>
 
-    <local:HostedPage.Header>
-        <controls:PageHeader Text="{CustomResource ChatBackground}" />
-    </local:HostedPage.Header>
-
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+    <Grid Background="{ThemeResource SettingsPageBackground}">
         <GridView x:Name="List"
                   ItemsSource="{x:Bind ViewModel.Items}"
                   ItemClick="List_ItemClick"
@@ -57,12 +53,14 @@
             <GridView.Header>
                 <controls:HeaderedControl Margin="-8,0,-8,8">
                     <controls:BadgeButton Content="{CustomResource SelectFromGallery}"
-                                          Command="{x:Bind ViewModel.LocalCommand}" />
-
-                    <Rectangle Style="{StaticResource Separator}" />
+                                          Command="{x:Bind ViewModel.LocalCommand}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xEB9F;" />
 
                     <controls:BadgeButton Content="{CustomResource SetColor}"
-                                          Command="{x:Bind ViewModel.ColorCommand}" />
+                                          Command="{x:Bind ViewModel.ColorCommand}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xE2B1;"/>
                 </controls:HeaderedControl>
             </GridView.Header>
             <GridView.Footer>

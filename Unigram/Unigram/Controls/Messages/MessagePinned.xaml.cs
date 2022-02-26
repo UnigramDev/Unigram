@@ -327,19 +327,17 @@ namespace Unigram.Controls.Messages
         private readonly CompositionSpriteShape _back;
         private readonly CompositionSpriteShape _fore;
         private readonly CompositionRectangleGeometry _forePath;
-        private readonly CompositionSpriteShape _mask;
+        private readonly CompositionGeometricClip _mask;
         private readonly CompositionPathGeometry _maskPath;
 
         public MessagePinnedLine()
         {
-            RegisterPropertyChangedCallback(BackgroundProperty, OnBackgroundChanged);
             RegisterPropertyChangedCallback(BorderBrushProperty, OnBorderBrushChanged);
 
             var compositor = Window.Current.Compositor;
 
             var visual = compositor.CreateShapeVisual();
-            visual.Clip = compositor.CreateInsetClip(0, 0, 1, 0);
-            visual.Size = new Vector2(4, 36);
+            visual.Size = new Vector2(2, 36);
 
             var back = compositor.CreateRectangleGeometry();
             back.Offset = Vector2.Zero;
@@ -357,13 +355,11 @@ namespace Unigram.Controls.Messages
             foreShape.FillBrush = GetBrush(ForegroundProperty);
 
             var mask = compositor.CreatePathGeometry(GetMask(1));
-            var maskShape = compositor.CreateSpriteShape(mask);
-            maskShape.FillBrush = GetBrush(BackgroundProperty);
-            maskShape.Offset = new Vector2(-2);
+            var maskShape = compositor.CreateGeometricClip(mask);
 
             visual.Shapes.Add(backShape);
             visual.Shapes.Add(foreShape);
-            visual.Shapes.Add(maskShape);
+            visual.Clip = maskShape;
 
             _back = backShape;
             _fore = foreShape;
@@ -418,14 +414,6 @@ namespace Unigram.Controls.Messages
         }
 
         #endregion
-
-        private void OnBackgroundChanged(DependencyObject sender, DependencyProperty dp)
-        {
-            if (_mask != null)
-            {
-                _mask.FillBrush = GetBrush(dp);
-            }
-        }
 
         private void OnBorderBrushChanged(DependencyObject sender, DependencyProperty dp)
         {
@@ -599,14 +587,14 @@ namespace Unigram.Controls.Messages
             if (initial1 != final1)
             {
                 var anim1 = _mask.Compositor.CreateVector2KeyFrameAnimation();
-                anim1.InsertKeyFrame(0, new Vector2(-2, initial1), easing);
-                anim1.InsertKeyFrame(1, new Vector2(-2, final1), easing);
+                anim1.InsertKeyFrame(0, new Vector2(0, initial1 + 2), easing);
+                anim1.InsertKeyFrame(1, new Vector2(0, final1 + 2), easing);
 
                 _mask.StartAnimation("Offset", anim1);
             }
             else
             {
-                _mask.Offset = new Vector2(-2, final1);
+                _mask.Offset = new Vector2(0, final1 + 2);
             }
 
             if (initial2 != final2 && maximum > 1)
@@ -649,15 +637,11 @@ namespace Unigram.Controls.Messages
 
             for (int i = 0; i < geometries.Length; i++)
             {
-                geometries[i] = CanvasGeometry.CreateRectangle(null, 2, 2 + i * (h + m), 4, h);
+                geometries[i] = CanvasGeometry.CreateRectangle(null, 0, 0 + i * (h + m), 4, h);
             }
 
-            var rectangle = CanvasGeometry.CreateRectangle(null, 0, 0, 8, (h + m) * geometries.Length + 1);
-
-            var group1 = CanvasGeometry.CreateGroup(null, geometries, CanvasFilledRegionDetermination.Winding);
-            var group2 = CanvasGeometry.CreateGroup(null, new[] { rectangle, group1 }, CanvasFilledRegionDetermination.Alternate);
-
-            return new CompositionPath(group2);
+            var rectangle = CanvasGeometry.CreateRectangle(null, -2, -2, 8, (h + m) * geometries.Length + 1);
+            return new CompositionPath(CanvasGeometry.CreateGroup(null, geometries, CanvasFilledRegionDetermination.Winding));
         }
 
     }

@@ -5,7 +5,8 @@
                   xmlns:controls="using:Unigram.Controls"
                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                  mc:Ignorable="d">
+                  mc:Ignorable="d"
+                  Title="{x:Bind ViewModel.Scope.Title}">
 
     <Page.Transitions>
         <TransitionCollection>
@@ -15,11 +16,7 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <local:HostedPage.Header>
-        <controls:PageHeader Text="{x:Bind ViewModel.Scope.Title}" />
-    </local:HostedPage.Header>
-
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+    <Grid Background="{ThemeResource SettingsPageBackground}">
         <controls:TableListView x:Name="List"
                                 ItemsSource="{x:Bind ViewModel.Items}"
                                 ItemClick="ListView_ItemClick"
@@ -48,13 +45,10 @@
                                               Badge="{CustomResource SoundDefault}" />
                     </controls:HeaderedControl>
 
-                    <Border MaxWidth="640"
-                            Margin="12,0">
-                        <TextBlock x:Name="HeaderLabel"
-                                   Text="{CustomResource NotificationsExceptions}"
-                                   Style="{StaticResource BaseTextBlockStyle}"
-                                   Margin="0,16,0,8" />
-                    </Border>
+                    <TextBlock x:Name="HeaderLabel"
+                               Text="{CustomResource NotificationsExceptions}"
+                               Style="{StaticResource BaseTextBlockStyle}"
+                               Margin="24,16,24,8" />
                 </StackPanel>
             </ListView.Header>
             <ListView.ItemTemplate>

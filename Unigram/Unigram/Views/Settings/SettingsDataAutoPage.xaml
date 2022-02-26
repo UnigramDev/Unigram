@@ -5,7 +5,8 @@
                   xmlns:controls="using:Unigram.Controls"
                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                  mc:Ignorable="d">
+                  mc:Ignorable="d"
+                  Title="{x:Bind ViewModel.Title, Mode=OneWay}">
 
     <Page.Transitions>
         <TransitionCollection>
@@ -15,31 +16,32 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <local:HostedPage.Header>
-        <controls:ButtonPageHeader Text="{x:Bind ViewModel.Title, Mode=OneWay}"
-                                   Command="{x:Bind ViewModel.SendCommand}"
-                                   CommandToolTip="{CustomResource Done}"
-                                   Glyph="&#xE10B;" />
-    </local:HostedPage.Header>
+    <local:HostedPage.Footer>
+        <Button Content="{CustomResource Done}"
+                Command="{x:Bind ViewModel.SendCommand}"
+                Style="{StaticResource AccentButtonStyle}" />
+    </local:HostedPage.Footer>
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+
+    <Grid Background="{ThemeResource SettingsPageBackground}">
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
-            <StackPanel Margin="0,0,0,48">
+            <StackPanel Spacing="16"
+                        Margin="0,0,0,32">
                 <controls:HeaderedControl Header="{x:Bind ViewModel.Header, Mode=OneWay}">
                     <CheckBox IsChecked="{x:Bind ViewModel.Contacts, Mode=TwoWay}"
                               Content="{CustomResource AutodownloadContacts}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
-                    
+
                     <CheckBox IsChecked="{x:Bind ViewModel.PrivateChats, Mode=TwoWay}"
                               Content="{CustomResource AutodownloadPrivateChats}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
-                    
+
                     <CheckBox IsChecked="{x:Bind ViewModel.Groups, Mode=TwoWay}"
                               Content="{CustomResource AutodownloadGroupChats}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
-                    
+
                     <CheckBox IsChecked="{x:Bind ViewModel.Channels, Mode=TwoWay}"
                               Content="{CustomResource AutodownloadChannels}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
@@ -47,7 +49,8 @@
 
                 <controls:HeaderedControl Header="{CustomResource AutoDownloadMaxFileSize}"
                                           Footer="{x:Bind ConvertUpTo(ViewModel.Limit), Mode=OneWay}"
-                                          Visibility="{x:Bind ViewModel.IsLimitSupported, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                          Visibility="{x:Bind ViewModel.IsLimitSupported, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                          Background="{ThemeResource SettingsItemBackground}">
                     <Slider Value="{x:Bind ConvertLimit(ViewModel.Limit), Mode=TwoWay, BindBack=ConvertLimitBack}"
                             Minimum="0"
                             Maximum="1"
@@ -57,10 +60,7 @@
                             TickFrequency="0.25"
                             TickPlacement="Outside"
                             IsThumbToolTipEnabled="False"
-                            Margin="12,6,12,0" />
-                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}"
-                               Height="1"
-                               Margin="12,6,0,0" />
+                            Margin="12,6,12,6" />
                 </controls:HeaderedControl>
             </StackPanel>
         </ScrollViewer>

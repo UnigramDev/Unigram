@@ -14,6 +14,7 @@ namespace Unigram.Views.Supergroups
         public SupergroupEditAdministratorPage()
         {
             InitializeComponent();
+            Title = Strings.Resources.EditAdmin;
         }
 
         public void UpdateChat(Chat chat)
@@ -30,7 +31,7 @@ namespace Unigram.Views.Supergroups
 
         public void UpdateUser(Chat chat, User user, bool secret)
         {
-            Title.Text = user.GetFullName();
+            TitleLabel.Text = user.GetFullName();
             Subtitle.Text = LastSeenConverter.GetLabel(user, true);
             Photo.SetUser(ViewModel.ProtoService, user, 64);
 

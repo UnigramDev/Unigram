@@ -1139,6 +1139,8 @@ namespace Unigram.Common
 
         public static TdNetworkType GetNetworkType(this NetworkStatisticsEntry entry)
         {
+            return TdNetworkType.WiFi;
+
             if (entry is NetworkStatisticsEntryCall call)
             {
                 switch (call.NetworkType)

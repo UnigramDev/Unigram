@@ -11,6 +11,7 @@ namespace Unigram.Views.Settings.Privacy
         public SettingsPrivacyShowStatusPage()
         {
             InitializeComponent();
+            Title = Strings.Resources.PrivacyLastSeen;
         }
 
         #region Binding

@@ -14,6 +14,7 @@ namespace Unigram.Views.Settings
         public SettingsDataAndStoragePage()
         {
             InitializeComponent();
+            Title = Strings.Resources.DataSettings;
         }
 
         private void Storage_Click(object sender, RoutedEventArgs e)

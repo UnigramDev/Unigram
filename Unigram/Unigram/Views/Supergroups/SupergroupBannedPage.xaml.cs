@@ -20,6 +20,7 @@ namespace Unigram.Views.Supergroups
         public SupergroupBannedPage()
         {
             InitializeComponent();
+            Title = Strings.Resources.ChannelBlockedUsers;
 
             var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
             debouncer.Invoked += (s, args) =>
@@ -103,7 +104,7 @@ namespace Unigram.Views.Supergroups
         {
             if (args.ItemContainer == null)
             {
-                args.ItemContainer = new TextListViewItem();
+                args.ItemContainer = new TableListViewItem();
                 args.ItemContainer.Style = sender.ItemContainerStyle;
                 args.ItemContainer.ContentTemplate = sender.ItemTemplate;
                 args.ItemContainer.ContextRequested += Member_ContextRequested;

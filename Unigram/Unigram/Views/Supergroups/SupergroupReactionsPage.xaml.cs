@@ -17,6 +17,7 @@ namespace Unigram.Views.Supergroups
         public SupergroupReactionsPage()
         {
             InitializeComponent();
+            Title = Strings.Resources.Reactions;
         }
 
         private void OnContainerContentChanged(ListViewBase sender, ContainerContentChangingEventArgs args)

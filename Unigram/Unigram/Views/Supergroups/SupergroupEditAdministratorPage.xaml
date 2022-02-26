@@ -22,11 +22,12 @@
                                    Command="{x:Bind ViewModel.SendCommand}" />
     </local:HostedPage.Header>
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+    <Grid Background="{ThemeResource SettingsPageBackground}">
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
-            <StackPanel Margin="0,0,0,24">
+            <StackPanel Spacing="16"
+                        Margin="0,0,0,32">
                 <controls:HeaderedControl>
                     <Grid>
                         <Grid.RowDefinitions>
@@ -51,7 +52,7 @@
                                 <ColumnDefinition />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock x:Name="Title"
+                            <TextBlock x:Name="TitleLabel"
                                        TextWrapping="NoWrap"
                                        TextTrimming="CharacterEllipsis"
                                        Style="{StaticResource BaseTextBlockStyle}" />

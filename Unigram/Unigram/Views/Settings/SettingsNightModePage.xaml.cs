@@ -20,6 +20,7 @@ namespace Unigram.Views.Settings
         public SettingsNightModePage()
         {
             InitializeComponent();
+            Title = Strings.Resources.AutoNightTheme;
 
             // We have to do this as english copy contains a randomic \n at the end of the string.
             AutoNightLocation.Content = Strings.Resources.AutoNightLocation.TrimEnd('\n');

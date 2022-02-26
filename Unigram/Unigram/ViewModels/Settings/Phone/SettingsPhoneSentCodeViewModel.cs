@@ -111,7 +111,7 @@ namespace Unigram.ViewModels.Settings
             {
                 while (NavigationService.Frame.BackStackDepth > 1)
                 {
-                    NavigationService.Frame.BackStack.RemoveAt(1);
+                    NavigationService.RemoveFromBackStack(1);
                 }
 
                 NavigationService.GoBack();

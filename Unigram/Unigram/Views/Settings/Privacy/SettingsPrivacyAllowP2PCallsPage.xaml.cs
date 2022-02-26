@@ -11,6 +11,7 @@ namespace Unigram.Views.Settings.Privacy
         public SettingsPrivacyAllowP2PCallsPage()
         {
             InitializeComponent();
+            Title = Strings.Resources.PrivacyP2P;
         }
 
         #region Binding

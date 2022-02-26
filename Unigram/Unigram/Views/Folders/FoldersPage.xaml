@@ -9,16 +9,20 @@
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                   mc:Ignorable="d">
 
-    <local:HostedPage.Header>
-        <controls:PageHeader Text="{CustomResource Filters}" />
-    </local:HostedPage.Header>
-
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+    <Grid Background="{ThemeResource SettingsPageBackground}">
         <muxc:ItemsRepeaterScrollHost>
             <ScrollViewer VerticalScrollBarVisibility="Auto"
                           VerticalScrollMode="Auto">
                 <StackPanel>
-                    <StackPanel MaxWidth="640">
+                    <Grid Margin="24,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition MaxWidth="1000" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
                         <controls:LottieView IsLoopingEnabled="False"
                                              IsCachingEnabled="False"
                                              Source="ms-appx:///Assets/Animations/ChatListFolders.tgs"
@@ -28,8 +32,9 @@
                         <TextBlock Text="{CustomResource CreateNewFilterInfo}"
                                    Style="{StaticResource InfoCaptionTextBlockStyle}"
                                    TextAlignment="Center"
-                                   Margin="12,16,12,8" />
-                    </StackPanel>
+                                   Margin="0,16,0,8"
+                                   Grid.Row="1"/>
+                    </Grid>
 
                     <controls:HeaderedControl Header="{CustomResource Filters}">
                         <muxc:ItemsRepeater Layout="{StaticResource ThreadStackLayout}"
@@ -76,7 +81,8 @@
                     </controls:HeaderedControl>
 
                     <controls:HeaderedControl Header="Tabs view"
-                                              Footer="If you have many folders, try moving tabs on the left.">
+                                              Footer="If you have many folders, try moving tabs on the left."
+                                              Background="{ThemeResource SettingsItemBackground}">
                         <ScrollViewer HorizontalScrollBarVisibility="Auto"
                                       HorizontalScrollMode="Auto"
                                       VerticalScrollBarVisibility="Disabled"

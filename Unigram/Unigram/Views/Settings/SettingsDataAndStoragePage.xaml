@@ -8,121 +8,12 @@
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                   mc:Ignorable="d">
 
-    <Page.Resources>
-        <Style x:Key="SubtitleButtonStyle"
-               TargetType="controls:BadgeButton">
-            <Setter Property="Background"
-                    Value="Transparent" />
-            <Setter Property="Foreground"
-                    Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
-            <Setter Property="BorderBrush"
-                    Value="{ThemeResource TelegramSeparatorBrush}" />
-            <Setter Property="BorderThickness"
-                    Value="0" />
-            <Setter Property="Padding"
-                    Value="12,0,0,0" />
-            <Setter Property="HorizontalContentAlignment"
-                    Value="Left" />
-            <Setter Property="HorizontalAlignment"
-                    Value="Stretch" />
-            <Setter Property="VerticalAlignment"
-                    Value="Center" />
-            <Setter Property="FontFamily"
-                    Value="{ThemeResource ContentControlThemeFontFamily}" />
-            <Setter Property="FontWeight"
-                    Value="Normal" />
-            <Setter Property="FontSize"
-                    Value="{ThemeResource ControlContentThemeFontSize}" />
-            <Setter Property="UseSystemFocusVisuals"
-                    Value="True" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="controls:BadgeButton">
-                        <StackPanel x:Name="RootGrid"
-                                    Background="{TemplateBinding Background}">
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Normal" />
-                                    <VisualState x:Name="PointerOver">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
-                                                                           Storyboard.TargetName="RootGrid">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource SystemControlBackgroundListLowBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Pressed">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
-                                                                           Storyboard.TargetName="RootGrid">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource SystemControlBackgroundListMediumBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Disabled">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
-                                                                           Storyboard.TargetName="ContentPresenter">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource SystemControlForegroundBaseLowBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                            <ContentPresenter x:Name="ContentPresenter"
-                                              TextWrapping="Wrap"
-                                              AutomationProperties.AccessibilityView="Raw"
-                                              BorderBrush="{TemplateBinding BorderBrush}"
-                                              BorderThickness="{TemplateBinding BorderThickness}"
-                                              ContentTemplate="{TemplateBinding ContentTemplate}"
-                                              ContentTransitions="{TemplateBinding ContentTransitions}"
-                                              Content="{TemplateBinding Content}"
-                                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                              Padding="12,11,12,0"
-                                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
-                            <ContentControl x:Name="BadgePresenter"
-                                            Content="{TemplateBinding Badge}"
-                                            Visibility="{TemplateBinding BadgeVisibility}"
-                                            Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                            Padding="12,0,0,12">
-                                <ContentControl.ContentTransitions>
-                                    <TransitionCollection>
-                                        <EntranceThemeTransition />
-                                    </TransitionCollection>
-                                </ContentControl.ContentTransitions>
-                                <ContentControl.Clip>
-                                    <RectangleGeometry Rect="0,0,3600,28" />
-                                </ContentControl.Clip>
-                                <ContentControl.ContentTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding}"
-                                                   Style="{StaticResource CaptionTextBlockStyle}"
-                                                   Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
-                                    </DataTemplate>
-                                </ContentControl.ContentTemplate>
-                            </ContentControl>
-                            <Rectangle Fill="{TemplateBinding BorderBrush}"
-                                       Height="1"
-                                       Margin="{TemplateBinding Padding}" />
-                        </StackPanel>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </Page.Resources>
-
-    <local:HostedPage.Header>
-        <controls:PageHeader Text="{CustomResource DataSettings}" />
-    </local:HostedPage.Header>
-
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+    <Grid Background="{ThemeResource SettingsPageBackground}">
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
-            <StackPanel Margin="0,0,0,24">
+            <StackPanel Spacing="16"
+                        Margin="0,0,0,32">
                 <controls:HeaderedControl Header="{CustomResource DataUsage}">
                     <controls:BadgeButton Content="{CustomResource StorageUsage}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"

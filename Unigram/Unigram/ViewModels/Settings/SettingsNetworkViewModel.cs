@@ -24,86 +24,79 @@ namespace Unigram.ViewModels.Settings
             ResetCommand = new RelayCommand(ResetExecute);
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            ProtoService.Send(new GetNetworkStatistics(false), result =>
+            var response = await ProtoService.SendAsync(new GetNetworkStatistics(false));
+            if (response is NetworkStatistics statistics)
             {
-                if (result is NetworkStatistics statistics)
+                SinceDate = Converter.DateTime(statistics.SinceDate);
+
+                var groups = new Dictionary<TdNetworkType, List<NetworkStatisticsEntry>>();
+
+                foreach (var entry in statistics.Entries)
                 {
-                    BeginOnUIThread(() =>
+                    var type = entry.GetNetworkType();
+                    if (groups.TryGetValue(type, out List<NetworkStatisticsEntry> entries))
                     {
-                        SinceDate = Converter.DateTime(statistics.SinceDate);
+                        entries.Add(entry);
+                    }
+                    else
+                    {
+                        groups[type] = new List<NetworkStatisticsEntry>();
+                        groups[type].Add(entry);
+                    }
+                }
 
-                        var groups = new Dictionary<TdNetworkType, List<NetworkStatisticsEntry>>();
+                foreach (var group in groups.ToList())
+                {
+                    var notes = new NetworkStatisticsEntryFile(new FileTypeNotes(), null, 0, 0);
+                    var other = new NetworkStatisticsEntryFile(new FileTypeOther(), null, 0, 0);
+                    var total = new NetworkStatisticsEntryFile(new FileTypeTotal(), null, 0, 0);
 
-                        foreach (var entry in statistics.Entries)
+                    var results = new List<NetworkStatisticsEntry>
+                    {
+                        notes,
+                        other,
+                        total
+                    };
+
+                    foreach (var entry in group.Value)
+                    {
+                        if (entry is NetworkStatisticsEntryFile file)
                         {
-                            var type = entry.GetNetworkType();
-                            if (groups.TryGetValue(type, out List<NetworkStatisticsEntry> entries))
+                            if (IsSecondaryType(file.FileType))
                             {
-                                entries.Add(entry);
+                                other.SentBytes += file.SentBytes;
+                                other.ReceivedBytes += file.ReceivedBytes;
+                            }
+                            else if (IsNotesType(file.FileType))
+                            {
+                                notes.SentBytes += file.SentBytes;
+                                notes.ReceivedBytes += file.ReceivedBytes;
                             }
                             else
                             {
-                                groups[type] = new List<NetworkStatisticsEntry>();
-                                groups[type].Add(entry);
+                                results.Add(entry);
                             }
-                        }
 
-                        foreach (var group in groups.ToList())
+                            total.SentBytes += file.SentBytes;
+                            total.ReceivedBytes += file.ReceivedBytes;
+                        }
+                        else if (entry is NetworkStatisticsEntryCall call)
                         {
-                            var notes = new NetworkStatisticsEntryFile(new FileTypeNotes(), null, 0, 0);
-                            var other = new NetworkStatisticsEntryFile(new FileTypeOther(), null, 0, 0);
-                            var total = new NetworkStatisticsEntryFile(new FileTypeTotal(), null, 0, 0);
+                            results.Add(entry);
 
-                            var results = new List<NetworkStatisticsEntry>
-                            {
-                                notes,
-                                other,
-                                total
-                            };
-
-                            foreach (var entry in group.Value)
-                            {
-                                if (entry is NetworkStatisticsEntryFile file)
-                                {
-                                    if (IsSecondaryType(file.FileType))
-                                    {
-                                        other.SentBytes += file.SentBytes;
-                                        other.ReceivedBytes += file.ReceivedBytes;
-                                    }
-                                    else if (IsNotesType(file.FileType))
-                                    {
-                                        notes.SentBytes += file.SentBytes;
-                                        notes.ReceivedBytes += file.ReceivedBytes;
-                                    }
-                                    else
-                                    {
-                                        results.Add(entry);
-                                    }
-
-                                    total.SentBytes += file.SentBytes;
-                                    total.ReceivedBytes += file.ReceivedBytes;
-                                }
-                                else if (entry is NetworkStatisticsEntryCall call)
-                                {
-                                    results.Add(entry);
-
-                                    total.SentBytes += call.SentBytes;
-                                    total.ReceivedBytes += call.ReceivedBytes;
-                                }
-                            }
-
-                            groups[group.Key] = results;
+                            total.SentBytes += call.SentBytes;
+                            total.ReceivedBytes += call.ReceivedBytes;
                         }
+                    }
 
-                        Items.ReplaceWith(groups.Select(x => new NetworkStatisticsList(x.Key, x.Value.OrderBy(y => y, new NetworkStatisticsComparer()))));
-                        SelectedItem = Items.FirstOrDefault();
-                    });
+                    groups[group.Key] = results;
                 }
-            });
 
-            return Task.CompletedTask;
+                Items.ReplaceWith(groups.Select(x => new NetworkStatisticsList(x.Key, x.Value.OrderBy(y => y, new NetworkStatisticsComparer()))));
+                SelectedItem = Items.FirstOrDefault();
+            }
         }
 
         private bool IsSecondaryType(FileType type)

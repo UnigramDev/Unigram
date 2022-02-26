@@ -17,8 +17,9 @@
 
     <Page.Resources>
         <DataTemplate x:Key="MemberTemplate">
-            <Grid Margin="12,6"
-                  Background="Transparent">
+            <Grid Padding="12,6"
+                  Background="{ThemeResource SettingsItemBackground}"
+                  BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -85,7 +86,7 @@
         </controls:ContentPageHeader>
     </local:HostedPage.Header>
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+    <Grid Background="{ThemeResource SettingsPageBackground}">
         <ListView ItemsSource="{x:Bind ViewModel.Search, Mode=OneWay}"
                   ItemTemplate="{StaticResource MemberTemplate}"
                   ItemClick="ListView_ItemClick"
@@ -112,8 +113,7 @@
             </ListView.Footer>
         </ListView>
 
-        <Grid x:Name="ContentPanel"
-              Background="{ThemeResource PageBackgroundDarkBrush}">
+        <Grid x:Name="ContentPanel">
             <controls:TableListView x:Name="ScrollingHost"
                                     ItemsSource="{x:Bind ViewModel.Members}"
                                     ItemTemplate="{StaticResource MemberTemplate}"
@@ -131,7 +131,8 @@
                     </Style>
                 </ListView.ItemContainerStyle>
                 <ListView.Header>
-                    <StackPanel Margin="0,0,0,16">
+                    <StackPanel Spacing="16"
+                                Margin="0,0,0,16">
                         <controls:HeaderedControl Header="{CustomResource ChannelPermissionsHeader}">
                             <CheckBox IsChecked="{x:Bind ViewModel.CanSendMessages, Mode=TwoWay}"
                                       Content="{CustomResource UserRestrictionsSend}"
@@ -170,7 +171,8 @@
 
                         <controls:HeaderedControl x:Name="SlowmodePanel"
                                                   Header="{CustomResource Slowmode}"
-                                                  Footer="{x:Bind ConvertSlowModeFooter(ViewModel.SlowModeDelay), Mode=OneWay}">
+                                                  Footer="{x:Bind ConvertSlowModeFooter(ViewModel.SlowModeDelay), Mode=OneWay}"
+                                                  Background="{ThemeResource SettingsItemBackground}">
                             <Grid x:Name="SlowmodeTicks"
                                   Padding="12,6,12,0">
                                 <Grid.RowDefinitions>
@@ -212,12 +214,10 @@
                     </StackPanel>
                 </ListView.Header>
                 <ListView.Footer>
-                    <Border MaxWidth="640">
-                        <TextBlock x:Name="Footer"
-                                   Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                   Style="{StaticResource CaptionTextBlockStyle}"
-                                   Margin="12,8,12,32" />
-                    </Border>
+                    <TextBlock x:Name="Footer"
+                               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                               Style="{StaticResource CaptionTextBlockStyle}"
+                               Margin="0,8,0,32" />
                 </ListView.Footer>
             </controls:TableListView>
         </Grid>

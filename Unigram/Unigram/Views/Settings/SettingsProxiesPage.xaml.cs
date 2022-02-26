@@ -16,6 +16,7 @@ namespace Unigram.Views.Settings
         public SettingsProxiesPage()
         {
             InitializeComponent();
+            Title = Strings.Resources.ProxySettings;
         }
 
         private void List_ItemClick(object sender, ItemClickEventArgs e)
@@ -55,7 +56,7 @@ namespace Unigram.Views.Settings
         {
             if (args.ItemContainer == null)
             {
-                args.ItemContainer = new TextListViewItem();
+                args.ItemContainer = new TableListViewItem();
                 args.ItemContainer.Style = sender.ItemContainerStyle;
                 args.ItemContainer.ContentTemplate = sender.ItemTemplate;
                 args.ItemContainer.ContextRequested += Proxy_ContextRequested;

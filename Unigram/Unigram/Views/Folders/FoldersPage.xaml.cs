@@ -16,6 +16,7 @@ namespace Unigram.Views.Folders
         public FoldersPage()
         {
             InitializeComponent();
+            Title = Strings.Resources.Filters;
         }
 
         private void Items_ElementPrepared(Microsoft.UI.Xaml.Controls.ItemsRepeater sender, Microsoft.UI.Xaml.Controls.ItemsRepeaterElementPreparedEventArgs args)

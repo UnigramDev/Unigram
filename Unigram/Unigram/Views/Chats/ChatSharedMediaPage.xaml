@@ -46,14 +46,17 @@
                                             VerticalContentAlignment="Stretch" />
 
                     <Grid x:Name="HeaderPanel"
-                          Background="{ThemeResource PageBackgroundDarkBrush}"
+                          Margin="24,16,24,0"
                           Canvas.ZIndex="1">
-                        <Grid MaxWidth="640"
-                              Margin="12,16,12,0"
-                              CornerRadius="8,8,0,0">
-                            <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                    BorderBrush="{ThemeResource TelegramSeparatorMediumBrush}"
-                                    BorderThickness="0,0,0,1" />
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition MaxWidth="1000" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid CornerRadius="8,8,0,0">
+                            <Border Background="{ThemeResource SettingsItemBackground}"
+                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="8,8,0,0" />
                             <controls:TopNavView IsItemClickEnabled="True"
                                                  ItemClick="Header_ItemClick"
                                                  ItemsSource="{x:Bind ViewModel.Items}"

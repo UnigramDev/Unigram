@@ -16,29 +16,23 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <local:HostedPage.Header>
-        <controls:PageHeader Text="{CustomResource WebSessionsTitle}" />
-    </local:HostedPage.Header>
-
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+    <Grid Background="{ThemeResource SettingsPageBackground}">
         <controls:TableListView ItemsSource="{x:Bind ViewModel.Items}"
                                 IsItemClickEnabled="True"
                                 SelectionMode="None"
                                 ItemClick="ListView_ItemClick"
                                 ContainerContentChanging="OnContainerContentChanging">
             <ListView.Header>
-                <StackPanel>
+                <StackPanel Spacing="16">
                     <controls:HeaderedControl Footer="{CustomResource ClearOtherWebSessionsHelp}">
                         <controls:BadgeButton Content="{CustomResource TerminateAllWebSessions}"
                                               Foreground="Red"
                                               Click="TerminateOthers_Click" />
                     </controls:HeaderedControl>
 
-                    <Border MaxWidth="640"
-                            Margin="12,16,12,8">
-                        <TextBlock Text="{CustomResource OtherWebSessions}"
-                                   Style="{StaticResource BaseTextBlockStyle}" />
-                    </Border>
+                    <TextBlock Text="{CustomResource OtherWebSessions}"
+                               Style="{StaticResource BaseTextBlockStyle}"
+                               Margin="24,16,24,8" />
                 </StackPanel>
             </ListView.Header>
             <ListView.ItemTemplate>
@@ -47,11 +41,9 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.Footer>
-                <Border MaxWidth="640"
-                        Margin="12,8,12,32">
-                    <TextBlock Text="{CustomResource TerminateWebSessionInfo}"
-                               Style="{StaticResource InfoCaptionTextBlockStyle}" />
-                </Border>
+                <TextBlock Text="{CustomResource TerminateWebSessionInfo}"
+                           Style="{StaticResource InfoCaptionTextBlockStyle}"
+                           Margin="24,8,24,32" />
             </ListView.Footer>
         </controls:TableListView>
     </Grid>

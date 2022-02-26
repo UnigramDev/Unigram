@@ -14,11 +14,7 @@
                               IsSourceGrouped="True" />
     </Page.Resources>
 
-    <local:HostedPage.Header>
-        <controls:PageHeader Text="{CustomResource SessionsTitle}" />
-    </local:HostedPage.Header>
-
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+    <Grid Background="{ThemeResource SettingsPageBackground}">
         <controls:TableListView ItemsSource="{x:Bind ItemsSource.View}"
                                 IsItemClickEnabled="True"
                                 SelectionMode="None"
@@ -34,12 +30,16 @@
                                     Value="0" />
                             <Setter Property="MinHeight"
                                     Value="0" />
-                            <Setter Property="MaxWidth"
-                                    Value="640" />
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="ListViewHeaderItem">
-                                        <ContentPresenter />
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition MaxWidth="1000" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <ContentPresenter />
+                                        </Grid>
                                     </ControlTemplate>
                                 </Setter.Value>
                             </Setter>
@@ -82,18 +82,16 @@
             </ListView.ItemTemplate>
             <ListView.Footer>
                 <StackPanel Margin="0,0,0,32">
-                    <Border MaxWidth="640">
-                        <TextBlock Text="{CustomResource SessionsListInfo}"
-                                   Style="{StaticResource InfoCaptionTextBlockStyle}"
-                                   Margin="0,8,0,8" />
-                    </Border>
+                    <TextBlock Text="{CustomResource SessionsListInfo}"
+                               Style="{StaticResource InfoCaptionTextBlockStyle}"
+                               Margin="24,8,24,8" />
 
                     <controls:HeaderedControl Header="{CustomResource TerminateOldSessionHeader}">
                         <controls:BadgeButton Content="{CustomResource IfInactiveFor}">
                             <controls:BadgeButton.Badge>
                                 <ComboBox ItemsSource="{x:Bind ViewModel.SessionTtlOptions}"
                                           SelectedIndex="{x:Bind ViewModel.SessionTtl, Mode=TwoWay}"
-                                          DisplayMemberPath="Text"/>
+                                          DisplayMemberPath="Text" />
                             </controls:BadgeButton.Badge>
                         </controls:BadgeButton>
                     </controls:HeaderedControl>
@@ -102,8 +100,7 @@
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <ItemsStackPanel AreStickyGroupHeadersEnabled="False"
-                                     MaxWidth="640"
-                                     Margin="12,0" />
+                                     Margin="24,0" />
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
         </controls:TableListView>

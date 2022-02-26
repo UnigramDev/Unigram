@@ -20,6 +20,7 @@ namespace Unigram.Views.Supergroups
         public SupergroupEditPage()
         {
             InitializeComponent();
+            Title = Strings.Resources.ChannelEdit;
         }
 
         private async void EditPhoto_Click(object sender, RoutedEventArgs e)
@@ -67,7 +68,7 @@ namespace Unigram.Views.Supergroups
 
         public void UpdateChatTitle(Chat chat)
         {
-            Title.Text = ViewModel.ProtoService.GetTitle(chat);
+            TitleLabel.Text = ViewModel.ProtoService.GetTitle(chat);
         }
 
         public void UpdateChatPhoto(Chat chat)
@@ -77,7 +78,7 @@ namespace Unigram.Views.Supergroups
 
         public void UpdateSupergroup(Chat chat, Supergroup group)
         {
-            Title.PlaceholderText = group.IsChannel ? Strings.Resources.EnterChannelName : Strings.Resources.GroupName;
+            TitleLabel.PlaceholderText = group.IsChannel ? Strings.Resources.EnterChannelName : Strings.Resources.GroupName;
 
             Delete.Content = group.IsChannel ? Strings.Resources.ChannelDelete : Strings.Resources.DeleteMega;
             DeletePanel.Footer = group.IsChannel ? Strings.Resources.ChannelDeleteInfo : Strings.Resources.MegaDeleteInfo;
@@ -89,7 +90,7 @@ namespace Unigram.Views.Supergroups
 
 
             Photo.IsEnabled = group.CanChangeInfo();
-            Title.IsReadOnly = !group.CanChangeInfo();
+            TitleLabel.IsReadOnly = !group.CanChangeInfo();
             About.IsReadOnly = !group.CanChangeInfo();
 
             ChatType.Content = group.IsChannel ? Strings.Resources.ChannelType : Strings.Resources.GroupType;
@@ -209,7 +210,7 @@ namespace Unigram.Views.Supergroups
 
         public void UpdateBasicGroup(Chat chat, BasicGroup group)
         {
-            Title.PlaceholderText = Strings.Resources.GroupName;
+            TitleLabel.PlaceholderText = Strings.Resources.GroupName;
 
             Delete.Content = Strings.Resources.DeleteMega;
             DeletePanel.Footer = Strings.Resources.MegaDeleteInfo;

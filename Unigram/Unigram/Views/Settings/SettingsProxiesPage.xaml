@@ -17,11 +17,7 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <local:HostedPage.Header>
-        <controls:PageHeader Text="{CustomResource ProxySettings}" />
-    </local:HostedPage.Header>
-
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+    <Grid Background="{ThemeResource SettingsPageBackground}">
         <controls:TableListView x:Name="List"
                                 ItemsSource="{x:Bind ViewModel.Items}"
                                 ItemClick="List_ItemClick"
@@ -30,17 +26,15 @@
                                 ChoosingItemContainer="OnChoosingItemContainer"
                                 VerticalContentAlignment="Top">
             <ListView.Header>
-                <StackPanel>
+                <StackPanel Spacing="16">
                     <controls:HeaderedControl>
                         <controls:BadgeButton Content="{CustomResource AddProxy}"
                                               Command="{x:Bind ViewModel.AddCommand}" />
                     </controls:HeaderedControl>
 
-                    <Border MaxWidth="640"
-                            Margin="12,16,12,8">
-                        <TextBlock Text="{CustomResource ProxyConnections}"
-                                   Style="{StaticResource BaseTextBlockStyle}" />
-                    </Border>
+                    <TextBlock Text="{CustomResource ProxyConnections}"
+                               Style="{StaticResource BaseTextBlockStyle}"
+                               Margin="24,16,24,8" />
                 </StackPanel>
             </ListView.Header>
             <ListView.ItemTemplate>

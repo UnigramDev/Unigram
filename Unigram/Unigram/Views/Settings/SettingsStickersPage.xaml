@@ -7,11 +7,8 @@
                   xmlns:settings="using:Unigram.ViewModels.Settings"
                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                  mc:Ignorable="d">
-
-    <local:HostedPage.Header>
-        <controls:PageHeader Text="{x:Bind ViewModel.Title}" />
-    </local:HostedPage.Header>
+                  mc:Ignorable="d"
+                  Title="{x:Bind ViewModel.Title}">
 
     <Page.Resources>
         <DataTemplate x:Key="AnimatedItemTemplate">
@@ -118,7 +115,7 @@
         </DataTemplate>
     </Page.Resources>
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+    <Grid Background="{ThemeResource SettingsPageBackground}">
         <controls:TableListView x:Name="List"
                                 ItemsSource="{x:Bind ViewModel.Items}"
                                 ItemClick="ListView_ItemClick"
@@ -140,7 +137,7 @@
                                 <controls:BadgeButton.Badge>
                                     <ComboBox ItemsSource="{x:Bind ViewModel.SuggestStickersOptions}"
                                               SelectedIndex="{x:Bind ViewModel.SuggestStickers, Mode=TwoWay}"
-                                              DisplayMemberPath="Text"/>
+                                              DisplayMemberPath="Text" />
                                 </controls:BadgeButton.Badge>
                             </controls:BadgeButton>
 
@@ -157,15 +154,15 @@
                                                   Style="{StaticResource GlyphBadgeButtonStyle}"
                                                   IsChevronVisible="True"
                                                   Glyph="&#xE989;" />
-                            
+
                             <controls:BadgeButton Content="{CustomResource ArchivedStickers}"
                                                   Click="ArchivedStickers_Click"
                                                   Badge="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay}"
                                                   Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                                   Style="{StaticResource GlyphBadgeButtonStyle}"
                                                   IsChevronVisible="True"
-                                                  Glyph="&#xE7B8;"/>
-                            
+                                                  Glyph="&#xE7B8;" />
+
                             <controls:BadgeButton Content="{CustomResource Masks}"
                                                   Click="Masks_Click"
                                                   IsChevronVisible="True" />
@@ -174,8 +171,7 @@
 
                     <StackPanel x:Name="MasksPanel"
                                 x:Load="{x:Bind IsType(ViewModel.Type, settings:StickersType.Masks)}">
-                        <controls:HeaderedControl Header="{CustomResource ArchivedMasksInfo}"
-                                                  Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <controls:HeaderedControl Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <controls:BadgeButton Content="{CustomResource ArchivedMasks}"
                                                   Click="ArchivedMasks_Click"
                                                   Badge="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay}"
@@ -183,37 +179,29 @@
                                                   IsChevronVisible="True"
                                                   Glyph="&#xE7B8;" />
                         </controls:HeaderedControl>
-                        
-                        <Border MaxWidth="640"
-                                Margin="12,16,12,8">
-                            <TextBlock Text="{CustomResource MasksInfo}"
-                                       Style="{StaticResource InfoCaptionTextBlockStyle}" />
-                        </Border>
+
+                        <TextBlock Text="{CustomResource MasksInfo}"
+                                   Style="{StaticResource InfoCaptionTextBlockStyle}"
+                                   Margin="24,16,24,8" />
                     </StackPanel>
 
-                    <Border x:Name="TrendingPanel"
-                            x:Load="{x:Bind IsType(ViewModel.Type, settings:StickersType.Trending)}"
-                            MaxWidth="640"
-                            Margin="12,16,12,8">
-                        <TextBlock Text="{CustomResource FeaturedStickersInfo}"
-                                   Style="{StaticResource InfoCaptionTextBlockStyle}" />
-                    </Border>
+                    <TextBlock x:Name="TrendingPanel"
+                               x:Load="{x:Bind IsType(ViewModel.Type, settings:StickersType.Trending)}"
+                               Text="{CustomResource FeaturedStickersInfo}"
+                               Style="{StaticResource InfoCaptionTextBlockStyle}"
+                               Margin="24,16,24,8" />
 
-                    <Border x:Name="ArchivedPanel"
-                            x:Load="{x:Bind IsType(ViewModel.Type, settings:StickersType.Archived)}"
-                            MaxWidth="640"
-                            Margin="12,16,12,8">
-                        <TextBlock Text="{CustomResource ArchivedStickersInfo}"
-                                   Style="{StaticResource InfoCaptionTextBlockStyle}" />
-                    </Border>
+                    <TextBlock x:Name="ArchivedPanel"
+                               x:Load="{x:Bind IsType(ViewModel.Type, settings:StickersType.Archived)}"
+                               Text="{CustomResource ArchivedMasksInfo}"
+                               Style="{StaticResource InfoCaptionTextBlockStyle}"
+                               Margin="24,16,24,8" />
 
-                    <Border x:Name="MasksArchivedPanel"
-                            x:Load="{x:Bind IsType(ViewModel.Type, settings:StickersType.MasksArchived)}"
-                            MaxWidth="640"
-                            Margin="12,16,12,8">
-                        <TextBlock Text="{CustomResource ArchivedStickersInfo}"
-                                   Style="{StaticResource InfoCaptionTextBlockStyle}" />
-                    </Border>
+                    <TextBlock x:Name="MasksArchivedPanel"
+                               x:Load="{x:Bind IsType(ViewModel.Type, settings:StickersType.MasksArchived)}"
+                               Text="{CustomResource ArchivedStickersInfo}"
+                               Style="{StaticResource InfoCaptionTextBlockStyle}"
+                               Margin="24,16,24,8" />
                 </Grid>
             </ListView.Header>
             <ListView.Footer>

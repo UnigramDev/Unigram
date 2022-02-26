@@ -325,6 +325,7 @@
 
     <local:HostedPage.Header>
         <controls:ContentPageHeader x:Name="Header"
+                                    Background="Transparent"
                                     Canvas.ZIndex="1">
             <Grid x:Name="InfoPanel"
                   Margin="12,0,0,0">
@@ -519,14 +520,27 @@
                     MinHeight="{ThemeResource TelegramToolBarHeight}" />
         </Grid>
 
-        <StackPanel x:Name="ClipperOuter"
-                    Canvas.ZIndex="2"
-                    Grid.Row="2">
+        <Grid x:Name="ClipperOuter"
+              Margin="0,-48,0,0"
+              CornerRadius="8,0,0,0"
+              Canvas.ZIndex="2"
+              Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="48" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Border x:Name="ClipperBackground"
+                    Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
+                    Grid.RowSpan="3" />
+
             <controls:GroupCallHeader x:Name="GroupCall"
                                       JoinCommand="{x:Bind ViewModel.GroupCallJoinCommand}"
-                                      Visibility="Collapsed" />
+                                      Visibility="Collapsed"
+                                      Grid.Row="1" />
 
-            <StackPanel x:Name="ClipperJoinRequests">
+            <StackPanel x:Name="ClipperJoinRequests"
+                        Grid.Row="2">
                 <controls:ChatJoinRequestsHeader x:Name="JoinRequests"
                                                  Command="{x:Bind ViewModel.JoinRequestsCommand}"
                                                  Visibility="Collapsed" />
@@ -537,8 +551,9 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
+                        
+                        
                         <messages:MessagePinned x:Name="PinnedMessage"
                                                 Click="Reply_Click"
                                                 HideCommand="{x:Bind ViewModel.PinnedHideCommand}"
@@ -555,12 +570,12 @@
                                                        IsHitTestVisible="False" />
                         </Grid>
 
-                        <StackPanel x:Name="DateHeaderRelative"
-                                    Grid.Row="2">
+                        <Border x:Name="DateHeaderRelative"
+                                SizeChanged="DateHeaderPanel_SizeChanged"
+                                Grid.Row="1">
                             <Border x:Name="DateHeaderPanel"
                                     Visibility="Collapsed"
-                                    HorizontalAlignment="Center"
-                                    SizeChanged="DateHeaderPanel_SizeChanged">
+                                    HorizontalAlignment="Center">
                                 <messages:MessageService x:Name="DateHeader"
                                                          Click="Date_Click"
                                                          BorderThickness="0,8,0,0">
@@ -571,11 +586,11 @@
                                                Style="{StaticResource CaptionTextBlockStyle}" />
                                 </messages:MessageService>
                             </Border>
-                        </StackPanel>
+                        </Border>
                     </Grid>
                 </StackPanel>
             </StackPanel>
-        </StackPanel>
+        </Grid>
 
         <Grid x:Name="ContentPanel"
               SizeChanged="ContentPanel_SizeChanged"
@@ -1045,7 +1060,7 @@
                         Margin="12,0,12,8"
                         Grid.Row="3">
             <Grid x:Name="TextRoot"
-                  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                  Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
                   MinHeight="{StaticResource TelegramToolBarHeight}"
                   SizeChanged="TextArea_SizeChanged"
                   CornerRadius="15">

@@ -19,6 +19,7 @@ namespace Unigram.Views.Supergroups
         public SupergroupMembersPage()
         {
             InitializeComponent();
+            Title = Strings.Resources.ChannelSubscribers;
 
             var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
             debouncer.Invoked += (s, args) =>
@@ -185,7 +186,7 @@ namespace Unigram.Views.Supergroups
         {
             if (args.ItemContainer == null)
             {
-                args.ItemContainer = new TextListViewItem();
+                args.ItemContainer = new TableListViewItem();
                 args.ItemContainer.Style = sender.ItemContainerStyle;
                 args.ItemContainer.ContextRequested += Member_ContextRequested;
 
@@ -292,6 +293,7 @@ namespace Unigram.Views.Supergroups
 
         public void UpdateSupergroup(Chat chat, Supergroup group)
         {
+            Title = group.IsChannel ? Strings.Resources.ChannelSubscribers : Strings.Resources.ChannelMembers;
             SearchField.PlaceholderText = group.IsChannel ? Strings.Resources.ChannelSubscribers : Strings.Resources.ChannelMembers;
 
             AddNew.Content = group.IsChannel ? Strings.Resources.AddSubscriber : Strings.Resources.AddMember;

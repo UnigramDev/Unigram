@@ -1,7 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Specialized;
+using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Unigram.Controls
 {
@@ -84,7 +87,24 @@ namespace Unigram.Controls
 
         protected override DependencyObject GetContainerForItemOverride()
         {
-            return new TextListViewItem();
+            return new TableListViewItem();
+        }
+    }
+
+    public class TableListViewItem : TextListViewItem
+    {
+        private ListViewItemPresenter Root;
+
+        protected override void OnApplyTemplate()
+        {
+            Root = GetTemplateChild(nameof(Root)) as ListViewItemPresenter; 
+            base.OnApplyTemplate();
+        }
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            Root.Arrange(new Rect(0, 0, Math.Min(finalSize.Width, 1000), finalSize.Height));
+            return finalSize;
         }
     }
 }

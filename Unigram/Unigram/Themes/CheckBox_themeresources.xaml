@@ -51,7 +51,8 @@
                     <Grid x:Name="RootGrid"
                           Background="{TemplateBinding Background}"
                           BorderBrush="{TemplateBinding BorderBrush}"
-                          BorderThickness="{TemplateBinding BorderThickness}">
+                          BorderThickness="{TemplateBinding BorderThickness}"
+                          CornerRadius="{TemplateBinding CornerRadius}">
 
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CombinedStates">
@@ -576,8 +577,8 @@
                                        UseLayoutRounding="False"
                                        Height="{StaticResource CheckBoxSize}"
                                        Width="{StaticResource CheckBoxSize}"
-                                       RadiusX="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
-                                       RadiusY="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}" />
+                                       RadiusX="{Binding Source={ThemeResource ControlCornerRadius}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
+                                       RadiusY="{Binding Source={ThemeResource ControlCornerRadius}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}" />
                             <local:AnimatedIcon x:Name="CheckGlyph"
                                                 Foreground="{ThemeResource CheckBoxCheckGlyphForegroundUnchecked}"
                                                 Margin="0,1,0,-1">

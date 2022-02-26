@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Navigation.Services;
 using Unigram.Services;
@@ -21,7 +23,6 @@ namespace Unigram.ViewModels.Settings
 
             ToggleCommand = new RelayCommand(ToggleExecute);
             EditCommand = new RelayCommand(EditExecute);
-            AutolockCommand = new RelayCommand(AutolockExecute);
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -56,13 +57,34 @@ namespace Unigram.ViewModels.Settings
 
         public int AutolockTimeout
         {
-            get => _passcodeService.AutolockTimeout;
+            get => Array.IndexOf(_autolockTimeoutIndexer, _passcodeService.AutolockTimeout);
             set
             {
-                _passcodeService.AutolockTimeout = value;
-                RaisePropertyChanged();
+                if (value >= 0 && value < _autolockTimeoutIndexer.Length && _passcodeService.AutolockTimeout != _autolockTimeoutIndexer[value])
+                {
+                    InactivityHelper.Initialize(_passcodeService.AutolockTimeout = _autolockTimeoutIndexer[value]);
+                    RaisePropertyChanged();
+                }
             }
         }
+
+        private readonly int[] _autolockTimeoutIndexer = new[]
+        {
+            0,
+            1 * 60,
+            5 * 60,
+            1 * 60 * 60,
+            5 * 60 * 60
+        };
+
+        public List<SettingsOptionItem<int>> AutolockTimeoutOptions => new List<SettingsOptionItem<int>>
+        {
+                new SettingsOptionItem<int>(0,           Locale.FormatAutoLock(0)),
+                new SettingsOptionItem<int>(1 * 60,      Locale.FormatAutoLock(1 * 60)),
+                new SettingsOptionItem<int>(5 * 60,      Locale.FormatAutoLock(5 * 60)),
+                new SettingsOptionItem<int>(1 * 60 * 60, Locale.FormatAutoLock(1 * 60 * 60)),
+                new SettingsOptionItem<int>(5 * 60 * 60, Locale.FormatAutoLock(5 * 60 * 60))
+        };
 
         public bool IsBiometricsEnabled
         {
@@ -114,33 +136,6 @@ namespace Unigram.ViewModels.Settings
                 _passcodeService.Set(passcode, simple, timeout);
 
                 InactivityHelper.Initialize(timeout);
-            }
-        }
-
-        public RelayCommand AutolockCommand { get; }
-        private async void AutolockExecute()
-        {
-            var timeout = AutolockTimeout + 0;
-
-            var items = new[]
-            {
-                new SelectRadioItem(0,           Locale.FormatAutoLock(0),           timeout == 0),
-                new SelectRadioItem(1 * 60,      Locale.FormatAutoLock(1 * 60),      timeout == 1 * 60),
-                new SelectRadioItem(5 * 60,      Locale.FormatAutoLock(5 * 60),      timeout == 5 * 60),
-                new SelectRadioItem(1 * 60 * 60, Locale.FormatAutoLock(1 * 60 * 60), timeout == 1 * 60 * 60),
-                new SelectRadioItem(5 * 60 * 60, Locale.FormatAutoLock(5 * 60 * 60), timeout == 5 * 60 * 60)
-            };
-
-            var dialog = new ChooseRadioPopup(items);
-            dialog.Title = Strings.Resources.AutoLock;
-            dialog.PrimaryButtonText = Strings.Resources.OK;
-            dialog.SecondaryButtonText = Strings.Resources.Cancel;
-
-            var confirm = await dialog.ShowQueuedAsync();
-            if (confirm == ContentDialogResult.Primary && dialog.SelectedIndex is int mode)
-            {
-                AutolockTimeout = mode;
-                InactivityHelper.Initialize(mode);
             }
         }
     }

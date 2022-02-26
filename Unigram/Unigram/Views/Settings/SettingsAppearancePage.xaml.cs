@@ -21,6 +21,7 @@ namespace Unigram.Views.Settings
         public SettingsAppearancePage()
         {
             InitializeComponent();
+            Title = Strings.Resources.ChatSettings;
 
             var preview = ElementCompositionPreview.GetElementVisual(Preview);
             preview.Clip = preview.Compositor.CreateInsetClip();

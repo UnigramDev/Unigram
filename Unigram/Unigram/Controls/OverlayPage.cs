@@ -520,5 +520,30 @@ namespace Unigram.Controls
         {
             throw new NotImplementedException();
         }
+
+        public void AddToBackStack(Type type, object parameter = null, NavigationTransitionInfo info = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void InsertToBackStack(int index, Type type, object parameter = null, NavigationTransitionInfo info = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemoveFromBackStack(int index)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ClearBackStack()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void GoBackAt(int index, bool back = true)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

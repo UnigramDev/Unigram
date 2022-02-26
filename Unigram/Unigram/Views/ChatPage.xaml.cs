@@ -15,7 +15,7 @@ namespace Unigram.Views
         {
             InitializeComponent();
 
-            Content = new ChatView(CreateViewModel);
+            Content = new ChatView(CreateViewModel, SetTitle);
             Header = View.Header;
             NavigationCacheMode = NavigationCacheMode.Required;
         }
@@ -26,6 +26,11 @@ namespace Unigram.Views
             DataContext = viewModel;
 
             return viewModel;
+        }
+
+        private void SetTitle(string title)
+        {
+            Title = title;
         }
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)

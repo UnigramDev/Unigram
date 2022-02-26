@@ -15,13 +15,7 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <local:HostedPage.Header>
-        <controls:ButtonPageHeader Command="{x:Bind ViewModel.BlockCommand}"
-                                   Text="{CustomResource BlockedUsers}"
-                                   Glyph="&#xE710;" />
-    </local:HostedPage.Header>
-
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+    <Grid Background="{ThemeResource SettingsPageBackground}">
         <controls:TableListView x:Name="ScrollingHost"
                                 ItemsSource="{x:Bind ViewModel.Items}"
                                 ItemClick="ListView_ItemClick"
@@ -29,6 +23,14 @@
                                 ChoosingItemContainer="OnChoosingItemContainer"
                                 ContainerContentChanging="OnContainerContentChanging"
                                 SelectionMode="None">
+            <ListView.Header>
+                <controls:HeaderedControl Margin="0,0,0,16">
+                    <controls:BadgeButton Content="{CustomResource BlockUser}"
+                                          Command="{x:Bind ViewModel.BlockCommand}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xE98B;" />
+                </controls:HeaderedControl>
+            </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid Padding="12,6"
@@ -52,15 +54,10 @@
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
-            <ListView.Header>
-                <Border Height="16" />
-            </ListView.Header>
             <ListView.Footer>
-                <Border MaxWidth="640"
-                        Margin="12,8,12,36">
-                    <TextBlock Text="{CustomResource UnblockText}"
-                               Style="{StaticResource InfoCaptionTextBlockStyle}" />
-                </Border>
+                <TextBlock Text="{CustomResource UnblockText}"
+                           Style="{StaticResource InfoCaptionTextBlockStyle}"
+                           Margin="24,8,24,36" />
             </ListView.Footer>
         </controls:TableListView>
     </Grid>

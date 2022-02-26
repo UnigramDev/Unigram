@@ -16,13 +16,13 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <local:HostedPage.Header>
-        <controls:ButtonPageHeader Command="{x:Bind ViewModel.SendCommand}"
-                                   Text="{CustomResource Reactions}"
-                                   Glyph="&#xE10B;" />
-    </local:HostedPage.Header>
+    <local:HostedPage.Footer>
+        <Button Content="{CustomResource Save}"
+                Command="{x:Bind ViewModel.SendCommand}"
+                Style="{StaticResource AccentButtonStyle}" />
+    </local:HostedPage.Footer>
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+    <Grid Background="{ThemeResource SettingsPageBackground}">
         <controls:TableListView x:Name="ScrollingHost"
                                 ItemsSource="{x:Bind ViewModel.Items}"
                                 IsItemClickEnabled="False"

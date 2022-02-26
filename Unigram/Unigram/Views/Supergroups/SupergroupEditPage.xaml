@@ -15,13 +15,13 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <local:HostedPage.Header>
-        <controls:ButtonPageHeader Command="{x:Bind ViewModel.SendCommand}"
-                                   Text="{CustomResource ChannelEdit}"
-                                   Glyph="&#xE10B;" />
-    </local:HostedPage.Header>
+    <local:HostedPage.Footer>
+        <Button Content="{CustomResource Done}"
+                Command="{x:Bind ViewModel.SendCommand}"
+                Style="{StaticResource AccentButtonStyle}" />
+    </local:HostedPage.Footer>
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+    <Grid Background="{ThemeResource SettingsPageBackground}">
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
@@ -60,7 +60,7 @@
                                 Margin="0,8,12,8"
                                 Grid.Column="1"
                                 Grid.RowSpan="2">
-                            <TextBox x:Name="Title"
+                            <TextBox x:Name="TitleLabel"
                                      Text="{x:Bind ViewModel.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                      FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                      MaxLength="{StaticResource ChannelTitleMaxLength}" />

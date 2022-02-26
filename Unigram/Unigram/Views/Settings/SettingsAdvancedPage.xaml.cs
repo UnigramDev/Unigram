@@ -12,6 +12,7 @@ namespace Unigram.Views.Settings
         public SettingsAdvancedPage()
         {
             InitializeComponent();
+            Title = Strings.Resources.PrivacyAdvanced;
 
             if (ApiInfo.IsPackagedRelease)
             {

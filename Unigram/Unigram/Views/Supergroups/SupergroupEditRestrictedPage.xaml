@@ -21,7 +21,7 @@
                                    Glyph="&#xE10B;" />
     </local:HostedPage.Header>
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+    <Grid Background="{ThemeResource SettingsPageBackground}">
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"
@@ -51,7 +51,7 @@
                                 <ColumnDefinition />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock x:Name="Title"
+                            <TextBlock x:Name="TitleLabel"
                                        TextWrapping="NoWrap"
                                        TextTrimming="CharacterEllipsis"
                                        Style="{StaticResource BaseTextBlockStyle}" />

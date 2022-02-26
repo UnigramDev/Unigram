@@ -1,6 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.UI.Xaml.Controls;
+using System;
 using System.ComponentModel;
+using System.Linq;
+using Unigram.Collections;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Views;
@@ -18,11 +20,15 @@ namespace Unigram.Controls
         private Frame DetailFrame;
         private ContentPresenter MasterPresenter;
         private Grid DetailPresenter;
+        private BreadcrumbBar DetailHeaderPresenter;
 
         public NavigationService NavigationService { get; private set; }
         public Frame ParentFrame { get; private set; }
 
-        private readonly LinkedList<BackStackType> _backStack = new LinkedList<BackStackType>();
+        private readonly MvxObservableCollection<NavigationStackItem> _backStack = new();
+        private readonly NavigationStackItem _currentPage = new(null, null, null);
+
+        private long _titleToken;
 
         public MasterDetailView()
         {
@@ -41,6 +47,7 @@ namespace Unigram.Controls
                 service = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, BootStrapper.ExistingContent.Exclude, session, key + session, false) as NavigationService;
                 service.Frame.DataContext = new object();
                 service.FrameFacade.BackRequested += OnBackRequested;
+                service.BackStackChanged += OnBackStackChanged;
             }
 
             NavigationService = service;
@@ -56,6 +63,7 @@ namespace Unigram.Controls
             if (service != null)
             {
                 service.FrameFacade.BackRequested -= OnBackRequested;
+                service.BackStackChanged -= OnBackStackChanged;
             }
 
             var panel = AdaptivePanel;
@@ -135,22 +143,6 @@ namespace Unigram.Controls
             //_backStack.AddLast(hamburger ? BackStackType.Hamburger : BackStackType.Navigation);
         }
 
-        public bool Last()
-        {
-            if (_backStack.Count > 0)
-            {
-                return _backStack.Last.Value == BackStackType.Hamburger;
-            }
-
-            return false;
-        }
-
-        enum BackStackType
-        {
-            Hamburger,
-            Navigation
-        }
-
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             if (CurrentState != MasterDetailState.Minimal)
@@ -182,17 +174,21 @@ namespace Unigram.Controls
         {
             VisualStateManager.GoToState(this, "ResetState", false);
 
-            MasterPresenter = (ContentPresenter)GetTemplateChild("MasterFrame");
-            DetailPresenter = (Grid)GetTemplateChild("DetailPresenter");
-            AdaptivePanel = (MasterDetailPanel)GetTemplateChild("AdaptivePanel");
+            MasterPresenter = GetTemplateChild("MasterFrame") as ContentPresenter;
+            DetailPresenter = GetTemplateChild(nameof(DetailPresenter)) as Grid;
+            DetailHeaderPresenter = GetTemplateChild(nameof(DetailHeaderPresenter)) as BreadcrumbBar;
+            AdaptivePanel = GetTemplateChild(nameof(AdaptivePanel)) as MasterDetailPanel;
             AdaptivePanel.ViewStateChanged += OnViewStateChanged;
+
+            DetailHeaderPresenter.ItemsSource = _backStack;
+            DetailHeaderPresenter.ItemClicked += DetailHeaderPresenter_ItemClicked;
 
             MasterPresenter.RegisterPropertyChangedCallback(VisibilityProperty, OnVisibilityChanged);
 
             if (DetailFrame != null)
             {
                 var detailVisual = ElementCompositionPreview.GetElementVisual(DetailFrame);
-                detailVisual.Clip = Window.Current.Compositor.CreateInsetClip();
+                detailVisual.Clip = Window.Current.Compositor.CreateInsetClip(0, -48, 0, 0);
 
                 var parent = VisualTreeHelper.GetParent(DetailFrame) as UIElement;
                 if (parent != null && parent != DetailPresenter)
@@ -212,7 +208,7 @@ namespace Unigram.Controls
                     }
                     else
                     {
-                        DetailFrame.BackStack.Insert(0, new PageStackEntry(BlankPageType, null, null));
+                        NavigationService.InsertToBackStack(0, BlankPageType);
                     }
                 }
                 catch { }
@@ -224,6 +220,20 @@ namespace Unigram.Controls
             }
         }
 
+        private void DetailHeaderPresenter_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemClickedEventArgs args)
+        {
+            var index = args.Index + 1;
+            var count = _backStack.Count - 1;
+
+            while (count - index > 0)
+            {
+                NavigationService.RemoveFromBackStack(DetailFrame.BackStackDepth - 1);
+                count--;
+            }
+
+            NavigationService.GoBack();
+        }
+
         private void OnVisibilityChanged(DependencyObject sender, DependencyProperty dp)
         {
             if (MasterPresenter.Visibility == Visibility.Visible)
@@ -232,15 +242,41 @@ namespace Unigram.Controls
             }
         }
 
+        private void OnNavigating(object sender, NavigatingEventArgs e)
+        {
+            if (e.Content is HostedPage hosted)
+            {
+                hosted.UnregisterPropertyChangedCallback(HostedPage.TitleProperty, _titleToken);
+            }
+        }
+
         private void OnNavigated(object sender, NavigationEventArgs e)
         {
             if (e.Content is HostedPage hosted)
             {
                 DetailHeader = hosted.Header;
+                DetailFooter = hosted.Footer;
+
+                _titleToken = hosted.RegisterPropertyChangedCallback(HostedPage.TitleProperty, OnTitleChanged);
+
+                if (string.IsNullOrEmpty(hosted.Title))
+                {
+                    _backStack.Clear();
+                }
+                else
+                {
+                    _currentPage.Title = hosted.Title;
+
+                    _backStack.ReplaceWith(NavigationService.BackStack.Where(x => x.Title != null));
+                    _backStack.Add(_currentPage);
+                }
             }
             else
             {
                 DetailHeader = null;
+                DetailFooter = null;
+
+                _backStack.Clear();
             }
 
             if (AdaptivePanel == null)
@@ -254,6 +290,34 @@ namespace Unigram.Controls
             }
 
             UpdateMasterVisibility();
+        }
+
+        private void OnTitleChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            if (sender is HostedPage hosted)
+            {
+                if (string.IsNullOrEmpty(hosted.Title))
+                {
+                    _backStack.Clear();
+                }
+                else if (_backStack.Count > 0)
+                {
+                    _currentPage.Title = hosted.Title;
+                }
+                else
+                {
+                    _currentPage.Title = hosted.Title;
+
+                    _backStack.ReplaceWith(NavigationService.BackStack.Where(x => x.Title != null));
+                    _backStack.Add(_currentPage);
+                }
+            }
+        }
+
+        private void OnBackStackChanged(object sender, EventArgs e)
+        {
+            _backStack.ReplaceWith(NavigationService.BackStack.Where(x => x.Title != null));
+            _backStack.Add(_currentPage);
         }
 
         private void OnViewStateChanged(object sender, EventArgs e)
@@ -363,6 +427,19 @@ namespace Unigram.Controls
 
         public static readonly DependencyProperty DetailHeaderProperty =
             DependencyProperty.Register("DetailHeader", typeof(UIElement), typeof(MasterDetailView), new PropertyMetadata(null));
+
+        #endregion
+
+        #region DetailFooter
+
+        public UIElement DetailFooter
+        {
+            get { return (UIElement)GetValue(DetailFooterProperty); }
+            set { SetValue(DetailFooterProperty, value); }
+        }
+
+        public static readonly DependencyProperty DetailFooterProperty =
+            DependencyProperty.Register("DetailFooter", typeof(UIElement), typeof(MasterDetailView), new PropertyMetadata(null));
 
         #endregion
 

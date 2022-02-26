@@ -15,19 +15,23 @@
                                    Glyph="&#xE10B;" />
     </local:HostedPage.Header>
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+    <Grid Background="{ThemeResource SettingsPageBackground}">
         <muxc:ItemsRepeaterScrollHost>
             <ScrollViewer VerticalScrollBarVisibility="Auto"
                           VerticalScrollMode="Auto">
                 <StackPanel>
-                    <StackPanel MaxWidth="640">
+                    <Grid Margin="24,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition MaxWidth="1000" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
                         <controls:LottieView IsLoopingEnabled="False"
                                              IsCachingEnabled="False"
                                              Source="ms-appx:///Assets/Animations/ChatListNewFolder.tgs"
                                              Width="140"
                                              Height="140"
                                              Margin="0,24,0,0" />
-                    </StackPanel>
+                    </Grid>
 
                     <controls:HeaderedControl Header="{CustomResource FilterNameHint}">
                         <Grid>

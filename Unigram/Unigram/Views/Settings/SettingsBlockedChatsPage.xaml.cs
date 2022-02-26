@@ -17,6 +17,7 @@ namespace Unigram.Views.Settings
         public SettingsBlockedChatsPage()
         {
             InitializeComponent();
+            Title = Strings.Resources.BlockedUsers;
         }
 
         private async void ListView_ItemClick(object sender, ItemClickEventArgs e)
@@ -44,7 +45,7 @@ namespace Unigram.Views.Settings
         {
             if (args.ItemContainer == null)
             {
-                args.ItemContainer = new TextListViewItem();
+                args.ItemContainer = new TableListViewItem();
                 args.ItemContainer.Style = sender.ItemContainerStyle;
                 args.ItemContainer.ContentTemplate = sender.ItemTemplate;
                 args.ItemContainer.ContextRequested += User_ContextRequested;

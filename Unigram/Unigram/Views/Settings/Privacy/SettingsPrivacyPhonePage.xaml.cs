@@ -11,6 +11,7 @@ namespace Unigram.Views.Settings.Privacy
         public SettingsPrivacyPhonePage()
         {
             InitializeComponent();
+            Title = Strings.Resources.PrivacyPhone;
         }
 
         #region Binding

@@ -17,6 +17,7 @@ namespace Unigram.Views.Settings
         public SettingsBackgroundsPage()
         {
             InitializeComponent();
+            Title = Strings.Resources.ChatBackground;
         }
 
         private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)

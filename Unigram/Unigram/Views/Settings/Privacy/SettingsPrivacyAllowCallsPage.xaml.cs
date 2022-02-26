@@ -12,6 +12,7 @@ namespace Unigram.Views.Settings.Privacy
         public SettingsPrivacyAllowCallsPage()
         {
             InitializeComponent();
+            Title = Strings.Resources.Calls;
         }
 
         #region Binding
