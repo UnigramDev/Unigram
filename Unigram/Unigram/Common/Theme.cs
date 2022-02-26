@@ -95,8 +95,6 @@ namespace Unigram.Common
             Update(ThemeCustomInfo.FromFile(path));
         }
 
-        private bool _lastMica;
-
         private int? _lastAccent;
         private long? _lastBackground;
 
@@ -204,6 +202,15 @@ namespace Unigram.Common
 
                 var target = MergedDictionaries[0].ThemeDictionaries[requested == TelegramTheme.Light ? "Light" : "Dark"] as ResourceDictionary;
                 var lookup = ThemeService.GetLookup(requested);
+
+                if (shades != null && shades.TryGetValue(AccentShade.Default, out Color accentResource))
+                {
+                    target["Accent"] = accentResource;
+                }
+                else
+                {
+                    target["Accent"] = ThemeInfoBase.Accents[TelegramThemeType.Day][AccentShade.Default];
+                }
 
                 foreach (var item in lookup)
                 {
