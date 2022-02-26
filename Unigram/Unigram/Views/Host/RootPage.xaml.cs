@@ -136,7 +136,7 @@ namespace Unigram.Views.Host
                     case AuthorizationStateWaitPhoneNumber waitPhoneNumber:
                     case AuthorizationStateWaitOtherDeviceConfirmation waitOtherDeviceConfirmation:
                         service.Navigate(typeof(SignInPage));
-                        service.Frame.BackStack.Add(new PageStackEntry(typeof(BlankPage), null, null));
+                        service.AddToBackStack(typeof(BlankPage));
                         break;
                     case AuthorizationStateWaitCode waitCode:
                         service.Navigate(typeof(SignInSentCodePage));

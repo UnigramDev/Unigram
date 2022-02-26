@@ -135,6 +135,7 @@
     <Compile Include="Assets\Icons\Phone.cs" />
     <Compile Include="Assets\Icons\Privacy.cs" />
     <Compile Include="Assets\Icons\PrivacyPolicy.cs" />
+    <Compile Include="Assets\Icons\ReactionsMore.cs" />
     <Compile Include="Assets\Icons\Stickers.cs" />
     <Compile Include="Assets\Icons\Username.cs" />
     <Compile Include="Charts\Animator.cs" />
@@ -548,6 +549,7 @@
     <Compile Include="ViewModels\DialogPinnedViewModel.cs" />
     <Compile Include="ViewModels\DialogThreadViewModel.cs" />
     <Compile Include="ViewModels\Chats\MessageStatisticsViewModel.cs" />
+    <Compile Include="ViewModels\DownloadsViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentAddressViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentCredentialsViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentFormViewModel.cs" />
@@ -616,6 +618,9 @@
     <Compile Include="Views\Popups\DoNotTranslatePopup.xaml.cs">
       <DependentUpon>DoNotTranslatePopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Popups\DownloadsPopup.xaml.cs">
+      <DependentUpon>DownloadsPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Popups\InputPopup.xaml.cs">
       <DependentUpon>InputPopup.xaml</DependentUpon>
     </Compile>
@@ -633,6 +638,9 @@
     </Compile>
     <Compile Include="Views\Popups\VideoChatAliasesPopup.xaml.cs">
       <DependentUpon>VideoChatAliasesPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Popups\VideoChatStreamsPopup.xaml.cs">
+      <DependentUpon>VideoChatStreamsPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\ZoomableMediaPopup.xaml.cs">
       <DependentUpon>ZoomableMediaPopup.xaml</DependentUpon>
@@ -1813,6 +1821,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Popups\DownloadsPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Popups\InputPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1836,6 +1848,10 @@
     <Page Include="Views\Popups\VideoChatAliasesPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Popups\VideoChatStreamsPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Popups\ZoomableMediaPopup.xaml">
       <SubType>Designer</SubType>
@@ -2310,8 +2326,8 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\VoIPPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>

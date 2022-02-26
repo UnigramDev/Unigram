@@ -1,7 +1,7 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using Unigram.Collections;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
@@ -26,7 +26,7 @@ namespace Unigram.Controls
         public Frame ParentFrame { get; private set; }
 
         private readonly MvxObservableCollection<NavigationStackItem> _backStack = new();
-        private readonly NavigationStackItem _currentPage = new(null, null, null);
+        private readonly NavigationStackItem _currentPage = new(null, null, null, false);
 
         private long _titleToken;
 
@@ -257,18 +257,25 @@ namespace Unigram.Controls
                 DetailHeader = hosted.Header;
                 DetailFooter = hosted.Footer;
 
-                _titleToken = hosted.RegisterPropertyChangedCallback(HostedPage.TitleProperty, OnTitleChanged);
-
-                if (string.IsNullOrEmpty(hosted.Title))
+                if (hosted.Header == null)
                 {
-                    _backStack.Clear();
+                    _titleToken = hosted.RegisterPropertyChangedCallback(HostedPage.TitleProperty, OnTitleChanged);
+
+                    if (string.IsNullOrEmpty(hosted.Title))
+                    {
+                        _backStack.Clear();
+                    }
+                    else
+                    {
+                        _currentPage.Title = hosted.Title;
+
+                        _backStack.ReplaceWith(BuildBackStack());
+                        _backStack.Add(_currentPage);
+                    }
                 }
                 else
                 {
-                    _currentPage.Title = hosted.Title;
-
-                    _backStack.ReplaceWith(NavigationService.BackStack.Where(x => x.Title != null));
-                    _backStack.Add(_currentPage);
+                    _backStack.Clear();
                 }
             }
             else
@@ -308,7 +315,7 @@ namespace Unigram.Controls
                 {
                     _currentPage.Title = hosted.Title;
 
-                    _backStack.ReplaceWith(NavigationService.BackStack.Where(x => x.Title != null));
+                    _backStack.ReplaceWith(BuildBackStack());
                     _backStack.Add(_currentPage);
                 }
             }
@@ -316,8 +323,30 @@ namespace Unigram.Controls
 
         private void OnBackStackChanged(object sender, EventArgs e)
         {
-            _backStack.ReplaceWith(NavigationService.BackStack.Where(x => x.Title != null));
-            _backStack.Add(_currentPage);
+            if (DetailFrame.Content is HostedPage hosted && hosted.Header == null)
+            {
+                _backStack.ReplaceWith(BuildBackStack());
+                _backStack.Add(_currentPage);
+            }
+            else if (_backStack.Count > 0)
+            {
+                _backStack.Clear();
+            }
+        }
+
+        private IEnumerable<NavigationStackItem> BuildBackStack()
+        {
+            var index = NavigationService.BackStack.FindLastIndex(x => x.IsRoot);
+            var k = Math.Max(index, 0);
+
+            for (int i = k; i < NavigationService.BackStack.Count; i++)
+            {
+                var item = NavigationService.BackStack[i];
+                if (item.Title != null)
+                {
+                    yield return item;
+                }
+            }
         }
 
         private void OnViewStateChanged(object sender, EventArgs e)

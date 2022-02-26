@@ -75,11 +75,12 @@ namespace Unigram.Navigation.Services
 
     public class NavigationStackItem : BindableBase
     {
-        public NavigationStackItem(Type sourcePageType, object parameter, string title)
+        public NavigationStackItem(Type sourcePageType, object parameter, string title, bool root)
         {
             SourcePageType = sourcePageType;
             Parameter = parameter;
             Title = title;
+            IsRoot = root;
         }
 
         public Type SourcePageType { get; }
@@ -92,6 +93,8 @@ namespace Unigram.Navigation.Services
             get => _title;
             set => Set(ref _title, value);
         }
+
+        public bool IsRoot { get; }
     }
 
     // DOCS: https://github.com/Windows-XAML/Template10/wiki/Docs-%7C-NavigationService
@@ -140,13 +143,13 @@ namespace Unigram.Navigation.Services
         public void InsertToBackStack(int index, Type type, object parameter = null, NavigationTransitionInfo info = null)
         {
             Frame.BackStack.Insert(index, new PageStackEntry(type, parameter, info));
-            BackStack.Insert(index, new NavigationStackItem(type, parameter, type.Name));
+            BackStack.Insert(index, new NavigationStackItem(type, parameter, null, false));
         }
 
         public void AddToBackStack(Type type, object parameter = null, NavigationTransitionInfo info = null)
         {
             Frame.BackStack.Add(new PageStackEntry(type, parameter, info));
-            BackStack.Add(new NavigationStackItem(type, parameter, type.Name));
+            BackStack.Add(new NavigationStackItem(type, parameter, null, false));
         }
 
         public void RemoveFromBackStack(int index)
@@ -181,11 +184,11 @@ namespace Unigram.Navigation.Services
                     {
                         if (page is HostedPage hosted)
                         {
-                            BackStack.Add(new NavigationStackItem(CurrentPageType, CurrentPageParam, hosted.Title));
+                            BackStack.Add(new NavigationStackItem(CurrentPageType, CurrentPageParam, hosted.Title, hosted.IsNavigationRoot));
                         }
                         else
                         {
-                            BackStack.Add(new NavigationStackItem(CurrentPageType, CurrentPageParam, null));
+                            BackStack.Add(new NavigationStackItem(CurrentPageType, CurrentPageParam, null, false));
                         }
                     }
                     else if (e.NavigationMode is NavigationMode.Back && BackStack.Count > 0)

@@ -3086,5 +3086,11 @@ namespace Unigram.Views
             DependencyProperty.Register("Title", typeof(string), typeof(HostedPage), new PropertyMetadata(null));
 
         #endregion
+
+        #region IsNavigationRoot
+
+        public bool IsNavigationRoot { get; set; } = false;
+
+        #endregion
     }
 }
