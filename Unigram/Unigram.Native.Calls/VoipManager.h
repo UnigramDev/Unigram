@@ -92,7 +92,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 		void SignalingDataEmitted(winrt::event_token const& token);
 
 	private:
-		std::shared_ptr<VoipVideoRenderer> m_renderer;
+		std::shared_ptr<VoipVideoRenderer> m_renderer = nullptr;
 
 		winrt::event<Windows::Foundation::TypedEventHandler<
 			winrt::Unigram::Native::Calls::VoipManager,

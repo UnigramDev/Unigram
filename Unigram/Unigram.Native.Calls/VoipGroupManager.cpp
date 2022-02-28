@@ -161,6 +161,18 @@ namespace winrt::Unigram::Native::Calls::implementation
 		return nullptr;
 	}
 
+	void VoipGroupManager::AddUnifiedVideoOutput(CanvasControl canvas) {
+		if (m_impl) {
+			if (canvas != nullptr) {
+				m_unifiedRenderer = std::make_shared<VoipVideoRenderer>(canvas);
+				m_impl->addIncomingVideoOutput("unified", m_unifiedRenderer);
+			}
+			else {
+				m_unifiedRenderer.reset();
+			}
+		}
+	}
+
 
 
 	bool VoipGroupManager::IsMuted() {
