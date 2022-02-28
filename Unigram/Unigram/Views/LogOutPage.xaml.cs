@@ -15,6 +15,7 @@ namespace Unigram.Views
         public LogOutPage()
         {
             InitializeComponent();
+            Title = Strings.Resources.LogOutTitle;
         }
 
         private void AddAnotherAccount_Click(object sender, RoutedEventArgs e)
