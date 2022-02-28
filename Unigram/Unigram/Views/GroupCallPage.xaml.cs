@@ -226,6 +226,7 @@ namespace Unigram.Views
             }
 
             _service.Participants.Delegate = this;
+            _service.Participants.LoadVideoInfo();
             this.BeginOnUIThread(() => List.ItemsSource = _service.Participants);
         }
 

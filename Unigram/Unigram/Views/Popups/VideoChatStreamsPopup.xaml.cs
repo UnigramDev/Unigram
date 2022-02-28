@@ -10,7 +10,7 @@ namespace Unigram.Views.Popups
         private readonly IProtoService _protoService;
         private readonly long _chatId;
 
-        public VideoChatStreamsPopup(IProtoService protoService, long chatId)
+        public VideoChatStreamsPopup(IProtoService protoService, long chatId, bool start)
         {
             InitializeComponent();
 
@@ -18,8 +18,16 @@ namespace Unigram.Views.Popups
             _chatId = chatId;
 
             Title = "Stream with...";
-            PrimaryButtonText = Strings.Resources.Start;
-            SecondaryButtonText = Strings.Resources.Cancel;
+
+            if (start)
+            {
+                PrimaryButtonText = Strings.Resources.Start;
+                SecondaryButtonText = Strings.Resources.Cancel;
+            }
+            else
+            {
+                PrimaryButtonText = Strings.Resources.OK;
+            }
         }
 
         private async void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)

@@ -591,6 +591,9 @@
     <Compile Include="Views\Chats\MessageStatisticsPage.xaml.cs">
       <DependentUpon>MessageStatisticsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\LiveStreamPage.xaml.cs">
+      <DependentUpon>LiveStreamPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\GroupCallPage.xaml.cs">
       <DependentUpon>GroupCallPage.xaml</DependentUpon>
     </Compile>
@@ -1784,6 +1787,10 @@
     <Page Include="Views\Chats\MessageStatisticsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\LiveStreamPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\GroupCallPage.xaml">
       <SubType>Designer</SubType>

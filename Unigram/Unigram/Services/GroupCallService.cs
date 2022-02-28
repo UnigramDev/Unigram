@@ -250,7 +250,7 @@ namespace Unigram.Services
                 }
                 else if (popup.IsStartWithSelected)
                 {
-                    var streams = new VideoChatStreamsPopup(ProtoService, chat.Id);
+                    var streams = new VideoChatStreamsPopup(ProtoService, chat.Id, true);
 
                     var again = await streams.ShowQueuedAsync();
                     if (again != ContentDialogResult.Primary)
@@ -392,7 +392,14 @@ namespace Unigram.Services
             _manager?.SetConnectionMode(VoipGroupConnectionMode.None, false, groupCall.IsRtmpStream);
             _manager?.EmitJoinPayload(async (ssrc, payload) =>
             {
-                Participants ??= new GroupCallParticipantsCollection(ProtoService, Aggregator, _chat, groupCall);
+                if (groupCall.IsRtmpStream)
+                {
+                    Participants = null;
+                }
+                else
+                {
+                    Participants ??= new GroupCallParticipantsCollection(ProtoService, Aggregator, groupCall);
+                }
 
                 var response = await ProtoService.SendAsync(new JoinGroupCall(groupCall.Id, alias, ssrc, payload, _manager.IsMuted, _capturer != null, string.Empty));
                 if (response is Text json)
@@ -424,7 +431,7 @@ namespace Unigram.Services
 #endif
         }
 
-#region Capturing
+        #region Capturing
 #if ENABLE_CALLS
         public bool CanEnableVideo
         {
@@ -471,9 +478,9 @@ namespace Unigram.Services
             ProtoService.Send(new ToggleGroupCallIsMyVideoEnabled(call.Id, _capturer != null));
         }
 #endif
-#endregion
+        #endregion
 
-#region Screencast
+        #region Screencast
 #if ENABLE_CALLS
         public VoipGroupManager ScreenSharing => _screenManager;
         public bool IsScreenSharing => _screenManager != null && _screenCapturer != null;
@@ -577,7 +584,7 @@ namespace Unigram.Services
             }
         }
 #endif
-#endregion
+        #endregion
 
 #if ENABLE_CALLS
 
@@ -975,13 +982,21 @@ namespace Unigram.Services
             {
                 if (_lifetime == null)
                 {
+                    var call = _call;
+                    if (call == null)
+                    {
+                        return;
+                    }
+
                     var parameters = new ViewServiceParams
                     {
                         Title = IsChannel ? Strings.Resources.VoipChannelVoiceChat : Strings.Resources.VoipGroupVoiceChat,
-                        Width = 380,
-                        Height = 580,
-                        PersistentId = "VideoChat",
-                        Content = control => new GroupCallPage(ProtoService, CacheService, Aggregator, this)
+                        Width = call.IsRtmpStream ? 580 : 380,
+                        Height = call.IsRtmpStream ? 380 : 580,
+                        PersistentId = call.IsRtmpStream ? "LiveStream" : "VideoChat",
+                        Content = call.IsRtmpStream
+                            ? control => new LiveStreamPage(ProtoService, CacheService, Aggregator, this)
+                            : control => new GroupCallPage(ProtoService, CacheService, Aggregator, this)
                     };
 
                     _lifetime = await _viewService.OpenAsync(parameters);
