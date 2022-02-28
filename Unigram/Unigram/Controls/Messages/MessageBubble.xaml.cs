@@ -1514,12 +1514,31 @@ namespace Unigram.Controls.Messages
 
         private Brush GetBrush(string key)
         {
-            if (Resources.TryGetValue(key, out object value))
+            var message = _message;
+            if (message == null)
             {
-                return value as SolidColorBrush;
+                return null;
             }
 
-            return Navigation.BootStrapper.Current.Resources[key] as SolidColorBrush;
+            if (message.IsOutgoing && !message.IsChannelPost)
+            {
+                if (ActualTheme == ElementTheme.Light)
+                {
+                    return ThemeOutgoing.Light[key].Brush;
+                }
+                else
+                {
+                    return ThemeOutgoing.Dark[key].Brush;
+                }
+            }
+            else if (ActualTheme == ElementTheme.Light)
+            {
+                return ThemeIncoming.Light[key].Brush;
+            }
+            else
+            {
+                return ThemeIncoming.Dark[key].Brush;
+            }
         }
 
         private void Entity_Click(MessageViewModel message, TextEntityType type, object data)
