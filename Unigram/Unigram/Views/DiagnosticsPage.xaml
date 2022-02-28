@@ -58,6 +58,16 @@
                                           Badge="{x:Bind ConvertSize(ViewModel.LogOldSize), Mode=OneWay}" />
                 </controls:HeaderedControl>
 
+                <controls:HeaderedControl>
+                    <controls:BadgeButton Content="Disable Database"
+                                          Command="{x:Bind ViewModel.DisableDatabaseCommand}"
+                                          Foreground="{ThemeResource DangerButtonBackground}"
+                                          Visibility="{x:Bind ViewModel.DisableDatabase, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}" />
+                    <controls:BadgeButton Content="Enable Database"
+                                          Command="{x:Bind ViewModel.DisableDatabaseCommand}"
+                                          Visibility="{x:Bind ViewModel.DisableDatabase, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                </controls:HeaderedControl>
+
                 <controls:HeaderedControl Header="TDLib Modules"
                                           ItemsSource="{x:Bind ViewModel.Tags}">
                     <controls:HeaderedControl.ItemTemplate>
