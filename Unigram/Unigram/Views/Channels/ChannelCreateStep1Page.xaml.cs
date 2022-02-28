@@ -18,11 +18,12 @@ namespace Unigram.Views.Channels
         public ChannelCreateStep1Page()
         {
             InitializeComponent();
+            Title = Strings.Resources.NewChannel;
         }
 
         private void Title_Loaded(object sender, RoutedEventArgs e)
         {
-            Title.Focus(FocusState.Keyboard);
+            TitleLabel.Focus(FocusState.Keyboard);
         }
 
         private async void EditPhoto_Click(object sender, RoutedEventArgs e)
