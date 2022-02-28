@@ -3,12 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using Unigram.Collections;
+using Unigram.Native.Composition;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Views;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
@@ -187,8 +187,12 @@ namespace Unigram.Controls
 
             if (DetailFrame != null)
             {
-                var detailVisual = ElementCompositionPreview.GetElementVisual(DetailFrame);
-                detailVisual.Clip = Window.Current.Compositor.CreateInsetClip(0, -48, 0, 0);
+                var clip = CompositionDevice.CreateRectangleClip(DetailFrame);
+                clip.Left = 0;
+                clip.Top = -48;
+                clip.Right = float.MaxValue;
+                clip.Bottom = float.MaxValue;
+                clip.TopLeft = 8;
 
                 var parent = VisualTreeHelper.GetParent(DetailFrame) as UIElement;
                 if (parent != null && parent != DetailPresenter)

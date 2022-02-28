@@ -3165,7 +3165,6 @@ namespace Unigram.Views
         private void DateHeaderPanel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             ElementCompositionPreview.GetElementVisual(sender as UIElement).CenterPoint = new Vector3((float)e.NewSize.Width / 2f, (float)e.NewSize.Height / 2f, 0);
-            ClipperBackground.Margin = new Thickness(0, 0, 0, e.NewSize.Height);
         }
 
         private void Mentions_RightTapped(object sender, RightTappedRoutedEventArgs e)

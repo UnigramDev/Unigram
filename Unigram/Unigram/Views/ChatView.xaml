@@ -520,27 +520,14 @@
                     MinHeight="{ThemeResource TelegramToolBarHeight}" />
         </Grid>
 
-        <Grid x:Name="ClipperOuter"
-              Margin="0,-48,0,0"
-              CornerRadius="8,0,0,0"
-              Canvas.ZIndex="2"
-              Grid.Row="2">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="48" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <Border x:Name="ClipperBackground"
-                    Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
-                    Grid.RowSpan="3" />
-
+        <StackPanel x:Name="ClipperOuter"
+                    Canvas.ZIndex="2"
+                    Grid.Row="2">
             <controls:GroupCallHeader x:Name="GroupCall"
                                       JoinCommand="{x:Bind ViewModel.GroupCallJoinCommand}"
-                                      Visibility="Collapsed"
-                                      Grid.Row="1" />
+                                      Visibility="Collapsed" />
 
-            <StackPanel x:Name="ClipperJoinRequests"
-                        Grid.Row="2">
+            <StackPanel x:Name="ClipperJoinRequests">
                 <controls:ChatJoinRequestsHeader x:Name="JoinRequests"
                                                  Command="{x:Bind ViewModel.JoinRequestsCommand}"
                                                  Visibility="Collapsed" />
@@ -552,8 +539,17 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        
-                        
+                        <!--
+                        48: header
+                        40: music player
+                        40: active call
+                        40: group call
+                        40: join request
+                        -->
+                        <Border x:Name="ClipperBackground"
+                                Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
+                                Margin="0,-208,0,0" />
+
                         <messages:MessagePinned x:Name="PinnedMessage"
                                                 Click="Reply_Click"
                                                 HideCommand="{x:Bind ViewModel.PinnedHideCommand}"
@@ -590,7 +586,7 @@
                     </Grid>
                 </StackPanel>
             </StackPanel>
-        </Grid>
+        </StackPanel>
 
         <Grid x:Name="ContentPanel"
               SizeChanged="ContentPanel_SizeChanged"
