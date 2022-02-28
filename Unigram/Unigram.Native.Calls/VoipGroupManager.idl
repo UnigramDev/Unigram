@@ -23,6 +23,7 @@ namespace Unigram.Native.Calls
         void RemoveSsrcs(Windows.Foundation.Collections.IVector<Int32> ssrcs);
 
         VoipVideoRendererToken AddIncomingVideoOutput(Int32 audioSource, Telegram.Td.Api.GroupCallParticipantVideoInfo videoInfo, Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas);
+        void AddUnifiedVideoOutput(Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas);
 
         Boolean IsMuted;
         Boolean IsNoiseSuppressionEnabled;
