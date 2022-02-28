@@ -77,11 +77,7 @@ namespace Unigram.Services.ViewService
                 var newAppView = ApplicationView.GetForCurrentView();
 
                 newAppView.Title = parameters.Title ?? string.Empty;
-
-                if (parameters.PersistentId != null)
-                {
-                    newAppView.PersistedStateId = parameters.PersistentId;
-                }
+                newAppView.PersistedStateId = parameters.PersistentId ?? string.Empty;
 
                 var control = ViewLifetimeControl.GetForCurrentView();
                 control.Released += (s, args) =>
@@ -99,7 +95,7 @@ namespace Unigram.Services.ViewService
                 }
 
                 await ApplicationViewSwitcher.TryShowAsViewModeAsync(newAppView.Id, parameters.ViewMode, preferences);
-                //newAppView.TryResizeView(new Size(parameters.Width, parameters.Height));
+                newAppView.TryResizeView(preferences.CustomSize);
 
                 return control;
             }).ConfigureAwait(false);
