@@ -7,6 +7,13 @@
         {
         }
 
+        private bool? _disableDatabase;
+        public bool DisableDatabase
+        {
+            get => _disableDatabase ??= GetValueOrDefault("DisableDatabase", false);
+            set => AddOrUpdateValue(ref _disableDatabase, "DisableDatabase", value);
+        }
+
         private bool? _copyFormattedCode;
         public bool CopyFormattedCode
         {

@@ -259,6 +259,12 @@ namespace Unigram.Services
                 UseTestDc = _settings.UseTestDC
             };
 
+            if (_settings.Diagnostics.DisableDatabase)
+            {
+                // ¯\_(ツ)_/¯
+                parameters.UseMessageDatabase = false;
+            }
+
 #if MOCKUP
             ProfilePhoto ProfilePhoto(string name)
             {

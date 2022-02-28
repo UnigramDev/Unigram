@@ -6,10 +6,12 @@ using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views.Popups;
+using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Devices.Enumeration;
 using Windows.Media.Capture;
@@ -30,6 +32,8 @@ namespace Unigram.ViewModels
 
             VerbosityCommand = new RelayCommand(VerbosityExecute);
             VideoInfoCommand = new RelayCommand(VideoInfoExecute);
+
+            DisableDatabaseCommand = new RelayCommand(DisableDatabaseExecute);
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -153,6 +157,8 @@ namespace Unigram.ViewModels
         }
 
         public bool CanUseTestDC => ProtoService.AuthorizationState is not AuthorizationStateReady;
+
+        public bool DisableDatabase => Settings.Diagnostics.DisableDatabase;
 
         public bool UseTestDC
         {
@@ -287,6 +293,29 @@ namespace Unigram.ViewModels
 
                 builder.AppendLine(string.Format("    - size: {0}x{1}, fps: {2}, subtype: {3}", width, height, framerate, sub_type));
             }
+        }
+
+        public RelayCommand DisableDatabaseCommand { get; }
+        private async void DisableDatabaseExecute()
+        {
+            if (Settings.Diagnostics.DisableDatabase)
+            {
+                Settings.Diagnostics.DisableDatabase = false;
+            }
+            else
+            {
+                var confirm = await MessagePopup.ShowAsync("If you disable the messages database some **features** might **stop to work** as expected, **secret chats** will become **inaccessible** and app won't recognize downloaded files after download.\r\n\r\n Are you sure you want to proceed? You can re-enable messages database anytime from here.", Strings.Resources.Warning, Strings.Resources.OK, Strings.Resources.Cancel);
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    Settings.Diagnostics.DisableDatabase = true;
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            await CoreApplication.RequestRestartAsync(string.Empty);
         }
     }
 
