@@ -116,7 +116,8 @@
                                             IsTabStop="False"
                                             HorizontalContentAlignment="Stretch"
                                             VerticalContentAlignment="Stretch"
-                                            VerticalAlignment="Top" />
+                                            VerticalAlignment="Top"
+                                            Canvas.ZIndex="1" />
 
                             <Grid x:Name="DetailPresenter">
                                 <Border VerticalAlignment="Top"
@@ -522,15 +523,6 @@
                                                       Style="{StaticResource HeaderGlyphButtonStyle}"
                                                       AutomationProperties.Name="{CustomResource AccDescrPasscodeLock}"
                                                       ToolTipService.ToolTip="{CustomResource AccDescrPasscodeLock}" />
-
-                                <controls:DownloadHistoryButton x:Name="Downloads"
-                                                                Click="Downloads_Click"
-                                                                AutomationProperties.Name="{CustomResource DownloadsTabs}"
-                                                                ToolTipService.ToolTip="{CustomResource DownloadsTabs}"
-                                                                HorizontalAlignment="Center"
-                                                                VerticalAlignment="Center"
-                                                                Width="40"
-                                                                Height="40" />
                             </StackPanel>
                         </Grid>
 
