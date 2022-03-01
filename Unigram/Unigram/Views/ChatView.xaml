@@ -525,15 +525,18 @@
                     Grid.Row="2">
             <controls:GroupCallHeader x:Name="GroupCall"
                                       JoinCommand="{x:Bind ViewModel.GroupCallJoinCommand}"
-                                      Visibility="Collapsed" />
+                                      Visibility="Collapsed"
+                                      Canvas.ZIndex="1" />
 
             <StackPanel x:Name="ClipperJoinRequests">
                 <controls:ChatJoinRequestsHeader x:Name="JoinRequests"
                                                  Command="{x:Bind ViewModel.JoinRequestsCommand}"
-                                                 Visibility="Collapsed" />
+                                                 Visibility="Collapsed"
+                                                 Canvas.ZIndex="1" />
                 <StackPanel x:Name="ClipperActionBar">
                     <chats:ChatActionBarView x:Name="ActionBar"
-                                             Visibility="Collapsed" />
+                                             Visibility="Collapsed"
+                                             Canvas.ZIndex="1" />
                     <Grid x:Name="Clipper">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
