@@ -73,6 +73,8 @@ namespace Unigram.Converters
         public const string Broom = "\uEA99";
         public const string CalendarClock = "\uE81C";
 
+        public const string Live = "\uE98D";
+
         public const string AlertOff = "\uE7ED";
         public const string Alert = "\uEA8F";
 

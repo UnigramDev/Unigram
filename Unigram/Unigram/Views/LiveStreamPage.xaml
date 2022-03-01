@@ -279,16 +279,9 @@
                                       Foreground="#FFFFFF"
                                       Content="{CustomResource VoipGroupLeave}"
                                       Style="{StaticResource CallGlyphButtonStyle}"
+                                      Margin="0,0,0,8"
                                       Grid.Column="4"
                                       Grid.Row="1" />
-                <TextBlock x:Name="LeaveInfo"
-                           Text="{CustomResource VoipGroupLeave}"
-                           Style="{StaticResource CaptionTextBlockStyle}"
-                           TextAlignment="Center"
-                           VerticalAlignment="Top"
-                           Margin="0,4,0,0"
-                           Grid.Column="4"
-                           Grid.Row="2" />
 
             </Grid>
         </StackPanel>

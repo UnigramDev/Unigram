@@ -459,7 +459,7 @@ namespace Unigram.Views
                 if (supergroup.Status is ChatMemberStatusCreator)
                 {
                     flyout.CreateFlyoutSeparator();
-                    flyout.CreateFlyoutItem(StreamWith, "Stream with...", new FontIcon { Glyph = Icons.AlertOff });
+                    flyout.CreateFlyoutItem(StreamWith, "Stream with...", new FontIcon { Glyph = Icons.Live });
                 }
             }
             else if (chat.Type is ChatTypeBasicGroup && _protoService.TryGetBasicGroup(chat, out BasicGroup basicGroup))
@@ -467,7 +467,7 @@ namespace Unigram.Views
                 if (basicGroup.Status is ChatMemberStatusCreator)
                 {
                     flyout.CreateFlyoutSeparator();
-                    flyout.CreateFlyoutItem(StreamWith, "Stream with...", new FontIcon { Glyph = Icons.AlertOff });
+                    flyout.CreateFlyoutItem(StreamWith, "Stream with...", new FontIcon { Glyph = Icons.Live });
                 }
             }
 
