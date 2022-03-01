@@ -116,7 +116,60 @@
                            Margin="12,2"
                            Height="1" />
 
-                <StackPanel>
+                <controls:TopNavView x:Name="Navigation"
+                                     Orientation="Vertical"
+                                     Height="Auto">
+                    <controls:TopNavView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel />
+                        </ItemsPanelTemplate>
+                    </controls:TopNavView.ItemsPanel>
+                    <controls:TopNavView.ItemContainerStyle>
+                        <Style TargetType="controls:TopNavViewItem">
+                            <Setter Property="HorizontalAlignment"
+                                    Value="Stretch" />
+                            <Setter Property="VerticalAlignment"
+                                    Value="Stretch" />
+                            <Setter Property="HorizontalContentAlignment"
+                                    Value="Stretch" />
+                            <Setter Property="VerticalContentAlignment"
+                                    Value="Stretch" />
+                            <Setter Property="UseSystemFocusVisuals"
+                                    Value="True" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="controls:TopNavViewItem">
+                                        <Grid Background="Transparent">
+                                            <ContentPresenter x:Name="ContentPresenter"
+                                                              Grid.Column="1"
+                                                              Margin="0"
+                                                              TextWrapping="NoWrap"
+                                                              Foreground="{TemplateBinding Foreground}"
+                                                              ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                              Content="{TemplateBinding Content}"
+                                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                              ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                                              VerticalAlignment="Center"
+                                                              AutomationProperties.AccessibilityView="Raw" />
+                                            <Grid x:Name="SelectionIndicatorGrid"
+                                                  Margin="4,4,0,4"
+                                                  HorizontalAlignment="Left"
+                                                  VerticalAlignment="Center">
+                                                <Rectangle x:Name="SelectionIndicator"
+                                                           Width="3"
+                                                           Height="16"
+                                                           Fill="{ThemeResource NavigationViewSelectionIndicatorForeground}"
+                                                           Opacity="0"
+                                                           RadiusX="{Binding Source={ThemeResource ControlCornerRadius}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
+                                                           RadiusY="{Binding Source={ThemeResource ControlCornerRadius}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}" />
+                                            </Grid>
+                                        </Grid>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </controls:TopNavView.ItemContainerStyle>
                     <controls:BadgeButton Content="{CustomResource NotificationsAndSounds}"
                                           Click="Notifications_Click"
                                           Style="{StaticResource IconBadgeButtonStyle}">
@@ -180,7 +233,7 @@
                             <icons:Advanced />
                         </controls:BadgeButton.IconSource>
                     </controls:BadgeButton>
-                </StackPanel>
+                </controls:TopNavView>
 
                 <Rectangle Fill="{ThemeResource NavigationViewItemSeparatorForeground}"
                            Margin="12,2"

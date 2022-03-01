@@ -68,12 +68,6 @@ namespace Unigram.Views
             }
         }
 
-        private void Advanced_Click(object sender, RoutedEventArgs e)
-        {
-            MasterDetail.NavigationService.Navigate(typeof(SettingsAdvancedPage));
-            MasterDetail.NavigationService.GoBackAt(0, false);
-        }
-
         private async void Phone_Click(object sender, RoutedEventArgs e)
         {
             var popup = new ChangePhoneNumberPopup();
@@ -151,49 +145,73 @@ namespace Unigram.Views
 
         private void Privacy_Click(object sender, RoutedEventArgs e)
         {
+            Navigation.SelectedItem = sender;
+
             MasterDetail.NavigationService.Navigate(typeof(SettingsPrivacyAndSecurityPage));
             MasterDetail.NavigationService.GoBackAt(0, false);
         }
 
         private void Stickers_Click(object sender, RoutedEventArgs e)
         {
+            Navigation.SelectedItem = sender;
+
             MasterDetail.NavigationService.Navigate(typeof(SettingsStickersPage));
             MasterDetail.NavigationService.GoBackAt(0, false);
         }
 
         private void Data_Click(object sender, RoutedEventArgs e)
         {
+            Navigation.SelectedItem = sender;
+
             MasterDetail.NavigationService.Navigate(typeof(SettingsDataAndStoragePage));
             MasterDetail.NavigationService.GoBackAt(0, false);
         }
 
         private void Folders_Click(object sender, RoutedEventArgs e)
         {
+            Navigation.SelectedItem = sender;
+
             MasterDetail.NavigationService.Navigate(typeof(FoldersPage));
             MasterDetail.NavigationService.GoBackAt(0, false);
         }
 
         private void Notifications_Click(object sender, RoutedEventArgs e)
         {
+            Navigation.SelectedItem = sender;
+
             MasterDetail.NavigationService.Navigate(typeof(SettingsNotificationsPage));
             MasterDetail.NavigationService.GoBackAt(0, false);
         }
 
         private void Appearance_Click(object sender, RoutedEventArgs e)
         {
+            Navigation.SelectedItem = sender;
+
             MasterDetail.NavigationService.Navigate(typeof(SettingsAppearancePage));
             MasterDetail.NavigationService.GoBackAt(0, false);
         }
 
         private void Sessions_Click(object sender, RoutedEventArgs e)
         {
+            Navigation.SelectedItem = sender;
+
             MasterDetail.NavigationService.Navigate(typeof(SettingsSessionsPage));
             MasterDetail.NavigationService.GoBackAt(0, false);
         }
 
         private void Language_Click(object sender, RoutedEventArgs e)
         {
+            Navigation.SelectedItem = sender;
+
             MasterDetail.NavigationService.Navigate(typeof(SettingsLanguagePage));
+            MasterDetail.NavigationService.GoBackAt(0, false);
+        }
+
+        private void Advanced_Click(object sender, RoutedEventArgs e)
+        {
+            Navigation.SelectedItem = sender;
+
+            MasterDetail.NavigationService.Navigate(typeof(SettingsAdvancedPage));
             MasterDetail.NavigationService.GoBackAt(0, false);
         }
 
