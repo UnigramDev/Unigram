@@ -483,6 +483,7 @@
       <DependentUpon>PollOptionControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\PrefixTextBox.cs" />
+    <Compile Include="Controls\Primitives\ScrollBarManager.cs" />
     <Compile Include="Controls\PrivacyRadioButton.cs" />
     <Compile Include="Controls\ProfileHeader.xaml.cs">
       <DependentUpon>ProfileHeader.xaml</DependentUpon>
@@ -1741,6 +1742,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Themes\RadioButton_themeresources.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\ScrollBar_themeresources.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
