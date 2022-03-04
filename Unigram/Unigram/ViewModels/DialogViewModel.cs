@@ -989,18 +989,31 @@ namespace Unigram.ViewModels
                 }
 
                 long lastMessageId;
+                long lastReadInboxMessageId;
 
                 var thread = _thread;
                 if (thread != null)
                 {
                     lastMessageId = thread.ReplyInfo?.LastMessageId ?? long.MaxValue;
+                    lastReadInboxMessageId = thread.ReplyInfo?.LastReadInboxMessageId ?? long.MaxValue;
                 }
                 else
                 {
                     lastMessageId = chat.LastMessage?.Id ?? long.MaxValue;
+                    lastReadInboxMessageId = chat.LastReadInboxMessageId;
                 }
 
-                await LoadMessageSliceAsync(null, lastMessageId, VerticalAlignment.Bottom, disableAnimation: false);
+                var panel = ListField?.ItemsPanelRoot as ItemsStackPanel;
+                if (panel != null && panel.LastVisibleIndex >= 0 && panel.LastVisibleIndex < Items.Count - 1 && Items.Count > 0)
+                {
+                    var start = Items[panel.LastVisibleIndex].Id;
+                    if (start < chat.LastReadInboxMessageId)
+                    {
+                        lastMessageId = lastReadInboxMessageId;
+                    }
+                }
+
+                await LoadMessageSliceAsync(null, lastMessageId, lastMessageId == lastReadInboxMessageId ? VerticalAlignment.Top : VerticalAlignment.Bottom, disableAnimation: false);
             }
 
             TextField?.Focus(FocusState.Programmatic);
