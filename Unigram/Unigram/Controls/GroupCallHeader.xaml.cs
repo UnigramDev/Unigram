@@ -71,7 +71,7 @@ namespace Unigram.Controls
         public bool UpdateGroupCall(Chat chat, GroupCall call)
         {
             var visible = true;
-            var channel = chat.Type is ChatTypeSupergroup super && super.IsChannel;
+            var channel = call?.IsRtmpStream is true || (chat.Type is ChatTypeSupergroup super && super.IsChannel);
 
             //if (chat.VideoChat.GroupCallId != call?.Id || !chat.VideoChat.HasParticipants || call == null || call.IsJoined)
             //{
@@ -115,17 +115,21 @@ namespace Unigram.Controls
                     JoinButton.Content = Strings.Resources.VoipChatJoin;
                 }
 
-                var destination = RecentUsers.Items;
-                var origin = call.RecentSpeakers;
-
-                if (destination.Count > 0 && _call?.Id == call.Id)
+                if (call.HasHiddenListeners)
                 {
-                    destination.ReplaceDiff(origin.Select(x => x.ParticipantId));
+                    RecentUsers.Items.Clear();
                 }
                 else
                 {
-                    destination.Clear();
-                    destination.AddRange(origin.Select(x => x.ParticipantId));
+                    if (RecentUsers.Items.Count > 0 && _call?.Id == call.Id)
+                    {
+                        RecentUsers.Items.ReplaceDiff(call.RecentSpeakers.Select(x => x.ParticipantId));
+                    }
+                    else
+                    {
+                        RecentUsers.Items.Clear();
+                        RecentUsers.Items.AddRange(call.RecentSpeakers.Select(x => x.ParticipantId));
+                    }
                 }
             }
             else

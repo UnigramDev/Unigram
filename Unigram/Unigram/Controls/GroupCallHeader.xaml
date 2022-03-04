@@ -40,6 +40,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
             <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
         <TextBlock x:Name="Label"
@@ -59,7 +60,10 @@
         <controls:RecentUserHeads x:Name="RecentUsers"
                                   RecentUserHeadChanged="RecentUsers_RecentUserHeadChanged"
                                   BorderBrush="{ThemeResource PageSubHeaderBackgroundBrush}"
-                                  Grid.ColumnSpan="2" />
+                                  VerticalAlignment="Center"
+                                  HorizontalAlignment="Right"
+                                  Margin="0,0,8,0"
+                                  Grid.Column="1" />
 
         <controls:BadgeButton x:Name="JoinButton"
                               Content="{CustomResource VoipChatJoin}"
@@ -68,7 +72,7 @@
                               HorizontalAlignment="Right"
                               VerticalAlignment="Center"
                               Margin="0,0,12,0"
-                              Grid.Column="1" />
+                              Grid.Column="2" />
 
     </Grid>
 </HyperlinkButton>
