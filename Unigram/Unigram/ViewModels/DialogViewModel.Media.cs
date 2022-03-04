@@ -803,7 +803,7 @@ namespace Unigram.ViewModels
                 }
             }
 
-            return await ProtoService.SendAsync(new SendMessageAlbum(chat.Id, _threadId, reply, options, operations));
+            return await ProtoService.SendAsync(new SendMessageAlbum(chat.Id, _threadId, reply, options, operations, false));
         }
 
         private FormattedText GetFormattedText(string text)
