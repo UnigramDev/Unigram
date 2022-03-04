@@ -7,7 +7,6 @@ using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Services;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.ViewModels.Chats
 {
@@ -210,15 +209,11 @@ namespace Unigram.ViewModels.Chats
 
                 var fromMessageId = 0L;
 
-                var field = _dialog.ListField;
-                if (field != null)
-                {
-                    var panel = field.ItemsPanelRoot as ItemsStackPanel;
-                    if (panel != null && panel.LastVisibleIndex >= 0 && panel.LastVisibleIndex < _dialog.Items.Count && _dialog.Items.Count > 0)
-                    {
-                        fromMessageId = _dialog.Items[panel.LastVisibleIndex].Id;
-                    }
-                }
+                //var panel = _dialog.ListField?.ItemsPanelRoot as ItemsStackPanel;
+                //if (panel != null && panel.LastVisibleIndex >= 0 && panel.LastVisibleIndex < _dialog.Items.Count && _dialog.Items.Count > 0)
+                //{
+                //    fromMessageId = _dialog.Items[panel.LastVisibleIndex].Id;
+                //}
 
                 var collection = new SearchChatMessagesCollection(ProtoService, chat.Id, _dialog.ThreadId, query, from, fromMessageId, filter);
 
