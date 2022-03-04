@@ -257,6 +257,19 @@ namespace Unigram.Services
                     {
                         return;
                     }
+
+                    if (streams.IsScheduleSelected)
+                    {
+                        var schedule = new ScheduleVideoChatPopup(true);
+
+                        var oneMore = await schedule.ShowQueuedAsync();
+                        if (oneMore != ContentDialogResult.Primary)
+                        {
+                            return;
+                        }
+
+                        startDate = schedule.Value.ToTimestamp();
+                    }
                 }
 
                 var response = await ProtoService.SendAsync(new CreateVideoChat(chat.Id, string.Empty, startDate, popup.IsStartWithSelected));
@@ -965,7 +978,7 @@ namespace Unigram.Services
         }
 
         public Chat Chat => _chat;
-        public bool IsChannel => _chat?.Type is ChatTypeSupergroup super && super.IsChannel;
+        public bool IsChannel => _call?.IsRtmpStream is true || (_chat?.Type is ChatTypeSupergroup super && super.IsChannel);
         public GroupCall Call => _call;
         public GroupCallParticipant CurrentUser => _currentUser;
 

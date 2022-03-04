@@ -18,6 +18,9 @@ namespace Unigram.Views.Popups
             _chatId = chatId;
 
             Title = "Stream with...";
+            Schedule.Visibility = start
+                ? Windows.UI.Xaml.Visibility.Visible
+                : Windows.UI.Xaml.Visibility.Collapsed;
 
             if (start)
             {
@@ -29,6 +32,8 @@ namespace Unigram.Views.Popups
                 PrimaryButtonText = Strings.Resources.OK;
             }
         }
+
+        public bool IsScheduleSelected { get; private set; }
 
         private async void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
         {
@@ -46,6 +51,12 @@ namespace Unigram.Views.Popups
 
         private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
+        }
+
+        private void Schedule_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            IsScheduleSelected = true;
+            Hide(ContentDialogResult.Primary);
         }
     }
 }
