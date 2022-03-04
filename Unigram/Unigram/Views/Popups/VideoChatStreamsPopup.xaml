@@ -50,14 +50,16 @@
                                    Margin="-4"
                                    Grid.Row="4" />
 
-        <TextBlock Text="Telegram doesn't see any stream coming from your streaming app."
+        <TextBlock Text="Please make sure you entered the right Server URL and Stream Key in your app."
                    Style="{StaticResource BodyTextBlockStyle}"
-                   Foreground="{ThemeResource DangerButtonBackground}"
                    Margin="0,12"
                    Grid.Row="5" />
 
-        <TextBlock Text="Please make sure you entered the right Server URL and Stream Key in your app."
-                   Style="{StaticResource BodyTextBlockStyle}"
-                   Grid.Row="6" />
+        <HyperlinkButton x:Name="Schedule"
+                         Click="Schedule_Click"
+                         Content="{CustomResource VoipChannelScheduleVoiceChat}"
+                         HorizontalAlignment="Left"
+                         Margin="-12,0,0,-16"
+                         Grid.Row="6" />
     </Grid>
 </controls:ContentPopup>
