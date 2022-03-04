@@ -27,10 +27,10 @@
                                           Click="Stats_Click"
                                           IsChevronVisible="True" />
 
-                    <!--<controls:BadgeButton Content="{CustomResource DownloadsTabs}"
+                    <controls:BadgeButton Content="{CustomResource DownloadsTabs}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Glyph="&#xE118;"
-                                          Click="Downloads_Click" />-->
+                                          Click="Downloads_Click" />
 
                     <Grid>
                         <controls:BadgeButton Command="{x:Bind ViewModel.StoragePathCommand}"

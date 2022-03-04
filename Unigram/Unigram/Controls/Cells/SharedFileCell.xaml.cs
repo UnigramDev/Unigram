@@ -4,6 +4,7 @@ using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Navigation;
 using Unigram.Services;
+using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -16,6 +17,7 @@ namespace Unigram.Controls.Cells
     {
         private IProtoService _protoService;
         private IMessageDelegate _delegate;
+        private DownloadsViewModel _viewModel;
         private Message _message;
 
         private string _fileToken;
@@ -23,6 +25,17 @@ namespace Unigram.Controls.Cells
         public SharedFileCell()
         {
             InitializeComponent();
+        }
+
+        public void UpdateFileDownload(DownloadsViewModel viewModel, FileDownloadViewModel fileDownload)
+        {
+            if (fileDownload == null)
+            {
+                return;
+            }
+
+            _viewModel = viewModel;
+            UpdateMessage(viewModel.ProtoService, null, fileDownload.Message);
         }
 
         public void UpdateMessage(IProtoService protoService, IMessageDelegate delegato, Message message)
@@ -225,7 +238,7 @@ namespace Unigram.Controls.Cells
             return Converter.BannedUntil(message.Date);
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private async void Button_Click(object sender, RoutedEventArgs e)
         {
             var file = _message.GetFile();
             if (file == null)
@@ -235,11 +248,39 @@ namespace Unigram.Controls.Cells
 
             if (file.Local.IsDownloadingActive)
             {
-                _protoService.Send(new CancelDownloadFile(file.Id, false));
+                if (_delegate != null)
+                {
+                    _protoService.CancelDownloadFile(file.Id);
+                }
+                else
+                {
+                    _protoService.Send(new ToggleDownloadIsPaused(file.Id, true));
+
+                    _viewModel.TotalPausedCount++;
+                    _viewModel.TotalActiveCount--;
+                }
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
-                _protoService.DownloadFile(file.Id, 32);
+                if (_delegate != null)
+                {
+                    _protoService.AddFileToDownloads(file.Id, _message.ChatId, _message.Id);
+                }
+                else
+                {
+                    _protoService.Send(new ToggleDownloadIsPaused(file.Id, false));
+
+                    _viewModel.TotalPausedCount--;
+                    _viewModel.TotalActiveCount++;
+                }
+            }
+            else if (_delegate == null)
+            {
+                var temp = await _protoService.GetFileAsync(file);
+                if (temp != null)
+                {
+                    await Windows.System.Launcher.LaunchFileAsync(temp);
+                }
             }
             else
             {

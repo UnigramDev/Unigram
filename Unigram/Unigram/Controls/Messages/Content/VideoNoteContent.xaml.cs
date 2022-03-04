@@ -273,7 +273,7 @@ namespace Unigram.Controls.Messages.Content
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
-                _message.ProtoService.DownloadFile(file.Id, 32);
+                _message.ProtoService.AddFileToDownloads(file.Id, _message.ChatId, _message.Id);
             }
             else
             {

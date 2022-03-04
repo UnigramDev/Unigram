@@ -991,6 +991,12 @@
                                     </local:ChatListPage>
                                 </Grid>
 
+                                <controls:DownloadsFooter x:Name="Downloads"
+                                                          Click="Downloads_Click"
+                                                          VerticalAlignment="Bottom"
+                                                          Visibility="Collapsed"
+                                                          Grid.Row="1" />
+
                                 <Grid VerticalAlignment="Bottom"
                                       HorizontalAlignment="Center"
                                       Margin="12"

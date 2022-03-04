@@ -731,8 +731,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 
         public void AddFileToDownloads(int fileId, long chatId, long messageId, int priority = 30)
         {
-            //_client.Send(new AddFileToDownloads(fileId, chatId, messageId, priority));
-            _client.Send(new DownloadFile(fileId, priority, 0, 0, false));
+            _client.Send(new AddFileToDownloads(fileId, chatId, messageId, priority));
         }
 
         public void DownloadFile(int fileId, int priority, int offset = 0, int limit = 0, bool synchronous = false)
@@ -744,6 +743,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
         {
             _canceledDownloads.Add(fileId);
             _client.Send(new CancelDownloadFile(fileId, onlyIfPending));
+            _client.Send(new RemoveFileFromDownloads(fileId, false));
         }
 
         public bool IsDownloadFileCanceled(int fileId)
@@ -1681,7 +1681,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
                 EventAggregator.Default.Send(updateFile.File, $"{SessionId}_{updateFile.File.Id}",
                     updateFile.File.Local.IsDownloadingCompleted);
 
-                return;
+                //return;
             }
             else if (update is UpdateFileGenerationStart updateFileGenerationStart)
             {

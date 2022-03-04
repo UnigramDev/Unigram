@@ -1,7 +1,9 @@
 ﻿using System.Text;
+using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Services.Settings;
 using Unigram.ViewModels.Settings;
+using Unigram.Views.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -27,9 +29,9 @@ namespace Unigram.Views.Settings
             Frame.Navigate(typeof(SettingsNetworkPage));
         }
 
-        private void Downloads_Click(object sender, RoutedEventArgs e)
+        private async void Downloads_Click(object sender, RoutedEventArgs e)
         {
-
+            await new DownloadsPopup(ViewModel.SessionId, ViewModel.NavigationService).ShowQueuedAsync();
         }
 
         private void Proxy_Click(object sender, RoutedEventArgs e)

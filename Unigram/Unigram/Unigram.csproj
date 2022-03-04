@@ -181,6 +181,7 @@
     <Compile Include="Collections\MvxObservableCollection.cs" />
     <Compile Include="Collections\SearchChatMessagesCollection.cs" />
     <Compile Include="Collections\SearchChatsCollection.cs" />
+    <Compile Include="Collections\SearchCollection.cs" />
     <Compile Include="Collections\SearchMembersAndUsersCollection.cs" />
     <Compile Include="Collections\SearchStickersCollection.cs" />
     <Compile Include="Collections\SearchUsersCollection.cs" />
@@ -200,6 +201,7 @@
     <Compile Include="Common\CurrencyNumberFormatter.cs" />
     <Compile Include="Common\DateTimeParser.cs" />
     <Compile Include="Common\EqualityComparerDelegate.cs" />
+    <Compile Include="Common\PropertyDebouncer.cs" />
     <Compile Include="Common\MediaDeviceWatcher.cs" />
     <Compile Include="Common\DisposableMutex.cs" />
     <Compile Include="Common\DropShadowEx.cs" />
@@ -262,6 +264,9 @@
     <Compile Include="Controls\Cells\ChatThemeCell.xaml.cs">
       <DependentUpon>ChatThemeCell.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Cells\FileDownloadCell.xaml.cs">
+      <DependentUpon>FileDownloadCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Cells\GroupCallParticipantGridCell.xaml.cs">
       <DependentUpon>GroupCallParticipantGridCell.xaml</DependentUpon>
     </Compile>
@@ -318,7 +323,10 @@
       <DependentUpon>CountryBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\DiceView.cs" />
-    <Compile Include="Controls\DownloadHistoryButton.cs" />
+    <Compile Include="Controls\DownloadsIndicator.cs" />
+    <Compile Include="Controls\DownloadsFooter.xaml.cs">
+      <DependentUpon>DownloadsFooter.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Drawers\AnimationDrawer.xaml.cs">
       <DependentUpon>AnimationDrawer.xaml</DependentUpon>
     </Compile>
@@ -1342,6 +1350,7 @@
     <Content Include="Assets\Background.tgv" />
     <Content Include="Assets\Animations\Passcode.tgs" />
     <Content Include="Assets\Animations\Qr.tgs" />
+    <Content Include="Assets\Animations\DownloadsEmpty.tgs" />
     <None Include="Assets\i420.hlsl" />
     <Content Include="Assets\Images\BoxArt.png" />
     <Content Include="Assets\Images\Reply.scale-100.png" />
@@ -1497,6 +1506,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Cells\FileDownloadCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Cells\GroupCallParticipantGridCell.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1546,6 +1559,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\CountryBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\DownloadsFooter.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

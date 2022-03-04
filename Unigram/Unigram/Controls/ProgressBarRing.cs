@@ -164,45 +164,54 @@ namespace Unigram.Controls
 
             if (_ellipse != null)
             {
-                var linear = Window.Current.Compositor.CreateLinearEasingFunction();
-                var trimStart = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-                var trimEnd = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-
-                if (newValue < 1)
+                var diff = Math.Abs(oldValue - newValue);
+                if (diff < 0.10 && newValue < 1)
                 {
-                    //_ellipse.TrimStart = 0;
-                    //_ellipse.TrimEnd = MathF.Max(0, MathF.Min(1, (float)newValue));
-
-                    trimStart.InsertKeyFrame(1, 0, linear);
-                    trimEnd.InsertKeyFrame(1, MathF.Max(0, MathF.Min(1, (float)newValue)), linear);
-
-                    _ellipse.StartAnimation("TrimStart", trimStart);
-                    _ellipse.StartAnimation("TrimEnd", trimEnd);
+                    _ellipse.TrimStart = 0;
+                    _ellipse.TrimEnd = MathF.Max(0, MathF.Min(1, (float)newValue));
                 }
                 else
                 {
-                    //_ellipse.TrimStart = 1;
-                    //_ellipse.TrimEnd = 1;
+                    var linear = Window.Current.Compositor.CreateLinearEasingFunction();
+                    var trimStart = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                    var trimEnd = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
 
-                    trimStart.InsertKeyFrame(1, ShrinkOut ? 1 : 0, linear);
-                    trimEnd.InsertKeyFrame(1, 1, linear);
-
-                    var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-                    batch.Completed += (s, args) =>
+                    if (newValue < 1)
                     {
-                        if (_foreverAnimation != null && _spinning)
+                        //_ellipse.TrimStart = 0;
+                        //_ellipse.TrimEnd = MathF.Max(0, MathF.Min(1, (float)newValue));
+
+                        trimStart.InsertKeyFrame(1, 0, linear);
+                        trimEnd.InsertKeyFrame(1, MathF.Max(0, MathF.Min(1, (float)newValue)), linear);
+
+                        _ellipse.StartAnimation("TrimStart", trimStart);
+                        _ellipse.StartAnimation("TrimEnd", trimEnd);
+                    }
+                    else
+                    {
+                        //_ellipse.TrimStart = 1;
+                        //_ellipse.TrimEnd = 1;
+
+                        trimStart.InsertKeyFrame(1, ShrinkOut ? 1 : 0, linear);
+                        trimEnd.InsertKeyFrame(1, 1, linear);
+
+                        var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+                        batch.Completed += (s, args) =>
                         {
-                            _spinning = false;
-                            _visual.StopAnimation("RotationAngleInDegrees");
-                        }
+                            if (_foreverAnimation != null && _spinning)
+                            {
+                                _spinning = false;
+                                _visual.StopAnimation("RotationAngleInDegrees");
+                            }
 
-                        Completed?.Invoke(this, EventArgs.Empty);
-                    };
+                            Completed?.Invoke(this, EventArgs.Empty);
+                        };
 
-                    _ellipse.StartAnimation("TrimStart", trimStart);
-                    _ellipse.StartAnimation("TrimEnd", trimEnd);
+                        _ellipse.StartAnimation("TrimStart", trimStart);
+                        _ellipse.StartAnimation("TrimEnd", trimEnd);
 
-                    batch.End();
+                        batch.End();
+                    }
                 }
             }
 
