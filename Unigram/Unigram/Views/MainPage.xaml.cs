@@ -48,6 +48,7 @@ namespace Unigram.Views
         IRootContentPage,
         INavigatingPage,
         IChatListDelegate,
+        IHandle<UpdateFileDownloads>,
         IHandle<UpdateChatPosition>,
         IHandle<UpdateChatIsMarkedAsUnread>,
         IHandle<UpdateChatReadInbox>,
@@ -191,6 +192,11 @@ namespace Unigram.Views
                 chatView.UpdateChatReadInbox(chat);
                 chatView.UpdateChatLastMessage(chat);
             });
+        }
+
+        public void Handle(UpdateFileDownloads update)
+        {
+            this.BeginOnUIThread(() => Downloads.UpdateFileDownloads(update));
         }
 
         public void Handle(UpdateChatPosition update)
@@ -3042,7 +3048,7 @@ namespace Unigram.Views
 
         private async void Downloads_Click(object sender, RoutedEventArgs e)
         {
-            await new DownloadsPopup(ViewModel.SessionId).ShowQueuedAsync();
+            await new DownloadsPopup(ViewModel.SessionId, ViewModel.NavigationService).ShowQueuedAsync();
         }
     }
 

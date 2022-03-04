@@ -368,7 +368,7 @@ namespace Unigram.Controls.Cells
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
-                _protoService.DownloadFile(file.Id, 32);
+                _protoService.AddFileToDownloads(file.Id, _message.ChatId, _message.Id);
             }
             else
             {

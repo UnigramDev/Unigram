@@ -9,7 +9,7 @@ using Windows.UI.Xaml.Hosting;
 
 namespace Unigram.Controls
 {
-    public class DownloadHistoryButton : Button
+    public class DownloadsIndicator : Control
     {
         private readonly IAnimatedVisualSource2 _visualSource;
         private readonly IAnimatedVisual _visual;
@@ -27,9 +27,9 @@ namespace Unigram.Controls
 
         private State _state;
 
-        public DownloadHistoryButton()
+        public DownloadsIndicator()
         {
-            DefaultStyleKey = typeof(DownloadHistoryButton);
+            DefaultStyleKey = typeof(DownloadsIndicator);
 
             var compositor = Window.Current.Compositor;
             var source = new Downloading();
@@ -133,11 +133,11 @@ namespace Unigram.Controls
         }
 
         public static readonly DependencyProperty ProgressProperty =
-            DependencyProperty.Register("Progress", typeof(double), typeof(DownloadHistoryButton), new PropertyMetadata(0d, OnProgressChanged));
+            DependencyProperty.Register("Progress", typeof(double), typeof(DownloadsIndicator), new PropertyMetadata(0d, OnProgressChanged));
 
         private static void OnProgressChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((DownloadHistoryButton)d).OnProgressChanged((double)e.NewValue, (double)e.OldValue);
+            ((DownloadsIndicator)d).OnProgressChanged((double)e.NewValue, (double)e.OldValue);
         }
 
         private void OnProgressChanged(double newValue, double oldValue)

@@ -513,10 +513,10 @@
         </Setter>
     </Style>
 
-    <Style TargetType="local:DownloadHistoryButton">
+    <Style TargetType="local:DownloadsIndicator">
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="local:DownloadHistoryButton">
+                <ControlTemplate TargetType="local:DownloadsIndicator">
                     <Grid x:Name="ButtonLayoutGrid"
                           BorderBrush="{ThemeResource TextControlButtonBorderBrush}"
                           BorderThickness="{TemplateBinding BorderThickness}"

@@ -128,6 +128,8 @@
                                           Click="Storage_Click" />
                     <controls:BadgeButton Content="{CustomResource NetworkUsage}"
                                           Click="Stats_Click" />
+                    <controls:BadgeButton Content="{CustomResource DownloadsTabs}"
+                                          Click="Downloads_Click" />
 
                     <Grid>
                         <controls:BadgeButton Command="{x:Bind ViewModel.StoragePathCommand}"
