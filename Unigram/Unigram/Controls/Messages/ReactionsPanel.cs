@@ -80,7 +80,7 @@ namespace Unigram.Controls.Messages
 
                 foreach (var step in diff.Steps)
                 {
-                    if (step.Status == Rg.DiffUtils.DiffStatus.Move)
+                    if (step.Status == Rg.DiffUtils.DiffStatus.Move && step.OldStartIndex < Children.Count && step.NewStartIndex < Children.Count)
                     {
                         Children.Move((uint)step.OldStartIndex, (uint)step.NewStartIndex);
                     }
