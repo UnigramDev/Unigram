@@ -20,6 +20,8 @@ namespace Unigram.Views.Popups
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<DownloadsViewModel>(sessionId);
 
+            PrimaryButtonText = Strings.Resources.Close;
+
             ViewModel.Dispatcher = navigationService.Dispatcher;
             ViewModel.NavigationService = navigationService;
             ViewModel.Hide = Hide;
