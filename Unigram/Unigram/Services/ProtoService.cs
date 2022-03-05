@@ -102,6 +102,9 @@ namespace Unigram.Services
 
         UserFullInfo GetUserFull(long id);
         UserFullInfo GetUserFull(Chat chat);
+        bool TryGetUserFull(long id, out UserFullInfo value);
+        bool TryGetUserFull(Chat chat, out UserFullInfo value);
+
         IList<User> GetUsers(IList<long> ids);
 
         BasicGroup GetBasicGroup(long id);
@@ -1180,6 +1183,26 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             }
 
             return null;
+        }
+
+        public bool TryGetUserFull(long id, out UserFullInfo value)
+        {
+            return _usersFull.TryGetValue(id, out value);
+        }
+
+        public bool TryGetUserFull(Chat chat, out UserFullInfo value)
+        {
+            if (chat?.Type is ChatTypePrivate privata)
+            {
+                return TryGetUserFull(privata.UserId, out value);
+            }
+            else if (chat?.Type is ChatTypeSecret secret)
+            {
+                return TryGetUserFull(secret.UserId, out value);
+            }
+
+            value = null;
+            return false;
         }
 
 

@@ -164,6 +164,12 @@ namespace Unigram.Common
                     await page.ViewModel.LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? long.MaxValue, VerticalAlignment.Bottom);
                 }
 
+                if (accessToken != null && ProtoService.TryGetUser(chat, out User user) && ProtoService.TryGetUserFull(chat, out UserFullInfo userFull))
+                {
+                    page.ViewModel.AccessToken = accessToken;
+                    page.View.UpdateUserFullInfo(chat, user, userFull, false, true);
+                }
+
                 page.ViewModel.TextField?.Focus(FocusState.Programmatic);
 
                 if (App.DataPackages.TryRemove(chat.Id, out DataPackageView package))
