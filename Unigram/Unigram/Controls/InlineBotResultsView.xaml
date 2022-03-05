@@ -37,8 +37,7 @@
                     <RowDefinition />
                     <RowDefinition />
                 </Grid.RowDefinitions>
-                <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
-                      Width="48"
+                <Grid Width="48"
                       Height="48"
                       VerticalAlignment="Top"
                       Margin="0,0,12,0"
