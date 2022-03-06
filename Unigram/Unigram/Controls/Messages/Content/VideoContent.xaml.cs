@@ -368,7 +368,14 @@ namespace Unigram.Controls.Messages.Content
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
-                _message.ProtoService.AddFileToDownloads(file.Id, _message.ChatId, _message.Id);
+                if (_message.Content is not MessageVideo)
+                {
+                    _message.ProtoService.DownloadFile(file.Id, 30);
+                }
+                else
+                {
+                    _message.ProtoService.AddFileToDownloads(file.Id, _message.ChatId, _message.Id);
+                }
             }
             else
             {
@@ -397,7 +404,14 @@ namespace Unigram.Controls.Messages.Content
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
                 {
-                    _message.ProtoService.AddFileToDownloads(file.Id, _message.ChatId, _message.Id);
+                    if (_message.Content is not MessageVideo)
+                    {
+                        _message.ProtoService.DownloadFile(file.Id, 30);
+                    }
+                    else
+                    {
+                        _message.ProtoService.AddFileToDownloads(file.Id, _message.ChatId, _message.Id);
+                    }
                 }
                 else
                 {
