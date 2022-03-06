@@ -10,16 +10,31 @@ namespace Unigram.Controls.Cells
             InitializeComponent();
         }
 
+        private bool _first;
         public bool IsFirst
         {
-            set => UpdateFirst(value);
+            set => UpdateFirst(value, _completeDate);
         }
 
-        private void UpdateFirst(bool value)
+        private int _completeDate;
+        public int CompleteDate
         {
-            if (value && Header == null)
+            set => UpdateFirst(_first, value);
+        }
+
+        private void UpdateFirst(bool value, int completeDate)
+        {
+            _first = value;
+            _completeDate = completeDate;
+
+            if (value)
             {
-                FindName(nameof(Header));
+                if (Header == null)
+                {
+                    FindName(nameof(Header));
+                }
+
+                Header.Text = completeDate != 0 ? Strings.Resources.RecentlyDownloaded : Strings.Resources.Downloading;
             }
             else if (value is false && Header != null)
             {

@@ -66,7 +66,7 @@ namespace Unigram.Views.Popups
 
             flyout.CreateFlyoutItem(ViewModel.SettingsCommand, Strings.Resources.Settings, new FontIcon { Glyph = Icons.Settings });
 
-            if (viewModel.Items.Count > 0)
+            if (viewModel.Search.Count > 0)
             {
                 flyout.CreateFlyoutItem(ViewModel.RemoveAllCommand, Strings.Resources.DeleteAll, new FontIcon { Glyph = Icons.Delete });
             }
@@ -120,8 +120,8 @@ namespace Unigram.Views.Popups
 
                 flyout.CreateFlyoutItem(ViewModel.RemoveFileDownloadCommand, fileDownload, Strings.Resources.DeleteFromRecent, new FontIcon { Glyph = Icons.Delete });
 
-                flyout.CreateFlyoutSeparator();
-                flyout.CreateFlyoutItem(_ => { }, fileDownload, Strings.Resources.lng_context_select_msg, new FontIcon { Glyph = Icons.CheckmarkCircle });
+                //flyout.CreateFlyoutSeparator();
+                //flyout.CreateFlyoutItem(_ => { }, fileDownload, Strings.Resources.lng_context_select_msg, new FontIcon { Glyph = Icons.CheckmarkCircle });
             }
 
             args.ShowAt(flyout, sender as FrameworkElement);

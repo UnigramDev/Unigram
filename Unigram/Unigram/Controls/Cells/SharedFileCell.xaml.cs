@@ -17,7 +17,6 @@ namespace Unigram.Controls.Cells
     {
         private IProtoService _protoService;
         private IMessageDelegate _delegate;
-        private DownloadsViewModel _viewModel;
         private Message _message;
 
         private string _fileToken;
@@ -34,7 +33,6 @@ namespace Unigram.Controls.Cells
                 return;
             }
 
-            _viewModel = viewModel;
             UpdateMessage(viewModel.ProtoService, null, fileDownload.Message);
         }
 
@@ -45,7 +43,7 @@ namespace Unigram.Controls.Cells
 
             _message = message;
 
-            var data = message.GetFileAndThumbnailAndName(false);
+            var data = message.GetFileAndThumbnailAndName();
             if (data.File == null)
             {
                 return;
@@ -94,7 +92,7 @@ namespace Unigram.Controls.Cells
 
         private void UpdateFile(Message message, File file)
         {
-            var data = message.GetFileAndThumbnailAndName(false);
+            var data = message.GetFileAndThumbnailAndName();
             if (data.File == null)
             {
                 return;
@@ -255,9 +253,6 @@ namespace Unigram.Controls.Cells
                 else
                 {
                     _protoService.Send(new ToggleDownloadIsPaused(file.Id, true));
-
-                    _viewModel.TotalPausedCount++;
-                    _viewModel.TotalActiveCount--;
                 }
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
@@ -269,9 +264,6 @@ namespace Unigram.Controls.Cells
                 else
                 {
                     _protoService.Send(new ToggleDownloadIsPaused(file.Id, false));
-
-                    _viewModel.TotalPausedCount--;
-                    _viewModel.TotalActiveCount++;
                 }
             }
             else if (_delegate == null)

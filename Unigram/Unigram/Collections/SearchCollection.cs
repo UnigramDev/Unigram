@@ -10,16 +10,16 @@ using Windows.UI.Xaml.Data;
 
 namespace Unigram.Collections
 {
-    public class SearchCollection<T> : DiffObservableCollection<T>, ISupportIncrementalLoading
+    public class SearchCollection<T, TSource> : DiffObservableCollection<T>, ISupportIncrementalLoading where TSource : IEnumerable<T>
     {
-        private readonly Func<string, IEnumerable<T>> _factory;
+        private readonly Func<string, TSource> _factory;
 
         private CancellationTokenSource _token;
 
-        private IEnumerable<T> _source;
+        private TSource _source;
         private ISupportIncrementalLoading _incrementalSource;
 
-        public SearchCollection(Func<string, IEnumerable<T>> factory, IDiffHandler<T> handler)
+        public SearchCollection(Func<string, TSource> factory, IDiffHandler<T> handler)
             : base(handler, new DiffOptions { AllowBatching = false, DetectMoves = true })
         {
             _factory = factory;
@@ -33,13 +33,15 @@ namespace Unigram.Collections
             set => _query.Set(value);
         }
 
+        public TSource Source => _source;
+
         public void SetQuery(string value)
         {
             Update(_factory(value));
             OnPropertyChanged(new PropertyChangedEventArgs(nameof(Query)));
         }
 
-        public async void Update(IEnumerable<T> source)
+        public async void Update(TSource source)
         {
             if (_token != null)
             {
