@@ -26,6 +26,8 @@ namespace winrt::Unigram::Native::implementation
 		}
 
 		void Close() {
+			slim_lock_guard const guard(s_locks[m_cacheKey]);
+
 			if (m_decompressBuffer) {
 				delete[] m_decompressBuffer;
 				m_decompressBuffer = nullptr;
