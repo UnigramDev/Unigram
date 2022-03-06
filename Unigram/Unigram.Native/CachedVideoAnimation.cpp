@@ -8,7 +8,6 @@
 #define QOI_NO_STDIO
 
 #include <lz4.h>
-#include <jpeglib.h>
 #include <qoi.h>
 
 namespace winrt::Unigram::Native::implementation
@@ -105,103 +104,6 @@ namespace winrt::Unigram::Native::implementation
 		delete[] pixels;
 	}
 
-	inline void decode_jpeg_to_memory(const unsigned char* image, unsigned long imageSize, uint8_t* jpegBuf) {
-		int rc, i, j;
-
-		// Variables for the decompressor itself
-		struct jpeg_decompress_struct cinfo;
-		struct jpeg_error_mgr jerr;
-
-		// Variables for the output buffer, and how long each row is
-		unsigned long bmp_size;
-		//unsigned char* bmp_buffer;
-		int row_stride, width, height, pixel_size;
-
-
-		// Allocate a new decompress struct, with the default error handler.
-		// The default error handler will exit() on pretty much any issue,
-		// so it's likely you'll want to replace it or supplement it with
-		// your own.
-		cinfo.err = jpeg_std_error(&jerr);
-		cinfo.out_color_space = JCS_EXT_BGRA;
-		jpeg_create_decompress(&cinfo);
-
-
-		// Configure this decompressor to read its data from a memory 
-		// buffer starting at unsigned char *jpg_buffer, which is jpg_size
-		// long, and which must contain a complete jpg already.
-		//
-		// If you need something fancier than this, you must write your 
-		// own data source manager, which shouldn't be too hard if you know
-		// what it is you need it to do. See jpeg-8d/jdatasrc.c for the 
-		// implementation of the standard jpeg_mem_src and jpeg_stdio_src 
-		// managers as examples to work from.
-		jpeg_mem_src(&cinfo, image, imageSize);
-
-
-		// Have the decompressor scan the jpeg header. This won't populate
-		// the cinfo struct output fields, but will indicate if the
-		// jpeg is valid.
-		rc = jpeg_read_header(&cinfo, TRUE);
-
-		// By calling jpeg_start_decompress, you populate cinfo
-		// and can then allocate your output bitmap buffers for
-		// each scanline.
-		jpeg_start_decompress(&cinfo);
-
-		width = cinfo.output_width;
-		height = cinfo.output_height;
-		pixel_size = cinfo.output_components;
-
-		bmp_size = width * height * pixel_size;
-		//bmp_buffer = (unsigned char*)malloc(bmp_size);
-
-		// The row_stride is the total number of bytes it takes to store an
-		// entire scanline (row). 
-		row_stride = width * pixel_size;
-
-		//
-		// Now that you have the decompressor entirely configured, it's time
-		// to read out all of the scanlines of the jpeg.
-		//
-		// By default, scanlines will come out in RGBRGBRGB...  order, 
-		// but this can be changed by setting cinfo.out_color_space
-		//
-		// jpeg_read_scanlines takes an array of buffers, one for each scanline.
-		// Even if you give it a complete set of buffers for the whole image,
-		// it will only ever decompress a few lines at a time. For best 
-		// performance, you should pass it an array with cinfo.rec_outbuf_height
-		// scanline buffers. rec_outbuf_height is typically 1, 2, or 4, and 
-		// at the default high quality decompression setting is always 1.
-		while (cinfo.output_scanline < cinfo.output_height) {
-			unsigned char* buffer_array[1];
-			buffer_array[0] = jpegBuf + \
-				(cinfo.output_scanline) * row_stride;
-
-			jpeg_read_scanlines(&cinfo, buffer_array, 1);
-
-		}
-
-		// Once done reading *all* scanlines, release all internal buffers,
-		// etc by calling jpeg_finish_decompress. This lets you go back and
-		// reuse the same cinfo object with the same settings, if you
-		// want to decompress several jpegs in a row.
-		//
-		// If you didn't read all the scanlines, but want to stop early,
-		// you instead need to call jpeg_abort_decompress(&cinfo)
-		jpeg_finish_decompress(&cinfo);
-
-		// At this point, optionally go back and either load a new jpg into
-		// the jpg_buffer, or define a new jpeg_mem_src, and then start 
-		// another decompress operation.
-
-		// Once you're really really done, destroy the object to free everything
-		jpeg_destroy_decompress(&cinfo);
-
-		// And free the input buffer
-		//free(bmp_buffer);
-	}
-
 	void CachedVideoAnimation::RenderSync(uint8_t* pixels, size_t w, size_t h, int32_t& seconds, bool* rendered)
 	{
 		bool loadedFromCache = false;
@@ -225,7 +127,6 @@ namespace winrt::Unigram::Native::implementation
 					if (frameSize <= m_maxFrameSize) {
 						fread(m_decompressBuffer, sizeof(uint8_t), frameSize, precacheFile);
 						//LZ4_decompress_safe((const char*)m_decompressBuffer, (char*)pixels, frameSize, w * h * 4);
-						//decode_jpeg_to_memory((const unsigned char*)m_decompressBuffer, frameSize, pixels);
 						qoi_desc desc;
 						qoi_decode_2((const void*)m_decompressBuffer, frameSize, &desc, 4, pixels);
 						loadedFromCache = true;
@@ -275,39 +176,6 @@ namespace winrt::Unigram::Native::implementation
 		}
 	}
 
-	inline void encode_jpeg_to_memory(unsigned char* image, int width, int height, int quality, unsigned long* jpegSize, uint8_t** jpegBuf) {
-		struct jpeg_compress_struct cinfo;
-		struct jpeg_error_mgr jerr;
-		JSAMPROW row_pointer[1];
-		int row_stride;
-		cinfo.err = jpeg_std_error(&jerr);
-		jpeg_create_compress(&cinfo);
-		cinfo.image_width = width;
-		cinfo.image_height = height;
-		cinfo.input_components = 4;
-		cinfo.in_color_space = JCS_EXT_BGRA;
-		jpeg_set_defaults(&cinfo);
-		jpeg_set_quality(&cinfo, quality, TRUE);
-		//
-		//
-		// Tell libJpeg to encode to memory, this is the bit that's different!
-		// Lib will alloc buffer.
-		//
-		jpeg_mem_dest(&cinfo, jpegBuf, jpegSize);
-		jpeg_start_compress(&cinfo, TRUE);
-
-		// 1 BPP
-		row_stride = width * 4;
-		// Encode
-		while (cinfo.next_scanline < cinfo.image_height) {
-			row_pointer[0] = &image[cinfo.next_scanline * row_stride];
-			jpeg_write_scanlines(&cinfo, row_pointer, 1);
-		}
-		jpeg_finish_compress(&cinfo);
-		jpeg_destroy_compress(&cinfo);
-	}
-
-
 	void CachedVideoAnimation::CompressThreadProc() {
 		while (s_compressStarted) {
 			auto work = s_compressQueue.wait_and_pop();
@@ -331,26 +199,34 @@ namespace winrt::Unigram::Native::implementation
 
 				FILE* precacheFile = _wfopen(item->m_cacheFile.c_str(), L"r+b");
 				if (precacheFile != nullptr) {
-					//uint8_t temp;
-					//size_t read = fread(&temp, sizeof(uint8_t), 1, precacheFile);
-					//if (read == 1 && temp == CACHED_VERSION + 1) {
-					//	fread(&item->m_maxFrameSize, sizeof(uint32_t), 1, precacheFile);
-					//	fread(&item->m_imageSize, sizeof(uint32_t), 1, precacheFile);
-					//	fread(&item->m_fps, sizeof(int32_t), 1, precacheFile);
-					//	fread(&item->m_frameCount, sizeof(size_t), 1, precacheFile);
-					//	item->m_fileOffsets = std::vector<uint32_t>(item->m_frameCount, 0);
-					//	fread(&item->m_fileOffsets[0], sizeof(uint32_t), item->m_frameCount, precacheFile);
-					//	fclose(precacheFile);
+					uint8_t temp;
+					size_t read = fread(&temp, sizeof(uint8_t), 1, precacheFile);
+					if (read == 1 && temp == CACHED_VERSION) {
+						uint32_t headerOffset;
+						fread(&headerOffset, sizeof(uint32_t), 1, precacheFile);
+						if (headerOffset != 0)
+						{
+							fseek(precacheFile, headerOffset, SEEK_SET);
+							fread(&item->m_maxFrameSize, sizeof(uint32_t), 1, precacheFile);
+							fread(&item->m_imageSize, sizeof(uint32_t), 1, precacheFile);
+							fread(&item->m_pixelWidth, sizeof(int32_t), 1, precacheFile);
+							fread(&item->m_pixelHeight, sizeof(int32_t), 1, precacheFile);
+							fread(&item->m_fps, sizeof(int32_t), 1, precacheFile);
+							fread(&item->m_frameCount, sizeof(size_t), 1, precacheFile);
+							item->m_fileOffsets = std::vector<uint32_t>(item->m_frameCount, 0);
+							fread(&item->m_fileOffsets[0], sizeof(uint32_t), item->m_frameCount, precacheFile);
 
-					//	item->m_caching = false;
-					//	continue;
-					//}
+							item->m_caching = false;
+							continue;
+						}
+					}
 
 					fseek(precacheFile, sizeof(uint8_t) + sizeof(uint32_t), SEEK_SET);
 					size_t totalSize = ftell(precacheFile);
 
 					if (w + h > oldW + oldH) {
 						bound = w * h * (4 + 1) + QOI_HEADER_SIZE + sizeof(qoi_padding);
+						//bound = LZ4_compressBound(w * h * 4);
 						compressBuffer = new uint8_t[bound];
 						pixels = new uint8_t[w * h * 4];
 					}
@@ -373,6 +249,7 @@ namespace winrt::Unigram::Native::implementation
 
 						uint32_t size;
 						qoi_encode_2((const void*)pixels, &desc, compressBuffer, &size);
+						//uint32_t size = (uint32_t)LZ4_compress_default((const char*)pixels, (char*)compressBuffer, w * h * 4, bound);
 
 						if (size > item->m_maxFrameSize && item->m_decompressBuffer != nullptr) {
 							delete[] item->m_decompressBuffer;

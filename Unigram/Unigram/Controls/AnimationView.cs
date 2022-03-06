@@ -24,13 +24,15 @@ namespace Unigram.Controls
     }
 
     [TemplatePart(Name = "Thumbnail", Type = typeof(ImageBrush))]
-    public class AnimationView : AnimatedControl<IVideoAnimationSource, VideoAnimation>, IPlayerView
+    public class AnimationView : AnimatedControl<IVideoAnimationSource, CachedVideoAnimation>, IPlayerView
     {
         private ImageBrush _thumbnail;
         private bool? _hideThumbnail;
 
         private int _prevSeconds = int.MaxValue;
         private int _nextSeconds;
+
+        private bool _isCachingEnabled;
 
         public AnimationView()
             : this(null)
@@ -164,13 +166,13 @@ namespace Unigram.Controls
         protected override void NextFrame()
         {
             var animation = _animation;
-            if (animation == null || _surface == null || _bitmap == null || _unloaded)
+            if (animation == null || animation.IsCaching || _surface == null || _bitmap == null || _unloaded)
             {
                 return;
             }
 
             //_bitmap = animation.RenderSync(_device, index, 256, 256);
-            animation.RenderSync(_bitmap, false, out _nextSeconds);
+            animation.RenderSync(_bitmap, out _nextSeconds);
 
             if (_hideThumbnail == null)
             {
@@ -201,7 +203,7 @@ namespace Unigram.Controls
 
             var shouldPlay = _shouldPlay;
 
-            var animation = await Task.Run(() => VideoAnimation.LoadFromFile(newValue, false, _limitFps));
+            var animation = await Task.Run(() => CachedVideoAnimation.LoadFromFile(newValue, _isCachingEnabled));
             if (animation == null || newValue?.Id != _source?.Id)
             {
                 // The app can't access the file specified
@@ -253,6 +255,24 @@ namespace Unigram.Controls
 
         public static readonly DependencyProperty ThumbnailProperty =
             DependencyProperty.Register("Thumbnail", typeof(ImageSource), typeof(AnimationView), new PropertyMetadata(null));
+
+        #endregion
+
+        #region IsCachingEnabled
+
+        public bool IsCachingEnabled
+        {
+            get => (bool)GetValue(IsCachingEnabledProperty);
+            set => SetValue(IsCachingEnabledProperty, value);
+        }
+
+        public static readonly DependencyProperty IsCachingEnabledProperty =
+            DependencyProperty.Register("IsCachingEnabled", typeof(bool), typeof(AnimationView), new PropertyMetadata(false, OnCachingEnabledChanged));
+
+        private static void OnCachingEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((AnimationView)d)._isCachingEnabled = (bool)e.NewValue;
+        }
 
         #endregion
     }
