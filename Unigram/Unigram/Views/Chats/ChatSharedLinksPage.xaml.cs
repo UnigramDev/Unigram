@@ -11,7 +11,6 @@ namespace Unigram.Views.Chats
         public ChatSharedLinksPage()
         {
             InitializeComponent();
-            InitializeSearch(Search, () => new SearchMessagesFilterUrl());
         }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)

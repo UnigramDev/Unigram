@@ -91,15 +91,6 @@ namespace Unigram.Views.Chats
 
         #endregion
 
-        protected void InitializeSearch(TextBox field, Func<SearchMessagesFilter> filter)
-        {
-            var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => field.TextChanged += new TextChangedEventHandler(handler));
-            debouncer.Invoked += (s, args) =>
-            {
-                ViewModel.Find(filter(), field.Text);
-            };
-        }
-
         #region Context menu
 
         private void Message_ContextRequested(UIElement sender, ContextRequestedEventArgs args)

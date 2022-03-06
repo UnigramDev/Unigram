@@ -66,7 +66,7 @@ namespace Unigram.Views.Popups
 
             flyout.CreateFlyoutItem(ViewModel.SettingsCommand, Strings.Resources.Settings, new FontIcon { Glyph = Icons.Settings });
 
-            if (viewModel.Search.Count > 0)
+            if (viewModel.Items.Count > 0)
             {
                 flyout.CreateFlyoutItem(ViewModel.RemoveAllCommand, Strings.Resources.DeleteAll, new FontIcon { Glyph = Icons.Delete });
             }

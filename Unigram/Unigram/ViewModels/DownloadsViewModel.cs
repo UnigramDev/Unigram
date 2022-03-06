@@ -28,8 +28,8 @@ namespace Unigram.ViewModels
             _storageService = storageService;
 
             //Items = new ItemCollection(this, string.Empty);
-            Search = new SearchCollection<FileDownloadViewModel, ItemCollection>(SetSearch, new FileDownloadDiffHandler());
-            Search.SetQuery(string.Empty);
+            Items = new SearchCollection<FileDownloadViewModel, ItemCollection>(SetSearch, new FileDownloadDiffHandler());
+            Items.SetQuery(string.Empty);
 
             RemoveAllCommand = new RelayCommand(RemoveAll);
             ToggleAllPausedCommand = new RelayCommand(ToggleAllPaused);
@@ -42,11 +42,9 @@ namespace Unigram.ViewModels
 
         public Action Hide { get; set; }
 
-        //public ItemCollection Items { get; private set; }
+        public SearchCollection<FileDownloadViewModel, ItemCollection> Items { get; private set; }
 
-        public SearchCollection<FileDownloadViewModel, ItemCollection> Search { get; private set; }
-
-        private ItemCollection SetSearch(string query)
+        private ItemCollection SetSearch(object sender, string query)
         {
             return new ItemCollection(this, query);
         }
@@ -81,20 +79,20 @@ namespace Unigram.ViewModels
 
         public void Handle(UpdateFileDownload update)
         {
-            if (Search.Source.TryGetValue(update.FileId, out FileDownloadViewModel fileDownload))
+            if (Items.Source.TryGetValue(update.FileId, out FileDownloadViewModel fileDownload))
             {
                 Dispatcher.Dispatch(() =>
                 {
                     if (update.CompleteDate != 0 && update.CompleteDate != fileDownload.CompleteDate)
                     {
-                        var first = Search.FirstOrDefault(x => x.IsFirst && x.CompleteDate != 0);
+                        var first = Items.FirstOrDefault(x => x.IsFirst && x.CompleteDate != 0);
 
-                        var next = Search.IndexOf(first);
-                        var prev = Search.IndexOf(fileDownload);
+                        var next = Items.IndexOf(first);
+                        var prev = Items.IndexOf(fileDownload);
 
                         if (prev == 0 && next > 1)
                         {
-                            Search[1].IsFirst = true;
+                            Items[1].IsFirst = true;
                         }
 
                         // If the future position is after the current(supposedly
@@ -107,8 +105,8 @@ namespace Unigram.ViewModels
 
                         if (next != prev)
                         {
-                            Search.Remove(fileDownload);
-                            Search.Insert(next >= 0 ? next : Search.Count, fileDownload);
+                            Items.Remove(fileDownload);
+                            Items.Insert(next >= 0 ? next : Items.Count, fileDownload);
                         }
 
                         if (first != null)
@@ -122,19 +120,19 @@ namespace Unigram.ViewModels
                     fileDownload.CompleteDate = update.CompleteDate;
                     fileDownload.IsPaused = update.IsPaused;
 
-                    Search.Source.UpdateProperties(update.Counts);
+                    Items.Source.UpdateProperties(update.Counts);
                 });
             }
         }
 
         public void Handle(UpdateFileAddedToDownloads update)
         {
-            Dispatcher.Dispatch(() => Search.Source.UpdateProperties(update.Counts));
+            Dispatcher.Dispatch(() => Items.Source.UpdateProperties(update.Counts));
         }
 
         public void Handle(UpdateFileRemovedFromDownloads update)
         {
-            Dispatcher.Dispatch(() => Search.Source.RemoveById(update));
+            Dispatcher.Dispatch(() => Items.Source.RemoveById(update));
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -273,7 +271,7 @@ namespace Unigram.ViewModels
                 _viewModel.TotalPausedCount = counts?.PausedCount ?? 0;
                 _viewModel.TotalActiveCount = counts?.ActiveCount ?? 0;
 
-                _viewModel.IsEmpty = Items.Count == 0;
+                _viewModel.IsEmpty = _items.Count == 0;
             }
 
             public bool HasMoreItems => _hasMoreItems;

@@ -11,7 +11,6 @@ namespace Unigram.Views.Chats
         public ChatSharedMusicPage()
         {
             InitializeComponent();
-            InitializeSearch(Search, () => new SearchMessagesFilterAudio());
         }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)

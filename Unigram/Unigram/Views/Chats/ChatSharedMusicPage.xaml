@@ -69,17 +69,17 @@
                             MaxWidth="640"
                             Margin="12,0">
                         <TextBox x:Name="Search"
+                                 Text="{x:Bind ViewModel.Music.Query, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                  PlaceholderText="{CustomResource Search}"
                                  Margin="12,8"
                                  InputScope="Search" />
                     </Border>
                 </StackPanel>
             </ListView.Header>
-            <ListView.Footer>
-                <!--<Border Height="8"/>-->
+            <!--<ListView.Footer>
                 <microsoft:ProgressBar Background="Transparent"
                                        IsIndeterminate="{x:Bind ViewModel.Music.IsLoading, Mode=OneWay}" />
-            </ListView.Footer>
+            </ListView.Footer>-->
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <cells:SharedAudioCell Padding="12,6"
