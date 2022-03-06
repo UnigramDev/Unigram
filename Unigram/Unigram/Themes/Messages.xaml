@@ -139,7 +139,8 @@
                       Width="72"
                       Height="72">
                     <controls:AnimationView30Fps x:Name="Player"
-                                                 AutoPlay="False" />
+                                                 AutoPlay="False"
+                                                 IsCachingEnabled="True" />
                 </Grid>
             </DataTemplate>
         </selectors:AutocompleteTemplateSelector.VideoStickerTemplate>
