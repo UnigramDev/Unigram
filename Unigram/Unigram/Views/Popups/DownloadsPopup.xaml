@@ -46,7 +46,7 @@
                              Width="140"
                              Height="140"
                              Margin="0,24,0,8"
-                             Grid.Row="1"/>
+                             Grid.Row="1" />
 
 
         <ListView ItemsSource="{x:Bind ViewModel.Search}"
@@ -58,7 +58,8 @@
                   Grid.Row="1">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="viewModels:FileDownloadViewModel">
-                    <cells:FileDownloadCell IsFirst="{x:Bind IsFirst, Mode=OneWay}" />
+                    <cells:FileDownloadCell IsFirst="{x:Bind IsFirst, Mode=OneWay}"
+                                            CompleteDate="{x:Bind CompleteDate, Mode=OneWay}" />
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>

@@ -445,7 +445,7 @@ namespace Unigram.Common
             }
         }
 
-        public static (File File, Thumbnail Thumbnail, string FileName) GetFileAndThumbnailAndName(this Message message, bool allowPhoto)
+        public static (File File, Thumbnail Thumbnail, string FileName) GetFileAndThumbnailAndName(this Message message)
         {
             switch (message.Content)
             {
@@ -460,7 +460,7 @@ namespace Unigram.Common
                     {
                         return (game.Game.Animation.AnimationValue, game.Game.Animation.Thumbnail, game.Game.Animation.FileName);
                     }
-                    else if (game.Game.Photo != null && allowPhoto)
+                    else if (game.Game.Photo != null)
                     {
                         var big = game.Game.Photo.GetBig();
                         if (big != null)
@@ -470,7 +470,6 @@ namespace Unigram.Common
                     }
                     break;
                 case MessagePhoto photo:
-                    if (allowPhoto)
                     {
                         var big = photo.Photo.GetBig();
                         if (big != null)
@@ -510,7 +509,7 @@ namespace Unigram.Common
                     {
                         return (text.WebPage.VoiceNote.Voice, null, null);
                     }
-                    else if (text.WebPage != null && text.WebPage.Photo != null && allowPhoto)
+                    else if (text.WebPage != null && text.WebPage.Photo != null)
                     {
                         var big = text.WebPage.Photo.GetBig();
                         if (big != null)

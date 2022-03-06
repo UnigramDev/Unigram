@@ -1,7 +1,6 @@
 ﻿using Rg.DiffUtils;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -19,7 +18,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {
-    public class DownloadsViewModel : TLViewModelBase, IHandle<UpdateFile>, IHandle<UpdateFileRemovedFromDownloads>
+    public class DownloadsViewModel : TLViewModelBase, IHandle<UpdateFileDownload>, IHandle<UpdateFileAddedToDownloads>, IHandle<UpdateFileRemovedFromDownloads>
     {
         private readonly IStorageService _storageService;
 
@@ -28,8 +27,8 @@ namespace Unigram.ViewModels
         {
             _storageService = storageService;
 
-            Items = new ItemCollection(this, string.Empty);
-            Search = new SearchCollection<FileDownloadViewModel>(SetSearch, new FileDownloadDiffHandler());
+            //Items = new ItemCollection(this, string.Empty);
+            Search = new SearchCollection<FileDownloadViewModel, ItemCollection>(SetSearch, new FileDownloadDiffHandler());
             Search.SetQuery(string.Empty);
 
             RemoveAllCommand = new RelayCommand(RemoveAll);
@@ -43,11 +42,11 @@ namespace Unigram.ViewModels
 
         public Action Hide { get; set; }
 
-        public ItemCollection Items { get; private set; }
+        //public ItemCollection Items { get; private set; }
 
-        public SearchCollection<FileDownloadViewModel> Search { get; private set; }
+        public SearchCollection<FileDownloadViewModel, ItemCollection> Search { get; private set; }
 
-        private IEnumerable<FileDownloadViewModel> SetSearch(string query)
+        private ItemCollection SetSearch(string query)
         {
             return new ItemCollection(this, query);
         }
@@ -80,48 +79,62 @@ namespace Unigram.ViewModels
             set => Set(ref _totalActiveCount, value);
         }
 
-        public void Handle(UpdateFile update)
+        public void Handle(UpdateFileDownload update)
         {
-            if (update.File.Local.IsDownloadingCompleted && Items.TryGetValue(update.File.Id, out FileDownloadViewModel fileDownload))
+            if (Search.Source.TryGetValue(update.FileId, out FileDownloadViewModel fileDownload))
             {
                 Dispatcher.Dispatch(() =>
                 {
-                    var first = Items.FirstOrDefault(x => x.IsFirst);
-
-                    var next = Items.IndexOf(first);
-                    var prev = Items.IndexOf(fileDownload);
-
-                    // If the future position is after the current(supposedly
-                    // it's always the case) we have to decrease the index
-                    // otherwise the item will move after the one.
-                    if (next > prev)
+                    if (update.CompleteDate != 0 && update.CompleteDate != fileDownload.CompleteDate)
                     {
-                        next--;
+                        var first = Search.FirstOrDefault(x => x.IsFirst && x.CompleteDate != 0);
+
+                        var next = Search.IndexOf(first);
+                        var prev = Search.IndexOf(fileDownload);
+
+                        if (prev == 0 && next > 1)
+                        {
+                            Search[1].IsFirst = true;
+                        }
+
+                        // If the future position is after the current(supposedly
+                        // it's always the case) we have to decrease the index
+                        // otherwise the item will move after the one.
+                        if (next > prev)
+                        {
+                            next--;
+                        }
+
+                        if (next != prev)
+                        {
+                            Search.Remove(fileDownload);
+                            Search.Insert(next >= 0 ? next : Search.Count, fileDownload);
+                        }
+
+                        if (first != null)
+                        {
+                            first.IsFirst = false;
+                        }
+
+                        fileDownload.IsFirst = true;
                     }
 
-                    if (next != prev)
-                    {
-                        Items.Remove(fileDownload);
-                        Items.Insert(next >= 0 ? next : Items.Count, fileDownload);
-                    }
+                    fileDownload.CompleteDate = update.CompleteDate;
+                    fileDownload.IsPaused = update.IsPaused;
 
-                    if (first != null)
-                    {
-                        first.IsFirst = false;
-                    }
-
-                    fileDownload.CompleteDate = DateTime.Now.ToTimestamp();
-                    fileDownload.IsFirst = true;
-
-                    TotalActiveCount--;
-                    TotalCompletedCount++;
+                    Search.Source.UpdateProperties(update.Counts);
                 });
             }
         }
 
+        public void Handle(UpdateFileAddedToDownloads update)
+        {
+            Dispatcher.Dispatch(() => Search.Source.UpdateProperties(update.Counts));
+        }
+
         public void Handle(UpdateFileRemovedFromDownloads update)
         {
-            Dispatcher.Dispatch(() => Items.RemoveById(update.FileId));
+            Dispatcher.Dispatch(() => Search.Source.RemoveById(update));
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -145,35 +158,7 @@ namespace Unigram.ViewModels
         public RelayCommand ToggleAllPausedCommand { get; }
         private void ToggleAllPaused()
         {
-            var pause = _totalActiveCount > 0;
-            ProtoService.Send(new ToggleAllDownloadsArePaused(pause));
-
-            foreach (var fileDownload in Items)
-            {
-                if (fileDownload.CompleteDate != 0)
-                {
-                    continue;
-                }
-
-                if (fileDownload.IsPaused != pause)
-                {
-                    fileDownload.IsPaused = pause;
-
-                    if (pause)
-                    {
-                        _totalPausedCount++;
-                        _totalActiveCount--; 
-                    }
-                    else
-                    {
-                        _totalPausedCount--;
-                        _totalActiveCount++;
-                    }
-                }
-            }
-
-            RaisePropertyChanged(nameof(TotalPausedCount));
-            RaisePropertyChanged(nameof(TotalActiveCount));
+            ProtoService.Send(new ToggleAllDownloadsArePaused(_totalActiveCount > 0));
         }
 
         public RelayCommand SettingsCommand { get; }
@@ -219,7 +204,7 @@ namespace Unigram.ViewModels
             private string _offset = string.Empty;
             private bool _hasMoreItems = true;
 
-            private bool _first;
+            private bool _first = true;
 
             public ItemCollection(DownloadsViewModel viewModel, string query)
             {
@@ -270,7 +255,7 @@ namespace Unigram.ViewModels
                             _offset = found.NextOffset;
                         }
 
-                        UpdateProperties(found);
+                        UpdateProperties(found.TotalCounts);
                         return new LoadMoreItemsResult { Count = (uint)found.Files.Count };
                     }
 
@@ -282,37 +267,25 @@ namespace Unigram.ViewModels
                 });
             }
 
-            private void UpdateProperties(FoundFileDownloads found)
+            public void UpdateProperties(DownloadedFileCounts counts)
             {
-                _viewModel.TotalCompletedCount = found?.TotalCompletedCount ?? 0;
-                _viewModel.TotalPausedCount = found?.TotalPausedCount ?? 0;
-                _viewModel.TotalActiveCount = found?.TotalActiveCount ?? 0;
+                _viewModel.TotalCompletedCount = counts?.CompletedCount ?? 0;
+                _viewModel.TotalPausedCount = counts?.PausedCount ?? 0;
+                _viewModel.TotalActiveCount = counts?.ActiveCount ?? 0;
 
                 _viewModel.IsEmpty = Items.Count == 0;
             }
 
             public bool HasMoreItems => _hasMoreItems;
 
-            public void RemoveById(int fileId)
+            public void RemoveById(UpdateFileRemovedFromDownloads update)
             {
-                if (_items.TryRemove(fileId, out FileDownloadViewModel fileDownload))
+                if (_items.TryRemove(update.FileId, out FileDownloadViewModel fileDownload))
                 {
-                    if (fileDownload.IsPaused)
-                    {
-                        _viewModel.TotalPausedCount--;
-                    }
-                    else if (fileDownload.CompleteDate == 0)
-                    {
-                        _viewModel.TotalActiveCount--;
-                    }
-                    else
-                    {
-                        _viewModel.TotalCompletedCount--;
-                    }
-
-                    _viewModel.IsEmpty = _items.Count == 0;
                     Remove(fileDownload);
                 }
+
+                UpdateProperties(update.Counts);
             }
 
             public bool TryGetValue(int fileId, out FileDownloadViewModel fileDownload)
@@ -347,7 +320,15 @@ namespace Unigram.ViewModels
         /// Point in time (Unix timestamp) when the file downloading was completed; 0 if
         /// the file downloading isn't completed.
         /// </summary>
-        public int CompleteDate { get => _fileDownload.CompleteDate; set => _fileDownload.CompleteDate = value; }
+        public int CompleteDate
+        {
+            get => _fileDownload.CompleteDate;
+            set
+            {
+                _fileDownload.CompleteDate = value;
+                RaisePropertyChanged(nameof(CompleteDate));
+            }
+        }
 
         /// <summary>
         /// Point in time (Unix timestamp) when the file was added to the download list.
