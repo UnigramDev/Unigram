@@ -77,11 +77,10 @@
                     </Grid>
                 </StackPanel>
             </GridView.Header>
-            <GridView.Footer>
-                <!--<Border Height="8"/>-->
+            <!--<GridView.Footer>
                 <microsoft:ProgressBar Background="Transparent"
                                        IsIndeterminate="{x:Bind ViewModel.Media.IsLoading, Mode=OneWay}" />
-            </GridView.Footer>
+            </GridView.Footer>-->
             <GridView.ItemTemplateSelector>
                 <selectors:MessageContentTemplateSelector>
                     <selectors:MessageContentTemplateSelector.PhotoTemplate>

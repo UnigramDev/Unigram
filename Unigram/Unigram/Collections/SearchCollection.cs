@@ -12,17 +12,24 @@ namespace Unigram.Collections
 {
     public class SearchCollection<T, TSource> : DiffObservableCollection<T>, ISupportIncrementalLoading where TSource : IEnumerable<T>
     {
-        private readonly Func<string, TSource> _factory;
+        private readonly Func<object, string, TSource> _factory;
+        private readonly object _sender;
 
         private CancellationTokenSource _token;
 
         private TSource _source;
         private ISupportIncrementalLoading _incrementalSource;
 
-        public SearchCollection(Func<string, TSource> factory, IDiffHandler<T> handler)
+        public SearchCollection(Func<object, string, TSource> factory, IDiffHandler<T> handler)
+            : this(factory, null, handler)
+        {
+        }
+
+        public SearchCollection(Func<object, string, TSource> factory, object sender, IDiffHandler<T> handler)
             : base(handler, new DiffOptions { AllowBatching = false, DetectMoves = true })
         {
             _factory = factory;
+            _sender = sender;
             _query = new PropertyDebouncer<string>(Constants.TypingTimeout, SetQuery);
         }
 
@@ -37,7 +44,7 @@ namespace Unigram.Collections
 
         public void SetQuery(string value)
         {
-            Update(_factory(value));
+            Update(_factory(_sender ?? this, value));
             OnPropertyChanged(new PropertyChangedEventArgs(nameof(Query)));
         }
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Rg.DiffUtils;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
@@ -47,6 +48,13 @@ namespace Unigram.ViewModels.Chats
 
             Items = new ObservableCollection<ProfileItem>();
 
+            Media = new SearchCollection<Message, MediaCollection>(SetSearch, new SearchMessagesFilterPhotoAndVideo(), new MessageDiffHandler());
+            Files = new SearchCollection<Message, MediaCollection>(SetSearch, new SearchMessagesFilterDocument(), new MessageDiffHandler());
+            Links = new SearchCollection<Message, MediaCollection>(SetSearch, new SearchMessagesFilterUrl(), new MessageDiffHandler());
+            Music = new SearchCollection<Message, MediaCollection>(SetSearch, new SearchMessagesFilterAudio(), new MessageDiffHandler());
+            Voice = new SearchCollection<Message, MediaCollection>(SetSearch, new SearchMessagesFilterVoiceNote(), new MessageDiffHandler());
+            Animations = new SearchCollection<Message, MediaCollection>(SetSearch, new SearchMessagesFilterAnimation(), new MessageDiffHandler());
+
             MessagesForwardCommand = new RelayCommand(MessagesForwardExecute, MessagesForwardCanExecute);
             MessagesDeleteCommand = new RelayCommand(MessagesDeleteExecute, MessagesDeleteCanExecute);
             MessagesUnselectCommand = new RelayCommand(MessagesUnselectExecute);
@@ -72,24 +80,14 @@ namespace Unigram.ViewModels.Chats
                 SelectedIndex = selectedIndex;
             }
 
-            //Peer = (TLInputPeerBase)parameter;
-            //With = Peer is TLInputPeerUser ? (ITLDialogWith)CacheService.GetUser(Peer.ToPeer().Id) : CacheService.GetChat(Peer.ToPeer().Id);
-
             Chat = ProtoService.GetChat(chatId);
 
-            Media = new MediaCollection(ProtoService, chatId, new SearchMessagesFilterPhotoAndVideo());
-            Files = new MediaCollection(ProtoService, chatId, new SearchMessagesFilterDocument());
-            Links = new MediaCollection(ProtoService, chatId, new SearchMessagesFilterUrl());
-            Music = new MediaCollection(ProtoService, chatId, new SearchMessagesFilterAudio());
-            Voice = new MediaCollection(ProtoService, chatId, new SearchMessagesFilterVoiceNote());
-            Animations = new MediaCollection(ProtoService, chatId, new SearchMessagesFilterAnimation());
-
-            RaisePropertyChanged(nameof(Media));
-            RaisePropertyChanged(nameof(Files));
-            RaisePropertyChanged(nameof(Links));
-            RaisePropertyChanged(nameof(Music));
-            RaisePropertyChanged(nameof(Voice));
-            RaisePropertyChanged(nameof(Animations));
+            Media.SetQuery(string.Empty);
+            Files.SetQuery(string.Empty);
+            Links.SetQuery(string.Empty);
+            Music.SetQuery(string.Empty);
+            Voice.SetQuery(string.Empty);
+            Animations.SetQuery(string.Empty);
 
             Aggregator.Subscribe(this);
 
@@ -243,41 +241,32 @@ namespace Unigram.ViewModels.Chats
             set => Set(ref _selectedIndex, value);
         }
 
-        public MediaCollection Media { get; private set; }
-        public MediaCollection Files { get; private set; }
-        public MediaCollection Links { get; private set; }
-        public MediaCollection Music { get; private set; }
-        public MediaCollection Voice { get; private set; }
-        public MediaCollection Animations { get; private set; }
+        public SearchCollection<Message, MediaCollection> Media { get; private set; }
+        public SearchCollection<Message, MediaCollection> Files { get; private set; }
+        public SearchCollection<Message, MediaCollection> Links { get; private set; }
+        public SearchCollection<Message, MediaCollection> Music { get; private set; }
+        public SearchCollection<Message, MediaCollection> Voice { get; private set; }
+        public SearchCollection<Message, MediaCollection> Animations { get; private set; }
 
-        public void Find(SearchMessagesFilter filter, string query)
+        public MediaCollection SetSearch(object sender, string query)
         {
-            switch (filter)
+            if (sender is SearchMessagesFilter filter)
             {
-                case SearchMessagesFilterPhotoAndVideo photoAndVideo:
-                    Media = new MediaCollection(ProtoService, Chat.Id, photoAndVideo, query);
-                    RaisePropertyChanged(nameof(Media));
-                    break;
-                case SearchMessagesFilterDocument document:
-                    Files = new MediaCollection(ProtoService, Chat.Id, document, query);
-                    RaisePropertyChanged(nameof(Files));
-                    break;
-                case SearchMessagesFilterUrl url:
-                    Links = new MediaCollection(ProtoService, Chat.Id, url, query);
-                    RaisePropertyChanged(nameof(Links));
-                    break;
-                case SearchMessagesFilterAudio audio:
-                    Music = new MediaCollection(ProtoService, Chat.Id, audio, query);
-                    RaisePropertyChanged(nameof(Music));
-                    break;
-                case SearchMessagesFilterVoiceNote voiceNote:
-                    Voice = new MediaCollection(ProtoService, Chat.Id, voiceNote, query);
-                    RaisePropertyChanged(nameof(Voice));
-                    break;
-                case SearchMessagesFilterAnimation animation:
-                    Animations = new MediaCollection(ProtoService, Chat.Id, animation, query);
-                    RaisePropertyChanged(nameof(Animations));
-                    break;
+                return new MediaCollection(ProtoService, Chat.Id, filter, query);
+            }
+
+            return null;
+        }
+
+        public class MessageDiffHandler : IDiffHandler<Message>
+        {
+            public bool CompareItems(Message oldItem, Message newItem)
+            {
+                return oldItem?.Id == newItem?.Id && oldItem?.ChatId == newItem?.ChatId;
+            }
+
+            public void UpdateItem(Message oldItem, Message newItem)
+            {
             }
         }
 
