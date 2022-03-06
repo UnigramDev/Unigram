@@ -244,6 +244,10 @@
       <DependentUpon>AudioPitchEffect.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="CachedVideoAnimation.h">
+      <DependentUpon>CachedVideoAnimation.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="Composition\CompositionDevice.h">
       <DependentUpon>Composition\CompositionDevice.idl</DependentUpon>
     </ClInclude>
@@ -291,6 +295,7 @@
     <ClInclude Include="PlaceholderImageHelper.h">
       <DependentUpon>PlaceholderImageHelper.idl</DependentUpon>
     </ClInclude>
+    <ClInclude Include="qoi.h" />
     <ClInclude Include="QrBuffer.h">
       <DependentUpon>QrBuffer.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -539,6 +544,10 @@
       <DependentUpon>AudioPitchEffect.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="CachedVideoAnimation.cpp">
+      <DependentUpon>CachedVideoAnimation.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="Composition\CompositionDevice.cpp">
       <DependentUpon>Composition\CompositionDevice.idl</DependentUpon>
     </ClCompile>
@@ -750,6 +759,9 @@
   </ItemGroup>
   <ItemGroup>
     <Midl Include="AudioPitchEffect.idl">
+      <SubType>Designer</SubType>
+    </Midl>
+    <Midl Include="CachedVideoAnimation.idl">
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="Composition\CompositionDevice.idl" />

@@ -64,6 +64,9 @@
     <Filter Include="libtextclassifier\libutf">
       <UniqueIdentifier>{807e2bc0-b3e4-456f-ad2e-ee65cf6aa813}</UniqueIdentifier>
     </Filter>
+    <Filter Include="libqoi">
+      <UniqueIdentifier>{4f7c13f1-0708-461c-a2f3-fb4a89199aee}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -676,6 +679,7 @@
     <ClInclude Include="libyuv\include\libyuv\scale_uv.h">
       <Filter>libyuv\include\libyuv</Filter>
     </ClInclude>
+    <ClInclude Include="qoi.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -698,5 +702,6 @@
     <Midl Include="ScreenshotManager.idl" />
     <Midl Include="LanguageIdentification.idl" />
     <Midl Include="QrBuffer.idl" />
+    <Midl Include="CachedVideoAnimation.idl" />
   </ItemGroup>
 </Project>

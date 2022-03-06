@@ -296,7 +296,24 @@ namespace winrt::Unigram::Native::implementation
 
 	int VideoAnimation::RenderSync(CanvasBitmap bitmap, bool preview, int32_t& seconds)
 	{
+		auto size = bitmap.SizeInPixels();
+		auto w = size.Width;
+		auto h = size.Height;
+
+		uint8_t* pixels = new uint8_t[w * h * 4];
+		bool completed;
+		auto result = RenderSync(pixels, preview, seconds, completed);
+
+		bitmap.SetPixelBytes(winrt::array_view(pixels, w * h * 4));
+		delete[] pixels;
+
+		return result;
+	}
+
+	int VideoAnimation::RenderSync(uint8_t* pixels, bool preview, int32_t& seconds, bool& completed)
+	{
 		//int64_t time = ConnectionsManager::getInstance(0).getCurrentTimeMonotonicMillis();
+		completed = false;
 
 		if (this->limitFps && this->nextFrame && this->nextFrame < this->prevFrame + this->prevDuration + this->limitedDuration) {
 			this->nextFrame += this->limitedDuration;
@@ -345,6 +362,7 @@ namespace winrt::Unigram::Native::implementation
 				if (!preview && got_frame == 0) {
 					if (this->has_decoded_frames) {
 						this->nextFrame = 0;
+						completed = true;
 						if ((ret = av_seek_frame(this->fmt_ctx, this->video_stream_idx, 0, AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_FRAME)) < 0) {
 							//OutputDebugStringFormat(L"can't seek to begin of file %s, %s", this->src, av_err2str(ret));
 							return 0;
@@ -373,9 +391,9 @@ namespace winrt::Unigram::Native::implementation
 					//jint* dataArr = env->GetIntArrayElements(data, 0);
 
 					//void* pixels;
-					if (pixels == nullptr) {
-						pixels = new uint8_t[pixelWidth * pixelHeight * 4];
-					}
+					//if (pixels == nullptr) {
+					//	pixels = new uint8_t[pixelWidth * pixelHeight * 4];
+					//}
 
 					if (this->sws_ctx == nullptr) {
 						if (this->frame->format > AV_PIX_FMT_NONE && this->frame->format < AV_PIX_FMT_NB) {
@@ -403,9 +421,9 @@ namespace winrt::Unigram::Native::implementation
 						//	libyuv::I420AlphaToARGBMatrix(this->frame->data[0], this->frame->linesize[0], this->frame->data[2], this->frame->linesize[2], this->frame->data[1], this->frame->linesize[1], this->frame->data[3], this->frame->linesize[3], (uint8_t*)pixels, pixelWidth * 4, &libyuv::kYvuI601Constants, pixelWidth, pixelHeight, 50);
 						//}
 						//else {
-							this->dst_data[0] = (uint8_t*)pixels;
-							this->dst_linesize[0] = pixelWidth * 4;
-							sws_scale(this->sws_ctx, this->frame->data, this->frame->linesize, 0, this->frame->height, this->dst_data, this->dst_linesize);
+						this->dst_data[0] = (uint8_t*)pixels;
+						this->dst_linesize[0] = pixelWidth * 4;
+						sws_scale(this->sws_ctx, this->frame->data, this->frame->linesize, 0, this->frame->height, this->dst_data, this->dst_linesize);
 						//}
 					}
 
@@ -420,7 +438,7 @@ namespace winrt::Unigram::Native::implementation
 						}
 					}
 
-					bitmap.SetPixelBytes(winrt::array_view(pixels, pixelWidth * pixelHeight * 4));
+					//bitmap.SetPixelBytes(winrt::array_view(pixels, pixelWidth * pixelHeight * 4));
 					seconds = this->frame->best_effort_timestamp * av_q2d(this->video_stream->time_base);
 					//delete[] pixels;
 
