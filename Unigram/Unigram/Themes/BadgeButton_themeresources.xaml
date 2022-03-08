@@ -787,10 +787,10 @@
                 Value="Stretch" />
         <Setter Property="VerticalAlignment"
                 Value="Stretch" />
-        <Setter Property="FontFamily"
-                Value="{StaticResource SymbolThemeFontFamily}" />
         <Setter Property="FontWeight"
                 Value="Normal" />
+        <Setter Property="FontFamily"
+                Value="{ThemeResource ContentControlThemeFontFamily}" />
         <Setter Property="FontSize"
                 Value="{ThemeResource ControlContentThemeFontSize}" />
         <Setter Property="UseSystemFocusVisuals"
@@ -851,10 +851,10 @@
                                    Margin="12,0,0,0"
                                    AutomationProperties.AccessibilityView="Raw"
                                    Text="{TemplateBinding Glyph}"
-                                   FontFamily="{TemplateBinding FontFamily}" />
+                                   FontFamily="{StaticResource SymbolThemeFontFamily}" />
 
                         <ContentPresenter x:Name="ContentPresenter"
-                                          FontFamily="{ThemeResource ContentControlThemeFontFamily}"
+                                          FontFamily="{TemplateBinding FontFamily}"
                                           AutomationProperties.AccessibilityView="Raw"
                                           ContentTemplate="{TemplateBinding ContentTemplate}"
                                           ContentTransitions="{TemplateBinding ContentTransitions}"
@@ -917,10 +917,10 @@
                 Value="Stretch" />
         <Setter Property="VerticalAlignment"
                 Value="Stretch" />
-        <Setter Property="FontFamily"
-                Value="{StaticResource SymbolThemeFontFamily}" />
         <Setter Property="FontWeight"
                 Value="Normal" />
+        <Setter Property="FontFamily"
+                Value="{ThemeResource ContentControlThemeFontFamily}" />
         <Setter Property="FontSize"
                 Value="{ThemeResource ControlContentThemeFontSize}" />
         <Setter Property="UseSystemFocusVisuals"
@@ -978,11 +978,11 @@
                                    VerticalAlignment="Center"
                                    AutomationProperties.AccessibilityView="Raw"
                                    Text="{TemplateBinding Glyph}"
-                                   FontFamily="{TemplateBinding FontFamily}"
+                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
                                    Margin="8" />
 
                         <ContentPresenter x:Name="ContentPresenter"
-                                          FontFamily="{ThemeResource ContentControlThemeFontFamily}"
+                                          FontFamily="{TemplateBinding FontFamily}"
                                           AutomationProperties.AccessibilityView="Raw"
                                           ContentTemplate="{TemplateBinding ContentTemplate}"
                                           ContentTransitions="{TemplateBinding ContentTransitions}"
