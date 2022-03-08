@@ -250,6 +250,7 @@ namespace Unigram.Views.Host
                 return;
             }
 
+            Photo.SetUser(viewModel.ProtoService, user, 48);
             NameLabel.Text = user.GetFullName();
 #if DEBUG
             PhoneLabel.Text = "+42 --- --- ----";
@@ -687,8 +688,8 @@ namespace Unigram.Views.Host
             var visual = ElementCompositionPreview.GetElementVisual(Theme);
             var ease = visual.Compositor.CreateCubicBezierEasingFunction(new Vector2(0.1f, 0.9f), new Vector2(0.2f, 1.0f));
             var anim = visual.Compositor.CreateVector3KeyFrameAnimation();
-            anim.InsertKeyFrame(0, new Vector3(-48, TopPadding, 0), ease);
-            anim.InsertKeyFrame(1, new Vector3(192, TopPadding, 0), ease);
+            anim.InsertKeyFrame(0, new Vector3(-40, TopPadding, 0), ease);
+            anim.InsertKeyFrame(1, new Vector3(200, TopPadding, 0), ease);
             anim.Duration = TimeSpan.FromMilliseconds(350);
 
             visual.StartAnimation("Offset", anim);
@@ -707,8 +708,8 @@ namespace Unigram.Views.Host
             var visual = ElementCompositionPreview.GetElementVisual(Theme);
             var ease = visual.Compositor.CreateCubicBezierEasingFunction(new Vector2(0.1f, 0.9f), new Vector2(0.2f, 1.0f));
             var anim = visual.Compositor.CreateVector3KeyFrameAnimation();
-            anim.InsertKeyFrame(0, new Vector3(192, TopPadding, 0), ease);
-            anim.InsertKeyFrame(1, new Vector3(-48, TopPadding, 0), ease);
+            anim.InsertKeyFrame(0, new Vector3(200, TopPadding, 0), ease);
+            anim.InsertKeyFrame(1, new Vector3(-40, TopPadding, 0), ease);
             anim.Duration = TimeSpan.FromMilliseconds(120);
 
             visual.StartAnimation("Offset", anim);

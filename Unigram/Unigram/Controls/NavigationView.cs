@@ -61,8 +61,6 @@ namespace Unigram.Controls
 
             _previousTopPadding = TopPadding;
             TopPadding = new Thickness();
-
-            TogglePaneButton.RequestedTheme = ElementTheme.Dark;
         }
 
         private void OnPaneClosing(SplitView sender, SplitViewPaneClosingEventArgs args)
@@ -74,8 +72,6 @@ namespace Unigram.Controls
                 TopPadding = _previousTopPadding.Value;
                 _previousTopPadding = null;
             }
-
-            TogglePaneButton.RequestedTheme = ElementTheme.Default;
         }
 
         public event TypedEventHandler<NavigationView, object> BackRequested;

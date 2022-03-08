@@ -178,7 +178,7 @@
 
         <Grid x:Name="TitleBarrr"
               Height="40"
-              Margin="0,0,0,-8"
+              Margin="36,0,0,-8"
               Background="Transparent"
               Grid.ColumnSpan="2">
             <Grid.ColumnDefinitions>
@@ -416,7 +416,7 @@
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
                         <Grid x:Name="MainHeader"
-                              Padding="40,0,0,0"
+                              Padding="12,0,0,0"
                               Grid.ColumnSpan="2">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition />
@@ -431,6 +431,7 @@
 
                             <TextBox x:Name="SearchField"
                                      PlaceholderText="{CustomResource Search}"
+                                     BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
                                      PreventKeyboardDisplayOnProgrammaticFocus="True"
                                      AutomationProperties.LandmarkType="Search"
                                      VerticalAlignment="Center"

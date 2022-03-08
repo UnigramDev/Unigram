@@ -51,7 +51,7 @@
 
     <Style TargetType="local:NavigationView">
         <Setter Property="Padding"
-                Value="0,36,0,0" />
+                Value="0,0,0,0" />
         <Setter Property="IsTabStop"
                 Value="False" />
         <Setter Property="Template">
@@ -182,7 +182,7 @@
                                    BorderBrush="{ThemeResource NavigationViewItemSeparatorForeground}"
                                    BorderThickness="0 0 1 0"
                                    CornerRadius="{Binding Source={ThemeResource OverlayCornerRadius}, Converter={StaticResource RightCornerRadiusFilterConverter}}"
-                                   PaneBackground="Transparent"
+                                   PaneBackground="{ThemeResource NavigationViewDefaultPaneBackground}"
                                    OpenPaneLength="240"
                                    IsTabStop="False"
                                    IsPaneOpen="{Binding Path=IsPaneOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
@@ -201,11 +201,6 @@
                                     <Grid.Children>
                                         <Grid x:Name="ContentPaneTopPadding"
                                               Padding="{TemplateBinding Padding}" />
-                                        <Border Background="{ThemeResource NavigationViewAccentPaneBackground}"
-                                                Grid.RowSpan="3" />
-                                        <Border Background="{ThemeResource NavigationViewChromePaneBackground}"
-                                                Grid.Row="3"
-                                                Grid.RowSpan="3" />
                                         <Border x:Name="HeaderContentBorder"
                                                 Grid.Row="2"
                                                 Child="{TemplateBinding PaneHeader}" />
@@ -1074,9 +1069,11 @@
                                           AutomationProperties.AccessibilityView="Raw" />
                         <Grid x:Name="SelectionIndicatorGrid"
                               Margin="12,0,12,4"
+                              HorizontalAlignment="Center"
                               VerticalAlignment="Bottom">
                             <Rectangle x:Name="SelectionIndicator"
-                                       Height="2"
+                                       Height="3"
+                                       Width="24"
                                        Fill="{ThemeResource NavigationViewSelectionIndicatorForeground}"
                                        Opacity="0"
                                        RadiusX="{Binding Source={ThemeResource ControlCornerRadius}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"

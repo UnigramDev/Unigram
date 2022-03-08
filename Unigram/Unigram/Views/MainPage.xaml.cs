@@ -108,6 +108,7 @@ namespace Unigram.Views
             }
 
             DropShadowEx.Attach(UpdateShadow);
+            //Window.Current.SetTitleBar(TitleBarrr);
 
             ChatsList.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
 
@@ -629,11 +630,6 @@ namespace Unigram.Views
             if (show)
             {
                 _tabsLeftCollapsed = false;
-            }
-
-            if (Window.Current.Content is RootPage root)
-            {
-                root.SetTopPadding(new Thickness(show ? 72 : 0, 0, 0, 0));
             }
 
             if (ChatTabsLeft == null)
