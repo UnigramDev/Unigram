@@ -81,7 +81,7 @@ namespace Unigram.Controls
 
         protected override void Dispose()
         {
-            if (_animation != null)
+            if (_animation != null && !_animation.IsCaching)
             {
                 _animation.Dispose();
             }
@@ -277,6 +277,21 @@ namespace Unigram.Controls
             }
 
             OnSourceChanged();
+        }
+
+        public async Task UpdateColorsAsync(IReadOnlyDictionary<int, int> colorReplacements)
+        {
+            var newValue = _source;
+
+            var animation = await Task.Run(() => LottieAnimation.LoadFromFile(_source, _frameSize, _isCachingEnabled, colorReplacements, FitzModifier));
+            if (animation == null || !string.Equals(newValue, _source, StringComparison.OrdinalIgnoreCase))
+            {
+                // The app can't access the file specified
+                return;
+            }
+
+            _animation = animation;
+            ColorReplacements = colorReplacements;
         }
 
         public bool Play(bool backward = false)
