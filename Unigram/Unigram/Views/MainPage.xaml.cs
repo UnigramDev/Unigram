@@ -108,7 +108,7 @@ namespace Unigram.Views
             }
 
             DropShadowEx.Attach(UpdateShadow);
-            //Window.Current.SetTitleBar(TitleBarrr);
+            Window.Current.SetTitleBar(TitleBarrr);
 
             ChatsList.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
 
