@@ -346,6 +346,28 @@ namespace Unigram.Controls
             }
         }
 
+        private void CreateBitmap()
+        {
+            try
+            {
+                _bitmap = CreateBitmap(CanvasDevice.GetSharedDevice());
+            }
+            catch (Exception ex)
+            {
+                if (_surface != null && _surface.Device.IsDeviceLost(ex.HResult))
+                {
+                    _surface = null;
+                    _bitmap = null;
+
+                    Changed();
+                }
+                else
+                {
+                    Unload();
+                }
+            }
+        }
+
         protected abstract CanvasBitmap CreateBitmap(ICanvasResourceCreator sender);
 
         protected abstract void DrawFrame(CanvasImageSource sender, CanvasDrawingSession args);
@@ -378,7 +400,7 @@ namespace Unigram.Controls
         {
             if (AutoPlay || _shouldPlay)
             {
-                _bitmap = CreateBitmap(CanvasDevice.GetSharedDevice());
+                CreateBitmap();
 
                 _shouldPlay = false;
                 Subscribe(true);
@@ -389,7 +411,7 @@ namespace Unigram.Controls
 
                 if (!_unloaded)
                 {
-                    _bitmap = CreateBitmap(CanvasDevice.GetSharedDevice());
+                    CreateBitmap();
 
                     // Invalidate to render the first frame
                     await Task.Run(PrepareNextFrame);
