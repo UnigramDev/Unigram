@@ -21,9 +21,12 @@ namespace Unigram.Views.Folders
 
         private void Items_ElementPrepared(Microsoft.UI.Xaml.Controls.ItemsRepeater sender, Microsoft.UI.Xaml.Controls.ItemsRepeaterElementPreparedEventArgs args)
         {
-            var button = args.Element as Button;
+            var button = args.Element as BadgeButton;
             var filter = button.DataContext as ChatFilterInfo;
 
+            var icon = Icons.ParseFilter(filter.IconName);
+
+            button.Glyph = Icons.FilterToGlyph(icon).Item1;
             button.Content = filter.Title;
             button.Command = ViewModel.EditCommand;
             button.CommandParameter = filter;
