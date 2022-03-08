@@ -62,6 +62,7 @@ namespace winrt::Unigram::Native::implementation
 					info->m_animation = VideoAnimation::LoadFromFile(file, false, false).as<VideoAnimation>();
 					info->m_pixelWidth = info->m_animation->PixelWidth();
 					info->m_pixelHeight = info->m_animation->PixelHeight();
+					info->m_fps = info->m_animation->FrameRate();
 					info->m_precache = true;
 
 					FILE* precacheFile = _wfopen(info->m_cacheFile.c_str(), L"w+b");

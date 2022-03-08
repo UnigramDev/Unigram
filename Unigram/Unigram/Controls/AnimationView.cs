@@ -67,7 +67,7 @@ namespace Unigram.Controls
 
         protected override void Dispose()
         {
-            if (_animation != null)
+            if (_animation != null && !_animation.IsCaching)
             {
                 _animation.Dispose();
             }
