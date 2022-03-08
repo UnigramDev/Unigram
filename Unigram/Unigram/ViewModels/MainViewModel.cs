@@ -521,7 +521,10 @@ namespace Unigram.ViewModels
 
             _title = info.Title;
             _icon = Icons.ParseFilter(info.IconName);
-            _iconGlyph = Icons.FilterToGlyph(_icon).Item1;
+
+            var glyph = Icons.FilterToGlyph(_icon);
+            _iconGlyph = glyph.Item1;
+            _filledIconGlyph = glyph.Item2;
         }
 
         private ChatFilterViewModel(ChatList list)
@@ -533,7 +536,10 @@ namespace Unigram.ViewModels
         {
             Title = info.Title;
             Icon = Icons.ParseFilter(info.IconName);
-            IconGlyph = Icons.FilterToGlyph(_icon).Item1;
+
+            var glyph = Icons.FilterToGlyph(_icon);
+            IconGlyph = glyph.Item1;
+            FilledIconGlyph = glyph.Item2;
         }
 
         public ChatList ChatList { get; }
@@ -559,6 +565,13 @@ namespace Unigram.ViewModels
         {
             get => _iconGlyph;
             set => Set(ref _iconGlyph, value);
+        }
+
+        private string _filledIconGlyph;
+        public string FilledIconGlyph
+        {
+            get => _filledIconGlyph;
+            set => Set(ref _filledIconGlyph, value);
         }
 
         private int _unreadCount;
