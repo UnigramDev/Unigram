@@ -267,6 +267,9 @@
     <Compile Include="Controls\Cells\FileDownloadCell.xaml.cs">
       <DependentUpon>FileDownloadCell.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Cells\ChatFilterCell.xaml.cs">
+      <DependentUpon>ChatFilterCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Cells\GroupCallParticipantGridCell.xaml.cs">
       <DependentUpon>GroupCallParticipantGridCell.xaml</DependentUpon>
     </Compile>
@@ -1507,6 +1510,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Cells\FileDownloadCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Cells\ChatFilterCell.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

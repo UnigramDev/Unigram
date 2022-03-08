@@ -250,9 +250,6 @@
 
         <Border x:Load="False"
                 x:Name="ChatTabsLeft"
-                Background="{ThemeResource SystemControlAcrylicWindowMediumHighBrush}"
-                BorderBrush="{ThemeResource PageHeaderBackgroundBrush}"
-                BorderThickness="0,0,0,0"
                 Grid.Row="1">
             <controls:TopNavView x:Name="ChatFiltersSide"
                                  ItemsSource="{x:Bind ViewModel.Filters}"
@@ -271,55 +268,16 @@
                                  ScrollViewer.VerticalScrollBarVisibility="Auto"
                                  ScrollViewer.VerticalScrollMode="Auto"
                                  Height="Auto"
-                                 Width="72">
+                                 Width="68">
                 <controls:TopNavView.ItemTemplate>
-                    <DataTemplate x:DataType="viewModels:ChatFilterViewModel">
-                        <StackPanel Orientation="Vertical">
-                            <Grid>
-                                <FontIcon Glyph="{x:Bind IconGlyph, Mode=OneWay}"
-                                          FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                          HorizontalAlignment="Center"
-                                          FontSize="32" />
-                                <Border Visibility="{x:Bind ShowUnmuted, Mode=OneWay}"
-                                        Background="{ThemeResource ChatUnreadBadgeBrush}"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Top"
-                                        Margin="0,0,-4,0"
-                                        MinWidth="20"
-                                        Height="20"
-                                        CornerRadius="10">
-                                    <TextBlock Text="{x:Bind UnreadCount, Mode=OneWay}"
-                                               Style="{StaticResource CaptionTextBlockStyle}"
-                                               Foreground="{ThemeResource ChatUnreadLabelBrush}"
-                                               TextAlignment="Center"
-                                               Margin="8,2,8,0" />
-                                </Border>
-                                <Border Visibility="{x:Bind ShowMuted, Mode=OneWay}"
-                                        Background="{ThemeResource ChatUnreadBadgeMutedBrush}"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Top"
-                                        Margin="0,0,-4,0"
-                                        MinWidth="20"
-                                        Height="20"
-                                        CornerRadius="10">
-                                    <TextBlock Text="{x:Bind UnreadMutedCount, Mode=OneWay}"
-                                               Style="{StaticResource CaptionTextBlockStyle}"
-                                               Foreground="{ThemeResource ChatUnreadLabelMutedBrush}"
-                                               TextAlignment="Center"
-                                               Margin="8,2,8,0" />
-                                </Border>
-                            </Grid>
-                            <TextBlock Text="{x:Bind Title, Mode=OneWay}"
-                                       TextAlignment="Center"
-                                       TextWrapping="Wrap"
-                                       FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                       Style="{StaticResource CaptionTextBlockStyle}" />
-                        </StackPanel>
+                    <DataTemplate>
+                        <cells:ChatFilterCell />
                     </DataTemplate>
                 </controls:TopNavView.ItemTemplate>
                 <controls:TopNavView.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <ItemsStackPanel Orientation="Vertical" />
+                        <ItemsStackPanel Orientation="Vertical"
+                                         Margin="0,8,0,0" />
                     </ItemsPanelTemplate>
                 </controls:TopNavView.ItemsPanel>
                 <controls:TopNavView.ItemContainerStyle>
@@ -334,13 +292,57 @@
                                 Value="Stretch" />
                         <Setter Property="UseSystemFocusVisuals"
                                 Value="True" />
+                        <Setter Property="Margin"
+                                Value="0,0,0,4" />
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="controls:TopNavViewItem">
                                     <Grid Background="Transparent">
+                                        <VisualStateManager.CustomVisualStateManager>
+                                            <controls:TopNavViewItemManager />
+                                        </VisualStateManager.CustomVisualStateManager>
+                                        <VisualStateManager.VisualStateGroups>
+                                            <VisualStateGroup x:Name="CommonStates">
+                                                <VisualState x:Name="Normal" />
+                                                <VisualState x:Name="PointerOver">
+                                                    <VisualState.Setters>
+                                                        <Setter Target="Plate.Background"
+                                                                Value="{ThemeResource ControlAltFillColorQuarternaryBrush}" />
+                                                    </VisualState.Setters>
+                                                </VisualState>
+                                                <VisualState x:Name="Pressed">
+                                                    <VisualState.Setters>
+                                                        <Setter Target="Plate.Background"
+                                                                Value="{ThemeResource ControlAltFillColorTertiaryBrush}" />
+                                                    </VisualState.Setters>
+                                                </VisualState>
+                                                <VisualState x:Name="Selected">
+                                                    <VisualState.Setters>
+                                                        <Setter Target="Plate.Background"
+                                                                Value="{ThemeResource ControlSolidFillColorDefaultBrush}" />
+                                                    </VisualState.Setters>
+                                                </VisualState>
+                                                <VisualState x:Name="PointerOverSelected">
+                                                    <VisualState.Setters>
+                                                        <Setter Target="Plate.Background"
+                                                                Value="{ThemeResource ControlSolidFillColorDefaultBrush}" />
+                                                    </VisualState.Setters>
+                                                </VisualState>
+                                                <VisualState x:Name="PressedSelected">
+                                                    <VisualState.Setters>
+                                                        <Setter Target="Plate.Background"
+                                                                Value="{ThemeResource ControlSolidFillColorDefaultBrush}" />
+                                                    </VisualState.Setters>
+                                                </VisualState>
+                                            </VisualStateGroup>
+                                        </VisualStateManager.VisualStateGroups>
+                                        <Border x:Name="Plate"
+                                                Width="64"
+                                                Margin="0,0"
+                                                CornerRadius="4" />
                                         <ContentPresenter x:Name="ContentPresenter"
                                                           Grid.Column="1"
-                                                          Margin="8,4,8,4"
+                                                          Margin="0"
                                                           TextWrapping="NoWrap"
                                                           Foreground="{TemplateBinding Foreground}"
                                                           ContentTransitions="{TemplateBinding ContentTransitions}"
@@ -352,9 +354,11 @@
                                                           AutomationProperties.AccessibilityView="Raw" />
                                         <Grid x:Name="SelectionIndicatorGrid"
                                               Margin="4,4,0,4"
-                                              HorizontalAlignment="Left">
+                                              HorizontalAlignment="Left"
+                                              VerticalAlignment="Center">
                                             <Rectangle x:Name="SelectionIndicator"
-                                                       Width="2"
+                                                       Width="3"
+                                                       Height="24"
                                                        Fill="{ThemeResource NavigationViewSelectionIndicatorForeground}"
                                                        Opacity="0"
                                                        RadiusX="{Binding Source={ThemeResource ControlCornerRadius}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Numerics;
 using Windows.Foundation;
 using Windows.UI.Composition;
@@ -267,6 +268,32 @@ namespace Unigram.Controls
         public UIElement GetSelectionIndicator()
         {
             return GetTemplateChild("SelectionIndicator") as UIElement;
+        }
+    }
+
+    public class TopNavViewItemManager : VisualStateManager
+    {
+        private readonly static string[] _allowedStates = new[]
+        {
+            "Normal",
+            "PointerOver",
+            "Pressed",
+            "Selected",
+            "PointerOverSelected",
+            "PressedSelected",
+        };
+
+        protected override bool GoToStateCore(Control control, FrameworkElement templateRoot, string stateName, VisualStateGroup group, VisualState state, bool useTransitions)
+        {
+            if (control is TopNavViewItem selector && selector.ContentTemplateRoot is UserControl element)
+            {
+                if (_allowedStates.Contains(stateName))
+                {
+                    GoToState(element, stateName, useTransitions);
+                }
+            }
+
+            return base.GoToStateCore(control, templateRoot, stateName, group, state, useTransitions);
         }
     }
 }

@@ -1,0 +1,97 @@
+﻿<UserControl x:Class="Unigram.Controls.Cells.ChatFilterCell"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:Unigram.Controls.Cells"
+             xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignHeight="300"
+             d:DesignWidth="400">
+
+    <Grid Width="64"
+          Height="58"
+          Margin="0,0"
+          CornerRadius="4">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="CommonStates"
+                              CurrentStateChanged="OnCurrentStateChanged">
+                <VisualState x:Name="Normal" />
+                <VisualState x:Name="PointerOver">
+                    <VisualState.Setters>
+                        <Setter Target="UnselectedIcon.Opacity"
+                                Value="1" />
+                        <Setter Target="TitlePresenter.Opacity"
+                                Value="1" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Pressed" />
+                <VisualState x:Name="Selected" />
+                <VisualState x:Name="PointerOverSelected" />
+                <VisualState x:Name="PressedSelected" />
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid x:Name="Icon"
+              Margin="0,10,0,0"
+              VerticalAlignment="Top">
+            <FontIcon x:Name="UnselectedIcon"
+                      Opacity="0.6"
+                      Glyph="{x:Bind ViewModel.IconGlyph, Mode=OneWay}"
+                      FontFamily="{StaticResource SymbolThemeFontFamily}"
+                      HorizontalAlignment="Center"
+                      FontSize="24" />
+            <FontIcon x:Name="SelectedIcon"
+                      Glyph="{x:Bind ViewModel.FilledIconGlyph, Mode=OneWay}"
+                      FontFamily="{StaticResource SymbolThemeFontFamily}"
+                      Foreground="{ThemeResource ChatUnreadBadgeBrush}"
+                      HorizontalAlignment="Center"
+                      FontSize="24" />
+            <Border Visibility="{x:Bind ViewModel.ShowUnmuted, Mode=OneWay}"
+                    Background="{ThemeResource ChatUnreadBadgeBrush}"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Margin="0,-4,4,0"
+                    MinWidth="17"
+                    MinHeight="17"
+                    CornerRadius="8.5">
+                <TextBlock Text="{x:Bind ViewModel.UnreadCount, Mode=OneWay}"
+                           FontSize="{ThemeResource InfoBadgeValueFontSize}"
+                           Foreground="{ThemeResource ChatUnreadLabelBrush}"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Margin="{ThemeResource ValueInfoBadgeTextMargin}" />
+            </Border>
+            <Border Visibility="{x:Bind ViewModel.ShowMuted, Mode=OneWay}"
+                    Background="{ThemeResource ChatUnreadBadgeMutedBrush}"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Margin="0,0,-4,0"
+                    MinWidth="20"
+                    Height="20"
+                    CornerRadius="10">
+                <TextBlock Text="{x:Bind ViewModel.UnreadMutedCount, Mode=OneWay}"
+                           Style="{StaticResource CaptionTextBlockStyle}"
+                           Foreground="{ThemeResource ChatUnreadLabelMutedBrush}"
+                           TextAlignment="Center"
+                           Margin="8,2,8,0" />
+            </Border>
+        </Grid>
+        <Border x:Name="TitlePresenter"
+                Opacity="0.8"
+                Margin="0,0,0,6"
+                Grid.Row="1">
+            <TextBlock x:Name="Title"
+                       Text="{x:Bind ViewModel.Title, Mode=OneWay}"
+                       TextAlignment="Center"
+                       TextWrapping="Wrap"
+                       FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                       Style="{StaticResource CaptionTextBlockStyle}"
+                       FontSize="10" />
+        </Border>
+    </Grid>
+</UserControl>
