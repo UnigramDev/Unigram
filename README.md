@@ -6,7 +6,7 @@
   <h3 align="center">Unigram</h3>
 
   <p align="center">
-    The Telegram client optimised for the Windows 10 platform.
+    Telegram for Windows
     <br>
     <br>
     <a href="https://www.microsoft.com/store/apps/9n97zckpd60q">Download</a>
@@ -16,8 +16,6 @@
 </p>
 
 <br>
-
-Thanks to the [Universal Windows Platform](https://docs.microsoft.com/en-us/windows/uwp/get-started/whats-a-uwp), Unigram can run on any Windows 10 device (PC, Xbox One, Holo Lens and Surface Hub), integrated with almost all the new Windows features, it provides a seamless and consistent user experience.
 
 ## Table of contents
 - [Features](#features)
@@ -37,20 +35,21 @@ Thanks to the [Universal Windows Platform](https://docs.microsoft.com/en-us/wind
 - Folders synced with other Telegram clients
 - Instant view (now updated with the most recent 2.0)
 - Multi-account
-- Calls
+- Full featured private and group calls and videocalls (videosharing, raise the hand etc.)
 - Videos and photos editor (easily crop photos, rotate, flip, draw on images before sending them)
 - Drag&drop files to chats to send them quickly or use Windows 10 Share
-- Open chats in separated windows (Shift+click)
+- Open chats in separated windows
 - Replace sent media content
 - Polls 2.0 and Quizzes
 - Backgrounds 2.0 (blurred and motion options available)
 - Built-in app lock with support for Windows Hello authentication (fingerprint, face and iris recognition)
 - Advanced markdown editor for messages
 - In-app music player
-- Animated stickers and emojis
+- Animated stickers and emojis, video stickers
 - Scheduled and silent messages
+- Advanced formatting of the messages (markdown support and spoiler feature)
 - Channel statistics for big channels
-- Full support of Windows 10 notifications and Action Centre (reply to a message or mark it as read without opening the app)
+- Full support of Windows notifications and Action Centre (reply to a message or mark it as read without opening the app)
 - Accessibility for visually impaired people
 
 
