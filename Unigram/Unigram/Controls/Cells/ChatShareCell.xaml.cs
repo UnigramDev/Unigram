@@ -16,6 +16,26 @@ namespace Unigram.Controls.Cells
         {
             InitializeComponent();
             InitializeSelection();
+
+            Loaded += OnLoaded;
+            Unloaded += OnUnloaded;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            if (Stroke is SolidColorBrush stroke && _strokeToken == 0)
+            {
+                _strokeToken = stroke.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, OnStrokeChanged);
+            }
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            if (Stroke is SolidColorBrush stroke && _strokeToken != 0)
+            {
+                stroke.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, _strokeToken);
+                _strokeToken = 0;
+            }
         }
 
         public ProfilePicture Photo => PhotoElement;
@@ -35,21 +55,24 @@ namespace Unigram.Controls.Cells
 
         private static void OnStrokeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var sender = d as ChatShareCell;
-            var solid = e.NewValue as SolidColorBrush;
+            ((ChatShareCell)d).OnStrokeChanged(e.NewValue as SolidColorBrush, e.OldValue as SolidColorBrush);
+        }
 
-            if (e.OldValue is SolidColorBrush old && sender._strokeToken != 0)
+        private void OnStrokeChanged(SolidColorBrush newValue, SolidColorBrush oldValue)
+        {
+            if (oldValue != null && _strokeToken != 0)
             {
-                old.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, sender._strokeToken);
+                oldValue.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, _strokeToken);
+                _strokeToken = 0;
             }
 
-            if (solid == null || sender._ellipse == null)
+            if (newValue == null || _ellipse == null)
             {
                 return;
             }
 
-            sender._ellipse.FillBrush = Window.Current.Compositor.CreateColorBrush(solid.Color);
-            sender._strokeToken = solid.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, sender.OnStrokeChanged);
+            _ellipse.FillBrush = Window.Current.Compositor.CreateColorBrush(newValue.Color);
+            _strokeToken = newValue.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, OnStrokeChanged);
         }
 
         private void OnStrokeChanged(DependencyObject sender, DependencyProperty dp)
@@ -168,7 +191,7 @@ namespace Unigram.Controls.Cells
                 _visual = visual;
             }
 
-            _selectionPhoto = ElementCompositionPreview.GetElementVisual(Photo);
+            _selectionPhoto = ElementCompositionPreview.GetElementVisual(PhotoElement);
             _selectionOutline = ElementCompositionPreview.GetElementVisual(SelectionOutline);
             _selectionPhoto.CenterPoint = new Vector3(18);
             _selectionOutline.CenterPoint = new Vector3(18);

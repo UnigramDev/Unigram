@@ -60,6 +60,37 @@ namespace Unigram.Controls.Cells
         public ChatCell()
         {
             DefaultStyleKey = typeof(ChatCell);
+
+            Loaded += OnLoaded;
+            Unloaded += OnUnloaded;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            if (Stroke is SolidColorBrush stroke && _strokeToken == 0)
+            {
+                _strokeToken = stroke.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, OnStrokeChanged);
+            }
+
+            if (SelectionStroke is SolidColorBrush selectionStroke && _selectionStrokeToken == 0)
+            {
+                _selectionStrokeToken = selectionStroke.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, OnSelectionStrokeChanged);
+            }
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            if (Stroke is SolidColorBrush stroke && _strokeToken != 0)
+            {
+                stroke.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, _strokeToken);
+                _strokeToken = 0;
+            }
+
+            if (SelectionStroke is SolidColorBrush selectionStroke && _selectionStrokeToken != 0)
+            {
+                selectionStroke.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, _selectionStrokeToken);
+                _selectionStrokeToken = 0;
+            }
         }
 
         #region InitializeComponent
@@ -1454,22 +1485,24 @@ namespace Unigram.Controls.Cells
 
         private static void OnSelectionStrokeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var sender = d as ChatCell;
-            var solid = e.NewValue as SolidColorBrush;
+            ((ChatCell)d).OnSelectionStrokeChanged(e.NewValue as SolidColorBrush, e.OldValue as SolidColorBrush);
+        }
 
-            sender._selectionStrokeToken = solid.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, sender.OnSelectionStrokeChanged);
-
-            if (e.OldValue is SolidColorBrush old && sender._selectionStrokeToken != 0)
+        private void OnSelectionStrokeChanged(SolidColorBrush newValue, SolidColorBrush oldValue)
+        {
+            if (oldValue != null && _selectionStrokeToken != 0)
             {
-                old.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, sender._selectionStrokeToken);
+                oldValue.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, _selectionStrokeToken);
+                _selectionStrokeToken = 0;
             }
 
-            if (solid == null || sender._stroke == null)
+            if (newValue == null || _stroke == null)
             {
                 return;
             }
 
-            sender._stroke.FillBrush = Window.Current.Compositor.CreateColorBrush(solid.Color);
+            _stroke.FillBrush = Window.Current.Compositor.CreateColorBrush(newValue.Color);
+            _selectionStrokeToken = newValue.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, OnSelectionStrokeChanged);
         }
 
         private void OnSelectionStrokeChanged(DependencyObject sender, DependencyProperty dp)
@@ -1650,29 +1683,31 @@ namespace Unigram.Controls.Cells
 
         private static void OnStrokeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var sender = d as ChatCell;
-            var solid = e.NewValue as SolidColorBrush;
+            ((ChatCell)d).OnStrokeChanged(e.NewValue as SolidColorBrush, e.OldValue as SolidColorBrush);
+        }
 
-            if (e.OldValue is SolidColorBrush old && sender._strokeToken != 0)
+        private void OnStrokeChanged(SolidColorBrush newValue, SolidColorBrush oldValue)
+        {
+            if (oldValue != null && _strokeToken != 0)
             {
-                old.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, sender._strokeToken);
+                oldValue.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, _strokeToken);
+                _strokeToken = 0;
             }
 
-            sender._strokeToken = solid.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, sender.OnStrokeChanged);
-
-            if (solid == null || sender._container == null || sender._ellipse == null)
+            if (newValue == null || _container == null || _ellipse == null)
             {
                 return;
             }
 
-            var brush = Window.Current.Compositor.CreateColorBrush(solid.Color);
+            var brush = Window.Current.Compositor.CreateColorBrush(newValue.Color);
 
-            foreach (var shape in sender._shapes)
+            foreach (var shape in _shapes)
             {
                 shape.StrokeBrush = brush;
             }
 
-            sender._ellipse.FillBrush = brush;
+            _ellipse.FillBrush = brush;
+            _strokeToken = newValue.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, OnStrokeChanged);
         }
 
         private void OnStrokeChanged(DependencyObject sender, DependencyProperty dp)
