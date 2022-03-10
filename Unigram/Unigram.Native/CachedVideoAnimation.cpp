@@ -60,6 +60,10 @@ namespace winrt::Unigram::Native::implementation
 
 				if (createCache) {
 					info->m_animation = VideoAnimation::LoadFromFile(file, false, false).as<VideoAnimation>();
+					if (info->m_animation == nullptr) {
+						return nullptr;
+					}
+
 					info->m_pixelWidth = info->m_animation->PixelWidth();
 					info->m_pixelHeight = info->m_animation->PixelHeight();
 					info->m_fps = info->m_animation->FrameRate();
@@ -81,6 +85,10 @@ namespace winrt::Unigram::Native::implementation
 		}
 		else {
 			info->m_animation = VideoAnimation::LoadFromFile(file, false, false).as<VideoAnimation>();
+			if (info->m_animation == nullptr) {
+				return nullptr;
+			}
+
 			info->m_pixelWidth = info->m_animation->PixelWidth();
 			info->m_pixelHeight = info->m_animation->PixelHeight();
 		}
