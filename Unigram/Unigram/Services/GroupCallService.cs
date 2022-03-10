@@ -34,6 +34,8 @@ namespace Unigram.Services
         string CurrentAudioOutput { get; set; }
 
 #if ENABLE_CALLS
+        bool IsMuted { get; set; }
+
         bool IsNoiseSuppressionEnabled { get; set; }
 
         VoipGroupManager Manager { get; }
@@ -119,6 +121,9 @@ namespace Unigram.Services
         private ViewLifetimeControl _lifetime;
 
         private DisplayRequest _request;
+
+        //private VoipCallCoordinator _coordinator;
+        //private VoipPhoneCall _systemCall;
 
         public GroupCallService(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IViewService viewService)
             : base(protoService, cacheService, settingsService, aggregator)
@@ -326,6 +331,19 @@ namespace Unigram.Services
                 _isScheduled = groupCall.ScheduledStartDate > 0;
 
 #if ENABLE_CALLS
+                //var coordinator = VoipCallCoordinator.GetDefault();
+                //if (coordinator != null)
+                //{
+                //    var result = await coordinator.ReserveCallResourcesAsync();
+                //    if (result == VoipPhoneCallResourceReservationStatus.Success)
+                //    {
+                //        _coordinator = coordinator;
+                //        _systemCall = coordinator.RequestNewAppInitiatedCall("test", "Test", "test", "Telegram", VoipPhoneCallMedia.Audio | VoipPhoneCallMedia.Video);
+
+                //        coordinator.MuteStateChanged += OnMuteStateChanged;
+                //    }
+                //}
+
                 var descriptor = new VoipGroupDescriptor
                 {
                     AudioInputId = await _inputWatcher.GetAndUpdateAsync(),
@@ -341,6 +359,15 @@ namespace Unigram.Services
                 _manager.AudioLevelsUpdated += OnAudioLevelsUpdated;
                 _manager.BroadcastTimeRequested += OnBroadcastTimeRequested;
                 _manager.BroadcastPartRequested += OnBroadcastPartRequested;
+
+                //if (_manager.IsMuted)
+                //{
+                //    coordinator?.NotifyMuted();
+                //}
+                //else
+                //{
+                //    coordinator?.NotifyUnmuted();
+                //}
 #endif
 
                 // This must be set before, as updates might come
@@ -360,6 +387,11 @@ namespace Unigram.Services
                 }
             }
         }
+
+        //private void OnMuteStateChanged(VoipCallCoordinator sender, MuteChangeEventArgs args)
+        //{
+        //    IsMuted = args.Muted;
+        //}
 
         public async Task RejoinAsync()
         {
@@ -803,6 +835,22 @@ namespace Unigram.Services
                 }
 
                 EndScreenSharing();
+
+                //if (_coordinator != null)
+                //{
+                //    _coordinator.MuteStateChanged -= OnMuteStateChanged;
+                //    _coordinator = null;
+                //}
+
+                //if (_systemCall != null)
+                //{
+                //    try
+                //    {
+                //        _systemCall.NotifyCallEnded();
+                //        _systemCall = null;
+                //    }
+                //    catch { }
+                //}
             });
 #else
             return Task.CompletedTask;
@@ -828,6 +876,31 @@ namespace Unigram.Services
         }
 
 #if ENABLE_CALLS
+
+        public bool IsMuted
+        {
+            get => _manager.IsMuted;
+            set
+            {
+                if (_manager != null)
+                {
+                    _manager.IsMuted = value;
+
+                    //if (value)
+                    //{
+                    //    _coordinator?.NotifyMuted();
+                    //}
+                    //else
+                    //{
+                    //    _coordinator?.NotifyUnmuted();
+                    //}
+                }
+                else
+                {
+                    //_coordinator?.NotifyMuted();
+                }
+            }
+        }
 
         public bool IsNoiseSuppressionEnabled
         {

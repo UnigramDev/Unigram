@@ -1148,7 +1148,7 @@ namespace Unigram.Views
             //        _protoService.Send(new ToggleGroupCallParticipantIsMuted(call.Id, currentUser.ParticipantId, _service.Manager.IsMuted));
             //    }
             //}
-            else if (currentUser != null && currentUser.CanUnmuteSelf && _service.Manager.IsMuted)
+            else if (currentUser != null && currentUser.CanUnmuteSelf && _service.IsMuted)
             {
                 var permissions = await MediaDeviceWatcher.CheckAccessAsync(false, ElementTheme.Dark);
                 if (permissions == false || _service == null)
@@ -1156,12 +1156,12 @@ namespace Unigram.Views
                     return;
                 }
 
-                _service.Manager.IsMuted = false;
+                _service.IsMuted = false;
                 _protoService.Send(new ToggleGroupCallParticipantIsMuted(call.Id, currentUser.ParticipantId, false));
             }
-            else if (currentUser != null && !_service.Manager.IsMuted)
+            else if (currentUser != null && !_service.IsMuted)
             {
-                _service.Manager.IsMuted = true;
+                _service.IsMuted = true;
                 _protoService.Send(new ToggleGroupCallParticipantIsMuted(call.Id, currentUser.ParticipantId, true));
             }
             else if (currentUser != null)
@@ -1213,12 +1213,12 @@ namespace Unigram.Views
                 }
             }
             //else if (currentUser != null && currentUser.CanBeUnmutedForAllUsers)
-            else if (currentUser != null && currentUser.CanUnmuteSelf && _service.Manager.IsMuted)
+            else if (currentUser != null && currentUser.CanUnmuteSelf && _service.IsMuted)
             {
                 SetButtonState(ButtonState.Mute);
             }
             //else if (currentUser != null && currentUser.CanBeMutedForAllUsers)
-            else if (currentUser != null && !_service.Manager.IsMuted)
+            else if (currentUser != null && !_service.IsMuted)
             {
                 SetButtonState(ButtonState.Unmute);
             }
