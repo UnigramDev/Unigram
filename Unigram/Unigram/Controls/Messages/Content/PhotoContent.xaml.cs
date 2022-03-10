@@ -85,13 +85,6 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            Texture.HorizontalAlignment = big.Width > big.Height && ActualHeight > ActualWidth
-                ? HorizontalAlignment.Center
-                : HorizontalAlignment.Stretch;
-            Texture.VerticalAlignment = big.Height > big.Width && ActualWidth > ActualHeight
-                ? VerticalAlignment.Center
-                : VerticalAlignment.Stretch;
-
             if (!big.Photo.Local.IsDownloadingCompleted && !message.IsSecret())
             {
                 UpdateThumbnail(message, small, photo.Minithumbnail, true);
@@ -112,13 +105,6 @@ namespace Unigram.Controls.Messages.Content
             {
                 return availableSize;
             }
-
-            Texture.HorizontalAlignment = big.Width > big.Height && availableSize.Height > availableSize.Width
-                ? HorizontalAlignment.Center
-                : HorizontalAlignment.Stretch;
-            Texture.VerticalAlignment = big.Height > big.Width && availableSize.Width > availableSize.Height
-                ? VerticalAlignment.Center
-                : VerticalAlignment.Stretch;
 
             return availableSize;
         }
