@@ -42,7 +42,7 @@ namespace Unigram.Controls
                 _service.Manager.AudioLevelsUpdated += OnAudioLevelsUpdated;
 
                 TitleInfo.Text = service.Call.Title.Length > 0 ? service.Call.Title : service.CacheService.GetTitle(_service.Chat);
-                Audio.IsChecked = !_service.Manager.IsMuted;
+                Audio.IsChecked = !_service.IsMuted;
             }
         }
 
@@ -73,7 +73,7 @@ namespace Unigram.Controls
 
             if (_service?.Manager != null)
             {
-                _drawable.setState(_service.Manager.IsMuted ? 1 : 0);
+                _drawable.setState(_service.IsMuted ? 1 : 0);
                 _drawable.draw(0, 48, (float)sender.Size.Width, 48 + 40, args.DrawingSession, sender, 1);
             }
 
@@ -85,9 +85,9 @@ namespace Unigram.Controls
         {
 #if ENABLE_CALLS
             var service = _service;
-            if (service?.Manager != null)
+            if (service != null)
             {
-                service.Manager.IsMuted = Audio.IsChecked == false;
+                service.IsMuted = Audio.IsChecked == false;
             }
 #endif
         }
