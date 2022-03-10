@@ -950,6 +950,7 @@
                                                         ContextRequested="ArchivedChats_ContextRequested"
                                                         AutomationProperties.Name="{CustomResource ArchivedChats}"
                                                         Style="{StaticResource EmptyButtonStyle}"
+                                                        Visibility="{x:Bind ArchivedChats.Visibility, Mode=OneWay}"
                                                         Padding="4,2"
                                                         CornerRadius="4">
                                                     <cells:ChatCell x:Name="ArchivedChats"
