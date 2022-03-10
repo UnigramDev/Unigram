@@ -23,9 +23,9 @@
                     <controls:AspectView x:Name="LayoutRoot"
                                          Background="Black">
                         <Image x:Name="Texture"
-                               Stretch="UniformToFill"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Center" />
+                               Stretch="Uniform"
+                               HorizontalAlignment="Stretch"
+                               VerticalAlignment="Stretch" />
 
                         <Border x:Name="Overlay"
                                 Background="{ThemeResource MessageOverlayBackgroundBrush}"
