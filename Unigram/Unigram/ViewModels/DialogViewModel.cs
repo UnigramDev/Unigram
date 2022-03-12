@@ -3704,7 +3704,8 @@ namespace Unigram.ViewModels
 
             if (message1.SenderId is MessageSenderChat chat1 && message2.SenderId is MessageSenderChat chat2)
             {
-                return chat1.ChatId == chat2.ChatId;
+                return chat1.ChatId == chat2.ChatId
+                    && message1.AuthorSignature == message2.AuthorSignature;
             }
             else if (message1.SenderId is MessageSenderUser user1 && message2.SenderId is MessageSenderUser user2)
             {
