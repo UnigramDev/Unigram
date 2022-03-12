@@ -561,9 +561,9 @@ namespace Unigram
                 Unigram.Views.Settings.Password.SettingsPasswordHintPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.Password.SettingsPasswordHintViewModel>(navigationService.SessionId),
                 Unigram.Views.Settings.Password.SettingsPasswordIntroPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.Password.SettingsPasswordIntroViewModel>(navigationService.SessionId),
                 Unigram.Views.Payments.PaymentFormPage => TLContainer.Current.Resolve<Unigram.ViewModels.Payments.PaymentFormViewModel>(navigationService.SessionId),
-                Unigram.Views.Chats.MessageStatisticsPage messageStatistics => TLContainer.Current.Resolve<Unigram.ViewModels.Chats.MessageStatisticsViewModel, Unigram.ViewModels.Delegates.IChatDelegate>(messageStatistics, navigationService.SessionId),
+                Unigram.Views.Chats.MessageStatisticsPage => TLContainer.Current.Resolve<Unigram.ViewModels.Chats.MessageStatisticsViewModel>(navigationService.SessionId),
                 Unigram.Views.Chats.ChatInviteLinkPage => TLContainer.Current.Resolve<Unigram.ViewModels.Chats.ChatInviteLinkViewModel>(navigationService.SessionId),
-                Unigram.Views.Chats.ChatStatisticsPage chatStatistics => TLContainer.Current.Resolve<Unigram.ViewModels.Chats.ChatStatisticsViewModel, Unigram.ViewModels.Delegates.IChatDelegate>(chatStatistics, navigationService.SessionId),
+                Unigram.Views.Chats.ChatStatisticsPage => TLContainer.Current.Resolve<Unigram.ViewModels.Chats.ChatStatisticsViewModel>(navigationService.SessionId),
                 _ => null
             };
         }
