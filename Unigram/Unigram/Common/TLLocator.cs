@@ -1128,6 +1128,7 @@
                     _protoService,
                     _cacheService,
                     _settingsService,
+                    _storageService ??= new Unigram.Services.StorageService(_protoService),
                     _eventAggregator);
             }
             else if (type == typeof(Unigram.Services.IDeviceInfoService))
