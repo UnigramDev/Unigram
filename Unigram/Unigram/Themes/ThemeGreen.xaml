@@ -29,7 +29,7 @@
             <SolidColorBrush x:Key="PageHeaderBackgroundBrush" Color="{StaticResource SystemChromeLowColor}" />
             <SolidColorBrush x:Key="PageHeaderBorderBrush" Color="{StaticResource SystemChromeMediumColor}" />
             <SolidColorBrush x:Key="PageSubHeaderBackgroundBrush" Color="{StaticResource SystemChromeLowColor}" />
-            <SolidColorBrush x:Key="PageBackgroundDarkBrush" Color="{StaticResource LayerFillColorDefault}" />
+            <SolidColorBrush x:Key="PageBackgroundDarkBrush" Color="{StaticResource SystemChromeMediumColor}" />
 
             <SolidColorBrush x:Key="TelegramSeparatorMediumBrush" Color="{StaticResource SystemChromeMediumColor}" />
             
@@ -2272,7 +2272,7 @@
             <SolidColorBrush x:Key="PageHeaderBackgroundBrush" Color="{StaticResource SystemAltHighColor}" />
             <SolidColorBrush x:Key="PageHeaderBorderBrush" Color="{StaticResource SystemChromeMediumLowColor}" />
             <SolidColorBrush x:Key="PageSubHeaderBackgroundBrush" Color="{StaticResource SystemAltHighColor}" />
-            <SolidColorBrush x:Key="PageBackgroundDarkBrush" Color="{StaticResource LayerFillColorDefault}" />
+            <SolidColorBrush x:Key="PageBackgroundDarkBrush" Color="{StaticResource SystemChromeMediumLowColor}" />
 
             <SolidColorBrush x:Key="TelegramSeparatorMediumBrush" Color="{StaticResource SystemChromeMediumLowColor}" />
 
