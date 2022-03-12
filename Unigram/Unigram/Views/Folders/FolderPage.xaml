@@ -7,13 +7,14 @@
                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                   mc:Ignorable="d"
-                  Loaded="OnLoaded">
+                  Loaded="OnLoaded"
+                  Title="{x:Bind ConvertTitle(ViewModel.Filter), Mode=OneWay}">
 
-    <local:HostedPage.Header>
-        <controls:ButtonPageHeader Text="{x:Bind ConvertTitle(ViewModel.Filter), Mode=OneWay}"
-                                   Command="{x:Bind ViewModel.SendCommand}"
-                                   Glyph="&#xE10B;" />
-    </local:HostedPage.Header>
+    <local:HostedPage.Footer>
+        <Button Content="{CustomResource Done}"
+                Command="{x:Bind ViewModel.SendCommand}"
+                Style="{StaticResource AccentButtonStyle}" />
+    </local:HostedPage.Footer>
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <muxc:ItemsRepeaterScrollHost>
