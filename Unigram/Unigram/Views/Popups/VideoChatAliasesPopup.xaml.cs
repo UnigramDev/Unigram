@@ -43,9 +43,22 @@ namespace Unigram.Views.Popups
                 ? Visibility.Visible
                 : Visibility.Collapsed;
 
-            StartWith.Visibility = canSchedule
-                ? Visibility.Visible
-                : Visibility.Collapsed;
+            if (protoService.TryGetSupergroup(chat, out Supergroup supergroup))
+            {
+                StartWith.Visibility = canSchedule && supergroup.Status is ChatMemberStatusCreator
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            }
+            else if (protoService.TryGetBasicGroup(chat, out BasicGroup basicGroup))
+            {
+                StartWith.Visibility = canSchedule && basicGroup.Status is ChatMemberStatusCreator
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            }
+            else
+            {
+                StartWith.Visibility = Visibility.Collapsed;
+            }
 
             PrimaryButtonText = Strings.Resources.Start;
             SecondaryButtonText = Strings.Resources.Close;
