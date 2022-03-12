@@ -15,11 +15,11 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <local:HostedPage.Header>
-        <controls:ButtonPageHeader Command="{x:Bind ViewModel.SendCommand}"
-                                   Text="{CustomResource UserRestrictions}"
-                                   Glyph="&#xE10B;" />
-    </local:HostedPage.Header>
+    <local:HostedPage.Footer>
+        <Button Content="{CustomResource Done}"
+                Command="{x:Bind ViewModel.SendCommand}"
+                Style="{StaticResource AccentButtonStyle}" />
+    </local:HostedPage.Footer>
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <ScrollViewer x:Name="ScrollingHost"
@@ -28,7 +28,7 @@
                       Grid.Row="1">
             <StackPanel Margin="0,0,0,24">
                 <controls:HeaderedControl>
-                    <Grid>
+                    <Grid Background="{ThemeResource SettingsItemBackground}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />

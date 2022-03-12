@@ -76,12 +76,9 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.Footer>
-                <Border MaxWidth="640">
-                    <TextBlock x:Name="Footer"
-                               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                               Style="{StaticResource CaptionTextBlockStyle}"
-                               Margin="12,8,12,32" />
-                </Border>
+                <TextBlock x:Name="Footer"
+                            Style="{StaticResource InfoCaptionTextBlockStyle}"
+                            Margin="24,8,24,32" />
             </ListView.Footer>
         </controls:TableListView>
     </Grid>

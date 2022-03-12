@@ -12,7 +12,7 @@ namespace Unigram.ViewModels.Supergroups
         }
 
         private SearchMembersAndUsersCollection _search;
-        public new SearchMembersAndUsersCollection Search
+        public SearchMembersAndUsersCollection Search
         {
             get => _search;
             set => Set(ref _search, value);

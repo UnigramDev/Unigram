@@ -53,7 +53,7 @@ namespace Unigram.Views.Supergroups
             {
                 var canBeEdited = (member.Status is ChatMemberStatusCreator && member.MemberId.IsUser(ViewModel.CacheService.Options.MyId)) || (member.Status is ChatMemberStatusAdministrator administrator && administrator.CanBeEdited);
 
-                Header.CommandVisibility = canBeEdited ? Visibility.Visible : Visibility.Collapsed;
+                Done.Visibility = canBeEdited ? Visibility.Visible : Visibility.Collapsed;
                 Dismiss.Visibility = member.Status is ChatMemberStatusAdministrator && canBeEdited ? Visibility.Visible : Visibility.Collapsed;
                 PermissionsRoot.Footer = canBeEdited ? null : Strings.Resources.EditAdminCantEdit;
                 EditRankField.PlaceholderText = member.Status is ChatMemberStatusCreator ? Strings.Resources.ChannelCreator : Strings.Resources.ChannelAdmin;
@@ -72,7 +72,7 @@ namespace Unigram.Views.Supergroups
             }
             else
             {
-                Header.CommandVisibility = Visibility.Visible;
+                Done.Visibility = Visibility.Visible;
                 Dismiss.Visibility = Visibility.Collapsed;
                 PermissionsRoot.Footer = null;
                 EditRankField.PlaceholderText = Strings.Resources.ChannelAdmin;

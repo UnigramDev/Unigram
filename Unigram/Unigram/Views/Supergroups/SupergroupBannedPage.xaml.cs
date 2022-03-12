@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using Telegram.Td.Api;
+﻿using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
@@ -13,7 +12,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Unigram.Views.Supergroups
 {
-    public sealed partial class SupergroupBannedPage : HostedPage, ISupergroupDelegate, INavigablePage, ISearchablePage
+    public sealed partial class SupergroupBannedPage : HostedPage, ISupergroupDelegate, ISearchablePage
     {
         public SupergroupBannedViewModel ViewModel => DataContext as SupergroupBannedViewModel;
 
@@ -21,33 +20,12 @@ namespace Unigram.Views.Supergroups
         {
             InitializeComponent();
             Title = Strings.Resources.ChannelBlockedUsers;
-
-            var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
-            debouncer.Invoked += (s, args) =>
-            {
-                if (string.IsNullOrWhiteSpace(SearchField.Text))
-                {
-                    ViewModel.Search?.Clear();
-                }
-                else
-                {
-                    ViewModel.Find(SearchField.Text);
-                }
-            };
         }
 
         public void Search()
         {
+            SearchField.StartBringIntoView();
             SearchField.Focus(FocusState.Keyboard);
-        }
-
-        public void OnBackRequested(HandledEventArgs args)
-        {
-            if (ContentPanel.Visibility == Visibility.Collapsed)
-            {
-                SearchField.Text = string.Empty;
-                args.Handled = true;
-            }
         }
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
@@ -171,17 +149,5 @@ namespace Unigram.Views.Supergroups
         }
 
         #endregion
-
-        private void Search_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (string.IsNullOrEmpty(SearchField.Text))
-            {
-                ContentPanel.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                ContentPanel.Visibility = Visibility.Collapsed;
-            }
-        }
     }
 }

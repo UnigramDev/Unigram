@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Rg.DiffUtils;
+using System;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
+using Unigram.Collections;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
@@ -20,6 +22,8 @@ namespace Unigram.ViewModels.Supergroups
         {
             _filter = filter;
             _find = search;
+
+            Members = new SearchCollection<ChatMember, ChatMemberCollection>(SetItems, new ChatMemberHandler());
         }
 
         protected Chat _chat;
@@ -57,7 +61,7 @@ namespace Unigram.ViewModels.Supergroups
                     Delegate?.UpdateSupergroupFullInfo(chat, item, cache);
                 }
 
-                Members = new ChatMemberCollection(ProtoService, supergroup.SupergroupId, _filter ?? _find(string.Empty));
+                Members.SetQuery(string.Empty);
             }
             else if (chat.Type is ChatTypeBasicGroup basicGroup)
             {
@@ -77,25 +81,21 @@ namespace Unigram.ViewModels.Supergroups
                     _ => null
                 };
 
-                Members = new ChatMemberCollection(ProtoService, chat.Id, string.Empty, filter);
+                Members.SetQuery(string.Empty);
             }
 
             return Task.CompletedTask;
         }
 
-        public void Find(string query)
-        {
-            var chat = _chat;
-            if (chat == null)
-            {
-                return;
-            }
+        public SearchCollection<ChatMember, ChatMemberCollection> Members { get; private set; }
 
-            if (chat.Type is ChatTypeSupergroup supergroup)
+        private ChatMemberCollection SetItems(object sender, string query)
+        {
+            if (_chat?.Type is ChatTypeSupergroup supergroup)
             {
-                Search = new ChatMemberCollection(ProtoService, supergroup.SupergroupId, _find(query));
+                return new ChatMemberCollection(ProtoService, supergroup.SupergroupId, _find(query));
             }
-            else if (chat.Type is ChatTypeBasicGroup)
+            else if (_chat?.Type is ChatTypeBasicGroup)
             {
                 ChatMembersFilter filter = _filter switch
                 {
@@ -106,22 +106,20 @@ namespace Unigram.ViewModels.Supergroups
                     _ => null
                 };
 
-                Search = new ChatMemberCollection(ProtoService, chat.Id, query, filter);
+                return new ChatMemberCollection(ProtoService, _chat.Id, query, filter);
             }
+
+            return null;
         }
 
-        protected ChatMemberCollection _members;
-        public ChatMemberCollection Members
+        public class ChatMemberHandler : IDiffHandler<ChatMember>
         {
-            get => _members;
-            set => Set(ref _members, value);
-        }
+            public bool CompareItems(ChatMember oldItem, ChatMember newItem)
+            {
+                return oldItem?.MemberId == newItem?.MemberId;
+            }
 
-        protected ChatMemberCollection _search;
-        public ChatMemberCollection Search
-        {
-            get => _search;
-            set => Set(ref _search, value);
+            public void UpdateItem(ChatMember oldItem, ChatMember newItem) { }
         }
     }
 }

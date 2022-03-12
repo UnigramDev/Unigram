@@ -51,60 +51,41 @@
         </DataTemplate>
     </Page.Resources>
 
-    <local:HostedPage.Header>
-        <controls:ContentPageHeader>
-            <TextBox x:Name="SearchField"
-                     PlaceholderText="{CustomResource ChannelBlockedUsers}"
-                     Background="{ThemeResource PageBackgroundDarkBrush}"
-                     BorderBrush="{ThemeResource PageBackgroundDarkBrush}"
-                     PreventKeyboardDisplayOnProgrammaticFocus="True"
-                     TextChanged="Search_TextChanged"
-                     Margin="12,8" />
-        </controls:ContentPageHeader>
-    </local:HostedPage.Header>
-
     <Grid Background="{ThemeResource SettingsPageBackground}">
-        <controls:TableListView ItemsSource="{x:Bind ViewModel.Search, Mode=OneWay}"
+        <controls:TableListView x:Name="ScrollingHost"
+                                ItemsSource="{x:Bind ViewModel.Members}"
                                 ItemTemplate="{StaticResource MemberTemplate}"
                                 ItemClick="ListView_ItemClick"
                                 IsItemClickEnabled="True"
                                 ChoosingItemContainer="OnChoosingItemContainer"
                                 ContainerContentChanging="OnContainerContentChanging"
-                                SelectionMode="None">
+                                SelectionMode="None"
+                                Grid.Row="1">
             <ListView.Header>
-                <Border Height="16" />
+                <StackPanel Margin="0,0,0,16">
+                    <TextBox x:Name="SearchField"
+                             Text="{x:Bind ViewModel.Members.Query, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             PlaceholderText="{CustomResource Search}"
+                             PreventKeyboardDisplayOnProgrammaticFocus="True"
+                             HorizontalAlignment="Left"
+                             Width="280"
+                             Margin="24,0" />
+
+                    <controls:HeaderedControl x:Name="AddNewPanel"
+                                              Visibility="Collapsed">
+                        <controls:BadgeButton Content="{CustomResource ChannelBlockUser}"
+                                              Command="{x:Bind ViewModel.AddCommand}"
+                                              Style="{StaticResource GlyphBadgeButtonStyle}"
+                                              Glyph="&#xF140;" />
+                    </controls:HeaderedControl>
+                </StackPanel>
             </ListView.Header>
             <ListView.Footer>
-                <Border Height="32" />
+                <TextBlock x:Name="Footer"
+                           Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                           Style="{StaticResource CaptionTextBlockStyle}"
+                           Margin="24,8,24,32" />
             </ListView.Footer>
         </controls:TableListView>
-
-        <Grid x:Name="ContentPanel">
-            <controls:TableListView x:Name="ScrollingHost"
-                                    ItemsSource="{x:Bind ViewModel.Members}"
-                                    ItemTemplate="{StaticResource MemberTemplate}"
-                                    ItemClick="ListView_ItemClick"
-                                    IsItemClickEnabled="True"
-                                    ChoosingItemContainer="OnChoosingItemContainer"
-                                    ContainerContentChanging="OnContainerContentChanging"
-                                    SelectionMode="None"
-                                    Grid.Row="1">
-                <ListView.Header>
-                    <controls:HeaderedControl x:Name="AddNewPanel"
-                                              Visibility="Collapsed"
-                                              Margin="0,0,0,16">
-                        <controls:BadgeButton x:Name="AddNew"
-                                              Content="{CustomResource ChannelBlockUser}"
-                                              Command="{x:Bind ViewModel.AddCommand}" />
-                    </controls:HeaderedControl>
-                </ListView.Header>
-                <ListView.Footer>
-                    <TextBlock x:Name="Footer"
-                                Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                Style="{StaticResource CaptionTextBlockStyle}"
-                                Margin="24,8,24,32" />
-                </ListView.Footer>
-            </controls:TableListView>
-        </Grid>
     </Grid>
 </local:HostedPage>

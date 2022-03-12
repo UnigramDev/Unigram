@@ -15,12 +15,12 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <local:HostedPage.Header>
-        <controls:ButtonPageHeader x:Name="Header"
-                                   Text="{CustomResource EditAdmin}"
-                                   Glyph="&#xE10B;"
-                                   Command="{x:Bind ViewModel.SendCommand}" />
-    </local:HostedPage.Header>
+    <local:HostedPage.Footer>
+        <Button x:Name="Done"
+                Content="{CustomResource Done}"
+                Command="{x:Bind ViewModel.SendCommand}"
+                Style="{StaticResource AccentButtonStyle}" />
+    </local:HostedPage.Footer>
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <ScrollViewer x:Name="ScrollingHost"
@@ -29,7 +29,7 @@
             <StackPanel Spacing="16"
                         Margin="0,0,0,32">
                 <controls:HeaderedControl>
-                    <Grid>
+                    <Grid Background="{ThemeResource SettingsItemBackground}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
