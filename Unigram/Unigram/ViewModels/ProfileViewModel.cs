@@ -16,7 +16,6 @@ using Unigram.ViewModels.Users;
 using Unigram.Views.Chats;
 using Unigram.Views.Popups;
 using Unigram.Views.Supergroups;
-using Unigram.Views.Users;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -678,7 +677,7 @@ namespace Unigram.ViewModels
         }
 
         public RelayCommand IdenticonCommand { get; }
-        private void IdenticonExecute()
+        private async void IdenticonExecute()
         {
             var chat = _chat;
             if (chat == null)
@@ -686,7 +685,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            NavigationService.Navigate(typeof(IdenticonPage), chat.Id);
+            await new IdenticonPopup(SessionId, chat).ShowQueuedAsync();
         }
 
         public RelayCommand MigrateCommand { get; }

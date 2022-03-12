@@ -4,26 +4,24 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Services;
-using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Views.Users
+namespace Unigram.Views.Popups
 {
-    public sealed partial class IdenticonPage : HostedPage
+    public sealed partial class IdenticonPopup : ContentPopup
     {
-        public IdenticonPage()
+        public IdenticonPopup(int sessionId, Chat chat)
         {
             InitializeComponent();
-        }
+            Title = Strings.Resources.EncryptionKey;
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            var service = TLContainer.Current.Resolve<IProtoService>();
-            var chatId = (long)e.Parameter;
+            PrimaryButtonText = Strings.Resources.Close;
 
-            var chat = service.GetChat(chatId);
             if (chat.Type is ChatTypeSecret secret)
             {
+                var service = TLContainer.Current.Resolve<IProtoService>(sessionId);
+
                 var secretChat = service.GetSecretChat(secret.SecretChatId);
                 if (secretChat == null)
                 {

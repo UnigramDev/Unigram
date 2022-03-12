@@ -632,6 +632,9 @@
     <Compile Include="Views\Popups\DownloadsPopup.xaml.cs">
       <DependentUpon>DownloadsPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Popups\IdenticonPopup.xaml.cs">
+      <DependentUpon>IdenticonPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Popups\InputPopup.xaml.cs">
       <DependentUpon>InputPopup.xaml</DependentUpon>
     </Compile>
@@ -897,9 +900,6 @@
     </Compile>
     <Compile Include="Views\Host\StandalonePage.xaml.cs">
       <DependentUpon>StandalonePage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\IdenticonPage.xaml.cs">
-      <DependentUpon>IdenticonPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\LogOutPage.xaml.cs">
       <DependentUpon>LogOutPage.xaml</DependentUpon>
@@ -1841,6 +1841,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Popups\IdenticonPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Popups\InputPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1940,10 +1944,6 @@
     <Page Include="Views\Host\StandalonePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\IdenticonPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\InstantPage.xaml">
       <SubType>Designer</SubType>
