@@ -67,13 +67,11 @@ namespace Unigram.Controls.Chats
         private void AttachEventHandlers()
         {
             Loaded += OnLoaded;
-            SizeChanged += OnSizeChanged;
         }
 
         private void DetachEventHandlers()
         {
             Loaded -= OnLoaded;
-            SizeChanged -= OnSizeChanged;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -84,10 +82,11 @@ namespace Unigram.Controls.Chats
 
                 _hitTest = _visual.Compositor.CreateSpriteVisual();
                 _hitTest.Brush = _visual.Compositor.CreateColorBrush(Windows.UI.Colors.Transparent);
+                _hitTest.RelativeSizeAdjustment = Vector2.One;
 
                 _container = _visual.Compositor.CreateContainerVisual();
                 _container.Children.InsertAtBottom(_hitTest);
-                _container.Size = _hitTest.Size = ActualSize;
+                _container.RelativeSizeAdjustment = Vector2.One;
 
                 ElementCompositionPreview.SetElementChildVisual(this, _container);
 
@@ -95,14 +94,6 @@ namespace Unigram.Controls.Chats
             }
 
             _hasInitialLoadedEventFired = true;
-        }
-
-        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            if (_hitTest != null)
-            {
-                _hitTest.Size = _container.Size = e.NewSize.ToVector2();
-            }
         }
 
         private void ConfigureInteractionTracker()
