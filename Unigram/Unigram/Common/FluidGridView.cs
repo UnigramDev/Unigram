@@ -78,7 +78,9 @@ namespace Unigram.Common
             if (trigger != null)
             {
                 //var itemLength = trigger.GetItemLength(parentLength - paddingNear - paddingFar);
-                var itemLength = trigger.GetItemLength(Math.Floor(parentLength));
+                var itemLength = trigger.GetItemLength(Math.Floor(parentLength), out int maximumRowsOrColumns);
+
+                reference.MaximumRowsOrColumns = maximumRowsOrColumns;
 
                 if (reference.Orientation == Orientation.Horizontal)
                 {
@@ -272,6 +274,42 @@ namespace Unigram.Common
                 }
             }
 
+            public int MaximumRowsOrColumns
+            {
+                get
+                {
+                    if (Owner is WrapGrid)
+                    {
+                        return (Owner as WrapGrid).MaximumRowsOrColumns;
+                    }
+                    else if (Owner is ItemsWrapGrid)
+                    {
+                        return (Owner as ItemsWrapGrid).MaximumRowsOrColumns;
+                    }
+                    else if (Owner is VariableSizedWrapGrid)
+                    {
+                        return (Owner as VariableSizedWrapGrid).MaximumRowsOrColumns;
+                    }
+
+                    return 0;
+                }
+                set
+                {
+                    if (Owner is WrapGrid)
+                    {
+                        (Owner as WrapGrid).MaximumRowsOrColumns = value;
+                    }
+                    else if (Owner is ItemsWrapGrid)
+                    {
+                        (Owner as ItemsWrapGrid).MaximumRowsOrColumns = value;
+                    }
+                    else if (Owner is VariableSizedWrapGrid)
+                    {
+                        (Owner as VariableSizedWrapGrid).MaximumRowsOrColumns = value;
+                    }
+                }
+            }
+
             public WrapGridReference(object owner)
             {
                 Owner = owner;
@@ -338,7 +376,7 @@ namespace Unigram.Common
             return parentWidth >= MinLength;
         }
 
-        public abstract double GetItemLength(double parentLength);
+        public abstract double GetItemLength(double parentLength, out int maximumRowsOrColumns);
 
         #region PropertyChanged
         private static void OnPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -378,8 +416,10 @@ namespace Unigram.Common
             DependencyProperty.Register("MaxLength", typeof(double), typeof(FluidGridViewTrigger), new PropertyMetadata(0d));
         #endregion
 
-        public override double GetItemLength(double parentLength)
+        public override double GetItemLength(double parentLength, out int maximumRowsOrColumns)
         {
+            maximumRowsOrColumns = RowsOrColumns;
+
             if (MaxLength > 0)
             {
                 return Math.Min(MaxLength, parentLength / RowsOrColumns);
@@ -415,8 +455,9 @@ namespace Unigram.Common
             DependencyProperty.Register("ItemLength", typeof(double), typeof(FixedGridViewTrigger), new PropertyMetadata(0d, OnPropertyChanged));
         #endregion
 
-        public override double GetItemLength(double parentLength)
+        public override double GetItemLength(double parentLength, out int maximumRowsOrColumns)
         {
+            maximumRowsOrColumns = (int)Math.Floor(parentLength / ItemLength);
             return ItemLength;
         }
 
@@ -447,14 +488,34 @@ namespace Unigram.Common
             DependencyProperty.Register("ItemLength", typeof(double), typeof(LengthGridViewTrigger), new PropertyMetadata(0d, OnPropertyChanged));
         #endregion
 
-        public override double GetItemLength(double parentLength)
+        #region MaxLength
+
+        public double MaxLength
         {
+            get { return (double)GetValue(MaxLengthProperty); }
+            set { SetValue(MaxLengthProperty, value); }
+        }
+
+        public static readonly DependencyProperty MaxLengthProperty =
+            DependencyProperty.Register("MaxLength", typeof(double), typeof(LengthGridViewTrigger), new PropertyMetadata(double.NaN));
+
+        #endregion
+
+        public override double GetItemLength(double parentLength, out int maximumRowsOrColumns)
+        {
+            if (parentLength > MaxLength && !double.IsNaN(MaxLength))
+            {
+                parentLength = MaxLength;
+            }
+
             if (parentLength <= 400)
             {
+                maximumRowsOrColumns = 3;
                 return parentLength / 3d;
             }
             else if (parentLength <= 500)
             {
+                maximumRowsOrColumns = 4;
                 return parentLength / 4d;
             }
             else
@@ -468,6 +529,7 @@ namespace Unigram.Common
                     itemsCount += 1;
                 }
 
+                maximumRowsOrColumns = itemsCount;
                 return parentLength / itemsCount;
             }
         }
