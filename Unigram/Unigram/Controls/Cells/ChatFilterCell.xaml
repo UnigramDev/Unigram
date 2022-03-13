@@ -51,36 +51,20 @@
                       Foreground="{ThemeResource ChatUnreadBadgeBrush}"
                       HorizontalAlignment="Center"
                       FontSize="24" />
-            <Border Visibility="{x:Bind ViewModel.ShowUnmuted, Mode=OneWay}"
-                    Background="{ThemeResource ChatUnreadBadgeBrush}"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Top"
-                    Margin="0,-4,4,0"
-                    MinWidth="17"
-                    MinHeight="17"
-                    CornerRadius="8.5">
-                <TextBlock Text="{x:Bind ViewModel.UnreadCount, Mode=OneWay}"
-                           FontSize="{ThemeResource InfoBadgeValueFontSize}"
-                           Foreground="{ThemeResource ChatUnreadLabelBrush}"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
-                           Margin="{ThemeResource ValueInfoBadgeTextMargin}" />
-            </Border>
-            <Border Visibility="{x:Bind ViewModel.ShowMuted, Mode=OneWay}"
-                    Background="{ThemeResource ChatUnreadBadgeMutedBrush}"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Top"
-                    Margin="0,-4,4,0"
-                    MinWidth="17"
-                    MinHeight="17"
-                    CornerRadius="8.5">
-                <TextBlock Text="{x:Bind ViewModel.UnreadMutedCount, Mode=OneWay}"
-                           FontSize="{ThemeResource InfoBadgeValueFontSize}"
-                           Foreground="{ThemeResource ChatUnreadLabelMutedBrush}"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
-                           Margin="{ThemeResource ValueInfoBadgeTextMargin}" />
-            </Border>
+            <muxc:InfoBadge Value="{x:Bind ViewModel.UnreadCount, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.ShowUnmuted, Mode=OneWay}"
+                            Background="{ThemeResource ChatUnreadBadgeBrush}"
+                            Foreground="{ThemeResource ChatUnreadLabelBrush}"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Top"
+                            Margin="0,-4,4,0" />
+            <muxc:InfoBadge Value="{x:Bind ViewModel.UnreadMutedCount, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.ShowMuted, Mode=OneWay}"
+                            Background="{ThemeResource ChatUnreadBadgeMutedBrush}"
+                            Foreground="{ThemeResource ChatUnreadLabelMutedBrush}"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Top"
+                            Margin="0,-4,4,0" />
         </Grid>
         <Border x:Name="TitlePresenter"
                 Opacity="0.8"

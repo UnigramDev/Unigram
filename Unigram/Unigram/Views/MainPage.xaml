@@ -8,7 +8,7 @@
       xmlns:cells="using:Unigram.Controls.Cells"
       xmlns:chats="using:Unigram.Controls.Chats"
       xmlns:viewModels="using:Unigram.ViewModels"
-      xmlns:microsoft="using:Microsoft.UI.Xaml.Controls"
+      xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
       xmlns:navigation="using:Unigram.Navigation.Services"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -89,16 +89,16 @@
                                         <ColumnDefinition MaxWidth="1000" />
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
-                                    <microsoft:BreadcrumbBar x:Name="DetailHeaderPresenter"
-                                                             Margin="0,-4,0,0"
-                                                             VerticalAlignment="Top">
-                                        <microsoft:BreadcrumbBar.ItemTemplate>
+                                    <muxc:BreadcrumbBar x:Name="DetailHeaderPresenter"
+                                                        Margin="0,-4,0,0"
+                                                        VerticalAlignment="Top">
+                                        <muxc:BreadcrumbBar.ItemTemplate>
                                             <DataTemplate x:DataType="navigation:NavigationStackItem">
                                                 <!--<TextBlock Text="{x:Bind Title}" />-->
-                                                <microsoft:BreadcrumbBarItem Content="{x:Bind Title, Mode=OneWay}" />
+                                                <muxc:BreadcrumbBarItem Content="{x:Bind Title, Mode=OneWay}" />
                                             </DataTemplate>
-                                        </microsoft:BreadcrumbBar.ItemTemplate>
-                                    </microsoft:BreadcrumbBar>
+                                        </muxc:BreadcrumbBar.ItemTemplate>
+                                    </muxc:BreadcrumbBar>
 
                                     <ContentControl Content="{TemplateBinding DetailFooter}"
                                                     IsTabStop="False"
@@ -179,10 +179,10 @@
                 <ColumnDefinition />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <microsoft:ProgressBar x:Name="State"
-                                   VerticalAlignment="Top"
-                                   Background="Transparent"
-                                   Grid.ColumnSpan="4" />
+            <muxc:ProgressBar x:Name="State"
+                              VerticalAlignment="Top"
+                              Background="Transparent"
+                              Grid.ColumnSpan="4" />
             <Canvas x:Name="TitleBarLogo"
                     Width="16"
                     Height="14"
@@ -945,30 +945,17 @@
                                                             <TextBlock Text="{x:Bind Title, Mode=OneWay}"
                                                                        FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                                                        VerticalAlignment="Top" />
-                                                            <Border Visibility="{x:Bind ShowUnmuted, Mode=OneWay}"
-                                                                    Background="{ThemeResource ChatUnreadBadgeBrush}"
-                                                                    MinWidth="20"
-                                                                    Height="20"
-                                                                    CornerRadius="10"
-                                                                    Margin="8,0,0,0">
-                                                                <TextBlock Text="{x:Bind UnreadCount, Mode=OneWay}"
-                                                                           Style="{StaticResource CaptionTextBlockStyle}"
-                                                                           Foreground="{ThemeResource ChatUnreadLabelBrush}"
-                                                                           TextAlignment="Center"
-                                                                           Margin="6,2,6,0" />
-                                                            </Border>
-                                                            <Border Visibility="{x:Bind ShowMuted, Mode=OneWay}"
-                                                                    Background="{ThemeResource ChatUnreadBadgeMutedBrush}"
-                                                                    MinWidth="20"
-                                                                    Height="20"
-                                                                    CornerRadius="10"
-                                                                    Margin="8,0,0,0">
-                                                                <TextBlock Text="{x:Bind UnreadMutedCount, Mode=OneWay}"
-                                                                           Style="{StaticResource CaptionTextBlockStyle}"
-                                                                           Foreground="{ThemeResource ChatUnreadLabelMutedBrush}"
-                                                                           TextAlignment="Center"
-                                                                           Margin="6,2,6,0" />
-                                                            </Border>
+
+                                                            <muxc:InfoBadge Value="{x:Bind UnreadCount, Mode=OneWay}"
+                                                                            Visibility="{x:Bind ShowUnmuted, Mode=OneWay}"
+                                                                            Background="{ThemeResource ChatUnreadBadgeBrush}"
+                                                                            Foreground="{ThemeResource ChatUnreadLabelBrush}"
+                                                                            Margin="8,0,0,0" />
+                                                            <muxc:InfoBadge Value="{x:Bind UnreadMutedCount, Mode=OneWay}"
+                                                                            Visibility="{x:Bind ShowMuted, Mode=OneWay}"
+                                                                            Background="{ThemeResource ChatUnreadBadgeMutedBrush}"
+                                                                            Foreground="{ThemeResource ChatUnreadLabelMutedBrush}"
+                                                                            Margin="8,0,0,0" />
                                                         </StackPanel>
                                                     </DataTemplate>
                                                 </controls:TopNavView.ItemTemplate>
