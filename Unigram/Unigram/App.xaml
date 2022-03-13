@@ -20,6 +20,8 @@
                     <SolidColorBrush x:Key="TelegramSeparatorBrush" Color="Transparent"/>
                     <!--<StaticResource x:Key="TelegramSeparatorBrush" ResourceKey="SystemControlForegroundBaseLowBrush"/>-->
 
+                    <StaticResource x:Key="SettingsItemBorderBrush" ResourceKey="{ThemeResource CardStrokeColorDefaultBrush}" />
+
                     <StaticResource x:Key="SettingsItemBackground" ResourceKey="CardBackgroundFillColorDefaultBrush" />
                     <StaticResource x:Key="SettingsItemBackgroundPointerOver" ResourceKey="ControlFillColorSecondaryBrush" />
                     <StaticResource x:Key="SettingsItemBackgroundPressed" ResourceKey="ControlFillColorTertiaryBrush" />
@@ -40,6 +42,8 @@
                     <SolidColorBrush x:Key="TelegramSeparatorBrush" Color="Transparent"/>
                     <!--<StaticResource x:Key="TelegramSeparatorBrush" ResourceKey="SystemControlForegroundBaseLowBrush"/>-->
 
+                    <StaticResource x:Key="SettingsItemBorderBrush" ResourceKey="{ThemeResource CardStrokeColorDefaultBrush}" />
+                    
                     <StaticResource x:Key="SettingsItemBackground" ResourceKey="CardBackgroundFillColorDefaultBrush" />
                     <StaticResource x:Key="SettingsItemBackgroundPointerOver" ResourceKey="ControlFillColorSecondaryBrush" />
                     <StaticResource x:Key="SettingsItemBackgroundPressed" ResourceKey="ControlFillColorTertiaryBrush" />

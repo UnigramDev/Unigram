@@ -25,6 +25,10 @@
     </Page.Transitions>
 
     <Page.Resources>
+        <CollectionViewSource x:Name="NavigationResults"
+                              Source="{x:Bind ViewModel.NavigationItems}"
+                              IsSourceGrouped="True" />
+
         <CollectionViewSource x:Name="ChatsResults"
                               Source="{x:Bind ViewModel.Chats.Search, Mode=OneWay}"
                               IsSourceGrouped="True" />
@@ -39,7 +43,6 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="controls:MasterDetailView">
                         <controls:MasterDetailPanel x:Name="AdaptivePanel"
-                                                    IsBlank="{TemplateBinding IsBlank}"
                                                     Background="Transparent">
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup x:Name="CommonStates">
@@ -66,11 +69,6 @@
 
                             <!--<Grid BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding Padding}" VerticalAlignment="Top"/>-->
 
-                            <ContentControl Content="{TemplateBinding MasterHeader}"
-                                            IsTabStop="False"
-                                            HorizontalContentAlignment="Stretch"
-                                            VerticalContentAlignment="Stretch"
-                                            VerticalAlignment="Top" />
                             <Grid Canvas.ZIndex="1">
                                 <ContentControl x:Name="DetailHeaderPresenter2"
                                                 Content="{TemplateBinding DetailHeader}"
@@ -92,7 +90,7 @@
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
                                     <microsoft:BreadcrumbBar x:Name="DetailHeaderPresenter"
-                                                             Margin="0,4,0,0"
+                                                             Margin="0,-4,0,0"
                                                              VerticalAlignment="Top">
                                         <microsoft:BreadcrumbBar.ItemTemplate>
                                             <DataTemplate x:DataType="navigation:NavigationStackItem">
@@ -107,7 +105,6 @@
                                                     HorizontalContentAlignment="Right"
                                                     VerticalContentAlignment="Stretch"
                                                     VerticalAlignment="Top"
-                                                    Padding="0,8,0,0"
                                                     Canvas.ZIndex="1" />
                                 </Grid>
                             </Grid>
@@ -119,11 +116,7 @@
                                             VerticalAlignment="Top"
                                             Canvas.ZIndex="1" />
 
-                            <Grid x:Name="DetailPresenter">
-                                <Border VerticalAlignment="Top"
-                                        Background="{TemplateBinding BorderBrush}"
-                                        Height="{ThemeResource AppBarThemeCompactHeight}" />
-                            </Grid>
+                            <Grid x:Name="DetailPresenter" />
 
                             <Border x:Name="BorderPart"
                                     Opacity="{TemplateBinding BackgroundOpacity}"
@@ -178,12 +171,11 @@
 
         <Grid x:Name="TitleBarrr"
               Height="40"
-              Margin="36,0,0,-8"
               Background="Transparent"
               Grid.ColumnSpan="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="56" />
                 <ColumnDefinition />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
@@ -191,9 +183,10 @@
                                    VerticalAlignment="Top"
                                    Background="Transparent"
                                    Grid.ColumnSpan="4" />
-            <Canvas Width="16"
+            <Canvas x:Name="TitleBarLogo"
+                    Width="16"
                     Height="14"
-                    Margin="6,0,12,0"
+                    HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Grid.Column="1">
                 <Path Data="M14.6025 0.109437C9.96891 1.86558 5.33409 3.61851 0.69863 5.36857L0.69863 5.36857C0.391755 5.48441 0.151119 5.65913 0.0247189 5.96984L0.0247189 5.96984C-0.00823964 6.06584 -0.00823964 6.14328 0.0247189 6.21976L0.0247189 6.21976C0.169358 6.5228 0.426634 6.67031 0.735112 6.77303L0.735112 6.77303C1.51366 7.03255 2.29669 7.28279 3.0586 7.58486L3.0586 7.58486C3.77315 7.8687 4.38978 7.77046 5.0301 7.35575L5.0301 7.35575C7.12511 5.99896 9.23964 4.67322 11.3497 3.34011L11.3497 3.34011C11.5299 3.22651 11.7417 2.98396 11.9478 3.23324L11.9478 3.23324C12.1769 3.51067 11.8617 3.65819 11.7062 3.80859L11.7062 3.80859C10.158 5.30617 8.60157 6.79479 7.05087 8.28949L7.05087 8.28949C6.55616 8.76629 6.57984 9.14804 7.12959 9.54644L7.12959 9.54644C8.67037 10.6648 10.2121 11.781 11.7619 12.8869L11.7619 12.8869C11.9414 13.0152 12.165 13.1211 12.381 13.1531L12.381 13.1531C12.9948 13.2437 13.4037 12.8773 13.5663 12.1429L13.5663 12.1429C13.7676 11.2299 13.9692 10.3167 14.1692 9.4034L14.1692 9.4034C14.7685 6.66327 15.3653 3.92219 15.9685 1.18303L15.9685 1.18303C16.0463 0.82847 15.9852 0.522555 15.7272 0.264637L15.7272 0.264637C15.5365 0.0742392 15.3317 0 15.1148 0L15.1148 0C14.9506 0 14.7794 0.0425605 14.6025 0.109439"
@@ -252,11 +245,12 @@
                 x:Name="ChatTabsLeft"
                 Grid.Row="1">
             <controls:TopNavView x:Name="ChatFiltersSide"
-                                 ItemsSource="{x:Bind ViewModel.Filters}"
+                                 ItemsSource="{x:Bind NavigationResults.View}"
                                  SelectedItem="{x:Bind ConvertFilter(ViewModel.SelectedFilter), Mode=TwoWay, BindBack=ConvertFilterBack}"
                                  IsItemClickEnabled="True"
                                  ItemClick="ChatFilter_ItemClick"
                                  ItemContextRequested="ChatFilter_ContextRequested"
+                                 ChoosingGroupHeaderContainer="ChatFilters_ChoosingGroupHeaderContainer"
                                  Orientation="Vertical"
                                  AllowDrop="True"
                                  CanDragItems="True"
@@ -276,8 +270,7 @@
                 </controls:TopNavView.ItemTemplate>
                 <controls:TopNavView.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <ItemsStackPanel Orientation="Vertical"
-                                         Margin="0,8,0,0" />
+                        <ItemsStackPanel Orientation="Vertical" />
                     </ItemsPanelTemplate>
                 </controls:TopNavView.ItemsPanel>
                 <controls:TopNavView.ItemContainerStyle>
@@ -370,6 +363,25 @@
                         </Setter>
                     </Style>
                 </controls:TopNavView.ItemContainerStyle>
+                <controls:TopNavView.GroupStyle>
+                    <GroupStyle>
+                        <GroupStyle.HeaderContainerStyle>
+                            <Style TargetType="ListViewHeaderItem">
+                                <Setter Property="MinHeight"
+                                        Value="0" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate>
+                                            <Rectangle Fill="{ThemeResource CardStrokeColorDefaultBrush}"
+                                                       Margin="8,4"
+                                                       Height="1" />
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </GroupStyle.HeaderContainerStyle>
+                    </GroupStyle>
+                </controls:TopNavView.GroupStyle>
             </controls:TopNavView>
         </Border>
 
@@ -405,11 +417,15 @@
                                                     x:Name="GroupCallBanner" />
                 </Grid>
             </controls:MasterDetailView.Banner>
-            <controls:MasterDetailView.MasterHeader>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
                 <controls:ContentPageHeader x:Name="PageHeader"
                                             Background="Transparent"
                                             BackVisibility="Collapsed"
-                                            Grid.Row="1">
+                                            Margin="0,-8,0,0">
                     <Grid x:Name="Header">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="40" />
@@ -419,6 +435,7 @@
                               Padding="12,0,0,0"
                               Grid.ColumnSpan="2">
                             <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition />
                                 <ColumnDefinition Width="Auto"
                                                   MinWidth="12" />
@@ -427,7 +444,17 @@
                                     Content="Nothing to see here, tab further"
                                     Width="12"
                                     Height="12"
-                                    Opacity="0" />
+                                    Opacity="0"
+                                    Grid.ColumnSpan="2" />
+                            <controls:ProfilePicture x:Name="Photo"
+                                                     Click="Photo_Click"
+                                                     VerticalAlignment="Center"
+                                                     Margin="0,0,12,0"
+                                                     Width="32"
+                                                     Height="32"
+                                                     AutomationProperties.LandmarkType="Navigation"
+                                                     AutomationProperties.Name="{CustomResource AccDescrOpenMenu}"
+                                                     ToolTipService.ToolTip="{CustomResource AccDescrOpenMenu}" />
 
                             <TextBox x:Name="SearchField"
                                      PlaceholderText="{CustomResource Search}"
@@ -437,7 +464,8 @@
                                      VerticalAlignment="Center"
                                      GotFocus="Search_Click"
                                      TextChanged="Search_TextChanged"
-                                     KeyDown="Search_KeyDown">
+                                     KeyDown="Search_KeyDown"
+                                     Grid.Column="1">
                                 <TextBox.Header>
                                     <ItemsControl x:Name="Test"
                                                   x:Load="False"
@@ -476,7 +504,7 @@
 
                             <StackPanel x:Name="SettingsOptions"
                                         Orientation="Horizontal"
-                                        Grid.Column="1">
+                                        Grid.Column="2">
                                 <controls:MoreButton>
                                     <Button.Flyout>
                                         <MenuFlyout Placement="BottomEdgeAlignedRight">
@@ -500,7 +528,7 @@
                             </StackPanel>
                             <StackPanel x:Name="ContactsOptions"
                                         Orientation="Horizontal"
-                                        Grid.Column="1">
+                                        Grid.Column="2">
                                 <controls:GlyphToggleButton Glyph="&#xE91B;"
                                                             CheckedGlyph="&#xE91E;"
                                                             IsChecked="{x:Bind ViewModel.Contacts.IsSortedByEpoch, Mode=TwoWay}"
@@ -512,7 +540,7 @@
                             </StackPanel>
                             <StackPanel x:Name="ChatsOptions"
                                         Orientation="Horizontal"
-                                        Grid.Column="1">
+                                        Grid.Column="2">
                                 <controls:GlyphButton x:Name="Proxy"
                                                       Glyph="&#xEA19;"
                                                       Click="Proxy_Click"
@@ -598,29 +626,11 @@
                         </Grid>
                     </Grid>
                 </controls:ContentPageHeader>
-            </controls:MasterDetailView.MasterHeader>
-            <VisualStateManager.VisualStateGroups>
-                <VisualStateGroup>
-                    <VisualState x:Name="Normal" />
-                    <VisualState x:Name="TitleBar">
-                        <VisualState.Setters>
-                            <Setter Target="MasterDetail.BorderBrush"
-                                    Value="{ThemeResource PageHeaderBackgroundBrush}" />
-                        </VisualState.Setters>
-                    </VisualState>
-                </VisualStateGroup>
-            </VisualStateManager.VisualStateGroups>
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition />
-                </Grid.RowDefinitions>
+
                 <Pivot x:Name="rpMasterTitlebar"
                        SelectionChanged="Pivot_SelectionChanged"
                        Style="{StaticResource HeaderlessPivotStyle}"
-                       Grid.Row="3">
+                       Grid.Row="1">
                     <PivotItem x:Name="TabChats"
                                Header="Chats">
                         <Grid>
@@ -753,8 +763,8 @@
                                                     <ColumnDefinition Width="Auto" />
                                                 </Grid.ColumnDefinitions>
                                                 <TextBlock Text="{CustomResource Recent}"
-                                                           Style="{StaticResource SettingsGroupTextBlockStyle}"
-                                                           Margin="12,16,12,6" />
+                                                           Style="{StaticResource BaseTextBlockStyle}"
+                                                           Margin="12,16,12,8" />
                                                 <controls:GlyphButton Command="{x:Bind ViewModel.Chats.ClearRecentChatsCommand}"
                                                                       AllowFocusOnInteraction="False"
                                                                       VerticalAlignment="Bottom"
@@ -840,8 +850,8 @@
                                                 <DataTemplate>
                                                     <!--<TextBlock Text="{Binding Key}" Style="{StaticResource BaseTextBlockStyle}"/>-->
                                                     <TextBlock Text="{Binding Key}"
-                                                               Style="{StaticResource SettingsGroupTextBlockStyle}"
-                                                               Margin="12,16,12,6" />
+                                                               Style="{StaticResource BaseTextBlockStyle}"
+                                                               Margin="12,16,12,8" />
                                                 </DataTemplate>
                                             </GroupStyle.HeaderTemplate>
                                             <GroupStyle.HeaderContainerStyle>
@@ -953,8 +963,6 @@
                                         </Grid>
                                     </Border>
 
-                                    <!--IsItemClickEnabled="True"
-                                                            SelectionMode="{x:Bind ViewModel.Chats.SelectionMode, Mode=TwoWay}"-->
                                     <local:ChatListPage x:Name="ChatsList"
                                                         ItemClick="ListView_ItemClick"
                                                         IsItemClickEnabled="True"
@@ -972,7 +980,7 @@
                                                         ContextRequested="ArchivedChats_ContextRequested"
                                                         AutomationProperties.Name="{CustomResource ArchivedChats}"
                                                         Style="{StaticResource EmptyButtonStyle}"
-                                                        Visibility="{x:Bind ArchivedChats.Visibility, Mode=OneWay}"
+                                                        Background="Transparent"
                                                         Padding="4,2"
                                                         CornerRadius="4">
                                                     <cells:ChatCell x:Name="ArchivedChats"
@@ -1083,13 +1091,13 @@
                                         <GroupStyle.HeaderTemplate>
                                             <DataTemplate>
                                                 <TextBlock Text="{Binding Key}"
-                                                           Style="{StaticResource SettingsGroupTextBlockStyle}" />
+                                                           Style="{StaticResource BaseTextBlockStyle}" />
                                             </DataTemplate>
                                         </GroupStyle.HeaderTemplate>
                                         <GroupStyle.HeaderContainerStyle>
                                             <Style TargetType="ListViewHeaderItem">
                                                 <Setter Property="Background"
-                                                        Value="{ThemeResource PageBackgroundDarkBrush}" />
+                                                        Value="Transparent" />
                                                 <Setter Property="FontFamily"
                                                         Value="{ThemeResource ContentControlThemeFontFamily}" />
                                                 <Setter Property="FontSize"
@@ -1097,7 +1105,7 @@
                                                 <Setter Property="Margin"
                                                         Value="0,0,0,0" />
                                                 <Setter Property="Padding"
-                                                        Value="12,0,12,0" />
+                                                        Value="12,16,12,8" />
                                                 <Setter Property="HorizontalContentAlignment"
                                                         Value="Stretch" />
                                                 <Setter Property="VerticalContentAlignment"
@@ -1184,10 +1192,10 @@
                                                                   Style="{StaticResource GlyphBadgeButtonStyle}"
                                                                   Glyph="&#xE8FA;" />
 
-                                            <Border Background="{ThemeResource PageBackgroundDarkBrush}">
+                                            <Border>
                                                 <TextBlock Text="{x:Bind ConvertSortedBy(ViewModel.Contacts.IsSortedByEpoch), Mode=OneWay}"
-                                                           Padding="12,0,0,0"
-                                                           Style="{StaticResource SettingsGroupTextBlockStyle}" />
+                                                           Padding="12,8,0,8"
+                                                           Style="{StaticResource BaseTextBlockStyle}" />
                                             </Border>
                                         </StackPanel>
                                     </ListView.Header>

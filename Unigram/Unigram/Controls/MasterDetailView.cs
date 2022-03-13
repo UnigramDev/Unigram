@@ -156,17 +156,14 @@ namespace Unigram.Controls
             if (CurrentState == MasterDetailState.Minimal && DetailFrame?.CurrentSourcePageType == BlankPageType)
             {
                 MasterPresenter.Visibility = Visibility.Visible;
-                MasterHeader.Visibility = Visibility.Visible;
             }
             else if (CurrentState is MasterDetailState.Compact or MasterDetailState.Expanded)
             {
                 MasterPresenter.Visibility = Visibility.Visible;
-                MasterHeader.Visibility = Visibility.Visible;
             }
             else
             {
                 MasterPresenter.Visibility = Visibility.Collapsed;
-                MasterHeader.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -437,19 +434,6 @@ namespace Unigram.Controls
 
         #endregion
 
-        #region MasterHeader
-
-        public UIElement MasterHeader
-        {
-            get => (UIElement)GetValue(MasterHeaderProperty);
-            set => SetValue(MasterHeaderProperty, value);
-        }
-
-        public static readonly DependencyProperty MasterHeaderProperty =
-            DependencyProperty.Register("MasterHeader", typeof(UIElement), typeof(MasterDetailView), new PropertyMetadata(null));
-
-        #endregion
-
         #region DetailHeader
 
         public UIElement DetailHeader
@@ -486,19 +470,6 @@ namespace Unigram.Controls
 
         public static readonly DependencyProperty BackgroundOpacityProperty =
             DependencyProperty.Register("BackgroundOpacity", typeof(double), typeof(MasterDetailView), new PropertyMetadata(1d));
-
-        #endregion
-
-        #region IsBlank
-
-        public bool IsBlank
-        {
-            get => (bool)GetValue(IsBlankProperty);
-            set => SetValue(IsBlankProperty, value);
-        }
-
-        public static readonly DependencyProperty IsBlankProperty =
-            DependencyProperty.Register("IsBlank", typeof(bool), typeof(MasterDetailView), new PropertyMetadata(true));
 
         #endregion
     }

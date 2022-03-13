@@ -1,8 +1,6 @@
-﻿using Unigram.Common;
-using Windows.Foundation;
+﻿using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Unigram.Controls
 {
@@ -15,26 +13,17 @@ namespace Unigram.Controls
 
     public class NavigationView : ContentControl
     {
-        private Grid TogglePaneButtonRoot;
-        private ToggleButton TogglePaneButton;
+        private GlyphButton TogglePaneButton;
         private SplitView RootSplitView;
-
-        private Thickness? _previousTopPadding;
 
         public NavigationView()
         {
             DefaultStyleKey = typeof(NavigationView);
         }
 
-        public void ShowTeachingTip(string text)
-        {
-            Window.Current.ShowTeachingTip(TogglePaneButton, text, Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode.BottomRight);
-        }
-
         protected override void OnApplyTemplate()
         {
-            TogglePaneButtonRoot = GetTemplateChild("TogglePaneButtonRoot") as Grid;
-            TogglePaneButton = GetTemplateChild("TogglePaneButton") as ToggleButton;
+            TogglePaneButton = GetTemplateChild("TogglePaneButton") as GlyphButton;
             RootSplitView = GetTemplateChild("RootSplitView") as SplitView;
 
             TogglePaneButton.Click += Toggle_Click;
@@ -45,33 +34,17 @@ namespace Unigram.Controls
 
         private void Toggle_Click(object sender, RoutedEventArgs e)
         {
-            if (TogglePaneButton.IsChecked == true)
-            {
-                BackRequested?.Invoke(this, null);
-            }
-            else
-            {
-                IsPaneOpen = !IsPaneOpen;
-            }
+            BackRequested?.Invoke(this, null);
         }
 
         private void OnPaneOpening(SplitView sender, object args)
         {
             PaneOpening?.Invoke(sender, args);
-
-            _previousTopPadding = TopPadding;
-            TopPadding = new Thickness();
         }
 
         private void OnPaneClosing(SplitView sender, SplitViewPaneClosingEventArgs args)
         {
             PaneClosing?.Invoke(sender, args);
-
-            if (_previousTopPadding != null)
-            {
-                TopPadding = _previousTopPadding.Value;
-                _previousTopPadding = null;
-            }
         }
 
         public event TypedEventHandler<NavigationView, object> BackRequested;
@@ -136,41 +109,19 @@ namespace Unigram.Controls
 
         private void OnPaneToggleButtonVisibilityChanged(PaneToggleButtonVisibility newValue, PaneToggleButtonVisibility oldValue)
         {
-            if (TogglePaneButtonRoot == null)
+            if (TogglePaneButton == null)
             {
                 return;
             }
 
-            if (newValue == PaneToggleButtonVisibility.Collapsed)
+            if (newValue != PaneToggleButtonVisibility.Back)
             {
-                TogglePaneButtonRoot.Visibility = Visibility.Collapsed;
+                TogglePaneButton.Visibility = Visibility.Collapsed;
             }
             else
             {
-                TogglePaneButtonRoot.Visibility = Visibility.Visible;
-                TogglePaneButton.IsChecked = newValue == PaneToggleButtonVisibility.Back;
-
-                Automation.SetToolTip(TogglePaneButton, newValue == PaneToggleButtonVisibility.Back ? Strings.Resources.AccDescrGoBack : Strings.Resources.AccDescrOpenMenu);
+                TogglePaneButton.Visibility = Visibility.Visible;
             }
-        }
-
-        #endregion
-
-        #region TopPadding
-
-        public Thickness TopPadding
-        {
-            get => (Thickness)GetValue(TopPaddingProperty);
-            set => SetValue(TopPaddingProperty, value);
-        }
-
-        public static readonly DependencyProperty TopPaddingProperty =
-            DependencyProperty.Register("TopPadding", typeof(Thickness), typeof(NavigationView), new PropertyMetadata(null));
-
-        public void SetTopPadding(Thickness thickness)
-        {
-            _previousTopPadding = thickness;
-            TopPadding = thickness;
         }
 
         #endregion

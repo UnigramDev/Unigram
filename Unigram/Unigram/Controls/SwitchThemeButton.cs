@@ -22,7 +22,7 @@ namespace Unigram.Controls
             _player.IsLoopingEnabled = false;
             _player.IsCachingEnabled = false;
             _player.IsBackward = ActualTheme == ElementTheme.Dark;
-            _player.FrameSize = new Size(24, 24);
+            _player.FrameSize = new Size(22, 22);
             _player.DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical;
             _player.ColorReplacements = new Dictionary<int, int>
             {

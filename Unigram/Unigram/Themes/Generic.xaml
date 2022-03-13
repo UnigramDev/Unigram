@@ -57,167 +57,56 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:NavigationView">
-                    <Grid>
-                        <Grid x:Name="TogglePaneButtonRoot"
-                              Margin="0,0,0,0"
-                              HorizontalAlignment="Left"
-                              VerticalAlignment="Top"
-                              Canvas.ZIndex="100">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <Grid x:Name="TogglePaneTopPadding"
-                                  Padding="{TemplateBinding Padding}" />
-                            <local:MenuButton x:Name="TogglePaneButton"
-                                              Grid.Row="1"
-                                              Foreground="{ThemeResource PageHeaderForegroundBrush}"
-                                              Width="40"
-                                              Height="40"
-                                              AutomationProperties.LandmarkType="Navigation"
-                                              AutomationProperties.Name="{CustomResource AccDescrOpenMenu}"
-                                              ToolTipService.ToolTip="{CustomResource AccDescrOpenMenu}"
-                                              Margin="{TemplateBinding TopPadding}"
-                                              Type="Back">
-                                <local:MenuButton.Style>
-                                    <Style TargetType="local:MenuButton">
-                                        <Setter Property="Background"
-                                                Value="Transparent" />
-                                        <Setter Property="Foreground"
-                                                Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
-                                        <Setter Property="BorderBrush"
-                                                Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
-                                        <Setter Property="BorderThickness"
-                                                Value="0" />
-                                        <Setter Property="Padding"
-                                                Value="0" />
-                                        <Setter Property="HorizontalAlignment"
-                                                Value="Left" />
-                                        <Setter Property="HorizontalContentAlignment"
-                                                Value="Center" />
-                                        <Setter Property="VerticalAlignment"
-                                                Value="Top" />
-                                        <Setter Property="VerticalContentAlignment"
-                                                Value="Center" />
-                                        <Setter Property="FontFamily"
-                                                Value="{StaticResource SymbolThemeFontFamily}" />
-                                        <Setter Property="Height"
-                                                Value="40" />
-                                        <Setter Property="Width"
-                                                Value="40" />
-                                        <Setter Property="FontWeight"
-                                                Value="Normal" />
-                                        <Setter Property="FontSize"
-                                                Value="20" />
-                                        <Setter Property="UseSystemFocusVisuals"
-                                                Value="True" />
-                                        <Setter Property="FocusVisualMargin"
-                                                Value="-3" />
-                                        <Setter Property="CornerRadius"
-                                                Value="{StaticResource GlyphButtonCornerRadius}" />
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate TargetType="local:MenuButton">
-                                                    <Grid x:Name="RootGrid"
-                                                          Background="{TemplateBinding Background}"
-                                                          CornerRadius="{TemplateBinding CornerRadius}"
-                                                          Margin="{StaticResource GlyphButtonPadding}">
-                                                        <VisualStateManager.VisualStateGroups>
-                                                            <VisualStateGroup x:Name="CommonStates">
-                                                                <VisualState x:Name="Normal" />
-                                                                <VisualState x:Name="PointerOver">
-                                                                    <Storyboard>
-                                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
-                                                                                                       Storyboard.TargetName="RootGrid">
-                                                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                                                    Value="{ThemeResource SystemControlBackgroundListLowBrush}" />
-                                                                        </ObjectAnimationUsingKeyFrames>
-                                                                    </Storyboard>
-                                                                </VisualState>
-                                                                <VisualState x:Name="Pressed">
-                                                                    <Storyboard>
-                                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
-                                                                                                       Storyboard.TargetName="RootGrid">
-                                                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                                                    Value="{ThemeResource SystemControlBackgroundListMediumBrush}" />
-                                                                        </ObjectAnimationUsingKeyFrames>
-                                                                    </Storyboard>
-                                                                </VisualState>
-                                                                <VisualState x:Name="Disabled" />
-                                                                <VisualState x:Name="Checked" />
-                                                                <VisualState x:Name="CheckedPointerOver">
-                                                                    <Storyboard>
-                                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
-                                                                                                       Storyboard.TargetName="RootGrid">
-                                                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                                                    Value="{ThemeResource SystemControlBackgroundListLowBrush}" />
-                                                                        </ObjectAnimationUsingKeyFrames>
-                                                                    </Storyboard>
-                                                                </VisualState>
-                                                                <VisualState x:Name="CheckedPressed">
-                                                                    <Storyboard>
-                                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
-                                                                                                       Storyboard.TargetName="RootGrid">
-                                                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                                                    Value="{ThemeResource SystemControlBackgroundListMediumBrush}" />
-                                                                        </ObjectAnimationUsingKeyFrames>
-                                                                    </Storyboard>
-                                                                </VisualState>
-                                                                <VisualState x:Name="CheckedDisabled" />
-                                                            </VisualStateGroup>
-                                                        </VisualStateManager.VisualStateGroups>
+                    <SplitView x:Name="RootSplitView"
+                               BorderBrush="{ThemeResource NavigationViewItemSeparatorForeground}"
+                               BorderThickness="0 0 1 0"
+                               CornerRadius="{Binding Source={ThemeResource OverlayCornerRadius}, Converter={StaticResource RightCornerRadiusFilterConverter}}"
+                               PaneBackground="{ThemeResource NavigationViewDefaultPaneBackground}"
+                               OpenPaneLength="240"
+                               IsTabStop="False"
+                               IsPaneOpen="{Binding Path=IsPaneOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+                        <SplitView.Pane>
+                            <Grid x:Name="PaneContentGrid">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition x:Name="PaneContentGridToggleButtonRow"
+                                                   Height="40" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <!--<RowDefinition Height="8" />-->
+                                </Grid.RowDefinitions>
+                                <Grid.Children>
+                                    <Grid x:Name="ContentPaneTopPadding"
+                                          Padding="{TemplateBinding Padding}" />
+                                    <Border x:Name="HeaderContentBorder"
+                                            Grid.Row="2"
+                                            Child="{TemplateBinding PaneHeader}" />
 
-                                                        <Border x:Name="LayoutRoot"
-                                                                Width="16"
-                                                                Height="16" />
-                                                    </Grid>
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Style>
-                                </local:MenuButton.Style>
-                            </local:MenuButton>
-                        </Grid>
-                        <SplitView x:Name="RootSplitView"
-                                   BorderBrush="{ThemeResource NavigationViewItemSeparatorForeground}"
-                                   BorderThickness="0 0 1 0"
-                                   CornerRadius="{Binding Source={ThemeResource OverlayCornerRadius}, Converter={StaticResource RightCornerRadiusFilterConverter}}"
-                                   PaneBackground="{ThemeResource NavigationViewDefaultPaneBackground}"
-                                   OpenPaneLength="240"
-                                   IsTabStop="False"
-                                   IsPaneOpen="{Binding Path=IsPaneOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
-                            <SplitView.Pane>
-                                <Grid x:Name="PaneContentGrid">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition x:Name="PaneContentGridToggleButtonRow"
-                                                       Height="40" />
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="*" />
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="Auto" />
-                                        <!--<RowDefinition Height="8" />-->
-                                    </Grid.RowDefinitions>
-                                    <Grid.Children>
-                                        <Grid x:Name="ContentPaneTopPadding"
-                                              Padding="{TemplateBinding Padding}" />
-                                        <Border x:Name="HeaderContentBorder"
-                                                Grid.Row="2"
-                                                Child="{TemplateBinding PaneHeader}" />
-
-                                        <Border x:Name="FooterContentBorder"
-                                                Grid.Row="3"
-                                                Child="{TemplateBinding PaneFooter}" />
-                                        <!--<local:NavigationViewItem x:Name="SettingsNavPaneItem" Glyph="&#xE713;" Grid.Row="5" />-->
-                                    </Grid.Children>
-                                </Grid>
-                            </SplitView.Pane>
+                                    <Border x:Name="FooterContentBorder"
+                                            Grid.Row="3"
+                                            Child="{TemplateBinding PaneFooter}" />
+                                    <!--<local:NavigationViewItem x:Name="SettingsNavPaneItem" Glyph="&#xE713;" Grid.Row="5" />-->
+                                </Grid.Children>
+                            </Grid>
+                        </SplitView.Pane>
+                        <Grid>
                             <ContentPresenter Content="{TemplateBinding Content}"
                                               AutomationProperties.LandmarkType="Main"
                                               HorizontalContentAlignment="Stretch"
                                               VerticalContentAlignment="Stretch" />
-                        </SplitView>
-                    </Grid>
+
+                            <local:GlyphButton x:Name="TogglePaneButton"
+                                               Grid.Row="1"
+                                               Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                                               Width="56"
+                                               Height="40"
+                                               AutomationProperties.Name="{CustomResource AccDescrGoBack}"
+                                               ToolTipService.ToolTip="{CustomResource AccDescrGoBack}"
+                                               Glyph="&#xE72B;" />
+                        </Grid>
+                    </SplitView>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -4375,8 +4264,8 @@
                                           HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                           AutomationProperties.AccessibilityView="Raw"
-                                          Width="24"
-                                          Height="24" />
+                                          Width="22"
+                                          Height="22" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
