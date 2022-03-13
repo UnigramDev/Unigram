@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 03/13/2022 10:40:30
+// 	Generated: 03/13/2022 11:05:31
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -15913,6 +15913,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("DoubleTapSetting");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Downloading"
+        /// </summary>
+        public static string Downloading
+        {
+            get
+            {
+                return resourceLoader.GetString("Downloading");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Downloads"
+        /// </summary>
+        public static string DownloadsTabs
+        {
+            get
+            {
+                return resourceLoader.GetString("DownloadsTabs");
             }
         }
         
@@ -36005,6 +36027,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Pause all"
+        /// </summary>
+        public static string PauseAll
+        {
+            get
+            {
+                return resourceLoader.GetString("PauseAll");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Billing address"
         /// </summary>
         public static string PaymentBillingAddress
@@ -41084,6 +41117,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Recently downloaded"
+        /// </summary>
+        public static string RecentlyDownloaded
+        {
+            get
+            {
+                return resourceLoader.GetString("RecentlyDownloaded");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to ""
         /// </summary>
         public static string Recipient_few
@@ -42717,6 +42761,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("RestrictSavingContentInfoGroup");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Resume all"
+        /// </summary>
+        public static string ResumeAll
+        {
+            get
+            {
+                return resourceLoader.GetString("ResumeAll");
             }
         }
         
