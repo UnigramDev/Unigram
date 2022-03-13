@@ -22,7 +22,8 @@
                                  Padding="12,0,12,8"
                                  common:FluidGridView.OrientationOnly="False">
             <common:FluidGridView.Triggers>
-                <common:LengthGridViewTrigger ItemLength="120" />
+                <common:LengthGridViewTrigger ItemLength="120"
+                                              MaxLength="1008" />
             </common:FluidGridView.Triggers>
             <GridView.ItemContainerStyle>
                 <Style TargetType="GridViewItem"
@@ -117,10 +118,7 @@
             <GridView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <ItemsWrapGrid Orientation="Horizontal"
-                                   VerticalAlignment="Top"
-                                   GroupPadding="0,0,0,8"
-                                   MaxWidth="640"
-                                   Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" />
+                                   Margin="8,0"/>
                 </ItemsPanelTemplate>
             </GridView.ItemsPanel>
         </controls:SelectGridView>

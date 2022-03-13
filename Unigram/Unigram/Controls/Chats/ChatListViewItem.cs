@@ -100,7 +100,7 @@ namespace Unigram.Controls.Chats
         {
             _interactionSource = VisualInteractionSource.Create(_hitTest);
 
-            //Configure for y-direction panning
+            //Configure for x-direction panning
             _interactionSource.ManipulationRedirectionMode = VisualInteractionSourceRedirectionMode.CapableTouchpadOnly;
             _interactionSource.PositionXSourceMode = InteractionSourceMode.EnabledWithInertia;
             _interactionSource.PositionXChainingMode = InteractionChainingMode.Never;
@@ -349,6 +349,26 @@ namespace Unigram.Controls.Chats
         }
 
         public AccessibleChatListViewItem(IProtoService protoService)
+        {
+            _protoService = protoService;
+        }
+
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new ChatListViewAutomationPeer(this, _protoService);
+        }
+    }
+
+    public class TableAccessibleChatListViewItem : TableListViewItem
+    {
+        private readonly IProtoService _protoService;
+
+        public TableAccessibleChatListViewItem()
+        {
+
+        }
+
+        public TableAccessibleChatListViewItem(IProtoService protoService)
         {
             _protoService = protoService;
         }

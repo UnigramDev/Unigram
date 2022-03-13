@@ -8,7 +8,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Unigram.Controls
 {
-    public class TableListView : ListView
+    public class TableListView : SelectListView
     {
         private INotifyCollectionChanged _itemsSource;
 

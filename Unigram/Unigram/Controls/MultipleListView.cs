@@ -37,11 +37,6 @@ namespace Unigram.Controls
                 test.UpdateState(selected, true);
             }
         }
-
-        protected override bool GoToElementStateCore(string stateName, bool useTransitions)
-        {
-            return base.GoToElementStateCore(stateName, useTransitions);
-        }
     }
 
     public interface IMultipleElement

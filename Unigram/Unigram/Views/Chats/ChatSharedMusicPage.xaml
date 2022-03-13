@@ -14,21 +14,12 @@
                                d:DesignWidth="400">
 
     <Grid>
-        <controls:SelectListView x:Name="ScrollingHost"
-                                 ItemsSource="{x:Bind ViewModel.Music, Mode=OneWay}"
-                                 SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
-                                 Loaded="List_Loaded"
-                                 ChoosingItemContainer="OnChoosingItemContainer"
-                                 ContainerContentChanging="OnContainerContentChanging">
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem"
-                       BasedOn="{StaticResource DefaultListViewItemStyle}">
-                    <Setter Property="MinHeight"
-                            Value="0" />
-                    <Setter Property="HorizontalContentAlignment"
-                            Value="Stretch" />
-                </Style>
-            </ListView.ItemContainerStyle>
+        <controls:TableListView x:Name="ScrollingHost"
+                                ItemsSource="{x:Bind ViewModel.Music, Mode=OneWay}"
+                                SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
+                                Loaded="List_Loaded"
+                                ChoosingItemContainer="OnChoosingItemContainer"
+                                ContainerContentChanging="OnContainerContentChanging">
             <ListView.Header>
                 <StackPanel>
                     <controls:ProfileHeader x:Name="ProfileHeader"
@@ -68,15 +59,21 @@
                         </messages:MessageService>
                     </Grid>
 
-                    <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                            MaxWidth="640"
-                            Margin="12,0">
-                        <TextBox x:Name="Search"
-                                 Text="{x:Bind ViewModel.Music.Query, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                 PlaceholderText="{CustomResource Search}"
-                                 Margin="12,8"
-                                 InputScope="Search" />
-                    </Border>
+                    <Grid Margin="24,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition MaxWidth="1000" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Border Background="{ThemeResource SettingsItemBackground}"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1,0">
+                            <TextBox x:Name="Search"
+                                     Text="{x:Bind ViewModel.Music.Query, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     PlaceholderText="{CustomResource Search}"
+                                     Margin="12,8"
+                                     InputScope="Search" />
+                        </Border>
+                    </Grid>
                 </StackPanel>
             </ListView.Header>
             <!--<ListView.Footer>
@@ -85,18 +82,9 @@
             </ListView.Footer>-->
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <cells:SharedAudioCell Padding="12,6"
-                                           Background="Transparent" />
+                    <cells:SharedAudioCell />
                 </DataTemplate>
             </ListView.ItemTemplate>
-            <ListView.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <ItemsStackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                     VerticalAlignment="Top"
-                                     Margin="12,0"
-                                     MaxWidth="640" />
-                </ItemsPanelTemplate>
-            </ListView.ItemsPanel>
-        </controls:SelectListView>
+        </controls:TableListView>
     </Grid>
 </local:ChatSharedMediaPageBase>

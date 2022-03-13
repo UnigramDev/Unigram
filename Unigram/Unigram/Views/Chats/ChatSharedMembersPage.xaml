@@ -50,16 +50,20 @@
                         </Grid>
                     </Grid>
 
-                    <Border Background="{ThemeResource SettingsItemBackground}"
-                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                            BorderThickness="1,0,1,0"
-                            MaxWidth="640"
-                            Margin="12,0">
-                        <TextBox x:Name="Search"
-                                 PlaceholderText="{CustomResource Search}"
-                                 Margin="12,8"
-                                 InputScope="Search" />
-                    </Border>
+                    <Grid Margin="24,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition MaxWidth="1000" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Border Background="{ThemeResource SettingsItemBackground}"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1,0">
+                            <TextBox x:Name="Search"
+                                     PlaceholderText="{CustomResource Search}"
+                                     Margin="12,8"
+                                     InputScope="Search" />
+                        </Border>
+                    </Grid>
                 </StackPanel>
             </ListView.Header>
             <ListView.ItemTemplate>
