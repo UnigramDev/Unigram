@@ -1810,6 +1810,9 @@ verwijderd, {0} nadat ze zijn verstuurd</value>
   <data name="AutomaticMediaDownload" xml:space="preserve">
     <value>Automatisch media downloaden</value>
   </data>
+  <data name="AutomaticTranslation" xml:space="preserve">
+    <value>Automatische vertaling</value>
+  </data>
   <data name="AutoNightAdaptive" xml:space="preserve">
     <value>Adaptief</value>
   </data>
@@ -1881,6 +1884,9 @@ Zonsopkomst: {1}</value>
   </data>
   <data name="Available" xml:space="preserve">
     <value>Beschikbaar</value>
+  </data>
+  <data name="AvailableReactions" xml:space="preserve">
+    <value>Beschikbare reacties</value>
   </data>
   <data name="AwaitingEncryption" xml:space="preserve">
     <value>Wachten tot {0} online komt</value>
@@ -3203,6 +3209,9 @@ De minimale lengte is 5 karakters.</value>
   <data name="CloseEditor" xml:space="preserve">
     <value>BEWERKER SLUITEN</value>
   </data>
+  <data name="CloseTranslation" xml:space="preserve">
+    <value>Vertaling sluiten</value>
+  </data>
   <data name="Code" xml:space="preserve">
     <value>Code</value>
   </data>
@@ -3991,6 +4000,9 @@ Je kunt hier altijd het standaardthema weer instellen.</value>
   <data name="DescriptionInfo" xml:space="preserve">
     <value>Optioneel kun je een kanaalbeschrijving geven.</value>
   </data>
+  <data name="DescriptionMore" xml:space="preserve">
+    <value>meer</value>
+  </data>
   <data name="DescriptionOptionalPlaceholder" xml:space="preserve">
     <value>Beschrijving (optioneel)</value>
   </data>
@@ -4020,6 +4032,9 @@ Je kunt hier altijd het standaardthema weer instellen.</value>
   </data>
   <data name="DidNotGetTheCode" xml:space="preserve">
     <value>Geen code ontvangen?</value>
+  </data>
+  <data name="DidNotGetTheCodeHelpButton" xml:space="preserve">
+    <value>Help</value>
   </data>
   <data name="DidNotGetTheCodeSms" xml:space="preserve">
     <value>Verstuur de code per SMS</value>
@@ -4156,6 +4171,12 @@ Alle abonnees van het kanaal kunnen de berichten in deze groep zien.</value>
   </data>
   <data name="Done" xml:space="preserve">
     <value>Gereed</value>
+  </data>
+  <data name="DoNotTranslate" xml:space="preserve">
+    <value>Niet vertalen</value>
+  </data>
+  <data name="DoubleTapPreviewSenderName" xml:space="preserve">
+    <value>Dino</value>
   </data>
   <data name="Draft" xml:space="preserve">
     <value>Concept</value>
@@ -7243,6 +7264,24 @@ De minimale lengte is 5 karakters.</value>
   <data name="messages_zero" xml:space="preserve">
     <value />
   </data>
+  <data name="MessagesBold_few" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MessagesBold_many" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MessagesBold_one" xml:space="preserve">
+    <value>**{0}** bericht</value>
+  </data>
+  <data name="MessagesBold_other" xml:space="preserve">
+    <value>**{0}** berichten</value>
+  </data>
+  <data name="MessagesBold_two" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MessagesBold_zero" xml:space="preserve">
+    <value />
+  </data>
   <data name="MessagesChartTitle" xml:space="preserve">
     <value>Leden</value>
   </data>
@@ -7296,6 +7335,9 @@ De minimale lengte is 5 karakters.</value>
   </data>
   <data name="MessagesDeletedHint_zero" xml:space="preserve">
     <value />
+  </data>
+  <data name="MessageSeenTooltipMessage" xml:space="preserve">
+    <value>Ter bescherming van de privacy worden weergaven slechts **7 dagen** bewaard.</value>
   </data>
   <data name="MessagesOverview" xml:space="preserve">
     <value>Berichten</value>
@@ -10227,11 +10269,17 @@ We gebruiken je locatie alleen voor de periode die jij instelt en je kunt het de
   <data name="PsaInfo_covid" xml:space="preserve">
     <value>Dit bericht geeft je een publieke dienstaankondiging betreft de huidige COVID-19-pandemie. Lees meer over dit initiatief op https://telegram.org/blog/coronavirus</value>
   </data>
+  <data name="PsaInfo_psa" xml:space="preserve">
+    <value>Dit is een officieel bericht van de CEO van Telegram over het lopende conflict.</value>
+  </data>
   <data name="PsaInfoDefault" xml:space="preserve">
     <value>PSA info test</value>
   </data>
   <data name="PsaMessage_covid" xml:space="preserve">
     <value>Melding betreft COVID-19</value>
+  </data>
+  <data name="PsaMessage_psa" xml:space="preserve">
+    <value>Aankondiging</value>
   </data>
   <data name="PsaMessageDefault" xml:space="preserve">
     <value>Belangrijke melding</value>
@@ -10239,11 +10287,17 @@ We gebruiken je locatie alleen voor de periode die jij instelt en je kunt het de
   <data name="PsaMessageInfo_covid" xml:space="preserve">
     <value>Dit bericht geeft je een publieke dienstaankondiging betreft de huidige COVID-19-pandemie. Lees meer over dit initiatief op https://telegram.org/blog/coronavirus</value>
   </data>
+  <data name="PsaMessageInfo_psa" xml:space="preserve">
+    <value>Dit is een officieel bericht van de CEO van Telegram over het lopende conflict.</value>
+  </data>
   <data name="PsaMessageInfoDefault" xml:space="preserve">
     <value>Dit is een belangrijke melding.</value>
   </data>
   <data name="PsaType_covid" xml:space="preserve">
     <value>COVID-19</value>
+  </data>
+  <data name="PsaType_psa" xml:space="preserve">
+    <value>Aankondiging</value>
   </data>
   <data name="PsaTypeDefault" xml:space="preserve">
     <value>PSA</value>
@@ -10364,6 +10418,30 @@ We gebruiken je locatie alleen voor de periode die jij instelt en je kunt het de
   </data>
   <data name="RateCallVideoPixelated" xml:space="preserve">
     <value>Video was korrelig</value>
+  </data>
+  <data name="Reactions" xml:space="preserve">
+    <value>Reacties</value>
+  </data>
+  <data name="ReactionsCount_few" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ReactionsCount_many" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ReactionsCount_one" xml:space="preserve">
+    <value>{0} reactie</value>
+  </data>
+  <data name="ReactionsCount_other" xml:space="preserve">
+    <value>{0} reacties</value>
+  </data>
+  <data name="ReactionsCount_two" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ReactionsCount_zero" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ReactionsOff" xml:space="preserve">
+    <value>Uit</value>
   </data>
   <data name="Recent" xml:space="preserve">
     <value>Recent</value>
@@ -10827,6 +10905,9 @@ Het kanaal "**{1}**" zal privé worden.</value>
   </data>
   <data name="SaveLink" xml:space="preserve">
     <value>Link opslaan</value>
+  </data>
+  <data name="SaveLinkHeader" xml:space="preserve">
+    <value>OPSLAAN</value>
   </data>
   <data name="SaveTheme" xml:space="preserve">
     <value>THEME OPSLAAN</value>
@@ -11602,6 +11683,12 @@ Neem niet op, Telegram verwerkt alles automatisch.</value>
   </data>
   <data name="ShowInChat" xml:space="preserve">
     <value>In chat weergeven</value>
+  </data>
+  <data name="ShowLess" xml:space="preserve">
+    <value>Minder weergeven</value>
+  </data>
+  <data name="ShowMore" xml:space="preserve">
+    <value>Meer weergeven</value>
   </data>
   <data name="ShowNearbyPlaces" xml:space="preserve">
     <value>Veeg omhoog voor plekken dichtbij</value>
@@ -12562,6 +12649,12 @@ Helaas is het wel zo dat als je niet akkoord gaat met het beperkte gebruik van j
   <data name="TotalDeviceSize" xml:space="preserve">
     <value>{0} Andere Apps</value>
   </data>
+  <data name="TranslateMessage" xml:space="preserve">
+    <value>Vertalen</value>
+  </data>
+  <data name="TranslateMessages" xml:space="preserve">
+    <value>Berichten vertalen</value>
+  </data>
   <data name="TurnPasswordOff" xml:space="preserve">
     <value>Wachtwoord uitschakelen</value>
   </data>
@@ -12815,7 +12908,7 @@ Helaas is het wel zo dat als je niet akkoord gaat met het beperkte gebruik van j
     <value>SOCKS5 Proxy</value>
   </data>
   <data name="UseProxySponsor" xml:space="preserve">
-    <value>Proxy-sponsor</value>
+    <value>Proxysponsor</value>
   </data>
   <data name="UseProxySponsorInfo" xml:space="preserve">
     <value>Dit kanaal is zichtbaar omdat je een proxy-server gebruikt, om dit kanaal te verwijderen uit je chatoverzicht kun je de proxy uitschakelen via de instellingen van Telegram.</value>
@@ -13845,6 +13938,9 @@ Deelnemers kunnen zien dat de chat opgenomen wordt.</value>
   <data name="VoipPeerVideoOutdatedMakeVoice" xml:space="preserve">
     <value>Voer een spraakoproep</value>
   </data>
+  <data name="VoipPhoneScreen" xml:space="preserve">
+    <value>TELEFOONSCHERM</value>
+  </data>
   <data name="VoipQuickReplies" xml:space="preserve">
     <value>Antwoord met bericht</value>
   </data>
@@ -13963,6 +14059,9 @@ je scherm</value>
   </data>
   <data name="Warmth" xml:space="preserve">
     <value>Warmte</value>
+  </data>
+  <data name="Warning" xml:space="preserve">
+    <value>Waarschuwing</value>
   </data>
   <data name="WebSessionsTitle" xml:space="preserve">
     <value>Ingelogd met Telegram</value>
@@ -18741,9 +18840,6 @@ Themalinks moeten meer dan 5 karakters lang zijn van naam en mogen a-z, 0-9 of u
   </data>
   <data name="lng_theme_sure_keep" xml:space="preserve">
     <value>Dit thema behouden?</value>
-  </data>
-  <data name="lng_tooltip_psa_default" xml:space="preserve">
-    <value>Dit bericht geeft je een publieke dienstaankondiging.</value>
   </data>
   <data name="lng_tray_icon_text" xml:space="preserve">
     <value>Telegram is nog steeds actief, 

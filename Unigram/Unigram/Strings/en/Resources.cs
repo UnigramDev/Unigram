@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 02/23/2022 13:08:38
+// 	Generated: 03/13/2022 10:40:30
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -934,6 +934,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AccDescrQuizExplanation");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Go to next unread reactions"
+        /// </summary>
+        public static string AccDescrReactionMentionDown
+        {
+            get
+            {
+                return resourceLoader.GetString("AccDescrReactionMentionDown");
             }
         }
         
@@ -7662,6 +7673,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Blue");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Blur in chat"
+        /// </summary>
+        public static string BlurInChat
+        {
+            get
+            {
+                return resourceLoader.GetString("BlurInChat");
             }
         }
         
@@ -15176,6 +15198,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "more"
+        /// </summary>
+        public static string DescriptionMore
+        {
+            get
+            {
+                return resourceLoader.GetString("DescriptionMore");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Description (optional)"
         /// </summary>
         public static string DescriptionOptionalPlaceholder
@@ -15880,28 +15913,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("DoubleTapSetting");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Downloading"
-        /// </summary>
-        public static string Downloading
-        {
-            get
-            {
-                return resourceLoader.GetString("Downloading");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Downloads"
-        /// </summary>
-        public static string DownloadsTabs
-        {
-            get
-            {
-                return resourceLoader.GetString("DownloadsTabs");
             }
         }
         
@@ -19091,7 +19102,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "File saved to downloads"
+        /// Localized resource similar to "File saved to Downloads"
         /// </summary>
         public static string FileSavedHint
         {
@@ -19135,7 +19146,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "File saved to downloads"
+        /// Localized resource similar to "File saved to Downloads"
         /// </summary>
         public static string FilesSavedHint_one
         {
@@ -19146,7 +19157,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} files saved to downloads"
+        /// Localized resource similar to "{0} files saved to Downloads"
         /// </summary>
         public static string FilesSavedHint_other
         {
@@ -21456,6 +21467,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Copying and forwarding is not allowed from this bot."
+        /// </summary>
+        public static string ForwardsRestrictedInfoBot
+        {
+            get
+            {
+                return resourceLoader.GetString("ForwardsRestrictedInfoBot");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "?opying and forwarding is not allowed in this channel."
         /// </summary>
         public static string ForwardsRestrictedInfoChannel
@@ -21863,7 +21885,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "GIF saved to downloads"
+        /// Localized resource similar to "GIF saved to Downloads"
         /// </summary>
         public static string GifSavedToDownloadsHint
         {
@@ -22740,7 +22762,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Hide senders\’ names"
+        /// Localized resource similar to "Hide senders’ names"
         /// </summary>
         public static string HideSenderNames
         {
@@ -22751,7 +22773,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Hide sender\’s name"
+        /// Localized resource similar to "Hide sender’s name"
         /// </summary>
         public static string HideSendersName
         {
@@ -30396,6 +30418,30 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "**Oops!** Telegram doesn't see any stream coming from your streaming app.
+        ///    
+        ///    Please make sure you entered the right Server URL and Stream Key in your app."
+        /// </summary>
+        public static string NoRtmpStreamFromAppOwner
+        {
+            get
+            {
+                return resourceLoader.GetString("NoRtmpStreamFromAppOwner");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} is currently not broadcasting live stream data to Telegram."
+        /// </summary>
+        public static string NoRtmpStreamFromAppViewer
+        {
+            get
+            {
+                return resourceLoader.GetString("NoRtmpStreamFromAppViewer");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "No scheduled messages here yet..."
         /// </summary>
         public static string NoScheduledMessages
@@ -35959,17 +36005,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Pause all"
-        /// </summary>
-        public static string PauseAll
-        {
-            get
-            {
-                return resourceLoader.GetString("PauseAll");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Billing address"
         /// </summary>
         public static string PaymentBillingAddress
@@ -37452,7 +37487,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Photo saved to downloads"
+        /// Localized resource similar to "Photo saved to Downloads"
         /// </summary>
         public static string PhotoSavedToDownloadsHint
         {
@@ -39542,6 +39577,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "This public link opens a chat with you:"
+        /// </summary>
+        public static string PrivacyPhoneInfo4
+        {
+            get
+            {
+                return resourceLoader.GetString("PrivacyPhoneInfo4");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Who can see my phone number?"
         /// </summary>
         public static string PrivacyPhoneTitle
@@ -39883,7 +39929,18 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "PSA info test"
+        /// Localized resource similar to "This is an official message from the CEO of Telegram regarding the ongoing conflict."
+        /// </summary>
+        public static string PsaInfo_psa
+        {
+            get
+            {
+                return resourceLoader.GetString("PsaInfo_psa");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This message provides you with a public service announcement."
         /// </summary>
         public static string PsaInfoDefault
         {
@@ -39901,6 +39958,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("PsaMessage_covid");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Announcement"
+        /// </summary>
+        public static string PsaMessage_psa
+        {
+            get
+            {
+                return resourceLoader.GetString("PsaMessage_psa");
             }
         }
         
@@ -39927,6 +39995,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "This is an official message from the CEO of Telegram regarding the ongoing conflict."
+        /// </summary>
+        public static string PsaMessageInfo_psa
+        {
+            get
+            {
+                return resourceLoader.GetString("PsaMessageInfo_psa");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "This is an important notification."
         /// </summary>
         public static string PsaMessageInfoDefault
@@ -39945,6 +40024,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("PsaType_covid");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Announcement"
+        /// </summary>
+        public static string PsaType_psa
+        {
+            get
+            {
+                return resourceLoader.GetString("PsaType_psa");
             }
         }
         
@@ -40994,17 +41084,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Recently downloaded"
-        /// </summary>
-        public static string RecentlyDownloaded
-        {
-            get
-            {
-                return resourceLoader.GetString("RecentlyDownloaded");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to ""
         /// </summary>
         public static string Recipient_few
@@ -41601,11 +41680,33 @@ namespace Unigram.Strings
         /// <summary>
         /// Localized resource similar to "Other"
         /// </summary>
+        public static string ReportChatIllegalDrugs
+        {
+            get
+            {
+                return resourceLoader.GetString("ReportChatIllegalDrugs");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Illegal Drugs"
+        /// </summary>
         public static string ReportChatOther
         {
             get
             {
                 return resourceLoader.GetString("ReportChatOther");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Personal Details"
+        /// </summary>
+        public static string ReportChatPersonalDetails
+        {
+            get
+            {
+                return resourceLoader.GetString("ReportChatPersonalDetails");
             }
         }
         
@@ -42620,17 +42721,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Resume all"
-        /// </summary>
-        public static string ResumeAll
-        {
-            get
-            {
-                return resourceLoader.GetString("ResumeAll");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Retry"
         /// </summary>
         public static string Retry
@@ -42899,7 +42989,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Save to downloads"
+        /// Localized resource similar to "Save to Downloads"
         /// </summary>
         public static string SaveToDownloads
         {
@@ -45906,6 +45996,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Show less"
+        /// </summary>
+        public static string ShowLess
+        {
+            get
+            {
+                return resourceLoader.GetString("ShowLess");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Show more"
+        /// </summary>
+        public static string ShowMore
+        {
+            get
+            {
+                return resourceLoader.GetString("ShowMore");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Pull up to see places nearby"
         /// </summary>
         public static string ShowNearbyPlaces
@@ -45939,7 +46051,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Show senders\’ names"
+        /// Localized resource similar to "Show senders’ names"
         /// </summary>
         public static string ShowSenderNames
         {
@@ -45950,7 +46062,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Show sender\’s name"
+        /// Localized resource similar to "Show sender’s name"
         /// </summary>
         public static string ShowSendersName
         {
@@ -51820,7 +51932,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Video saved to downloads"
+        /// Localized resource similar to "Video saved to Downloads"
         /// </summary>
         public static string VideoSavedToDownloadsHint
         {
@@ -75272,17 +75384,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("lng_theme_sure_keep");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "This message provides you with a public service announcement."
-        /// </summary>
-        public static string lng_tooltip_psa_default
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_tooltip_psa_default");
             }
         }
         

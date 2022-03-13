@@ -4,7 +4,7 @@ param (
 )
 
 $path = Resolve-Path $path
-$path_strings = "${path}\Strings"
+$path_strings = "${path}Strings\"
 
 $languages = Get-ChildItem $path_strings -Directory
 
@@ -12,8 +12,8 @@ $values = [System.Collections.ArrayList]@()
 
 if ($compare)
 {
-    [xml]$androidXml = Get-Content "${path}\Strings\en\Android.resw"
-    [xml]$desktopXml = Get-Content "${path}\Strings\en\Desktop.resw"
+    [xml]$androidXml = Get-Content "${path_strings}en\Android.resw"
+    [xml]$desktopXml = Get-Content "${path_strings}en\Desktop.resw"
 
     $temp = [System.Collections.ArrayList]@()
 
@@ -36,8 +36,8 @@ if ($compare)
 
 function Merge([string]$path)
 {
-    [xml]$androidXml = Get-Content "${path}\Android.resw"
-    [xml]$desktopXml = Get-Content "${path}\Desktop.resw"
+    [xml]$androidXml = Get-Content "${path}\Android.resw" -Encoding UTF8
+    [xml]$desktopXml = Get-Content "${path}\Desktop.resw" -Encoding UTF8
 
     $newNode = $androidXml.ImportNode($desktopXml.get_DocumentElement(), $true)
 
@@ -51,37 +51,42 @@ function Merge([string]$path)
         $a = $androidXml.DocumentElement.AppendChild($data)
     }
 
-    $androidXml.Save("${path}\Resources.resw")
+    $utf8WithoutBom = New-Object System.Text.UTF8Encoding($true)
+    $sw = New-Object System.IO.StreamWriter("${path}\Resources.resw", $false, $utf8WithoutBom)
+
+    $androidXml.Save($sw)
+    $sw.Close()
 }
 
 foreach ($language in $languages)
 {
+    $path_language = "${path_strings}${language}"
     $name = [System.IO.Path]::GetFileName($language)
-
-    if ((Test-Path "${language}\Android.resw") -And (Test-Path "${language}\Desktop.resw"))
+        
+    if ((Test-Path "${path_language}\Android.resw") -And (Test-Path "${path_language}\Desktop.resw"))
     {
-        $android = Get-ChildItem "${language}\Android.resw"
-        $desktop = Get-ChildItem "${language}\Desktop.resw"
+        $android = Get-ChildItem "${path_language}\Android.resw"
+        $desktop = Get-ChildItem "${path_language}\Desktop.resw"
 
-        if (Test-Path "${language}\Resources.resw")
+        if (Test-Path "${path_language}\Resources.resw")
         {
-            $resources = Get-ChildItem "${language}\Resources.resw"
+            $resources = Get-ChildItem "${path_language}\Resources.resw"
 
-            if ($android.LastWrittenTime -gt $resources.LastAccessTime -Or $desktop.LastWriteTime -gt $resources.LastWriteTime)
+            if ($android.LastWriteTime -gt $resources.LastWriteTime -Or $desktop.LastWriteTime -gt $resources.LastWriteTime)
             {
-                Merge -path $language
+                Merge -path $path_language
                 Write-Host "Updated ${name}"
             }
         }
         else
         {
-            Merge -path $language
+            Merge -path $path_language
             Write-Host "Updated ${name}"
         }
     }
     else
     {
-        Copy-Item "${language}\Android.resw" -Destination "${language}\Resources.resw" -Force
+        Copy-Item "${path_language}\Android.resw" -Destination "${path_language}\Resources.resw" -Force
         Write-Host "Updated ${name}"
     }
 }

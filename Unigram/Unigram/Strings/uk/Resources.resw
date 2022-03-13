@@ -304,6 +304,9 @@
   <data name="AccDescrQuizExplanation" xml:space="preserve">
     <value>Пояснення</value>
   </data>
+  <data name="AccDescrReactionMentionDown" xml:space="preserve">
+    <value>Перейти до наступних непрочитаних реакцій</value>
+  </data>
   <data name="AccDescrReceivedDate" xml:space="preserve">
     <value>Отримано {0}</value>
   </data>
@@ -1059,6 +1062,12 @@
   <data name="Allow" xml:space="preserve">
     <value>Дозволити</value>
   </data>
+  <data name="AllowBackgroundActivity" xml:space="preserve">
+    <value>Дозволити активність у фоні</value>
+  </data>
+  <data name="AllowBackgroundActivityInfo" xml:space="preserve">
+    <value>Це покращить надійність отримання сповіщень та викликів Telegram.</value>
+  </data>
   <data name="AllowCustomQuickReply" xml:space="preserve">
     <value>Вказати свій текст</value>
   </data>
@@ -1225,7 +1234,7 @@
     <value>Схвалити нових учасників</value>
   </data>
   <data name="ApproveNewMembersDescription" xml:space="preserve">
-    <value>Приєднання до каналу нових користувачів має бути схвалено адміністраторами.</value>
+    <value>Приєднання до каналу нових користувачів має схвалювати адміністратор.</value>
   </data>
   <data name="AppUpdate" xml:space="preserve">
     <value>Оновити Telegram</value>
@@ -1547,10 +1556,10 @@
     <value>Адміністратори групи заборонили вам надсилати GIF.</value>
   </data>
   <data name="AttachInlineRestricted" xml:space="preserve">
-    <value>Адміністратори цієї групи заборонили вам надсилати сюди інлайн-вміст до {0}</value>
+    <value>Адміністратори цієї групи заборонили вам користуватися вбудованими ботами до {0}</value>
   </data>
   <data name="AttachInlineRestrictedForever" xml:space="preserve">
-    <value>Адміністратори цієї групи заборонили вам надсилати сюди інлайн-вміст.</value>
+    <value>Адміністратори цієї групи заборонили вам користуватися вбудованими ботами.</value>
   </data>
   <data name="AttachLiveLocation" xml:space="preserve">
     <value>Маячок</value>
@@ -1565,13 +1574,28 @@
     <value>{0} у {1}</value>
   </data>
   <data name="AttachLocation" xml:space="preserve">
-    <value>Місце</value>
+    <value>Розташування</value>
+  </data>
+  <data name="AttachMediaDragHint" xml:space="preserve">
+    <value>Змінюйте порядок перетягуванням</value>
+  </data>
+  <data name="AttachMediaPhotoDeselected" xml:space="preserve">
+    <value>З фото знято вибір.</value>
+  </data>
+  <data name="AttachMediaPreview" xml:space="preserve">
+    <value>Попередній перегляд</value>
+  </data>
+  <data name="AttachMediaPreviewButton" xml:space="preserve">
+    <value>Попередній перегляд</value>
   </data>
   <data name="AttachMediaRestricted" xml:space="preserve">
     <value>Адміністратори цієї групи заборонили вам надсилати сюди медіа до {0}</value>
   </data>
   <data name="AttachMediaRestrictedForever" xml:space="preserve">
     <value>Адміністратори групи заборонили вам надсилати сюди медіа.</value>
+  </data>
+  <data name="AttachMediaVideoDeselected" xml:space="preserve">
+    <value>З відео знято вибір.</value>
   </data>
   <data name="AttachMenu" xml:space="preserve">
     <value>Прикріпити...</value>
@@ -2149,6 +2173,9 @@
   <data name="Blue" xml:space="preserve">
     <value>Синій</value>
   </data>
+  <data name="BlurInChat" xml:space="preserve">
+    <value>Розмиття в чатах</value>
+  </data>
   <data name="BlurLinear" xml:space="preserve">
     <value>Лінійне</value>
   </data>
@@ -2302,6 +2329,9 @@
   <data name="CallAlertTitle" xml:space="preserve">
     <value>Голосовий виклик</value>
   </data>
+  <data name="CallAvailableIn" xml:space="preserve">
+    <value>Ви зможете зробити запит на виклик за {0}:%2$02d</value>
+  </data>
   <data name="CallBack" xml:space="preserve">
     <value>Перетелефонувати</value>
   </data>
@@ -2432,6 +2462,9 @@
   <data name="CancelLinkSuccess" xml:space="preserve">
     <value>Процес видалення вашого акаунта {0} було скасовано. Зараз ви можете закрити це вікно.</value>
   </data>
+  <data name="CancelLinkSuccessTitle" xml:space="preserve">
+    <value>Успіх</value>
+  </data>
   <data name="CancelPasswordQuestion" xml:space="preserve">
     <value>Ви дійсно хочете скасувати встановлення двоетапної перевірки?</value>
   </data>
@@ -2511,6 +2544,9 @@
     <value>Після встановлення коду блокування на сторінці чатів зʼявиться значок замка для блокування й розблокування застосунку.
 
 Примітка: якщо ви забудете код блокування, перевстановіть застосунок. При цьому всі секретні чати буде втрачено.</value>
+  </data>
+  <data name="ChangePasscodeInfoShort" xml:space="preserve">
+    <value>Якщо ви встановите код блокування, ви зможете блокувати та розблоковувати застосунок іконкою замка, що з'явиться в списку чатів.</value>
   </data>
   <data name="ChangePassword" xml:space="preserve">
     <value>Змінити пароль</value>
@@ -3013,7 +3049,7 @@
     <value>Дія при змахуванні в списку</value>
   </data>
   <data name="ChatLocation" xml:space="preserve">
-    <value>Розташування</value>
+    <value>Розташув-ня</value>
   </data>
   <data name="ChatNoTheme" xml:space="preserve">
     <value>Без теми</value>
@@ -3318,6 +3354,9 @@
   <data name="ChromeCustomTabsInfo" xml:space="preserve">
     <value>Відкривати посилання в застосунку</value>
   </data>
+  <data name="Clear" xml:space="preserve">
+    <value>Очистити</value>
+  </data>
   <data name="ClearButton" xml:space="preserve">
     <value>Очистити</value>
   </data>
@@ -3329,6 +3368,9 @@
   </data>
   <data name="ClearCacheInfo" xml:space="preserve">
     <value>Звільніть місце у пристрої; медіа залишаться у хмарі.</value>
+  </data>
+  <data name="ClearDownloadsList" xml:space="preserve">
+    <value>Очистити список завантажень</value>
   </data>
   <data name="ClearFewChatsTitle" xml:space="preserve">
     <value>Очистити {0}</value>
@@ -3548,6 +3590,12 @@
 
 Щойно {1} оновить Telegram, фото з таймером на 1 хвилину і менше відображатимуться в режимі "Утримуйте для перегляду" і вас буде сповіщено, коли інша сторона робитиме знімок екрана.</value>
   </data>
+  <data name="ConfirmCorrectNumber" xml:space="preserve">
+    <value>Це ваш номер телефону?</value>
+  </data>
+  <data name="ConfirmCreatePasscode" xml:space="preserve">
+    <value>Повторіть код блокування</value>
+  </data>
   <data name="ConfirmDeleteCallLog" xml:space="preserve">
     <value>Видалити цей запис з журналу викликів?</value>
   </data>
@@ -3574,6 +3622,9 @@
   </data>
   <data name="ConnectingToProxyTapToDisable" xml:space="preserve">
     <value>Натисніть тут, щоб вимкнути проксі...</value>
+  </data>
+  <data name="ConnectingYourContacts" xml:space="preserve">
+    <value>Підключення ваших контактів...</value>
   </data>
   <data name="ContactBirthday" xml:space="preserve">
     <value>День народження</value>
@@ -3696,6 +3747,9 @@
   <data name="CountReceived" xml:space="preserve">
     <value>Одержано</value>
   </data>
+  <data name="Country" xml:space="preserve">
+    <value>Країна</value>
+  </data>
   <data name="CountSent" xml:space="preserve">
     <value>Надіслано</value>
   </data>
@@ -3748,6 +3802,18 @@
   </data>
   <data name="CreateNewThemeMenu" xml:space="preserve">
     <value>Створити нову тему</value>
+  </data>
+  <data name="CreatePasscode" xml:space="preserve">
+    <value>Створити код блокування</value>
+  </data>
+  <data name="CreatePasscodeInfoPassword" xml:space="preserve">
+    <value>Придумайте пароль, яким ви хочете розблоковувати Telegram.</value>
+  </data>
+  <data name="CreatePasscodeInfoPIN" xml:space="preserve">
+    <value>Придумайте 4 цифри, якими ви хочете розблоковувати Telegram.</value>
+  </data>
+  <data name="CreatePassword" xml:space="preserve">
+    <value>Створити пароль</value>
   </data>
   <data name="CreateTheme" xml:space="preserve">
     <value>СТВОРИТИ ТЕМУ</value>
@@ -3911,6 +3977,9 @@
   <data name="DebugMenuDisableCamera" xml:space="preserve">
     <value>Вимкнути вбудовану камеру</value>
   </data>
+  <data name="DebugMenuDisableForceRtmpStreamFlag" xml:space="preserve">
+    <value>Вимкнути примусовий RTMP Stream Flag</value>
+  </data>
   <data name="DebugMenuDisableLogs" xml:space="preserve">
     <value>Вимкнути логи</value>
   </data>
@@ -3922,6 +3991,9 @@
   </data>
   <data name="DebugMenuEnableCamera" xml:space="preserve">
     <value>Увімкнути вбудовану камеру</value>
+  </data>
+  <data name="DebugMenuEnableForceRtmpStreamFlag" xml:space="preserve">
+    <value>Увімкнути примусовий RTMP Stream Flag</value>
   </data>
   <data name="DebugMenuEnableLogs" xml:space="preserve">
     <value>Увімкнути логи</value>
@@ -4217,6 +4289,9 @@
   <data name="DescriptionInfo" xml:space="preserve">
     <value>Додайте опис для каналу за бажанням.</value>
   </data>
+  <data name="DescriptionMore" xml:space="preserve">
+    <value>ще</value>
+  </data>
   <data name="DescriptionOptionalPlaceholder" xml:space="preserve">
     <value>Опис (необовʼязково)</value>
   </data>
@@ -4247,6 +4322,19 @@
   <data name="DidNotGetTheCode" xml:space="preserve">
     <value>Не одержали коду?</value>
   </data>
+  <data name="DidNotGetTheCodeEditNumberButton" xml:space="preserve">
+    <value>Змінити номер</value>
+  </data>
+  <data name="DidNotGetTheCodeHelpButton" xml:space="preserve">
+    <value>Допомога</value>
+  </data>
+  <data name="DidNotGetTheCodeInfo" xml:space="preserve">
+    <value>Якщо ви не одержали коду в SMS або виклику, перевірте **налаштування мобільних даних** та номер телефону:
+
+**{0}**
+
+Якщо це не допоможе, вам залишиться спробувати інший номер телефону або зв'язатися з підтримкою Telegram. Натисніть **Допомога**, щоб надіслати нам технічну інформацію і ми могли з'ясувати проблему.</value>
+  </data>
   <data name="DidNotGetTheCodePhone" xml:space="preserve">
     <value>Отримати код на цей телефон</value>
   </data>
@@ -4263,6 +4351,15 @@
     <value>Показувати недавні чати при поширенні з програм</value>
   </data>
   <data name="Disable" xml:space="preserve">
+    <value>Вимкнути</value>
+  </data>
+  <data name="DisablePasscode" xml:space="preserve">
+    <value>Вимкнути код блокування</value>
+  </data>
+  <data name="DisablePasscodeConfirmMessage" xml:space="preserve">
+    <value>Ви дійсно хочете вимкнути код блокування?</value>
+  </data>
+  <data name="DisablePasscodeTurnOff" xml:space="preserve">
     <value>Вимкнути</value>
   </data>
   <data name="DisappearingGif" xml:space="preserve">
@@ -4412,6 +4509,18 @@
   </data>
   <data name="DoubleTapSetting" xml:space="preserve">
     <value>Швидка реакція</value>
+  </data>
+  <data name="DownloadedFiles" xml:space="preserve">
+    <value>Завантажені файли</value>
+  </data>
+  <data name="DownloadedFilesMessage" xml:space="preserve">
+    <value>Одержані й надіслані документи можна зберігати в хмарному сховищі Telegram замість пам‘яті пристрою.</value>
+  </data>
+  <data name="Downloading" xml:space="preserve">
+    <value>Поточні завантаження</value>
+  </data>
+  <data name="DownloadsTabs" xml:space="preserve">
+    <value>Завантаження</value>
   </data>
   <data name="Draft" xml:space="preserve">
     <value>Чернетка</value>
@@ -4572,6 +4681,16 @@
   <data name="EditName" xml:space="preserve">
     <value>Редагувати імʼя</value>
   </data>
+  <data name="EditNumber" xml:space="preserve">
+    <value>Змінити номер</value>
+  </data>
+  <data name="EditNumberInfo" xml:space="preserve">
+    <value>Змінити номер телефону?
+
+**{0}**
+
+Якщо ви ввели правильний номер, дочекайтеся коду підтвердження.</value>
+  </data>
   <data name="EditPhoto" xml:space="preserve">
     <value>Відкрити в редакторі</value>
   </data>
@@ -4681,6 +4800,9 @@
     <value>Увімкнено двоетапну перевірку.
 Для входу в акаунт Telegram вам знадобиться встановлений тут пароль.</value>
   </data>
+  <data name="EnablePasscode" xml:space="preserve">
+    <value>Увімкнути код блокування</value>
+  </data>
   <data name="EnableProxyAlert" xml:space="preserve">
     <value>Ви дійсно хочете увімкнути цей проксі?</value>
   </data>
@@ -4775,6 +4897,9 @@
   <data name="EnterNewPasscode" xml:space="preserve">
     <value>Введіть новий код блокування</value>
   </data>
+  <data name="EnterPassword" xml:space="preserve">
+    <value>Введіть пароль</value>
+  </data>
   <data name="EnterThemeName" xml:space="preserve">
     <value>Введіть назву теми</value>
   </data>
@@ -4785,6 +4910,9 @@
   </data>
   <data name="EnterYourPasscode" xml:space="preserve">
     <value>Введіть код блокування</value>
+  </data>
+  <data name="EnterYourPasscodeInfo" xml:space="preserve">
+    <value>Для керування цією опцією необхідно ввести код блокування.</value>
   </data>
   <data name="EnterYourTelegramPasscode" xml:space="preserve">
     <value>Введіть код блокування Telegram</value>
@@ -5249,22 +5377,22 @@
     <value />
   </data>
   <data name="FileSavedHint" xml:space="preserve">
-    <value>Файл збережено в завантаженнях</value>
+    <value>Файл збережено в Завантаженнях</value>
   </data>
   <data name="FilesDataUsage" xml:space="preserve">
     <value>Файли</value>
   </data>
   <data name="FilesSavedHint_few" xml:space="preserve">
-    <value>{0} файли збережено в завантаженнях</value>
+    <value>{0} файли збережено в Завантаженнях</value>
   </data>
   <data name="FilesSavedHint_many" xml:space="preserve">
-    <value>{0} файлів збережено в завантаженнях</value>
+    <value>{0} файлів збережено в Завантаженнях</value>
   </data>
   <data name="FilesSavedHint_one" xml:space="preserve">
-    <value>Файл збережено в завантаженнях</value>
+    <value>Файл збережено в Завантаженнях</value>
   </data>
   <data name="FilesSavedHint_other" xml:space="preserve">
-    <value>{0} файл збережено в завантаженнях</value>
+    <value>{0} файл збережено в Завантаженнях</value>
   </data>
   <data name="FilesSavedHint_two" xml:space="preserve">
     <value />
@@ -5533,6 +5661,9 @@
   <data name="FirstName" xml:space="preserve">
     <value>Імʼя (обовʼязково)</value>
   </data>
+  <data name="FirstNameSmall" xml:space="preserve">
+    <value>Ім'я</value>
+  </data>
   <data name="FloodWait" xml:space="preserve">
     <value>Забагато спроб, спробуйте пізніше.</value>
   </data>
@@ -5590,11 +5721,37 @@
   <data name="ForceSetPasswordAlertMessage_zero" xml:space="preserve">
     <value />
   </data>
+  <data name="ForceSetPasswordAlertMessageShort_few" xml:space="preserve">
+    <value>Якщо ви не встановите пароль, ви зможете входити за допомогою SMS-повідомлення лише раз на {0} дні. Продовжити без пароля?</value>
+  </data>
+  <data name="ForceSetPasswordAlertMessageShort_many" xml:space="preserve">
+    <value>Якщо ви не встановите пароль, ви зможете входити за допомогою SMS-повідомлення лише раз на {0} днів. Продовжити без пароля?</value>
+  </data>
+  <data name="ForceSetPasswordAlertMessageShort_one" xml:space="preserve">
+    <value>Якщо ви не встановите пароль, ви зможете входити за допомогою SMS-повідомлення лише раз на {0} день. Продовжити без пароля?</value>
+  </data>
+  <data name="ForceSetPasswordAlertMessageShort_other" xml:space="preserve">
+    <value>Якщо ви не встановите пароль, ви зможете входити за допомогою SMS-повідомлення лише раз на {0} днів. Продовжити без пароля?</value>
+  </data>
+  <data name="ForceSetPasswordAlertMessageShort_two" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ForceSetPasswordAlertMessageShort_zero" xml:space="preserve">
+    <value />
+  </data>
   <data name="ForceSetPasswordCancel" xml:space="preserve">
     <value>Так, я впевнений(-на)</value>
   </data>
   <data name="ForceSetPasswordContinue" xml:space="preserve">
     <value>Ні, встановити пароль</value>
+  </data>
+  <data name="ForgotPasscode" xml:space="preserve">
+    <value>Забули код блокування?</value>
+  </data>
+  <data name="ForgotPasscodeInfo" xml:space="preserve">
+    <value>Якщо ви забудете код блокування, вам доведеться видалити та перевстановити застосунок.
+
+При цьому всі секретні чати буде втрачено.</value>
   </data>
   <data name="ForgotPassword" xml:space="preserve">
     <value>Забули пароль?</value>
@@ -5741,13 +5898,13 @@
     <value>Переслане повідомлення</value>
   </data>
   <data name="ForwardedMessageCount_few" xml:space="preserve">
-    <value>{0} пересланих повідомлень</value>
+    <value>{0} пересланих повідомлення</value>
   </data>
   <data name="ForwardedMessageCount_many" xml:space="preserve">
     <value>{0} пересланих повідомлень</value>
   </data>
   <data name="ForwardedMessageCount_one" xml:space="preserve">
-    <value>{0} переслане повідомлення</value>
+    <value>Переслане повідомлення</value>
   </data>
   <data name="ForwardedMessageCount_other" xml:space="preserve">
     <value>{0} пересланих повідомлень</value>
@@ -5813,7 +5970,7 @@
     <value />
   </data>
   <data name="ForwardedRound_few" xml:space="preserve">
-    <value>{0} пересланих відеоповідомлень</value>
+    <value>{0} пересланих відеоповідомлення</value>
   </data>
   <data name="ForwardedRound_many" xml:space="preserve">
     <value>{0} пересланих відеоповідомлень</value>
@@ -5822,7 +5979,7 @@
     <value>Переслане відеоповідомлення</value>
   </data>
   <data name="ForwardedRound_other" xml:space="preserve">
-    <value>{0} пересланих відеоповідомлення</value>
+    <value>{0} пересланих відеоповідомлень</value>
   </data>
   <data name="ForwardedRound_two" xml:space="preserve">
     <value />
@@ -5892,6 +6049,9 @@
   </data>
   <data name="ForwardSendMessages" xml:space="preserve">
     <value>Надіслати повідомлення</value>
+  </data>
+  <data name="ForwardsRestrictedInfoBot" xml:space="preserve">
+    <value>Цей бот не дозволяє копіювання та пересилання.</value>
   </data>
   <data name="ForwardsRestrictedInfoChannel" xml:space="preserve">
     <value>Копіювання та пересилання не дозволено в цьому каналі.</value>
@@ -6004,8 +6164,11 @@
   <data name="GIFs_zero" xml:space="preserve">
     <value />
   </data>
+  <data name="GifSavedHint" xml:space="preserve">
+    <value>Додано до ваших GIF</value>
+  </data>
   <data name="GifSavedToDownloadsHint" xml:space="preserve">
-    <value>GIF збережено в завантаженнях</value>
+    <value>GIF збережено в Завантаженнях</value>
   </data>
   <data name="GifsTab" xml:space="preserve">
     <value>GIF</value>
@@ -6060,7 +6223,7 @@
     <value>У цій групі не дозволені GIF.</value>
   </data>
   <data name="GlobalAttachInlineRestricted" xml:space="preserve">
-    <value>У цій групі не дозволені інлайн-боти.</value>
+    <value>У цій групі не дозволені вбудовані боти.</value>
   </data>
   <data name="GlobalAttachMediaRestricted" xml:space="preserve">
     <value>У цій групі не дозволено надсилати медіа.</value>
@@ -6942,6 +7105,9 @@
   <data name="LastName" xml:space="preserve">
     <value>Прізвище (за бажанням)</value>
   </data>
+  <data name="LastNameSmall" xml:space="preserve">
+    <value>Прізвище</value>
+  </data>
   <data name="LastSeen" xml:space="preserve">
     <value>відвідини —</value>
   </data>
@@ -7103,7 +7269,7 @@
     <value>Назва посилання (необовʼязково)</value>
   </data>
   <data name="LinkNotFound" xml:space="preserve">
-    <value>Ви не маєте доступу до цього повідомлення, позаяк ви не є учасником чату, де воно було опубліковане.</value>
+    <value>Ви не є учасником чату, де опубліковане це повідомлення.</value>
   </data>
   <data name="LinkPreview" xml:space="preserve">
     <value>Попередній перегляд посилання</value>
@@ -7233,6 +7399,9 @@
   <data name="LocationUpdatedJustNow" xml:space="preserve">
     <value>оновлено щойно</value>
   </data>
+  <data name="LoginAccessibilityCountryCode" xml:space="preserve">
+    <value>Код країни</value>
+  </data>
   <data name="LoginAttempts" xml:space="preserve">
     <value>Незавершені спроби входу</value>
   </data>
@@ -7244,6 +7413,9 @@
   </data>
   <data name="LoginPasswordText" xml:space="preserve">
     <value>Ви вмикали двоетапну перевірку. Ваш акаунт захищений додатковим паролем.</value>
+  </data>
+  <data name="LoginPasswordTextShort" xml:space="preserve">
+    <value>У вас увімкнено двоетапну перевірку. Ваш акаунт захищений додатковим паролем.</value>
   </data>
   <data name="LogOut" xml:space="preserve">
     <value>Вийти</value>
@@ -7312,6 +7484,9 @@
   </data>
   <data name="ManageChannelMenu" xml:space="preserve">
     <value>Керування каналом</value>
+  </data>
+  <data name="ManageDeviceStorage" xml:space="preserve">
+    <value>Керування пам‘яттю</value>
   </data>
   <data name="ManageGroup" xml:space="preserve">
     <value>Керування групою</value>
@@ -8288,8 +8463,8 @@
     <value>Немає запитів на приєднання</value>
   </data>
   <data name="NoMemberRequestsDescription" xml:space="preserve">
-    <value>У групі немає поточних запитів
-на приєднання.</value>
+    <value>Немає поточних запитів на
+приєднання до групи.</value>
   </data>
   <data name="NoMessages" xml:space="preserve">
     <value>Повідомлень ще немає...</value>
@@ -8357,6 +8532,14 @@
   </data>
   <data name="NoResult" xml:space="preserve">
     <value>Немає результатів</value>
+  </data>
+  <data name="NoRtmpStreamFromAppOwner" xml:space="preserve">
+    <value>Telegram не «бачить» потоку трансляції.
+
+Переконайтеся, що в програмі вказано правильні URL сервера та ключ трансляції.</value>
+  </data>
+  <data name="NoRtmpStreamFromAppViewer" xml:space="preserve">
+    <value>У трансляції в {0} наразі відсутній потік.</value>
   </data>
   <data name="NoScheduledMessages" xml:space="preserve">
     <value>Запланованих повідомлень поки немає…</value>
@@ -9284,11 +9467,29 @@
   <data name="PasscodeDoNotMatch" xml:space="preserve">
     <value>Коди блокування не збігаються</value>
   </data>
+  <data name="PasscodeFinish" xml:space="preserve">
+    <value>Встановити код блокування</value>
+  </data>
   <data name="PasscodePassword" xml:space="preserve">
     <value>Пароль</value>
   </data>
   <data name="PasscodePIN" xml:space="preserve">
     <value>PIN-код</value>
+  </data>
+  <data name="PasscodeReinstallNotice" xml:space="preserve">
+    <value>Якщо ви забудете код блокування, необхідно буде **перевстановити** застосунок. При цьому всі секретні чати буде втрачено.</value>
+  </data>
+  <data name="PasscodeScreenHint" xml:space="preserve">
+    <value>У списку чатів є іконка замка, що блокує застосунок.</value>
+  </data>
+  <data name="PasscodesDoNotMatchTryAgain" xml:space="preserve">
+    <value>Коди не збігаються. Спробуйте ще раз.</value>
+  </data>
+  <data name="PasscodeSwitchToPassword" xml:space="preserve">
+    <value>Змінити на пароль</value>
+  </data>
+  <data name="PasscodeSwitchToPIN" xml:space="preserve">
+    <value>Змінити на PIN-код</value>
   </data>
   <data name="PassportAddAddressUploadInfo" xml:space="preserve">
     <value>Щоб підтвердити адресу, завантажте скан чи фото вибраного документа (всі сторінки).</value>
@@ -9772,7 +9973,7 @@
     <value>Адреса проживання</value>
   </data>
   <data name="PassportReverseSide" xml:space="preserve">
-    <value>Зворотній бік</value>
+    <value>Зворотний бік</value>
   </data>
   <data name="PassportReverseSideInfo" xml:space="preserve">
     <value>Завантажте фото зворотнього боку документа</value>
@@ -9873,6 +10074,9 @@
   <data name="PasswordHint" xml:space="preserve">
     <value>Підказка пароля</value>
   </data>
+  <data name="PasswordHintDescription" xml:space="preserve">
+    <value>За бажанням ви можете додати підказку до пароля.</value>
+  </data>
   <data name="PasswordHintPlaceholder" xml:space="preserve">
     <value>Підказка</value>
   </data>
@@ -9896,6 +10100,9 @@
   </data>
   <data name="PasteFromClipboard" xml:space="preserve">
     <value>Вставити з буфера обміну</value>
+  </data>
+  <data name="PauseAll" xml:space="preserve">
+    <value>Призупинити всі</value>
   </data>
   <data name="PaymentBillingAddress" xml:space="preserve">
     <value>Платіжна адреса</value>
@@ -10217,20 +10424,50 @@
   <data name="PermissionNoAudioVideo" xml:space="preserve">
     <value>Для знімання відео Telegram потрібен доступ до мікрофона.</value>
   </data>
+  <data name="PermissionNoAudioVideoWithHint" xml:space="preserve">
+    <value>**Telegram** потрібен доступ до мікрофона, щоб ви могли надсилати.голосові повідомлення. Відкрийте Налаштування &gt; Дозволи та увімкніть **Мікрофон**.</value>
+  </data>
+  <data name="PermissionNoAudioWithHint" xml:space="preserve">
+    <value>**Telegram** потрібен доступ до мікрофона, щоб ви могли надсилати.голосові повідомлення. Відкрийте Налаштування &gt; Дозволи та увімкніть **Мікрофон**.</value>
+  </data>
   <data name="PermissionNoCamera" xml:space="preserve">
     <value>Для знімання фото й відео Telegram потрібен доступ до камери. Надайте його в Налаштуваннях.</value>
+  </data>
+  <data name="PermissionNoCameraMicVideo" xml:space="preserve">
+    <value>**Telegram** потрібен доступ до камери та мікрофона, щоб ви могли надсилати.відеоповідомлення. Відкрийте Налаштування &gt; Дозволи та увімкніть **Мікрофон** і **Камера**.</value>
+  </data>
+  <data name="PermissionNoCameraWithHint" xml:space="preserve">
+    <value>**Telegram** потрібен доступ до камери, щоб ви могли знімати фото та відео. Відкрийте Налаштування &gt; Дозволи та увімкніть **Камера**.</value>
+  </data>
+  <data name="PermissionNoContactsSharing" xml:space="preserve">
+    <value>**Telegram** потрібен доступ до контактів, щоб ви могли ділитися ними з друзями. Відкрийте Налаштування &gt; Дозволи та увімкніть **Контакти**.</value>
   </data>
   <data name="PermissionNoLocation" xml:space="preserve">
     <value>Telegram потрібен доступ до розташування, щоб ви могли ділитися ним із друзями.</value>
   </data>
+  <data name="PermissionNoLocationFriends" xml:space="preserve">
+    <value>**Telegram** потрібен доступ до геоданих, щоб ви могли ділитися розташуваннями з друзями. Відкрийте Налаштування &gt; Дозволи та увімкніть **Геодані**.</value>
+  </data>
+  <data name="PermissionNoLocationNavigation" xml:space="preserve">
+    <value>**Telegram** потрібен доступ до геоданих, щоб ви могли знаходити місця поблизу. Відкрийте Налаштування &gt; Дозволи та увімкніть **Геодані**.</value>
+  </data>
+  <data name="PermissionNoLocationPeopleNearby" xml:space="preserve">
+    <value>**Telegram** потрібен доступ до геоданих, щоб ви могли знаходити людей поблизу. Відкрийте Налаштування &gt; Дозволи та увімкніть **Геодані**.</value>
+  </data>
   <data name="PermissionNoLocationPosition" xml:space="preserve">
     <value>Telegram потрібен доступ до розташування.</value>
+  </data>
+  <data name="PermissionNoStorageAvatar" xml:space="preserve">
+    <value>**Telegram** потрібен доступ до розташування, щоб ви могли додавати фото та відео. Відкрийте Налаштування &gt; Дозволи та увімкніть **Пам'ять**.</value>
   </data>
   <data name="PermissionOpenSettings" xml:space="preserve">
     <value>НАЛАШТУВАННЯ</value>
   </data>
   <data name="PermissionStorage" xml:space="preserve">
     <value>Telegram потрібен доступ до сховища, щоб ви могли надсилати і зберігати фото, відео, музику та інші медіа.</value>
+  </data>
+  <data name="PermissionStorageWithHint" xml:space="preserve">
+    <value>**Telegram** потрібен доступ до пам'яті, щоб ви могли надіслати та зберігати фото, відео, музику та інші медіафайли. Відкрийте Налаштування &gt; Дозволи та увімкніть **Пам'ять**.</value>
   </data>
   <data name="PermissionXiaomiLockscreen" xml:space="preserve">
     <value>Для належної роботи викликів дозвольте Telegram відображатись на екрані блокування.</value>
@@ -10252,6 +10489,9 @@
   </data>
   <data name="PhoneMobile" xml:space="preserve">
     <value>Мобільний</value>
+  </data>
+  <data name="PhoneNumber" xml:space="preserve">
+    <value>Номер телефону</value>
   </data>
   <data name="PhoneNumberAlert" xml:space="preserve">
     <value>Новий номер побачать ті, хто має його у своєму списку контактів або може бачити ваш номер згідно з вашими налаштуваннями приватності (Налаштування &gt; Приватність і безпека &gt; Номер телефону).</value>
@@ -10308,7 +10548,7 @@
     <value>Фото збережено до галереї</value>
   </data>
   <data name="PhotoSavedToDownloadsHint" xml:space="preserve">
-    <value>Фото збережено в завантаженнях</value>
+    <value>Фото збережено в Завантаженнях</value>
   </data>
   <data name="PhotosSavedHint_few" xml:space="preserve">
     <value>{0} фото збережено до галереї</value>
@@ -10971,11 +11211,17 @@
   <data name="PsaInfo_covid" xml:space="preserve">
     <value>Це екстрене оголошення про пандемію COVID-19. Докладніше про цю ініціативу: https://telegram.org/blog/coronavirus</value>
   </data>
+  <data name="PsaInfo_psa" xml:space="preserve">
+    <value>Ви бачите офіційне звернення від керівника Telegram щодо поточного конфлікту.</value>
+  </data>
   <data name="PsaInfoDefault" xml:space="preserve">
-    <value>Перевірка системи екстреного сповіщення</value>
+    <value>Це екстрене оголошення.</value>
   </data>
   <data name="PsaMessage_covid" xml:space="preserve">
     <value>Сповіщення про COVID-19</value>
+  </data>
+  <data name="PsaMessage_psa" xml:space="preserve">
+    <value>Оголошення</value>
   </data>
   <data name="PsaMessageDefault" xml:space="preserve">
     <value>Важливе сповіщення</value>
@@ -10983,11 +11229,17 @@
   <data name="PsaMessageInfo_covid" xml:space="preserve">
     <value>Це екстрене оголошення про пандемію COVID-19. Докладніше про цю ініціативу: https://telegram.org/blog/coronavirus</value>
   </data>
+  <data name="PsaMessageInfo_psa" xml:space="preserve">
+    <value>Ви бачите офіційне звернення від керівника Telegram щодо поточного конфлікту.</value>
+  </data>
   <data name="PsaMessageInfoDefault" xml:space="preserve">
     <value>Це важливе сповіщення.</value>
   </data>
   <data name="PsaType_covid" xml:space="preserve">
     <value>COVID-19</value>
+  </data>
+  <data name="PsaType_psa" xml:space="preserve">
+    <value>Оголошення</value>
   </data>
   <data name="PsaTypeDefault" xml:space="preserve">
     <value>PSA</value>
@@ -11137,6 +11389,9 @@
   <data name="QRCodePermissionNoCamera" xml:space="preserve">
     <value>Telegram потрібен доступ до камери, щоб ви могли сканувати QR-коди.</value>
   </data>
+  <data name="QRCodePermissionNoCameraWithHint" xml:space="preserve">
+    <value>Для сканування QR-кодів **Telegram** потрібен доступ до камери. Відкрийте Налаштування &gt; Дозволи та увімкніть **Камера**.</value>
+  </data>
   <data name="Question" xml:space="preserve">
     <value>Запитання</value>
   </data>
@@ -11251,6 +11506,12 @@
   <data name="ReactionsOff" xml:space="preserve">
     <value>Вимкнено</value>
   </data>
+  <data name="ReadAllMentions" xml:space="preserve">
+    <value>Прочитати всі згадки</value>
+  </data>
+  <data name="ReadAllReactions" xml:space="preserve">
+    <value>Прочитати всі реакції</value>
+  </data>
   <data name="Recent" xml:space="preserve">
     <value>Недавні</value>
   </data>
@@ -11259,6 +11520,9 @@
   </data>
   <data name="RecentFilesAZ" xml:space="preserve">
     <value>Файли за алфавітом</value>
+  </data>
+  <data name="RecentlyDownloaded" xml:space="preserve">
+    <value>Недавно завантажені</value>
   </data>
   <data name="RecentlyViewed" xml:space="preserve">
     <value>Недавно переглянуті</value>
@@ -11311,6 +11575,9 @@
   <data name="Red" xml:space="preserve">
     <value>Червоний</value>
   </data>
+  <data name="ReEnterPassword" xml:space="preserve">
+    <value>Введіть пароль ще раз</value>
+  </data>
   <data name="ReEnterYourPasscode" xml:space="preserve">
     <value>Введіть новий код блокування ще раз</value>
   </data>
@@ -11319,6 +11586,9 @@
   </data>
   <data name="RegisterText2" xml:space="preserve">
     <value>Введіть своє імʼя і додайте фото для профілю.</value>
+  </data>
+  <data name="RegistrationProfileInfo" xml:space="preserve">
+    <value>Інформація про профіль</value>
   </data>
   <data name="Regular" xml:space="preserve">
     <value>Звичайний</value>
@@ -11349,6 +11619,42 @@
   </data>
   <data name="RemovedFromRecent" xml:space="preserve">
     <value>Наліпку вилучено з Недавніх</value>
+  </data>
+  <data name="RemoveDocumentsMessage_few" xml:space="preserve">
+    <value>Ви дійсно хочете видалити **%d файли** із Завантажень?</value>
+  </data>
+  <data name="RemoveDocumentsMessage_many" xml:space="preserve">
+    <value>Ви дійсно хочете видалити **%d файлів** із Завантажень?</value>
+  </data>
+  <data name="RemoveDocumentsMessage_one" xml:space="preserve">
+    <value>Ви дійсно хочете видалити файл із Завантажень?</value>
+  </data>
+  <data name="RemoveDocumentsMessage_other" xml:space="preserve">
+    <value>Ви дійсно хочете видалити **%d файл** із Завантажень?</value>
+  </data>
+  <data name="RemoveDocumentsMessage_two" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RemoveDocumentsMessage_zero" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RemoveDocumentsTitle_few" xml:space="preserve">
+    <value>Видалити %d файли</value>
+  </data>
+  <data name="RemoveDocumentsTitle_many" xml:space="preserve">
+    <value>Видалити %d файлів</value>
+  </data>
+  <data name="RemoveDocumentsTitle_one" xml:space="preserve">
+    <value>Видалити %d файл</value>
+  </data>
+  <data name="RemoveDocumentsTitle_other" xml:space="preserve">
+    <value>Видалити %d файлів</value>
+  </data>
+  <data name="RemoveDocumentsTitle_two" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RemoveDocumentsTitle_zero" xml:space="preserve">
+    <value />
   </data>
   <data name="RemovedUser_few" xml:space="preserve">
     <value>{0} вилучених користувачі</value>
@@ -11527,8 +11833,17 @@
   <data name="ReportUserLocation" xml:space="preserve">
     <value>Поскаржитися</value>
   </data>
+  <data name="RequestCallButton" xml:space="preserve">
+    <value>Продиктувати код у виклику</value>
+  </data>
   <data name="RequestedToJoinAt" xml:space="preserve">
     <value>запитує про приєднання {0}</value>
+  </data>
+  <data name="RequestMissedCall" xml:space="preserve">
+    <value>Отримати код у виклику</value>
+  </data>
+  <data name="RequestSmsButton" xml:space="preserve">
+    <value>Отримати код в SMS-повідомленні</value>
   </data>
   <data name="RequestToJoinChannel" xml:space="preserve">
     <value>Надіслати запит</value>
@@ -11540,7 +11855,7 @@
     <value>Нових підписників у цьому каналі схвалюють адміністратори.</value>
   </data>
   <data name="RequestToJoinChannelSentDescription" xml:space="preserve">
-    <value>Ви отримаєте доступ до каналу, як тільки адміністратори схвалять ваш запит.</value>
+    <value>Ви отримаєте доступ до каналу, щойно адміністратори схвалять ваш запит.</value>
   </data>
   <data name="RequestToJoinGroup" xml:space="preserve">
     <value>Надіслати запит</value>
@@ -11648,6 +11963,9 @@
   <data name="ResetStatisticsAlertTitle" xml:space="preserve">
     <value>Скинути статистику</value>
   </data>
+  <data name="RestoreEmailNoAccess" xml:space="preserve">
+    <value>Не маєте доступу до {0}?</value>
+  </data>
   <data name="RestoreEmailSent" xml:space="preserve">
     <value>Ми надіслали код відновлення на вказану вами е-пошту:
 
@@ -11721,6 +12039,9 @@
   </data>
   <data name="RestrictSavingContentInfoGroup" xml:space="preserve">
     <value>Учасники не зможуть копіювати, зберігати та пересилати вміст з цієї групи.</value>
+  </data>
+  <data name="ResumeAll" xml:space="preserve">
+    <value>Поновити всі</value>
   </data>
   <data name="Retry" xml:space="preserve">
     <value>Повторити</value>
@@ -11799,7 +12120,7 @@
     <value>ЗБЕРЕГТИ ТЕМУ</value>
   </data>
   <data name="SaveToDownloads" xml:space="preserve">
-    <value>Зберегти до завантажень</value>
+    <value>Зберегти до Завантажень</value>
   </data>
   <data name="SaveToGallery" xml:space="preserve">
     <value>Зберегти до галереї</value>
@@ -11842,8 +12163,14 @@
 
 Для застосування змін може знадобитися перезапуск програми.</value>
   </data>
+  <data name="ScreenCaptureHeader" xml:space="preserve">
+    <value>Вміст застосунку в перемикачі програм</value>
+  </data>
   <data name="ScreenCaptureInfo" xml:space="preserve">
     <value>Якщо вимкнено, ви не зможете робити знімків екрана у програмі, але вмісту ваших чатів не буде видно в перемикачі завдань.</value>
+  </data>
+  <data name="ScreenCaptureShowContent" xml:space="preserve">
+    <value>Показувати вміст</value>
   </data>
   <data name="SdCard" xml:space="preserve">
     <value>Карта памʼяті</value>
@@ -11862,6 +12189,9 @@
   </data>
   <data name="SearchEmojiHint" xml:space="preserve">
     <value>Пошук емодзі</value>
+  </data>
+  <data name="SearchEmptyViewDownloads" xml:space="preserve">
+    <value>Немає недавніх завантажень</value>
   </data>
   <data name="SearchEmptyViewFilteredSubtitle2" xml:space="preserve">
     <value>Змініть запит.</value>
@@ -12005,7 +12335,7 @@
     <value>Секретні чати</value>
   </data>
   <data name="SecretChatContextBotAlert" xml:space="preserve">
-    <value>Зауважте, що інлайн-боти надаються сторонніми розробниками. Для роботи бота введений після його псевдоніма текст надсилається розробнику бота.</value>
+    <value>Зауважте, що вбудовані боти створені сторонніми розробниками. Для роботи бота введений після його псевдоніма текст надсилається розробнику.</value>
   </data>
   <data name="SecretChatName" xml:space="preserve">
     <value>Telegram</value>
@@ -12251,7 +12581,10 @@
     <value>Ми надіслали код до **Telegram** на іншому вашому пристрої.</value>
   </data>
   <data name="SentAppCodeTitle" xml:space="preserve">
-    <value>Перегляньте ваші повідомлення в Telegram</value>
+    <value>Перевірте повідомлення в Telegram</value>
+  </data>
+  <data name="SentAppCodeWithPhone" xml:space="preserve">
+    <value>Ми надіслали код до **Telegram** для {0} на іншому вашому пристрої.</value>
   </data>
   <data name="SentCallCode" xml:space="preserve">
     <value>Ми телефонуємо на ваш номер **{0}**.
@@ -12320,6 +12653,9 @@
   </data>
   <data name="SetColor" xml:space="preserve">
     <value>Встановити колір</value>
+  </data>
+  <data name="SetNewPassword" xml:space="preserve">
+    <value>Встановити новий пароль</value>
   </data>
   <data name="SetPasscode" xml:space="preserve">
     <value>Встановити код блокування</value>
@@ -12391,7 +12727,7 @@
     <value>Посилання не може бути довшим за 64 символи.</value>
   </data>
   <data name="SetUrlInvalidShort" xml:space="preserve">
-    <value>Посилання має містити принаймні 5 символів</value>
+    <value>Посилання має містити принаймні 5 символів.</value>
   </data>
   <data name="SetUrlInvalidStartNumber" xml:space="preserve">
     <value>Посилання не може починатися з цифри.</value>
@@ -12594,6 +12930,13 @@
   <data name="ShortMessageLifetimeForever" xml:space="preserve">
     <value>Вимкнено</value>
   </data>
+  <data name="ShortNumberInfo" xml:space="preserve">
+    <value>Вказаний номер є занадто коротким для **{0}**:
+
+**{1}**
+
+Введіть номер телефону повністю, разом із кодом країни.</value>
+  </data>
   <data name="ShowAllFiles" xml:space="preserve">
     <value>Показати всі файли</value>
   </data>
@@ -12620,6 +12963,12 @@
   </data>
   <data name="ShowInChat" xml:space="preserve">
     <value>Показати в чаті</value>
+  </data>
+  <data name="ShowLess" xml:space="preserve">
+    <value>Показати менше</value>
+  </data>
+  <data name="ShowMore" xml:space="preserve">
+    <value>Показати більше</value>
   </data>
   <data name="ShowNearbyPlaces" xml:space="preserve">
     <value>Потягніть, щоб побачити місця поблизу</value>
@@ -12728,6 +13077,9 @@
   </data>
   <data name="SmartNotificationsInfo" xml:space="preserve">
     <value>{0} / {1}</value>
+  </data>
+  <data name="SmsAvailableIn" xml:space="preserve">
+    <value>Ви зможете зробити запит на SMS за {0}:%2$02d</value>
   </data>
   <data name="SmsText" xml:space="preserve">
     <value>Ми надішлемо вам SMS за {0}:%2$02d</value>
@@ -13064,11 +13416,17 @@
   <data name="Subscribers_zero" xml:space="preserve">
     <value />
   </data>
+  <data name="SuggestClearDatabaseMessage" xml:space="preserve">
+    <value>Розмір локальної бази даних: {0}. Він може вплинути на швидкість роботи застосунку.</value>
+  </data>
+  <data name="SuggestClearDatabaseTitle" xml:space="preserve">
+    <value>Очистити базу даних</value>
+  </data>
   <data name="SuggestContacts" xml:space="preserve">
     <value>Пропонувати часті контакти</value>
   </data>
   <data name="SuggestContactsAlert" xml:space="preserve">
-    <value>Буде видалено всі дані про те, з якими людьми та інлайн-ботами ви найчастіше спілкуєтеся.</value>
+    <value>Буде видалено всі дані про те, з якими людьми ви найчастіше спілкуєтеся та якими вбудованими ботами користуєтесь.</value>
   </data>
   <data name="SuggestContactsInfo" xml:space="preserve">
     <value>Показувати людей, яким ви часто пишете, вгорі пошуку для швидкого доступу.</value>
@@ -13619,9 +13977,9 @@
 Але якщо ви не погоджуєтеся зі скромними вимогами Telegram, ми не зможемо надати вам цей сервіс.</value>
   </data>
   <data name="TosDeclineDeleteAccount" xml:space="preserve">
-    <value>Попередження: ваш акаунт буде незворотньо видалено разом з усіма даними, які ви зберігаєте у хмарі Telegram.
+    <value>Увага: ваш акаунт буде незворотньо видалено разом з усіма даними, які ви зберігаєте в хмарі Telegram.
 
-Важливо: ви можете скасувати видалення зараз та експортувати свої дані, щоб не втратити їх, перш ніж видалити акаунт. (В останній версії Telegram Desktop відкрийте Налаштування &gt; Розширені &gt; Експортувати дані Telegram.)</value>
+Ви можете експортувати свої дані на комп'ютер, перш ніж видаляти акаунт. Щоб це зробити, в останній версії Telegram Desktop відкрийте Налаштування &gt; Розширені &gt; Експортувати дані Telegram.</value>
   </data>
   <data name="TosUpdateDecline" xml:space="preserve">
     <value>Нам шкода, але тут наші шляхи розходяться. На відміну від інших, ми не використовуємо ваші дані для таргетингу реклами чи інших комерційних потреб. Telegram зберігає лише ту інформацію, яка потрібна для того, щоб він працював як потужний хмарний сервіс. У налаштуваннях Приватності й безпеки ви можете вибрати, як використовуються ваші дані (напр., видалити синхронізовані контакти).
@@ -14239,7 +14597,7 @@ http://telegram.org/update</value>
     <value>Відео збережено до галереї</value>
   </data>
   <data name="VideoSavedToDownloadsHint" xml:space="preserve">
-    <value>Відео збережено в завантаженнях</value>
+    <value>Відео збережено в Завантаженнях</value>
   </data>
   <data name="VideosSavedHint_few" xml:space="preserve">
     <value>{0} відео збережено в галереї</value>
@@ -14288,6 +14646,27 @@ http://telegram.org/update</value>
   </data>
   <data name="ViewDiscussion" xml:space="preserve">
     <value>Переглянути обговорення</value>
+  </data>
+  <data name="ViewersWatching_few" xml:space="preserve">
+    <value>{0} глядачі</value>
+  </data>
+  <data name="ViewersWatching_many" xml:space="preserve">
+    <value>{0} глядачів</value>
+  </data>
+  <data name="ViewersWatching_one" xml:space="preserve">
+    <value>{0} глядач</value>
+  </data>
+  <data name="ViewersWatching_other" xml:space="preserve">
+    <value>{0} глядачів</value>
+  </data>
+  <data name="ViewersWatching_two" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ViewersWatching_zero" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ViewersWatchingNobody" xml:space="preserve">
+    <value>Ніхто не дивиться</value>
   </data>
   <data name="ViewExceptions" xml:space="preserve">
     <value>Переглянути винятки</value>
@@ -14685,6 +15064,9 @@ http://telegram.org/update</value>
   <data name="VoipGroupEndedStartNew" xml:space="preserve">
     <value>Відеочат закінчено. Почати новий?</value>
   </data>
+  <data name="VoipGroupExpandStream" xml:space="preserve">
+    <value>Розгорнути</value>
+  </data>
   <data name="VoipGroupInviteAlreadyParticipant" xml:space="preserve">
     <value>Цей користувач уже у відеочаті.</value>
   </data>
@@ -14738,6 +15120,9 @@ http://telegram.org/update</value>
   </data>
   <data name="VoipGroupLeaveAlertTitle" xml:space="preserve">
     <value>Вийти з відеочату</value>
+  </data>
+  <data name="VoipGroupMinimizeStream" xml:space="preserve">
+    <value>Згорнути</value>
   </data>
   <data name="VoipGroupMute" xml:space="preserve">
     <value>Заглушити</value>
@@ -14974,8 +15359,14 @@ http://telegram.org/update</value>
   <data name="VoipNeedMicCameraPermission" xml:space="preserve">
     <value>Telegram потрібен доступ до мікрофона та камери, щоб робити відеовиклики.</value>
   </data>
+  <data name="VoipNeedMicCameraPermissionWithHint" xml:space="preserve">
+    <value>**Telegram** потрібен доступ до камери та мікрофона, щоб ви могли здійснювати відеовиклики. Відкрийте Налаштування &gt; Дозволи та увімкніть **Мікрофон** і **Камера**.</value>
+  </data>
   <data name="VoipNeedMicPermission" xml:space="preserve">
     <value>Щоб телефонувати, Telegram потрібен доступ до мікрофона.</value>
+  </data>
+  <data name="VoipNeedMicPermissionWithHint" xml:space="preserve">
+    <value>**Telegram** потрібен доступ до мікрофона, щоб ви могли здійснювати виклики. Відкрийте Налаштування &gt; Дозволи та увімкніть **Мікрофон**.</value>
   </data>
   <data name="VoipNoiseCancellation" xml:space="preserve">
     <value>Шумозаглушення</value>
@@ -15287,11 +15678,20 @@ http://telegram.org/update</value>
   <data name="WithinAWeek" xml:space="preserve">
     <value>відвідини – впродовж тижня</value>
   </data>
+  <data name="WrongCode" xml:space="preserve">
+    <value>Ви ввели неправильний код. Спробуйте ще раз.</value>
+  </data>
+  <data name="WrongCodeTitle" xml:space="preserve">
+    <value>Неправильний код</value>
+  </data>
   <data name="WrongCountry" xml:space="preserve">
     <value>Недопустимий код країни</value>
   </data>
   <data name="WrongNumber" xml:space="preserve">
     <value>Хибний номер?</value>
+  </data>
+  <data name="WrongNumberFormat" xml:space="preserve">
+    <value>Неправильний формат</value>
   </data>
   <data name="Years_few" xml:space="preserve">
     <value>{0} роки</value>
@@ -15391,6 +15791,9 @@ http://telegram.org/update</value>
   <data name="YourNameChanged" xml:space="preserve">
     <value>Ім’я оновлено.</value>
   </data>
+  <data name="YourNumber" xml:space="preserve">
+    <value>Ваш номер телефону</value>
+  </data>
   <data name="YourPassword" xml:space="preserve">
     <value>Ваш пароль</value>
   </data>
@@ -15408,6 +15811,9 @@ http://telegram.org/update</value>
   </data>
   <data name="YourPasswordRememberYes" xml:space="preserve">
     <value>Так, пам'ятаю</value>
+  </data>
+  <data name="YourPasswordReset" xml:space="preserve">
+    <value>Пароль успішно вимкнено</value>
   </data>
   <data name="YourPasswordSuccess" xml:space="preserve">
     <value>Успіх!</value>
@@ -20762,9 +21168,6 @@ http://telegram.org/update</value>
   </data>
   <data name="lng_theme_sure_keep" xml:space="preserve">
     <value>Залишити цю тему?</value>
-  </data>
-  <data name="lng_tooltip_psa_default" xml:space="preserve">
-    <value>Це екстрене оголошення.</value>
   </data>
   <data name="lng_tray_icon_text" xml:space="preserve">
     <value>Telegram продовжує працювати у фоні.

@@ -327,7 +327,7 @@
     <value>Gira</value>
   </data>
   <data name="AccDescrScheduledDate" xml:space="preserve">
-    <value>Programat per {0}</value>
+    <value>Programat per al {0}</value>
   </data>
   <data name="AccDescrSearchByUser" xml:space="preserve">
     <value>Filtra per usuari</value>
@@ -612,7 +612,7 @@
     <value>Ha començat el directe</value>
   </data>
   <data name="ActionChannelCallScheduled" xml:space="preserve">
-    <value>Directe programat per al {0}</value>
+    <value>Directe programat. Data: {0}</value>
   </data>
   <data name="ActionChannelChangedPhoto" xml:space="preserve">
     <value>S&apos;ha canviat la foto del canal</value>
@@ -1562,19 +1562,34 @@ Vegeu les &lt;![CDATA[&lt;a href=&quot;https://telegram.org/faq#general-question
     <value>{0} compartida amb {1}</value>
   </data>
   <data name="AttachLiveLocationIsSharingChat" xml:space="preserve">
-    <value>Es comparteix la {0} amb {1}</value>
+    <value>{0} compartida amb {1}</value>
   </data>
   <data name="AttachLiveLocationIsSharingChats" xml:space="preserve">
-    <value>Es comparteix la {0} amb {1}</value>
+    <value> {0} compartida amb {1}</value>
   </data>
   <data name="AttachLocation" xml:space="preserve">
     <value>Ubicació</value>
+  </data>
+  <data name="AttachMediaDragHint" xml:space="preserve">
+    <value>Arrossegueu per a reordenar</value>
+  </data>
+  <data name="AttachMediaPhotoDeselected" xml:space="preserve">
+    <value>S&apos;ha desseleccionat la foto.</value>
+  </data>
+  <data name="AttachMediaPreview" xml:space="preserve">
+    <value>Previsualització</value>
+  </data>
+  <data name="AttachMediaPreviewButton" xml:space="preserve">
+    <value>Previsualitza</value>
   </data>
   <data name="AttachMediaRestricted" xml:space="preserve">
     <value>Els administradors del grup us han restringit la publicació de contingut multimèdia fins {0}</value>
   </data>
   <data name="AttachMediaRestrictedForever" xml:space="preserve">
     <value>Els administradors del grup us han restringit l&apos;enviament de fitxers.</value>
+  </data>
+  <data name="AttachMediaVideoDeselected" xml:space="preserve">
+    <value>S&apos;ha desseleccionat el vídeo.</value>
   </data>
   <data name="AttachMenu" xml:space="preserve">
     <value>Adjunta...</value>
@@ -3553,6 +3568,12 @@ Longitud mínima: 5 caràcters.</value>
 
 Quan {1} actualitzi el Telegram, les fotos amb autodestrucció d&apos;1 minut o menys funcionaran en mode «Manteniu premut per a veure-ho», i rebreu una notificació quan l&apos;altra persona faci una captura de pantalla.</value>
   </data>
+  <data name="ConfirmCorrectNumber" xml:space="preserve">
+    <value>És aquest el número correcte?</value>
+  </data>
+  <data name="ConfirmCreatePasscode" xml:space="preserve">
+    <value>Torneu a escriure el codi</value>
+  </data>
   <data name="ConfirmDeleteCallLog" xml:space="preserve">
     <value>Voleu eliminar l&apos;entrada de l&apos;historial de trucades?</value>
   </data>
@@ -3579,6 +3600,9 @@ Quan {1} actualitzi el Telegram, les fotos amb autodestrucció d&apos;1 minut o 
   </data>
   <data name="ConnectingToProxyTapToDisable" xml:space="preserve">
     <value>Toqueu per a desactivar el servidor intermediari...</value>
+  </data>
+  <data name="ConnectingYourContacts" xml:space="preserve">
+    <value>S&apos;estan connectant els contactes...</value>
   </data>
   <data name="ContactBirthday" xml:space="preserve">
     <value>Aniversari</value>
@@ -3700,6 +3724,9 @@ Per a més espai i característiques, actualitzeu a un supergrup:
   </data>
   <data name="CountReceived" xml:space="preserve">
     <value>Rebuts</value>
+  </data>
+  <data name="Country" xml:space="preserve">
+    <value>País</value>
   </data>
   <data name="CountSent" xml:space="preserve">
     <value>Enviats</value>
@@ -4004,7 +4031,7 @@ Sempre podreu tornar al tema predeterminat de Telegram aquí.</value>
     <value>Voleu eliminar totes les trucades recents?</value>
   </data>
   <data name="DeleteAllFrom" xml:space="preserve">
-    <value>Elimina-ho tot de {0}</value>
+    <value>Elimina-ho tot de: {0}</value>
   </data>
   <data name="DeleteAllMessagesAlert" xml:space="preserve">
     <value>Atenció! Això **eliminarà tots els missatges** del xat per a **ambdós** participants.</value>
@@ -4254,6 +4281,12 @@ Sempre podreu tornar al tema predeterminat de Telegram aquí.</value>
   </data>
   <data name="DidNotGetTheCode" xml:space="preserve">
     <value>No heu rebut el codi?</value>
+  </data>
+  <data name="DidNotGetTheCodeEditNumberButton" xml:space="preserve">
+    <value>Edita el número</value>
+  </data>
+  <data name="DidNotGetTheCodeHelpButton" xml:space="preserve">
+    <value>Ajuda</value>
   </data>
   <data name="DidNotGetTheCodePhone" xml:space="preserve">
     <value>Obteniu el codi en aquest telèfon</value>
@@ -4580,6 +4613,9 @@ Qualsevol subscriptor podrà veure els missatges d&apos;aquest grup.</value>
   <data name="EditName" xml:space="preserve">
     <value>Edita el nom</value>
   </data>
+  <data name="EditNumber" xml:space="preserve">
+    <value>Edita el número</value>
+  </data>
   <data name="EditPhoto" xml:space="preserve">
     <value>Obre a l&apos;editor</value>
   </data>
@@ -4795,6 +4831,9 @@ Introduïu el nom del tema:</value>
   <data name="EnterYourPasscode" xml:space="preserve">
     <value>Introduïu el codi d&apos;accés</value>
   </data>
+  <data name="EnterYourPasscodeInfo" xml:space="preserve">
+    <value>Introduïu el codi d&apos;accés actual per a gestionar aquesta opció.</value>
+  </data>
   <data name="EnterYourTelegramPasscode" xml:space="preserve">
     <value>Introduïu el codi d&apos;accés</value>
   </data>
@@ -4979,7 +5018,7 @@ que coincideixi amb la cerca.</value>
     <value>És una llista de les accions destacades dels membres i l&apos;administració en les últimes 48 hores.</value>
   </data>
   <data name="EventLogInfoDetailChannel" xml:space="preserve">
-    <value>Això és una llista de totes les accions del servei fetes pels administradors del canal en les últimes 48 hores.</value>
+    <value>És una llista de les accions destacades de l&apos;administració en les últimes 48 hores.</value>
   </data>
   <data name="EventLogInfoTitle" xml:space="preserve">
     <value>Què són les accions recents?</value>
@@ -5541,6 +5580,9 @@ Durada: {1}</value>
   <data name="FirstName" xml:space="preserve">
     <value>Nom (necessari)</value>
   </data>
+  <data name="FirstNameSmall" xml:space="preserve">
+    <value>Nom</value>
+  </data>
   <data name="FloodWait" xml:space="preserve">
     <value>Heu excedit el nombre d&apos;intents. Torneu a provar-ho més tard.</value>
   </data>
@@ -5560,13 +5602,13 @@ Durada: {1}</value>
     <value>Però has vist quina hora és?</value>
   </data>
   <data name="FontSizePreviewLine2" xml:space="preserve">
-    <value>No pot ser que ho digues seriosament, això...</value>
+    <value>És de dia a Tòquio 😎</value>
   </data>
   <data name="FontSizePreviewName" xml:space="preserve">
     <value>Dídac</value>
   </data>
   <data name="FontSizePreviewReply" xml:space="preserve">
-    <value>Vicent, has de tastar una paella de veres 🥘</value>
+    <value>Bon dia! 👋</value>
   </data>
   <data name="FontType" xml:space="preserve">
     <value>Tipus de lletra</value>
@@ -5603,6 +5645,11 @@ Durada: {1}</value>
   </data>
   <data name="ForceSetPasswordContinue" xml:space="preserve">
     <value>No, vull definir una contrasenya</value>
+  </data>
+  <data name="ForgotPasscodeInfo" xml:space="preserve">
+    <value>Si oblideu el codi d&apos;accés, haureu d&apos;eliminar i reinstal·lar l&apos;aplicació.
+
+Es perdran tots els xats secrets.</value>
   </data>
   <data name="ForgotPassword" xml:space="preserve">
     <value>Heu oblidat la contrasenya?</value>
@@ -6954,6 +7001,9 @@ Podeu tornar a canviar la llengua en qualsevol moment a la Configuració.</value
   <data name="LastName" xml:space="preserve">
     <value>Cognoms (opcional)</value>
   </data>
+  <data name="LastNameSmall" xml:space="preserve">
+    <value>Cognoms</value>
+  </data>
   <data name="LastSeen" xml:space="preserve">
     <value>vist:</value>
   </data>
@@ -7240,10 +7290,13 @@ Això pot trigar uns minuts.</value>
     <value>actualitzat</value>
   </data>
   <data name="LocationUpdatedFormatted" xml:space="preserve">
-    <value>actualitzada fa {0}</value>
+    <value>actualitzada {0}</value>
   </data>
   <data name="LocationUpdatedJustNow" xml:space="preserve">
-    <value>actualitzat just ara</value>
+    <value>actualitzada ara mateix</value>
+  </data>
+  <data name="LoginAccessibilityCountryCode" xml:space="preserve">
+    <value>Codi de país</value>
   </data>
   <data name="LoginAttempts" xml:space="preserve">
     <value>Intents d&apos;inici de sessió incomplets</value>
@@ -8150,10 +8203,10 @@ Això podria trigar uns minuts. Podeu continuar usant l&apos;aplicació mentre e
     <value>Però has vist quina hora és?</value>
   </data>
   <data name="NewThemePreviewLine2" xml:space="preserve">
-    <value>És de dia en Tokyo 😎</value>
+    <value>És de dia a Tòquio 😎</value>
   </data>
   <data name="NewThemePreviewLine3" xml:space="preserve">
-    <value>És de dia en *Tokyo* 😎</value>
+    <value>És de dia a *Tòquio* 😎</value>
   </data>
   <data name="NewThemePreviewName" xml:space="preserve">
     <value>Bob Harris</value>
@@ -10259,6 +10312,9 @@ Hi accedirem només durant el temps que estipuleu, i ho podeu aturar en qualsevo
   <data name="PhoneMobile" xml:space="preserve">
     <value>Mòbil</value>
   </data>
+  <data name="PhoneNumber" xml:space="preserve">
+    <value>Número de telèfon</value>
+  </data>
   <data name="PhoneNumberAlert" xml:space="preserve">
     <value>Els usuaris veuran el número nou si el tenen a l&apos;agenda o si la vostra configuració de privadesa els ho permet. Podeu canviar-ho a Configuració &gt; Privadesa i seguretat &gt; Número de telèfon.</value>
   </data>
@@ -10974,25 +11030,37 @@ Hi accedirem només durant el temps que estipuleu, i ho podeu aturar en qualsevo
     <value>Amaga el xat</value>
   </data>
   <data name="PsaInfo_covid" xml:space="preserve">
-    <value>Aquest missatge us proporciona un anunci de servei públic en relació amb la pandèmia COVID-19. Vegeu més informació sobre aquesta iniciativa en https://telegram.org/blog/coronavirus</value>
+    <value>Aquest missatge us proporciona un comunicat de servei públic en relació amb la pandèmia COVID-19. Vegeu més informació sobre aquesta iniciativa en https://telegram.org/blog/coronavirus</value>
+  </data>
+  <data name="PsaInfo_psa" xml:space="preserve">
+    <value>Aquest és un missatge oficial del CEO de Telegram sobre el conflicte en curs.</value>
   </data>
   <data name="PsaInfoDefault" xml:space="preserve">
-    <value>Prova d&apos;informació ASP</value>
+    <value>Aquest missatge us proporciona un comunicat de servei públic.</value>
   </data>
   <data name="PsaMessage_covid" xml:space="preserve">
     <value>Notificació COVID-19</value>
+  </data>
+  <data name="PsaMessage_psa" xml:space="preserve">
+    <value>Comunicat</value>
   </data>
   <data name="PsaMessageDefault" xml:space="preserve">
     <value>Notificació important</value>
   </data>
   <data name="PsaMessageInfo_covid" xml:space="preserve">
-    <value>Aquest missatge us proporciona un anunci de servei públic en relació amb la pandèmia COVID-19. Vegeu més informació sobre aquesta iniciativa en https://telegram.org/blog/coronavirus</value>
+    <value>Aquest missatge us proporciona un comunicat de servei públic en relació amb la pandèmia COVID-19. Vegeu més informació sobre aquesta iniciativa en https://telegram.org/blog/coronavirus</value>
+  </data>
+  <data name="PsaMessageInfo_psa" xml:space="preserve">
+    <value>Aquest és un missatge oficial del CEO de Telegram sobre el conflicte en curs.</value>
   </data>
   <data name="PsaMessageInfoDefault" xml:space="preserve">
     <value>Això és una notificació important.</value>
   </data>
   <data name="PsaType_covid" xml:space="preserve">
     <value>COVID-19</value>
+  </data>
+  <data name="PsaType_psa" xml:space="preserve">
+    <value>Comunicat</value>
   </data>
   <data name="PsaTypeDefault" xml:space="preserve">
     <value>ASP</value>
@@ -11324,6 +11392,9 @@ Hi accedirem només durant el temps que estipuleu, i ho podeu aturar en qualsevo
   <data name="RegisterText2" xml:space="preserve">
     <value>Introduïu el vostre nom i poseu una foto de perfil.</value>
   </data>
+  <data name="RegistrationProfileInfo" xml:space="preserve">
+    <value>Informació del perfil</value>
+  </data>
   <data name="Regular" xml:space="preserve">
     <value>Normal</value>
   </data>
@@ -11361,10 +11432,10 @@ Hi accedirem només durant el temps que estipuleu, i ho podeu aturar en qualsevo
     <value/>
   </data>
   <data name="RemovedUser_one" xml:space="preserve">
-    <value>{0} ha eliminat l&apos;usuari</value>
+    <value>{0} usuari eliminat</value>
   </data>
   <data name="RemovedUser_other" xml:space="preserve">
-    <value>{0} ha eliminat els usuaris</value>
+    <value>{0} usuaris eliminats</value>
   </data>
   <data name="RemovedUser_two" xml:space="preserve">
     <value/>
@@ -11553,7 +11624,7 @@ Gràcies per cooperar!</value>
     <value>S&apos;ha aprovat la sol·licitud d&apos;unir-vos al grup</value>
   </data>
   <data name="RequestToJoinGroupDescription" xml:space="preserve">
-    <value>Aquest grup accepta membres nous només després que un administrador ho aprovi.</value>
+    <value>Aquest grup accepta membres nous només després que l&apos;administració ho aprovi.</value>
   </data>
   <data name="RequestToJoinGroupSentDescription" xml:space="preserve">
     <value>Us unireu al grup una vegada un administrador aprovi la sol·licitud.</value>
@@ -11673,13 +11744,13 @@ Si restabliu el compte, tots els vostres missatges i xats s&apos;eliminaran.</va
     <value>Si no podeu recuperar l&apos;accés a la vostra adreça electrònica, les opcions disponibles són recordar la contrasenya o restablir el compte.</value>
   </data>
   <data name="RestoreEmailTroubleText2" xml:space="preserve">
-    <value>Si no teniu accés a la vostra adreça de recuperació, les opcions restants són recordar la contrasenya o esperar 7 dies fins que aquesta es restableixi.</value>
+    <value>Si no teniu accés a la vostra adreça de recuperació, les opcions disponibles són recordar la contrasenya o esperar 7 dies fins que aquesta es restableixi.</value>
   </data>
   <data name="RestorePasswordNoEmailText" xml:space="preserve">
     <value>Atès que no vau proporcionar cap adreça de recuperació en establir la contrasenya, les opcions disponibles són recordar-la o restablir el vostre compte.</value>
   </data>
   <data name="RestorePasswordNoEmailText2" xml:space="preserve">
-    <value>Com que no vau proporcionar cap correu de recuperació en configurar la contrasenya, les opcions restants són recordar-la o esperar 7 dies fins que es restableixi la contrasenya.</value>
+    <value>Atès que no vau proporcionar cap correu de recuperació en configurar la contrasenya, les opcions disponibles són recordar-la o esperar 7 dies a que es restableixi.</value>
   </data>
   <data name="RestorePasswordNoEmailTitle" xml:space="preserve">
     <value>Vaja</value>
@@ -11848,6 +11919,9 @@ Potse calgui reiniciar l&apos;aplicació per a aplicar-ho.</value>
   </data>
   <data name="ScreenCaptureInfo" xml:space="preserve">
     <value>En desactivar-la, no podreu fer captures de pantalla, però el contingut dels xats s’amagarà al commutador de tasques.</value>
+  </data>
+  <data name="ScreenCaptureShowContent" xml:space="preserve">
+    <value>Mostra el contingut</value>
   </data>
   <data name="SdCard" xml:space="preserve">
     <value>Targeta SD</value>
@@ -12177,7 +12251,7 @@ Potse calgui reiniciar l&apos;aplicació per a aplicar-ho.</value>
     <value>Envia {0}</value>
   </data>
   <data name="SendLiveLocation" xml:space="preserve">
-    <value>Envia la meva ubicació en directe...</value>
+    <value>Comparteix la ubicació durant...</value>
   </data>
   <data name="SendLiveLocationFor15m" xml:space="preserve">
     <value>15 minuts</value>
@@ -12189,7 +12263,7 @@ Potse calgui reiniciar l&apos;aplicació per a aplicar-ho.</value>
     <value>8 hores</value>
   </data>
   <data name="SendLiveLocationInfo" xml:space="preserve">
-    <value>Actualitzada en temps real seguint el moviment</value>
+    <value>Actualitzada en temps real quan us moveu</value>
   </data>
   <data name="SendLiveLocationMenu" xml:space="preserve">
     <value>Envia la ubicació en directe</value>
@@ -12256,6 +12330,9 @@ Potse calgui reiniciar l&apos;aplicació per a aplicar-ho.</value>
   </data>
   <data name="SentAppCodeTitle" xml:space="preserve">
     <value>Comproveu els missatges del Telegram</value>
+  </data>
+  <data name="SentAppCodeWithPhone" xml:space="preserve">
+    <value>Hem enviat el codi per al {0} al **Telegram** de l&apos;altre dispositiu.</value>
   </data>
   <data name="SentCallCode" xml:space="preserve">
     <value>Estem trucant al telèfon **{0}**.
@@ -12584,7 +12661,7 @@ No respongueu la trucada, el Telegram ho processarà tot automàticament.</value
     <value>Compartir el vostre número de telèfon?</value>
   </data>
   <data name="SharingLiveLocationTitle" xml:space="preserve">
-    <value>Esteu compartint la vostra ubicació en directe amb {0}</value>
+    <value>Esteu compartint la ubicació en directe amb {0}</value>
   </data>
   <data name="SharingYouAndOtherName" xml:space="preserve">
     <value>Vós i {0}</value>
@@ -12677,7 +12754,7 @@ No respongueu la trucada, el Telegram ho processarà tot automàticament.</value
     <value>Mescla la llista</value>
   </data>
   <data name="SignUp" xml:space="preserve">
-    <value>Registra&apos;t</value>
+    <value>Registreu-vos</value>
   </data>
   <data name="SinglePhotosHelp" xml:space="preserve">
     <value>Mostra el contingut multimèdia en missatges diferents</value>
@@ -12866,7 +12943,7 @@ Els anuncis no haurien de ser sinònim d’abús de la privadesa dels usuaris. R
     <value>&apos;Comença avui a les&apos; HH:mm</value>
   </data>
   <data name="StartText" xml:space="preserve">
-    <value>Confirmeu el codi de país i escriviu el vostre número de telèfon.</value>
+    <value>Confirmeu el codi de país i introduïu el número de telèfon.</value>
   </data>
   <data name="StartTodayAt" xml:space="preserve">
     <value>&apos;Comença avui a les&apos; HH:mm</value>
@@ -14746,7 +14823,7 @@ Els participants nous només podran accedir a l&apos;àudio.</value>
     <value>Segur que voleu sortir del xat de vídeo?</value>
   </data>
   <data name="VoipGroupLeaveAlertTitle" xml:space="preserve">
-    <value>Sortida del xat</value>
+    <value>Abandona el xat</value>
   </data>
   <data name="VoipGroupMute" xml:space="preserve">
     <value>Silencia</value>
@@ -14862,7 +14939,7 @@ Els participants nous només podran accedir a l&apos;àudio.</value>
 Els participants veuran que s&apos;està enregistrant.</value>
   </data>
   <data name="VoipGroupStartRecordingTitle" xml:space="preserve">
-    <value>Enregistra el xat</value>
+    <value>Enregistrament</value>
   </data>
   <data name="VoipGroupStartRecordingVideoText" xml:space="preserve">
     <value>Voleu iniciar l&apos;enregistrament del xat i desar-lo en un fitxer de vídeo?
@@ -15301,6 +15378,9 @@ El vostre codi **no afectarà** els ginys de la pantalla d&apos;inici.</value>
   <data name="WrongNumber" xml:space="preserve">
     <value>No és correcte el número?</value>
   </data>
+  <data name="WrongNumberFormat" xml:space="preserve">
+    <value>Format incorrecte</value>
+  </data>
   <data name="Years_few" xml:space="preserve">
     <value/>
   </data>
@@ -15398,6 +15478,9 @@ Si oblideu la contrasenya, perdreu l&apos;accés al vostre compte de Telegram. N
   </data>
   <data name="YourNameChanged" xml:space="preserve">
     <value>S&apos;ha actualitzat el nom.</value>
+  </data>
+  <data name="YourNumber" xml:space="preserve">
+    <value>El vostre número</value>
   </data>
   <data name="YourPassword" xml:space="preserve">
     <value>Contrasenya</value>

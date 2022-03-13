@@ -304,6 +304,9 @@
   <data name="AccDescrQuizExplanation" xml:space="preserve">
     <value>Tushuntirish</value>
   </data>
+  <data name="AccDescrReactionMentionDown" xml:space="preserve">
+    <value>Keyingi oʻqilmagan reaksiyalarga oʻtish</value>
+  </data>
   <data name="AccDescrReceivedDate" xml:space="preserve">
     <value>{0} qabul qilindi</value>
   </data>
@@ -452,7 +455,7 @@
     <value>Yuqori sifatli</value>
   </data>
   <data name="AccDescrVideoCompressLow" xml:space="preserve">
-    <value>Kichik oʻlchamli</value>
+    <value>Kichikroq hajm</value>
   </data>
   <data name="AccDescrVideoMessage" xml:space="preserve">
     <value>Videoxabar yozish</value>
@@ -768,8 +771,8 @@
   </data>
   <data name="ActionReactionsChanged" xml:space="preserve">
     <value>un1 chat reaksiyalarini oʻzgartirdi
-kimdan: {0} 
-kimga: {1}</value>
+bundan: {0} 
+bunga: {1}</value>
   </data>
   <data name="ActionRemovedPhoto" xml:space="preserve">
     <value>un1 guruh rasmini olib tashladi</value>
@@ -1058,6 +1061,12 @@ kimga: {1}</value>
   </data>
   <data name="Allow" xml:space="preserve">
     <value>Ruxsat</value>
+  </data>
+  <data name="AllowBackgroundActivity" xml:space="preserve">
+    <value>Fondagi faoliyatga ruxsat berish</value>
+  </data>
+  <data name="AllowBackgroundActivityInfo" xml:space="preserve">
+    <value>Bunda kiruvchi bildirishnomalar va Telegram chaqiruvlar ishonchliligi yaxshilanadi.</value>
   </data>
   <data name="AllowCustomQuickReply" xml:space="preserve">
     <value>Maxsusga ruxsat berish</value>
@@ -1567,11 +1576,26 @@ Unutmang, agar hisobingizdan chiqsangiz, barcha maxfiy chatlaringiz oʻchib keta
   <data name="AttachLocation" xml:space="preserve">
     <value>Joylashuv</value>
   </data>
+  <data name="AttachMediaDragHint" xml:space="preserve">
+    <value>Mediani qayta tartiblash uchun ushlab torting</value>
+  </data>
+  <data name="AttachMediaPhotoDeselected" xml:space="preserve">
+    <value>Rasmdan belgi olib tashlandi.</value>
+  </data>
+  <data name="AttachMediaPreview" xml:space="preserve">
+    <value>Xabarga razm solish</value>
+  </data>
+  <data name="AttachMediaPreviewButton" xml:space="preserve">
+    <value>Xabar eskizlarini koʻrsatish</value>
+  </data>
   <data name="AttachMediaRestricted" xml:space="preserve">
     <value>Bu guruh adminlari {0} gacha bu yerda mediafayllar yuborishingizni taqiqlagan</value>
   </data>
   <data name="AttachMediaRestrictedForever" xml:space="preserve">
     <value>Bu guruh adminlari bu yerga mediafayllar yuborishingizni taqiqlagan.</value>
+  </data>
+  <data name="AttachMediaVideoDeselected" xml:space="preserve">
+    <value>Videodan belgi olib tashlandi.</value>
   </data>
   <data name="AttachMenu" xml:space="preserve">
     <value>Biriktirish...</value>
@@ -1844,10 +1868,10 @@ avtomatik ravishda oʻchirib tashlanadi.</value>
     <value>Shaxsiy chatlar</value>
   </data>
   <data name="AutodownloadSizeLimit" xml:space="preserve">
-    <value>Cheklov Hajmi</value>
+    <value>Hajm asosida cheklash</value>
   </data>
   <data name="AutodownloadSizeLimitUpTo" xml:space="preserve">
-    <value>{0}gacha</value>
+    <value>{0} gacha</value>
   </data>
   <data name="AutoDownloadTypes" xml:space="preserve">
     <value>Multimedia turlari</value>
@@ -1877,7 +1901,7 @@ avtomatik ravishda oʻchirib tashlanadi.</value>
     <value>{0}dan keyin</value>
   </data>
   <data name="AutomaticMediaDownload" xml:space="preserve">
-    <value>Mediafayllarni avtomatik yuklab olish</value>
+    <value>Media fayllarni avtomatik yuklab olish</value>
   </data>
   <data name="AutomaticTranslation" xml:space="preserve">
     <value>Avtomatik tarjima</value>
@@ -2115,7 +2139,7 @@ Quyosh chiqishi: {1}</value>
     <value/>
   </data>
   <data name="BlockedUsersInfo" xml:space="preserve">
-    <value>Bloklangan foydalanuvchilar sizga xabarlar yubora olmaydi yoki sizni guruhlarga qoʻsha olmaydi. Ular profil rasmlaringiz, onlayn va soʻnggi faollik holatingizni koʻrmaydi.</value>
+    <value>Bloklangan foydalanuvchilar sizga xabarlar yubora olmaydi yoki sizni guruhlarga qoʻsha olmaydi. Ular profil rasmlaringiz, onlayn va oxirgi faollik holatingizni koʻrmaydi.</value>
   </data>
   <data name="BlockUser" xml:space="preserve">
     <value>Foydalanuvchini bloklash</value>
@@ -2149,6 +2173,9 @@ Quyosh chiqishi: {1}</value>
   </data>
   <data name="Blue" xml:space="preserve">
     <value>Koʻk</value>
+  </data>
+  <data name="BlurInChat" xml:space="preserve">
+    <value>Chatda xiralik</value>
   </data>
   <data name="BlurLinear" xml:space="preserve">
     <value>Chiziqli</value>
@@ -2190,7 +2217,7 @@ Quyosh chiqishi: {1}</value>
     <value>Bunda bot uchun **toʻliq egalik** huquqlari tanlangan foydalanuvchiga oʻtkaziladi.</value>
   </data>
   <data name="BotPermissionGameAlert" xml:space="preserve">
-    <value>{0} ga sizning Telegramdagi nomingiz va ID&apos;ingizni (telefon raqamingiz emas) ushbu bot orqali ochiladigan sahifalarga taqdim qilishiga ruxsat berilsinmi?</value>
+    <value>{0} botiga Telegramdagi nomingiz va ID raqamingizni (telefon raqamingiz emas) ushbu bot orqali ochiladigan sahifalarga taqdim etishiga ruxsat berilsinmi?</value>
   </data>
   <data name="BotRestart" xml:space="preserve">
     <value>Botni qayta ishga tushirish</value>
@@ -2232,7 +2259,7 @@ Quyosh chiqishi: {1}</value>
     <value>Endi guruhingiz 200 000 tadan ortiq aʼzoga ega boʻlishi mumkin.</value>
   </data>
   <data name="BroadcastGroupInfo" xml:space="preserve">
-    <value>Bu guruhda faqat administratorlar xabarlar yuborishi mumkin.</value>
+    <value>Bu guruhda faqat adminlar xabar yuborishi mumkin.</value>
   </data>
   <data name="Brown" xml:space="preserve">
     <value>Jigarrang</value>
@@ -2303,6 +2330,9 @@ Quyosh chiqishi: {1}</value>
   <data name="CallAlertTitle" xml:space="preserve">
     <value>Ovozli chaqiruv</value>
   </data>
+  <data name="CallAvailableIn" xml:space="preserve">
+    <value>{0}:%2$02d dan keyin ovozli chaqiruvni soʻrashingiz mumkin</value>
+  </data>
   <data name="CallBack" xml:space="preserve">
     <value>Takroriy chaqiruv</value>
   </data>
@@ -2325,7 +2355,7 @@ Quyosh chiqishi: {1}</value>
     <value>Chiquvchi chaqiruv</value>
   </data>
   <data name="CallMessageOutgoingMissed" xml:space="preserve">
-    <value>Rad etilgan chaqiruv</value>
+    <value>Bekor qilingan chaqiruv</value>
   </data>
   <data name="CallMessageReportProblem" xml:space="preserve">
     <value>Chaqiruvingizni baholang</value>
@@ -2355,7 +2385,7 @@ Quyosh chiqishi: {1}</value>
     <value>Xatolik topdingizmi?</value>
   </data>
   <data name="CallReportIncludeLogs" xml:space="preserve">
-    <value>Texnik maʼlumot ham qoʻshilsin</value>
+    <value>Texnik axborotni kiritish</value>
   </data>
   <data name="CallReportLogsExplain" xml:space="preserve">
     <value>Bu suhbat kontentini oshkor qilmaydi va muammoni tezroq hal qilishimizga yordam beradi.</value>
@@ -2432,6 +2462,9 @@ Agar bu siz boʻlmasangiz, biz sizga hozirgina SMS orqali yuborgan kodni kiritin
   </data>
   <data name="CancelLinkSuccess" xml:space="preserve">
     <value>{0} hisobingizni oʻchirib tashlash jarayoni bekor qilindi. Hozir bu oynani yopishingiz mumkin.</value>
+  </data>
+  <data name="CancelLinkSuccessTitle" xml:space="preserve">
+    <value>Muvaffaqiyatli</value>
   </data>
   <data name="CancelPasswordQuestion" xml:space="preserve">
     <value>Haqiqatan ikki bosqichli tekshiruvni oʻrnatishni bekor qilasizmi?</value>
@@ -2512,6 +2545,9 @@ Agar bu siz boʻlmasangiz, biz sizga hozirgina SMS orqali yuborgan kodni kiritin
     <value>Qoʻshimcha kirish kodini oʻrnatganingizda chatlar sahifasida qulf belgisi paydo boʻladi. Telegram ilovasini qulflash va ochish uchun uni bosing.
 
 Eslatma: agar kirish kodini unutsangiz, ilovani oʻchirishingiz va qaytadan oʻrnatishingiz zarur. Barcha maxfiy chatlar yoʻqotiladi.</value>
+  </data>
+  <data name="ChangePasscodeInfoShort" xml:space="preserve">
+    <value>Kirish kodini sozlaganingizda chatlar sahifasida qulf belgisi chiqadi. Ilovani qulflash va ochish uchun uni bosing.</value>
   </data>
   <data name="ChangePassword" xml:space="preserve">
     <value>Parolni oʻzgartirish</value>
@@ -2628,7 +2664,7 @@ Eslatma: agar kirish kodini unutsangiz, ilovani oʻchirishingiz va qaytadan oʻr
     <value>Kechirasiz, siz bu kanalga xabarlar yubora olmaysiz.</value>
   </data>
   <data name="ChannelContacts" xml:space="preserve">
-    <value>Kanaldagi kontaktlar</value>
+    <value>Bu kanaldagi kontaktlar</value>
   </data>
   <data name="ChannelCreator" xml:space="preserve">
     <value>Ega</value>
@@ -3223,7 +3259,7 @@ Kamida 5 ta belgi boʻlishi zarur.</value>
     <value>Sozlamalarga qaytish</value>
   </data>
   <data name="CheckPasswordInfo" xml:space="preserve">
-    <value>Parolingizni hali ham eslay olasizmi?</value>
+    <value>Parolingiz hali ham yodingizdami?</value>
   </data>
   <data name="CheckPasswordPerfect" xml:space="preserve">
     <value>Ajoyib!</value>
@@ -3238,7 +3274,7 @@ Kamida 5 ta belgi boʻlishi zarur.</value>
     <value>{0} hali ham sizning raqamingizmi?</value>
   </data>
   <data name="CheckPhoneNumberInfo" xml:space="preserve">
-    <value>Telegramga har doim kira olishingizni taʼminlash uchun telefon raqamingizni aktual holda saqlang. **Batafsil**</value>
+    <value>Telegramga har doim kira olishingizni taʼminlash uchun telefon raqamingizni dolzarb holda saqlang. **Batafsil**</value>
   </data>
   <data name="CheckPhoneNumberLearnMoreUrl" xml:space="preserve">
     <value>https://telegram.org/faq#q-i-have-a-new-phone-number-what-do-i-do</value>
@@ -3318,6 +3354,9 @@ Kamida 5 ta belgi boʻlishi zarur.</value>
   <data name="ChromeCustomTabsInfo" xml:space="preserve">
     <value>Tashqi havolalarni ilova ichida ochish</value>
   </data>
+  <data name="Clear" xml:space="preserve">
+    <value>Tozalash</value>
+  </data>
   <data name="ClearButton" xml:space="preserve">
     <value>Tozalash</value>
   </data>
@@ -3329,6 +3368,9 @@ Kamida 5 ta belgi boʻlishi zarur.</value>
   </data>
   <data name="ClearCacheInfo" xml:space="preserve">
     <value>Qurilmangizdagi xotira joyini tozalash; mediangiz bulutda saqlanib qoladi.</value>
+  </data>
+  <data name="ClearDownloadsList" xml:space="preserve">
+    <value>Yuklanmalar roʻyxatini tozalash</value>
   </data>
   <data name="ClearFewChatsTitle" xml:space="preserve">
     <value>{0}ni tozalash</value>
@@ -3548,6 +3590,12 @@ Kamida 5 ta belgi boʻlishi zarur.</value>
 
  {1} Telegramni yangilagandan keyin 1 daqiqa yoki undan kam vaqt uchun taymer sozlangan rasmlar “Koʻrish uchun bosib turing” rejimida ishlashni boshlaydi hamda agar suhbatdoshingiz skrinshot olsa, siz bu haqida xabardor boʻlasiz.</value>
   </data>
+  <data name="ConfirmCorrectNumber" xml:space="preserve">
+    <value>Bu raqam toʻgʻrimi?</value>
+  </data>
+  <data name="ConfirmCreatePasscode" xml:space="preserve">
+    <value>Kirish kodini qayta kiriting</value>
+  </data>
   <data name="ConfirmDeleteCallLog" xml:space="preserve">
     <value>Bu yozuvni chaqiruvlar roʻyxatidan oʻchirib tashlamoqchimisiz?</value>
   </data>
@@ -3574,6 +3622,9 @@ Kamida 5 ta belgi boʻlishi zarur.</value>
   </data>
   <data name="ConnectingToProxyTapToDisable" xml:space="preserve">
     <value>Proksini faolsizlantirish uchun bosing...</value>
+  </data>
+  <data name="ConnectingYourContacts" xml:space="preserve">
+    <value>Kontaktlaringizga ulanmoqda...</value>
   </data>
   <data name="ContactBirthday" xml:space="preserve">
     <value>Tugʻilgan kun</value>
@@ -3696,6 +3747,9 @@ Koʻproq joy va qoʻshimcha funksiyalar uchun superguruhga aylantiring:
   <data name="CountReceived" xml:space="preserve">
     <value>Qabul qilindi</value>
   </data>
+  <data name="Country" xml:space="preserve">
+    <value>Mamlakat</value>
+  </data>
   <data name="CountSent" xml:space="preserve">
     <value>Yuborildi</value>
   </data>
@@ -3748,6 +3802,18 @@ Bu yerda istalgan paytda birlamchi Telegram mavzungizga qaytishingiz mumkin.</va
   </data>
   <data name="CreateNewThemeMenu" xml:space="preserve">
     <value>Yangi mavzu yaratish</value>
+  </data>
+  <data name="CreatePasscode" xml:space="preserve">
+    <value>Kirish kodi yaratish</value>
+  </data>
+  <data name="CreatePasscodeInfoPassword" xml:space="preserve">
+    <value>Siz Telegram qulfini ochish uchun foydalanadigan parolni kiriting.</value>
+  </data>
+  <data name="CreatePasscodeInfoPIN" xml:space="preserve">
+    <value>Siz Telegram qulfini ochish uchun foydalanadigan istalgan 4 ta raqamni kiriting.</value>
+  </data>
+  <data name="CreatePassword" xml:space="preserve">
+    <value>Parol yaratish</value>
   </data>
   <data name="CreateTheme" xml:space="preserve">
     <value>MAVZU YARATISH</value>
@@ -4217,6 +4283,9 @@ Bu yerda istalgan paytda birlamchi Telegram mavzungizga qaytishingiz mumkin.</va
   <data name="DescriptionInfo" xml:space="preserve">
     <value>Xohlasangiz, kanalingizga tavsif qoʻshishingiz mumkin.</value>
   </data>
+  <data name="DescriptionMore" xml:space="preserve">
+    <value>yana</value>
+  </data>
   <data name="DescriptionOptionalPlaceholder" xml:space="preserve">
     <value>Tavsif (ixtiyoriy)</value>
   </data>
@@ -4247,6 +4316,19 @@ Bu yerda istalgan paytda birlamchi Telegram mavzungizga qaytishingiz mumkin.</va
   <data name="DidNotGetTheCode" xml:space="preserve">
     <value>Kod yetib kelmadimi?</value>
   </data>
+  <data name="DidNotGetTheCodeEditNumberButton" xml:space="preserve">
+    <value>Raqamni tahrirlash</value>
+  </data>
+  <data name="DidNotGetTheCodeHelpButton" xml:space="preserve">
+    <value>Yordam</value>
+  </data>
+  <data name="DidNotGetTheCodeInfo" xml:space="preserve">
+    <value>Agar SMS yoki chaqiruv orqali kodni olmagan boʻlsangiz, **mobil internet sozlamalaringiz** va telefon raqamingizni tekshiring:
+
+**{0}**
+
+Sizga qolgan variantlar: boshqa raqam bilan urinish yoki Telegram qoʻllab-quvvatlash xizmatiga murojaat qilish. Muammoni aniqlay olishimiz uchun **Yordam** bandini bosib, bizga texnik tafsilotlarni yuboring.</value>
+  </data>
   <data name="DidNotGetTheCodePhone" xml:space="preserve">
     <value>Bu telefonda kodni olish</value>
   </data>
@@ -4263,6 +4345,15 @@ Bu yerda istalgan paytda birlamchi Telegram mavzungizga qaytishingiz mumkin.</va
     <value>Menyuda oxirgi chatlarni koʻrsatish</value>
   </data>
   <data name="Disable" xml:space="preserve">
+    <value>Faolsizlantirish</value>
+  </data>
+  <data name="DisablePasscode" xml:space="preserve">
+    <value>Kirish kodini faolsizlantirish</value>
+  </data>
+  <data name="DisablePasscodeConfirmMessage" xml:space="preserve">
+    <value>Haqiqatan ham kirish kodini faolsizlantirmoqchimisiz?</value>
+  </data>
+  <data name="DisablePasscodeTurnOff" xml:space="preserve">
     <value>Faolsizlantirish</value>
   </data>
   <data name="DisappearingGif" xml:space="preserve">
@@ -4412,6 +4503,18 @@ Kanalning barcha aʼzolari ushbu guruh xabarlarini koʻrish imkoniga ega boʻlad
   </data>
   <data name="DoubleTapSetting" xml:space="preserve">
     <value>Tezkor reaksiya</value>
+  </data>
+  <data name="DownloadedFiles" xml:space="preserve">
+    <value>Yuklab olingan fayllar</value>
+  </data>
+  <data name="DownloadedFilesMessage" xml:space="preserve">
+    <value>Telegram sizga bulutda siz yuborgan va qabul qilgan barcha hujjatlarni saqlash va qurilmangizda joy tejash imkonini beradi.</value>
+  </data>
+  <data name="Downloading" xml:space="preserve">
+    <value>Yuklab olinmoqda</value>
+  </data>
+  <data name="DownloadsTabs" xml:space="preserve">
+    <value>Yuklanmalar</value>
   </data>
   <data name="Draft" xml:space="preserve">
     <value>Qoralama</value>
@@ -4572,6 +4675,16 @@ Kanalning barcha aʼzolari ushbu guruh xabarlarini koʻrish imkoniga ega boʻlad
   <data name="EditName" xml:space="preserve">
     <value>Ismni tahrirlash</value>
   </data>
+  <data name="EditNumber" xml:space="preserve">
+    <value>Raqamni tahrirlash</value>
+  </data>
+  <data name="EditNumberInfo" xml:space="preserve">
+    <value>Telefon raqamingizni tahrirlashni xohlaysizmi?
+
+**{0}**
+
+Agar yuqoridagi telefon raqami xato boʻlsa, tasdiqlash kodini kuting.</value>
+  </data>
   <data name="EditPhoto" xml:space="preserve">
     <value>Muharrirda ochish</value>
   </data>
@@ -4681,6 +4794,9 @@ Agar hech kim tanlanmasa, oxirgi faol kontaktlaringiz ushbu vidjetda chiqariladi
     <value>Siz ikki bosqichli tekshiruvni yoqdingiz.
 Bu yerda oʻrnatgan parolingiz Telegram hisobingizga kirishingiz uchun kerak boʻladi.</value>
   </data>
+  <data name="EnablePasscode" xml:space="preserve">
+    <value>Kirish kodini yoqish</value>
+  </data>
   <data name="EnableProxyAlert" xml:space="preserve">
     <value>Haqiqatan ham bu proksi yoqilsinmi?</value>
   </data>
@@ -4775,6 +4891,9 @@ Tafsilotlar uchun telegram.org manziliga kiring</value>
   <data name="EnterNewPasscode" xml:space="preserve">
     <value>Yangi kirish kodingizni kiriting</value>
   </data>
+  <data name="EnterPassword" xml:space="preserve">
+    <value>Parolingizni kiriting</value>
+  </data>
   <data name="EnterThemeName" xml:space="preserve">
     <value>Mavzu nomini kiriting</value>
   </data>
@@ -4785,6 +4904,9 @@ Mavzu nomini kiriting:</value>
   </data>
   <data name="EnterYourPasscode" xml:space="preserve">
     <value>Kirish kodingizni kiriting</value>
+  </data>
+  <data name="EnterYourPasscodeInfo" xml:space="preserve">
+    <value>Bu parametrni boshqarish uchun joriy Telegram kirish kodingizni kiriting.</value>
   </data>
   <data name="EnterYourTelegramPasscode" xml:space="preserve">
     <value>Telegram kirish kodingizni kiriting</value>
@@ -4966,7 +5088,7 @@ Soʻrovingizga mos keluvchi hech qanday oxirgi amallar topilmadi.</value>
     <value>un1 guruhga qoʻshildi</value>
   </data>
   <data name="EventLogInfoDetail" xml:space="preserve">
-    <value>Bu aʼzolar hamda administratorlar 48 soat mobaynida amalga oshirgan barcha xizmat harakatlarining roʻyxati.</value>
+    <value>Bu guruh aʼzolari va adminlarining oxirgi 48 soatdagi barcha muhim harakatlari roʻyxati.</value>
   </data>
   <data name="EventLogInfoDetailChannel" xml:space="preserve">
     <value>Bu kanal administratorlarining oxirgi 48 soat davomida bajargan xizmat amallari roʻyxati.</value>
@@ -5145,7 +5267,7 @@ Muddati: {1}</value>
     <value>un1 sekin rejimni {0} qilib belgiladi</value>
   </data>
   <data name="EventLogUnpinnedMessages" xml:space="preserve">
-    <value>un1 xabarni olib tashladi</value>
+    <value>un1 xabarni yechib oldi</value>
   </data>
   <data name="EventLogVoiceChatAllowedToSpeak" xml:space="preserve">
     <value>un1 yangi videochat ishtirokchilari gapirishiga ruxsat berdi</value>
@@ -5247,7 +5369,7 @@ Muddati: {1}</value>
     <value/>
   </data>
   <data name="FileSavedHint" xml:space="preserve">
-    <value>Fayl yuklanmalarga saqlandi</value>
+    <value>Fayl Yuklanmalar jildiga saqlandi</value>
   </data>
   <data name="FilesDataUsage" xml:space="preserve">
     <value>Fayllar</value>
@@ -5259,10 +5381,10 @@ Muddati: {1}</value>
     <value/>
   </data>
   <data name="FilesSavedHint_one" xml:space="preserve">
-    <value>Fayl yuklanmalarga saqlandi</value>
+    <value>Fayl Yuklanmalar jildiga saqlandi</value>
   </data>
   <data name="FilesSavedHint_other" xml:space="preserve">
-    <value>{0} ta fayl yuklanmalarga saqlandi</value>
+    <value>{0} ta fayl Yuklanmalar jildiga saqlandi</value>
   </data>
   <data name="FilesSavedHint_two" xml:space="preserve">
     <value/>
@@ -5531,6 +5653,9 @@ Muddati: {1}</value>
   <data name="FirstName" xml:space="preserve">
     <value>Ism (majburiy)</value>
   </data>
+  <data name="FirstNameSmall" xml:space="preserve">
+    <value>Familiya</value>
+  </data>
   <data name="FloodWait" xml:space="preserve">
     <value>Haddan ziyod urinish qilindi, keyinroq qayta urining.</value>
   </data>
@@ -5547,7 +5672,7 @@ Muddati: {1}</value>
     <value>Shrift oʻlchami</value>
   </data>
   <data name="FontSizePreviewLine1" xml:space="preserve">
-    <value>Soat nechchi boʻlganligini bilasizmi?</value>
+    <value>Soat nechchi boʻlganini bilasizmi?</value>
   </data>
   <data name="FontSizePreviewLine2" xml:space="preserve">
     <value>Tokioda tong otdi 😎</value>
@@ -5588,11 +5713,37 @@ Muddati: {1}</value>
   <data name="ForceSetPasswordAlertMessage_zero" xml:space="preserve">
     <value/>
   </data>
+  <data name="ForceSetPasswordAlertMessageShort_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ForceSetPasswordAlertMessageShort_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ForceSetPasswordAlertMessageShort_one" xml:space="preserve">
+    <value>Agar parol sozlamasangiz, faqat har {0} kunda hisobingizga SMS orqali kira olasiz. Parolsiz davom etishni xohlaysizmi?</value>
+  </data>
+  <data name="ForceSetPasswordAlertMessageShort_other" xml:space="preserve">
+    <value>Agar parol sozlamasangiz, faqat har {0} kunda hisobingizga SMS orqali kira olasiz. Parolsiz davom etishni xohlaysizmi?</value>
+  </data>
+  <data name="ForceSetPasswordAlertMessageShort_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ForceSetPasswordAlertMessageShort_zero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="ForceSetPasswordCancel" xml:space="preserve">
     <value>Ha, albatta</value>
   </data>
   <data name="ForceSetPasswordContinue" xml:space="preserve">
     <value>Yoʻq, parol oʻrnataman</value>
+  </data>
+  <data name="ForgotPasscode" xml:space="preserve">
+    <value>Kirish kodingizni unutdingizmi?</value>
+  </data>
+  <data name="ForgotPasscodeInfo" xml:space="preserve">
+    <value>Agar kirish kodingizni unutsangiz, ilovani oʻchirish va qayta oʻrnatishingiz kerak boʻladi.
+
+Barcha maxfiy chatlar yoʻqotiladi.</value>
   </data>
   <data name="ForgotPassword" xml:space="preserve">
     <value>Parolni unutdingizmi?</value>
@@ -5891,6 +6042,9 @@ Muddati: {1}</value>
   <data name="ForwardSendMessages" xml:space="preserve">
     <value>Xabarlar yuborish</value>
   </data>
+  <data name="ForwardsRestrictedInfoBot" xml:space="preserve">
+    <value>Bu botdan nusxa olish va uzatish taqiqlangan.</value>
+  </data>
   <data name="ForwardsRestrictedInfoChannel" xml:space="preserve">
     <value>Bu kanalda nusxa olish va uzatish taqiqlangan.</value>
   </data>
@@ -6002,8 +6156,11 @@ Muddati: {1}</value>
   <data name="GIFs_zero" xml:space="preserve">
     <value/>
   </data>
+  <data name="GifSavedHint" xml:space="preserve">
+    <value>Saqlangan GIFlarga qoʻshildi</value>
+  </data>
   <data name="GifSavedToDownloadsHint" xml:space="preserve">
-    <value>GIF yuklanmalarga saqlandi</value>
+    <value>GIF Yuklanmalar jildiga saqlandi</value>
   </data>
   <data name="GifsTab" xml:space="preserve">
     <value>GIFLAR</value>
@@ -6037,7 +6194,7 @@ Keyin bu amalni bekor qilib **boʻlmaydi**.</value>
     <value>Oddiy guruh sifatida qoldirish</value>
   </data>
   <data name="GigagroupConvertCancelHint" xml:space="preserve">
-    <value>Agar fikringizni oʻzgartirsangiz, guruhingizning Sozlamalar &gt; Ruxsatlar runkiga kiring.</value>
+    <value>Agar fikringizni oʻzgartirsangiz, guruhingizning Sozlamalar &gt; Ruxsatlar rukniga kiring.</value>
   </data>
   <data name="GigagroupConvertInfo1" xml:space="preserve">
     <value>Guruh aʼzolari soniga cheklov yoʻq</value>
@@ -6046,7 +6203,7 @@ Keyin bu amalni bekor qilib **boʻlmaydi**.</value>
     <value>Faqat adminlar xabarlar yuborishi mumkin.</value>
   </data>
   <data name="GigagroupConvertInfo3" xml:space="preserve">
-    <value>Qayta oddiy guruh qilib boʻlmaydi.</value>
+    <value>Qayta oddiy guruh qilish imkonsiz.</value>
   </data>
   <data name="GigagroupConvertProcessButton" xml:space="preserve">
     <value>Translatsiya guruhiga aylantirish</value>
@@ -6101,13 +6258,13 @@ savolingiz bormi?</value>
     <value>Aʼzolar qoʻshish</value>
   </data>
   <data name="GroupContacts" xml:space="preserve">
-    <value>Guruhdagi kontaktlar</value>
+    <value>Bu guruhdagi kontaktlar</value>
   </data>
   <data name="GroupDeletedUndo" xml:space="preserve">
     <value>Guruh oʻchirildi.</value>
   </data>
   <data name="GroupDescription1" xml:space="preserve">
-    <value>200,000 gacha aʼzolar</value>
+    <value>200 000 tagacha aʼzolar</value>
   </data>
   <data name="GroupDescription2" xml:space="preserve">
     <value>Umumiy yozishmalar tarixi</value>
@@ -6235,7 +6392,7 @@ Unutmang, u qora roʻyxatda boʻlmasa, guruhning taklif havolasi orqali qayta qo
     <value>Izohni berkitish</value>
   </data>
   <data name="HideNewChatsAlertText" xml:space="preserve">
-    <value>Sizga kontaktlar roʻyxatingizda boʻlmaganlar tez-tez yozishmoqda. Bunday chatlarni *avtomatik sukut qilish** va **arxivlashni** xohlaysizmi?</value>
+    <value>Sizga kontaktlar roʻyxatingizda boʻlmaganlar tez-tez yozishmoqda. Bunday chatlarni **avtomatik sukut qilish** va **arxivlashni** xohlaysizmi?</value>
   </data>
   <data name="HideNewChatsAlertTitle" xml:space="preserve">
     <value>Yangi chatlar berkitilsinmi?</value>
@@ -6247,7 +6404,7 @@ Unutmang, u qora roʻyxatda boʻlmasa, guruhning taklif havolasi orqali qayta qo
     <value>QADALGAN XABARLARNI BERKITISH</value>
   </data>
   <data name="HideSenderNames" xml:space="preserve">
-    <value>Yuboruvchi ismini berkitish</value>
+    <value>Yuboruvchilarning ismlarini berkitish</value>
   </data>
   <data name="HideSendersName" xml:space="preserve">
     <value>Yuboruvchi ismini berkitish</value>
@@ -6370,7 +6527,7 @@ Unutmang, u qora roʻyxatda boʻlmasa, guruhning taklif havolasi orqali qayta qo
     <value>Bu xabar boshqa ilovadan import qilingan. U haqiqiyligiga kafolat bera olmaymiz.</value>
   </data>
   <data name="ImportedMessage" xml:space="preserve">
-    <value>Import qilindi</value>
+    <value>Import qilingan</value>
   </data>
   <data name="ImportErrorChatInvalidGroup" xml:space="preserve">
     <value>Fayl formati foydalanuvchi uchun, lekin siz guruhni tanladingiz.</value>
@@ -6535,7 +6692,7 @@ Xabarlar joriy kun sanasida import qilinadi, lekin asl vaqt belgilarini ham oʻz
     <value>Google Maps oʻrnatilsinmi?</value>
   </data>
   <data name="InstantView" xml:space="preserve">
-    <value>BATAFSIL</value>
+    <value>TEZKOR KOʻRISH</value>
   </data>
   <data name="InstantViewNightMode" xml:space="preserve">
     <value>Tungi rejim kech tushishi bilan avtomatik yoqiladi</value>
@@ -6832,7 +6989,7 @@ Xabarlar joriy kun sanasida import qilinadi, lekin asl vaqt belgilarini ham oʻz
     <value>Iyun</value>
   </data>
   <data name="KeepMedia" xml:space="preserve">
-    <value>Mediafayllarni saqlash muddati</value>
+    <value>Media fayllar saqlanishi</value>
   </data>
   <data name="KeepMediaForever" xml:space="preserve">
     <value>Doimiy</value>
@@ -6870,11 +7027,11 @@ Barcha mediafayllar Telegram bulutida saqlanadi va agar u sizga yana kerak boʻl
     <value>Til</value>
   </data>
   <data name="LanguageAlert" xml:space="preserve">
-    <value>Siz qoʻllamoqchi boʻlgan (**{0}**) tarjima toʻplami {1}% tarjima qilingan.
+    <value>Siz tatbiq qilmoqchi boʻlgan (**{0}**) tarjima toʻplami {1}% tarjima qilingan.
 
-Bunda butun interfeys tili oʻzgaradi. [translation panel]da oʻz tarjima versiyangizni taklif qilishingiz mumkin.
+Bunda butun interfeys tili tarjima qilinadi. [Tarjima panelida] tuzatishlarni taklif qilishingiz mumkin.
 
-Istalgan payt ilova sozlamalarida tilni oʻzgartirishingiz mumkin.</value>
+Istalgan paytda Sozlamalarda tilni oʻzgartirishingiz mumkin.</value>
   </data>
   <data name="LanguageCode" xml:space="preserve">
     <value>uz</value>
@@ -6940,8 +7097,11 @@ Istalgan payt ilova sozlamalarida tilni oʻzgartirishingiz mumkin.</value>
   <data name="LastName" xml:space="preserve">
     <value>Familiya (ixtiyoriy)</value>
   </data>
+  <data name="LastNameSmall" xml:space="preserve">
+    <value>Familiya</value>
+  </data>
   <data name="LastSeen" xml:space="preserve">
-    <value>soʻnggi faollik:</value>
+    <value>oxirgi marta:</value>
   </data>
   <data name="LastSeenContacts" xml:space="preserve">
     <value>Kontaktlarim</value>
@@ -6956,10 +7116,10 @@ Istalgan payt ilova sozlamalarida tilni oʻzgartirishingiz mumkin.</value>
     <value>Mening kontaktlarim (+{0})</value>
   </data>
   <data name="LastSeenDate" xml:space="preserve">
-    <value>soʻnggi faollik:</value>
+    <value>oxirgi marta:</value>
   </data>
   <data name="LastSeenDateFormatted" xml:space="preserve">
-    <value>soʻnggi faollik: {0}</value>
+    <value>oxirgi marta: {0}</value>
   </data>
   <data name="LastSeenEverybody" xml:space="preserve">
     <value>Hamma</value>
@@ -6968,7 +7128,7 @@ Istalgan payt ilova sozlamalarida tilni oʻzgartirishingiz mumkin.</value>
     <value>Hamma (-{0})</value>
   </data>
   <data name="LastSeenFormatted" xml:space="preserve">
-    <value>soʻnggi faollik: {0}</value>
+    <value>oxirgi marta: {0}</value>
   </data>
   <data name="LastSeenNobody" xml:space="preserve">
     <value>Hech kim</value>
@@ -7041,7 +7201,7 @@ Bu havola faqat ushbu guruh aʼzolari uchun ishlaydi.</value>
     <value>Havolani yaratgan:</value>
   </data>
   <data name="LinkDesktopDevice" xml:space="preserve">
-    <value>Desktop qurilmasini biriktirish</value>
+    <value>Desktop qurilmasini ulash</value>
   </data>
   <data name="LinkedChannel" xml:space="preserve">
     <value>Biriktirilgan kanal</value>
@@ -7056,7 +7216,7 @@ Bu havola faqat ushbu guruh aʼzolari uchun ishlaydi.</value>
     <value>Havola ortiq faol emas</value>
   </data>
   <data name="LinkInfo" xml:space="preserve">
-    <value>Telegramning istalgan foydalanuvchisi bu havola orqali guruhingizga qoʻshilishi mumkin.</value>
+    <value>Istalgan Telegram foydalanuvchisi ushbu havola orqali guruhingizga qoʻshilishi mumkin boʻladi.</value>
   </data>
   <data name="LinkInfoChannel" xml:space="preserve">
     <value>Telegramning istalgan foydalanuvchisi ushbu havola orqali kanalingizga qoʻshila oladi.</value>
@@ -7137,7 +7297,7 @@ Bu havola faqat ushbu guruh aʼzolari uchun ishlaydi.</value>
     <value>tinglamoqda</value>
   </data>
   <data name="LiveLocationAlertGroup" xml:space="preserve">
-    <value>Ushbu suhbatdoshlaringiz jonli manzilingizni qancha vaqt davomida koʻrishi mumkinligini tanlang.</value>
+    <value>Bu chatdagi odamlar jonli joylashuvingizni qancha muddat koʻrishini tanlang.</value>
   </data>
   <data name="LiveLocationAlertPrivate" xml:space="preserve">
     <value>{0} aniq joylashuvingizni qancha vaqt koʻrib turishini tanlang.</value>
@@ -7231,17 +7391,23 @@ Bu amalni bajarish uchun bir necha daqiqa ketishi mumkin.</value>
   <data name="LocationUpdatedJustNow" xml:space="preserve">
     <value>hozirgina yangilangan</value>
   </data>
+  <data name="LoginAccessibilityCountryCode" xml:space="preserve">
+    <value>Mamlakat kodi</value>
+  </data>
   <data name="LoginAttempts" xml:space="preserve">
     <value>Kirish yakunlanmagan harakatlar</value>
   </data>
   <data name="LoginAttemptsInfo" xml:space="preserve">
-    <value>Yuqoridagi moslamalar sizning xabarlaringizni ko‘ra olmaydi. Yuborilgan kod to‘g‘ri kiritilgan ammo parol noto‘g‘ri kiritildi.</value>
+    <value>Yuqoridagi qurilmalar xabarlaringizni koʻra olmaydi. Kod toʻgʻri kiritildi, lekin toʻgʻri parol kiritilmadi.</value>
   </data>
   <data name="LoginPassword" xml:space="preserve">
     <value>Parol</value>
   </data>
   <data name="LoginPasswordText" xml:space="preserve">
     <value>Ikki bosqichli tekshiruvni yoqqansiz, hisobingiz qoʻshimcha parol bilan himoyalangan.</value>
+  </data>
+  <data name="LoginPasswordTextShort" xml:space="preserve">
+    <value>Ikki bosqichli tekshiruv yoqilgan. Hisobingiz qoʻshimcha parol bilan himoyalangan.</value>
   </data>
   <data name="LogOut" xml:space="preserve">
     <value>Chiqish</value>
@@ -7310,6 +7476,9 @@ Bu amalni bajarish uchun bir necha daqiqa ketishi mumkin.</value>
   </data>
   <data name="ManageChannelMenu" xml:space="preserve">
     <value>Kanalni boshqarish</value>
+  </data>
+  <data name="ManageDeviceStorage" xml:space="preserve">
+    <value>Qurilma xotirasini boshqarish</value>
   </data>
   <data name="ManageGroup" xml:space="preserve">
     <value>Guruhni boshqarish</value>
@@ -7852,7 +8021,7 @@ Kamida 5 ta belgi boʻlishi zarur.</value>
 Bunga biroz vaqt ketadi. Fayllar koʻchirilayotganida ilovadan foydalanishda davom etishingiz mumkin.</value>
   </data>
   <data name="MigrateOldFolderTitle" xml:space="preserve">
-    <value>Fayllarni Cheklangan Joyga Ko&apos;chirish</value>
+    <value>Fayllarni fayllar saqlanadigan joyga koʻchirish</value>
   </data>
   <data name="MigratingFiles" xml:space="preserve">
     <value>Fayllar koʻchirilmoqda</value>
@@ -7945,7 +8114,7 @@ Bunga biroz vaqt ketadi. Fayllar koʻchirilayotganida ilovadan foydalanishda dav
     <value>**TAYYOR** tugmasini bosganingizda telefon raqamingiz {0}ga koʻrinadigan boʻladi.</value>
   </data>
   <data name="Mono" xml:space="preserve">
-    <value>Mono</value>
+    <value>Monoboʻshliq</value>
   </data>
   <data name="Months_few" xml:space="preserve">
     <value/>
@@ -8146,7 +8315,7 @@ Bunga biroz vaqt ketadi. Fayllar koʻchirilayotganida ilovadan foydalanishda dav
     <value>Zahiriddin Olimov</value>
   </data>
   <data name="NewThemePreviewReply" xml:space="preserve">
-    <value>Hayrli tong! 👋</value>
+    <value>Xayrli tong! 👋</value>
   </data>
   <data name="NewThemePreviewReply2" xml:space="preserve">
     <value>Xayrli kun</value>
@@ -8355,6 +8524,14 @@ bu yerda chiqadi.</value>
   </data>
   <data name="NoResult" xml:space="preserve">
     <value>Natijalar yoʻq</value>
+  </data>
+  <data name="NoRtmpStreamFromAppOwner" xml:space="preserve">
+    <value>Telegram hozircha striming ilovangizdan hech qanday translatsiyani koʻrmayapti.
+
+Ilovangizda toʻgʻri server URL manzili va strim kalitini kiritganingizni tekshiring.</value>
+  </data>
+  <data name="NoRtmpStreamFromAppViewer" xml:space="preserve">
+    <value>{0} ayni paytda Telegramga jonli efir maʼlumotlarini translatsiya qilmayapti.</value>
   </data>
   <data name="NoScheduledMessages" xml:space="preserve">
     <value>Rejalashtirilgan xabarlar hozircha mavjud emas...</value>
@@ -8859,7 +9036,7 @@ qoʻshilish soʻrovlari yoʻq.</value>
     <value>Unutmang, **{0}** istisno sifatida belgilangan va ushbu oʻzgarish ularga taʼsir qilmaydi.</value>
   </data>
   <data name="NotificationsExceptionsSingleAlert" xml:space="preserve">
-    <value>Hozirgi o&apos;zgarishlar istisnolar ro&apos;yxatidagi **{0}** chat uchun ta&apos;sir qilmaydi.</value>
+    <value>Unutmang, **{0}** istisno sifatida kiritilgan va ushbu oʻzgarish unga taʼsir qilmaydi.</value>
   </data>
   <data name="NotificationsForChannels" xml:space="preserve">
     <value>Kanallar uchun bildirishnomalar</value>
@@ -9278,14 +9455,32 @@ Obuna toʻlovlarisiz.</value>
   <data name="PasscodeDoNotMatch" xml:space="preserve">
     <value>Kirish kodlari bir-biriga mos emas</value>
   </data>
+  <data name="PasscodeFinish" xml:space="preserve">
+    <value>Kirish kodini sozlash</value>
+  </data>
   <data name="PasscodePassword" xml:space="preserve">
     <value>Parol</value>
   </data>
   <data name="PasscodePIN" xml:space="preserve">
     <value>PIN kod</value>
   </data>
+  <data name="PasscodeReinstallNotice" xml:space="preserve">
+    <value>Agar kirish kodingizni unutsangiz, ilovani **qayta oʻrnatishingiz** kerak. Barcha maxfiy chatlar yoʻqotiladi.</value>
+  </data>
+  <data name="PasscodeScreenHint" xml:space="preserve">
+    <value>Ilovani qulflash uchun chatlar sahifasidagi qulf belgisini bosing.</value>
+  </data>
+  <data name="PasscodesDoNotMatchTryAgain" xml:space="preserve">
+    <value>Kirish kodlari bir-biriga mos emas. Qayta urining.</value>
+  </data>
+  <data name="PasscodeSwitchToPassword" xml:space="preserve">
+    <value>Parolga almashtirish</value>
+  </data>
+  <data name="PasscodeSwitchToPIN" xml:space="preserve">
+    <value>PIN kodga almashtirish</value>
+  </data>
   <data name="PassportAddAddressUploadInfo" xml:space="preserve">
-    <value>Manzilingizni tasdiqlash uchun hujjatning skaynerlarngan rasmlarini yuklang (barcha sahifalar).</value>
+    <value>Manzilingizni tasdiqlash uchun tanlangan hujjatning (barcha sahifalar) skan yoki suratini yuklang.</value>
   </data>
   <data name="PassportAddAgreement" xml:space="preserve">
     <value>Ijara shartnomasini qoʻshish</value>
@@ -9362,7 +9557,7 @@ Pasportingizning sertifikatlangan inglizcha tarjimasi skanlarini yuklang.</value
     <value>Bank bayonnomangizning tasdiqlangan ingliz tilidagi tarjimasini skaner variantini yuklang.</value>
   </data>
   <data name="PassportAddTranslationBillInfo" xml:space="preserve">
-    <value>Kommunal xizmatlar uchun to&apos;lovlarni ingliz tilidagi tarjimasi tasdiqlangan skaner nusxasini yuklang.</value>
+    <value>Kommunal xizmatlar uchun toʻlov kvitansiyalarining ingliz tilidagi sertifikatlangan tarjimasi skanlarini yuklang.</value>
   </data>
   <data name="PassportAddTranslationPassportRegistrationInfo" xml:space="preserve">
     <value>Pasportingizning propiska sahifasining ingliz tiliga tasdiqlangan tarjima qilingan variantini yuklang.</value>
@@ -9479,7 +9674,7 @@ Pasportingizning sertifikatlangan inglizcha tarjimasi skanlarini yuklang.</value
     <value>Shaxsni tasdiqlovchi hujjat</value>
   </data>
   <data name="PassportIdentityDocumentInfo" xml:space="preserve">
-    <value>Pasport yoki boshqa bir ID hujjat skaynerini yuklang</value>
+    <value>Pasport yoki boshqa shaxsni tasdiqlovchi hujjatingiz skanini yuklash</value>
   </data>
   <data name="PassportIdentityDriverLicence" xml:space="preserve">
     <value>Haydovchilik guvohnomangizning skanerlangan variantini yuklang</value>
@@ -9777,7 +9972,7 @@ Tafsilotlar uchun Savol-javoblarimizga kirishingiz mumkin.</value>
     <value>Pasportingizni skanerlang</value>
   </data>
   <data name="PassportScanPassportInfo" xml:space="preserve">
-    <value>Pasport yoki identifikatsion kartangiz ma&apos;lumotlarini avtomatik to&apos;ldirilishi uchun mashina o&apos;qiydigan ko&apos;rinishda skaner qiling.</value>
+    <value>Shaxsiy maʼlumotlaringizni avtomatik toʻldirish uchun pasport yoki shaxsni tasdiqlovchi hujjatingizning kompyuter oʻqiydigan sohasini skanerlang.</value>
   </data>
   <data name="PassportSDK_Cancel" xml:space="preserve">
     <value>Bekor qilish</value>
@@ -9869,6 +10064,9 @@ Tafsilotlar uchun Savol-javoblarimizga kirishingiz mumkin.</value>
   <data name="PasswordHint" xml:space="preserve">
     <value>Parol ishorasi</value>
   </data>
+  <data name="PasswordHintDescription" xml:space="preserve">
+    <value>Parolingiz uchun ixtiyoriy ishora yaratishingiz mumkin.</value>
+  </data>
   <data name="PasswordHintPlaceholder" xml:space="preserve">
     <value>Ishora</value>
   </data>
@@ -9892,6 +10090,9 @@ Tafsilotlar uchun Savol-javoblarimizga kirishingiz mumkin.</value>
   </data>
   <data name="PasteFromClipboard" xml:space="preserve">
     <value>Vaqtincha xotiradan qoʻyish</value>
+  </data>
+  <data name="PauseAll" xml:space="preserve">
+    <value>Hammasini pauzalash</value>
   </data>
   <data name="PaymentBillingAddress" xml:space="preserve">
     <value>Toʻlovchi manzili</value>
@@ -9951,7 +10152,7 @@ Tafsilotlar uchun Savol-javoblarimizga kirishingiz mumkin.</value>
     <value>Yetkazib berish usuli</value>
   </data>
   <data name="PaymentConfirmationMessage" xml:space="preserve">
-    <value>Sizning {0}kartangiz faylda. Ushbu karta orqali to‘lash uchun ikki bosqichli parolingizni kiriting.</value>
+    <value>{0} kartangiz saqlangan. Bu karta orqali toʻlash uchun 2 bosqichli tekshiruv parolingizni kiriting.</value>
   </data>
   <data name="PaymentConfirmationNewCard" xml:space="preserve">
     <value>Boshqa kartani tanlang</value>
@@ -10014,7 +10215,7 @@ Tafsilotlar uchun Savol-javoblarimizga kirishingiz mumkin.</value>
     <value>Yetkazib berish manzili</value>
   </data>
   <data name="PaymentShippingAddress1Placeholder" xml:space="preserve">
-    <value>Manzil 1 (Koʻcha)</value>
+    <value>Manzil 1 (koʻcha)</value>
   </data>
   <data name="PaymentShippingAddress2Placeholder" xml:space="preserve">
     <value>Manzil 2 (Koʻcha)</value>
@@ -10086,9 +10287,9 @@ Tafsilotlar uchun Savol-javoblarimizga kirishingiz mumkin.</value>
     <value>Diqqat</value>
   </data>
   <data name="PaymentWarningText" xml:space="preserve">
-    <value>Telegram ham, {0} ham kredit kartangiz maʼlumotlariga kira olmaydi. Kredit kartasi maʼlumotlari faqat {1} toʻlov tizimi tomonidan qayta ishlanadi.
+    <value>Telegram ham, {0} ham kredit kartangiz maʼlumotlariga kira olmaydi. Kredit karta maʼlumotlari faqat {1} toʻlov tizimi tomonidan qayta ishlanadi.
 
-To‘lovlar bevosita {0} ishlab chiquvchisiga oʻtkaziladi. Telegram hech qanday kafolat  bera olmaydi. Qandaydir muammolar chiqsa {0} ishlab chiquvchisiga yoki bankingizga murojaat qiling.</value>
+To‘lovlar bevosita {0} ishlab chiquvchisiga yuboriladi. Telegram hech qanday kafolat  bera olmaydi, shuning uchun davom etish orqali javobgarlikni zimmangizga olasiz. Qandaydir muammolar chiqsa, {0} ishlab chiquvchisiga yoki bankingizga murojaat qiling.</value>
   </data>
   <data name="PendingEmailText" xml:space="preserve">
     <value>{0} tiklash emailingiz hali faol emas va tasdiqlanishi kutilmoqda.</value>
@@ -10213,20 +10414,50 @@ Biz joylashuv axborotingizdan siz tanlagan muddat davomida foydalanamiz va istal
   <data name="PermissionNoAudioVideo" xml:space="preserve">
     <value>Videolar yoza olishingiz uchun Telegram mikrofoningizdan foydalanishi kerak.</value>
   </data>
+  <data name="PermissionNoAudioVideoWithHint" xml:space="preserve">
+    <value>**Telegram** ovozli xabarlarni yubora olishingiz uchun mikrofon ruxsatini talab qiladi. Sozlamalar &gt; Ruxsatlar rukniga kiring va **Mikrofon** bandini yoqing.</value>
+  </data>
+  <data name="PermissionNoAudioWithHint" xml:space="preserve">
+    <value>**Telegram** ovozli xabarlarni yubora olishingiz uchun mikrofon ruxsatini talab qiladi. Sozlamalar &gt; Ruxsatlar rukniga kiring va **Mikrofon** bandini yoqing.</value>
+  </data>
   <data name="PermissionNoCamera" xml:space="preserve">
     <value>Rasm va videoga olish imkoniyatiga ega boʻlishingiz uchun Telegram qurilmangiz kamerasiga kirish huquqiga ega boʻlishi kerak.</value>
+  </data>
+  <data name="PermissionNoCameraMicVideo" xml:space="preserve">
+    <value>**Telegram** videoxabarlarni yubora olishingiz uchun kamera va mikrofon ruxsatini talab qiladi. Sozlamalar &gt; Ruxsatlar rukniga kiring va **Mikrofon** va **Kamera** bandlarini yoqing.</value>
+  </data>
+  <data name="PermissionNoCameraWithHint" xml:space="preserve">
+    <value>**Telegram** rasm va videoga ola olishingiz uchun kamera ruxsatini talab qiladi. Sozlamalar &gt; Ruxsatlar rukniga kiring va **Kamera** bandini yoqing.</value>
+  </data>
+  <data name="PermissionNoContactsSharing" xml:space="preserve">
+    <value>**Telegram** kontaktlarni tanishlaringizga ulasha olishingiz uchun kontaktlar ruxsatini talab qiladi. Sozlamalar &gt; Ruxsatlar rukniga kiring va **Kontaktlar** bandini yoqing.</value>
   </data>
   <data name="PermissionNoLocation" xml:space="preserve">
     <value>Telegram tanishlaringizga ulasha olishingiz uchun joylashuv axborotingizdan foydalanishi kerak.</value>
   </data>
+  <data name="PermissionNoLocationFriends" xml:space="preserve">
+    <value>**Telegram** joylashuv axborotingizni tanishlaringizga ulasha olishingiz uchun uchun joylashuv ruxsatini talab qiladi. Sozlamalar &gt; Ruxsatlar rukniga kiring va **Joylashuv** bandini yoqing.</value>
+  </data>
+  <data name="PermissionNoLocationNavigation" xml:space="preserve">
+    <value>**Telegram** marshrutlar ola olishingiz uchun joylashuv ruxsatini talab qiladi. Sozlamalar &gt; Ruxsatlar rukniga kiring va **Joylashuv** ruxsatini yoqing.</value>
+  </data>
+  <data name="PermissionNoLocationPeopleNearby" xml:space="preserve">
+    <value>**Telegram** yaqin-atrofdagi odamlarni topa olishingiz uchun joylashuv ruxsatini talab qiladi. Sozlamalar &gt; Ruxsatlar rukniga kiring va **Joylashuv** bandini yoqing.</value>
+  </data>
   <data name="PermissionNoLocationPosition" xml:space="preserve">
     <value>Telegram joylashuv axborotingizdan foydalana olishi kerak.</value>
+  </data>
+  <data name="PermissionNoStorageAvatar" xml:space="preserve">
+    <value>**Telegram** profil rasm va videolarini yuklay olishingiz uchun xotira ruxsatini talab qiladi. Sozlamalar &gt; Ruxsatlar rukniga kiring va “Fayllar va media** bandini yoqing.</value>
   </data>
   <data name="PermissionOpenSettings" xml:space="preserve">
     <value>SOZLAMALAR</value>
   </data>
   <data name="PermissionStorage" xml:space="preserve">
     <value>Rasm, video, musiqa hamda boshqa mediafayllarni yuborish va saqlay olish uchun Telegram qurilmangiz xotirasiga kirish huquqiga ega boʻlishi kerak.</value>
+  </data>
+  <data name="PermissionStorageWithHint" xml:space="preserve">
+    <value>**Telegram** rasm, video, musiqa va boshqa media fayllarni yubora olish va qabul qila olishingiz uchun xotira ruxsatini talab qiladi. Sozlamalar &gt; Ruxsatlar rukniga kiring va **Fayllar va media** bandini yoqing.</value>
   </data>
   <data name="PermissionXiaomiLockscreen" xml:space="preserve">
     <value>Chaqiruvlar toʻgʻri ishlashi uchun Telegramga ekran qulfida koʻrsatilishiga ruxsat bering.</value>
@@ -10248,6 +10479,9 @@ Biz joylashuv axborotingizdan siz tanlagan muddat davomida foydalanamiz va istal
   </data>
   <data name="PhoneMobile" xml:space="preserve">
     <value>Mobil raqam</value>
+  </data>
+  <data name="PhoneNumber" xml:space="preserve">
+    <value>Telefon raqami</value>
   </data>
   <data name="PhoneNumberAlert" xml:space="preserve">
     <value>Agar foydalanuvchilarning manzillar kitobida telefon raqamingiz boʻlsa yoki maxfiylik sozlamalaringiz ularga buni koʻrish imkonini bersa, ular yangi raqamingizni koʻradilar. Siz buni Sozlamalar &gt; Maxfiylik va xavfsizlik &gt; Telefon raqami ruknida oʻzgartirishingiz mumkin.</value>
@@ -10304,7 +10538,7 @@ Biz joylashuv axborotingizdan siz tanlagan muddat davomida foydalanamiz va istal
     <value>Rasm galereyaga saqlandi</value>
   </data>
   <data name="PhotoSavedToDownloadsHint" xml:space="preserve">
-    <value>Rasm yuklanmalarga saqlandi</value>
+    <value>Rasm Yuklanmalar jildiga saqlandi</value>
   </data>
   <data name="PhotosSavedHint_few" xml:space="preserve">
     <value/>
@@ -10778,7 +11012,7 @@ Biz joylashuv axborotingizdan siz tanlagan muddat davomida foydalanamiz va istal
     <value>Telegram orqali kirilgan veb-saytlar.</value>
   </data>
   <data name="PrivacyCallsP2PHelp" xml:space="preserve">
-    <value>Peer-to-peer faolsizlantirilganida IP manzilingiz oshkor qilinishining oldini olish uchun barcha chaqiruvlar Telegram serverlari orqali amalga oshiriladi, lekin bunda audio va video sifati yomonlashishi mumkin.</value>
+    <value>Peer-to-peer faolsizlantirilsa, IP manzilingiz oshkor qilinishining oldini olish uchun barcha chaqiruvlar Telegram serverlari orqali amalga oshiriladi, lekin bunda audio va video sifati yomonlashishi mumkin.</value>
   </data>
   <data name="PrivacyCallsP2PTitle" xml:space="preserve">
     <value>Peer-to-Peer</value>
@@ -10823,7 +11057,7 @@ Biz joylashuv axborotingizdan siz tanlagan muddat davomida foydalanamiz va istal
     <value>Xabarlarimni uzatganida kimlar hisobimga havola qoʻshishi mumkin?</value>
   </data>
   <data name="PrivacyLastSeen" xml:space="preserve">
-    <value>Soʻnggi faollik va onlayn</value>
+    <value>Oxirgi faollik va onlayn</value>
   </data>
   <data name="PrivacyP2P" xml:space="preserve">
     <value>Peer-to-peer orqali chaqiruvlar</value>
@@ -10922,7 +11156,7 @@ Biz joylashuv axborotingizdan siz tanlagan muddat davomida foydalanamiz va istal
     <value>Qalqib chiquvchi bildirishnomalar</value>
   </data>
   <data name="ProfilePopupNotificationInfo" xml:space="preserve">
-    <value>Telegramdan foydalanmaganda ushbu kontaktdan yangi xabarlar ekranda ko&apos;rinadi.</value>
+    <value>Telegramdan foydalanmayotganingizda ushbu kontaktdan yangi xabarlar ekraningizda chiqadi.</value>
   </data>
   <data name="ProximityAlertCancelled" xml:space="preserve">
     <value>Ogohlantirish bekor qilindi</value>
@@ -10967,11 +11201,17 @@ Biz joylashuv axborotingizdan siz tanlagan muddat davomida foydalanamiz va istal
     <value>Bu xabar davom etayotgan COVID-19 pandemiyasi bilan bog‘liq davlat xizmatlari e’lonlarini taqdim etadi.
 Bu tashabbus tafsilotlari shu yerda: https://telegram.org/blog/coronavirus</value>
   </data>
+  <data name="PsaInfo_psa" xml:space="preserve">
+    <value>Bu davom etayotgan mojaro yuzasidan Telegram rahbarining rasmiy xabaridir.</value>
+  </data>
   <data name="PsaInfoDefault" xml:space="preserve">
-    <value>PSA info test</value>
+    <value>Bu xabar sizga favqulodda eʼlonni taqdim etadi.</value>
   </data>
   <data name="PsaMessage_covid" xml:space="preserve">
     <value>COVID-19 bildirishnomasi</value>
+  </data>
+  <data name="PsaMessage_psa" xml:space="preserve">
+    <value>Eʼlon</value>
   </data>
   <data name="PsaMessageDefault" xml:space="preserve">
     <value>Muhim bildirishnoma</value>
@@ -10980,11 +11220,17 @@ Bu tashabbus tafsilotlari shu yerda: https://telegram.org/blog/coronavirus</valu
     <value>Bu xabar davom etayotgan COVID-19 pandemiyasi bilan bogʻliq davlat xizmatlari eʼlonlarini taqdim etadi.
 Bu tashabbus tafsilotlarini bilish uchun quyidagi manzilga kiring: https://telegram.org/blog/coronavirus</value>
   </data>
+  <data name="PsaMessageInfo_psa" xml:space="preserve">
+    <value>Bu davom etayotgan mojaro yuzasidan Telegram rahbarining rasmiy xabaridir.</value>
+  </data>
   <data name="PsaMessageInfoDefault" xml:space="preserve">
     <value>Bu muhim bildirishnoma.</value>
   </data>
   <data name="PsaType_covid" xml:space="preserve">
     <value>COVID-19</value>
+  </data>
+  <data name="PsaType_psa" xml:space="preserve">
+    <value>Eʼlon</value>
   </data>
   <data name="PsaTypeDefault" xml:space="preserve">
     <value>PSA</value>
@@ -11133,6 +11379,9 @@ Bu tashabbus tafsilotlarini bilish uchun quyidagi manzilga kiring: https://teleg
   <data name="QRCodePermissionNoCamera" xml:space="preserve">
     <value>QR kodlarni skanerlashingiz uchun Telegram kamerangizdan foydalanishga ruxsat olishi kerak.</value>
   </data>
+  <data name="QRCodePermissionNoCameraWithHint" xml:space="preserve">
+    <value>**Telegram** QR kodlarni skanerlay olishingiz uchun kamera ruxsatini talab qiladi. Sozlamalar &gt; Ruxsatlar rukniga kiring va **Kamera** bandini yoqing.</value>
+  </data>
   <data name="Question" xml:space="preserve">
     <value>Savol</value>
   </data>
@@ -11185,13 +11434,13 @@ Bu tashabbus tafsilotlarini bilish uchun quyidagi manzilga kiring: https://teleg
     <value>Chaqiruv uzilib qoldi</value>
   </data>
   <data name="RateCallEcho" xml:space="preserve">
-    <value>Men oʻz ovozimni eshitdim</value>
+    <value>Oʻz ovozimni eshitdim</value>
   </data>
   <data name="RateCallInterruptions" xml:space="preserve">
     <value>Suhbatdoshim ovozi yoʻqoldi</value>
   </data>
   <data name="RateCallNoise" xml:space="preserve">
-    <value>Men atrofdagi tovushni eshitdim</value>
+    <value>Fonda shovqin eshitildi</value>
   </data>
   <data name="RateCallSilentLocal" xml:space="preserve">
     <value>Suhbatdoshimni eshita olmadim</value>
@@ -11247,6 +11496,12 @@ Bu tashabbus tafsilotlarini bilish uchun quyidagi manzilga kiring: https://teleg
   <data name="ReactionsOff" xml:space="preserve">
     <value>Oʻchiq</value>
   </data>
+  <data name="ReadAllMentions" xml:space="preserve">
+    <value>Barcha zikrlarni oʻqish</value>
+  </data>
+  <data name="ReadAllReactions" xml:space="preserve">
+    <value>Barcha reaksiyalarni oʻqish</value>
+  </data>
   <data name="Recent" xml:space="preserve">
     <value>Oxirgi</value>
   </data>
@@ -11255,6 +11510,9 @@ Bu tashabbus tafsilotlarini bilish uchun quyidagi manzilga kiring: https://teleg
   </data>
   <data name="RecentFilesAZ" xml:space="preserve">
     <value>Fayllar A-Z</value>
+  </data>
+  <data name="RecentlyDownloaded" xml:space="preserve">
+    <value>Yaqinda yuklab olingan</value>
   </data>
   <data name="RecentlyViewed" xml:space="preserve">
     <value>Yaqinda koʻrilgan</value>
@@ -11307,6 +11565,9 @@ Bu tashabbus tafsilotlarini bilish uchun quyidagi manzilga kiring: https://teleg
   <data name="Red" xml:space="preserve">
     <value>Qizil</value>
   </data>
+  <data name="ReEnterPassword" xml:space="preserve">
+    <value>Parolni qayta kiriting</value>
+  </data>
   <data name="ReEnterYourPasscode" xml:space="preserve">
     <value>Kirish kodingizni qayta kiriting</value>
   </data>
@@ -11315,6 +11576,9 @@ Bu tashabbus tafsilotlarini bilish uchun quyidagi manzilga kiring: https://teleg
   </data>
   <data name="RegisterText2" xml:space="preserve">
     <value>Toʻliq ismingizni kiriting va profil rasmingizni yuklang.</value>
+  </data>
+  <data name="RegistrationProfileInfo" xml:space="preserve">
+    <value>Profil axboroti</value>
   </data>
   <data name="Regular" xml:space="preserve">
     <value>Odatdagi</value>
@@ -11345,6 +11609,42 @@ Bu tashabbus tafsilotlarini bilish uchun quyidagi manzilga kiring: https://teleg
   </data>
   <data name="RemovedFromRecent" xml:space="preserve">
     <value>Stikerlar Oxirgilardan olib tashlandi</value>
+  </data>
+  <data name="RemoveDocumentsMessage_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="RemoveDocumentsMessage_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="RemoveDocumentsMessage_one" xml:space="preserve">
+    <value>Bu elementni Yuklanmalardan olib tashlamoqchimisiz?</value>
+  </data>
+  <data name="RemoveDocumentsMessage_other" xml:space="preserve">
+    <value>Bu **%d ta elementni** Yuklanmalardan olib tashlamoqchimisiz?</value>
+  </data>
+  <data name="RemoveDocumentsMessage_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="RemoveDocumentsMessage_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="RemoveDocumentsTitle_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="RemoveDocumentsTitle_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="RemoveDocumentsTitle_one" xml:space="preserve">
+    <value>%d ta yuklanmani olib tashlash</value>
+  </data>
+  <data name="RemoveDocumentsTitle_other" xml:space="preserve">
+    <value>%d ta yuklanmani olib tashlash</value>
+  </data>
+  <data name="RemoveDocumentsTitle_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="RemoveDocumentsTitle_zero" xml:space="preserve">
+    <value/>
   </data>
   <data name="RemovedUser_few" xml:space="preserve">
     <value/>
@@ -11523,8 +11823,17 @@ Hamkorligingiz uchun rahmat!</value>
   <data name="ReportUserLocation" xml:space="preserve">
     <value>Shikoyat qilish</value>
   </data>
+  <data name="RequestCallButton" xml:space="preserve">
+    <value>Kodni aytish uchun menga chaqiruv qilinsin</value>
+  </data>
   <data name="RequestedToJoinAt" xml:space="preserve">
     <value>{0}ga qoʻshilishni soʻradi</value>
+  </data>
+  <data name="RequestMissedCall" xml:space="preserve">
+    <value>Kodni telefon chaqiruvi orqali olish</value>
+  </data>
+  <data name="RequestSmsButton" xml:space="preserve">
+    <value>Kodni SMS orqali olish</value>
   </data>
   <data name="RequestToJoinChannel" xml:space="preserve">
     <value>Kanalga qoʻshilish soʻrovi</value>
@@ -11633,7 +11942,7 @@ Agar hisobingizni asliga qaytarsangiz, barcha xabarlaringiz va chatlaringiz oʻc
     <value>Parolni tiklash</value>
   </data>
   <data name="ResetPasswordWait" xml:space="preserve">
-    <value>Yaqinda bekor qilingan parolni asliga qaytarishni soʻradingiz. Yangi soʻrov yuborishdan oldin {0} kuting.</value>
+    <value>Yaqinda parolni tiklash soʻrovini yuborgansiz, lekin soʻrov bekor qilingan. Yangi soʻrov yuborishdan oldin {0} kuting.</value>
   </data>
   <data name="ResetStatistics" xml:space="preserve">
     <value>Statistikani asliga qaytarish</value>
@@ -11644,8 +11953,11 @@ Agar hisobingizni asliga qaytarsangiz, barcha xabarlaringiz va chatlaringiz oʻc
   <data name="ResetStatisticsAlertTitle" xml:space="preserve">
     <value>Statistikani tozalash</value>
   </data>
+  <data name="RestoreEmailNoAccess" xml:space="preserve">
+    <value>{0} manziliga kira olmayapsizmi?</value>
+  </data>
   <data name="RestoreEmailSent" xml:space="preserve">
-    <value>Koʻrsatgan elektron pochta manzilingizga tiklash kodi yuborildi:
+    <value>Siz taqdim etgan email manziliga tiklash kodi yuborildi:
 
 {0}</value>
   </data>
@@ -11671,7 +11983,7 @@ Agar hisobingizni asliga qaytarsangiz, barcha xabarlaringiz va chatlaringiz oʻc
     <value>Parolni oʻrnatayotgan paytda uni tiklash uchun email manzili taqdim etmaganligingiz sababli sizda mavjud imkoniyatlar bu — parolni eslash yoki hisobingizni asliga qaytarish.</value>
   </data>
   <data name="RestorePasswordNoEmailText2" xml:space="preserve">
-    <value>Parolingizni sozlash paytida tiklash uchun email manzilini taqdim etmaganligingiz sababli sizda qolgan variantlar: parolingizni tiklash yoki parolingiz asliga qaytarilguniga qadar 7 kun kutish.</value>
+    <value>Parolingizni sozlash paytida tiklash uchun email manzilini taqdim etmaganligingiz sababli sizda qolgan variantlar: parolingizni eslash yoki parolingiz tiklanguniga qadar 7 kun kutish.</value>
   </data>
   <data name="RestorePasswordNoEmailTitle" xml:space="preserve">
     <value>Kechirasiz</value>
@@ -11680,7 +11992,7 @@ Agar hisobingizni asliga qaytarsangiz, barcha xabarlaringiz va chatlaringiz oʻc
     <value>HISOBNI ASLIGA QAYTARISH</value>
   </data>
   <data name="RestorePasswordResetIn" xml:space="preserve">
-    <value>Quyidagi vaqtdan keyin parolingizni asliga qaytara olasiz: {0}.</value>
+    <value>Bu vaqtdan keyin parolingizni asliga qaytara olasiz: {0}.</value>
   </data>
   <data name="RestorePasswordResetPassword" xml:space="preserve">
     <value>PAROLNI TIKLASH</value>
@@ -11717,6 +12029,9 @@ Agar hisobingizni asliga qaytarsangiz, barcha xabarlaringiz va chatlaringiz oʻc
   </data>
   <data name="RestrictSavingContentInfoGroup" xml:space="preserve">
     <value>Aʼzolar ushbu guruhdan kontentni nusxalay, saqlay va uzata olmaydi.</value>
+  </data>
+  <data name="ResumeAll" xml:space="preserve">
+    <value>Hammasini davom ettirish</value>
   </data>
   <data name="Retry" xml:space="preserve">
     <value>Qayta urinish</value>
@@ -11795,7 +12110,7 @@ Agar hisobingizni asliga qaytarsangiz, barcha xabarlaringiz va chatlaringiz oʻc
     <value>MAVZUNI SAQLASH</value>
   </data>
   <data name="SaveToDownloads" xml:space="preserve">
-    <value>Yuklanmalarga saqlash</value>
+    <value>Yuklanmalar jildiga saqlash</value>
   </data>
   <data name="SaveToGallery" xml:space="preserve">
     <value>Galereyaga saqlash</value>
@@ -11839,8 +12154,14 @@ uchun bu tugmani bosib turing.</value>
 
 Bu oʻzgarish kuchga kirishi uchun ilovani qayta ishga tushirishingiz kerak boʻlishi mumkin.</value>
   </data>
+  <data name="ScreenCaptureHeader" xml:space="preserve">
+    <value>Vazifalarni almashtirgichda ilova kontenti</value>
+  </data>
   <data name="ScreenCaptureInfo" xml:space="preserve">
     <value>Agar bu faolsizlantirilsa, ilovada skrinshotlar ololmaysiz, lekin chat kontenti vazifalar almashtirgichida berkitiladi.</value>
+  </data>
+  <data name="ScreenCaptureShowContent" xml:space="preserve">
+    <value>Kontentni koʻrsatish</value>
   </data>
   <data name="SdCard" xml:space="preserve">
     <value>SD karta</value>
@@ -11859,6 +12180,9 @@ Bu oʻzgarish kuchga kirishi uchun ilovani qayta ishga tushirishingiz kerak boʻ
   </data>
   <data name="SearchEmojiHint" xml:space="preserve">
     <value>Emoji qidirish</value>
+  </data>
+  <data name="SearchEmptyViewDownloads" xml:space="preserve">
+    <value>Hech narsa topilmadi</value>
   </data>
   <data name="SearchEmptyViewFilteredSubtitle2" xml:space="preserve">
     <value>Qayta urining.</value>
@@ -12251,6 +12575,9 @@ Bu oʻzgarish kuchga kirishi uchun ilovani qayta ishga tushirishingiz kerak boʻ
   <data name="SentAppCodeTitle" xml:space="preserve">
     <value>Telegram xabarlaringizni tekshiring</value>
   </data>
+  <data name="SentAppCodeWithPhone" xml:space="preserve">
+    <value>Boshqa qurilmangizdagi {0} uchun **Telegram** ilovasiga kod yubordik.</value>
+  </data>
   <data name="SentCallCode" xml:space="preserve">
     <value>Biz **{0}** telefon raqamingizga qoʻngʻiroq qilmoqdamiz.
 
@@ -12319,6 +12646,9 @@ Chaqiruvga javob bermang, Telegram hammasini avtomatik amalga oshiradi.</value>
   <data name="SetColor" xml:space="preserve">
     <value>Rang tanlash</value>
   </data>
+  <data name="SetNewPassword" xml:space="preserve">
+    <value>Yangi parol sozlash</value>
+  </data>
   <data name="SetPasscode" xml:space="preserve">
     <value>Kirish kodi oʻrnatish</value>
   </data>
@@ -12362,13 +12692,13 @@ Chaqiruvga javob bermang, Telegram hammasini avtomatik amalga oshiradi.</value>
     <value>Natijalar topilmadi</value>
   </data>
   <data name="SettingsRecent" xml:space="preserve">
-    <value>Soʻnggi qidiruvlar</value>
+    <value>Oxirgi qidiruvlar</value>
   </data>
   <data name="SettingsSearchFaq" xml:space="preserve">
     <value>KBS</value>
   </data>
   <data name="SettingsSwitchToDayMode" xml:space="preserve">
-    <value>Kunduzgi rejimga almashtirildi</value>
+    <value>Kunduzgi rejimga almashtirish</value>
   </data>
   <data name="SettingsSwitchToNightMode" xml:space="preserve">
     <value>Tungi rejimga almashtirish</value>
@@ -12592,6 +12922,13 @@ Chaqiruvga javob bermang, Telegram hammasini avtomatik amalga oshiradi.</value>
   <data name="ShortMessageLifetimeForever" xml:space="preserve">
     <value>Oʻchiq</value>
   </data>
+  <data name="ShortNumberInfo" xml:space="preserve">
+    <value>Siz taqdim etgan raqam **{0}** uchun juda qisqa:
+
+**{1}**
+
+Raqamni toʻgʻri kiriting. U mamlakatingiz kodi bilan boshlanishi kerak.</value>
+  </data>
   <data name="ShowAllFiles" xml:space="preserve">
     <value>Barcha fayllarni koʻrsatish</value>
   </data>
@@ -12599,7 +12936,7 @@ Chaqiruvga javob bermang, Telegram hammasini avtomatik amalga oshiradi.</value>
     <value>Barcha GIFlarni koʻrsatish</value>
   </data>
   <data name="ShowAllMedia" xml:space="preserve">
-    <value>Barcha mediafayllarni koʻrish</value>
+    <value>Barcha media fayllar</value>
   </data>
   <data name="ShowAllThemes" xml:space="preserve">
     <value>Barcha mavzularni koʻrsatish</value>
@@ -12618,6 +12955,12 @@ Chaqiruvga javob bermang, Telegram hammasini avtomatik amalga oshiradi.</value>
   </data>
   <data name="ShowInChat" xml:space="preserve">
     <value>Chatda koʻrsatish</value>
+  </data>
+  <data name="ShowLess" xml:space="preserve">
+    <value>Kamroq</value>
+  </data>
+  <data name="ShowMore" xml:space="preserve">
+    <value>Yana</value>
   </data>
   <data name="ShowNearbyPlaces" xml:space="preserve">
     <value>Yaqin-atrofdagi joylarni koʻrish uchun yuqoriga torting</value>
@@ -12715,7 +13058,7 @@ Sekin rejim yoqilgan. Siz birdaniga bittadan ortiq xabar yubora olmaysiz.</value
     <value>Aqlli bildirishnomalar</value>
   </data>
   <data name="SmartNotificationsAlert" xml:space="preserve">
-    <value>Tovushli Ogohlantirish Muntazamligi</value>
+    <value>Tovushli signal chastotasi</value>
   </data>
   <data name="SmartNotificationsDetail" xml:space="preserve">
     <value> {1} minut ichida {0} marta</value>
@@ -12725,6 +13068,9 @@ Sekin rejim yoqilgan. Siz birdaniga bittadan ortiq xabar yubora olmaysiz.</value
   </data>
   <data name="SmartNotificationsInfo" xml:space="preserve">
     <value>{0} / {1} daqiqa</value>
+  </data>
+  <data name="SmsAvailableIn" xml:space="preserve">
+    <value>Bu vaqtdan keyin SMS soʻrovini yuborishingiz mumkin: {0}:%2$02d</value>
   </data>
   <data name="SmsText" xml:space="preserve">
     <value>Sizga {0}:%2$02d dan keyin SMS yuboriladi</value>
@@ -13061,11 +13407,17 @@ Internetdagi reklamalar endi foydalanuvchi maxfiyligi buzilishi bilan sinonim bo
   <data name="Subscribers_zero" xml:space="preserve">
     <value/>
   </data>
+  <data name="SuggestClearDatabaseMessage" xml:space="preserve">
+    <value>Mahalliy maʼlumotlar bazangiz hajmi {0}. U ilovangiz tezligiga taʼsir qilishi mumkin.</value>
+  </data>
+  <data name="SuggestClearDatabaseTitle" xml:space="preserve">
+    <value>Maʼlumotlar bazasini tozalash</value>
+  </data>
   <data name="SuggestContacts" xml:space="preserve">
     <value>Muntazam kontaktlar tavsiyasi</value>
   </data>
   <data name="SuggestContactsAlert" xml:space="preserve">
-    <value>Bu amal orqali tez-tez suhbat quradigan odamlar va inline botlar haqidagi ma&apos;lumotlar o&apos;chirib tashlanadi</value>
+    <value>Bunda siz tez-tez xabar yozadigan odamlar, shuningdek, siz odatda foydalanadigan botlar haqidagi barcha maʼlumotlar oʻchirib tashlanadi.</value>
   </data>
   <data name="SuggestContactsInfo" xml:space="preserve">
     <value>Tezkor kirish uchun qidiruv boʻlimining yuqorisida tez-tez muloqot qiluvchi insonlarni namoyish qilish.</value>
@@ -13487,7 +13839,7 @@ Mavzu havolasi 5 ta belgidan koʻproq boʻlishi kerak va a-z, 0-9 hamda pastki c
     <value>Bu 2018 yilning eng yaxshi musiqasi!</value>
   </data>
   <data name="ThemePreviewLine3" xml:space="preserve">
-    <value>Bolalar, bugun texno musiqa eshitamiz! Siz uchun Jahongir Otajonov kuylaydi!</value>
+    <value>Bolalar, bugun texno musiqa tinglaymiz! Sizlarga Hasselhoff kabi klassika yoqsa kerak!</value>
   </data>
   <data name="ThemePreviewLine3Reply" xml:space="preserve">
     <value>Lucio</value>
@@ -13578,7 +13930,7 @@ Minimum 5 ta belgi boʻlishi shart.</value>
     <value>Kechirasiz, siz juda koʻp guruh va kanallarga aʼzosiz. Yangisini yaratishdan oldin ayrimlarini tark eting.</value>
   </data>
   <data name="TooManyCommunitiesHintEdit" xml:space="preserve">
-    <value>Kechirasiz, siz juda koʻp guruh va kanallarga aʼzo boʻlgansiz. Texnik sabablar tufayli guruhlaringizda bu sozlamani oʻzgartirishdan oldin ayrimlarini tark etishingiz kerak.</value>
+    <value>Kechirasiz, siz juda koʻp guruh va kanallarga aʼzo boʻlgansiz. Texnik sabablar tufayli guruhlaringizda ushbu sozlamani oʻzgartirishdan oldin ayrimlarini tark etishingiz kerak.</value>
   </data>
   <data name="TooManyCommunitiesHintJoin" xml:space="preserve">
     <value>Kechirasiz, siz juda koʻp guruh va kanallarga aʼzo boʻlgansiz. Yangisiga qoʻshilishdan oldin ayrimlarini tark eting.</value>
@@ -13610,7 +13962,7 @@ Minimum 5 ta belgi boʻlishi shart.</value>
   <data name="TosDecline" xml:space="preserve">
     <value>Afsuski, bu Telegramda roʻyxatdan oʻta olmasligingizni bildiradi.
 
-Boshqa xizmatlardan farqli ravishda, biz maʼlumotlaringizdan reklama va boshqa tijoriy maqsadlarda foydalanmaymiz. Serverlarda faqat Telegramdan toʻlaqonli ravishda foydalanishingizga imkon beradigan maʼlumotlar saqlanadi. Biz maʼlumotlaringizdan qanday foydalanishimizni (masalan, sinxronlangan kontaktlarni oʻchirib tashlash) Maxfiylik va xavfsizlik sozlamalarida oʻzgartirishingiz mumkin.
+Boshqa xizmatlardan farqli ravishda, biz maʼlumotlaringizdan reklama va boshqa tijoriy maqsadlarda foydalanmaymiz. Telegram faqat funksiyalarga boy bulut xizmati sifatida ishlashi uchun zarur boʻlgan axborotlarni saqlaydi. Biz maʼlumotlaringizdan qanday foydalanishimizni (masalan, sinxronlangan kontaktlarni oʻchirib tashlash) Maxfiylik va xavfsizlik sozlamalarida oʻzgartirishingiz mumkin.
 
 Agar minimal muhim maʼlumotlarni taqdim etishga tayyor boʻlmasangiz, biz Telegramning ishlashini taʼminlay olmaymiz.</value>
   </data>
@@ -13769,7 +14121,7 @@ Agar minimal muhim maʼlumotlarni taqdim etishga tayyor boʻlmasangiz, biz Teleg
     <value>BARCHA XABARLARNI OLIB TASHLASH</value>
   </data>
   <data name="UnpinFromTop" xml:space="preserve">
-    <value>Tepadan olib tashlash</value>
+    <value>Yuqoridan yechib olish</value>
   </data>
   <data name="UnpinMessage" xml:space="preserve">
     <value>Olib tashlash</value>
@@ -13778,7 +14130,7 @@ Agar minimal muhim maʼlumotlarni taqdim etishga tayyor boʻlmasangiz, biz Teleg
     <value>Bu xabar olib tashlansinmi?</value>
   </data>
   <data name="UnpinMessageAlertTitle" xml:space="preserve">
-    <value>Xabarni olib tashlash</value>
+    <value>Xabarni yechib olish</value>
   </data>
   <data name="UnpinnedDialogsCount_few" xml:space="preserve">
     <value/>
@@ -14234,7 +14586,7 @@ Agar minimal muhim maʼlumotlarni taqdim etishga tayyor boʻlmasangiz, biz Teleg
     <value>Video galereyaga saqlandi</value>
   </data>
   <data name="VideoSavedToDownloadsHint" xml:space="preserve">
-    <value>Video yuklanmalarga saqlandi</value>
+    <value>Video Yuklanmalar jildiga saqlandi</value>
   </data>
   <data name="VideosSavedHint_few" xml:space="preserve">
     <value/>
@@ -14284,6 +14636,27 @@ Agar minimal muhim maʼlumotlarni taqdim etishga tayyor boʻlmasangiz, biz Teleg
   </data>
   <data name="ViewDiscussion" xml:space="preserve">
     <value>Muhokamani ochish</value>
+  </data>
+  <data name="ViewersWatching_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ViewersWatching_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ViewersWatching_one" xml:space="preserve">
+    <value>{0} kishi</value>
+  </data>
+  <data name="ViewersWatching_other" xml:space="preserve">
+    <value>{0} kishi</value>
+  </data>
+  <data name="ViewersWatching_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ViewersWatching_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ViewersWatchingNobody" xml:space="preserve">
+    <value>Hech kim tomosha qilmayapti</value>
   </data>
   <data name="ViewExceptions" xml:space="preserve">
     <value>Istisnolarni koʻrish</value>
@@ -14517,7 +14890,7 @@ Qatnashchilar chat yozib olinayotganini koʻradi.</value>
 Yangi qatnashchilar faqatgina ovozli efirga qo&apos;shilishi mumkin.</value>
   </data>
   <data name="VoipChannelViewVoiceChat" xml:space="preserve">
-    <value>JONLI EFIRNI KO&apos;RISH</value>
+    <value>JONLI EFIRNI KOʻRISH</value>
   </data>
   <data name="VoipChannelVoiceChat" xml:space="preserve">
     <value>Jonli efir</value>
@@ -14681,6 +15054,9 @@ Yangi qatnashchilar faqatgina ovozli efirga qo&apos;shilishi mumkin.</value>
   <data name="VoipGroupEndedStartNew" xml:space="preserve">
     <value>Videochat yakunlandi. Yangisini boshlaysizmi?</value>
   </data>
+  <data name="VoipGroupExpandStream" xml:space="preserve">
+    <value>Kengaytirish</value>
+  </data>
   <data name="VoipGroupInviteAlreadyParticipant" xml:space="preserve">
     <value>Tanlangan foydalanuvchi allaqachon ushbu videochatda.</value>
   </data>
@@ -14734,6 +15110,9 @@ Yangi qatnashchilar faqatgina ovozli efirga qo&apos;shilishi mumkin.</value>
   </data>
   <data name="VoipGroupLeaveAlertTitle" xml:space="preserve">
     <value>Videochatni tark etish</value>
+  </data>
+  <data name="VoipGroupMinimizeStream" xml:space="preserve">
+    <value>Kichraytirish</value>
   </data>
   <data name="VoipGroupMute" xml:space="preserve">
     <value>Sukut qilish</value>
@@ -14971,8 +15350,14 @@ Boshqa ishtirokchilar chat yozib olinayotganini koʻradi.</value>
   <data name="VoipNeedMicCameraPermission" xml:space="preserve">
     <value>Telegram video chaqiruvlarni amalga oshirishingiz uchun mikrofon va kamerangizdan foydalanishi kerak.</value>
   </data>
+  <data name="VoipNeedMicCameraPermissionWithHint" xml:space="preserve">
+    <value>**Telegram** video chaqiruvlarni amalga oshira olishingiz uchun kamera va mikrofon ruxsatlarini talab qiladi. Sozlamalar &gt; Ruxsatlar rukniga kiring hamda **Mikrofon** va **Kamera** bandlarini yoqing.</value>
+  </data>
   <data name="VoipNeedMicPermission" xml:space="preserve">
-    <value>Siz chaqiruvlarni amalga oshira olishingiz uchun Telegram mikrofoningizga kirish huquqiga ega boʻlishi kerak.</value>
+    <value>Chaqiruvlarni amalga oshira olishingiz uchun Telegram mikrofondan foydalanishi zarur.</value>
+  </data>
+  <data name="VoipNeedMicPermissionWithHint" xml:space="preserve">
+    <value>**Telegram** chaqiruvlarni amalga oshira olishingiz uchun mikrofon ruxsatini talab qiladi. Sozlamalar &gt; Ruxsatlar rukniga kiring va **Mikrofon** ruxsatini yoqing.</value>
   </data>
   <data name="VoipNoiseCancellation" xml:space="preserve">
     <value>Shovqinsizlantirish</value>
@@ -15273,22 +15658,31 @@ Kirish kodingiz bosh ekranga qoʻshilgan vidjetlarga **taʼsir qilmaydi**.</valu
     <value>Yorliqlar</value>
   </data>
   <data name="WiFiUsage" xml:space="preserve">
-    <value>Wi-Fi tarmogʻidan foydalanish</value>
+    <value>Wi-Fi tarmoqdan foydalanish</value>
   </data>
   <data name="WillUnmuteIn" xml:space="preserve">
     <value>{0}dan keyin</value>
   </data>
   <data name="WithinAMonth" xml:space="preserve">
-    <value>soʻnggi faollik: bir oy oldin</value>
+    <value>oxirgi marta: bir oy oldin</value>
   </data>
   <data name="WithinAWeek" xml:space="preserve">
     <value>bir hafta oldin onlayn edi</value>
+  </data>
+  <data name="WrongCode" xml:space="preserve">
+    <value>Kodni xato kiritdingiz. Qayta urining.</value>
+  </data>
+  <data name="WrongCodeTitle" xml:space="preserve">
+    <value>Kod xato</value>
   </data>
   <data name="WrongCountry" xml:space="preserve">
     <value>Mamlakat kodi xato</value>
   </data>
   <data name="WrongNumber" xml:space="preserve">
     <value>Raqam xatomi?</value>
+  </data>
+  <data name="WrongNumberFormat" xml:space="preserve">
+    <value>Xato format</value>
   </data>
   <data name="Years_few" xml:space="preserve">
     <value/>
@@ -15388,6 +15782,9 @@ Agar parolingizni unutsangiz, Telegram hisobiga kirish huquqidan mahrum boʻlasi
   <data name="YourNameChanged" xml:space="preserve">
     <value>Ism yangilandi.</value>
   </data>
+  <data name="YourNumber" xml:space="preserve">
+    <value>Telefon raqamingiz</value>
+  </data>
   <data name="YourPassword" xml:space="preserve">
     <value>Parolingiz</value>
   </data>
@@ -15405,6 +15802,9 @@ Agar parolingizni unutsangiz, Telegram hisobiga kirish huquqidan mahrum boʻlasi
   </data>
   <data name="YourPasswordRememberYes" xml:space="preserve">
     <value>Ha, albatta</value>
+  </data>
+  <data name="YourPasswordReset" xml:space="preserve">
+    <value>Parolingiz muvaffaqiyatli faolsizlantirildi</value>
   </data>
   <data name="YourPasswordSuccess" xml:space="preserve">
     <value>Tayyor!</value>
