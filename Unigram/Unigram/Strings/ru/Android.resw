@@ -1062,6 +1062,12 @@
   <data name="Allow" xml:space="preserve">
     <value>Разрешить</value>
   </data>
+  <data name="AllowBackgroundActivity" xml:space="preserve">
+    <value>Разрешить фоновый режим</value>
+  </data>
+  <data name="AllowBackgroundActivityInfo" xml:space="preserve">
+    <value>Это улучшит работу оповещений и звонков через Telegram.</value>
+  </data>
   <data name="AllowCustomQuickReply" xml:space="preserve">
     <value>Задать свой текст</value>
   </data>
@@ -1395,7 +1401,7 @@
     <value>Вы точно хотите покинуть канал и удалить его?</value>
   </data>
   <data name="AreYouSureDeleteAndExitName" xml:space="preserve">
-    <value>Вы точно хотите группу **{0}** и удалить её?</value>
+    <value>Вы точно хотите удалить и покинуть группу **{0}**?</value>
   </data>
   <data name="AreYouSureDeleteContact" xml:space="preserve">
     <value>Вы точно хотите удалить этот контакт?</value>
@@ -1571,11 +1577,26 @@
   <data name="AttachLocation" xml:space="preserve">
     <value>Геопозиция</value>
   </data>
+  <data name="AttachMediaDragHint" xml:space="preserve">
+    <value>Перетащите для изменения порядка</value>
+  </data>
+  <data name="AttachMediaPhotoDeselected" xml:space="preserve">
+    <value>Фотография убрана.</value>
+  </data>
+  <data name="AttachMediaPreview" xml:space="preserve">
+    <value>Предпросмотр</value>
+  </data>
+  <data name="AttachMediaPreviewButton" xml:space="preserve">
+    <value>Предпросмотр сообщения</value>
+  </data>
   <data name="AttachMediaRestricted" xml:space="preserve">
     <value>Администраторы группы запретили Вам отправлять фото и видео до {0}</value>
   </data>
   <data name="AttachMediaRestrictedForever" xml:space="preserve">
     <value>Администраторы группы запретили Вам отправлять в нее фото и видео.</value>
+  </data>
+  <data name="AttachMediaVideoDeselected" xml:space="preserve">
+    <value>Видеозапись убрана.</value>
   </data>
   <data name="AttachMenu" xml:space="preserve">
     <value>Прикрепить…</value>
@@ -2153,6 +2174,9 @@
   <data name="Blue" xml:space="preserve">
     <value>Синий</value>
   </data>
+  <data name="BlurInChat" xml:space="preserve">
+    <value>Размытие в чатах</value>
+  </data>
   <data name="BlurLinear" xml:space="preserve">
     <value>Линейное</value>
   </data>
@@ -2306,6 +2330,9 @@
   <data name="CallAlertTitle" xml:space="preserve">
     <value>Звонок</value>
   </data>
+  <data name="CallAvailableIn" xml:space="preserve">
+    <value>Вы можете запросить звонок с кодом через {0}:%2$02d</value>
+  </data>
   <data name="CallBack" xml:space="preserve">
     <value>Перезвонить</value>
   </data>
@@ -2436,6 +2463,9 @@
   <data name="CancelLinkSuccess" xml:space="preserve">
     <value>Процесс удаления Вашего аккаунта {0} был отменён. Теперь можете закрыть это окно.</value>
   </data>
+  <data name="CancelLinkSuccessTitle" xml:space="preserve">
+    <value>Готово</value>
+  </data>
   <data name="CancelPasswordQuestion" xml:space="preserve">
     <value>Вы точно хотите прервать настройку двухэтапной аутентификации?</value>
   </data>
@@ -2515,6 +2545,9 @@
     <value>После установки кода-пароля в списке чатов появится значок замка для блокировки и разблокировки приложения.
 
 Важно: если Вы забудете код-пароль, приложение придётся переустановить, и все секретные чаты будут утрачены.</value>
+  </data>
+  <data name="ChangePasscodeInfoShort" xml:space="preserve">
+    <value>После установки кода-пароля в списке чатов появится значок замка для блокировки и разблокировки приложения.</value>
   </data>
   <data name="ChangePassword" xml:space="preserve">
     <value>Сменить пароль</value>
@@ -3323,6 +3356,9 @@
   <data name="ChromeCustomTabsInfo" xml:space="preserve">
     <value>Открывать внешние ссылки в приложении</value>
   </data>
+  <data name="Clear" xml:space="preserve">
+    <value>Очистить</value>
+  </data>
   <data name="ClearButton" xml:space="preserve">
     <value>Очистить</value>
   </data>
@@ -3334,6 +3370,9 @@
   </data>
   <data name="ClearCacheInfo" xml:space="preserve">
     <value>Освободите память устройства; файлы останутся в облаке.</value>
+  </data>
+  <data name="ClearDownloadsList" xml:space="preserve">
+    <value>Очистить список загрузок</value>
   </data>
   <data name="ClearFewChatsTitle" xml:space="preserve">
     <value>Очистить {0}</value>
@@ -3553,6 +3592,12 @@
 
 Когда {1} обновит Telegram, для просмотра фотографий с таймером на минуту и меньше нужно будет нажать на фото и удерживать. Вы также будете видеть уведомление, если собеседник делает скриншот.</value>
   </data>
+  <data name="ConfirmCorrectNumber" xml:space="preserve">
+    <value>Правильно ли указан номер?</value>
+  </data>
+  <data name="ConfirmCreatePasscode" xml:space="preserve">
+    <value>Повторите код-пароль</value>
+  </data>
   <data name="ConfirmDeleteCallLog" xml:space="preserve">
     <value>Вы точно хотите удалить запись из истории звонков?</value>
   </data>
@@ -3579,6 +3624,9 @@
   </data>
   <data name="ConnectingToProxyTapToDisable" xml:space="preserve">
     <value>Нажмите для отключения прокси...</value>
+  </data>
+  <data name="ConnectingYourContacts" xml:space="preserve">
+    <value>Загрузка контактов...</value>
   </data>
   <data name="ContactBirthday" xml:space="preserve">
     <value>День рождения</value>
@@ -3701,6 +3749,9 @@
   <data name="CountReceived" xml:space="preserve">
     <value>Получено</value>
   </data>
+  <data name="Country" xml:space="preserve">
+    <value>Страна</value>
+  </data>
   <data name="CountSent" xml:space="preserve">
     <value>Отправлено</value>
   </data>
@@ -3753,6 +3804,18 @@
   </data>
   <data name="CreateNewThemeMenu" xml:space="preserve">
     <value>Создать новую тему</value>
+  </data>
+  <data name="CreatePasscode" xml:space="preserve">
+    <value>Создание код-пароля</value>
+  </data>
+  <data name="CreatePasscodeInfoPassword" xml:space="preserve">
+    <value>Введите пароль, который хотите использовать для разблокировки приложения.</value>
+  </data>
+  <data name="CreatePasscodeInfoPIN" xml:space="preserve">
+    <value>Введите 4 цифры, которые хотите использовать для разблокировки приложения.</value>
+  </data>
+  <data name="CreatePassword" xml:space="preserve">
+    <value>Создание пароля</value>
   </data>
   <data name="CreateTheme" xml:space="preserve">
     <value>СОЗДАТЬ ТЕМУ</value>
@@ -3916,6 +3979,9 @@
   <data name="DebugMenuDisableCamera" xml:space="preserve">
     <value>Выключить встроенную камеру</value>
   </data>
+  <data name="DebugMenuDisableForceRtmpStreamFlag" xml:space="preserve">
+    <value>Необязательное использование RTMP для трансляций</value>
+  </data>
   <data name="DebugMenuDisableLogs" xml:space="preserve">
     <value>Выключить логирование</value>
   </data>
@@ -3927,6 +3993,9 @@
   </data>
   <data name="DebugMenuEnableCamera" xml:space="preserve">
     <value>Включить встроенную камеру</value>
+  </data>
+  <data name="DebugMenuEnableForceRtmpStreamFlag" xml:space="preserve">
+    <value>Обязательное использование RTMP для трансляций</value>
   </data>
   <data name="DebugMenuEnableLogs" xml:space="preserve">
     <value>Включить логирование</value>
@@ -4222,6 +4291,9 @@
   <data name="DescriptionInfo" xml:space="preserve">
     <value>Можете указать дополнительное описание вашего канала.</value>
   </data>
+  <data name="DescriptionMore" xml:space="preserve">
+    <value>ещё</value>
+  </data>
   <data name="DescriptionOptionalPlaceholder" xml:space="preserve">
     <value>Описание (необязательно)</value>
   </data>
@@ -4252,6 +4324,19 @@
   <data name="DidNotGetTheCode" xml:space="preserve">
     <value>Не получили код?</value>
   </data>
+  <data name="DidNotGetTheCodeEditNumberButton" xml:space="preserve">
+    <value>Изменить номер</value>
+  </data>
+  <data name="DidNotGetTheCodeHelpButton" xml:space="preserve">
+    <value>Помощь</value>
+  </data>
+  <data name="DidNotGetTheCodeInfo" xml:space="preserve">
+    <value>Если Вы не получили звонок или СМС с кодом, проверьте настройки сотовой связи и указанный Вами номер:
+
+**{0}**
+
+Если это не помогло, Вы можете указать другой номер телефона или связаться с командой поддержки Telegram. Чтобы сообщить нам о проблеме и отправить техническую информацию для диагностики, нажмите **Помощь**.</value>
+  </data>
   <data name="DidNotGetTheCodePhone" xml:space="preserve">
     <value>Получить код на телефон</value>
   </data>
@@ -4268,6 +4353,15 @@
     <value>Показывать недавние чаты в меню</value>
   </data>
   <data name="Disable" xml:space="preserve">
+    <value>Отключить</value>
+  </data>
+  <data name="DisablePasscode" xml:space="preserve">
+    <value>Выключить код-пароль</value>
+  </data>
+  <data name="DisablePasscodeConfirmMessage" xml:space="preserve">
+    <value>Вы точно хотите отключить пароль?</value>
+  </data>
+  <data name="DisablePasscodeTurnOff" xml:space="preserve">
     <value>Отключить</value>
   </data>
   <data name="DisappearingGif" xml:space="preserve">
@@ -4417,6 +4511,18 @@
   </data>
   <data name="DoubleTapSetting" xml:space="preserve">
     <value>Быстрая реакция</value>
+  </data>
+  <data name="DownloadedFiles" xml:space="preserve">
+    <value>Загруженные файлы</value>
+  </data>
+  <data name="DownloadedFilesMessage" xml:space="preserve">
+    <value>Файлы, полученные и отправленные через Telegram, можно хранить в облаке. Они не будут занимать место на Вашем устройстве.</value>
+  </data>
+  <data name="Downloading" xml:space="preserve">
+    <value>Загрузка</value>
+  </data>
+  <data name="DownloadsTabs" xml:space="preserve">
+    <value>Загрузки</value>
   </data>
   <data name="Draft" xml:space="preserve">
     <value>Черновик</value>
@@ -4577,6 +4683,16 @@
   <data name="EditName" xml:space="preserve">
     <value>Изменить имя</value>
   </data>
+  <data name="EditNumber" xml:space="preserve">
+    <value>Изменить номер</value>
+  </data>
+  <data name="EditNumberInfo" xml:space="preserve">
+    <value>Хотите указать другой номер?
+
+**{0}**
+
+Если номер указан правильно, пожалуйста, дождитесь кода подтверждения.</value>
+  </data>
   <data name="EditPhoto" xml:space="preserve">
     <value>Открыть в редакторе</value>
   </data>
@@ -4686,6 +4802,9 @@
     <value>Включена двухэтапная аутентификация.
 Для входа в свой аккаунт в Telegram Вам нужно будет вводить установленный здесь пароль.</value>
   </data>
+  <data name="EnablePasscode" xml:space="preserve">
+    <value>Включить код-пароль</value>
+  </data>
   <data name="EnableProxyAlert" xml:space="preserve">
     <value>Хотите включить этот прокси?</value>
   </data>
@@ -4780,6 +4899,9 @@
   <data name="EnterNewPasscode" xml:space="preserve">
     <value>Введите новый код-пароль</value>
   </data>
+  <data name="EnterPassword" xml:space="preserve">
+    <value>Введите пароль</value>
+  </data>
   <data name="EnterThemeName" xml:space="preserve">
     <value>Введите название темы</value>
   </data>
@@ -4790,6 +4912,9 @@
   </data>
   <data name="EnterYourPasscode" xml:space="preserve">
     <value>Введите код-пароль</value>
+  </data>
+  <data name="EnterYourPasscodeInfo" xml:space="preserve">
+    <value>Чтобы изменить эту настройку, введите текущий код-пароль от приложения.</value>
   </data>
   <data name="EnterYourTelegramPasscode" xml:space="preserve">
     <value>Введите код-пароль от Telegram</value>
@@ -5592,6 +5717,9 @@
   <data name="FirstName" xml:space="preserve">
     <value>Имя (обязательно)</value>
   </data>
+  <data name="FirstNameSmall" xml:space="preserve">
+    <value>Имя</value>
+  </data>
   <data name="FloodWait" xml:space="preserve">
     <value>Слишком много попыток. Повторите позже.</value>
   </data>
@@ -5649,11 +5777,37 @@
   <data name="ForceSetPasswordAlertMessage_zero" xml:space="preserve">
     <value/>
   </data>
+  <data name="ForceSetPasswordAlertMessageShort_few" xml:space="preserve">
+    <value>Если Вы не установите пароль, то сможете входить в свой аккаунт через SMS только раз в {0} дня. Продолжить без пароля?</value>
+  </data>
+  <data name="ForceSetPasswordAlertMessageShort_many" xml:space="preserve">
+    <value>Если Вы не установите пароль, то сможете входить в свой аккаунт через SMS только раз в {0} дней. Продолжить без пароля?</value>
+  </data>
+  <data name="ForceSetPasswordAlertMessageShort_one" xml:space="preserve">
+    <value>Если Вы не установите пароль, то сможете входить в свой аккаунт через SMS только раз в {0} день. Продолжить без пароля?</value>
+  </data>
+  <data name="ForceSetPasswordAlertMessageShort_other" xml:space="preserve">
+    <value>Если Вы не установите пароль, то сможете входить в свой аккаунт через SMS только раз в {0} дня. Продолжить без пароля?</value>
+  </data>
+  <data name="ForceSetPasswordAlertMessageShort_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ForceSetPasswordAlertMessageShort_zero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="ForceSetPasswordCancel" xml:space="preserve">
     <value>Да, я уверен(а)</value>
   </data>
   <data name="ForceSetPasswordContinue" xml:space="preserve">
     <value>Нет, я задам пароль</value>
+  </data>
+  <data name="ForgotPasscode" xml:space="preserve">
+    <value>Забыли пароль?</value>
+  </data>
+  <data name="ForgotPasscodeInfo" xml:space="preserve">
+    <value>Если Вы забыли пароль, необходимо удалить и заново установить приложение.
+
+Секретные чаты будут потеряны.</value>
   </data>
   <data name="ForgotPassword" xml:space="preserve">
     <value>Забыли пароль?</value>
@@ -6067,6 +6221,9 @@
   </data>
   <data name="GIFs_zero" xml:space="preserve">
     <value/>
+  </data>
+  <data name="GifSavedHint" xml:space="preserve">
+    <value>Добавлено в сохраненные GIF</value>
   </data>
   <data name="GifSavedToDownloadsHint" xml:space="preserve">
     <value>GIF сохранён в загрузки</value>
@@ -7007,6 +7164,9 @@
   <data name="LastName" xml:space="preserve">
     <value>Фамилия (необязательно)</value>
   </data>
+  <data name="LastNameSmall" xml:space="preserve">
+    <value>Фамилия</value>
+  </data>
   <data name="LastSeen" xml:space="preserve">
     <value>был(а)</value>
   </data>
@@ -7298,6 +7458,9 @@
   <data name="LocationUpdatedJustNow" xml:space="preserve">
     <value>обновлена только что</value>
   </data>
+  <data name="LoginAccessibilityCountryCode" xml:space="preserve">
+    <value>Код страны</value>
+  </data>
   <data name="LoginAttempts" xml:space="preserve">
     <value>Незавершенные попытки входа</value>
   </data>
@@ -7309,6 +7472,9 @@
   </data>
   <data name="LoginPasswordText" xml:space="preserve">
     <value>Вы включили двухэтапную аутентификацию. Теперь Ваш аккаунт защищён дополнительным паролем.</value>
+  </data>
+  <data name="LoginPasswordTextShort" xml:space="preserve">
+    <value>Включена двухфакторная аутентификация. Теперь аккаунт защищен дополнительным паролем.</value>
   </data>
   <data name="LogOut" xml:space="preserve">
     <value>Выход</value>
@@ -7377,6 +7543,9 @@
   </data>
   <data name="ManageChannelMenu" xml:space="preserve">
     <value>Управление каналом</value>
+  </data>
+  <data name="ManageDeviceStorage" xml:space="preserve">
+    <value>Управление памятью устройства</value>
   </data>
   <data name="ManageGroup" xml:space="preserve">
     <value>Управление группой</value>
@@ -7499,16 +7668,16 @@
     <value/>
   </data>
   <data name="MediaSelected_few" xml:space="preserve">
-    <value>выбраны {0} медиафайла</value>
+    <value>Выбраны {0} медиафайла</value>
   </data>
   <data name="MediaSelected_many" xml:space="preserve">
-    <value>выбрано {0} медиафайлов</value>
+    <value>Выбрано {0} медиафайлов</value>
   </data>
   <data name="MediaSelected_one" xml:space="preserve">
-    <value>выбран {0} медиафайл</value>
+    <value>Выбран {0} медиафайл</value>
   </data>
   <data name="MediaSelected_other" xml:space="preserve">
-    <value>выбрано {0} медиафайлов</value>
+    <value>Выбрано {0} медиафайлов</value>
   </data>
   <data name="MediaSelected_two" xml:space="preserve">
     <value/>
@@ -8420,6 +8589,14 @@
   </data>
   <data name="NoResult" xml:space="preserve">
     <value>Нет результатов</value>
+  </data>
+  <data name="NoRtmpStreamFromAppOwner" xml:space="preserve">
+    <value>Telegram пока не видит трансляции из Вашей программы для стриминга. 
+
+Пожалуйста, убедитесь, что указали корректный ключ трансляции и ссылку на сервер.</value>
+  </data>
+  <data name="NoRtmpStreamFromAppViewer" xml:space="preserve">
+    <value>{0} не ведёт трансляцию в данный момент.</value>
   </data>
   <data name="NoScheduledMessages" xml:space="preserve">
     <value>Здесь пока нет отложенных сообщений...</value>
@@ -9344,11 +9521,29 @@
   <data name="PasscodeDoNotMatch" xml:space="preserve">
     <value>Код-пароли не совпадают</value>
   </data>
+  <data name="PasscodeFinish" xml:space="preserve">
+    <value>Задать код-пароль</value>
+  </data>
   <data name="PasscodePassword" xml:space="preserve">
     <value>Пароль</value>
   </data>
   <data name="PasscodePIN" xml:space="preserve">
     <value>ПИН-код</value>
+  </data>
+  <data name="PasscodeReinstallNotice" xml:space="preserve">
+    <value>Если Вы забудете пароль, приложение придётся **переустановить**. Секретные чаты будут потеряны.</value>
+  </data>
+  <data name="PasscodeScreenHint" xml:space="preserve">
+    <value>Для блокировки и разблокировки приложения нажмите на значок замка в списке чатов.</value>
+  </data>
+  <data name="PasscodesDoNotMatchTryAgain" xml:space="preserve">
+    <value>Пароли не совпадают. Повторите попытку.</value>
+  </data>
+  <data name="PasscodeSwitchToPassword" xml:space="preserve">
+    <value>Использовать пароль</value>
+  </data>
+  <data name="PasscodeSwitchToPIN" xml:space="preserve">
+    <value>Использовать пин-код</value>
   </data>
   <data name="PassportAddAddressUploadInfo" xml:space="preserve">
     <value>Чтобы подтвердить адрес, загрузите скан или фотографию выбранного документа (все страницы).</value>
@@ -9933,6 +10128,9 @@
   <data name="PasswordHint" xml:space="preserve">
     <value>Подсказка</value>
   </data>
+  <data name="PasswordHintDescription" xml:space="preserve">
+    <value>Если хотите, укажите подсказку для пароля.</value>
+  </data>
   <data name="PasswordHintPlaceholder" xml:space="preserve">
     <value>Подсказка</value>
   </data>
@@ -9956,6 +10154,9 @@
   </data>
   <data name="PasteFromClipboard" xml:space="preserve">
     <value>Вставить из буфера обмена</value>
+  </data>
+  <data name="PauseAll" xml:space="preserve">
+    <value>Остановить все</value>
   </data>
   <data name="PaymentBillingAddress" xml:space="preserve">
     <value>Платёжный адрес</value>
@@ -10277,20 +10478,50 @@
   <data name="PermissionNoAudioVideo" xml:space="preserve">
     <value>Telegram требуется доступ к микрофону, чтобы Вы могли снимать видео.</value>
   </data>
+  <data name="PermissionNoAudioVideoWithHint" xml:space="preserve">
+    <value>Telegram требуется доступ к микрофону, чтобы Вы могли отправлять голосовые сообщения. Для этого включите **Микрофон** в настройках телефона &gt; Разрешения.</value>
+  </data>
+  <data name="PermissionNoAudioWithHint" xml:space="preserve">
+    <value>Telegram требуется доступ к микрофону, чтобы Вы могли отправлять голосовые сообщения. Для этого включите **Микрофон** в настройках телефона &gt; Разрешения.</value>
+  </data>
   <data name="PermissionNoCamera" xml:space="preserve">
     <value>Telegram требуется доступ к камере, чтобы Вы могли снимать фото и видео.</value>
+  </data>
+  <data name="PermissionNoCameraMicVideo" xml:space="preserve">
+    <value>Telegram требуется доступ к камере и микрофону, чтобы Вы могли отправлять видеосообщения. Для этого включите **микрофон** и  **камеру** в настройках телефона &gt; Разрешения.</value>
+  </data>
+  <data name="PermissionNoCameraWithHint" xml:space="preserve">
+    <value>Telegram требуется доступ к камере, чтобы Вы могли делать фотографии и снимать видео. Для этого включите опцию **Камера** в настройках телефона &gt; Разрешения.</value>
+  </data>
+  <data name="PermissionNoContactsSharing" xml:space="preserve">
+    <value>Telegram требуется доступ к телефонной книге, чтобы Вы могли делиться контактами с друзьями. Для этого включите **Контакты** в настройках телефона &gt; Разрешения.</value>
   </data>
   <data name="PermissionNoLocation" xml:space="preserve">
     <value>Telegram требуется доступ к геопозиции, чтобы Вы могли отправлять её друзьям.</value>
   </data>
+  <data name="PermissionNoLocationFriends" xml:space="preserve">
+    <value>Telegram требуется доступ к геопозиции, чтобы Вы могли делиться ею с друзьями. Для этого включите **Геопозиция** в настройках телефона &gt; Разрешения.</value>
+  </data>
+  <data name="PermissionNoLocationNavigation" xml:space="preserve">
+    <value>Telegram требуется доступ к геопозиции, чтобы Вы могли строить маршруты. Для этого включите **Геопозиция** в настройках телефона &gt; Разрешения.</value>
+  </data>
+  <data name="PermissionNoLocationPeopleNearby" xml:space="preserve">
+    <value>Telegram требуется доступ к геопозиции, чтобы Вы могли искать людей рядом с Вами. Для этого включите **Геопозиция** в настройках телефона &gt; Разрешения.</value>
+  </data>
   <data name="PermissionNoLocationPosition" xml:space="preserve">
     <value>Telegram требуется доступ к геопозиции.</value>
+  </data>
+  <data name="PermissionNoStorageAvatar" xml:space="preserve">
+    <value>Telegram требуется доступ к Хранилищу, чтобы Вы могли загружать фотографии или видеозаписи профиля. Для этого включите **Файлы и медиа** в настройках телефона &gt; Разрешения.</value>
   </data>
   <data name="PermissionOpenSettings" xml:space="preserve">
     <value>НАСТРОЙКИ</value>
   </data>
   <data name="PermissionStorage" xml:space="preserve">
     <value>Telegram требуется доступ к хранилищу, чтобы Вы могли отправлять и сохранять фото, видео, музыку и другие медиа.</value>
+  </data>
+  <data name="PermissionStorageWithHint" xml:space="preserve">
+    <value>Telegram требуется доступ к хранилищу, чтобы Вы могли отправлять и сохранять фото, видео, музыку и другие медиа. Для этого включите **Файлы и медиа** в настройках телефона &gt; Разрешения.</value>
   </data>
   <data name="PermissionXiaomiLockscreen" xml:space="preserve">
     <value>Для корректной работы звонков, пожалуйста, разрешите приложению показываться на экране блокировки.</value>
@@ -10312,6 +10543,9 @@
   </data>
   <data name="PhoneMobile" xml:space="preserve">
     <value>Телефон</value>
+  </data>
+  <data name="PhoneNumber" xml:space="preserve">
+    <value>Номер телефона</value>
   </data>
   <data name="PhoneNumberAlert" xml:space="preserve">
     <value>Пользователи будут видеть Ваш новый номер, если он есть в их телефонной книге или если это разрешают Ваши настройки конфиденциальности: Настройки &gt; Конфиденциальность &gt; Номер телефона.</value>
@@ -10389,16 +10623,16 @@
     <value/>
   </data>
   <data name="PhotosSelected_few" xml:space="preserve">
-    <value>выбраны {0} фотографии</value>
+    <value>Выбраны {0} фотографии</value>
   </data>
   <data name="PhotosSelected_many" xml:space="preserve">
-    <value>выбрано {0} фотографий</value>
+    <value>Выбрано {0} фотографий</value>
   </data>
   <data name="PhotosSelected_one" xml:space="preserve">
-    <value>выбрана {0} фотография</value>
+    <value>Выбрана {0} фотография</value>
   </data>
   <data name="PhotosSelected_other" xml:space="preserve">
-    <value>выбрано {0} фотографий</value>
+    <value>Выбрано {0} фотографий</value>
   </data>
   <data name="PhotosSelected_two" xml:space="preserve">
     <value/>
@@ -11030,11 +11264,17 @@
   <data name="PsaInfo_covid" xml:space="preserve">
     <value>Это экстренная новость о пандемии COVID-19. Подробнее об этой инициативе: https://telegram.org/blog/coronavirus</value>
   </data>
+  <data name="PsaInfo_psa" xml:space="preserve">
+    <value>Вы видите официальное сообщение от руководителя Telegram в связи с происходящим конфликтом.</value>
+  </data>
   <data name="PsaInfoDefault" xml:space="preserve">
-    <value>PSA info test</value>
+    <value>Это экстренное оповещение.</value>
   </data>
   <data name="PsaMessage_covid" xml:space="preserve">
     <value>Новость о COVID-19</value>
+  </data>
+  <data name="PsaMessage_psa" xml:space="preserve">
+    <value>Объявление</value>
   </data>
   <data name="PsaMessageDefault" xml:space="preserve">
     <value>Важное уведомление</value>
@@ -11042,11 +11282,17 @@
   <data name="PsaMessageInfo_covid" xml:space="preserve">
     <value>Это экстренная новость о пандемии COVID-19. Подробнее об этой инициативе: https://telegram.org/blog/coronavirus</value>
   </data>
+  <data name="PsaMessageInfo_psa" xml:space="preserve">
+    <value>Вы видите официальное сообщение от руководителя Telegram в связи с происходящим конфликтом.</value>
+  </data>
   <data name="PsaMessageInfoDefault" xml:space="preserve">
     <value>Это важное уведомление.</value>
   </data>
   <data name="PsaType_covid" xml:space="preserve">
     <value>COVID-19</value>
+  </data>
+  <data name="PsaType_psa" xml:space="preserve">
+    <value>Объявление</value>
   </data>
   <data name="PsaTypeDefault" xml:space="preserve">
     <value>PSA</value>
@@ -11195,6 +11441,9 @@
   <data name="QRCodePermissionNoCamera" xml:space="preserve">
     <value>Чтобы Вы могли сканировать QR-коды, Telegram нужен доступ к камере.</value>
   </data>
+  <data name="QRCodePermissionNoCameraWithHint" xml:space="preserve">
+    <value>Чтобы Вы могли сканировать QR-коды, **Telegram** требуется доступ к камере. Пожалуйста, включите его в настройках устройства: Разрешения  &gt; **Камера**.</value>
+  </data>
   <data name="Question" xml:space="preserve">
     <value>Вопрос</value>
   </data>
@@ -11309,6 +11558,12 @@
   <data name="ReactionsOff" xml:space="preserve">
     <value>Нет</value>
   </data>
+  <data name="ReadAllMentions" xml:space="preserve">
+    <value>Прочитать все упоминания</value>
+  </data>
+  <data name="ReadAllReactions" xml:space="preserve">
+    <value>Прочитать все реакции</value>
+  </data>
   <data name="Recent" xml:space="preserve">
     <value>Недавние</value>
   </data>
@@ -11317,6 +11572,9 @@
   </data>
   <data name="RecentFilesAZ" xml:space="preserve">
     <value>Файлы А-Я</value>
+  </data>
+  <data name="RecentlyDownloaded" xml:space="preserve">
+    <value>Недавние загрузки</value>
   </data>
   <data name="RecentlyViewed" xml:space="preserve">
     <value>Недавние</value>
@@ -11369,6 +11627,9 @@
   <data name="Red" xml:space="preserve">
     <value>Красный</value>
   </data>
+  <data name="ReEnterPassword" xml:space="preserve">
+    <value>Повторите пароль</value>
+  </data>
   <data name="ReEnterYourPasscode" xml:space="preserve">
     <value>Введите код-пароль ещё раз</value>
   </data>
@@ -11377,6 +11638,9 @@
   </data>
   <data name="RegisterText2" xml:space="preserve">
     <value>Введите своё имя и загрузите фотографию.</value>
+  </data>
+  <data name="RegistrationProfileInfo" xml:space="preserve">
+    <value>Информация о себе</value>
   </data>
   <data name="Regular" xml:space="preserve">
     <value>Обычный</value>
@@ -11407,6 +11671,42 @@
   </data>
   <data name="RemovedFromRecent" xml:space="preserve">
     <value>Стикер был удалён из списка недавних</value>
+  </data>
+  <data name="RemoveDocumentsMessage_few" xml:space="preserve">
+    <value>Вы точно хотите удалить %d файла из Загрузок?</value>
+  </data>
+  <data name="RemoveDocumentsMessage_many" xml:space="preserve">
+    <value>Вы точно хотите удалить %d файлов из Загрузок?</value>
+  </data>
+  <data name="RemoveDocumentsMessage_one" xml:space="preserve">
+    <value>Вы точно хотите удалить %d файл из Загрузок?</value>
+  </data>
+  <data name="RemoveDocumentsMessage_other" xml:space="preserve">
+    <value>Вы точно хотите удалить %d файла из Загрузок?</value>
+  </data>
+  <data name="RemoveDocumentsMessage_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="RemoveDocumentsMessage_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="RemoveDocumentsTitle_few" xml:space="preserve">
+    <value>Удалить %d файла</value>
+  </data>
+  <data name="RemoveDocumentsTitle_many" xml:space="preserve">
+    <value>Удалить %d файлов</value>
+  </data>
+  <data name="RemoveDocumentsTitle_one" xml:space="preserve">
+    <value>Удалить  %d файл</value>
+  </data>
+  <data name="RemoveDocumentsTitle_other" xml:space="preserve">
+    <value>Удалить %d файла</value>
+  </data>
+  <data name="RemoveDocumentsTitle_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="RemoveDocumentsTitle_zero" xml:space="preserve">
+    <value/>
   </data>
   <data name="RemovedUser_few" xml:space="preserve">
     <value>{0} пользователя в чёрном списке</value>
@@ -11585,8 +11885,17 @@
   <data name="ReportUserLocation" xml:space="preserve">
     <value>Пожаловаться</value>
   </data>
+  <data name="RequestCallButton" xml:space="preserve">
+    <value>Получить звонок с кодом</value>
+  </data>
   <data name="RequestedToJoinAt" xml:space="preserve">
     <value>подал(а) заявку {0}</value>
+  </data>
+  <data name="RequestMissedCall" xml:space="preserve">
+    <value>Получить звонок с кодом</value>
+  </data>
+  <data name="RequestSmsButton" xml:space="preserve">
+    <value>Получить СМС с кодом</value>
   </data>
   <data name="RequestToJoinChannel" xml:space="preserve">
     <value>Подать заявку</value>
@@ -11706,6 +12015,9 @@
   <data name="ResetStatisticsAlertTitle" xml:space="preserve">
     <value>Сбросить статистику</value>
   </data>
+  <data name="RestoreEmailNoAccess" xml:space="preserve">
+    <value>Нет доступа к {0}?</value>
+  </data>
   <data name="RestoreEmailSent" xml:space="preserve">
     <value>Мы отправили код восстановления на указанный вами адрес электронной почты:
 
@@ -11779,6 +12091,9 @@
   </data>
   <data name="RestrictSavingContentInfoGroup" xml:space="preserve">
     <value>Участники не смогут копировать, сохранять или пересылать материалы из группы.</value>
+  </data>
+  <data name="ResumeAll" xml:space="preserve">
+    <value>Запустить все</value>
   </data>
   <data name="Retry" xml:space="preserve">
     <value>Повторить</value>
@@ -11900,8 +12215,14 @@
 
 Для вступления настроек в силу может потребоваться перезапуск приложения.</value>
   </data>
+  <data name="ScreenCaptureHeader" xml:space="preserve">
+    <value>Просмотр при переключении задач</value>
+  </data>
   <data name="ScreenCaptureInfo" xml:space="preserve">
     <value>Если выключено, Вы не сможете делать скриншоты приложения, но чаты не будут видны в окне переключения задач.</value>
+  </data>
+  <data name="ScreenCaptureShowContent" xml:space="preserve">
+    <value>Показывать</value>
   </data>
   <data name="SdCard" xml:space="preserve">
     <value>Карта памяти</value>
@@ -11920,6 +12241,9 @@
   </data>
   <data name="SearchEmojiHint" xml:space="preserve">
     <value>Поиск эмодзи</value>
+  </data>
+  <data name="SearchEmptyViewDownloads" xml:space="preserve">
+    <value>Нет недавних загрузок</value>
   </data>
   <data name="SearchEmptyViewFilteredSubtitle2" xml:space="preserve">
     <value>Попробуйте снова.</value>
@@ -12311,6 +12635,9 @@
   <data name="SentAppCodeTitle" xml:space="preserve">
     <value>Проверьте сообщения в Telegram</value>
   </data>
+  <data name="SentAppCodeWithPhone" xml:space="preserve">
+    <value>Мы отправили код через **Telegram** на другое устройство, где авторизован {0}.</value>
+  </data>
   <data name="SentCallCode" xml:space="preserve">
     <value>Наш робот звонит на номер **{0}**.
 
@@ -12378,6 +12705,9 @@
   </data>
   <data name="SetColor" xml:space="preserve">
     <value>Задать цвет</value>
+  </data>
+  <data name="SetNewPassword" xml:space="preserve">
+    <value>Задать новый пароль</value>
   </data>
   <data name="SetPasscode" xml:space="preserve">
     <value>Установить код-пароль</value>
@@ -12652,6 +12982,13 @@
   <data name="ShortMessageLifetimeForever" xml:space="preserve">
     <value>Откл.</value>
   </data>
+  <data name="ShortNumberInfo" xml:space="preserve">
+    <value>Указанный номер слишком короткий для региона **{0}**:
+
+**{1}**
+
+Убедитесь, что правильно указываете номер. Он должен начинаться с кода страны.</value>
+  </data>
   <data name="ShowAllFiles" xml:space="preserve">
     <value>Все файлы</value>
   </data>
@@ -12793,6 +13130,9 @@
   <data name="SmartNotificationsInfo" xml:space="preserve">
     <value>{0} / {1}</value>
   </data>
+  <data name="SmsAvailableIn" xml:space="preserve">
+    <value>Вы сможете запросить СМС через {0}:%2$02d</value>
+  </data>
   <data name="SmsText" xml:space="preserve">
     <value>Мы отправим Вам SMS через {0}:%2$02d</value>
   </data>
@@ -12919,7 +13259,7 @@
     <value>&apos;Начнётся сегодня в&apos; HH:mm</value>
   </data>
   <data name="StartText" xml:space="preserve">
-    <value>Пожалуйста, укажите код страны и свой номер телефона.</value>
+    <value>Введите код страны и свой номер телефона.</value>
   </data>
   <data name="StartTodayAt" xml:space="preserve">
     <value>&apos;Начать сегодня в&apos; HH:mm</value>
@@ -13127,6 +13467,12 @@
   </data>
   <data name="Subscribers_zero" xml:space="preserve">
     <value/>
+  </data>
+  <data name="SuggestClearDatabaseMessage" xml:space="preserve">
+    <value>Размер базы данных — {0}. Он может влиять на скорость приложения.</value>
+  </data>
+  <data name="SuggestClearDatabaseTitle" xml:space="preserve">
+    <value>Очистить базу данных</value>
   </data>
   <data name="SuggestContacts" xml:space="preserve">
     <value>Подсказка людей при поиске</value>
@@ -14374,6 +14720,27 @@
   <data name="ViewDiscussion" xml:space="preserve">
     <value>Просмотреть обсуждение</value>
   </data>
+  <data name="ViewersWatching_few" xml:space="preserve">
+    <value>{0} зрителя</value>
+  </data>
+  <data name="ViewersWatching_many" xml:space="preserve">
+    <value>{0} зрителей</value>
+  </data>
+  <data name="ViewersWatching_one" xml:space="preserve">
+    <value>{0} зритель</value>
+  </data>
+  <data name="ViewersWatching_other" xml:space="preserve">
+    <value>{0} зрителей</value>
+  </data>
+  <data name="ViewersWatching_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ViewersWatching_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ViewersWatchingNobody" xml:space="preserve">
+    <value>Зрителей нет</value>
+  </data>
   <data name="ViewExceptions" xml:space="preserve">
     <value>Показать исключения</value>
   </data>
@@ -14770,6 +15137,9 @@
   <data name="VoipGroupEndedStartNew" xml:space="preserve">
     <value>Видеочат завершён. Начать новый?</value>
   </data>
+  <data name="VoipGroupExpandStream" xml:space="preserve">
+    <value>Развернуть</value>
+  </data>
   <data name="VoipGroupInviteAlreadyParticipant" xml:space="preserve">
     <value>Этот пользователь уже есть в видеочате.</value>
   </data>
@@ -14823,6 +15193,9 @@
   </data>
   <data name="VoipGroupLeaveAlertTitle" xml:space="preserve">
     <value>Выход из чата</value>
+  </data>
+  <data name="VoipGroupMinimizeStream" xml:space="preserve">
+    <value>Свернуть</value>
   </data>
   <data name="VoipGroupMute" xml:space="preserve">
     <value>Выключить микрофон</value>
@@ -15059,8 +15432,14 @@
   <data name="VoipNeedMicCameraPermission" xml:space="preserve">
     <value>Чтобы Вы могли совершать видеозвонки, Telegram требуется доступ к камере и микрофону.</value>
   </data>
+  <data name="VoipNeedMicCameraPermissionWithHint" xml:space="preserve">
+    <value>Telegram требуется доступ к камере и микрофону, чтобы Вы могли использовать видеозвонки. Для этого включите опции **Микрофон** и  **Камера** в настройках телефона &gt; Разрешения.</value>
+  </data>
   <data name="VoipNeedMicPermission" xml:space="preserve">
     <value>Telegram требуется доступ к микрофону, чтобы Вы могли пользоваться звонками.</value>
+  </data>
+  <data name="VoipNeedMicPermissionWithHint" xml:space="preserve">
+    <value>Telegram требуется доступ к микрофону, чтобы Вы могли пользоваться звонками. Для этого включите **Микрофон** в настройках телефона &gt; Разрешения.</value>
   </data>
   <data name="VoipNoiseCancellation" xml:space="preserve">
     <value>Шумоподавление</value>
@@ -15372,11 +15751,20 @@ Telegram до последней версии</value>
   <data name="WithinAWeek" xml:space="preserve">
     <value>был(а) на этой неделе</value>
   </data>
+  <data name="WrongCode" xml:space="preserve">
+    <value>Вы ввели неверный код. Повторите попытку.</value>
+  </data>
+  <data name="WrongCodeTitle" xml:space="preserve">
+    <value>Неверный код</value>
+  </data>
   <data name="WrongCountry" xml:space="preserve">
     <value>Некорректный код страны</value>
   </data>
   <data name="WrongNumber" xml:space="preserve">
     <value>Неправильный номер?</value>
+  </data>
+  <data name="WrongNumberFormat" xml:space="preserve">
+    <value>Некорректный формат</value>
   </data>
   <data name="Years_few" xml:space="preserve">
     <value>{0} года</value>
@@ -15476,6 +15864,9 @@ Telegram до последней версии</value>
   <data name="YourNameChanged" xml:space="preserve">
     <value>Имя обновлено.</value>
   </data>
+  <data name="YourNumber" xml:space="preserve">
+    <value>Номер телефона</value>
+  </data>
   <data name="YourPassword" xml:space="preserve">
     <value>Пароль</value>
   </data>
@@ -15494,6 +15885,9 @@ Telegram до последней версии</value>
   </data>
   <data name="YourPasswordRememberYes" xml:space="preserve">
     <value>Помню, спасибо</value>
+  </data>
+  <data name="YourPasswordReset" xml:space="preserve">
+    <value>Пароль отключен</value>
   </data>
   <data name="YourPasswordSuccess" xml:space="preserve">
     <value>Готово!</value>

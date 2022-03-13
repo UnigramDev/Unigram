@@ -304,6 +304,9 @@
   <data name="AccDescrQuizExplanation" xml:space="preserve">
     <value>Explanation</value>
   </data>
+  <data name="AccDescrReactionMentionDown" xml:space="preserve">
+    <value>Go to next unread reactions</value>
+  </data>
   <data name="AccDescrReceivedDate" xml:space="preserve">
     <value>Received {0}</value>
   </data>
@@ -2151,6 +2154,9 @@ Sunrise: {1}</value>
   </data>
   <data name="Blue" xml:space="preserve">
     <value>Blue</value>
+  </data>
+  <data name="BlurInChat" xml:space="preserve">
+    <value>Blur in chat</value>
   </data>
   <data name="BlurLinear" xml:space="preserve">
     <value>Linear</value>
@@ -4222,6 +4228,9 @@ You can always switch back to the default Telegram theme here.</value>
   <data name="DescriptionInfo" xml:space="preserve">
     <value>You can provide an optional description for your channel.</value>
   </data>
+  <data name="DescriptionMore" xml:space="preserve">
+    <value>more</value>
+  </data>
   <data name="DescriptionOptionalPlaceholder" xml:space="preserve">
     <value>Description (optional)</value>
   </data>
@@ -5308,7 +5317,7 @@ Duration: {1}</value>
     <value/>
   </data>
   <data name="FileSavedHint" xml:space="preserve">
-    <value>File saved to downloads</value>
+    <value>File saved to Downloads</value>
   </data>
   <data name="FilesDataUsage" xml:space="preserve">
     <value>Files</value>
@@ -5320,10 +5329,10 @@ Duration: {1}</value>
     <value/>
   </data>
   <data name="FilesSavedHint_one" xml:space="preserve">
-    <value>File saved to downloads</value>
+    <value>File saved to Downloads</value>
   </data>
   <data name="FilesSavedHint_other" xml:space="preserve">
-    <value>{0} files saved to downloads</value>
+    <value>{0} files saved to Downloads</value>
   </data>
   <data name="FilesSavedHint_two" xml:space="preserve">
     <value/>
@@ -5952,6 +5961,9 @@ Duration: {1}</value>
   <data name="ForwardSendMessages" xml:space="preserve">
     <value>Send messages</value>
   </data>
+  <data name="ForwardsRestrictedInfoBot" xml:space="preserve">
+    <value>Copying and forwarding is not allowed from this bot.</value>
+  </data>
   <data name="ForwardsRestrictedInfoChannel" xml:space="preserve">
     <value>Сopying and forwarding is not allowed in this channel.</value>
   </data>
@@ -6064,7 +6076,7 @@ Duration: {1}</value>
     <value/>
   </data>
   <data name="GifSavedToDownloadsHint" xml:space="preserve">
-    <value>GIF saved to downloads</value>
+    <value>GIF saved to Downloads</value>
   </data>
   <data name="GifsTab" xml:space="preserve">
     <value>GIFS</value>
@@ -8420,6 +8432,14 @@ will appear here.</value>
   <data name="NoResult" xml:space="preserve">
     <value>No results</value>
   </data>
+  <data name="NoRtmpStreamFromAppOwner" xml:space="preserve">
+    <value>**Oops!** Telegram doesn't see any stream coming from your streaming app.
+    
+    Please make sure you entered the right Server URL and Stream Key in your app.</value>
+  </data>
+  <data name="NoRtmpStreamFromAppViewer" xml:space="preserve">
+    <value>{0} is currently not broadcasting live stream data to Telegram.</value>
+  </data>
   <data name="NoScheduledMessages" xml:space="preserve">
     <value>No scheduled messages here yet...</value>
   </data>
@@ -10370,7 +10390,7 @@ We will access your location only for the duration you choose, and you can stop 
     <value>Photo saved to gallery</value>
   </data>
   <data name="PhotoSavedToDownloadsHint" xml:space="preserve">
-    <value>Photo saved to downloads</value>
+    <value>Photo saved to Downloads</value>
   </data>
   <data name="PhotosSavedHint_few" xml:space="preserve">
     <value/>
@@ -10939,6 +10959,9 @@ We will access your location only for the duration you choose, and you can stop 
   <data name="PrivacyPhoneInfo3" xml:space="preserve">
     <value>Users who add your number to their contacts will see it on Telegram only if they are your contacts.</value>
   </data>
+  <data name="PrivacyPhoneInfo4" xml:space="preserve">
+    <value>This public link opens a chat with you:</value>
+  </data>
   <data name="PrivacyPhoneTitle" xml:space="preserve">
     <value>Who can see my phone number?</value>
   </data>
@@ -11032,11 +11055,17 @@ We will access your location only for the duration you choose, and you can stop 
   <data name="PsaInfo_covid" xml:space="preserve">
     <value>This message provides you with a public service announcement in relation to the ongoing COVID-19 pandemic. Learn more about this initiative at https://telegram.org/blog/coronavirus</value>
   </data>
+  <data name="PsaInfo_psa" xml:space="preserve">
+    <value>This is an official message from the CEO of Telegram regarding the ongoing conflict.</value>
+  </data>
   <data name="PsaInfoDefault" xml:space="preserve">
-    <value>PSA info test</value>
+    <value>This message provides you with a public service announcement.</value>
   </data>
   <data name="PsaMessage_covid" xml:space="preserve">
     <value>COVID-19 Notification</value>
+  </data>
+  <data name="PsaMessage_psa" xml:space="preserve">
+    <value>Announcement</value>
   </data>
   <data name="PsaMessageDefault" xml:space="preserve">
     <value>Important Notification</value>
@@ -11044,11 +11073,17 @@ We will access your location only for the duration you choose, and you can stop 
   <data name="PsaMessageInfo_covid" xml:space="preserve">
     <value>This message provides you with a public service announcement in relation to the ongoing COVID-19 pandemic. Learn more about this initiative at https://telegram.org/blog/coronavirus</value>
   </data>
+  <data name="PsaMessageInfo_psa" xml:space="preserve">
+    <value>This is an official message from the CEO of Telegram regarding the ongoing conflict.</value>
+  </data>
   <data name="PsaMessageInfoDefault" xml:space="preserve">
     <value>This is an important notification.</value>
   </data>
   <data name="PsaType_covid" xml:space="preserve">
     <value>COVID-19</value>
+  </data>
+  <data name="PsaType_psa" xml:space="preserve">
+    <value>Announcement</value>
   </data>
   <data name="PsaTypeDefault" xml:space="preserve">
     <value>PSA</value>
@@ -11497,8 +11532,14 @@ We will access your location only for the duration you choose, and you can stop 
   <data name="ReportChatFakeAccount" xml:space="preserve">
     <value>Fake Account</value>
   </data>
-  <data name="ReportChatOther" xml:space="preserve">
+  <data name="ReportChatIllegalDrugs" xml:space="preserve">
     <value>Other</value>
+  </data>
+  <data name="ReportChatOther" xml:space="preserve">
+    <value>Illegal Drugs</value>
+  </data>
+  <data name="ReportChatPersonalDetails" xml:space="preserve">
+    <value>Personal Details</value>
   </data>
   <data name="ReportChatPornography" xml:space="preserve">
     <value>Pornography</value>
@@ -11859,7 +11900,7 @@ The channel &quot;**{1}**&quot; will become private.</value>
     <value>SAVE THEME</value>
   </data>
   <data name="SaveToDownloads" xml:space="preserve">
-    <value>Save to downloads</value>
+    <value>Save to Downloads</value>
   </data>
   <data name="SaveToGallery" xml:space="preserve">
     <value>Save to gallery</value>
@@ -12680,6 +12721,12 @@ Don&apos;t accept the call, Telegram will process everything automatically.</val
   </data>
   <data name="ShowInChat" xml:space="preserve">
     <value>Show in chat</value>
+  </data>
+  <data name="ShowLess" xml:space="preserve">
+    <value>Show less</value>
+  </data>
+  <data name="ShowMore" xml:space="preserve">
+    <value>Show more</value>
   </data>
   <data name="ShowNearbyPlaces" xml:space="preserve">
     <value>Pull up to see places nearby</value>
@@ -14316,7 +14363,7 @@ You can use **a–z**, **0–9** and underscores. Minimum length is **5** charac
     <value>Video saved to gallery</value>
   </data>
   <data name="VideoSavedToDownloadsHint" xml:space="preserve">
-    <value>Video saved to downloads</value>
+    <value>Video saved to Downloads</value>
   </data>
   <data name="VideosSavedHint_few" xml:space="preserve">
     <value/>

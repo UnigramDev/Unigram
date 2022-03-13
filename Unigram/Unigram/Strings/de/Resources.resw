@@ -304,6 +304,9 @@
   <data name="AccDescrQuizExplanation" xml:space="preserve">
     <value>Erklärung</value>
   </data>
+  <data name="AccDescrReactionMentionDown" xml:space="preserve">
+    <value>Wechsle zur nächsten ungesehenen Reaktion</value>
+  </data>
   <data name="AccDescrReceivedDate" xml:space="preserve">
     <value>Empfangen {0}</value>
   </data>
@@ -1574,11 +1577,26 @@ Bitte schau auch in den  &lt;![CDATA[&lt;a href="https://telegram.org/faq/de#all
   <data name="AttachLocation" xml:space="preserve">
     <value>Standort</value>
   </data>
+  <data name="AttachMediaDragHint" xml:space="preserve">
+    <value>Medien zur Neuordnung ziehen</value>
+  </data>
+  <data name="AttachMediaPhotoDeselected" xml:space="preserve">
+    <value>Bild abgewählt.</value>
+  </data>
+  <data name="AttachMediaPreview" xml:space="preserve">
+    <value>Nachrichtenvorschau</value>
+  </data>
+  <data name="AttachMediaPreviewButton" xml:space="preserve">
+    <value>Vorschau der Nachricht</value>
+  </data>
   <data name="AttachMediaRestricted" xml:space="preserve">
     <value>Die Admins dieser Gruppe haben dir die Berechtigung entzogen, Medien bis {0} zu senden</value>
   </data>
   <data name="AttachMediaRestrictedForever" xml:space="preserve">
     <value>Die Admins dieser Gruppe haben dir die Berechtigung entzogen, Medien zu senden.</value>
+  </data>
+  <data name="AttachMediaVideoDeselected" xml:space="preserve">
+    <value>Video abgewählt.</value>
   </data>
   <data name="AttachMenu" xml:space="preserve">
     <value>Anhängen...</value>
@@ -2158,6 +2176,9 @@ um Ton einzuschalten.</value>
   <data name="Blue" xml:space="preserve">
     <value>Blau</value>
   </data>
+  <data name="BlurInChat" xml:space="preserve">
+    <value>Unschärfe im Chat</value>
+  </data>
   <data name="BlurLinear" xml:space="preserve">
     <value>Linear</value>
   </data>
@@ -2311,6 +2332,9 @@ um Ton einzuschalten.</value>
   <data name="CallAlertTitle" xml:space="preserve">
     <value>Sprachanruf</value>
   </data>
+  <data name="CallAvailableIn" xml:space="preserve">
+    <value>Du kannst einen Sprachanruf anfordern in {0}:%2$02d</value>
+  </data>
   <data name="CallBack" xml:space="preserve">
     <value>Zurückrufen</value>
   </data>
@@ -2441,6 +2465,9 @@ Wenn du das nicht selbst gewesen bist, tippe den Code der SMS ein, den wir dir g
   <data name="CancelLinkSuccess" xml:space="preserve">
     <value>Löschvorgang für dein Konto {0} wurde abgebrochen. Du kannst das Fenster nun schließen.</value>
   </data>
+  <data name="CancelLinkSuccessTitle" xml:space="preserve">
+    <value>Erfolgreich</value>
+  </data>
   <data name="CancelPasswordQuestion" xml:space="preserve">
     <value>Wirklich Einrichtung der zweistufigen Bestätigung abbrechen?</value>
   </data>
@@ -2520,6 +2547,9 @@ Wenn du das nicht selbst gewesen bist, tippe den Code der SMS ein, den wir dir g
     <value>Wenn du die Code-Sperre aktivierst, erscheint ein Schloss ganz oben über der Chatliste. Tippe auf das Schloss, um deine Chats zu sperren und zu entsperren.
 
 Übrigens: Wenn du den Pincode vergisst, musst du Telegram löschen und neu installieren. Dadurch verlierst du alle Geheimen Chats.</value>
+  </data>
+  <data name="ChangePasscodeInfoShort" xml:space="preserve">
+    <value>Wenn du den Pincode aktivierst, erscheint ein Schloss-Symbol oben in der Chatliste. Tippe es an, um die App zu sperren. </value>
   </data>
   <data name="ChangePassword" xml:space="preserve">
     <value>Passwort ändern</value>
@@ -3327,6 +3357,9 @@ um es zu verstecken.</value>
   <data name="ChromeCustomTabsInfo" xml:space="preserve">
     <value>Externe Links innerhalb der App öffnen</value>
   </data>
+  <data name="Clear" xml:space="preserve">
+    <value>Leeren</value>
+  </data>
   <data name="ClearButton" xml:space="preserve">
     <value>Löschen</value>
   </data>
@@ -3338,6 +3371,9 @@ um es zu verstecken.</value>
   </data>
   <data name="ClearCacheInfo" xml:space="preserve">
     <value>Gebe jederzeit Speicherplatz von deinem Gerät frei. Deine Medien bleiben in der Cloud.</value>
+  </data>
+  <data name="ClearDownloadsList" xml:space="preserve">
+    <value>Downloadliste leeren</value>
   </data>
   <data name="ClearFewChatsTitle" xml:space="preserve">
     <value>{0} leeren</value>
@@ -3557,6 +3593,12 @@ um es zu verstecken.</value>
 
 Sobald {1} Telegram aktualisiert, werden Bilder mit Timern von 1 Minute und kürzer per "Tippen und Halten" angezeigt. Du wirst benachrichtigt, sobald dein Chatpartner ein Bildschirmfoto macht.</value>
   </data>
+  <data name="ConfirmCorrectNumber" xml:space="preserve">
+    <value>Ist das die richtige Nummer?</value>
+  </data>
+  <data name="ConfirmCreatePasscode" xml:space="preserve">
+    <value>Pincode erneut eingeben</value>
+  </data>
   <data name="ConfirmDeleteCallLog" xml:space="preserve">
     <value>Möchtest du wirklich diesen Eintrag aus der Anrufliste löschen?</value>
   </data>
@@ -3583,6 +3625,9 @@ Sobald {1} Telegram aktualisiert, werden Bilder mit Timern von 1 Minute und kür
   </data>
   <data name="ConnectingToProxyTapToDisable" xml:space="preserve">
     <value>Hier tippen, um Proxy zu deaktivieren...</value>
+  </data>
+  <data name="ConnectingYourContacts" xml:space="preserve">
+    <value>Verbinde deine Kontakte...</value>
   </data>
   <data name="ContactBirthday" xml:space="preserve">
     <value>Geburtstag</value>
@@ -3705,6 +3750,9 @@ Für weitere Funktionen und um das Limit aufzuheben in Supergruppe ändern:
   <data name="CountReceived" xml:space="preserve">
     <value>Empfangen</value>
   </data>
+  <data name="Country" xml:space="preserve">
+    <value>Land</value>
+  </data>
   <data name="CountSent" xml:space="preserve">
     <value>Gesendet</value>
   </data>
@@ -3757,6 +3805,12 @@ Jederzeit kannst du hier zum Standard-Farbthema von Telegram zurückkehren.</val
   </data>
   <data name="CreateNewThemeMenu" xml:space="preserve">
     <value>Neues Thema erstellen</value>
+  </data>
+  <data name="CreatePasscode" xml:space="preserve">
+    <value>Pincode erstellen</value>
+  </data>
+  <data name="CreatePassword" xml:space="preserve">
+    <value>Passwort erstellen</value>
   </data>
   <data name="CreateTheme" xml:space="preserve">
     <value>THEMA ERSTELLEN</value>
@@ -3921,6 +3975,9 @@ Jederzeit kannst du hier zum Standard-Farbthema von Telegram zurückkehren.</val
   <data name="DebugMenuDisableCamera" xml:space="preserve">
     <value>In-App Kamera deaktivieren</value>
   </data>
+  <data name="DebugMenuDisableForceRtmpStreamFlag" xml:space="preserve">
+    <value>Deaktiviere erzwungenes RTMP-Stream-Flag</value>
+  </data>
   <data name="DebugMenuDisableLogs" xml:space="preserve">
     <value>Protokollierung deaktivieren</value>
   </data>
@@ -3932,6 +3989,9 @@ Jederzeit kannst du hier zum Standard-Farbthema von Telegram zurückkehren.</val
   </data>
   <data name="DebugMenuEnableCamera" xml:space="preserve">
     <value>In-App Kamera aktivieren</value>
+  </data>
+  <data name="DebugMenuEnableForceRtmpStreamFlag" xml:space="preserve">
+    <value>Aktiviere erzwungenes RTMP-Stream-Flag</value>
   </data>
   <data name="DebugMenuEnableLogs" xml:space="preserve">
     <value>Protokollierung aktivieren</value>
@@ -4227,6 +4287,9 @@ Jederzeit kannst du hier zum Standard-Farbthema von Telegram zurückkehren.</val
   <data name="DescriptionInfo" xml:space="preserve">
     <value>Beschreibe deinen Kanal (optional).</value>
   </data>
+  <data name="DescriptionMore" xml:space="preserve">
+    <value>mehr</value>
+  </data>
   <data name="DescriptionOptionalPlaceholder" xml:space="preserve">
     <value>Beschreibung (optional)</value>
   </data>
@@ -4257,6 +4320,19 @@ Jederzeit kannst du hier zum Standard-Farbthema von Telegram zurückkehren.</val
   <data name="DidNotGetTheCode" xml:space="preserve">
     <value>Code nicht erhalten?</value>
   </data>
+  <data name="DidNotGetTheCodeEditNumberButton" xml:space="preserve">
+    <value>Nummer ändern</value>
+  </data>
+  <data name="DidNotGetTheCodeHelpButton" xml:space="preserve">
+    <value>Hilfe</value>
+  </data>
+  <data name="DidNotGetTheCodeInfo" xml:space="preserve">
+    <value>Falls du den Code nicht per SMS oder Anruf erhalten hast, prüfe deine **Mobilfunk-Einstellungen** und Handynummer:
+
+**{0}**
+
+Hilft auch nicht, kannst du eine andere Handynummer probieren oder den Telegram Support kontaktieren. Tippe auf **Hilfe**, um uns technische Daten zu senden.</value>
+  </data>
   <data name="DidNotGetTheCodePhone" xml:space="preserve">
     <value>Code auf diesem Telefon erhalten</value>
   </data>
@@ -4274,6 +4350,15 @@ Jederzeit kannst du hier zum Standard-Farbthema von Telegram zurückkehren.</val
   </data>
   <data name="Disable" xml:space="preserve">
     <value>Deaktivieren</value>
+  </data>
+  <data name="DisablePasscode" xml:space="preserve">
+    <value>Pincode ausschalten</value>
+  </data>
+  <data name="DisablePasscodeConfirmMessage" xml:space="preserve">
+    <value>Wirklich den Pincode deaktivieren?</value>
+  </data>
+  <data name="DisablePasscodeTurnOff" xml:space="preserve">
+    <value>Ausschalten</value>
   </data>
   <data name="DisappearingGif" xml:space="preserve">
     <value>Geheimes GIF</value>
@@ -4423,6 +4508,15 @@ Jeder aus dem Kanal wird Nachrichten in dieser Gruppe sehen.</value>
   </data>
   <data name="DoubleTapSetting" xml:space="preserve">
     <value>Schnelle Reaktion</value>
+  </data>
+  <data name="DownloadedFiles" xml:space="preserve">
+    <value>Heruntergeladene Dateien</value>
+  </data>
+  <data name="Downloading" xml:space="preserve">
+    <value>Download</value>
+  </data>
+  <data name="DownloadsTabs" xml:space="preserve">
+    <value>Downloads</value>
   </data>
   <data name="Draft" xml:space="preserve">
     <value>Entwurf</value>
@@ -4583,6 +4677,16 @@ Jeder aus dem Kanal wird Nachrichten in dieser Gruppe sehen.</value>
   <data name="EditName" xml:space="preserve">
     <value>Name bearbeiten</value>
   </data>
+  <data name="EditNumber" xml:space="preserve">
+    <value>Nummer ändern</value>
+  </data>
+  <data name="EditNumberInfo" xml:space="preserve">
+    <value>Möchtest du deine Nummer bearbeiten?
+
+**{0}**
+
+Wenn die Nummer richtig ist, warte bitte auf den Verifizierungscode.</value>
+  </data>
   <data name="EditPhoto" xml:space="preserve">
     <value>Im Editor öffnen</value>
   </data>
@@ -4692,6 +4796,9 @@ Entscheidest du dich keinen auszuwählen, erscheinen häufige Kontakte im Widget
     <value>Du hast die zweistufige Bestätigung aktiviert.
 Wenn du dich bei Telegram anmeldest, brauchst du dein Passwort.</value>
   </data>
+  <data name="EnablePasscode" xml:space="preserve">
+    <value>Pincode aktivieren</value>
+  </data>
   <data name="EnableProxyAlert" xml:space="preserve">
     <value>Möchtest du wirklich diesen Proxy aktivieren?</value>
   </data>
@@ -4790,6 +4897,9 @@ Erfahre mehr unter telegram.org</value>
   <data name="EnterNewPasscode" xml:space="preserve">
     <value>Neuen Pincode eingeben</value>
   </data>
+  <data name="EnterPassword" xml:space="preserve">
+    <value>Passwort eingeben</value>
+  </data>
   <data name="EnterThemeName" xml:space="preserve">
     <value>Einen Namen festlegen</value>
   </data>
@@ -4800,6 +4910,9 @@ Wähle den Namen für dein Thema:</value>
   </data>
   <data name="EnterYourPasscode" xml:space="preserve">
     <value>Deinen Pincode eingeben</value>
+  </data>
+  <data name="EnterYourPasscodeInfo" xml:space="preserve">
+    <value>Tippe bitte deinen aktuellen Pincode ein, um diese Option zu verwalten.</value>
   </data>
   <data name="EnterYourTelegramPasscode" xml:space="preserve">
     <value>Telegram Pincode eingeben</value>
@@ -5604,6 +5717,9 @@ Chats in diesem Ordner.</value>
   <data name="FirstName" xml:space="preserve">
     <value>Vorname (erforderlich)</value>
   </data>
+  <data name="FirstNameSmall" xml:space="preserve">
+    <value>Vorname</value>
+  </data>
   <data name="FloodWait" xml:space="preserve">
     <value>Zu viele Versuche in zu kurzer Zeit, versuche es bitte später erneut.</value>
   </data>
@@ -5666,6 +5782,14 @@ Chats in diesem Ordner.</value>
   </data>
   <data name="ForceSetPasswordContinue" xml:space="preserve">
     <value>Nein, lass mich ein Passwort festlegen</value>
+  </data>
+  <data name="ForgotPasscode" xml:space="preserve">
+    <value>Pincode vergessen?</value>
+  </data>
+  <data name="ForgotPasscodeInfo" xml:space="preserve">
+    <value>Wenn du deinen Pincode vergisst, musst du Telegram löschen und neu installieren. 
+
+Alle Geheimen Chats gehen dadurch verloren.</value>
   </data>
   <data name="ForgotPassword" xml:space="preserve">
     <value>Passwort vergessen?</value>
@@ -5964,6 +6088,9 @@ Chats in diesem Ordner.</value>
   <data name="ForwardSendMessages" xml:space="preserve">
     <value>Nachrichten senden</value>
   </data>
+  <data name="ForwardsRestrictedInfoBot" xml:space="preserve">
+    <value>Kopieren und Weiterleiten ist von diesem Bot nicht erlaubt.</value>
+  </data>
   <data name="ForwardsRestrictedInfoChannel" xml:space="preserve">
     <value>Kopieren und Weiterleiten ist in diesem Kanal nicht erlaubt.</value>
   </data>
@@ -6074,6 +6201,9 @@ Chats in diesem Ordner.</value>
   </data>
   <data name="GIFs_zero" xml:space="preserve">
     <value />
+  </data>
+  <data name="GifSavedHint" xml:space="preserve">
+    <value>Gespeicherten GIFs hinzugefügt</value>
   </data>
   <data name="GifSavedToDownloadsHint" xml:space="preserve">
     <value>GIF in Downloads gespeichert</value>
@@ -7016,6 +7146,9 @@ Die Sprache lässt sich jederzeit wieder in den Einstellungen ändern.</value>
   <data name="LastName" xml:space="preserve">
     <value>Nachname (optional)</value>
   </data>
+  <data name="LastNameSmall" xml:space="preserve">
+    <value>Nachname</value>
+  </data>
   <data name="LastSeen" xml:space="preserve">
     <value>zul. online</value>
   </data>
@@ -7307,6 +7440,9 @@ Hinweis: Der Vorgang kann mehrere Minuten dauern.</value>
   <data name="LocationUpdatedJustNow" xml:space="preserve">
     <value>gerade aktualisiert</value>
   </data>
+  <data name="LoginAccessibilityCountryCode" xml:space="preserve">
+    <value>Landeskennzahl</value>
+  </data>
   <data name="LoginAttempts" xml:space="preserve">
     <value>Unvollständige Anmeldeversuche</value>
   </data>
@@ -7318,6 +7454,9 @@ Hinweis: Der Vorgang kann mehrere Minuten dauern.</value>
   </data>
   <data name="LoginPasswordText" xml:space="preserve">
     <value>Du hast die zweistufige Bestätigung aktiviert. Dein Konto ist mit einem zusätzlichen Passwort geschützt.</value>
+  </data>
+  <data name="LoginPasswordTextShort" xml:space="preserve">
+    <value>Zweistufige Bestätigung wurde aktiviert. Dein Konto ist jetzt mit einem zusätzlichen Passwort geschützt.</value>
   </data>
   <data name="LogOut" xml:space="preserve">
     <value>Abmelden</value>
@@ -7386,6 +7525,9 @@ Deine Nummer bleibt verborgen.</value>
   </data>
   <data name="ManageChannelMenu" xml:space="preserve">
     <value>Kanal verwalten</value>
+  </data>
+  <data name="ManageDeviceStorage" xml:space="preserve">
+    <value>Gerätespeicher verwalten</value>
   </data>
   <data name="ManageGroup" xml:space="preserve">
     <value>Gruppe verwalten</value>
@@ -8434,6 +8576,14 @@ werden hier angezeigt.</value>
   <data name="NoResult" xml:space="preserve">
     <value>Keine Ergebnisse</value>
   </data>
+  <data name="NoRtmpStreamFromAppOwner" xml:space="preserve">
+    <value>**Oh nein!** Telegram erkennt keinen Stream von deiner Streaming-App. 
+
+Stelle sicher, dass du die richtige Server-URL und den korrekten Stream-Schlüssel in deiner Streaming-App hinterlegt hast.</value>
+  </data>
+  <data name="NoRtmpStreamFromAppViewer" xml:space="preserve">
+    <value>{0} sendet derzeit keinen Livestream an Telegram.</value>
+  </data>
   <data name="NoScheduledMessages" xml:space="preserve">
     <value>Noch keine geplanten Nachrichten...</value>
   </data>
@@ -9360,11 +9510,26 @@ synchronisiert benutzen.</value>
   <data name="PasscodeDoNotMatch" xml:space="preserve">
     <value>Pincode falsch</value>
   </data>
+  <data name="PasscodeFinish" xml:space="preserve">
+    <value>Pincode festlegen</value>
+  </data>
   <data name="PasscodePassword" xml:space="preserve">
     <value>Passwort</value>
   </data>
   <data name="PasscodePIN" xml:space="preserve">
     <value>Pincode</value>
+  </data>
+  <data name="PasscodeScreenHint" xml:space="preserve">
+    <value>Tippe auf das Schloss-Symbol in der Chatliste, um die App zu (ent)sperren.</value>
+  </data>
+  <data name="PasscodesDoNotMatchTryAgain" xml:space="preserve">
+    <value>Pincodes stimmen nicht überein. Bitte erneut versuchen.</value>
+  </data>
+  <data name="PasscodeSwitchToPassword" xml:space="preserve">
+    <value>Zu Passwort wechseln</value>
+  </data>
+  <data name="PasscodeSwitchToPIN" xml:space="preserve">
+    <value>Zu PIN wechseln</value>
   </data>
   <data name="PassportAddAddressUploadInfo" xml:space="preserve">
     <value>Um deine Adresse zu bestätigen, Scan oder ein Bild der ausgewählten Dokumente (alle Seiten) hochladen.</value>
@@ -9949,6 +10114,9 @@ Mehr dazu in unseren *FAQs*.</value>
   <data name="PasswordHint" xml:space="preserve">
     <value>Passwort-Erinnerung</value>
   </data>
+  <data name="PasswordHintDescription" xml:space="preserve">
+    <value>Du kannst einen Passworthinweis hinterlegen.</value>
+  </data>
   <data name="PasswordHintPlaceholder" xml:space="preserve">
     <value>Hinweis</value>
   </data>
@@ -9972,6 +10140,9 @@ Mehr dazu in unseren *FAQs*.</value>
   </data>
   <data name="PasteFromClipboard" xml:space="preserve">
     <value>Aus Zwischenablage einfügen</value>
+  </data>
+  <data name="PauseAll" xml:space="preserve">
+    <value>Alle pausieren</value>
   </data>
   <data name="PaymentBillingAddress" xml:space="preserve">
     <value>Rechnungsadresse</value>
@@ -10299,20 +10470,50 @@ Wir greifen nur für die von dir gewählte Dauer auf deinen Standort zu und du k
   <data name="PermissionNoAudioVideo" xml:space="preserve">
     <value>Telegram benötigt Zugriff auf dein Mikrofon, damit du Videos aufnehmen kannst.</value>
   </data>
+  <data name="PermissionNoAudioVideoWithHint" xml:space="preserve">
+    <value>**Telegram** benötigt Zugriff auf dein **Mikrofon**, damit du Sprachnachrichten senden kannst. Tippe unten auf Einstellungen &gt; Berechtigungen und aktiviere den Zugriff.</value>
+  </data>
+  <data name="PermissionNoAudioWithHint" xml:space="preserve">
+    <value>**Telegram** benötigt Zugriff auf dein **Mikrofon**, damit du Sprachnachrichten senden kannst. Tippe unten auf Einstellungen &gt; Berechtigungen und aktiviere den Zugriff.</value>
+  </data>
   <data name="PermissionNoCamera" xml:space="preserve">
     <value>Telegram benötigt Zugriff auf deine Kamera, damit du Bilder und Videos aufnehmen kannst. Bitte aktiviere es in den Einstellungen.</value>
+  </data>
+  <data name="PermissionNoCameraMicVideo" xml:space="preserve">
+    <value>**Telegram** benötigt Zugriff auf deine **Kamera** und dein **Mikrofon**, damit du Videonachrichten aufnehmen kannst. Tippe unten auf Einstellungen &gt; Berechtigungen und aktiviere den Zugriff für beides.</value>
+  </data>
+  <data name="PermissionNoCameraWithHint" xml:space="preserve">
+    <value>**Telegram** benötigt Zugriff auf deine **Kamera**, damit du Bilder und Videos aufnehmen kannst. Tippe unten auf Einstellungen &gt; Berechtigungen und aktiviere den Zugriff.</value>
+  </data>
+  <data name="PermissionNoContactsSharing" xml:space="preserve">
+    <value>**Telegram** benötigt Zugriff auf deine **Kontakte**, damit du sie mit deinen Freunden teilen kannst. Tippe unten auf Einstellungen &gt; Berechtigungen und aktiviere den Zugriff.</value>
   </data>
   <data name="PermissionNoLocation" xml:space="preserve">
     <value>Telegram benötigt Zugriff auf deinen Standort, damit du ihn mit Freunden teilen kannst. </value>
   </data>
+  <data name="PermissionNoLocationFriends" xml:space="preserve">
+    <value>**Telegram** benötigt Zugriff auf deinen **Standort**, damit du ihn mit Freunden teilen kannst. Tippe unten auf Einstellungen &gt; Berechtigungen und aktiviere den Zugriff.</value>
+  </data>
+  <data name="PermissionNoLocationNavigation" xml:space="preserve">
+    <value>**Telegram** benötigt Zugriff auf deinen **Standort**, damit du Anweisungen erhalten kannst. Tippe unten auf Einstellungen &gt; Berechtigungen und aktiviere den Zugriff.</value>
+  </data>
+  <data name="PermissionNoLocationPeopleNearby" xml:space="preserve">
+    <value>**Telegram** benötigt Zugriff auf deinen **Standort**, damit dich Leute in der Nähe  finden können. Tippe unten auf Einstellungen &gt; Berechtigungen und aktiviere den Zugriff.</value>
+  </data>
   <data name="PermissionNoLocationPosition" xml:space="preserve">
     <value>Telegram benötigt Zugriff auf deinen Standort.</value>
+  </data>
+  <data name="PermissionNoStorageAvatar" xml:space="preserve">
+    <value>**Telegram** benötigt Zugriff auf deinen **Speicher**, damit du ein Profilbild hochladen kannst. Tippe unten auf Einstellungen &gt; Berechtigungen und aktiviere den Zugriff.</value>
   </data>
   <data name="PermissionOpenSettings" xml:space="preserve">
     <value>EINSTELLUNGEN</value>
   </data>
   <data name="PermissionStorage" xml:space="preserve">
     <value>Telegram benötigt Zugriff auf deinen Speicher, damit du Bilder, Videos und Musik senden und speichern kannst.</value>
+  </data>
+  <data name="PermissionStorageWithHint" xml:space="preserve">
+    <value>**Telegram** benötigt Zugriff auf deinen **Speicher**, damit du Bilder, Videos, Musik und weitere Medien senden und speichern kannst. Tippe unten auf Einstellungen -&gt; Berechtigungen und schalte den Zugriff ein.</value>
   </data>
   <data name="PermissionXiaomiLockscreen" xml:space="preserve">
     <value>Bitte erlaube Telegram auf dem Sperrbildschirm, damit Anrufe signalisiert werden können.</value>
@@ -10334,6 +10535,9 @@ Wir greifen nur für die von dir gewählte Dauer auf deinen Standort zu und du k
   </data>
   <data name="PhoneMobile" xml:space="preserve">
     <value>Mobil</value>
+  </data>
+  <data name="PhoneNumber" xml:space="preserve">
+    <value>Telefonnummer</value>
   </data>
   <data name="PhoneNumberAlert" xml:space="preserve">
     <value>Nutzer werden deine neue Nummer sehen, wenn sie diese in ihrem Adressbuch gespeichert haben oder deine Einstellungen es erlauben. Unter Einstellungen &gt; Privatsphäre und Sicherheit &gt; Telefonnummer kannst du es jederzeit anpassen.</value>
@@ -11054,11 +11258,17 @@ Wenn du mehr Ordnung brauchst, versuche einige Chats zu archivieren. Der Ordner 
   <data name="PsaInfo_covid" xml:space="preserve">
     <value>Diese Nachricht enthält eine öffentliche Bekanntmachung hinsichtlich der aktuellen COVID-19 Pandemie. Erfahre mehr über diese Initiative unter https://telegram.org/blog/coronavirus</value>
   </data>
+  <data name="PsaInfo_psa" xml:space="preserve">
+    <value>Das ist eine offizielle Nachricht des CEO von Telegram zum aktuellen Konflikt.</value>
+  </data>
   <data name="PsaInfoDefault" xml:space="preserve">
-    <value>PSA info test</value>
+    <value>Diese Nachricht enthält eine öffentliche Bekanntmachung.</value>
   </data>
   <data name="PsaMessage_covid" xml:space="preserve">
     <value>COVID-19 Benachrichtigung</value>
+  </data>
+  <data name="PsaMessage_psa" xml:space="preserve">
+    <value>Bekanntmachung</value>
   </data>
   <data name="PsaMessageDefault" xml:space="preserve">
     <value>Wichtige Benachrichtigung</value>
@@ -11066,11 +11276,17 @@ Wenn du mehr Ordnung brauchst, versuche einige Chats zu archivieren. Der Ordner 
   <data name="PsaMessageInfo_covid" xml:space="preserve">
     <value>Diese Nachricht enthält eine öffentliche Bekanntmachung hinsichtlich der aktuellen COVID-19 Pandemie. Erfahre mehr über diese Initiative unter https://telegram.org/blog/coronavirus</value>
   </data>
+  <data name="PsaMessageInfo_psa" xml:space="preserve">
+    <value>Das ist eine offizielle Nachricht des CEO von Telegram zum aktuellen Konflikt.</value>
+  </data>
   <data name="PsaMessageInfoDefault" xml:space="preserve">
     <value>Das ist eine wichtige Benachrichtigung.</value>
   </data>
   <data name="PsaType_covid" xml:space="preserve">
     <value>COVID-19</value>
+  </data>
+  <data name="PsaType_psa" xml:space="preserve">
+    <value>Bekanntmachung</value>
   </data>
   <data name="PsaTypeDefault" xml:space="preserve">
     <value>PSA</value>
@@ -11219,6 +11435,9 @@ Wenn du mehr Ordnung brauchst, versuche einige Chats zu archivieren. Der Ordner 
   <data name="QRCodePermissionNoCamera" xml:space="preserve">
     <value>Telegram benötigt zum Scannen von QR-Codes Zugriff auf deine Kamera.</value>
   </data>
+  <data name="QRCodePermissionNoCameraWithHint" xml:space="preserve">
+    <value>**Telegram** benötigt Kamerazugriff, damit du QR-Codes scannen kannst. Erteile den Zugriff in den Android-Einstellungen unter Datenschutz.</value>
+  </data>
   <data name="Question" xml:space="preserve">
     <value>Frage</value>
   </data>
@@ -11333,6 +11552,12 @@ Wenn du mehr Ordnung brauchst, versuche einige Chats zu archivieren. Der Ordner 
   <data name="ReactionsOff" xml:space="preserve">
     <value>Aus</value>
   </data>
+  <data name="ReadAllMentions" xml:space="preserve">
+    <value>Alle Erwähnungen lesen</value>
+  </data>
+  <data name="ReadAllReactions" xml:space="preserve">
+    <value>Alle Reaktionen lesen</value>
+  </data>
   <data name="Recent" xml:space="preserve">
     <value>Letzte</value>
   </data>
@@ -11341,6 +11566,9 @@ Wenn du mehr Ordnung brauchst, versuche einige Chats zu archivieren. Der Ordner 
   </data>
   <data name="RecentFilesAZ" xml:space="preserve">
     <value>Dateien von A-Z</value>
+  </data>
+  <data name="RecentlyDownloaded" xml:space="preserve">
+    <value>Kürzlich heruntergeladen</value>
   </data>
   <data name="RecentlyViewed" xml:space="preserve">
     <value>Kürzlich angeschaut</value>
@@ -11394,6 +11622,9 @@ für Wiederherstellung</value>
   <data name="Red" xml:space="preserve">
     <value>Rot</value>
   </data>
+  <data name="ReEnterPassword" xml:space="preserve">
+    <value>Passwort wiederholen</value>
+  </data>
   <data name="ReEnterYourPasscode" xml:space="preserve">
     <value>Neuen Pincode erneut eingben</value>
   </data>
@@ -11402,6 +11633,9 @@ für Wiederherstellung</value>
   </data>
   <data name="RegisterText2" xml:space="preserve">
     <value>Namen eingeben und ein Profilbild hochladen.</value>
+  </data>
+  <data name="RegistrationProfileInfo" xml:space="preserve">
+    <value>Profil</value>
   </data>
   <data name="Regular" xml:space="preserve">
     <value>Normal</value>
@@ -11432,6 +11666,24 @@ für Wiederherstellung</value>
   </data>
   <data name="RemovedFromRecent" xml:space="preserve">
     <value>Sticker wurde aus kürzlich entfernt</value>
+  </data>
+  <data name="RemoveDocumentsTitle_few" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RemoveDocumentsTitle_many" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RemoveDocumentsTitle_one" xml:space="preserve">
+    <value>%d Datei entfernen</value>
+  </data>
+  <data name="RemoveDocumentsTitle_other" xml:space="preserve">
+    <value>%d Dateien entfernen</value>
+  </data>
+  <data name="RemoveDocumentsTitle_two" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RemoveDocumentsTitle_zero" xml:space="preserve">
+    <value />
   </data>
   <data name="RemovedUser_few" xml:space="preserve">
     <value />
@@ -11611,8 +11863,17 @@ Vielen Dank!</value>
   <data name="ReportUserLocation" xml:space="preserve">
     <value>Melden</value>
   </data>
+  <data name="RequestCallButton" xml:space="preserve">
+    <value>Ruft an, um mir den Code anzusagen</value>
+  </data>
   <data name="RequestedToJoinAt" xml:space="preserve">
     <value>möchte {0} beitreten</value>
+  </data>
+  <data name="RequestMissedCall" xml:space="preserve">
+    <value>Code per Anruf erhalten</value>
+  </data>
+  <data name="RequestSmsButton" xml:space="preserve">
+    <value>Code per SMS anfordern</value>
   </data>
   <data name="RequestToJoinChannel" xml:space="preserve">
     <value>Anfrage für Kanalbeitritt</value>
@@ -11732,6 +11993,9 @@ Wenn du dein Konto zurücksetzt, sind alle Chats gelöscht.</value>
   <data name="ResetStatisticsAlertTitle" xml:space="preserve">
     <value>Statistiken zurücksetzen</value>
   </data>
+  <data name="RestoreEmailNoAccess" xml:space="preserve">
+    <value>Keinen Zugang zu {0}?</value>
+  </data>
   <data name="RestoreEmailSent" xml:space="preserve">
     <value>Wir haben den Wiederherstellungscode an diese Adresse geschickt:
 
@@ -11805,6 +12069,9 @@ Wenn du dein Konto zurücksetzt, sind alle Chats gelöscht.</value>
   </data>
   <data name="RestrictSavingContentInfoGroup" xml:space="preserve">
     <value>Mitglieder können keine Inhalte aus dieser Gruppe kopieren, speichern und weiterleiten.</value>
+  </data>
+  <data name="ResumeAll" xml:space="preserve">
+    <value>Alle fortsetzen</value>
   </data>
   <data name="Retry" xml:space="preserve">
     <value>Erneut versuchen</value>
@@ -11926,8 +12193,14 @@ Der Kanal "**{1}**" wird dann privat.</value>
 
 Du wirst die App nach der Änderung neu starten müssen.</value>
   </data>
+  <data name="ScreenCaptureHeader" xml:space="preserve">
+    <value>App-Inhalte nach Sperrung</value>
+  </data>
   <data name="ScreenCaptureInfo" xml:space="preserve">
     <value>Wenn du diese Funktion deaktivierst, wirst du keine Bildschirmfotos mehr in der App aufnehmen können und Chatinhalte werden in der Liste der geöffneten App ausgeblendet.</value>
+  </data>
+  <data name="ScreenCaptureShowContent" xml:space="preserve">
+    <value>Inhalt anzeigen</value>
   </data>
   <data name="SdCard" xml:space="preserve">
     <value>SD-Karte</value>
@@ -11946,6 +12219,9 @@ Du wirst die App nach der Änderung neu starten müssen.</value>
   </data>
   <data name="SearchEmojiHint" xml:space="preserve">
     <value>Emoji suchen</value>
+  </data>
+  <data name="SearchEmptyViewDownloads" xml:space="preserve">
+    <value>Keine kürzlichen Downloads</value>
   </data>
   <data name="SearchEmptyViewFilteredSubtitle2" xml:space="preserve">
     <value>Probiere eine neue Suche.</value>
@@ -12337,6 +12613,9 @@ Du wirst die App nach der Änderung neu starten müssen.</value>
   <data name="SentAppCodeTitle" xml:space="preserve">
     <value>Prüfe deine Telegram-Nachrichten</value>
   </data>
+  <data name="SentAppCodeWithPhone" xml:space="preserve">
+    <value>Wir haben dir den Code für {0} an die **Telegram**-App deines anderen Gerätes gesendet.</value>
+  </data>
   <data name="SentCallCode" xml:space="preserve">
     <value>Wir rufen dich jetzt unter **{0}** an.
 
@@ -12405,6 +12684,9 @@ um dir einen Code anzusagen.</value>
   </data>
   <data name="SetColor" xml:space="preserve">
     <value>Farbe festlegen</value>
+  </data>
+  <data name="SetNewPassword" xml:space="preserve">
+    <value>Neues Passwort festlegen</value>
   </data>
   <data name="SetPasscode" xml:space="preserve">
     <value>Pincode einrichten</value>
@@ -12680,6 +12962,13 @@ noch nichts gesucht</value>
   <data name="ShortMessageLifetimeForever" xml:space="preserve">
     <value>Aus</value>
   </data>
+  <data name="ShortNumberInfo" xml:space="preserve">
+    <value>Die angegebene Nummer ist zu kurz für **{0}**:
+
+**{1}**
+
+Tippe die richtige Nummer ein, inkl. deiner Landeskennzahl.</value>
+  </data>
   <data name="ShowAllFiles" xml:space="preserve">
     <value>Zeige alle Dateien</value>
   </data>
@@ -12706,6 +12995,12 @@ noch nichts gesucht</value>
   </data>
   <data name="ShowInChat" xml:space="preserve">
     <value>Im Chat zeigen</value>
+  </data>
+  <data name="ShowLess" xml:space="preserve">
+    <value>Weniger zeigen</value>
+  </data>
+  <data name="ShowMore" xml:space="preserve">
+    <value>Mehr zeigen</value>
   </data>
   <data name="ShowNearbyPlaces" xml:space="preserve">
     <value>Hochziehen, für Orte in der Nähe</value>
@@ -12814,6 +13109,9 @@ Langsamer Modus ist aktiv, du kannst nicht mehr als eine gleichzeitig senden.</v
   </data>
   <data name="SmartNotificationsInfo" xml:space="preserve">
     <value>{0} / {1}</value>
+  </data>
+  <data name="SmsAvailableIn" xml:space="preserve">
+    <value>Du kannst eine SMS anfordern in: {0}:%2$02d</value>
   </data>
   <data name="SmsText" xml:space="preserve">
     <value>Senden dir eine SMS in {0}:%2$02d</value>
@@ -13150,6 +13448,9 @@ Werbung sollte nicht länger ein Synonym für den Missbrauch der Privatsphäre v
   </data>
   <data name="Subscribers_zero" xml:space="preserve">
     <value />
+  </data>
+  <data name="SuggestClearDatabaseTitle" xml:space="preserve">
+    <value>Datenbank leeren</value>
   </data>
   <data name="SuggestContacts" xml:space="preserve">
     <value>Häufige Kontakte vorschlagen</value>
@@ -14376,6 +14677,27 @@ Erlaubt sind **a–z**, **0–9** und Unterstriche. Die Mindestlänge beträgt *
   <data name="ViewDiscussion" xml:space="preserve">
     <value>Diskussion anzeigen</value>
   </data>
+  <data name="ViewersWatching_few" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ViewersWatching_many" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ViewersWatching_one" xml:space="preserve">
+    <value>{0} Zuschauer</value>
+  </data>
+  <data name="ViewersWatching_other" xml:space="preserve">
+    <value>{0} Zuschauer</value>
+  </data>
+  <data name="ViewersWatching_two" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ViewersWatching_zero" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ViewersWatchingNobody" xml:space="preserve">
+    <value>Niemand sieht zu</value>
+  </data>
   <data name="ViewExceptions" xml:space="preserve">
     <value>Ausnahmen anzeigen</value>
   </data>
@@ -14772,6 +15094,9 @@ Neue Teilnehmer haben nur Zugang zum Audiostream.</value>
   <data name="VoipGroupEndedStartNew" xml:space="preserve">
     <value>Videochat beendet. Neuen starten?</value>
   </data>
+  <data name="VoipGroupExpandStream" xml:space="preserve">
+    <value>Erweitern</value>
+  </data>
   <data name="VoipGroupInviteAlreadyParticipant" xml:space="preserve">
     <value>Ausgewählter Nutzer ist bereits in diesem Videochat.</value>
   </data>
@@ -14825,6 +15150,9 @@ Neue Teilnehmer haben nur Zugang zum Audiostream.</value>
   </data>
   <data name="VoipGroupLeaveAlertTitle" xml:space="preserve">
     <value>Videochat verlassen</value>
+  </data>
+  <data name="VoipGroupMinimizeStream" xml:space="preserve">
+    <value>Minimieren</value>
   </data>
   <data name="VoipGroupMute" xml:space="preserve">
     <value>Stummschalten</value>
@@ -15061,8 +15389,14 @@ Andere Teilnehmer sehen, dass der Chat aufgenommen wird.</value>
   <data name="VoipNeedMicCameraPermission" xml:space="preserve">
     <value>Telegram benötigt Zugriff auf dein Mikrofon und deine Kamera, damit du Videoanrufe tätigen kannst.</value>
   </data>
+  <data name="VoipNeedMicCameraPermissionWithHint" xml:space="preserve">
+    <value>**Telegram** benötigt Zugriff auf dein **Mikrofon**, damit du Videoanrufe führen kannst. Tippe unten auf Einstellungen &gt; Berechtigungen und aktiviere den Zugriff.</value>
+  </data>
   <data name="VoipNeedMicPermission" xml:space="preserve">
     <value>Telegram benötigt für Sprachanrufe Zugriff auf dein Mikrofon.</value>
+  </data>
+  <data name="VoipNeedMicPermissionWithHint" xml:space="preserve">
+    <value>**Telegram** benötigt Zugriff auf dein **Mikrofon**, damit du Anrufe tätigen kannst. Tippe unten auf Einstellungen &gt; Berechtigungen und aktiviere den Zugriff.</value>
   </data>
   <data name="VoipNoiseCancellation" xml:space="preserve">
     <value>Rauschunterdrückung</value>
@@ -15374,11 +15708,20 @@ Dein Pincode wird sich **nicht** auf Widgets auswirken.</value>
   <data name="WithinAWeek" xml:space="preserve">
     <value>innerhalb einer Woche</value>
   </data>
+  <data name="WrongCode" xml:space="preserve">
+    <value>Das ist der falsche Code. Bitte erneut versuchen.</value>
+  </data>
+  <data name="WrongCodeTitle" xml:space="preserve">
+    <value>Falscher Code</value>
+  </data>
   <data name="WrongCountry" xml:space="preserve">
     <value>Ungültige Landeskennzahl</value>
   </data>
   <data name="WrongNumber" xml:space="preserve">
     <value>Falsche Nummer?</value>
+  </data>
+  <data name="WrongNumberFormat" xml:space="preserve">
+    <value>Falsches Format</value>
   </data>
   <data name="Years_few" xml:space="preserve">
     <value />
@@ -15478,6 +15821,9 @@ Wenn du dein Passwort vergisst, verlierst du den Zugang zu deinem Telegram-Konto
   <data name="YourNameChanged" xml:space="preserve">
     <value>Name aktualisiert.</value>
   </data>
+  <data name="YourNumber" xml:space="preserve">
+    <value>Deine Telefonnummer</value>
+  </data>
   <data name="YourPassword" xml:space="preserve">
     <value>Dein Passwort</value>
   </data>
@@ -15495,6 +15841,9 @@ Wenn du dein Passwort vergisst, verlierst du den Zugang zu deinem Telegram-Konto
   </data>
   <data name="YourPasswordRememberYes" xml:space="preserve">
     <value>Ja, kenne es noch</value>
+  </data>
+  <data name="YourPasswordReset" xml:space="preserve">
+    <value>Dein Passwort wurde deaktiviert.</value>
   </data>
   <data name="YourPasswordSuccess" xml:space="preserve">
     <value>Geschafft!</value>
@@ -20858,9 +21207,6 @@ Erlaubt sind a-z, 0-9 und Unterstriche. Die Mindestlänge der Links beträgt 5 Z
   </data>
   <data name="lng_theme_sure_keep" xml:space="preserve">
     <value>Dieses Thema behalten?</value>
-  </data>
-  <data name="lng_tooltip_psa_default" xml:space="preserve">
-    <value>Diese Nachricht enthält eine öffentliche Bekanntmachung.</value>
   </data>
   <data name="lng_tray_icon_text" xml:space="preserve">
     <value>Telegram läuft jetzt minimiert.

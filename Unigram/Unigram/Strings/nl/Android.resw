@@ -4033,6 +4033,9 @@ Je kunt hier altijd het standaardthema weer instellen.</value>
   <data name="DidNotGetTheCode" xml:space="preserve">
     <value>Geen code ontvangen?</value>
   </data>
+  <data name="DidNotGetTheCodeHelpButton" xml:space="preserve">
+    <value>Help</value>
+  </data>
   <data name="DidNotGetTheCodeSms" xml:space="preserve">
     <value>Verstuur de code per SMS</value>
   </data>
@@ -4171,6 +4174,9 @@ Alle abonnees van het kanaal kunnen de berichten in deze groep zien.</value>
   </data>
   <data name="DoNotTranslate" xml:space="preserve">
     <value>Niet vertalen</value>
+  </data>
+  <data name="DoubleTapPreviewSenderName" xml:space="preserve">
+    <value>Dino</value>
   </data>
   <data name="Draft" xml:space="preserve">
     <value>Concept</value>
@@ -10263,11 +10269,17 @@ We gebruiken je locatie alleen voor de periode die jij instelt en je kunt het de
   <data name="PsaInfo_covid" xml:space="preserve">
     <value>Dit bericht geeft je een publieke dienstaankondiging betreft de huidige COVID-19-pandemie. Lees meer over dit initiatief op https://telegram.org/blog/coronavirus</value>
   </data>
+  <data name="PsaInfo_psa" xml:space="preserve">
+    <value>Dit is een officieel bericht van de CEO van Telegram over het lopende conflict.</value>
+  </data>
   <data name="PsaInfoDefault" xml:space="preserve">
     <value>PSA info test</value>
   </data>
   <data name="PsaMessage_covid" xml:space="preserve">
     <value>Melding betreft COVID-19</value>
+  </data>
+  <data name="PsaMessage_psa" xml:space="preserve">
+    <value>Aankondiging</value>
   </data>
   <data name="PsaMessageDefault" xml:space="preserve">
     <value>Belangrijke melding</value>
@@ -10275,11 +10287,17 @@ We gebruiken je locatie alleen voor de periode die jij instelt en je kunt het de
   <data name="PsaMessageInfo_covid" xml:space="preserve">
     <value>Dit bericht geeft je een publieke dienstaankondiging betreft de huidige COVID-19-pandemie. Lees meer over dit initiatief op https://telegram.org/blog/coronavirus</value>
   </data>
+  <data name="PsaMessageInfo_psa" xml:space="preserve">
+    <value>Dit is een officieel bericht van de CEO van Telegram over het lopende conflict.</value>
+  </data>
   <data name="PsaMessageInfoDefault" xml:space="preserve">
     <value>Dit is een belangrijke melding.</value>
   </data>
   <data name="PsaType_covid" xml:space="preserve">
     <value>COVID-19</value>
+  </data>
+  <data name="PsaType_psa" xml:space="preserve">
+    <value>Aankondiging</value>
   </data>
   <data name="PsaTypeDefault" xml:space="preserve">
     <value>PSA</value>
@@ -11665,6 +11683,12 @@ Neem niet op, Telegram verwerkt alles automatisch.</value>
   </data>
   <data name="ShowInChat" xml:space="preserve">
     <value>In chat weergeven</value>
+  </data>
+  <data name="ShowLess" xml:space="preserve">
+    <value>Minder weergeven</value>
+  </data>
+  <data name="ShowMore" xml:space="preserve">
+    <value>Meer weergeven</value>
   </data>
   <data name="ShowNearbyPlaces" xml:space="preserve">
     <value>Veeg omhoog voor plekken dichtbij</value>

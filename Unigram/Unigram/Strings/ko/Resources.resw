@@ -304,6 +304,9 @@
   <data name="AccDescrQuizExplanation" xml:space="preserve">
     <value>설명</value>
   </data>
+  <data name="AccDescrReactionMentionDown" xml:space="preserve">
+    <value>다음 미확인 반응으로 이동</value>
+  </data>
   <data name="AccDescrReceivedDate" xml:space="preserve">
     <value>{0} 받음</value>
   </data>
@@ -1569,11 +1572,26 @@
   <data name="AttachLocation" xml:space="preserve">
     <value>위치</value>
   </data>
+  <data name="AttachMediaDragHint" xml:space="preserve">
+    <value>미디어를 드래그하여 재정렬</value>
+  </data>
+  <data name="AttachMediaPhotoDeselected" xml:space="preserve">
+    <value>사진 선택이 해제되었습니다.</value>
+  </data>
+  <data name="AttachMediaPreview" xml:space="preserve">
+    <value>메시지 미리보기</value>
+  </data>
+  <data name="AttachMediaPreviewButton" xml:space="preserve">
+    <value>메시지 미리보기</value>
+  </data>
   <data name="AttachMediaRestricted" xml:space="preserve">
     <value>그룹 관리자의 제한으로 여기에 미디어를 {0}까지 보내실 수 없습니다</value>
   </data>
   <data name="AttachMediaRestrictedForever" xml:space="preserve">
     <value>그룹 관리자의 제한으로 여기에 미디어를 보내실 수 없습니다.</value>
+  </data>
+  <data name="AttachMediaVideoDeselected" xml:space="preserve">
+    <value>영상 선택이 해제되었습니다.</value>
   </data>
   <data name="AttachMenu" xml:space="preserve">
     <value>첨부...</value>
@@ -2151,6 +2169,9 @@
   <data name="Blue" xml:space="preserve">
     <value>파란색</value>
   </data>
+  <data name="BlurInChat" xml:space="preserve">
+    <value>대화내 흐림</value>
+  </data>
   <data name="BlurLinear" xml:space="preserve">
     <value>선형</value>
   </data>
@@ -2304,6 +2325,9 @@
   <data name="CallAlertTitle" xml:space="preserve">
     <value>음성 통화</value>
   </data>
+  <data name="CallAvailableIn" xml:space="preserve">
+    <value>다음 이후에 음성 전화를 요청할 수 있습니다 {0}:%2$02d</value>
+  </data>
   <data name="CallBack" xml:space="preserve">
     <value>답신 전화</value>
   </data>
@@ -2434,6 +2458,9 @@
   <data name="CancelLinkSuccess" xml:space="preserve">
     <value>{0} 계정 탈퇴 작업이 취소되었습니다. 이제 이 창을 닫으셔도 좋습니다.</value>
   </data>
+  <data name="CancelLinkSuccessTitle" xml:space="preserve">
+    <value>성공</value>
+  </data>
   <data name="CancelPasswordQuestion" xml:space="preserve">
     <value>정말 2단계 인증 설정을 중단하시겠습니까?</value>
   </data>
@@ -2513,6 +2540,9 @@
     <value>암호를 설정하시면, 대화 페이지에 잠금 아이콘이 나타납니다. 이 아이콘을 눌러 텔레그램을 잠그거나 잠금 해제하실 수 있습니다.
 
 주의: 암호를 잊어버리면 앱을 삭제하고 다시 설치하셔야 합니다. 비밀 대화는 모두 사라집니다.</value>
+  </data>
+  <data name="ChangePasscodeInfoShort" xml:space="preserve">
+    <value>암호 설정시, 대화 페이지에 잠금 아이콘이 표시됩니다. 탭을 하여 앱을 잠그거나 해제할 수 있습니다.</value>
   </data>
   <data name="ChangePassword" xml:space="preserve">
     <value>비밀번호 바꾸기</value>
@@ -3549,6 +3579,12 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
 
 {1}님이 텔레그램을 업데이트하고 나면, 자동삭제 시간이 1분 이하인 사진은 "탭하고 누르고 있어야 보임" 상태가 되며, 상대방이 화면을 캡처할 때 마다 알림을 받습니다.</value>
   </data>
+  <data name="ConfirmCorrectNumber" xml:space="preserve">
+    <value>올바른 번호인가요?</value>
+  </data>
+  <data name="ConfirmCreatePasscode" xml:space="preserve">
+    <value>암호를 다시 입력해주세요</value>
+  </data>
   <data name="ConfirmDeleteCallLog" xml:space="preserve">
     <value>이 항목을 통화 기록에서 삭제하시겠습니까?</value>
   </data>
@@ -3575,6 +3611,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   </data>
   <data name="ConnectingToProxyTapToDisable" xml:space="preserve">
     <value>프록시를 끄려면 여기를 누르세요...</value>
+  </data>
+  <data name="ConnectingYourContacts" xml:space="preserve">
+    <value>내 연락처 연결 중...</value>
   </data>
   <data name="ContactBirthday" xml:space="preserve">
     <value>생일</value>
@@ -3695,6 +3734,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   </data>
   <data name="CountReceived" xml:space="preserve">
     <value>받음</value>
+  </data>
+  <data name="Country" xml:space="preserve">
+    <value>국가</value>
   </data>
   <data name="CountSent" xml:space="preserve">
     <value>보냄</value>
@@ -3912,6 +3954,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="DebugMenuDisableCamera" xml:space="preserve">
     <value>앱 안 카메라 사용 안 함</value>
   </data>
+  <data name="DebugMenuDisableForceRtmpStreamFlag" xml:space="preserve">
+    <value>강제 RTMP 스트림 플래그 비활성화</value>
+  </data>
   <data name="DebugMenuDisableLogs" xml:space="preserve">
     <value>로그 사용 안 함</value>
   </data>
@@ -3923,6 +3968,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   </data>
   <data name="DebugMenuEnableCamera" xml:space="preserve">
     <value>앱 안 카메라 사용</value>
+  </data>
+  <data name="DebugMenuEnableForceRtmpStreamFlag" xml:space="preserve">
+    <value>강제 RTMP 스트림 플래그 활성화</value>
   </data>
   <data name="DebugMenuEnableLogs" xml:space="preserve">
     <value>로그 활성화</value>
@@ -4218,6 +4266,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="DescriptionInfo" xml:space="preserve">
     <value>채널에 관해 안내해 주실 수 있습니다.</value>
   </data>
+  <data name="DescriptionMore" xml:space="preserve">
+    <value>더보기</value>
+  </data>
   <data name="DescriptionOptionalPlaceholder" xml:space="preserve">
     <value>설명 (선택)</value>
   </data>
@@ -4248,6 +4299,19 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="DidNotGetTheCode" xml:space="preserve">
     <value>코드를 받지 못하셨나요?</value>
   </data>
+  <data name="DidNotGetTheCodeEditNumberButton" xml:space="preserve">
+    <value>번호 변경</value>
+  </data>
+  <data name="DidNotGetTheCodeHelpButton" xml:space="preserve">
+    <value>도움말</value>
+  </data>
+  <data name="DidNotGetTheCodeInfo" xml:space="preserve">
+    <value>코드를 SMS 혹은 전화로 받지 못하였을 경우, **셀룰러 데이터 설정**과 전화번호를 확인해주세요:
+
+**{0}**
+
+현재 남은 방법은 다른 번호로 시도하시거나 텔레그램 지원에 연락하는 것입니다. **도움말**을 탭하여 저희가 문제를 확인할 수 있도록 자세하게 기술적인 내용을 전달해주세요.</value>
+  </data>
   <data name="DidNotGetTheCodePhone" xml:space="preserve">
     <value>이 휴대폰에 코드 받기</value>
   </data>
@@ -4265,6 +4329,15 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   </data>
   <data name="Disable" xml:space="preserve">
     <value>사용 안 함</value>
+  </data>
+  <data name="DisablePasscode" xml:space="preserve">
+    <value>암호 끄기</value>
+  </data>
+  <data name="DisablePasscodeConfirmMessage" xml:space="preserve">
+    <value>정말 암호를 끄겠습니까?</value>
+  </data>
+  <data name="DisablePasscodeTurnOff" xml:space="preserve">
+    <value>끄기</value>
   </data>
   <data name="DisappearingGif" xml:space="preserve">
     <value>비밀 GIF</value>
@@ -4574,6 +4647,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="EditName" xml:space="preserve">
     <value>이름 수정</value>
   </data>
+  <data name="EditNumber" xml:space="preserve">
+    <value>번호 변경</value>
+  </data>
   <data name="EditPhoto" xml:space="preserve">
     <value>편집기에서 열기</value>
   </data>
@@ -4683,6 +4759,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
     <value>2단계 인증이 활성화되었습니다.
 회원님의 텔레그램 계정에 로그인하려면 여기서 설정하신 비밀번호가 필요합니다.</value>
   </data>
+  <data name="EnablePasscode" xml:space="preserve">
+    <value>암호 설정</value>
+  </data>
   <data name="EnableProxyAlert" xml:space="preserve">
     <value>정말 이 프록시를 사용하시겠습니까?</value>
   </data>
@@ -4777,6 +4856,9 @@ telegram.org에서 자세히 알아보세요.</value>
   <data name="EnterNewPasscode" xml:space="preserve">
     <value>새 암호를 입력하세요</value>
   </data>
+  <data name="EnterPassword" xml:space="preserve">
+    <value>비밀번호 입력</value>
+  </data>
   <data name="EnterThemeName" xml:space="preserve">
     <value>테마명을 입력하세요</value>
   </data>
@@ -4788,6 +4870,9 @@ telegram.org에서 자세히 알아보세요.</value>
   </data>
   <data name="EnterYourPasscode" xml:space="preserve">
     <value>암호를 입력하세요</value>
+  </data>
+  <data name="EnterYourPasscodeInfo" xml:space="preserve">
+    <value>이 옵션을 관리하려면 현재 텔레그램 암호를 입력해주세요.</value>
   </data>
   <data name="EnterYourTelegramPasscode" xml:space="preserve">
     <value>텔레그램 암호 입력</value>
@@ -5590,6 +5675,9 @@ telegram.org에서 자세히 알아보세요.</value>
   <data name="FirstName" xml:space="preserve">
     <value>이름 (필수)</value>
   </data>
+  <data name="FirstNameSmall" xml:space="preserve">
+    <value>이름</value>
+  </data>
   <data name="FloodWait" xml:space="preserve">
     <value>너무 많이 시도하셨습니다. 나중에 다시 시도하세요.</value>
   </data>
@@ -5652,6 +5740,14 @@ telegram.org에서 자세히 알아보세요.</value>
   </data>
   <data name="ForceSetPasswordContinue" xml:space="preserve">
     <value>아니요, 비밀번호를 설정하겠습니다</value>
+  </data>
+  <data name="ForgotPasscode" xml:space="preserve">
+    <value>암호를 잊어버리셨나요?</value>
+  </data>
+  <data name="ForgotPasscodeInfo" xml:space="preserve">
+    <value>암호를 잊어버리셨을 경우, 앱을 삭제하고 재설치를 해주셔야합니다.
+
+모든 비밀대화는 사라지게 됩니다.</value>
   </data>
   <data name="ForgotPassword" xml:space="preserve">
     <value>비밀번호를 잊어버리셨나요?</value>
@@ -5950,6 +6046,9 @@ telegram.org에서 자세히 알아보세요.</value>
   <data name="ForwardSendMessages" xml:space="preserve">
     <value>메시지 보내기</value>
   </data>
+  <data name="ForwardsRestrictedInfoBot" xml:space="preserve">
+    <value>이 봇에서 복사 및 전달이 허용되지 않습니다.</value>
+  </data>
   <data name="ForwardsRestrictedInfoChannel" xml:space="preserve">
     <value>이 채널은 복사 및 전달이 허용되지 않습니다.</value>
   </data>
@@ -6060,6 +6159,9 @@ telegram.org에서 자세히 알아보세요.</value>
   </data>
   <data name="GIFs_zero" xml:space="preserve">
     <value />
+  </data>
+  <data name="GifSavedHint" xml:space="preserve">
+    <value>저장한 GIF로 추가</value>
   </data>
   <data name="GifSavedToDownloadsHint" xml:space="preserve">
     <value>다운로드로 GIF가 저장됐습니다</value>
@@ -7004,6 +7106,9 @@ telegram.org에서 자세히 알아보세요.</value>
   <data name="LastName" xml:space="preserve">
     <value>성 (선택)</value>
   </data>
+  <data name="LastNameSmall" xml:space="preserve">
+    <value>성</value>
+  </data>
   <data name="LastSeen" xml:space="preserve">
     <value>마지막 접속: </value>
   </data>
@@ -7294,6 +7399,9 @@ telegram.org에서 자세히 알아보세요.</value>
   </data>
   <data name="LocationUpdatedJustNow" xml:space="preserve">
     <value>방금 업데이트됨</value>
+  </data>
+  <data name="LoginAccessibilityCountryCode" xml:space="preserve">
+    <value>국가코드</value>
   </data>
   <data name="LoginAttempts" xml:space="preserve">
     <value>완료되지 않은 로그인 시도</value>
@@ -9350,11 +9458,26 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="PasscodeDoNotMatch" xml:space="preserve">
     <value>암호가 일치하지 않습니다.</value>
   </data>
+  <data name="PasscodeFinish" xml:space="preserve">
+    <value>암호 설정</value>
+  </data>
   <data name="PasscodePassword" xml:space="preserve">
     <value>암호</value>
   </data>
   <data name="PasscodePIN" xml:space="preserve">
     <value>PIN</value>
+  </data>
+  <data name="PasscodeScreenHint" xml:space="preserve">
+    <value>대화 페이지에서 잠금 아이콘을 탭하여 앱을 잠그거나 해제할 수 있습니다.</value>
+  </data>
+  <data name="PasscodesDoNotMatchTryAgain" xml:space="preserve">
+    <value>암호가 일치하지 않습니다. 다시 시도해주세요.</value>
+  </data>
+  <data name="PasscodeSwitchToPassword" xml:space="preserve">
+    <value>암호로 전환</value>
+  </data>
+  <data name="PasscodeSwitchToPIN" xml:space="preserve">
+    <value>PIN으로 전환</value>
   </data>
   <data name="PassportAddAddressUploadInfo" xml:space="preserve">
     <value>회원님의 주소를 확인하기 위함이오니, 선택된 서류(모든 쪽)의 사진이나 스캔을 업로드해 주세요.</value>
@@ -9939,6 +10062,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="PasswordHint" xml:space="preserve">
     <value>비밀번호 힌트</value>
   </data>
+  <data name="PasswordHintDescription" xml:space="preserve">
+    <value>비밀번호에 추가 힌트를 생성할 수 있습니다.</value>
+  </data>
   <data name="PasswordHintPlaceholder" xml:space="preserve">
     <value>힌트</value>
   </data>
@@ -10319,6 +10445,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   </data>
   <data name="PhoneMobile" xml:space="preserve">
     <value>휴대전화</value>
+  </data>
+  <data name="PhoneNumber" xml:space="preserve">
+    <value>전화번호</value>
   </data>
   <data name="PhoneNumberAlert" xml:space="preserve">
     <value>회원님이 주소록에 저장되어 있거나, 회원님의 개인 정보 설정으로 번호 열람이 승인된 사용자들은 회원님의 전화번호를 볼 수 있습니다. 설정 &gt; 개인 정보 및 보안 &gt; 전화번호에서 이 설정을 수정하실 수 있습니다.</value>
@@ -11038,11 +11167,17 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
     <value>이 메시지는 세계적 유행 중인 코로나19 감염 질환에 관한 공공 서비스 발표를 제공드립니다. 아래 링크에서 이 계획에 대해 더 알아보세요.
 https://telegram.org/blog/coronavirus</value>
   </data>
+  <data name="PsaInfo_psa" xml:space="preserve">
+    <value>현재 진행중인 갈등과 관련된 텔레그램 CEO의 공식 메시지입니다.</value>
+  </data>
   <data name="PsaInfoDefault" xml:space="preserve">
-    <value>공공서비스발표 정보 테스트</value>
+    <value>이 메시지는 공공 서비스 안내를 제공합니다.</value>
   </data>
   <data name="PsaMessage_covid" xml:space="preserve">
     <value>코로나바이러스감염증-19 알림</value>
+  </data>
+  <data name="PsaMessage_psa" xml:space="preserve">
+    <value>안내</value>
   </data>
   <data name="PsaMessageDefault" xml:space="preserve">
     <value>중요 알림</value>
@@ -11051,11 +11186,17 @@ https://telegram.org/blog/coronavirus</value>
     <value>이 메시지는 세계적 유행 중인 코로나19 감염 질환에 관한 공공 서비스 발표를 제공드립니다. 아래 링크에서 이 계획에 대해 더 알아보세요.
 https://telegram.org/blog/coronavirus</value>
   </data>
+  <data name="PsaMessageInfo_psa" xml:space="preserve">
+    <value>현재 진행중인 갈등과 관련된 텔레그램 CEO의 공식 메시지입니다.</value>
+  </data>
   <data name="PsaMessageInfoDefault" xml:space="preserve">
     <value>중요한 알림입니다.</value>
   </data>
   <data name="PsaType_covid" xml:space="preserve">
     <value>코로나19</value>
+  </data>
+  <data name="PsaType_psa" xml:space="preserve">
+    <value>공지사항</value>
   </data>
   <data name="PsaTypeDefault" xml:space="preserve">
     <value>공공발표</value>
@@ -11203,6 +11344,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="QRCodePermissionNoCamera" xml:space="preserve">
     <value>QR 코드를 스캔하려면 텔레그램에게 카메라 접근 권한이 필요합니다.</value>
+  </data>
+  <data name="QRCodePermissionNoCameraWithHint" xml:space="preserve">
+    <value>**텔레그램**이 QR 코드를 스캔하려면 카메라 접근권한이 필요합니다. 설정을 탭하고 -&gt; 권한으로 이동 하신 후, **카메라**를 활성화해주세요.</value>
   </data>
   <data name="Question" xml:space="preserve">
     <value>질문</value>
@@ -11386,6 +11530,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="RegisterText2" xml:space="preserve">
     <value>이름을 입력하고 프로필 사진을 추가하세요.</value>
+  </data>
+  <data name="RegistrationProfileInfo" xml:space="preserve">
+    <value>프로필 정보</value>
   </data>
   <data name="Regular" xml:space="preserve">
     <value>일반</value>
@@ -11593,8 +11740,17 @@ https://telegram.org/blog/coronavirus</value>
   <data name="ReportUserLocation" xml:space="preserve">
     <value>신고</value>
   </data>
+  <data name="RequestCallButton" xml:space="preserve">
+    <value>코드를 불러주는 전화 받기</value>
+  </data>
   <data name="RequestedToJoinAt" xml:space="preserve">
     <value>{0}에 참가 요청</value>
+  </data>
+  <data name="RequestMissedCall" xml:space="preserve">
+    <value>전화로 코드 받기</value>
+  </data>
+  <data name="RequestSmsButton" xml:space="preserve">
+    <value>SMS로 코드받기</value>
   </data>
   <data name="RequestToJoinChannel" xml:space="preserve">
     <value>채널 입장 요청</value>
@@ -11639,7 +11795,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>초기화</value>
   </data>
   <data name="ResetAccountCancelledAlert" xml:space="preserve">
-    <value>이 계정으로 활동하는 사용자가 계정 초기화를 취소했습니다. 7일 뒤 다시 시도해 주세요.</value>
+    <value>이 계정을 사용 중인 사용자가 계정 초기화 시도를 취소했습니다. 7일 뒤에 다시 시도해 주세요.</value>
   </data>
   <data name="ResetAccountInfo" xml:space="preserve">
     <value>계정 **{0}**이 비밀번호로 보호되어 있기에, 보안 목적으로 1주일 뒤에 이 계정을 삭제할 것입니다. 보안목적에 따라 지연기간을 두게 되었습니다.
@@ -11750,7 +11906,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>계정 초기화</value>
   </data>
   <data name="RestorePasswordResetIn" xml:space="preserve">
-    <value>{0} 후에 비밀번호 초기화를 할 수 있습니다.</value>
+    <value>{0} 뒤 비밀번호를 초기화하실 수 있습니다.</value>
   </data>
   <data name="RestorePasswordResetPassword" xml:space="preserve">
     <value>비밀번호 초기화</value>
@@ -11908,8 +12064,14 @@ https://telegram.org/blog/coronavirus</value>
 
 이 기능을 사용하려면 앱을 다시 시작하셔야 할 수도 있습니다.</value>
   </data>
+  <data name="ScreenCaptureHeader" xml:space="preserve">
+    <value>작업전환에 있는 앱 내용</value>
+  </data>
   <data name="ScreenCaptureInfo" xml:space="preserve">
     <value>위 기능을 끄면, 앱 안에서 화면을 캡처하실 수 없지만 앱 전환 화면에서 대화 내용이 숨겨집니다.</value>
+  </data>
+  <data name="ScreenCaptureShowContent" xml:space="preserve">
+    <value>내용 보기</value>
   </data>
   <data name="SdCard" xml:space="preserve">
     <value>SD 카드</value>
@@ -12319,6 +12481,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="SentAppCodeTitle" xml:space="preserve">
     <value>텔레그램 메시지를 확인하세요</value>
   </data>
+  <data name="SentAppCodeWithPhone" xml:space="preserve">
+    <value>회원님의 다른 기기에 {0}에 대한 코드를 **텔레그램**앱으로 전송했습니다.</value>
+  </data>
   <data name="SentCallCode" xml:space="preserve">
     <value>**{0}** 번호로 인증 전화를 걸었습니다. 
 
@@ -12660,6 +12825,13 @@ https://telegram.org/blog/coronavirus</value>
   <data name="ShortMessageLifetimeForever" xml:space="preserve">
     <value>끔</value>
   </data>
+  <data name="ShortNumberInfo" xml:space="preserve">
+    <value>**{0}**에 제공한 번호가 너무 짧습니다:
+
+**{1}**
+
+국가코드를 포함한 올바른 번호를 입력해주세요.</value>
+  </data>
   <data name="ShowAllFiles" xml:space="preserve">
     <value>모든 파일 보기</value>
   </data>
@@ -12686,6 +12858,12 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="ShowInChat" xml:space="preserve">
     <value>대화 속에서 보기</value>
+  </data>
+  <data name="ShowLess" xml:space="preserve">
+    <value>간략히</value>
+  </data>
+  <data name="ShowMore" xml:space="preserve">
+    <value>더 보기</value>
   </data>
   <data name="ShowNearbyPlaces" xml:space="preserve">
     <value>근처 장소를 보려면 끌어올리세요</value>
@@ -12793,6 +12971,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="SmartNotificationsInfo" xml:space="preserve">
     <value>{0} / {1}</value>
+  </data>
+  <data name="SmsAvailableIn" xml:space="preserve">
+    <value>다음 이후에 SMS를 요청할 수 있습니다 {0}:%2$02d</value>
   </data>
   <data name="SmsText" xml:space="preserve">
     <value>{0}:%2$02d 뒤에 SMS를 보냅니다</value>
@@ -15053,7 +15234,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>사용안함</value>
   </data>
   <data name="VoipNoiseCancellationEnabled" xml:space="preserve">
-    <value>사용</value>
+    <value>켬</value>
   </data>
   <data name="VoipNotificationSettings" xml:space="preserve">
     <value>전화</value>
@@ -15356,11 +15537,17 @@ https://telegram.org/blog/coronavirus</value>
   <data name="WithinAWeek" xml:space="preserve">
     <value>일주일 이내 마지막으로 접속함</value>
   </data>
+  <data name="WrongCode" xml:space="preserve">
+    <value>올바르지 않은 코드를 입력했습니다. 다시 시도해주세요.</value>
+  </data>
   <data name="WrongCountry" xml:space="preserve">
     <value>올바른 국가번호를 입력하세요</value>
   </data>
   <data name="WrongNumber" xml:space="preserve">
     <value>전화번호가 잘못되었나요?</value>
+  </data>
+  <data name="WrongNumberFormat" xml:space="preserve">
+    <value>올바르지 않은 포맷</value>
   </data>
   <data name="Years_few" xml:space="preserve">
     <value />
@@ -15460,6 +15647,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="YourNameChanged" xml:space="preserve">
     <value>이름 업데이트됨.</value>
+  </data>
+  <data name="YourNumber" xml:space="preserve">
+    <value>내 전화번호</value>
   </data>
   <data name="YourPassword" xml:space="preserve">
     <value>비밀번호</value>
@@ -20826,9 +21016,6 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_theme_sure_keep" xml:space="preserve">
     <value>이 테마를 유지하시겠습니까?</value>
-  </data>
-  <data name="lng_tooltip_psa_default" xml:space="preserve">
-    <value>이 메시지는 공공 서비스 발표를 제공해드립니다.</value>
   </data>
   <data name="lng_tray_icon_text" xml:space="preserve">
     <value>텔레그램이 아직 실행되고 있습니다.
