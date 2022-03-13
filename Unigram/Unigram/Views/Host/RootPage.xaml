@@ -28,7 +28,7 @@
             <Setter Property="HorizontalAlignment"
                     Value="Left" />
             <Setter Property="VerticalAlignment"
-                    Value="Bottom" />
+                    Value="Center" />
             <Setter Property="HorizontalContentAlignment"
                     Value="Left" />
             <Setter Property="VerticalContentAlignment"
@@ -149,7 +149,8 @@
                                  PaneOpening="Navigation_PaneOpening"
                                  PaneClosing="Navigation_PaneClosing">
             <controls:NavigationView.PaneHeader>
-                <Border Height="48" />
+                <Border x:Name="AccountsPlaceholder"
+                        Height="48" />
             </controls:NavigationView.PaneHeader>
             <controls:NavigationView.PaneFooter>
                 <ListView x:Name="NavigationViewList"

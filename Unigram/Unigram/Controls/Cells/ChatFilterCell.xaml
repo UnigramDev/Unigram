@@ -11,7 +11,7 @@
 
     <Grid Width="64"
           Height="58"
-          Margin="0,0"
+          Margin="4,0,0,0"
           CornerRadius="4">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="CommonStates"
@@ -70,15 +70,16 @@
                     Background="{ThemeResource ChatUnreadBadgeMutedBrush}"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Top"
-                    Margin="0,0,-4,0"
-                    MinWidth="20"
-                    Height="20"
-                    CornerRadius="10">
+                    Margin="0,-4,4,0"
+                    MinWidth="17"
+                    MinHeight="17"
+                    CornerRadius="8.5">
                 <TextBlock Text="{x:Bind ViewModel.UnreadMutedCount, Mode=OneWay}"
-                           Style="{StaticResource CaptionTextBlockStyle}"
+                           FontSize="{ThemeResource InfoBadgeValueFontSize}"
                            Foreground="{ThemeResource ChatUnreadLabelMutedBrush}"
-                           TextAlignment="Center"
-                           Margin="8,2,8,0" />
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Margin="{ThemeResource ValueInfoBadgeTextMargin}" />
             </Border>
         </Grid>
         <Border x:Name="TitlePresenter"

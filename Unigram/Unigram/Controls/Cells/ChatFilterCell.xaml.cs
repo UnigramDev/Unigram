@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Numerics;
 using Unigram.ViewModels;
-using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Cells
 {
@@ -31,18 +29,6 @@ namespace Unigram.Controls.Cells
         private void ChatFilterCell_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
         {
             Bindings.Update();
-
-            if (args.NewValue is ChatFilterViewModel filter && filter.Title == "Separator")
-            {
-                if (Content is Grid grid)
-                {
-                    grid.Height = 1;
-                    grid.BorderThickness = new Thickness(0, 1, 0, 0);
-                    grid.BorderBrush = new SolidColorBrush(Color.FromArgb(0x0F, 0x00, 0x00, 0x00));
-                    grid.Margin = new Thickness(4, 4, 4, 0);
-                    grid.Width = 56;
-                }
-            }
         }
 
         private void OnCurrentStateChanged(object sender, VisualStateChangedEventArgs e)

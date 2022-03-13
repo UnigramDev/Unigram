@@ -460,7 +460,7 @@ namespace Unigram.Views.Host
 
                     case RootDestination.Chats:
                         content.Text = Strings.Resources.FilterChats;
-                        content.Glyph = Icons.Comment;
+                        content.Glyph = Icons.ChatMultiple;
                         break;
                     case RootDestination.Contacts:
                         content.Text = Strings.Resources.Contacts;
@@ -674,6 +674,24 @@ namespace Unigram.Views.Host
             set => Navigation.IsPaneOpen = value;
         }
 
+        private bool _isSidebarEnabled;
+
+        public void SetSidebarEnabled(bool value)
+        {
+            if (_isSidebarEnabled != value)
+            {
+                _isSidebarEnabled = value;
+
+                AccountsPlaceholder.Visibility = value
+                    ? Visibility.Collapsed
+                    : Visibility.Visible;
+
+                Accounts.VerticalAlignment = value
+                    ? VerticalAlignment.Bottom
+                    : VerticalAlignment.Top;
+            }
+        }
+
         private void Navigation_PaneOpening(SplitView sender, object args)
         {
             Theme.Visibility = Visibility.Visible;
@@ -717,7 +735,7 @@ namespace Unigram.Views.Host
             theme.StartAnimation("Offset", offset1);
             theme.StartAnimation("Opacity", opacity);
 
-            photo.CenterPoint = new Vector3(0, 24, 0);
+            photo.CenterPoint = new Vector3(_isSidebarEnabled ? 24 : 0, 24, 0);
             photo.StartAnimation("Scale", scale);
 
             info.CenterPoint = new Vector3(0, 32, 0);
@@ -778,7 +796,7 @@ namespace Unigram.Views.Host
             theme.StartAnimation("Offset", offset1);
             theme.StartAnimation("Opacity", opacity);
 
-            photo.CenterPoint = new Vector3(0, 24, 0);
+            photo.CenterPoint = new Vector3(_isSidebarEnabled ? 24 : 0, 24, 0);
             photo.StartAnimation("Scale", scale);
 
             info.CenterPoint = new Vector3(0, 32, 0);

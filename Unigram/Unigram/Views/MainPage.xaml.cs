@@ -249,7 +249,11 @@ namespace Unigram.Views
         {
             if (update.User.Id == _protoService.Options.MyId)
             {
-                this.BeginOnUIThread(() => Photo.SetUser(_protoService, update.User, 32));
+                this.BeginOnUIThread(() =>
+                {
+                    Photo.SetUser(_protoService, update.User, 32);
+                    PhotoSide?.SetUser(_protoService, update.User, 32);
+                });
             }
         }
 
@@ -632,6 +636,8 @@ namespace Unigram.Views
                 _tabsLeftCollapsed = false;
             }
 
+            Root?.SetSidebarEnabled(show);
+
             Photo.Visibility = show
                 ? Visibility.Collapsed
                 : Visibility.Visible;
@@ -639,6 +645,14 @@ namespace Unigram.Views
             if (ChatTabsLeft == null)
             {
                 FindName(nameof(ChatTabsLeft));
+            }
+
+            if (show && PhotoSide != null)
+            {
+                if (_protoService.TryGetUser(_protoService.Options.MyId, out User user))
+                {
+                    PhotoSide.SetUser(_protoService, user, 32);
+                }
             }
 
             var element = VisualTreeHelper.GetChild(ChatsList, 0) as UIElement;
@@ -756,10 +770,10 @@ namespace Unigram.Views
 
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
-            var user = _protoService.GetUser(_protoService.Options.MyId);
-            if (user != null)
+            if (_protoService.TryGetUser(_protoService.Options.MyId, out User user))
             {
                 Photo.SetUser(_protoService, user, 32);
+                PhotoSide?.SetUser(_protoService, user, 32);
             }
 
             ViewModel.Aggregator.Subscribe(this);

@@ -178,6 +178,7 @@ namespace Unigram.Converters
         public const string AppFolder = "\uF122";
 
         public const string ChatBubblesQuestion = "\uE783";
+        public const string ChatMultiple = "\uE992";
 
         public const string TopSpeed = "\uE90D";
 
