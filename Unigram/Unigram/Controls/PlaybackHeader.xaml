@@ -318,15 +318,17 @@
                               Padding="0,6,0,6">
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <cells:SharedAudioCell />
+                                <cells:SharedAudioCell Background="Transparent"
+                                                       BorderBrush="Transparent"/>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                         <ListView.ItemContainerStyle>
-                            <Style TargetType="ListViewItem">
+                            <Style TargetType="ListViewItem"
+                                   BasedOn="{StaticResource DefaultListViewItemStyle}">
                                 <Setter Property="HorizontalContentAlignment"
                                         Value="Stretch" />
                                 <Setter Property="Padding"
-                                        Value="12,6,12,6" />
+                                        Value="0" />
                             </Style>
                         </ListView.ItemContainerStyle>
                     </ListView>
