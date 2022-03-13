@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Security;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Telegram.Td;
@@ -139,7 +140,7 @@ namespace Unigram.Services
 
         public void SaveRemoteLocaleStrings(string lang, LanguagePackStrings difference)
         {
-            var fileName = Path.Combine(ApplicationData.Current.LocalFolder.Path, "test", lang, "Resources.resw");
+            var fileName = Path.Combine(ApplicationData.Current.LocalFolder.Path, "test", lang, "Android.resw");
             try
             {
                 var values = new Dictionary<string, string>();
@@ -262,7 +263,7 @@ namespace Unigram.Services
                     }
                     else
                     {
-                        writer.Write($"    <value>{entry.Value.Replace("&", "&amp;")}</value>\n");
+                        writer.Write($"    <value>{SecurityElement.Escape(entry.Value)}</value>\n");
                     }
                     writer.Write($"  </data>\n");
                 }
