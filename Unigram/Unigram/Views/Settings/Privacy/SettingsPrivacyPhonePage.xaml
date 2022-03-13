@@ -64,6 +64,16 @@
                                                  Style="{StaticResource SettingsRadioButtonStyle}" />
                 </controls:HeaderedControl>
 
+                <TextBlock Visibility="{x:Bind ConvertPhoneLink(ViewModel.ShowPhone.SelectedItem, ViewModel.AllowFindingByPhoneNumber.SelectedItem), Mode=OneWay}"
+                           Margin="{x:Bind ConvertPhoneLinkMargin(ViewModel.ShowPhone.SelectedItem), Mode=OneWay}"
+                           Style="{StaticResource InfoCaptionTextBlockStyle}">
+                    <Run Text="{CustomResource PrivacyPhoneInfo4}" />
+                    <LineBreak />
+                    <Hyperlink>
+                        <Run Text="{x:Bind ViewModel.PhoneNumber, Mode=OneWay}" />
+                    </Hyperlink>
+                </TextBlock>
+
                 <controls:HeaderedControl Header="{CustomResource AddExceptions}"
                                           Footer="{CustomResource PrivacyPhoneInfo2}">
                     <controls:BadgeButton Content="{CustomResource AlwaysAllow}"

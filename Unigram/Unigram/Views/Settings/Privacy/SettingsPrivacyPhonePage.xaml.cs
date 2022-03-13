@@ -31,6 +31,26 @@ namespace Unigram.Views.Settings.Privacy
             return value == PrivacyValue.DisallowAll ? Visibility.Visible : Visibility.Collapsed;
         }
 
+        private Visibility ConvertPhoneLink(PrivacyValue value1, PrivacyValue value2)
+        {
+            if (value1 is PrivacyValue.AllowAll or PrivacyValue.AllowContacts)
+            {
+                return Visibility.Visible;
+            }
+
+            return value2 == PrivacyValue.AllowAll ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private Thickness ConvertPhoneLinkMargin(PrivacyValue value)
+        {
+            if (value is PrivacyValue.AllowAll or PrivacyValue.AllowContacts)
+            {
+                return new Thickness(24, -16, 24, 0);
+            }
+
+            return new Thickness(24, 0, 24, 0);
+        }
+
         private string ConvertFooter(PrivacyValue value)
         {
             if (value == PrivacyValue.AllowAll)
