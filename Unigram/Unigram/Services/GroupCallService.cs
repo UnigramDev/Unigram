@@ -27,6 +27,9 @@ namespace Unigram.Services
 {
     public interface IGroupCallService : INotifyPropertyChanged
     {
+        event EventHandler AvailableStreamsChanged;
+        int AvailableStreamsCount { get; }
+
         ICacheService CacheService { get; }
 
         string CurrentVideoInput { get; set; }
@@ -125,6 +128,8 @@ namespace Unigram.Services
         //private VoipCallCoordinator _coordinator;
         //private VoipPhoneCall _systemCall;
 
+        private int _availableStreamsCount = 0;
+
         public GroupCallService(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IViewService viewService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
@@ -138,6 +143,9 @@ namespace Unigram.Services
 
             aggregator.Subscribe(this);
         }
+
+        public event EventHandler AvailableStreamsChanged;
+        public int AvailableStreamsCount => _availableStreamsCount;
 
 #if ENABLE_CALLS
         public VoipGroupManager Manager => _manager;
@@ -647,10 +655,22 @@ namespace Unigram.Services
                 if (response is GroupCallStreams streams && streams.Streams.Count > 0)
                 {
                     args.Deferral(streams.Streams[0].TimeOffset);
+
+                    if (_availableStreamsCount == 0)
+                    {
+                        _availableStreamsCount = 1;
+                        AvailableStreamsChanged?.Invoke(this, EventArgs.Empty);
+                    }
                 }
                 else
                 {
                     args.Deferral(0);
+
+                    if (_availableStreamsCount > 0)
+                    {
+                        _availableStreamsCount = 0;
+                        AvailableStreamsChanged?.Invoke(this, EventArgs.Empty);
+                    }
                 }
             }
             else

@@ -58,6 +58,7 @@ namespace Unigram.Views
             };
 
             _service = voipService;
+            _service.AvailableStreamsChanged += OnAvailableStreamsChanged;
 
             var titleBar = ApplicationView.GetForCurrentView().TitleBar;
             titleBar.ButtonBackgroundColor = Colors.Transparent;
@@ -86,6 +87,36 @@ namespace Unigram.Views
             //ElementCompositionPreview.SetIsTranslationEnabled(PinnedInfo, true);
             //ElementCompositionPreview.SetIsTranslationEnabled(PinnedGlyph, true);
             //ViewportAspect.Constraint = new Size(16, 9);
+
+            OnAvailableStreamsChanged();
+        }
+
+        private void OnAvailableStreamsChanged(object sender, EventArgs e)
+        {
+            this.BeginOnUIThread(OnAvailableStreamsChanged);
+        }
+
+        private void OnAvailableStreamsChanged()
+        {
+            if (_service.AvailableStreamsCount > 0)
+            {
+                NoStream.Visibility = Visibility.Collapsed;
+                Viewport.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                if (_protoService.TryGetSupergroup(_service.Chat, out Supergroup supergroup))
+                {
+                    TextBlockHelper.SetMarkdown(NoStream, supergroup.Status is ChatMemberStatusCreator ? Strings.Resources.NoRtmpStreamFromAppOwner : string.Format(Strings.Resources.NoRtmpStreamFromAppViewer, _service.Chat.Title));
+                }
+                else if (_protoService.TryGetBasicGroup(_service.Chat, out BasicGroup basicGroup))
+                {
+                    TextBlockHelper.SetMarkdown(NoStream, basicGroup.Status is ChatMemberStatusCreator ? Strings.Resources.NoRtmpStreamFromAppOwner : string.Format(Strings.Resources.NoRtmpStreamFromAppViewer, _service.Chat.Title));
+                }
+
+                NoStream.Visibility = Visibility.Visible;
+                Viewport.Visibility = Visibility.Collapsed;
+            }
         }
 
         private enum ButtonState
@@ -174,6 +205,7 @@ namespace Unigram.Views
 
             if (_service != null)
             {
+                _service.AvailableStreamsChanged -= OnAvailableStreamsChanged;
                 _service = null;
             }
 
