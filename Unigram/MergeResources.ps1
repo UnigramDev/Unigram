@@ -84,6 +84,17 @@ foreach ($language in $languages)
             Write-Host "Updated ${name}"
         }
     }
+    elseif ((Test-Path "${path_language}\Android.resw") -And (Test-Path "${path_language}\Resources.resw"))
+    {
+        $android = Get-ChildItem "${path_language}\Android.resw"
+        $resources = Get-ChildItem "${path_language}\Resources.resw"
+
+        if ($android.LastWriteTime -gt $resources.LastWriteTime)
+        {
+            Copy-Item "${path_language}\Android.resw" -Destination "${path_language}\Resources.resw" -Force
+            Write-Host "Updated ${name}"
+        }
+    }
     else
     {
         Copy-Item "${path_language}\Android.resw" -Destination "${path_language}\Resources.resw" -Force
