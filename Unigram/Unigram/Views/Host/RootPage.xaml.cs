@@ -704,7 +704,7 @@ namespace Unigram.Views.Host
             opacity.Duration = TimeSpan.FromMilliseconds(350);
 
             var scale = compositor.CreateVector3KeyFrameAnimation();
-            scale.InsertKeyFrame(0, new Vector3(32f / 48f, 32f / 48f, 0), ease);
+            scale.InsertKeyFrame(0, new Vector3(28f / 48f, 28f / 48f, 0), ease);
             scale.InsertKeyFrame(1, new Vector3(1, 1, 0), ease);
             scale.Duration = TimeSpan.FromMilliseconds(350);
 
@@ -766,7 +766,7 @@ namespace Unigram.Views.Host
 
             var scale = compositor.CreateVector3KeyFrameAnimation();
             scale.InsertKeyFrame(0, new Vector3(1, 1, 0), ease);
-            scale.InsertKeyFrame(1, new Vector3(32f / 48f, 32f / 48f, 0), ease);
+            scale.InsertKeyFrame(1, new Vector3(28f / 48f, 28f / 48f, 0), ease);
             scale.Duration = TimeSpan.FromMilliseconds(120);
 
             var clip = compositor.CreateScalarKeyFrameAnimation();

@@ -175,7 +175,7 @@
               Grid.ColumnSpan="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="56" />
+                <ColumnDefinition Width="52" />
                 <ColumnDefinition />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
@@ -358,8 +358,8 @@
                                                        Height="24"
                                                        Fill="{ThemeResource NavigationViewSelectionIndicatorForeground}"
                                                        Opacity="0"
-                                                       RadiusX="{Binding Source={ThemeResource ControlCornerRadius}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
-                                                       RadiusY="{Binding Source={ThemeResource ControlCornerRadius}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}" />
+                                                       RadiusX="3"
+                                                       RadiusY="3" />
                                         </Grid>
                                     </Grid>
                                 </ControlTemplate>
@@ -392,9 +392,9 @@
                                      Click="Photo_Click"
                                      HorizontalAlignment="Left"
                                      VerticalAlignment="Bottom"
-                                     Margin="20,8,0,16"
-                                     Width="32"
-                                     Height="32"
+                                     Margin="22,8,0,18"
+                                     Width="28"
+                                     Height="28"
                                      AutomationProperties.LandmarkType="Navigation"
                                      AutomationProperties.Name="{CustomResource AccDescrOpenMenu}"
                                      ToolTipService.ToolTip="{CustomResource AccDescrOpenMenu}"
@@ -466,8 +466,8 @@
                                                      Click="Photo_Click"
                                                      VerticalAlignment="Center"
                                                      Margin="0,0,12,0"
-                                                     Width="32"
-                                                     Height="32"
+                                                     Width="28"
+                                                     Height="28"
                                                      AutomationProperties.LandmarkType="Navigation"
                                                      AutomationProperties.Name="{CustomResource AccDescrOpenMenu}"
                                                      ToolTipService.ToolTip="{CustomResource AccDescrOpenMenu}" />

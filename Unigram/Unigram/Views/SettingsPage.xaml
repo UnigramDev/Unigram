@@ -161,8 +161,8 @@
                                                            Height="16"
                                                            Fill="{ThemeResource NavigationViewSelectionIndicatorForeground}"
                                                            Opacity="0"
-                                                           RadiusX="{Binding Source={ThemeResource ControlCornerRadius}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
-                                                           RadiusY="{Binding Source={ThemeResource ControlCornerRadius}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}" />
+                                                           RadiusX="3"
+                                                           RadiusY="3" />
                                             </Grid>
                                         </Grid>
                                     </ControlTemplate>
