@@ -203,18 +203,17 @@ namespace Unigram.Controls
             }
         }
 
-        private static string ReadableTime(int seconds)
+        private static string ReadableTime(double seconds)
         {
-            var parts = new List<string>();
-            Action<int, string> add = (val, unit) => { if (val > 0) parts.Add(val + unit); };
-            var t = TimeSpan.FromSeconds(seconds);
-
-            add(t.Days, "d");
-            add(t.Hours, "h");
-            add(t.Minutes, "m");
-            add(t.Seconds, "s");
-
-            return string.Join(" ", parts);
+            var duration = TimeSpan.FromSeconds(seconds);
+            if (duration.TotalHours >= 1)
+            {
+                return duration.ToString("h\\:mm\\:ss");
+            }
+            else
+            {
+                return duration.ToString("mm\\:ss");
+            }
         }
 
 
