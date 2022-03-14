@@ -959,6 +959,11 @@ namespace Unigram.Views
                 return;
             }
 
+            if ((args.VirtualKey == Windows.System.VirtualKey.Down || args.VirtualKey == Windows.System.VirtualKey.PageDown || args.VirtualKey == Windows.System.VirtualKey.PageUp) && FocusManager.GetFocusedElement() is PlaybackSlider)
+            {
+                return;
+            }
+
             var alt = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
             var ctrl = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
             var shift = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
