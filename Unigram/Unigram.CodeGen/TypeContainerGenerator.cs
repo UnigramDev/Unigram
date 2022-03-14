@@ -161,6 +161,7 @@ namespace Unigram.CodeGen
                 typeof(ChatsNearbyViewModel),
                 typeof(FoldersViewModel),
                 typeof(FolderViewModel),
+                typeof(DownloadsViewModel),
             };
 
             // Preprocess: find out lazy singletons used by singletons to promote

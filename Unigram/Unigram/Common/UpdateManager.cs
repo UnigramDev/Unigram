@@ -33,19 +33,23 @@ namespace Unigram.Common
 
         #region Subscribe
 
-        public static void Subscribe(object sender, MessageViewModel message, File file, UpdateHandler<File> handler, bool completionOnly = false, bool keepTargetAlive = false)
+        public static void Subscribe(object sender, MessageViewModel message, File file, UpdateHandler<File> handler, bool completionOnly = false, bool keepTargetAlive = false, bool unsubscribe = true)
         {
-            Subscribe(sender, message.ProtoService.SessionId, file, handler, completionOnly, keepTargetAlive);
+            Subscribe(sender, message.ProtoService.SessionId, file, handler, completionOnly, keepTargetAlive, unsubscribe);
         }
 
-        public static void Subscribe(object sender, IProtoService protoService, File file, UpdateHandler<File> handler, bool completionOnly = false, bool keepTargetAlive = false)
+        public static void Subscribe(object sender, IProtoService protoService, File file, UpdateHandler<File> handler, bool completionOnly = false, bool keepTargetAlive = false, bool unsubscribe = true)
         {
-            Subscribe(sender, protoService.SessionId, file, handler, completionOnly, keepTargetAlive);
+            Subscribe(sender, protoService.SessionId, file, handler, completionOnly, keepTargetAlive, unsubscribe);
         }
 
-        public static void Subscribe(object sender, int sessionId, File file, UpdateHandler<File> handler, bool completionOnly = false, bool keepTargetAlive = false)
+        public static void Subscribe(object sender, int sessionId, File file, UpdateHandler<File> handler, bool completionOnly = false, bool keepTargetAlive = false, bool unsubscribe = true)
         {
-            EventAggregator.Default.Unregister<File>(sender);
+            if (unsubscribe)
+            {
+                EventAggregator.Default.Unregister<File>(sender);
+            }
+
             EventAggregator.Default.Register(sender, $"{sessionId}_{file.Id}", handler, keepTargetAlive, completionOnly);
         }
 

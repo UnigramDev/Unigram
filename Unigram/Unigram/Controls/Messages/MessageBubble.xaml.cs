@@ -46,7 +46,7 @@ namespace Unigram.Controls.Messages
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            if (IsLoaded)
+            if (IsLoaded || !_templateApplied)
             {
                 return;
             }

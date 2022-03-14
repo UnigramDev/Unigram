@@ -13,6 +13,11 @@ namespace Unigram.Controls
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
+            if (args.InRecycleQueue)
+            {
+                return;
+            }
+
             var content = args.ItemContainer.ContentTemplateRoot;
             if (content != null)
             {

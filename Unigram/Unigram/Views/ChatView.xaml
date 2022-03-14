@@ -1059,7 +1059,7 @@
                         Margin="12,0,12,8"
                         Grid.Row="3">
             <Grid x:Name="TextRoot"
-                  Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
+                  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                   MinHeight="{StaticResource TelegramToolBarHeight}"
                   SizeChanged="TextArea_SizeChanged"
                   CornerRadius="15">
