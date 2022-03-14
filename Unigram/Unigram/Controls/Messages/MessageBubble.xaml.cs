@@ -228,6 +228,25 @@ namespace Unigram.Controls.Messages
                 }
             }
 
+            if (message.ForwardInfo != null)
+            {
+                if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
+                {
+                    title = message.ProtoService.GetUser(fromUser.SenderUserId)?.GetFullName();
+                    builder.AppendLine($"{Strings.Resources.AccDescrForwarding} {title}. ");
+                }
+                if (message.ForwardInfo?.Origin is MessageForwardOriginChat fromChat)
+                {
+                    title = message.ProtoService.GetTitle(message.ProtoService.GetChat(fromChat.SenderChatId));
+                    builder.AppendLine($"{Strings.Resources.AccDescrForwarding} {title}. ");
+                }
+                else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel)
+                {
+                    title = message.ProtoService.GetTitle(message.ProtoService.GetChat(fromChannel.ChatId));
+                    builder.AppendLine($"{Strings.Resources.AccDescrForwarding} {title}. ");
+                }
+            }
+
             builder.Append(Automation.GetSummary(message.ProtoService, message.Get(), true));
 
             if (message.AuthorSignature.Length > 0)
