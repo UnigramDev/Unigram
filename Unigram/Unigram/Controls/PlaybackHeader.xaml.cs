@@ -35,7 +35,7 @@ namespace Unigram.Controls
         {
             InitializeComponent();
 
-            Slider.AddHandler(PreviewKeyDownEvent, new KeyEventHandler(Slider_KeyDown), true);
+            Slider.AddHandler(KeyDownEvent, new KeyEventHandler(Slider_KeyDown), true);
             Slider.AddHandler(PointerPressedEvent, new PointerEventHandler(Slider_PointerPressed), true);
             Slider.AddHandler(PointerReleasedEvent, new PointerEventHandler(Slider_PointerReleased), true);
             Slider.AddHandler(PointerCanceledEvent, new PointerEventHandler(Slider_PointerCanceled), true);
