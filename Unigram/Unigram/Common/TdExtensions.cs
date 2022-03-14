@@ -1860,11 +1860,11 @@ namespace Telegram.Td.Api
             IsMedia = media;
         }
 
-        public const double ITEM_MARGIN = 2;
-        public const double MAX_WIDTH = 320 + ITEM_MARGIN;
-        public const double MAX_HEIGHT = 420 + ITEM_MARGIN;
+        public const int ITEM_MARGIN = 0;
+        public const int MAX_WIDTH = 420 + ITEM_MARGIN;
+        public const int MAX_HEIGHT = 420 + ITEM_MARGIN;
 
-        private ((Rect, MosaicItemPosition)[], Size)? _positions;
+        private IList<GroupMediaLayout> _positions;
 
         public void Invalidate()
         {
@@ -1873,45 +1873,56 @@ namespace Telegram.Td.Api
 
         public (Rect[], Size) GetPositionsForWidth(double w)
         {
-            var positions = _positions ??= MosaicAlbumLayout.chatMessageBubbleMosaicLayout(new Size(MAX_WIDTH, MAX_HEIGHT), GetSizes());
+            var positions = _positions ??= MosaicAlbumLayout.LayoutMediaGroup(GetSizes(), MAX_WIDTH, MAX_HEIGHT, 2);
 
-            var ratio = w / positions.Item2.Width;
-            var rects = new Rect[positions.Item1.Length];
+            var dimensions = new Size();
+            foreach (var itemInfo in positions)
+            {
+                dimensions.Width = Math.Max(dimensions.Width, Math.Round(itemInfo.Geometry.Right));
+                dimensions.Height = Math.Max(dimensions.Height, Math.Round(itemInfo.Geometry.Bottom));
+            }
+
+            var ratio = w / MAX_WIDTH;
+            var rects = new Rect[positions.Count];
 
             for (int i = 0; i < rects.Length; i++)
             {
-                var rect = positions.Item1[i].Item1;
+                var rect = positions[i].Geometry;
                 rects[i] = new Rect(rect.X * ratio, rect.Y * ratio, rect.Width * ratio, rect.Height * ratio);
             }
 
-            return (rects, new Size(positions.Item2.Width * ratio, positions.Item2.Height * ratio));
+            return (rects, new Size(dimensions.Width * ratio, dimensions.Height * ratio));
         }
 
-        private IEnumerable<Size> GetSizes()
+        private IList<Size> GetSizes()
         {
+            var sizes = new List<Size>(Messages.Count);
+
             foreach (var message in Messages)
             {
                 if (message.Content is MessagePhoto photoMedia)
                 {
-                    yield return GetClosestPhotoSizeWithSize(photoMedia.Photo.Sizes, 1280, false);
+                    sizes.Add(GetClosestPhotoSizeWithSize(photoMedia.Photo.Sizes, 1280, false));
                 }
                 else if (message.Content is MessageVideo videoMedia)
                 {
                     if (videoMedia.Video.Width != 0 && videoMedia.Video.Height != 0)
                     {
-                        yield return new Size(videoMedia.Video.Width, videoMedia.Video.Height);
+                        sizes.Add(new Size(videoMedia.Video.Width, videoMedia.Video.Height));
                     }
                     else if (videoMedia.Video.Thumbnail != null)
                     {
-                        yield return new Size(videoMedia.Video.Thumbnail.Width, videoMedia.Video.Thumbnail.Height);
+                        sizes.Add(new Size(videoMedia.Video.Thumbnail.Width, videoMedia.Video.Thumbnail.Height));
                     }
                     else
                     {
                         // We are returning a random size, it's still better than NaN.
-                        yield return new Size(1280, 1280);
+                        sizes.Add(new Size(1280, 1280));
                     }
                 }
             }
+
+            return sizes;
         }
 
         public static Size GetClosestPhotoSizeWithSize(IList<PhotoSize> sizes, int side)
