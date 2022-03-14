@@ -18801,9 +18801,6 @@ Czy na pewno chcesz go uruchomić?</value>
   <data name="lng_mediaview_date_time" xml:space="preserve">
     <value>{date} o {time}</value>
   </data>
-  <data name="lng_mediaview_downloads" xml:space="preserve">
-    <value>Pobrane</value>
-  </data>
   <data name="lng_mediaview_file_n_of_amount" xml:space="preserve">
     <value>{file} {n} z {amount}</value>
   </data>
@@ -20564,9 +20561,6 @@ wszystkie inne sesje?</value>
   </data>
   <data name="lng_settings_show_name" xml:space="preserve">
     <value>Pokazuj nazwę nadawcy</value>
-  </data>
-  <data name="lng_settings_show_preview" xml:space="preserve">
-    <value>Pokazuj podgląd wiadomości</value>
   </data>
   <data name="lng_settings_show_sessions" xml:space="preserve">
     <value>Pokaż wszystkie sesje</value>

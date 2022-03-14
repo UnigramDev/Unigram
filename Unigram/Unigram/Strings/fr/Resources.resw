@@ -18780,9 +18780,6 @@ Voulez-vous vraiment l'exécuter ?</value>
   <data name="lng_mediaview_date_time" xml:space="preserve">
     <value>{date} à {time}</value>
   </data>
-  <data name="lng_mediaview_downloads" xml:space="preserve">
-    <value>Téléchargements</value>
-  </data>
   <data name="lng_mediaview_file_n_of_amount" xml:space="preserve">
     <value>{file} {n} sur {amount}</value>
   </data>
@@ -20539,9 +20536,6 @@ toutes les autres sessions ?</value>
   </data>
   <data name="lng_settings_show_name" xml:space="preserve">
     <value>Afficher le nom de l’expéditeur</value>
-  </data>
-  <data name="lng_settings_show_preview" xml:space="preserve">
-    <value>Afficher un aperçu du message</value>
   </data>
   <data name="lng_settings_show_sessions" xml:space="preserve">
     <value>Afficher toutes les sessions</value>

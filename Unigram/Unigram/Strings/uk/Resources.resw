@@ -18881,9 +18881,6 @@ http://telegram.org/update</value>
   <data name="lng_mediaview_date_time" xml:space="preserve">
     <value>{date}, {time}</value>
   </data>
-  <data name="lng_mediaview_downloads" xml:space="preserve">
-    <value>Завантаження</value>
-  </data>
   <data name="lng_mediaview_file_n_of_amount" xml:space="preserve">
     <value>{file} {n} із {amount}</value>
   </data>
@@ -20637,9 +20634,6 @@ http://telegram.org/update</value>
   </data>
   <data name="lng_settings_show_name" xml:space="preserve">
     <value>Показувати імʼя відправника</value>
-  </data>
-  <data name="lng_settings_show_preview" xml:space="preserve">
-    <value>Показувати текст повідомлення</value>
   </data>
   <data name="lng_settings_show_sessions" xml:space="preserve">
     <value>Показати всі сеанси</value>

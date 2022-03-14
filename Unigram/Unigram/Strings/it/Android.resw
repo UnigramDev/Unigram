@@ -3975,7 +3975,7 @@ Cancella i log</value>
     <value>Verifica aggiornamenti</value>
   </data>
   <data name="DebugMenuClearMediaCache" xml:space="preserve">
-    <value>Vuota cache dei media inviati</value>
+    <value>Svuota cache dei media inviati</value>
   </data>
   <data name="DebugMenuDisableCamera" xml:space="preserve">
     <value>Disattiva fotocamera in-app</value>

@@ -18728,9 +18728,6 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_mediaview_date_time" xml:space="preserve">
     <value>{date}  {time}</value>
   </data>
-  <data name="lng_mediaview_downloads" xml:space="preserve">
-    <value>다운로드</value>
-  </data>
   <data name="lng_mediaview_file_n_of_amount" xml:space="preserve">
     <value>{file}, {amount} 개중 {n} 번째</value>
   </data>
@@ -20485,9 +20482,6 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_settings_show_name" xml:space="preserve">
     <value>발신인 표시</value>
-  </data>
-  <data name="lng_settings_show_preview" xml:space="preserve">
-    <value>메시지 미리보기</value>
   </data>
   <data name="lng_settings_show_sessions" xml:space="preserve">
     <value>모든 세션 보기</value>

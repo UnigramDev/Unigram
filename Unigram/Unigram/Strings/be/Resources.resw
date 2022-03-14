@@ -18675,9 +18675,6 @@ https://telegram.org/blog/coronavirus</value>
   <data name="lng_mediaview_date_time" xml:space="preserve">
     <value>{date} а {time}</value>
   </data>
-  <data name="lng_mediaview_downloads" xml:space="preserve">
-    <value>Спампоўкі</value>
-  </data>
   <data name="lng_mediaview_file_n_of_amount" xml:space="preserve">
     <value>{file} {n} з {amount}</value>
   </data>
@@ -20433,9 +20430,6 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="lng_settings_show_name" xml:space="preserve">
     <value>Адлюстроўваць імя адпраўніка</value>
-  </data>
-  <data name="lng_settings_show_preview" xml:space="preserve">
-    <value>Перадпрагляд паведамлення</value>
   </data>
   <data name="lng_settings_show_sessions" xml:space="preserve">
     <value>Паказаць усе сеансы</value>

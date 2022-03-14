@@ -18864,9 +18864,6 @@ Bilgisayarınıza zarar verebilir.
   <data name="lng_mediaview_date_time" xml:space="preserve">
     <value>{date} {time}</value>
   </data>
-  <data name="lng_mediaview_downloads" xml:space="preserve">
-    <value>İndirilenler</value>
-  </data>
   <data name="lng_mediaview_file_n_of_amount" xml:space="preserve">
     <value>{file} {n} / {amount}</value>
   </data>
@@ -20625,9 +20622,6 @@ istediğinizden emin misiniz?</value>
   </data>
   <data name="lng_settings_show_name" xml:space="preserve">
     <value>Gönderenin adını göster</value>
-  </data>
-  <data name="lng_settings_show_preview" xml:space="preserve">
-    <value>Mesaj önizlemesini göster</value>
   </data>
   <data name="lng_settings_show_sessions" xml:space="preserve">
     <value>Tüm oturumları göster</value>

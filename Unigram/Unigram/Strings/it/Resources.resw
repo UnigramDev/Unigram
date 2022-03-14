@@ -3975,7 +3975,7 @@ Cancella i log</value>
     <value>Verifica aggiornamenti</value>
   </data>
   <data name="DebugMenuClearMediaCache" xml:space="preserve">
-    <value>Vuota cache dei media inviati</value>
+    <value>Svuota cache dei media inviati</value>
   </data>
   <data name="DebugMenuDisableCamera" xml:space="preserve">
     <value>Disattiva fotocamera in-app</value>
@@ -18945,9 +18945,6 @@ Vuoi davvero avviarlo?</value>
   <data name="lng_mediaview_date_time" xml:space="preserve">
     <value>{date} alle {time}</value>
   </data>
-  <data name="lng_mediaview_downloads" xml:space="preserve">
-    <value>Download</value>
-  </data>
   <data name="lng_mediaview_file_n_of_amount" xml:space="preserve">
     <value>{file} {n} di {amount}</value>
   </data>
@@ -20704,9 +20701,6 @@ tutte le altre sessioni?</value>
   </data>
   <data name="lng_settings_show_name" xml:space="preserve">
     <value>Mostra nome del mittente</value>
-  </data>
-  <data name="lng_settings_show_preview" xml:space="preserve">
-    <value>Mostra anteprima messaggio</value>
   </data>
   <data name="lng_settings_show_sessions" xml:space="preserve">
     <value>Mostra tutte le sessioni</value>
