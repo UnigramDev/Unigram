@@ -18899,9 +18899,6 @@ Tem certeza de que deseja executar?</value>
   <data name="lng_mediaview_date_time" xml:space="preserve">
     <value>{date} às {time}</value>
   </data>
-  <data name="lng_mediaview_downloads" xml:space="preserve">
-    <value>Downloads</value>
-  </data>
   <data name="lng_mediaview_file_n_of_amount" xml:space="preserve">
     <value>{file} {n} de {amount}</value>
   </data>
@@ -20661,9 +20658,6 @@ todas as outras sessões?</value>
   </data>
   <data name="lng_settings_show_name" xml:space="preserve">
     <value>Mostrar nome de quem enviou</value>
-  </data>
-  <data name="lng_settings_show_preview" xml:space="preserve">
-    <value>Mostrar prévia da mensagem</value>
   </data>
   <data name="lng_settings_show_sessions" xml:space="preserve">
     <value>Exibir todas as sessões</value>

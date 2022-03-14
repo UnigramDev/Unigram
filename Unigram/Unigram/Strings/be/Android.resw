@@ -306,7 +306,7 @@
   </data>
   <data name="AccDescrReactionMentionDown" xml:space="preserve">
     <value>Перайсці да наступных непрачытаных рэакцый</value>
-  </data> 
+  </data>
   <data name="AccDescrReceivedDate" xml:space="preserve">
     <value>Атрымана {0}</value>
   </data>

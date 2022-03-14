@@ -18951,9 +18951,6 @@ Podría dañar tu computadora.
   <data name="lng_mediaview_date_time" xml:space="preserve">
     <value>{date} a las {time}</value>
   </data>
-  <data name="lng_mediaview_downloads" xml:space="preserve">
-    <value>Descargas</value>
-  </data>
   <data name="lng_mediaview_file_n_of_amount" xml:space="preserve">
     <value>{file} {n} de {amount}</value>
   </data>
@@ -20710,9 +20707,6 @@ las demás sesiones?</value>
   </data>
   <data name="lng_settings_show_name" xml:space="preserve">
     <value>Mostrar nombre del remitente</value>
-  </data>
-  <data name="lng_settings_show_preview" xml:space="preserve">
-    <value>Mostrar la vista previa del mensaje</value>
   </data>
   <data name="lng_settings_show_sessions" xml:space="preserve">
     <value>Mostrar todas las sesiones</value>

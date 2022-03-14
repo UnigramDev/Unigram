@@ -3816,7 +3816,10 @@
     <value>إنشاء رمز للقفل</value>
   </data>
   <data name="CreatePasscodeInfoPassword" xml:space="preserve">
-    <value>يرجى إدخال كلمة القفل التي سيتم استخدامها في إلغاء قفل تيليجرام.</value>
+    <value>يرجى إدخال كلمة المرور التي ستُستخدَم لفتح قفل تيليجرام.</value>
+  </data>
+  <data name="CreatePasscodeInfoPIN" xml:space="preserve">
+    <value>يرجى إدخال أي 4 أرقام والتي ستُستخدَم لفتح قفل تيليجرام.</value>
   </data>
   <data name="CreatePassword" xml:space="preserve">
     <value>إنشاء كلمة مرور</value>
@@ -4917,7 +4920,7 @@
     <value>يرجى إدخال رمز قفل تيليجرام الحالي لإدارة هذا الخيار.</value>
   </data>
   <data name="EnterYourTelegramPasscode" xml:space="preserve">
-    <value>أدخل رمز قفلك في تيليجرام</value>
+    <value>يرجى إدخال رمز قفلك في تيليجرام</value>
   </data>
   <data name="ErrorOccurred" xml:space="preserve">
     <value>حدث خطأ ما.</value>
@@ -8597,6 +8600,9 @@
 
 يرجى التأكد من إدخالك الرابط الصحيح للخادم ومفتاح البث في التطبيق.</value>
   </data>
+  <data name="NoRtmpStreamFromAppViewer" xml:space="preserve">
+    <value>لا تنشر ⁨{0}⁩ في الوقت الحالي أي بث مباشر إلى تيليجرام.</value>
+  </data>
   <data name="NoScheduledMessages" xml:space="preserve">
     <value>ما من رسائل مجدولة هنا بعد...</value>
   </data>
@@ -10495,11 +10501,26 @@
   <data name="PermissionNoCameraWithHint" xml:space="preserve">
     <value>يحتاج تيليجرام الوصول إلى الكاميرا لتتمكنوا من التقاط الصور والمقاطع المرئية. يرجى تمكين **الكاميرا** في إعدادات الهاتف &gt; الأذونات.</value>
   </data>
+  <data name="PermissionNoContactsSharing" xml:space="preserve">
+    <value>يحتاج **تيليجرام** الوصول إلى جهات الاتصال كي تتمكنوا من مشاركتها مع أصدقائكم. يرجى تمكين **جهات الاتصال** في إعدادات الهاتف &gt; الأذونات.</value>
+  </data>
   <data name="PermissionNoLocation" xml:space="preserve">
     <value>يحتاج تيليجرام إلى السماح له بتحديد موقعك لتتمكن من مشاركته مع أصدقائك.</value>
   </data>
+  <data name="PermissionNoLocationFriends" xml:space="preserve">
+    <value>يحتاج **تيليجرام** الوصول إلى الموقع لتتمكنوا من مشاركته مع أصدقائكم. يرجى تمكين **الموقع** في إعدادات الهاتف &gt; الأذونات.</value>
+  </data>
+  <data name="PermissionNoLocationNavigation" xml:space="preserve">
+    <value>يحتاج **تيليجرام** الوصول إلى الموقع لتتمكنوا من معرفة الاتجاهات. يرجى تمكين **الموقع** في إعدادات الهاتف &gt; الأذونات.</value>
+  </data>
+  <data name="PermissionNoLocationPeopleNearby" xml:space="preserve">
+    <value>يحتاج **تيليجرام** الوصول إلى الموقع لتتمكنوا من إيجاد الأشخاص القريبين. يرجى تشغيل **الموقع** في إعدادات الهاتف &gt; الأذونات.</value>
+  </data>
   <data name="PermissionNoLocationPosition" xml:space="preserve">
     <value>يحتاج تيليجرام إلى صلاحية تحديد موقعك.</value>
+  </data>
+  <data name="PermissionNoStorageAvatar" xml:space="preserve">
+    <value>يحتاج تيليجرام الوصول إلى التخزين لتتمكنوا من تعيين صور أو مقاطع مرئية للملف الشخصي. يرجى تمكين **الملفات والوسائط** في إعدادات الهاتف &gt; الأذونات.</value>
   </data>
   <data name="PermissionOpenSettings" xml:space="preserve">
     <value>الإعدادات</value>
@@ -10745,7 +10766,7 @@
     <value>إدخال كلمة مرور جديدة</value>
   </data>
   <data name="PleaseEnterNewFirstPasswordLogin" xml:space="preserve">
-    <value>يمكنك الآن تعيين كلمة مرور جديدة؛ لاستخدامها عند تسجيل الدخول إلى حسابك. </value>
+    <value>يمكنك الآن تعيين كلمة مرور جديدة لاستخدامها عند تسجيل الدخول إلى حسابك. </value>
   </data>
   <data name="PleaseEnterNewSecondPasswordHint" xml:space="preserve">
     <value>إعادة إدخال كلمة المرور الجديدة</value>
@@ -11675,6 +11696,24 @@
     <value>هل تريدون إزالة هذين العنصرين من التنزيلات؟</value>
   </data>
   <data name="RemoveDocumentsMessage_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="RemoveDocumentsTitle_few" xml:space="preserve">
+    <value>إزالة ⁨%d⁩ ملفات</value>
+  </data>
+  <data name="RemoveDocumentsTitle_many" xml:space="preserve">
+    <value>إزالة ⁨%d⁩ ملفًا</value>
+  </data>
+  <data name="RemoveDocumentsTitle_one" xml:space="preserve">
+    <value>إزالة ملف</value>
+  </data>
+  <data name="RemoveDocumentsTitle_other" xml:space="preserve">
+    <value>إزالة ⁨%d⁩ ملفٍ</value>
+  </data>
+  <data name="RemoveDocumentsTitle_two" xml:space="preserve">
+    <value>إزالة ملفين</value>
+  </data>
+  <data name="RemoveDocumentsTitle_zero" xml:space="preserve">
     <value/>
   </data>
   <data name="RemovedUser_few" xml:space="preserve">
@@ -15388,6 +15427,9 @@
   </data>
   <data name="VoipNeedMicPermission" xml:space="preserve">
     <value>يحتاج تيليجرام إلى استخدام الميكروفون من أجل إجراء المكالمات.</value>
+  </data>
+  <data name="VoipNeedMicPermissionWithHint" xml:space="preserve">
+    <value>يحتاج **تيليجرام** الوصول إلى المايكروفون لتتمكنوا من إجراء المكالمات. يرجى تشغيل **المايكروفون** في إعدادات الهاتف &gt; الأذونات.</value>
   </data>
   <data name="VoipNoiseCancellation" xml:space="preserve">
     <value>تقليل الضوضاء</value>

@@ -1063,6 +1063,12 @@ a: {1}</value>
   <data name="Allow" xml:space="preserve">
     <value>Permet</value>
   </data>
+  <data name="AllowBackgroundActivity" xml:space="preserve">
+    <value>Permet l'activitat en segon pla</value>
+  </data>
+  <data name="AllowBackgroundActivityInfo" xml:space="preserve">
+    <value>Això millorarà la fiabilitat de les notificacions entrants i de les trucades de Telegram.</value>
+  </data>
   <data name="AllowCustomQuickReply" xml:space="preserve">
     <value>Permet personalitzar</value>
   </data>
@@ -2323,6 +2329,9 @@ Ocàs: {1}</value>
   <data name="CallAlertTitle" xml:space="preserve">
     <value>Trucada</value>
   </data>
+  <data name="CallAvailableIn" xml:space="preserve">
+    <value>Podeu demanar una trucada en {0}:%2$02d</value>
+  </data>
   <data name="CallBack" xml:space="preserve">
     <value>Torna la trucada</value>
   </data>
@@ -2453,6 +2462,9 @@ Si no en sabeu res, introduïu el codi que us hem enviat per SMS. També ho pode
   <data name="CancelLinkSuccess" xml:space="preserve">
     <value>S'ha cancel·lat el procés d'eliminació del compte {0}. Podeu tancar aquesta finestra.</value>
   </data>
+  <data name="CancelLinkSuccessTitle" xml:space="preserve">
+    <value>Correcte</value>
+  </data>
   <data name="CancelPasswordQuestion" xml:space="preserve">
     <value>Segur que voleu interrompre la configuració de la verificació en dos passos?</value>
   </data>
@@ -2529,9 +2541,12 @@ Si no en sabeu res, introduïu el codi que us hem enviat per SMS. També ho pode
     <value>Canvia el codi d'accés</value>
   </data>
   <data name="ChangePasscodeInfo" xml:space="preserve">
-    <value>En introduir un codi d'accés addicional, apareixerà la icona d'un cadenat a la pàgina de xats. Toqueu-la per blocar i desblocar l'aplicació.
+    <value>En establir un codi d'accés addicional, apareixerà la icona d'un cadenat a la pàgina de xats. Toqueu-la per blocar i desblocar l'aplicació.
 
-Nota: Si oblideu el codi d'accés haureu d'eliminar i reinstal·lar l'aplicació. Es perdran tots els xats secrets.</value>
+Nota: Si oblideu el codi d'accés, haureu d'eliminar i reinstal·lar l'aplicació. Es perdran tots els xats secrets.</value>
+  </data>
+  <data name="ChangePasscodeInfoShort" xml:space="preserve">
+    <value>En establir un codi d'accés, apareixerà la icona d'un cadenat a la pàgina de xats. Toqueu-la per blocar i desblocar l'aplicació.</value>
   </data>
   <data name="ChangePassword" xml:space="preserve">
     <value>Canvia la contrasenya</value>
@@ -3338,6 +3353,9 @@ Longitud mínima: 5 caràcters.</value>
   <data name="ChromeCustomTabsInfo" xml:space="preserve">
     <value>Obre els enllaços dins l'aplicació</value>
   </data>
+  <data name="Clear" xml:space="preserve">
+    <value>Esborra</value>
+  </data>
   <data name="ClearButton" xml:space="preserve">
     <value>Esborra</value>
   </data>
@@ -3349,6 +3367,9 @@ Longitud mínima: 5 caràcters.</value>
   </data>
   <data name="ClearCacheInfo" xml:space="preserve">
     <value>Allibereu espai intern al dispositiu; els fitxers romandran al núvol.</value>
+  </data>
+  <data name="ClearDownloadsList" xml:space="preserve">
+    <value>Esborra la llista de baixades</value>
   </data>
   <data name="ClearFewChatsTitle" xml:space="preserve">
     <value>Esborra {0}</value>
@@ -3781,6 +3802,18 @@ Sempre podreu tornar al tema predeterminat de Telegram aquí.</value>
   <data name="CreateNewThemeMenu" xml:space="preserve">
     <value>Crea un tema nou</value>
   </data>
+  <data name="CreatePasscode" xml:space="preserve">
+    <value>Creació d'un codi</value>
+  </data>
+  <data name="CreatePasscodeInfoPassword" xml:space="preserve">
+    <value>Introduïu la contrasenya amb què desblocareu el Telegram.</value>
+  </data>
+  <data name="CreatePasscodeInfoPIN" xml:space="preserve">
+    <value>Introduïu quatre dígits qualssevol amb què desblocareu el Telegram.</value>
+  </data>
+  <data name="CreatePassword" xml:space="preserve">
+    <value>Crea una contrasenya</value>
+  </data>
   <data name="CreateTheme" xml:space="preserve">
     <value>CREA UN TEMA</value>
   </data>
@@ -3943,6 +3976,9 @@ Sempre podreu tornar al tema predeterminat de Telegram aquí.</value>
   <data name="DebugMenuDisableCamera" xml:space="preserve">
     <value>Desactiva la càmera en l'aplicació</value>
   </data>
+  <data name="DebugMenuDisableForceRtmpStreamFlag" xml:space="preserve">
+    <value>Desactiva la transmissió RTMP forçada</value>
+  </data>
   <data name="DebugMenuDisableLogs" xml:space="preserve">
     <value>Desactiva el registre</value>
   </data>
@@ -3954,6 +3990,9 @@ Sempre podreu tornar al tema predeterminat de Telegram aquí.</value>
   </data>
   <data name="DebugMenuEnableCamera" xml:space="preserve">
     <value>Activa la càmera en l'aplicació</value>
+  </data>
+  <data name="DebugMenuEnableForceRtmpStreamFlag" xml:space="preserve">
+    <value>Activa la transmissió RTMP forçada</value>
   </data>
   <data name="DebugMenuEnableLogs" xml:space="preserve">
     <value>Activa el registre</value>
@@ -4288,6 +4327,13 @@ Sempre podreu tornar al tema predeterminat de Telegram aquí.</value>
   <data name="DidNotGetTheCodeHelpButton" xml:space="preserve">
     <value>Ajuda</value>
   </data>
+  <data name="DidNotGetTheCodeInfo" xml:space="preserve">
+    <value>Si no heu rebut el codi per SMS ni trucada, comproveu la **configuració de dades mòbils** i el número de telèfon:
+
+**{0}**
+
+Les opcions disponibles són provar un altre número o parlar amb l'assistència del Telegram. Toqueu **Ajuda** per enviar-nos detalls tècnics i poder identificar el problema.</value>
+  </data>
   <data name="DidNotGetTheCodePhone" xml:space="preserve">
     <value>Obteniu el codi en aquest telèfon</value>
   </data>
@@ -4304,6 +4350,15 @@ Sempre podreu tornar al tema predeterminat de Telegram aquí.</value>
     <value>Mostra els xats recents al menú Compartir</value>
   </data>
   <data name="Disable" xml:space="preserve">
+    <value>Desactiva</value>
+  </data>
+  <data name="DisablePasscode" xml:space="preserve">
+    <value>Desactiva el codi d'accés</value>
+  </data>
+  <data name="DisablePasscodeConfirmMessage" xml:space="preserve">
+    <value>Segur que voleu desactivar el codi d'accés?</value>
+  </data>
+  <data name="DisablePasscodeTurnOff" xml:space="preserve">
     <value>Desactiva</value>
   </data>
   <data name="DisappearingGif" xml:space="preserve">
@@ -4453,6 +4508,18 @@ Qualsevol subscriptor podrà veure els missatges d'aquest grup.</value>
   </data>
   <data name="DoubleTapSetting" xml:space="preserve">
     <value>Reacció ràpida</value>
+  </data>
+  <data name="DownloadedFiles" xml:space="preserve">
+    <value>Fitxers baixats</value>
+  </data>
+  <data name="DownloadedFilesMessage" xml:space="preserve">
+    <value>El Telegram us permet desar al núvol tots els documents enviats i rebuts i estalviar espai al dispositiu.</value>
+  </data>
+  <data name="Downloading" xml:space="preserve">
+    <value>En curs</value>
+  </data>
+  <data name="DownloadsTabs" xml:space="preserve">
+    <value>Baixades</value>
   </data>
   <data name="Draft" xml:space="preserve">
     <value>Esborrany</value>
@@ -4616,6 +4683,13 @@ Qualsevol subscriptor podrà veure els missatges d'aquest grup.</value>
   <data name="EditNumber" xml:space="preserve">
     <value>Edita el número</value>
   </data>
+  <data name="EditNumberInfo" xml:space="preserve">
+    <value>Voleu editar el número?
+
+**{0}**
+
+Si el número de dalt és correcte, espereu el codi de verificació.</value>
+  </data>
   <data name="EditPhoto" xml:space="preserve">
     <value>Obre a l'editor</value>
   </data>
@@ -4726,6 +4800,9 @@ Si no seleccioneu ningú, es mostraran els vostres contactes més freqüents.</v
     <value>Heu activat la verificació en dos passos.
 Us caldrà la contrasenya que heu indicat aquí per a iniciar sessió al Telegram.</value>
   </data>
+  <data name="EnablePasscode" xml:space="preserve">
+    <value>Activa el codi d'accés</value>
+  </data>
   <data name="EnableProxyAlert" xml:space="preserve">
     <value>Segur que voleu activar aquest servidor intermediari?</value>
   </data>
@@ -4819,6 +4896,9 @@ Més informació a telegram.org</value>
   </data>
   <data name="EnterNewPasscode" xml:space="preserve">
     <value>Introduïu un codi d'accés nou</value>
+  </data>
+  <data name="EnterPassword" xml:space="preserve">
+    <value>Introduïu la contrasenya</value>
   </data>
   <data name="EnterThemeName" xml:space="preserve">
     <value>Introduïu el nom del tema</value>
@@ -5640,11 +5720,32 @@ Durada: {1}</value>
   <data name="ForceSetPasswordAlertMessage_zero" xml:space="preserve">
     <value />
   </data>
+  <data name="ForceSetPasswordAlertMessageShort_few" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ForceSetPasswordAlertMessageShort_many" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ForceSetPasswordAlertMessageShort_one" xml:space="preserve">
+    <value>Si no establiu una contrasenya, només podreu iniciar sessió via SMS una vegada al dia. Voleu continuar sense contrasenya?</value>
+  </data>
+  <data name="ForceSetPasswordAlertMessageShort_other" xml:space="preserve">
+    <value>Si no establiu una contrasenya, només podreu iniciar sessió via SMS una vegada cada {0} dies. Voleu continuar sense contrasenya?</value>
+  </data>
+  <data name="ForceSetPasswordAlertMessageShort_two" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ForceSetPasswordAlertMessageShort_zero" xml:space="preserve">
+    <value />
+  </data>
   <data name="ForceSetPasswordCancel" xml:space="preserve">
     <value>Sí, endavant</value>
   </data>
   <data name="ForceSetPasswordContinue" xml:space="preserve">
     <value>No, vull definir una contrasenya</value>
+  </data>
+  <data name="ForgotPasscode" xml:space="preserve">
+    <value>Heu oblidat el codi?</value>
   </data>
   <data name="ForgotPasscodeInfo" xml:space="preserve">
     <value>Si oblideu el codi d'accés, haureu d'eliminar i reinstal·lar l'aplicació.
@@ -6061,6 +6162,9 @@ Es perdran tots els xats secrets.</value>
   </data>
   <data name="GIFs_zero" xml:space="preserve">
     <value />
+  </data>
+  <data name="GifSavedHint" xml:space="preserve">
+    <value>S'ha afegit als GIF desats</value>
   </data>
   <data name="GifSavedToDownloadsHint" xml:space="preserve">
     <value>S'ha desat el GIF a «Baixades»</value>
@@ -7310,6 +7414,9 @@ Això pot trigar uns minuts.</value>
   <data name="LoginPasswordText" xml:space="preserve">
     <value>Heu activat la verificació en dos passos. El compte s'ha protegit amb una contrasenya addicional.</value>
   </data>
+  <data name="LoginPasswordTextShort" xml:space="preserve">
+    <value>La verificació en dos passos està activada. El compte està protegit amb una contrasenya addicional.</value>
+  </data>
   <data name="LogOut" xml:space="preserve">
     <value>Tanca la sessió</value>
   </data>
@@ -7317,7 +7424,7 @@ Això pot trigar uns minuts.</value>
     <value>En tancar la sessió perdreu tots els xats secrets.</value>
   </data>
   <data name="LogOutTitle" xml:space="preserve">
-    <value>Desconnexió</value>
+    <value>Tanca la sessió</value>
   </data>
   <data name="Long" xml:space="preserve">
     <value>Llarga</value>
@@ -7377,6 +7484,9 @@ Ningú no veurà el vostre telèfon.</value>
   </data>
   <data name="ManageChannelMenu" xml:space="preserve">
     <value>Gestiona el canal</value>
+  </data>
+  <data name="ManageDeviceStorage" xml:space="preserve">
+    <value>Gestiona l'emmagatzematge</value>
   </data>
   <data name="ManageGroup" xml:space="preserve">
     <value>Gestiona el grup</value>
@@ -8421,6 +8531,14 @@ d'unió al grup.</value>
   <data name="NoResult" xml:space="preserve">
     <value>Cap resultat</value>
   </data>
+  <data name="NoRtmpStreamFromAppOwner" xml:space="preserve">
+    <value>**Ep!** El Telegram no detecta cap transmissió entrant.
+
+Comproveu que heu introduït l'URL del servidor i la clau de transmissió correctes en la vostra aplicació.</value>
+  </data>
+  <data name="NoRtmpStreamFromAppViewer" xml:space="preserve">
+    <value>{0} no està transmetent ara mateix cap directe al Telegram.</value>
+  </data>
   <data name="NoScheduledMessages" xml:space="preserve">
     <value>Encara no hi ha cap missatge programat...</value>
   </data>
@@ -9343,11 +9461,29 @@ la mida dels vostres fitxers i xats.</value>
   <data name="PasscodeDoNotMatch" xml:space="preserve">
     <value>Els codis d'accés no concorden</value>
   </data>
+  <data name="PasscodeFinish" xml:space="preserve">
+    <value>Estableix un codi d'accés</value>
+  </data>
   <data name="PasscodePassword" xml:space="preserve">
     <value>Contrasenya</value>
   </data>
   <data name="PasscodePIN" xml:space="preserve">
     <value>PIN</value>
+  </data>
+  <data name="PasscodeReinstallNotice" xml:space="preserve">
+    <value>Si oblideu el codi d'accés, haureu de **reinstal·lar** l'aplicació. Es perdran tots els xats secrets.</value>
+  </data>
+  <data name="PasscodeScreenHint" xml:space="preserve">
+    <value>Toqueu la icona del cadenat a la pàgina de xats per a blocar l'aplicació.</value>
+  </data>
+  <data name="PasscodesDoNotMatchTryAgain" xml:space="preserve">
+    <value>Els codis d'accés no concorden. Torneu a provar-ho.</value>
+  </data>
+  <data name="PasscodeSwitchToPassword" xml:space="preserve">
+    <value>Canvia a una contrasenya</value>
+  </data>
+  <data name="PasscodeSwitchToPIN" xml:space="preserve">
+    <value>Canvia a un PIN</value>
   </data>
   <data name="PassportAddAddressUploadInfo" xml:space="preserve">
     <value>Per confirmar la vostra adreça, escanegeu (o feu-ne una foto) i pugeu els documents seleccionats (totes les pàgines).</value>
@@ -9932,6 +10068,9 @@ Podeu visitar les *PMF* per a més informació.</value>
   <data name="PasswordHint" xml:space="preserve">
     <value>Pista de la contrasenya</value>
   </data>
+  <data name="PasswordHintDescription" xml:space="preserve">
+    <value>Podeu crear una pista opcional per a la contrasenya.</value>
+  </data>
   <data name="PasswordHintPlaceholder" xml:space="preserve">
     <value>Pista</value>
   </data>
@@ -9955,6 +10094,9 @@ Podeu visitar les *PMF* per a més informació.</value>
   </data>
   <data name="PasteFromClipboard" xml:space="preserve">
     <value>Enganxa del porta-retalls</value>
+  </data>
+  <data name="PauseAll" xml:space="preserve">
+    <value>Detén-ho tot</value>
   </data>
   <data name="PaymentBillingAddress" xml:space="preserve">
     <value>Adreça de facturació</value>
@@ -10276,20 +10418,50 @@ Hi accedirem només durant el temps que estipuleu, i ho podeu aturar en qualsevo
   <data name="PermissionNoAudioVideo" xml:space="preserve">
     <value>Telegram necessita accedir al micròfon perquè pugueu enviar missatges de veu.</value>
   </data>
+  <data name="PermissionNoAudioVideoWithHint" xml:space="preserve">
+    <value>El **Telegram** necessita accés al micròfon perquè pugueu enviar missatges de veu. Toqueu Configuració &gt; Permisos, i activeu **Micròfon**.</value>
+  </data>
+  <data name="PermissionNoAudioWithHint" xml:space="preserve">
+    <value>El **Telegram** necessita accés al micròfon perquè pugueu enviar missatges de veu. Toqueu Configuració &gt; Permisos, i activeu **Micròfon**.</value>
+  </data>
   <data name="PermissionNoCamera" xml:space="preserve">
     <value>El Telegram necessita accedir a la càmera perquè pugueu fer fotos i vídeos. Activeu-la en la configuració.</value>
+  </data>
+  <data name="PermissionNoCameraMicVideo" xml:space="preserve">
+    <value>El **Telegram** necessita accés a la càmera i al micròfon perquè pugueu enviar missatges de vídeo. Toqueu Configuració &gt; Permisos, i activeu **Fitxers i multimèdia**.</value>
+  </data>
+  <data name="PermissionNoCameraWithHint" xml:space="preserve">
+    <value>El **Telegram** necessita accés a la càmera perquè pugueu fer fotos i vídeos. Toqueu Configuració &gt; Permisos, i activeu **Càmera**.</value>
+  </data>
+  <data name="PermissionNoContactsSharing" xml:space="preserve">
+    <value>El **Telegram** necessita accés als contactes perquè pugueu compartir-ne amb amics. Toqueu Configuració &gt; Permisos, i activeu **Contactes**.</value>
   </data>
   <data name="PermissionNoLocation" xml:space="preserve">
     <value>El Telegram necessita accedir a la ubicació perquè la pugueu compartir amb els amics.</value>
   </data>
+  <data name="PermissionNoLocationFriends" xml:space="preserve">
+    <value>El **Telegram** necessita accés a la ubicació perquè pugueu compartir-la amb els contactes. Toqueu Configuració &gt; Permisos, i activeu **Ubicació**.</value>
+  </data>
+  <data name="PermissionNoLocationNavigation" xml:space="preserve">
+    <value>El **Telegram** necessita accés a la ubicació perquè pugueu obtenir indicacions. Toqueu Configuració &gt; Permisos, i activeu **Ubicació**.</value>
+  </data>
+  <data name="PermissionNoLocationPeopleNearby" xml:space="preserve">
+    <value>El **Telegram** necessita accés a la ubicació perquè pugueu trobar gent propera. Toqueu Configuració &gt; Permisos, i activeu **Ubicació**.</value>
+  </data>
   <data name="PermissionNoLocationPosition" xml:space="preserve">
     <value>El Telegram necessita accedir a la ubicació.</value>
+  </data>
+  <data name="PermissionNoStorageAvatar" xml:space="preserve">
+    <value>El **Telegram** necessita accés a l'emmagatzematge perquè pugueu pujar fotos o vídeos de perfil. Toqueu Configuració &gt; Permisos, i activeu **Fitxers i multimèdia**.</value>
   </data>
   <data name="PermissionOpenSettings" xml:space="preserve">
     <value>CONFIGURACIÓ</value>
   </data>
   <data name="PermissionStorage" xml:space="preserve">
     <value>El Telegram necessita accedir a l'emmagatzematge perquè pugueu enviar i desar fotos, vídeos, música, etc.</value>
+  </data>
+  <data name="PermissionStorageWithHint" xml:space="preserve">
+    <value>El **Telegram** necessita accés a l'emmagatzematge perquè pugueu enviar i desar fotos, vídeos, música i altres fitxers. Toqueu Configuració &gt; Permisos, i activeu **Fitxers i multimèdia**.</value>
   </data>
   <data name="PermissionXiaomiLockscreen" xml:space="preserve">
     <value>Permeteu al Telegram mostrar-se a la pantalla de bloqueig perquè les trucades funcionin correctament.</value>
@@ -11209,6 +11381,9 @@ Hi accedirem només durant el temps que estipuleu, i ho podeu aturar en qualsevo
   <data name="QRCodePermissionNoCamera" xml:space="preserve">
     <value>El Telegram necessita accedir a la càmera perquè pugueu escanejar codis QR.</value>
   </data>
+  <data name="QRCodePermissionNoCameraWithHint" xml:space="preserve">
+    <value>El **Telegram** necessita accés a la càmera perquè pugueu escanejar codis QR. Toqueu Configuració &gt; Permisos, i activeu **Càmera**.</value>
+  </data>
   <data name="Question" xml:space="preserve">
     <value>Pregunta</value>
   </data>
@@ -11323,6 +11498,12 @@ Hi accedirem només durant el temps que estipuleu, i ho podeu aturar en qualsevo
   <data name="ReactionsOff" xml:space="preserve">
     <value>Desactivades</value>
   </data>
+  <data name="ReadAllMentions" xml:space="preserve">
+    <value>Marca-ho com a vist</value>
+  </data>
+  <data name="ReadAllReactions" xml:space="preserve">
+    <value>Marca-ho com a vist</value>
+  </data>
   <data name="Recent" xml:space="preserve">
     <value>Recent</value>
   </data>
@@ -11331,6 +11512,9 @@ Hi accedirem només durant el temps que estipuleu, i ho podeu aturar en qualsevo
   </data>
   <data name="RecentFilesAZ" xml:space="preserve">
     <value>Fitxers A-Z</value>
+  </data>
+  <data name="RecentlyDownloaded" xml:space="preserve">
+    <value>Baixat fa poc</value>
   </data>
   <data name="RecentlyViewed" xml:space="preserve">
     <value>Vistos fa poc</value>
@@ -11383,6 +11567,9 @@ Hi accedirem només durant el temps que estipuleu, i ho podeu aturar en qualsevo
   <data name="Red" xml:space="preserve">
     <value>Vermell</value>
   </data>
+  <data name="ReEnterPassword" xml:space="preserve">
+    <value>Torneu a introduir-la</value>
+  </data>
   <data name="ReEnterYourPasscode" xml:space="preserve">
     <value>Torneu a introduir el codi d'accés nou</value>
   </data>
@@ -11424,6 +11611,42 @@ Hi accedirem només durant el temps que estipuleu, i ho podeu aturar en qualsevo
   </data>
   <data name="RemovedFromRecent" xml:space="preserve">
     <value>S'ha eliminat l'adhesiu dels recents</value>
+  </data>
+  <data name="RemoveDocumentsMessage_few" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RemoveDocumentsMessage_many" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RemoveDocumentsMessage_one" xml:space="preserve">
+    <value>Voleu eliminar aquest ítem de les Baixades?</value>
+  </data>
+  <data name="RemoveDocumentsMessage_other" xml:space="preserve">
+    <value>Voleu eliminar aquests **%d ítems** de les Baixades?</value>
+  </data>
+  <data name="RemoveDocumentsMessage_two" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RemoveDocumentsMessage_zero" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RemoveDocumentsTitle_few" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RemoveDocumentsTitle_many" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RemoveDocumentsTitle_one" xml:space="preserve">
+    <value>Elimina %d baixada</value>
+  </data>
+  <data name="RemoveDocumentsTitle_other" xml:space="preserve">
+    <value>Elimina %d baixades</value>
+  </data>
+  <data name="RemoveDocumentsTitle_two" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RemoveDocumentsTitle_zero" xml:space="preserve">
+    <value />
   </data>
   <data name="RemovedUser_few" xml:space="preserve">
     <value />
@@ -11602,8 +11825,17 @@ Gràcies per cooperar!</value>
   <data name="ReportUserLocation" xml:space="preserve">
     <value>Notifica</value>
   </data>
+  <data name="RequestCallButton" xml:space="preserve">
+    <value>Truca'm per a dictar-me el codi</value>
+  </data>
   <data name="RequestedToJoinAt" xml:space="preserve">
     <value>data de sol·licitud: {0}</value>
+  </data>
+  <data name="RequestMissedCall" xml:space="preserve">
+    <value>Rep el codi amb una trucada</value>
+  </data>
+  <data name="RequestSmsButton" xml:space="preserve">
+    <value>Rep el codi amb un SMS</value>
   </data>
   <data name="RequestToJoinChannel" xml:space="preserve">
     <value>Sol·licita accés al canal</value>
@@ -11723,6 +11955,9 @@ Si restabliu el compte, tots els vostres missatges i xats s'eliminaran.</value>
   <data name="ResetStatisticsAlertTitle" xml:space="preserve">
     <value>Restableix les estadístiques</value>
   </data>
+  <data name="RestoreEmailNoAccess" xml:space="preserve">
+    <value>No podeu accedir a {0}?</value>
+  </data>
   <data name="RestoreEmailSent" xml:space="preserve">
     <value>Hem enviat un codi de recuperació a l'adreça que heu indicat:
 
@@ -11796,6 +12031,9 @@ Si restabliu el compte, tots els vostres missatges i xats s'eliminaran.</value>
   </data>
   <data name="RestrictSavingContentInfoGroup" xml:space="preserve">
     <value>Ningú podrà copiar, desar ni reenviar el contingut d'aquest grup.</value>
+  </data>
+  <data name="ResumeAll" xml:space="preserve">
+    <value>Reprèn-ho tot</value>
   </data>
   <data name="Retry" xml:space="preserve">
     <value>Reintenta</value>
@@ -11917,6 +12155,9 @@ El canal «**{1}**» es convertirà en privat.</value>
 
 Potse calgui reiniciar l'aplicació per a aplicar-ho.</value>
   </data>
+  <data name="ScreenCaptureHeader" xml:space="preserve">
+    <value>Contingut al commutador de tasques</value>
+  </data>
   <data name="ScreenCaptureInfo" xml:space="preserve">
     <value>En desactivar-la, no podreu fer captures de pantalla, però el contingut dels xats s’amagarà al commutador de tasques.</value>
   </data>
@@ -11940,6 +12181,9 @@ Potse calgui reiniciar l'aplicació per a aplicar-ho.</value>
   </data>
   <data name="SearchEmojiHint" xml:space="preserve">
     <value>Cerqueu emojis</value>
+  </data>
+  <data name="SearchEmptyViewDownloads" xml:space="preserve">
+    <value>No hi ha baixades recents</value>
   </data>
   <data name="SearchEmptyViewFilteredSubtitle2" xml:space="preserve">
     <value>Feu una altra cerca.</value>
@@ -12008,7 +12252,7 @@ Potse calgui reiniciar l'aplicació per a aplicar-ho.</value>
     <value>Missatges</value>
   </data>
   <data name="SearchMusic" xml:space="preserve">
-    <value>Cerca música</value>
+    <value>Cerqueu música</value>
   </data>
   <data name="SearchRecentFiles" xml:space="preserve">
     <value>Cerca fitxers recents</value>
@@ -12402,6 +12646,9 @@ No respongueu la trucada, el Telegram ho processarà tot automàticament.</value
   <data name="SetColor" xml:space="preserve">
     <value>Estableix un color</value>
   </data>
+  <data name="SetNewPassword" xml:space="preserve">
+    <value>Defineix una contrasenya nova</value>
+  </data>
   <data name="SetPasscode" xml:space="preserve">
     <value>Estableix un codi d’accés</value>
   </data>
@@ -12675,6 +12922,13 @@ No respongueu la trucada, el Telegram ho processarà tot automàticament.</value
   <data name="ShortMessageLifetimeForever" xml:space="preserve">
     <value>Desactivat</value>
   </data>
+  <data name="ShortNumberInfo" xml:space="preserve">
+    <value>El número que heu proporcionat és massa curt per a **{0}**:
+
+**{1}**
+
+Introduïu el número correcte incloent el codi de país.</value>
+  </data>
   <data name="ShowAllFiles" xml:space="preserve">
     <value>Mostra tots els fitxers</value>
   </data>
@@ -12815,6 +13069,9 @@ El mode lent està activat. No podeu enviar més d'un missatge alhora.</value>
   </data>
   <data name="SmartNotificationsInfo" xml:space="preserve">
     <value>{0} / {1}</value>
+  </data>
+  <data name="SmsAvailableIn" xml:space="preserve">
+    <value>Podeu demanar un SMS en {0}:%2$02d</value>
   </data>
   <data name="SmsText" xml:space="preserve">
     <value>Us enviarem un SMS en {0}:%2$02d</value>
@@ -13151,6 +13408,12 @@ Els anuncis no haurien de ser sinònim d’abús de la privadesa dels usuaris. R
   </data>
   <data name="Subscribers_zero" xml:space="preserve">
     <value />
+  </data>
+  <data name="SuggestClearDatabaseMessage" xml:space="preserve">
+    <value>La mida de la base de dades local és de {0}. Això pot afectar la velocitat de l'aplicació.</value>
+  </data>
+  <data name="SuggestClearDatabaseTitle" xml:space="preserve">
+    <value>Esborra la base de dades</value>
   </data>
   <data name="SuggestContacts" xml:space="preserve">
     <value>Suggeriments de contactes freqüents</value>
@@ -14375,6 +14638,27 @@ Podeu usar **a–z**, **0–9** i guions baixos. Longitud mínima: **5** caràct
   <data name="ViewDiscussion" xml:space="preserve">
     <value>Mostra el debat</value>
   </data>
+  <data name="ViewersWatching_few" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ViewersWatching_many" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ViewersWatching_one" xml:space="preserve">
+    <value>{0} espectador</value>
+  </data>
+  <data name="ViewersWatching_other" xml:space="preserve">
+    <value>{0} espectadors</value>
+  </data>
+  <data name="ViewersWatching_two" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ViewersWatching_zero" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ViewersWatchingNobody" xml:space="preserve">
+    <value>Cap espectador</value>
+  </data>
   <data name="ViewExceptions" xml:space="preserve">
     <value>Mostra les excepcions</value>
   </data>
@@ -14547,7 +14831,7 @@ Podeu usar **a–z**, **0–9** i guions baixos. Longitud mínima: **5** caràct
     <value>Voleu abandonar aquest directe?</value>
   </data>
   <data name="VoipChannelLeaveAlertTitle" xml:space="preserve">
-    <value>Sortida del directe</value>
+    <value>Abandona el directe</value>
   </data>
   <data name="VoipChannelOpenVoiceChat" xml:space="preserve">
     <value>Obre el directe</value>
@@ -14771,6 +15055,9 @@ Els participants nous només podran accedir a l'àudio.</value>
   <data name="VoipGroupEndedStartNew" xml:space="preserve">
     <value>El xat de vídeo ha finalitzat. Voleu iniciar-ne un altre?</value>
   </data>
+  <data name="VoipGroupExpandStream" xml:space="preserve">
+    <value>Amplia</value>
+  </data>
   <data name="VoipGroupInviteAlreadyParticipant" xml:space="preserve">
     <value>L'usuari seleccionat ja és al xat de vídeo.</value>
   </data>
@@ -14824,6 +15111,9 @@ Els participants nous només podran accedir a l'àudio.</value>
   </data>
   <data name="VoipGroupLeaveAlertTitle" xml:space="preserve">
     <value>Abandona el xat</value>
+  </data>
+  <data name="VoipGroupMinimizeStream" xml:space="preserve">
+    <value>Minimitza</value>
   </data>
   <data name="VoipGroupMute" xml:space="preserve">
     <value>Silencia</value>
@@ -15060,8 +15350,14 @@ Els altres participants veuran que el xat s'està enregistrant.</value>
   <data name="VoipNeedMicCameraPermission" xml:space="preserve">
     <value>El Telegram necessita accedir al micròfon i la càmera perquè pugueu fer videotrucades.</value>
   </data>
+  <data name="VoipNeedMicCameraPermissionWithHint" xml:space="preserve">
+    <value>El **Telegram** necessita accés a la càmera i al micròfon perquè pugueu fer vídeotrucades. Toqueu Configuració &gt; Permisos, i activeu **Càmera** i **Micròfon**.</value>
+  </data>
   <data name="VoipNeedMicPermission" xml:space="preserve">
     <value>El Telegram necessita accedir al micròfon perquè pugueu fer trucades.</value>
+  </data>
+  <data name="VoipNeedMicPermissionWithHint" xml:space="preserve">
+    <value>El **Telegram** necessita accés al micròfon perquè pugueu fer trucades. Toqueu Configuració &gt; Permisos, i activeu **Micròfon**.</value>
   </data>
   <data name="VoipNoiseCancellation" xml:space="preserve">
     <value>Supressió del soroll</value>
@@ -15372,6 +15668,12 @@ El vostre codi **no afectarà** els ginys de la pantalla d'inici.</value>
   <data name="WithinAWeek" xml:space="preserve">
     <value>vist fa uns dies</value>
   </data>
+  <data name="WrongCode" xml:space="preserve">
+    <value>Heu introduït un codi incorrecte. Torneu a intentar-ho.</value>
+  </data>
+  <data name="WrongCodeTitle" xml:space="preserve">
+    <value>Codi incorrecte</value>
+  </data>
   <data name="WrongCountry" xml:space="preserve">
     <value>El codi de país no és vàlid</value>
   </data>
@@ -15500,6 +15802,9 @@ Encara us recordeu de la contrasenya?</value>
   </data>
   <data name="YourPasswordRememberYes" xml:space="preserve">
     <value>Sí, per descomptat</value>
+  </data>
+  <data name="YourPasswordReset" xml:space="preserve">
+    <value>S'ha desactivat la contrasenya correctament.</value>
   </data>
   <data name="YourPasswordSuccess" xml:space="preserve">
     <value>Correcte!</value>
@@ -18552,9 +18857,6 @@ Segur que voleu executar-lo?</value>
   <data name="lng_mediaview_date_time" xml:space="preserve">
     <value>{date} a les {time}</value>
   </data>
-  <data name="lng_mediaview_downloads" xml:space="preserve">
-    <value>Baixades</value>
-  </data>
   <data name="lng_mediaview_file_n_of_amount" xml:space="preserve">
     <value>{file} {n} de {amount}</value>
   </data>
@@ -20312,9 +20614,6 @@ les altres sessions?</value>
   </data>
   <data name="lng_settings_show_name" xml:space="preserve">
     <value>Mostra el remitent</value>
-  </data>
-  <data name="lng_settings_show_preview" xml:space="preserve">
-    <value>Mostra la vista prèvia del missatge</value>
   </data>
   <data name="lng_settings_show_sessions" xml:space="preserve">
     <value>Mostra totes les sessions</value>

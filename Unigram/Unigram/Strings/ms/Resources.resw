@@ -18854,9 +18854,6 @@ Anda pasti ingin lakukannya?</value>
   <data name="lng_mediaview_date_time" xml:space="preserve">
     <value>{date} jam {time}</value>
   </data>
-  <data name="lng_mediaview_downloads" xml:space="preserve">
-    <value>Muat turun</value>
-  </data>
   <data name="lng_mediaview_file_n_of_amount" xml:space="preserve">
     <value>{file} {n} dari {amount}</value>
   </data>
@@ -20607,9 +20604,6 @@ Sila dayakan Telegram Desktop di Aturan Aplikasi Permulaan.</value>
   </data>
   <data name="lng_settings_show_name" xml:space="preserve">
     <value>Tunjuk nama pengirim</value>
-  </data>
-  <data name="lng_settings_show_preview" xml:space="preserve">
-    <value>Tunjuk pratonton mesej</value>
   </data>
   <data name="lng_settings_show_sessions" xml:space="preserve">
     <value>Tunjuk semua sesi</value>

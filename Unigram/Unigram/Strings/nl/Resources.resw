@@ -16755,9 +16755,6 @@ Bestand echt uitvoeren?</value>
   <data name="lng_mediaview_date_time" xml:space="preserve">
     <value>{date} om {time}</value>
   </data>
-  <data name="lng_mediaview_downloads" xml:space="preserve">
-    <value>Downloads</value>
-  </data>
   <data name="lng_mediaview_file_n_of_amount" xml:space="preserve">
     <value>{file} {n} van {amount}</value>
   </data>
@@ -18344,9 +18341,6 @@ apparaat uitloggen?</value>
   </data>
   <data name="lng_settings_show_name" xml:space="preserve">
     <value>Afzender weergeven</value>
-  </data>
-  <data name="lng_settings_show_preview" xml:space="preserve">
-    <value>Voorbeeld weergeven</value>
   </data>
   <data name="lng_settings_show_sessions" xml:space="preserve">
     <value>Alle sessies weergeven</value>
