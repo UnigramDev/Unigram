@@ -53,12 +53,6 @@ namespace Unigram.Views.Host
                 // ------------
                 RootDestination.Separator,
                 // ------------
-                RootDestination.NewChat,
-                RootDestination.NewSecretChat,
-                RootDestination.NewChannel,
-                // ------------
-                RootDestination.Separator,
-                // ------------
                 RootDestination.Chats,
                 RootDestination.Contacts,
                 RootDestination.Calls,
@@ -442,20 +436,7 @@ namespace Unigram.Views.Host
                 {
                     case RootDestination.AddAccount:
                         content.Text = Strings.Resources.AddAccount;
-                        content.Glyph = Icons.Add;
-                        break;
-
-                    case RootDestination.NewChat:
-                        content.Text = Strings.Resources.NewGroup;
-                        content.Glyph = Icons.People;
-                        break;
-                    case RootDestination.NewSecretChat:
-                        content.Text = Strings.Resources.NewSecretChat;
-                        content.Glyph = Icons.LockClosed;
-                        break;
-                    case RootDestination.NewChannel:
-                        content.Text = Strings.Resources.NewChannel;
-                        content.Glyph = Icons.Megaphone;
+                        content.Glyph = Icons.PersonAdd;
                         break;
 
                     case RootDestination.Chats:
@@ -885,10 +866,6 @@ namespace Unigram.Views.Host
         Contacts,
         Calls,
         Settings,
-
-        NewChat,
-        NewSecretChat,
-        NewChannel,
 
         Tips,
         News,

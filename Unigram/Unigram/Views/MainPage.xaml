@@ -520,8 +520,10 @@
 
                             <StackPanel x:Name="SettingsOptions"
                                         Orientation="Horizontal"
+                                        VerticalAlignment="Center"
                                         Grid.Column="2">
-                                <controls:MoreButton>
+                                <controls:MoreButton Width="40"
+                                                     Height="40">
                                     <Button.Flyout>
                                         <MenuFlyout Placement="BottomEdgeAlignedRight">
                                             <MenuFlyoutItem Click="EditName_Click"
@@ -544,6 +546,7 @@
                             </StackPanel>
                             <StackPanel x:Name="ContactsOptions"
                                         Orientation="Horizontal"
+                                        VerticalAlignment="Center"
                                         Grid.Column="2">
                                 <controls:GlyphToggleButton Glyph="&#xE91B;"
                                                             CheckedGlyph="&#xE91E;"
@@ -552,11 +555,48 @@
                                                             FontFamily="{StaticResource TelegramThemeFontFamily}"
                                                             AutomationProperties.Name="{CustomResource AccDescrContactSorting}"
                                                             ToolTipService.ToolTip="{CustomResource AccDescrContactSorting}"
-                                                            IsOneWay="False" />
+                                                            IsOneWay="False"
+                                                            Width="40"
+                                                            Height="40" />
                             </StackPanel>
                             <StackPanel x:Name="ChatsOptions"
                                         Orientation="Horizontal"
+                                        VerticalAlignment="Center"
                                         Grid.Column="2">
+                                <controls:GlyphButton Glyph="&#xE996;"
+                                                      AutomationProperties.Name="{CustomResource NewConversationShortcut}"
+                                                      ToolTipService.ToolTip="{CustomResource NewConversationShortcut}"
+                                                      FontSize="16"
+                                                      VerticalAlignment="Center"
+                                                      Margin="-36,0,0,0"
+                                                      Width="36"
+                                                      Height="32">
+                                    <Button.Flyout>
+                                        <MenuFlyout Placement="BottomEdgeAlignedRight">
+                                            <MenuFlyoutItem Click="NewGroup_Click"
+                                                            Text="{CustomResource NewGroup}">
+                                                <MenuFlyoutItem.Icon>
+                                                    <FontIcon Glyph="&#xE716;"
+                                                              Style="{StaticResource DefaultFontIconStyle}" />
+                                                </MenuFlyoutItem.Icon>
+                                            </MenuFlyoutItem>
+                                            <MenuFlyoutItem Command="{x:Bind ViewModel.CreateSecretChatCommand}"
+                                                            Text="{CustomResource NewSecretChat}">
+                                                <MenuFlyoutItem.Icon>
+                                                    <FontIcon Glyph="&#xE916;"
+                                                              Style="{StaticResource DefaultFontIconStyle}" />
+                                                </MenuFlyoutItem.Icon>
+                                            </MenuFlyoutItem>
+                                            <MenuFlyoutItem Click="NewChannel_Click"
+                                                            Text="{CustomResource NewChannel}">
+                                                <MenuFlyoutItem.Icon>
+                                                    <FontIcon Glyph="&#xE789;"
+                                                              Style="{StaticResource DefaultFontIconStyle}" />
+                                                </MenuFlyoutItem.Icon>
+                                            </MenuFlyoutItem>
+                                        </MenuFlyout>
+                                    </Button.Flyout>
+                                </controls:GlyphButton>
                                 <controls:GlyphButton x:Name="Proxy"
                                                       Glyph="&#xEA19;"
                                                       Click="Proxy_Click"
@@ -564,14 +604,18 @@
                                                       FontFamily="{StaticResource TelegramThemeFontFamily}"
                                                       Style="{StaticResource HeaderGlyphButtonStyle}"
                                                       AutomationProperties.Name="{CustomResource ProxySettings}"
-                                                      ToolTipService.ToolTip="{CustomResource ProxySettings}" />
+                                                      ToolTipService.ToolTip="{CustomResource ProxySettings}"
+                                                      Width="40"
+                                                      Height="40" />
                                 <controls:GlyphButton x:Name="Lock"
                                                       Visibility="Collapsed"
                                                       Glyph="&#xE785;"
                                                       Click="Lock_Click"
                                                       Style="{StaticResource HeaderGlyphButtonStyle}"
                                                       AutomationProperties.Name="{CustomResource AccDescrPasscodeLock}"
-                                                      ToolTipService.ToolTip="{CustomResource AccDescrPasscodeLock}" />
+                                                      ToolTipService.ToolTip="{CustomResource AccDescrPasscodeLock}"
+                                                      Width="40"
+                                                      Height="40" />
                             </StackPanel>
                         </Grid>
 
