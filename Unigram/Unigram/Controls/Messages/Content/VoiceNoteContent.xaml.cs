@@ -5,7 +5,6 @@ using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.Media.Playback;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls.Messages.Content
@@ -58,7 +57,6 @@ namespace Unigram.Controls.Messages.Content
             Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
 
             Button.Click += Button_Click;
-            AutomationProperties.SetAccessibilityView(Progress, Windows.UI.Xaml.Automation.Peers.AccessibilityView.Raw);
 
             _templateApplied = true;
 
