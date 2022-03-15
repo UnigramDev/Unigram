@@ -35,6 +35,7 @@ namespace Unigram.Controls
         {
             InitializeComponent();
 
+            Slider.AddHandler(KeyDownEvent, new KeyEventHandler(Slider_KeyDown), true);
             Slider.AddHandler(PointerPressedEvent, new PointerEventHandler(Slider_PointerPressed), true);
             Slider.AddHandler(PointerReleasedEvent, new PointerEventHandler(Slider_PointerReleased), true);
             Slider.AddHandler(PointerCanceledEvent, new PointerEventHandler(Slider_PointerCanceled), true);
@@ -410,6 +411,40 @@ namespace Unigram.Controls
 
 
         private bool _scrubbing;
+
+        private void Slider_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == VirtualKey.Right || e.Key == VirtualKey.Up)
+            {
+                Slider.Value += 5;
+                _playbackService?.Seek(TimeSpan.FromSeconds(Slider.Value));
+            }
+            else if (e.Key == VirtualKey.Left || e.Key == VirtualKey.Down)
+            {
+                Slider.Value -= 5;
+                _playbackService?.Seek(TimeSpan.FromSeconds(Slider.Value));
+            }
+            else if (e.Key == VirtualKey.PageUp)
+            {
+                Slider.Value += 30;
+                _playbackService?.Seek(TimeSpan.FromSeconds(Slider.Value));
+            }
+            else if (e.Key == VirtualKey.PageDown)
+            {
+                Slider.Value -= 30;
+                _playbackService?.Seek(TimeSpan.FromSeconds(Slider.Value));
+            }
+            else if (e.Key == VirtualKey.Home)
+            {
+                Slider.Value = Slider.Minimum;
+                _playbackService?.Seek(TimeSpan.FromSeconds(Slider.Value));
+            }
+            else if (e.Key == VirtualKey.End)
+            {
+                Slider.Value = Slider.Maximum;
+                _playbackService?.Seek(TimeSpan.FromSeconds(Slider.Value));
+            }
+        }
 
         private void Slider_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
