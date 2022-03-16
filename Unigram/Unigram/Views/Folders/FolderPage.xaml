@@ -10,6 +10,14 @@
                   Loaded="OnLoaded"
                   Title="{x:Bind ConvertTitle(ViewModel.Filter), Mode=OneWay}">
 
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <SlideNavigationTransitionInfo Effect="FromRight" />
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
     <local:HostedPage.Footer>
         <Button Content="{CustomResource Done}"
                 Command="{x:Bind ViewModel.SendCommand}"

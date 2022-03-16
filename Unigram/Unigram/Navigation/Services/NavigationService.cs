@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Logs;
 using Unigram.Services.ViewService;
 using Unigram.Views;
@@ -39,6 +41,7 @@ namespace Unigram.Navigation.Services
 
 
         Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null, Size size = default);
+        Task<ContentDialogResult> ShowAsync(Type sourcePopupType, object parameter = null);
 
         object CurrentPageParam { get; }
         Type CurrentPageType { get; }
@@ -238,7 +241,7 @@ namespace Unigram.Navigation.Services
             if (page.DataContext is not INavigable or null)
             {
                 // to support dependency injection, but keeping it optional.
-                var viewModel = BootStrapper.Current.ViewModelForPage(page, this);
+                var viewModel = BootStrapper.Current.ViewModelForPage(page, SessionId);
                 if (viewModel != null)
                 {
                     page.DataContext = viewModel;
@@ -320,6 +323,37 @@ namespace Unigram.Navigation.Services
         {
             Logger.Info($"Page: {page}, Parameter: {parameter}, Title: {title}, Size: {size}");
             return viewService.OpenAsync(page, parameter, title, size, SessionId);
+        }
+
+        public Task<ContentDialogResult> ShowAsync(Type sourcePopupType, object parameter)
+        {
+            var popup = Activator.CreateInstance(sourcePopupType) as ContentPopup;
+            if (popup != null)
+            {
+                var viewModel = BootStrapper.Current.ViewModelForPage(popup, SessionId);
+                if (viewModel != null)
+                {
+                    void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
+                    {
+                        popup.Opened -= OnOpened;
+                    }
+
+                    void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
+                    {
+                        _ = viewModel.OnNavigatedFromAsync(null, false);
+                        popup.Closed -= OnClosed;
+                    }
+
+                    popup.DataContext = viewModel;
+
+                    _ = viewModel.OnNavigatedToAsync(parameter, NavigationMode.New, null);
+                    popup.Closed += OnClosed;
+                }
+
+                return popup.ShowQueuedAsync();
+            }
+
+            return Task.FromResult(ContentDialogResult.None);
         }
 
         public event EventHandler<NavigatingEventArgs> Navigating;

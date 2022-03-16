@@ -889,6 +889,14 @@
                     _settingsService,
                     _eventAggregator);
             }
+            else if (type == typeof(Unigram.ViewModels.Settings.SettingsProfileViewModel))
+            {
+                return (T)(object)new Unigram.ViewModels.Settings.SettingsProfileViewModel(
+                    _protoService,
+                    _cacheService,
+                    _settingsService,
+                    _eventAggregator);
+            }
             else if (type == typeof(Unigram.ViewModels.Settings.SettingsPasswordViewModel))
             {
                 return (T)(object)new Unigram.ViewModels.Settings.SettingsPasswordViewModel(

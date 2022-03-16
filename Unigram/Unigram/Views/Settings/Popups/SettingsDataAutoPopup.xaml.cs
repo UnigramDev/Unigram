@@ -1,16 +1,20 @@
 ﻿using System;
+using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.ViewModels.Settings;
 
-namespace Unigram.Views.Settings
+namespace Unigram.Views.Settings.Popups
 {
-    public sealed partial class SettingsDataAutoPage : HostedPage
+    public sealed partial class SettingsDataAutoPopup : ContentPopup
     {
         public SettingsDataAutoViewModel ViewModel => DataContext as SettingsDataAutoViewModel;
 
-        public SettingsDataAutoPage()
+        public SettingsDataAutoPopup()
         {
             InitializeComponent();
+
+            PrimaryButtonText = Strings.Resources.Done;
+            SecondaryButtonText = Strings.Resources.Cancel;
         }
 
         #region Binding

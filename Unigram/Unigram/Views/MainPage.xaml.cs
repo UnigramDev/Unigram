@@ -761,8 +761,7 @@ namespace Unigram.Views
                 }
                 else if (ViewModel.Chats.Items.ChatList is ChatListFilter or ChatListArchive)
                 {
-                    ViewModel.SelectedFilter = ChatFilterViewModel.Main;
-                    ConvertFilter(ChatFilterViewModel.Main);
+                    UpdateFilter(ChatFilterViewModel.Main);
                     args.Handled = true;
                 }
             }
@@ -1042,7 +1041,7 @@ namespace Unigram.Views
                 var index = command - ShortcutCommand.ShowAllChats;
                 if (folders.Count > index)
                 {
-                    ViewModel.SelectedFilter = folders[index];
+                    UpdateFilter(folders[index], false);
                 }
             }
         }
@@ -1181,7 +1180,7 @@ namespace Unigram.Views
 
             if (index >= 0 && index < ViewModel.Filters.Count)
             {
-                ViewModel.SelectedFilter = ViewModel.Filters[index];
+                UpdateFilter(ViewModel.Filters[index], false);
             }
         }
 
@@ -1753,13 +1752,14 @@ namespace Unigram.Views
                     }
                 }
             }
+
+            Photo.Visibility = _tabsLeftCollapsed && rpMasterTitlebar.SelectedIndex != 3 ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void UpdateHeader()
         {
             ChatsOptions.Visibility = rpMasterTitlebar.SelectedIndex == 0 ? Visibility.Visible : Visibility.Collapsed;
             ContactsOptions.Visibility = rpMasterTitlebar.SelectedIndex == 1 ? Visibility.Visible : Visibility.Collapsed;
-            SettingsOptions.Visibility = rpMasterTitlebar.SelectedIndex == 3 ? Visibility.Visible : Visibility.Collapsed;
 
             SearchField.PlaceholderText = rpMasterTitlebar.SelectedIndex == 3 ? Strings.Resources.SearchInSettings : Strings.Resources.Search;
         }
@@ -2031,11 +2031,6 @@ namespace Unigram.Views
 
             ViewModel.Passcode.Lock();
             App.ShowPasscode(false);
-        }
-
-        private void EditPhoto_Click(object sender, RoutedEventArgs e)
-        {
-            SettingsView.EditPhoto_Click(sender, e);
         }
 
         private void OnUpdate(object sender, EventArgs e)
@@ -2478,16 +2473,6 @@ namespace Unigram.Views
             MasterDetail.NavigationService.Navigate(typeof(ChatsNearbyPage));
         }
 
-        private void LogOut_Click(object sender, RoutedEventArgs e)
-        {
-            MasterDetail.NavigationService.Navigate(typeof(LogOutPage));
-        }
-
-        private void EditName_Click(object sender, RoutedEventArgs e)
-        {
-            SettingsView.EditName_Click(sender, e);
-        }
-
         private ChatFilterViewModel ConvertFilter(ChatFilterViewModel filter)
         {
             ShowHideTopTabs(!ViewModel.Chats.Settings.IsLeftTabsEnabled && ViewModel.Filters.Count > 0 && !(filter.ChatList is ChatListArchive));
@@ -2503,15 +2488,13 @@ namespace Unigram.Views
         {
             if (obj is ChatFilterViewModel filter && !filter.IsNavigationItem && !(ViewModel.Chats.Items.ChatList is ChatListArchive))
             {
-                ViewModel.SelectedFilter = filter;
-                ConvertFilter(filter);
+                UpdateFilter(filter);
             }
         }
 
         public void ArchivedChats_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.SelectedFilter = ChatFilterViewModel.Archive;
-            ConvertFilter(ChatFilterViewModel.Archive);
+            UpdateFilter(ChatFilterViewModel.Archive);
         }
 
         private void ChatFilter_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
@@ -2743,9 +2726,62 @@ namespace Unigram.Views
             }
             else if (ViewModel.Chats.Items.ChatList is ChatListArchive)
             {
-                ViewModel.SelectedFilter = ChatFilterViewModel.Main;
-                ConvertFilter(ChatFilterViewModel.Main);
+                UpdateFilter(ChatFilterViewModel.Main);
             }
+        }
+
+        private void UpdateFilter(ChatFilterViewModel filter, bool update = true)
+        {
+            ViewModel.SelectedFilter = filter;
+
+            if (update)
+            {
+                ConvertFilter(filter);
+            }
+
+            return;
+
+            var visual = ElementCompositionPreview.GetElementVisual(TabChats);
+            ElementCompositionPreview.SetIsTranslationEnabled(TabChats, true);
+
+            var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
+                ViewModel.SelectedFilter = filter;
+
+                if (update)
+                {
+                    ConvertFilter(filter);
+                }
+
+                var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                offset.InsertKeyFrame(0, new Vector3(0, 16, 0));
+                offset.InsertKeyFrame(1, new Vector3(0, 0, 0));
+                offset.Duration = TimeSpan.FromMilliseconds(150);
+
+                var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                opacity.InsertKeyFrame(0, 0);
+                opacity.InsertKeyFrame(1, 1);
+                opacity.Duration = TimeSpan.FromMilliseconds(150);
+
+                visual.StartAnimation("Translation", offset);
+                visual.StartAnimation("Opacity", opacity);
+            };
+
+            var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            offset.InsertKeyFrame(0, new Vector3());
+            offset.InsertKeyFrame(1, new Vector3(0, -16, 0));
+            offset.Duration = TimeSpan.FromMilliseconds(150);
+
+            var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            opacity.InsertKeyFrame(0, 1);
+            opacity.InsertKeyFrame(1, 0);
+            opacity.Duration = TimeSpan.FromMilliseconds(150);
+
+            visual.StartAnimation("Translation", offset);
+            visual.StartAnimation("Opacity", opacity);
+
+            batch.End();
         }
 
         #region Selection

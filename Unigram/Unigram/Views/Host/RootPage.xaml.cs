@@ -22,6 +22,7 @@ using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
@@ -402,7 +403,7 @@ namespace Unigram.Views.Host
                     var title = content.Children[2] as TextBlock;
                     title.Text = user.GetFullName();
 
-                    Automation.SetToolTip(content, user.GetFullName());
+                    AutomationProperties.SetName(content, user.GetFullName());
                 }
                 else if (args.Phase == 2)
                 {
@@ -766,7 +767,16 @@ namespace Unigram.Views.Host
 
             var scale = compositor.CreateVector3KeyFrameAnimation();
             scale.InsertKeyFrame(0, new Vector3(1, 1, 0), ease);
-            scale.InsertKeyFrame(1, new Vector3(28f / 48f, 28f / 48f, 0), ease);
+
+            if (_navigationViewSelected == RootDestination.Settings && !_isSidebarEnabled)
+            {
+                scale.InsertKeyFrame(1, new Vector3(0, 0, 0), ease);
+            }
+            else
+            {
+                scale.InsertKeyFrame(1, new Vector3(28f / 48f, 28f / 48f, 0), ease);
+            }
+
             scale.Duration = TimeSpan.FromMilliseconds(120);
 
             var clip = compositor.CreateScalarKeyFrameAnimation();

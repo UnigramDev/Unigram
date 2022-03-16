@@ -6,7 +6,8 @@
                   xmlns:settings="using:Unigram.Services.Settings"
                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                  mc:Ignorable="d">
+                  mc:Ignorable="d"
+                  IsNavigationRoot="True">
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <ScrollViewer x:Name="ScrollingHost"
@@ -37,8 +38,7 @@
                                               Content="{CustomResource StoragePath}"
                                               Badge="{x:Bind ConvertFilesDirectory(ViewModel.FilesDirectory), Mode=OneWay}"
                                               Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
-                                              Glyph="&#xF12B;"
-                                              IsChevronVisible="True">
+                                              Glyph="&#xF12B;">
                             <controls:BadgeButton.CommandParameter>
                                 <x:Boolean>False</x:Boolean>
                             </controls:BadgeButton.CommandParameter>
@@ -69,8 +69,7 @@
                                           IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
                                           Content="{CustomResource AutoDownloadPhotos}"
                                           Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
-                                          Glyph="&#xEB9F;"
-                                          IsChevronVisible="True">
+                                          Glyph="&#xEB9F;">
                         <Button.CommandParameter>
                             <settings:AutoDownloadType>Photos</settings:AutoDownloadType>
                         </Button.CommandParameter>
@@ -81,8 +80,7 @@
                                           IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
                                           Content="{CustomResource AutoDownloadVideos}"
                                           Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
-                                          Glyph="&#xE714;"
-                                          IsChevronVisible="True">
+                                          Glyph="&#xE714;">
                         <Button.CommandParameter>
                             <settings:AutoDownloadType>Videos</settings:AutoDownloadType>
                         </Button.CommandParameter>
@@ -93,8 +91,7 @@
                                           IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
                                           Content="{CustomResource AutoDownloadFiles}"
                                           Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
-                                          Glyph="&#xE7C3;"
-                                          IsChevronVisible="True">
+                                          Glyph="&#xE7C3;">
                         <Button.CommandParameter>
                             <settings:AutoDownloadType>Documents</settings:AutoDownloadType>
                         </Button.CommandParameter>

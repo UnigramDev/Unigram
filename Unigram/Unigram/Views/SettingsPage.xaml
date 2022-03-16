@@ -14,7 +14,7 @@
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
-            <StackPanel Padding="0,4,0,24">
+            <StackPanel Padding="0,0,0,24">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -28,8 +28,8 @@
                     <controls:ProfilePicture x:Name="Photo"
                                              Click="Photo_Click"
                                              AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"
-                                             Height="64"
-                                             Width="64"
+                                             Height="48"
+                                             Width="48"
                                              Margin="12,8"
                                              Grid.RowSpan="2" />
 
@@ -45,16 +45,6 @@
                                    TextTrimming="CharacterEllipsis"
                                    FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                    Style="{StaticResource BaseTextBlockStyle}" />
-                        <Grid Margin="4,0,0,-2"
-                              x:Name="Verified"
-                              Grid.Column="2">
-                            <Path Width="16"
-                                  Height="16"
-                                  Stretch="Uniform"
-                                  Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z M31.485,14.514L35.727,18.757 23.707,30.778 19.464,35.021 15.221,30.778 10.271,25.828 14.514,21.586 19.464,26.535z"
-                                  Fill="{ThemeResource ChatVerifiedBadgeBrush}"
-                                  StrokeThickness="0" />
-                        </Grid>
                     </Grid>
                     <TextBlock x:Name="Subtitle"
                                Text="{CustomResource Online}"
@@ -63,54 +53,7 @@
                                VerticalAlignment="Top"
                                Grid.Row="1"
                                Grid.Column="1" />
-
-                    <Border Background="{ThemeResource TinyButtonBackgroundBrush}"
-                            VerticalAlignment="Center"
-                            Width="36"
-                            Height="36"
-                            CornerRadius="18"
-                            Margin="8,12,12,12"
-                            Grid.Column="2"
-                            Grid.RowSpan="2">
-                        <controls:GlyphButton Glyph="&#xE722;"
-                                              Click="EditPhoto_Click"
-                                              Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
-                                              AutomationProperties.Name="{CustomResource AccDescrChangeProfilePicture}"
-                                              ToolTipService.ToolTip="{CustomResource AccDescrChangeProfilePicture}"
-                                              Style="{StaticResource RoundGlyphButtonStyle}"
-                                              Width="36"
-                                              Height="36"
-                                              CornerRadius="18"
-                                              Padding="0,0,0,0" />
-                    </Border>
                 </Grid>
-
-                <StackPanel>
-                    <controls:BadgeButton x:Name="PhoneNumber"
-                                          Content="{CustomResource Phone}"
-                                          Style="{StaticResource IconSubtitleBadgeButtonStyle}"
-                                          Click="Phone_Click">
-                        <controls:BadgeButton.IconSource>
-                            <icons:Phone />
-                        </controls:BadgeButton.IconSource>
-                    </controls:BadgeButton>
-                    <controls:BadgeButton x:Name="Username"
-                                          Content="{CustomResource Username}"
-                                          Style="{StaticResource IconSubtitleBadgeButtonStyle}"
-                                          Click="Username_Click">
-                        <controls:BadgeButton.IconSource>
-                            <icons:Username />
-                        </controls:BadgeButton.IconSource>
-                    </controls:BadgeButton>
-                    <controls:BadgeButton x:Name="Bio"
-                                          Content="{CustomResource UserBio}"
-                                          Style="{StaticResource IconSubtitleBadgeButtonStyle}"
-                                          Click="About_Click">
-                        <controls:BadgeButton.IconSource>
-                            <icons:Info />
-                        </controls:BadgeButton.IconSource>
-                    </controls:BadgeButton>
-                </StackPanel>
 
                 <Rectangle Fill="{ThemeResource NavigationViewItemSeparatorForeground}"
                            Margin="12,2"
@@ -140,6 +83,44 @@
                                 <Setter.Value>
                                     <ControlTemplate TargetType="controls:TopNavViewItem">
                                         <Grid Background="Transparent">
+                                            <VisualStateManager.VisualStateGroups>
+                                                <VisualStateGroup x:Name="CommonStates">
+                                                    <VisualState x:Name="Normal" />
+                                                    <VisualState x:Name="PointerOver">
+                                                        <VisualState.Setters>
+                                                            <Setter Target="LayoutRoot.Background"
+                                                                    Value="{ThemeResource NavigationViewItemBackgroundPointerOver}" />
+                                                        </VisualState.Setters>
+                                                    </VisualState>
+                                                    <VisualState x:Name="Pressed">
+                                                        <VisualState.Setters>
+                                                            <Setter Target="LayoutRoot.Background"
+                                                                    Value="{ThemeResource NavigationViewItemBackgroundPressed}" />
+                                                        </VisualState.Setters>
+                                                    </VisualState>
+                                                    <VisualState x:Name="Selected">
+                                                        <VisualState.Setters>
+                                                            <Setter Target="LayoutRoot.Background"
+                                                                    Value="{ThemeResource NavigationViewItemBackgroundSelected}" />
+                                                        </VisualState.Setters>
+                                                    </VisualState>
+                                                    <VisualState x:Name="PointerOverSelected">
+                                                        <VisualState.Setters>
+                                                            <Setter Target="LayoutRoot.Background"
+                                                                    Value="{ThemeResource NavigationViewItemBackgroundSelectedPointerOver}" />
+                                                        </VisualState.Setters>
+                                                    </VisualState>
+                                                    <VisualState x:Name="PressedSelected">
+                                                        <VisualState.Setters>
+                                                            <Setter Target="LayoutRoot.Background"
+                                                                    Value="{ThemeResource NavigationViewItemBackgroundSelectedPressed}" />
+                                                        </VisualState.Setters>
+                                                    </VisualState>
+                                                </VisualStateGroup>
+                                            </VisualStateManager.VisualStateGroups>
+                                            <Border x:Name="LayoutRoot"
+                                                    Margin="4,2"
+                                                    CornerRadius="4" />
                                             <ContentPresenter x:Name="ContentPresenter"
                                                               Grid.Column="1"
                                                               Margin="0"
@@ -170,64 +151,81 @@
                             </Setter>
                         </Style>
                     </controls:TopNavView.ItemContainerStyle>
-                    <controls:BadgeButton Content="{CustomResource NotificationsAndSounds}"
+                    <controls:BadgeButton x:Name="Username"
+                                          Content="{CustomResource lng_settings_information}"
+                                          Style="{StaticResource IconBadgeButtonStyle}"
+                                          Click="Username_Click">
+                        <controls:BadgeButton.IconSource>
+                            <icons:Phone />
+                        </controls:BadgeButton.IconSource>
+                    </controls:BadgeButton>
+                    <controls:BadgeButton x:Name="Notifications"
                                           Click="Notifications_Click"
+                                          Content="{CustomResource NotificationsAndSounds}"
                                           Style="{StaticResource IconBadgeButtonStyle}">
                         <controls:BadgeButton.IconSource>
                             <icons:Notifications />
                         </controls:BadgeButton.IconSource>
                     </controls:BadgeButton>
-                    <controls:BadgeButton Content="{CustomResource PrivacySettings}"
+                    <controls:BadgeButton x:Name="Privacy"
                                           Click="Privacy_Click"
+                                          Content="{CustomResource PrivacySettings}"
                                           Style="{StaticResource IconBadgeButtonStyle}">
                         <controls:BadgeButton.IconSource>
                             <icons:Privacy />
                         </controls:BadgeButton.IconSource>
                     </controls:BadgeButton>
-                    <controls:BadgeButton Content="{CustomResource DataSettings}"
+                    <controls:BadgeButton x:Name="Data"
                                           Click="Data_Click"
+                                          Content="{CustomResource DataSettings}"
                                           Style="{StaticResource IconBadgeButtonStyle}">
                         <controls:BadgeButton.IconSource>
                             <icons:Data />
                         </controls:BadgeButton.IconSource>
                     </controls:BadgeButton>
-                    <controls:BadgeButton Content="{CustomResource StickersName}"
+                    <controls:BadgeButton x:Name="Stickers"
                                           Click="Stickers_Click"
+                                          Content="{CustomResource StickersName}"
                                           Style="{StaticResource IconBadgeButtonStyle}">
                         <controls:BadgeButton.IconSource>
                             <icons:Stickers />
                         </controls:BadgeButton.IconSource>
                     </controls:BadgeButton>
-                    <controls:BadgeButton Content="{CustomResource ChatSettings}"
+                    <controls:BadgeButton x:Name="Appearance"
                                           Click="Appearance_Click"
+                                          Content="{CustomResource ChatSettings}"
                                           Style="{StaticResource IconBadgeButtonStyle}">
                         <controls:BadgeButton.IconSource>
                             <icons:Appearance />
                         </controls:BadgeButton.IconSource>
                     </controls:BadgeButton>
-                    <controls:BadgeButton Content="{CustomResource Filters}"
+                    <controls:BadgeButton x:Name="Folders"
                                           Click="Folders_Click"
+                                          Content="{CustomResource Filters}"
                                           Style="{StaticResource IconBadgeButtonStyle}">
                         <controls:BadgeButton.IconSource>
                             <icons:Folders />
                         </controls:BadgeButton.IconSource>
                     </controls:BadgeButton>
-                    <controls:BadgeButton Content="{CustomResource Devices}"
+                    <controls:BadgeButton x:Name="Sessions"
                                           Click="Sessions_Click"
+                                          Content="{CustomResource Devices}"
                                           Style="{StaticResource IconBadgeButtonStyle}">
                         <controls:BadgeButton.IconSource>
                             <icons:Devices />
                         </controls:BadgeButton.IconSource>
                     </controls:BadgeButton>
-                    <controls:BadgeButton Content="{CustomResource Language}"
+                    <controls:BadgeButton x:Name="Language"
                                           Click="Language_Click"
+                                          Content="{CustomResource Language}"
                                           Style="{StaticResource IconBadgeButtonStyle}">
                         <controls:BadgeButton.IconSource>
                             <icons:Language />
                         </controls:BadgeButton.IconSource>
                     </controls:BadgeButton>
-                    <controls:BadgeButton Content="{CustomResource PrivacyAdvanced}"
+                    <controls:BadgeButton x:Name="Advanced"
                                           Click="Advanced_Click"
+                                          Content="{CustomResource PrivacyAdvanced}"
                                           Style="{StaticResource IconBadgeButtonStyle}">
                         <controls:BadgeButton.IconSource>
                             <icons:Advanced />

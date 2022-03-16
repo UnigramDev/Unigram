@@ -15,7 +15,7 @@
     <Page.Transitions>
         <TransitionCollection>
             <NavigationThemeTransition>
-                <DrillInNavigationTransitionInfo />
+                <SlideNavigationTransitionInfo Effect="FromRight" />
             </NavigationThemeTransition>
         </TransitionCollection>
     </Page.Transitions>

@@ -16,23 +16,21 @@ namespace Unigram.ViewModels.Settings
         public SettingsUsernameViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
-            SendCommand = new RelayCommand(SendExecute);
             CopyCommand = new RelayCommand(CopyExecute);
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             IsValid = false;
             IsLoading = false;
             ErrorMessage = null;
 
-            var response = await ProtoService.SendAsync(new GetMe());
-            if (response is User user)
+            if (CacheService.TryGetUser(CacheService.Options.MyId, out User user))
             {
-                _username = user.Username;
+                Set(ref _username, user.Username, nameof(Username));
             }
 
-            RaisePropertyChanged(nameof(Username));
+            return base.OnNavigatedToAsync(parameter, mode, state);
         }
 
         private string _username = string.Empty;
@@ -170,13 +168,12 @@ namespace Unigram.ViewModels.Settings
             return true;
         }
 
-        public RelayCommand SendCommand { get; }
-        private async void SendExecute()
+        public async Task<bool> SendAsync()
         {
             var response = await ProtoService.SendAsync(new SetUsername(_username ?? string.Empty));
             if (response is Ok)
             {
-                NavigationService.GoBack();
+                return true;
             }
             else if (response is Error error)
             {
@@ -240,6 +237,8 @@ namespace Unigram.ViewModels.Settings
                     //Telegram.Api.Helpers.Logs.Log.Write("account.updateUsername error " + error);
                 }
             }
+
+            return false;
         }
 
         public RelayCommand CopyCommand { get; }

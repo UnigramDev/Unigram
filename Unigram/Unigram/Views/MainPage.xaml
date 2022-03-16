@@ -518,32 +518,6 @@
                                 </TextBox.Header>
                             </TextBox>
 
-                            <StackPanel x:Name="SettingsOptions"
-                                        Orientation="Horizontal"
-                                        VerticalAlignment="Center"
-                                        Grid.Column="2">
-                                <controls:MoreButton Width="40"
-                                                     Height="40">
-                                    <Button.Flyout>
-                                        <MenuFlyout Placement="BottomEdgeAlignedRight">
-                                            <MenuFlyoutItem Click="EditName_Click"
-                                                            Text="{CustomResource EditName}">
-                                                <MenuFlyoutItem.Icon>
-                                                    <FontIcon Glyph="&#xE104;"
-                                                              Style="{StaticResource DefaultFontIconStyle}" />
-                                                </MenuFlyoutItem.Icon>
-                                            </MenuFlyoutItem>
-                                            <MenuFlyoutItem Click="LogOut_Click"
-                                                            Text="{CustomResource LogOut}">
-                                                <MenuFlyoutItem.Icon>
-                                                    <FontIcon Glyph="&#xF3B1;"
-                                                              Style="{StaticResource DefaultFontIconStyle}" />
-                                                </MenuFlyoutItem.Icon>
-                                            </MenuFlyoutItem>
-                                        </MenuFlyout>
-                                    </Button.Flyout>
-                                </controls:MoreButton>
-                            </StackPanel>
                             <StackPanel x:Name="ContactsOptions"
                                         Orientation="Horizontal"
                                         VerticalAlignment="Center"

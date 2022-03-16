@@ -270,7 +270,7 @@ namespace Unigram.Controls
                     {
                         _currentPage.Title = hosted.Title;
 
-                        _backStack.ReplaceWith(BuildBackStack());
+                        _backStack.ReplaceWith(BuildBackStack(hosted.IsNavigationRoot));
                         _backStack.Add(_currentPage);
                     }
                 }
@@ -316,7 +316,7 @@ namespace Unigram.Controls
                 {
                     _currentPage.Title = hosted.Title;
 
-                    _backStack.ReplaceWith(BuildBackStack());
+                    _backStack.ReplaceWith(BuildBackStack(hosted.IsNavigationRoot));
                     _backStack.Add(_currentPage);
                 }
             }
@@ -326,7 +326,7 @@ namespace Unigram.Controls
         {
             if (DetailFrame.Content is HostedPage hosted && hosted.Header == null)
             {
-                _backStack.ReplaceWith(BuildBackStack());
+                _backStack.ReplaceWith(BuildBackStack(hosted.IsNavigationRoot));
                 _backStack.Add(_currentPage);
             }
             else if (_backStack.Count > 0)
@@ -335,8 +335,13 @@ namespace Unigram.Controls
             }
         }
 
-        private IEnumerable<NavigationStackItem> BuildBackStack()
+        private IEnumerable<NavigationStackItem> BuildBackStack(bool root)
         {
+            if (root)
+            {
+                yield break;
+            }
+
             var index = NavigationService.BackStack.FindLastIndex(x => x.IsRoot);
             var k = Math.Max(index, 0);
 
