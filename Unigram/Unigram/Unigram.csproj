@@ -566,6 +566,7 @@
     <Compile Include="ViewModels\Payments\PaymentCredentialsViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentFormViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsBlockedChatsViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsProfileViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsStickersViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsThemeViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupReactionsViewModel.cs" />
@@ -947,9 +948,6 @@
     <Compile Include="Views\Popups\EditUserNamePopup.xaml.cs">
       <DependentUpon>EditUserNamePopup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Popups\EditYourAboutPopup.xaml.cs">
-      <DependentUpon>EditYourAboutPopup.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Popups\JoinChatPopup.xaml.cs">
       <DependentUpon>JoinChatPopup.xaml</DependentUpon>
     </Compile>
@@ -1019,6 +1017,9 @@
     <Compile Include="Views\Settings\Phone\SettingsPhoneSentCodePage.xaml.cs">
       <DependentUpon>SettingsPhoneSentCodePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\Popups\SettingsDataAutoPopup.xaml.cs">
+      <DependentUpon>SettingsDataAutoPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings\Popups\SettingsPasscodeConfirmPopup.xaml.cs">
       <DependentUpon>SettingsPasscodeConfirmPopup.xaml</DependentUpon>
     </Compile>
@@ -1030,6 +1031,9 @@
     </Compile>
     <Compile Include="Views\Settings\Popups\SettingsSessionPopup.xaml.cs">
       <DependentUpon>SettingsSessionPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\Popups\SettingsUsernamePopup.xaml.cs">
+      <DependentUpon>SettingsUsernamePopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\Privacy\SettingsPrivacyAllowCallsPage.xaml.cs">
       <DependentUpon>SettingsPrivacyAllowCallsPage.xaml</DependentUpon>
@@ -1064,9 +1068,6 @@
     <Compile Include="Views\Settings\SettingsBlockedChatsPage.xaml.cs">
       <DependentUpon>SettingsBlockedChatsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Settings\SettingsDataAutoPage.xaml.cs">
-      <DependentUpon>SettingsDataAutoPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Settings\SettingsLanguagePage.xaml.cs">
       <DependentUpon>SettingsLanguagePage.xaml</DependentUpon>
     </Compile>
@@ -1084,6 +1085,9 @@
     </Compile>
     <Compile Include="Views\Settings\SettingsPasswordPage.xaml.cs">
       <DependentUpon>SettingsPasswordPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsProfilePage.xaml.cs">
+      <DependentUpon>SettingsProfilePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsProxiesPage.xaml.cs">
       <DependentUpon>SettingsProxiesPage.xaml</DependentUpon>
@@ -1267,9 +1271,6 @@
     </Compile>
     <Compile Include="Views\Settings\SettingsStoragePage.xaml.cs">
       <DependentUpon>SettingsStoragePage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Settings\SettingsUsernamePage.xaml.cs">
-      <DependentUpon>SettingsUsernamePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Users\UserCreatePage.xaml.cs">
       <DependentUpon>UserCreatePage.xaml</DependentUpon>
@@ -2033,10 +2034,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Popups\EditYourAboutPopup.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Views\Popups\JoinChatPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2129,6 +2126,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Settings\Popups\SettingsDataAutoPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Settings\Popups\SettingsPasscodeConfirmPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2144,6 +2145,10 @@
     <Page Include="Views\Settings\Popups\SettingsSessionPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\Popups\SettingsUsernamePopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Settings\Privacy\SettingsPrivacyAllowCallsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -2189,10 +2194,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Settings\SettingsDataAutoPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Views\Settings\SettingsLanguagePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2216,6 +2217,10 @@
     <Page Include="Views\Settings\SettingsPasswordPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\SettingsProfilePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\SettingsProxiesPage.xaml">
       <SubType>Designer</SubType>
@@ -2294,10 +2299,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\SettingsStoragePage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Settings\SettingsUsernamePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
