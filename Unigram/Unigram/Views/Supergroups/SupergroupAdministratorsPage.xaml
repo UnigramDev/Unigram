@@ -15,11 +15,7 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <local:HostedPage.Header>
-        <controls:PageHeader Text="{CustomResource ChannelAdministrators}" />
-    </local:HostedPage.Header>
-
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+    <Grid Background="{ThemeResource SettingsPageBackground}">
         <controls:TableListView x:Name="ScrollingHost"
                                 ItemsSource="{x:Bind ViewModel.Members}"
                                 ItemClick="ListView_ItemClick"
@@ -47,7 +43,8 @@
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid Padding="12,6"
-                          Background="Transparent">
+                          Background="{ThemeResource SettingsItemBackground}"
+                          BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
@@ -78,20 +75,10 @@
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem"
-                       BasedOn="{StaticResource DefaultListViewItemStyle}">
-                    <Setter Property="HorizontalContentAlignment"
-                            Value="Stretch" />
-                </Style>
-            </ListView.ItemContainerStyle>
             <ListView.Footer>
-                <Border MaxWidth="640">
-                    <TextBlock x:Name="Footer"
-                               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                               Style="{StaticResource CaptionTextBlockStyle}"
-                               Margin="12,8,12,32" />
-                </Border>
+                <TextBlock x:Name="Footer"
+                            Style="{StaticResource InfoCaptionTextBlockStyle}"
+                            Margin="24,8,24,32" />
             </ListView.Footer>
         </controls:TableListView>
     </Grid>

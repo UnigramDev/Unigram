@@ -25,7 +25,7 @@ namespace Unigram.Views.Users
         {
             if (args.ItemContainer == null)
             {
-                args.ItemContainer = new TextListViewItem();
+                args.ItemContainer = new TableListViewItem();
                 args.ItemContainer.Style = ScrollingHost.ItemContainerStyle;
             }
 

@@ -1,6 +1,10 @@
-﻿using Telegram.Td.Api;
+﻿using System.Threading.Tasks;
+using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Converters;
+using Unigram.Navigation.Services;
 using Unigram.Services;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings.Privacy
 {
@@ -23,6 +27,23 @@ namespace Unigram.ViewModels.Settings.Privacy
 
         public SettingsPrivacyShowPhoneViewModel ShowPhone => _showPhone;
         public SettingsPrivacyAllowFindingByPhoneNumberViewModel AllowFindingByPhoneNumber => _allowFindingByPhoneNumber;
+
+        private string _phoneNumber;
+        public string PhoneNumber
+        {
+            get => _phoneNumber;
+            set => Set(ref _phoneNumber, value);
+        }
+
+        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        {
+            if (CacheService.TryGetUser(CacheService.Options.MyId, out User user))
+            {
+                PhoneNumber = MeUrlPrefixConverter.Convert(CacheService, $"+{user.PhoneNumber}");
+            }
+
+            return base.OnNavigatedToAsync(parameter, mode, state);
+        }
 
         public RelayCommand SendCommand { get; }
         private async void SendExecute()

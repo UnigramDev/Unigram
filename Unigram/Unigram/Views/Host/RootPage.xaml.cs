@@ -22,6 +22,7 @@ using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
@@ -50,12 +51,6 @@ namespace Unigram.Views.Host
             {
                 RootDestination.ArchivedChats,
                 RootDestination.SavedMessages,
-                // ------------
-                RootDestination.Separator,
-                // ------------
-                RootDestination.NewChat,
-                RootDestination.NewSecretChat,
-                RootDestination.NewChannel,
                 // ------------
                 RootDestination.Separator,
                 // ------------
@@ -99,11 +94,6 @@ namespace Unigram.Views.Host
             Switch(_lifetime.ActiveItem);
         }
 
-        public void SetTopPadding(Thickness thickness)
-        {
-            Navigation.SetTopPadding(thickness);
-        }
-
         public void Create()
         {
             Switch(_lifetime.Create());
@@ -119,7 +109,6 @@ namespace Unigram.Views.Host
             }
 
             Navigation.IsPaneOpen = false;
-            Navigation.SetTopPadding(new Thickness());
 
             var service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId($"{session.Id}") as NavigationService;
             if (service == null)
@@ -136,7 +125,7 @@ namespace Unigram.Views.Host
                     case AuthorizationStateWaitPhoneNumber waitPhoneNumber:
                     case AuthorizationStateWaitOtherDeviceConfirmation waitOtherDeviceConfirmation:
                         service.Navigate(typeof(SignInPage));
-                        service.Frame.BackStack.Add(new PageStackEntry(typeof(BlankPage), null, null));
+                        service.AddToBackStack(typeof(BlankPage));
                         break;
                     case AuthorizationStateWaitCode waitCode:
                         service.Navigate(typeof(SignInSentCodePage));
@@ -250,6 +239,7 @@ namespace Unigram.Views.Host
                 return;
             }
 
+            Photo.SetUser(viewModel.ProtoService, user, 48);
             NameLabel.Text = user.GetFullName();
 #if DEBUG
             PhoneLabel.Text = "+42 --- --- ----";
@@ -413,7 +403,7 @@ namespace Unigram.Views.Host
                     var title = content.Children[2] as TextBlock;
                     title.Text = user.GetFullName();
 
-                    Automation.SetToolTip(content, user.GetFullName());
+                    AutomationProperties.SetName(content, user.GetFullName());
                 }
                 else if (args.Phase == 2)
                 {
@@ -447,25 +437,12 @@ namespace Unigram.Views.Host
                 {
                     case RootDestination.AddAccount:
                         content.Text = Strings.Resources.AddAccount;
-                        content.Glyph = Icons.Add;
-                        break;
-
-                    case RootDestination.NewChat:
-                        content.Text = Strings.Resources.NewGroup;
-                        content.Glyph = Icons.People;
-                        break;
-                    case RootDestination.NewSecretChat:
-                        content.Text = Strings.Resources.NewSecretChat;
-                        content.Glyph = Icons.LockClosed;
-                        break;
-                    case RootDestination.NewChannel:
-                        content.Text = Strings.Resources.NewChannel;
-                        content.Glyph = Icons.Megaphone;
+                        content.Glyph = Icons.PersonAdd;
                         break;
 
                     case RootDestination.Chats:
                         content.Text = Strings.Resources.FilterChats;
-                        content.Glyph = Icons.Comment;
+                        content.Glyph = Icons.ChatMultiple;
                         break;
                     case RootDestination.Contacts:
                         content.Text = Strings.Resources.Contacts;
@@ -546,11 +523,6 @@ namespace Unigram.Views.Host
         }
 
         #region Exposed
-
-        public void ShowTeachingTip(string text)
-        {
-            Navigation.ShowTeachingTip(text);
-        }
 
         public void UpdateSessions()
         {
@@ -678,40 +650,154 @@ namespace Unigram.Views.Host
             SettingsService.Current.Appearance.UpdateNightMode();
         }
 
-        private float TopPadding => (float)Navigation.Padding.Top;
+        public bool IsPaneOpen
+        {
+            get => Navigation.IsPaneOpen;
+            set => Navigation.IsPaneOpen = value;
+        }
+
+        private bool _isSidebarEnabled;
+
+        public void SetSidebarEnabled(bool value)
+        {
+            if (_isSidebarEnabled != value)
+            {
+                _isSidebarEnabled = value;
+
+                AccountsPlaceholder.Visibility = value
+                    ? Visibility.Collapsed
+                    : Visibility.Visible;
+
+                Accounts.VerticalAlignment = value
+                    ? VerticalAlignment.Bottom
+                    : VerticalAlignment.Top;
+            }
+        }
 
         private void Navigation_PaneOpening(SplitView sender, object args)
         {
             Theme.Visibility = Visibility.Visible;
+            Accounts.Visibility = Visibility.Visible;
 
-            var visual = ElementCompositionPreview.GetElementVisual(Theme);
-            var ease = visual.Compositor.CreateCubicBezierEasingFunction(new Vector2(0.1f, 0.9f), new Vector2(0.2f, 1.0f));
-            var anim = visual.Compositor.CreateVector3KeyFrameAnimation();
-            anim.InsertKeyFrame(0, new Vector3(-48, TopPadding, 0), ease);
-            anim.InsertKeyFrame(1, new Vector3(192, TopPadding, 0), ease);
-            anim.Duration = TimeSpan.FromMilliseconds(350);
+            ElementCompositionPreview.SetIsTranslationEnabled(Info, true);
 
-            visual.StartAnimation("Offset", anim);
+            var theme = ElementCompositionPreview.GetElementVisual(Theme);
+            var photo = ElementCompositionPreview.GetElementVisual(Photo);
+            var info = ElementCompositionPreview.GetElementVisual(Info);
+            var accounts = ElementCompositionPreview.GetElementVisual(Accounts);
+            var compositor = theme.Compositor;
+
+            var ease = compositor.CreateCubicBezierEasingFunction(new Vector2(0.1f, 0.9f), new Vector2(0.2f, 1.0f));
+
+            var offset1 = compositor.CreateVector3KeyFrameAnimation();
+            offset1.InsertKeyFrame(0, new Vector3(-40, 0, 0), ease);
+            offset1.InsertKeyFrame(1, new Vector3(200, 0, 0), ease);
+            offset1.Duration = TimeSpan.FromMilliseconds(350);
+
+            var offset2 = compositor.CreateVector3KeyFrameAnimation();
+            offset2.InsertKeyFrame(0, new Vector3(-8, 0, 0), ease);
+            offset2.InsertKeyFrame(1, new Vector3(0, 0, 0), ease);
+            offset2.Duration = TimeSpan.FromMilliseconds(350);
+
+            var opacity = compositor.CreateScalarKeyFrameAnimation();
+            opacity.InsertKeyFrame(0, 0, ease);
+            opacity.InsertKeyFrame(1, 1, ease);
+            opacity.Duration = TimeSpan.FromMilliseconds(350);
+
+            var scale = compositor.CreateVector3KeyFrameAnimation();
+            scale.InsertKeyFrame(0, new Vector3(28f / 48f, 28f / 48f, 0), ease);
+            scale.InsertKeyFrame(1, new Vector3(1, 1, 0), ease);
+            scale.Duration = TimeSpan.FromMilliseconds(350);
+
+            var clip = compositor.CreateScalarKeyFrameAnimation();
+            clip.InsertKeyFrame(0, 180, ease);
+            clip.InsertKeyFrame(1, 0, ease);
+            clip.Duration = TimeSpan.FromMilliseconds(350);
+
+            theme.StartAnimation("Offset", offset1);
+            theme.StartAnimation("Opacity", opacity);
+
+            photo.CenterPoint = new Vector3(_isSidebarEnabled ? 24 : 0, 24, 0);
+            photo.StartAnimation("Scale", scale);
+
+            info.CenterPoint = new Vector3(0, 32, 0);
+            info.StartAnimation("Scale", scale);
+            info.StartAnimation("Opacity", opacity);
+            info.StartAnimation("Translation", offset2);
+
+            accounts.Clip = compositor.CreateInsetClip();
+            accounts.Clip.StartAnimation("RightInset", clip);
         }
 
         private void Navigation_PaneClosing(SplitView sender, SplitViewPaneClosingEventArgs args)
         {
             Theme.Visibility = Visibility.Visible;
+            Accounts.Visibility = Visibility.Visible;
+
+            ElementCompositionPreview.SetIsTranslationEnabled(Info, true);
 
             var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
                 Theme.Visibility = Visibility.Collapsed;
+                Accounts.Visibility = Visibility.Collapsed;
             };
 
-            var visual = ElementCompositionPreview.GetElementVisual(Theme);
-            var ease = visual.Compositor.CreateCubicBezierEasingFunction(new Vector2(0.1f, 0.9f), new Vector2(0.2f, 1.0f));
-            var anim = visual.Compositor.CreateVector3KeyFrameAnimation();
-            anim.InsertKeyFrame(0, new Vector3(192, TopPadding, 0), ease);
-            anim.InsertKeyFrame(1, new Vector3(-48, TopPadding, 0), ease);
-            anim.Duration = TimeSpan.FromMilliseconds(120);
+            var theme = ElementCompositionPreview.GetElementVisual(Theme);
+            var photo = ElementCompositionPreview.GetElementVisual(Photo);
+            var info = ElementCompositionPreview.GetElementVisual(Info);
+            var accounts = ElementCompositionPreview.GetElementVisual(Accounts);
+            var compositor = theme.Compositor;
 
-            visual.StartAnimation("Offset", anim);
+            var ease = compositor.CreateCubicBezierEasingFunction(new Vector2(0.1f, 0.9f), new Vector2(0.2f, 1.0f));
+            var offset1 = compositor.CreateVector3KeyFrameAnimation();
+            offset1.InsertKeyFrame(0, new Vector3(200, 0, 0), ease);
+            offset1.InsertKeyFrame(1, new Vector3(-40, 0, 0), ease);
+            offset1.Duration = TimeSpan.FromMilliseconds(120);
+
+            var offset2 = compositor.CreateVector3KeyFrameAnimation();
+            offset2.InsertKeyFrame(0, new Vector3(0, 0, 0), ease);
+            offset2.InsertKeyFrame(1, new Vector3(-8, 0, 0), ease);
+            offset2.Duration = TimeSpan.FromMilliseconds(120);
+
+            var opacity = compositor.CreateScalarKeyFrameAnimation();
+            opacity.InsertKeyFrame(0, 1, ease);
+            opacity.InsertKeyFrame(1, 0, ease);
+            opacity.Duration = TimeSpan.FromMilliseconds(120);
+
+            var scale = compositor.CreateVector3KeyFrameAnimation();
+            scale.InsertKeyFrame(0, new Vector3(1, 1, 0), ease);
+
+            if (_navigationViewSelected == RootDestination.Settings && !_isSidebarEnabled)
+            {
+                scale.InsertKeyFrame(1, new Vector3(0, 0, 0), ease);
+            }
+            else
+            {
+                scale.InsertKeyFrame(1, new Vector3(28f / 48f, 28f / 48f, 0), ease);
+            }
+
+            scale.Duration = TimeSpan.FromMilliseconds(120);
+
+            var clip = compositor.CreateScalarKeyFrameAnimation();
+            clip.InsertKeyFrame(0, 0, ease);
+            clip.InsertKeyFrame(1, 180, ease);
+            clip.Duration = TimeSpan.FromMilliseconds(120);
+
+            theme.StartAnimation("Offset", offset1);
+            theme.StartAnimation("Opacity", opacity);
+
+            photo.CenterPoint = new Vector3(_isSidebarEnabled ? 24 : 0, 24, 0);
+            photo.StartAnimation("Scale", scale);
+
+            info.CenterPoint = new Vector3(0, 32, 0);
+            info.StartAnimation("Scale", scale);
+            info.StartAnimation("Opacity", opacity);
+            info.StartAnimation("Translation", offset2);
+
+            accounts.Clip = compositor.CreateInsetClip();
+            accounts.Clip.StartAnimation("RightInset", clip);
+
             batch.End();
         }
 
@@ -759,6 +845,11 @@ namespace Unigram.Views.Host
                 content.BackRequested();
             }
         }
+
+        private void Photo_Click(object sender, RoutedEventArgs e)
+        {
+            IsPaneOpen = false;
+        }
     }
 
     public interface IRootContentPage
@@ -785,10 +876,6 @@ namespace Unigram.Views.Host
         Contacts,
         Calls,
         Settings,
-
-        NewChat,
-        NewSecretChat,
-        NewChannel,
 
         Tips,
         News,

@@ -1,7 +1,6 @@
 ﻿using System.Text;
 using Unigram.Common;
 using Unigram.Converters;
-using Unigram.Native.Calls;
 using Unigram.Services.Settings;
 using Unigram.ViewModels.Settings;
 using Unigram.Views.Popups;
@@ -17,6 +16,7 @@ namespace Unigram.Views.Settings
         public SettingsDataAndStoragePage()
         {
             InitializeComponent();
+            Title = Strings.Resources.DataSettings;
         }
 
         private void Storage_Click(object sender, RoutedEventArgs e)
@@ -131,20 +131,6 @@ namespace Unigram.Views.Settings
             }
 
             return builder.ToString();
-        }
-
-        private string ConvertUseLessData(VoipDataSaving value)
-        {
-            switch (value)
-            {
-                default:
-                case VoipDataSaving.Never:
-                    return Strings.Resources.UseLessDataNever;
-                case VoipDataSaving.Mobile:
-                    return Strings.Resources.UseLessDataOnMobile;
-                case VoipDataSaving.Always:
-                    return Strings.Resources.UseLessDataAlways;
-            }
         }
 
         #endregion

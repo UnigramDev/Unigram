@@ -1,132 +1,110 @@
 ﻿using System;
-using System.Numerics;
-using Unigram.Common;
-using Windows.UI.Composition;
+using System.Collections;
+using System.Collections.Specialized;
+using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
+using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Unigram.Controls
 {
-    public class TableListView : ListView
+    public class TableListView : SelectListView
     {
+        private INotifyCollectionChanged _itemsSource;
+
         public TableListView()
         {
             DefaultStyleKey = typeof(TableListView);
-            Loaded += OnLoaded;
-            //ContainerContentChanging += OnContainerContentChanging;
+
+            ContainerContentChanging += OnContainerContentChanging;
+            //RegisterPropertyChangedCallback(ItemsSourceProperty, OnItemsSourceChanged);
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
-            if (GroupStyle.Count > 0)
+            if (args.InRecycleQueue)
             {
                 return;
             }
 
-            var root = ItemsPanelRoot;
-            if (root == null)
+            if (args.ItemContainer.ContentTemplateRoot is Grid content)
             {
-                return;
+                if (args.ItemIndex == 0)
+                {
+                    content.CornerRadius = new CornerRadius(4, 4, 0, 0);
+                    content.BorderThickness = new Thickness(1);
+                }
+                else if (ItemsSource is IList list && args.ItemIndex == list.Count - 1)
+                {
+                    content.CornerRadius = new CornerRadius(0, 0, 4, 4);
+                    content.BorderThickness = new Thickness(1, 0, 1, 1);
+                }
+                else
+                {
+                    content.CornerRadius = new CornerRadius(0);
+                    content.BorderThickness = new Thickness(1, 0, 1, 1);
+                }
             }
-
-            var visual = ElementCompositionPreview.GetElementVisual(root);
-            var rect = visual.Compositor.CreateRoundedRectangleGeometry();
-
-            var radius = ItemsPanelCornerRadius;
-            var size = root.ActualSize;
-            var offset = new Vector2();
-
-            if ((radius.TopLeft == 0 && radius.TopRight == 0) || radius.BottomLeft == 0 || radius.BottomRight == 0)
-            {
-                size.Y += (float)radius.BottomLeft;
-                offset.Y = radius.TopLeft == 0 ? -(float)radius.BottomLeft : 0;
-            }
-
-            rect.Size = size;
-            rect.Offset = offset;
-            rect.CornerRadius = new Vector2((float)Math.Max(radius.TopLeft, radius.BottomRight));
-
-            visual.Clip = visual.Compositor.CreateGeometricClip(rect);
-
-            root.SizeChanged += OnSizeChanged;
         }
 
-        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        private void OnItemsSourceChanged(DependencyObject sender, DependencyProperty dp)
         {
-            var root = ItemsPanelRoot;
-            var visual = ElementCompositionPreview.GetElementVisual(root);
-            var clip = visual.Clip as CompositionGeometricClip;
-            var rect = clip.Geometry as CompositionRoundedRectangleGeometry;
-
-            var radius = ItemsPanelCornerRadius;
-            var size = e.NewSize.ToVector2();
-            var offset = new Vector2();
-
-            if ((radius.TopLeft == 0 && radius.TopRight == 0) || radius.BottomLeft == 0 || radius.BottomRight == 0)
+            if (_itemsSource is INotifyCollectionChanged oldValue)
             {
-                size.Y += (float)radius.BottomLeft;
-                offset.Y = radius.TopLeft == 0 ? -(float)radius.BottomLeft : 0;
+                _itemsSource = null;
+                oldValue.CollectionChanged -= OnCollectionChanged;
             }
 
-            rect.Size = size;
-            rect.Offset = offset;
+            if (ItemsSource is INotifyCollectionChanged newValue)
+            {
+                _itemsSource = newValue;
+                newValue.CollectionChanged += OnCollectionChanged;
+            }
         }
 
-        #region ItemsPanelCornerRadius
-
-        public CornerRadius ItemsPanelCornerRadius
+        private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            get => (CornerRadius)GetValue(ItemsPanelCornerRadiusProperty);
-            set => SetValue(ItemsPanelCornerRadiusProperty, value);
+            var list = sender as IList;
+            if (list == null)
+            {
+                return;
+            }
+
+            var stack = ItemsPanelRoot as ItemsStackPanel;
+            if (stack == null)
+            {
+                return;
+            }
+
+            if (e.Action == NotifyCollectionChangedAction.Add && (e.NewStartingIndex == 0 || e.NewStartingIndex == list.Count - 1))
+            {
+                if (stack.FirstCacheIndex <= e.NewStartingIndex && stack.LastCacheIndex >= e.NewStartingIndex)
+                {
+
+                }
+            }
         }
-
-        public static readonly DependencyProperty ItemsPanelCornerRadiusProperty =
-            DependencyProperty.Register("ItemsPanelCornerRadius", typeof(CornerRadius), typeof(TableListView), new PropertyMetadata(default, OnItemsPanelCornerRadiusChanged));
-
-        private static void OnItemsPanelCornerRadiusChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (((TableListView)d).GroupStyle.Count > 0)
-            {
-                return;
-            }
-
-            var root = ((TableListView)d).ItemsPanelRoot;
-            if (root == null)
-            {
-                return;
-            }
-
-            var visual = ElementCompositionPreview.GetElementVisual(root);
-
-            var clip = visual.Clip as CompositionGeometricClip;
-            if (clip == null)
-            {
-                return;
-            }
-
-            var rect = clip.Geometry as CompositionRoundedRectangleGeometry;
-
-            var radius = ((TableListView)d).ItemsPanelCornerRadius;
-            var size = root.ActualSize;
-            var offset = new Vector2();
-
-            if ((radius.TopLeft == 0 && radius.TopRight == 0) || radius.BottomLeft == 0 || radius.BottomRight == 0)
-            {
-                size.Y += (float)radius.BottomLeft;
-                offset.Y = radius.TopLeft == 0 ? -(float)radius.BottomLeft : 0;
-            }
-
-            rect.Size = size;
-            rect.Offset = offset;
-            rect.CornerRadius = new Vector2((float)Math.Max(radius.TopLeft, radius.BottomRight));
-        }
-
-        #endregion
 
         protected override DependencyObject GetContainerForItemOverride()
         {
-            return new TextListViewItem();
+            return new TableListViewItem();
+        }
+    }
+
+    public class TableListViewItem : TextListViewItem
+    {
+        private ListViewItemPresenter Root;
+
+        protected override void OnApplyTemplate()
+        {
+            Root = GetTemplateChild(nameof(Root)) as ListViewItemPresenter; 
+            base.OnApplyTemplate();
+        }
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            Root.Arrange(new Rect(0, 0, Math.Min(finalSize.Width, 1000), finalSize.Height));
+            return finalSize;
         }
     }
 }

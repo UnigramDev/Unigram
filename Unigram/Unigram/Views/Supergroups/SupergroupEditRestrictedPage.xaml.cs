@@ -14,6 +14,7 @@ namespace Unigram.Views.Supergroups
         public SupergroupEditRestrictedPage()
         {
             InitializeComponent();
+            Title = Strings.Resources.UserRestrictions;
         }
 
         #region Binding
@@ -39,7 +40,7 @@ namespace Unigram.Views.Supergroups
 
         public void UpdateUser(Chat chat, User user, bool secret)
         {
-            Title.Text = user.GetFullName();
+            TitleLabel.Text = user.GetFullName();
             Subtitle.Text = LastSeenConverter.GetLabel(user, true);
             Photo.SetUser(ViewModel.ProtoService, user, 64);
 

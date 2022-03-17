@@ -17,6 +17,7 @@ namespace Unigram.Views.Settings
         public SettingsStoragePage()
         {
             InitializeComponent();
+            Title = Strings.Resources.StorageUsage;
 
             InitializeKeepMediaTicks();
         }

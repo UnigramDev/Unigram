@@ -15,100 +15,86 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <local:HostedPage.Header>
-        <controls:ButtonPageHeader Command="{x:Bind ViewModel.SendCommand}"
-                                   Text="{CustomResource ChannelEdit}"
-                                   Glyph="&#xE10B;" />
-    </local:HostedPage.Header>
+    <local:HostedPage.Footer>
+        <Button Content="{CustomResource Done}"
+                Command="{x:Bind ViewModel.SendCommand}"
+                Style="{StaticResource AccentButtonStyle}" />
+    </local:HostedPage.Footer>
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+    <Grid Background="{ThemeResource SettingsPageBackground}">
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
-            <StackPanel Padding="0,0,0,48">
+            <StackPanel Spacing="16"
+                        Padding="0,0,0,32">
+                <Grid Margin="24,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition MaxWidth="1000" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <controls:ProfilePicture x:Name="Photo"
+                                             IsEnabled="False"
+                                             Height="140"
+                                             Width="140" />
+                    <Border Background="{ThemeResource MessageServiceBackgroundBrush}"
+                            CornerRadius="70"
+                            Height="140"
+                            Width="140" />
+
+                    <controls:GlyphButton Click="EditPhoto_Click"
+                                          Glyph="&#xE722;"
+                                          AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"
+                                          Style="{StaticResource RoundGlyphButtonStyle}"
+                                          HorizontalAlignment="Center"
+                                          RequestedTheme="Dark"
+                                          CornerRadius="70"
+                                          Height="140"
+                                          Width="140"
+                                          FontSize="48" />
+
+                </Grid>
+ 
                 <controls:HeaderedControl>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <Grid Margin="12,8"
-                              Grid.RowSpan="2">
-                            <controls:ProfilePicture x:Name="Photo"
-                                                     IsEnabled="False"
-                                                     Height="64"
-                                                     Width="64" />
-                            <Border Background="{ThemeResource MessageServiceBackgroundBrush}"
-                                    CornerRadius="32" />
+                    <TextBox x:Name="TitleLabel"
+                             Text="{x:Bind ViewModel.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                             MaxLength="{StaticResource ChannelTitleMaxLength}"
+                             Padding="12,11,6,12" />
 
-                            <controls:GlyphButton Click="EditPhoto_Click"
-                                                  Glyph="&#xE722;"
-                                                  AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"
-                                                  Style="{StaticResource RoundGlyphButtonStyle}"
-                                                  RequestedTheme="Dark"
-                                                  CornerRadius="32"
-                                                  Width="64"
-                                                  Height="64" />
-                        </Grid>
-
-                        <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                VerticalAlignment="Center"
-                                Margin="0,8,12,8"
-                                Grid.Column="1"
-                                Grid.RowSpan="2">
-                            <TextBox x:Name="Title"
-                                     Text="{x:Bind ViewModel.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                     FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                     MaxLength="{StaticResource ChannelTitleMaxLength}" />
-                        </Border>
-                    </Grid>
-
-                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}"
-                               Height="1"
-                               Margin="12,0,0,0" />
-
-                    <StackPanel>
-                        <TextBox x:Name="About"
-                                 Text="{x:Bind ViewModel.About, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                 FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                 MaxLength="{StaticResource ChannelAboutMaxLength}"
-                                 PlaceholderText="{CustomResource DescriptionOptionalPlaceholder}"
-                                 TextWrapping="Wrap"
-                                 AcceptsReturn="True"
-                                 Margin="12,8,12,8" />
-                        <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}"
-                                   Height="1"
-                                   Margin="12,0,0,0" />
-                    </StackPanel>
+                    <TextBox x:Name="About"
+                             Text="{x:Bind ViewModel.About, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                             MaxLength="{StaticResource ChannelAboutMaxLength}"
+                             PlaceholderText="{CustomResource DescriptionOptionalPlaceholder}"
+                             TextWrapping="Wrap"
+                             AcceptsReturn="True"
+                             Padding="12,11,6,12" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl x:Name="ChatBasicPanel">
                     <controls:BadgeButton x:Name="ChatType"
                                           Content="{CustomResource GroupType}"
                                           Command="{x:Bind ViewModel.EditTypeCommand}"
-                                          Style="{StaticResource SubtitleBadgeButtonStyle}" />
+                                          Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}" />
 
                     <controls:BadgeButton x:Name="ChatHistory"
                                           Content="{CustomResource ChatHistory}"
                                           Badge="{x:Bind ConvertHistory(ViewModel.IsAllHistoryAvailable), Mode=OneWay}"
                                           Command="{x:Bind ViewModel.EditHistoryCommand}"
-                                          Style="{StaticResource SubtitleBadgeButtonStyle}" />
+                                          Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
+                                          Glyph="&#xE8BD;" />
 
                     <controls:BadgeButton x:Name="ChatLinked"
                                           Content="{CustomResource Discussion}"
                                           Command="{x:Bind ViewModel.EditLinkedChatCommand}"
-                                          Style="{StaticResource SubtitleBadgeButtonStyle}" />
+                                          Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl x:Name="InviteLinkPanel"
                                           Header="{CustomResource ChannelInviteLinkTitle}">
                     <TextBox x:Name="InviteLink"
                              IsReadOnly="True"
-                             Margin="12,8,12,8"
+                             Padding="12,11,6,12"
                              Grid.Row="1" />
 
                     <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}"
@@ -125,7 +111,6 @@
                     <CheckBox IsChecked="{x:Bind ViewModel.IsSignatures, Mode=TwoWay}"
                               Content="{CustomResource ChannelSignMessages}"
                               Margin="12,6,12,0" />
-                    <Rectangle Style="{StaticResource Separator}" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl x:Name="GroupMembersPanel">
@@ -133,26 +118,35 @@
                                           Content="{CustomResource Reactions}"
                                           Command="{x:Bind ViewModel.ReactionsCommand}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          IsChevronVisible="True"
                                           Glyph="&#xE987;" />
+
                     <controls:BadgeButton x:Name="Permissions"
                                           Content="{CustomResource ChannelPermissions}"
                                           Command="{x:Bind ViewModel.KickedCommand}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          IsChevronVisible="True"
                                           Glyph="&#xE192;" />
+
                     <controls:BadgeButton x:Name="Admins"
                                           Content="{CustomResource ChannelAdministrators}"
                                           Command="{x:Bind ViewModel.AdminsCommand}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          IsChevronVisible="True"
                                           Glyph="&#xE734;" />
+
                     <controls:BadgeButton x:Name="Members"
                                           Content="{CustomResource ChannelMembers}"
                                           Command="{x:Bind ViewModel.MembersCommand}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          IsChevronVisible="True"
                                           Glyph="&#xE716;" />
+
                     <controls:BadgeButton x:Name="Blacklist"
                                           Content="{CustomResource ChannelBlacklist}"
                                           Command="{x:Bind ViewModel.BannedCommand}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          IsChevronVisible="True"
                                           Glyph="&#xF140;" />
                 </controls:HeaderedControl>
 
@@ -160,7 +154,10 @@
                                           Footer="{CustomResource GroupStickersInfo}">
                     <controls:BadgeButton x:Name="GroupStickers"
                                           Content="{CustomResource GroupStickers}"
-                                          Command="{x:Bind ViewModel.EditStickerSetCommand}" />
+                                          Command="{x:Bind ViewModel.EditStickerSetCommand}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          IsChevronVisible="True"
+                                          Glyph="&#xF4AA;" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl x:Name="DeletePanel">

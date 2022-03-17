@@ -55,6 +55,7 @@ namespace Unigram.Views
         public DialogViewModel ViewModel => _viewModel ??= DataContext as DialogViewModel;
 
         private readonly Func<IDialogDelegate, int, DialogViewModel> _getViewModel;
+        private readonly Action<string> _setTitle;
 
         private readonly TLWindowContext _windowContext;
 
@@ -89,11 +90,12 @@ namespace Unigram.Views
 
         private ChatBackgroundPresenter _backgroundPresenter;
 
-        public ChatView(Func<IDialogDelegate, int, DialogViewModel> getViewModel)
+        public ChatView(Func<IDialogDelegate, int, DialogViewModel> getViewModel, Action<string> setTitle)
         {
             InitializeComponent();
 
             _getViewModel = getViewModel;
+            _setTitle = setTitle;
 
             _autocompleteHandler = new AnimatedListHandler<Sticker>(ListAutocomplete);
 
@@ -137,7 +139,7 @@ namespace Unigram.Views
             InitializeAutomation();
             InitializeStickers();
 
-            ElementCompositionPreview.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
+            //ElementCompositionPreview.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
             ElementCompositionPreview.SetIsTranslationEnabled(Ellipse, true);
             ElementCompositionPreview.SetIsTranslationEnabled(ButtonMore, true);
             ElementCompositionPreview.SetIsTranslationEnabled(TextFieldPanel, true);
@@ -998,7 +1000,7 @@ namespace Unigram.Views
                 }
 
                 var focused = FocusManager.GetFocusedElement();
-                if (focused is Selector or SelectorItem or Microsoft.UI.Xaml.Controls.ItemsRepeater or ChatCell)
+                if (focused is Selector or SelectorItem or Microsoft.UI.Xaml.Controls.ItemsRepeater or ChatCell or PlaybackSlider)
                 {
                     return;
                 }
@@ -1041,7 +1043,7 @@ namespace Unigram.Views
                 }
 
                 var focused = FocusManager.GetFocusedElement();
-                if (focused is Selector or SelectorItem or Microsoft.UI.Xaml.Controls.ItemsRepeater or ChatCell)
+                if (focused is Selector or SelectorItem or Microsoft.UI.Xaml.Controls.ItemsRepeater or ChatCell or PlaybackSlider)
                 {
                     return;
                 }
@@ -3498,6 +3500,8 @@ namespace Unigram.Views
             {
                 Title.Text = ViewModel.CacheService.GetTitle(chat);
             }
+
+            _setTitle(Title.Text);
         }
 
         public void UpdateChatPhoto(Chat chat)
@@ -4070,7 +4074,7 @@ namespace Unigram.Views
             ButtonForward.CornerRadius = new CornerRadius(min, 4, 4, min);
 
             ComposerHeaderCancel.CornerRadius = new CornerRadius(4, min, 4, 4);
-            TextRoot.CornerRadius = ChatFooter.CornerRadius = ChatRecord.CornerRadius = ManagePanel.CornerRadius = new CornerRadius(radius);
+            TextRoot.CornerRadius = ChatFooter.CornerRadius = ChatRecord.CornerRadius = ManagePanel.CornerRadius = new CornerRadius(radius, radius, 0, 0);
 
             // It would be cool to have shadow to respect text field corner radius
             //Separator.CornerRadius = new CornerRadius(radius);
@@ -4082,7 +4086,7 @@ namespace Unigram.Views
             {
                 TextArea.MaxWidth = ChatRecord.MaxWidth = ChatFooter.MaxWidth = ManagePanel.MaxWidth = InlinePanel.MaxWidth = Separator.MaxWidth =
                     SettingsService.Current.IsAdaptiveWideEnabled ? 640 : double.PositiveInfinity;
-                TextArea.Margin = ChatRecord.Margin = ChatFooter.Margin = ManagePanel.Margin = Separator.Margin = new Thickness(12, 0, 12, 8);
+                TextArea.Margin = ChatRecord.Margin = ChatFooter.Margin = ManagePanel.Margin = Separator.Margin = new Thickness(12, 0, 12, 0);
                 InlinePanel.Margin = new Thickness(12, 0, 12, -radius);
             }
             else
@@ -4096,12 +4100,12 @@ namespace Unigram.Views
             var messages = ElementCompositionPreview.GetElementVisual(Messages);
             if (messages.Clip is InsetClip messagesClip)
             {
-                messagesClip.TopInset = 0;
-                messagesClip.BottomInset = -radius;
+                messagesClip.TopInset = -48;
+                messagesClip.BottomInset = -48;
             }
             else
             {
-                messages.Clip = Window.Current.Compositor.CreateInsetClip(0, 0, 0, -radius);
+                messages.Clip = Window.Current.Compositor.CreateInsetClip(0, -48, 0, -48);
             }
         }
 

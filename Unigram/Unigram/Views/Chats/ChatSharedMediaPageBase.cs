@@ -168,7 +168,7 @@ namespace Unigram.Views.Chats
             {
                 if (sender is ListView)
                 {
-                    args.ItemContainer = new AccessibleChatListViewItem(ViewModel.ProtoService);
+                    args.ItemContainer = new TableAccessibleChatListViewItem(ViewModel.ProtoService);
                 }
                 else
                 {
@@ -216,11 +216,14 @@ namespace Unigram.Views.Chats
 
                 var properties = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(scrollingHost);
                 var visual = ElementCompositionPreview.GetElementVisual(HeaderPanel);
+                var panel = ElementCompositionPreview.GetElementVisual(ScrollingHost.ItemsPanelRoot);
+
+                panel.Clip = panel.Compositor.CreateInsetClip();
 
                 ElementCompositionPreview.SetIsTranslationEnabled(HeaderPanel, true);
 
                 _properties = visual.Compositor.CreatePropertySet();
-                _properties.InsertScalar("ActualHeight", ProfileHeader.ActualSize.Y);
+                _properties.InsertScalar("ActualHeight", ProfileHeader.ActualSize.Y + 16);
 
                 var translation = visual.Compositor.CreateExpressionAnimation(
                     "scrollViewer.Translation.Y > -properties.ActualHeight ? 0 : -scrollViewer.Translation.Y - properties.ActualHeight");
@@ -228,6 +231,13 @@ namespace Unigram.Views.Chats
                 translation.SetReferenceParameter("properties", _properties);
 
                 visual.StartAnimation("Translation.Y", translation);
+
+                var clip = visual.Compositor.CreateExpressionAnimation(
+                    "scrollViewer.Translation.Y > -properties.ActualHeight ? 0 : -scrollViewer.Translation.Y - properties.ActualHeight - 48");
+                clip.SetReferenceParameter("scrollViewer", properties);
+                clip.SetReferenceParameter("properties", _properties);
+
+                panel.Clip.StartAnimation("TopInset", clip);
 
                 //void handler(object _, object args)
                 //{
@@ -288,7 +298,7 @@ namespace Unigram.Views.Chats
 
         protected void ProfileHeader_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            _properties?.InsertScalar("ActualHeight", (float)e.NewSize.Height);
+            _properties?.InsertScalar("ActualHeight", (float)e.NewSize.Height + 16);
 
             //var panel = ScrollingHost.ItemsPanelRoot;
             //if (panel != null)

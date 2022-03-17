@@ -21,8 +21,9 @@
                               IsSourceGrouped="True" />
 
         <DataTemplate x:Key="MemberTemplate">
-            <Grid Margin="12,6"
-                  Background="Transparent">
+            <Grid Padding="12,6"
+                  Background="{ThemeResource SettingsItemBackground}"
+                  BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -84,7 +85,7 @@
         </controls:ContentPageHeader>
     </local:HostedPage.Header>
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+    <Grid Background="{ThemeResource SettingsPageBackground}">
         <controls:TableListView ItemsSource="{x:Bind SearchResults.View, Mode=OneWay}"
                                 ItemTemplate="{StaticResource MemberTemplate}"
                                 ItemClick="ListView_ItemClick"
@@ -158,8 +159,7 @@
             </ListView.Footer>
         </controls:TableListView>
 
-        <Grid x:Name="ContentPanel"
-              Background="{ThemeResource PageBackgroundDarkBrush}">
+        <Grid x:Name="ContentPanel">
             <controls:TableListView x:Name="ScrollingHost"
                                     ItemsSource="{x:Bind ViewModel.Members}"
                                     ItemTemplate="{StaticResource MemberTemplate}"
@@ -168,13 +168,6 @@
                                     ContainerContentChanging="OnContainerContentChanging"
                                     SelectionMode="None"
                                     Grid.Row="1">
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem"
-                           BasedOn="{StaticResource DefaultListViewItemStyle}">
-                        <Setter Property="HorizontalContentAlignment"
-                                Value="Stretch" />
-                    </Style>
-                </ListView.ItemContainerStyle>
                 <ListView.Header>
                     <Border Height="16" />
                 </ListView.Header>

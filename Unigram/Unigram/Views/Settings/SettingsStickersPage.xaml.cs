@@ -5,7 +5,6 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
-using Unigram.Services.Settings;
 using Unigram.ViewModels.Settings;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -54,22 +53,22 @@ namespace Unigram.Views.Settings
 
         private void FeaturedStickers_Click(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(SettingsStickersPage), (int)StickersType.Trending, new DrillInNavigationTransitionInfo());
+            Frame.Navigate(typeof(SettingsStickersPage), (int)StickersType.Trending, new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
         }
 
         private void ArchivedStickers_Click(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(SettingsStickersPage), (int)StickersType.Archived, new DrillInNavigationTransitionInfo());
+            Frame.Navigate(typeof(SettingsStickersPage), (int)StickersType.Archived, new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
         }
 
         private void ArchivedMasks_Click(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(SettingsStickersPage), (int)StickersType.MasksArchived, new DrillInNavigationTransitionInfo());
+            Frame.Navigate(typeof(SettingsStickersPage), (int)StickersType.MasksArchived, new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
         }
 
         private void Masks_Click(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(SettingsStickersPage), (int)StickersType.Masks, new DrillInNavigationTransitionInfo());
+            Frame.Navigate(typeof(SettingsStickersPage), (int)StickersType.Masks, new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
         }
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
@@ -221,29 +220,9 @@ namespace Unigram.Views.Settings
 
         #region Binding
 
-        private bool IsInstalled(StickersType type)
+        private bool IsType(StickersType x, StickersType y)
         {
-            return type == StickersType.Installed;
-        }
-
-        private bool IsMasks(StickersType type)
-        {
-            return type == StickersType.Masks;
-        }
-
-        private string ConvertSuggest(StickersSuggestionMode mode)
-        {
-            switch (mode)
-            {
-                case StickersSuggestionMode.All:
-                    return Strings.Resources.SuggestStickersAll;
-                case StickersSuggestionMode.Installed:
-                    return Strings.Resources.SuggestStickersInstalled;
-                case StickersSuggestionMode.None:
-                    return Strings.Resources.SuggestStickersNone;
-            }
-
-            return null;
+            return x == y;
         }
 
         #endregion

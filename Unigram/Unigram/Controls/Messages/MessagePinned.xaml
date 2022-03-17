@@ -8,7 +8,7 @@
                             mc:Ignorable="d"
                             d:DesignHeight="300"
                             d:DesignWidth="400"
-                            Background="{ThemeResource PageSubHeaderBackgroundBrush}"
+                            Background="Transparent"
                             MinHeight="{ThemeResource AppBarThemeCompactHeight}"
                             HorizontalContentAlignment="Stretch"
                             VerticalContentAlignment="Stretch"
@@ -46,18 +46,10 @@
 
         <local:MessagePinnedLine x:Name="Line"
                                  Stroke="{ThemeResource PinnedMessageForegroundBrush}"
-                                 Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                  BorderBrush="{ThemeResource PinnedMessageBorderBrush}"
                                  IsTabStop="False"
                                  Width="4"
                                  Height="36" />
-        <StackPanel Height="36"
-                    Orientation="Horizontal">
-            <Border BorderBrush="Transparent"
-                    BorderThickness="2,0,0,0" />
-            <Border BorderBrush="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                    BorderThickness="2,0,0,0" />
-        </StackPanel>
 
         <Border x:Name="ThumbRoot"
                 x:DeferLoadStrategy="Lazy"

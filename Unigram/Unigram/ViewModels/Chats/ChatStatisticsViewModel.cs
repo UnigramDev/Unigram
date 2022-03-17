@@ -8,17 +8,14 @@ using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Navigation.Services;
 using Unigram.Services;
-using Unigram.ViewModels.Delegates;
 using Unigram.Views;
 using Windows.Data.Json;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Chats
 {
-    public class ChatStatisticsViewModel : TLViewModelBase, IDelegable<IChatDelegate>
+    public class ChatStatisticsViewModel : TLViewModelBase
     {
-        public IChatDelegate Delegate { get; set; }
-
         public ChatStatisticsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
@@ -105,7 +102,6 @@ namespace Unigram.ViewModels.Chats
             IsLoading = true;
 
             Chat = ProtoService.GetChat(chatId);
-            Delegate?.UpdateChat(Chat);
 
 
 

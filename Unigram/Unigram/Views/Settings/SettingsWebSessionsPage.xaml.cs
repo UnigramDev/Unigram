@@ -13,6 +13,7 @@ namespace Unigram.Views.Settings
         public SettingsWebSessionsPage()
         {
             InitializeComponent();
+            Title = Strings.Resources.WebSessionsTitle;
         }
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)

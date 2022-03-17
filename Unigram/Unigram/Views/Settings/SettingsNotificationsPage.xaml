@@ -6,33 +6,21 @@
                   xmlns:settings="using:Unigram.ViewModels.Settings"
                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                  mc:Ignorable="d">
+                  mc:Ignorable="d"
+                  IsNavigationRoot="True">
 
-    <local:HostedPage.Header>
-        <controls:PageHeader Text="{CustomResource NotificationsAndSounds}" />
-    </local:HostedPage.Header>
-
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+    <Grid Background="{ThemeResource SettingsPageBackground}">
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
-            <StackPanel Margin="0,0,0,24">
-                <!--<ContentControl x:Name="HeaderContent"
-                                MinHeight="{StaticResource PaneToggleButtonHeight}"
-                                IsTabStop="False"
-                                Content="{CustomResource NotificationsAndSounds}"
-                                VerticalContentAlignment="Stretch"
-                                HorizontalContentAlignment="Stretch"
-                                Style="{StaticResource NavigationViewTitleHeaderContentControlTextStyle}"
-                                Margin="24,4,0,0" />-->
-
+            <StackPanel Spacing="16"
+                        Margin="0,0,0,32">
                 <controls:HeaderedControl Visibility="{x:Bind ViewModel.IsAllAccountsAvailable}"
                                           Header="{CustomResource ShowNotificationsFor}"
                                           Footer="{CustomResource ShowNotificationsForInfo}">
                     <CheckBox IsChecked="{x:Bind ViewModel.IsAllAccountsNotifications, Mode=TwoWay}"
                               Content="{CustomResource AllAccounts}"
-                              Margin="12,6,12,0" />
-                    <Rectangle Style="{StaticResource Separator}" />
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl ItemsSource="{x:Bind ViewModel.Scopes}">
@@ -42,7 +30,8 @@
                                                   Content="{x:Bind Title}"
                                                   Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
                                                   Glyph="{x:Bind Glyph}"
-                                                  Click="{x:Bind ExceptionsExecute}" />
+                                                  Click="{x:Bind ExceptionsExecute}"
+                                                  IsChevronVisible="True" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </controls:HeaderedControl>
@@ -52,46 +41,35 @@
                               x:Load="False"
                               IsChecked="{x:Bind ViewModel.InAppFlash, Mode=TwoWay}"
                               Content="Flash window when receiving a notification"
-                              Margin="12,6,12,0" />
-                    <Rectangle x:Name="InAppFlashSeparator"
-                               x:Load="False"
-                               Fill="{ThemeResource TelegramSeparatorMediumBrush}"
-                               Height="1"
-                               Margin="12,6,0,0" />
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
 
                     <CheckBox IsChecked="{x:Bind ViewModel.InAppSounds, Mode=TwoWay}"
                               Content="{CustomResource InAppSounds}"
-                              Margin="12,6,12,0" />
-                    <Rectangle Style="{StaticResource Separator}" />
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
 
                     <CheckBox IsChecked="{x:Bind ViewModel.InAppPreview, Mode=TwoWay}"
                               Content="{CustomResource InAppPreview}"
-                              Margin="12,6,12,0" />
-                    <Rectangle Style="{StaticResource Separator}" />
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="{CustomResource Events}">
                     <CheckBox IsChecked="{x:Bind ViewModel.IsContactEnabled, Mode=TwoWay}"
                               Content="{CustomResource ContactJoined}"
-                              Margin="12,6,12,0" />
-                    <Rectangle Style="{StaticResource Separator}" />
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
 
                     <CheckBox IsChecked="{x:Bind ViewModel.IsPinnedEnabled, Mode=TwoWay}"
                               Content="{CustomResource PinnedMessages}"
-                              Margin="12,6,12,0" />
-                    <Rectangle Style="{StaticResource Separator}" />
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="{CustomResource BadgeNumber}">
                     <CheckBox IsChecked="{x:Bind ViewModel.IncludeMutedChats, Mode=TwoWay}"
                               Content="{CustomResource BadgeNumberMutedChats}"
-                              Margin="12,6,12,0" />
-                    <Rectangle Style="{StaticResource Separator}" />
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
 
                     <CheckBox IsChecked="{x:Bind ViewModel.CountUnreadMessages, Mode=TwoWay}"
                               Content="{CustomResource BadgeNumberUnread}"
-                              Margin="12,6,12,0" />
-                    <Rectangle Style="{StaticResource Separator}" />
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
                     <!--<TextBlock Text="{x:Bind ConvertCountInfo(ViewModel.CountUnreadMessages),Mode=OneWay}" Margin="12,8,12,0" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>-->
                 </controls:HeaderedControl>
 

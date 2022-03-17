@@ -4,40 +4,20 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Cells;
 using Unigram.ViewModels.Chats;
-using Unigram.ViewModels.Delegates;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Chats
 {
-    public sealed partial class MessageStatisticsPage : HostedPage, IChatDelegate
+    public sealed partial class MessageStatisticsPage : HostedPage
     {
         public MessageStatisticsViewModel ViewModel => DataContext as MessageStatisticsViewModel;
 
         public MessageStatisticsPage()
         {
             InitializeComponent();
+            Title = Strings.Resources.ViewMessageStatistic;
         }
-
-        #region Delegate
-
-        public void UpdateChat(Chat chat)
-        {
-            UpdateChatTitle(chat);
-            UpdateChatPhoto(chat);
-        }
-
-        public void UpdateChatTitle(Chat chat)
-        {
-            Title.Text = ViewModel.CacheService.GetTitle(chat);
-        }
-
-        public void UpdateChatPhoto(Chat chat)
-        {
-            Photo.SetChat(ViewModel.ProtoService, chat, 36);
-        }
-
-        #endregion
 
         #region Binding
 

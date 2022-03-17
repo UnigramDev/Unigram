@@ -6,136 +6,39 @@
                   xmlns:settings="using:Unigram.Services.Settings"
                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                  mc:Ignorable="d">
+                  mc:Ignorable="d"
+                  IsNavigationRoot="True">
 
-    <Page.Resources>
-        <Style x:Key="SubtitleButtonStyle"
-               TargetType="controls:BadgeButton">
-            <Setter Property="Background"
-                    Value="Transparent" />
-            <Setter Property="Foreground"
-                    Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
-            <Setter Property="BorderBrush"
-                    Value="{ThemeResource TelegramSeparatorBrush}" />
-            <Setter Property="BorderThickness"
-                    Value="0" />
-            <Setter Property="Padding"
-                    Value="12,0,0,0" />
-            <Setter Property="HorizontalContentAlignment"
-                    Value="Left" />
-            <Setter Property="HorizontalAlignment"
-                    Value="Stretch" />
-            <Setter Property="VerticalAlignment"
-                    Value="Center" />
-            <Setter Property="FontFamily"
-                    Value="{ThemeResource ContentControlThemeFontFamily}" />
-            <Setter Property="FontWeight"
-                    Value="Normal" />
-            <Setter Property="FontSize"
-                    Value="{ThemeResource ControlContentThemeFontSize}" />
-            <Setter Property="UseSystemFocusVisuals"
-                    Value="True" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="controls:BadgeButton">
-                        <StackPanel x:Name="RootGrid"
-                                    Background="{TemplateBinding Background}">
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Normal" />
-                                    <VisualState x:Name="PointerOver">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
-                                                                           Storyboard.TargetName="RootGrid">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource SystemControlBackgroundListLowBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Pressed">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
-                                                                           Storyboard.TargetName="RootGrid">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource SystemControlBackgroundListMediumBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Disabled">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
-                                                                           Storyboard.TargetName="ContentPresenter">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource SystemControlForegroundBaseLowBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                            <ContentPresenter x:Name="ContentPresenter"
-                                              TextWrapping="Wrap"
-                                              AutomationProperties.AccessibilityView="Raw"
-                                              BorderBrush="{TemplateBinding BorderBrush}"
-                                              BorderThickness="{TemplateBinding BorderThickness}"
-                                              ContentTemplate="{TemplateBinding ContentTemplate}"
-                                              ContentTransitions="{TemplateBinding ContentTransitions}"
-                                              Content="{TemplateBinding Content}"
-                                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                              Padding="12,11,12,0"
-                                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
-                            <ContentControl x:Name="BadgePresenter"
-                                            Content="{TemplateBinding Badge}"
-                                            Visibility="{TemplateBinding BadgeVisibility}"
-                                            Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                            Padding="12,0,0,12">
-                                <ContentControl.ContentTransitions>
-                                    <TransitionCollection>
-                                        <EntranceThemeTransition />
-                                    </TransitionCollection>
-                                </ContentControl.ContentTransitions>
-                                <ContentControl.Clip>
-                                    <RectangleGeometry Rect="0,0,3600,28" />
-                                </ContentControl.Clip>
-                                <ContentControl.ContentTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding}"
-                                                   Style="{StaticResource CaptionTextBlockStyle}"
-                                                   Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
-                                    </DataTemplate>
-                                </ContentControl.ContentTemplate>
-                            </ContentControl>
-                            <Rectangle Fill="{TemplateBinding BorderBrush}"
-                                       Height="1"
-                                       Margin="{TemplateBinding Padding}" />
-                        </StackPanel>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </Page.Resources>
-
-    <local:HostedPage.Header>
-        <controls:PageHeader Text="{CustomResource DataSettings}" />
-    </local:HostedPage.Header>
-
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+    <Grid Background="{ThemeResource SettingsPageBackground}">
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
-            <StackPanel Margin="0,0,0,24">
+            <StackPanel Spacing="16"
+                        Margin="0,0,0,32">
                 <controls:HeaderedControl Header="{CustomResource DataUsage}">
                     <controls:BadgeButton Content="{CustomResource StorageUsage}"
-                                          Click="Storage_Click" />
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xEB05;"
+                                          Click="Storage_Click"
+                                          IsChevronVisible="True" />
+
                     <controls:BadgeButton Content="{CustomResource NetworkUsage}"
-                                          Click="Stats_Click" />
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xE91F;"
+                                          Click="Stats_Click"
+                                          IsChevronVisible="True" />
+
                     <controls:BadgeButton Content="{CustomResource DownloadsTabs}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xE118;"
                                           Click="Downloads_Click" />
 
                     <Grid>
                         <controls:BadgeButton Command="{x:Bind ViewModel.StoragePathCommand}"
                                               Content="{CustomResource StoragePath}"
                                               Badge="{x:Bind ConvertFilesDirectory(ViewModel.FilesDirectory), Mode=OneWay}"
-                                              Style="{StaticResource SubtitleBadgeButtonStyle}">
+                                              Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
+                                              Glyph="&#xF12B;">
                             <controls:BadgeButton.CommandParameter>
                                 <x:Boolean>False</x:Boolean>
                             </controls:BadgeButton.CommandParameter>
@@ -159,14 +62,14 @@
                                           Footer="{CustomResource AutoDownloadAudioInfo}">
                     <CheckBox IsChecked="{x:Bind ViewModel.AutoDownloadEnabled, Mode=TwoWay}"
                               Content="{CustomResource AutoDownloadMedia}"
-                              Margin="12,6,12,0" />
-                    <Rectangle Style="{StaticResource Separator}" />
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
 
                     <controls:BadgeButton Badge="{x:Bind ConvertAutoDownload(settings:AutoDownloadType.Photos, ViewModel.AutoDownload.Photos, 0), Mode=OneWay}"
                                           Command="{x:Bind ViewModel.AutoDownloadCommand}"
                                           IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
                                           Content="{CustomResource AutoDownloadPhotos}"
-                                          Style="{StaticResource SubtitleBadgeButtonStyle}">
+                                          Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
+                                          Glyph="&#xEB9F;">
                         <Button.CommandParameter>
                             <settings:AutoDownloadType>Photos</settings:AutoDownloadType>
                         </Button.CommandParameter>
@@ -176,7 +79,8 @@
                                           Command="{x:Bind ViewModel.AutoDownloadCommand}"
                                           IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
                                           Content="{CustomResource AutoDownloadVideos}"
-                                          Style="{StaticResource SubtitleBadgeButtonStyle}">
+                                          Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
+                                          Glyph="&#xE714;">
                         <Button.CommandParameter>
                             <settings:AutoDownloadType>Videos</settings:AutoDownloadType>
                         </Button.CommandParameter>
@@ -186,7 +90,8 @@
                                           Command="{x:Bind ViewModel.AutoDownloadCommand}"
                                           IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
                                           Content="{CustomResource AutoDownloadFiles}"
-                                          Style="{StaticResource SubtitleBadgeButtonStyle}">
+                                          Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
+                                          Glyph="&#xE7C3;">
                         <Button.CommandParameter>
                             <settings:AutoDownloadType>Documents</settings:AutoDownloadType>
                         </Button.CommandParameter>
@@ -194,38 +99,41 @@
 
                     <controls:BadgeButton Command="{x:Bind ViewModel.ResetAutoDownloadCommand}"
                                           Content="{CustomResource ResetAutomaticMediaDownload}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Foreground="Red" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="{CustomResource AutoplayMedia}">
                     <CheckBox IsChecked="{x:Bind ViewModel.IsAutoPlayAnimationsEnabled, Mode=TwoWay}"
                               Content="{CustomResource AutoplayGIF}"
-                              Margin="12,6,12,0" />
-                    <Rectangle Style="{StaticResource Separator}" />
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
 
                     <CheckBox IsChecked="{x:Bind ViewModel.IsAutoPlayVideosEnabled, Mode=TwoWay}"
                               Content="{CustomResource AutoplayVideo}"
-                              Margin="12,6,12,0" />
-                    <Rectangle Style="{StaticResource Separator}" />
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="{CustomResource Streaming}"
                                           Footer="{CustomResource EnableAllStreamingInfo}">
                     <CheckBox IsChecked="{x:Bind ViewModel.IsStreamingEnabled, Mode=TwoWay}"
                               Content="{CustomResource EnableStreaming}"
-                              Margin="12,6,12,0" />
-                    <Rectangle Style="{StaticResource Separator}" />
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="{CustomResource Calls}">
-                    <controls:BadgeButton Badge="{x:Bind ConvertUseLessData(ViewModel.UseLessData), Mode=OneWay}"
-                                          Command="{x:Bind ViewModel.UseLessDataCommand}"
-                                          Content="{CustomResource VoipUseLessData}" />
+                    <controls:BadgeButton Content="{CustomResource VoipUseLessData}">
+                        <controls:BadgeButton.Badge>
+                            <ComboBox ItemsSource="{x:Bind ViewModel.UseLessDataOptions}"
+                                      SelectedIndex="{x:Bind ViewModel.UseLessData, Mode=TwoWay}"
+                                      DisplayMemberPath="Text" />
+                        </controls:BadgeButton.Badge>
+                    </controls:BadgeButton>
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="{CustomResource Proxy}">
                     <controls:BadgeButton Content="{CustomResource ProxySettings}"
-                                          Click="Proxy_Click" />
+                                          Click="Proxy_Click"
+                                          IsChevronVisible="True" />
                 </controls:HeaderedControl>
             </StackPanel>
         </ScrollViewer>

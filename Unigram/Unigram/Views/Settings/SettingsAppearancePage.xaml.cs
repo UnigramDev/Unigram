@@ -21,6 +21,7 @@ namespace Unigram.Views.Settings
         public SettingsAppearancePage()
         {
             InitializeComponent();
+            Title = Strings.Resources.ChatSettings;
 
             var preview = ElementCompositionPreview.GetElementVisual(Preview);
             preview.Clip = preview.Compositor.CreateInsetClip();
@@ -77,21 +78,6 @@ namespace Unigram.Views.Settings
                 : mode == NightMode.System
                 ? Strings.Resources.AutoNightSystemDefault
                 : Strings.Resources.AutoNightDisabled;
-        }
-
-        private string ConvertDistanceUnits(DistanceUnits units)
-        {
-            switch (units)
-            {
-                case DistanceUnits.Automatic:
-                    return Strings.Resources.DistanceUnitsAutomatic;
-                case DistanceUnits.Kilometers:
-                    return Strings.Resources.DistanceUnitsKilometers;
-                case DistanceUnits.Miles:
-                    return Strings.Resources.DistanceUnitsMiles;
-            }
-
-            return null;
         }
 
         private Visibility ConvertNightModeVisibility(NightMode mode)

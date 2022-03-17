@@ -14,6 +14,7 @@ namespace Unigram.Views.Settings
         public SettingsPrivacyAndSecurityPage()
         {
             InitializeComponent();
+            Title = Strings.Resources.PrivacySettings;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)

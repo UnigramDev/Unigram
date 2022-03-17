@@ -15,6 +15,7 @@ namespace Unigram.Views
         public DiagnosticsPage()
         {
             InitializeComponent();
+            Title = "Diagnostics";
         }
 
         #region Binding

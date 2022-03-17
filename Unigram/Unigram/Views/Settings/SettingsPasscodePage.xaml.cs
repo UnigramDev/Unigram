@@ -13,21 +13,12 @@ namespace Unigram.Views.Settings
         public SettingsPasscodePage()
         {
             InitializeComponent();
+            Title = Strings.Resources.Passcode;
         }
 
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
             Biometrics.Visibility = await KeyCredentialManager.IsSupportedAsync() ? Visibility.Visible : Visibility.Collapsed;
         }
-
-        #region Binding
-
-        private string ConvertAutolock(int seconds)
-        {
-            return Locale.FormatAutoLock(seconds);
-        }
-
-        #endregion
-
     }
 }

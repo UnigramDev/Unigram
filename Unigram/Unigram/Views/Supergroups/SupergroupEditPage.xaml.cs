@@ -20,6 +20,7 @@ namespace Unigram.Views.Supergroups
         public SupergroupEditPage()
         {
             InitializeComponent();
+            Title = Strings.Resources.ChannelEdit;
         }
 
         private async void EditPhoto_Click(object sender, RoutedEventArgs e)
@@ -67,7 +68,7 @@ namespace Unigram.Views.Supergroups
 
         public void UpdateChatTitle(Chat chat)
         {
-            Title.Text = ViewModel.ProtoService.GetTitle(chat);
+            TitleLabel.Text = ViewModel.ProtoService.GetTitle(chat);
         }
 
         public void UpdateChatPhoto(Chat chat)
@@ -77,7 +78,7 @@ namespace Unigram.Views.Supergroups
 
         public void UpdateSupergroup(Chat chat, Supergroup group)
         {
-            Title.PlaceholderText = group.IsChannel ? Strings.Resources.EnterChannelName : Strings.Resources.GroupName;
+            TitleLabel.PlaceholderText = group.IsChannel ? Strings.Resources.EnterChannelName : Strings.Resources.GroupName;
 
             Delete.Content = group.IsChannel ? Strings.Resources.ChannelDelete : Strings.Resources.DeleteMega;
             DeletePanel.Footer = group.IsChannel ? Strings.Resources.ChannelDeleteInfo : Strings.Resources.MegaDeleteInfo;
@@ -89,10 +90,11 @@ namespace Unigram.Views.Supergroups
 
 
             Photo.IsEnabled = group.CanChangeInfo();
-            Title.IsReadOnly = !group.CanChangeInfo();
+            TitleLabel.IsReadOnly = !group.CanChangeInfo();
             About.IsReadOnly = !group.CanChangeInfo();
 
             ChatType.Content = group.IsChannel ? Strings.Resources.ChannelType : Strings.Resources.GroupType;
+            ChatType.Glyph = group.IsChannel ? Icons.Megaphone : Icons.People;
             ChatType.Visibility = Visibility.Collapsed;
             ChatType.Badge = group.Username.Length > 0
                 ? group.IsChannel
@@ -115,6 +117,7 @@ namespace Unigram.Views.Supergroups
 
             ChatLinked.Visibility = group.IsChannel ? Visibility.Visible : group.HasLinkedChat ? Visibility.Visible : Visibility.Collapsed;
             ChatLinked.Content = group.IsChannel ? Strings.Resources.Discussion : Strings.Resources.LinkedChannel;
+            ChatLinked.Glyph = group.IsChannel ? Icons.Comment : Icons.Megaphone;
             ChatLinked.Badge = group.HasLinkedChat ? string.Empty : Strings.Resources.DiscussionInfo;
 
             Permissions.Badge = string.Format("{0}/{1}", chat.Permissions.Count(), chat.Permissions.Total());
@@ -207,7 +210,7 @@ namespace Unigram.Views.Supergroups
 
         public void UpdateBasicGroup(Chat chat, BasicGroup group)
         {
-            Title.PlaceholderText = Strings.Resources.GroupName;
+            TitleLabel.PlaceholderText = Strings.Resources.GroupName;
 
             Delete.Content = Strings.Resources.DeleteMega;
             DeletePanel.Footer = Strings.Resources.MegaDeleteInfo;

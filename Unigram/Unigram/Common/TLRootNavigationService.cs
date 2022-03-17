@@ -42,8 +42,8 @@ namespace Unigram.Common
                             Navigate(typeof(SignInPage));
                         }
 
-                        Frame.BackStack.Clear();
-                        Frame.BackStack.Add(new PageStackEntry(typeof(BlankPage), null, null));
+                        ClearBackStack();
+                        AddToBackStack(typeof(BlankPage));
                     }
                     else
                     {

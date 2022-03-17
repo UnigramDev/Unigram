@@ -5,6 +5,15 @@
 
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Dark">
+            <x:String x:Key="BreadcrumbBarChevronLeftToRight">&#xE0E3;</x:String>
+            <x:String x:Key="BreadcrumbBarChevronRightToLeft">&#xE0E2;</x:String>
+            <x:Double x:Key="BreadcrumbBarItemThemeFontSize">24</x:Double>
+            <x:Double x:Key="BreadcrumbBarChevronFontSize">20</x:Double>
+            <Thickness x:Key="BreadcrumbBarChevronPadding">2,6,2,0</Thickness>
+            <FontWeight x:Key="BreadcrumbBarItemFontWeight">SemiBold</FontWeight>
+            <StaticResource x:Key="BreadcrumbBarNormalForegroundBrush" ResourceKey="TextFillColorSecondaryBrush" />
+            <StaticResource x:Key="BreadcrumbBarHoverForegroundBrush" ResourceKey="TextFillColorPrimaryBrush" />
+
             <!-- Common -->
             <Color x:Key="SystemAccentColor">#71BAFA</Color>
 
@@ -2149,12 +2158,6 @@
             <StaticResource x:Key="InfoBarHyperlinkButtonForeground" ResourceKey="AccentTextFillColorPrimaryBrush" />
             <StaticResource x:Key="InfoBarBorderBrush" ResourceKey="CardStrokeColorDefaultBrush" />
             <Thickness x:Key="InfoBarBorderThickness">1</Thickness>
-            <x:String x:Key="BreadcrumbBarChevronLeftToRight">&#xE974;</x:String>
-            <x:String x:Key="BreadcrumbBarChevronRightToLeft">&#xE973;</x:String>
-            <Thickness x:Key="BreadcrumbBarChevronPadding">2,0</Thickness>
-            <FontWeight x:Key="BreadcrumbBarItemFontWeight">Normal</FontWeight>
-            <StaticResource x:Key="BreadcrumbBarNormalForegroundBrush" ResourceKey="TextFillColorPrimaryBrush" />
-            <StaticResource x:Key="BreadcrumbBarHoverForegroundBrush" ResourceKey="TextFillColorSecondaryBrush" />
             <StaticResource x:Key="BreadcrumbBarPressedForegroundBrush" ResourceKey="TextFillColorTertiaryBrush" />
             <StaticResource x:Key="BreadcrumbBarDisabledForegroundBrush" ResourceKey="TextFillColorDisabledBrush" />
             <StaticResource x:Key="BreadcrumbBarFocusForegroundBrush" ResourceKey="TextFillColorPrimaryBrush" />
@@ -2176,8 +2179,6 @@
             <StaticResource x:Key="BreadcrumbBarEllipsisFlyoutPresenterBackground" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
             <StaticResource x:Key="BreadcrumbBarEllipsisFlyoutPresenterBorderBrush" ResourceKey="SurfaceStrokeColorFlyoutBrush" />
             <Thickness x:Key="BreadcrumbBarEllipsisFlyoutPresenterBorderThemeThickness">1</Thickness>
-            <StaticResource x:Key="BreadcrumbBarItemThemeFontSize" ResourceKey="ControlContentThemeFontSize" />
-            <x:Double x:Key="BreadcrumbBarChevronFontSize">12</x:Double>
             <StaticResource x:Key="PipsPagerSelectionIndicatorBackground" ResourceKey="ControlFillColorTransparentBrush" />
             <StaticResource x:Key="PipsPagerSelectionIndicatorBackgroundPointerOver" ResourceKey="ControlFillColorTransparentBrush" />
             <StaticResource x:Key="PipsPagerSelectionIndicatorBackgroundPressed" ResourceKey="ControlFillColorTransparentBrush" />
@@ -2247,6 +2248,15 @@
             <StaticResource x:Key="ToolTipBackgroundBrush" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="Light">
+            <x:String x:Key="BreadcrumbBarChevronLeftToRight">&#xE0E3;</x:String>
+            <x:String x:Key="BreadcrumbBarChevronRightToLeft">&#xE0E2;</x:String>
+            <x:Double x:Key="BreadcrumbBarItemThemeFontSize">24</x:Double>
+            <x:Double x:Key="BreadcrumbBarChevronFontSize">20</x:Double>
+            <Thickness x:Key="BreadcrumbBarChevronPadding">2,6,2,0</Thickness>
+            <FontWeight x:Key="BreadcrumbBarItemFontWeight">SemiBold</FontWeight>
+            <StaticResource x:Key="BreadcrumbBarNormalForegroundBrush" ResourceKey="TextFillColorSecondaryBrush" />
+            <StaticResource x:Key="BreadcrumbBarHoverForegroundBrush" ResourceKey="TextFillColorPrimaryBrush" />
+
             <!-- Common -->
             <Color x:Key="SystemAccentColor">#158DCD</Color>
 
@@ -4393,12 +4403,6 @@
             <StaticResource x:Key="InfoBarHyperlinkButtonForeground" ResourceKey="AccentTextFillColorPrimaryBrush" />
             <StaticResource x:Key="InfoBarBorderBrush" ResourceKey="CardStrokeColorDefaultBrush" />
             <Thickness x:Key="InfoBarBorderThickness">1</Thickness>
-            <x:String x:Key="BreadcrumbBarChevronLeftToRight">&#xE974;</x:String>
-            <x:String x:Key="BreadcrumbBarChevronRightToLeft">&#xE973;</x:String>
-            <Thickness x:Key="BreadcrumbBarChevronPadding">2,0</Thickness>
-            <FontWeight x:Key="BreadcrumbBarItemFontWeight">Normal</FontWeight>
-            <StaticResource x:Key="BreadcrumbBarNormalForegroundBrush" ResourceKey="TextFillColorPrimaryBrush" />
-            <StaticResource x:Key="BreadcrumbBarHoverForegroundBrush" ResourceKey="TextFillColorSecondaryBrush" />
             <StaticResource x:Key="BreadcrumbBarPressedForegroundBrush" ResourceKey="TextFillColorTertiaryBrush" />
             <StaticResource x:Key="BreadcrumbBarDisabledForegroundBrush" ResourceKey="TextFillColorDisabledBrush" />
             <StaticResource x:Key="BreadcrumbBarFocusForegroundBrush" ResourceKey="TextFillColorPrimaryBrush" />
@@ -4420,8 +4424,6 @@
             <StaticResource x:Key="BreadcrumbBarEllipsisFlyoutPresenterBackground" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
             <StaticResource x:Key="BreadcrumbBarEllipsisFlyoutPresenterBorderBrush" ResourceKey="SurfaceStrokeColorFlyoutBrush" />
             <Thickness x:Key="BreadcrumbBarEllipsisFlyoutPresenterBorderThemeThickness">1</Thickness>
-            <StaticResource x:Key="BreadcrumbBarItemThemeFontSize" ResourceKey="ControlContentThemeFontSize" />
-            <x:Double x:Key="BreadcrumbBarChevronFontSize">12</x:Double>
             <StaticResource x:Key="PipsPagerSelectionIndicatorBackground" ResourceKey="ControlFillColorTransparentBrush" />
             <StaticResource x:Key="PipsPagerSelectionIndicatorBackgroundPointerOver" ResourceKey="ControlFillColorTransparentBrush" />
             <StaticResource x:Key="PipsPagerSelectionIndicatorBackgroundPressed" ResourceKey="ControlFillColorTransparentBrush" />

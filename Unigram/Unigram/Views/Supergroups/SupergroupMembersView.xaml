@@ -19,7 +19,8 @@
     <UserControl.Resources>
         <DataTemplate x:Key="MemberTemplate">
             <Grid Padding="12,6"
-                  Background="Transparent">
+                  Background="{ThemeResource SettingsItemBackground}"
+                  BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />

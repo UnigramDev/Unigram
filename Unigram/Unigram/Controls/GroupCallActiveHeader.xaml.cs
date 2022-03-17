@@ -74,7 +74,7 @@ namespace Unigram.Controls
             if (_service?.Manager != null)
             {
                 _drawable.setState(_service.IsMuted ? 1 : 0);
-                _drawable.draw(0, 48, (float)sender.Size.Width, 48 + 40, args.DrawingSession, sender, 1);
+                _drawable.draw(0, 40, (float)sender.Size.Width, 40, args.DrawingSession, sender, 2);
             }
 
             sender.Invalidate();

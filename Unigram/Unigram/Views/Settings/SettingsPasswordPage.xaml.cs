@@ -10,6 +10,7 @@ namespace Unigram.Views.Settings
         public SettingsPasswordPage()
         {
             InitializeComponent();
+            Title = Strings.Resources.TwoStepVerification;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)

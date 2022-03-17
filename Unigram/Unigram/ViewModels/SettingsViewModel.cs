@@ -62,7 +62,6 @@ namespace Unigram.ViewModels
                 Chat = chat;
 
                 Aggregator.Subscribe(this);
-                Delegate?.UpdateChat(chat);
 
                 if (chat.Type is ChatTypePrivate privata)
                 {

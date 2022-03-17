@@ -127,7 +127,7 @@ namespace Unigram.Views.Chats
         {
             if (args.ItemContainer == null)
             {
-                args.ItemContainer = new TextListViewItem();
+                args.ItemContainer = new TableListViewItem();
                 args.ItemContainer.Style = sender.ItemContainerStyle;
                 args.ItemContainer.ContextRequested += Member_ContextRequested;
 

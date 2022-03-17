@@ -20,6 +20,7 @@ namespace Unigram.Views.Settings
         public SettingsLanguagePage()
         {
             InitializeComponent();
+            Title = Strings.Resources.Language;
         }
 
         private void List_ItemClick(object sender, ItemClickEventArgs e)
@@ -57,7 +58,7 @@ namespace Unigram.Views.Settings
         {
             if (args.ItemContainer == null)
             {
-                args.ItemContainer = new TextListViewItem();
+                args.ItemContainer = new TableListViewItem();
                 args.ItemContainer.Style = sender.ItemContainerStyle;
                 args.ItemContainer.ContentTemplate = sender.ItemTemplate;
                 args.ItemContainer.ContextRequested += Language_ContextRequested;

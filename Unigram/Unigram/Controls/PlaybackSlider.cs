@@ -1,4 +1,8 @@
-﻿using Windows.UI.Xaml;
+﻿using System;
+using System.Collections.Generic;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation.Peers;
+using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
@@ -22,6 +26,11 @@ namespace Unigram.Controls
             LayoutRoot.ColumnDefinitions[1].Width = new GridLength(Maximum - Value, GridUnitType.Star);
 
             base.OnApplyTemplate();
+        }
+
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new PlaybackSliderAutomationPeer(this);
         }
 
         protected override void OnValueChanged(double oldValue, double newValue)
@@ -137,5 +146,78 @@ namespace Unigram.Controls
                 VisualStateManager.GoToState(this, "Normal", true);
             }
         }
+    }
+
+    public class PlaybackSliderAutomationPeer : RangeBaseAutomationPeer, IValueProvider
+    {
+        private readonly PlaybackSlider _owner;
+
+        public PlaybackSliderAutomationPeer(PlaybackSlider owner)
+            : base(owner)
+        {
+            _owner = owner;
+        }
+
+        protected override string GetClassNameCore()
+        {
+            return "Slider";
+        }
+
+        protected override string GetNameCore()
+        {
+            return "Seek";
+        }
+
+        protected override object GetPatternCore(PatternInterface patternInterface)
+        {
+            if (patternInterface == PatternInterface.Value)
+            {
+                return this;
+            }
+
+            return base.GetPatternCore(patternInterface);
+        }
+
+        protected override AutomationControlType GetAutomationControlTypeCore()
+        {
+            return AutomationControlType.Slider;
+        }
+
+        public string Value
+        {
+            get
+            {
+                return ReadableTime((int)_owner.Value);
+            }
+        }
+
+        public void SetValue(string value)
+        {
+        }
+
+        public bool IsReadOnly
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        private static string ReadableTime(double seconds)
+        {
+            var duration = TimeSpan.FromSeconds(seconds);
+            if (duration.TotalHours >= 1)
+            {
+                return duration.ToString("h\\:mm\\:ss");
+            }
+            else
+            {
+                return duration.ToString("mm\\:ss");
+            }
+        }
+
+
+
+
     }
 }

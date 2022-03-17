@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Logs;
 using Unigram.Services.ViewService;
 using Unigram.Views;
@@ -17,6 +18,7 @@ namespace Unigram.Navigation.Services
     public interface INavigationService
     {
         void GoBack(NavigationTransitionInfo infoOverride = null);
+        void GoBackAt(int index, bool back = true);
         void GoForward();
 
         object Content { get; }
@@ -39,6 +41,7 @@ namespace Unigram.Navigation.Services
 
 
         Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null, Size size = default);
+        Task<ContentDialogResult> ShowAsync(Type sourcePopupType, object parameter = null);
 
         object CurrentPageParam { get; }
         Type CurrentPageType { get; }
@@ -51,7 +54,6 @@ namespace Unigram.Navigation.Services
 
         event TypedEventHandler<INavigationService, Type> AfterRestoreSavedNavigation;
 
-        void ClearHistory();
         void ClearCache(bool removeCachedPagesInBackStack = false);
 
         Task SuspendingAsync();
@@ -67,6 +69,35 @@ namespace Unigram.Navigation.Services
         /// </summary>
         /// <returns><value>true</value> if associated with MainView, <value>false</value> otherwise</returns>
         bool IsInMainView { get; }
+
+        void AddToBackStack(Type type, object parameter = null, NavigationTransitionInfo info = null);
+        void InsertToBackStack(int index, Type type, object parameter = null, NavigationTransitionInfo info = null);
+        void RemoveFromBackStack(int index);
+        void ClearBackStack();
+    }
+
+    public class NavigationStackItem : BindableBase
+    {
+        public NavigationStackItem(Type sourcePageType, object parameter, string title, bool root)
+        {
+            SourcePageType = sourcePageType;
+            Parameter = parameter;
+            Title = title;
+            IsRoot = root;
+        }
+
+        public Type SourcePageType { get; }
+
+        public object Parameter { get; }
+
+        private string _title;
+        public string Title
+        {
+            get => _title;
+            set => Set(ref _title, value);
+        }
+
+        public bool IsRoot { get; }
     }
 
     // DOCS: https://github.com/Windows-XAML/Template10/wiki/Docs-%7C-NavigationService
@@ -91,8 +122,50 @@ namespace Unigram.Navigation.Services
 
         public IDictionary<string, long> CacheKeyToChatId { get; } = new Dictionary<string, long>();
 
-        public static INavigationService GetForFrame(Frame frame) =>
-            WindowContext.ActiveWrappers.SelectMany(x => x.NavigationServices).FirstOrDefault(x => x.FrameFacade.Frame.Equals(frame));
+        public List<NavigationStackItem> BackStack { get; } = new();
+
+        public event EventHandler BackStackChanged;
+
+        public void GoBackAt(int index, bool back = true)
+        {
+            while (Frame.BackStackDepth > index + 1)
+            {
+                RemoveFromBackStack(index + 1);
+            }
+
+            if (Frame.CanGoBack && back)
+            {
+                Frame.GoBack();
+            }
+            else
+            {
+                BackStackChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public void InsertToBackStack(int index, Type type, object parameter = null, NavigationTransitionInfo info = null)
+        {
+            Frame.BackStack.Insert(index, new PageStackEntry(type, parameter, info));
+            BackStack.Insert(index, new NavigationStackItem(type, parameter, null, false));
+        }
+
+        public void AddToBackStack(Type type, object parameter = null, NavigationTransitionInfo info = null)
+        {
+            Frame.BackStack.Add(new PageStackEntry(type, parameter, info));
+            BackStack.Add(new NavigationStackItem(type, parameter, null, false));
+        }
+
+        public void RemoveFromBackStack(int index)
+        {
+            Frame.BackStack.RemoveAt(index);
+            BackStack.RemoveAt(index);
+        }
+
+        public void ClearBackStack()
+        {
+            Frame.BackStack.Clear();
+            BackStack.Clear();
+        }
 
         public NavigationService(Frame frame, int session, string id)
         {
@@ -110,6 +183,22 @@ namespace Unigram.Navigation.Services
                 var page = FrameFacade.Content as Page;
                 if (page != null)
                 {
+                    if (e.NavigationMode is NavigationMode.New or NavigationMode.Forward)
+                    {
+                        if (page is HostedPage hosted)
+                        {
+                            BackStack.Add(new NavigationStackItem(CurrentPageType, CurrentPageParam, hosted.Title, hosted.IsNavigationRoot));
+                        }
+                        else
+                        {
+                            BackStack.Add(new NavigationStackItem(CurrentPageType, CurrentPageParam, null, false));
+                        }
+                    }
+                    else if (e.NavigationMode is NavigationMode.Back && BackStack.Count > 0)
+                    {
+                        BackStack.RemoveAt(BackStack.Count - 1);
+                    }
+
                     // call navagable override (navigating)
                     var dataContext = ViewModelForPage(page);
                     if (dataContext != null)
@@ -152,7 +241,7 @@ namespace Unigram.Navigation.Services
             if (page.DataContext is not INavigable or null)
             {
                 // to support dependency injection, but keeping it optional.
-                var viewModel = BootStrapper.Current.ViewModelForPage(page, this);
+                var viewModel = BootStrapper.Current.ViewModelForPage(page, SessionId);
                 if (viewModel != null)
                 {
                     page.DataContext = viewModel;
@@ -234,6 +323,37 @@ namespace Unigram.Navigation.Services
         {
             Logger.Info($"Page: {page}, Parameter: {parameter}, Title: {title}, Size: {size}");
             return viewService.OpenAsync(page, parameter, title, size, SessionId);
+        }
+
+        public Task<ContentDialogResult> ShowAsync(Type sourcePopupType, object parameter)
+        {
+            var popup = Activator.CreateInstance(sourcePopupType) as ContentPopup;
+            if (popup != null)
+            {
+                var viewModel = BootStrapper.Current.ViewModelForPage(popup, SessionId);
+                if (viewModel != null)
+                {
+                    void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
+                    {
+                        popup.Opened -= OnOpened;
+                    }
+
+                    void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
+                    {
+                        _ = viewModel.OnNavigatedFromAsync(null, false);
+                        popup.Closed -= OnClosed;
+                    }
+
+                    popup.DataContext = viewModel;
+
+                    _ = viewModel.OnNavigatedToAsync(parameter, NavigationMode.New, null);
+                    popup.Closed += OnClosed;
+                }
+
+                return popup.ShowQueuedAsync();
+            }
+
+            return Task.FromResult(ContentDialogResult.None);
         }
 
         public event EventHandler<NavigatingEventArgs> Navigating;
@@ -388,8 +508,6 @@ namespace Unigram.Navigation.Services
 
             FrameFacade.Frame.CacheSize = currentSize;
         }
-
-        public void ClearHistory() { FrameFacade.Frame.BackStack.Clear(); }
 
         public async void Resuming()
         {

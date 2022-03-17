@@ -32,8 +32,9 @@
 
     <DataTemplate x:Key="StickerSetItemTemplate"
                   x:DataType="td:StickerSetInfo">
-        <Grid Margin="0,6"
-              Background="Transparent">
+        <Grid Padding="12,6"
+              Background="{ThemeResource SettingsItemBackground}"
+              BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition />

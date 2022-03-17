@@ -78,28 +78,15 @@ namespace Unigram.Common
             var cacheSize = service.Frame.CacheSize;
             service.Frame.CacheSize = 0;
             service.Refresh();
-            service.Frame.BackStack.Clear();
+            service.ClearBackStack();
             service.Frame.CacheSize = cacheSize;
-        }
-
-        public static void GoBackAt(this INavigationService service, int index, bool back = true)
-        {
-            while (service.Frame.BackStackDepth > index + 1)
-            {
-                service.Frame.BackStack.RemoveAt(index + 1);
-            }
-
-            if (service.Frame.CanGoBack && back)
-            {
-                service.Frame.GoBack();
-            }
         }
 
         public static void RemoveSkip(this INavigationService service, int count)
         {
             while (service.Frame.BackStackDepth > count)
             {
-                service.Frame.BackStack.RemoveAt(count);
+                service.RemoveFromBackStack(count);
             }
         }
 
@@ -107,7 +94,7 @@ namespace Unigram.Common
         {
             if (service.CanGoBack)
             {
-                service.Frame.BackStack.RemoveAt(service.Frame.BackStackDepth - 1);
+                service.RemoveFromBackStack(service.Frame.BackStackDepth - 1);
             }
         }
 
@@ -115,7 +102,7 @@ namespace Unigram.Common
         {
             if (service.CanGoBack && service.Frame.BackStack[service.Frame.BackStackDepth - 1].SourcePageType == type)
             {
-                service.Frame.BackStack.RemoveAt(service.Frame.BackStackDepth - 1);
+                service.RemoveFromBackStack(service.Frame.BackStackDepth - 1);
             }
         }
 
@@ -214,7 +201,7 @@ namespace Unigram.Common
 
                 if (found)
                 {
-                    service.Frame.BackStack.RemoveAt(i);
+                    service.RemoveFromBackStack(i);
                     i--;
                 }
             }

@@ -14,6 +14,7 @@ namespace Unigram.Views
         public ChatsNearbyPage()
         {
             InitializeComponent();
+            Title = Strings.Resources.PeopleNearby;
         }
 
         private void OnElementPrepared(Microsoft.UI.Xaml.Controls.ItemsRepeater sender, Microsoft.UI.Xaml.Controls.ItemsRepeaterElementPreparedEventArgs args)

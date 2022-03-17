@@ -1,18 +1,23 @@
 ﻿using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.ViewModels.Settings;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Views.Settings
+namespace Unigram.Views.Settings.Popups
 {
-    public sealed partial class SettingsUsernamePage : HostedPage
+    public sealed partial class SettingsUsernamePopup : ContentPopup
     {
         public SettingsUsernameViewModel ViewModel => DataContext as SettingsUsernameViewModel;
 
-        public SettingsUsernamePage()
+        public SettingsUsernamePopup()
         {
             InitializeComponent();
+
+            Title = Strings.Resources.Username;
+            PrimaryButtonText = Strings.Resources.Done;
+            SecondaryButtonText = Strings.Resources.Cancel;
 
             var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => Username.TextChanged += new TextChangedEventHandler(handler));
             debouncer.Invoked += (s, args) =>
@@ -27,6 +32,7 @@ namespace Unigram.Views.Settings
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             Username.Focus(FocusState.Keyboard);
+            Username.SelectionStart = Username.Text.Length;
         }
 
         private void Copy_Click(Windows.UI.Xaml.Documents.Hyperlink sender, Windows.UI.Xaml.Documents.HyperlinkClickEventArgs args)
@@ -55,5 +61,14 @@ namespace Unigram.Views.Settings
         }
 
         #endregion
+
+        private async void ContentPopup_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            var deferral = args.GetDeferral();
+            var confirm = await ViewModel.SendAsync();
+
+            args.Cancel = !confirm;
+            deferral.Complete();
+        }
     }
 }

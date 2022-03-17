@@ -16,26 +16,19 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <local:HostedPage.Header>
-        <controls:ButtonPageHeader Command="{x:Bind ViewModel.SendCommand}"
-                                   Text="{CustomResource Reactions}"
-                                   Glyph="&#xE10B;" />
-    </local:HostedPage.Header>
+    <local:HostedPage.Footer>
+        <Button Content="{CustomResource Save}"
+                Command="{x:Bind ViewModel.SendCommand}"
+                Style="{StaticResource AccentButtonStyle}" />
+    </local:HostedPage.Footer>
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+    <Grid Background="{ThemeResource SettingsPageBackground}">
         <controls:TableListView x:Name="ScrollingHost"
                                 ItemsSource="{x:Bind ViewModel.Items}"
                                 IsItemClickEnabled="False"
                                 SelectionMode="None"
                                 ContainerContentChanging="OnContainerContentChanged"
                                 Grid.Row="1">
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem"
-                       BasedOn="{StaticResource DefaultListViewItemStyle}">
-                    <Setter Property="HorizontalContentAlignment"
-                            Value="Stretch" />
-                </Style>
-            </ListView.ItemContainerStyle>
             <ListView.Header>
                 <StackPanel Margin="0,0,0,16">
                     <controls:HeaderedControl x:Name="Enable"
@@ -43,33 +36,35 @@
                         <CheckBox IsChecked="{x:Bind ViewModel.AreEnabled, Mode=TwoWay}"
                                   IsThreeState="True"
                                   Content="{CustomResource EnableReactions}"
-                                  Margin="12,6,12,0" />
-                        <Rectangle Style="{StaticResource Separator}" />
+                                  Style="{StaticResource SettingsCheckBoxStyle}" />
                     </controls:HeaderedControl>
                 </StackPanel>
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="viewModels:SupergroupReactionOption">
-                    <CheckBox IsChecked="{x:Bind IsSelected, Mode=TwoWay}"
-                              PointerEntered="OnPointerEntered"
-                              Margin="12,0">
-                        <Grid Margin="-6,-4,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <controls:LottieView30Fps x:Name="Player"
-                                                      AutoPlay="False"
-                                                      IsLoopingEnabled="False"
-                                                      DecodeFrameType="Logical"
-                                                      Width="48"
-                                                      Height="48" />
+                    <Grid Background="{ThemeResource SettingsItemBackground}"
+                          BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+                        <CheckBox IsChecked="{x:Bind IsSelected, Mode=TwoWay}"
+                                  PointerEntered="OnPointerEntered"
+                                  Margin="12,0">
+                            <Grid Margin="-6,-4,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <controls:LottieView30Fps x:Name="Player"
+                                                          AutoPlay="False"
+                                                          IsLoopingEnabled="False"
+                                                          DecodeFrameType="Logical"
+                                                          Width="48"
+                                                          Height="48" />
 
-                            <TextBlock Text="{x:Bind Reaction.Title}"
-                                       VerticalAlignment="Center"
-                                       Grid.Column="1" />
-                        </Grid>
-                    </CheckBox>
+                                <TextBlock Text="{x:Bind Reaction.Title}"
+                                           VerticalAlignment="Center"
+                                           Grid.Column="1" />
+                            </Grid>
+                        </CheckBox>
+                    </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.Footer>

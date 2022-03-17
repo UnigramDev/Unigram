@@ -7,14 +7,13 @@
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                   mc:Ignorable="d">
 
-    <local:HostedPage.Header>
-        <controls:ButtonPageHeader x:Name="Header"
-                                   Command="{x:Bind ViewModel.SendCommand}"
-                                   Text="{CustomResource ChannelSettings}"
-                                   Glyph="&#xE10B;" />
-    </local:HostedPage.Header>
+    <local:HostedPage.Footer>
+        <Button Content="{CustomResource Done}"
+                Command="{x:Bind ViewModel.SendCommand}"
+                Style="{StaticResource AccentButtonStyle}" />
+    </local:HostedPage.Footer>
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+    <Grid Background="{ThemeResource SettingsPageBackground}">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -27,18 +26,12 @@
                 <RadioButton x:Name="Public"
                              Content="{CustomResource ChannelPublic}"
                              IsChecked="{x:Bind ViewModel.IsPublic, Mode=TwoWay}"
-                             Margin="12,6,0,0" />
-                <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}"
-                           Height="1"
-                           Margin="12,6,0,6" />
+                             Style="{StaticResource SettingsRadioButtonStyle}" />
 
                 <RadioButton x:Name="Private"
                              Content="{CustomResource ChannelPrivate}"
                              IsChecked="{x:Bind ViewModel.IsPublic, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
-                             Margin="12,0,0,0" />
-                <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}"
-                           Height="1"
-                           Margin="12,6,0,0" />
+                             Style="{StaticResource SettingsRadioButtonStyle}" />
             </controls:HeaderedControl>
 
             <Grid Visibility="{x:Bind ViewModel.IsPublic, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
@@ -77,16 +70,18 @@
                                         SelectionMode="None"
                                         Grid.Row="1">
                     <ListView.Header>
-                        <Border MaxWidth="640">
+                        <Border>
                             <TextBlock Text="{CustomResource ChangePublicLimitReached}"
                                        Foreground="#FF0000"
-                                       Margin="12,12,12,6"
+                                       Margin="24,12,24,6"
                                        Style="{StaticResource CaptionTextBlockStyle}" />
                         </Border>
                     </ListView.Header>
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <Grid Margin="0,6">
+                            <Grid Background="{ThemeResource SettingsItemBackground}"
+                                  BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                  Padding="12,6">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
@@ -115,12 +110,6 @@
                             </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="HorizontalContentAlignment"
-                                    Value="Stretch" />
-                        </Style>
-                    </ListView.ItemContainerStyle>
                 </controls:TableListView>
             </Grid>
 
@@ -139,10 +128,7 @@
                                       Grid.Row="2">
                 <CheckBox IsChecked="{x:Bind ViewModel.HasProtectedContent, Mode=TwoWay}"
                           Content="{CustomResource RestrictSavingContent}"
-                          Margin="12,6,12,0" />
-                <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}"
-                           Height="1"
-                           Margin="12,6,0,0" />
+                          Style="{StaticResource SettingsCheckBoxStyle}" />
             </controls:HeaderedControl>
         </Grid>
     </Grid>

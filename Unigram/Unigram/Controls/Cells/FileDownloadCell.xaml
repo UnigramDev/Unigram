@@ -20,6 +20,8 @@
                    Margin="12,32,12,2" />
 
         <local:SharedFileCell x:Name="SharedFile"
+                              Background="Transparent"
+                              BorderBrush="Transparent"
                               Grid.Row="1" />
     </Grid>
 </UserControl>

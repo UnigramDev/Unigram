@@ -6,7 +6,8 @@
                   xmlns:td="using:Telegram.Td.Api"
                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                  mc:Ignorable="d">
+                  mc:Ignorable="d"
+                  IsNavigationRoot="True">
 
     <Page.Resources>
         <CollectionViewSource x:Name="ItemsSource"
@@ -14,31 +15,30 @@
                               IsSourceGrouped="True" />
     </Page.Resources>
 
-    <local:HostedPage.Header>
+    <!--<local:HostedPage.Header>
         <controls:PageHeader Text="{CustomResource Language}"
                              IsLoading="{x:Bind ViewModel.IsLoading, Mode=OneWay}" />
-    </local:HostedPage.Header>
+    </local:HostedPage.Header>-->
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
-        <ListView x:Name="List"
-                  ItemsSource="{x:Bind ItemsSource.View}"
-                  ChoosingItemContainer="OnChoosingItemContainer"
-                  ContainerContentChanging="OnContainerContentChanging"
-                  ItemClick="List_ItemClick"
-                  IsItemClickEnabled="True"
-                  SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=OneWay}">
+    <Grid Background="{ThemeResource SettingsPageBackground}">
+        <controls:TableListView x:Name="List"
+                                ItemsSource="{x:Bind ItemsSource.View}"
+                                ChoosingItemContainer="OnChoosingItemContainer"
+                                ContainerContentChanging="OnContainerContentChanging"
+                                ItemClick="List_ItemClick"
+                                IsItemClickEnabled="True"
+                                SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=OneWay}">
             <ListView.Header>
                 <controls:HeaderedControl Header="{CustomResource TranslateMessages}"
                                           Footer="{x:Bind ConvertTranslateInfo(ViewModel.IsTranslateEnabled), Mode=OneWay}">
                     <CheckBox IsChecked="{x:Bind ViewModel.IsTranslateEnabled, Mode=TwoWay}"
                               Content="{CustomResource ShowTranslateButton}"
-                              Margin="12,6,12,0" />
-                    <Rectangle Style="{StaticResource Separator}" />
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
 
                     <controls:BadgeButton Content="{CustomResource DoNotTranslate}"
                                           Badge="{x:Bind ViewModel.DoNotTranslate, Mode=OneWay}"
                                           Command="{x:Bind ViewModel.DoNotTranslateCommand}"
-                                          Visibility="{x:Bind ViewModel.IsTranslateEnabled, Mode=OneWay}"/>
+                                          Visibility="{x:Bind ViewModel.IsTranslateEnabled, Mode=OneWay}" />
                 </controls:HeaderedControl>
             </ListView.Header>
             <ListView.GroupStyle>
@@ -51,12 +51,16 @@
                                     Value="0" />
                             <Setter Property="MinHeight"
                                     Value="0" />
-                            <Setter Property="MaxWidth"
-                                    Value="640" />
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="ListViewHeaderItem">
-                                        <ContentPresenter />
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition MaxWidth="1000" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <ContentPresenter />
+                                        </Grid>
                                     </ControlTemplate>
                                 </Setter.Value>
                             </Setter>
@@ -72,7 +76,8 @@
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="td:LanguagePackInfo">
                     <Grid Padding="12,6"
-                          Background="Transparent">
+                          Background="{ThemeResource SettingsItemBackground}"
+                          BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
@@ -91,20 +96,6 @@
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="Background"
-                            Value="{ThemeResource ApplicationPageBackgroundThemeBrush}" />
-                    <Setter Property="HorizontalContentAlignment"
-                            Value="Stretch" />
-                    <Setter Property="MaxWidth"
-                            Value="640" />
-                    <Setter Property="MinHeight"
-                            Value="0" />
-                    <Setter Property="Padding"
-                            Value="0" />
-                </Style>
-            </ListView.ItemContainerStyle>
             <!--<ListView.Header>
                 <Border Height="16"/>
             </ListView.Header>-->
@@ -113,9 +104,10 @@
             </ListView.Footer>
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <ItemsStackPanel AreStickyGroupHeadersEnabled="False" />
+                    <ItemsStackPanel AreStickyGroupHeadersEnabled="False"
+                                     Margin="24,0" />
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
-        </ListView>
+        </controls:TableListView>
     </Grid>
 </local:HostedPage>

@@ -14,28 +14,16 @@ using Windows.UI.Xaml.Input;
 
 namespace Unigram.Views.Supergroups
 {
-    public sealed partial class SupergroupPermissionsPage : HostedPage, ISupergroupDelegate, INavigablePage, ISearchablePage
+    public sealed partial class SupergroupPermissionsPage : HostedPage, ISupergroupDelegate, ISearchablePage
     {
         public SupergroupPermissionsViewModel ViewModel => DataContext as SupergroupPermissionsViewModel;
 
         public SupergroupPermissionsPage()
         {
             InitializeComponent();
+            Title = Strings.Resources.ChannelPermissions;
 
             InitializeTicks();
-
-            var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
-            debouncer.Invoked += (s, args) =>
-            {
-                if (string.IsNullOrWhiteSpace(SearchField.Text))
-                {
-                    ViewModel.Search?.Clear();
-                }
-                else
-                {
-                    ViewModel.Find(SearchField.Text);
-                }
-            };
         }
 
         private void InitializeTicks()
@@ -62,17 +50,8 @@ namespace Unigram.Views.Supergroups
 
         public void Search()
         {
-            Search_Click(null, null);
-        }
-
-        public void OnBackRequested(HandledEventArgs args)
-        {
-            if (ContentPanel.Visibility == Visibility.Collapsed)
-            {
-                SearchField.Text = string.Empty;
-                Search_LostFocus(null, null);
-                args.Handled = true;
-            }
+            SearchField.StartBringIntoView();
+            SearchField.Focus(FocusState.Keyboard);
         }
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
@@ -254,7 +233,7 @@ namespace Unigram.Views.Supergroups
         {
             if (args.ItemContainer == null)
             {
-                args.ItemContainer = new TextListViewItem();
+                args.ItemContainer = new TableListViewItem();
                 args.ItemContainer.Style = sender.ItemContainerStyle;
                 args.ItemContainer.ContentTemplate = sender.ItemTemplate;
                 args.ItemContainer.ContextRequested += Member_ContextRequested;
@@ -307,36 +286,5 @@ namespace Unigram.Views.Supergroups
         }
 
         #endregion
-
-        private void Search_Click(object sender, RoutedEventArgs e)
-        {
-            MainHeader.Visibility = Visibility.Collapsed;
-            SearchField.Visibility = Visibility.Visible;
-
-            SearchField.Focus(FocusState.Keyboard);
-        }
-
-        private void Search_LostFocus(object sender, RoutedEventArgs e)
-        {
-            if (string.IsNullOrEmpty(SearchField.Text))
-            {
-                MainHeader.Visibility = Visibility.Visible;
-                SearchField.Visibility = Visibility.Collapsed;
-
-                Focus(FocusState.Programmatic);
-            }
-        }
-
-        private void Search_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (string.IsNullOrEmpty(SearchField.Text))
-            {
-                ContentPanel.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                ContentPanel.Visibility = Visibility.Collapsed;
-            }
-        }
     }
 }

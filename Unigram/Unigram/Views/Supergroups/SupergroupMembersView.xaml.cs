@@ -19,6 +19,7 @@ namespace Unigram.Views.Supergroups
         public SupergroupMembersPage()
         {
             InitializeComponent();
+            Title = Strings.Resources.ChannelSubscribers;
 
             var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
             debouncer.Invoked += (s, args) =>
@@ -56,7 +57,6 @@ namespace Unigram.Views.Supergroups
             Header.Visibility = embedded ? Visibility.Collapsed : Visibility.Visible;
             ListHeader.Visibility = embedded ? Visibility.Collapsed : Visibility.Visible;
             ScrollingHost.Padding = new Thickness(0, embedded ? 12 : embedded ? 12 + 16 : 16, 0, 0);
-            ScrollingHost.ItemsPanelCornerRadius = new CornerRadius(embedded ? 0 : 8, embedded ? 0 : 8, 8, 8);
             //ListHeader.Height = embedded && !locked ? 12 : embedded ? 12 + 16 : 16;
 
             if (embedded)
@@ -186,7 +186,7 @@ namespace Unigram.Views.Supergroups
         {
             if (args.ItemContainer == null)
             {
-                args.ItemContainer = new TextListViewItem();
+                args.ItemContainer = new TableListViewItem();
                 args.ItemContainer.Style = sender.ItemContainerStyle;
                 args.ItemContainer.ContextRequested += Member_ContextRequested;
 
@@ -293,6 +293,7 @@ namespace Unigram.Views.Supergroups
 
         public void UpdateSupergroup(Chat chat, Supergroup group)
         {
+            Title = group.IsChannel ? Strings.Resources.ChannelSubscribers : Strings.Resources.ChannelMembers;
             SearchField.PlaceholderText = group.IsChannel ? Strings.Resources.ChannelSubscribers : Strings.Resources.ChannelMembers;
 
             AddNew.Content = group.IsChannel ? Strings.Resources.AddSubscriber : Strings.Resources.AddMember;

@@ -15,6 +15,7 @@ namespace Unigram.Views.Supergroups
         public SupergroupEditLinkedChatPage()
         {
             InitializeComponent();
+            Title = Strings.Resources.Discussion;
         }
 
         private void OnElementPrepared(Microsoft.UI.Xaml.Controls.ItemsRepeater sender, Microsoft.UI.Xaml.Controls.ItemsRepeaterElementPreparedEventArgs args)

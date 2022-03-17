@@ -325,6 +325,7 @@
 
     <local:HostedPage.Header>
         <controls:ContentPageHeader x:Name="Header"
+                                    Background="Transparent"
                                     Canvas.ZIndex="1">
             <Grid x:Name="InfoPanel"
                   Margin="12,0,0,0">
@@ -524,21 +525,34 @@
                     Grid.Row="2">
             <controls:GroupCallHeader x:Name="GroupCall"
                                       JoinCommand="{x:Bind ViewModel.GroupCallJoinCommand}"
-                                      Visibility="Collapsed" />
+                                      Visibility="Collapsed"
+                                      Canvas.ZIndex="1" />
 
             <StackPanel x:Name="ClipperJoinRequests">
                 <controls:ChatJoinRequestsHeader x:Name="JoinRequests"
                                                  Command="{x:Bind ViewModel.JoinRequestsCommand}"
-                                                 Visibility="Collapsed" />
+                                                 Visibility="Collapsed"
+                                                 Canvas.ZIndex="1" />
                 <StackPanel x:Name="ClipperActionBar">
                     <chats:ChatActionBarView x:Name="ActionBar"
-                                             Visibility="Collapsed" />
+                                             Visibility="Collapsed"
+                                             Canvas.ZIndex="1" />
                     <Grid x:Name="Clipper">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
+                        <!--
+                        48: header
+                        40: music player
+                        40: active call
+                        40: group call
+                        40: join request
+                        -->
+                        <Border x:Name="ClipperBackground"
+                                Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
+                                Margin="0,-208,0,0" />
+
                         <messages:MessagePinned x:Name="PinnedMessage"
                                                 Click="Reply_Click"
                                                 HideCommand="{x:Bind ViewModel.PinnedHideCommand}"
@@ -555,12 +569,12 @@
                                                        IsHitTestVisible="False" />
                         </Grid>
 
-                        <StackPanel x:Name="DateHeaderRelative"
-                                    Grid.Row="2">
+                        <Border x:Name="DateHeaderRelative"
+                                SizeChanged="DateHeaderPanel_SizeChanged"
+                                Grid.Row="1">
                             <Border x:Name="DateHeaderPanel"
                                     Visibility="Collapsed"
-                                    HorizontalAlignment="Center"
-                                    SizeChanged="DateHeaderPanel_SizeChanged">
+                                    HorizontalAlignment="Center">
                                 <messages:MessageService x:Name="DateHeader"
                                                          Click="Date_Click"
                                                          BorderThickness="0,8,0,0">
@@ -571,7 +585,7 @@
                                                Style="{StaticResource CaptionTextBlockStyle}" />
                                 </messages:MessageService>
                             </Border>
-                        </StackPanel>
+                        </Border>
                     </Grid>
                 </StackPanel>
             </StackPanel>

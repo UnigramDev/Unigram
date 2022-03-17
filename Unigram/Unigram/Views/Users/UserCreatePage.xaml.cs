@@ -12,6 +12,7 @@ namespace Unigram.Views.Users
         public UserCreatePage()
         {
             InitializeComponent();
+            Title = Strings.Resources.AddContactTitle;
         }
 
         private void FirstName_Loaded(object sender, RoutedEventArgs e)

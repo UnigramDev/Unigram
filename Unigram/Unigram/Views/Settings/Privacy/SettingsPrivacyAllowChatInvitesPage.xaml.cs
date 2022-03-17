@@ -11,6 +11,7 @@ namespace Unigram.Views.Settings.Privacy
         public SettingsPrivacyAllowChatInvitesPage()
         {
             InitializeComponent();
+            Title = Strings.Resources.GroupsAndChannels;
         }
 
         #region Binding

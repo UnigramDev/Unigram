@@ -4,18 +4,18 @@
                   xmlns:local="using:Unigram.Views"
                   xmlns:controls="using:Unigram.Controls"
                   xmlns:common="using:Unigram.Common"
+                  xmlns:settings="using:Unigram.ViewModels.Settings"
                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                  mc:Ignorable="d">
-
-    <local:HostedPage.Header>
-        <controls:PageHeader Text="{x:Bind ViewModel.Title}" />
-    </local:HostedPage.Header>
+                  mc:Ignorable="d"
+                  Title="{x:Bind ViewModel.Title}"
+                  IsNavigationRoot="True">
 
     <Page.Resources>
         <DataTemplate x:Key="AnimatedItemTemplate">
-            <Grid Margin="0,6"
-                  Background="Transparent">
+            <Grid Padding="12,6"
+                  Background="{ThemeResource SettingsItemBackground}"
+                  BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
@@ -48,8 +48,9 @@
         </DataTemplate>
 
         <DataTemplate x:Key="VideoItemTemplate">
-            <Grid Margin="0,6"
-                  Background="Transparent">
+            <Grid Padding="12,6"
+                  Background="{ThemeResource SettingsItemBackground}"
+                  BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
@@ -83,8 +84,9 @@
         </DataTemplate>
 
         <DataTemplate x:Key="ItemTemplate">
-            <Grid Margin="0,6"
-                  Background="Transparent">
+            <Grid Padding="12,6"
+                  Background="{ThemeResource SettingsItemBackground}"
+                  BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
@@ -115,7 +117,7 @@
         </DataTemplate>
     </Page.Resources>
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+    <Grid Background="{ThemeResource SettingsPageBackground}">
         <controls:TableListView x:Name="List"
                                 ItemsSource="{x:Bind ViewModel.Items}"
                                 ItemClick="ListView_ItemClick"
@@ -128,61 +130,87 @@
                                 SelectionMode="None"
                                 AllowDrop="True">
             <ListView.Header>
-                <Grid Margin="0,0,0,16">
+                <Grid>
                     <StackPanel x:Name="InstalledPanel"
-                                x:Load="{x:Bind IsInstalled(ViewModel.Type)}">
-                        <controls:HeaderedControl Footer="{CustomResource FeaturedStickersInfo}">
-                            <controls:BadgeButton Content="{CustomResource SuggestStickers}"
-                                                  Command="{x:Bind ViewModel.SuggestCommand}"
-                                                  Badge="{x:Bind ConvertSuggest(ViewModel.SuggestStickers), Mode=OneWay}" />
+                                x:Load="{x:Bind IsType(ViewModel.Type, settings:StickersType.Installed)}"
+                                Margin="0,0,0,16">
+                        <controls:HeaderedControl Footer="{CustomResource LoopAnimatedStickersInfo}">
+                            <controls:BadgeButton Content="{CustomResource SuggestStickers}">
+                                <controls:BadgeButton.Badge>
+                                    <ComboBox ItemsSource="{x:Bind ViewModel.SuggestStickersOptions}"
+                                              SelectedIndex="{x:Bind ViewModel.SuggestStickers, Mode=TwoWay}"
+                                              DisplayMemberPath="Text" />
+                                </controls:BadgeButton.Badge>
+                            </controls:BadgeButton>
 
                             <CheckBox IsChecked="{x:Bind ViewModel.IsLoopingEnabled, Mode=TwoWay}"
                                       Content="{CustomResource LoopAnimatedStickers}"
-                                      Margin="12,6,12,0" />
-                            <Rectangle Style="{StaticResource Separator}" />
+                                      Style="{StaticResource SettingsCheckBoxStyle}" />
+                        </controls:HeaderedControl>
 
+                        <controls:HeaderedControl Footer="{CustomResource StickersBotInfo}">
                             <controls:BadgeButton Content="{CustomResource FeaturedStickers}"
                                                   Click="FeaturedStickers_Click"
                                                   Badge="{x:Bind ViewModel.FeaturedStickersCount, Mode=OneWay}"
-                                                  BadgeVisibility="{x:Bind ViewModel.FeaturedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                        </controls:HeaderedControl>
+                                                  BadgeVisibility="{x:Bind ViewModel.FeaturedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                                  Style="{StaticResource GlyphBadgeButtonStyle}"
+                                                  IsChevronVisible="True"
+                                                  Glyph="&#xE989;" />
 
-                        <controls:HeaderedControl Footer="{CustomResource MasksInfo}">
-                            <controls:BadgeButton Content="{CustomResource Masks}"
-                                                  Click="Masks_Click" />
-                        </controls:HeaderedControl>
-
-                        <controls:HeaderedControl Footer="{CustomResource ArchivedStickersInfo}"
-                                                  Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <controls:BadgeButton Content="{CustomResource ArchivedStickers}"
                                                   Click="ArchivedStickers_Click"
-                                                  Badge="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay}" />
+                                                  Badge="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay}"
+                                                  Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                                  Style="{StaticResource GlyphBadgeButtonStyle}"
+                                                  IsChevronVisible="True"
+                                                  Glyph="&#xE7B8;" />
+
+                            <controls:BadgeButton Content="{CustomResource Masks}"
+                                                  Click="Masks_Click"
+                                                  Style="{StaticResource GlyphBadgeButtonStyle}"
+                                                  IsChevronVisible="True"
+                                                  Glyph="&#xE997;" />
                         </controls:HeaderedControl>
                     </StackPanel>
 
                     <StackPanel x:Name="MasksPanel"
-                                x:Load="{x:Bind IsMasks(ViewModel.Type)}">
-                        <controls:HeaderedControl Header="{CustomResource ArchivedMasksInfo}"
-                                                  Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                x:Load="{x:Bind IsType(ViewModel.Type, settings:StickersType.Masks)}">
+                        <controls:HeaderedControl Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <controls:BadgeButton Content="{CustomResource ArchivedMasks}"
                                                   Click="ArchivedMasks_Click"
-                                                  Badge="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay}" />
+                                                  Badge="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay}"
+                                                  Style="{StaticResource GlyphBadgeButtonStyle}"
+                                                  IsChevronVisible="True"
+                                                  Glyph="&#xE7B8;" />
                         </controls:HeaderedControl>
+
+                        <TextBlock Text="{CustomResource MasksInfo}"
+                                   Style="{StaticResource InfoCaptionTextBlockStyle}"
+                                   Margin="24,16,24,8" />
                     </StackPanel>
+
+                    <TextBlock x:Name="TrendingPanel"
+                               x:Load="{x:Bind IsType(ViewModel.Type, settings:StickersType.Trending)}"
+                               Text="{CustomResource FeaturedStickersInfo}"
+                               Style="{StaticResource InfoCaptionTextBlockStyle}"
+                               Margin="24,16,24,8" />
+
+                    <TextBlock x:Name="ArchivedPanel"
+                               x:Load="{x:Bind IsType(ViewModel.Type, settings:StickersType.Archived)}"
+                               Text="{CustomResource ArchivedMasksInfo}"
+                               Style="{StaticResource InfoCaptionTextBlockStyle}"
+                               Margin="24,16,24,8" />
+
+                    <TextBlock x:Name="MasksArchivedPanel"
+                               x:Load="{x:Bind IsType(ViewModel.Type, settings:StickersType.MasksArchived)}"
+                               Text="{CustomResource ArchivedStickersInfo}"
+                               Style="{StaticResource InfoCaptionTextBlockStyle}"
+                               Margin="24,16,24,8" />
                 </Grid>
             </ListView.Header>
             <ListView.Footer>
                 <Border Height="32" />
             </ListView.Footer>
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem"
-                       BasedOn="{StaticResource DefaultListViewItemStyle}">
-                    <Setter Property="HorizontalContentAlignment"
-                            Value="Stretch" />
-                    <Setter Property="Padding"
-                            Value="12,0,0,0" />
-                </Style>
-            </ListView.ItemContainerStyle>
         </controls:TableListView>
     </Grid>
 </local:HostedPage>

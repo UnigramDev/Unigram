@@ -12,6 +12,7 @@ namespace Unigram.Views.Settings
         public SettingsAdvancedPage()
         {
             InitializeComponent();
+            Title = Strings.Resources.PrivacyAdvanced;
 
             if (ApiInfo.IsPackagedRelease)
             {
@@ -22,7 +23,6 @@ namespace Unigram.Views.Settings
             if (ApiInformation.IsTypePresent("Windows.ApplicationModel.FullTrustProcessLauncher"))
             {
                 FindName(nameof(TraySwitch));
-                FindName(nameof(TraySwitchSeparator));
             }
 #endif
         }

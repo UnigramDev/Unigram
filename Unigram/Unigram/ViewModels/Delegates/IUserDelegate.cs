@@ -2,7 +2,7 @@
 
 namespace Unigram.ViewModels.Delegates
 {
-    public interface IUserDelegate : IChatDelegate
+    public interface IUserDelegate : IViewModelDelegate
     {
         void UpdateUser(Chat chat, User user, bool secret);
         void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret, bool accessToken);

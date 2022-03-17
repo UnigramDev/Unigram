@@ -13,7 +13,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Cells
 {
-    public sealed partial class SharedLinkCell : UserControl
+    public sealed partial class SharedLinkCell : Grid
     {
         private readonly Message _message;
         private IProtoService _protoService;

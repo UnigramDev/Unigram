@@ -9,29 +9,24 @@
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                   mc:Ignorable="d">
 
-    <local:HostedPage.Header>
-        <controls:PageHeader Text="Diagnostics" />
-    </local:HostedPage.Header>
-
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+    <Grid Background="{ThemeResource SettingsPageBackground}">
         <ScrollViewer VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
-            <StackPanel>
+            <StackPanel Spacing="16"
+                        Margin="0,0,0,32">
                 <controls:HeaderedControl Header="Experimental">
                     <CheckBox IsChecked="{x:Bind ViewModel.UseTestDC, Mode=TwoWay}"
                               Visibility="{x:Bind ViewModel.CanUseTestDC}"
                               Content="Use Test DC"
-                              Margin="12,6,12,0" />
-                    <Rectangle Style="{StaticResource Separator}"
-                               Visibility="{x:Bind ViewModel.CanUseTestDC}" />
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
                     <CheckBox IsChecked="{x:Bind ViewModel.Minithumbnails, Mode=TwoWay}"
                               Content="Minithumbnails"
-                              Margin="12,6,12,0" />
-                    <Rectangle Style="{StaticResource Separator}" />
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
                     <CheckBox IsChecked="{x:Bind ViewModel.CopyFormattedCode, Mode=TwoWay}"
                               Content="Copy formatted code"
-                              Margin="12,6,12,0" />
-                    <Rectangle Style="{StaticResource Separator}" />
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="Calls Logs">

@@ -15,6 +15,7 @@ namespace Unigram.Views.Supergroups
         public SupergroupEditTypePage()
         {
             InitializeComponent();
+            Title = Strings.Resources.ChannelSettings;
 
             var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => Username.TextChanged += new TextChangedEventHandler(handler));
             debouncer.Invoked += (s, args) =>
@@ -80,7 +81,7 @@ namespace Unigram.Views.Supergroups
 
         public void UpdateSupergroup(Chat chat, Supergroup group)
         {
-            Header.Text = group.IsChannel ? Strings.Resources.ChannelSettingsTitle : Strings.Resources.GroupSettingsTitle;
+            Title = group.IsChannel ? Strings.Resources.ChannelSettingsTitle : Strings.Resources.GroupSettingsTitle;
             Subheader.Header = group.IsChannel ? Strings.Resources.ChannelTypeHeader : Strings.Resources.GroupTypeHeader;
             Subheader.Footer = group.Username.Length > 0 ? group.IsChannel ? Strings.Resources.ChannelPublicInfo : Strings.Resources.MegaPublicInfo : group.IsChannel ? Strings.Resources.ChannelPrivateInfo : Strings.Resources.MegaPrivateInfo;
 
@@ -108,7 +109,7 @@ namespace Unigram.Views.Supergroups
 
         public void UpdateBasicGroup(Chat chat, BasicGroup group)
         {
-            Header.Text = Strings.Resources.GroupSettingsTitle;
+            Title = Strings.Resources.GroupSettingsTitle;
             Subheader.Header = Strings.Resources.GroupTypeHeader;
             Subheader.Footer = Strings.Resources.MegaPrivateInfo;
 

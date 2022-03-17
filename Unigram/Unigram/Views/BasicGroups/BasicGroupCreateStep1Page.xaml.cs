@@ -19,11 +19,12 @@ namespace Unigram.Views.BasicGroups
         public BasicGroupCreateStep1Page()
         {
             InitializeComponent();
+            Title = Strings.Resources.NewGroup;
         }
 
         private void Title_Loaded(object sender, RoutedEventArgs e)
         {
-            Title.Focus(FocusState.Keyboard);
+            TitleLabel.Focus(FocusState.Keyboard);
         }
 
         private async void EditPhoto_Click(object sender, RoutedEventArgs e)

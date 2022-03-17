@@ -151,25 +151,19 @@
                                           Footer="{CustomResource QuizInfo}">
                     <CheckBox x:Name="Anonymous"
                               Content="{CustomResource EditAdminSendAnonymously}"
-                              Margin="12,6,12,0" />
-                    <Rectangle x:Name="AnonymousSeparator"
-                               Style="{StaticResource Separator}" />
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
 
                     <CheckBox x:Name="Multiple"
                               Checked="Multiple_Toggled"
                               Unchecked="Multiple_Toggled"
                               Content="{CustomResource PollMultiple}"
-                              Margin="12,6,12,0" />
-                    <Rectangle x:Name="MultipleSeparator"
-                               Style="{StaticResource Separator}" />
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
 
                     <CheckBox x:Name="Quiz"
                               Checked="Quiz_Toggled"
                               Unchecked="Quiz_Toggled"
                               Content="{CustomResource PollQuiz}"
-                              Margin="12,6,12,0" />
-                    <Rectangle x:Name="QuizSeparator"
-                               Style="{StaticResource Separator}" />
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl x:Name="QuizSettings"

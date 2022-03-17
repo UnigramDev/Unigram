@@ -9,6 +9,7 @@ namespace Unigram.Views.Settings
         public SettingsNotificationsPage()
         {
             InitializeComponent();
+            Title = Strings.Resources.NotificationsAndSounds;
         }
 
         #region Binding

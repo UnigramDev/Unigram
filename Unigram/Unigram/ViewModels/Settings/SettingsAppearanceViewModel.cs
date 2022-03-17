@@ -5,7 +5,6 @@ using Unigram.Common;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views.Popups;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
@@ -22,7 +21,6 @@ namespace Unigram.ViewModels.Settings
         {
             _emojiSetService = emojiSetService;
 
-            DistanceUnitsCommand = new RelayCommand(DistanceUnitsExecute);
             EmojiSetCommand = new RelayCommand(EmojiSetExecute);
         }
 
@@ -169,27 +167,32 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public RelayCommand DistanceUnitsCommand { get; }
-        private async void DistanceUnitsExecute()
+        public int DistanceUnit
         {
-            var items = new[]
+            get => Array.IndexOf(_distanceUnitIndexer, Settings.DistanceUnits);
+            set
             {
-                new SelectRadioItem(DistanceUnits.Automatic, Strings.Resources.DistanceUnitsAutomatic, DistanceUnits == DistanceUnits.Automatic),
-                new SelectRadioItem(DistanceUnits.Kilometers, Strings.Resources.DistanceUnitsKilometers, DistanceUnits == DistanceUnits.Kilometers),
-                new SelectRadioItem(DistanceUnits.Miles, Strings.Resources.DistanceUnitsMiles, DistanceUnits == DistanceUnits.Miles),
-            };
-
-            var dialog = new ChooseRadioPopup(items);
-            dialog.Title = Strings.Resources.DistanceUnitsTitle;
-            dialog.PrimaryButtonText = Strings.Resources.OK;
-            dialog.SecondaryButtonText = Strings.Resources.Cancel;
-
-            var confirm = await dialog.ShowQueuedAsync();
-            if (confirm == ContentDialogResult.Primary && dialog.SelectedIndex is DistanceUnits index)
-            {
-                DistanceUnits = index;
+                if (value >= 0 && value < _distanceUnitIndexer.Length && Settings.DistanceUnits != _distanceUnitIndexer[value])
+                {
+                    Settings.DistanceUnits = _distanceUnitIndexer[value];
+                    RaisePropertyChanged();
+                }
             }
         }
+
+        private readonly DistanceUnits[] _distanceUnitIndexer = new[]
+        {
+            DistanceUnits.Automatic,
+            DistanceUnits.Kilometers,
+            DistanceUnits.Miles
+        };
+
+        public List<SettingsOptionItem<DistanceUnits>> DistanceUnitOptions => new List<SettingsOptionItem<DistanceUnits>>
+        {
+            new SettingsOptionItem<DistanceUnits>(DistanceUnits.Automatic, Strings.Resources.DistanceUnitsAutomatic),
+            new SettingsOptionItem<DistanceUnits>(DistanceUnits.Kilometers, Strings.Resources.DistanceUnitsKilometers),
+            new SettingsOptionItem<DistanceUnits>(DistanceUnits.Miles, Strings.Resources.DistanceUnitsMiles),
+        };
 
         public RelayCommand EmojiSetCommand { get; }
         private async void EmojiSetExecute()

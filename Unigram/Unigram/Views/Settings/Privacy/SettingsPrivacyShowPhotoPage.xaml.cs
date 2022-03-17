@@ -11,6 +11,7 @@ namespace Unigram.Views.Settings.Privacy
         public SettingsPrivacyShowPhotoPage()
         {
             InitializeComponent();
+            Title = Strings.Resources.PrivacyProfilePhoto;
         }
 
         #region Binding

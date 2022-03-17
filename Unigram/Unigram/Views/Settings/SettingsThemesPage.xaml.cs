@@ -17,6 +17,7 @@ namespace Unigram.Views.Settings
         public SettingsThemesPage()
         {
             InitializeComponent();
+            Title = Strings.Resources.ColorThemes;
         }
 
         private async void Switch_Click(object sender, RoutedEventArgs e)

@@ -18,7 +18,6 @@ namespace Unigram.Controls
             {
 #if DESKTOP_BRIDGE
                 FindName(nameof(ToggleMinimized));
-                FindName(nameof(ToggleMinimizedSeparator));
 #endif
 
                 OnLoaded();

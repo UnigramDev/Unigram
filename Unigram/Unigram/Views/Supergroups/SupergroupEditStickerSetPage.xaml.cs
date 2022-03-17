@@ -14,6 +14,7 @@ namespace Unigram.Views.Supergroups
         public SupergroupEditStickerSetPage()
         {
             InitializeComponent();
+            Title = Strings.Resources.GroupStickers;
 
             var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => ShortName.TextChanged += new TextChangedEventHandler(handler));
             debouncer.Invoked += (s, args) =>

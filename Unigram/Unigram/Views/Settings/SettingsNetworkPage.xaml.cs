@@ -11,6 +11,7 @@ namespace Unigram.Views.Settings
         public SettingsNetworkPage()
         {
             InitializeComponent();
+            Title = Strings.Resources.NetworkUsage;
         }
 
         #region Binding

@@ -17,8 +17,9 @@
 
     <Page.Resources>
         <DataTemplate x:Key="MemberTemplate">
-            <Grid Margin="12,6"
-                  Background="Transparent">
+            <Grid Padding="12,6"
+                  Background="{ThemeResource SettingsItemBackground}"
+                  BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -50,183 +51,119 @@
         </DataTemplate>
     </Page.Resources>
 
-    <local:HostedPage.Header>
-        <controls:ContentPageHeader>
-            <Grid>
-                <Grid x:Name="MainHeader">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Text="{CustomResource ChannelPermissions}"
-                               Style="{StaticResource BaseTextBlockStyle}"
-                               VerticalAlignment="Center"
-                               Margin="12,0" />
+    <local:HostedPage.Footer>
+        <Button Content="{CustomResource Done}"
+                Command="{x:Bind ViewModel.SendCommand}"
+                Style="{StaticResource AccentButtonStyle}" />
+    </local:HostedPage.Footer>
 
-                    <controls:GlyphButton Glyph="&#xE721;"
-                                          Click="Search_Click"
-                                          Style="{StaticResource HeaderGlyphButtonStyle}"
-                                          Grid.Column="1" />
-
-                    <controls:GlyphButton Glyph="&#xE10B;"
-                                          Command="{x:Bind ViewModel.SendCommand}"
-                                          Style="{StaticResource HeaderGlyphButtonStyle}"
-                                          Grid.Column="2" />
-                </Grid>
-                <TextBox x:Name="SearchField"
-                         PlaceholderText="{CustomResource Search}"
-                         PreventKeyboardDisplayOnProgrammaticFocus="True"
-                         LostFocus="Search_LostFocus"
-                         TextChanged="Search_TextChanged"
-                         Visibility="Collapsed"
-                         Canvas.ZIndex="1" />
-            </Grid>
-        </controls:ContentPageHeader>
-    </local:HostedPage.Header>
-
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
-        <ListView ItemsSource="{x:Bind ViewModel.Search, Mode=OneWay}"
-                  ItemTemplate="{StaticResource MemberTemplate}"
-                  ItemClick="ListView_ItemClick"
-                  IsItemClickEnabled="True"
-                  ChoosingItemContainer="OnChoosingItemContainer"
-                  ContainerContentChanging="OnContainerContentChanging"
-                  SelectionMode="None">
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem"
-                       BasedOn="{StaticResource DefaultListViewItemStyle}">
-                    <Setter Property="Background"
-                            Value="{ThemeResource ApplicationPageBackgroundThemeBrush}" />
-                    <Setter Property="HorizontalContentAlignment"
-                            Value="Stretch" />
-                    <Setter Property="MaxWidth"
-                            Value="640" />
-                </Style>
-            </ListView.ItemContainerStyle>
+    <Grid Background="{ThemeResource SettingsPageBackground}">
+        <controls:TableListView x:Name="ScrollingHost"
+                                ItemsSource="{x:Bind ViewModel.Members}"
+                                ItemTemplate="{StaticResource MemberTemplate}"
+                                ItemClick="ListView_ItemClick"
+                                IsItemClickEnabled="True"
+                                ChoosingItemContainer="OnChoosingItemContainer"
+                                ContainerContentChanging="OnContainerContentChanging"
+                                SelectionMode="None"
+                                Grid.Row="1">
             <ListView.Header>
-                <Border Height="16" />
+                <StackPanel Spacing="16"
+                            Margin="0,0,0,16">
+                    <controls:HeaderedControl Header="{CustomResource ChannelPermissionsHeader}">
+                        <CheckBox IsChecked="{x:Bind ViewModel.CanSendMessages, Mode=TwoWay}"
+                                  Content="{CustomResource UserRestrictionsSend}"
+                                  Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                        <CheckBox IsChecked="{x:Bind ViewModel.CanSendMediaMessages, Mode=TwoWay}"
+                                  Content="{CustomResource UserRestrictionsSendMedia}"
+                                  Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                        <CheckBox IsChecked="{x:Bind ViewModel.CanSendOtherMessages, Mode=TwoWay}"
+                                  Content="{CustomResource UserRestrictionsSendStickers}"
+                                  Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                        <CheckBox IsChecked="{x:Bind ViewModel.CanSendPolls, Mode=TwoWay}"
+                                  Content="{CustomResource UserRestrictionsSendPolls}"
+                                  Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                        <CheckBox IsChecked="{x:Bind ViewModel.CanAddWebPagePreviews, Mode=TwoWay}"
+                                  Content="{CustomResource UserRestrictionsEmbedLinks}"
+                                  Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                        <CheckBox IsChecked="{x:Bind ViewModel.CanInviteUsers, Mode=TwoWay}"
+                                  Content="{CustomResource UserRestrictionsInviteUsers}"
+                                  Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                        <CheckBox x:Name="PinMessages"
+                                  IsChecked="{x:Bind ViewModel.CanPinMessages, Mode=TwoWay}"
+                                  Content="{CustomResource UserRestrictionsPinMessages}"
+                                  Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                        <CheckBox x:Name="ChangeInfo"
+                                  IsChecked="{x:Bind ViewModel.CanChangeInfo, Mode=TwoWay}"
+                                  Content="{CustomResource UserRestrictionsChangeInfo}"
+                                  Style="{StaticResource SettingsCheckBoxStyle}" />
+                    </controls:HeaderedControl>
+
+                    <controls:HeaderedControl x:Name="SlowmodePanel"
+                                              Header="{CustomResource Slowmode}"
+                                              Footer="{x:Bind ConvertSlowModeFooter(ViewModel.SlowModeDelay), Mode=OneWay}"
+                                              Background="{ThemeResource SettingsItemBackground}">
+                        <Grid x:Name="SlowmodeTicks"
+                              Padding="12,6,12,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <Slider x:Name="Slowmode"
+                                    Value="{x:Bind ConvertSlowMode(ViewModel.SlowModeDelay), Mode=TwoWay, BindBack=ConvertSlowModeBack}"
+                                    Maximum="6"
+                                    Minimum="0"
+                                    SmallChange="1"
+                                    LargeChange="1"
+                                    StepFrequency="1"
+                                    TickFrequency="1"
+                                    TickPlacement="Outside"
+                                    IsThumbToolTipEnabled="False"
+                                    Grid.Row="1" />
+                        </Grid>
+                        <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}"
+                                   Height="1"
+                                   Margin="12,6,0,0" />
+                    </controls:HeaderedControl>
+
+                    <controls:HeaderedControl>
+                        <controls:BadgeButton x:Name="Blacklist"
+                                              Content="{CustomResource ChannelBlacklist}"
+                                              Command="{x:Bind ViewModel.BannedCommand}"
+                                              IsChevronVisible="True" />
+                    </controls:HeaderedControl>
+
+                    <TextBox x:Name="SearchField"
+                             Text="{x:Bind ViewModel.Members.Query, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             PlaceholderText="{CustomResource Search}"
+                             PreventKeyboardDisplayOnProgrammaticFocus="True"
+                             HorizontalAlignment="Left"
+                             Width="280"
+                             Margin="24,16,24,0" />
+
+                    <controls:HeaderedControl x:Name="AddNew"
+                                              Margin="0,-16,0,0"
+                                              Visibility="Collapsed">
+                        <controls:BadgeButton Content="{CustomResource ChannelAddException}"
+                                              Command="{x:Bind ViewModel.AddCommand}"
+                                              Style="{StaticResource GlyphBadgeButtonStyle}"
+                                              Glyph="&#xF140;" />
+                    </controls:HeaderedControl>
+                </StackPanel>
             </ListView.Header>
             <ListView.Footer>
-                <Border Height="32" />
+                <TextBlock x:Name="Footer"
+                           Style="{StaticResource InfoCaptionTextBlockStyle}"
+                           Margin="24,8,24,32" />
             </ListView.Footer>
-        </ListView>
-
-        <Grid x:Name="ContentPanel"
-              Background="{ThemeResource PageBackgroundDarkBrush}">
-            <controls:TableListView x:Name="ScrollingHost"
-                                    ItemsSource="{x:Bind ViewModel.Members}"
-                                    ItemTemplate="{StaticResource MemberTemplate}"
-                                    ItemClick="ListView_ItemClick"
-                                    IsItemClickEnabled="True"
-                                    ChoosingItemContainer="OnChoosingItemContainer"
-                                    ContainerContentChanging="OnContainerContentChanging"
-                                    SelectionMode="None"
-                                    Grid.Row="1">
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem"
-                           BasedOn="{StaticResource DefaultListViewItemStyle}">
-                        <Setter Property="HorizontalContentAlignment"
-                                Value="Stretch" />
-                    </Style>
-                </ListView.ItemContainerStyle>
-                <ListView.Header>
-                    <StackPanel Margin="0,0,0,16">
-                        <controls:HeaderedControl Header="{CustomResource ChannelPermissionsHeader}">
-                            <CheckBox IsChecked="{x:Bind ViewModel.CanSendMessages, Mode=TwoWay}"
-                                      Content="{CustomResource UserRestrictionsSend}"
-                                      Margin="12,6,12,0" />
-                            <Rectangle Style="{StaticResource Separator}" />
-
-                            <CheckBox IsChecked="{x:Bind ViewModel.CanSendMediaMessages, Mode=TwoWay}"
-                                      Content="{CustomResource UserRestrictionsSendMedia}"
-                                      Margin="12,6,12,0" />
-                            <Rectangle Style="{StaticResource Separator}" />
-
-                            <CheckBox IsChecked="{x:Bind ViewModel.CanSendOtherMessages, Mode=TwoWay}"
-                                      Content="{CustomResource UserRestrictionsSendStickers}"
-                                      Margin="12,6,12,0" />
-                            <Rectangle Style="{StaticResource Separator}" />
-
-                            <CheckBox IsChecked="{x:Bind ViewModel.CanSendPolls, Mode=TwoWay}"
-                                      Content="{CustomResource UserRestrictionsSendPolls}"
-                                      Margin="12,6,12,0" />
-                            <Rectangle Style="{StaticResource Separator}" />
-
-                            <CheckBox IsChecked="{x:Bind ViewModel.CanAddWebPagePreviews, Mode=TwoWay}"
-                                      Content="{CustomResource UserRestrictionsEmbedLinks}"
-                                      Margin="12,6,12,0" />
-                            <Rectangle Style="{StaticResource Separator}" />
-
-                            <CheckBox IsChecked="{x:Bind ViewModel.CanInviteUsers, Mode=TwoWay}"
-                                      Content="{CustomResource UserRestrictionsInviteUsers}"
-                                      Margin="12,6,12,0" />
-                            <Rectangle Style="{StaticResource Separator}" />
-
-                            <CheckBox x:Name="PinMessages"
-                                      IsChecked="{x:Bind ViewModel.CanPinMessages, Mode=TwoWay}"
-                                      Content="{CustomResource UserRestrictionsPinMessages}"
-                                      Margin="12,6,12,0" />
-                            <Rectangle Style="{StaticResource Separator}" />
-
-                            <CheckBox x:Name="ChangeInfo"
-                                      IsChecked="{x:Bind ViewModel.CanChangeInfo, Mode=TwoWay}"
-                                      Content="{CustomResource UserRestrictionsChangeInfo}"
-                                      Margin="12,6,12,0" />
-                            <Rectangle Style="{StaticResource Separator}" />
-                        </controls:HeaderedControl>
-
-                        <controls:HeaderedControl x:Name="SlowmodePanel"
-                                                  Header="{CustomResource Slowmode}"
-                                                  Footer="{x:Bind ConvertSlowModeFooter(ViewModel.SlowModeDelay), Mode=OneWay}">
-                            <Grid x:Name="SlowmodeTicks"
-                                  Padding="12,6,12,0">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-
-                                <Slider x:Name="Slowmode"
-                                        Value="{x:Bind ConvertSlowMode(ViewModel.SlowModeDelay), Mode=TwoWay, BindBack=ConvertSlowModeBack}"
-                                        Maximum="6"
-                                        Minimum="0"
-                                        SmallChange="1"
-                                        LargeChange="1"
-                                        StepFrequency="1"
-                                        TickFrequency="1"
-                                        TickPlacement="Outside"
-                                        IsThumbToolTipEnabled="False"
-                                        Grid.Row="1" />
-                            </Grid>
-                            <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}"
-                                       Height="1"
-                                       Margin="12,6,0,0" />
-                        </controls:HeaderedControl>
-
-                        <controls:HeaderedControl>
-                            <controls:BadgeButton x:Name="Blacklist"
-                                                  Content="{CustomResource ChannelBlacklist}"
-                                                  Command="{x:Bind ViewModel.BannedCommand}" />
-                        </controls:HeaderedControl>
-
-                        <controls:HeaderedControl x:Name="AddNew"
-                                                  Visibility="Collapsed">
-                            <controls:BadgeButton Content="{CustomResource ChannelAddException}"
-                                                  Command="{x:Bind ViewModel.AddCommand}"
-                                                  Style="{StaticResource GlyphBadgeButtonStyle}"
-                                                  Glyph="&#xF140;" />
-                        </controls:HeaderedControl>
-                    </StackPanel>
-                </ListView.Header>
-                <ListView.Footer>
-                    <Border MaxWidth="640">
-                        <TextBlock x:Name="Footer"
-                                   Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                   Style="{StaticResource CaptionTextBlockStyle}"
-                                   Margin="12,8,12,32" />
-                    </Border>
-                </ListView.Footer>
-            </controls:TableListView>
-        </Grid>
+        </controls:TableListView>
     </Grid>
 </local:HostedPage>

@@ -13,7 +13,7 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Controls.Cells
 {
-    public sealed partial class SharedFileCell : UserControl
+    public sealed partial class SharedFileCell : Grid
     {
         private IProtoService _protoService;
         private IMessageDelegate _delegate;

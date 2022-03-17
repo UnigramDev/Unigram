@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
@@ -46,7 +47,6 @@ namespace Unigram.ViewModels.Settings
             ClearDraftsCommand = new RelayCommand(ClearDraftsExecute);
             ClearContactsCommand = new RelayCommand(ClearContactsExecute);
             ClearPaymentsCommand = new RelayCommand(ClearPaymentsExecute);
-            AccountTTLCommand = new RelayCommand(AccountTTLExecute);
 
             Children.Add(_showForwardedRules);
             Children.Add(_showPhotoRules);
@@ -64,7 +64,31 @@ namespace Unigram.ViewModels.Settings
             {
                 if (result is AccountTtl ttl)
                 {
-                    BeginOnUIThread(() => AccountTTL = ttl.Days);
+                    BeginOnUIThread(() =>
+                    {
+                        if (ttl.Days == 0)
+                        {
+                            _accountTtl = _accountTtlIndexer[2];
+                            RaisePropertyChanged(nameof(AccountTtl));
+                            return;
+                        }
+
+                        int? period = null;
+
+                        var max = 2147483647;
+                        foreach (var days in _accountTtlIndexer)
+                        {
+                            int abs = Math.Abs(ttl.Days - days);
+                            if (abs < max)
+                            {
+                                max = abs;
+                                period = days;
+                            }
+                        }
+
+                        _accountTtl = period ?? _accountTtlIndexer[2];
+                        RaisePropertyChanged(nameof(AccountTtl));
+                    });
                 }
             });
 
@@ -106,14 +130,37 @@ namespace Unigram.ViewModels.Settings
         public SettingsPrivacyAllowCallsViewModel AllowCallsRules => _allowCallsRules;
         public SettingsPrivacyAllowChatInvitesViewModel AllowChatInvitesRules => _allowChatInvitesRules;
 
-        private int _accountTTL;
-        public int AccountTTL
+        private int _accountTtl;
+        public int AccountTtl
         {
-            get => _accountTTL;
-            set => Set(ref _accountTTL, value);
+            get => Array.IndexOf(_accountTtlIndexer, _accountTtl);
+            set
+            {
+                if (value >= 0 && value < _accountTtlIndexer.Length && _accountTtl != _accountTtlIndexer[value])
+                {
+                    ProtoService.SendAsync(new SetAccountTtl(new AccountTtl(_accountTtl = _accountTtlIndexer[value])));
+                    RaisePropertyChanged();
+                }
+            }
         }
 
-        private int _blockedUsers;
+        private readonly int[] _accountTtlIndexer = new[]
+        {
+            30,
+            90,
+            180,
+            365
+        };
+
+        public List<SettingsOptionItem<int>> AccountTtlOptions => new List<SettingsOptionItem<int>>
+        {
+            new SettingsOptionItem<int>(30, Locale.Declension("Months", 1)),
+            new SettingsOptionItem<int>(90, Locale.Declension("Months", 3)),
+            new SettingsOptionItem<int>(180, Locale.Declension("Months", 6)),
+            new SettingsOptionItem<int>(365, Locale.Declension("Years", 1))
+        };
+
+    private int _blockedUsers;
         public int BlockedUsers
         {
             get => _blockedUsers;
@@ -330,63 +377,6 @@ namespace Unigram.ViewModels.Settings
                 if (credential)
                 {
                     ProtoService.Send(new DeleteSavedCredentials());
-                }
-            }
-        }
-
-        public RelayCommand AccountTTLCommand { get; }
-        private async void AccountTTLExecute()
-        {
-            SelectRadioItem GetSelectedPeriod(SelectRadioItem[] periods, SelectRadioItem defaultPeriod)
-            {
-                if (_accountTTL == 0)
-                {
-                    return defaultPeriod;
-                }
-
-                SelectRadioItem period = null;
-
-                var max = 2147483647;
-                foreach (var current in periods)
-                {
-                    var days = (int)current.Value;
-                    int abs = Math.Abs(_accountTTL - days);
-                    if (abs < max)
-                    {
-                        max = abs;
-                        period = current;
-                    }
-                }
-
-                return period ?? defaultPeriod;
-            };
-
-            var items = new[]
-            {
-                new SelectRadioItem(30, Locale.Declension("Months", 1), false),
-                new SelectRadioItem(90, Locale.Declension("Months", 3), false),
-                new SelectRadioItem(180, Locale.Declension("Months", 6), false),
-                new SelectRadioItem(365, Locale.Declension("Years", 1), false)
-            };
-
-            var selected = GetSelectedPeriod(items, items[2]);
-            if (selected != null)
-            {
-                selected.IsChecked = true;
-            }
-
-            var dialog = new ChooseRadioPopup(items);
-            dialog.Title = Strings.Resources.DeleteAccountTitle;
-            dialog.PrimaryButtonText = Strings.Resources.OK;
-            dialog.SecondaryButtonText = Strings.Resources.Cancel;
-
-            var confirm = await dialog.ShowQueuedAsync();
-            if (confirm == ContentDialogResult.Primary && dialog.SelectedIndex is int days)
-            {
-                var response = await ProtoService.SendAsync(new SetAccountTtl(new AccountTtl(days)));
-                if (response is Ok)
-                {
-                    AccountTTL = days;
                 }
             }
         }

@@ -103,15 +103,15 @@ namespace Unigram.Controls
 
             Visibility = Visibility.Visible;
 
-            var visual = ElementCompositionPreview.GetElementVisual(_parent);
+            var parent = ElementCompositionPreview.GetElementVisual(_parent);
+            var visual = ElementCompositionPreview.GetElementVisual(this);
             visual.Clip = visual.Compositor.CreateInsetClip();
 
             var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
                 visual.Clip = null;
-                //visual.Offset = new Vector3();
-                visual.Properties.InsertVector3("Translation", Vector3.Zero);
+                parent.Properties.InsertVector3("Translation", Vector3.Zero);
 
                 if (show)
                 {
@@ -134,7 +134,7 @@ namespace Unigram.Controls
             offset.Duration = TimeSpan.FromMilliseconds(150);
 
             visual.Clip.StartAnimation("TopInset", clip);
-            visual.StartAnimation("Translation", offset);
+            parent.StartAnimation("Translation", offset);
 
             batch.End();
         }

@@ -12,16 +12,12 @@
         <CheckBox x:Name="Toggle"
                   x:Uid="StartupSwitch_Toggle"
                   Content="{CustomResource lng_settings_auto_start}"
-                  Margin="12,6,12,0" />
-        <Rectangle Style="{StaticResource Separator}" />
+                  Style="{StaticResource SettingsCheckBoxStyle}" />
         <CheckBox x:Name="ToggleMinimized"
                   x:Uid="StartupSwitch_Toggle"
                   x:Load="False"
                   Content="Launch minimized"
                   Visibility="{x:Bind Toggle.IsChecked, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                  Margin="12,6,12,0" />
-        <Rectangle x:Load="False"
-                   x:Name="ToggleMinimizedSeparator"
-                   Style="{StaticResource Separator}" />
+                  Style="{StaticResource SettingsCheckBoxStyle}" />
     </local:HeaderedControl>
 </UserControl>

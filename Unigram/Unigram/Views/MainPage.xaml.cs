@@ -59,6 +59,7 @@ namespace Unigram.Views
         IHandle<UpdateChatPhoto>,
         IHandle<UpdateChatVideoChat>,
         IHandle<UpdateUserStatus>,
+        IHandle<UpdateUser>,
         IHandle<UpdateChatAction>,
         IHandle<UpdateMessageMentionRead>,
         IHandle<UpdateMessageUnreadReactions>,
@@ -108,6 +109,7 @@ namespace Unigram.Views
             }
 
             DropShadowEx.Attach(UpdateShadow);
+            Window.Current.SetTitleBar(TitleBarrr);
 
             ChatsList.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
 
@@ -152,9 +154,7 @@ namespace Unigram.Views
         {
             var sender = CoreApplication.GetCurrentView().TitleBar;
 
-            //TitleBarrr.Visibility = sender.IsVisible ? Visibility.Visible : Visibility.Collapsed;
-            //TitleBarrr.Height = sender.Height;
-            TitleBarrr.ColumnDefinitions[0].Width = new GridLength(Math.Max(sender.SystemOverlayLeftInset, 6), GridUnitType.Pixel);
+            TitleBarrr.ColumnDefinitions[0].Width = new GridLength(Math.Max(sender.SystemOverlayLeftInset, 0), GridUnitType.Pixel);
             TitleBarrr.ColumnDefinitions[3].Width = new GridLength(Math.Max(sender.SystemOverlayRightInset, 6), GridUnitType.Pixel);
 
             StateLabel.FlowDirection = sender.SystemOverlayLeftInset > 0 ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
@@ -165,9 +165,7 @@ namespace Unigram.Views
 
         private void CoreTitleBar_LayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)
         {
-            //TitleBarrr.Visibility = sender.IsVisible ? Visibility.Visible : Visibility.Collapsed;
-            //TitleBarrr.Height = sender.Height;
-            TitleBarrr.ColumnDefinitions[0].Width = new GridLength(Math.Max(sender.SystemOverlayLeftInset, 6), GridUnitType.Pixel);
+            TitleBarrr.ColumnDefinitions[0].Width = new GridLength(Math.Max(sender.SystemOverlayLeftInset, 0), GridUnitType.Pixel);
             TitleBarrr.ColumnDefinitions[3].Width = new GridLength(Math.Max(sender.SystemOverlayRightInset, 6), GridUnitType.Pixel);
 
             StateLabel.FlowDirection = sender.SystemOverlayLeftInset > 0 ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
@@ -245,6 +243,18 @@ namespace Unigram.Views
         public void Handle(UpdateChatVideoChat update)
         {
             Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatVideoChat(chat));
+        }
+
+        public void Handle(UpdateUser update)
+        {
+            if (update.User.Id == _protoService.Options.MyId)
+            {
+                this.BeginOnUIThread(() =>
+                {
+                    Photo.SetUser(_protoService, update.User, 28);
+                    PhotoSide?.SetUser(_protoService, update.User, 28);
+                });
+            }
         }
 
         public void Handle(UpdateUserStatus update)
@@ -546,11 +556,6 @@ namespace Unigram.Views
                 _tabsTopCollapsed = false;
             }
 
-            if (Window.Current.Content is RootPage root && show)
-            {
-                root.SetTopPadding(new Thickness());
-            }
-
             if (ChatTabs == null)
             {
                 FindName(nameof(ChatTabs));
@@ -631,14 +636,23 @@ namespace Unigram.Views
                 _tabsLeftCollapsed = false;
             }
 
-            if (Window.Current.Content is RootPage root)
-            {
-                root.SetTopPadding(new Thickness(show ? 72 : 0, 0, 0, 0));
-            }
+            Root?.SetSidebarEnabled(show);
+
+            Photo.Visibility = show
+                ? Visibility.Collapsed
+                : Visibility.Visible;
 
             if (ChatTabsLeft == null)
             {
                 FindName(nameof(ChatTabsLeft));
+            }
+
+            if (show && PhotoSide != null)
+            {
+                if (_protoService.TryGetUser(_protoService.Options.MyId, out User user))
+                {
+                    PhotoSide.SetUser(_protoService, user, 28);
+                }
             }
 
             var element = VisualTreeHelper.GetChild(ChatsList, 0) as UIElement;
@@ -734,6 +748,7 @@ namespace Unigram.Views
             if (rpMasterTitlebar.SelectedIndex > 0)
             {
                 rpMasterTitlebar.SelectedIndex = 0;
+                ViewModel.RaisePropertyChanged(nameof(ViewModel.SelectedFilter));
                 args.Handled = true;
             }
             else
@@ -746,8 +761,7 @@ namespace Unigram.Views
                 }
                 else if (ViewModel.Chats.Items.ChatList is ChatListFilter or ChatListArchive)
                 {
-                    ViewModel.SelectedFilter = ChatFilterViewModel.Main;
-                    ConvertFilter(ChatFilterViewModel.Main);
+                    UpdateFilter(ChatFilterViewModel.Main);
                     args.Handled = true;
                 }
             }
@@ -755,6 +769,12 @@ namespace Unigram.Views
 
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
+            if (_protoService.TryGetUser(_protoService.Options.MyId, out User user))
+            {
+                Photo.SetUser(_protoService, user, 28);
+                PhotoSide?.SetUser(_protoService, user, 28);
+            }
+
             ViewModel.Aggregator.Subscribe(this);
             Window.Current.CoreWindow.CharacterReceived += OnCharacterReceived;
             WindowContext.GetForCurrentView().AcceleratorKeyActivated += OnAcceleratorKeyActivated;
@@ -1021,7 +1041,7 @@ namespace Unigram.Views
                 var index = command - ShortcutCommand.ShowAllChats;
                 if (folders.Count > index)
                 {
-                    ViewModel.SelectedFilter = folders[index];
+                    UpdateFilter(folders[index], false);
                 }
             }
         }
@@ -1160,7 +1180,7 @@ namespace Unigram.Views
 
             if (index >= 0 && index < ViewModel.Filters.Count)
             {
-                ViewModel.SelectedFilter = ViewModel.Filters[index];
+                UpdateFilter(ViewModel.Filters[index], false);
             }
         }
 
@@ -1287,13 +1307,13 @@ namespace Unigram.Views
                 e.SourcePageType == typeof(ChatThreadPage) ||
                 e.SourcePageType == typeof(ChatScheduledPage) ||
                 e.SourcePageType == typeof(ChatEventLogPage) ||
-                e.SourcePageType == typeof(BlankPage) ||
-                frame.CurrentSourcePageType == typeof(ChatPage) ||
-                frame.CurrentSourcePageType == typeof(ChatPinnedPage) ||
-                frame.CurrentSourcePageType == typeof(ChatThreadPage) ||
-                frame.CurrentSourcePageType == typeof(ChatScheduledPage) ||
-                frame.CurrentSourcePageType == typeof(ChatEventLogPage) ||
-                frame.CurrentSourcePageType == typeof(BlankPage);
+                e.SourcePageType == typeof(BlankPage); //||
+                                                       //frame.CurrentSourcePageType == typeof(ChatPage) ||
+                                                       //frame.CurrentSourcePageType == typeof(ChatPinnedPage) ||
+                                                       //frame.CurrentSourcePageType == typeof(ChatThreadPage) ||
+                                                       //frame.CurrentSourcePageType == typeof(ChatScheduledPage) ||
+                                                       //frame.CurrentSourcePageType == typeof(ChatEventLogPage) ||
+                                                       //frame.CurrentSourcePageType == typeof(BlankPage);
 
             if (MasterDetail.CurrentState == MasterDetailState.Minimal)
             {
@@ -1307,12 +1327,10 @@ namespace Unigram.Views
         {
             if (MasterDetail.CurrentState == MasterDetailState.Minimal)
             {
-                SetTitleBarVisibility(Visibility.Visible);
                 MasterDetail.AllowCompact = true;
             }
             else
             {
-                SetTitleBarVisibility(e.SourcePageType == typeof(BlankPage) ? Visibility.Collapsed : Visibility.Visible);
                 MasterDetail.AllowCompact = e.SourcePageType != typeof(BlankPage) && rpMasterTitlebar.SelectedIndex == 0;
             }
 
@@ -1345,7 +1363,6 @@ namespace Unigram.Views
                     ChatsList.SelectionMode = ListViewSelectionMode.None;
                 }
 
-                SetTitleBarVisibility(Visibility.Visible);
                 Header.Visibility = Visibility.Visible;
                 StateLabel.Visibility = Visibility.Visible;
             }
@@ -1357,7 +1374,6 @@ namespace Unigram.Views
                     ChatsList.SelectedItem = ViewModel.Chats.Items.FirstOrDefault(x => x.Id == ViewModel.Chats.SelectedItem);
                 }
 
-                SetTitleBarVisibility(MasterDetail.NavigationService.CurrentPageType == typeof(BlankPage) ? Visibility.Collapsed : Visibility.Visible);
                 Header.Visibility = MasterDetail.CurrentState == MasterDetailState.Expanded ? Visibility.Visible : Visibility.Collapsed;
                 StateLabel.Visibility = MasterDetail.CurrentState == MasterDetailState.Expanded ? Visibility.Visible : Visibility.Collapsed;
             }
@@ -1390,25 +1406,51 @@ namespace Unigram.Views
                 {
                     if (rpMasterTitlebar.SelectedIndex != 0 || ViewModel.Chats.Items.ChatList is ChatListArchive || !_searchCollapsed || ChatsList.SelectionMode == ListViewSelectionMode.Multiple)
                     {
-                        Root?.SetPaneToggleButtonVisibility(PaneToggleButtonVisibility.Back);
+                        SetPaneToggleButtonVisibility(PaneToggleButtonVisibility.Back);
                     }
                     else
                     {
-                        Root?.SetPaneToggleButtonVisibility(PaneToggleButtonVisibility.Visible);
+                        SetPaneToggleButtonVisibility(PaneToggleButtonVisibility.Visible);
                     }
                 }
                 else
                 {
-                    Root?.SetPaneToggleButtonVisibility(PaneToggleButtonVisibility.Collapsed);
+                    SetPaneToggleButtonVisibility(PaneToggleButtonVisibility.Collapsed);
                 }
             }
             else if (rpMasterTitlebar.SelectedIndex != 0 || ViewModel.Chats.Items.ChatList is ChatListArchive || !_searchCollapsed || ChatsList.SelectionMode == ListViewSelectionMode.Multiple)
             {
-                Root?.SetPaneToggleButtonVisibility(PaneToggleButtonVisibility.Back);
+                SetPaneToggleButtonVisibility(PaneToggleButtonVisibility.Back);
             }
             else
             {
-                Root?.SetPaneToggleButtonVisibility(PaneToggleButtonVisibility.Visible);
+                SetPaneToggleButtonVisibility(PaneToggleButtonVisibility.Visible);
+            }
+        }
+
+        private bool _visibility = false;
+
+        private void SetPaneToggleButtonVisibility(PaneToggleButtonVisibility visibility)
+        {
+            Root?.SetPaneToggleButtonVisibility(visibility);
+
+            var visible = visibility == PaneToggleButtonVisibility.Back;
+            if (visible != _visibility)
+            {
+                var logo = ElementCompositionPreview.GetElementVisual(TitleBarLogo);
+                var label = ElementCompositionPreview.GetElementVisual(StateLabel);
+
+                ElementCompositionPreview.SetIsTranslationEnabled(TitleBarLogo, true);
+                ElementCompositionPreview.SetIsTranslationEnabled(StateLabel, true);
+
+                var anim = logo.Compositor.CreateVector3KeyFrameAnimation();
+                anim.InsertKeyFrame(visibility == PaneToggleButtonVisibility.Back ? 0 : 1, new Vector3(0, 0, 0));
+                anim.InsertKeyFrame(visibility == PaneToggleButtonVisibility.Back ? 1 : 0, new Vector3(36, 0, 0));
+
+                logo.StartAnimation("Translation", anim);
+                label.StartAnimation("Translation", anim);
+
+                _visibility = visible;
             }
         }
 
@@ -1421,12 +1463,6 @@ namespace Unigram.Views
             {
                 ChatsList.SelectedItem = dialog;
             }
-        }
-
-        private void SetTitleBarVisibility(Visibility visibility)
-        {
-            MasterDetail.IsBlank = visibility == Visibility.Collapsed;
-            VisualStateManager.GoToState(this, visibility == Visibility.Collapsed ? "Normal" : "TitleBar", false);
         }
 
         public PaneToggleButtonVisibility EvaluatePaneToggleButtonVisibility()
@@ -1716,13 +1752,14 @@ namespace Unigram.Views
                     }
                 }
             }
+
+            Photo.Visibility = _tabsLeftCollapsed && rpMasterTitlebar.SelectedIndex != 3 ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void UpdateHeader()
         {
             ChatsOptions.Visibility = rpMasterTitlebar.SelectedIndex == 0 ? Visibility.Visible : Visibility.Collapsed;
             ContactsOptions.Visibility = rpMasterTitlebar.SelectedIndex == 1 ? Visibility.Visible : Visibility.Collapsed;
-            SettingsOptions.Visibility = rpMasterTitlebar.SelectedIndex == 3 ? Visibility.Visible : Visibility.Collapsed;
 
             SearchField.PlaceholderText = rpMasterTitlebar.SelectedIndex == 3 ? Strings.Resources.SearchInSettings : Strings.Resources.Search;
         }
@@ -1994,11 +2031,6 @@ namespace Unigram.Views
 
             ViewModel.Passcode.Lock();
             App.ShowPasscode(false);
-        }
-
-        private void EditPhoto_Click(object sender, RoutedEventArgs e)
-        {
-            SettingsView.EditPhoto_Click(sender, e);
         }
 
         private void OnUpdate(object sender, EventArgs e)
@@ -2372,19 +2404,7 @@ namespace Unigram.Views
 
         public async void NavigationView_ItemClick(RootDestination destination)
         {
-            if (destination == RootDestination.NewChat)
-            {
-                MasterDetail.NavigationService.Navigate(typeof(BasicGroupCreateStep1Page));
-            }
-            else if (destination == RootDestination.NewSecretChat)
-            {
-                ViewModel.CreateSecretChatCommand.Execute();
-            }
-            else if (destination == RootDestination.NewChannel)
-            {
-                MasterDetail.NavigationService.Navigate(typeof(ChannelCreateStep1Page));
-            }
-            else if (destination == RootDestination.Chats)
+            if (destination == RootDestination.Chats)
             {
                 rpMasterTitlebar.SelectedIndex = 0;
                 MasterDetail.Push(true);
@@ -2453,16 +2473,6 @@ namespace Unigram.Views
             MasterDetail.NavigationService.Navigate(typeof(ChatsNearbyPage));
         }
 
-        private void LogOut_Click(object sender, RoutedEventArgs e)
-        {
-            MasterDetail.NavigationService.Navigate(typeof(LogOutPage));
-        }
-
-        private void EditName_Click(object sender, RoutedEventArgs e)
-        {
-            SettingsView.EditName_Click(sender, e);
-        }
-
         private ChatFilterViewModel ConvertFilter(ChatFilterViewModel filter)
         {
             ShowHideTopTabs(!ViewModel.Chats.Settings.IsLeftTabsEnabled && ViewModel.Filters.Count > 0 && !(filter.ChatList is ChatListArchive));
@@ -2476,17 +2486,15 @@ namespace Unigram.Views
 
         private void ConvertFilterBack(object obj)
         {
-            if (obj is ChatFilterViewModel filter && !(ViewModel.Chats.Items.ChatList is ChatListArchive))
+            if (obj is ChatFilterViewModel filter && !filter.IsNavigationItem && !(ViewModel.Chats.Items.ChatList is ChatListArchive))
             {
-                ViewModel.SelectedFilter = filter;
-                ConvertFilter(filter);
+                UpdateFilter(filter);
             }
         }
 
         public void ArchivedChats_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.SelectedFilter = ChatFilterViewModel.Archive;
-            ConvertFilter(ChatFilterViewModel.Archive);
+            UpdateFilter(ChatFilterViewModel.Archive);
         }
 
         private void ChatFilter_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
@@ -2497,8 +2505,6 @@ namespace Unigram.Views
                 return;
             }
 
-            var flyout = new MenuFlyout();
-
             var element = sender as FrameworkElement;
             var filter = ChatFilters?.ItemFromContainer(sender) as ChatFilterViewModel;
 
@@ -2506,6 +2512,13 @@ namespace Unigram.Views
             {
                 filter = ChatFiltersSide.ItemFromContainer(sender) as ChatFilterViewModel;
             }
+
+            if (filter.IsNavigationItem)
+            {
+                return;
+            }
+
+            var flyout = new MenuFlyout();
 
             if (filter.ChatFilterId == Constants.ChatListMain)
             {
@@ -2590,7 +2603,7 @@ namespace Unigram.Views
 
                 if (show is false)
                 {
-                    Root.ShowTeachingTip(Strings.Resources.lng_context_archive_to_menu_info);
+                    Window.Current.ShowTeachingTip(Photo, Strings.Resources.lng_context_archive_to_menu_info, Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode.BottomRight);
                 }
             };
 
@@ -2713,9 +2726,62 @@ namespace Unigram.Views
             }
             else if (ViewModel.Chats.Items.ChatList is ChatListArchive)
             {
-                ViewModel.SelectedFilter = ChatFilterViewModel.Main;
-                ConvertFilter(ChatFilterViewModel.Main);
+                UpdateFilter(ChatFilterViewModel.Main);
             }
+        }
+
+        private void UpdateFilter(ChatFilterViewModel filter, bool update = true)
+        {
+            ViewModel.SelectedFilter = filter;
+
+            if (update)
+            {
+                ConvertFilter(filter);
+            }
+
+            return;
+
+            var visual = ElementCompositionPreview.GetElementVisual(TabChats);
+            ElementCompositionPreview.SetIsTranslationEnabled(TabChats, true);
+
+            var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
+                ViewModel.SelectedFilter = filter;
+
+                if (update)
+                {
+                    ConvertFilter(filter);
+                }
+
+                var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                offset.InsertKeyFrame(0, new Vector3(0, 16, 0));
+                offset.InsertKeyFrame(1, new Vector3(0, 0, 0));
+                offset.Duration = TimeSpan.FromMilliseconds(150);
+
+                var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                opacity.InsertKeyFrame(0, 0);
+                opacity.InsertKeyFrame(1, 1);
+                opacity.Duration = TimeSpan.FromMilliseconds(150);
+
+                visual.StartAnimation("Translation", offset);
+                visual.StartAnimation("Opacity", opacity);
+            };
+
+            var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            offset.InsertKeyFrame(0, new Vector3());
+            offset.InsertKeyFrame(1, new Vector3(0, -16, 0));
+            offset.Duration = TimeSpan.FromMilliseconds(150);
+
+            var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            opacity.InsertKeyFrame(0, 1);
+            opacity.InsertKeyFrame(1, 0);
+            opacity.Duration = TimeSpan.FromMilliseconds(150);
+
+            visual.StartAnimation("Translation", offset);
+            visual.StartAnimation("Opacity", opacity);
+
+            batch.End();
         }
 
         #region Selection
@@ -2990,7 +3056,18 @@ namespace Unigram.Views
 
         private void ChatFilter_ItemClick(object sender, ItemClickEventArgs e)
         {
-            rpMasterTitlebar.SelectedIndex = 0;
+            if (e.ClickedItem is ChatFilterViewModel chatFilter)
+            {
+                var index = int.MaxValue - chatFilter.ChatFilterId;
+                if (index >= 0 && index <= 3)
+                {
+                    rpMasterTitlebar.SelectedIndex = index;
+                }
+                else
+                {
+                    rpMasterTitlebar.SelectedIndex = 0;
+                }
+            }
 
             if (MasterDetail.CurrentState == MasterDetailState.Minimal &&
                 MasterDetail.NavigationService.CurrentPageType != typeof(BlankPage))
@@ -3050,10 +3127,37 @@ namespace Unigram.Views
         {
             await new DownloadsPopup(ViewModel.SessionId, ViewModel.NavigationService).ShowQueuedAsync();
         }
+
+        private void Photo_Click(object sender, RoutedEventArgs e)
+        {
+            Root.IsPaneOpen = true;
+        }
+
+        private void ChatFilters_ChoosingGroupHeaderContainer(ListViewBase sender, ChoosingGroupHeaderContainerEventArgs args)
+        {
+            args.GroupHeaderContainer = new ListViewHeaderItem
+            {
+                Visibility = args.GroupIndex == 0
+                    ? Visibility.Collapsed
+                    : Visibility.Visible
+            };
+        }
+
+        private void NewGroup_Click(object sender, RoutedEventArgs e)
+        {
+            MasterDetail.NavigationService.Navigate(typeof(BasicGroupCreateStep1Page));
+        }
+
+        private void NewChannel_Click(object sender, RoutedEventArgs e)
+        {
+            MasterDetail.NavigationService.Navigate(typeof(ChannelCreateStep1Page));
+        }
     }
 
     public class HostedPage : Page
     {
+        #region Header
+
         public UIElement Header
         {
             get => (UIElement)GetValue(HeaderProperty);
@@ -3062,5 +3166,39 @@ namespace Unigram.Views
 
         public static readonly DependencyProperty HeaderProperty =
             DependencyProperty.Register("Header", typeof(UIElement), typeof(HostedPage), new PropertyMetadata(null));
+
+        #endregion
+
+        #region Footer
+
+        public UIElement Footer
+        {
+            get { return (UIElement)GetValue(FooterProperty); }
+            set { SetValue(FooterProperty, value); }
+        }
+
+        public static readonly DependencyProperty FooterProperty =
+            DependencyProperty.Register("Footer", typeof(UIElement), typeof(HostedPage), new PropertyMetadata(null));
+
+        #endregion
+
+        #region Title
+
+        public string Title
+        {
+            get { return (string)GetValue(TitleProperty); }
+            set { SetValue(TitleProperty, value); }
+        }
+
+        public static readonly DependencyProperty TitleProperty =
+            DependencyProperty.Register("Title", typeof(string), typeof(HostedPage), new PropertyMetadata(null));
+
+        #endregion
+
+        #region IsNavigationRoot
+
+        public bool IsNavigationRoot { get; set; } = false;
+
+        #endregion
     }
 }

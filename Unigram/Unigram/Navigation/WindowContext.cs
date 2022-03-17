@@ -5,6 +5,7 @@ using Unigram.Navigation.Services;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.UI.Core;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 
 namespace Unigram.Navigation
@@ -93,6 +94,24 @@ namespace Unigram.Navigation
                     }
                 }
             }
+        }
+
+
+
+        private int _screenCaptureDisabled;
+
+        public void SetScreenCaptureEnabled(bool enabled)
+        {
+            if (enabled)
+            {
+                _screenCaptureDisabled = Math.Max(_screenCaptureDisabled - 1, 0);
+            }
+            else
+            {
+                _screenCaptureDisabled++;
+            }
+
+            ApplicationView.GetForCurrentView().IsScreenCaptureEnabled = _screenCaptureDisabled == 0;
         }
     }
 }

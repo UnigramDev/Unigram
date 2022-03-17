@@ -8,7 +8,10 @@
       mc:Ignorable="d"
       d:DesignHeight="300"
       d:DesignWidth="400"
-      Unloaded="OnUnloaded">
+      Unloaded="OnUnloaded"
+      Padding="12,6"
+      Background="{ThemeResource SettingsItemBackground}"
+      BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
 
     <Grid.ColumnDefinitions>
         <ColumnDefinition Width="Auto" />

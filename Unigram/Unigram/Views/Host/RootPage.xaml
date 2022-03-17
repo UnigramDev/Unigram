@@ -28,7 +28,7 @@
             <Setter Property="HorizontalAlignment"
                     Value="Left" />
             <Setter Property="VerticalAlignment"
-                    Value="Bottom" />
+                    Value="Center" />
             <Setter Property="HorizontalContentAlignment"
                     Value="Left" />
             <Setter Property="VerticalContentAlignment"
@@ -149,40 +149,8 @@
                                  PaneOpening="Navigation_PaneOpening"
                                  PaneClosing="Navigation_PaneClosing">
             <controls:NavigationView.PaneHeader>
-                <Button x:Name="Accounts"
-                        Click="Expand_Click"
-                        RequestedTheme="Dark"
-                        Style="{StaticResource EmptyButtonStyle}">
-                    <Grid Padding="12,8">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock x:Name="NameLabel"
-                                   TextWrapping="NoWrap"
-                                   TextTrimming="CharacterEllipsis"
-                                   VerticalAlignment="Bottom"
-                                   FontFamily="{ThemeResource EmojiThemeFontFamily}" />
-                        <TextBlock x:Name="PhoneLabel"
-                                   VerticalAlignment="Top"
-                                   Style="{StaticResource CaptionTextBlockStyle}"
-                                   Foreground="{ThemeResource SystemControlBackgroundBaseMediumBrush}"
-                                   TextTrimming="CharacterEllipsis"
-                                   TextWrapping="NoWrap"
-                                   Grid.Row="1"
-                                   MaxLines="1" />
-                        <CheckBox x:Name="Expanded"
-                                  MinWidth="0"
-                                  IsEnabled="False"
-                                  Style="{StaticResource NavigationViewExpanderStyle}"
-                                  Grid.Column="1"
-                                  Grid.RowSpan="2" />
-                    </Grid>
-                </Button>
+                <Border x:Name="AccountsPlaceholder"
+                        Height="48" />
             </controls:NavigationView.PaneHeader>
             <controls:NavigationView.PaneFooter>
                 <ListView x:Name="NavigationViewList"
@@ -216,7 +184,61 @@
                                     Visibility="Collapsed"
                                     VerticalAlignment="Top"
                                     HorizontalAlignment="Left"
-                                    IsTabStop="False" />
+                                    IsTabStop="False"
+                                    Width="40"
+                                    Height="40" />
+
+        <Button x:Name="Accounts"
+                Visibility="Collapsed"
+                Click="Expand_Click"
+                Background="Transparent"
+                Style="{StaticResource EmptyButtonStyle}"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Margin="0,32,0,0"
+                Width="240">
+            <Grid Padding="12,0,12,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <controls:ProfilePicture x:Name="Photo"
+                                         Click="Photo_Click"
+                                         Margin="0,0,12,0"
+                                         Width="48"
+                                         Height="48" />
+
+                <Grid x:Name="Info"
+                      Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock x:Name="NameLabel"
+                               TextWrapping="NoWrap"
+                               TextTrimming="CharacterEllipsis"
+                               VerticalAlignment="Bottom"
+                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                               Grid.Column="1" />
+                    <TextBlock x:Name="PhoneLabel"
+                               VerticalAlignment="Top"
+                               Style="{StaticResource CaptionTextBlockStyle}"
+                               Foreground="{ThemeResource SystemControlBackgroundBaseMediumBrush}"
+                               TextTrimming="CharacterEllipsis"
+                               TextWrapping="NoWrap"
+                               Grid.Column="1"
+                               Grid.Row="1"
+                               MaxLines="1" />
+                </Grid>
+                <CheckBox x:Name="Expanded"
+                          MinWidth="0"
+                          IsEnabled="False"
+                          Style="{StaticResource NavigationViewExpanderStyle}"
+                          Grid.Column="2" />
+            </Grid>
+        </Button>
 
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>

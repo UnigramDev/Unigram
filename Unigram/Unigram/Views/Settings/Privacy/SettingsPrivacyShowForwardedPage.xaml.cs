@@ -18,6 +18,7 @@ namespace Unigram.Views.Settings.Privacy
         public SettingsPrivacyShowForwardedPage()
         {
             InitializeComponent();
+            Title = Strings.Resources.PrivacyForwards;
 
             if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "Shadow"))
             {

@@ -62,6 +62,16 @@ namespace Unigram.ViewModels
             _shortcutService = shortcutService;
 
             Filters = new ChatFilterCollection();
+            NavigationItems = new List<IEnumerable<ChatFilterViewModel>>
+            {
+                Filters,
+                new ChatFilterViewModel[]
+                {
+                    new ChatFilterViewModel(int.MaxValue - 1, Strings.Resources.Contacts, "\uE95E", "\uE95D"),
+                    new ChatFilterViewModel(int.MaxValue - 2, Strings.Resources.Calls, "\uE991", "\uE990"),
+                    new ChatFilterViewModel(int.MaxValue - 3, Strings.Resources.Settings, "\uE98F", "\uE98E"),
+                }
+            };
 
             Chats = new ChatListViewModel(protoService, cacheService, settingsService, aggregator, pushService, new ChatListMain());
             Contacts = new ContactsViewModel(protoService, cacheService, settingsService, aggregator, contactsService);
@@ -325,6 +335,8 @@ namespace Unigram.ViewModels
             set => Set(ref _filters, value);
         }
 
+        public List<IEnumerable<ChatFilterViewModel>> NavigationItems { get; private set; }
+
         public ChatFilterViewModel SelectedFilter
         {
             get
@@ -502,6 +514,8 @@ namespace Unigram.ViewModels
             Title = Strings.Resources.ArchivedChats
         };
 
+        public bool IsNavigationItem { get; }
+
         public ChatFilterViewModel(ChatFilterInfo info)
         {
             if (info.Id == Constants.ChatListMain)
@@ -521,7 +535,20 @@ namespace Unigram.ViewModels
 
             _title = info.Title;
             _icon = Icons.ParseFilter(info.IconName);
-            _iconGlyph = Icons.FilterToGlyph(_icon).Item1;
+
+            var glyph = Icons.FilterToGlyph(_icon);
+            _iconGlyph = glyph.Item1;
+            _filledIconGlyph = glyph.Item2;
+        }
+
+        public ChatFilterViewModel(int id, string title, string glyph, string filledGlyph)
+        {
+            ChatFilterId = id;
+            IsNavigationItem = true;
+
+            Title = title;
+            IconGlyph = glyph;
+            FilledIconGlyph = filledGlyph;
         }
 
         private ChatFilterViewModel(ChatList list)
@@ -533,7 +560,10 @@ namespace Unigram.ViewModels
         {
             Title = info.Title;
             Icon = Icons.ParseFilter(info.IconName);
-            IconGlyph = Icons.FilterToGlyph(_icon).Item1;
+
+            var glyph = Icons.FilterToGlyph(_icon);
+            IconGlyph = glyph.Item1;
+            FilledIconGlyph = glyph.Item2;
         }
 
         public ChatList ChatList { get; }
@@ -559,6 +589,13 @@ namespace Unigram.ViewModels
         {
             get => _iconGlyph;
             set => Set(ref _iconGlyph, value);
+        }
+
+        private string _filledIconGlyph;
+        public string FilledIconGlyph
+        {
+            get => _filledIconGlyph;
+            set => Set(ref _filledIconGlyph, value);
         }
 
         private int _unreadCount;

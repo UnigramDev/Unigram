@@ -1,12 +1,14 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml.Controls;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using Unigram.Collections;
+using Unigram.Native.Composition;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Views;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
@@ -18,11 +20,15 @@ namespace Unigram.Controls
         private Frame DetailFrame;
         private ContentPresenter MasterPresenter;
         private Grid DetailPresenter;
+        private BreadcrumbBar DetailHeaderPresenter;
 
         public NavigationService NavigationService { get; private set; }
         public Frame ParentFrame { get; private set; }
 
-        private readonly LinkedList<BackStackType> _backStack = new LinkedList<BackStackType>();
+        private readonly MvxObservableCollection<NavigationStackItem> _backStack = new();
+        private readonly NavigationStackItem _currentPage = new(null, null, null, false);
+
+        private long _titleToken;
 
         public MasterDetailView()
         {
@@ -41,6 +47,7 @@ namespace Unigram.Controls
                 service = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, BootStrapper.ExistingContent.Exclude, session, key + session, false) as NavigationService;
                 service.Frame.DataContext = new object();
                 service.FrameFacade.BackRequested += OnBackRequested;
+                service.BackStackChanged += OnBackStackChanged;
             }
 
             NavigationService = service;
@@ -56,6 +63,7 @@ namespace Unigram.Controls
             if (service != null)
             {
                 service.FrameFacade.BackRequested -= OnBackRequested;
+                service.BackStackChanged -= OnBackStackChanged;
             }
 
             var panel = AdaptivePanel;
@@ -135,22 +143,6 @@ namespace Unigram.Controls
             //_backStack.AddLast(hamburger ? BackStackType.Hamburger : BackStackType.Navigation);
         }
 
-        public bool Last()
-        {
-            if (_backStack.Count > 0)
-            {
-                return _backStack.Last.Value == BackStackType.Hamburger;
-            }
-
-            return false;
-        }
-
-        enum BackStackType
-        {
-            Hamburger,
-            Navigation
-        }
-
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             if (CurrentState != MasterDetailState.Minimal)
@@ -164,17 +156,14 @@ namespace Unigram.Controls
             if (CurrentState == MasterDetailState.Minimal && DetailFrame?.CurrentSourcePageType == BlankPageType)
             {
                 MasterPresenter.Visibility = Visibility.Visible;
-                MasterHeader.Visibility = Visibility.Visible;
             }
             else if (CurrentState is MasterDetailState.Compact or MasterDetailState.Expanded)
             {
                 MasterPresenter.Visibility = Visibility.Visible;
-                MasterHeader.Visibility = Visibility.Visible;
             }
             else
             {
                 MasterPresenter.Visibility = Visibility.Collapsed;
-                MasterHeader.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -182,17 +171,25 @@ namespace Unigram.Controls
         {
             VisualStateManager.GoToState(this, "ResetState", false);
 
-            MasterPresenter = (ContentPresenter)GetTemplateChild("MasterFrame");
-            DetailPresenter = (Grid)GetTemplateChild("DetailPresenter");
-            AdaptivePanel = (MasterDetailPanel)GetTemplateChild("AdaptivePanel");
+            MasterPresenter = GetTemplateChild("MasterFrame") as ContentPresenter;
+            DetailPresenter = GetTemplateChild(nameof(DetailPresenter)) as Grid;
+            DetailHeaderPresenter = GetTemplateChild(nameof(DetailHeaderPresenter)) as BreadcrumbBar;
+            AdaptivePanel = GetTemplateChild(nameof(AdaptivePanel)) as MasterDetailPanel;
             AdaptivePanel.ViewStateChanged += OnViewStateChanged;
+
+            DetailHeaderPresenter.ItemsSource = _backStack;
+            DetailHeaderPresenter.ItemClicked += DetailHeaderPresenter_ItemClicked;
 
             MasterPresenter.RegisterPropertyChangedCallback(VisibilityProperty, OnVisibilityChanged);
 
             if (DetailFrame != null)
             {
-                var detailVisual = ElementCompositionPreview.GetElementVisual(DetailFrame);
-                detailVisual.Clip = Window.Current.Compositor.CreateInsetClip();
+                var clip = CompositionDevice.CreateRectangleClip(DetailFrame);
+                clip.Left = 0;
+                clip.Top = -48;
+                clip.Right = float.MaxValue;
+                clip.Bottom = float.MaxValue;
+                clip.TopLeft = 8;
 
                 var parent = VisualTreeHelper.GetParent(DetailFrame) as UIElement;
                 if (parent != null && parent != DetailPresenter)
@@ -212,7 +209,7 @@ namespace Unigram.Controls
                     }
                     else
                     {
-                        DetailFrame.BackStack.Insert(0, new PageStackEntry(BlankPageType, null, null));
+                        NavigationService.InsertToBackStack(0, BlankPageType);
                     }
                 }
                 catch { }
@@ -224,6 +221,20 @@ namespace Unigram.Controls
             }
         }
 
+        private void DetailHeaderPresenter_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemClickedEventArgs args)
+        {
+            var index = args.Index + 1;
+            var count = _backStack.Count - 1;
+
+            while (count - index > 0)
+            {
+                NavigationService.RemoveFromBackStack(DetailFrame.BackStackDepth - 1);
+                count--;
+            }
+
+            NavigationService.GoBack();
+        }
+
         private void OnVisibilityChanged(DependencyObject sender, DependencyProperty dp)
         {
             if (MasterPresenter.Visibility == Visibility.Visible)
@@ -232,15 +243,48 @@ namespace Unigram.Controls
             }
         }
 
+        private void OnNavigating(object sender, NavigatingEventArgs e)
+        {
+            if (e.Content is HostedPage hosted)
+            {
+                hosted.UnregisterPropertyChangedCallback(HostedPage.TitleProperty, _titleToken);
+            }
+        }
+
         private void OnNavigated(object sender, NavigationEventArgs e)
         {
             if (e.Content is HostedPage hosted)
             {
                 DetailHeader = hosted.Header;
+                DetailFooter = hosted.Footer;
+
+                if (hosted.Header == null)
+                {
+                    _titleToken = hosted.RegisterPropertyChangedCallback(HostedPage.TitleProperty, OnTitleChanged);
+
+                    if (string.IsNullOrEmpty(hosted.Title))
+                    {
+                        _backStack.Clear();
+                    }
+                    else
+                    {
+                        _currentPage.Title = hosted.Title;
+
+                        _backStack.ReplaceWith(BuildBackStack(hosted.IsNavigationRoot));
+                        _backStack.Add(_currentPage);
+                    }
+                }
+                else
+                {
+                    _backStack.Clear();
+                }
             }
             else
             {
                 DetailHeader = null;
+                DetailFooter = null;
+
+                _backStack.Clear();
             }
 
             if (AdaptivePanel == null)
@@ -254,6 +298,61 @@ namespace Unigram.Controls
             }
 
             UpdateMasterVisibility();
+        }
+
+        private void OnTitleChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            if (sender is HostedPage hosted)
+            {
+                if (string.IsNullOrEmpty(hosted.Title))
+                {
+                    _backStack.Clear();
+                }
+                else if (_backStack.Count > 0)
+                {
+                    _currentPage.Title = hosted.Title;
+                }
+                else
+                {
+                    _currentPage.Title = hosted.Title;
+
+                    _backStack.ReplaceWith(BuildBackStack(hosted.IsNavigationRoot));
+                    _backStack.Add(_currentPage);
+                }
+            }
+        }
+
+        private void OnBackStackChanged(object sender, EventArgs e)
+        {
+            if (DetailFrame.Content is HostedPage hosted && hosted.Header == null)
+            {
+                _backStack.ReplaceWith(BuildBackStack(hosted.IsNavigationRoot));
+                _backStack.Add(_currentPage);
+            }
+            else if (_backStack.Count > 0)
+            {
+                _backStack.Clear();
+            }
+        }
+
+        private IEnumerable<NavigationStackItem> BuildBackStack(bool root)
+        {
+            if (root)
+            {
+                yield break;
+            }
+
+            var index = NavigationService.BackStack.FindLastIndex(x => x.IsRoot);
+            var k = Math.Max(index, 0);
+
+            for (int i = k; i < NavigationService.BackStack.Count; i++)
+            {
+                var item = NavigationService.BackStack[i];
+                if (item.Title != null)
+                {
+                    yield return item;
+                }
+            }
         }
 
         private void OnViewStateChanged(object sender, EventArgs e)
@@ -340,19 +439,6 @@ namespace Unigram.Controls
 
         #endregion
 
-        #region MasterHeader
-
-        public UIElement MasterHeader
-        {
-            get => (UIElement)GetValue(MasterHeaderProperty);
-            set => SetValue(MasterHeaderProperty, value);
-        }
-
-        public static readonly DependencyProperty MasterHeaderProperty =
-            DependencyProperty.Register("MasterHeader", typeof(UIElement), typeof(MasterDetailView), new PropertyMetadata(null));
-
-        #endregion
-
         #region DetailHeader
 
         public UIElement DetailHeader
@@ -366,6 +452,19 @@ namespace Unigram.Controls
 
         #endregion
 
+        #region DetailFooter
+
+        public UIElement DetailFooter
+        {
+            get { return (UIElement)GetValue(DetailFooterProperty); }
+            set { SetValue(DetailFooterProperty, value); }
+        }
+
+        public static readonly DependencyProperty DetailFooterProperty =
+            DependencyProperty.Register("DetailFooter", typeof(UIElement), typeof(MasterDetailView), new PropertyMetadata(null));
+
+        #endregion
+
         #region BackgroundOpacity
 
         public double BackgroundOpacity
@@ -376,19 +475,6 @@ namespace Unigram.Controls
 
         public static readonly DependencyProperty BackgroundOpacityProperty =
             DependencyProperty.Register("BackgroundOpacity", typeof(double), typeof(MasterDetailView), new PropertyMetadata(1d));
-
-        #endregion
-
-        #region IsBlank
-
-        public bool IsBlank
-        {
-            get => (bool)GetValue(IsBlankProperty);
-            set => SetValue(IsBlankProperty, value);
-        }
-
-        public static readonly DependencyProperty IsBlankProperty =
-            DependencyProperty.Register("IsBlank", typeof(bool), typeof(MasterDetailView), new PropertyMetadata(true));
 
         #endregion
     }

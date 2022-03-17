@@ -11,7 +11,7 @@
     d:DesignWidth="400">
 
     <Grid x:Name="ActionBar"
-          Background="{ThemeResource PageSubHeaderBackgroundBrush}"
+          Background="Transparent"
           Grid.Row="1">
         <Grid.ColumnDefinitions>
             <ColumnDefinition />

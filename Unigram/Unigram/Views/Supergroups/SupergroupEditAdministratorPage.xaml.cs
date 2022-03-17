@@ -14,6 +14,7 @@ namespace Unigram.Views.Supergroups
         public SupergroupEditAdministratorPage()
         {
             InitializeComponent();
+            Title = Strings.Resources.EditAdmin;
         }
 
         public void UpdateChat(Chat chat)
@@ -30,7 +31,7 @@ namespace Unigram.Views.Supergroups
 
         public void UpdateUser(Chat chat, User user, bool secret)
         {
-            Title.Text = user.GetFullName();
+            TitleLabel.Text = user.GetFullName();
             Subtitle.Text = LastSeenConverter.GetLabel(user, true);
             Photo.SetUser(ViewModel.ProtoService, user, 64);
 
@@ -52,7 +53,7 @@ namespace Unigram.Views.Supergroups
             {
                 var canBeEdited = (member.Status is ChatMemberStatusCreator && member.MemberId.IsUser(ViewModel.CacheService.Options.MyId)) || (member.Status is ChatMemberStatusAdministrator administrator && administrator.CanBeEdited);
 
-                Header.CommandVisibility = canBeEdited ? Visibility.Visible : Visibility.Collapsed;
+                Done.Visibility = canBeEdited ? Visibility.Visible : Visibility.Collapsed;
                 Dismiss.Visibility = member.Status is ChatMemberStatusAdministrator && canBeEdited ? Visibility.Visible : Visibility.Collapsed;
                 PermissionsRoot.Footer = canBeEdited ? null : Strings.Resources.EditAdminCantEdit;
                 EditRankField.PlaceholderText = member.Status is ChatMemberStatusCreator ? Strings.Resources.ChannelCreator : Strings.Resources.ChannelAdmin;
@@ -71,7 +72,7 @@ namespace Unigram.Views.Supergroups
             }
             else
             {
-                Header.CommandVisibility = Visibility.Visible;
+                Done.Visibility = Visibility.Visible;
                 Dismiss.Visibility = Visibility.Collapsed;
                 PermissionsRoot.Footer = null;
                 EditRankField.PlaceholderText = Strings.Resources.ChannelAdmin;
@@ -83,13 +84,13 @@ namespace Unigram.Views.Supergroups
                 PermissionsRoot.Visibility = Visibility.Visible;
 
                 ChangeInfo.Content = group.IsChannel ? Strings.Resources.EditAdminChangeChannelInfo : Strings.Resources.EditAdminChangeGroupInfo;
-                PostMessages.Visibility = PostMessagesSeparator.Visibility = group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
-                EditMessages.Visibility = EditMessagesSeparator.Visibility = group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
+                PostMessages.Visibility = group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
+                EditMessages.Visibility = group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
                 DeleteMessages.Content = group.IsChannel ? Strings.Resources.EditAdminDeleteMessages : Strings.Resources.EditAdminGroupDeleteMessages;
-                BanUsers.Visibility = BanUsersSeparator.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
-                PinMessages.Visibility = PinMessagesSeparator.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
-                ManageVideoChats.Visibility = ManageVideoChatsSeparator.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
-                IsAnonymous.Visibility = IsAnonymousSeparator.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
+                BanUsers.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
+                PinMessages.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
+                ManageVideoChats.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
+                IsAnonymous.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
                 AddUsers.Content = chat.Permissions.CanInviteUsers ? Strings.Resources.EditAdminAddUsersViaLink : Strings.Resources.EditAdminAddUsers;
             }
             else
