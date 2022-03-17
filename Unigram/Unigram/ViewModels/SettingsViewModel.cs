@@ -23,17 +23,18 @@ namespace Unigram.ViewModels
         IChildViewModel,
         IDelegable<ISettingsDelegate>,
         IHandle<UpdateUser>,
-        IHandle<UpdateUserFullInfo>,
-        IHandle<UpdateFile>
+        IHandle<UpdateUserFullInfo>
     {
         private readonly ISettingsSearchService _searchService;
+        private readonly IStorageService _storageService;
 
         public ISettingsDelegate Delegate { get; set; }
 
-        public SettingsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ISettingsSearchService searchService)
+        public SettingsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IStorageService storageService, IEventAggregator aggregator, ISettingsSearchService searchService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _searchService = searchService;
+            _storageService = storageService;
 
             AskCommand = new RelayCommand(AskExecute);
             EditPhotoCommand = new RelayCommand<StorageMedia>(EditPhotoExecute);
@@ -42,11 +43,13 @@ namespace Unigram.ViewModels
             Results = new MvxObservableCollection<SettingsSearchEntry>();
         }
 
+        public IStorageService StorageService => _storageService;
+
         private Chat _chat;
         public Chat Chat
         {
-            get { return _chat; }
-            set { Set(ref _chat, value); }
+            get => _chat;
+            set => Set(ref _chat, value);
         }
 
         public MvxObservableCollection<SettingsSearchEntry> Results { get; private set; }
@@ -120,26 +123,6 @@ namespace Unigram.ViewModels
             if (chat.Type is ChatTypePrivate privata && privata.UserId == update.UserId)
             {
                 BeginOnUIThread(() => Delegate?.UpdateUserFullInfo(chat, ProtoService.GetUser(update.UserId), update.UserFullInfo, false, false));
-            }
-        }
-
-        public void Handle(UpdateFile update)
-        {
-            var chat = _chat;
-            if (chat == null)
-            {
-                return;
-            }
-
-            var user = CacheService.GetUser(chat);
-            if (user == null)
-            {
-                return;
-            }
-
-            if (user.UpdateFile(update.File))
-            {
-                BeginOnUIThread(() => Delegate?.UpdateFile(update.File));
             }
         }
 

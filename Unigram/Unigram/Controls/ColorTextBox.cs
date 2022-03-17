@@ -67,8 +67,8 @@ namespace Unigram.Controls
             }
 
             int start = SelectionStart;
-            String phoneChars = "0123456789ABCDEF";
-            String str = Text.ToUpper();
+            string phoneChars = "0123456789ABCDEF";
+            string str = Text.ToUpper();
             if (characterAction == 3)
             {
                 str = str.Substring(0, actionPosition) + str.Substring(actionPosition + 1);
@@ -77,7 +77,7 @@ namespace Unigram.Controls
             StringBuilder builder = new StringBuilder(str.Length);
             for (int a = 0; a < str.Length; a++)
             {
-                String ch = str.Substring(a, 1);
+                string ch = str.Substring(a, 1);
                 if (phoneChars.Contains(ch))
                 {
                     builder.Append(ch);
@@ -121,8 +121,8 @@ namespace Unigram.Controls
 
         public Color Color
         {
-            get { return (Color)GetValue(ColorProperty); }
-            set { SetValue(ColorProperty, value); }
+            get => (Color)GetValue(ColorProperty);
+            set => SetValue(ColorProperty, value);
         }
 
         public static readonly DependencyProperty ColorProperty =

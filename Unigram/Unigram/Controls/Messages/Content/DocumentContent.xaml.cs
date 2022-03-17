@@ -2,6 +2,7 @@
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Converters;
+using Unigram.Navigation;
 using Unigram.ViewModels;
 using Windows.Storage;
 using Windows.UI.Xaml;
@@ -11,81 +12,89 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public enum MessageContentState
-    {
-        None,
-        Download,
-        Downloading,
-        Uploading,
-        Confirm,
-        Document,
-        Photo,
-        Animation,
-        Ttl,
-        Play,
-        Pause,
-        Theme,
-    }
-
-    public sealed partial class DocumentContent : Grid, IContentWithFile
+    public sealed class DocumentContent : Control, IContent
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
+        private string _fileToken;
+        private string _thumbnailToken;
+
         public DocumentContent(MessageViewModel message)
         {
-            InitializeComponent();
-            UpdateMessage(message);
+            _message = message;
+
+            DefaultStyleKey = typeof(DocumentContent);
         }
+
+        #region InitializeComponent
+
+        private Border Texture;
+        private FileButton Button;
+        private TextBlock Title;
+        private TextBlock Subtitle;
+        private bool _templateApplied;
+
+        protected override void OnApplyTemplate()
+        {
+            Texture = GetTemplateChild(nameof(Texture)) as Border;
+            Button = GetTemplateChild(nameof(Button)) as FileButton;
+            Title = GetTemplateChild(nameof(Title)) as TextBlock;
+            Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
+
+            Button.Click += Button_Click;
+
+            _templateApplied = true;
+
+            if (_message != null)
+            {
+                UpdateMessage(_message);
+            }
+        }
+
+        #endregion
 
         public void UpdateMessage(MessageViewModel message)
         {
             _message = message;
 
             var document = GetContent(message.Content);
-            if (document == null)
+            if (document == null || !_templateApplied)
             {
                 return;
             }
 
             Title.Text = document.FileName;
 
-            if (document.Thumbnail != null)
+            if (document.Thumbnail?.File.Id != null)
             {
+                UpdateManager.Subscribe(this, message, document.Thumbnail.File, ref _thumbnailToken, UpdateThumbnail, true);
                 UpdateThumbnail(message, document.Thumbnail, document.Thumbnail.File);
             }
             else
             {
                 Texture.Background = null;
-                Button.Style = App.Current.Resources["InlineFileButtonStyle"] as Style;
+                Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
             }
 
+            UpdateManager.Subscribe(this, message, document.DocumentValue, ref _fileToken, UpdateFile);
             UpdateFile(message, document.DocumentValue);
         }
 
-        public void UpdateMessageContentOpened(MessageViewModel message)
+        private void UpdateFile(object target, File file)
         {
-            if (message.Ttl > 0)
-            {
-                //Timer.Maximum = message.Ttl;
-                //Timer.Value = DateTime.Now.AddSeconds(message.TtlExpiresIn);
-            }
+            UpdateFile(_message, file);
         }
 
-        public void UpdateFile(MessageViewModel message, File file)
+        private void UpdateFile(MessageViewModel message, File file)
         {
             var document = GetContent(message.Content);
-            if (document == null)
+            if (document == null || !_templateApplied)
             {
                 return;
             }
 
-            if (document.Thumbnail != null && document.Thumbnail.File.Id == file.Id)
-            {
-                UpdateThumbnail(message, document.Thumbnail, file);
-                return;
-            }
-            else if (document.DocumentValue.Id != file.Id)
+            if (document.DocumentValue.Id != file.Id)
             {
                 return;
             }
@@ -112,7 +121,7 @@ namespace Unigram.Controls.Messages.Content
 
                 Subtitle.Text = FileSizeConverter.Convert(size);
 
-                if (message.Delegate.CanBeDownloaded(message))
+                if (message.Delegate.CanBeDownloaded(document, file))
                 {
                     _message.ProtoService.DownloadFile(file.Id, 32);
                 }
@@ -134,8 +143,24 @@ namespace Unigram.Controls.Messages.Content
             }
         }
 
+        private void UpdateThumbnail(object target, File file)
+        {
+            var document = GetContent(_message.Content);
+            if (document == null || !_templateApplied)
+            {
+                return;
+            }
+
+            UpdateThumbnail(_message, document.Thumbnail, file);
+        }
+
         private void UpdateThumbnail(MessageViewModel message, Thumbnail thumbnail, File file)
         {
+            if (thumbnail.File.Id != file.Id)
+            {
+                return;
+            }
+
             if (file.Local.IsDownloadingCompleted)
             {
                 double ratioX = (double)48 / thumbnail.Width;
@@ -148,12 +173,12 @@ namespace Unigram.Controls.Messages.Content
                 try
                 {
                     Texture.Background = new ImageBrush { ImageSource = new BitmapImage(UriEx.ToLocal(file.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height }, Stretch = Stretch.UniformToFill, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
-                    Button.Style = App.Current.Resources["ImmersiveFileButtonStyle"] as Style;
+                    Button.Style = BootStrapper.Current.Resources["ImmersiveFileButtonStyle"] as Style;
                 }
                 catch
                 {
                     Texture.Background = null;
-                    Button.Style = App.Current.Resources["InlineFileButtonStyle"] as Style;
+                    Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
                 }
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
@@ -161,7 +186,7 @@ namespace Unigram.Controls.Messages.Content
                 message.ProtoService.DownloadFile(file.Id, 1);
 
                 Texture.Background = null;
-                Button.Style = App.Current.Resources["InlineFileButtonStyle"] as Style;
+                Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
             }
         }
 
@@ -212,7 +237,14 @@ namespace Unigram.Controls.Messages.Content
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
-                _message.ProtoService.DownloadFile(file.Id, 32);
+                if (_message.Content is not MessageDocument)
+                {
+                    _message.ProtoService.DownloadFile(file.Id, 30);
+                }
+                else
+                {
+                    _message.ProtoService.AddFileToDownloads(file.Id, _message.ChatId, _message.Id);
+                }
             }
             else
             {

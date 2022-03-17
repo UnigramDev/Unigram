@@ -6,7 +6,6 @@ using Unigram.Logs;
 using Unigram.Navigation;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
-using Windows.Foundation.Metadata;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 
@@ -23,7 +22,7 @@ namespace Unigram.Services.ViewService
         /// <param name="size">Anchor size for newly created view</param>        
         /// <returns><see cref="ViewLifetimeControl"/> object that is associated to newly created view. Use it to subscribe to <code>Released</code> event to close window manually.
         /// It won't not be called before all previously started async operations on <see cref="CoreDispatcher"/> complete. <remarks>DO NOT call operations on Dispatcher after this</remarks></returns>
-        Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null, ViewSizePreference size = ViewSizePreference.UseHalf, int session = 0, string id = "0");
+        Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null, Size size = default, int session = 0, string id = "0");
 
         Task<ViewLifetimeControl> OpenAsync(ViewServiceParams parameters);
     }
@@ -78,11 +77,7 @@ namespace Unigram.Services.ViewService
                 var newAppView = ApplicationView.GetForCurrentView();
 
                 newAppView.Title = parameters.Title ?? string.Empty;
-
-                if (ApiInformation.IsPropertyPresent("Windows.UI.ViewManagement.ApplicationView", "PersistedStateId"))
-                {
-                    newAppView.PersistedStateId = "Calls";
-                }
+                newAppView.PersistedStateId = parameters.PersistentId ?? string.Empty;
 
                 var control = ViewLifetimeControl.GetForCurrentView();
                 control.Released += (s, args) =>
@@ -94,10 +89,13 @@ namespace Unigram.Services.ViewService
                 newWindow.Activate();
 
                 var preferences = ViewModePreferences.CreateDefault(parameters.ViewMode);
-                preferences.CustomSize = new Size(parameters.Width, parameters.Height);
+                if (parameters.Width != 0 && parameters.Height != 0)
+                {
+                    preferences.CustomSize = new Size(parameters.Width, parameters.Height);
+                }
 
                 await ApplicationViewSwitcher.TryShowAsViewModeAsync(newAppView.Id, parameters.ViewMode, preferences);
-                newAppView.TryResizeView(new Size(parameters.Width, parameters.Height));
+                newAppView.TryResizeView(preferences.CustomSize);
 
                 return control;
             }).ConfigureAwait(false);
@@ -105,12 +103,12 @@ namespace Unigram.Services.ViewService
         }
 
         public async Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null,
-            ViewSizePreference size = ViewSizePreference.UseHalf, int session = 0, string id = "0")
+            Size size = default, int session = 0, string id = "0")
         {
             Logger.Info($"Page: {page}, Parameter: {parameter}, Title: {title}, Size: {size}");
 
             var currentView = ApplicationView.GetForCurrentView();
-            title = title ?? currentView.Title;
+            title ??= currentView.Title;
 
 
 
@@ -160,11 +158,7 @@ namespace Unigram.Services.ViewService
                     var newWindow = Window.Current;
                     var newAppView = ApplicationView.GetForCurrentView();
                     newAppView.Title = title;
-
-                    if (ApiInformation.IsPropertyPresent("Windows.UI.ViewManagement.ApplicationView", "PersistedStateId"))
-                    {
-                        newAppView.PersistedStateId = "Floating";
-                    }
+                    newAppView.PersistedStateId = "Floating";
 
                     var control = ViewLifetimeControl.GetForCurrentView();
                     control.Released += (s, args) =>
@@ -183,9 +177,9 @@ namespace Unigram.Services.ViewService
                     newWindow.Activate();
 
                     await ApplicationViewSwitcher
-                        .TryShowAsStandaloneAsync(newAppView.Id, ViewSizePreference.Default, currentView.Id, size);
+                        .TryShowAsStandaloneAsync(newAppView.Id, ViewSizePreference.Default, currentView.Id, ViewSizePreference.UseHalf);
                     //newAppView.TryResizeView(new Windows.Foundation.Size(360, bounds.Height));
-                    newAppView.TryResizeView(new Windows.Foundation.Size(360, 640));
+                    newAppView.TryResizeView(size);
 
                     return control;
                 }).ConfigureAwait(false);

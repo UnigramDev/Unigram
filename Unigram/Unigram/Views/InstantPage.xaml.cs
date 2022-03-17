@@ -7,9 +7,9 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Gallery;
-using Unigram.Controls.Messages;
 using Unigram.Controls.Messages.Content;
 using Unigram.Converters;
+using Unigram.Navigation;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
@@ -30,24 +30,22 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Views
 {
-    public sealed partial class InstantPage : HostedPage, IMessageDelegate, IHandle<UpdateFile>
+    public sealed partial class InstantPage : HostedPage, IMessageDelegate
     {
         public InstantViewModel ViewModel => DataContext as InstantViewModel;
+
+        public ISettingsService Settings => throw new NotImplementedException();
 
         public IEventAggregator Aggregator => throw new NotImplementedException();
 
         private readonly string _injectedJs;
         private readonly ScrollViewer _scrollingHost;
 
-        private readonly FileContext<Tuple<IContentWithFile, MessageViewModel>> _filesMap = new FileContext<Tuple<IContentWithFile, MessageViewModel>>();
-        private readonly FileContext<Image> _iconsMap = new FileContext<Image>();
-
-        private readonly List<(AnimationContent, AnimationView)> _animations = new List<(AnimationContent, AnimationView)>();
+        private readonly List<IPlayerView> _animations = new List<IPlayerView>();
 
         public InstantPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<InstantViewModel>();
 
             var jsPath = System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "Assets", "Webviews", "injected.js");
             _injectedJs = System.IO.File.ReadAllText(jsPath);
@@ -55,8 +53,6 @@ namespace Unigram.Views
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            ViewModel.Aggregator.Subscribe(this);
-
             var scroll = ScrollingHost.GetScrollViewer();
             if (scroll != null)
             {
@@ -66,13 +62,11 @@ namespace Unigram.Views
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            ViewModel.Aggregator.Unsubscribe(this);
-
             foreach (var animation in _animations)
             {
                 try
                 {
-                    animation.Item1.Children.Remove(animation.Item2);
+                    animation?.Pause();
                 }
                 catch { }
             }
@@ -87,58 +81,6 @@ namespace Unigram.Views
             else
             {
                 Reading.Value = 0;
-            }
-        }
-
-        public void Handle(UpdateFile update)
-        {
-            if (_filesMap.TryGetValue(update.File.Id, out List<Tuple<IContentWithFile, MessageViewModel>> elements))
-            {
-                this.BeginOnUIThread(() =>
-                {
-                    foreach (var panel in elements)
-                    {
-                        panel.Item2.UpdateFile(update.File);
-                        panel.Item1.UpdateFile(panel.Item2, update.File);
-
-                        if (panel.Item1 is AnimationContent content && panel.Item2.Content is MessageAnimation animation)
-                        {
-                            if (update.File.Local.IsDownloadingCompleted && update.File.Id == animation.Animation.AnimationValue.Id)
-                            {
-                                var presenter = new AnimationView();
-                                presenter.AutoPlay = true;
-                                presenter.IsLoopingEnabled = true;
-                                presenter.IsHitTestVisible = false;
-                                presenter.Source = UriEx.ToLocal(update.File.Local.Path);
-
-                                content.Children.Add(presenter);
-
-                                _animations.Add((content, presenter));
-                            }
-                        }
-                    }
-
-                    if (update.File.Local.IsDownloadingCompleted && !update.File.Remote.IsUploadingActive)
-                    {
-                        elements.Clear();
-                    }
-                });
-            }
-
-            if (_iconsMap.TryGetValue(update.File.Id, out List<Image> photos))
-            {
-                this.BeginOnUIThread(() =>
-                {
-                    if (update.File.Local.IsDownloadingCompleted && !update.File.Remote.IsUploadingActive)
-                    {
-                        foreach (var photo in photos)
-                        {
-                            photo.Source = new BitmapImage(UriEx.ToLocal(update.File.Local.Path));
-                        }
-
-                        photos.Clear();
-                    }
-                });
             }
         }
 
@@ -240,7 +182,7 @@ namespace Unigram.Views
                 {
                     if (ViewModel.ShareLink?.Fragment?.Length > 0)
                     {
-                        Hyperlink_Click(new RichTextUrl { Url = ViewModel.ShareLink.AbsoluteUri });
+                        Hyperlink_Click(new RichTextAnchorLink { AnchorName = ViewModel.ShareLink.Fragment.TrimStart('#') });
                     }
                 };
             }
@@ -378,17 +320,18 @@ namespace Unigram.Views
 
                 if (article.Photo != null)
                 {
-                    var photo = new Image { Width = 36, Height = 36, Stretch = Stretch.UniformToFill, VerticalAlignment = VerticalAlignment.Top };
+                    var photo = new ImageView
+                    {
+                        Width = 36,
+                        Height = 36,
+                        Stretch = Stretch.UniformToFill,
+                        VerticalAlignment = VerticalAlignment.Top
+                    };
 
                     var file = article.Photo.GetSmall()?.Photo;
-                    if (file.Local.IsDownloadingCompleted)
+                    if (file != null)
                     {
-                        photo.Source = new BitmapImage(UriEx.ToLocal(file.Local.Path));
-                    }
-                    else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-                    {
-                        _iconsMap[file.Id].Add(photo);
-                        ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                        photo.SetSource(ViewModel.ProtoService, file, 36, 36);
                     }
 
                     Grid.SetColumn(photo, 1);
@@ -531,7 +474,7 @@ namespace Unigram.Views
         {
             var panel = new StackPanel();
 
-            var header = new BadgeButton { Content = ProcessText(details, false), Glyph = details.IsOpen ? Icons.ChevronUp : Icons.ChevronDown, Style = App.Current.Resources["GlyphBadgeButtonStyle"] as Style, Margin = new Thickness(-12, 0, -12, 0) };
+            var header = new BadgeButton { Content = ProcessText(details, false), Glyph = details.IsOpen ? Icons.ChevronUp : Icons.ChevronDown, Style = BootStrapper.Current.Resources["GlyphBadgeButtonStyle"] as Style, Margin = new Thickness(-12, 0, -12, 0) };
             var inner = new StackPanel { Padding = new Thickness(0, 12, 0, 12), Visibility = details.IsOpen ? Visibility.Visible : Visibility.Collapsed };
 
             panel.Children.Add(header);
@@ -752,7 +695,7 @@ namespace Unigram.Views
 
         private void Text_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            MessageHelper.Hyperlink_ContextRequested(null, sender, args);
+            MessageHelper.Hyperlink_ContextRequested(ViewModel.TranslateService, sender, args);
         }
 
         private void Text_ContextMenuOpening(object sender, ContextMenuEventArgs e)
@@ -908,11 +851,6 @@ namespace Unigram.Views
             content.ClearValue(MaxWidthProperty);
             content.ClearValue(MaxHeightProperty);
 
-            foreach (var size in block.Photo.Sizes)
-            {
-                _filesMap[size.Photo.Id].Add(Tuple.Create(content as IContentWithFile, message));
-            }
-
             element.Children.Add(content);
 
             var caption = ProcessCaption(block.Caption);
@@ -938,13 +876,6 @@ namespace Unigram.Views
             content.HorizontalAlignment = HorizontalAlignment.Center;
             content.ClearValue(MaxWidthProperty);
             content.ClearValue(MaxHeightProperty);
-
-            if (block.Video.Thumbnail != null)
-            {
-                _filesMap[block.Video.Thumbnail.File.Id].Add(Tuple.Create(content as IContentWithFile, message));
-            }
-
-            _filesMap[block.Video.VideoValue.Id].Add(Tuple.Create(content as IContentWithFile, message));
 
             element.Children.Add(content);
 
@@ -974,23 +905,8 @@ namespace Unigram.Views
 
             if (block.Animation.AnimationValue.Local.IsDownloadingCompleted)
             {
-                var presenter = new AnimationView();
-                presenter.AutoPlay = true;
-                presenter.IsLoopingEnabled = true;
-                presenter.IsHitTestVisible = false;
-                presenter.Source = UriEx.ToLocal(block.Animation.AnimationValue.Local.Path);
-
-                content.Children.Add(presenter);
-
-                _animations.Add((content, presenter));
+                _animations.Add(content.GetPlaybackElement());
             }
-
-            if (block.Animation.Thumbnail != null)
-            {
-                _filesMap[block.Animation.Thumbnail.File.Id].Add(Tuple.Create(content as IContentWithFile, message));
-            }
-
-            _filesMap[block.Animation.AnimationValue.Id].Add(Tuple.Create(content as IContentWithFile, message));
 
             element.Children.Add(content);
 
@@ -1088,11 +1004,6 @@ namespace Unigram.Views
                     content.ClearValue(MaxWidthProperty);
                     content.ClearValue(MaxHeightProperty);
 
-                    foreach (var size in photoBlock.Photo.Sizes)
-                    {
-                        _filesMap[size.Photo.Id].Add(Tuple.Create(content as IContentWithFile, message));
-                    }
-
                     items.Add(content);
                 }
                 else if (item is PageBlockVideo videoBlock)
@@ -1107,13 +1018,6 @@ namespace Unigram.Views
                     content.HorizontalAlignment = HorizontalAlignment.Center;
                     content.ClearValue(MaxWidthProperty);
                     content.ClearValue(MaxHeightProperty);
-
-                    if (videoBlock.Video.Thumbnail != null)
-                    {
-                        _filesMap[videoBlock.Video.Thumbnail.File.Id].Add(Tuple.Create(content as IContentWithFile, message));
-                    }
-
-                    _filesMap[videoBlock.Video.VideoValue.Id].Add(Tuple.Create(content as IContentWithFile, message));
 
                     items.Add(content);
                 }
@@ -1253,7 +1157,6 @@ namespace Unigram.Views
             element.Children.Add(header);
 
             PageBlock previousBlock = null;
-            FrameworkElement previousElement = null;
             foreach (var subBlock in block.PageBlocks)
             {
                 var subLayout = ProcessBlock(subBlock);
@@ -1266,7 +1169,7 @@ namespace Unigram.Views
                 }
 
                 previousBlock = block;
-                previousElement = subLayout;
+                FrameworkElement previousElement = subLayout;
             }
 
             return element;
@@ -1370,18 +1273,18 @@ namespace Unigram.Views
                     }
                     break;
                 case RichTextIcon icon:
-                    var photo = new Image { Width = icon.Width, Height = icon.Height };
+                    var photo = new ImageView
+                    {
+                        Width = icon.Width,
+                        Height = icon.Height
+                    };
 
                     var file = icon.Document.DocumentValue;
-                    if (file.Local.IsDownloadingCompleted)
+                    if (file != null)
                     {
-                        photo.Source = new BitmapImage(UriEx.ToLocal(file.Local.Path));
+                        photo.SetSource(ViewModel.ProtoService, file, icon.Width, icon.Height);
                     }
-                    else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-                    {
-                        _iconsMap[file.Id].Add(photo);
-                        ViewModel.ProtoService.DownloadFile(file.Id, 1);
-                    }
+
                     var inline = new InlineUIContainer();
                     inline.Child = photo;
                     span.Inlines.Add(inline);
@@ -1425,7 +1328,7 @@ namespace Unigram.Views
 
         private double SpacingBetweenBlocks(PageBlock upper, PageBlock lower)
         {
-            if (lower is PageBlockCover || lower is PageBlockChatLink)
+            if (lower is PageBlockCover or PageBlockChatLink)
             {
                 return 0;
             }
@@ -1437,7 +1340,7 @@ namespace Unigram.Views
 
             return 12;
 
-            if (lower is PageBlockCover || lower is PageBlockChatLink)
+            if (lower is PageBlockCover or PageBlockChatLink)
             {
                 return 0;
             }
@@ -1466,11 +1369,11 @@ namespace Unigram.Views
             }
             else if (lower is PageBlockParagraph)
             {
-                if (upper is PageBlockTitle || upper is PageBlockAuthorDate)
+                if (upper is PageBlockTitle or PageBlockAuthorDate)
                 {
                     return 20; // 34;
                 }
-                else if (upper is PageBlockHeader || upper is PageBlockSubheader)
+                else if (upper is PageBlockHeader or PageBlockSubheader)
                 {
                     return 15; // 25;
                 }
@@ -1493,15 +1396,15 @@ namespace Unigram.Views
             }
             else if (lower is PageBlockList)
             {
-                if (upper is PageBlockTitle || upper is PageBlockAuthorDate)
+                if (upper is PageBlockTitle or PageBlockAuthorDate)
                 {
                     return 20; // 34;
                 }
-                else if (upper is PageBlockHeader || upper is PageBlockSubheader)
+                else if (upper is PageBlockHeader or PageBlockSubheader)
                 {
                     return 19; // 31;
                 }
-                else if (upper is PageBlockParagraph || upper is PageBlockList)
+                else if (upper is PageBlockParagraph or PageBlockList)
                 {
                     return 19; // 31;
                 }
@@ -1550,9 +1453,9 @@ namespace Unigram.Views
 
         private double PaddingForBlock(PageBlock block)
         {
-            if (block is PageBlockCover || block is PageBlockPreformatted ||
-                block is PageBlockPhoto || block is PageBlockVideo ||
-                block is PageBlockSlideshow || block is PageBlockChatLink)
+            if (block is PageBlockCover or PageBlockPreformatted or
+                PageBlockPhoto or PageBlockVideo or
+                PageBlockSlideshow or PageBlockChatLink)
             {
                 return 0.0;
             }
@@ -1639,7 +1542,7 @@ namespace Unigram.Views
 
         #region Delegate
 
-        public bool CanBeDownloaded(MessageViewModel message)
+        public bool CanBeDownloaded(object content, File file)
         {
             return !ViewModel.Settings.AutoDownload.Disabled;
         }
@@ -1681,7 +1584,12 @@ namespace Unigram.Views
         {
         }
 
-        public async void OpenMedia(MessageViewModel message, FrameworkElement target)
+        public void ViewVisibleMessages(bool intermediate)
+        {
+
+        }
+
+        public async void OpenMedia(MessageViewModel message, FrameworkElement target, int timestamp = 0)
         {
             var content = target.Tag as GalleryContent;
             if (content == null)
@@ -1711,7 +1619,7 @@ namespace Unigram.Views
         {
         }
 
-        public void OpenUser(int userId)
+        public void OpenUser(long userId)
         {
         }
 
@@ -1723,7 +1631,7 @@ namespace Unigram.Views
         {
         }
 
-        public void OpenViaBot(int viaBotUserId)
+        public void OpenViaBot(long viaBotUserId)
         {
         }
 

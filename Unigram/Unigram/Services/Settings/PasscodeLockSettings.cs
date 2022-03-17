@@ -21,6 +21,8 @@ namespace Unigram.Services.Settings
             _isLocked = null;
             _isHelloEnabled = null;
             _isScreenshotEnabled = null;
+            _retryCount = null;
+            _retryTime = null;
         }
 
         private byte[] _hash;
@@ -64,20 +66,8 @@ namespace Unigram.Services.Settings
         private bool? _isSimple;
         public bool IsSimple
         {
-            get
-            {
-                if (_isSimple == null)
-                {
-                    _isSimple = GetValueOrDefault("IsSimple", true);
-                }
-
-                return _isSimple ?? true;
-            }
-            set
-            {
-                _isSimple = value;
-                AddOrUpdateValue("IsSimple", value);
-            }
+            get => _isSimple ??= GetValueOrDefault("IsSimple", true);
+            set => AddOrUpdateValue(ref _isSimple, "IsSimple", value);
         }
 
         private DateTime? _closeTime;
@@ -102,76 +92,55 @@ namespace Unigram.Services.Settings
         private int? _autolockTimeout;
         public int AutolockTimeout
         {
-            get
-            {
-                if (_autolockTimeout == null)
-                {
-                    _autolockTimeout = GetValueOrDefault("AutolockTimeout", 0);
-                }
-
-                return _autolockTimeout ?? 0;
-            }
-            set
-            {
-                _autolockTimeout = value;
-                AddOrUpdateValue("AutolockTimeout", value);
-            }
+            get => _autolockTimeout ??= GetValueOrDefault("AutolockTimeout", 0);
+            set => AddOrUpdateValue(ref _autolockTimeout, "AutolockTimeout", value);
         }
 
         private bool? _isLocked;
         public bool IsLocked
         {
-            get
-            {
-                if (_isLocked == null)
-                {
-                    _isLocked = GetValueOrDefault("IsLocked", false);
-                }
-
-                return _isLocked ?? false;
-            }
-            set
-            {
-                _isLocked = value;
-                AddOrUpdateValue("IsLocked", value);
-            }
+            get => _isLocked ??= GetValueOrDefault("IsLocked", false);
+            set => AddOrUpdateValue(ref _isLocked, "IsLocked", value);
         }
 
         private bool? _isHelloEnabled;
         public bool IsHelloEnabled
         {
-            get
-            {
-                if (_isHelloEnabled == null)
-                {
-                    _isHelloEnabled = GetValueOrDefault("IsHelloEnabled", false);
-                }
-
-                return _isHelloEnabled ?? false;
-            }
-            set
-            {
-                _isHelloEnabled = value;
-                AddOrUpdateValue("IsHelloEnabled", value);
-            }
+            get => _isHelloEnabled ??= GetValueOrDefault("IsHelloEnabled", false);
+            set => AddOrUpdateValue(ref _isHelloEnabled, "IsHelloEnabled", value);
         }
 
         private bool? _isScreenshotEnabled;
         public bool IsScreenshotEnabled
         {
+            get => _isScreenshotEnabled ??= GetValueOrDefault("IsScreenshotEnabled", true);
+            set => AddOrUpdateValue(ref _isScreenshotEnabled, "IsScreenshotEnabled", value);
+        }
+
+        private int? _retryCount;
+        public int RetryCount
+        {
+            get => _retryCount ??= GetValueOrDefault("RetryCount", 0);
+            set => AddOrUpdateValue(ref _retryCount, "RetryCount", value);
+        }
+
+
+        private DateTime? _retryTime;
+        public DateTime RetryTime
+        {
             get
             {
-                if (_isScreenshotEnabled == null)
+                if (_retryTime == null)
                 {
-                    _isScreenshotEnabled = GetValueOrDefault("IsScreenshotEnabled", true);
+                    _retryTime = DateTime.FromFileTimeUtc(GetValueOrDefault("RetryTime", 2650467743999999999 /* DateTime.MaxValue */));
                 }
 
-                return _isScreenshotEnabled ?? true;
+                return _retryTime ?? DateTime.MaxValue;
             }
             set
             {
-                _isScreenshotEnabled = value;
-                AddOrUpdateValue("IsScreenshotEnabled", value);
+                _retryTime = value;
+                AddOrUpdateValue("RetryTime", value.ToFileTimeUtc());
             }
         }
     }

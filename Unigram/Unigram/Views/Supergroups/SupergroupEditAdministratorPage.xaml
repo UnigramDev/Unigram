@@ -1,146 +1,175 @@
-<local:HostedPage
-    x:Class="Unigram.Views.Supergroups.SupergroupEditAdministratorPage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Unigram.Views"
-    xmlns:controls="using:Unigram.Controls"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+<local:HostedPage x:Class="Unigram.Views.Supergroups.SupergroupEditAdministratorPage"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:local="using:Unigram.Views"
+                  xmlns:controls="using:Unigram.Controls"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  mc:Ignorable="d">
 
     <Page.Transitions>
         <TransitionCollection>
             <NavigationThemeTransition>
-                <EntranceNavigationTransitionInfo/>
+                <EntranceNavigationTransitionInfo />
             </NavigationThemeTransition>
         </TransitionCollection>
     </Page.Transitions>
 
     <local:HostedPage.Header>
-        <controls:ButtonPageHeader
-            x:Name="Header"
-            Text="{CustomResource EditAdmin}"
-            Glyph="&#xE10B;"
-            Command="{x:Bind ViewModel.SendCommand}"/>
+        <controls:ButtonPageHeader x:Name="Header"
+                                   Text="{CustomResource EditAdmin}"
+                                   Glyph="&#xE10B;"
+                                   Command="{x:Bind ViewModel.SendCommand}" />
     </local:HostedPage.Header>
-    
+
     <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
-        <ScrollViewer
-            x:Name="ScrollingHost"
-            VerticalScrollBarVisibility="Auto"
-            VerticalScrollMode="Auto">
+        <ScrollViewer x:Name="ScrollingHost"
+                      VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto">
             <StackPanel Margin="0,0,0,24">
                 <controls:HeaderedControl>
                     <Grid>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
                         </Grid.ColumnDefinitions>
-                        <controls:ProfilePicture x:Name="Photo" Command="{x:Bind ViewModel.ProfileCommand}" Height="64" Width="64" Margin="12,8" Grid.RowSpan="2"/>
+                        <controls:ProfilePicture x:Name="Photo"
+                                                 Command="{x:Bind ViewModel.ProfileCommand}"
+                                                 Height="64"
+                                                 Width="64"
+                                                 Margin="12,8"
+                                                 Grid.RowSpan="2" />
 
-                        <Grid VerticalAlignment="Bottom" HorizontalAlignment="Left" Grid.Column="1">
+                        <Grid VerticalAlignment="Bottom"
+                              HorizontalAlignment="Left"
+                              Grid.Column="1">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition/>
-                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock x:Name="Title" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
-                            <Grid x:Name="Verified" Visibility="Collapsed" Margin="4,0,0,-2" Grid.Column="2">
-                                <Path Width="16" Height="16" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z M31.485,14.514L35.727,18.757 23.707,30.778 19.464,35.021 15.221,30.778 10.271,25.828 14.514,21.586 19.464,26.535z" Fill="{ThemeResource ChatVerifiedBadgeBrush}" StrokeThickness="0" />
+                            <TextBlock x:Name="Title"
+                                       TextWrapping="NoWrap"
+                                       TextTrimming="CharacterEllipsis"
+                                       Style="{StaticResource BaseTextBlockStyle}" />
+                            <Grid x:Name="Verified"
+                                  Visibility="Collapsed"
+                                  Margin="4,0,0,-2"
+                                  Grid.Column="2">
+                                <Path Width="16"
+                                      Height="16"
+                                      Stretch="Uniform"
+                                      Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z M31.485,14.514L35.727,18.757 23.707,30.778 19.464,35.021 15.221,30.778 10.271,25.828 14.514,21.586 19.464,26.535z"
+                                      Fill="{ThemeResource ChatVerifiedBadgeBrush}"
+                                      StrokeThickness="0" />
                             </Grid>
                         </Grid>
-                        <TextBlock x:Name="Subtitle" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource PageHeaderDisabledBrush}" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1"/>
+                        <TextBlock x:Name="Subtitle"
+                                   Style="{StaticResource CaptionTextBlockStyle}"
+                                   Foreground="{ThemeResource PageHeaderDisabledBrush}"
+                                   VerticalAlignment="Top"
+                                   Grid.Row="1"
+                                   Grid.Column="1" />
                     </Grid>
                 </controls:HeaderedControl>
 
-                <UserControl x:Name="PermissionsPanel" Visibility="Collapsed" IsEnabled="False">
-                    <controls:HeaderedControl
-                        x:Name="PermissionsRoot"
-                        Footer="{CustomResource EditAdminCantEdit}">
-                        <ToggleSwitch
-                            x:Name="ChangeInfo"
-                            IsOn="{x:Bind ViewModel.CanChangeInfo, Mode=TwoWay}"
-                            Header="{CustomResource EditAdminChangeGroupInfo}"
-                            Style="{StaticResource CheckButtonStyle}"/>
-                        <ToggleSwitch
-                            x:Name="PostMessages"
-                            IsOn="{x:Bind ViewModel.CanPostMessages, Mode=TwoWay}"
-                            Header="{CustomResource EditAdminPostMessages}"
-                            Style="{StaticResource CheckButtonStyle}"/>
-                        <ToggleSwitch
-                            x:Name="EditMessages"
-                            IsOn="{x:Bind ViewModel.CanEditMessages, Mode=TwoWay}"
-                            Header="{CustomResource EditAdminEditMessages}"
-                            Style="{StaticResource CheckButtonStyle}"/>
-                        <ToggleSwitch
-                            x:Name="DeleteMessages"
-                            IsOn="{x:Bind ViewModel.CanDeleteMessages, Mode=TwoWay}"
-                            Header="{CustomResource EditAdminGroupDeleteMessages}"
-                            Style="{StaticResource CheckButtonStyle}"/>
-                        <ToggleSwitch
-                            x:Name="BanUsers"
-                            IsOn="{x:Bind ViewModel.CanRestrictMembers, Mode=TwoWay}"
-                            Header="{CustomResource EditAdminBanUsers}"
-                            Style="{StaticResource CheckButtonStyle}"/>
-                        <ToggleSwitch
-                            x:Name="AddUsers"
-                            IsOn="{x:Bind ViewModel.CanInviteUsers, Mode=TwoWay}"
-                            Header="{CustomResource EditAdminAddUsers}"
-                            Style="{StaticResource CheckButtonStyle}"/>
-                        <ToggleSwitch
-                            x:Name="PinMessages"
-                            IsOn="{x:Bind ViewModel.CanPinMessages, Mode=TwoWay}"
-                            Header="{CustomResource EditAdminPinMessages}"
-                            Style="{StaticResource CheckButtonStyle}"/>
-                        <ToggleSwitch
-                            x:Name="ManageVoiceChats"
-                            IsOn="{x:Bind ViewModel.CanManageVoiceChats, Mode=TwoWay}"
-                            Header="{CustomResource StartVoipChatPermission}"
-                            Style="{StaticResource CheckButtonStyle}"/>
-                        <ToggleSwitch
-                            x:Name="AddAdmins"
-                            IsOn="{x:Bind ViewModel.CanPromoteMembers, Mode=TwoWay}"
-                            Header="{CustomResource EditAdminAddAdmins}"
-                            Style="{StaticResource CheckButtonStyle}"/>
-                        <ToggleSwitch
-                            x:Name="IsAnonymous"
-                            IsOn="{x:Bind ViewModel.IsAnonymous, Mode=TwoWay}"
-                            Header="{CustomResource EditAdminSendAnonymously}"
-                            Style="{StaticResource CheckButtonStyle}"/>
-                    </controls:HeaderedControl>
-                </UserControl>
+                <controls:HeaderedControl x:Name="PermissionsRoot"
+                                          Visibility="Collapsed"
+                                          Footer="{CustomResource EditAdminCantEdit}">
+                    <CheckBox x:Name="ChangeInfo"
+                              IsChecked="{x:Bind ViewModel.CanChangeInfo, Mode=TwoWay}"
+                              Content="{CustomResource EditAdminChangeGroupInfo}"
+                              Margin="12,6,12,0" />
+                    <Rectangle x:Name="ChangeInfoSeparator"
+                               Style="{StaticResource Separator}" />
 
-                <controls:HeaderedControl
-                    x:Name="Yolo"
-                    x:Load="False"
-                    Visibility="{x:Bind ViewModel.CanTransferOwnership, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <controls:BadgeButton
-                        x:Name="TransferOwnership"
-                        Command="{x:Bind ViewModel.TransferCommand}"
-                        Content="{CustomResource EditAdminGroupTransfer}"/>
+                    <CheckBox x:Name="PostMessages"
+                              IsChecked="{x:Bind ViewModel.CanPostMessages, Mode=TwoWay}"
+                              Content="{CustomResource EditAdminPostMessages}"
+                              Margin="12,6,12,0" />
+                    <Rectangle x:Name="PostMessagesSeparator"
+                               Style="{StaticResource Separator}" />
+
+                    <CheckBox x:Name="EditMessages"
+                              IsChecked="{x:Bind ViewModel.CanEditMessages, Mode=TwoWay}"
+                              Content="{CustomResource EditAdminEditMessages}"
+                              Margin="12,6,12,0" />
+                    <Rectangle x:Name="EditMessagesSeparator"
+                               Style="{StaticResource Separator}" />
+
+                    <CheckBox x:Name="DeleteMessages"
+                              IsChecked="{x:Bind ViewModel.CanDeleteMessages, Mode=TwoWay}"
+                              Content="{CustomResource EditAdminGroupDeleteMessages}"
+                              Margin="12,6,12,0" />
+                    <Rectangle x:Name="DeleteMessagesSeparator"
+                               Style="{StaticResource Separator}" />
+
+                    <CheckBox x:Name="BanUsers"
+                              IsChecked="{x:Bind ViewModel.CanRestrictMembers, Mode=TwoWay}"
+                              Content="{CustomResource EditAdminBanUsers}"
+                              Margin="12,6,12,0" />
+                    <Rectangle x:Name="BanUsersSeparator"
+                               Style="{StaticResource Separator}" />
+
+                    <CheckBox x:Name="AddUsers"
+                              IsChecked="{x:Bind ViewModel.CanInviteUsers, Mode=TwoWay}"
+                              Content="{CustomResource EditAdminAddUsers}"
+                              Margin="12,6,12,0" />
+                    <Rectangle x:Name="AddUsersSeparator"
+                               Style="{StaticResource Separator}" />
+
+                    <CheckBox x:Name="PinMessages"
+                              IsChecked="{x:Bind ViewModel.CanPinMessages, Mode=TwoWay}"
+                              Content="{CustomResource EditAdminPinMessages}"
+                              Margin="12,6,12,0" />
+                    <Rectangle x:Name="PinMessagesSeparator"
+                               Style="{StaticResource Separator}" />
+
+                    <CheckBox x:Name="ManageVideoChats"
+                              IsChecked="{x:Bind ViewModel.CanManageVideoChats, Mode=TwoWay}"
+                              Content="{CustomResource StartVoipChatPermission}"
+                              Margin="12,6,12,0" />
+                    <Rectangle x:Name="ManageVideoChatsSeparator"
+                               Style="{StaticResource Separator}" />
+
+                    <CheckBox x:Name="AddAdmins"
+                              IsChecked="{x:Bind ViewModel.CanPromoteMembers, Mode=TwoWay}"
+                              Content="{CustomResource EditAdminAddAdmins}"
+                              Margin="12,6,12,0" />
+                    <Rectangle x:Name="AddAdminsSeparator"
+                               Style="{StaticResource Separator}" />
+
+                    <CheckBox x:Name="IsAnonymous"
+                              IsChecked="{x:Bind ViewModel.IsAnonymous, Mode=TwoWay}"
+                              Content="{CustomResource EditAdminSendAnonymously}"
+                              Margin="12,6,12,0" />
+                    <Rectangle x:Name="IsAnonymousSeparator"
+                               Style="{StaticResource Separator}" />
                 </controls:HeaderedControl>
 
-                <controls:HeaderedControl
-                    x:Name="EditRankPanel"
-                    Header="{CustomResource EditAdminRank}"
-                    Footer="{CustomResource EditAdminRankInfo}">
-                    <TextBox
-                        x:Name="EditRankField"
-                        Text="{x:Bind ViewModel.CustomTitle, Mode=TwoWay}"
-                        PlaceholderText="{CustomResource ChannelCreator}"
-                        MaxLength="16"
-                        Margin="12,8"/>
+                <controls:HeaderedControl x:Name="EditRankPanel"
+                                          Header="{CustomResource EditAdminRank}"
+                                          Footer="{CustomResource EditAdminRankInfo}">
+                    <TextBox x:Name="EditRankField"
+                             Text="{x:Bind ViewModel.CustomTitle, Mode=TwoWay}"
+                             PlaceholderText="{CustomResource ChannelCreator}"
+                             MaxLength="16"
+                             Margin="12,8" />
                 </controls:HeaderedControl>
-                
-                <controls:HeaderedControl
-                    x:Name="DismissPanel"
-                    Visibility="Collapsed">
-                    <controls:BadgeButton
-                        Command="{x:Bind ViewModel.DismissCommand}"
-                        Content="{CustomResource EditAdminRemoveAdmin}"/>
+
+                <controls:HeaderedControl>
+                    <controls:BadgeButton x:Name="TransferOwnership"
+                                          Command="{x:Bind ViewModel.TransferCommand}"
+                                          Content="{CustomResource EditAdminGroupTransfer}"
+                                          Visibility="{x:Bind ViewModel.CanTransferOwnership, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <controls:BadgeButton x:Name="Dismiss"
+                                          Command="{x:Bind ViewModel.DismissCommand}"
+                                          Content="{CustomResource EditAdminRemoveAdmin}"
+                                          Foreground="#df3f40"
+                                          Visibility="Collapsed" />
                 </controls:HeaderedControl>
             </StackPanel>
         </ScrollViewer>

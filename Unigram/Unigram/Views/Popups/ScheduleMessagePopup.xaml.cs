@@ -61,6 +61,11 @@ namespace Unigram.Views.Popups
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
+            if (IsUntilOnline)
+            {
+                return;
+            }
+
             if (Date.Date == null || Date.Date < DateTime.Today)
             {
                 VisualUtilities.ShakeView(Date);

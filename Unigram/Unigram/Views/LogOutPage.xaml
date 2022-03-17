@@ -1,15 +1,14 @@
-﻿<local:HostedPage
-    x:Class="Unigram.Views.LogOutPage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Unigram.Views"
-    xmlns:controls="using:Unigram.Controls"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+﻿<local:HostedPage x:Class="Unigram.Views.LogOutPage"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:local="using:Unigram.Views"
+                  xmlns:controls="using:Unigram.Controls"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  mc:Ignorable="d">
 
     <local:HostedPage.Header>
-        <controls:PageHeader Text="{CustomResource LogOutTitle}"/>
+        <controls:PageHeader Text="{CustomResource LogOutTitle}" />
     </local:HostedPage.Header>
 
     <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
@@ -17,48 +16,42 @@
                       VerticalScrollMode="Auto">
             <StackPanel>
                 <controls:HeaderedControl Header="{CustomResource AlternativeOptions}">
-                    <controls:BadgeButton
-                        Badge="{CustomResource AddAnotherAccountInfo}"
-                        Content="{CustomResource AddAnotherAccount}"
-                        Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
-                        Glyph="&#xE8FA;"
-                        Click="AddAnotherAccount_Click"/>
+                    <controls:BadgeButton Badge="{CustomResource AddAnotherAccountInfo}"
+                                          Content="{CustomResource AddAnotherAccount}"
+                                          Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
+                                          Glyph="&#xE8FA;"
+                                          Click="AddAnotherAccount_Click" />
 
-                    <controls:BadgeButton
-                        Badge="{CustomResource SetPasscodeInfo}"
-                        Content="{CustomResource SetPasscode}"
-                        Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
-                        Visibility="{x:Bind ViewModel.IsPasscodeEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
-                        Glyph="&#xE192;"
-                        Click="SetPasscode_Click"/>
-                
-                    <controls:BadgeButton
-                        Badge="{CustomResource ClearCacheInfo}"
-                        Content="{CustomResource ClearCache}"
-                        Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
-                        Glyph="&#xE74D;"
-                        Click="ClearCache_Click"/>
-                
-                    <controls:BadgeButton
-                        Badge="{CustomResource ChangePhoneNumberInfo}"
-                        Content="{CustomResource ChangePhoneNumber}"
-                        Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
-                        Glyph="&#xF61B;"
-                        Click="ChangePhoneNumber_Click"/>
-                
-                    <controls:BadgeButton
-                        Badge="{CustomResource ContactSupportInfo}"
-                        Content="{CustomResource ContactSupport}"
-                        Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
-                        Glyph="&#xED15;"
-                        Command="{x:Bind ViewModel.AskCommand}"/>
+                    <controls:BadgeButton Badge="{CustomResource SetPasscodeInfo}"
+                                          Content="{CustomResource SetPasscode}"
+                                          Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
+                                          Visibility="{x:Bind ViewModel.IsPasscodeEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
+                                          Glyph="&#xE192;"
+                                          Click="SetPasscode_Click" />
+
+                    <controls:BadgeButton Badge="{CustomResource ClearCacheInfo}"
+                                          Content="{CustomResource ClearCache}"
+                                          Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
+                                          Glyph="&#xE74D;"
+                                          Click="ClearCache_Click" />
+
+                    <controls:BadgeButton Badge="{CustomResource ChangePhoneNumberInfo}"
+                                          Content="{CustomResource ChangePhoneNumber}"
+                                          Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
+                                          Glyph="&#xF61B;"
+                                          Click="ChangePhoneNumber_Click" />
+
+                    <controls:BadgeButton Badge="{CustomResource ContactSupportInfo}"
+                                          Content="{CustomResource ContactSupport}"
+                                          Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
+                                          Glyph="&#xED15;"
+                                          Command="{x:Bind ViewModel.AskCommand}" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Footer="{CustomResource LogOutInfo}">
-                    <controls:BadgeButton
-                        Content="{CustomResource LogOutTitle}"
-                        Foreground="Red"
-                        Command="{x:Bind ViewModel.LogoutCommand}"/>
+                    <controls:BadgeButton Content="{CustomResource LogOutTitle}"
+                                          Foreground="Red"
+                                          Command="{x:Bind ViewModel.LogoutCommand}" />
                 </controls:HeaderedControl>
             </StackPanel>
         </ScrollViewer>

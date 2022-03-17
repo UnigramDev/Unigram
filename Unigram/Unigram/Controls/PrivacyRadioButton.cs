@@ -23,8 +23,8 @@ namespace Unigram.Controls
 
         public PrivacyValue Type
         {
-            get { return (PrivacyValue)GetValue(TypeProperty); }
-            set { SetValue(TypeProperty, value); }
+            get => (PrivacyValue)GetValue(TypeProperty);
+            set => SetValue(TypeProperty, value);
         }
 
         public static readonly DependencyProperty TypeProperty =
@@ -36,8 +36,8 @@ namespace Unigram.Controls
 
         public PrivacyValue Value
         {
-            get { return (PrivacyValue)GetValue(ValueProperty); }
-            set { SetValue(ValueProperty, value); }
+            get => (PrivacyValue)GetValue(ValueProperty);
+            set => SetValue(ValueProperty, value);
         }
 
         public static readonly DependencyProperty ValueProperty =

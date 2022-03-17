@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace Unigram.Services.Stripe
@@ -18,19 +17,21 @@ namespace Unigram.Services.Stripe
         /// <returns>a <see langword="Dictionary"/> containing the appropriate values read from the card</returns>
         public static Dictionary<string, string> HashMapFromCard(Card card)
         {
-            var cardParams = new Dictionary<string, string>();
-            cardParams["card[number]"] = StripeTextUtils.NullIfBlank(card.Number);
-            cardParams["card[cvc]"] = StripeTextUtils.NullIfBlank(card.CVC);
-            cardParams["card[exp_month]"] = card.ExpiryMonth.ToString();
-            cardParams["card[exp_year]"] = card.ExpiryYear.ToString();
-            cardParams["card[name]"] = StripeTextUtils.NullIfBlank(card.Name);
-            cardParams["card[currency]"] = StripeTextUtils.NullIfBlank(card.Currency);
-            cardParams["card[address_line1]"] = StripeTextUtils.NullIfBlank(card.AddressLine1);
-            cardParams["card[address_line2]"] = StripeTextUtils.NullIfBlank(card.AddressLine2);
-            cardParams["card[address_city]"] = StripeTextUtils.NullIfBlank(card.AddressCity);
-            cardParams["card[address_zip]"] = StripeTextUtils.NullIfBlank(card.AddressZip);
-            cardParams["card[address_state]"] = StripeTextUtils.NullIfBlank(card.AddressState);
-            cardParams["card[address_country]"] = StripeTextUtils.NullIfBlank(card.AddressCountry);
+            var cardParams = new Dictionary<string, string>
+            {
+                ["card[number]"] = StripeTextUtils.NullIfBlank(card.Number),
+                ["card[cvc]"] = StripeTextUtils.NullIfBlank(card.CVC),
+                ["card[exp_month]"] = card.ExpiryMonth.ToString(),
+                ["card[exp_year]"] = card.ExpiryYear.ToString(),
+                ["card[name]"] = StripeTextUtils.NullIfBlank(card.Name),
+                ["card[currency]"] = StripeTextUtils.NullIfBlank(card.Currency),
+                ["card[address_line1]"] = StripeTextUtils.NullIfBlank(card.AddressLine1),
+                ["card[address_line2]"] = StripeTextUtils.NullIfBlank(card.AddressLine2),
+                ["card[address_city]"] = StripeTextUtils.NullIfBlank(card.AddressCity),
+                ["card[address_zip]"] = StripeTextUtils.NullIfBlank(card.AddressZip),
+                ["card[address_state]"] = StripeTextUtils.NullIfBlank(card.AddressState),
+                ["card[address_country]"] = StripeTextUtils.NullIfBlank(card.AddressCountry)
+            };
 
             // Remove all null values; they cause validation errors
             RemoveNullParams(cardParams);
@@ -45,7 +46,7 @@ namespace Unigram.Services.Stripe
         private static void RemoveNullParams(Dictionary<string, string> mapToEdit)
         {
             // Remove all null values; they cause validation errors
-            foreach (String key in mapToEdit.Keys.ToList())
+            foreach (string key in mapToEdit.Keys.ToList())
             {
                 if (mapToEdit[key] == null)
                 {

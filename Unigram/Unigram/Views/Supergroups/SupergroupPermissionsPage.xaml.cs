@@ -21,7 +21,6 @@ namespace Unigram.Views.Supergroups
         public SupergroupPermissionsPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SupergroupPermissionsViewModel, ISupergroupDelegate>(this);
 
             InitializeTicks();
 
@@ -44,7 +43,7 @@ namespace Unigram.Views.Supergroups
             int j = 0;
             for (int i = 0; i < 7; i++)
             {
-                var label = new TextBlock { Text = ConvertSlowModeTick(i), TextAlignment = TextAlignment.Center, HorizontalAlignment = HorizontalAlignment.Stretch, Style = App.Current.Resources["InfoCaptionTextBlockStyle"] as Style };
+                var label = new TextBlock { Text = ConvertSlowModeTick(i), TextAlignment = TextAlignment.Center, HorizontalAlignment = HorizontalAlignment.Stretch, Style = BootStrapper.Current.Resources["InfoCaptionTextBlockStyle"] as Style };
                 Grid.SetColumn(label, j);
 
                 SlowmodeTicks.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
@@ -296,7 +295,7 @@ namespace Unigram.Views.Supergroups
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
+                photo.SetUser(ViewModel.ProtoService, user, 36);
             }
 
             if (args.Phase < 2)

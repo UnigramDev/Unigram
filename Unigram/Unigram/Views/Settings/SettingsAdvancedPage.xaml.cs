@@ -1,5 +1,6 @@
 ﻿using Unigram.Common;
 using Unigram.ViewModels.Settings;
+using Windows.Foundation.Metadata;
 using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Settings
@@ -11,23 +12,17 @@ namespace Unigram.Views.Settings
         public SettingsAdvancedPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsAdvancedViewModel>();
 
             if (ApiInfo.IsPackagedRelease)
             {
                 FindName(nameof(UpdatePanel));
             }
 
-#if DESKTOP_BRIDGE
-            FindName(nameof(TraySwitch));
-
+#if !DESKTOP_BRIDGE
             if (ApiInformation.IsTypePresent("Windows.ApplicationModel.FullTrustProcessLauncher"))
             {
-                TraySwitch.Visibility = Windows.UI.Xaml.Visibility.Visible;
-            }
-            else
-            {
-                TraySwitch.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                FindName(nameof(TraySwitch));
+                FindName(nameof(TraySwitchSeparator));
             }
 #endif
         }

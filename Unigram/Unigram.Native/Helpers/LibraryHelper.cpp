@@ -17,7 +17,7 @@ HMODULE GetKernelModule()
 	return kernelModule;
 }
 
-HMODULE GetModuleHandle(LPCTSTR libFileName)
+HMODULE GetModuleHandle2(LPCTSTR libFileName)
 {
 	typedef HMODULE(WINAPI *pGetModuleHandle)(_In_opt_ LPCTSTR);
 	static const auto procGetModuleHandle = reinterpret_cast<pGetModuleHandle>(GetProcAddress(GetKernelModule(), "GetModuleHandleW"));
@@ -25,7 +25,7 @@ HMODULE GetModuleHandle(LPCTSTR libFileName)
 	return procGetModuleHandle(libFileName);
 }
 
-HMODULE LoadLibrary(LPCTSTR lpFileName)
+HMODULE LoadLibrary2(LPCTSTR lpFileName)
 {
 	typedef HMODULE(WINAPI *pLoadLibrary)(_In_ LPCTSTR);
 	static const auto procLoadLibrary = reinterpret_cast<pLoadLibrary>(GetProcAddress(GetKernelModule(), "LoadLibraryW"));
@@ -33,7 +33,7 @@ HMODULE LoadLibrary(LPCTSTR lpFileName)
 	return procLoadLibrary(lpFileName);
 }
 
-HMODULE LoadLibraryEx(_In_ LPCTSTR lpFileName, _Reserved_ HANDLE hFile, _In_ DWORD flags)
+HMODULE LoadLibraryEx2(_In_ LPCTSTR lpFileName, _Reserved_ HANDLE hFile, _In_ DWORD flags)
 {
 	typedef HMODULE(WINAPI *pLoadLibraryEx)(_In_ LPCTSTR, _Reserved_ HANDLE, _In_ DWORD);
 	static const auto procLoadLibraryEx = reinterpret_cast<pLoadLibraryEx>(GetProcAddress(GetKernelModule(), "LoadLibraryExW"));

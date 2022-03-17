@@ -35,6 +35,15 @@ namespace Unigram.Common
             }
         }
 
+        public static void Update(ItemsControl owner)
+        {
+            var triggers = GetTriggers(owner);
+            if (triggers != null && triggers.Owner != null)
+            {
+                SetActive(triggers, GetReference(triggers.Owner));
+            }
+        }
+
         private static void SetActive(FluidGridViewTriggerCollection triggers, WrapGridReference reference)
         {
             if (triggers.Owner.ItemsPanelRoot == null || reference == null)
@@ -69,7 +78,7 @@ namespace Unigram.Common
             if (trigger != null)
             {
                 //var itemLength = trigger.GetItemLength(parentLength - paddingNear - paddingFar);
-                var itemLength = trigger.GetItemLength(parentLength);
+                var itemLength = trigger.GetItemLength(Math.Floor(parentLength));
 
                 if (reference.Orientation == Orientation.Horizontal)
                 {
@@ -155,13 +164,12 @@ namespace Unigram.Common
                 value = new WrapGridReference(sender.ItemsPanelRoot);
                 obj.SetValue(ReferenceProperty, value);
             }
+            else
+            {
+                value.Owner = sender.ItemsPanelRoot;
+            }
 
             return value;
-        }
-
-        private static void SetReference(DependencyObject obj, WrapGridReference value)
-        {
-            obj.SetValue(ReferenceProperty, value);
         }
 
         private static readonly DependencyProperty ReferenceProperty =
@@ -169,7 +177,7 @@ namespace Unigram.Common
 
         private class WrapGridReference
         {
-            public object Owner { get; private set; }
+            public object Owner { get; set; }
 
             public Orientation Orientation
             {
@@ -317,8 +325,8 @@ namespace Unigram.Common
         #region MinLength
         public double MinLength
         {
-            get { return (double)GetValue(MinLengthProperty); }
-            set { SetValue(MinLengthProperty, value); }
+            get => (double)GetValue(MinLengthProperty);
+            set => SetValue(MinLengthProperty, value);
         }
 
         public static readonly DependencyProperty MinLengthProperty =
@@ -351,8 +359,8 @@ namespace Unigram.Common
         #region RowsOrColumns
         public int RowsOrColumns
         {
-            get { return (int)GetValue(RowsOrColumnsProperty); }
-            set { SetValue(RowsOrColumnsProperty, value); }
+            get => (int)GetValue(RowsOrColumnsProperty);
+            set => SetValue(RowsOrColumnsProperty, value);
         }
 
         public static readonly DependencyProperty RowsOrColumnsProperty =
@@ -362,8 +370,8 @@ namespace Unigram.Common
         #region MaxLength
         public double MaxLength
         {
-            get { return (double)GetValue(MaxLengthProperty); }
-            set { SetValue(MaxLengthProperty, value); }
+            get => (double)GetValue(MaxLengthProperty);
+            set => SetValue(MaxLengthProperty, value);
         }
 
         public static readonly DependencyProperty MaxLengthProperty =
@@ -399,8 +407,8 @@ namespace Unigram.Common
         #region ItemLength
         public double ItemLength
         {
-            get { return (double)GetValue(ItemLengthProperty); }
-            set { SetValue(ItemLengthProperty, value); }
+            get => (double)GetValue(ItemLengthProperty);
+            set => SetValue(ItemLengthProperty, value);
         }
 
         public static readonly DependencyProperty ItemLengthProperty =
@@ -431,8 +439,8 @@ namespace Unigram.Common
         #region ItemLength
         public double ItemLength
         {
-            get { return (double)GetValue(ItemLengthProperty); }
-            set { SetValue(ItemLengthProperty, value); }
+            get => (double)GetValue(ItemLengthProperty);
+            set => SetValue(ItemLengthProperty, value);
         }
 
         public static readonly DependencyProperty ItemLengthProperty =
@@ -443,11 +451,11 @@ namespace Unigram.Common
         {
             if (parentLength <= 400)
             {
-                return parentLength / 4d;
+                return parentLength / 3d;
             }
             else if (parentLength <= 500)
             {
-                return parentLength / 5d;
+                return parentLength / 4d;
             }
             else
             {

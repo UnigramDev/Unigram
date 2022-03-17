@@ -7,6 +7,7 @@ using Windows.Foundation.Metadata;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Settings.Privacy
 {
@@ -17,15 +18,6 @@ namespace Unigram.Views.Settings.Privacy
         public SettingsPrivacyShowForwardedPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsPrivacyShowForwardedViewModel>();
-
-            var user = ViewModel.CacheService.GetUser(ViewModel.CacheService.Options.MyId);
-            if (user != null)
-            {
-                MessagePreview.Mockup(Strings.Resources.PrivacyForwardsMessageLine, user.GetFullName(), true, false, DateTime.Now);
-            }
-
-            BackgroundPresenter.Update(ViewModel.SessionId, ViewModel.ProtoService, ViewModel.Aggregator);
 
             if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "Shadow"))
             {
@@ -38,6 +30,17 @@ namespace Unigram.Views.Settings.Privacy
             }
         }
 
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            var user = ViewModel.CacheService.GetUser(ViewModel.CacheService.Options.MyId);
+            if (user != null)
+            {
+                MessagePreview.Mockup(Strings.Resources.PrivacyForwardsMessageLine, user.GetFullName(), true, false, DateTime.Now);
+            }
+
+            BackgroundPresenter.Update(ViewModel.SessionId, ViewModel.ProtoService, ViewModel.Aggregator);
+        }
+
         #region Binding
 
         private string ConvertToolTip(PrivacyValue value)
@@ -47,12 +50,12 @@ namespace Unigram.Views.Settings.Privacy
 
         private Visibility ConvertNever(PrivacyValue value)
         {
-            return value == PrivacyValue.AllowAll || value == PrivacyValue.AllowContacts ? Visibility.Visible : Visibility.Collapsed;
+            return value is PrivacyValue.AllowAll or PrivacyValue.AllowContacts ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private Visibility ConvertAlways(PrivacyValue value)
         {
-            return value == PrivacyValue.AllowContacts || value == PrivacyValue.DisallowAll ? Visibility.Visible : Visibility.Collapsed;
+            return value is PrivacyValue.AllowContacts or PrivacyValue.DisallowAll ? Visibility.Visible : Visibility.Collapsed;
         }
 
         #endregion

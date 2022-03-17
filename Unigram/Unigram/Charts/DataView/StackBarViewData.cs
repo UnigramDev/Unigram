@@ -30,7 +30,7 @@ namespace Unigram.Charts.DataView
         {
             base.UpdateColors(theme);
 
-            if (App.Current.Resources.TryGet("ApplicationPageBackgroundThemeBrush", out SolidColorBrush brush))
+            if (Navigation.BootStrapper.Current.Resources.TryGet("ApplicationPageBackgroundThemeBrush", out SolidColorBrush brush))
             {
                 blendColor = Extensions.blendARGB(brush.Color, lineColor, 0.3f);
             }

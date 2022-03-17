@@ -34,10 +34,7 @@ namespace Unigram.ViewModels.Settings
 
         public VoipDataSaving UseLessData
         {
-            get
-            {
-                return Settings.UseLessData;
-            }
+            get => Settings.UseLessData;
             set
             {
                 Settings.UseLessData = value;
@@ -49,10 +46,7 @@ namespace Unigram.ViewModels.Settings
 
         public bool AutoDownloadEnabled
         {
-            get
-            {
-                return !Settings.AutoDownload.Disabled;
-            }
+            get => !Settings.AutoDownload.Disabled;
             set
             {
                 Settings.AutoDownload = Settings.AutoDownload.UpdateDisabled(!value);
@@ -63,10 +57,7 @@ namespace Unigram.ViewModels.Settings
 
         public bool IsAutoPlayAnimationsEnabled
         {
-            get
-            {
-                return Settings.IsAutoPlayAnimationsEnabled;
-            }
+            get => Settings.IsAutoPlayAnimationsEnabled;
             set
             {
                 Settings.IsAutoPlayAnimationsEnabled = value;
@@ -76,10 +67,7 @@ namespace Unigram.ViewModels.Settings
 
         public bool IsAutoPlayVideosEnabled
         {
-            get
-            {
-                return Settings.IsAutoPlayVideosEnabled;
-            }
+            get => Settings.IsAutoPlayVideosEnabled;
             set
             {
                 Settings.IsAutoPlayVideosEnabled = value;
@@ -89,10 +77,7 @@ namespace Unigram.ViewModels.Settings
 
         public bool IsStreamingEnabled
         {
-            get
-            {
-                return SettingsService.Current.IsStreamingEnabled;
-            }
+            get => SettingsService.Current.IsStreamingEnabled;
             set
             {
                 SettingsService.Current.IsStreamingEnabled = value;
@@ -102,10 +87,7 @@ namespace Unigram.ViewModels.Settings
 
         public string FilesDirectory
         {
-            get
-            {
-                return Settings.FilesDirectory;
-            }
+            get => Settings.FilesDirectory;
             set
             {
                 Settings.FilesDirectory = value;
@@ -123,7 +105,7 @@ namespace Unigram.ViewModels.Settings
                 new SelectRadioItem(VoipDataSaving.Always, Strings.Resources.UseLessDataAlways, UseLessData == VoipDataSaving.Always),
             };
 
-            var dialog = new SelectRadioPopup(items);
+            var dialog = new ChooseRadioPopup(items);
             dialog.Title = Strings.Resources.VoipUseLessData;
             dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.SecondaryButtonText = Strings.Resources.Cancel;

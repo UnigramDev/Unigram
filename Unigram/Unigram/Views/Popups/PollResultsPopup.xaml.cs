@@ -23,7 +23,7 @@ namespace Unigram.Views.Popups
             _protoService = protoService;
             _delegate = delegato;
 
-            Title.Text = Strings.Resources.PollResults;
+            Title = Strings.Resources.PollResults;
             Subtitle.Text = Locale.Declension(poll.Type is PollTypeQuiz ? "Answer" : "Vote", poll.TotalVoterCount);
 
             PrimaryButtonText = Strings.Resources.OK;
@@ -57,7 +57,7 @@ namespace Unigram.Views.Popups
                 title.Text = user.GetFullName();
 
                 var photo = content.Children[0] as ProfilePicture;
-                photo.Source = PlaceholderHelper.GetUser(_protoService, user, 36);
+                photo.SetUser(_protoService, user, 36);
 
                 button.Click += User_Click;
             }

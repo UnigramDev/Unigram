@@ -4,7 +4,6 @@
 #include "PlaceholderImageHelper.g.cpp"
 #endif
 
-#include "Qr/QrCode.hpp"
 #include "SVG/nanosvg.h"
 #include "StringUtils.h"
 #include "Helpers\COMHelper.h"
@@ -19,7 +18,6 @@
 
 using namespace D2D1;
 using namespace winrt::Windows::ApplicationModel;
-using namespace qrcodegen;
 
 namespace winrt::Unigram::Native::implementation
 {
@@ -213,14 +211,20 @@ namespace winrt::Unigram::Native::implementation
 		free(buffer);
 	}
 
+	winrt::Windows::Foundation::IAsyncAction PlaceholderImageHelper::DrawSvgAsync(hstring path, Color foreground, IRandomAccessStream randomAccessStream)
+	{
+		winrt::apartment_context ui_thread;
+		co_await winrt::resume_background();
+
+		Windows::Foundation::Size size;
+		winrt::check_hresult(InternalDrawSvg(path, foreground, randomAccessStream, size));
+
+		co_await ui_thread;
+	}
+
 	void PlaceholderImageHelper::DrawSvg(hstring path, Color foreground, IRandomAccessStream randomAccessStream, Windows::Foundation::Size& size)
 	{
 		winrt::check_hresult(InternalDrawSvg(path, foreground, randomAccessStream, size));
-	}
-
-	void PlaceholderImageHelper::DrawQr(hstring data, Color foreground, Color background, IRandomAccessStream randomAccessStream)
-	{
-		winrt::check_hresult(InternalDrawQr(data, foreground, background, randomAccessStream));
 	}
 
 	void PlaceholderImageHelper::DrawIdenticon(IVector<uint8_t> hash, int side, IRandomAccessStream randomAccessStream)
@@ -253,6 +257,11 @@ namespace winrt::Unigram::Native::implementation
 		winrt::check_hresult(InternalDrawThumbnailPlaceholder(fileName, blurAmount, randomAccessStream));
 	}
 
+	void PlaceholderImageHelper::DrawThumbnailPlaceholder(IVector<uint8_t> bytes, float blurAmount, IRandomAccessStream randomAccessStream)
+	{
+		winrt::check_hresult(InternalDrawThumbnailPlaceholder(bytes, blurAmount, randomAccessStream));
+	}
+
 	HRESULT PlaceholderImageHelper::InternalDrawSvg(hstring path, Color foreground, IRandomAccessStream randomAccessStream, Windows::Foundation::Size& size)
 	{
 		auto lock = critical_section::scoped_lock(m_criticalSection);
@@ -264,14 +273,23 @@ namespace winrt::Unigram::Native::implementation
 		struct NSVGimage* image;
 		image = nsvgParse((char*)data.c_str(), "px", 96);
 
-		size = Windows::Foundation::Size(image->width, image->height);
+		auto unique = std::shared_ptr<NSVGimage>(image, [](NSVGimage* p)
+			{
+				nsvgDelete(p);
+			});
+
+		auto imageWidth = image->width / 2;
+		auto imageHeight = image->height / 2;
+		size = Windows::Foundation::Size(imageWidth, imageHeight);
 
 		winrt::com_ptr<ID2D1Bitmap1> targetBitmap;
 		D2D1_BITMAP_PROPERTIES1 properties = { { DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED }, 96, 96, D2D1_BITMAP_OPTIONS_TARGET, 0 };
-		ReturnIfFailed(result, m_d2dContext->CreateBitmap(D2D1_SIZE_U{ (uint32_t)image->width, (uint32_t)image->height }, nullptr, 0, &properties, targetBitmap.put()));
+		ReturnIfFailed(result, m_d2dContext->CreateBitmap(D2D1_SIZE_U{ (uint32_t)imageWidth, (uint32_t)imageHeight }, nullptr, 0, &properties, targetBitmap.put()));
 
 		m_d2dContext->SetTarget(targetBitmap.get());
 		m_d2dContext->BeginDraw();
+		m_d2dContext->Clear(D2D1::ColorF(0, 0, 0, 0));
+		m_d2dContext->SetTransform(D2D1::Matrix3x2F::Scale(0.5f, 0.5f));
 
 		winrt::com_ptr<ID2D1SolidColorBrush> blackBrush;
 		ReturnIfFailed(result, m_d2dContext->CreateSolidColorBrush(
@@ -305,6 +323,8 @@ namespace winrt::Unigram::Native::implementation
 				sink->EndFigure(path->closed ? D2D1_FIGURE_END_CLOSED : D2D1_FIGURE_END_OPEN);
 			}
 
+			ReturnIfFailed(result, sink->Close());
+
 			if (shape->fill.type != NSVG_PAINT_NONE)
 			{
 				switch (shape->fillRule)
@@ -317,7 +337,6 @@ namespace winrt::Unigram::Native::implementation
 					break;
 				}
 
-				ReturnIfFailed(result, sink->Close());
 				m_d2dContext->FillGeometry(geometry.get(), blackBrush.get());
 			}
 
@@ -359,229 +378,16 @@ namespace winrt::Unigram::Native::implementation
 				winrt::com_ptr<ID2D1StrokeStyle1> strokeStyle;
 				ReturnIfFailed(result, m_d2dFactory->CreateStrokeStyle(strokeProperties, NULL, 0, strokeStyle.put()));
 
-
-				ReturnIfFailed(result, sink->Close());
 				m_d2dContext->DrawGeometry(geometry.get(), blackBrush.get(), shape->strokeWidth, strokeStyle.get());
 			}
 		}
 
-		nsvgDelete(image);
+		m_d2dContext->SetTransform(D2D1::Matrix3x2F::Identity());
 
 		if ((result = m_d2dContext->EndDraw()) == D2DERR_RECREATE_TARGET)
 		{
 			ReturnIfFailed(result, CreateDeviceResources());
 			return InternalDrawSvg(path, foreground, randomAccessStream, size);
-		}
-
-		return SaveImageToStream(targetBitmap.get(), GUID_ContainerFormatPng, randomAccessStream);
-	}
-
-	constexpr auto kShareQrSize = 768;
-	constexpr auto kShareQrPadding = 16;
-
-	inline int ReplaceElements(const QrData& data) {
-		const auto elements = (data.size / 4);
-		const auto shift = (data.size - elements) % 2;
-		return (elements - shift);
-	}
-
-	inline int ReplaceSize(const QrData& data, int pixel) {
-		return ReplaceElements(data) * pixel;
-	}
-
-	HRESULT PlaceholderImageHelper::InternalDrawQr(hstring text, Color foreground, Color background, IRandomAccessStream randomAccessStream)
-	{
-		auto lock = critical_section::scoped_lock(m_criticalSection);
-
-		HRESULT result;
-
-		winrt::com_ptr<ID2D1Bitmap1> targetBitmap;
-		D2D1_BITMAP_PROPERTIES1 properties = { { DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED }, 96, 96, D2D1_BITMAP_OPTIONS_TARGET, 0 };
-		ReturnIfFailed(result, m_d2dContext->CreateBitmap(D2D1_SIZE_U{ kShareQrSize - 4 * kShareQrPadding, kShareQrSize - 4 * kShareQrPadding }, nullptr, 0, &properties, targetBitmap.put()));
-
-
-		m_d2dContext->SetTarget(targetBitmap.get());
-		m_d2dContext->BeginDraw();
-
-		auto data = QrData();
-		const auto utf8 = string_to_unmanaged(text);
-		const auto qr = QrCode::encodeText(utf8.c_str(), QrCode::Ecc::MEDIUM);
-		data.size = qr.getSize();
-
-		data.values.reserve(data.size * data.size);
-		for (auto row = 0; row != data.size; ++row) {
-			for (auto column = 0; column != data.size; ++column) {
-				data.values.push_back(qr.getModule(row, column));
-			}
-		}
-
-		const auto size = (kShareQrSize - 2 * kShareQrPadding);
-		const auto pixel = size / data.size;
-
-		const auto replaceElements = ReplaceElements(data);
-		const auto replaceFrom = (data.size - replaceElements) / 2;
-		const auto replaceTill = (data.size - replaceFrom);
-		//const auto black = GenerateSingle(pixel, Qt::transparent, Qt::black);
-		//const auto white = GenerateSingle(pixel, Qt::black, Qt::transparent);
-		const auto value = [&](int row, int column) {
-			return (row >= 0)
-				&& (row < data.size)
-				&& (column >= 0)
-				&& (column < data.size)
-				&& (row < replaceFrom
-					|| row >= replaceTill
-					|| column < replaceFrom
-					|| column >= replaceTill)
-				&& data.values[row * data.size + column];
-		};
-		const auto blackFull = [&](int row, int column) {
-			return (value(row - 1, column) && value(row + 1, column))
-				|| (value(row, column - 1) && value(row, column + 1));
-		};
-		const auto whiteCorner = [&](int row, int column, int dx, int dy) {
-			return !value(row + dy, column)
-				|| !value(row, column + dx)
-				|| !value(row + dy, column + dx);
-		};
-		const auto whiteFull = [&](int row, int column) {
-			return whiteCorner(row, column, -1, -1)
-				&& whiteCorner(row, column, 1, -1)
-				&& whiteCorner(row, column, 1, 1)
-				&& whiteCorner(row, column, -1, 1);
-		};
-		//auto result = QImage(
-		//	data.size * pixel,
-		//	data.size * pixel,
-		//	QImage::Format_ARGB32_Premultiplied);
-		//result.fill(Qt::transparent);
-		{
-			//auto p = QPainter(&result);
-			//p.setCompositionMode(QPainter::CompositionMode_Source);
-			auto context = m_d2dContext;
-
-			winrt::com_ptr<ID2D1SolidColorBrush> blackBrush;
-			ReturnIfFailed(result, m_d2dContext->CreateSolidColorBrush(
-				D2D1::ColorF(foreground.R / 255.0f, foreground.G / 255.0f, foreground.B / 255.0f, foreground.A / 255.0f), blackBrush.put()));
-
-			winrt::com_ptr<ID2D1SolidColorBrush> whiteBrush;
-			ReturnIfFailed(result, m_d2dContext->CreateSolidColorBrush(
-				D2D1::ColorF(background.R / 255.0f, background.G / 255.0f, background.B / 255.0f, background.A / 255.0f), whiteBrush.put()));
-
-			const auto skip = pixel - pixel / 2;
-			const auto brect = [&](float x, float y, float width, float height) {
-				context->FillRectangle(D2D1_RECT_F{ x, y, x + width, y + height }, blackBrush.get());
-			};
-			const auto wrect = [&](float x, float y, float width, float height) {
-				context->FillRectangle(D2D1_RECT_F{ x, y, x + width, y + height }, whiteBrush.get());
-			};
-			const auto large = [&](float x, float y) {
-				context->FillRoundedRectangle(D2D1_ROUNDED_RECT{ D2D1_RECT_F{
-					x,
-					y,
-					x + pixel * 7,
-					y + pixel * 7 }, pixel * 2.0f, pixel * 2.0f }, blackBrush.get());
-				context->FillRoundedRectangle(D2D1_ROUNDED_RECT{ D2D1_RECT_F{
-					x + pixel,
-					y + pixel,
-					x + pixel + pixel * 5,
-					y + pixel + pixel * 5 }, pixel * 1.5f, pixel * 1.5f }, whiteBrush.get());
-				context->FillRoundedRectangle(D2D1_ROUNDED_RECT{ D2D1_RECT_F{
-					x + pixel * 2,
-					y + pixel * 2,
-					x + pixel * 2 + pixel * 3,
-					y + pixel * 2 + pixel * 3 }, (float)pixel, (float)pixel }, blackBrush.get());
-			};
-			const auto white = [&](float x, float y) {
-				context->FillRectangle(D2D1_RECT_F{ x, y, x + pixel, y + pixel }, blackBrush.get());
-				context->FillRoundedRectangle(D2D1_ROUNDED_RECT{ D2D1_RECT_F{ x, y, x + pixel, y + pixel }, pixel / 2.0f, pixel / 2.0f }, whiteBrush.get());
-			};
-			const auto black = [&](float x, float y) {
-				context->FillRectangle(D2D1_RECT_F{ x, y, x + pixel, y + pixel }, whiteBrush.get());
-				context->FillRoundedRectangle(D2D1_ROUNDED_RECT{ D2D1_RECT_F{ x, y, x + pixel, y + pixel }, pixel / 2.0f, pixel / 2.0f }, blackBrush.get());
-			};
-			for (auto row = 0; row != data.size; ++row) {
-				for (auto column = 0; column != data.size; ++column) {
-					if ((row < 7 && (column < 7 || column >= data.size - 7))
-						|| (column < 7 && (row < 7 || row >= data.size - 7))) {
-						continue;
-					}
-					const auto x = column * pixel;
-					const auto y = row * pixel;
-					const auto index = row * data.size + column;
-					if (value(row, column)) {
-						if (blackFull(row, column)) {
-							brect(x, y, pixel, pixel);
-						}
-						else {
-							black(x, y);
-							if (value(row - 1, column)) {
-								brect(x, y, pixel, pixel / 2);
-							}
-							else if (value(row + 1, column)) {
-								brect(x, y + skip, pixel, pixel / 2);
-							}
-							if (value(row, column - 1)) {
-								brect(x, y, pixel / 2, pixel);
-							}
-							else if (value(row, column + 1)) {
-								brect(x + skip, y, pixel / 2, pixel);
-							}
-						}
-					}
-					else if (whiteFull(row, column)) {
-						wrect(x, y, pixel, pixel);
-					}
-					else {
-						white(x, y);
-						if (whiteCorner(row, column, -1, -1)
-							&& whiteCorner(row, column, 1, -1)) {
-							wrect(x, y, pixel, pixel / 2);
-						}
-						else if (whiteCorner(row, column, -1, 1)
-							&& whiteCorner(row, column, 1, 1)) {
-							wrect(x, y + skip, pixel, pixel / 2);
-						}
-						if (whiteCorner(row, column, -1, -1)
-							&& whiteCorner(row, column, -1, 1)) {
-							wrect(x, y, pixel / 2, pixel);
-						}
-						else if (whiteCorner(row, column, 1, -1)
-							&& whiteCorner(row, column, 1, 1)) {
-							wrect(x + skip, y, pixel / 2, pixel);
-						}
-						if (whiteCorner(row, column, -1, -1)) {
-							wrect(x, y, pixel / 2, pixel / 2);
-						}
-						if (whiteCorner(row, column, 1, -1)) {
-							wrect(x + skip, y, pixel / 2, pixel / 2);
-						}
-						if (whiteCorner(row, column, 1, 1)) {
-							wrect(x + skip, y + skip, pixel / 2, pixel / 2);
-						}
-						if (whiteCorner(row, column, -1, 1)) {
-							wrect(x, y + skip, pixel / 2, pixel / 2);
-						}
-					}
-				}
-			}
-
-			//PrepareForRound(p);
-			large(0, 0);
-			large((data.size - 7) * pixel, 0);
-			large(0, (data.size - 7) * pixel);
-		}
-
-		float diamond = ReplaceSize(data, pixel);
-		float x1 = (size - diamond) / 2.0f;
-		x1 -= kShareQrPadding / 2.0f;
-		//winrt::com_ptr<ID2D1SolidColorBrush> red;
-		//ReturnIfFailed(result, m_d2dContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Red), &red));
-		//m_d2dContext->FillRectangle(D2D1_RECT_F{ x1, x1, x1 + diamond, x1 + diamond }, red.get());
-
-		if ((result = m_d2dContext->EndDraw()) == D2DERR_RECREATE_TARGET)
-		{
-			ReturnIfFailed(result, CreateDeviceResources());
-			return InternalDrawQr(text, foreground, background, randomAccessStream);
 		}
 
 		return SaveImageToStream(targetBitmap.get(), GUID_ContainerFormatPng, randomAccessStream);
@@ -819,14 +625,42 @@ namespace winrt::Unigram::Native::implementation
 		ReturnIfFailed(result, m_wicFactory->CreateFormatConverter(wicFormatConverter.put()));
 		ReturnIfFailed(result, wicFormatConverter->Initialize(wicFrameDecode.get(), GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, nullptr, 0.f, WICBitmapPaletteTypeCustom));
 
-		ReturnIfFailed(result, InternalDrawThumbnailPlaceholder(wicFormatConverter.get(), blurAmount, randomAccessStream));
+		ReturnIfFailed(result, InternalDrawThumbnailPlaceholder(wicFormatConverter.get(), blurAmount, randomAccessStream, false));
 
 		CloseHandle(file);
 
 		return result;
 	}
 
-	HRESULT PlaceholderImageHelper::InternalDrawThumbnailPlaceholder(IWICBitmapSource* wicBitmapSource, float blurAmount, IRandomAccessStream randomAccessStream)
+	HRESULT PlaceholderImageHelper::InternalDrawThumbnailPlaceholder(IVector<uint8_t> bytes, float blurAmount, IRandomAccessStream randomAccessStream)
+	{
+		auto lock = critical_section::scoped_lock(m_criticalSection);
+
+		HRESULT result;
+		winrt::com_ptr<IStream> stream;
+		ReturnIfFailed(result, CreateStreamOverRandomAccessStream(winrt::get_unknown(randomAccessStream), IID_PPV_ARGS(&stream)));
+
+		auto yolo = std::vector<byte>(bytes.begin(), bytes.end());
+
+		ReturnIfFailed(result, stream->Write(yolo.data(), bytes.Size(), nullptr));
+		ReturnIfFailed(result, stream->Seek({ 0 }, STREAM_SEEK_SET, nullptr));
+
+		winrt::com_ptr<IWICBitmapDecoder> wicBitmapDecoder;
+		ReturnIfFailed(result, m_wicFactory->CreateDecoderFromStream(stream.get(), nullptr, WICDecodeMetadataCacheOnLoad, wicBitmapDecoder.put()));
+
+		winrt::com_ptr<IWICBitmapFrameDecode> wicFrameDecode;
+		ReturnIfFailed(result, wicBitmapDecoder->GetFrame(0, wicFrameDecode.put()));
+
+		winrt::com_ptr<IWICFormatConverter> wicFormatConverter;
+		ReturnIfFailed(result, m_wicFactory->CreateFormatConverter(wicFormatConverter.put()));
+		ReturnIfFailed(result, wicFormatConverter->Initialize(wicFrameDecode.get(), GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, nullptr, 0.f, WICBitmapPaletteTypeCustom));
+
+		ReturnIfFailed(result, InternalDrawThumbnailPlaceholder(wicFormatConverter.get(), blurAmount, randomAccessStream, true));
+
+		return result;
+	}
+
+	HRESULT PlaceholderImageHelper::InternalDrawThumbnailPlaceholder(IWICBitmapSource* wicBitmapSource, float blurAmount, IRandomAccessStream randomAccessStream, bool minithumbnail)
 	{
 		HRESULT result;
 		winrt::com_ptr<ID2D1ImageSourceFromWic> imageSource;
@@ -835,12 +669,28 @@ namespace winrt::Unigram::Native::implementation
 		D2D1_SIZE_U size;
 		ReturnIfFailed(result, wicBitmapSource->GetSize(&size.width, &size.height));
 
+		//if (minithumbnail) {
+		//	size.width *= 2;
+		//	size.height *= 2;
+		//}
+
 		winrt::com_ptr<ID2D1Bitmap1> targetBitmap;
 		D2D1_BITMAP_PROPERTIES1 properties = { { DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED }, 96, 96, D2D1_BITMAP_OPTIONS_TARGET, 0 };
 		ReturnIfFailed(result, m_d2dContext->CreateBitmap(size, nullptr, 0, &properties, targetBitmap.put()));
 
+		//winrt::com_ptr<ID2D1Effect> scaleEffect;
+		//ReturnIfFailed(result, m_d2dContext->CreateEffect(CLSID_D2D1Scale, scaleEffect.put()));
+		//ReturnIfFailed(result, scaleEffect->SetValue(D2D1_SCALE_PROP_SCALE, D2D1_VECTOR_2F({ 2, 2 })));
+		//ReturnIfFailed(result, scaleEffect->SetValue(D2D1_SCALE_PROP_INTERPOLATION_MODE, D2D1_SCALE_INTERPOLATION_MODE_NEAREST_NEIGHBOR));
+		//scaleEffect->SetInput(0, imageSource.get());
+
+		//winrt::com_ptr<ID2D1Image> test;
+		//scaleEffect->SetInput(0, imageSource.get());
+		//scaleEffect->GetOutput(test.put());
+
 		ReturnIfFailed(result, m_gaussianBlurEffect->SetValue(D2D1_GAUSSIANBLUR_PROP_STANDARD_DEVIATION, blurAmount));
 
+		//m_gaussianBlurEffect->SetInput(0, test.get());
 		m_gaussianBlurEffect->SetInput(0, imageSource.get());
 
 		m_d2dContext->SetTarget(targetBitmap.get());
@@ -852,7 +702,7 @@ namespace winrt::Unigram::Native::implementation
 		if ((result = m_d2dContext->EndDraw()) == D2DERR_RECREATE_TARGET)
 		{
 			ReturnIfFailed(result, CreateDeviceResources());
-			return InternalDrawThumbnailPlaceholder(wicBitmapSource, blurAmount, randomAccessStream);
+			return InternalDrawThumbnailPlaceholder(wicBitmapSource, blurAmount, randomAccessStream, minithumbnail);
 		}
 
 		return SaveImageToStream(targetBitmap.get(), GUID_ContainerFormatPng, randomAccessStream);
@@ -875,18 +725,19 @@ namespace winrt::Unigram::Native::implementation
 
 
 		hstring path = Package::Current().InstalledLocation().Path() + L"\\Assets\\Fonts\\Telegram.ttf";
-		auto pathBegin = path.begin();
-		auto pathEnd = path.end();
-
-		//assert(pathBegin && pathEnd);
-
-		void const* key = pathBegin;
-		uint32_t keySize = static_cast<uint32_t>(std::distance(pathBegin, pathEnd) * sizeof(wchar_t));
+		void const* key = path.begin();
+		uint32_t keySize = static_cast<uint32_t>(std::distance(path.begin(), path.end()) * sizeof(wchar_t));
 
 		m_customLoader = winrt::make_self<CustomFontLoader>();
 
 		ReturnIfFailed(result, m_dwriteFactory->RegisterFontCollectionLoader(m_customLoader.get()));
 		ReturnIfFailed(result, m_dwriteFactory->CreateCustomFontCollection(m_customLoader.get(), key, keySize, m_fontCollection.put()));
+
+		path = Package::Current().InstalledLocation().Path() + L"\\Assets\\Emoji\\apple.ttf";
+		key = path.begin();
+		keySize = static_cast<uint32_t>(std::distance(path.begin(), path.end()) * sizeof(wchar_t));
+		ReturnIfFailed(result, m_dwriteFactory->CreateCustomFontCollection(m_customLoader.get(), key, keySize, m_appleCollection.put()));
+
 		ReturnIfFailed(result, m_dwriteFactory->CreateTextFormat(
 			L"Telegram",							// font family name
 			m_fontCollection.get(),					// system font collection
@@ -924,7 +775,6 @@ namespace winrt::Unigram::Native::implementation
 			m_textFormat.put()
 		));
 		ReturnIfFailed(result, m_textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING));
-
 		return m_textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 	}
 
@@ -935,6 +785,9 @@ namespace winrt::Unigram::Native::implementation
 
 		D3D_FEATURE_LEVEL featureLevels[] =
 		{
+			//D3D_FEATURE_LEVEL_12_2,
+			//D3D_FEATURE_LEVEL_12_1,
+			//D3D_FEATURE_LEVEL_12_0,
 			D3D_FEATURE_LEVEL_11_1,
 			D3D_FEATURE_LEVEL_11_0,
 			D3D_FEATURE_LEVEL_10_1,
@@ -944,7 +797,6 @@ namespace winrt::Unigram::Native::implementation
 			D3D_FEATURE_LEVEL_9_1
 		};
 
-		winrt::com_ptr<ID3D11Device> device;
 		winrt::com_ptr<ID3D11DeviceContext> context;
 		ReturnIfFailed(result, D3D11CreateDevice(nullptr,	// specify null to use the default adapter
 			D3D_DRIVER_TYPE_HARDWARE, 0,
@@ -952,12 +804,12 @@ namespace winrt::Unigram::Native::implementation
 			featureLevels,									// list of feature levels this app can support
 			ARRAYSIZE(featureLevels),						// number of possible feature levels
 			D3D11_SDK_VERSION,
-			device.put(),									// returns the Direct3D device created
+			m_d3dDevice.put(),								// returns the Direct3D device created
 			&m_featureLevel,								// returns feature level of device created
 			context.put()									// returns the device immediate context
 		));
 
-		winrt::com_ptr<IDXGIDevice> dxgiDevice = device.as<IDXGIDevice>();
+		winrt::com_ptr<IDXGIDevice> dxgiDevice = m_d3dDevice.as<IDXGIDevice>();
 		ReturnIfFailed(result, m_d2dFactory->CreateDevice(dxgiDevice.get(), m_d2dDevice.put()));
 
 		winrt::com_ptr<ID2D1DeviceContext> d2dContext;
@@ -1015,11 +867,161 @@ namespace winrt::Unigram::Native::implementation
 		return textLayout->GetMetrics(textMetrics);
 	}
 
+	float2 PlaceholderImageHelper::ContentEnd(hstring text, double fontSize, double width)
+	{
+		winrt::check_hresult(m_dwriteFactory->CreateTextFormat(
+			L"Segoe UI Emoji",						// font family name
+			m_appleCollection.get(),				// system font collection
+			DWRITE_FONT_WEIGHT_NORMAL,				// font weight 
+			DWRITE_FONT_STYLE_NORMAL,				// font style
+			DWRITE_FONT_STRETCH_NORMAL,				// default font stretch
+			fontSize,								// font size
+			L"",									// locale name
+			m_appleFormat.put()
+		));
+		winrt::check_hresult(m_appleFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING));
+		winrt::check_hresult(m_appleFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR));
+
+		winrt::com_ptr<IDWriteTextLayout> textLayout;
+		winrt::check_hresult(m_dwriteFactory->CreateTextLayout(
+			text.data(),					// The string to be laid out and formatted.
+			wcslen(text.data()),			// The length of the string.
+			m_appleFormat.get(),			// The text format to apply to the string (contains font information, etc).
+			width,							// The width of the layout box.
+			INFINITY,						// The height of the layout box.
+			textLayout.put()				// The IDWriteTextLayout interface pointer.
+		));
+
+		FLOAT x;
+		FLOAT y;
+		DWRITE_HIT_TEST_METRICS metrics;
+		textLayout->HitTestTextPosition(text.size() - 1, false, &x, &y, &metrics);
+
+		return float2(metrics.left + metrics.width, metrics.top + metrics.height);
+	}
+
+	IVector<Windows::Foundation::Rect> PlaceholderImageHelper::LineMetrics(hstring text, double fontSize, double width, bool rtl)
+	{
+		winrt::check_hresult(m_dwriteFactory->CreateTextFormat(
+			L"Segoe UI Emoji",						// font family name
+			m_appleCollection.get(),				// system font collection
+			DWRITE_FONT_WEIGHT_NORMAL,				// font weight 
+			DWRITE_FONT_STYLE_NORMAL,				// font style
+			DWRITE_FONT_STRETCH_NORMAL,				// default font stretch
+			fontSize,								// font size
+			L"",									// locale name
+			m_appleFormat.put()
+		));
+		winrt::check_hresult(m_appleFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING));
+		winrt::check_hresult(m_appleFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR));
+		winrt::check_hresult(m_appleFormat->SetReadingDirection(rtl ? DWRITE_READING_DIRECTION_RIGHT_TO_LEFT : DWRITE_READING_DIRECTION_LEFT_TO_RIGHT));
+
+		winrt::com_ptr<IDWriteTextLayout> textLayout;
+		winrt::check_hresult(m_dwriteFactory->CreateTextLayout(
+			text.data(),					// The string to be laid out and formatted.
+			wcslen(text.data()),			// The length of the string.
+			m_appleFormat.get(),			// The text format to apply to the string (contains font information, etc).
+			width,							// The width of the layout box.
+			INFINITY,						// The height of the layout box.
+			textLayout.put()				// The IDWriteTextLayout interface pointer.
+		));
+
+		DWRITE_TEXT_METRICS metrics;
+		winrt::check_hresult(textLayout->GetMetrics(&metrics));
+
+		UINT32 maxHitTestMetricsCount = metrics.lineCount * metrics.maxBidiReorderingDepth;
+		UINT32 actualTestsCount;
+		DWRITE_HIT_TEST_METRICS* ranges = new DWRITE_HIT_TEST_METRICS[maxHitTestMetricsCount];
+		winrt::check_hresult(textLayout->HitTestTextRange(0, text.size(), 0, 0, ranges, maxHitTestMetricsCount, &actualTestsCount));
+
+		std::vector<Windows::Foundation::Rect> rects;
+
+		for (int i = 0; i < actualTestsCount; i++) {
+			float left = ranges[i].left;
+			float top = ranges[i].top;
+			float right = ranges[i].left + ranges[i].width;
+			float bottom = ranges[i].top + ranges[i].height;
+
+			rects.push_back({ left, top, right - left, bottom - top });
+		}
+
+		return winrt::single_threaded_vector<Windows::Foundation::Rect>(std::move(rects));
+	}
+
+	//IVector<Windows::Foundation::Rect> PlaceholderImageHelper::EntityMetrics(hstring text, IVector<TextEntity> entities, double fontSize, double width, bool rtl)
+	//{
+	//	winrt::check_hresult(m_dwriteFactory->CreateTextFormat(
+	//		L"Segoe UI Emoji",						// font family name
+	//		m_appleCollection.get(),				// system font collection
+	//		DWRITE_FONT_WEIGHT_NORMAL,				// font weight 
+	//		DWRITE_FONT_STYLE_NORMAL,				// font style
+	//		DWRITE_FONT_STRETCH_NORMAL,				// default font stretch
+	//		fontSize,								// font size
+	//		L"",									// locale name
+	//		m_appleFormat.put()
+	//	));
+	//	winrt::check_hresult(m_appleFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING));
+	//	winrt::check_hresult(m_appleFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR));
+	//	winrt::check_hresult(m_appleFormat->SetReadingDirection(rtl ? DWRITE_READING_DIRECTION_RIGHT_TO_LEFT : DWRITE_READING_DIRECTION_LEFT_TO_RIGHT));
+
+	//	winrt::com_ptr<IDWriteTextLayout> textLayout;
+	//	winrt::check_hresult(m_dwriteFactory->CreateTextLayout(
+	//		text.data(),					// The string to be laid out and formatted.
+	//		wcslen(text.data()),			// The length of the string.
+	//		m_appleFormat.get(),			// The text format to apply to the string (contains font information, etc).
+	//		width,							// The width of the layout box.
+	//		INFINITY,						// The height of the layout box.
+	//		textLayout.put()				// The IDWriteTextLayout interface pointer.
+	//	));
+
+	//	DWRITE_TEXT_METRICS metrics;
+	//	winrt::check_hresult(textLayout->GetMetrics(&metrics));
+
+	//	UINT32 maxHitTestMetricsCount = metrics.lineCount * metrics.maxBidiReorderingDepth;
+	//	DWRITE_HIT_TEST_METRICS* ranges = new DWRITE_HIT_TEST_METRICS[maxHitTestMetricsCount];
+
+	//	std::vector<Windows::Foundation::Rect> rects;
+
+	//	for (const TextEntity& entity : entities) {
+	//		auto spoiler = entity.Type().try_as<TextEntityTypeSpoiler>();
+	//		if (spoiler != nullptr) {
+	//			UINT32 actualTestsCount;
+	//			winrt::check_hresult(textLayout->HitTestTextRange(entity.Offset(), entity.Length(), 0, 0, ranges, maxHitTestMetricsCount, &actualTestsCount));
+
+	//			for (int i = 0; i < actualTestsCount; i++) {
+	//				float left = ranges[i].left;
+	//				float top = ranges[i].top;
+	//				float right = ranges[i].left + ranges[i].width;
+	//				float bottom = ranges[i].top + ranges[i].height;
+
+	//				rects.push_back({ left, top, right - left, bottom - top });
+	//			}
+	//		}
+	//	}
+
+	//	return winrt::single_threaded_vector<Windows::Foundation::Rect>(std::move(rects));
+	//}
+
+	void PlaceholderImageHelper::WriteBytes(IVector<byte> hash, IRandomAccessStream randomAccessStream)
+	{
+		winrt::com_ptr<IStream> stream;
+		winrt::check_hresult(CreateStreamOverRandomAccessStream(winrt::get_unknown(randomAccessStream), IID_PPV_ARGS(&stream)));
+
+		auto yolo = std::vector<byte>(hash.begin(), hash.end());
+
+		winrt::check_hresult(stream->Write(yolo.data(), hash.Size(), nullptr));
+		winrt::check_hresult(stream->Seek({ 0 }, STREAM_SEEK_SET, nullptr));
+	}
+
 	HRESULT PlaceholderImageHelper::SaveImageToStream(ID2D1Image* image, REFGUID wicFormat, IRandomAccessStream randomAccessStream)
 	{
 		HRESULT result;
 		winrt::com_ptr<IStream> stream;
 		ReturnIfFailed(result, CreateStreamOverRandomAccessStream(winrt::get_unknown(randomAccessStream), IID_PPV_ARGS(&stream)));
+
+		if (randomAccessStream.Size()) {
+			stream->SetSize({ 0 });
+		}
 
 		winrt::com_ptr<IWICBitmapEncoder> wicBitmapEncoder;
 		ReturnIfFailed(result, m_wicFactory->CreateEncoder(wicFormat, nullptr, wicBitmapEncoder.put()));

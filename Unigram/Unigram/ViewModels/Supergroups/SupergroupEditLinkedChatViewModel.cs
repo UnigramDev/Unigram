@@ -32,14 +32,8 @@ namespace Unigram.ViewModels.Supergroups
         protected Chat _chat;
         public Chat Chat
         {
-            get
-            {
-                return _chat;
-            }
-            set
-            {
-                Set(ref _chat, value);
-            }
+            get => _chat;
+            set => Set(ref _chat, value);
         }
 
         public MvxObservableCollection<Chat> Items { get; private set; }
@@ -187,7 +181,7 @@ namespace Unigram.ViewModels.Supergroups
             }
             else
             {
-                String message;
+                string message;
                 bool history = false;
                 if (CacheService.TryGetSupergroup(linkedChat, out Supergroup linkedSupergroup))
                 {

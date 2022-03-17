@@ -13,7 +13,6 @@ namespace Unigram.Views.Settings
         public SettingsUsernamePage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsUsernameViewModel>();
 
             var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => Username.TextChanged += new TextChangedEventHandler(handler));
             debouncer.Invoked += (s, args) =>

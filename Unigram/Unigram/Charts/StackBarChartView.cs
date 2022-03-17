@@ -29,8 +29,8 @@ namespace Unigram.Charts
                 return;
             }
 
-            float fullWidth = (chartWidth / (pickerDelegate.pickerEnd - pickerDelegate.pickerStart));
-            float offset = fullWidth * (pickerDelegate.pickerStart) - HORIZONTAL_PADDING;
+            float fullWidth = chartWidth / (pickerDelegate.pickerEnd - pickerDelegate.pickerStart);
+            float offset = fullWidth * pickerDelegate.pickerStart - HORIZONTAL_PADDING;
 
             float p;
             float lineWidth;
@@ -107,7 +107,7 @@ namespace Unigram.Charts
                     float xPoint = p / 2 + chartData.xPercentage[i] * (fullWidth - p) - offset;
                     float yPercentage = y[i] / currentMaxHeight;
 
-                    float height = (yPercentage) * (MeasuredHeight - chartBottom - SIGNATURE_TEXT_HEIGHT) * line.alpha;
+                    float height = yPercentage * (MeasuredHeight - chartBottom - SIGNATURE_TEXT_HEIGHT) * line.alpha;
                     float yPoint = MeasuredHeight - chartBottom - height;
 
                     line.linesPath[line.linesPathBottomSize++] = xPoint;
@@ -158,7 +158,7 @@ namespace Unigram.Charts
                     float xPoint = p / 2 + chartData.xPercentage[selectedIndex] * (fullWidth - p) - offset;
                     float yPercentage = y[selectedIndex] / currentMaxHeight;
 
-                    float height = (yPercentage) * (MeasuredHeight - chartBottom - SIGNATURE_TEXT_HEIGHT) * line.alpha;
+                    float height = yPercentage * (MeasuredHeight - chartBottom - SIGNATURE_TEXT_HEIGHT) * line.alpha;
                     float yPoint = MeasuredHeight - chartBottom - height;
 
                     line.paint.StrokeWidth = lineWidth;
@@ -180,7 +180,7 @@ namespace Unigram.Charts
                 return;
             }
 
-            float offset = chartFullWidth * (pickerDelegate.pickerStart) - HORIZONTAL_PADDING;
+            float offset = chartFullWidth * pickerDelegate.pickerStart - HORIZONTAL_PADDING;
             float p;
             if (chartData.xPercentage.Length < 2)
             {
@@ -278,7 +278,7 @@ namespace Unigram.Charts
 
                             float h = ANIMATE_PICKER_SIZES ? pickerMaxHeight : chartData.maxValue;
                             float yPercentage = yMaxPoints[k] / h * line.alpha;
-                            float yPoint = (yPercentage) * (pickerHeight);
+                            float yPoint = yPercentage * pickerHeight;
 
 
                             line.linesPath[line.linesPathBottomSize++] = xPoint;

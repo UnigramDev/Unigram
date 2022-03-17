@@ -7,7 +7,6 @@ using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Services;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.ViewModels.Chats
 {
@@ -37,8 +36,8 @@ namespace Unigram.ViewModels.Chats
         private ICollection _autocomplete;
         public ICollection Autocomplete
         {
-            get { return _autocomplete; }
-            set { Set(ref _autocomplete, value); }
+            get => _autocomplete;
+            set => Set(ref _autocomplete, value);
         }
 
         #region Filters
@@ -46,22 +45,22 @@ namespace Unigram.ViewModels.Chats
         private string _query;
         public string Query
         {
-            get { return _query; }
-            set { Set(ref _query, value); }
+            get => _query;
+            set => Set(ref _query, value);
         }
 
         private DateTimeOffset? _date;
         public DateTimeOffset? Date
         {
-            get { return _date; }
-            set { Set(ref _date, value); }
+            get => _date;
+            set => Set(ref _date, value);
         }
 
         private MessageSender _from;
         public MessageSender From
         {
-            get { return _from; }
-            set { Set(ref _from, value); }
+            get => _from;
+            set => Set(ref _from, value);
         }
 
         public bool IsFromEnabled
@@ -86,8 +85,8 @@ namespace Unigram.ViewModels.Chats
         private SearchMessagesFilter _filter;
         public SearchMessagesFilter Filter
         {
-            get { return _filter; }
-            set { Set(ref _filter, value); }
+            get => _filter;
+            set => Set(ref _filter, value);
         }
 
         public ICollection Filters
@@ -145,10 +144,7 @@ namespace Unigram.ViewModels.Chats
         protected Message _selectedItem;
         public Message SelectedItem
         {
-            get
-            {
-                return _selectedItem;
-            }
+            get => _selectedItem;
             set
             {
                 Set(ref _selectedItem, value);
@@ -161,14 +157,8 @@ namespace Unigram.ViewModels.Chats
         protected SearchChatMessagesCollection _items;
         public SearchChatMessagesCollection Items
         {
-            get
-            {
-                return _items;
-            }
-            set
-            {
-                Set(ref _items, value);
-            }
+            get => _items;
+            set => Set(ref _items, value);
         }
 
         #endregion
@@ -219,15 +209,11 @@ namespace Unigram.ViewModels.Chats
 
                 var fromMessageId = 0L;
 
-                var field = _dialog.ListField;
-                if (field != null)
-                {
-                    var panel = field.ItemsPanelRoot as ItemsStackPanel;
-                    if (panel != null && panel.LastVisibleIndex >= 0 && panel.LastVisibleIndex < _dialog.Items.Count && _dialog.Items.Count > 0)
-                    {
-                        fromMessageId = _dialog.Items[panel.LastVisibleIndex].Id;
-                    }
-                }
+                //var panel = _dialog.ListField?.ItemsPanelRoot as ItemsStackPanel;
+                //if (panel != null && panel.LastVisibleIndex >= 0 && panel.LastVisibleIndex < _dialog.Items.Count && _dialog.Items.Count > 0)
+                //{
+                //    fromMessageId = _dialog.Items[panel.LastVisibleIndex].Id;
+                //}
 
                 var collection = new SearchChatMessagesCollection(ProtoService, chat.Id, _dialog.ThreadId, query, from, fromMessageId, filter);
 

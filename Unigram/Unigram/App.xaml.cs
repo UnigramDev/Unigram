@@ -21,8 +21,6 @@ using Windows.ApplicationModel.DataTransfer.ShareTarget;
 using Windows.ApplicationModel.ExtendedExecution;
 using Windows.Foundation;
 using Windows.Media;
-using Windows.Networking.PushNotifications;
-using Windows.Storage;
 using Windows.System.Profile;
 using Windows.UI.Core;
 using Windows.UI.Notifications;
@@ -55,7 +53,7 @@ namespace Unigram
         /// </summary>
         public App()
         {
-            TLContainer.Current.Configure(/*session*/);
+            TLContainer.Current.Configure(out int count);
 
             RequestedTheme = SettingsService.Current.Appearance.GetCalculatedApplicationTheme();
             InitializeComponent();
@@ -75,14 +73,8 @@ namespace Unigram
 
             UnhandledException += (s, args) =>
             {
-                if (args.Exception is NotSupportedException)
-                {
-                    args.Handled = true;
-                }
-                else
-                {
-                    Client.Execute(new AddLogMessage(1, "Unhandled exception:\n" + args.Exception.ToString()));
-                }
+                args.Handled = true;
+                Client.Execute(new AddLogMessage(1, "Unhandled exception:\n" + args.Exception.ToString()));
             };
 
 #if !DEBUG
@@ -97,14 +89,25 @@ namespace Unigram
                     { "Architecture", Package.Current.Id.Architecture.ToString() }
                 });
 
-            Client.SetFatalErrorCallback(FatalErrorCallback);
+            Microsoft.AppCenter.Analytics.Analytics.TrackEvent("Instance",
+                new System.Collections.Generic.Dictionary<string, string>
+                {
+                    { "ActiveSessions", $"{count}" },
+                });
+
+            Client.SetLogMessageCallback(0, FatalErrorCallback);
 
             var lastMessage = SettingsService.Current.Diagnostics.LastErrorMessage;
-            if (lastMessage != null && lastMessage.Length > 0)
+            if (lastMessage != null && lastMessage.Length > 0 && SettingsService.Current.Diagnostics.LastErrorVersion == Package.Current.Id.Version.Build)
             {
                 SettingsService.Current.Diagnostics.LastErrorMessage = null;
                 SettingsService.Current.Diagnostics.IsLastErrorDiskFull = TdException.IsDiskFullError(lastMessage);
-                Microsoft.AppCenter.Crashes.Crashes.TrackError(TdException.FromMessage(lastMessage));
+
+                var exception = TdException.FromMessage(lastMessage);
+                if (exception.IsUnhandled)
+                {
+                    Microsoft.AppCenter.Crashes.Crashes.TrackError(exception);
+                }
             }
 #endif
 
@@ -112,14 +115,18 @@ namespace Unigram
             LeavingBackground += OnLeavingBackground;
         }
 
-        private void FatalErrorCallback(string message)
+        private void FatalErrorCallback(int verbosityLevel, string message)
         {
-            message += Environment.NewLine;
-            message += "Application version: " + SettingsPage.GetVersion();
-            message += Environment.NewLine;
-            message += "Entered background: " + IsBackground;
+            if (verbosityLevel == 0)
+            {
+                message += Environment.NewLine;
+                message += "Application version: " + SettingsPage.GetVersion();
+                message += Environment.NewLine;
+                message += "Entered background: " + IsBackground;
 
-            SettingsService.Current.Diagnostics.LastErrorMessage = message;
+                SettingsService.Current.Diagnostics.LastErrorMessage = message;
+                SettingsService.Current.Diagnostics.LastErrorVersion = Package.Current.Id.Version.Build;
+            }
         }
 
         private void OnEnteredBackground(object sender, EnteredBackgroundEventArgs e)
@@ -134,6 +141,8 @@ namespace Unigram
 
         protected override void OnWindowCreated(WindowCreatedEventArgs args)
         {
+            args.Window.Activated += Window_Activated;
+
             //var flowDirectionSetting = Windows.ApplicationModel.Resources.Core.ResourceContext.GetForCurrentView().QualifierValues["LayoutDirection"];
 
             //args.Window.CoreWindow.FlowDirection = flowDirectionSetting == "RTL" ? CoreWindowFlowDirection.RightToLeft : CoreWindowFlowDirection.LeftToRight;
@@ -180,8 +189,7 @@ namespace Unigram
             }
 
             var dialog = new PasscodePage(biometrics);
-            TypedEventHandler<ContentDialog, ContentDialogClosingEventArgs> handler = null;
-            handler = (s, args) =>
+            void handler(ContentDialog s, ContentDialogClosingEventArgs args)
             {
                 dialog.Closing -= handler;
 
@@ -191,7 +199,7 @@ namespace Unigram
                 {
                     content.Visibility = Visibility.Visible;
                 }
-            };
+            }
 
             dialog.Closing += handler;
             var result = await dialog.ShowQueuedAsync();
@@ -224,18 +232,18 @@ namespace Unigram
         {
             base.OnBackgroundActivated(args);
 
-            //if (args.TaskInstance.TriggerDetails is AppServiceTriggerDetails appService && string.Equals(appService.CallerPackageFamilyName, Package.Current.Id.FamilyName))
-            //{
-            //    Connection = appService.AppServiceConnection;
-            //    Deferral = args.TaskInstance.GetDeferral();
+            if (args.TaskInstance.TriggerDetails is AppServiceTriggerDetails appService && string.Equals(appService.CallerPackageFamilyName, Package.Current.Id.FamilyName))
+            {
+                Connection = appService.AppServiceConnection;
+                Deferral = args.TaskInstance.GetDeferral();
 
-            //    appService.AppServiceConnection.RequestReceived += AppServiceConnection_RequestReceived;
-            //    args.TaskInstance.Canceled += (s, e) =>
-            //    {
-            //        Deferral.Complete();
-            //    };
-            //}
-            //else
+                appService.AppServiceConnection.RequestReceived += AppServiceConnection_RequestReceived;
+                args.TaskInstance.Canceled += (s, e) =>
+                {
+                    Deferral.Complete();
+                };
+            }
+            else
             {
                 var deferral = args.TaskInstance.GetDeferral();
 
@@ -257,42 +265,6 @@ namespace Unigram
                     if (TLContainer.Current.TryResolve(session, out INotificationsService service))
                     {
                         await service.ProcessAsync(data);
-                    }
-                }
-                else if (args.TaskInstance.TriggerDetails is RawNotification notification)
-                {
-                    int? GetSession(long id)
-                    {
-                        if (ApplicationData.Current.LocalSettings.Values.TryGet($"User{id}", out int value))
-                        {
-                            return value;
-                        }
-
-                        return null;
-                    }
-
-                    var receiver = Client.Execute(new GetPushReceiverId(notification.Content)) as PushReceiverId;
-                    if (receiver == null)
-                    {
-                        deferral.Complete();
-                        return;
-                    }
-
-                    var session = GetSession(receiver.Id);
-                    if (session == null)
-                    {
-                        deferral.Complete();
-                        return;
-                    }
-
-                    if (TLContainer.Current.TryResolve(session.Value, out IProtoService service))
-                    {
-                        var response = await service.SendAsync(new ProcessPushNotification(notification.Content));
-                        if (response is Error error && error.Code == 406)
-                        {
-                            // xd memes
-                            await Task.Delay(5000);
-                        }
                     }
                 }
 
@@ -317,12 +289,6 @@ namespace Unigram
             {
                 TLContainer.Current.Passcode.Lock();
                 InactivityHelper.Initialize(TLContainer.Current.Passcode.AutolockTimeout);
-            }
-
-            if (Window.Current != null)
-            {
-                Window.Current.Activated -= Window_Activated;
-                Window.Current.Activated += Window_Activated;
             }
         }
 
@@ -365,10 +331,6 @@ namespace Unigram
             }
 
             TLWindowContext.GetForCurrentView().SetActivatedArgs(args, navService);
-
-            Window.Current.Activated -= Window_Activated;
-            Window.Current.Activated += Window_Activated;
-
             ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(320, 500));
             //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 
@@ -419,6 +381,8 @@ namespace Unigram
 
         private async void OnStartSync()
         {
+            await RequestExtendedExecutionSessionAsync();
+
             //#if DEBUG
             //await VoIPConnection.Current.ConnectAsync();
             //#endif
@@ -437,8 +401,9 @@ namespace Unigram
             }
             catch { }
 
-#if DESKTOP_BRIDGE
-            if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.ApplicationModel.FullTrustProcessLauncher"))
+#if !DEBUG
+            if (SettingsService.Current.IsTrayVisible
+                && Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.ApplicationModel.FullTrustProcessLauncher"))
             {
                 try
                 {
@@ -452,12 +417,17 @@ namespace Unigram
 #endif
 
             Windows.ApplicationModel.Core.CoreApplication.EnablePrelaunch(true);
+        }
 
+        private async Task RequestExtendedExecutionSessionAsync()
+        {
             if (_extendedSession == null && AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Desktop")
             {
-                var session = new ExtendedExecutionSession { Reason = ExtendedExecutionReason.Unspecified };
-                var result = await session.RequestExtensionAsync();
+                var session = new ExtendedExecutionSession();
+                session.Reason = ExtendedExecutionReason.Unspecified;
+                session.Revoked += ExtendedExecutionSession_Revoked;
 
+                var result = await session.RequestExtensionAsync();
                 if (result == ExtendedExecutionResult.Allowed)
                 {
                     _extendedSession = session;
@@ -466,6 +436,7 @@ namespace Unigram
                 }
                 else
                 {
+                    session.Revoked -= ExtendedExecutionSession_Revoked;
                     session.Dispose();
 
                     Logs.Logger.Warning(Logs.LogTarget.Lifecycle, "ExtendedExecutionResult.Denied");
@@ -473,7 +444,18 @@ namespace Unigram
             }
         }
 
-        public override void OnResuming(object s, object e, AppExecutionState previousExecutionState)
+        private void ExtendedExecutionSession_Revoked(object sender, ExtendedExecutionRevokedEventArgs args)
+        {
+            Logs.Logger.Warning(Logs.LogTarget.Lifecycle, "ExtendedExecutionSession.Revoked");
+
+            if (_extendedSession != null)
+            {
+                _extendedSession.Dispose();
+                _extendedSession = null;
+            }
+        }
+
+        public override async void OnResuming(object s, object e, AppExecutionState previousExecutionState)
         {
             Logs.Logger.Info(Logs.LogTarget.Lifecycle, "OnResuming");
 
@@ -486,16 +468,104 @@ namespace Unigram
             // #2034: Will this work? No one knows.
             SettingsService.Current.Appearance.UpdateNightMode();
 
-            base.OnResuming(s, e, previousExecutionState);
+            await RequestExtendedExecutionSessionAsync();
         }
 
         public override Task OnSuspendingAsync(object s, SuspendingEventArgs e, bool prelaunchActivated)
         {
             Logs.Logger.Info(Logs.LogTarget.Lifecycle, "OnSuspendingAsync");
 
-            TLContainer.Current.Passcode.CloseTime = DateTime.Now;
+            TLContainer.Current.Passcode.CloseTime = DateTime.UtcNow;
 
-            return base.OnSuspendingAsync(s, e, prelaunchActivated);
+            return Task.CompletedTask;
+        }
+
+        public override INavigable ViewModelForPage(Page page, INavigationService navigationService)
+        {
+            return page switch
+            {
+                Unigram.Views.ChatsNearbyPage => TLContainer.Current.Resolve<Unigram.ViewModels.ChatsNearbyViewModel>(navigationService.SessionId),
+                Unigram.Views.DiagnosticsPage => TLContainer.Current.Resolve<Unigram.ViewModels.DiagnosticsViewModel>(navigationService.SessionId),
+                Unigram.Views.LogOutPage => TLContainer.Current.Resolve<Unigram.ViewModels.LogOutViewModel>(navigationService.SessionId),
+                Unigram.Views.ProfilePage profile => TLContainer.Current.Resolve<Unigram.ViewModels.ProfileViewModel, Unigram.ViewModels.Delegates.IProfileDelegate>(profile, navigationService.SessionId),
+                Unigram.Views.InstantPage => TLContainer.Current.Resolve<Unigram.ViewModels.InstantViewModel>(navigationService.SessionId),
+                //
+                Unigram.Views.MainPage => TLContainer.Current.Resolve<Unigram.ViewModels.MainViewModel>(navigationService.SessionId),
+                Unigram.Views.SettingsPage settings => TLContainer.Current.Resolve<Unigram.ViewModels.SettingsViewModel, Unigram.ViewModels.Delegates.ISettingsDelegate>(settings, navigationService.SessionId),
+                Unigram.Views.Users.UserCommonChatsPage => TLContainer.Current.Resolve<Unigram.ViewModels.Users.UserCommonChatsViewModel>(navigationService.SessionId),
+                Unigram.Views.Users.UserCreatePage => TLContainer.Current.Resolve<Unigram.ViewModels.Users.UserCreateViewModel>(navigationService.SessionId),
+                //
+                Unigram.Views.Supergroups.SupergroupAddAdministratorPage => TLContainer.Current.Resolve<Unigram.ViewModels.Supergroups.SupergroupAddAdministratorViewModel>(navigationService.SessionId),
+                Unigram.Views.Supergroups.SupergroupAddRestrictedPage => TLContainer.Current.Resolve<Unigram.ViewModels.Supergroups.SupergroupAddRestrictedViewModel>(navigationService.SessionId),
+                Unigram.Views.Supergroups.SupergroupAdministratorsPage supergroupAdministrators => TLContainer.Current.Resolve<Unigram.ViewModels.Supergroups.SupergroupAdministratorsViewModel, Unigram.ViewModels.Delegates.ISupergroupDelegate>(supergroupAdministrators, navigationService.SessionId),
+                Unigram.Views.Supergroups.SupergroupBannedPage supergroupBanned => TLContainer.Current.Resolve<Unigram.ViewModels.Supergroups.SupergroupBannedViewModel, Unigram.ViewModels.Delegates.ISupergroupDelegate>(supergroupBanned, navigationService.SessionId),
+                Unigram.Views.Supergroups.SupergroupEditAdministratorPage supergroupEditAdministrator => TLContainer.Current.Resolve<Unigram.ViewModels.Supergroups.SupergroupEditAdministratorViewModel, Unigram.ViewModels.Delegates.IMemberDelegate>(supergroupEditAdministrator, navigationService.SessionId),
+                Unigram.Views.Supergroups.SupergroupEditLinkedChatPage supergroupEditLinkedChat => TLContainer.Current.Resolve<Unigram.ViewModels.Supergroups.SupergroupEditLinkedChatViewModel, Unigram.ViewModels.Delegates.ISupergroupDelegate>(supergroupEditLinkedChat, navigationService.SessionId),
+                Unigram.Views.Supergroups.SupergroupEditRestrictedPage supergroupEditRestricted => TLContainer.Current.Resolve<Unigram.ViewModels.Supergroups.SupergroupEditRestrictedViewModel, Unigram.ViewModels.Delegates.IMemberDelegate>(supergroupEditRestricted, navigationService.SessionId),
+                Unigram.Views.Supergroups.SupergroupEditStickerSetPage => TLContainer.Current.Resolve<Unigram.ViewModels.Supergroups.SupergroupEditStickerSetViewModel>(navigationService.SessionId),
+                Unigram.Views.Supergroups.SupergroupEditTypePage supergroupEditType => TLContainer.Current.Resolve<Unigram.ViewModels.Supergroups.SupergroupEditTypeViewModel, Unigram.ViewModels.Delegates.ISupergroupEditDelegate>(supergroupEditType, navigationService.SessionId),
+                Unigram.Views.Supergroups.SupergroupEditPage supergroupEdit => TLContainer.Current.Resolve<Unigram.ViewModels.Supergroups.SupergroupEditViewModel, Unigram.ViewModels.Delegates.ISupergroupEditDelegate>(supergroupEdit, navigationService.SessionId),
+                Unigram.Views.Supergroups.SupergroupMembersPage supergroupMembers => TLContainer.Current.Resolve<Unigram.ViewModels.Supergroups.SupergroupMembersViewModel, Unigram.ViewModels.Delegates.ISupergroupDelegate>(supergroupMembers, navigationService.SessionId),
+                Unigram.Views.Supergroups.SupergroupPermissionsPage supergroupPermissions => TLContainer.Current.Resolve<Unigram.ViewModels.Supergroups.SupergroupPermissionsViewModel, Unigram.ViewModels.Delegates.ISupergroupDelegate>(supergroupPermissions, navigationService.SessionId),
+                Unigram.Views.Supergroups.SupergroupReactionsPage supergroupReactions => TLContainer.Current.Resolve<Unigram.ViewModels.Supergroups.SupergroupReactionsViewModel, Unigram.ViewModels.Delegates.IChatDelegate>(supergroupReactions, navigationService.SessionId),
+                //
+                Unigram.Views.SignIn.SignInRecoveryPage => TLContainer.Current.Resolve<Unigram.ViewModels.SignIn.SignInRecoveryViewModel>(navigationService.SessionId),
+                Unigram.Views.SignIn.SignUpPage => TLContainer.Current.Resolve<Unigram.ViewModels.SignIn.SignUpViewModel>(navigationService.SessionId),
+                Unigram.Views.SignIn.SignInPasswordPage => TLContainer.Current.Resolve<Unigram.ViewModels.SignIn.SignInPasswordViewModel>(navigationService.SessionId),
+                Unigram.Views.SignIn.SignInSentCodePage => TLContainer.Current.Resolve<Unigram.ViewModels.SignIn.SignInSentCodeViewModel>(navigationService.SessionId),
+                Unigram.Views.SignIn.SignInPage signIn => TLContainer.Current.Resolve<Unigram.ViewModels.SignIn.SignInViewModel, Unigram.ViewModels.Delegates.ISignInDelegate>(signIn, navigationService.SessionId),
+                //
+                Unigram.Views.Folders.FoldersPage => TLContainer.Current.Resolve<Unigram.ViewModels.Folders.FoldersViewModel>(navigationService.SessionId),
+                Unigram.Views.Folders.FolderPage => TLContainer.Current.Resolve<Unigram.ViewModels.Folders.FolderViewModel>(navigationService.SessionId),
+                Unigram.Views.Channels.ChannelCreateStep1Page => TLContainer.Current.Resolve<Unigram.ViewModels.Channels.ChannelCreateStep1ViewModel>(navigationService.SessionId),
+                Unigram.Views.Channels.ChannelCreateStep2Page channelCreateStep2 => TLContainer.Current.Resolve<Unigram.ViewModels.Channels.ChannelCreateStep2ViewModel, Unigram.ViewModels.Delegates.ISupergroupEditDelegate>(channelCreateStep2, navigationService.SessionId),
+                Unigram.Views.BasicGroups.BasicGroupCreateStep1Page => TLContainer.Current.Resolve<Unigram.ViewModels.BasicGroups.BasicGroupCreateStep1ViewModel>(navigationService.SessionId),
+                Unigram.Views.Settings.SettingsBlockedChatsPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.SettingsBlockedChatsViewModel>(navigationService.SessionId),
+                Unigram.Views.Settings.SettingsStickersPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.SettingsStickersViewModel>(navigationService.SessionId),
+                //
+                Unigram.Views.Settings.SettingsThemePage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.SettingsThemeViewModel>(navigationService.SessionId),
+                Unigram.Views.Settings.SettingsPhoneSentCodePage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.SettingsPhoneSentCodeViewModel>(navigationService.SessionId),
+                Unigram.Views.Settings.SettingsPhonePage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.SettingsPhoneViewModel>(navigationService.SessionId),
+                //
+                Unigram.Views.Settings.SettingsAdvancedPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.SettingsAdvancedViewModel>(navigationService.SessionId),
+                Unigram.Views.Settings.SettingsAppearancePage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.SettingsAppearanceViewModel>(navigationService.SessionId),
+                Unigram.Views.Settings.SettingsBackgroundsPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.SettingsBackgroundsViewModel>(navigationService.SessionId),
+                Unigram.Views.Settings.SettingsDataAndStoragePage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.SettingsDataAndStorageViewModel>(navigationService.SessionId),
+                Unigram.Views.Settings.SettingsDataAutoPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.SettingsDataAutoViewModel>(navigationService.SessionId),
+                Unigram.Views.Settings.SettingsLanguagePage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.SettingsLanguageViewModel>(navigationService.SessionId),
+                Unigram.Views.Settings.SettingsNetworkPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.SettingsNetworkViewModel>(navigationService.SessionId),
+                Unigram.Views.Settings.SettingsNightModePage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.SettingsNightModeViewModel>(navigationService.SessionId),
+                Unigram.Views.Settings.SettingsNotificationsExceptionsPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.SettingsNotificationsExceptionsViewModel>(navigationService.SessionId),
+                Unigram.Views.Settings.SettingsPasscodePage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.SettingsPasscodeViewModel>(navigationService.SessionId),
+                Unigram.Views.Settings.SettingsPasswordPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.SettingsPasswordViewModel>(navigationService.SessionId),
+                Unigram.Views.Settings.SettingsPrivacyAndSecurityPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.SettingsPrivacyAndSecurityViewModel>(navigationService.SessionId),
+                Unigram.Views.Settings.SettingsProxiesPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.SettingsProxiesViewModel>(navigationService.SessionId),
+                Unigram.Views.Settings.SettingsShortcutsPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.SettingsShortcutsViewModel>(navigationService.SessionId),
+                Unigram.Views.Settings.SettingsThemesPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.SettingsThemesViewModel>(navigationService.SessionId),
+                Unigram.Views.Settings.SettingsWebSessionsPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.SettingsWebSessionsViewModel>(navigationService.SessionId),
+                Unigram.Views.Settings.SettingsNotificationsPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.SettingsNotificationsViewModel>(navigationService.SessionId),
+                Unigram.Views.Settings.SettingsSessionsPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.SettingsSessionsViewModel>(navigationService.SessionId),
+                Unigram.Views.Settings.SettingsStoragePage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.SettingsStorageViewModel>(navigationService.SessionId),
+                Unigram.Views.Settings.SettingsUsernamePage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.SettingsUsernameViewModel>(navigationService.SessionId),
+                Unigram.Views.Settings.Privacy.SettingsPrivacyAllowCallsPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyAllowCallsViewModel>(navigationService.SessionId),
+                Unigram.Views.Settings.Privacy.SettingsPrivacyAllowChatInvitesPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyAllowChatInvitesViewModel>(navigationService.SessionId),
+                Unigram.Views.Settings.Privacy.SettingsPrivacyAllowP2PCallsPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyAllowP2PCallsViewModel>(navigationService.SessionId),
+                Unigram.Views.Settings.Privacy.SettingsPrivacyShowForwardedPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyShowForwardedViewModel>(navigationService.SessionId),
+                Unigram.Views.Settings.Privacy.SettingsPrivacyPhonePage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyPhoneViewModel>(navigationService.SessionId),
+                Unigram.Views.Settings.Privacy.SettingsPrivacyShowPhotoPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyShowPhotoViewModel>(navigationService.SessionId),
+                Unigram.Views.Settings.Privacy.SettingsPrivacyShowStatusPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyShowStatusViewModel>(navigationService.SessionId),
+                Unigram.Views.Settings.Password.SettingsPasswordConfirmPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.Password.SettingsPasswordConfirmViewModel>(navigationService.SessionId),
+                Unigram.Views.Settings.Password.SettingsPasswordCreatePage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.Password.SettingsPasswordCreateViewModel>(navigationService.SessionId),
+                Unigram.Views.Settings.Password.SettingsPasswordDonePage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.Password.SettingsPasswordDoneViewModel>(navigationService.SessionId),
+                Unigram.Views.Settings.Password.SettingsPasswordEmailPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.Password.SettingsPasswordEmailViewModel>(navigationService.SessionId),
+                Unigram.Views.Settings.Password.SettingsPasswordHintPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.Password.SettingsPasswordHintViewModel>(navigationService.SessionId),
+                Unigram.Views.Settings.Password.SettingsPasswordIntroPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.Password.SettingsPasswordIntroViewModel>(navigationService.SessionId),
+                Unigram.Views.Payments.PaymentFormPage => TLContainer.Current.Resolve<Unigram.ViewModels.Payments.PaymentFormViewModel>(navigationService.SessionId),
+                Unigram.Views.Chats.MessageStatisticsPage messageStatistics => TLContainer.Current.Resolve<Unigram.ViewModels.Chats.MessageStatisticsViewModel, Unigram.ViewModels.Delegates.IChatDelegate>(messageStatistics, navigationService.SessionId),
+                Unigram.Views.Chats.ChatInviteLinkPage => TLContainer.Current.Resolve<Unigram.ViewModels.Chats.ChatInviteLinkViewModel>(navigationService.SessionId),
+                Unigram.Views.Chats.ChatStatisticsPage chatStatistics => TLContainer.Current.Resolve<Unigram.ViewModels.Chats.ChatStatisticsViewModel, Unigram.ViewModels.Delegates.IChatDelegate>(chatStatistics, navigationService.SessionId),
+                _ => null
+            };
         }
     }
 }

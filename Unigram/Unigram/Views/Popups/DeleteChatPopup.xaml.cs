@@ -13,12 +13,12 @@ namespace Unigram.Views.Popups
         {
             InitializeComponent();
 
-            Photo.Source = PlaceholderHelper.GetChat(protoService, chat, 36);
+            //Photo.Source = PlaceholderHelper.GetChat(protoService, chat, 36);
 
             var position = chat.GetPosition(chatList);
             if (position?.Source is ChatSourcePublicServiceAnnouncement)
             {
-                Title.Text = Strings.Resources.PsaHideChatAlertTitle;
+                Title = Strings.Resources.PsaHideChatAlertTitle;
                 Subtitle.Text = Strings.Resources.PsaHideChatAlertText;
                 CheckBox.Visibility = Visibility.Collapsed;
 
@@ -28,7 +28,7 @@ namespace Unigram.Views.Popups
                 return;
             }
 
-            Title.Text = clear ? Strings.Resources.ClearHistory : Strings.Resources.DeleteChatUser; // protoService.GetTitle(chat);
+            Title = clear ? Strings.Resources.ClearHistory : Strings.Resources.DeleteChatUser; // protoService.GetTitle(chat);
 
             var user = protoService.GetUser(chat);
             var basicGroup = protoService.GetBasicGroup(chat);

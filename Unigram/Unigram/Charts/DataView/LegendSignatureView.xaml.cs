@@ -168,9 +168,9 @@ namespace Unigram.Charts.DataView
                     if (showPercentage)
                     {
                         float v = l.y[index] / (float)sum;
-                        if (v < 0.1f && v != 0f)
+                        if (v is < 0.1f and not 0f)
                         {
-                            holdes[i].Percentage = string.Format(CultureInfo.InvariantCulture, "{0:0.0}%", (100f * v));
+                            holdes[i].Percentage = string.Format(CultureInfo.InvariantCulture, "{0:0.0}%", 100f * v);
                         }
                         else
                         {
@@ -192,14 +192,14 @@ namespace Unigram.Charts.DataView
             //}
         }
 
-        private String formatData(DateTime date)
+        private string formatData(DateTime date)
         {
             //if (useHour) return capitalize(format2.format(date));
             //return capitalize(format.format(date)) + capitalize(format2.format(date));
             return Converter.DayMonthFullYear.Format(date);
         }
 
-        private String capitalize(String s)
+        private string capitalize(string s)
         {
             if (s.Length > 0)
             {
@@ -210,20 +210,20 @@ namespace Unigram.Charts.DataView
         }
 
 
-        public String formatWholeNumber(int v)
+        public string formatWholeNumber(int v)
         {
             float num_ = v;
             int count = 0;
             if (v < 10_000)
             {
-                return String.Format("{0:D}", v);
+                return string.Format("{0:D}", v);
             }
             while (num_ >= 10_000 && count < ChartHorizontalLinesData.s.Length - 1)
             {
                 num_ /= 1000;
                 count++;
             }
-            return String.Format("{0:F2}", num_) + ChartHorizontalLinesData.s[count];
+            return string.Format("{0:F2}", num_) + ChartHorizontalLinesData.s[count];
         }
 
 
@@ -322,7 +322,7 @@ namespace Unigram.Charts.DataView
 
                 _value = new TextBlock();
                 _value.Margin = new Thickness(8, 2, 0, 0);
-                _value.Style = App.Current.Resources["BaseTextBlockStyle"] as Style;
+                _value.Style = Navigation.BootStrapper.Current.Resources["BaseTextBlockStyle"] as Style;
                 _value.HorizontalAlignment = HorizontalAlignment.Right;
                 SetColumn(_value, 2);
                 Children.Add(_value);

@@ -43,9 +43,16 @@
     </ContentDialog.Style>
 
     <Grid x:Name="LayoutRoot" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
         <StackPanel
             VerticalAlignment="Center"
-            HorizontalAlignment="Center">
+            HorizontalAlignment="Center"
+            Margin="0,-120,0,0"
+            Grid.Row="1">
 
             <controls:ProfilePicture
                 x:Name="Photo"
@@ -71,17 +78,17 @@
             <Grid x:Name="FieldPanel"
                   HorizontalAlignment="Center"
                   VerticalAlignment="Center"
-                  Margin="0,0,0,120"
                   Width="296">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <Border x:Name="Biometrics" Visibility="Collapsed" Width="32" Height="32" CornerRadius="16" Margin="0,0,8,0">
-                    <Border.Background>
-                        <SolidColorBrush Opacity="0.2" Color="{ThemeResource SystemAccentColor}"/>
-                    </Border.Background>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Border x:Name="Biometrics" Background="{ThemeResource TinyButtonBackgroundBrush}" Visibility="Collapsed" Width="32" Height="32" CornerRadius="16" Margin="0,0,8,0">
                     <controls:GlyphButton
                         Glyph="&#xE904;"
                         Click="Biometrics_Click"
@@ -104,10 +111,7 @@
                     LosingFocus="Field_LosingFocus"
                     Grid.Column="1"/>
 
-                <Border Width="32" Height="32" CornerRadius="16" Margin="8,0,0,0" Grid.Column="2">
-                    <Border.Background>
-                        <SolidColorBrush Opacity="0.2" Color="{ThemeResource SystemAccentColor}"/>
-                    </Border.Background>
+                <Border Background="{ThemeResource TinyButtonBackgroundBrush}" Width="32" Height="32" CornerRadius="16" Margin="8,0,0,0" Grid.Column="2">
                     <controls:GlyphButton
                         Glyph="&#xE72A;"
                         Click="Enter_Click"
@@ -122,5 +126,14 @@
                 </Border>
             </Grid>
         </StackPanel>
+
+        <Border Width="296" Grid.Row="2">
+            <TextBlock
+                x:Name="RetryIn"
+                Visibility="Collapsed"
+                Style="{StaticResource CaptionTextBlockStyle}"
+                Foreground="{ThemeResource DangerButtonBackground}"
+                Margin="0,4,0,0"/>
+        </Border>
     </Grid>
 </controls:ContentPopup>

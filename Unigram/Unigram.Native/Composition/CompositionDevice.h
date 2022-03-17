@@ -4,8 +4,10 @@
 
 #include "dcompex.h"
 #include <winrt/windows.ui.composition.h>
+#include <winrt/windows.ui.xaml.h>
 
 using namespace winrt::Windows::UI::Composition;
+using namespace winrt::Windows::UI::Xaml;
 
 namespace winrt::Unigram::Native::Composition::implementation
 {
@@ -26,6 +28,7 @@ namespace winrt::Unigram::Native::Composition::implementation
 
         HRESULT CreateCubicBezierAnimation(Compositor compositor, float from, float to, double duration, IDCompositionAnimation** slideAnimation);
 
+        static winrt::Unigram::Native::Composition::DirectRectangleClip CreateRectangleClip(UIElement element);
         static winrt::Unigram::Native::Composition::DirectRectangleClip CreateRectangleClip(Visual visual);
         static void SetClip(Visual visual, winrt::Unigram::Native::Composition::DirectRectangleClip clip);
 

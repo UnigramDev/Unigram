@@ -31,7 +31,7 @@ namespace Unigram.Controls
 
         protected override void OnKeyDown(KeyRoutedEventArgs e)
         {
-            if (e.Key == VirtualKey.Up || e.Key == VirtualKey.Down)
+            if (e.Key is VirtualKey.Up or VirtualKey.Down)
             {
                 var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
                 var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
@@ -76,35 +76,16 @@ namespace Unigram.Controls
                     return;
                 }
             }
-            else if (e.Key == VirtualKey.Enter)
-            {
-                var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
-                var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
-
-                var send = false;
-
-                if (ViewModel != null && ViewModel.Settings.IsSendByEnterEnabled)
-                {
-                    send = !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
-                }
-                else
-                {
-                    send = ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
-                }
-
-                AcceptsReturn = !send;
-                e.Handled = send;
-
-                if (send)
-                {
-                    View?.Accept();
-                }
-            }
 
             if (!e.Handled)
             {
                 base.OnKeyDown(e);
             }
+        }
+
+        protected override void OnAccept()
+        {
+            View?.Accept();
         }
 
         private void OnSelectionChanged(object sender, RoutedEventArgs e)
@@ -116,7 +97,7 @@ namespace Unigram.Controls
             }
 
             Document.GetText(TextGetOptions.NoHidden, out string text);
-            
+
             if (ChatTextBox.SearchByUsername(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string username, out _))
             {
                 var chat = viewModel.Chat;
@@ -134,9 +115,9 @@ namespace Unigram.Controls
                     View.Autocomplete = null;
                 }
             }
-            else if (ChatTextBox.SearchByEmoji(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string replacement) && replacement.Length > 0)
+            else if (ChatTextBox.SearchByEmoji(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string replacement, out bool column) && replacement.Length > 0)
             {
-                View.Autocomplete = new ChatTextBox.EmojiCollection(viewModel.ProtoService, replacement.Length < 2 ? replacement : replacement.ToLower(), CoreTextServicesManager.GetForCurrentView().InputLanguage.LanguageTag);
+                View.Autocomplete = new ChatTextBox.EmojiCollection(viewModel.ProtoService, replacement.Length < 2 ? replacement : replacement.ToLower(), column, CoreTextServicesManager.GetForCurrentView().InputLanguage.LanguageTag);
             }
             else
             {

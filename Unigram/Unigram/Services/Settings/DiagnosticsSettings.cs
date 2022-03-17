@@ -7,6 +7,20 @@
         {
         }
 
+        private bool? _disableDatabase;
+        public bool DisableDatabase
+        {
+            get => _disableDatabase ??= GetValueOrDefault("DisableDatabase", false);
+            set => AddOrUpdateValue(ref _disableDatabase, "DisableDatabase", value);
+        }
+
+        private bool? _copyFormattedCode;
+        public bool CopyFormattedCode
+        {
+            get => _copyFormattedCode ??= GetValueOrDefault("CopyFormattedCode", true);
+            set => AddOrUpdateValue(ref _copyFormattedCode, "CopyFormattedCode", value);
+        }
+
         private bool? _minithumbnails;
         public bool Minithumbnails
         {
@@ -19,6 +33,13 @@
         {
             get => _lastErrorMessage ??= GetValueOrDefault("LastErrorMessage", string.Empty);
             set => AddOrUpdateValue(ref _lastErrorMessage, "LastErrorMessage", value);
+        }
+
+        private int? _lastErrorVersion;
+        public int LastErrorVersion
+        {
+            get => _lastErrorVersion ??= GetValueOrDefault("LastErrorVersion", 0);
+            set => AddOrUpdateValue(ref _lastErrorVersion, "LastErrorVersion", value);
         }
 
         public bool IsLastErrorDiskFull { get; set; }

@@ -6,9 +6,9 @@ namespace Unigram.Controls.Payments
 {
     public class CardTextBox : TextBox
     {
-        public String[] PREFIXES_15 = new[] { "34", "37" };
-        public String[] PREFIXES_14 = new[] { "300", "301", "302", "303", "304", "305", "309", "36", "38", "39" };
-        public String[] PREFIXES_16 = new[]
+        public string[] PREFIXES_15 = new[] { "34", "37" };
+        public string[] PREFIXES_14 = new[] { "300", "301", "302", "303", "304", "305", "309", "36", "38", "39" };
+        public string[] PREFIXES_16 = new[]
         {
             "2221", "2222", "2223", "2224", "2225", "2226", "2227", "2228", "2229",
             "223", "224", "225", "226", "227", "228", "229",
@@ -79,7 +79,7 @@ namespace Unigram.Controls.Payments
             }
 
             int start = SelectionStart;
-            String str = Text;
+            string str = Text;
             if (characterAction == 3)
             {
                 str = str.Substring(0, actionPosition) + str.Substring(actionPosition + 1);
@@ -95,15 +95,15 @@ namespace Unigram.Controls.Payments
                 }
             }
             ignoreOnCardChange = true;
-            String hint = null;
+            string hint = null;
             int maxLength = 100;
             if (builder.Length > 0)
             {
-                String currentString = builder.ToString();
+                string currentString = builder.ToString();
                 for (int a = 0; a < 3; a++)
                 {
-                    String[] checkArr;
-                    String resultHint;
+                    string[] checkArr;
+                    string resultHint;
                     int resultMaxLength;
                     switch (a)
                     {
@@ -126,7 +126,7 @@ namespace Unigram.Controls.Payments
                     }
                     for (int b = 0; b < checkArr.Length; b++)
                     {
-                        String prefix = checkArr[b];
+                        string prefix = checkArr[b];
                         if (currentString.Length <= prefix.Length)
                         {
                             if (prefix.StartsWith(currentString))

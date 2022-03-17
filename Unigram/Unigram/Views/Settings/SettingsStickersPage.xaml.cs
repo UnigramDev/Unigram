@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
-using Unigram.Services;
 using Unigram.Services.Settings;
 using Unigram.ViewModels.Settings;
 using Windows.UI.Composition;
@@ -20,11 +18,9 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Settings
 {
-    public sealed partial class SettingsStickersPage : HostedPage, IHandle<UpdateFile>
+    public sealed partial class SettingsStickersPage : HostedPage
     {
         public SettingsStickersViewModel ViewModel => DataContext as SettingsStickersViewModel;
-
-        private readonly FileContext<StickerSetInfo> _filesMap = new FileContext<StickerSetInfo>();
 
         private readonly Dictionary<string, DataTemplate> _typeToTemplateMapping = new Dictionary<string, DataTemplate>();
         private readonly Dictionary<string, HashSet<SelectorItem>> _typeToItemHashSetMapping = new Dictionary<string, HashSet<SelectorItem>>();
@@ -34,14 +30,15 @@ namespace Unigram.Views.Settings
         public SettingsStickersPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsStickersViewModel>();
 
             _handler = new AnimatedListHandler<StickerSetInfo>(List);
 
             _typeToItemHashSetMapping.Add("AnimatedItemTemplate", new HashSet<SelectorItem>());
+            _typeToItemHashSetMapping.Add("VideoItemTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("ItemTemplate", new HashSet<SelectorItem>());
 
             _typeToTemplateMapping.Add("AnimatedItemTemplate", Resources["AnimatedItemTemplate"] as DataTemplate);
+            _typeToTemplateMapping.Add("VideoItemTemplate", Resources["VideoItemTemplate"] as DataTemplate);
             _typeToTemplateMapping.Add("ItemTemplate", Resources["ItemTemplate"] as DataTemplate);
         }
 
@@ -93,9 +90,14 @@ namespace Unigram.Views.Settings
         private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
         {
             var stickerSet = args.Item as StickerSetInfo;
-            var cover = stickerSet.GetThumbnail(out _, out bool animated);
+            var cover = stickerSet.GetThumbnail();
 
-            var typeName = animated ? "AnimatedItemTemplate" : "ItemTemplate";
+            var typeName = cover?.Type switch
+            {
+                StickerTypeAnimated => "AnimatedItemTemplate",
+                StickerTypeVideo => "VideoItemTemplate",
+                _ => "ItemTemplate"
+            };
             var relevantHashSet = _typeToItemHashSetMapping[typeName];
 
             // args.ItemContainer is used to indicate whether the ListView is proposing an
@@ -163,12 +165,13 @@ namespace Unigram.Views.Settings
             var subtitle = content.Children[2] as TextBlock;
             subtitle.Text = Locale.Declension("Stickers", stickerSet.Size);
 
-            var file = stickerSet.GetThumbnail(out var outline, out _);
-            if (file == null)
+            var cover = stickerSet.GetThumbnail();
+            if (cover == null)
             {
                 return;
             }
 
+            var file = cover.StickerValue;
             if (file.Local.IsDownloadingCompleted)
             {
                 if (content.Children[0] is Image photo)
@@ -180,8 +183,12 @@ namespace Unigram.Views.Settings
                 {
                     lottie.Source = UriEx.ToLocal(file.Local.Path);
                 }
+                else if (args.Phase == 0 && content.Children[0] is AnimationView animation)
+                {
+                    animation.Source = new LocalVideoSource(file);
+                }
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+            else
             {
                 if (content.Children[0] is Image photo)
                 {
@@ -191,12 +198,20 @@ namespace Unigram.Views.Settings
                 {
                     lottie.Source = null;
                 }
+                else if (args.Phase == 0 && content.Children[0] is AnimationView animation)
+                {
+                    animation.Source = null;
+                }
 
-                CompositionPathParser.ParseThumbnail(outline, out ShapeVisual visual, false);
+                CompositionPathParser.ParseThumbnail(cover, out ShapeVisual visual, false);
                 ElementCompositionPreview.SetElementChildVisual(content.Children[0], visual);
 
-                _filesMap[file.Id].Add(stickerSet);
-                ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                UpdateManager.Subscribe(content, ViewModel.ProtoService, file, UpdateFile, true);
+
+                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                {
+                    ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                }
             }
 
             args.Handled = true;
@@ -235,45 +250,28 @@ namespace Unigram.Views.Settings
 
         #region Handle
 
-        public void Handle(UpdateFile update)
+        private async void UpdateFile(object target, File file)
         {
-            if (!update.File.Local.IsDownloadingCompleted)
+            var content = target as Grid;
+            if (content == null)
             {
                 return;
             }
 
-            if (_filesMap.TryGetValue(update.File.Id, out List<StickerSetInfo> stickers))
+            if (content.Children[0] is Image photo)
             {
-                this.BeginOnUIThread(async () =>
-                {
-                    foreach (var stickerSet in stickers.ToImmutableHashSet())
-                    {
-                        stickerSet.UpdateFile(update.File);
-
-                        var container = List.ContainerFromItem(stickerSet) as SelectorItem;
-                        if (container == null)
-                        {
-                            continue;
-                        }
-
-                        var content = container.ContentTemplateRoot as Grid;
-                        if (content == null)
-                        {
-                            continue;
-                        }
-
-                        if (content.Children[0] is Image photo)
-                        {
-                            photo.Source = await PlaceholderHelper.GetWebPFrameAsync(update.File.Local.Path, 48);
-                            ElementCompositionPreview.SetElementChildVisual(content.Children[0], null);
-                        }
-                        else if (content.Children[0] is LottieView lottie)
-                        {
-                            lottie.Source = UriEx.ToLocal(update.File.Local.Path);
-                            _handler.ThrottleVisibleItems();
-                        }
-                    }
-                });
+                photo.Source = await PlaceholderHelper.GetWebPFrameAsync(file.Local.Path, 48);
+                ElementCompositionPreview.SetElementChildVisual(content.Children[0], null);
+            }
+            else if (content.Children[0] is LottieView lottie)
+            {
+                lottie.Source = UriEx.ToLocal(file.Local.Path);
+                _handler.ThrottleVisibleItems();
+            }
+            else if (content.Children[0] is AnimationView animation)
+            {
+                animation.Source = new LocalVideoSource(file);
+                _handler.ThrottleVisibleItems();
             }
         }
 
@@ -283,7 +281,7 @@ namespace Unigram.Views.Settings
 
         private void StickerSet_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            if (ViewModel.Type != StickersType.Installed && ViewModel.Type != StickersType.Masks)
+            if (ViewModel.Type is not StickersType.Installed and not StickersType.Masks)
             {
                 return;
             }

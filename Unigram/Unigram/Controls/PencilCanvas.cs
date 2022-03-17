@@ -327,8 +327,7 @@ namespace Unigram.Controls
 
         public CanvasGeometry ToGeometry(ICanvasResourceCreator resourceCreator, Vector2 canvasSize)
         {
-            //var multiplier = NSMakePoint(imageSize.width / touch.canvasSize.width, imageSize.height / touch.canvasSize.height)
-            var multiplier = canvasSize; //_imageSize / canvasSize;
+            var multiplier = canvasSize;
 
             var builder = new CanvasPathBuilder(resourceCreator);
             builder.BeginFigure(_beginPoint * multiplier);

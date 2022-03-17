@@ -14,7 +14,10 @@
     SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
 
     <StackPanel>
-        <DatePicker x:Name="Date" Margin="12,12,12,12"/>
-        <TimePicker x:Name="Time" Margin="12,0,12,12"/>
+        <DatePicker
+            x:Name="Date"
+            Margin="0,12,0,12"/>
+        <TimePicker
+            x:Name="Time"/>
     </StackPanel>
 </controls:ContentPopup>

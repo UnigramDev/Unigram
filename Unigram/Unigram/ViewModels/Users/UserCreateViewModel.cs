@@ -74,14 +74,8 @@ namespace Unigram.ViewModels.Users
         private string _lastName = string.Empty;
         public string LastName
         {
-            get
-            {
-                return _lastName;
-            }
-            set
-            {
-                Set(ref _lastName, value);
-            }
+            get => _lastName;
+            set => Set(ref _lastName, value);
         }
 
         private string _phoneNumber = string.Empty;

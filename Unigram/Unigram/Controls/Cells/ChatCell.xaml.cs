@@ -1,19 +1,20 @@
 ﻿using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Common.Chats;
+using Unigram.Controls.Chats;
 using Unigram.Controls.Messages;
 using Unigram.Converters;
+using Unigram.Native;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Windows.Foundation;
+using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -22,6 +23,7 @@ using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
+using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Controls.Cells
 {
@@ -34,7 +36,7 @@ namespace Unigram.Controls.Cells
         Read
     }
 
-    public sealed partial class ChatCell : UserControl, IMultipleElement
+    public sealed class ChatCell : Control, IMultipleElement
     {
         private Chat _chat;
         private ChatList _chatList;
@@ -57,10 +59,124 @@ namespace Unigram.Controls.Cells
 
         public ChatCell()
         {
-            InitializeComponent();
+            DefaultStyleKey = typeof(ChatCell);
+
+            Loaded += OnLoaded;
+            Unloaded += OnUnloaded;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            if (Stroke is SolidColorBrush stroke && _strokeToken == 0)
+            {
+                _strokeToken = stroke.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, OnStrokeChanged);
+            }
+
+            if (SelectionStroke is SolidColorBrush selectionStroke && _selectionStrokeToken == 0)
+            {
+                _selectionStrokeToken = selectionStroke.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, OnSelectionStrokeChanged);
+            }
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            if (Stroke is SolidColorBrush stroke && _strokeToken != 0)
+            {
+                stroke.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, _strokeToken);
+                _strokeToken = 0;
+            }
+
+            if (SelectionStroke is SolidColorBrush selectionStroke && _selectionStrokeToken != 0)
+            {
+                selectionStroke.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, _selectionStrokeToken);
+                _selectionStrokeToken = 0;
+            }
+        }
+
+        #region InitializeComponent
+
+        private Grid PhotoPanel;
+        private TextBlock TypeIcon;
+        private TextBlock TitleLabel;
+        private FontIcon VerifiedIcon;
+        private FontIcon MutedIcon;
+        private FontIcon StateIcon;
+        private TextBlock TimeLabel;
+        private Border MinithumbnailPanel;
+        private TextBlock BriefInfo;
+        private ChatActionIndicator ChatActionIndicator;
+        private TextBlock TypingLabel;
+        private Border PinnedIcon;
+        private Border UnreadMentionsBadge;
+        private Border UnreadBadge;
+        private Border FailedBadge;
+        private Rectangle DropVisual;
+        private TextBlock FailedLabel;
+        private TextBlock UnreadLabel;
+        private TextBlock UnreadMentionsLabel;
+        private Run FromLabel;
+        private Run DraftLabel;
+        private Run BriefLabel;
+        private Image Minithumbnail;
+        private Ellipse SelectionOutline;
+        private ProfilePicture Photo;
+        private Border OnlineBadge;
+        private Border OnlineHeart;
+        private bool _templateApplied;
+
+        protected override void OnApplyTemplate()
+        {
+            PhotoPanel = GetTemplateChild(nameof(PhotoPanel)) as Grid;
+            TypeIcon = GetTemplateChild(nameof(TypeIcon)) as TextBlock;
+            TitleLabel = GetTemplateChild(nameof(TitleLabel)) as TextBlock;
+            VerifiedIcon = GetTemplateChild(nameof(VerifiedIcon)) as FontIcon;
+            MutedIcon = GetTemplateChild(nameof(MutedIcon)) as FontIcon;
+            StateIcon = GetTemplateChild(nameof(StateIcon)) as FontIcon;
+            TimeLabel = GetTemplateChild(nameof(TimeLabel)) as TextBlock;
+            MinithumbnailPanel = GetTemplateChild(nameof(MinithumbnailPanel)) as Border;
+            BriefInfo = GetTemplateChild(nameof(BriefInfo)) as TextBlock;
+            ChatActionIndicator = GetTemplateChild(nameof(ChatActionIndicator)) as ChatActionIndicator;
+            TypingLabel = GetTemplateChild(nameof(TypingLabel)) as TextBlock;
+            PinnedIcon = GetTemplateChild(nameof(PinnedIcon)) as Border;
+            UnreadMentionsBadge = GetTemplateChild(nameof(UnreadMentionsBadge)) as Border;
+            UnreadBadge = GetTemplateChild(nameof(UnreadBadge)) as Border;
+            FailedBadge = GetTemplateChild(nameof(FailedBadge)) as Border;
+            DropVisual = GetTemplateChild(nameof(DropVisual)) as Rectangle;
+            FailedLabel = GetTemplateChild(nameof(FailedLabel)) as TextBlock;
+            UnreadLabel = GetTemplateChild(nameof(UnreadLabel)) as TextBlock;
+            UnreadMentionsLabel = GetTemplateChild(nameof(UnreadMentionsLabel)) as TextBlock;
+            FromLabel = GetTemplateChild(nameof(FromLabel)) as Run;
+            DraftLabel = GetTemplateChild(nameof(DraftLabel)) as Run;
+            BriefLabel = GetTemplateChild(nameof(BriefLabel)) as Run;
+            Minithumbnail = GetTemplateChild(nameof(Minithumbnail)) as Image;
+            SelectionOutline = GetTemplateChild(nameof(SelectionOutline)) as Ellipse;
+            Photo = GetTemplateChild(nameof(Photo)) as ProfilePicture;
+
+            var tooltip = new ToolTip();
+            tooltip.Opened += ToolTip_Opened;
+
+            ToolTipService.SetToolTip(BriefInfo, tooltip);
+
             InitializeSelection();
             InitializeTicks();
+
+            _templateApplied = true;
+
+            if (_chat != null)
+            {
+                UpdateChat(_protoService, _chat, _chatList);
+            }
+            else if (_chatList != null)
+            {
+                UpdateChatList(_protoService, _chatList);
+            }
+            else if (_message != null)
+            {
+                UpdateMessage(_protoService, _message);
+            }
         }
+
+        #endregion
 
         public void UpdateService(IProtoService protoService)
         {
@@ -78,6 +194,11 @@ namespace Unigram.Controls.Cells
         {
             _protoService = protoService;
             _message = message;
+
+            if (!_templateApplied)
+            {
+                return;
+            }
 
             var chat = protoService.GetChat(message.ChatId);
             if (chat == null)
@@ -100,43 +221,51 @@ namespace Unigram.Controls.Cells
             TimeLabel.Text = UpdateTimeLabel(message);
             StateIcon.Glyph = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, null, message, message.SendingState);
 
+            UpdateBriefSpoiler(chat.DraftMessage == null ? message : null);
             UpdateMinithumbnail(message);
         }
 
         public async void UpdateChatList(IProtoService protoService, ChatList chatList)
         {
             _protoService = protoService;
-
-            TitleLabel.Text = Strings.Resources.ArchivedChats;
-            Photo.Source = PlaceholderHelper.GetGlyph(Icons.Archive, 0, 96);
-
-            TypeIcon.Text = string.Empty;
-            TypeIcon.Visibility = Visibility.Collapsed;
-            VerifiedIcon.Visibility = Visibility.Collapsed;
-            UnreadMentionsBadge.Visibility = Visibility.Collapsed;
-            PinnedIcon.Visibility = Visibility.Collapsed;
-
-            DraftLabel.Text = string.Empty;
-            TimeLabel.Text = string.Empty;
-            StateIcon.Glyph = string.Empty;
-            FailedBadge.Visibility = Visibility.Collapsed;
-
-            MutedIcon.Visibility = Visibility.Collapsed;
-
-            MinithumbnailPanel.Visibility = Visibility.Collapsed;
-
-            VisualStateManager.GoToState(this, "Muted", false);
-
-            UpdateTicks(null);
-
-            var unreadCount = protoService.GetUnreadCount(chatList);
-            UnreadBadge.Visibility = unreadCount.UnreadChatCount.UnreadCount > 0 ? Visibility.Visible : Visibility.Collapsed;
-            UnreadLabel.Text = $"{unreadCount.UnreadChatCount.UnreadCount}";
+            _chatList = chatList;
 
             var response = await protoService.GetChatListAsync(chatList, 0, 20);
             if (response is Telegram.Td.Api.Chats chats)
             {
                 Visibility = chats.ChatIds.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+
+                if (!_templateApplied)
+                {
+                    return;
+                }
+
+                TitleLabel.Text = Strings.Resources.ArchivedChats;
+                Photo.Source = PlaceholderHelper.GetGlyph(Icons.Archive, 0, 96);
+
+                TypeIcon.Text = string.Empty;
+                TypeIcon.Visibility = Visibility.Collapsed;
+                VerifiedIcon.Visibility = Visibility.Collapsed;
+                UnreadMentionsBadge.Visibility = Visibility.Collapsed;
+                PinnedIcon.Visibility = Visibility.Collapsed;
+
+                DraftLabel.Text = string.Empty;
+                TimeLabel.Text = string.Empty;
+                StateIcon.Glyph = string.Empty;
+                FailedBadge.Visibility = Visibility.Collapsed;
+
+                MutedIcon.Visibility = Visibility.Collapsed;
+
+                MinithumbnailPanel.Visibility = Visibility.Collapsed;
+
+                VisualStateManager.GoToState(this, "Muted", false);
+
+                UpdateTicks(null);
+
+                var unreadCount = protoService.GetUnreadCount(chatList);
+                UnreadBadge.Visibility = unreadCount.UnreadChatCount.UnreadCount > 0 ? Visibility.Visible : Visibility.Collapsed;
+                UnreadLabel.Text = $"{unreadCount.UnreadChatCount.UnreadCount}";
+
                 BriefInfo.Inlines.Clear();
 
                 foreach (var id in chats.ChatIds)
@@ -152,10 +281,10 @@ namespace Unigram.Controls.Cells
                         BriefInfo.Inlines.Add(new Run { Text = ", " });
                     }
 
-                    var run = new Run { Text = chat.Title };
+                    var run = new Run { Text = _protoService.GetTitle(chat) };
                     if (chat.IsUnread())
                     {
-                        run.Foreground = App.Current.Resources["ListViewItemForegroundSelected"] as Brush;
+                        run.Foreground = new SolidColorBrush(ActualTheme == ElementTheme.Dark ? Colors.White : Colors.Black);
                     }
 
                     BriefInfo.Inlines.Add(run);
@@ -195,7 +324,7 @@ namespace Unigram.Controls.Cells
                 builder.Append(". ");
             }
 
-            if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
+            if (chat.Type is ChatTypePrivate or ChatTypeSecret)
             {
                 var user = protoService.GetUser(chat);
                 if (user != null)
@@ -246,19 +375,24 @@ namespace Unigram.Controls.Cells
             }
 
             //if (!message.IsOutgoing && message.SenderUserId != 0 && !message.IsService())
-            if (ShowFrom(protoService, chat, message, out User fromUser))
+            if (ShowFrom(protoService, chat, message, out User fromUser, out Chat fromChat))
             {
                 if (message.IsOutgoing)
                 {
-                    if (!(chat.Type is ChatTypePrivate priv && priv.UserId == fromUser.Id) && !message.IsChannelPost)
+                    if (!(chat.Type is ChatTypePrivate priv && priv.UserId == fromUser?.Id) && !message.IsChannelPost)
                     {
                         builder.Append(Strings.Resources.FromYou);
                         builder.Append(": ");
                     }
                 }
-                else
+                else if (fromUser != null)
                 {
                     builder.Append(fromUser.GetFullName());
+                    builder.Append(": ");
+                }
+                else if (fromChat != null && fromChat.Id != chat.Id)
+                {
+                    builder.Append(fromChat.Title);
                     builder.Append(": ");
                 }
             }
@@ -286,7 +420,7 @@ namespace Unigram.Controls.Cells
 
         public void UpdateChatLastMessage(Chat chat, ChatPosition position = null)
         {
-            if (chat == null)
+            if (chat == null || !_templateApplied)
             {
                 return;
             }
@@ -303,17 +437,23 @@ namespace Unigram.Controls.Cells
             StateIcon.Glyph = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, chat.DraftMessage, chat.LastMessage, chat.LastMessage?.SendingState);
             FailedBadge.Visibility = chat.LastMessage?.SendingState is MessageSendingStateFailed ? Visibility.Visible : Visibility.Collapsed;
 
+            UpdateBriefSpoiler(chat.DraftMessage == null ? chat.LastMessage : null);
             UpdateMinithumbnail(chat.LastMessage);
         }
 
         public void UpdateChatReadInbox(Chat chat, ChatPosition position = null)
         {
+            if (!_templateApplied)
+            {
+                return;
+            }
+
             if (position == null)
             {
                 position = chat.GetPosition(_chatList);
             }
 
-            PinnedIcon.Visibility = (chat.UnreadCount == 0 && !chat.IsMarkedAsUnread) && (position?.IsPinned ?? false) ? Visibility.Visible : Visibility.Collapsed;
+            PinnedIcon.Visibility = chat.UnreadCount == 0 && !chat.IsMarkedAsUnread && (position?.IsPinned ?? false) ? Visibility.Visible : Visibility.Collapsed;
             UnreadBadge.Visibility = (chat.UnreadCount > 0 || chat.IsMarkedAsUnread) ? chat.UnreadMentionCount == 1 && chat.UnreadCount == 1 ? Visibility.Collapsed : Visibility.Visible : Visibility.Collapsed;
             UnreadLabel.Text = chat.UnreadCount > 0 ? chat.UnreadCount.ToString() : string.Empty;
 
@@ -322,6 +462,11 @@ namespace Unigram.Controls.Cells
 
         public void UpdateChatReadOutbox(Chat chat)
         {
+            if (!_templateApplied)
+            {
+                return;
+            }
+
             StateIcon.Glyph = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, chat.DraftMessage, chat.LastMessage, chat.LastMessage?.SendingState);
         }
 
@@ -332,50 +477,67 @@ namespace Unigram.Controls.Cells
 
         public void UpdateChatUnreadMentionCount(Chat chat, ChatPosition position = null)
         {
+            if (!_templateApplied)
+            {
+                return;
+            }
+
             UpdateChatReadInbox(chat, position);
-            UnreadMentionsBadge.Visibility = chat.UnreadMentionCount > 0 ? Visibility.Visible : Visibility.Collapsed;
+            UnreadMentionsBadge.Visibility = chat.UnreadMentionCount > 0 || chat.UnreadReactionCount > 0 ? Visibility.Visible : Visibility.Collapsed;
+            UnreadMentionsLabel.Text = chat.UnreadMentionCount > 0 ? Icons.Mention16 : Icons.HeartFilled16;
         }
 
         public void UpdateNotificationSettings(Chat chat)
         {
-            var muted = _protoService.GetNotificationSettingsMuteFor(chat) > 0;
+            if (!_templateApplied)
+            {
+                return;
+            }
+
+            var muted = _protoService.Notifications.GetMutedFor(chat) > 0;
             VisualStateManager.GoToState(this, muted ? "Muted" : "Unmuted", false);
             MutedIcon.Visibility = muted ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public void UpdateChatTitle(Chat chat)
         {
+            if (!_templateApplied)
+            {
+                return;
+            }
+
             TitleLabel.Text = _protoService.GetTitle(chat);
         }
 
         public void UpdateChatPhoto(Chat chat)
         {
-            Photo.Source = PlaceholderHelper.GetChat(_protoService, chat, 48);
+            if (!_templateApplied)
+            {
+                return;
+            }
+
+            Photo.SetChat(_protoService, chat, 48);
         }
 
-        public void UpdateFile(Chat chat, File file)
+        public void UpdateChatActions(Chat chat, IDictionary<MessageSender, ChatAction> actions)
         {
-            if (chat.Type is ChatTypePrivate privata && privata.UserId == _protoService.Options.MyId)
+            if (!_templateApplied)
             {
-                Photo.Source = PlaceholderHelper.GetSavedMessages(privata.UserId, 96);
+                return;
             }
-            else
-            {
-                Photo.Source = PlaceholderHelper.GetChat(null, chat, 48);
-            }
-        }
 
-        public void UpdateChatActions(Chat chat, IDictionary<int, ChatAction> actions)
-        {
             if (actions != null && actions.Count > 0)
             {
-                TypingLabel.Text = InputChatActionManager.GetTypingString(chat, actions, _protoService.GetUser, out ChatAction commonAction);
+                TypingLabel.Text = InputChatActionManager.GetTypingString(chat, actions, _protoService.GetUser, _protoService.GetChat, out ChatAction commonAction);
+                ChatActionIndicator.UpdateAction(commonAction);
+                ChatActionIndicator.Visibility = Visibility.Visible;
                 TypingLabel.Visibility = Visibility.Visible;
                 BriefInfo.Visibility = Visibility.Collapsed;
                 Minithumbnail.Visibility = Visibility.Collapsed;
             }
             else
             {
+                ChatActionIndicator.Visibility = Visibility.Collapsed;
                 TypingLabel.Visibility = Visibility.Collapsed;
                 BriefInfo.Visibility = Visibility.Visible;
                 Minithumbnail.Visibility = Visibility.Visible;
@@ -401,13 +563,23 @@ namespace Unigram.Controls.Cells
             VerifiedIcon.Visibility = verified ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        public void UpdateChatVoiceChat(Chat chat)
+        public void UpdateChatVideoChat(Chat chat)
         {
-            UpdateOnlineBadge(chat.VoiceChat?.HasParticipants ?? false, true);
+            if (!_templateApplied)
+            {
+                return;
+            }
+
+            UpdateOnlineBadge(chat.VideoChat?.HasParticipants ?? false, true);
         }
 
         public void UpdateUserStatus(Chat chat, UserStatus status)
         {
+            if (!_templateApplied)
+            {
+                return;
+            }
+
             UpdateOnlineBadge(status is UserStatusOnline, false);
         }
 
@@ -415,12 +587,20 @@ namespace Unigram.Controls.Cells
         {
             if (OnlineBadge == null)
             {
-                FindName(nameof(OnlineBadge));
+                if (visible)
+                {
+                    OnlineBadge = GetTemplateChild(nameof(OnlineBadge)) as Border;
+                    OnlineHeart = GetTemplateChild(nameof(OnlineHeart)) as Border;
 
-                _onlineBadge = ElementCompositionPreview.GetElementVisual(OnlineBadge);
-                _onlineBadge.CenterPoint = new Vector3(6.5f);
-                //_onlineBadge.Opacity = 0;
-                //_onlineBadge.Scale = new Vector3(0);
+                    _onlineBadge = ElementCompositionPreview.GetElementVisual(OnlineBadge);
+                    _onlineBadge.CenterPoint = new Vector3(6);
+                    //_onlineBadge.Opacity = 0;
+                    //_onlineBadge.Scale = new Vector3(0);
+                }
+                else
+                {
+                    return;
+                }
             }
             else if (OnlineBadge.Visibility == Visibility.Collapsed && !visible)
             {
@@ -441,13 +621,13 @@ namespace Unigram.Controls.Cells
                 }
                 else
                 {
-                    OnlineBadge.Margin = new Thickness(0, 0, 1, 1);
-                    OnlineBadge.Width = OnlineBadge.Height = 13;
-                    OnlineBadge.CornerRadius = new CornerRadius(6.5);
-                    OnlineHeart.Width = OnlineHeart.Height = 9;
-                    OnlineHeart.CornerRadius = new CornerRadius(4.5);
+                    OnlineBadge.Margin = new Thickness(0, 0, 3, 0);
+                    OnlineBadge.Width = OnlineBadge.Height = 12;
+                    OnlineBadge.CornerRadius = new CornerRadius(6);
+                    OnlineHeart.Width = OnlineHeart.Height = 8;
+                    OnlineHeart.CornerRadius = new CornerRadius(4);
 
-                    _onlineBadge.CenterPoint = new Vector3(6.5f);
+                    _onlineBadge.CenterPoint = new Vector3(6);
                 }
 
                 _onlineCall = activeCall;
@@ -480,7 +660,7 @@ namespace Unigram.Controls.Cells
 
                 var shape1 = compositor.CreateSpriteShape();
                 shape1.Geometry = line1;
-                shape1.FillBrush = compositor.CreateColorBrush(Windows.UI.Colors.White);
+                shape1.FillBrush = compositor.CreateColorBrush(Colors.White);
 
                 var line2 = compositor.CreateRoundedRectangleGeometry();
                 line2.CornerRadius = Vector2.One;
@@ -489,7 +669,7 @@ namespace Unigram.Controls.Cells
 
                 var shape2 = compositor.CreateSpriteShape();
                 shape2.Geometry = line2;
-                shape2.FillBrush = compositor.CreateColorBrush(Windows.UI.Colors.White);
+                shape2.FillBrush = compositor.CreateColorBrush(Colors.White);
 
                 var line3 = compositor.CreateRoundedRectangleGeometry();
                 line3.CornerRadius = Vector2.One;
@@ -498,7 +678,7 @@ namespace Unigram.Controls.Cells
 
                 var shape3 = compositor.CreateSpriteShape();
                 shape3.Geometry = line3;
-                shape3.FillBrush = compositor.CreateColorBrush(Windows.UI.Colors.White);
+                shape3.FillBrush = compositor.CreateColorBrush(Colors.White);
 
                 var visual = compositor.CreateShapeVisual();
                 visual.Shapes.Add(shape3);
@@ -604,6 +784,11 @@ namespace Unigram.Controls.Cells
 
             Tag = chat;
 
+            if (!_templateApplied)
+            {
+                return;
+            }
+
             var position = chat.GetPosition(chatList);
 
             //UpdateViewState(chat, ChatFilterMode.None, false, false);
@@ -622,9 +807,9 @@ namespace Unigram.Controls.Cells
             {
                 UpdateUserStatus(chat, user.Status);
             }
-            else if (chat.VoiceChat.GroupCallId != 0)
+            else if (chat.VideoChat.GroupCallId != 0)
             {
-                UpdateOnlineBadge(chat.VoiceChat.HasParticipants, true);
+                UpdateOnlineBadge(chat.VideoChat.HasParticipants, true);
             }
             else if (OnlineBadge != null)
             {
@@ -634,19 +819,13 @@ namespace Unigram.Controls.Cells
 
         #endregion
 
-        public void UpdateViewState(Chat chat, bool selected, bool compact)
+        public void UpdateViewState(Chat chat, bool compact)
         {
-            VisualStateManager.GoToState(this, selected ? "Selected" : chat.Type is ChatTypeSecret ? "Secret" : "Normal", false);
+            VisualStateManager.GoToState(this, chat.Type is ChatTypeSecret ? "Secret" : "Normal", false);
             VisualStateManager.GoToState(this, compact ? "Compact" : "Expanded", false);
         }
 
-        public void UpdateViewState(ChatList chatList, bool selected, bool compact)
-        {
-            VisualStateManager.GoToState(this, selected ? "Selected" : "Normal", false);
-            VisualStateManager.GoToState(this, compact ? "Compact" : "Expanded", false);
-        }
-
-        private async void UpdateMinithumbnail(Message message)
+        private void UpdateMinithumbnail(Message message)
         {
             var thumbnail = message?.GetMinithumbnail(false);
             if (thumbnail != null && SettingsService.Current.Diagnostics.Minithumbnails)
@@ -659,12 +838,11 @@ namespace Unigram.Controls.Cells
                 var height = (int)(thumbnail.Height * ratio);
 
                 var bitmap = new BitmapImage { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical };
-                var bytes = thumbnail.Data.ToArray();
 
-                using (var stream = new System.IO.MemoryStream(bytes))
+                using (var stream = new InMemoryRandomAccessStream())
                 {
-                    var random = System.IO.WindowsRuntimeStreamExtensions.AsRandomAccessStream(stream);
-                    await bitmap.SetSourceAsync(random);
+                    PlaceholderImageHelper.Current.WriteBytes(thumbnail.Data, stream);
+                    bitmap.SetSource(stream);
                 }
 
                 Minithumbnail.Source = bitmap;
@@ -675,6 +853,48 @@ namespace Unigram.Controls.Cells
                 MinithumbnailPanel.Visibility = Visibility.Collapsed;
                 Minithumbnail.Source = null;
             }
+        }
+
+        private void UpdateBriefSpoiler(Message message)
+        {
+            BriefInfo.TextHighlighters.Clear();
+            TextHighlighter spoiler = null;
+
+            var offset = FromLabel.Text.Length + DraftLabel.Text.Length;
+            var entities = message?.Content switch
+            {
+                MessageAnimation animation => animation.Caption.Entities,
+                MessageAudio audio => audio.Caption.Entities,
+                MessageDocument document => document.Caption.Entities,
+                MessagePhoto photo => photo.Caption.Entities,
+                MessageVideo video => video.Caption.Entities,
+                MessageVoiceNote voiceNote => voiceNote.Caption.Entities,
+                MessageText text => text.Text.Entities,
+                _ => null
+            };
+
+            if (entities == null)
+            {
+                return;
+            }
+
+            foreach (var entity in entities)
+            {
+                if (entity.Type is TextEntityTypeSpoiler)
+                {
+                    spoiler ??= new TextHighlighter();
+                    spoiler.Ranges.Add(new TextRange { StartIndex = offset + entity.Offset, Length = entity.Length });
+                }
+            }
+
+            if (spoiler?.Ranges.Count > 0)
+            {
+                spoiler.Foreground = BriefInfo.Foreground;
+                spoiler.Background = BriefInfo.Foreground;
+
+                BriefInfo.TextHighlighters.Add(spoiler);
+            }
+
         }
 
         private string UpdateBriefLabel(Chat chat, ChatPosition position)
@@ -743,29 +963,19 @@ namespace Unigram.Controls.Cells
                 return Strings.Resources.Message;
             }
 
-            switch (value.Content)
+            return value.Content switch
             {
-                case MessageAnimation animation:
-                    return animation.Caption.Text.Replace('\n', ' ');
-                case MessageAudio audio:
-                    return audio.Caption.Text.Replace('\n', ' ');
-                case MessageDocument document:
-                    return document.Caption.Text.Replace('\n', ' ');
-                case MessagePhoto photo:
-                    return photo.Caption.Text.Replace('\n', ' ');
-                case MessageVideo video:
-                    return video.Caption.Text.Replace('\n', ' ');
-                case MessageVoiceNote voiceNote:
-                    return voiceNote.Caption.Text.Replace('\n', ' ');
-
-                case MessageText text:
-                    return text.Text.Text.Replace('\n', ' ');
-
-                case MessageDice dice:
-                    return dice.Emoji;
-            }
-
-            return string.Empty;
+                MessageAnimation animation => animation.Caption.Text.Replace('\n', ' '),
+                MessageAudio audio => audio.Caption.Text.Replace('\n', ' '),
+                MessageDocument document => document.Caption.Text.Replace('\n', ' '),
+                MessagePhoto photo => photo.Caption.Text.Replace('\n', ' '),
+                MessageVideo video => video.Caption.Text.Replace('\n', ' '),
+                MessageVoiceNote voiceNote => voiceNote.Caption.Text.Replace('\n', ' '),
+                MessageText text => text.Text.Text.Replace('\n', ' '),
+                MessageAnimatedEmoji animatedEmoji => animatedEmoji.Emoji,
+                MessageDice dice => dice.Emoji,
+                _ => string.Empty,
+            };
         }
 
         private string UpdateDraftLabel(Chat chat)
@@ -816,7 +1026,7 @@ namespace Unigram.Controls.Cells
             var format = "{0}: ";
             var result = string.Empty;
 
-            if (ShowFrom(_protoService, chat, message, out User from))
+            if (ShowFrom(_protoService, chat, message, out User fromUser, out Chat fromChat))
             {
                 if (message.IsSaved(_protoService.Options.MyId))
                 {
@@ -824,33 +1034,37 @@ namespace Unigram.Controls.Cells
                 }
                 else if (message.IsOutgoing)
                 {
-                    if (!(chat.Type is ChatTypePrivate priv && priv.UserId == from.Id) && !message.IsChannelPost)
+                    if (!(chat.Type is ChatTypePrivate priv && priv.UserId == fromUser?.Id) && !message.IsChannelPost)
                     {
                         result = string.Format(format, Strings.Resources.FromYou);
                     }
                 }
-                else
+                else if (fromUser != null)
                 {
-                    if (!string.IsNullOrEmpty(from.FirstName))
+                    if (!string.IsNullOrEmpty(fromUser.FirstName))
                     {
-                        result = string.Format(format, from.FirstName.Trim());
+                        result = string.Format(format, fromUser.FirstName.Trim());
                     }
-                    else if (!string.IsNullOrEmpty(from.LastName))
+                    else if (!string.IsNullOrEmpty(fromUser.LastName))
                     {
-                        result = string.Format(format, from.LastName.Trim());
+                        result = string.Format(format, fromUser.LastName.Trim());
                     }
-                    else if (!string.IsNullOrEmpty(from.Username))
+                    else if (!string.IsNullOrEmpty(fromUser.Username))
                     {
-                        result = string.Format(format, from.Username.Trim());
+                        result = string.Format(format, fromUser.Username.Trim());
                     }
-                    else if (from.Type is UserTypeDeleted)
+                    else if (fromUser.Type is UserTypeDeleted)
                     {
                         result = string.Format(format, Strings.Resources.HiddenName);
                     }
                     else
                     {
-                        result = string.Format(format, from.Id);
+                        result = string.Format(format, fromUser.Id);
                     }
+                }
+                else if (fromChat != null && fromChat.Id != chat.Id)
+                {
+                    result = string.Format(format, fromChat.Title);
                 }
             }
 
@@ -880,7 +1094,7 @@ namespace Unigram.Controls.Cells
                 return result + $"{sticker.Sticker.Emoji} {Strings.Resources.AttachSticker}";
             }
 
-            string GetCaption(string caption)
+            static string GetCaption(string caption)
             {
                 return string.IsNullOrEmpty(caption) ? string.Empty : ", ";
             }
@@ -956,31 +1170,39 @@ namespace Unigram.Controls.Cells
             return result;
         }
 
-        private bool ShowFrom(ICacheService cacheService, Chat chat, Message message, out User senderUser)
+        private bool ShowFrom(ICacheService cacheService, Chat chat, Message message, out User senderUser, out Chat senderChat)
         {
             if (message.IsService())
             {
                 senderUser = null;
+                senderChat = null;
                 return false;
             }
 
             if (message.IsOutgoing)
             {
-                return cacheService.TryGetUser(message.Sender, out senderUser);
+                senderChat = null;
+                return cacheService.TryGetUser(message.SenderId, out senderUser)
+                    || cacheService.TryGetChat(message.SenderId, out senderChat);
             }
 
             if (chat.Type is ChatTypeBasicGroup)
             {
-                return cacheService.TryGetUser(message.Sender, out senderUser);
+                senderChat = null;
+                return cacheService.TryGetUser(message.SenderId, out senderUser);
             }
 
             if (chat.Type is ChatTypeSupergroup supergroup)
             {
                 senderUser = null;
-                return !supergroup.IsChannel && cacheService.TryGetUser(message.Sender, out senderUser);
+                senderChat = null;
+                return !supergroup.IsChannel
+                    && cacheService.TryGetUser(message.SenderId, out senderUser)
+                    || cacheService.TryGetChat(message.SenderId, out senderChat);
             }
 
             senderUser = null;
+            senderChat = null;
             return false;
         }
 
@@ -1085,15 +1307,15 @@ namespace Unigram.Controls.Cells
         {
             if (chat.Type is ChatTypeSupergroup supergroup)
             {
-                return supergroup.IsChannel ? Icons.Megaphone : Icons.People;
+                return supergroup.IsChannel ? Icons.MegaphoneFilled16 : Icons.PeopleFilled16;
             }
             else if (chat.Type is ChatTypeBasicGroup)
             {
-                return Icons.People;
+                return Icons.PeopleFilled16;
             }
             else if (chat.Type is ChatTypeSecret)
             {
-                return Icons.Lock;
+                return Icons.LockClosedFilled16;
             }
             else if (chat.Type is ChatTypePrivate privata && _protoService != null)
             {
@@ -1105,7 +1327,7 @@ namespace Unigram.Controls.Cells
                 var user = _protoService.GetUser(privata.UserId);
                 if (user != null && user.Type is UserTypeBot)
                 {
-                    return Icons.Bot;
+                    return Icons.BotFilled;
                 }
             }
 
@@ -1223,6 +1445,7 @@ namespace Unigram.Controls.Cells
             VisualStateManager.GoToState(this, muted ? "Muted" : "Unmuted", false);
 
             VerifiedIcon.Visibility = Visibility.Collapsed;
+            MinithumbnailPanel.Visibility = Visibility.Collapsed;
 
             PinnedIcon.Visibility = pinned ? Visibility.Visible : Visibility.Collapsed;
             UnreadBadge.Visibility = unread > 0 ? Visibility.Visible : Visibility.Collapsed;
@@ -1247,40 +1470,14 @@ namespace Unigram.Controls.Cells
         }
 
 
-        #region Accent
+        #region SelectionStroke
 
-        public Color Accent
-        {
-            get { return (Color)GetValue(AccentProperty); }
-            set { SetValue(AccentProperty, value); }
-        }
-
-        public static readonly DependencyProperty AccentProperty =
-            DependencyProperty.Register("Accent", typeof(Color), typeof(ChatCell), new PropertyMetadata(default(Color), OnAccentChanged));
-
-        private static void OnAccentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var sender = d as ChatCell;
-            var solid = (Color)e.NewValue;
-
-            if (solid == null || sender._ellipse == null)
-            {
-                return;
-            }
-
-            var brush = Window.Current.Compositor.CreateColorBrush(solid);
-
-            sender._ellipse.FillBrush = brush;
-        }
-
-        #endregion
-
-        #region Accent
+        private long _selectionStrokeToken;
 
         public SolidColorBrush SelectionStroke
         {
-            get { return (SolidColorBrush)GetValue(SelectionStrokeProperty); }
-            set { SetValue(SelectionStrokeProperty, value); }
+            get => (SolidColorBrush)GetValue(SelectionStrokeProperty);
+            set => SetValue(SelectionStrokeProperty, value);
         }
 
         public static readonly DependencyProperty SelectionStrokeProperty =
@@ -1288,17 +1485,35 @@ namespace Unigram.Controls.Cells
 
         private static void OnSelectionStrokeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var sender = d as ChatCell;
-            var solid = e.NewValue as SolidColorBrush;
+            ((ChatCell)d).OnSelectionStrokeChanged(e.NewValue as SolidColorBrush, e.OldValue as SolidColorBrush);
+        }
 
-            if (solid == null || sender._stroke == null)
+        private void OnSelectionStrokeChanged(SolidColorBrush newValue, SolidColorBrush oldValue)
+        {
+            if (oldValue != null && _selectionStrokeToken != 0)
+            {
+                oldValue.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, _selectionStrokeToken);
+                _selectionStrokeToken = 0;
+            }
+
+            if (newValue == null || _stroke == null)
             {
                 return;
             }
 
-            var brush = Window.Current.Compositor.CreateColorBrush(solid.Color);
+            _stroke.FillBrush = Window.Current.Compositor.CreateColorBrush(newValue.Color);
+            _selectionStrokeToken = newValue.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, OnSelectionStrokeChanged);
+        }
 
-            sender._stroke.FillBrush = brush;
+        private void OnSelectionStrokeChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            var solid = sender as SolidColorBrush;
+            if (solid == null || _stroke == null)
+            {
+                return;
+            }
+
+            _stroke.FillBrush = Window.Current.Compositor.CreateColorBrush(solid.Color);
         }
 
         #endregion
@@ -1315,7 +1530,7 @@ namespace Unigram.Controls.Cells
 
         private void InitializeSelection()
         {
-            CompositionPath GetCheckMark()
+            static CompositionPath GetCheckMark()
             {
                 CanvasGeometry result;
                 using (var builder = new CanvasPathBuilder(null))
@@ -1349,7 +1564,7 @@ namespace Unigram.Controls.Cells
 
             var shape2 = compositor.CreateSpriteShape();
             shape2.Geometry = ellipse;
-            shape2.FillBrush = compositor.CreateColorBrush(Colors.Black);
+            shape2.FillBrush = GetBrush(StrokeProperty);
 
             var outer = compositor.CreateEllipseGeometry();
             outer.Radius = new Vector2(10);
@@ -1357,7 +1572,7 @@ namespace Unigram.Controls.Cells
 
             var shape3 = compositor.CreateSpriteShape();
             shape3.Geometry = outer;
-            shape3.FillBrush = compositor.CreateColorBrush(Colors.White);
+            shape3.FillBrush = GetBrush(SelectionStrokeProperty);
 
             var visual = compositor.CreateShapeVisual();
             visual.Shapes.Add(shape3);
@@ -1455,10 +1670,12 @@ namespace Unigram.Controls.Cells
 
         #region Stroke
 
+        private long _strokeToken;
+
         public Brush Stroke
         {
-            get { return (Brush)GetValue(StrokeProperty); }
-            set { SetValue(StrokeProperty, value); }
+            get => (Brush)GetValue(StrokeProperty);
+            set => SetValue(StrokeProperty, value);
         }
 
         public static readonly DependencyProperty StrokeProperty =
@@ -1466,36 +1683,77 @@ namespace Unigram.Controls.Cells
 
         private static void OnStrokeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var sender = d as ChatCell;
-            var solid = e.NewValue as SolidColorBrush;
+            ((ChatCell)d).OnStrokeChanged(e.NewValue as SolidColorBrush, e.OldValue as SolidColorBrush);
+        }
 
-            if (solid == null || sender._container == null)
+        private void OnStrokeChanged(SolidColorBrush newValue, SolidColorBrush oldValue)
+        {
+            if (oldValue != null && _strokeToken != 0)
+            {
+                oldValue.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, _strokeToken);
+                _strokeToken = 0;
+            }
+
+            if (newValue == null || _container == null || _ellipse == null)
+            {
+                return;
+            }
+
+            var brush = Window.Current.Compositor.CreateColorBrush(newValue.Color);
+
+            foreach (var shape in _shapes)
+            {
+                shape.StrokeBrush = brush;
+            }
+
+            _ellipse.FillBrush = brush;
+            _strokeToken = newValue.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, OnStrokeChanged);
+        }
+
+        private void OnStrokeChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            var solid = sender as SolidColorBrush;
+            if (solid == null || _container == null || _ellipse == null)
             {
                 return;
             }
 
             var brush = Window.Current.Compositor.CreateColorBrush(solid.Color);
 
-            foreach (var shape in sender._shapes)
+            foreach (var shape in _shapes)
             {
                 shape.StrokeBrush = brush;
             }
+
+            _ellipse.FillBrush = brush;
         }
 
         #endregion
+
+        private CompositionBrush GetBrush(DependencyProperty dp)
+        {
+            var value = GetValue(dp);
+            if (value is SolidColorBrush solid)
+            {
+                return Window.Current.Compositor.CreateColorBrush(solid.Color);
+            }
+
+            return Window.Current.Compositor.CreateColorBrush(Colors.Black);
+        }
+
 
         private void InitializeTicks()
         {
             var width = 18f;
             var height = 10f;
-            var stroke = 2f;
-            var distance = stroke * 2;
+            var stroke = 1.33f;
+            var distance = 4;
 
-            var sqrt = (float)Math.Sqrt(2);
+            var sqrt = MathF.Sqrt(2);
 
-            var side = (stroke / sqrt) / 2f;
+            var side = stroke / sqrt / 2f;
             var diagonal = height * sqrt;
-            var length = (diagonal / 2f) / sqrt;
+            var length = diagonal / 2f / sqrt;
 
             var join = stroke / 2 * sqrt;
 
@@ -1509,14 +1767,16 @@ namespace Unigram.Controls.Cells
             line12.End = new Vector2(width - side - distance, side);
 
             var shape11 = Window.Current.Compositor.CreateSpriteShape(line11);
-            shape11.StrokeThickness = 2;
-            shape11.StrokeBrush = Window.Current.Compositor.CreateColorBrush(Windows.UI.Colors.Black);
+            shape11.StrokeThickness = stroke;
+            shape11.StrokeBrush = GetBrush(StrokeProperty);
             shape11.IsStrokeNonScaling = true;
+            shape11.StrokeStartCap = CompositionStrokeCap.Round;
 
             var shape12 = Window.Current.Compositor.CreateSpriteShape(line12);
-            shape12.StrokeThickness = 2;
-            shape12.StrokeBrush = Window.Current.Compositor.CreateColorBrush(Windows.UI.Colors.Black);
+            shape12.StrokeThickness = stroke;
+            shape12.StrokeBrush = GetBrush(StrokeProperty);
             shape12.IsStrokeNonScaling = true;
+            shape12.StrokeEndCap = CompositionStrokeCap.Round;
 
             var visual1 = Window.Current.Compositor.CreateShapeVisual();
             visual1.Shapes.Add(shape12);
@@ -1535,12 +1795,14 @@ namespace Unigram.Controls.Cells
             line22.End = new Vector2(width - side, side);
 
             var shape21 = Window.Current.Compositor.CreateSpriteShape(line21);
-            shape21.StrokeThickness = 2;
-            shape21.StrokeBrush = Window.Current.Compositor.CreateColorBrush(Windows.UI.Colors.Black);
+            shape21.StrokeThickness = stroke;
+            shape21.StrokeBrush = GetBrush(StrokeProperty);
+            shape21.StrokeStartCap = CompositionStrokeCap.Round;
 
             var shape22 = Window.Current.Compositor.CreateSpriteShape(line22);
-            shape22.StrokeThickness = 2;
-            shape22.StrokeBrush = Window.Current.Compositor.CreateColorBrush(Windows.UI.Colors.Black);
+            shape22.StrokeThickness = stroke;
+            shape22.StrokeBrush = GetBrush(StrokeProperty);
+            shape22.StrokeEndCap = CompositionStrokeCap.Round;
 
             var visual2 = Window.Current.Compositor.CreateShapeVisual();
             visual2.Shapes.Add(shape22);
@@ -1601,7 +1863,7 @@ namespace Unigram.Controls.Cells
             var sqrt = (float)Math.Sqrt(2);
 
             var diagonal = height * sqrt;
-            var length = (diagonal / 2f) / sqrt;
+            var length = diagonal / 2f / sqrt;
 
             var duration = 250;
             var percent = stroke / length;
@@ -1611,7 +1873,7 @@ namespace Unigram.Controls.Cells
             var anim11 = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
             anim11.InsertKeyFrame(0, 0);
             anim11.InsertKeyFrame(1, 1, linear);
-            anim11.Duration = TimeSpan.FromMilliseconds(duration - (percent * duration));
+            anim11.Duration = TimeSpan.FromMilliseconds(duration - percent * duration);
 
             var anim12 = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
             anim12.InsertKeyFrame(0, 0);
@@ -1671,11 +1933,12 @@ namespace Unigram.Controls.Cells
 
             var MinithumbnailPanel = Children[7];
             var BriefInfo = Children[8];
-            var TypingLabel = Children[9];
-            var PinnedIcon = Children[10];
-            var UnreadMentionsBadge = Children[11];
-            var UnreadBadge = Children[12];
-            var FailedBadge = Children[13];
+            var ChatActionIndicator = Children[9];
+            var TypingLabel = Children[10];
+            var PinnedIcon = Children[11];
+            var UnreadMentionsBadge = Children[12];
+            var UnreadBadge = Children[13];
+            var FailedBadge = Children[14];
 
             PhotoPanel.Measure(availableSize);
 
@@ -1685,7 +1948,7 @@ namespace Unigram.Controls.Cells
             VerifiedIcon.Measure(availableSize);
             MutedIcon.Measure(availableSize);
 
-            var line1Left = 12 + PhotoPanel.DesiredSize.Width + 12 + TypeIcon.DesiredSize.Width;
+            var line1Left = 8 + PhotoPanel.DesiredSize.Width + 12 + TypeIcon.DesiredSize.Width;
             var line1Right = availableSize.Width - 12 - TimeLabel.DesiredSize.Width - StateIcon.DesiredSize.Width;
 
             var titleWidth = Math.Max(0, line1Right - (line1Left + VerifiedIcon.DesiredSize.Width + MutedIcon.DesiredSize.Width));
@@ -1695,6 +1958,7 @@ namespace Unigram.Controls.Cells
 
 
             MinithumbnailPanel.Measure(availableSize);
+            ChatActionIndicator.Measure(availableSize);
             PinnedIcon.Measure(availableSize);
             UnreadBadge.Measure(availableSize);
             UnreadMentionsBadge.Measure(availableSize);
@@ -1702,8 +1966,8 @@ namespace Unigram.Controls.Cells
 
             var line2RightPadding = Math.Max(Math.Max(PinnedIcon.DesiredSize.Width, UnreadBadge.DesiredSize.Width), FailedBadge.DesiredSize.Width);
 
-            var line2Left = 12 + PhotoPanel.DesiredSize.Width + 12 + MinithumbnailPanel.DesiredSize.Width;
-            var line2Right = availableSize.Width - 12 - line2RightPadding - UnreadMentionsBadge.DesiredSize.Width;
+            var line2Left = 8 + PhotoPanel.DesiredSize.Width + 12 + MinithumbnailPanel.DesiredSize.Width;
+            var line2Right = availableSize.Width - 8 - line2RightPadding - UnreadMentionsBadge.DesiredSize.Width;
 
             var briefWidth = Math.Max(0, line2Right - line2Left);
 
@@ -1733,41 +1997,42 @@ namespace Unigram.Controls.Cells
 
             var MinithumbnailPanel = Children[7];
             var BriefInfo = Children[8];
-            var TypingLabel = Children[9];
-            var PinnedIcon = Children[10];
-            var UnreadMentionsBadge = Children[11];
-            var UnreadBadge = Children[12];
-            var FailedBadge = Children[13];
+            var ChatActionIndicator = Children[9];
+            var TypingLabel = Children[10];
+            var PinnedIcon = Children[11];
+            var UnreadMentionsBadge = Children[12];
+            var UnreadBadge = Children[13];
+            var FailedBadge = Children[14];
 
             var rect = new Rect();
-            var min = 12 + PhotoPanel.DesiredSize.Width + 12;
+            var min = 8 + PhotoPanel.DesiredSize.Width + 12;
 
-            rect.X = 12;
+            rect.X = 8;
             rect.Y = 0;
             rect.Width = PhotoPanel.DesiredSize.Width;
             rect.Height = PhotoPanel.DesiredSize.Height;
             PhotoPanel.Arrange(rect);
 
-            rect.X = Math.Max(min, finalSize.Width - 12 - TimeLabel.DesiredSize.Width);
-            rect.Y = 32 - TitleLabel.DesiredSize.Height;
+            rect.X = Math.Max(min, finalSize.Width - 8 - TimeLabel.DesiredSize.Width);
+            rect.Y = 13;
             rect.Width = TimeLabel.DesiredSize.Width;
             rect.Height = TimeLabel.DesiredSize.Height;
             TimeLabel.Arrange(rect);
 
-            rect.X = Math.Max(min, finalSize.Width - 12 - TimeLabel.DesiredSize.Width - StateIcon.DesiredSize.Width);
-            rect.Y = 32 - TitleLabel.DesiredSize.Height;
+            rect.X = Math.Max(min, finalSize.Width - 8 - TimeLabel.DesiredSize.Width - StateIcon.DesiredSize.Width);
+            rect.Y = 13;
             rect.Width = StateIcon.DesiredSize.Width;
             rect.Height = StateIcon.DesiredSize.Height;
             StateIcon.Arrange(rect);
 
-            rect.X = 12 + PhotoPanel.DesiredSize.Width + 12;
-            rect.Y = 32 - TitleLabel.DesiredSize.Height;
+            rect.X = min;
+            rect.Y = 13;
             rect.Width = TypeIcon.DesiredSize.Width;
             rect.Height = TypeIcon.DesiredSize.Height;
             TypeIcon.Arrange(rect);
 
-            var line1Left = 12 + PhotoPanel.DesiredSize.Width + 12 + TypeIcon.DesiredSize.Width;
-            var line1Right = finalSize.Width - 12 - TimeLabel.DesiredSize.Width - StateIcon.DesiredSize.Width;
+            var line1Left = min + TypeIcon.DesiredSize.Width;
+            var line1Right = finalSize.Width - 8 - TimeLabel.DesiredSize.Width - StateIcon.DesiredSize.Width;
 
             double titleWidth;
             if (line1Left + TitleLabel.DesiredSize.Width + VerifiedIcon.DesiredSize.Width + MutedIcon.DesiredSize.Width > line1Right)
@@ -1779,72 +2044,83 @@ namespace Unigram.Controls.Cells
                 titleWidth = TitleLabel.DesiredSize.Width;
             }
 
-            rect.X = 12 + PhotoPanel.DesiredSize.Width + 12 + TypeIcon.DesiredSize.Width;
-            rect.Y = 32 - 2 - TitleLabel.DesiredSize.Height;
+            rect.X = min + TypeIcon.DesiredSize.Width;
+            rect.Y = 12;
             rect.Width = titleWidth;
             rect.Height = TitleLabel.DesiredSize.Height;
             TitleLabel.Arrange(rect);
 
-            rect.X = 12 + PhotoPanel.DesiredSize.Width + 12 + TypeIcon.DesiredSize.Width + titleWidth;
-            rect.Y = 32 - TitleLabel.DesiredSize.Height;
+            rect.X = min + TypeIcon.DesiredSize.Width + titleWidth;
+            rect.Y = 13;
             rect.Width = VerifiedIcon.DesiredSize.Width;
             rect.Height = VerifiedIcon.DesiredSize.Height;
             VerifiedIcon.Arrange(rect);
 
-            rect.X = 12 + PhotoPanel.DesiredSize.Width + 12 + TypeIcon.DesiredSize.Width + titleWidth + VerifiedIcon.DesiredSize.Width;
-            rect.Y = 32 - TitleLabel.DesiredSize.Height;
+            rect.X = min + TypeIcon.DesiredSize.Width + titleWidth + VerifiedIcon.DesiredSize.Width;
+            rect.Y = 13;
             rect.Width = MutedIcon.DesiredSize.Width;
             rect.Height = MutedIcon.DesiredSize.Height;
             MutedIcon.Arrange(rect);
 
 
 
-            rect.X = 12 + PhotoPanel.DesiredSize.Width + 12;
-            rect.Y = 35;
+            rect.X = min;
+            rect.Y = 36;
             rect.Width = MinithumbnailPanel.DesiredSize.Width;
             rect.Height = MinithumbnailPanel.DesiredSize.Height;
             MinithumbnailPanel.Arrange(rect);
 
-            rect.X = Math.Max(min, finalSize.Width - 12 - PinnedIcon.DesiredSize.Width);
-            rect.Y = 64 - 8 - PinnedIcon.DesiredSize.Height;
+            rect.X = Math.Max(min, finalSize.Width - 8 - PinnedIcon.DesiredSize.Width);
+            rect.Y = 34;
             rect.Width = PinnedIcon.DesiredSize.Width;
             rect.Height = PinnedIcon.DesiredSize.Height;
             PinnedIcon.Arrange(rect);
 
-            rect.X = finalSize.Width - 12 - UnreadBadge.DesiredSize.Width;
-            rect.Y = 64 - 8 - UnreadBadge.DesiredSize.Height;
+            rect.X = finalSize.Width - 8 - UnreadBadge.DesiredSize.Width;
+            rect.Y = 36;
             rect.Width = UnreadBadge.DesiredSize.Width;
             rect.Height = UnreadBadge.DesiredSize.Height;
             UnreadBadge.Arrange(rect);
 
-            rect.X = finalSize.Width - 12 - UnreadBadge.DesiredSize.Width - UnreadMentionsBadge.DesiredSize.Width;
-            rect.Y = 64 - 8 - UnreadMentionsBadge.DesiredSize.Height;
+            rect.X = finalSize.Width - 8 - UnreadBadge.DesiredSize.Width - UnreadMentionsBadge.DesiredSize.Width;
+            rect.Y = 36;
             rect.Width = UnreadMentionsBadge.DesiredSize.Width;
             rect.Height = UnreadMentionsBadge.DesiredSize.Height;
             UnreadMentionsBadge.Arrange(rect);
 
-            rect.X = Math.Max(min, finalSize.Width - 12 - FailedBadge.DesiredSize.Width);
-            rect.Y = 64 - 8 - FailedBadge.DesiredSize.Height;
+            rect.X = Math.Max(min, finalSize.Width - 8 - FailedBadge.DesiredSize.Width);
+            rect.Y = 36;
             rect.Width = FailedBadge.DesiredSize.Width;
             rect.Height = FailedBadge.DesiredSize.Height;
             FailedBadge.Arrange(rect);
 
             var line2RightPadding = Math.Max(Math.Max(PinnedIcon.DesiredSize.Width, UnreadBadge.DesiredSize.Width), FailedBadge.DesiredSize.Width);
 
-            var line2Left = 12 + PhotoPanel.DesiredSize.Width + 12 + MinithumbnailPanel.DesiredSize.Width;
-            var line2Right = finalSize.Width - 12 - line2RightPadding - UnreadMentionsBadge.DesiredSize.Width;
+            var line2Left = min + MinithumbnailPanel.DesiredSize.Width;
+            var line2Right = finalSize.Width - 8 - line2RightPadding - UnreadMentionsBadge.DesiredSize.Width;
 
             var briefWidth = Math.Max(0, line2Right - line2Left);
 
-            rect.X = 12 + PhotoPanel.DesiredSize.Width + 12 + MinithumbnailPanel.DesiredSize.Width;
-            rect.Y = 64 - 12 - BriefInfo.DesiredSize.Height;
+            rect.X = min + MinithumbnailPanel.DesiredSize.Width;
+            rect.Y = 34;
             rect.Width = briefWidth;
             rect.Height = BriefInfo.DesiredSize.Height;
             BriefInfo.Arrange(rect);
 
-            rect.X = 12 + PhotoPanel.DesiredSize.Width + 12;
-            rect.Y = 64 - 12 - TypingLabel.DesiredSize.Height;
-            rect.Width = briefWidth + MinithumbnailPanel.DesiredSize.Width;
+            rect.X = min;
+            rect.Y = 34;
+            rect.Width = ChatActionIndicator.DesiredSize.Width;
+            rect.Height = ChatActionIndicator.DesiredSize.Height;
+            ChatActionIndicator.Arrange(rect);
+
+            line2Left = min + ChatActionIndicator.DesiredSize.Width;
+            line2Right = finalSize.Width - 8 - line2RightPadding - UnreadMentionsBadge.DesiredSize.Width;
+
+            var typingLabel = Math.Max(0, line2Right - line2Left);
+
+            rect.X = min + ChatActionIndicator.DesiredSize.Width;
+            rect.Y = 34;
+            rect.Width = typingLabel;
             rect.Height = TypingLabel.DesiredSize.Height;
             TypingLabel.Arrange(rect);
 

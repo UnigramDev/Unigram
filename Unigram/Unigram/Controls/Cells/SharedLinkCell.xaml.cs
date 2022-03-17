@@ -94,8 +94,8 @@ namespace Unigram.Controls.Cells
 
                     try
                     {
-                        String link = null;
-                        if (entity.Type is TextEntityTypeTextUrl || entity.Type is TextEntityTypeUrl)
+                        string link = null;
+                        if (entity.Type is TextEntityTypeTextUrl or TextEntityTypeUrl)
                         {
                             if (entity.Type is TextEntityTypeUrl)
                             {
@@ -114,7 +114,7 @@ namespace Unigram.Controls.Cells
                                     url = "http://" + url;
                                 }
 
-                                Uri uri = new Uri(url);
+                                var uri = new Uri(url);
                                 title = uri.Host;
                                 if (title == null)
                                 {
@@ -239,7 +239,7 @@ namespace Unigram.Controls.Cells
 
                     if (link == webPageLink && webPageCached)
                     {
-                        hyperlink.Inlines.Add(new Run { Text = "\uE611", FontSize = 12, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily });
+                        hyperlink.Inlines.Add(new Run { Text = "\uE611", FontSize = 12, FontFamily = Navigation.BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily });
                         hyperlink.Inlines.Add(new Run { Text = " \u200D" });
 
                         hyperlink.Click += (s, args) => InstantView_Click(s, link);

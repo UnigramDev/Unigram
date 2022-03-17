@@ -35,23 +35,7 @@ namespace Unigram.ViewModels.Gallery
 
         public override File GetThumbnail()
         {
-            return _photo?.GetSmall().Photo;
-        }
-
-        public override (File File, string FileName) GetFileAndName()
-        {
-            var big = _photo.GetBig();
-            if (big != null)
-            {
-                return (big.Photo, null);
-            }
-
-            return (null, null);
-        }
-
-        public override bool UpdateFile(File file)
-        {
-            return _photo.UpdateFile(file);
+            return _photo?.GetSmall()?.Photo;
         }
 
         public override bool IsVideo => _photo.Animation != null;

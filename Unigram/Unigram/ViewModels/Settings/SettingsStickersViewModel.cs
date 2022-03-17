@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using Rg.DiffUtils;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
-using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Navigation.Services;
@@ -36,7 +36,7 @@ namespace Unigram.ViewModels.Settings
         public SettingsStickersViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
-            Items = new MvxObservableCollection<StickerSetInfo>();
+            Items = new DiffObservableCollection<StickerSetInfo>(new StickerSetInfoDiffHandler());
             ReorderCommand = new RelayCommand<StickerSetInfo>(ReorderExecute);
 
             SuggestCommand = new RelayCommand(SuggestExecute);
@@ -46,6 +46,19 @@ namespace Unigram.ViewModels.Settings
             StickerSetRemoveCommand = new RelayCommand<StickerSetInfo>(StickerSetRemoveExecute);
             //StickerSetShareCommand = new RelayCommand<StickerSetInfo>(StickerSetShareExecute);
             //StickerSetCopyCommand = new RelayCommand<StickerSetInfo>(StickerSetCopyExecute);
+        }
+
+        private class StickerSetInfoDiffHandler : IDiffHandler<StickerSetInfo>
+        {
+            public bool CompareItems(StickerSetInfo oldItem, StickerSetInfo newItem)
+            {
+                return oldItem.Id == newItem.Id;
+            }
+
+            public void UpdateItem(StickerSetInfo oldItem, StickerSetInfo newItem)
+            {
+                //
+            }
         }
 
         public StickersType Type => _type;
@@ -67,7 +80,7 @@ namespace Unigram.ViewModels.Settings
                 _type = (StickersType)flags;
             }
 
-            if (_type == StickersType.Installed || _type == StickersType.Masks)
+            if (_type is StickersType.Installed or StickersType.Masks)
             {
                 Items = new ItemsCollection(ProtoService, _type == StickersType.Masks);
 
@@ -87,7 +100,7 @@ namespace Unigram.ViewModels.Settings
                     }
                 });
             }
-            else if (_type == StickersType.Archived || _type == StickersType.MasksArchived)
+            else if (_type is StickersType.Archived or StickersType.MasksArchived)
             {
                 Items = new ArchivedCollection(ProtoService, _type == StickersType.MasksArchived);
             }
@@ -102,20 +115,12 @@ namespace Unigram.ViewModels.Settings
 
         public override Task OnNavigatedFromAsync(NavigationState pageState, bool suspending)
         {
-            if (_type == StickersType.Installed || _type == StickersType.Masks)
+            if (_type is StickersType.Installed or StickersType.Masks)
             {
                 if (_needReorder && _newOrder.Count > 0)
                 {
                     _needReorder = false;
                     ProtoService.Send(new ReorderInstalledStickerSets(_type == StickersType.Masks, _newOrder));
-
-                    //_stickersService.CalculateNewHash(_type);
-
-                    //var stickers = _stickersService.GetStickerSets(_type);
-                    //var order = new TLVector<long>(stickers.Select(x => x.Set.Id));
-
-                    //LegacyService.ReorderStickerSetsAsync(_type == StickerType.Mask, order, null);
-                    //Aggregator.Publish(new StickersDidLoadedEventArgs(_type));
                 }
             }
 
@@ -123,9 +128,9 @@ namespace Unigram.ViewModels.Settings
             return Task.CompletedTask;
         }
 
-        public void Handle(UpdateInstalledStickerSets update)
+        public async void Handle(UpdateInstalledStickerSets update)
         {
-            if (_type != StickersType.Installed && _type != StickersType.Masks)
+            if (_type is not StickersType.Installed and not StickersType.Masks)
             {
                 return;
             }
@@ -135,23 +140,19 @@ namespace Unigram.ViewModels.Settings
                 return;
             }
 
-            ProtoService.Send(new GetInstalledStickerSets(_type == StickersType.Masks), result =>
+            var response = await ProtoService.SendAsync(new GetInstalledStickerSets(_type == StickersType.Masks));
+            if (response is StickerSets stickerSets)
             {
-                if (result is StickerSets stickerSets)
+                var union = await ProtoService.SendAsync(new GetRecentStickers(_type == StickersType.Masks));
+                if (union is Stickers recents && recents.StickersValue.Count > 0)
                 {
-                    ProtoService.Send(new GetRecentStickers(_type == StickersType.Masks), resultRecent =>
-                    {
-                        if (resultRecent is Stickers recents && recents.StickersValue.Count > 0)
-                        {
-                            BeginOnUIThread(() => Items.ReplaceWith(new[] { new StickerSetInfo(0, Strings.Resources.RecentStickers, "tg/recentlyUsed", null, new ClosedVectorPath[0], false, false, false, false, _type == StickersType.Masks, false, recents.StickersValue.Count, recents.StickersValue) }.Union(stickerSets.Sets)));
-                        }
-                        else
-                        {
-                            BeginOnUIThread(() => Items.ReplaceWith(stickerSets.Sets));
-                        }
-                    });
+                    BeginOnUIThread(() => Items.ReplaceDiff(new[] { new StickerSetInfo(0, Strings.Resources.RecentStickers, "tg/recentlyUsed", null, new ClosedVectorPath[0], false, false, false, null, false, recents.StickersValue.Count, recents.StickersValue) }.Union(stickerSets.Sets)));
                 }
-            });
+                else
+                {
+                    BeginOnUIThread(() => Items.ReplaceDiff(stickerSets.Sets));
+                }
+            }
         }
 
         public void Handle(UpdateTrendingStickerSets update)
@@ -166,7 +167,7 @@ namespace Unigram.ViewModels.Settings
 
         public void Handle(UpdateRecentStickers update)
         {
-            if (_type != StickersType.Installed && _type != StickersType.Masks)
+            if (_type is not StickersType.Installed and not StickersType.Masks)
             {
                 return;
             }
@@ -184,11 +185,11 @@ namespace Unigram.ViewModels.Settings
                     {
                         if (resultRecent is Stickers recents && recents.StickersValue.Count > 0)
                         {
-                            BeginOnUIThread(() => Items.ReplaceWith(new[] { new StickerSetInfo(0, Strings.Resources.RecentStickers, "tg/recentlyUsed", null, new ClosedVectorPath[0], false, false, false, false, _type == StickersType.Masks, false, recents.StickersValue.Count, recents.StickersValue) }.Union(stickerSets.Sets)));
+                            BeginOnUIThread(() => Items.ReplaceDiff(new[] { new StickerSetInfo(0, Strings.Resources.RecentStickers, "tg/recentlyUsed", null, new ClosedVectorPath[0], false, false, false, null, false, recents.StickersValue.Count, recents.StickersValue) }.Union(stickerSets.Sets)));
                         }
                         else
                         {
-                            BeginOnUIThread(() => Items.ReplaceWith(stickerSets.Sets));
+                            BeginOnUIThread(() => Items.ReplaceDiff(stickerSets.Sets));
                         }
                     });
                 }
@@ -198,30 +199,18 @@ namespace Unigram.ViewModels.Settings
         private int _featuredStickersCount;
         public int FeaturedStickersCount
         {
-            get
-            {
-                return _featuredStickersCount;
-            }
-            set
-            {
-                Set(ref _featuredStickersCount, value);
-            }
+            get => _featuredStickersCount;
+            set => Set(ref _featuredStickersCount, value);
         }
 
         private int _archivedStickersCount;
         public int ArchivedStickersCount
         {
-            get
-            {
-                return _archivedStickersCount;
-            }
-            set
-            {
-                Set(ref _archivedStickersCount, value);
-            }
+            get => _archivedStickersCount;
+            set => Set(ref _archivedStickersCount, value);
         }
 
-        public MvxObservableCollection<StickerSetInfo> Items { get; private set; }
+        public DiffObservableCollection<StickerSetInfo> Items { get; private set; }
 
         public RelayCommand<StickerSetInfo> ReorderCommand { get; }
         private void ReorderExecute(StickerSetInfo set)
@@ -232,10 +221,7 @@ namespace Unigram.ViewModels.Settings
 
         public StickersSuggestionMode SuggestStickers
         {
-            get
-            {
-                return Settings.Stickers.SuggestionMode;
-            }
+            get => Settings.Stickers.SuggestionMode;
             set
             {
                 Settings.Stickers.SuggestionMode = value;
@@ -245,10 +231,7 @@ namespace Unigram.ViewModels.Settings
 
         public bool IsLoopingEnabled
         {
-            get
-            {
-                return Settings.Stickers.IsLoopingEnabled;
-            }
+            get => Settings.Stickers.IsLoopingEnabled;
             set
             {
                 Settings.Stickers.IsLoopingEnabled = value;
@@ -266,7 +249,7 @@ namespace Unigram.ViewModels.Settings
                 new SelectRadioItem(StickersSuggestionMode.None, Strings.Resources.SuggestStickersNone, SuggestStickers == StickersSuggestionMode.None),
             };
 
-            var dialog = new SelectRadioPopup(items);
+            var dialog = new ChooseRadioPopup(items);
             dialog.Title = Strings.Resources.SuggestStickers;
             dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.SecondaryButtonText = Strings.Resources.Cancel;
@@ -291,6 +274,7 @@ namespace Unigram.ViewModels.Settings
                     return;
                 }
 
+                Items.Remove(stickerSet);
                 ProtoService.Send(new ClearRecentStickers(_type == StickersType.Masks));
             }
             else
@@ -320,7 +304,7 @@ namespace Unigram.ViewModels.Settings
 
         #endregion
 
-        public class ItemsCollection : MvxObservableCollection<StickerSetInfo>, ISupportIncrementalLoading
+        public class ItemsCollection : DiffObservableCollection<StickerSetInfo>, ISupportIncrementalLoading
         {
             private readonly IProtoService _protoService;
             private readonly bool _masks;
@@ -328,6 +312,7 @@ namespace Unigram.ViewModels.Settings
             private bool _hasMoreItems = true;
 
             public ItemsCollection(IProtoService protoService, bool masks)
+                : base(new StickerSetInfoDiffHandler())
             {
                 _protoService = protoService;
                 _masks = masks;
@@ -338,9 +323,9 @@ namespace Unigram.ViewModels.Settings
                 return AsyncInfo.Run(async token =>
                 {
                     var recentResponse = await _protoService.SendAsync(new GetRecentStickers(_masks));
-                    if (recentResponse is Stickers stickers)
+                    if (recentResponse is Stickers stickers && stickers.StickersValue.Count > 0)
                     {
-                        Add(new StickerSetInfo(0, Strings.Resources.RecentStickers, "tg/recentlyUsed", null, new ClosedVectorPath[0], false, false, false, false, _masks, false, stickers.StickersValue.Count, stickers.StickersValue));
+                        Add(new StickerSetInfo(0, Strings.Resources.RecentStickers, "tg/recentlyUsed", null, new ClosedVectorPath[0], false, false, false, null, false, stickers.StickersValue.Count, stickers.StickersValue));
                     }
 
                     var response = await _protoService.SendAsync(new GetInstalledStickerSets(_masks));
@@ -363,7 +348,7 @@ namespace Unigram.ViewModels.Settings
             public bool HasMoreItems => _hasMoreItems;
         }
 
-        public class ArchivedCollection : MvxObservableCollection<StickerSetInfo>, ISupportIncrementalLoading
+        public class ArchivedCollection : DiffObservableCollection<StickerSetInfo>, ISupportIncrementalLoading
         {
             private readonly IProtoService _protoService;
             private readonly bool _masks;
@@ -371,6 +356,7 @@ namespace Unigram.ViewModels.Settings
             private bool _hasMoreItems = true;
 
             public ArchivedCollection(IProtoService protoService, bool masks)
+                : base(new StickerSetInfoDiffHandler())
             {
                 _protoService = protoService;
                 _masks = masks;
@@ -408,12 +394,13 @@ namespace Unigram.ViewModels.Settings
             public bool HasMoreItems => _hasMoreItems;
         }
 
-        public class TrendingCollection : MvxObservableCollection<StickerSetInfo>, ISupportIncrementalLoading
+        public class TrendingCollection : DiffObservableCollection<StickerSetInfo>, ISupportIncrementalLoading
         {
             private readonly IProtoService _protoService;
             private bool _hasMoreItems = true;
 
             public TrendingCollection(IProtoService protoService)
+                : base(new StickerSetInfoDiffHandler())
             {
                 _protoService = protoService;
             }

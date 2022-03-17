@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,18 +13,16 @@ using Unigram.ViewModels.Chats;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Supergroups;
 using Unigram.ViewModels.Users;
-using Unigram.Views;
 using Unigram.Views.Chats;
 using Unigram.Views.Popups;
 using Unigram.Views.Supergroups;
-using Unigram.Views.Users;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {
-    public class ProfileViewModel : TLMultipleViewModelBase,
+    public class ProfileViewModel : ChatSharedMediaViewModel,
         IDelegable<IProfileDelegate>,
         IHandle<UpdateUser>,
         IHandle<UpdateUserFullInfo>,
@@ -36,8 +33,7 @@ namespace Unigram.ViewModels
         IHandle<UpdateUserStatus>,
         IHandle<UpdateChatTitle>,
         IHandle<UpdateChatPhoto>,
-        IHandle<UpdateChatNotificationSettings>,
-        IHandle<UpdateFile>
+        IHandle<UpdateChatNotificationSettings>
     {
         public string LastSeen { get; internal set; }
 
@@ -46,19 +42,19 @@ namespace Unigram.ViewModels
         private readonly IVoipService _voipService;
         private readonly IGroupCallService _groupCallService;
         private readonly INotificationsService _notificationsService;
+        private readonly ITranslateService _translateService;
 
-        private readonly ChatSharedMediaViewModel _chatSharedMediaViewModel;
         private readonly UserCommonChatsViewModel _userCommonChatsViewModel;
         private readonly SupergroupMembersViewModel _supergroupMembersVieModel;
 
-        public ProfileViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IVoipService voipService, IGroupCallService groupCallService, INotificationsService notificationsService, ChatSharedMediaViewModel chatSharedMediaViewModel, UserCommonChatsViewModel userCommonChatsViewModel, SupergroupMembersViewModel supergroupMembersViewModel)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public ProfileViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IPlaybackService playbackService, IVoipService voipService, IGroupCallService groupCallService, INotificationsService notificationsService, IStorageService storageService, ITranslateService translateService, ChatSharedMediaViewModel chatSharedMediaViewModel, UserCommonChatsViewModel userCommonChatsViewModel, SupergroupMembersViewModel supergroupMembersViewModel)
+            : base(protoService, cacheService, settingsService, storageService, aggregator, playbackService)
         {
             _voipService = voipService;
             _groupCallService = groupCallService;
             _notificationsService = notificationsService;
+            _translateService = translateService;
 
-            _chatSharedMediaViewModel = chatSharedMediaViewModel;
             _userCommonChatsViewModel = userCommonChatsViewModel;
             _supergroupMembersVieModel = supergroupMembersViewModel;
             _supergroupMembersVieModel.IsEmbedded = true;
@@ -85,6 +81,7 @@ namespace Unigram.ViewModels
             InviteCommand = new RelayCommand(InviteExecute);
             ToggleMuteCommand = new RelayCommand(ToggleMuteExecute);
             StatisticsCommand = new RelayCommand(StatisticsExecute);
+
             MemberPromoteCommand = new RelayCommand<ChatMember>(MemberPromoteExecute);
             MemberRestrictCommand = new RelayCommand<ChatMember>(MemberRestrictExecute);
             MemberRemoveCommand = new RelayCommand<ChatMember>(MemberRemoveExecute);
@@ -94,27 +91,20 @@ namespace Unigram.ViewModels
             BannedCommand = new RelayCommand(BannedExecute);
             KickedCommand = new RelayCommand(KickedExecute);
 
-            Children.Add(chatSharedMediaViewModel);
             Children.Add(userCommonChatsViewModel);
             Children.Add(supergroupMembersViewModel);
         }
 
-        public ChatSharedMediaViewModel ChatSharedMedia => _chatSharedMediaViewModel;
+        public ITranslateService TranslateService => _translateService;
+
         public UserCommonChatsViewModel UserCommonChats => _userCommonChatsViewModel;
         public SupergroupMembersViewModel SupergroupMembers => _supergroupMembersVieModel;
-
-        protected Chat _chat;
-        public Chat Chat
-        {
-            get { return _chat; }
-            set { Set(ref _chat, value); }
-        }
 
         protected ObservableCollection<ChatMember> _members;
         public ObservableCollection<ChatMember> Members
         {
-            get { return _members; }
-            set { Set(ref _members, value); }
+            get => _members;
+            set => Set(ref _members, value);
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -340,17 +330,6 @@ namespace Unigram.ViewModels
             }
         }
 
-        public void Handle(UpdateFile update)
-        {
-            var chat = _chat;
-            if (chat == null)
-            {
-                return;
-            }
-
-            BeginOnUIThread(() => Delegate?.UpdateFile(update.File));
-        }
-
         public RelayCommand SendMessageCommand { get; }
         private void SendMessageExecute()
         {
@@ -471,12 +450,12 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
+            if (chat.Type is ChatTypePrivate or ChatTypeSecret)
             {
                 var user = ProtoService.GetUser(chat.Type is ChatTypePrivate privata ? privata.UserId : chat.Type is ChatTypeSecret secret ? secret.UserId : 0);
                 if (user != null)
                 {
-                    await SharePopup.GetForCurrentView().ShowAsync(new InputMessageContact(new Telegram.Td.Api.Contact(user.PhoneNumber, user.FirstName, user.LastName, string.Empty, user.Id)));
+                    await SharePopup.GetForCurrentView().ShowAsync(new InputMessageContact(new Contact(user.PhoneNumber, user.FirstName, user.LastName, string.Empty, user.Id)));
                 }
             }
         }
@@ -698,7 +677,7 @@ namespace Unigram.ViewModels
         }
 
         public RelayCommand IdenticonCommand { get; }
-        private void IdenticonExecute()
+        private async void IdenticonExecute()
         {
             var chat = _chat;
             if (chat == null)
@@ -706,7 +685,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            NavigationService.Navigate(typeof(IdenticonPage), chat.Id);
+            await new IdenticonPopup(SessionId, chat).ShowQueuedAsync();
         }
 
         public RelayCommand MigrateCommand { get; }
@@ -747,7 +726,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
+            if (chat.Type is ChatTypePrivate or ChatTypeSecret)
             {
                 var user = ProtoService.GetUser(chat);
                 if (user == null)
@@ -773,7 +752,7 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                var response = await ProtoService.SendAsync(new AddChatMember(chat.Id, user.Id, CacheService.Options.ForwardedMessageCountMax));
+                var response = await ProtoService.SendAsync(new AddChatMember(chat.Id, user.Id, (int)CacheService.Options.ForwardedMessageCountMax));
                 if (response is Error error)
                 {
 
@@ -790,7 +769,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            _notificationsService.SetMuteFor(chat, CacheService.GetNotificationSettingsMuteFor(chat) > 0 ? 0 : 632053052);
+            _notificationsService.SetMuteFor(chat, CacheService.Notifications.GetMutedFor(chat) > 0 ? 0 : 632053052);
         }
 
         #region Call
@@ -804,7 +783,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
+            if (chat.Type is ChatTypePrivate or ChatTypeSecret)
             {
                 _voipService.Start(chat.Id, video);
             }
@@ -856,11 +835,11 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            if (chat.Type is ChatTypeSupergroup || chat.Type is ChatTypeBasicGroup)
+            if (chat.Type is ChatTypeSupergroup or ChatTypeBasicGroup)
             {
                 NavigationService.Navigate(typeof(SupergroupEditPage), chat.Id);
             }
-            else if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
+            else if (chat.Type is ChatTypePrivate or ChatTypeSecret)
             {
                 AddExecute();
             }
@@ -897,7 +876,7 @@ namespace Unigram.ViewModels
             }
 
             var message = Strings.Resources.AreYouSureDeleteAndExit;
-            if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
+            if (chat.Type is ChatTypePrivate or ChatTypeSecret)
             {
                 message = Strings.Resources.AreYouSureDeleteContact;
             }
@@ -919,7 +898,7 @@ namespace Unigram.ViewModels
                 }
                 else
                 {
-                    if (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup)
+                    if (chat.Type is ChatTypeBasicGroup or ChatTypeSupergroup)
                     {
                         await ProtoService.SendAsync(new LeaveChat(chat.Id));
                     }
@@ -985,7 +964,7 @@ namespace Unigram.ViewModels
             }
 
             var dialog = new ChatTtlPopup(chat.Type is ChatTypeSecret);
-            dialog.Value = chat.MessageTtlSetting;
+            dialog.Value = chat.MessageTtl;
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm != ContentDialogResult.Primary)
@@ -993,7 +972,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            ProtoService.Send(new SetChatMessageTtlSetting(chat.Id, dialog.Value));
+            ProtoService.Send(new SetChatMessageTtl(chat.Id, dialog.Value));
         }
 
         #endregion
@@ -1048,40 +1027,9 @@ namespace Unigram.ViewModels
             NavigationService.Navigate(typeof(SupergroupMembersPage), chat.Id);
         }
 
-        public virtual ChatMemberCollection CreateMembers(int supergroupId)
+        public virtual ChatMemberCollection CreateMembers(long supergroupId)
         {
             return new ChatMemberCollection(ProtoService, supergroupId, new SupergroupMembersFilterRecent());
-        }
-
-        public void Find(string query)
-        {
-            var chat = _chat;
-            if (chat == null)
-            {
-                return;
-            }
-
-            if (chat.Type is ChatTypeSupergroup supergroup)
-            {
-                Search = new ChatMemberCollection(ProtoService, supergroup.SupergroupId, new SupergroupMembersFilterSearch(query));
-            }
-            else if (chat.Type is ChatTypeBasicGroup)
-            {
-                Search = new ChatMemberCollection(ProtoService, chat.Id, query, new ChatMembersFilterMembers());
-            }
-        }
-
-        private ChatMemberCollection _search;
-        public ChatMemberCollection Search
-        {
-            get
-            {
-                return _search;
-            }
-            set
-            {
-                Set(ref _search, value);
-            }
         }
 
         #endregion
@@ -1134,89 +1082,6 @@ namespace Unigram.ViewModels
 
         #endregion
 
-
-
-        public async void OpenUsername(string username)
-        {
-            var response = await ProtoService.SendAsync(new SearchPublicChat(username));
-            if (response is Chat chat)
-            {
-                if (chat.Type is ChatTypePrivate privata)
-                {
-                    var user = ProtoService.GetUser(privata.UserId);
-                    if (user?.Type is UserTypeBot)
-                    {
-                        NavigationService.NavigateToChat(chat);
-                    }
-                    else
-                    {
-                        NavigationService.Navigate(typeof(ProfilePage), chat.Id);
-                    }
-                }
-                else
-                {
-                    NavigationService.NavigateToChat(chat);
-                }
-            }
-        }
-
-        public async void OpenUser(int userId)
-        {
-            var response = await ProtoService.SendAsync(new CreatePrivateChat(userId, false));
-            if (response is Chat chat)
-            {
-                var user = ProtoService.GetUser(userId);
-                if (user?.Type is UserTypeBot)
-                {
-                    NavigationService.NavigateToChat(chat);
-                }
-                else
-                {
-                    NavigationService.Navigate(typeof(ProfilePage), chat.Id);
-                }
-            }
-        }
-
-        public async void OpenUrl(string url, bool untrust)
-        {
-            if (MessageHelper.TryCreateUri(url, out Uri uri))
-            {
-                if (MessageHelper.IsTelegramUrl(uri))
-                {
-                    MessageHelper.OpenTelegramUrl(ProtoService, NavigationService, uri);
-                }
-                else
-                {
-                    //if (message?.Media is TLMessageMediaWebPage webpageMedia)
-                    //{
-                    //    if (webpageMedia.WebPage is TLWebPage webpage && webpage.HasCachedPage && webpage.Url.Equals(navigation))
-                    //    {
-                    //        var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
-                    //        if (service != null)
-                    //        {
-                    //            service.Navigate(typeof(InstantPage), webpageMedia);
-                    //            return;
-                    //        }
-                    //    }
-                    //}
-
-                    if (untrust)
-                    {
-                        var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.OpenUrlAlert, url), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
-                        if (confirm != ContentDialogResult.Primary)
-                        {
-                            return;
-                        }
-                    }
-
-                    try
-                    {
-                        await Windows.System.Launcher.LaunchUriAsync(uri);
-                    }
-                    catch { }
-                }
-            }
-        }
     }
 
     public class ChatMemberCollection : IncrementalCollection<ChatMember>
@@ -1226,7 +1091,7 @@ namespace Unigram.ViewModels
         private readonly ChatMembersFilter _filter2;
         private readonly string _query;
 
-        private readonly int _supergroupId;
+        private readonly long _supergroupId;
         private readonly SupergroupMembersFilter _filter;
 
         private bool _hasMore;
@@ -1240,7 +1105,7 @@ namespace Unigram.ViewModels
             _hasMore = true;
         }
 
-        public ChatMemberCollection(IProtoService protoService, int supergroupId, SupergroupMembersFilter filter)
+        public ChatMemberCollection(IProtoService protoService, long supergroupId, SupergroupMembersFilter filter)
         {
             _protoService = protoService;
             _supergroupId = supergroupId;
@@ -1257,7 +1122,7 @@ namespace Unigram.ViewModels
                 {
                     _hasMore = false;
 
-                    if (_filter2 == null || _filter2 is ChatMembersFilterMembers)
+                    if (_filter2 is null or ChatMembersFilterMembers)
                     {
                         return members.Members.OrderBy(x => x, new ChatMemberComparer(_protoService, true)).ToArray();
                     }
@@ -1299,7 +1164,7 @@ namespace Unigram.ViewModels
         private readonly long _chatId;
         private readonly string _query;
 
-        private readonly int _supergroupId;
+        private readonly long _supergroupId;
         private SupergroupMembersFilter _filter;
         private int _offset;
 
@@ -1316,7 +1181,7 @@ namespace Unigram.ViewModels
             _group = group;
         }
 
-        public ChatMemberGroupedCollection(IProtoService protoService, int supergroupId, bool group)
+        public ChatMemberGroupedCollection(IProtoService protoService, long supergroupId, bool group)
         {
             _protoService = protoService;
             _supergroupId = supergroupId;

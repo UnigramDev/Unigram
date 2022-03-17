@@ -10,7 +10,7 @@ namespace Unigram.Navigation
 
         public virtual bool Set<T>(ref T storage, T value, [CallerMemberName] string propertyName = null)
         {
-            if (object.Equals(storage, value))
+            if (Equals(storage, value))
             {
                 return false;
             }
@@ -28,7 +28,7 @@ namespace Unigram.Navigation
             }
 
             var handler = PropertyChanged;
-            if (!object.Equals(handler, null))
+            if (!Equals(handler, null))
             {
                 try
                 {

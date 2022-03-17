@@ -13,7 +13,6 @@ namespace Unigram.Views.Settings
         public SettingsPasscodePage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsPasscodeViewModel>();
         }
 
         private async void OnLoaded(object sender, RoutedEventArgs e)

@@ -1,5 +1,4 @@
-<StackPanel
-    x:Class="Unigram.Controls.Messages.Content.InvoicePhotoContent"
+<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Controls.Messages.Content"
@@ -11,27 +10,40 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <TextBlock Margin="0,0,0,8" TextAlignment="DetectFromContent" IsTextSelectionEnabled="True" Style="{StaticResource BodyTextBlockStyle}">
-        <Run x:Name="Title" Foreground="{ThemeResource MessageHeaderForegroundBrush}" FontWeight="SemiBold"/>
-        <LineBreak/>
-        <Run x:Name="Description"/>
-    </TextBlock>
+    <Style TargetType="local:InvoicePhotoContent">
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:InvoicePhotoContent">
+                    <StackPanel>
+                        <TextBlock Margin="0,0,0,8" TextAlignment="DetectFromContent" IsTextSelectionEnabled="True" Style="{StaticResource BodyTextBlockStyle}">
+                            <Run x:Name="Title" Foreground="{ThemeResource MessageHeaderForegroundBrush}" FontWeight="SemiBold"/>
+                            <LineBreak/>
+                            <Run x:Name="Description"/>
+                        </TextBlock>
 
-    <controls:AspectView
-        x:Name="Photo"
-        MinWidth="{ThemeResource TelegramMediaMinWidth}"
-        MinHeight="{ThemeResource TelegramMediaMinHeight}"
-        MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
-        MaxHeight="{ThemeResource TelegramMediaMaxHeight}"
-        Margin="-10,0,-10,4">
-        <Image x:Name="Texture" Stretch="UniformToFill"/>
-        <messages:InvoiceFooter
-            x:Name="Footer"
-            Background="{ThemeResource MessageOverlayBackgroundBrush}"
-            Foreground="White"
-            VerticalAlignment="Top"
-            HorizontalAlignment="Left"
-            Padding="8,2,8,4"
-            Margin="4"/>
-    </controls:AspectView>
-</StackPanel>
+                        <controls:AspectView
+                            x:Name="Photo"
+                            MinWidth="{ThemeResource TelegramMediaMinWidth}"
+                            MinHeight="{ThemeResource TelegramMediaMinHeight}"
+                            MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
+                            MaxHeight="{ThemeResource TelegramMediaMaxHeight}"
+                            Margin="-10,0,-10,4"
+                            CornerRadius="4">
+                            <Image x:Name="Texture" Stretch="UniformToFill"/>
+                            <messages:InvoiceFooter
+                                x:Name="Footer"
+                                Background="{ThemeResource MessageOverlayBackgroundBrush}"
+                                Foreground="White"
+                                VerticalAlignment="Top"
+                                HorizontalAlignment="Left"
+                                Padding="8,2,8,4"
+                                Margin="4"/>
+                        </controls:AspectView>
+                    </StackPanel>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

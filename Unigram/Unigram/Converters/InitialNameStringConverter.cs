@@ -70,7 +70,7 @@ namespace Unigram.Converters
 
         public static string Convert(string title)
         {
-            title = title ?? string.Empty;
+            title ??= string.Empty;
 
             var word1 = string.Empty;
             var word2 = string.Empty;
@@ -87,8 +87,8 @@ namespace Unigram.Converters
 
         public static string Convert(string word1, string word2)
         {
-            word1 = word1 ?? string.Empty;
-            word2 = word2 ?? string.Empty;
+            word1 ??= string.Empty;
+            word2 ??= string.Empty;
 
             var si1 = StringInfo.GetTextElementEnumerator(word1);
             var si2 = StringInfo.GetTextElementEnumerator(word2);

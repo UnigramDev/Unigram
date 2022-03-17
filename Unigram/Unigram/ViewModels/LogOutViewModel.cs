@@ -58,7 +58,6 @@ namespace Unigram.ViewModels
             Settings.Clear();
             Settings.PasscodeLock.Clear();
 
-            await _pushService.UnregisterAsync();
             await _contactsService.RemoveAsync();
 
             var response = await ProtoService.SendAsync(new LogOut());

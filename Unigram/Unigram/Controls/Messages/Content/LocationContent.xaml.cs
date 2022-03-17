@@ -6,27 +6,61 @@ using Unigram.Converters;
 using Unigram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media.Imaging;
+using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed partial class LocationContent : StackPanel, IContent
+    public sealed class LocationContent : Control, IContent
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
         public LocationContent(MessageViewModel message)
         {
-            InitializeComponent();
-            UpdateMessage(message);
+            _message = message;
+
+            DefaultStyleKey = typeof(LocationContent);
         }
+
+        #region InitializeComponent
+
+        private ImageView Texture;
+        private ProfilePicture PinPhoto;
+        private Path PinDot;
+        private Grid LivePanel;
+        private Run Title;
+        private Run Subtitle;
+        private bool _templateApplied;
+
+        protected override void OnApplyTemplate()
+        {
+            Texture = GetTemplateChild(nameof(Texture)) as ImageView;
+            PinPhoto = GetTemplateChild(nameof(PinPhoto)) as ProfilePicture;
+            PinDot = GetTemplateChild(nameof(PinDot)) as Path;
+            LivePanel = GetTemplateChild(nameof(LivePanel)) as Grid;
+            Title = GetTemplateChild(nameof(Title)) as Run;
+            Subtitle = GetTemplateChild(nameof(Subtitle)) as Run;
+
+            Texture.Click += Button_Click;
+
+            _templateApplied = true;
+
+            if (_message != null)
+            {
+                UpdateMessage(_message);
+            }
+        }
+
+        #endregion
 
         public void UpdateMessage(MessageViewModel message)
         {
             _message = message;
 
             var location = message.Content as MessageLocation;
-            if (location == null)
+            if (location == null || !_templateApplied)
             {
                 return;
             }
@@ -54,14 +88,7 @@ namespace Unigram.Controls.Messages.Content
                     LivePanel.Visibility = Visibility.Visible;
                     PinDot.Visibility = Visibility.Collapsed;
 
-                    if (_message.ProtoService.TryGetUser(message.Sender, out User senderUser))
-                    {
-                        PinPhoto.Source = PlaceholderHelper.GetUser(message.ProtoService, senderUser, 32);
-                    }
-                    else if (_message.ProtoService.TryGetChat(message.Sender, out Chat senderChat))
-                    {
-                        PinPhoto.Source = PlaceholderHelper.GetChat(message.ProtoService, senderChat, 32);
-                    }
+                    PinPhoto.SetMessageSender(message.ProtoService, message.SenderId, 32);
 
                     Title.Text = Strings.Resources.AttachLiveLocation;
                     Subtitle.Text = Locale.FormatLocationUpdateDate(message.EditDate > 0 ? message.EditDate : message.Date);
@@ -88,17 +115,17 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            if (location.LivePeriod > 0)
+            //if (location.LivePeriod > 0)
+            //{
+            //    _message.Delegate.OpenLiveLocation(_message);
+            //}
+            //else
             {
-                _message.Delegate.OpenLiveLocation(_message);
-            }
-            else
-            {
-                if (_message.ProtoService.TryGetUser(_message.Sender, out User senderUser))
+                if (_message.ProtoService.TryGetUser(_message.SenderId, out User senderUser))
                 {
                     _message.Delegate.OpenLocation(location.Location, senderUser.GetFullName());
                 }
-                else if (_message.ProtoService.TryGetChat(_message.Sender, out Chat senderChat))
+                else if (_message.ProtoService.TryGetChat(_message.SenderId, out Chat senderChat))
                 {
                     _message.Delegate.OpenLocation(location.Location, _message.ProtoService.GetTitle(senderChat));
                 }

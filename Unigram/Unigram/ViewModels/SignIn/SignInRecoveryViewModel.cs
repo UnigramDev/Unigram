@@ -37,40 +37,22 @@ namespace Unigram.ViewModels.SignIn
         private string _recoveryEmailAddressPattern;
         public string RecoveryEmailAddressPattern
         {
-            get
-            {
-                return _recoveryEmailAddressPattern;
-            }
-            set
-            {
-                Set(ref _recoveryEmailAddressPattern, value);
-            }
+            get => _recoveryEmailAddressPattern;
+            set => Set(ref _recoveryEmailAddressPattern, value);
         }
 
         private string _recoveryCode;
         public string RecoveryCode
         {
-            get
-            {
-                return _recoveryCode;
-            }
-            set
-            {
-                Set(ref _recoveryCode, value);
-            }
+            get => _recoveryCode;
+            set => Set(ref _recoveryCode, value);
         }
 
         private bool _isResettable;
         public bool IsResettable
         {
-            get
-            {
-                return _isResettable;
-            }
-            set
-            {
-                Set(ref _isResettable, value);
-            }
+            get => _isResettable;
+            set => Set(ref _isResettable, value);
         }
 
         public RelayCommand SendCommand { get; }
@@ -82,7 +64,7 @@ namespace Unigram.ViewModels.SignIn
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new RecoverAuthenticationPassword(_recoveryCode));
+            var response = await ProtoService.SendAsync(new RecoverAuthenticationPassword(_recoveryCode, string.Empty, string.Empty));
             if (response is Error error)
             {
                 if (error.TypeEquals(ErrorType.CODE_INVALID))

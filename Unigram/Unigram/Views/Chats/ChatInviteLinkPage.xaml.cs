@@ -18,7 +18,6 @@ namespace Unigram.Views.Chats
         public ChatInviteLinkPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<ChatInviteLinkViewModel>();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -137,7 +136,7 @@ namespace Unigram.Views.Chats
             else if (phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
+                photo.SetUser(ViewModel.ProtoService, user, 36);
             }
         }
 
@@ -162,7 +161,7 @@ namespace Unigram.Views.Chats
             else if (phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
+                photo.SetUser(ViewModel.ProtoService, user, 36);
             }
         }
     }

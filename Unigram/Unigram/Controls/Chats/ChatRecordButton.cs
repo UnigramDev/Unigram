@@ -21,7 +21,6 @@ using Windows.System.Profile;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Input;
 
 namespace Unigram.Controls.Chats
 {
@@ -31,7 +30,7 @@ namespace Unigram.Controls.Chats
         Video
     }
 
-    public class ChatRecordButton : GlyphToggleButton
+    public class ChatRecordButton : AnimatedGlyphToggleButton
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
@@ -47,10 +46,7 @@ namespace Unigram.Controls.Chats
 
         public ChatRecordMode Mode
         {
-            get
-            {
-                return IsChecked.HasValue && IsChecked.Value ? ChatRecordMode.Video : ChatRecordMode.Voice;
-            }
+            get => IsChecked.HasValue && IsChecked.Value ? ChatRecordMode.Video : ChatRecordMode.Voice;
             set
             {
                 IsChecked = value == ChatRecordMode.Video;
@@ -105,16 +101,10 @@ namespace Unigram.Controls.Chats
             _recorder.QuantumProcessed = null;
         }
 
-        private async void RecordAudioVideoRunnable()
+        private void RecordAudioVideoRunnable()
         {
             _calledRecordRunnable = true;
             _recordAudioVideoRunnableStarted = false;
-
-            var permissions = await CheckAccessAsync(Mode);
-            if (permissions == false)
-            {
-                return;
-            }
 
             Logger.Debug(LogTarget.Recording, "Permissions granted, mode: " + Mode);
 
@@ -253,6 +243,12 @@ namespace Unigram.Controls.Chats
         {
             if (ClickMode == ClickMode.Press)
             {
+                var permissions = await CheckAccessAsync(Mode);
+                if (permissions == false)
+                {
+                    return;
+                }
+
                 Logger.Debug(LogTarget.Recording, "Click mode: Press");
 
                 if (_recordingLocked)
@@ -319,40 +315,6 @@ namespace Unigram.Controls.Chats
                     UpdateRecordingInterface();
                 }
             }
-        }
-
-        protected override void OnPointerPressed(PointerRoutedEventArgs e)
-        {
-            CapturePointer(e.Pointer);
-            base.OnPointerPressed(e);
-        }
-
-        protected override void OnPointerReleased(PointerRoutedEventArgs e)
-        {
-            ReleasePointerCapture(e.Pointer);
-
-            Logger.Debug(LogTarget.Recording, "OnPointerReleased");
-
-            OnRelease();
-            base.OnPointerReleased(e);
-        }
-
-        protected override void OnPointerCanceled(PointerRoutedEventArgs e)
-        {
-            ReleasePointerCapture(e.Pointer);
-
-            Logger.Debug(LogTarget.Recording, "OnPointerCanceled");
-
-            OnRelease();
-            base.OnPointerCanceled(e);
-        }
-
-        protected override void OnPointerCaptureLost(PointerRoutedEventArgs e)
-        {
-            Logger.Debug(LogTarget.Recording, "OnPointerCaptureLost");
-
-            OnRelease();
-            base.OnPointerCaptureLost(e);
         }
 
         private void OnRelease()
@@ -455,7 +417,7 @@ namespace Unigram.Controls.Chats
             return true;
         }
 
-        private readonly bool _hasRecordVideo = false;
+        private readonly bool _hasRecordVideo = true;
 
         private bool _calledRecordRunnable;
         private bool _recordAudioVideoRunnableStarted;
@@ -531,7 +493,7 @@ namespace Unigram.Controls.Chats
 
             [ThreadStatic]
             private static Recorder _current;
-            public static Recorder Current => _current = _current ?? new Recorder();
+            public static Recorder Current => _current ??= new Recorder();
 
             private readonly ConcurrentQueueWorker _recordQueue;
 
@@ -563,6 +525,8 @@ namespace Unigram.Controls.Chats
                         RecordingFailed?.Invoke(this, EventArgs.Empty);
                         return;
                     }
+
+                    RecordingStarted?.Invoke(this, EventArgs.Empty);
 
                     try
                     {
@@ -634,10 +598,7 @@ namespace Unigram.Controls.Chats
                         _file = null;
 
                         RecordingFailed?.Invoke(this, EventArgs.Empty);
-                        return;
                     }
-
-                    RecordingStarted?.Invoke(this, EventArgs.Empty);
                 });
             }
 
@@ -687,7 +648,7 @@ namespace Unigram.Controls.Chats
             [ComImport]
             [Guid("5B0D3235-4DBA-4D44-865E-8F1D0E4FD04D")]
             [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-            unsafe interface IMemoryBufferByteAccess
+            private unsafe interface IMemoryBufferByteAccess
             {
                 void GetBuffer(out byte* buffer, out uint capacity);
             }
@@ -803,7 +764,7 @@ namespace Unigram.Controls.Chats
                     uint sample = (ushort)scaledSamples[i];
                     var minPeak = Math.Min(sample, calculatedPeak);
                     var resultPeak = minPeak * 31 / calculatedPeak;
-                    scaledSamples[i] = (short)(/*clamping:*/ Math.Min(31, resultPeak));
+                    scaledSamples[i] = (short)/*clamping:*/ Math.Min(31, resultPeak);
                 }
 
                 var bitstreamLength = scaledSamples.Length * 5 / 8 + 1;
@@ -815,7 +776,7 @@ namespace Unigram.Controls.Chats
                     {
                         bytes += bitOffset / 8;
                         bitOffset %= 8;
-                        *((int*)bytes) |= (value << bitOffset);
+                        *(int*)bytes |= value << bitOffset;
                     }
 
                     for (int i = 0; i < scaledSamples.Length; i++)
@@ -922,22 +883,24 @@ namespace Unigram.Controls.Chats
                         height = width;
                     }
 
+                    var length = viewModel.ProtoService.Options.SuggestedVideoNoteLength;
+                    var videoBitrate = viewModel.ProtoService.Options.SuggestedVideoNoteVideoBitrate;
+                    var audioBitrate = viewModel.ProtoService.Options.SuggestedVideoNoteAudioBitrate;
+
                     var transform = new VideoTransformEffectDefinition();
                     transform.CropRectangle = new Rect(x, y, width, height);
-                    transform.OutputSize = new Size(240, 240);
+                    transform.OutputSize = new Size(length, length);
                     transform.Mirror = mirroring ? MediaMirroringOptions.Horizontal : MediaMirroringOptions.None;
 
                     var profile = MediaEncodingProfile.CreateMp4(VideoEncodingQuality.Vga);
-                    profile.Video.Width = 240;
-                    profile.Video.Height = 240;
-                    profile.Video.Bitrate = 300000;
+                    profile.Video.Width = (uint)length;
+                    profile.Video.Height = (uint)length;
+                    profile.Video.Bitrate = (uint)videoBitrate * 100;
+                    profile.Audio.Bitrate = (uint)audioBitrate * 1000;
 
                     try
                     {
-                        viewModel.Dispatcher.Dispatch(async () =>
-                        {
-                            await viewModel.SendVideoNoteAsync(chat, file, profile, transform);
-                        });
+                        await viewModel.Dispatcher.DispatchAsync(() => viewModel.SendVideoNoteAsync(chat, file, profile, transform));
                     }
                     catch { }
                 }
@@ -945,10 +908,7 @@ namespace Unigram.Controls.Chats
                 {
                     try
                     {
-                        viewModel.Dispatcher.Dispatch(async () =>
-                        {
-                            await viewModel.SendVoiceNoteAsync(chat, file, duration, null);
-                        });
+                        await viewModel.Dispatcher.DispatchAsync(() => viewModel.SendVoiceNoteAsync(chat, file, duration, null));
                     }
                     catch { }
                 }
@@ -1024,12 +984,10 @@ namespace Unigram.Controls.Chats
                     if (m_isVideo)
                     {
                         var profile = MediaEncodingProfile.CreateMp4(VideoEncodingQuality.Auto);
-                        //var rotationAngle = CameraRotationHelper.ConvertSimpleOrientationToClockwiseDegrees(Windows.Devices.Sensors.SimpleOrientation.NotRotated); // _rotationHelper.GetCameraCaptureOrientation());
-                        //profile.Video.Properties.Add(new Guid("C380465D-2271-428C-9B83-ECEA3B4A85C1"), PropertyValue.CreateInt32(rotationAngle));
+                        //m_lowLag = await m_mediaCapture.PrepareLowLagRecordToStorageFileAsync(profile, m_file);
 
-                        m_lowLag = await m_mediaCapture.PrepareLowLagRecordToStorageFileAsync(profile, m_file);
-
-                        await m_lowLag.StartAsync();
+                        //await m_lowLag.StartAsync();
+                        await m_mediaCapture.StartRecordToStorageFileAsync(profile, m_file);
                     }
                     else
                     {

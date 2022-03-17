@@ -167,8 +167,7 @@ namespace Unigram.Services.ViewService
         /// before.</returns>
         public static ViewLifetimeControl TryGetForCurrentView()
         {
-            ViewLifetimeControl res;
-            WindowControlsMap.TryGetValue(ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow), out res);
+            WindowControlsMap.TryGetValue(ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow), out ViewLifetimeControl res);
             return res;
         }
 
@@ -190,7 +189,7 @@ namespace Unigram.Services.ViewService
             Logger.Info("Start:" + refCountCopy);
             if (releasedCopy)
             {
-                throw new ViewLifeTimeException("This view is being disposed");
+                return -1;
             }
 
             return refCountCopy;
@@ -229,7 +228,7 @@ namespace Unigram.Services.ViewService
             Logger.Info("Stop:" + refCountCopy);
             if (releasedCopy)
             {
-                throw new ViewLifeTimeException("This view is being disposed");
+                return -1;
             }
 
             return refCountCopy;
@@ -252,34 +251,13 @@ namespace Unigram.Services.ViewService
                         InternalReleased += value;
                     }
                 }
-
-                if (releasedCopy)
-                {
-                    throw new ViewLifeTimeException("This view is being disposed");
-                }
             }
-
             remove
             {
                 lock (syncObject)
                 {
                     InternalReleased -= value;
                 }
-            }
-        }
-
-        public class ViewLifeTimeException : Exception
-        {
-            public ViewLifeTimeException()
-            {
-            }
-
-            public ViewLifeTimeException(string message) : base(message)
-            {
-            }
-
-            public ViewLifeTimeException(string message, Exception innerException) : base(message, innerException)
-            {
             }
         }
     }

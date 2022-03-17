@@ -9,6 +9,7 @@ using Unigram.Converters;
 using Unigram.Native;
 using Unigram.Services;
 using Windows.Foundation;
+using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Xaml.Media;
@@ -178,7 +179,7 @@ namespace Unigram.Common
             return bitmap;
         }
 
-        public static ImageSource GetSavedMessages(int id, int side)
+        public static ImageSource GetSavedMessages(long id, int side)
         {
             var bitmap = new BitmapImage { DecodePixelWidth = side, DecodePixelHeight = side, DecodePixelType = DecodePixelType.Logical };
             using (var stream = new InMemoryRandomAccessStream())
@@ -226,79 +227,6 @@ namespace Unigram.Common
             return bitmap;
         }
 
-        public static ImageSource GetChat(IProtoService protoService, Chat chat, int side)
-        {
-            if (protoService != null)
-            {
-                if (chat.Type is ChatTypePrivate privata && protoService.IsSavedMessages(chat))
-                {
-                    return GetSavedMessages(privata.UserId, side);
-                }
-                else if (protoService.IsRepliesChat(chat))
-                {
-                    return GetGlyph(Icons.ArrowReply, 5, side);
-                }
-            }
-
-            var file = chat.Photo?.Small;
-            if (file != null)
-            {
-                if (file.Local.IsDownloadingCompleted)
-                {
-                    return UriEx.ToBitmap(file.Local.Path, side, side);
-                }
-                else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-                {
-                    protoService?.DownloadFile(file.Id, 1);
-                }
-            }
-            else if (protoService.TryGetUser(chat, out User user) && user.Type is UserTypeDeleted)
-            {
-                return GetDeletedUser(user, side);
-            }
-
-            return GetChat(chat, side);
-        }
-
-        public static ImageSource GetChat(IProtoService protoService, ChatInviteLinkInfo chat, int side)
-        {
-            var file = chat.Photo?.Small;
-            if (file != null)
-            {
-                if (file.Local.IsDownloadingCompleted)
-                {
-                    return UriEx.ToBitmap(file.Local.Path, side, side);
-                }
-                else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-                {
-                    protoService?.DownloadFile(file.Id, 1);
-                }
-            }
-
-            return GetChat(chat, side);
-        }
-
-        public static ImageSource GetUser(IProtoService protoService, User user, int side)
-        {
-            var file = user.ProfilePhoto?.Small;
-            if (file != null)
-            {
-                if (file.Local.IsDownloadingCompleted)
-                {
-                    return UriEx.ToBitmap(file.Local.Path, side, side);
-                }
-                else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-                {
-                    protoService?.DownloadFile(file.Id, 1);
-                }
-            }
-            else if (user.Type is UserTypeDeleted)
-            {
-                return GetDeletedUser(user, side);
-            }
-
-            return GetUser(user, side);
-        }
 
         public static ImageSource GetBitmap(IProtoService protoService, PhotoSize photoSize)
         {
@@ -311,7 +239,7 @@ namespace Unigram.Common
             {
                 return UriEx.ToBitmap(file.Local.Path, width, height);
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && protoService != null)
             {
                 protoService.DownloadFile(file.Id, 1);
             }
@@ -319,48 +247,46 @@ namespace Unigram.Common
             return null;
         }
 
-        public static ImageSource GetVector(IProtoService protoService, File file, Color foreground)
+        private static readonly DisposableMutex _patternSurfaceLock = new DisposableMutex();
+
+        public static async Task<LoadedImageSurface> GetPatternSurfaceAsync(IProtoService protoService, File file)
         {
+            using var locked = await _patternSurfaceLock.WaitAsync();
+
             if (file.Local.IsDownloadingCompleted)
             {
-                var text = GetSvgXml(file);
+                var bitmap = default(LoadedImageSurface);
 
-                var bitmap = new BitmapImage();
-                using (var stream = new InMemoryRandomAccessStream())
+                var cache = $"{file.Remote.UniqueId}.cache.png";
+                var relative = System.IO.Path.Combine("wallpapers", cache);
+
+                var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(relative) as StorageFile;
+                if (item == null)
                 {
-                    try
+                    item = await ApplicationData.Current.LocalFolder.CreateFileAsync(relative, CreationCollisionOption.ReplaceExisting);
+
+                    using (var stream = await item.OpenAsync(FileAccessMode.ReadWrite))
                     {
-                        PlaceholderImageHelper.Current.DrawSvg(text, foreground, stream, out _);
-                        bitmap.SetSource(stream);
+                        try
+                        {
+                            var text = await GetSvgXml(file);
+                            await PlaceholderImageHelper.Current.DrawSvgAsync(text, Colors.White, stream);
+                        }
+                        catch { }
                     }
-                    catch { }
                 }
 
-                return bitmap;
-            }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-            {
-                protoService.DownloadFile(file.Id, 1);
-            }
-
-            return null;
-        }
-
-        public static LoadedImageSurface GetVectorSurface(IProtoService protoService, File file, Color foreground)
-        {
-            if (file.Local.IsDownloadingCompleted)
-            {
-                var text = GetSvgXml(file);
-
-                var bitmap = default(LoadedImageSurface);
-                using (var stream = new InMemoryRandomAccessStream())
+                if (item != null)
                 {
-                    try
+                    using (var stream = await item.OpenReadAsync())
                     {
-                        PlaceholderImageHelper.Current.DrawSvg(text, foreground, stream, out Size size);
-                        bitmap = LoadedImageSurface.StartLoadFromStream(stream, new Size(size.Width / 3, size.Height / 3));
+                        try
+                        {
+                            var props = await item.Properties.GetImagePropertiesAsync();
+                            bitmap = LoadedImageSurface.StartLoadFromStream(stream, new Size(props.Width / 2d, props.Height / 2d));
+                        }
+                        catch { }
                     }
-                    catch { }
                 }
 
                 return bitmap;
@@ -373,7 +299,7 @@ namespace Unigram.Common
             return null;
         }
 
-        private static string GetSvgXml(File file)
+        private static async Task<string> GetSvgXml(File file)
         {
             var styles = new Dictionary<string, string>();
             var text = string.Empty;
@@ -382,7 +308,7 @@ namespace Unigram.Common
             using (var decompress = new GZipStream(source, CompressionMode.Decompress))
             using (var reader = new System.IO.StreamReader(decompress))
             {
-                text = reader.ReadToEnd();
+                text = await reader.ReadToEndAsync();
             }
 
             var document = XDocument.Parse(text);
@@ -460,14 +386,14 @@ namespace Unigram.Common
             return bitmap;
         }
 
-        public static ImageSource GetQr(string data, Color foreground, Color background)
+        public static ImageSource GetBlurred(IList<byte> bytes, float amount = 3)
         {
             var bitmap = new BitmapImage();
             using (var stream = new InMemoryRandomAccessStream())
             {
                 try
                 {
-                    PlaceholderImageHelper.Current.DrawQr(data, foreground, background, stream);
+                    PlaceholderImageHelper.Current.DrawThumbnailPlaceholder(bytes, amount, stream);
                     bitmap.SetSource(stream);
                 }
                 catch { }
@@ -533,8 +459,8 @@ namespace Unigram.Common
                         double ratioY = maxWidth / size.Height;
                         double ratio = Math.Min(ratioX, ratioY);
 
-                        bitmap.DecodePixelWidth = (int)(size.Width * ratio);
-                        bitmap.DecodePixelHeight = (int)(size.Height * ratio);
+                        bitmap.DecodePixelWidth = (int)Math.Max(1, size.Width * ratio);
+                        bitmap.DecodePixelHeight = (int)Math.Max(1, size.Height * ratio);
                         bitmap.DecodePixelType = DecodePixelType.Logical;
                     }
 
@@ -553,7 +479,10 @@ namespace Unigram.Common
 
         public static ImageSource GetLottieFrame(string path, int frame, int width, int height, bool webp = true)
         {
-            var animation = LottieAnimation.LoadFromFile(path, false, null);
+            // Frame size affects disk cache, so we always use 256.
+            var frameSize = new Windows.Graphics.SizeInt32 { Width = 256, Height = 256 };
+
+            var animation = LottieAnimation.LoadFromFile(path, frameSize, false, null);
             if (animation == null)
             {
                 if (webp)

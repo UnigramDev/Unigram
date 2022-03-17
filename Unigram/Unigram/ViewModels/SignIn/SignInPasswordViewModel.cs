@@ -37,40 +37,22 @@ namespace Unigram.ViewModels.SignIn
         private string _passwordHint;
         public string PasswordHint
         {
-            get
-            {
-                return _passwordHint;
-            }
-            set
-            {
-                Set(ref _passwordHint, value);
-            }
+            get => _passwordHint;
+            set => Set(ref _passwordHint, value);
         }
 
         private string _password;
         public string Password
         {
-            get
-            {
-                return _password;
-            }
-            set
-            {
-                Set(ref _password, value);
-            }
+            get => _password;
+            set => Set(ref _password, value);
         }
 
         private bool _isResettable;
         public bool IsResettable
         {
-            get
-            {
-                return _isResettable;
-            }
-            set
-            {
-                Set(ref _isResettable, value);
-            }
+            get => _isResettable;
+            set => Set(ref _isResettable, value);
         }
 
         public RelayCommand SendCommand { get; }

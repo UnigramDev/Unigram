@@ -9,7 +9,7 @@ namespace Unigram.Common
     {
         public static string Format(string number)
         {
-            if (number.Any(x => x < '0' || x > '9'))
+            if (number.Any(x => x is < '0' or > '9'))
             {
                 number = Regex.Replace(number, "[^\\d]", string.Empty);
             }

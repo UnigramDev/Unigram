@@ -5,8 +5,11 @@
 
 #include "rtc_base/synchronization/mutex.h"
 
+#include "VoipVideoRenderer.h"
+
 #include <winrt/Telegram.Td.Api.h>
 
+using namespace winrt::Microsoft::Graphics::Canvas::UI::Xaml;
 using namespace winrt::Telegram::Td::Api;
 using namespace winrt::Windows::Foundation::Collections;
 
@@ -18,21 +21,29 @@ namespace winrt::Unigram::Native::Calls::implementation
 
 		void Close();
 
-		void SetConnectionMode(VoipGroupConnectionMode connectionMode, bool keepBroadcastIfWasEnabled);
+		void SetConnectionMode(VoipGroupConnectionMode connectionMode, bool keepBroadcastIfWasEnabled, bool isUnifiedBroadcast);
 
 		void EmitJoinPayload(EmitJsonPayloadDelegate completion);
-		void SetJoinResponsePayload(GroupCallJoinResponseWebrtc payload);
-		void SetJoinResponsePayload(GroupCallJoinResponseWebrtc payload, IVector<GroupCallParticipant> participants);
-		void AddParticipants(IVector<GroupCallParticipant> participants);
+		void SetJoinResponsePayload(hstring payload);
 		void RemoveSsrcs(IVector<int32_t> ssrcs);
+
+		winrt::Unigram::Native::Calls::VoipVideoRendererToken AddIncomingVideoOutput(int32_t audioSource, GroupCallParticipantVideoInfo videoInfo, CanvasControl canvas);
+		void AddUnifiedVideoOutput(CanvasControl canvas);
 
 		bool IsMuted();
 		void IsMuted(bool value);
 
+		bool IsNoiseSuppressionEnabled();
+		void IsNoiseSuppressionEnabled(bool value);
+
 		void SetAudioOutputDevice(hstring id);
 		void SetAudioInputDevice(hstring id);
+		void SetVideoCapture(Unigram::Native::Calls::IVoipVideoCapture videoCapture);
+
+		void AddExternalAudioSamples(std::vector<uint8_t>&& samples);
 
 		void SetVolume(int32_t ssrc, double volume);
+		void SetRequestedVideoChannels(IVector<VoipVideoChannelInfo> descriptions);
 
 		winrt::event_token NetworkStateUpdated(Windows::Foundation::TypedEventHandler<
 			winrt::Unigram::Native::Calls::VoipGroupManager,
@@ -44,15 +55,24 @@ namespace winrt::Unigram::Native::Calls::implementation
 			IMapView<int32_t, IKeyValuePair<float, bool>>> const& value);
 		void AudioLevelsUpdated(winrt::event_token const& token);
 
-		winrt::event_token FrameRequested(Windows::Foundation::TypedEventHandler<
+		winrt::event_token BroadcastPartRequested(Windows::Foundation::TypedEventHandler<
 			winrt::Unigram::Native::Calls::VoipGroupManager,
-			winrt::Unigram::Native::Calls::FrameRequestedEventArgs> const& value);
-		void FrameRequested(winrt::event_token const& token);
+			winrt::Unigram::Native::Calls::BroadcastPartRequestedEventArgs> const& value);
+		void BroadcastPartRequested(winrt::event_token const& token);
+
+		winrt::event_token BroadcastTimeRequested(Windows::Foundation::TypedEventHandler<
+			winrt::Unigram::Native::Calls::VoipGroupManager,
+			winrt::Unigram::Native::Calls::BroadcastTimeRequestedEventArgs> const& value);
+		void BroadcastTimeRequested(winrt::event_token const& token);
 
 	private:
 		std::unique_ptr<tgcalls::GroupInstanceCustomImpl> m_impl = nullptr;
+		std::shared_ptr<tgcalls::VideoCaptureInterface> m_capturer = nullptr;
+
+		std::shared_ptr<VoipVideoRenderer> m_unifiedRenderer = nullptr;
 
 		bool m_isMuted = true;
+		bool m_isNoiseSuppressionEnabled = true;
 
 		winrt::event<Windows::Foundation::TypedEventHandler<
 			winrt::Unigram::Native::Calls::VoipGroupManager,
@@ -62,13 +82,16 @@ namespace winrt::Unigram::Native::Calls::implementation
 			IMapView<int32_t, IKeyValuePair<float, bool>>>> m_audioLevelsUpdated;
 		winrt::event<Windows::Foundation::TypedEventHandler<
 			winrt::Unigram::Native::Calls::VoipGroupManager,
-			winrt::Unigram::Native::Calls::FrameRequestedEventArgs>> m_frameRequested;
+			winrt::Unigram::Native::Calls::BroadcastPartRequestedEventArgs>> m_broadcastPartRequested;
+		winrt::event<Windows::Foundation::TypedEventHandler<
+			winrt::Unigram::Native::Calls::VoipGroupManager,
+			winrt::Unigram::Native::Calls::BroadcastTimeRequestedEventArgs>> m_broadcastTimeRequested;
 	};
 
 
-	class LoadPartTask final : public tgcalls::BroadcastPartTask {
+	class BroadcastPartTaskImpl final : public tgcalls::BroadcastPartTask {
 	public:
-		LoadPartTask(
+		BroadcastPartTaskImpl(
 			int64_t time,
 			int64_t period,
 			std::function<void(tgcalls::BroadcastPart&&)> done)
@@ -93,7 +116,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 					auto bytes = std::vector<uint8_t>(size);
 					memcpy(bytes.data(), data.data(), size);
 
-					broadcastPart.oggData = std::move(bytes);
+					broadcastPart.data = std::move(bytes);
 					broadcastPart.responseTimestamp = response;
 					broadcastPart.timestampMilliseconds = time;
 					broadcastPart.status = tgcalls::BroadcastPart::Status::Success;
@@ -123,6 +146,40 @@ namespace winrt::Unigram::Native::Calls::implementation
 		webrtc::Mutex _mutex;
 
 	};
+
+	class BroadcastTimeTaskImpl final : public tgcalls::BroadcastPartTask {
+	public:
+		BroadcastTimeTaskImpl(
+			std::function<void(int64_t)> done)
+			: _done(std::move(done))
+		{
+
+		}
+
+		void done(int64_t time) {
+			webrtc::MutexLock lock(&_mutex);
+
+			if (_done) {
+				_done(time);
+			}
+		}
+
+		void cancel() override {
+			webrtc::MutexLock lock(&_mutex);
+
+			if (!_done) {
+				return;
+			}
+
+			_done = nullptr;
+		}
+
+	private:
+		std::function<void(int64_t)> _done;
+		webrtc::Mutex _mutex;
+
+	};
+
 }
 
 namespace winrt::Unigram::Native::Calls::factory_implementation

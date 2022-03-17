@@ -115,6 +115,10 @@ namespace Unigram.Common
             {
                 builder.Append(dice.Emoji);
             }
+            else if (message.Content is MessageAnimatedEmoji animatedEmoji)
+            {
+                builder.Append(animatedEmoji.Emoji);
+            }
 
             if (builder.Length > 0 && builder[builder.Length - 1] != '.')
             {
@@ -158,19 +162,23 @@ namespace Unigram.Common
                     return Locale.Declension("Files", album.Messages.Count) + ", ";
                 }
             }
-            if (message.Content is MessageText text)
+            else if (message.Content is MessageText text)
             {
                 return text.Text.Text + ", ";
             }
-            if (message.Content is MessageDice dice)
+            else if (message.Content is MessageDice dice)
             {
                 return dice.Emoji + ", ";
             }
-            if (message.Content is MessageGame gameMedia)
+            else if (message.Content is MessageAnimatedEmoji animatedEmoji)
+            {
+                return animatedEmoji.Emoji + ", ";
+            }
+            else if (message.Content is MessageGame gameMedia)
             {
                 return Strings.Resources.AttachGame + ", " + gameMedia.Game.Title + ", ";
             }
-            if (message.Content is MessageExpiredVideo)
+            else if (message.Content is MessageExpiredVideo)
             {
                 return Strings.Resources.AttachVideoExpired + ", ";
             }
@@ -346,11 +354,11 @@ namespace Unigram.Common
 
             if (!light && /*message.IsFirst &&*/ !message.IsOutgoing && !message.IsChannelPost && (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup))
             {
-                if (cacheService.TryGetUser(message.Sender, out User senderUser))
+                if (cacheService.TryGetUser(message.SenderId, out User senderUser))
                 {
                     title = senderUser.GetFullName();
                 }
-                else if (cacheService.TryGetChat(message.Sender, out Chat senderChat))
+                else if (cacheService.TryGetChat(message.SenderId, out Chat senderChat))
                 {
                     title = senderChat.Title;
                 }
@@ -379,7 +387,7 @@ namespace Unigram.Common
             //    }
             //}
 
-            builder.Append(Automation.GetSummary(cacheService, message));
+            builder.Append(GetSummary(cacheService, message));
 
             var date = string.Format(Strings.Resources.TodayAtFormatted, Converter.ShortTime.Format(Utils.UnixTimestampToDateTime(message.Date)));
             if (message.IsOutgoing)

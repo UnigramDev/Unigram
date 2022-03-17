@@ -13,7 +13,6 @@ namespace Unigram.Views.Settings.Password
         public SettingsPasswordCreatePage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsPasswordCreateViewModel>();
         }
 
         private void Walkthrough_Loaded(object sender, RoutedEventArgs e)

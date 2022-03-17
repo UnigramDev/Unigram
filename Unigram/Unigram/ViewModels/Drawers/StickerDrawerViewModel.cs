@@ -213,10 +213,7 @@ namespace Unigram.ViewModels.Drawers
         private SearchStickerSetsCollection _searchStickers;
         public SearchStickerSetsCollection SearchStickers
         {
-            get
-            {
-                return _searchStickers;
-            }
+            get => _searchStickers;
             set
             {
                 Set(ref _searchStickers, value);
@@ -226,7 +223,7 @@ namespace Unigram.ViewModels.Drawers
 
         public MvxObservableCollection<StickerSetViewModel> Stickers => SearchStickers ?? (MvxObservableCollection<StickerSetViewModel>)SavedStickers;
 
-        public async void FindStickers(string query)
+        public async void Search(string query)
         {
             if (string.IsNullOrWhiteSpace(query))
             {
@@ -389,14 +386,8 @@ namespace Unigram.ViewModels.Drawers
         private int _featuredUnreadCount;
         public int FeaturedUnreadCount
         {
-            get
-            {
-                return _featuredUnreadCount;
-            }
-            set
-            {
-                Set(ref _featuredUnreadCount, value);
-            }
+            get => _featuredUnreadCount;
+            set => Set(ref _featuredUnreadCount, value);
         }
     }
 
@@ -447,7 +438,7 @@ namespace Unigram.ViewModels.Drawers
             var placeholders = new List<StickerViewModel>();
             for (int i = 0; i < (info.IsInstalled ? info.Size : info.Covers?.Count ?? 0); i++)
             {
-                placeholders.Add(new StickerViewModel(_protoService, _aggregator, info.Id, info.IsAnimated));
+                placeholders.Add(new StickerViewModel(_protoService, _aggregator, info.Id, info.StickerType));
             }
 
             Stickers = new MvxObservableCollection<StickerViewModel>(placeholders);
@@ -504,11 +495,8 @@ namespace Unigram.ViewModels.Drawers
 
         public bool IsLoaded { get; set; }
 
-        //public IList<StickerEmojis> Emojis { get => _set?.Emojis; set => _set?.Emojis = value; }
-        //public IList<Sticker> Stickers { get; set; }
         public bool IsViewed => _set?.IsViewed ?? _info.IsViewed;
-        public bool IsAnimated => _set?.IsAnimated ?? _info.IsAnimated;
-        public bool IsMasks => _set?.IsMasks ?? _info.IsMasks;
+        public StickerType StickerType => _set?.StickerType ?? _info.StickerType;
         public bool IsOfficial => _set?.IsOfficial ?? _info.IsOfficial;
         public bool IsArchived => _set?.IsArchived ?? _info.IsArchived;
         public bool IsInstalled => _set?.IsInstalled ?? _info.IsInstalled;
@@ -530,18 +518,18 @@ namespace Unigram.ViewModels.Drawers
     {
         private Sticker _sticker;
         private readonly long _setId;
-        private readonly bool _animated;
+        private readonly StickerType _type;
 
         private readonly IProtoService _protoService;
         private readonly IEventAggregator _aggregator;
 
-        public StickerViewModel(IProtoService protoService, IEventAggregator aggregator, long setId, bool animated)
+        public StickerViewModel(IProtoService protoService, IEventAggregator aggregator, long setId, StickerType type)
         {
             _protoService = protoService;
             _aggregator = aggregator;
 
             _setId = setId;
-            _animated = animated;
+            _type = type;
         }
 
         public StickerViewModel(IProtoService protoService, IEventAggregator aggregator, Sticker sticker)
@@ -550,7 +538,7 @@ namespace Unigram.ViewModels.Drawers
             _aggregator = aggregator;
 
             _sticker = sticker;
-            _animated = sticker.IsAnimated;
+            _type = sticker.Type;
         }
 
         public void Update(Sticker sticker)
@@ -561,16 +549,6 @@ namespace Unigram.ViewModels.Drawers
         public IProtoService ProtoService => _protoService;
         public IEventAggregator Aggregator => _aggregator;
 
-        public bool UpdateFile(File file)
-        {
-            if (_sticker == null)
-            {
-                return false;
-            }
-
-            return _sticker.UpdateFile(file);
-        }
-
         public static implicit operator Sticker(StickerViewModel viewModel)
         {
             return viewModel._sticker;
@@ -578,9 +556,7 @@ namespace Unigram.ViewModels.Drawers
 
         public File StickerValue => _sticker?.StickerValue;
         public IList<ClosedVectorPath> Outline => _sticker?.Outline;
-        public MaskPosition MaskPosition => _sticker?.MaskPosition;
-        public bool IsAnimated => _sticker?.IsAnimated ?? _animated;
-        public bool IsMask => _sticker?.IsMask ?? false;
+        public StickerType Type => _sticker?.Type ?? _type;
         public string Emoji => _sticker?.Emoji;
         public int Height => _sticker?.Height ?? 0;
         public int Width => _sticker?.Width ?? 0;
@@ -683,8 +659,8 @@ namespace Unigram.ViewModels.Drawers
                         if (response is Stickers stickers && stickers.StickersValue.Count > 0)
                         {
                             Add(new StickerSetViewModel(_protoService, _aggregator,
-                                new StickerSetInfo(0, _query, "emoji", null, new ClosedVectorPath[0], false, false, false, false, false, false, stickers.StickersValue.Count, stickers.StickersValue),
-                                new StickerSet(0, _query, "emoji", null, new ClosedVectorPath[0], false, false, false, false, false, false, stickers.StickersValue, new Emojis[0])));
+                                new StickerSetInfo(0, _query, "emoji", null, new ClosedVectorPath[0], false, false, false, new StickerTypeStatic(), false, stickers.StickersValue.Count, stickers.StickersValue),
+                                new StickerSet(0, _query, "emoji", null, new ClosedVectorPath[0], false, false, false, new StickerTypeStatic(), false, stickers.StickersValue, new Emojis[0])));
                         }
                     }
                     else
@@ -698,8 +674,8 @@ namespace Unigram.ViewModels.Drawers
                                 if (response is Stickers stickers && stickers.StickersValue.Count > 0)
                                 {
                                     Add(new StickerSetViewModel(_protoService, _aggregator,
-                                        new StickerSetInfo(0, emojis.EmojisValue[i], "emoji", null, new ClosedVectorPath[0], false, false, false, false, false, false, stickers.StickersValue.Count, stickers.StickersValue),
-                                        new StickerSet(0, emojis.EmojisValue[i], "emoji", null, new ClosedVectorPath[0], false, false, false, false, false, false, stickers.StickersValue, new Emojis[0])));
+                                        new StickerSetInfo(0, emojis.EmojisValue[i], "emoji", null, new ClosedVectorPath[0], false, false, false, new StickerTypeStatic(), false, stickers.StickersValue.Count, stickers.StickersValue),
+                                        new StickerSet(0, emojis.EmojisValue[i], "emoji", null, new ClosedVectorPath[0], false, false, false, new StickerTypeStatic(), false, stickers.StickersValue, new Emojis[0])));
                                 }
                             }
                         }

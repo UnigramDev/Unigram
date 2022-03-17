@@ -107,8 +107,8 @@ namespace Unigram.Controls
             }
 
             int start = SelectionStart;
-            String phoneChars = "0123456789";
-            String str = Text;
+            string phoneChars = "0123456789";
+            string str = Text;
             if (_characterAction == 3)
             {
                 str = str.Substring(0, _actionPosition) + str.Substring(_actionPosition + 1);
@@ -117,14 +117,14 @@ namespace Unigram.Controls
             StringBuilder builder = new StringBuilder(str.Length);
             for (int a = 0; a < str.Length; a++)
             {
-                String ch = str.Substring(a, 1);
+                string ch = str.Substring(a, 1);
                 if (phoneChars.Contains(ch))
                 {
                     builder.Append(ch);
                 }
             }
             _ignoreOnPhoneChange = true;
-            String hint = GetHint(builder.ToString());
+            string hint = GetHint(builder.ToString());
             if (hint != null)
             {
                 for (int a = 0; a < builder.Length; a++)
@@ -172,8 +172,8 @@ namespace Unigram.Controls
 
         public Country Country
         {
-            get { return (Country)GetValue(CountryProperty); }
-            set { SetValue(CountryProperty, value); }
+            get => (Country)GetValue(CountryProperty);
+            set => SetValue(CountryProperty, value);
         }
 
         public static readonly DependencyProperty CountryProperty =

@@ -27,33 +27,21 @@ namespace Unigram.ViewModels.Supergroups
         private Chat _chat;
         public Chat Chat
         {
-            get
-            {
-                return _chat;
-            }
-            set
-            {
-                Set(ref _chat, value);
-            }
+            get => _chat;
+            set => Set(ref _chat, value);
         }
 
         private ChatMember _member;
         public ChatMember Member
         {
-            get
-            {
-                return _member;
-            }
-            set
-            {
-                Set(ref _member, value);
-            }
+            get => _member;
+            set => Set(ref _member, value);
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             state.TryGet("chatId", out long chatId);
-            state.TryGet("senderUserId", out int userId);
+            state.TryGet("senderUserId", out long userId);
 
             Chat = ProtoService.GetChat(chatId);
 
@@ -127,10 +115,7 @@ namespace Unigram.ViewModels.Supergroups
         private bool _canSendMessages;
         public bool CanSendMessages
         {
-            get
-            {
-                return _canSendMessages;
-            }
+            get => _canSendMessages;
             set
             {
                 Set(ref _canSendMessages, value);
@@ -146,10 +131,7 @@ namespace Unigram.ViewModels.Supergroups
         private bool _canSendMediaMessages;
         public bool CanSendMediaMessages
         {
-            get
-            {
-                return _canSendMediaMessages;
-            }
+            get => _canSendMediaMessages;
             set
             {
                 Set(ref _canSendMediaMessages, value);
@@ -183,10 +165,7 @@ namespace Unigram.ViewModels.Supergroups
         private bool _canSendOtherMessages;
         public bool CanSendOtherMessages
         {
-            get
-            {
-                return _canSendOtherMessages;
-            }
+            get => _canSendOtherMessages;
             set
             {
                 Set(ref _canSendOtherMessages, value);
@@ -202,10 +181,7 @@ namespace Unigram.ViewModels.Supergroups
         private bool _canSendPolls;
         public bool CanSendPolls
         {
-            get
-            {
-                return _canSendPolls;
-            }
+            get => _canSendPolls;
             set
             {
                 Set(ref _canSendPolls, value);
@@ -220,10 +196,7 @@ namespace Unigram.ViewModels.Supergroups
         private bool _canAddWebPagePreviews;
         public bool CanAddWebPagePreviews
         {
-            get
-            {
-                return _canAddWebPagePreviews;
-            }
+            get => _canAddWebPagePreviews;
             set
             {
                 Set(ref _canAddWebPagePreviews, value);
@@ -240,40 +213,22 @@ namespace Unigram.ViewModels.Supergroups
         private bool _canInviteUsers;
         public bool CanInviteUsers
         {
-            get
-            {
-                return _canInviteUsers;
-            }
-            set
-            {
-                Set(ref _canInviteUsers, value);
-            }
+            get => _canInviteUsers;
+            set => Set(ref _canInviteUsers, value);
         }
 
         private bool _canPinMessages;
         public bool CanPinMessages
         {
-            get
-            {
-                return _canPinMessages;
-            }
-            set
-            {
-                Set(ref _canPinMessages, value);
-            }
+            get => _canPinMessages;
+            set => Set(ref _canPinMessages, value);
         }
 
         private bool _canChangeInfo;
         public bool CanChangeInfo
         {
-            get
-            {
-                return _canChangeInfo;
-            }
-            set
-            {
-                Set(ref _canChangeInfo, value);
-            }
+            get => _canChangeInfo;
+            set => Set(ref _canChangeInfo, value);
         }
 
         #endregion
@@ -281,8 +236,8 @@ namespace Unigram.ViewModels.Supergroups
         private int _untilDate;
         public int UntilDate
         {
-            get { return _untilDate; }
-            set { Set(ref _untilDate, value); }
+            get => _untilDate;
+            set => Set(ref _untilDate, value);
         }
 
         public RelayCommand ProfileCommand { get; }

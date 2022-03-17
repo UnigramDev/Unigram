@@ -1,5 +1,4 @@
 ﻿using Windows.ApplicationModel.Core;
-using Windows.Foundation;
 using Windows.System.Profile;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -51,11 +50,10 @@ namespace Unigram.Common
                 row.Height = new GridLength(sender.IsVisible ? sender.Height : 0, GridUnitType.Pixel);
             }
 
-            TypedEventHandler<CoreApplicationViewTitleBar, object> handler = null;
-            handler = (s, args) =>
+            void handler(CoreApplicationViewTitleBar s, object args)
             {
                 row.Height = new GridLength(sender.IsVisible ? sender.Height : 0, GridUnitType.Pixel);
-            };
+            }
 
             sender.ExtendViewIntoTitleBar = true;
             sender.IsVisibleChanged += handler;

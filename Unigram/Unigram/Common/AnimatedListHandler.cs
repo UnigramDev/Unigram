@@ -23,7 +23,7 @@ namespace Unigram.Common
         public AnimatedListHandler(ListViewBase listView)
         {
             _listView = listView;
-            _listView.Loaded += OnLoaded;
+            _listView.SizeChanged += OnSizeChanged;
             _listView.Unloaded += OnUnloaded;
 
             _debouncer = new DispatcherTimer();
@@ -35,29 +35,35 @@ namespace Unigram.Common
             };
         }
 
-        public Action<FrameworkElement, LottieView> LoadView { get; set; }
-        public Action<FrameworkElement, LottieView> UnloadView { get; set; }
-
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            _listView.Items.VectorChanged += OnVectorChanged;
-
-            var scrollViewer = _listView.GetScrollViewer();
-            if (scrollViewer != null)
+            if (sender is ListViewBase)
             {
-                scrollViewer.ViewChanged += OnViewChanged;
+                _listView.SizeChanged -= OnSizeChanged;
+                _listView.Items.VectorChanged += OnVectorChanged;
+
+                var scrollViewer = _listView.GetScrollViewer();
+                if (scrollViewer != null)
+                {
+                    scrollViewer.ViewChanged += OnViewChanged;
+                }
+
+                var panel = _listView.ItemsPanelRoot;
+                if (panel != null)
+                {
+                    panel.SizeChanged += OnSizeChanged;
+                }
             }
-
-            var panel = _listView.ItemsPanelRoot;
-            if (panel != null)
+            else if (e.PreviousSize.Width < _listView.ActualWidth || e.PreviousSize.Height < _listView.ActualHeight)
             {
-                panel.SizeChanged += OnSizeChanged;
+                _debouncer.Stop();
+                _debouncer.Start();
             }
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            UnloadVisibleItems();
+            UnloadItems();
         }
 
         private void OnVectorChanged(IObservableVector<object> sender, IVectorChangedEventArgs e)
@@ -69,15 +75,6 @@ namespace Unigram.Common
 
             _debouncer.Stop();
             _debouncer.Start();
-        }
-
-        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            if (e.PreviousSize.Width < _listView.ActualWidth || e.PreviousSize.Height < _listView.ActualHeight)
-            {
-                _debouncer.Stop();
-                _debouncer.Start();
-            }
         }
 
         private void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
@@ -150,19 +147,19 @@ namespace Unigram.Common
                 File file = null;
 
                 var item = _listView.ItemFromContainer(container);
-                if (item is StickerViewModel viewModel && viewModel.IsAnimated)
+                if (item is StickerViewModel viewModel && viewModel.Type is StickerTypeAnimated or StickerTypeVideo)
                 {
                     file = viewModel.StickerValue;
                 }
-                else if (item is StickerSetViewModel setViewModel && setViewModel.IsAnimated)
+                else if (item is StickerSetViewModel setViewModel && setViewModel.StickerType is StickerTypeAnimated or StickerTypeVideo)
                 {
                     file = setViewModel.Thumbnail?.File ?? setViewModel.Covers.FirstOrDefault()?.Thumbnail?.File;
                 }
-                else if (item is Sticker sticker && sticker.IsAnimated)
+                else if (item is Sticker sticker && sticker.Type is StickerTypeAnimated or StickerTypeVideo)
                 {
                     file = sticker.StickerValue;
                 }
-                else if (item is StickerSetInfo set && set.IsAnimated)
+                else if (item is StickerSetInfo set && set.StickerType is StickerTypeAnimated or StickerTypeVideo)
                 {
                     file = set.Thumbnail?.File ?? set.Covers.FirstOrDefault()?.Thumbnail?.File;
                 }
@@ -173,6 +170,10 @@ namespace Unigram.Common
                 else if (item is InlineQueryResultAnimation inlineQueryResultAnimation)
                 {
                     file = inlineQueryResultAnimation.Animation.AnimationValue;
+                }
+                else if (item is InlineQueryResultSticker inlineQueryResultSticker && inlineQueryResultSticker.Sticker.Type is StickerTypeAnimated or StickerTypeVideo)
+                {
+                    file = inlineQueryResultSticker.Sticker.StickerValue;
                 }
 
                 if (file == null || !file.Local.IsDownloadingCompleted)
@@ -230,11 +231,31 @@ namespace Unigram.Common
         {
             foreach (var item in _prev.Values)
             {
-                try
+                item.Pause();
+            }
+
+            _prev.Clear();
+            _unloaded = true;
+        }
+
+        public void UnloadItems()
+        {
+            var panel = _listView.ItemsPanelRoot;
+            if (panel == null)
+            {
+                return;
+            }
+
+            foreach (var item in panel.Children)
+            {
+                if (item is SelectorItem container && container.ContentTemplateRoot is FrameworkElement final)
                 {
-                    item.Pause();
+                    var lottie = final.FindName("Player") as IPlayerView;
+                    if (lottie != null)
+                    {
+                        lottie.Unload();
+                    }
                 }
-                catch { }
             }
 
             _prev.Clear();

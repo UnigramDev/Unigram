@@ -21,7 +21,7 @@ namespace Unigram.Entities
 
         public int Duration { get; private set; }
 
-        public new static async Task<StorageAudio> CreateAsync(StorageFile file)
+        public static new async Task<StorageAudio> CreateAsync(StorageFile file)
         {
             try
             {

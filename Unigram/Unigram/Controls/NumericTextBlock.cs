@@ -1,214 +1,241 @@
-﻿using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.Geometry;
-using Microsoft.Graphics.Canvas.Text;
-using System;
+﻿using System;
 using System.Numerics;
-using Windows.UI;
-using Windows.UI.Composition;
-using Windows.UI.Text;
+using System.Text.RegularExpressions;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls
 {
     public class NumericTextBlock : Control
     {
-        private readonly ShapeVisual _shape;
-        private CompositionBrush _foreground;
-
-        private readonly float _nineRight;
-        private readonly float _nineBottom;
+        private Grid _layoutRoot;
+        private TextBlock _beforePart;
+        private TextBlock _afterPart;
 
         public NumericTextBlock()
         {
-            var shape = Window.Current.Compositor.CreateShapeVisual();
-            //shape.Clip = Window.Current.Compositor.CreateInsetClip(0, 0, 1, 0);
-            //shape.Size = new Vector2(100, 36);
-
-            var part = GetPart('9');
-            var bounds = part.ComputeBounds();
-
-            _shape = shape;
-            _nineRight = (float)bounds.Right;
-            _nineBottom = (float)bounds.Bottom;
-
-            Height = _nineBottom;
-            shape.Size = new Vector2(0, _nineBottom);
-
-            ElementCompositionPreview.SetElementChildVisual(this, shape);
-
-            ApplyForeground();
-            RegisterPropertyChangedCallback(ForegroundProperty, OnForegroundChanged);
+            DefaultStyleKey = typeof(NumericTextBlock);
         }
 
-        private void OnForegroundChanged(DependencyObject sender, DependencyProperty dp)
+        protected override void OnApplyTemplate()
         {
-            OnValueChanged(Value, Value);
+            _layoutRoot = GetTemplateChild("LayoutRoot") as Grid;
+            _beforePart = GetTemplateChild("BeforePart") as TextBlock;
+            _afterPart = GetTemplateChild("AfterPart") as TextBlock;
+
+            OnTextChanged(Text, null);
+
+            base.OnApplyTemplate();
         }
 
-        private void ApplyForeground()
+        private void OnTextChanged(string newValue, string oldValue)
         {
-            if (Foreground is SolidColorBrush solid)
-            {
-                _foreground = Window.Current.Compositor.CreateColorBrush(solid.Color);
-                OnValueChanged(Value, Value);
-            }
-        }
-
-        public int Value
-        {
-            get { return (int)GetValue(ValueProperty); }
-            set { SetValue(ValueProperty, value); }
-        }
-
-        public static readonly DependencyProperty ValueProperty =
-            DependencyProperty.Register("Value", typeof(int), typeof(NumericTextBlock), new PropertyMetadata(0, OnValueChanged));
-
-        private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((NumericTextBlock)d).OnValueChanged((int)e.NewValue, (int)e.OldValue);
-        }
-
-        private void OnValueChanged(int nextValue, int prevValue)
-        {
-            if (_shape == null)
+            if (_layoutRoot == null)
             {
                 return;
             }
 
-            if (nextValue < 0)
+            _beforePart.Style = TextStyle;
+            _afterPart.Style = TextStyle;
+
+            _layoutRoot.Children.Clear();
+            _layoutRoot.ColumnDefinitions.Clear();
+
+            var next = ParseText(newValue, out var nextValue, out var before, out var after);
+            var prev = ParseText(oldValue, out var prevValue, out _, out _);
+
+            if (next != null && prev != null)
             {
-                _shape.Shapes.Clear();
-                return;
+                _beforePart.Text = before;
+                _afterPart.Text = after;
+
+                UpdateView(next, prev, nextValue, prevValue);
             }
+            else
+            {
+                _beforePart.Text = newValue ?? string.Empty;
+                _afterPart.Text = string.Empty;
+            }
+        }
 
-            var next = $"{nextValue}";
-            var prev = $"{prevValue}";
+        private void UpdateView(string next, string prev, int nextValue, int prevValue)
+        {
+            var direction = nextValue - prevValue;
 
-            var nextArr = new CanvasGeometry[Math.Max(next.Length, prev.Length)];
-            var prevArr = new CanvasGeometry[Math.Max(next.Length, prev.Length)];
+            var nextArr = new TextBlock[Math.Max(next.Length, prev.Length)];
+            var prevArr = new TextBlock[Math.Max(next.Length, prev.Length)];
             var prevFor = new bool[Math.Max(next.Length, prev.Length)];
 
             for (int i = 0; i < Math.Max(next.Length, prev.Length); i++)
             {
+                _layoutRoot.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
+
                 if (next.Length > i && prev.Length > i)
                 {
-                    prevArr[i] = GetPart(prev[i]);
+                    prevArr[i] = GetPart(prev[i], i);
 
                     if (next[i] != prev[i])
                     {
-                        nextArr[i] = GetPart(next[i]);
+                        nextArr[i] = GetPart(next[i], i);
                     }
                 }
                 else if (prev.Length > i)
                 {
-                    prevArr[i] = GetPart(prev[i]);
+                    prevArr[i] = GetPart(prev[i], i);
                     prevFor[i] = true;
                 }
                 else if (next.Length > i)
                 {
-                    nextArr[i] = GetPart(next[i]);
+                    nextArr[i] = GetPart(next[i], i);
                 }
-            }
-
-            _shape.Shapes.Clear();
-
-            var dir = nextValue - prevValue;
-            var x = 0f;
-
-            var foreground = Color.FromArgb(0xFF, 0x00, 0x00, 0x00);
-            var background = Color.FromArgb(0x00, 0x00, 0x00, 0x00);
-
-            if (Foreground is SolidColorBrush solid)
-            {
-                foreground = solid.Color;
-                background = Color.FromArgb(0x00, solid.Color.R, solid.Color.G, solid.Color.B);
             }
 
             for (int i = 0; i < nextArr.Length; i++)
             {
                 if (prevArr[i] != null)
                 {
-                    var brush = _shape.Compositor.CreateColorBrush(foreground);
-                    var mask = _shape.Compositor.CreatePathGeometry(new CompositionPath(prevArr[i]));
-                    var maskShape = _shape.Compositor.CreateSpriteShape(mask);
-                    maskShape.FillBrush = brush;
-                    maskShape.Offset = new Vector2(x, 0);
-
-                    _shape.Shapes.Add(maskShape);
+                    _layoutRoot.Children.Add(prevArr[i]);
 
                     if (nextArr[i] != null || prevFor[i])
                     {
-                        var offset = _shape.Compositor.CreateVector2KeyFrameAnimation();
-                        offset.InsertKeyFrame(0, new Vector2(x, 0));
-                        offset.InsertKeyFrame(1, new Vector2(x, dir > 0 ? -8 : 8));
+                        var visual = ElementCompositionPreview.GetElementVisual(prevArr[i]);
 
-                        maskShape.StartAnimation("Offset", offset);
+                        var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                        offset.InsertKeyFrame(0, new Vector3(0, 0, 0));
+                        offset.InsertKeyFrame(1, new Vector3(0, direction > 0 ? -8 : 8, 0));
 
-                        var opacity = _shape.Compositor.CreateColorKeyFrameAnimation();
-                        opacity.InsertKeyFrame(0, foreground);
-                        opacity.InsertKeyFrame(1, background);
+                        visual.StartAnimation("Translation", offset);
 
-                        brush.StartAnimation("Color", opacity);
-                    }
-                    else
-                    {
-                        //var bounds = prevArr[i].ComputeBounds();
-                        //prevX += (float)bounds.Right;
-                        x += _nineRight;
+                        var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                        opacity.InsertKeyFrame(0, 1);
+                        opacity.InsertKeyFrame(1, 0);
+
+                        visual.StartAnimation("Opacity", opacity);
                     }
                 }
 
                 if (nextArr[i] != null)
                 {
-                    var brush = _shape.Compositor.CreateColorBrush(foreground);
-                    var mask = _shape.Compositor.CreatePathGeometry(new CompositionPath(nextArr[i]));
-                    var maskShape = _shape.Compositor.CreateSpriteShape(mask);
-                    maskShape.FillBrush = brush;
-                    maskShape.Offset = new Vector2(x, 0);
+                    _layoutRoot.Children.Add(nextArr[i]);
 
-                    _shape.Shapes.Add(maskShape);
+                    var visual = ElementCompositionPreview.GetElementVisual(nextArr[i]);
 
-                    //if (prevArr[i] != null)
+                    var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                    offset.InsertKeyFrame(0, new Vector3(0, direction > 0 ? 8 : -8, 0));
+                    offset.InsertKeyFrame(1, new Vector3(0, 0, 0));
+
+                    visual.StartAnimation("Translation", offset);
+
+                    var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                    opacity.InsertKeyFrame(0, 0);
+                    opacity.InsertKeyFrame(1, 1);
+
+                    visual.StartAnimation("Opacity", opacity);
+                }
+            }
+        }
+
+        private TextBlock GetPart(char part, int index)
+        {
+            var textBlock = new TextBlock
+            {
+                Text = $"{part}",
+                Style = TextStyle
+            };
+
+            var binding = new Binding
+            {
+                Path = new PropertyPath("Foreground"),
+                Source = this
+            };
+
+            textBlock.SetBinding(ForegroundProperty, binding);
+
+            Grid.SetColumn(textBlock, index);
+            ElementCompositionPreview.SetIsTranslationEnabled(textBlock, true);
+            return textBlock;
+        }
+
+        private string ParseText(string text, out int value, out string before, out string after)
+        {
+            value = -1;
+            before = string.Empty;
+            after = string.Empty;
+
+            if (text == null)
+            {
+                return null;
+            }
+
+            var match = Regex.Match(text, "[0-9]+");
+            if (match.Success && match.Groups.Count > 0)
+            {
+                var group = match.Groups[0];
+
+                if (int.TryParse(group.Value, out value))
+                {
+                    if (group.Index > 0)
                     {
-                        var offset = _shape.Compositor.CreateVector2KeyFrameAnimation();
-                        offset.InsertKeyFrame(0, new Vector2(x, dir > 0 ? 8 : -8));
-                        offset.InsertKeyFrame(1, new Vector2(x, 0));
-
-                        maskShape.StartAnimation("Offset", offset);
+                        before = text.Substring(0, group.Index);
                     }
 
-                    var opacity = _shape.Compositor.CreateColorKeyFrameAnimation();
-                    opacity.InsertKeyFrame(0, background);
-                    opacity.InsertKeyFrame(1, foreground);
+                    if (group.Index + group.Length < text.Length)
+                    {
+                        after = text.Substring(group.Index + group.Length);
+                    }
 
-                    brush.StartAnimation("Color", opacity);
-
-                    //var bounds = nextArr[i].ComputeBounds();
-                    //prevX += (float)bounds.Right;
-                    x += _nineRight;
+                    return group.Value;
                 }
             }
 
-            _shape.Size = new Vector2(x, 100);
-            Width = x;
+            return null;
         }
 
-        CanvasGeometry GetPart(char value)
+        #region Text
+
+        public string Text
         {
-            using (var textFormat = new CanvasTextFormat
-            {
-                FontFamily = "Segoe UI",
-                FontWeight = FontWeights.Normal,
-                FontSize = 12,
-            })
-            using (var layout = new CanvasTextLayout(CanvasDevice.GetSharedDevice(), $"{value}", textFormat, 1000, 1000))
-            {
-                var text = CanvasGeometry.CreateText(layout);
-                return text;
-            }
+            get => (string)GetValue(TextProperty);
+            set => SetValue(TextProperty, value);
         }
+
+        public static readonly DependencyProperty TextProperty =
+            DependencyProperty.Register("Text", typeof(string), typeof(NumericTextBlock), new PropertyMetadata(null, OnTextChanged));
+
+        private static void OnTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((NumericTextBlock)d).OnTextChanged((string)e.NewValue, (string)e.OldValue);
+        }
+
+        #endregion
+
+        #region TextStyle
+
+        public Style TextStyle
+        {
+            get => (Style)GetValue(TextStyleProperty);
+            set => SetValue(TextStyleProperty, value);
+        }
+
+        public static readonly DependencyProperty TextStyleProperty =
+            DependencyProperty.Register("TextStyle", typeof(NumericTextBlock), typeof(NumericTextBlock), new PropertyMetadata(null));
+
+        #endregion
+
+        #region OverflowVisibility
+
+        public Visibility OverflowVisibility
+        {
+            get => (Visibility)GetValue(OverflowVisibilityProperty);
+            set => SetValue(OverflowVisibilityProperty, value);
+        }
+
+        public static readonly DependencyProperty OverflowVisibilityProperty =
+            DependencyProperty.Register("OverflowVisibility", typeof(Visibility), typeof(NumericTextBlock), new PropertyMetadata(Visibility.Visible));
+
+        #endregion
+
     }
 }

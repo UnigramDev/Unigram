@@ -49,8 +49,8 @@ namespace Unigram.Controls
         #region UriSource
         public Uri UriSource
         {
-            get { return (Uri)GetValue(UriSourceProperty); }
-            set { SetValue(UriSourceProperty, value); }
+            get => (Uri)GetValue(UriSourceProperty);
+            set => SetValue(UriSourceProperty, value);
         }
 
         public static readonly DependencyProperty UriSourceProperty =

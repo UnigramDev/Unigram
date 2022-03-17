@@ -49,9 +49,9 @@ namespace Unigram.ViewModels.Settings
             get
             {
                 var enabled = CacheService.Options.UseStorageOptimizer;
-                var ttl = CacheService.Options.StorageMaxTimeFromLastAccess;
+                var ttl = (int)CacheService.Options.StorageMaxTimeFromLastAccess;
 
-                return CacheService.Options.UseStorageOptimizer ? ttl / 60 / 60 / 24 : 0;
+                return enabled ? ttl / 60 / 60 / 24 : 0;
             }
             set
             {
@@ -65,53 +65,29 @@ namespace Unigram.ViewModels.Settings
         private StorageStatisticsFast _statisticsFast;
         public StorageStatisticsFast StatisticsFast
         {
-            get
-            {
-                return _statisticsFast;
-            }
-            set
-            {
-                Set(ref _statisticsFast, value);
-            }
+            get => _statisticsFast;
+            set => Set(ref _statisticsFast, value);
         }
 
         private StorageStatistics _statistics;
         public StorageStatistics Statistics
         {
-            get
-            {
-                return _statistics;
-            }
-            set
-            {
-                Set(ref _statistics, ProcessTotal(value));
-            }
+            get => _statistics;
+            set => Set(ref _statistics, ProcessTotal(value));
         }
 
         private StorageStatisticsByChat _totalStatistics;
         public StorageStatisticsByChat TotalStatistics
         {
-            get
-            {
-                return _totalStatistics;
-            }
-            set
-            {
-                Set(ref _totalStatistics, value);
-            }
+            get => _totalStatistics;
+            set => Set(ref _totalStatistics, value);
         }
 
         private bool _taskCompleted;
         public bool TaskCompleted
         {
-            get
-            {
-                return _taskCompleted;
-            }
-            set
-            {
-                Set(ref _taskCompleted, value);
-            }
+            get => _taskCompleted;
+            set => Set(ref _taskCompleted, value);
         }
 
         public RelayCommand ClearCacheCommand { get; }
@@ -188,7 +164,7 @@ namespace Unigram.ViewModels.Settings
                 {
                     var type = chat.ByFileType[j];
 
-                    if (type.FileType is FileTypeProfilePhoto || type.FileType is FileTypeWallpaper)
+                    if (type.FileType is FileTypeProfilePhoto or FileTypeWallpaper)
                     {
                         result.Count -= type.Count;
                         result.Size -= type.Size;

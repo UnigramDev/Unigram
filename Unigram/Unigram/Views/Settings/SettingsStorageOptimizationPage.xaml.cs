@@ -22,11 +22,7 @@ namespace Unigram.Views.Settings
 
             var chat = protoService.GetChat(statistics.ChatId);
 
-            Title.Text = chat == null ? "Other Chats" : protoService.GetTitle(chat);
-            Subtitle.Text = FileSizeConverter.Convert(statistics.Size, true);
-
-            Photo.Source = chat == null ? null : PlaceholderHelper.GetChat(protoService, chat, (int)Photo.Width);
-            Photo.Visibility = chat == null ? Visibility.Collapsed : Visibility.Visible;
+            Title = chat == null ? "Other Chats" : protoService.GetTitle(chat);
 
             StorageChartItem photo = null;
             StorageChartItem video = null;
@@ -40,28 +36,28 @@ namespace Unigram.Views.Settings
             {
                 switch (fileType.FileType)
                 {
-                    case FileTypePhoto _:
+                    case FileTypePhoto:
                         photo = new StorageChartItem(fileType);
                         break;
-                    case FileTypeVideo _:
-                    case FileTypeAnimation _:
+                    case FileTypeVideo:
+                    case FileTypeAnimation:
                         video = video?.Add(fileType) ?? new StorageChartItem(fileType);
                         break;
-                    case FileTypeDocument _:
+                    case FileTypeDocument:
                         document = new StorageChartItem(fileType);
                         break;
-                    case FileTypeAudio _:
+                    case FileTypeAudio:
                         audio = new StorageChartItem(fileType);
                         break;
-                    case FileTypeVideoNote _:
-                    case FileTypeVoiceNote _:
+                    case FileTypeVideoNote:
+                    case FileTypeVoiceNote:
                         voice = voice?.Add(fileType) ?? new StorageChartItem(fileType);
                         break;
-                    case FileTypeSticker _:
+                    case FileTypeSticker:
                         stickers = new StorageChartItem(fileType);
                         break;
-                    case FileTypeProfilePhoto _:
-                    case FileTypeWallpaper _:
+                    case FileTypeProfilePhoto:
+                    case FileTypeWallpaper:
                         break;
                     default:
                         local = local?.Add(fileType) ?? new StorageChartItem(fileType);

@@ -1,6 +1,7 @@
-﻿using System;
+﻿using LinqToVisualTree;
+using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Controls;
 using Unigram.Navigation;
@@ -8,13 +9,12 @@ using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Services.ViewService;
 using Unigram.ViewModels;
+using Unigram.ViewModels.Settings;
 using Unigram.Views;
 using Unigram.Views.Payments;
-using Unigram.Views.Popups;
 using Unigram.Views.Settings;
+using Unigram.Views.Settings.Popups;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.System;
-using Windows.UI.Core;
 using Windows.UI.WindowManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -111,7 +111,7 @@ namespace Unigram.Common
             }
         }
 
-        public async void NavigateToChat(Chat chat, long? message = null, long? thread = null, string accessToken = null, NavigationState state = null, bool scheduled = false, bool force = true)
+        public async void NavigateToChat(Chat chat, long? message = null, long? thread = null, string accessToken = null, NavigationState state = null, bool scheduled = false, bool force = true, bool createNewWindow = false)
         {
             if (chat == null)
             {
@@ -126,10 +126,9 @@ namespace Unigram.Common
                     return;
                 }
 
-                var reason = user.GetRestrictionReason();
-                if (reason != null && reason.Length > 0)
+                if (user.RestrictionReason.Length > 0)
                 {
-                    await MessagePopup.ShowAsync(reason, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(user.RestrictionReason, Strings.Resources.AppName, Strings.Resources.OK);
                     return;
                 }
             }
@@ -147,15 +146,14 @@ namespace Unigram.Common
                     return;
                 }
 
-                var reason = supergroup.GetRestrictionReason();
-                if (reason != null && reason.Length > 0)
+                if (supergroup.RestrictionReason.Length > 0)
                 {
-                    await MessagePopup.ShowAsync(reason, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(supergroup.RestrictionReason, Strings.Resources.AppName, Strings.Resources.OK);
                     return;
                 }
             }
 
-            if (Frame.Content is ChatPage page && chat.Id.Equals((long)CurrentPageParam) && thread == null && !scheduled)
+            if (Frame.Content is ChatPage page && chat.Id.Equals((long)CurrentPageParam) && thread == null && !scheduled && !createNewWindow)
             {
                 if (message != null)
                 {
@@ -164,6 +162,12 @@ namespace Unigram.Common
                 else
                 {
                     await page.ViewModel.LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? long.MaxValue, VerticalAlignment.Bottom);
+                }
+
+                if (accessToken != null && ProtoService.TryGetUser(chat, out User user) && ProtoService.TryGetUserFull(chat, out UserFullInfo userFull))
+                {
+                    page.ViewModel.AccessToken = accessToken;
+                    page.View.UpdateUserFullInfo(chat, user, userFull, false, true);
                 }
 
                 page.ViewModel.TextField?.Focus(FocusState.Programmatic);
@@ -191,7 +195,7 @@ namespace Unigram.Common
 
                 //Frame.Navigated += handler;
 
-                state = state ?? new NavigationState();
+                state ??= new NavigationState();
 
                 if (message != null)
                 {
@@ -203,9 +207,7 @@ namespace Unigram.Common
                     state["access_token"] = accessToken;
                 }
 
-                var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
-                var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
-                if (shift && !ctrl)
+                if (createNewWindow)
                 {
                     Type target;
                     object parameter;
@@ -226,7 +228,16 @@ namespace Unigram.Common
                         parameter = chat.Id;
                     }
 
-                    await OpenAsync(target, parameter);
+                    // This is horrible here but I don't want to bloat this method with dozens of parameters.
+                    var masterDetailPanel = Window.Current.Content.Descendants<MasterDetailPanel>().FirstOrDefault();
+                    if (masterDetailPanel != null)
+                    {
+                        await OpenAsync(target, parameter, size: new Windows.Foundation.Size(masterDetailPanel.ActualDetailWidth, masterDetailPanel.ActualHeight));
+                    }
+                    else
+                    {
+                        await OpenAsync(target, parameter);
+                    }
                 }
                 else
                 {
@@ -235,7 +246,7 @@ namespace Unigram.Common
                         chatPage.ViewModel.OnNavigatingFrom(null);
 
                         chatPage.Dispose();
-                        chatPage.Activate();
+                        chatPage.Activate(SessionId);
                         chatPage.ViewModel.NavigationService = this;
                         chatPage.ViewModel.Dispatcher = Dispatcher;
                         await chatPage.ViewModel.OnNavigatedToAsync(chat.Id, Windows.UI.Xaml.Navigation.NavigationMode.New, state);
@@ -269,7 +280,7 @@ namespace Unigram.Common
             }
         }
 
-        public async void NavigateToChat(long chatId, long? message = null, long? thread = null, string accessToken = null, NavigationState state = null, bool scheduled = false, bool force = true)
+        public async void NavigateToChat(long chatId, long? message = null, long? thread = null, string accessToken = null, NavigationState state = null, bool scheduled = false, bool force = true, bool createNewWindow = false)
         {
             var chat = _protoService.GetChat(chatId);
             if (chat == null)
@@ -282,17 +293,16 @@ namespace Unigram.Common
                 return;
             }
 
-            NavigateToChat(chat, message, thread, accessToken, state, scheduled, force);
+            NavigateToChat(chat, message, thread, accessToken, state, scheduled, force, createNewWindow);
         }
 
         public async void NavigateToPasscode()
         {
             if (_passcodeService.IsEnabled)
             {
-                var dialog = new SettingsPasscodeConfirmPopup(passcode => Task.FromResult(!_passcodeService.Check(passcode)), _passcodeService.IsSimple);
-                dialog.IsSimple = _passcodeService.IsSimple;
+                var dialog = new SettingsPasscodeConfirmPopup();
 
-                var confirm = await dialog.ShowAsync();
+                var confirm = await dialog.ShowQueuedAsync();
                 if (confirm == ContentDialogResult.Primary)
                 {
                     Navigate(typeof(SettingsPasscodePage));
@@ -300,7 +310,17 @@ namespace Unigram.Common
             }
             else
             {
-                Navigate(typeof(SettingsPasscodePage));
+                var popup = new SettingsPasscodePopup();
+
+                var confirm = await popup.ShowQueuedAsync();
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    var viewModel = TLContainer.Current.Resolve<SettingsPasscodeViewModel>(SessionId);
+                    if (viewModel != null)
+                    {
+                        viewModel.ToggleCommand.Execute();
+                    }
+                }
             }
         }
     }

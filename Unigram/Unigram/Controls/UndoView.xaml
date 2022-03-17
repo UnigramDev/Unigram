@@ -11,7 +11,8 @@
     d:DesignWidth="400"
     RequestedTheme="Dark"
     IsEnabled="False"
-    Margin="0,0,0,-60">
+    Margin="0,0,0,-60"
+    IsTabStop="False">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -31,7 +32,7 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="48"/>
             </Grid.ColumnDefinitions>
-            <ContentControl x:Name="Remaining" Content="5" Height="32" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
+            <ContentControl x:Name="Remaining" Content="5" Height="32" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsTabStop="False">
                 <ContentControl.ContentTransitions>
                     <TransitionCollection>
                         <EntranceThemeTransition/>
@@ -52,7 +53,7 @@
 
             <TextBlock x:Name="Text" Margin="6,0,0,0" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}" Grid.Column="1"/>
 
-            <local:GlyphButton Click="Undo_Click" Glyph="&#xE7A7;" Grid.Column="3"/>
+            <local:GlyphButton Click="Undo_Click" Glyph="&#xE7A7;" IsTabStop="False" Grid.Column="3"/>
         </Grid>
     </Grid>
 </UserControl>

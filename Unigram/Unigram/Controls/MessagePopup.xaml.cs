@@ -30,34 +30,19 @@ namespace Unigram.Controls
 
         public string Message
         {
-            get
-            {
-                return TextBlockHelper.GetMarkdown(MessageLabel);
-            }
-            set
-            {
-                TextBlockHelper.SetMarkdown(MessageLabel, value);
-            }
+            get => TextBlockHelper.GetMarkdown(MessageLabel);
+            set => TextBlockHelper.SetMarkdown(MessageLabel, value);
         }
 
         public FormattedText FormattedMessage
         {
-            get
-            {
-                return TextBlockHelper.GetFormattedText(MessageLabel);
-            }
-            set
-            {
-                TextBlockHelper.SetFormattedText(MessageLabel, value);
-            }
+            get => TextBlockHelper.GetFormattedText(MessageLabel);
+            set => TextBlockHelper.SetFormattedText(MessageLabel, value);
         }
 
         public string CheckBoxLabel
         {
-            get
-            {
-                return CheckBox.Content.ToString();
-            }
+            get => CheckBox.Content.ToString();
             set
             {
                 CheckBox.Content = value;
@@ -67,36 +52,34 @@ namespace Unigram.Controls
 
         public bool? IsChecked
         {
-            get
-            {
-                return CheckBox.IsChecked;
-            }
-            set
-            {
-                CheckBox.IsChecked = value;
-            }
+            get => CheckBox.IsChecked;
+            set => CheckBox.IsChecked = value;
         }
 
         public static Task<ContentDialogResult> ShowAsync(string message, string title = null, string primary = null, string secondary = null)
         {
-            var dialog = new MessagePopup();
-            dialog.Title = title;
-            dialog.Message = message;
-            dialog.PrimaryButtonText = primary ?? string.Empty;
-            dialog.SecondaryButtonText = secondary ?? string.Empty;
+            var popup = new MessagePopup
+            {
+                Title = title,
+                Message = message,
+                PrimaryButtonText = primary ?? string.Empty,
+                SecondaryButtonText = secondary ?? string.Empty
+            };
 
-            return dialog.ShowQueuedAsync();
+            return popup.ShowQueuedAsync();
         }
 
         public static Task<ContentDialogResult> ShowAsync(FormattedText message, string title = null, string primary = null, string secondary = null)
         {
-            var dialog = new MessagePopup();
-            dialog.Title = title;
-            dialog.FormattedMessage = message;
-            dialog.PrimaryButtonText = primary ?? string.Empty;
-            dialog.SecondaryButtonText = secondary ?? string.Empty;
+            var popup = new MessagePopup
+            {
+                Title = title,
+                FormattedMessage = message,
+                PrimaryButtonText = primary ?? string.Empty,
+                SecondaryButtonText = secondary ?? string.Empty
+            };
 
-            return dialog.ShowQueuedAsync();
+            return popup.ShowQueuedAsync();
         }
     }
 }

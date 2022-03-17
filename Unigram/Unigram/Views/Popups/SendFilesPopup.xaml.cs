@@ -35,21 +35,18 @@ namespace Unigram.Views.Popups
         private ICollection _autocomplete;
         public ICollection Autocomplete
         {
-            get
-            {
-                return _autocomplete;
-            }
+            get => _autocomplete;
             set
             {
                 if (_autocomplete != value)
                 {
                     _autocomplete = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Autocomplete"));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Autocomplete)));
                 }
             }
         }
 
-        public bool IsMediaOnly => Items.All(x => x is StoragePhoto || x is StorageVideo);
+        public bool IsMediaOnly => Items.All(x => x is StoragePhoto or StorageVideo);
         public bool IsAlbumAvailable
         {
             get
@@ -59,7 +56,7 @@ namespace Unigram.Views.Popups
                     return Items.Count > 1 && Items.Count <= 10 && Items.All(x => (x is StoragePhoto || x is StorageVideo) && x.Ttl == 0);
                 }
 
-                return Items.Count > 1 && Items.Count <= 10;
+                return Items.Count is > 1 and <= 10;
             }
         }
         public bool IsTtlAvailable { get; }
@@ -67,13 +64,15 @@ namespace Unigram.Views.Popups
         private bool _isMediaSelected;
         public bool IsMediaSelected
         {
-            get { return _isMediaSelected; }
+            get => _isMediaSelected;
             set
             {
                 if (_isMediaSelected != value)
                 {
                     _isMediaSelected = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsMediaSelected"));
+                    _isFilesSelected = !value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsMediaSelected)));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsFilesSelected)));
                 }
             }
         }
@@ -81,14 +80,29 @@ namespace Unigram.Views.Popups
         private bool _isFilesSelected;
         public bool IsFilesSelected
         {
-            get { return _isFilesSelected; }
+            get => _isFilesSelected;
             set
             {
                 if (_isFilesSelected != value)
                 {
                     _isFilesSelected = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsFilesSelected"));
+                    _isMediaSelected = !value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsFilesSelected)));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsMediaSelected)));
                 }
+            }
+        }
+
+        public string SendWithoutCompression
+        {
+            get
+            {
+                if (IsMediaSelected)
+                {
+                    return Items.Count == 1 ? Strings.Resources.SendAsFile : Strings.Resources.SendAsFiles;
+                }
+
+                return string.Format(Strings.Resources.SendItems, Locale.Declension("Files", Items.Count));
             }
         }
 
@@ -97,13 +111,13 @@ namespace Unigram.Views.Popups
         private bool _isAlbum = true;
         public bool IsAlbum
         {
-            get { return _isAlbum; }
+            get => _isAlbum;
             set
             {
                 if (_isAlbum != value)
                 {
-                    _isAlbum = IsAlbumAvailable ? value : false;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsAlbum"));
+                    _isAlbum = IsAlbumAvailable && value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsAlbum)));
                 }
             }
         }
@@ -144,6 +158,8 @@ namespace Unigram.Views.Popups
 
         private void OnCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SendWithoutCompression)));
+
             if (Items.Count > 0)
             {
                 UpdateView();
@@ -177,9 +193,9 @@ namespace Unigram.Views.Popups
 
             if (e.ClickedItem is User user && ChatTextBox.SearchByUsername(text.Substring(0, Math.Min(CaptionInput.Document.Selection.EndPosition, text.Length)), out string username, out _))
             {
-                var insert = string.Empty;
                 var adjust = 0;
 
+                string insert;
                 if (string.IsNullOrEmpty(user.Username))
                 {
                     insert = string.IsNullOrEmpty(user.FirstName) ? user.LastName : user.FirstName;
@@ -201,7 +217,7 @@ namespace Unigram.Views.Popups
                 CaptionInput.Document.GetRange(range.EndPosition, range.EndPosition).SetText(TextSetOptions.None, " ");
                 CaptionInput.Document.Selection.StartPosition = range.EndPosition + 1;
             }
-            else if (e.ClickedItem is EmojiData emoji && ChatTextBox.SearchByEmoji(text.Substring(0, Math.Min(CaptionInput.Document.Selection.EndPosition, text.Length)), out string replacement))
+            else if (e.ClickedItem is EmojiData emoji && ChatTextBox.SearchByEmoji(text.Substring(0, Math.Min(CaptionInput.Document.Selection.EndPosition, text.Length)), out string replacement, out _))
             {
                 var insert = $"{emoji.Value} ";
                 var start = CaptionInput.Document.Selection.StartPosition - 1 - replacement.Length + insert.Length;
@@ -236,11 +252,11 @@ namespace Unigram.Views.Popups
                 name.Text = user.GetFullName();
                 username.Text = string.IsNullOrEmpty(user.Username) ? string.Empty : $" @{user.Username}";
 
-                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
+                photo.SetUser(ViewModel.ProtoService, user, 36);
             }
         }
 
-        private async void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             if (args.InRecycleQueue)
             {
@@ -257,6 +273,11 @@ namespace Unigram.Views.Popups
             if (root == null)
             {
                 return;
+            }
+
+            if (root is AspectView aspect)
+            {
+                aspect.Constraint = new Size(storage.Width, storage.Height);
             }
 
             var glyph = root.FindName("Glyph") as TextBlock;
@@ -318,14 +339,13 @@ namespace Unigram.Views.Popups
         {
             if (CaptionInput.HandwritingView.IsOpen)
             {
-                RoutedEventHandler handler = null;
-                handler = (s, args) =>
+                void handler(object s, RoutedEventArgs args)
                 {
                     CaptionInput.HandwritingView.Unloaded -= handler;
 
                     Caption = CaptionInput.GetFormattedText();
                     Hide(ContentDialogResult.Primary);
-                };
+                }
 
                 CaptionInput.HandwritingView.Unloaded += handler;
                 CaptionInput.HandwritingView.TryClose();
@@ -342,7 +362,7 @@ namespace Unigram.Views.Popups
             var content = Clipboard.GetContent();
             if (content.AvailableFormats.Contains(StandardDataFormats.Text))
             {
-                e.Handled = false;
+                e.Handled = true;
             }
             else
             {
@@ -410,22 +430,14 @@ namespace Unigram.Views.Popups
 
         private void UpdateView()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsMediaOnly"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsAlbumAvailable"));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsMediaOnly)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsAlbumAvailable)));
 
             if (IsMediaSelected && !IsMediaOnly)
             {
                 IsMediaSelected = false;
                 IsFilesSelected = true;
             }
-
-            var state = IsMediaSelected ? 1 : 0;
-            if (state != _itemsState)
-            {
-                List.ItemTemplate = Resources[state == 1 ? "MediaItemTemplate" : "FileItemTemplate"] as DataTemplate;
-            }
-
-            _itemsState = state;
         }
 
         private void UpdatePanel()
@@ -442,24 +454,28 @@ namespace Unigram.Views.Popups
             var state = IsAlbum && IsAlbumAvailable && IsMediaSelected ? 1 : 0;
             if (state != _panelState)
             {
+                _panelState = state;
                 if (state == 1)
                 {
-                    FindName(nameof(Album));
-                    Album.Visibility = Visibility.Visible;
-                    List.Visibility = Visibility.Collapsed;
+                    FindName(nameof(AlbumPanel));
+                    AlbumPanel.Visibility = Visibility.Visible;
+
+                    if (ListPanel != null)
+                    {
+                        ListPanel.Visibility = Visibility.Collapsed;
+                    }
                 }
                 else
                 {
                     if (Album != null)
                     {
-                        Album.Visibility = Visibility.Collapsed;
+                        AlbumPanel.Visibility = Visibility.Collapsed;
                     }
 
-                    List.Visibility = Visibility.Visible;
+                    FindName(nameof(ListPanel));
+                    ListPanel.Visibility = Visibility.Visible;
                 }
             }
-
-            _panelState = state;
 
             if (Album?.ItemsPanelRoot is SendFilesAlbumPanel panel && IsAlbum)
             {
@@ -472,6 +488,13 @@ namespace Unigram.Views.Popups
 
                 panel.Sizes = layout;
                 panel.Invalidate();
+            }
+
+            var mediaState = IsMediaSelected ? 1 : 0;
+            if (mediaState != _itemsState && List != null)
+            {
+                _itemsState = mediaState;
+                List.ItemTemplate = Resources[mediaState == 1 ? "MediaItemTemplate" : "FileItemTemplate"] as DataTemplate;
             }
         }
 
@@ -519,7 +542,7 @@ namespace Unigram.Views.Popups
             };
 
             var text = new TextBlock();
-            text.Style = App.Current.Resources["InfoCaptionTextBlockStyle"] as Style;
+            text.Style = Navigation.BootStrapper.Current.Resources["InfoCaptionTextBlockStyle"] as Style;
             text.TextWrapping = TextWrapping.Wrap;
             text.Text = media is StoragePhoto
                 ? Strings.Resources.MessageLifetimePhoto
@@ -572,16 +595,18 @@ namespace Unigram.Views.Popups
 
         protected override void OnApplyTemplate()
         {
-            var button = (Button)GetTemplateChild("PrimaryButton");
+            IsPrimaryButtonSplit = CanSchedule;
+
+            var button = GetTemplateChild("PrimarySplitButton") as Button;
             if (button != null && CanSchedule)
             {
-                button.ContextRequested += PrimaryButton_ContextRequested;
+                button.Click += PrimaryButton_ContextRequested;
             }
 
             base.OnApplyTemplate();
         }
 
-        private void PrimaryButton_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        private void PrimaryButton_ContextRequested(object sender, RoutedEventArgs args)
         {
             var self = IsSavedMessages;
 
@@ -589,7 +614,7 @@ namespace Unigram.Views.Popups
             flyout.CreateFlyoutItem(new RelayCommand(() => { Silent = true; Hide(ContentDialogResult.Primary); }), Strings.Resources.SendWithoutSound, new FontIcon { Glyph = Icons.AlertOff });
             flyout.CreateFlyoutItem(new RelayCommand(() => { Schedule = true; Hide(ContentDialogResult.Primary); }), self ? Strings.Resources.SetReminder : Strings.Resources.ScheduleMessage, new FontIcon { Glyph = Icons.CalendarClock });
 
-            flyout.ShowAt(sender, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft });
+            flyout.ShowAt(sender as FrameworkElement, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedRight });
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -620,12 +645,12 @@ namespace Unigram.Views.Popups
             }
 
             var focused = FocusManager.GetFocusedElement();
-            if (focused == null || (focused is TextBox == false && focused is RichEditBox == false))
+            if (focused is null or (not TextBox and not RichEditBox))
             {
-                if (character == "\u0016" && CaptionInput.Document.Selection.CanPaste(0))
+                if (character == "\u0016" && CaptionInput.CanPasteClipboardContent)
                 {
                     CaptionInput.Focus(FocusState.Keyboard);
-                    CaptionInput.Document.Selection.Paste(0);
+                    CaptionInput.PasteFromClipboard();
                 }
                 else if (character == "\r")
                 {
@@ -638,6 +663,23 @@ namespace Unigram.Views.Popups
                 }
 
                 args.Handled = true;
+            }
+        }
+
+        private void Emoji_Click(object sender, RoutedEventArgs e)
+        {
+            // We don't want to unfocus the text are when the context menu gets opened
+            EmojiFlyout.ShowAt(CaptionInput, new FlyoutShowOptions { ShowMode = FlyoutShowMode.Transient });
+        }
+
+        private void Emoji_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            if (e.ClickedItem is EmojiData emoji)
+            {
+                EmojiFlyout.Hide();
+
+                CaptionInput.InsertText(emoji.Value);
+                CaptionInput.Focus(FocusState.Programmatic);
             }
         }
     }

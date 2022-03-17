@@ -25,7 +25,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 		std::shared_ptr<tgcalls::VideoCaptureInterface> m_capturer = nullptr;
 		//std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> m_renderer = nullptr;
 
-		void VoipManager::Start();
+		void Start();
 
 		//void SetNetworkType(NetworkType networkType);
 		void SetMuteMicrophone(bool muteMicrophone);
@@ -51,7 +51,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 
 		void ReceiveSignalingData(IVector<uint8_t> const data);
 		//virtual void setVideoCapture(std::shared_ptr<VideoCaptureInterface> videoCapture) = 0;
-		void SetVideoCapture(Unigram::Native::Calls::VoipVideoCapture videoCapture);
+		void SetVideoCapture(Unigram::Native::Calls::IVoipVideoCapture videoCapture);
 		void SetRequestedVideoAspect(float aspect);
 
 		//void stop(std::function<void(FinalState)> completion);
@@ -92,6 +92,8 @@ namespace winrt::Unigram::Native::Calls::implementation
 		void SignalingDataEmitted(winrt::event_token const& token);
 
 	private:
+		std::shared_ptr<VoipVideoRenderer> m_renderer = nullptr;
+
 		winrt::event<Windows::Foundation::TypedEventHandler<
 			winrt::Unigram::Native::Calls::VoipManager,
 			VoipState>> m_stateUpdatedEventSource;

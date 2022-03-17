@@ -23,17 +23,7 @@ namespace Unigram.ViewModels.Gallery
 
         public override File GetFile()
         {
-            var file = _message.GetFile();
-            if (file == null)
-            {
-                var photo = _message.GetPhoto();
-                if (photo != null)
-                {
-                    file = photo.GetBig()?.Photo;
-                }
-            }
-
-            return file;
+            return _message.GetFile();
         }
 
         public override File GetThumbnail()
@@ -56,16 +46,6 @@ namespace Unigram.ViewModels.Gallery
             return null;
         }
 
-        public override (File File, string FileName) GetFileAndName()
-        {
-            return _message.GetFileAndName(true);
-        }
-
-        public override bool UpdateFile(File file)
-        {
-            return _message.UpdateFile(file);
-        }
-
         public override object Constraint => _message.Content;
 
         public override object From
@@ -77,11 +57,11 @@ namespace Unigram.ViewModels.Gallery
                     // TODO: ...
                 }
 
-                if (_message.Sender is MessageSenderChat senderChat)
+                if (_message.SenderId is MessageSenderChat senderChat)
                 {
                     return _protoService.GetChat(senderChat.ChatId);
                 }
-                else if (_message.Sender is MessageSenderUser senderUser)
+                else if (_message.SenderId is MessageSenderUser senderUser)
                 {
                     return _protoService.GetUser(senderUser.UserId);
                 }
@@ -97,7 +77,7 @@ namespace Unigram.ViewModels.Gallery
         {
             get
             {
-                if (_message.Content is MessageVideo || _message.Content is MessageAnimation)
+                if (_message.Content is MessageVideo or MessageAnimation)
                 {
                     return true;
                 }

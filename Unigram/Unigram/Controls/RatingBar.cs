@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Unigram.Converters;
+using Unigram.Navigation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -83,9 +84,9 @@ namespace Unigram.Controls
             for (int i = 0; i < _unselected.Count; i++)
             {
                 var brush = i <= value || (i <= index) ? "TextControlBorderBrushFocused" : "TextControlBorderBrush";
-                var glyph = i <= value && (index == -1 ? true : i <= index) ? Icons.StarFilled : Icons.Star;
+                var glyph = i <= value && (index == -1 || i <= index) ? Icons.StarFilled : Icons.Star;
 
-                _unselected[i].Foreground = App.Current.Resources[brush] as SolidColorBrush;
+                _unselected[i].Foreground = BootStrapper.Current.Resources[brush] as SolidColorBrush;
                 _unselected[i].Glyph = glyph;
             }
         }
@@ -96,8 +97,8 @@ namespace Unigram.Controls
 
         public int Value
         {
-            get { return (int)GetValue(ValueProperty); }
-            set { SetValue(ValueProperty, value); }
+            get => (int)GetValue(ValueProperty);
+            set => SetValue(ValueProperty, value);
         }
 
         public static readonly DependencyProperty ValueProperty =

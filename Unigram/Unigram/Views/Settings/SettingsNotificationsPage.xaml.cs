@@ -9,7 +9,6 @@ namespace Unigram.Views.Settings
         public SettingsNotificationsPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsNotificationsViewModel>();
         }
 
         #region Binding

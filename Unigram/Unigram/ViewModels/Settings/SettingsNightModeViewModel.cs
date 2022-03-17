@@ -52,10 +52,7 @@ namespace Unigram.ViewModels.Settings
 
         public NightMode Mode
         {
-            get
-            {
-                return Settings.Appearance.NightMode;
-            }
+            get => Settings.Appearance.NightMode;
             set
             {
                 if (Settings.Appearance.NightMode != value)
@@ -77,10 +74,7 @@ namespace Unigram.ViewModels.Settings
 
         public bool IsLocationBased
         {
-            get
-            {
-                return Settings.Appearance.IsLocationBased;
-            }
+            get => Settings.Appearance.IsLocationBased;
             set
             {
                 if (Settings.Appearance.IsLocationBased != value)
@@ -105,10 +99,7 @@ namespace Unigram.ViewModels.Settings
 
         public TimeSpan From
         {
-            get
-            {
-                return Settings.Appearance.From;
-            }
+            get => Settings.Appearance.From;
             set
             {
                 if (Settings.Appearance.From != value)
@@ -121,10 +112,7 @@ namespace Unigram.ViewModels.Settings
 
         public TimeSpan To
         {
-            get
-            {
-                return Settings.Appearance.To;
-            }
+            get => Settings.Appearance.To;
             set
             {
                 if (Settings.Appearance.To != value)
@@ -137,10 +125,7 @@ namespace Unigram.ViewModels.Settings
 
         public Location Location
         {
-            get
-            {
-                return Settings.Appearance.Location;
-            }
+            get => Settings.Appearance.Location;
             set
             {
                 if (Settings.Appearance.Location.Latitude != value.Latitude || Settings.Appearance.Location.Longitude != value.Longitude)
@@ -153,10 +138,7 @@ namespace Unigram.ViewModels.Settings
 
         public string Town
         {
-            get
-            {
-                return Settings.Appearance.Town;
-            }
+            get => Settings.Appearance.Town;
             set
             {
                 if (Settings.Appearance.Town != value)

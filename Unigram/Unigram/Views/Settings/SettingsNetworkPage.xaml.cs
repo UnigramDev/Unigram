@@ -11,7 +11,6 @@ namespace Unigram.Views.Settings
         public SettingsNetworkPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsNetworkViewModel>();
         }
 
         #region Binding

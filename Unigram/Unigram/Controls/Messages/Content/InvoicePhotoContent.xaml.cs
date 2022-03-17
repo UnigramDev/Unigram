@@ -2,27 +2,58 @@
 using Unigram.Common;
 using Unigram.ViewModels;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed partial class InvoicePhotoContent : StackPanel, IContentWithFile
+    public sealed class InvoicePhotoContent : Control, IContent
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
+        private string _thumbnailToken;
+
         public InvoicePhotoContent(MessageViewModel message)
         {
-            InitializeComponent();
-            UpdateMessage(message);
+            _message = message;
+
+            DefaultStyleKey = typeof(InvoicePhotoContent);
         }
+
+        #region InitializeComponent
+
+        private Run Title;
+        private Run Description;
+        private InvoiceFooter Footer;
+        private AspectView Photo;
+        private Image Texture;
+        private bool _templateApplied;
+
+        protected override void OnApplyTemplate()
+        {
+            Title = GetTemplateChild(nameof(Title)) as Run;
+            Description = GetTemplateChild(nameof(Description)) as Run;
+            Footer = GetTemplateChild(nameof(Footer)) as InvoiceFooter;
+            Photo = GetTemplateChild(nameof(Photo)) as AspectView;
+            Texture = GetTemplateChild(nameof(Texture)) as Image;
+
+            _templateApplied = true;
+
+            if (_message != null)
+            {
+                UpdateMessage(_message);
+            }
+        }
+
+        #endregion
 
         public void UpdateMessage(MessageViewModel message)
         {
             _message = message;
 
             var invoice = message.Content as MessageInvoice;
-            if (invoice == null)
+            if (invoice == null || !_templateApplied)
             {
                 return;
             }
@@ -38,16 +69,20 @@ namespace Unigram.Controls.Messages.Content
             var small = invoice.Photo.GetSmall();
             if (small != null)
             {
+                UpdateManager.Subscribe(this, message, small.Photo, ref _thumbnailToken, UpdateFile, true);
                 UpdateThumbnail(message, small.Photo);
             }
         }
 
-        public void UpdateMessageContentOpened(MessageViewModel message) { }
+        private void UpdateFile(object target, File file)
+        {
+            UpdateFile(_message, file);
+        }
 
-        public void UpdateFile(MessageViewModel message, File file)
+        private void UpdateFile(MessageViewModel message, File file)
         {
             var invoice = message.Content as MessageInvoice;
-            if (invoice == null)
+            if (invoice == null || !_templateApplied)
             {
                 return;
             }

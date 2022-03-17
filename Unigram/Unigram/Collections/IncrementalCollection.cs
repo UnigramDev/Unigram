@@ -16,23 +16,14 @@ namespace Unigram.Collections
         private bool _hasMoreItems = true;
         public bool HasMoreItems
         {
-            get
-            {
-                return _hasMoreItems;
-            }
-            set
-            {
-                _hasMoreItems = value;
-            }
+            get => _hasMoreItems;
+            set => _hasMoreItems = value;
         }
 
         private bool _isLoading;
         public bool IsLoading
         {
-            get
-            {
-                return _isLoading;
-            }
+            get => _isLoading;
             set
             {
                 if (value != _isLoading)
@@ -87,7 +78,7 @@ namespace Unigram.Collections
                 var result = await LoadDataAsync();
                 var oldCount = Count;
                 Merge(result);
-                HasMoreItems = /*Count > 0 &&*/ (/*Count > oldCount ||*/ GetHasMoreItems());
+                HasMoreItems = /*Count > 0 &&*/ /*Count > oldCount ||*/ GetHasMoreItems();
 
                 return new LoadMoreItemsResult { Count = (uint)result.Count };
             });

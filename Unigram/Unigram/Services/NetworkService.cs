@@ -237,7 +237,7 @@ namespace Unigram.Services
             var cost = profile.GetConnectionCost();
             if (cost != null)
             {
-                IsMetered = cost.NetworkCostType != NetworkCostType.Unrestricted && cost.NetworkCostType != NetworkCostType.Unknown;
+                IsMetered = cost.NetworkCostType is not NetworkCostType.Unrestricted and not NetworkCostType.Unknown;
             }
             else
             {
@@ -245,7 +245,7 @@ namespace Unigram.Services
             }
 
             var level = profile.GetNetworkConnectivityLevel();
-            if (level == NetworkConnectivityLevel.LocalAccess || level == NetworkConnectivityLevel.None)
+            if (level is NetworkConnectivityLevel.LocalAccess or NetworkConnectivityLevel.None)
             {
                 //return new NetworkTypeNone();
                 return new NetworkTypeWiFi();

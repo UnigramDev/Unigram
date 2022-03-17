@@ -63,8 +63,8 @@ namespace Unigram.Controls.Gallery
 
         public object Header
         {
-            get { return GetValue(HeaderProperty); }
-            set { SetValue(HeaderProperty, value); }
+            get => GetValue(HeaderProperty);
+            set => SetValue(HeaderProperty, value);
         }
 
         public static readonly DependencyProperty HeaderProperty =
@@ -76,8 +76,8 @@ namespace Unigram.Controls.Gallery
 
         public object Footer
         {
-            get { return GetValue(FooterProperty); }
-            set { SetValue(FooterProperty, value); }
+            get => GetValue(FooterProperty);
+            set => SetValue(FooterProperty, value);
         }
 
         public static readonly DependencyProperty FooterProperty =
@@ -89,8 +89,8 @@ namespace Unigram.Controls.Gallery
 
         public object Content
         {
-            get { return GetValue(ContentProperty); }
-            set { SetValue(ContentProperty, value); }
+            get => GetValue(ContentProperty);
+            set => SetValue(ContentProperty, value);
         }
 
         public static readonly DependencyProperty ContentProperty =
@@ -102,8 +102,8 @@ namespace Unigram.Controls.Gallery
 
         public Visibility TransportVisibility
         {
-            get { return (Visibility)GetValue(TransportVisibilityProperty); }
-            set { SetValue(TransportVisibilityProperty, value); }
+            get => (Visibility)GetValue(TransportVisibilityProperty);
+            set => SetValue(TransportVisibilityProperty, value);
         }
 
         public static readonly DependencyProperty TransportVisibilityProperty =
@@ -115,8 +115,8 @@ namespace Unigram.Controls.Gallery
 
         public Visibility NextVisibility
         {
-            get { return (Visibility)GetValue(NextVisibilityProperty); }
-            set { SetValue(NextVisibilityProperty, value); }
+            get => (Visibility)GetValue(NextVisibilityProperty);
+            set => SetValue(NextVisibilityProperty, value);
         }
 
         public static readonly DependencyProperty NextVisibilityProperty =
@@ -128,8 +128,8 @@ namespace Unigram.Controls.Gallery
 
         public Visibility PreviousVisibility
         {
-            get { return (Visibility)GetValue(PreviousVisibilityProperty); }
-            set { SetValue(PreviousVisibilityProperty, value); }
+            get => (Visibility)GetValue(PreviousVisibilityProperty);
+            set => SetValue(PreviousVisibilityProperty, value);
         }
 
         public static readonly DependencyProperty PreviousVisibilityProperty =
@@ -141,8 +141,8 @@ namespace Unigram.Controls.Gallery
 
         public double DownloadValue
         {
-            get { return (double)GetValue(DownloadValueProperty); }
-            set { SetValue(DownloadValueProperty, value); }
+            get => (double)GetValue(DownloadValueProperty);
+            set => SetValue(DownloadValueProperty, value);
         }
 
         public static readonly DependencyProperty DownloadValueProperty =
@@ -154,8 +154,8 @@ namespace Unigram.Controls.Gallery
 
         public double DownloadMaximum
         {
-            get { return (double)GetValue(DownloadMaximumProperty); }
-            set { SetValue(DownloadMaximumProperty, value); }
+            get => (double)GetValue(DownloadMaximumProperty);
+            set => SetValue(DownloadMaximumProperty, value);
         }
 
         public static readonly DependencyProperty DownloadMaximumProperty =
@@ -167,8 +167,8 @@ namespace Unigram.Controls.Gallery
 
         public double Volume
         {
-            get { return (double)GetValue(VolumeProperty); }
-            set { SetValue(VolumeProperty, value); }
+            get => (double)GetValue(VolumeProperty);
+            set => SetValue(VolumeProperty, value);
         }
 
         public static readonly DependencyProperty VolumeProperty =
@@ -233,8 +233,8 @@ namespace Unigram.Controls.Gallery
 
         public double DownloadValue
         {
-            get { return (double)GetValue(DownloadValueProperty); }
-            set { SetValue(DownloadValueProperty, value); }
+            get => (double)GetValue(DownloadValueProperty);
+            set => SetValue(DownloadValueProperty, value);
         }
 
         public static readonly DependencyProperty DownloadValueProperty =
@@ -246,8 +246,8 @@ namespace Unigram.Controls.Gallery
 
         public double DownloadMaximum
         {
-            get { return (double)GetValue(DownloadMaximumProperty); }
-            set { SetValue(DownloadMaximumProperty, value); }
+            get => (double)GetValue(DownloadMaximumProperty);
+            set => SetValue(DownloadMaximumProperty, value);
         }
 
         public static readonly DependencyProperty DownloadMaximumProperty =

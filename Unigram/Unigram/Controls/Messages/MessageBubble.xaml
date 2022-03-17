@@ -1,240 +1,281 @@
-<StackPanel
-    x:Class="Unigram.Controls.Messages.MessageBubble"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Unigram.Controls.Messages"
-    xmlns:controls="using:Unigram.Controls"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    d:DesignHeight="300"
-    d:DesignWidth="400"
-    Margin="{StaticResource MessageContentMargin}"
-    MaxWidth="{StaticResource MessageMaxWidth}">
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="using:Unigram.Controls.Messages"
+                    xmlns:controls="using:Unigram.Controls"
+                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    mc:Ignorable="d"
+                    d:DesignHeight="300"
+                    d:DesignWidth="400">
 
-    <UserControl x:Name="LayoutRoot" IsTabStop="False">
-        <Grid x:Name="ContentPanel"
-              Background="{ThemeResource MessageBackgroundBrush}"
-              MinHeight="30"
-              Padding="0,4,0,0"
-              SizeChanged="OnSizeChanged">
-            <VisualStateManager.VisualStateGroups>
-                <VisualStateGroup>
-                    <VisualState x:Name="Normal"/>
-                    <VisualState x:Name="LightStateOut">
-                        <VisualState.Setters>
-                            <Setter Target="Footer.Padding" Value="6,2,6,4"/>
-                            <Setter Target="Footer.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
-                            <Setter Target="Footer.Foreground" Value="White"/>
-                            <Setter Target="Footer.Stroke" Value="White"/>
-                            <Setter Target="ContentPanel.Background" Value="{x:Null}"/>
-                            <Setter Target="Header.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
-                            <Setter Target="Header.VerticalAlignment" Value="Top"/>
-                            <Setter Target="Header.CornerRadius" Value="8"/>
-                            <Setter Target="Header.Padding" Value="8,2,8,4"/>
-                            <Setter Target="Header.(Grid.Row)" Value="1"/>
-                            <Setter Target="HeaderLabel.Margin" Value="0,2,0,2"/>
-                            <Setter Target="HeaderLabel.Foreground" Value="#FFFFFF"/>
+    <Style TargetType="local:MessageBubble">
+        <Setter Property="Margin"
+                Value="{StaticResource MessageContentMargin}" />
+        <Setter Property="MaxWidth"
+                Value="{StaticResource MessageMaxWidth}" />
+        <Setter Property="IsTabStop"
+                Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:MessageBubble">
+                    <StackPanel>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup>
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="LightStateOut">
+                                    <VisualState.Setters>
+                                        <Setter Target="Footer.Padding"
+                                                Value="6,2,6,4" />
+                                        <Setter Target="Footer.Background"
+                                                Value="{ThemeResource MessageServiceBackgroundBrush}" />
+                                        <Setter Target="Footer.Foreground"
+                                                Value="White" />
+                                        <Setter Target="Footer.Stroke"
+                                                Value="White" />
+                                        <Setter Target="ContentPanel.Background"
+                                                Value="{x:Null}" />
+                                        <Setter Target="Header.Background"
+                                                Value="{ThemeResource MessageServiceBackgroundBrush}" />
+                                        <Setter Target="Header.VerticalAlignment"
+                                                Value="Top" />
+                                        <Setter Target="Header.CornerRadius"
+                                                Value="8" />
+                                        <Setter Target="Header.Padding"
+                                                Value="8,2,8,4" />
+                                        <Setter Target="Header.(Grid.Row)"
+                                                Value="1" />
+                                        <Setter Target="HeaderLabel.Margin"
+                                                Value="0,2,0,2" />
+                                        <Setter Target="HeaderLabel.Foreground"
+                                                Value="#FFFFFF" />
 
-                            <Setter Target="Header.Margin" Value="-4,0,4,0"/>
-                            <Setter Target="Header.HorizontalAlignment" Value="Right"/>
-                            <Setter Target="Media.HorizontalAlignment" Value="Right"/>
-                            <Setter Target="Message.Margin" Value="0,0,0,28"/>
-                            <Setter Target="Message.HorizontalAlignment" Value="Right"/>
-                            <Setter Target="Panel.(Grid.Column)" Value="2"/>
-                        </VisualState.Setters>
-                    </VisualState>
-                    <VisualState x:Name="LightState">
-                        <VisualState.Setters>
-                            <Setter Target="Footer.Padding" Value="6,2,6,4"/>
-                            <Setter Target="Footer.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
-                            <Setter Target="Footer.Foreground" Value="White"/>
-                            <Setter Target="Footer.Stroke" Value="White"/>
-                            <Setter Target="ContentPanel.Background" Value="{x:Null}"/>
-                            <Setter Target="Header.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
-                            <Setter Target="Header.VerticalAlignment" Value="Top"/>
-                            <Setter Target="Header.CornerRadius" Value="8"/>
-                            <Setter Target="Header.Padding" Value="8,2,8,4"/>
-                            <Setter Target="Header.(Grid.Row)" Value="1"/>
-                            <Setter Target="HeaderLabel.Margin" Value="0,2,0,2"/>
-                            <Setter Target="HeaderLabel.Foreground" Value="#FFFFFF"/>
+                                        <Setter Target="Header.Margin"
+                                                Value="-4,0,4,0" />
+                                        <Setter Target="Header.HorizontalAlignment"
+                                                Value="Right" />
+                                        <Setter Target="Media.HorizontalAlignment"
+                                                Value="Right" />
+                                        <Setter Target="Message.Margin"
+                                                Value="0,0,0,28" />
+                                        <Setter Target="Message.HorizontalAlignment"
+                                                Value="Right" />
+                                        <Setter Target="Panel.(Grid.Column)"
+                                                Value="2" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="LightState">
+                                    <VisualState.Setters>
+                                        <Setter Target="Footer.Padding"
+                                                Value="6,2,6,4" />
+                                        <Setter Target="Footer.Background"
+                                                Value="{ThemeResource MessageServiceBackgroundBrush}" />
+                                        <Setter Target="Footer.Foreground"
+                                                Value="White" />
+                                        <Setter Target="Footer.Stroke"
+                                                Value="White" />
+                                        <Setter Target="ContentPanel.Background"
+                                                Value="{x:Null}" />
+                                        <Setter Target="Header.Background"
+                                                Value="{ThemeResource MessageServiceBackgroundBrush}" />
+                                        <Setter Target="Header.VerticalAlignment"
+                                                Value="Top" />
+                                        <Setter Target="Header.CornerRadius"
+                                                Value="8" />
+                                        <Setter Target="Header.Padding"
+                                                Value="8,2,8,4" />
+                                        <Setter Target="Header.(Grid.Row)"
+                                                Value="1" />
+                                        <Setter Target="HeaderLabel.Margin"
+                                                Value="0,2,0,2" />
+                                        <Setter Target="HeaderLabel.Foreground"
+                                                Value="#FFFFFF" />
 
-                            <Setter Target="Header.Margin" Value="4,0,-4,0"/>
-                            <Setter Target="Header.HorizontalAlignment" Value="Left"/>
-                            <Setter Target="Media.HorizontalAlignment" Value="Left"/>
-                            <Setter Target="Message.Margin" Value="0,0,0,10"/>
-                            <Setter Target="Message.HorizontalAlignment" Value="Left"/>
-                            <Setter Target="Panel.(Grid.Column)" Value="0"/>
-                        </VisualState.Setters>
-                    </VisualState>
-                    <VisualState x:Name="MediaState">
-                        <VisualState.Setters>
-                            <Setter Target="Footer.Padding" Value="6,2,6,4"/>
-                            <Setter Target="Footer.Background" Value="{ThemeResource MessageOverlayBackgroundBrush}"/>
-                            <Setter Target="Footer.Foreground" Value="White"/>
-                            <Setter Target="Footer.Stroke" Value="White"/>
-                        </VisualState.Setters>
-                    </VisualState>
-                    <VisualState x:Name="HiddenState">
-                        <VisualState.Setters>
-                            <Setter Target="Footer.Opacity" Value="0"/>
-                            <Setter Target="Footer.IsHitTestVisible" Value="False"/>
-                        </VisualState.Setters>
-                    </VisualState>
-                </VisualStateGroup>
-            </VisualStateManager.VisualStateGroups>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            <Border
-                x:Load="False"
-                x:Name="BackgroundPanel"
-                Background="{ThemeResource MessageBackgroundBrush}"
-                Margin="0,-8,0,-4"
-                Grid.Column="0"
-                Grid.ColumnSpan="3"
-                Grid.RowSpan="3">
-                <Border
-                    x:Name="CrossPanel"
-                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
-            </Border>
+                                        <Setter Target="Header.Margin"
+                                                Value="4,0,-4,0" />
+                                        <Setter Target="Header.HorizontalAlignment"
+                                                Value="Left" />
+                                        <Setter Target="Media.HorizontalAlignment"
+                                                Value="Left" />
+                                        <Setter Target="Message.Margin"
+                                                Value="0,0,0,10" />
+                                        <Setter Target="Message.HorizontalAlignment"
+                                                Value="Left" />
+                                        <Setter Target="Panel.(Grid.Column)"
+                                                Value="0" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="MediaState">
+                                    <VisualState.Setters>
+                                        <Setter Target="Footer.Padding"
+                                                Value="6,2,6,4" />
+                                        <Setter Target="Footer.Background"
+                                                Value="{ThemeResource MessageOverlayBackgroundBrush}" />
+                                        <Setter Target="Footer.Foreground"
+                                                Value="White" />
+                                        <Setter Target="Footer.Stroke"
+                                                Value="White" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="HiddenState">
+                                    <VisualState.Setters>
+                                        <Setter Target="Footer.Opacity"
+                                                Value="0" />
+                                        <Setter Target="Footer.IsHitTestVisible"
+                                                Value="False" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Grid x:Name="ContentPanel"
+                              Background="{ThemeResource MessageBackgroundBrush}"
+                              MinHeight="30"
+                              Padding="0,4,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Border x:Load="False"
+                                    x:Name="BackgroundPanel"
+                                    Background="{ThemeResource MessageBackgroundBrush}"
+                                    Margin="0,-8,0,-4"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="3"
+                                    Grid.RowSpan="3">
+                                <Border x:Name="CrossPanel"
+                                        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" />
+                            </Border>
 
-            <Grid x:Name="Header" Margin="10,0,10,0" Grid.Column="1">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <TextBlock x:Name="HeaderLabel"
-                           Margin="0,0,0,2"
-                           Foreground="{ThemeResource MessageHeaderForegroundBrush}"
-                           Style="{StaticResource CaptionTextBlockStyle}"
-                           FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                           TextTrimming="CharacterEllipsis"
-                           TextWrapping="NoWrap"
-                           FontWeight="SemiBold"
-                           Visibility="Collapsed"/>
+                            <Grid x:Name="Header"
+                                  Margin="10,0,10,0"
+                                  Grid.Column="1">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock x:Name="HeaderLabel"
+                                           Margin="0,0,0,2"
+                                           Foreground="{ThemeResource MessageHeaderForegroundBrush}"
+                                           Style="{StaticResource CaptionTextBlockStyle}"
+                                           FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                           TextTrimming="CharacterEllipsis"
+                                           TextWrapping="NoWrap"
+                                           FontWeight="SemiBold"
+                                           Visibility="Collapsed" />
 
-                <TextBlock x:Name="AdminLabel"
-                           Text="{CustomResource ChatAdmin}"
-                           Foreground="{ThemeResource MessageSubtleLabelBrush}"
-                           Style="{StaticResource CaptionTextBlockStyle}"
-                           HorizontalAlignment="Right"
-                           Visibility="Collapsed"
-                           Margin="0,0,0,2"/>
+                                <TextBlock x:Name="AdminLabel"
+                                           Text="{CustomResource ChatAdmin}"
+                                           Foreground="{ThemeResource MessageSubtleLabelBrush}"
+                                           Style="{StaticResource CaptionTextBlockStyle}"
+                                           HorizontalAlignment="Right"
+                                           Visibility="Collapsed"
+                                           Margin="0,0,0,2" />
 
-                <controls:GlyphButton
-                    x:Name="PsaInfo"
-                    x:DeferLoadStrategy="Lazy"
-                    Glyph="&#xE9CE;"
-                    Click="PsaInfo_Click"
-                    Margin="0,-6,-10,-8"
-                    Grid.Column="1"/>
+                                <controls:GlyphButton x:Name="PsaInfo"
+                                                      x:Load="False"
+                                                      Glyph="&#xE9CE;"
+                                                      Margin="0,-6,-10,-8"
+                                                      Grid.Column="1" />
 
-                <local:MessageReference
-                    x:Name="Reply"
-                    x:DeferLoadStrategy="Lazy"
-                    Click="Reply_Click"
-                    Grid.ColumnSpan="2"
-                    Grid.Row="1"/>
-            </Grid>
+                                <local:MessageReference x:Name="Reply"
+                                                        x:Load="False"
+                                                        Grid.ColumnSpan="2"
+                                                        Grid.Row="1" />
+                            </Grid>
 
-            <local:MessageBubblePanel
-                x:Name="Panel"
-                Grid.Column="1"
-                Grid.Row="1">
-                <RichTextBlock
-                    x:Name="Message"
-                    Style="{StaticResource BodyRichTextBlockStyle}"
-                    Foreground="{ThemeResource MessageForegroundBrush}"
-                    FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                    ContextMenuOpening="Message_ContextMenuOpening"
-                    TextAlignment="DetectFromContent"
-                    OpticalMarginAlignment="None"
-                    Margin="10,0,10,6"
-                    Grid.Column="1"
-                    Grid.Row="2">
-                    <Paragraph>
-                        <Span x:Name="Span"/>
-                    </Paragraph>
-                </RichTextBlock>
+                            <local:MessageBubblePanel x:Name="Panel"
+                                                      Grid.Column="1"
+                                                      Grid.Row="1">
+                                <RichTextBlock x:Name="Message"
+                                               Style="{StaticResource BodyRichTextBlockStyle}"
+                                               Foreground="{ThemeResource MessageForegroundBrush}"
+                                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                               TextReadingOrder="UseFlowDirection"
+                                               OpticalMarginAlignment="None"
+                                               Margin="10,0,10,6"
+                                               Grid.Column="1"
+                                               Grid.Row="2">
+                                    <Paragraph>
+                                        <Span x:Name="Span" />
+                                    </Paragraph>
+                                </RichTextBlock>
 
-                <Border
-                    x:Name="Media"
-                    Grid.Column="1"
-                    Grid.Row="3"/>
+                                <Border x:Name="Media"
+                                        Grid.Column="1"
+                                        Grid.Row="3" />
 
-                <local:MessageFooter
-                    x:Name="Footer"
-                    Stroke="{ThemeResource MessageSubtleLabelBrush}"
-                    VerticalAlignment="Bottom"
-                    HorizontalAlignment="Right"
-                    SizeChanged="Footer_SizeChanged"
-                    Margin="4,0,4,4"
-                    Grid.Column="1"
-                    Grid.Row="4"/>
-            </local:MessageBubblePanel>
+                                <local:ReactionsPanel x:Name="Reactions"
+                                                      HorizontalAlignment="Stretch"
+                                                      VerticalAlignment="Bottom"
+                                                      Padding="4,0,4,4" />
 
-            <HyperlinkButton
-                x:Name="Thread"
-                x:Load="False"
-                Click="Thread_Click"
-                Foreground="{ThemeResource MessageHeaderForegroundBrush}"
-                HorizontalAlignment="Stretch"
-                HorizontalContentAlignment="Stretch"
-                Padding="0"
-                Grid.Column="1"
-                Grid.Row="2">
-                <Grid
-                    BorderBrush="{ThemeResource TelegramSeparatorMediumBrush}"
-                    BorderThickness="0,1,0,0"
-                    Padding="10,4,10,4">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <StackPanel
-                        x:Name="RecentRepliers"
-                        Orientation="Horizontal"
-                        Height="28"/>
-                    <TextBlock
-                        x:Name="ThreadGlyph"
-                        Text="&#xE8BD;"
-                        FontFamily="{StaticResource SymbolThemeFontFamily}"
-                        FontSize="{StaticResource GlyphMediumFontSize}"
-                        VerticalAlignment="Center"
-                        Margin="0,1,0,-1"/>
-                    <TextBlock
-                        x:Name="ThreadLabel"
-                        Margin="8,-1,12,1"
-                        VerticalAlignment="Center"
-                        Grid.Column="1"/>
-                    <TextBlock
-                        Text="&#xE0E3;"
-                        FontFamily="{StaticResource SymbolThemeFontFamily}"
-                        VerticalAlignment="Center"
-                        FontSize="12"
-                        Grid.Column="2"/>
-                </Grid>
-            </HyperlinkButton>
-        </Grid>
-    </UserControl>
+                                <local:MessageFooter x:Name="Footer"
+                                                     Stroke="{ThemeResource MessageSubtleLabelBrush}"
+                                                     VerticalAlignment="Bottom"
+                                                     HorizontalAlignment="Right"
+                                                     Margin="4,0,4,4"
+                                                     Grid.Column="1"
+                                                     Grid.Row="4" />
+                            </local:MessageBubblePanel>
 
-    <controls:ReplyMarkupPanel
-        x:Name="Markup"
-        x:Load="False"
-        InlineButtonClick="ReplyMarkup_ButtonClick"/>
+                            <HyperlinkButton x:Name="Thread"
+                                             x:Load="False"
+                                             Foreground="{ThemeResource MessageHeaderForegroundBrush}"
+                                             HorizontalAlignment="Stretch"
+                                             HorizontalContentAlignment="Stretch"
+                                             Padding="0"
+                                             Grid.Column="1"
+                                             Grid.Row="2">
+                                <Grid BorderBrush="{ThemeResource TelegramSeparatorMediumBrush}"
+                                      BorderThickness="0,1,0,0"
+                                      Padding="10,4,10,4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel x:Name="RecentRepliers"
+                                                Orientation="Horizontal"
+                                                Height="28" />
+                                    <TextBlock x:Name="ThreadGlyph"
+                                               Text="&#xE8BD;"
+                                               FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                               FontSize="{StaticResource GlyphMediumFontSize}"
+                                               VerticalAlignment="Center"
+                                               Margin="0,1,0,-1" />
+                                    <TextBlock x:Name="ThreadLabel"
+                                               Margin="8,-1,12,1"
+                                               VerticalAlignment="Center"
+                                               Grid.Column="1" />
+                                    <TextBlock Text="&#xE0E3;"
+                                               FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                               VerticalAlignment="Center"
+                                               FontSize="20"
+                                               Grid.Column="2" />
+                                </Grid>
+                            </HyperlinkButton>
+                        </Grid>
 
-</StackPanel>
+                        <controls:ReplyMarkupPanel x:Name="Markup"
+                                                   x:Load="False" />
+
+                        <local:ReactionsPanel x:Name="MediaReactions"
+                                              HorizontalAlignment="Stretch"
+                                              Padding="0,2,0,0" />
+                    </StackPanel>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>
     

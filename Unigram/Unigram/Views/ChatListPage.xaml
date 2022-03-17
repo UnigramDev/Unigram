@@ -28,8 +28,7 @@
         <DataTemplate>
             <cells:ChatCell
                 Stroke="{ThemeResource ChatLastMessageStateBrush}"
-                SelectionStroke="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                Accent="{ThemeResource SystemAccentColor}"/>
+                SelectionStroke="{ThemeResource ApplicationPageBackgroundThemeBrush}" />
         </DataTemplate>
     </ListView.ItemTemplate>
     <ListView.Footer>

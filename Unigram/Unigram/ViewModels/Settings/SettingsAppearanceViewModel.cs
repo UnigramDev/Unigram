@@ -85,10 +85,7 @@ namespace Unigram.ViewModels.Settings
 
         public int BubbleRadius
         {
-            get
-            {
-                return Settings.Appearance.BubbleRadius;
-            }
+            get => Settings.Appearance.BubbleRadius;
             set
             {
                 Settings.Appearance.BubbleRadius = value;
@@ -114,10 +111,7 @@ namespace Unigram.ViewModels.Settings
 
         public bool FullScreenGallery
         {
-            get
-            {
-                return Settings.FullScreenGallery;
-            }
+            get => Settings.FullScreenGallery;
             set
             {
                 Settings.FullScreenGallery = value;
@@ -127,10 +121,7 @@ namespace Unigram.ViewModels.Settings
 
         public bool DisableHighlightWords
         {
-            get
-            {
-                return Settings.DisableHighlightWords;
-            }
+            get => Settings.DisableHighlightWords;
             set
             {
                 Settings.DisableHighlightWords = value;
@@ -140,10 +131,7 @@ namespace Unigram.ViewModels.Settings
 
         public bool IsSendByEnterEnabled
         {
-            get
-            {
-                return Settings.IsSendByEnterEnabled;
-            }
+            get => Settings.IsSendByEnterEnabled;
             set
             {
                 Settings.IsSendByEnterEnabled = value;
@@ -153,23 +141,17 @@ namespace Unigram.ViewModels.Settings
 
         public bool IsLargeEmojiEnabled
         {
-            get
-            {
-                return Settings.IsLargeEmojiEnabled;
-            }
+            get => !ProtoService.Options.DisableAnimatedEmoji;
             set
             {
-                Settings.IsLargeEmojiEnabled = value;
+                ProtoService.Options.DisableAnimatedEmoji = !value;
                 RaisePropertyChanged();
             }
         }
 
         public bool IsReplaceEmojiEnabled
         {
-            get
-            {
-                return Settings.IsReplaceEmojiEnabled;
-            }
+            get => Settings.IsReplaceEmojiEnabled;
             set
             {
                 Settings.IsReplaceEmojiEnabled = value;
@@ -179,10 +161,7 @@ namespace Unigram.ViewModels.Settings
 
         public DistanceUnits DistanceUnits
         {
-            get
-            {
-                return Settings.DistanceUnits;
-            }
+            get => Settings.DistanceUnits;
             set
             {
                 Settings.DistanceUnits = value;
@@ -200,7 +179,7 @@ namespace Unigram.ViewModels.Settings
                 new SelectRadioItem(DistanceUnits.Miles, Strings.Resources.DistanceUnitsMiles, DistanceUnits == DistanceUnits.Miles),
             };
 
-            var dialog = new SelectRadioPopup(items);
+            var dialog = new ChooseRadioPopup(items);
             dialog.Title = Strings.Resources.DistanceUnitsTitle;
             dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.SecondaryButtonText = Strings.Resources.Cancel;

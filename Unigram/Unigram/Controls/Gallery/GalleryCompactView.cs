@@ -1,5 +1,4 @@
 ﻿using System;
-using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services;
 using Unigram.Services.ViewService;
@@ -9,7 +8,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls.Gallery
 {
-    public class GalleryCompactView : MediaPlayerElement, IHandle<UpdateFile>
+    public class GalleryCompactView : MediaPlayerElement
     {
         private readonly IEventAggregator _aggregator;
         private readonly ViewLifetimeControl _lifetime;
@@ -51,11 +50,6 @@ namespace Unigram.Controls.Gallery
 
             lifetime.Closed += OnReleased;
             lifetime.Released += OnReleased;
-        }
-
-        public void Handle(UpdateFile update)
-        {
-            _fileStream?.UpdateFile(update.File);
         }
 
         private void OnReleased(object sender, EventArgs e)

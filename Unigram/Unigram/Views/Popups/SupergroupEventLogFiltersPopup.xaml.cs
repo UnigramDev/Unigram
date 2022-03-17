@@ -16,7 +16,7 @@ namespace Unigram.Views.Popups
         private ICacheService _cacheService;
 
         public ChatEventLogFilters Filters { get; private set; }
-        public IList<int> UserIds { get; private set; }
+        public IList<long> UserIds { get; private set; }
 
         public SupergroupEventLogFiltersPopup()
         {
@@ -27,7 +27,7 @@ namespace Unigram.Views.Popups
             SecondaryButtonText = Strings.Resources.Cancel;
         }
 
-        public Task<ContentDialogResult> ShowAsync(IProtoService protoService, int supergroupId, ChatEventLogFilters filters, IList<int> userIds)
+        public Task<ContentDialogResult> ShowAsync(IProtoService protoService, long supergroupId, ChatEventLogFilters filters, IList<long> userIds)
         {
             _protoService = protoService;
             _cacheService = protoService;
@@ -46,7 +46,7 @@ namespace Unigram.Views.Popups
             MessageEdits.IsChecked = filters.MessageEdits;
             MessagePins.IsChecked = filters.MessagePins;
             MemberLeaves.IsChecked = filters.MemberLeaves;
-            VoiceChatChanges.IsChecked = filters.VoiceChatChanges;
+            VideoChatChanges.IsChecked = filters.VideoChatChanges;
 
             Event_Toggled(null, null);
 
@@ -162,11 +162,11 @@ namespace Unigram.Views.Popups
                 MessageEdits = MessageEdits.IsChecked == true,
                 MessagePins = MessagePins.IsChecked == true,
                 MemberLeaves = MemberLeaves.IsChecked == true,
-                VoiceChatChanges = VoiceChatChanges.IsChecked == true,
+                VideoChatChanges = VideoChatChanges.IsChecked == true,
             };
 
             var areAllAdministratorsSelected = List.Items.All(x => List.SelectedItems.Contains(x));
-            UserIds = areAllAdministratorsSelected ? new int[0] : List.SelectedItems.OfType<ChatMember>().Select(x => x.MemberId).OfType<MessageSenderUser>().Select(x => x.UserId).ToArray();
+            UserIds = areAllAdministratorsSelected ? new long[0] : List.SelectedItems.OfType<ChatMember>().Select(x => x.MemberId).OfType<MessageSenderUser>().Select(x => x.UserId).ToArray();
         }
 
         private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -199,7 +199,7 @@ namespace Unigram.Views.Popups
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.Source = PlaceholderHelper.GetUser(_protoService, user, 32);
+                photo.SetUser(_protoService, user, 32);
             }
 
             if (args.Phase < 2)

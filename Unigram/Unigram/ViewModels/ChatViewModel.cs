@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Telegram.Td.Api;
-using Unigram.Common;
 using Unigram.Navigation;
 using Unigram.Services;
 
@@ -41,9 +40,5 @@ namespace Unigram.ViewModels
         public string Title { get => _chat.Title; set => _chat.Title = value; }
         public ChatType Type { get => _chat.Type; set => _chat.Type = value; }
         public long Id { get => _chat.Id; set => _chat.Id = value; }
-
-
-
-        public bool UpdateFile(File file) => _chat.UpdateFile(file);
     }
 }

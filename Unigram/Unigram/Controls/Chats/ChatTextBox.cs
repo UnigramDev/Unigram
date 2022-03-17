@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -43,9 +44,6 @@ namespace Unigram.Controls.Chats
                 return;
             }
 
-            ClipboardCopyFormat = RichEditClipboardFormat.PlainText;
-
-            Paste += OnPaste;
             //Clipboard.ContentChanged += Clipboard_ContentChanged;
 
             SelectionChanged += OnSelectionChanged;
@@ -68,12 +66,7 @@ namespace Unigram.Controls.Chats
             base.OnTapped(e);
         }
 
-        protected override void OnPaste()
-        {
-            OnPaste(null, null);
-        }
-
-        private async void OnPaste(object sender, TextControlPasteEventArgs e)
+        protected override async void OnPaste(HandledEventArgs e)
         {
             try
             {
@@ -82,19 +75,12 @@ namespace Unigram.Controls.Chats
                 var package = Clipboard.GetContent();
                 if (package.AvailableFormats.Contains(StandardDataFormats.Bitmap) || package.AvailableFormats.Contains(StandardDataFormats.StorageItems))
                 {
-                    if (e != null)
-                    {
-                        e.Handled = true;
-                    }
-
+                    e.Handled = true;
                     await ViewModel.HandlePackageAsync(package);
                 }
                 else if (package.AvailableFormats.Contains(StandardDataFormats.Text) && package.AvailableFormats.Contains("application/x-tl-field-tags"))
                 {
-                    if (e != null)
-                    {
-                        e.Handled = true;
-                    }
+                    e.Handled = true;
 
                     // This is our field format
                     var text = await package.GetTextAsync();
@@ -134,16 +120,9 @@ namespace Unigram.Controls.Chats
 
                     InsertText(text, entities);
                 }
-                else if (package.AvailableFormats.Contains(StandardDataFormats.Text) && package.AvailableFormats.Contains("application/x-td-field-tags"))
-                {
-                    // This is Telegram Desktop mentions format
-                }
                 else if (package.AvailableFormats.Contains(StandardDataFormats.Text) /*&& package.Contains("Rich Text Format")*/)
                 {
-                    if (e != null)
-                    {
-                        e.Handled = true;
-                    }
+                    e.Handled = true;
 
                     var text = await package.GetTextAsync();
                     var start = Document.Selection.StartPosition;
@@ -174,13 +153,13 @@ namespace Unigram.Controls.Chats
                     Document.Selection.CharacterFormat = Document.GetDefaultCharacterFormat();
                 }
             }
-            else if (e.Key == VirtualKey.Up || e.Key == VirtualKey.Down)
+            else if (e.Key is VirtualKey.Up or VirtualKey.Down)
             {
                 var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
                 var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
                 var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
 
-                if (e.Key == VirtualKey.Up && !alt && !ctrl && !shift && IsEmpty)
+                if (e.Key == VirtualKey.Up && !alt && !ctrl && !shift && IsEmpty && ViewModel.Autocomplete == null)
                 {
                     ViewModel.MessageEditLastCommand.Execute();
                     e.Handled = true;
@@ -195,7 +174,7 @@ namespace Unigram.Controls.Chats
                     ViewModel.MessageReplyNextCommand.Execute();
                     e.Handled = true;
                 }
-                else if (e.Key == VirtualKey.Up || e.Key == VirtualKey.Down)
+                else if (e.Key is VirtualKey.Up or VirtualKey.Down)
                 {
                     if (Autocomplete != null && ViewModel.Autocomplete != null)
                     {
@@ -213,7 +192,9 @@ namespace Unigram.Controls.Chats
                     }
                 }
             }
-            else if ((e.Key == VirtualKey.Tab || e.Key == VirtualKey.Enter) && Autocomplete != null && Autocomplete.Items.Count > 0 && ViewModel.Autocomplete != null && ((ViewModel.Autocomplete is SearchStickersCollection && Autocomplete.SelectedItem != null) || ViewModel.Autocomplete is not SearchStickersCollection))
+            else if ((e.Key == VirtualKey.Tab || e.Key == VirtualKey.Enter) && Autocomplete != null && Autocomplete.Items.Count > 0 && ViewModel.Autocomplete != null
+                && ((ViewModel.Autocomplete is EmojiCollection emojiCollection && (emojiCollection.HasColumn || Autocomplete.SelectedItem != null))
+                || (ViewModel.Autocomplete is SearchStickersCollection && Autocomplete.SelectedItem != null) || ViewModel.Autocomplete is not SearchStickersCollection and not EmojiCollection))
             {
                 var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
                 if (shift)
@@ -240,44 +221,6 @@ namespace Unigram.Controls.Chats
                     return;
                 }
             }
-            else if (e.Key == VirtualKey.Enter)
-            {
-                var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
-                var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
-
-                var send = false;
-
-                if (ViewModel.Settings.IsSendByEnterEnabled)
-                {
-                    send = !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
-                }
-                else
-                {
-                    send = ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
-                }
-
-                AcceptsReturn = !send;
-                e.Handled = send;
-
-                // If handwriting panel is open, the app would crash on send.
-                // Still, someone should fill a ticket to Microsoft about this.
-                if (send && HandwritingView.IsOpen)
-                {
-                    RoutedEventHandler handler = null;
-                    handler = (s, args) =>
-                    {
-                        _ = SendAsync();
-                        HandwritingView.Unloaded -= handler;
-                    };
-
-                    HandwritingView.Unloaded += handler;
-                    HandwritingView.TryClose();
-                }
-                else if (send)
-                {
-                    _ = SendAsync();
-                }
-            }
             else if (e.Key == VirtualKey.X && Math.Abs(Document.Selection.Length) == 4)
             {
                 var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
@@ -296,6 +239,11 @@ namespace Unigram.Controls.Chats
             {
                 base.OnKeyDown(e);
             }
+        }
+
+        protected override void OnAccept()
+        {
+            _ = SendAsync();
         }
 
         private void OnTextChanged(object sender, RoutedEventArgs e)
@@ -342,7 +290,18 @@ namespace Unigram.Controls.Chats
 
         private async void OnSelectionChanged(object sender, RoutedEventArgs e)
         {
-            Document.GetText(TextGetOptions.None, out string text);
+            if (_isMenuExpanded)
+            {
+                if (ViewModel.Autocomplete is not AutocompleteList<UserCommand>)
+                {
+                    ClearInlineBotResults();
+                    ViewModel.Autocomplete = GetCommands(string.Empty);
+                }
+
+                return;
+            }
+
+            Document.GetText(TextGetOptions.NoHidden, out string text);
 
             // This needs to run before text empty check as it cleans up
             // some stuff it inline bot isn't found
@@ -362,7 +321,7 @@ namespace Unigram.Controls.Chats
 
             var query = text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length));
 
-            if (TryGetAutocomplete(text, query, out var autocomplete))
+            if (TryGetAutocomplete(text, query, ViewModel.Autocomplete, out var autocomplete))
             {
                 ClearInlineBotResults();
                 ViewModel.Autocomplete = autocomplete;
@@ -394,7 +353,7 @@ namespace Unigram.Controls.Chats
             }
         }
 
-        private bool TryGetAutocomplete(string text, string query, out IAutocompleteCollection autocomplete)
+        private bool TryGetAutocomplete(string text, string query, IAutocompleteCollection prev, out IAutocompleteCollection autocomplete)
         {
             if (Emoji.ContainsSingleEmoji(text) && ViewModel.ComposerHeader?.EditingMessage == null)
             {
@@ -412,6 +371,12 @@ namespace Unigram.Controls.Chats
                         autocomplete = null;
                         return false;
                     }
+                }
+
+                if (prev is SearchStickersCollection && prev.Query.Equals(text.Trim()))
+                {
+                    autocomplete = prev;
+                    return true;
                 }
 
                 autocomplete = new SearchStickersCollection(ViewModel.ProtoService, ViewModel.Settings, text.Trim());
@@ -432,21 +397,45 @@ namespace Unigram.Controls.Chats
                     members = false;
                 }
 
+                if (prev is UsernameCollection && prev.Query.Equals(username))
+                {
+                    autocomplete = prev;
+                    return true;
+                }
+
                 autocomplete = new UsernameCollection(ViewModel.ProtoService, ViewModel.Chat.Id, ViewModel.ThreadId, username, index == 0, members);
                 return true;
             }
             else if (SearchByHashtag(query, out string hashtag, out _))
             {
+                if (prev is SearchHashtagsCollection && prev.Query.Equals(hashtag))
+                {
+                    autocomplete = prev;
+                    return true;
+                }
+                
                 autocomplete = new SearchHashtagsCollection(ViewModel.ProtoService, hashtag);
                 return true;
             }
-            else if (SearchByEmoji(query, out string replacement) && replacement.Length > 0)
+            else if (SearchByEmoji(query, out string replacement, out bool column) && replacement.Length > 0)
             {
-                autocomplete = new EmojiCollection(ViewModel.ProtoService, replacement, CoreTextServicesManager.GetForCurrentView().InputLanguage.LanguageTag);
+                if (prev is EmojiCollection && prev.Query.Equals(replacement))
+                {
+                    autocomplete = prev;
+                    return true;
+                }
+
+                autocomplete = new EmojiCollection(ViewModel.ProtoService, replacement, column, CoreTextServicesManager.GetForCurrentView().InputLanguage.LanguageTag);
                 return true;
             }
             else if (SearchByCommand(query, out string command))
             {
+                if (prev is AutocompleteList<UserCommand> && prev.Query.Equals(command))
+                {
+                    autocomplete = prev;
+                    return true;
+                }
+
                 autocomplete = GetCommands(command.ToLower());
                 return true;
             }
@@ -460,7 +449,7 @@ namespace Unigram.Controls.Chats
             var all = ViewModel.BotCommands;
             if (all != null)
             {
-                var results = new AutocompleteList<UserCommand>(all.Where(x => x.Item.Command.ToLower().StartsWith(command, StringComparison.OrdinalIgnoreCase)));
+                var results = new AutocompleteList<UserCommand>(command, all.Where(x => x.Item.Command.ToLower().StartsWith(command, StringComparison.OrdinalIgnoreCase)));
                 if (results.Count > 0)
                 {
                     return results;
@@ -539,6 +528,8 @@ namespace Unigram.Controls.Chats
 
             public bool HasMoreItems => _hasMore;
 
+            public string Query => _query;
+
             public Orientation Orientation => Orientation.Vertical;
         }
 
@@ -546,14 +537,16 @@ namespace Unigram.Controls.Chats
         {
             private readonly IProtoService _protoService;
             private readonly string _query;
+            private readonly bool _column;
             private readonly string _inputLanguage;
 
             private bool _hasMore = true;
 
-            public EmojiCollection(IProtoService protoService, string query, string inputLanguage)
+            public EmojiCollection(IProtoService protoService, string query, bool column, string inputLanguage)
             {
                 _protoService = protoService;
                 _query = query;
+                _column = column;
                 _inputLanguage = inputLanguage;
             }
 
@@ -603,39 +596,11 @@ namespace Unigram.Controls.Chats
 
             public bool HasMoreItems => _hasMore;
 
+            public string Query => _query;
+
+            public bool HasColumn => _column;
+
             public Orientation Orientation => Orientation.Horizontal;
-        }
-
-        public class EmojiGroupCollection : MvxObservableCollection<List<EmojiGroup>>, ISupportIncrementalLoading
-        {
-            private readonly IProtoService _protoService;
-            private readonly string _query;
-            private readonly EmojiSkinTone _skin;
-            private readonly string _inputLanguage;
-
-            private bool _hasMore = true;
-
-            public EmojiGroupCollection(IProtoService protoService, string query, EmojiSkinTone skin, string inputLanguage)
-            {
-                _protoService = protoService;
-                _query = query;
-                _skin = skin;
-                _inputLanguage = inputLanguage;
-            }
-
-            public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
-            {
-                return AsyncInfo.Run(async token =>
-                {
-                    _hasMore = false;
-
-                    Add(await Emoji.SearchAsync(_protoService, _query, _skin, _inputLanguage));
-
-                    return new LoadMoreItemsResult { Count = 1 };
-                });
-            }
-
-            public bool HasMoreItems => _hasMore;
         }
 
         public class SearchHashtagsCollection : MvxObservableCollection<string>, IAutocompleteCollection, ISupportIncrementalLoading
@@ -674,6 +639,8 @@ namespace Unigram.Controls.Chats
 
             public bool HasMoreItems => _hasMore;
 
+            public string Query => _query;
+
             public Orientation Orientation => Orientation.Vertical;
         }
 
@@ -687,7 +654,7 @@ namespace Unigram.Controls.Chats
 
             Sending?.Invoke(this, EventArgs.Empty);
 
-            var options = new MessageSendOptions(disableNotification, false, null);
+            var options = new MessageSendOptions(disableNotification, false, false, null);
 
             var text = GetFormattedText(true);
             await ViewModel.SendMessageAsync(text, options);
@@ -716,6 +683,22 @@ namespace Unigram.Controls.Chats
             UpdateInlinePlaceholder(null, null);
         }
 
+        private bool _isMenuExpanded;
+        public bool? IsMenuExpanded
+        {
+            get => _isMenuExpanded;
+            set
+            {
+                if (ViewModel?.Chat?.Type is not ChatTypePrivate)
+                {
+                    return;
+                }
+
+                _isMenuExpanded = value ?? false;
+                OnSelectionChanged(null, null);
+            }
+        }
+
         #region Username
 
         public static bool SearchByUsername(string text, out string searchText, out int index)
@@ -741,7 +724,7 @@ namespace Unigram.Controls.Chats
                 }
                 else
                 {
-                    if (!MessageHelper.IsValidUsernameSymbol(text[i]))
+                    if (!MessageHelper.IsValidUsernameSymbol(text[i]) && !char.IsLetter(text[i]))
                     {
                         found = false;
                         break;
@@ -862,8 +845,9 @@ namespace Unigram.Controls.Chats
             return flag;
         }
 
-        public static bool SearchByEmoji(string text, out string searchText)
+        public static bool SearchByEmoji(string text, out string searchText, out bool command)
         {
+            command = true;
             searchText = string.Empty;
 
             var c = ':';
@@ -873,9 +857,9 @@ namespace Unigram.Controls.Chats
 
             while (i >= 0)
             {
-                if (text[i] == c)
+                if (text[i] == c /*|| (i == 0 && (char.IsLetter(text[i]) || char.IsNumber(text[i])))*/)
                 {
-                    if (i == 0 || text[i - 1] == ' ' || text[i - 1] == '\n' || text[i - 1] == '\r' || text[i - 1] == '\v')
+                    if (i == 0 || text[i - 1] == ' ' || text[i - 1] == '\n' || text[i - 1] == '\r' || text[i - 1] == '\v' || !char.IsLetterOrDigit(text[i - 1]))
                     {
                         index = i;
                         break;
@@ -900,6 +884,7 @@ namespace Unigram.Controls.Chats
                     return false;
                 }
 
+                command = text[i] == c;
                 searchText = text.Substring(index).TrimStart(c);
             }
 
@@ -1052,8 +1037,8 @@ namespace Unigram.Controls.Chats
 
         public object Reply
         {
-            get { return GetValue(ReplyProperty); }
-            set { SetValue(ReplyProperty, value); }
+            get => GetValue(ReplyProperty);
+            set => SetValue(ReplyProperty, value);
         }
 
         // Using a DependencyProperty as the backing store for Reply.  This enables animation, styling, binding, etc...
@@ -1079,17 +1064,21 @@ namespace Unigram.Controls.Chats
 
     public interface IAutocompleteCollection : ICollection
     {
+        public string Query { get; }
+
         public Orientation Orientation { get; }
     }
 
     public class AutocompleteList<T> : List<T>, IAutocompleteCollection
     {
+        public string Query { get; }
+
         public Orientation Orientation { get; set; } = Orientation.Vertical;
 
-        public AutocompleteList(IEnumerable<T> collection)
+        public AutocompleteList(string query, IEnumerable<T> collection)
             : base(collection)
         {
-
+            Query = query;
         }
     }
 }

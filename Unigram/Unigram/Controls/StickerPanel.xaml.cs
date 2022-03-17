@@ -1,37 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Numerics;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls.Drawers;
 using Unigram.Services;
 using Unigram.Services.Settings;
 using Unigram.ViewModels;
-using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Drawers;
 using Unigram.Views;
 using Windows.Foundation;
-using Windows.Foundation.Metadata;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls
 {
-    public sealed partial class StickerPanel : UserControl, IFileDelegate
+    public sealed partial class StickerPanel : UserControl
     {
+        public new FrameworkElement Shadow => ShadowElement;
         public FrameworkElement Presenter => BackgroundElement;
 
         public Action<string> EmojiClick { get; set; }
 
         public Action<Sticker> StickerClick { get; set; }
         public event TypedEventHandler<UIElement, ItemContextRequestedEventArgs<Sticker>> StickerContextRequested;
+        public event EventHandler ChoosingSticker;
 
         public Action<Animation> AnimationClick { get; set; }
         public event TypedEventHandler<UIElement, ItemContextRequestedEventArgs<Animation>> AnimationContextRequested;
-
-        private StickersPanelMode _widget;
 
         public StickerPanel()
         {
@@ -39,18 +34,7 @@ namespace Unigram.Controls
             DataContext = new object();
 
             DropShadowEx.Attach(HeaderSeparator);
-
-            var protoService = TLContainer.Current.Resolve<IProtoService>();
-
-            AnimationsRoot.DataContext = AnimationDrawerViewModel.GetForCurrentView(protoService.SessionId);
-            AnimationsRoot.ItemClick = Animations_ItemClick;
-            AnimationsRoot.ItemContextRequested += (s, args) => AnimationContextRequested?.Invoke(s, args);
-
-            StickersRoot.DataContext = StickerDrawerViewModel.GetForCurrentView(protoService.SessionId);
-            StickersRoot.ItemClick = Stickers_ItemClick;
-            StickersRoot.ItemContextRequested += (s, args) => StickerContextRequested?.Invoke(s, args);
-
-            EmojisRoot.DataContext = StickersRoot.DataContext;
+            DropShadowEx.Attach(ShadowElement);
 
             switch (SettingsService.Current.Stickers.SelectedTab)
             {
@@ -64,38 +48,6 @@ namespace Unigram.Controls
                     Pivot.SelectedIndex = 2;
                     break;
             }
-
-            if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "Shadow"))
-            {
-                var themeShadow = new ThemeShadow();
-                BackgroundElement.Shadow = themeShadow;
-                BackgroundElement.Translation += new Vector3(0, 0, 32);
-
-                themeShadow.Receivers.Add(ShadowElement);
-            }
-        }
-
-        public void SetView(StickersPanelMode mode)
-        {
-            _widget = mode;
-
-            EmojisRoot?.SetView(mode);
-            VisualStateManager.GoToState(this, mode == StickersPanelMode.Overlay
-                ? "FilledState"
-                : mode == StickersPanelMode.Sidebar
-                ? "SidebarState"
-                : "NarrowState", false);
-        }
-
-        public void UpdateFile(File file)
-        {
-            if (!file.Local.IsDownloadingCompleted)
-            {
-                return;
-            }
-
-            StickersRoot.UpdateFile(file);
-            AnimationsRoot.UpdateFile(file);
         }
 
         private void Emojis_ItemClick(object sender, ItemClickEventArgs e)
@@ -123,53 +75,102 @@ namespace Unigram.Controls
             yield return StickersRoot;
         }
 
-        private IDrawer GetActiveDrawer()
-        {
-            switch (Pivot.SelectedIndex)
-            {
-                case 0:
-                    return EmojisRoot;
-                case 1:
-                    return AnimationsRoot;
-                case 2:
-                default:
-                    return StickersRoot;
-            }
-        }
-
         private void Pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (Pivot.SelectedIndex == 0 && EmojisRoot == null)
-            {
-                FindName(nameof(Emojis));
-                EmojisRoot.SetView(_widget);
-            }
-
-            var active = GetActiveDrawer();
-
-            foreach (var drawer in GetDrawers())
-            {
-                if (drawer == active)
-                {
-                    drawer.Activate();
-                }
-                else
-                {
-                    drawer?.Deactivate();
-                }
-            }
-
-            SettingsService.Current.Stickers.SelectedTab = active.Tab;
+            LoadAtIndex(Pivot.SelectedIndex, /* unsure here */ false);
         }
 
-        public async void Refresh()
+        private void LoadAtIndex(int index, bool unload)
         {
-            // TODO: memes
-            //StickersRoot.ViewModel.SyncStickers(null);
-            //AnimationsRoot.ViewModel.Update();
+            if (index == 0)
+            {
+                if (unload)
+                {
+                    UnloadAtIndex(1);
+                    UnloadAtIndex(2);
+                }
 
-            await Task.Delay(100);
-            Pivot_SelectionChanged(null, null);
+                if (EmojisRoot == null)
+                {
+                    FindName(nameof(EmojisRoot));
+                    EmojisRoot.DataContext = AnimationDrawerViewModel.GetForCurrentView(TLContainer.Current.Resolve<IProtoService>().SessionId);
+                }
+
+                EmojisRoot.Activate();
+                SettingsService.Current.Stickers.SelectedTab = StickersTab.Emoji;
+            }
+            else if (index == 1)
+            {
+                if (unload)
+                {
+                    UnloadAtIndex(0);
+                    UnloadAtIndex(2);
+                }
+
+                if (AnimationsRoot == null)
+                {
+                    FindName(nameof(AnimationsRoot));
+                    AnimationsRoot.DataContext = AnimationDrawerViewModel.GetForCurrentView(TLContainer.Current.Resolve<IProtoService>().SessionId);
+                    AnimationsRoot.ItemClick = Animations_ItemClick;
+                    AnimationsRoot.ItemContextRequested += (s, args) => AnimationContextRequested?.Invoke(s, args);
+                }
+
+                AnimationsRoot.Activate();
+                SettingsService.Current.Stickers.SelectedTab = StickersTab.Animations;
+            }
+            else if (index == 2)
+            {
+                if (unload)
+                {
+                    UnloadAtIndex(0);
+                    UnloadAtIndex(1);
+                }
+
+                if (StickersRoot == null)
+                {
+                    FindName(nameof(StickersRoot));
+                    StickersRoot.DataContext = StickerDrawerViewModel.GetForCurrentView(TLContainer.Current.Resolve<IProtoService>().SessionId);
+                    StickersRoot.ItemClick = Stickers_ItemClick;
+                    StickersRoot.ItemContextRequested += (s, args) => StickerContextRequested?.Invoke(s, args);
+                    StickersRoot.ChoosingItem += (s, args) => ChoosingSticker?.Invoke(s, args);
+                }
+
+                StickersRoot.Activate();
+                SettingsService.Current.Stickers.SelectedTab = StickersTab.Stickers;
+            }
+        }
+
+        private void UnloadAtIndex(int index)
+        {
+            if (index == 0 && EmojisRoot != null)
+            {
+                EmojisRoot.Deactivate();
+                UnloadObject(EmojisRoot);
+            }
+            else if (index == 1 && AnimationsRoot != null)
+            {
+                var viewModel = AnimationsRoot.DataContext as AnimationDrawerViewModel;
+
+                AnimationsRoot.Deactivate();
+                UnloadObject(AnimationsRoot);
+
+                if (viewModel != null)
+                {
+                    viewModel.Search(string.Empty);
+                }
+            }
+            else if (index == 2 && StickersRoot != null)
+            {
+                var viewModel = StickersRoot.DataContext as StickerDrawerViewModel;
+
+                StickersRoot.Deactivate();
+                UnloadObject(StickersRoot);
+
+                if (viewModel != null)
+                {
+                    viewModel.Search(string.Empty);
+                }
+            }
         }
 
         public void UpdateChatPermissions(ICacheService cacheService, Chat chat)
@@ -178,24 +179,29 @@ namespace Unigram.Controls
             var stickersRights = DialogViewModel.VerifyRights(cacheService, chat, x => x.CanSendOtherMessages, Strings.Resources.GlobalAttachStickersRestricted, Strings.Resources.AttachStickersRestrictedForever, Strings.Resources.AttachStickersRestricted, out string stickersLabel);
             var animationsRights = DialogViewModel.VerifyRights(cacheService, chat, x => x.CanSendOtherMessages, Strings.Resources.GlobalAttachGifRestricted, Strings.Resources.AttachGifRestrictedForever, Strings.Resources.AttachGifRestricted, out string animationsLabel);
 
-            EmojisRoot.Visibility = emojisRights ? Visibility.Collapsed : Visibility.Visible;
+            EmojisPanel.Visibility = emojisRights ? Visibility.Collapsed : Visibility.Visible;
             EmojisPermission.Visibility = emojisRights ? Visibility.Visible : Visibility.Collapsed;
             EmojisPermission.Text = emojisLabel ?? string.Empty;
 
-            StickersRoot.Visibility = stickersRights ? Visibility.Collapsed : Visibility.Visible;
+            StickersPanel.Visibility = stickersRights ? Visibility.Collapsed : Visibility.Visible;
             StickersPermission.Visibility = stickersRights ? Visibility.Visible : Visibility.Collapsed;
             StickersPermission.Text = stickersLabel ?? string.Empty;
 
-            AnimationsRoot.Visibility = animationsRights ? Visibility.Collapsed : Visibility.Visible;
+            AnimationsPanel.Visibility = animationsRights ? Visibility.Collapsed : Visibility.Visible;
             AnimationsPermission.Visibility = animationsRights ? Visibility.Visible : Visibility.Collapsed;
             AnimationsPermission.Text = animationsLabel ?? string.Empty;
         }
 
+        public void Activate()
+        {
+            Pivot_SelectionChanged(null, null);
+        }
+
         public void Deactivate()
         {
-            foreach (var drawer in GetDrawers())
+            for (int i = 0; i < 3; i++)
             {
-                drawer?.Deactivate();
+                UnloadAtIndex(i);
             }
         }
 

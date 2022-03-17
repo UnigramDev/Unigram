@@ -15,7 +15,6 @@ namespace Unigram.Views
         public DiagnosticsPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<DiagnosticsViewModel>();
         }
 
         #region Binding
@@ -35,6 +34,15 @@ namespace Unigram.Views
         private async void Calls_Click(object sender, RoutedEventArgs e)
         {
             var log = await ApplicationData.Current.LocalFolder.TryGetItemAsync("tgcalls.txt") as StorageFile;
+            if (log != null)
+            {
+                await SharePopup.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(log.Path), null, true, null));
+            }
+        }
+
+        private async void GroupCalls_Click(object sender, RoutedEventArgs e)
+        {
+            var log = await ApplicationData.Current.LocalFolder.TryGetItemAsync("tgcalls_group.txt") as StorageFile;
             if (log != null)
             {
                 await SharePopup.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(log.Path), null, true, null));

@@ -10,6 +10,7 @@ using Unigram.ViewModels.Delegates;
 using Unigram.Views.Popups;
 using Unigram.Views.Settings;
 using Unigram.Views.Supergroups;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Supergroups
@@ -30,33 +31,21 @@ namespace Unigram.ViewModels.Supergroups
         private Chat _chat;
         public Chat Chat
         {
-            get
-            {
-                return _chat;
-            }
-            set
-            {
-                Set(ref _chat, value);
-            }
+            get => _chat;
+            set => Set(ref _chat, value);
         }
 
         private ChatMember _member;
         public ChatMember Member
         {
-            get
-            {
-                return _member;
-            }
-            set
-            {
-                Set(ref _member, value);
-            }
+            get => _member;
+            set => Set(ref _member, value);
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             state.TryGet("chatId", out long chatId);
-            state.TryGet("senderUserId", out int userId);
+            state.TryGet("senderUserId", out long userId);
 
             Chat = ProtoService.GetChat(chatId);
 
@@ -96,7 +85,7 @@ namespace Unigram.ViewModels.Supergroups
                     CanPostMessages = administrator.CanPostMessages;
                     CanPromoteMembers = administrator.CanPromoteMembers;
                     CanRestrictMembers = administrator.CanRestrictMembers;
-                    CanManageVoiceChats = administrator.CanManageVoiceChats;
+                    CanManageVideoChats = administrator.CanManageVideoChats;
                     IsAnonymous = administrator.IsAnonymous;
 
                     CustomTitle = administrator.CustomTitle;
@@ -109,7 +98,7 @@ namespace Unigram.ViewModels.Supergroups
                     CanInviteUsers = true;
                     CanPinMessages = true;
                     CanPostMessages = true;
-                    CanManageVoiceChats = true;
+                    CanManageVideoChats = true;
                     CanPromoteMembers = member.Status is ChatMemberStatusCreator;
                     CanRestrictMembers = true;
 
@@ -132,14 +121,8 @@ namespace Unigram.ViewModels.Supergroups
         private bool _isAdminAlready = true;
         public bool IsAdminAlready
         {
-            get
-            {
-                return _isAdminAlready;
-            }
-            set
-            {
-                Set(ref _isAdminAlready, value);
-            }
+            get => _isAdminAlready;
+            set => Set(ref _isAdminAlready, value);
         }
 
         public bool CanTransferOwnership
@@ -147,13 +130,13 @@ namespace Unigram.ViewModels.Supergroups
             get
             {
                 var chat = _chat;
-                if (chat == null)
+                if (chat == null || _member?.Status is ChatMemberStatusCreator)
                 {
                     return false;
                 }
 
                 var supergroup = CacheService.GetSupergroup(chat);
-                if (supergroup == null)
+                if (supergroup == null || supergroup.Status is not ChatMemberStatusCreator)
                 {
                     return false;
                 }
@@ -166,7 +149,7 @@ namespace Unigram.ViewModels.Supergroups
                     (supergroup.IsChannel ? true : _canPinMessages) &&
                     (supergroup.IsChannel ? _canPostMessages : true) &&
                     (supergroup.IsChannel ? true : _canRestrictMembers) &&
-                    (supergroup.IsChannel ? true : _canManageVoiceChats);
+                    (supergroup.IsChannel ? true : _canManageVideoChats);
             }
         }
 
@@ -175,10 +158,7 @@ namespace Unigram.ViewModels.Supergroups
         private bool _canChangeInfo;
         public bool CanChangeInfo
         {
-            get
-            {
-                return _canChangeInfo;
-            }
+            get => _canChangeInfo;
             set
             {
                 Set(ref _canChangeInfo, value);
@@ -189,10 +169,7 @@ namespace Unigram.ViewModels.Supergroups
         private bool _canPostMessages;
         public bool CanPostMessages
         {
-            get
-            {
-                return _canPostMessages;
-            }
+            get => _canPostMessages;
             set
             {
                 Set(ref _canPostMessages, value);
@@ -203,10 +180,7 @@ namespace Unigram.ViewModels.Supergroups
         private bool _canEditMessages;
         public bool CanEditMessages
         {
-            get
-            {
-                return _canEditMessages;
-            }
+            get => _canEditMessages;
             set
             {
                 Set(ref _canEditMessages, value);
@@ -217,10 +191,7 @@ namespace Unigram.ViewModels.Supergroups
         private bool _canDeleteMessages;
         public bool CanDeleteMessages
         {
-            get
-            {
-                return _canDeleteMessages;
-            }
+            get => _canDeleteMessages;
             set
             {
                 Set(ref _canDeleteMessages, value);
@@ -231,10 +202,7 @@ namespace Unigram.ViewModels.Supergroups
         private bool _canRestrictMembers;
         public bool CanRestrictMembers
         {
-            get
-            {
-                return _canRestrictMembers;
-            }
+            get => _canRestrictMembers;
             set
             {
                 Set(ref _canRestrictMembers, value);
@@ -245,10 +213,7 @@ namespace Unigram.ViewModels.Supergroups
         private bool _canInviteUsers;
         public bool CanInviteUsers
         {
-            get
-            {
-                return _canInviteUsers;
-            }
+            get => _canInviteUsers;
             set
             {
                 Set(ref _canInviteUsers, value);
@@ -259,10 +224,7 @@ namespace Unigram.ViewModels.Supergroups
         private bool _canPinMessages;
         public bool CanPinMessages
         {
-            get
-            {
-                return _canPinMessages;
-            }
+            get => _canPinMessages;
             set
             {
                 Set(ref _canPinMessages, value);
@@ -270,16 +232,13 @@ namespace Unigram.ViewModels.Supergroups
             }
         }
 
-        private bool _canManageVoiceChats;
-        public bool CanManageVoiceChats
+        private bool _canManageVideoChats;
+        public bool CanManageVideoChats
         {
-            get
-            {
-                return _canManageVoiceChats;
-            }
+            get => _canManageVideoChats;
             set
             {
-                Set(ref _canManageVoiceChats, value);
+                Set(ref _canManageVideoChats, value);
                 RaisePropertyChanged(nameof(CanTransferOwnership));
             }
         }
@@ -287,24 +246,14 @@ namespace Unigram.ViewModels.Supergroups
         private bool _isAnonymous;
         public bool IsAnonymous
         {
-            get
-            {
-                return _isAnonymous;
-            }
-            set
-            {
-                Set(ref _isAnonymous, value);
-                // Is Anonymous isn't needed for transfer ownership.
-            }
+            get => _isAnonymous;
+            set => Set(ref _isAnonymous, value);// Is Anonymous isn't needed for transfer ownership.
         }
 
         private bool _canPromoteMembers;
         public bool CanPromoteMembers
         {
-            get
-            {
-                return _canPromoteMembers;
-            }
+            get => _canPromoteMembers;
             set
             {
                 Set(ref _canPromoteMembers, value);
@@ -368,7 +317,7 @@ namespace Unigram.ViewModels.Supergroups
                     CanPostMessages = channel ? _canPostMessages : false,
                     CanPromoteMembers = _canPromoteMembers,
                     CanRestrictMembers = channel ? false : _canRestrictMembers,
-                    CanManageVoiceChats = channel ? false : _canManageVoiceChats,
+                    CanManageVideoChats = channel ? false : _canManageVideoChats,
                     CustomTitle = _customTitle ?? string.Empty
                 };
             }
@@ -414,7 +363,7 @@ namespace Unigram.ViewModels.Supergroups
             }
 
             var canTransfer = await ProtoService.SendAsync(new CanTransferOwnership());
-            if (canTransfer is CanTransferOwnershipResultPasswordNeeded || canTransfer is CanTransferOwnershipResultPasswordTooFresh || canTransfer is CanTransferOwnershipResultSessionTooFresh)
+            if (canTransfer is CanTransferOwnershipResultPasswordNeeded or CanTransferOwnershipResultPasswordTooFresh or CanTransferOwnershipResultSessionTooFresh)
             {
                 var primary = Strings.Resources.OK;
 
@@ -435,33 +384,34 @@ namespace Unigram.ViewModels.Supergroups
                 }
 
                 var confirm = await MessagePopup.ShowAsync(builder.ToString(), Strings.Resources.EditAdminTransferAlertTitle, primary, Strings.Resources.Cancel);
-                if (confirm == Windows.UI.Xaml.Controls.ContentDialogResult.Primary && canTransfer is CanTransferOwnershipResultPasswordNeeded)
+                if (confirm == ContentDialogResult.Primary && canTransfer is CanTransferOwnershipResultPasswordNeeded)
                 {
                     NavigationService.Navigate(typeof(SettingsPasswordPage));
                 }
             }
             else if (canTransfer is CanTransferOwnershipResultOk)
             {
-                var confirm = await MessagePopup.ShowAsync(Strings.Resources.EditAdminTransferReadyAlertText, supergroup.IsChannel ? Strings.Resources.EditAdminChannelTransfer : Strings.Resources.EditAdminGroupTransfer, Strings.Resources.EditAdminTransferChangeOwner, Strings.Resources.Cancel);
-                if (confirm != Windows.UI.Xaml.Controls.ContentDialogResult.Primary)
+                var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.EditAdminTransferReadyAlertText, chat.Title, user.GetFullName()), supergroup.IsChannel ? Strings.Resources.EditAdminChannelTransfer : Strings.Resources.EditAdminGroupTransfer, Strings.Resources.EditAdminTransferChangeOwner, Strings.Resources.Cancel);
+                if (confirm != ContentDialogResult.Primary)
                 {
                     return;
                 }
 
-                var input = new InputPopup();
-                input.Title = "YOLO";
-                input.Header = "Yolo";
-                input.PlaceholderText = "Yolo";
-                input.PrimaryButtonText = Strings.Resources.OK;
-                input.SecondaryButtonText = Strings.Resources.Cancel;
+                var popup = new InputPopup(InputPopupType.Password)
+                {
+                    Title = Strings.Resources.TwoStepVerification,
+                    Header = Strings.Resources.PleaseEnterCurrentPasswordTransfer,
+                    PrimaryButtonText = Strings.Resources.OK,
+                    SecondaryButtonText = Strings.Resources.Cancel
+                };
 
-                var result = await input.ShowQueuedAsync();
-                if (result != Windows.UI.Xaml.Controls.ContentDialogResult.Primary)
+                var result = await popup.ShowQueuedAsync();
+                if (result != ContentDialogResult.Primary)
                 {
                     return;
                 }
 
-                var response = await ProtoService.SendAsync(new TransferChatOwnership(chat.Id, user.Id, input.Text));
+                var response = await ProtoService.SendAsync(new TransferChatOwnership(chat.Id, user.Id, popup.Text));
                 if (response is Ok)
                 {
 

@@ -14,38 +14,31 @@ namespace UnigramBridge
         private AppServiceConnection _connection = null;
         private NotifyIcon _notifyIcon = null;
 
-        private InterceptKeys _intercept;
+        //private InterceptKeys _intercept;
 
         public BridgeApplicationContext()
         {
-            _intercept = new InterceptKeys();
+            //_intercept = new InterceptKeys();
 
             MenuItem openMenuItem = new MenuItem("Open Unigram", new EventHandler(OpenApp));
             MenuItem exitMenuItem = new MenuItem("Quit Unigram", new EventHandler(Exit));
             openMenuItem.DefaultItem = true;
 
             _notifyIcon = new NotifyIcon();
-            _notifyIcon.Click += new EventHandler(OpenApp);
+            _notifyIcon.DoubleClick += new EventHandler(OpenApp);
             _notifyIcon.Icon = Properties.Resources.Default;
             _notifyIcon.ContextMenu = new ContextMenu(new MenuItem[] { openMenuItem, exitMenuItem });
 #if DEBUG
             _notifyIcon.Text = "Telegram";
 #else
-            notifyIcon.Text = "Unigram";
+            _notifyIcon.Text = "Unigram";
 #endif
+
+            _notifyIcon.Visible = true;
 
             try
             {
                 var local = ApplicationData.Current.LocalSettings;
-                if (local.Values.TryGetValue("IsTrayVisible", out object value) && value is bool visible)
-                {
-                    _notifyIcon.Visible = visible;
-                }
-                else
-                {
-                    _notifyIcon.Visible = true;
-                }
-
                 if (local.Values.TryGetValue("IsLaunchMinimized", out object minimizedV) && minimizedV is bool minimized && !minimized)
                 {
                     OpenApp(null, null);
@@ -98,11 +91,7 @@ namespace UnigramBridge
 
             _connection = new AppServiceConnection();
             _connection.PackageFamilyName = Package.Current.Id.FamilyName;
-#if DEBUG
             _connection.AppServiceName = "org.telegram.bridge";
-#else
-            connection.AppServiceName = "org.unigram.bridge";
-#endif
             _connection.RequestReceived += Connection_RequestReceived;
             _connection.ServiceClosed += Connection_ServiceClosed;
 
@@ -168,19 +157,19 @@ namespace UnigramBridge
         {
             if (args.Request.Message.TryGetValue("FlashWindow", out object flash))
             {
-#if DEBUG
-                var handle = FindWindow("ApplicationFrameWindow", "Telegram");
-#else
-                var handle = FindWindow("ApplicationFrameWindow", "Unigram");
-#endif
+//#if DEBUG
+//                var handle = FindWindow("ApplicationFrameWindow", "Telegram");
+//#else
+//                var handle = FindWindow("ApplicationFrameWindow", "Unigram");
+//#endif
 
-                FLASHWINFO info = new FLASHWINFO();
-                info.cbSize = Convert.ToUInt32(Marshal.SizeOf(info));
-                info.hwnd = handle;
-                info.dwFlags = FlashWindow.FLASHW_ALL;
-                info.dwTimeout = 0;
-                info.uCount = 1;
-                FlashWindowEx(ref info);
+//                FLASHWINFO info = new FLASHWINFO();
+//                info.cbSize = Convert.ToUInt32(Marshal.SizeOf(info));
+//                info.hwnd = handle;
+//                info.dwFlags = FlashWindow.FLASHW_ALL;
+//                info.dwTimeout = 0;
+//                info.uCount = 1;
+//                FlashWindowEx(ref info);
             }
             else if (args.Request.Message.TryGetValue("UnreadCount", out object unread) && args.Request.Message.TryGetValue("UnreadUnmutedCount", out object unreadUnmuted))
             {
@@ -196,16 +185,10 @@ namespace UnigramBridge
                     }
                 }
             }
-            else if (args.Request.Message.TryGetValue("IsTrayVisible", out object value) && value is bool visible)
-            {
-                if (_notifyIcon != null)
-                {
-                    _notifyIcon.Visible = visible;
-                }
-            }
             else if (args.Request.Message.TryGetValue("Exit", out object exit))
             {
                 _connection.ServiceClosed -= Connection_ServiceClosed;
+                _connection.Dispose();
 
                 _notifyIcon.Dispose();
                 Application.Exit();
@@ -215,6 +198,7 @@ namespace UnigramBridge
         private void Connection_ServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
         {
             _connection.ServiceClosed -= Connection_ServiceClosed;
+            _connection.Dispose();
             _connection = null;
 
             //Application.Exit();

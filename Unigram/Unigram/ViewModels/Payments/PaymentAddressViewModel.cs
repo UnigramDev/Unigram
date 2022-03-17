@@ -48,14 +48,8 @@ namespace Unigram.ViewModels.Payments
         private Country _selectedCountry = Country.All[0];
         public Country SelectedCountry
         {
-            get
-            {
-                return _selectedCountry;
-            }
-            set
-            {
-                Set(ref _selectedCountry, value);
-            }
+            get => _selectedCountry;
+            set => Set(ref _selectedCountry, value);
         }
 
         public bool IsAnyUserInfoRequested
@@ -69,14 +63,8 @@ namespace Unigram.ViewModels.Payments
         private bool? _isSave = true;
         public bool? IsSave
         {
-            get
-            {
-                return _isSave;
-            }
-            set
-            {
-                Set(ref _isSave, value);
-            }
+            get => _isSave;
+            set => Set(ref _isSave, value);
         }
 
         public async Task<ValidatedOrderInfo> ValidateAsync()

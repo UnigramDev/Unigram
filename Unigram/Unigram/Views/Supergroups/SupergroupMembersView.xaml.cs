@@ -6,18 +6,17 @@ using Unigram.Converters;
 using Unigram.Navigation;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Supergroups;
-using Unigram.Views.Chats;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
 namespace Unigram.Views.Supergroups
 {
-    public sealed partial class SupergroupMembersView : HostedUserControl, IProfileTab, IBasicAndSupergroupDelegate, INavigablePage, ISearchablePage
+    public sealed partial class SupergroupMembersPage : HostedPage, IBasicAndSupergroupDelegate, INavigablePage, ISearchablePage
     {
         public SupergroupMembersViewModel ViewModel => DataContext as SupergroupMembersViewModel;
 
-        public SupergroupMembersView()
+        public SupergroupMembersPage()
         {
             InitializeComponent();
 
@@ -37,20 +36,7 @@ namespace Unigram.Views.Supergroups
 
         public void Search()
         {
-            Search_Click(null, null);
-        }
-
-        public int Index { get => 0; }
-        public string Text { get => Strings.Resources.ChannelMembers; }
-
-        public ListViewBase GetSelector()
-        {
-            return ScrollingHost;
-        }
-
-        public ScrollViewer GetScrollViewer()
-        {
-            return ScrollingHost.GetScrollViewer();
+            SearchField.Focus(FocusState.Keyboard);
         }
 
         private bool _isLocked;
@@ -59,10 +45,7 @@ namespace Unigram.Views.Supergroups
         public bool IsEmbedded
         {
             get => _isEmbedded;
-            set
-            {
-                Update(value, _isLocked);
-            }
+            set => Update(value, _isLocked);
         }
 
         public void Update(bool embedded, bool locked)
@@ -87,12 +70,11 @@ namespace Unigram.Views.Supergroups
             if (ContentPanel.Visibility == Visibility.Collapsed)
             {
                 SearchField.Text = string.Empty;
-                Search_LostFocus(null, null);
                 args.Handled = true;
             }
         }
 
-        private async void ListView_ItemClick(object sender, ItemClickEventArgs e)
+        private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
             if (e.ClickedItem is ChatMember member)
             {
@@ -133,7 +115,7 @@ namespace Unigram.Views.Supergroups
             if (chat.Type is ChatTypeSupergroup)
             {
                 flyout.CreateFlyoutItem(MemberPromote_Loaded, ViewModel.MemberPromoteCommand, chat.Type, status, member, Strings.Resources.SetAsAdmin, new FontIcon { Glyph = Icons.Star });
-                flyout.CreateFlyoutItem(MemberRestrict_Loaded, ViewModel.MemberRestrictCommand, chat.Type, status, member, Strings.Resources.KickFromSupergroup, new FontIcon { Glyph = Icons.Lock });
+                flyout.CreateFlyoutItem(MemberRestrict_Loaded, ViewModel.MemberRestrictCommand, chat.Type, status, member, Strings.Resources.KickFromSupergroup, new FontIcon { Glyph = Icons.LockClosed });
             }
 
             flyout.CreateFlyoutItem(MemberRemove_Loaded, ViewModel.MemberRemoveCommand, chat.Type, status, member, Strings.Resources.KickFromGroup, new FontIcon { Glyph = Icons.Block });
@@ -143,7 +125,7 @@ namespace Unigram.Views.Supergroups
 
         private bool MemberPromote_Loaded(ChatType chatType, ChatMemberStatus status, ChatMember member)
         {
-            if (member.Status is ChatMemberStatusCreator || member.Status is ChatMemberStatusAdministrator)
+            if (member.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator)
             {
                 return false;
             }
@@ -207,9 +189,18 @@ namespace Unigram.Views.Supergroups
                 args.ItemContainer = new TextListViewItem();
                 args.ItemContainer.Style = sender.ItemContainerStyle;
                 args.ItemContainer.ContextRequested += Member_ContextRequested;
+
+                if (sender.ItemTemplateSelector == null)
+                {
+                    args.ItemContainer.ContentTemplate = sender.ItemTemplate;
+                }
             }
 
-            args.ItemContainer.ContentTemplate = sender.ItemTemplateSelector.SelectTemplate(args.Item, args.ItemContainer);
+            if (sender.ItemTemplateSelector != null)
+            {
+                args.ItemContainer.ContentTemplate = sender.ItemTemplateSelector.SelectTemplate(args.Item, args.ItemContainer);
+            }
+
             args.IsContainerPrepared = true;
         }
 
@@ -273,7 +264,7 @@ namespace Unigram.Views.Supergroups
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
+                photo.SetUser(ViewModel.ProtoService, user, 36);
             }
 
             if (args.Phase < 2)
@@ -285,25 +276,6 @@ namespace Unigram.Views.Supergroups
         }
 
         #endregion
-
-        private void Search_Click(object sender, RoutedEventArgs e)
-        {
-            MainHeader.Visibility = Visibility.Collapsed;
-            SearchField.Visibility = Visibility.Visible;
-
-            SearchField.Focus(FocusState.Keyboard);
-        }
-
-        private void Search_LostFocus(object sender, RoutedEventArgs e)
-        {
-            if (string.IsNullOrEmpty(SearchField.Text))
-            {
-                MainHeader.Visibility = Visibility.Visible;
-                SearchField.Visibility = Visibility.Collapsed;
-
-                Focus(FocusState.Programmatic);
-            }
-        }
 
         private void Search_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -321,7 +293,7 @@ namespace Unigram.Views.Supergroups
 
         public void UpdateSupergroup(Chat chat, Supergroup group)
         {
-            Title.Text = group.IsChannel ? Strings.Resources.ChannelSubscribers : Strings.Resources.ChannelMembers;
+            SearchField.PlaceholderText = group.IsChannel ? Strings.Resources.ChannelSubscribers : Strings.Resources.ChannelMembers;
 
             AddNew.Content = group.IsChannel ? Strings.Resources.AddSubscriber : Strings.Resources.AddMember;
             AddNewPanel.Visibility = group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
@@ -331,7 +303,7 @@ namespace Unigram.Views.Supergroups
 
         public void UpdateBasicGroup(Chat chat, BasicGroup group)
         {
-            Title.Text = Strings.Resources.ChannelMembers;
+            SearchField.PlaceholderText = Strings.Resources.ChannelMembers;
 
             AddNew.Content = Strings.Resources.AddMember;
             AddNewPanel.Visibility = group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;

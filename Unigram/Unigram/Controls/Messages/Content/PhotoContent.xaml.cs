@@ -2,64 +2,119 @@
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.ViewModels;
+using Windows.Foundation;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed partial class PhotoContent : AspectView, IContentWithFile
+    public sealed class PhotoContent : Control, IContentWithFile
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
+        private string _fileToken;
+        private string _thumbnailToken;
+
         public PhotoContent(MessageViewModel message)
         {
-            InitializeComponent();
-            UpdateMessage(message);
+            _message = message;
+
+            DefaultStyleKey = typeof(PhotoContent);
         }
 
         public PhotoContent()
         {
-            InitializeComponent();
+            DefaultStyleKey = typeof(PhotoContent);
         }
+
+        #region InitializeComponent
+
+        private AspectView LayoutRoot;
+        private Image Texture;
+        private Border Overlay;
+        private TextBlock Subtitle;
+        private FileButton Button;
+        private SelfDestructTimer Timer;
+        private bool _templateApplied;
+
+        protected override void OnApplyTemplate()
+        {
+            LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as AspectView;
+            Texture = GetTemplateChild(nameof(Texture)) as Image;
+            Overlay = GetTemplateChild(nameof(Overlay)) as Border;
+            Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
+            Button = GetTemplateChild(nameof(Button)) as FileButton;
+            Timer = GetTemplateChild(nameof(Timer)) as SelfDestructTimer;
+
+            Button.Click += Button_Click;
+
+            _templateApplied = true;
+
+            if (_message != null)
+            {
+                UpdateMessage(_message);
+            }
+        }
+
+        #endregion
 
         public void UpdateMessage(MessageViewModel message)
         {
             _message = message;
 
             var photo = GetContent(message.Content);
-            if (photo == null)
+            if (photo == null || !_templateApplied)
             {
                 return;
             }
 
-            Constraint = message;
-            Background = null;
+            LayoutRoot.Constraint = message;
+            LayoutRoot.Background = null;
             Texture.Source = null;
 
             //UpdateMessageContentOpened(message);
 
-            var small = photo.GetSmall();
+            var small = photo.GetSmall()?.Photo;
             var big = photo.GetBig();
 
-            if (small != null /*&& !big.Photo.Local.IsDownloadingCompleted*/ /*&& small.Photo.Id != big.Photo.Id*/)
+            if (small == null || big == null)
             {
-                UpdateThumbnail(message, small.Photo);
+                return;
             }
 
-            if (big != null)
+            if (!big.Photo.Local.IsDownloadingCompleted && !message.IsSecret())
             {
-                UpdateFile(message, big.Photo);
+                UpdateThumbnail(message, small, photo.Minithumbnail, true);
             }
+
+            UpdateManager.Subscribe(this, message, big.Photo, ref _fileToken, UpdateFile);
+            UpdateFile(message, big.Photo);
+        }
+
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            availableSize = base.MeasureOverride(availableSize);
+
+            var photo = GetContent(_message?.Content);
+            var big = photo?.GetBig();
+
+            if (big == null)
+            {
+                return availableSize;
+            }
+
+            return availableSize;
         }
 
         public void Mockup(MessagePhoto photo)
         {
             var big = photo.Photo.GetBig();
 
-            Constraint = photo;
-            Background = null;
+            LayoutRoot.Constraint = photo;
+            LayoutRoot.Background = null;
             Texture.Source = new BitmapImage(new Uri(big.Photo.Local.Path));
 
             Overlay.Opacity = 0;
@@ -68,30 +123,28 @@ namespace Unigram.Controls.Messages.Content
 
         public void UpdateMessageContentOpened(MessageViewModel message)
         {
-            if (message.Ttl > 0)
+            if (message.Ttl > 0 && _templateApplied)
             {
                 Timer.Maximum = message.Ttl;
                 Timer.Value = DateTime.Now.AddSeconds(message.TtlExpiresIn);
             }
         }
 
-        public async void UpdateFile(MessageViewModel message, File file)
+        private void UpdateFile(object target, File file)
+        {
+            UpdateFile(_message, file);
+        }
+
+        private void UpdateFile(MessageViewModel message, File file)
         {
             var photo = GetContent(message.Content);
-            if (photo == null)
+            if (photo == null || !_templateApplied)
             {
                 return;
             }
 
-            var small = photo.GetSmall();
             var big = photo.GetBig();
-
-            if (small != null && small.Photo.Id != big.Photo.Id && small.Photo.Id == file.Id)
-            {
-                UpdateThumbnail(message, file);
-                return;
-            }
-            else if (big == null || big.Photo.Id != file.Id)
+            if (big == null || big.Photo.Id != file.Id)
             {
                 return;
             }
@@ -114,6 +167,15 @@ namespace Unigram.Controls.Messages.Content
 
                 Button.Opacity = 1;
                 Overlay.Opacity = 0;
+
+                if (message.IsSecret())
+                {
+                    Texture.Source = null;
+                }
+                else
+                {
+                    UpdateTexture(message, big, file);
+                }
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
             {
@@ -124,7 +186,7 @@ namespace Unigram.Controls.Messages.Content
                 Button.Opacity = 1;
                 Overlay.Opacity = 0;
 
-                if (message.Delegate.CanBeDownloaded(message))
+                if (message.Delegate.CanBeDownloaded(photo, file))
                 {
                     _message.ProtoService.DownloadFile(file.Id, 32);
                 }
@@ -140,6 +202,7 @@ namespace Unigram.Controls.Messages.Content
                     Button.Opacity = 1;
                     Overlay.Opacity = 1;
 
+                    Texture.Source = null;
                     Subtitle.Text = Locale.FormatTtl(message.Ttl, true);
                 }
                 else
@@ -159,48 +222,86 @@ namespace Unigram.Controls.Messages.Content
 
                     Overlay.Opacity = 0;
 
-                    var width = 0;
-                    var height = 0;
-
-                    if (width > MaxWidth || height > MaxHeight)
-                    {
-                        double ratioX = MaxWidth / big.Width;
-                        double ratioY = MaxHeight / big.Height;
-                        double ratio = Math.Max(ratioX, ratioY);
-
-                        width = (int)(big.Width * ratio);
-                        height = (int)(big.Height * ratio);
-                    }
-
-                    try
-                    {
-                        BitmapImage image;
-                        Texture.Source = image = new BitmapImage { DecodePixelWidth = width, DecodePixelHeight = height }; // UriEx.GetLocal(file.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height };
-
-                        var test = await message.ProtoService.GetFileAsync(file);
-                        using (var stream = await test.OpenReadAsync())
-                        {
-                            await image.SetSourceAsync(stream);
-                        }
-                    }
-                    catch
-                    {
-                        Texture.Source = null;
-                    }
+                    UpdateTexture(message, big, file);
                 }
             }
         }
 
-        private void UpdateThumbnail(MessageViewModel message, File file)
+        private async void UpdateTexture(MessageViewModel message, PhotoSize big, File file)
         {
-            if (file.Local.IsDownloadingCompleted)
+            var width = 0;
+            var height = 0;
+
+            if (width > MaxWidth || height > MaxHeight)
             {
-                //Background = new ImageBrush { ImageSource = new BitmapImage(UriEx.GetLocal(file.Local.Path)), Stretch = Stretch.UniformToFill };
-                Background = new ImageBrush { ImageSource = PlaceholderHelper.GetBlurred(file.Local.Path, message.IsSecret() ? 15 : 3), Stretch = Stretch.UniformToFill };
+                double ratioX = MaxWidth / big.Width;
+                double ratioY = MaxHeight / big.Height;
+                double ratio = Math.Max(ratioX, ratioY);
+
+                width = (int)(big.Width * ratio);
+                height = (int)(big.Height * ratio);
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+
+            try
             {
-                message.ProtoService.DownloadFile(file.Id, 1);
+                BitmapImage image;
+                Texture.Source = image = new BitmapImage { DecodePixelWidth = width, DecodePixelHeight = height }; // UriEx.GetLocal(file.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height };
+
+                var test = await message.ProtoService.GetFileAsync(file);
+                if (test == null)
+                {
+                    Texture.Source = null;
+                    return;
+                }
+
+                using (var stream = await test.OpenReadAsync())
+                {
+                    await image.SetSourceAsync(stream);
+                }
+            }
+            catch
+            {
+                Texture.Source = null;
+            }
+        }
+
+        private void UpdateThumbnail(object target, File file)
+        {
+            var photo = GetContent(_message.Content);
+            if (photo == null || !_templateApplied)
+            {
+                return;
+            }
+
+            UpdateThumbnail(_message, file, photo.Minithumbnail, false);
+        }
+
+        private void UpdateThumbnail(MessageViewModel message, File file, Minithumbnail minithumbnail, bool download)
+        {
+            if (file != null)
+            {
+                if (file.Local.IsDownloadingCompleted)
+                {
+                    LayoutRoot.Background = new ImageBrush { ImageSource = PlaceholderHelper.GetBlurred(file.Local.Path, message.IsSecret() ? 15 : 3), Stretch = Stretch.UniformToFill };
+                }
+                else if (download)
+                {
+                    if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                    {
+                        if (minithumbnail != null)
+                        {
+                            LayoutRoot.Background = new ImageBrush { ImageSource = PlaceholderHelper.GetBlurred(minithumbnail.Data, message.IsSecret() ? 15 : 3), Stretch = Stretch.UniformToFill };
+                        }
+
+                        message.ProtoService.DownloadFile(file.Id, 1);
+                    }
+
+                    UpdateManager.Subscribe(this, message, file, ref _thumbnailToken, UpdateThumbnail, true);
+                }
+            }
+            else if (minithumbnail != null)
+            {
+                LayoutRoot.Background = new ImageBrush { ImageSource = PlaceholderHelper.GetBlurred(minithumbnail.Data, message.IsSecret() ? 15 : 3), Stretch = Stretch.UniformToFill };
             }
         }
 
@@ -259,7 +360,6 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-
             var file = big.Photo;
             if (file.Local.IsDownloadingActive)
             {
@@ -271,7 +371,7 @@ namespace Unigram.Controls.Messages.Content
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
-                _message.ProtoService.DownloadFile(file.Id, 32);
+                _message.ProtoService.DownloadFile(file.Id, 30);
             }
             else
             {

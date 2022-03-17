@@ -201,7 +201,7 @@ namespace Unigram.ViewModels
 
                     return true;
                 }
-                else if (supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator)
+                else if (supergroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator)
                 {
                     label = null;
                     return false;
@@ -335,7 +335,7 @@ namespace Unigram.ViewModels
 
         private async Task SendStorageMediaAsync(Chat chat, StorageMedia storage, FormattedText caption, bool asFile, MessageSendOptions options)
         {
-            if (storage is StorageDocument || storage is StorageAudio)
+            if (storage is StorageDocument or StorageAudio)
             {
                 await SendDocumentAsync(chat, storage.File, caption, options);
             }
@@ -505,7 +505,7 @@ namespace Unigram.ViewModels
                             if (first != null)
                             {
                                 var remote = first.RemoteId;
-                                if (int.TryParse(remote.Substring(1), out int userId))
+                                if (long.TryParse(remote.Substring(1), out long userId))
                                 {
                                     var user = ProtoService.GetUser(userId);
                                     if (user != null)
@@ -595,16 +595,16 @@ namespace Unigram.ViewModels
 
                 if (dialog.IsUntilOnline)
                 {
-                    return new MessageSendOptions(false, false, new MessageSchedulingStateSendWhenOnline());
+                    return new MessageSendOptions(false, false, false, new MessageSchedulingStateSendWhenOnline());
                 }
                 else
                 {
-                    return new MessageSendOptions(false, false, new MessageSchedulingStateSendAtDate(dialog.Value.ToTimestamp()));
+                    return new MessageSendOptions(false, false, false, new MessageSchedulingStateSendAtDate(dialog.Value.ToTimestamp()));
                 }
             }
             else
             {
-                return new MessageSendOptions(silent ?? false, false, null);
+                return new MessageSendOptions(silent ?? false, false, false, null);
             }
         }
 
@@ -612,7 +612,7 @@ namespace Unigram.ViewModels
         {
             if (options == null)
             {
-                options = new MessageSendOptions(false, false, null);
+                options = new MessageSendOptions(false, false, false, null);
             }
 
             var response = await ProtoService.SendAsync(new SendMessage(chat.Id, _threadId, replyToMessageId, options, null, inputMessageContent));
@@ -630,17 +630,6 @@ namespace Unigram.ViewModels
                 {
                     await MessagePopup.ShowAsync(Strings.Resources.MessageScheduledLimitReached, Strings.Resources.AppName, Strings.Resources.OK);
                 }
-            }
-
-            return response;
-        }
-
-        private async Task<BaseObject> EditMessageAsync(MessageViewModel message, InputFile inputFile, FileType type, Func<InputFile, InputMessageContent> inputMessageContent)
-        {
-            var response = await ProtoService.SendAsync(new UploadFile(inputFile, type, 32));
-            if (response is Telegram.Td.Api.File file)
-            {
-                ComposerHeader = new MessageComposerHeader { EditingMessage = message, EditingMessageMedia = null, EditingMessageFileId = file.Id };
             }
 
             return response;
@@ -814,7 +803,7 @@ namespace Unigram.ViewModels
                 }
             }
 
-            return await ProtoService.SendAsync(new SendMessageAlbum(chat.Id, _threadId, reply, options, operations));
+            return await ProtoService.SendAsync(new SendMessageAlbum(chat.Id, _threadId, reply, options, operations, false));
         }
 
         private FormattedText GetFormattedText(string text)
@@ -994,19 +983,19 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var fileInfo = header.EditingMessage.Get().GetFileAndName(true);
-            if (fileInfo.File == null || !fileInfo.File.Local.IsDownloadingCompleted)
+            var file = header.EditingMessage.GetFile();
+            if (file == null || !file.Local.IsDownloadingCompleted)
             {
                 return;
             }
 
-            var file = await ProtoService.GetFileAsync(fileInfo.File);
-            if (file == null)
+            var storageFile = await ProtoService.GetFileAsync(file);
+            if (storageFile == null)
             {
                 return;
             }
 
-            await EditMediaAsync(file);
+            await EditMediaAsync(storageFile);
         }
 
         public async Task EditMediaAsync(StorageFile file)

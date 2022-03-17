@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 04/16/2021 20:19:28
+// 	Generated: 03/13/2022 11:05:31
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -439,6 +439,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AccDescrExpandPanel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Fingerprint"
+        /// </summary>
+        public static string AccDescrFingerprint
+        {
+            get
+            {
+                return resourceLoader.GetString("AccDescrFingerprint");
             }
         }
         
@@ -923,6 +934,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AccDescrQuizExplanation");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Go to next unread reactions"
+        /// </summary>
+        public static string AccDescrReactionMentionDown
+        {
+            get
+            {
+                return resourceLoader.GetString("AccDescrReactionMentionDown");
             }
         }
         
@@ -1598,6 +1620,50 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Accept Calls"
+        /// </summary>
+        public static string AcceptCalls
+        {
+            get
+            {
+                return resourceLoader.GetString("AcceptCalls");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Use this device for Calls"
+        /// </summary>
+        public static string AcceptCallsChatsDescription
+        {
+            get
+            {
+                return resourceLoader.GetString("AcceptCallsChatsDescription");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Accept Secret Chats"
+        /// </summary>
+        public static string AcceptSecretChats
+        {
+            get
+            {
+                return resourceLoader.GetString("AcceptSecretChats");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Use this device for Secret Chats"
+        /// </summary>
+        public static string AcceptSecretChatsDescription
+        {
+            get
+            {
+                return resourceLoader.GetString("AcceptSecretChatsDescription");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Access error"
         /// </summary>
         public static string AccessError
@@ -1972,6 +2038,39 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Live stream finished ({0})"
+        /// </summary>
+        public static string ActionChannelCallEnded
+        {
+            get
+            {
+                return resourceLoader.GetString("ActionChannelCallEnded");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Live stream started"
+        /// </summary>
+        public static string ActionChannelCallJustStarted
+        {
+            get
+            {
+                return resourceLoader.GetString("ActionChannelCallJustStarted");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Live stream scheduled on {0}"
+        /// </summary>
+        public static string ActionChannelCallScheduled
+        {
+            get
+            {
+                return resourceLoader.GetString("ActionChannelCallScheduled");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Channel photo changed"
         /// </summary>
         public static string ActionChannelChangedPhoto
@@ -2137,7 +2236,51 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Voice chat ended ({0})"
+        /// Localized resource similar to "un1 enabled forwarding from this channel"
+        /// </summary>
+        public static string ActionForwardsEnabledChannel
+        {
+            get
+            {
+                return resourceLoader.GetString("ActionForwardsEnabledChannel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "un1 enabled forwarding from this group"
+        /// </summary>
+        public static string ActionForwardsEnabledGroup
+        {
+            get
+            {
+                return resourceLoader.GetString("ActionForwardsEnabledGroup");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "un1 restricted forwarding from this channel"
+        /// </summary>
+        public static string ActionForwardsRestrictedChannel
+        {
+            get
+            {
+                return resourceLoader.GetString("ActionForwardsRestrictedChannel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "un1 restricted forwarding from this group"
+        /// </summary>
+        public static string ActionForwardsRestrictedGroup
+        {
+            get
+            {
+                return resourceLoader.GetString("ActionForwardsRestrictedGroup");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Video chat ended ({0})"
         /// </summary>
         public static string ActionGroupCallEnded
         {
@@ -2148,7 +2291,29 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 invited un2 to the voice chat"
+        /// Localized resource similar to "un1 ended the video chat ({0})"
+        /// </summary>
+        public static string ActionGroupCallEndedBy
+        {
+            get
+            {
+                return resourceLoader.GetString("ActionGroupCallEndedBy");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You ended the video chat ({0})"
+        /// </summary>
+        public static string ActionGroupCallEndedByYou
+        {
+            get
+            {
+                return resourceLoader.GetString("ActionGroupCallEndedByYou");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "un1 invited un2 to the video chat"
         /// </summary>
         public static string ActionGroupCallInvited
         {
@@ -2159,7 +2324,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 invited you to the voice chat"
+        /// Localized resource similar to "un1 invited you to the video chat"
         /// </summary>
         public static string ActionGroupCallInvitedYou
         {
@@ -2170,7 +2335,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Voice chat started"
+        /// Localized resource similar to "Video chat started"
         /// </summary>
         public static string ActionGroupCallJustStarted
         {
@@ -2181,7 +2346,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Voice chat scheduled on {0}"
+        /// Localized resource similar to "Video chat scheduled for {0}"
         /// </summary>
         public static string ActionGroupCallScheduled
         {
@@ -2192,7 +2357,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 started a voice chat"
+        /// Localized resource similar to "un1 started a video chat"
         /// </summary>
         public static string ActionGroupCallStarted
         {
@@ -2203,7 +2368,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "You started a voice chat"
+        /// Localized resource similar to "You started a video chat"
         /// </summary>
         public static string ActionGroupCallStartedByYou
         {
@@ -2214,7 +2379,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "You invited un2 to the voice chat"
+        /// Localized resource similar to "You invited un2 to the video chat"
         /// </summary>
         public static string ActionGroupCallYouInvited
         {
@@ -2474,6 +2639,19 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ActionPinnedVoice");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "un1 changed chat reactions
+        ///from: {0} 
+        ///to: {1}"
+        /// </summary>
+        public static string ActionReactionsChanged
+        {
+            get
+            {
+                return resourceLoader.GetString("ActionReactionsChanged");
             }
         }
         
@@ -3028,6 +3206,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "added by {0} {1}"
+        /// </summary>
+        public static string AddedBy
+        {
+            get
+            {
+                return resourceLoader.GetString("AddedBy");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Sticker was added to Favorites"
         /// </summary>
         public static string AddedToFavorites
@@ -3292,6 +3481,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Add to Channel"
+        /// </summary>
+        public static string AddToChannel
+        {
+            get
+            {
+                return resourceLoader.GetString("AddToChannel");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Add to contacts"
         /// </summary>
         public static string AddToContacts
@@ -3332,6 +3532,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AddToFavorites");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add to Group"
+        /// </summary>
+        public static string AddToGroup
+        {
+            get
+            {
+                return resourceLoader.GetString("AddToGroup");
             }
         }
         
@@ -3486,6 +3697,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AllMedia");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Allow"
+        /// </summary>
+        public static string Allow
+        {
+            get
+            {
+                return resourceLoader.GetString("Allow");
             }
         }
         
@@ -4029,6 +4251,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Application"
+        /// </summary>
+        public static string Application
+        {
+            get
+            {
+                return resourceLoader.GetString("Application");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Apply localization file"
         /// </summary>
         public static string ApplyLocalizationFile
@@ -4080,6 +4313,107 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AppNameBeta");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Approve New Members"
+        /// </summary>
+        public static string ApproveNewMembers
+        {
+            get
+            {
+                return resourceLoader.GetString("ApproveNewMembers");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Turn this on if you want users to join only after they are approved by an admin."
+        /// </summary>
+        public static string ApproveNewMembersDescription
+        {
+            get
+            {
+                return resourceLoader.GetString("ApproveNewMembersDescription");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Update Telegram"
+        /// </summary>
+        public static string AppUpdate
+        {
+            get
+            {
+                return resourceLoader.GetString("AppUpdate");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "**What's new?**
+        ///
+        ///• Bug fixes and improvements."
+        /// </summary>
+        public static string AppUpdateChangelogEmpty
+        {
+            get
+            {
+                return resourceLoader.GetString("AppUpdateChangelogEmpty");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Downloading {0}%..."
+        /// </summary>
+        public static string AppUpdateDownloading
+        {
+            get
+            {
+                return resourceLoader.GetString("AppUpdateDownloading");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Download Now"
+        /// </summary>
+        public static string AppUpdateDownloadNow
+        {
+            get
+            {
+                return resourceLoader.GetString("AppUpdateDownloadNow");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Update Now"
+        /// </summary>
+        public static string AppUpdateNow
+        {
+            get
+            {
+                return resourceLoader.GetString("AppUpdateNow");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Remind me later"
+        /// </summary>
+        public static string AppUpdateRemindMeLater
+        {
+            get
+            {
+                return resourceLoader.GetString("AppUpdateRemindMeLater");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Version {0} • {1}"
+        /// </summary>
+        public static string AppUpdateVersionAndSize
+        {
+            get
+            {
+                return resourceLoader.GetString("AppUpdateVersionAndSize");
             }
         }
         
@@ -4768,7 +5102,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Are you sure you want to delete the chat with **{0}** and block them?"
+        /// Localized resource similar to "Are you sure you want to delete the chat with **{0}** and block it?"
         /// </summary>
         public static string AreYouSureDeleteThisChatWithBot
         {
@@ -4959,7 +5293,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Are you sure you want to unblock this contact?"
+        /// Localized resource similar to "Are you sure you want to unblock this user?"
         /// </summary>
         public static string AreYouSureUnblockContact
         {
@@ -5016,7 +5350,7 @@ namespace Unigram.Strings
         /// <summary>
         /// Localized resource similar to "Please note that Telegram Support is done by volunteers. We try to respond as quickly as possible, but it may take a while.
         ///
-        ///Please take a look at the <a href="https://telegram.org/faq#general-questions">Telegram FAQ</a>: it has answers to most questions and important tips for <a href="https://telegram.org/faq#troubleshooting">troubleshooting</a>."
+        ///Please take a look at the <![CDATA[<a href="https://telegram.org/faq#general-questions">Telegram FAQ</a>]]>: it has answers to most questions and important tips for <![CDATA[<a href="https://telegram.org/faq#troubleshooting">troubleshooting</a>]]>."
         /// </summary>
         public static string AskAQuestionInfo
         {
@@ -5243,6 +5577,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AttachMediaRestrictedForever");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Attach..."
+        /// </summary>
+        public static string AttachMenu
+        {
+            get
+            {
+                return resourceLoader.GetString("AttachMenu");
             }
         }
         
@@ -5555,6 +5900,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Link *Telegram Desktop* or *Telegram Web* by scanning a QR code."
+        /// </summary>
+        public static string AuthAnotherClientInfo4
+        {
+            get
+            {
+                return resourceLoader.GetString("AuthAnotherClientInfo4");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Go to *getdesktop.telegram.org* or *web.telegram.org* to get a QR code"
+        /// </summary>
+        public static string AuthAnotherClientInfo5
+        {
+            get
+            {
+                return resourceLoader.GetString("AuthAnotherClientInfo5");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "No auth token found"
         /// </summary>
         public static string AuthAnotherClientNotFound
@@ -5612,6 +5979,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "https://web.telegram.org/"
+        /// </summary>
+        public static string AuthAnotherWebClientUrl
+        {
+            get
+            {
+                return resourceLoader.GetString("AuthAnotherWebClientUrl");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "1 month"
+        /// </summary>
+        public static string AutoDelete1Month
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDelete1Month");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "24 hours"
         /// </summary>
         public static string AutoDelete24Hours
@@ -5623,7 +6012,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "7 days"
+        /// Localized resource similar to "1 week"
         /// </summary>
         public static string AutoDelete7Days
         {
@@ -6306,6 +6695,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Automatic Translation"
+        /// </summary>
+        public static string AutomaticTranslation
+        {
+            get
+            {
+                return resourceLoader.GetString("AutomaticTranslation");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Adaptive"
         /// </summary>
         public static string AutoNightAdaptive
@@ -6562,6 +6962,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Available reactions"
+        /// </summary>
+        public static string AvailableReactions
+        {
+            get
+            {
+                return resourceLoader.GetString("AvailableReactions");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Waiting for {0} to get online..."
         /// </summary>
         public static string AwaitingEncryption
@@ -6591,6 +7002,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Back");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Animate"
+        /// </summary>
+        public static string BackgroundAnimate
+        {
+            get
+            {
+                return resourceLoader.GetString("BackgroundAnimate");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Colors will move when you send messages"
+        /// </summary>
+        public static string BackgroundAnimateInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("BackgroundAnimateInfo");
             }
         }
         
@@ -6657,6 +7090,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("BackgroundColorPreviewLine2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Colors"
+        /// </summary>
+        public static string BackgroundColors
+        {
+            get
+            {
+                return resourceLoader.GetString("BackgroundColors");
             }
         }
         
@@ -6778,6 +7222,50 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("BackgroundSearchColor");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Background shared to **{0}**."
+        /// </summary>
+        public static string BackgroundToChats
+        {
+            get
+            {
+                return resourceLoader.GetString("BackgroundToChats");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Background shared to **{0}**."
+        /// </summary>
+        public static string BackgroundToGroup
+        {
+            get
+            {
+                return resourceLoader.GetString("BackgroundToGroup");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Background shared to **Saved Messages**."
+        /// </summary>
+        public static string BackgroundToSavedMessages
+        {
+            get
+            {
+                return resourceLoader.GetString("BackgroundToSavedMessages");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Background shared with **{0}**."
+        /// </summary>
+        public static string BackgroundToUser
+        {
+            get
+            {
+                return resourceLoader.GetString("BackgroundToUser");
             }
         }
         
@@ -7057,7 +7545,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Blocked users will not be able to contact you and will not see your Last Seen time."
+        /// Localized resource similar to "Blocked users can't send you messages or add you to groups. They will not see your profile pictures, online and last seen status."
         /// </summary>
         public static string BlockedUsersInfo
         {
@@ -7185,6 +7673,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Blue");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Blur in chat"
+        /// </summary>
+        public static string BlurInChat
+        {
+            get
+            {
+                return resourceLoader.GetString("BlurInChat");
             }
         }
         
@@ -7376,6 +7875,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Menu"
+        /// </summary>
+        public static string BotsMenuTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("BotsMenuTitle");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "START"
         /// </summary>
         public static string BotStart
@@ -7497,6 +8007,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Browse Themes"
+        /// </summary>
+        public static string BrowseThemes
+        {
+            get
+            {
+                return resourceLoader.GetString("BrowseThemes");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Message corners"
         /// </summary>
         public static string BubbleRadius
@@ -7504,6 +8025,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("BubbleRadius");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Build my own theme"
+        /// </summary>
+        public static string BuildMyOwnTheme
+        {
+            get
+            {
+                return resourceLoader.GetString("BuildMyOwnTheme");
             }
         }
         
@@ -7581,6 +8113,94 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("CalculatingSize");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Calendar"
+        /// </summary>
+        public static string Calendar
+        {
+            get
+            {
+                return resourceLoader.GetString("Calendar");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "F"
+        /// </summary>
+        public static string CalendarWeekNameShortFriday
+        {
+            get
+            {
+                return resourceLoader.GetString("CalendarWeekNameShortFriday");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "M"
+        /// </summary>
+        public static string CalendarWeekNameShortMonday
+        {
+            get
+            {
+                return resourceLoader.GetString("CalendarWeekNameShortMonday");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "S"
+        /// </summary>
+        public static string CalendarWeekNameShortSaturday
+        {
+            get
+            {
+                return resourceLoader.GetString("CalendarWeekNameShortSaturday");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "S"
+        /// </summary>
+        public static string CalendarWeekNameShortSunday
+        {
+            get
+            {
+                return resourceLoader.GetString("CalendarWeekNameShortSunday");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "T"
+        /// </summary>
+        public static string CalendarWeekNameShortThursday
+        {
+            get
+            {
+                return resourceLoader.GetString("CalendarWeekNameShortThursday");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "T"
+        /// </summary>
+        public static string CalendarWeekNameShortTuesday
+        {
+            get
+            {
+                return resourceLoader.GetString("CalendarWeekNameShortTuesday");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "W"
+        /// </summary>
+        public static string CalendarWeekNameShortWednesday
+        {
+            get
+            {
+                return resourceLoader.GetString("CalendarWeekNameShortWednesday");
             }
         }
         
@@ -7904,6 +8524,39 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Pin"
+        /// </summary>
+        public static string CallVideoPin
+        {
+            get
+            {
+                return resourceLoader.GetString("CallVideoPin");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Preview"
+        /// </summary>
+        public static string CallVideoPreviewTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("CallVideoPreviewTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unpin"
+        /// </summary>
+        public static string CallVideoUnpin
+        {
+            get
+            {
+                return resourceLoader.GetString("CallVideoUnpin");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Tap to allow access to your Camera"
         /// </summary>
         public static string CameraPermissionText
@@ -7996,6 +8649,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "What would you like to do with {0} from **{1}**?"
+        /// </summary>
+        public static string CancelForwardChat
+        {
+            get
+            {
+                return resourceLoader.GetString("CancelForwardChat");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Cancel Forwarding"
         /// </summary>
         public static string CancelForwarding
@@ -8014,6 +8678,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("CancelForwardMessage");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "What would you like to do with {0} from your chat with **{1}**?"
+        /// </summary>
+        public static string CancelForwardPrivate
+        {
+            get
+            {
+                return resourceLoader.GetString("CancelForwardPrivate");
             }
         }
         
@@ -8051,6 +8726,39 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Cancel the password reset process? If you request a new reset later, it will take another 7 days."
+        /// </summary>
+        public static string CancelPasswordReset
+        {
+            get
+            {
+                return resourceLoader.GetString("CancelPasswordReset");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "NO"
+        /// </summary>
+        public static string CancelPasswordResetNo
+        {
+            get
+            {
+                return resourceLoader.GetString("CancelPasswordResetNo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "YES"
+        /// </summary>
+        public static string CancelPasswordResetYes
+        {
+            get
+            {
+                return resourceLoader.GetString("CancelPasswordResetYes");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Are you sure you want to discard this poll?"
         /// </summary>
         public static string CancelPollAlertText
@@ -8080,6 +8788,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("CancelRegistration");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Cancel reset"
+        /// </summary>
+        public static string CancelReset
+        {
+            get
+            {
+                return resourceLoader.GetString("CancelReset");
             }
         }
         
@@ -8227,6 +8946,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Change colors"
+        /// </summary>
+        public static string ChangeColors
+        {
+            get
+            {
+                return resourceLoader.GetString("ChangeColors");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to use your currently selected background or reset it to the default for this theme?"
+        /// </summary>
+        public static string ChangeColorToColor
+        {
+            get
+            {
+                return resourceLoader.GetString("ChangeColorToColor");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "You can change your language later in Settings."
         /// </summary>
         public static string ChangeLanguageLater
@@ -8346,6 +9087,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ChangePublicLimitReached");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Change recipient"
+        /// </summary>
+        public static string ChangeRecipient
+        {
+            get
+            {
+                return resourceLoader.GetString("ChangeRecipient");
             }
         }
         
@@ -9496,7 +10248,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Add names of the admins to the messages they post."
+        /// Localized resource similar to "Add names of admins to the messages they post"
         /// </summary>
         public static string ChannelSignMessagesInfo
         {
@@ -9798,6 +10550,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Apply Theme"
+        /// </summary>
+        public static string ChatApplyTheme
+        {
+            get
+            {
+                return resourceLoader.GetString("ChatApplyTheme");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Chat archived."
         /// </summary>
         public static string ChatArchived
@@ -10073,6 +10836,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "No Theme"
+        /// </summary>
+        public static string ChatNoTheme
+        {
+            get
+            {
+                return resourceLoader.GetString("ChatNoTheme");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Reset Theme"
+        /// </summary>
+        public static string ChatResetTheme
+        {
+            get
+            {
+                return resourceLoader.GetString("ChatResetTheme");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to ""
         /// </summary>
         public static string Chats_few
@@ -10146,6 +10931,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ChatsArchived");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Chats deleted."
+        /// </summary>
+        public static string ChatsDeletedUndo
+        {
+            get
+            {
+                return resourceLoader.GetString("ChatsDeletedUndo");
             }
         }
         
@@ -10513,6 +11309,105 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{0} changed the chat theme to {1}"
+        /// </summary>
+        public static string ChatThemeChangedTo
+        {
+            get
+            {
+                return resourceLoader.GetString("ChatThemeChangedTo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You changed the chat theme to {0}"
+        /// </summary>
+        public static string ChatThemeChangedYou
+        {
+            get
+            {
+                return resourceLoader.GetString("ChatThemeChangedYou");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Tap here to view how **{0}** will see this theme when using night mode."
+        /// </summary>
+        public static string ChatThemeDayNightSwitchTooltip
+        {
+            get
+            {
+                return resourceLoader.GetString("ChatThemeDayNightSwitchTooltip");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} disabled the chat theme"
+        /// </summary>
+        public static string ChatThemeDisabled
+        {
+            get
+            {
+                return resourceLoader.GetString("ChatThemeDisabled");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You disabled the chat theme"
+        /// </summary>
+        public static string ChatThemeDisabledYou
+        {
+            get
+            {
+                return resourceLoader.GetString("ChatThemeDisabledYou");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Apply"
+        /// </summary>
+        public static string ChatThemeSaveDialogApply
+        {
+            get
+            {
+                return resourceLoader.GetString("ChatThemeSaveDialogApply");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Discard"
+        /// </summary>
+        public static string ChatThemeSaveDialogDiscard
+        {
+            get
+            {
+                return resourceLoader.GetString("ChatThemeSaveDialogDiscard");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to apply the new theme for this chat?"
+        /// </summary>
+        public static string ChatThemeSaveDialogText
+        {
+            get
+            {
+                return resourceLoader.GetString("ChatThemeSaveDialogText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Save changes?"
+        /// </summary>
+        public static string ChatThemeSaveDialogTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("ChatThemeSaveDialogTitle");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Video"
         /// </summary>
         public static string ChatVideo
@@ -10531,6 +11426,61 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ChatWasMovedToMainList");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Response to your join request"
+        /// </summary>
+        public static string ChatWithAdminChannelTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("ChatWithAdminChannelTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Response to your join request"
+        /// </summary>
+        public static string ChatWithAdminGroupTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("ChatWithAdminGroupTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You received this message because you requested to join **{0}** on {1}"
+        /// </summary>
+        public static string ChatWithAdminMessage
+        {
+            get
+            {
+                return resourceLoader.GetString("ChatWithAdminMessage");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "**{0}** is an admin of **{1}**, a channel you requested to join."
+        /// </summary>
+        public static string ChatWithChannelAdmin
+        {
+            get
+            {
+                return resourceLoader.GetString("ChatWithChannelAdmin");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "**{0}** is an admin of **{1}**, a group you requested to join."
+        /// </summary>
+        public static string ChatWithGroupAdmin
+        {
+            get
+            {
+                return resourceLoader.GetString("ChatWithGroupAdmin");
             }
         }
         
@@ -10623,6 +11573,127 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Check Password"
+        /// </summary>
+        public static string CheckPassword
+        {
+            get
+            {
+                return resourceLoader.GetString("CheckPassword");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Back to Settings"
+        /// </summary>
+        public static string CheckPasswordBackToSettings
+        {
+            get
+            {
+                return resourceLoader.GetString("CheckPasswordBackToSettings");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you still remember your password?"
+        /// </summary>
+        public static string CheckPasswordInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("CheckPasswordInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Perfect!"
+        /// </summary>
+        public static string CheckPasswordPerfect
+        {
+            get
+            {
+                return resourceLoader.GetString("CheckPasswordPerfect");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You still remember your password."
+        /// </summary>
+        public static string CheckPasswordPerfectInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("CheckPasswordPerfectInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You entered the wrong password."
+        /// </summary>
+        public static string CheckPasswordWrong
+        {
+            get
+            {
+                return resourceLoader.GetString("CheckPasswordWrong");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Is {0} still your number?"
+        /// </summary>
+        public static string CheckPhoneNumber
+        {
+            get
+            {
+                return resourceLoader.GetString("CheckPhoneNumber");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Keep your number up to date to ensure you can always log into Telegram. **Learn more**"
+        /// </summary>
+        public static string CheckPhoneNumberInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("CheckPhoneNumberInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "https://telegram.org/faq#q-i-have-a-new-phone-number-what-do-i-do"
+        /// </summary>
+        public static string CheckPhoneNumberLearnMoreUrl
+        {
+            get
+            {
+                return resourceLoader.GetString("CheckPhoneNumberLearnMoreUrl");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No"
+        /// </summary>
+        public static string CheckPhoneNumberNo
+        {
+            get
+            {
+                return resourceLoader.GetString("CheckPhoneNumberNo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Yes"
+        /// </summary>
+        public static string CheckPhoneNumberYes
+        {
+            get
+            {
+                return resourceLoader.GetString("CheckPhoneNumberYes");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Choose a country"
         /// </summary>
         public static string ChooseCountry
@@ -10685,6 +11756,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ChooseFromYourStickers");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Choose languages"
+        /// </summary>
+        public static string ChooseLanguages
+        {
+            get
+            {
+                return resourceLoader.GetString("ChooseLanguages");
             }
         }
         
@@ -10832,6 +11914,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "ch**oo**sing a sticker"
+        /// </summary>
+        public static string ChoosingSticker
+        {
+            get
+            {
+                return resourceLoader.GetString("ChoosingSticker");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "In-App Browser"
         /// </summary>
         public static string ChromeCustomTabs
@@ -10927,6 +12020,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ClearHistoryCache");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Clear History for these days"
+        /// </summary>
+        public static string ClearHistoryForTheseDays
+        {
+            get
+            {
+                return resourceLoader.GetString("ClearHistoryForTheseDays");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Clear History for this day"
+        /// </summary>
+        public static string ClearHistoryForThisDay
+        {
+            get
+            {
+                return resourceLoader.GetString("ClearHistoryForThisDay");
             }
         }
         
@@ -11114,6 +12229,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("CloseEditor");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Close Translation"
+        /// </summary>
+        public static string CloseTranslation
+        {
+            get
+            {
+                return resourceLoader.GetString("CloseTranslation");
             }
         }
         
@@ -12233,6 +13359,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "CREATE"
+        /// </summary>
+        public static string CreateLinkHeader
+        {
+            get
+            {
+                return resourceLoader.GetString("CreateLinkHeader");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Create New Contact"
         /// </summary>
         public static string CreateNewContact
@@ -12873,6 +14010,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Snow in chat"
+        /// </summary>
+        public static string DebugDrawSnowInChat
+        {
+            get
+            {
+                return resourceLoader.GetString("DebugDrawSnowInChat");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Debug Menu"
         /// </summary>
         public static string DebugMenu
@@ -12891,6 +14039,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("DebugMenuCallSettings");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Check app update"
+        /// </summary>
+        public static string DebugMenuCheckAppUpdate
+        {
+            get
+            {
+                return resourceLoader.GetString("DebugMenuCheckAppUpdate");
             }
         }
         
@@ -13045,6 +14204,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("DebugMenuResetDialogs");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send Last Logs"
+        /// </summary>
+        public static string DebugSendLastLogs
+        {
+            get
+            {
+                return resourceLoader.GetString("DebugSendLastLogs");
             }
         }
         
@@ -13467,6 +14637,72 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string DeleteDays_few
+        {
+            get
+            {
+                return resourceLoader.GetString("DeleteDays_few");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string DeleteDays_many
+        {
+            get
+            {
+                return resourceLoader.GetString("DeleteDays_many");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete {0} day"
+        /// </summary>
+        public static string DeleteDays_one
+        {
+            get
+            {
+                return resourceLoader.GetString("DeleteDays_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete {0} days"
+        /// </summary>
+        public static string DeleteDays_other
+        {
+            get
+            {
+                return resourceLoader.GetString("DeleteDays_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string DeleteDays_two
+        {
+            get
+            {
+                return resourceLoader.GetString("DeleteDays_two");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string DeleteDays_zero
+        {
+            get
+            {
+                return resourceLoader.GetString("DeleteDays_zero");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "{0} deleted from your contacts"
         /// </summary>
         public static string DeletedFromYourContacts
@@ -13551,6 +14787,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("DeleteGroupForAll");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to delete all messages for the selected days?"
+        /// </summary>
+        public static string DeleteHistoryByDaysMessage
+        {
+            get
+            {
+                return resourceLoader.GetString("DeleteHistoryByDaysMessage");
             }
         }
         
@@ -13951,6 +15198,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "more"
+        /// </summary>
+        public static string DescriptionMore
+        {
+            get
+            {
+                return resourceLoader.GetString("DescriptionMore");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Description (optional)"
         /// </summary>
         public static string DescriptionOptionalPlaceholder
@@ -14057,6 +15315,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("DidNotGetTheCode");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Get code on this phone"
+        /// </summary>
+        public static string DidNotGetTheCodePhone
+        {
+            get
+            {
+                return resourceLoader.GetString("DidNotGetTheCodePhone");
             }
         }
         
@@ -14472,6 +15741,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Dismiss"
+        /// </summary>
+        public static string Dismiss
+        {
+            get
+            {
+                return resourceLoader.GetString("Dismiss");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Dismiss request"
+        /// </summary>
+        public static string DismissRequest
+        {
+            get
+            {
+                return resourceLoader.GetString("DismissRequest");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Distance Units"
         /// </summary>
         public static string DistanceUnits
@@ -14545,6 +15836,105 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Done");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do Not Set Theme"
+        /// </summary>
+        public static string DoNoSetTheme
+        {
+            get
+            {
+                return resourceLoader.GetString("DoNoSetTheme");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do Not Translate"
+        /// </summary>
+        public static string DoNotTranslate
+        {
+            get
+            {
+                return resourceLoader.GetString("DoNotTranslate");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Don't ask again"
+        /// </summary>
+        public static string DontAskAgain
+        {
+            get
+            {
+                return resourceLoader.GetString("DontAskAgain");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "I hope you're enjoying your day as much as I am."
+        /// </summary>
+        public static string DoubleTapPreviewMessage
+        {
+            get
+            {
+                return resourceLoader.GetString("DoubleTapPreviewMessage");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Double tap this message for a quick reaction."
+        /// </summary>
+        public static string DoubleTapPreviewRational
+        {
+            get
+            {
+                return resourceLoader.GetString("DoubleTapPreviewRational");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Dino"
+        /// </summary>
+        public static string DoubleTapPreviewSenderName
+        {
+            get
+            {
+                return resourceLoader.GetString("DoubleTapPreviewSenderName");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Quick Reaction"
+        /// </summary>
+        public static string DoubleTapSetting
+        {
+            get
+            {
+                return resourceLoader.GetString("DoubleTapSetting");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Downloading"
+        /// </summary>
+        public static string Downloading
+        {
+            get
+            {
+                return resourceLoader.GetString("Downloading");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Downloads"
+        /// </summary>
+        public static string DownloadsTabs
+        {
+            get
+            {
+                return resourceLoader.GetString("DownloadsTabs");
             }
         }
         
@@ -14978,6 +16368,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Edit Current Theme"
+        /// </summary>
+        public static string EditCurrentTheme
+        {
+            get
+            {
+                return resourceLoader.GetString("EditCurrentTheme");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "edited"
         /// </summary>
         public static string EditedMessage
@@ -15350,6 +16751,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "If **{0}** were viewing the chat now, they would also see this animation."
+        /// </summary>
+        public static string EmojiInteractionTapHint
+        {
+            get
+            {
+                return resourceLoader.GetString("EmojiInteractionTapHint");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Emoji suggestions"
         /// </summary>
         public static string EmojiSuggestions
@@ -15502,6 +16914,39 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("EnableProxyAlert2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Enable Reactions"
+        /// </summary>
+        public static string EnableReactions
+        {
+            get
+            {
+                return resourceLoader.GetString("EnableReactions");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Allow subscribers to react to channel posts."
+        /// </summary>
+        public static string EnableReactionsChannelInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("EnableReactionsChannelInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Allow members to react to group messages."
+        /// </summary>
+        public static string EnableReactionsGroupInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("EnableReactionsGroupInfo");
             }
         }
         
@@ -15697,6 +17142,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "**oo** watching {0}"
+        /// </summary>
+        public static string EnjoyngAnimations
+        {
+            get
+            {
+                return resourceLoader.GetString("EnjoyngAnimations");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Channel name"
         /// </summary>
         public static string EnterChannelName
@@ -15805,6 +17261,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("EnterYourPasscode");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Enter your Telegram passcode"
+        /// </summary>
+        public static string EnterYourTelegramPasscode
+        {
+            get
+            {
+                return resourceLoader.GetString("EnterYourTelegramPasscode");
             }
         }
         
@@ -16095,6 +17562,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "un1 changed the channel theme:"
+        /// </summary>
+        public static string EventLogEditedChannelTheme
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogEditedChannelTheme");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "un1 renamed the channel to "{0}""
         /// </summary>
         public static string EventLogEditedChannelTitle
@@ -16135,6 +17613,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("EventLogEditedGroupPhoto");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "un1 changed the group theme:"
+        /// </summary>
+        public static string EventLogEditedGroupTheme
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogEditedGroupTheme");
             }
         }
         
@@ -16238,11 +17727,9 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "**No actions here yet**
+        /// Localized resource similar to "**No recent actions**
         ///
-        ///The group's members and admins
-        ///have not taken any service actions
-        ///in the last 48 hours."
+        ///No notable actions taken by the members and admins of this group in the last 48 hours."
         /// </summary>
         public static string EventLogEmpty
         {
@@ -16253,10 +17740,10 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "**No actions here yet**
+        /// Localized resource similar to "**No recent actions**
         ///
-        ///The channel's admins
-        ///have not taken any service actions
+        ///No notable actions taken
+        ///by the admins of this channel
         ///in the last 48 hours."
         /// </summary>
         public static string EventLogEmptyChannel
@@ -16293,7 +17780,18 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 ended the voice chat"
+        /// Localized resource similar to "un1 ended the live stream"
+        /// </summary>
+        public static string EventLogEndedLiveStream
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogEndedLiveStream");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "un1 ended the video chat"
         /// </summary>
         public static string EventLogEndedVoiceChat
         {
@@ -16315,7 +17813,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Voice chats"
+        /// Localized resource similar to "Video Chats"
         /// </summary>
         public static string EventLogFilterCalls
         {
@@ -16601,6 +18099,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Previous theme"
+        /// </summary>
+        public static string EventLogPreviousGroupTheme
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogPreviousGroupTheme");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Previous link"
         /// </summary>
         public static string EventLogPreviousLink
@@ -16711,7 +18220,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Manage voice chats"
+        /// Localized resource similar to "Manage video chats"
         /// </summary>
         public static string EventLogPromotedManageCall
         {
@@ -17043,7 +18552,29 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 started a voice chat"
+        /// Localized resource similar to "un1 sent this message:"
+        /// </summary>
+        public static string EventLogSendMessages
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogSendMessages");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "un1 started a live stream"
+        /// </summary>
+        public static string EventLogStartedLiveStream
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogStartedLiveStream");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "un1 started a video chat"
         /// </summary>
         public static string EventLogStartedVoiceChat
         {
@@ -17175,7 +18706,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 allowed new voice chat participants to speak"
+        /// Localized resource similar to "un1 allowed new video chat participants to speak"
         /// </summary>
         public static string EventLogVoiceChatAllowedToSpeak
         {
@@ -17186,7 +18717,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 muted un2 in a voice chat"
+        /// Localized resource similar to "un1 muted un2 in a video chat"
         /// </summary>
         public static string EventLogVoiceChatMuted
         {
@@ -17197,7 +18728,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 muted new voice chat participants"
+        /// Localized resource similar to "un1 muted new video chat participants"
         /// </summary>
         public static string EventLogVoiceChatNotAllowedToSpeak
         {
@@ -17208,7 +18739,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 unmuted un2 in a voice chat"
+        /// Localized resource similar to "un1 unmuted un2 in a video chat"
         /// </summary>
         public static string EventLogVoiceChatUnmuted
         {
@@ -17461,6 +18992,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Favorites"
+        /// </summary>
+        public static string FavoriteStickersShort
+        {
+            get
+            {
+                return resourceLoader.GetString("FavoriteStickersShort");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Trending GIFs"
         /// </summary>
         public static string FeaturedGifs
@@ -17490,6 +19032,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("FeaturedStickersInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Trending"
+        /// </summary>
+        public static string FeaturedStickersShort
+        {
+            get
+            {
+                return resourceLoader.GetString("FeaturedStickersShort");
             }
         }
         
@@ -17571,7 +19124,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "File saved to downloads"
+        /// Localized resource similar to "File saved to Downloads"
         /// </summary>
         public static string FileSavedHint
         {
@@ -17615,7 +19168,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "File saved to downloads"
+        /// Localized resource similar to "File saved to Downloads"
         /// </summary>
         public static string FilesSavedHint_one
         {
@@ -17626,7 +19179,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} files saved to downloads"
+        /// Localized resource similar to "{0} files saved to Downloads"
         /// </summary>
         public static string FilesSavedHint_other
         {
@@ -18759,6 +20312,94 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string ForceSetPasswordAlertMessage_few
+        {
+            get
+            {
+                return resourceLoader.GetString("ForceSetPasswordAlertMessage_few");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string ForceSetPasswordAlertMessage_many
+        {
+            get
+            {
+                return resourceLoader.GetString("ForceSetPasswordAlertMessage_many");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Proceed without a password? If you do not set a password, you will only be able to log into your account via SMS once every {0} day."
+        /// </summary>
+        public static string ForceSetPasswordAlertMessage_one
+        {
+            get
+            {
+                return resourceLoader.GetString("ForceSetPasswordAlertMessage_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Proceed without a password? If you do not set a password, you will only be able to log into your account via SMS once every {0} days."
+        /// </summary>
+        public static string ForceSetPasswordAlertMessage_other
+        {
+            get
+            {
+                return resourceLoader.GetString("ForceSetPasswordAlertMessage_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string ForceSetPasswordAlertMessage_two
+        {
+            get
+            {
+                return resourceLoader.GetString("ForceSetPasswordAlertMessage_two");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string ForceSetPasswordAlertMessage_zero
+        {
+            get
+            {
+                return resourceLoader.GetString("ForceSetPasswordAlertMessage_zero");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Yes, I'm sure"
+        /// </summary>
+        public static string ForceSetPasswordCancel
+        {
+            get
+            {
+                return resourceLoader.GetString("ForceSetPasswordCancel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No, let me set a password"
+        /// </summary>
+        public static string ForceSetPasswordContinue
+        {
+            get
+            {
+                return resourceLoader.GetString("ForceSetPasswordContinue");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Forgot password?"
         /// </summary>
         public static string ForgotPassword
@@ -18997,6 +20638,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Forward");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Forward to another chat"
+        /// </summary>
+        public static string ForwardAnotherChat
+        {
+            get
+            {
+                return resourceLoader.GetString("ForwardAnotherChat");
             }
         }
         
@@ -19738,6 +21390,138 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{0}: {0}"
+        /// </summary>
+        public static string ForwardingFromNameAndMessage
+        {
+            get
+            {
+                return resourceLoader.GetString("ForwardingFromNameAndMessage");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "From {0}"
+        /// </summary>
+        public static string ForwardingFromNames
+        {
+            get
+            {
+                return resourceLoader.GetString("ForwardingFromNames");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} won't see they were forwarded"
+        /// </summary>
+        public static string ForwardPreviewSendersNameHidden
+        {
+            get
+            {
+                return resourceLoader.GetString("ForwardPreviewSendersNameHidden");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Recipients won't see they were forwarded"
+        /// </summary>
+        public static string ForwardPreviewSendersNameHiddenChannel
+        {
+            get
+            {
+                return resourceLoader.GetString("ForwardPreviewSendersNameHiddenChannel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Recipients won't see they were forwarded"
+        /// </summary>
+        public static string ForwardPreviewSendersNameHiddenGroup
+        {
+            get
+            {
+                return resourceLoader.GetString("ForwardPreviewSendersNameHiddenGroup");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} will see that it was forwarded"
+        /// </summary>
+        public static string ForwardPreviewSendersNameVisible
+        {
+            get
+            {
+                return resourceLoader.GetString("ForwardPreviewSendersNameVisible");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Recipients will see that it was forwarded"
+        /// </summary>
+        public static string ForwardPreviewSendersNameVisibleChannel
+        {
+            get
+            {
+                return resourceLoader.GetString("ForwardPreviewSendersNameVisibleChannel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Recipients will see that it was forwarded"
+        /// </summary>
+        public static string ForwardPreviewSendersNameVisibleGroup
+        {
+            get
+            {
+                return resourceLoader.GetString("ForwardPreviewSendersNameVisibleGroup");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send messages"
+        /// </summary>
+        public static string ForwardSendMessages
+        {
+            get
+            {
+                return resourceLoader.GetString("ForwardSendMessages");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Copying and forwarding is not allowed from this bot."
+        /// </summary>
+        public static string ForwardsRestrictedInfoBot
+        {
+            get
+            {
+                return resourceLoader.GetString("ForwardsRestrictedInfoBot");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "?opying and forwarding is not allowed in this channel."
+        /// </summary>
+        public static string ForwardsRestrictedInfoChannel
+        {
+            get
+            {
+                return resourceLoader.GetString("ForwardsRestrictedInfoChannel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "?opying and forwarding is not allowed in this group."
+        /// </summary>
+        public static string ForwardsRestrictedInfoGroup
+        {
+            get
+            {
+                return resourceLoader.GetString("ForwardsRestrictedInfoGroup");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Forward to..."
         /// </summary>
         public static string ForwardTo
@@ -20123,7 +21907,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "GIF saved to downloads"
+        /// Localized resource similar to "GIF saved to Downloads"
         /// </summary>
         public static string GifSavedToDownloadsHint
         {
@@ -20857,6 +22641,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{0} has been added to the channel"
+        /// </summary>
+        public static string HasBeenAddedToChannel
+        {
+            get
+            {
+                return resourceLoader.GetString("HasBeenAddedToChannel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} has been added to the group"
+        /// </summary>
+        public static string HasBeenAddedToGroup
+        {
+            get
+            {
+                return resourceLoader.GetString("HasBeenAddedToGroup");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Hashtag copied to clipboard."
         /// </summary>
         public static string HashtagCopied
@@ -20901,6 +22707,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Sender names removed"
+        /// </summary>
+        public static string HiddenSendersNameDescription
+        {
+            get
+            {
+                return resourceLoader.GetString("HiddenSendersNameDescription");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Hide above the list"
         /// </summary>
         public static string HideAboveTheList
@@ -20908,6 +22725,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("HideAboveTheList");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Hide caption"
+        /// </summary>
+        public static string HideCaption
+        {
+            get
+            {
+                return resourceLoader.GetString("HideCaption");
             }
         }
         
@@ -20952,6 +22780,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("HidePinnedMessages");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Hide senders’ names"
+        /// </summary>
+        public static string HideSenderNames
+        {
+            get
+            {
+                return resourceLoader.GetString("HideSenderNames");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Hide sender’s name"
+        /// </summary>
+        public static string HideSendersName
+        {
+            get
+            {
+                return resourceLoader.GetString("HideSendersName");
             }
         }
         
@@ -21253,6 +23103,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "If inactive for"
+        /// </summary>
+        public static string IfInactiveFor
+        {
+            get
+            {
+                return resourceLoader.GetString("IfInactiveFor");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "IMAGES"
         /// </summary>
         public static string ImagesTab
@@ -21282,6 +23143,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ImporImportingService");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Importing stickers..."
+        /// </summary>
+        public static string ImporImportingStickersService
+        {
+            get
+            {
+                return resourceLoader.GetString("ImporImportingStickersService");
             }
         }
         
@@ -21558,6 +23430,182 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ImportNotAdmin");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "IMPORT {0}"
+        /// </summary>
+        public static string ImportStickers
+        {
+            get
+            {
+                return resourceLoader.GetString("ImportStickers");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Import more stickers to Telegram and share them with your friends."
+        /// </summary>
+        public static string ImportStickersDoneInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("ImportStickersDoneInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Stickers imported successfully!"
+        /// </summary>
+        public static string ImportStickersDoneTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("ImportStickersDoneTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Enter name"
+        /// </summary>
+        public static string ImportStickersEnterName
+        {
+            get
+            {
+                return resourceLoader.GetString("ImportStickersEnterName");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please choose a name for your set."
+        /// </summary>
+        public static string ImportStickersEnterNameInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("ImportStickersEnterNameInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can use a-z, 0-9 and underscores."
+        /// </summary>
+        public static string ImportStickersEnterUrlInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("ImportStickersEnterUrlInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Importing stickers"
+        /// </summary>
+        public static string ImportStickersImportingTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("ImportStickersImportingTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This link is available."
+        /// </summary>
+        public static string ImportStickersLinkAvailable
+        {
+            get
+            {
+                return resourceLoader.GetString("ImportStickersLinkAvailable");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Checking link..."
+        /// </summary>
+        public static string ImportStickersLinkChecking
+        {
+            get
+            {
+                return resourceLoader.GetString("ImportStickersLinkChecking");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, this link is invalid."
+        /// </summary>
+        public static string ImportStickersLinkInvalid
+        {
+            get
+            {
+                return resourceLoader.GetString("ImportStickersLinkInvalid");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Link must not exceed 32 characters."
+        /// </summary>
+        public static string ImportStickersLinkInvalidLong
+        {
+            get
+            {
+                return resourceLoader.GetString("ImportStickersLinkInvalidLong");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Link must have at least 5 characters."
+        /// </summary>
+        public static string ImportStickersLinkInvalidShort
+        {
+            get
+            {
+                return resourceLoader.GetString("ImportStickersLinkInvalidShort");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, this link is already taken."
+        /// </summary>
+        public static string ImportStickersLinkTaken
+        {
+            get
+            {
+                return resourceLoader.GetString("ImportStickersLinkTaken");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Processing stickers..."
+        /// </summary>
+        public static string ImportStickersProcessing
+        {
+            get
+            {
+                return resourceLoader.GetString("ImportStickersProcessing");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "REMOVE FROM IMPORT"
+        /// </summary>
+        public static string ImportStickersRemove
+        {
+            get
+            {
+                return resourceLoader.GetString("ImportStickersRemove");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Remove from import"
+        /// </summary>
+        public static string ImportStickersRemoveMenu
+        {
+            get
+            {
+                return resourceLoader.GetString("ImportStickersRemoveMenu");
             }
         }
         
@@ -22318,6 +24366,39 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "IP address"
+        /// </summary>
+        public static string IpAddress
+        {
+            get
+            {
+                return resourceLoader.GetString("IpAddress");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} is ch**oo**sing a sticker"
+        /// </summary>
+        public static string IsChoosingSticker
+        {
+            get
+            {
+                return resourceLoader.GetString("IsChoosingSticker");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} is **oo** watching {1}"
+        /// </summary>
+        public static string IsEnjoyngAnimations
+        {
+            get
+            {
+                return resourceLoader.GetString("IsEnjoyngAnimations");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "{0} is recording a voice message..."
         /// </summary>
         public static string IsRecordingAudio
@@ -22336,6 +24417,39 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("IsRecordingRound");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} is recording a video..."
+        /// </summary>
+        public static string IsRecordingVideo
+        {
+            get
+            {
+                return resourceLoader.GetString("IsRecordingVideo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} is selecting contact to share..."
+        /// </summary>
+        public static string IsSelectingContact
+        {
+            get
+            {
+                return resourceLoader.GetString("IsSelectingContact");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} is selecting location to share..."
+        /// </summary>
+        public static string IsSelectingLocation
+        {
+            get
+            {
+                return resourceLoader.GetString("IsSelectingLocation");
             }
         }
         
@@ -22494,6 +24608,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "I understand"
+        /// </summary>
+        public static string IUnderstand
+        {
+            get
+            {
+                return resourceLoader.GetString("IUnderstand");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "IV Interactions"
         /// </summary>
         public static string IVInteractionsChartTitle
@@ -22571,6 +24696,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "un1 joined via invite link un2, approved by un3"
+        /// </summary>
+        public static string JoinedViaInviteLinkApproved
+        {
+            get
+            {
+                return resourceLoader.GetString("JoinedViaInviteLinkApproved");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "JOIN GROUP"
         /// </summary>
         public static string JoinGroup
@@ -22578,6 +24714,72 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("JoinGroup");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string JoinRequests_few
+        {
+            get
+            {
+                return resourceLoader.GetString("JoinRequests_few");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string JoinRequests_many
+        {
+            get
+            {
+                return resourceLoader.GetString("JoinRequests_many");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} join request"
+        /// </summary>
+        public static string JoinRequests_one
+        {
+            get
+            {
+                return resourceLoader.GetString("JoinRequests_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} join requests"
+        /// </summary>
+        public static string JoinRequests_other
+        {
+            get
+            {
+                return resourceLoader.GetString("JoinRequests_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string JoinRequests_two
+        {
+            get
+            {
+                return resourceLoader.GetString("JoinRequests_two");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string JoinRequests_zero
+        {
+            get
+            {
+                return resourceLoader.GetString("JoinRequests_zero");
             }
         }
         
@@ -22600,6 +24802,72 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("JoinToGroupErrorNotExist");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string JoinUsersRequests_few
+        {
+            get
+            {
+                return resourceLoader.GetString("JoinUsersRequests_few");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string JoinUsersRequests_many
+        {
+            get
+            {
+                return resourceLoader.GetString("JoinUsersRequests_many");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} join request"
+        /// </summary>
+        public static string JoinUsersRequests_one
+        {
+            get
+            {
+                return resourceLoader.GetString("JoinUsersRequests_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} join requests"
+        /// </summary>
+        public static string JoinUsersRequests_other
+        {
+            get
+            {
+                return resourceLoader.GetString("JoinUsersRequests_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string JoinUsersRequests_two
+        {
+            get
+            {
+                return resourceLoader.GetString("JoinUsersRequests_two");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string JoinUsersRequests_zero
+        {
+            get
+            {
+                return resourceLoader.GetString("JoinUsersRequests_zero");
             }
         }
         
@@ -22841,6 +25109,72 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("LanguageNameInEnglish");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string Languages_few
+        {
+            get
+            {
+                return resourceLoader.GetString("Languages_few");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string Languages_many
+        {
+            get
+            {
+                return resourceLoader.GetString("Languages_many");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} Language"
+        /// </summary>
+        public static string Languages_one
+        {
+            get
+            {
+                return resourceLoader.GetString("Languages_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} Languages"
+        /// </summary>
+        public static string Languages_other
+        {
+            get
+            {
+                return resourceLoader.GetString("Languages_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string Languages_two
+        {
+            get
+            {
+                return resourceLoader.GetString("Languages_two");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string Languages_zero
+        {
+            get
+            {
+                return resourceLoader.GetString("Languages_zero");
             }
         }
         
@@ -23319,6 +25653,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Link Desktop Device"
+        /// </summary>
+        public static string LinkDesktopDevice
+        {
+            get
+            {
+                return resourceLoader.GetString("LinkDesktopDevice");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Linked Channel"
         /// </summary>
         public static string LinkedChannel
@@ -23506,6 +25851,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Only admins will see this name."
+        /// </summary>
+        public static string LinkNameHelp
+        {
+            get
+            {
+                return resourceLoader.GetString("LinkNameHelp");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Link Name (Optional)"
+        /// </summary>
+        public static string LinkNameHint
+        {
+            get
+            {
+                return resourceLoader.GetString("LinkNameHint");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Unfortunately, you can't access this message. You are not a member of the chat where it was posted."
         /// </summary>
         public static string LinkNotFound
@@ -23594,7 +25961,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Invite links created by other admins"
+        /// Localized resource similar to "Links created by other admins"
         /// </summary>
         public static string LinksCreatedByOtherAdmins
         {
@@ -23878,6 +26245,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("LocatedChannelsTooMuch");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Location based on the IP address"
+        /// </summary>
+        public static string Location
+        {
+            get
+            {
+                return resourceLoader.GetString("Location");
             }
         }
         
@@ -24764,6 +27142,50 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Show photos"
+        /// </summary>
+        public static string MediaShowPhotos
+        {
+            get
+            {
+                return resourceLoader.GetString("MediaShowPhotos");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Show videos"
+        /// </summary>
+        public static string MediaShowVideos
+        {
+            get
+            {
+                return resourceLoader.GetString("MediaShowVideos");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Zoom in"
+        /// </summary>
+        public static string MediaZoomIn
+        {
+            get
+            {
+                return resourceLoader.GetString("MediaZoomIn");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Zoom out"
+        /// </summary>
+        public static string MediaZoomOut
+        {
+            get
+            {
+                return resourceLoader.GetString("MediaZoomOut");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "un1 added you to this group"
         /// </summary>
         public static string MegaAddedBy
@@ -24910,6 +27332,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Join Requests"
+        /// </summary>
+        public static string MemberRequests
+        {
+            get
+            {
+                return resourceLoader.GetString("MemberRequests");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to ""
         /// </summary>
         public static string Members_few
@@ -24972,6 +27405,72 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Members_zero");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string MembersAreSpeakingToast_few
+        {
+            get
+            {
+                return resourceLoader.GetString("MembersAreSpeakingToast_few");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string MembersAreSpeakingToast_many
+        {
+            get
+            {
+                return resourceLoader.GetString("MembersAreSpeakingToast_many");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "un1 is speaking"
+        /// </summary>
+        public static string MembersAreSpeakingToast_one
+        {
+            get
+            {
+                return resourceLoader.GetString("MembersAreSpeakingToast_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "un1 are speaking"
+        /// </summary>
+        public static string MembersAreSpeakingToast_other
+        {
+            get
+            {
+                return resourceLoader.GetString("MembersAreSpeakingToast_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string MembersAreSpeakingToast_two
+        {
+            get
+            {
+                return resourceLoader.GetString("MembersAreSpeakingToast_two");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string MembersAreSpeakingToast_zero
+        {
+            get
+            {
+                return resourceLoader.GetString("MembersAreSpeakingToast_zero");
             }
         }
         
@@ -25306,6 +27805,72 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string MessagePlayed_few
+        {
+            get
+            {
+                return resourceLoader.GetString("MessagePlayed_few");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string MessagePlayed_many
+        {
+            get
+            {
+                return resourceLoader.GetString("MessagePlayed_many");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Played"
+        /// </summary>
+        public static string MessagePlayed_one
+        {
+            get
+            {
+                return resourceLoader.GetString("MessagePlayed_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} Played"
+        /// </summary>
+        public static string MessagePlayed_other
+        {
+            get
+            {
+                return resourceLoader.GetString("MessagePlayed_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string MessagePlayed_two
+        {
+            get
+            {
+                return resourceLoader.GetString("MessagePlayed_two");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string MessagePlayed_zero
+        {
+            get
+            {
+                return resourceLoader.GetString("MessagePlayed_zero");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Message Preview"
         /// </summary>
         public static string MessagePreview
@@ -25379,6 +27944,72 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("messages_zero");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string MessagesBold_few
+        {
+            get
+            {
+                return resourceLoader.GetString("MessagesBold_few");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string MessagesBold_many
+        {
+            get
+            {
+                return resourceLoader.GetString("MessagesBold_many");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "**{0}** message"
+        /// </summary>
+        public static string MessagesBold_one
+        {
+            get
+            {
+                return resourceLoader.GetString("MessagesBold_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "**{0}** messages"
+        /// </summary>
+        public static string MessagesBold_other
+        {
+            get
+            {
+                return resourceLoader.GetString("MessagesBold_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string MessagesBold_two
+        {
+            get
+            {
+                return resourceLoader.GetString("MessagesBold_two");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string MessagesBold_zero
+        {
+            get
+            {
+                return resourceLoader.GetString("MessagesBold_zero");
             }
         }
         
@@ -25577,6 +28208,149 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("MessagesDeletedHint_zero");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string MessagesDeletedUndo_few
+        {
+            get
+            {
+                return resourceLoader.GetString("MessagesDeletedUndo_few");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string MessagesDeletedUndo_many
+        {
+            get
+            {
+                return resourceLoader.GetString("MessagesDeletedUndo_many");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Messages for {0} day deleted"
+        /// </summary>
+        public static string MessagesDeletedUndo_one
+        {
+            get
+            {
+                return resourceLoader.GetString("MessagesDeletedUndo_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Messages for {0} days deleted"
+        /// </summary>
+        public static string MessagesDeletedUndo_other
+        {
+            get
+            {
+                return resourceLoader.GetString("MessagesDeletedUndo_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string MessagesDeletedUndo_two
+        {
+            get
+            {
+                return resourceLoader.GetString("MessagesDeletedUndo_two");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string MessagesDeletedUndo_zero
+        {
+            get
+            {
+                return resourceLoader.GetString("MessagesDeletedUndo_zero");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string MessageSeen_few
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageSeen_few");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string MessageSeen_many
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageSeen_many");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Seen"
+        /// </summary>
+        public static string MessageSeen_one
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageSeen_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} Seen"
+        /// </summary>
+        public static string MessageSeen_other
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageSeen_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string MessageSeen_two
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageSeen_two");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string MessageSeen_zero
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageSeen_zero");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "To protect privacy, views are only stored for **7 days**."
+        /// </summary>
+        public static string MessageSeenTooltipMessage
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageSeenTooltipMessage");
             }
         }
         
@@ -25797,6 +28571,63 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Mi");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Move Files Now"
+        /// </summary>
+        public static string MigrateOldFolderButton
+        {
+            get
+            {
+                return resourceLoader.GetString("MigrateOldFolderButton");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Due to a change made by **Google**, we need to move the files you downloaded using **Telegram** to a new folder.
+        ///
+        ///This may take a few moments. You can continue using the app while the files are moved."
+        /// </summary>
+        public static string MigrateOldFolderDescription
+        {
+            get
+            {
+                return resourceLoader.GetString("MigrateOldFolderDescription");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Migrate Files to Scoped Storage"
+        /// </summary>
+        public static string MigrateOldFolderTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("MigrateOldFolderTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Migrating files"
+        /// </summary>
+        public static string MigratingFiles
+        {
+            get
+            {
+                return resourceLoader.GetString("MigratingFiles");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Migration"
+        /// </summary>
+        public static string MigrationNotification
+        {
+            get
+            {
+                return resourceLoader.GetString("MigrationNotification");
             }
         }
         
@@ -26028,6 +28859,39 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("MinutesSchedule_zero");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Within next few seconds you should receive a short call from:"
+        /// </summary>
+        public static string MissedCallDescriptionSubtitle
+        {
+            get
+            {
+                return resourceLoader.GetString("MissedCallDescriptionSubtitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please enter the last digits of the number that called"
+        /// </summary>
+        public static string MissedCallDescriptionSubtitle2
+        {
+            get
+            {
+                return resourceLoader.GetString("MissedCallDescriptionSubtitle2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Enter the missing digits"
+        /// </summary>
+        public static string MissedCallDescriptionTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("MissedCallDescriptionTitle");
             }
         }
         
@@ -26714,6 +29578,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "New Password"
+        /// </summary>
+        public static string NewPassword
+        {
+            get
+            {
+                return resourceLoader.GetString("NewPassword");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "New Poll"
         /// </summary>
         public static string NewPoll
@@ -27011,6 +29886,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Nobody viewed"
+        /// </summary>
+        public static string NobodyViewed
+        {
+            get
+            {
+                return resourceLoader.GetString("NobodyViewed");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "No calls here yet..."
         /// </summary>
         public static string NoCallLog
@@ -27233,7 +30119,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Please send an email describing your problem to sms@stel.com"
+        /// Localized resource similar to "Please send an email describing your problem to reports@stel.com"
         /// </summary>
         public static string NoMailInstalled
         {
@@ -27288,6 +30174,29 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "No join requests"
+        /// </summary>
+        public static string NoMemberRequests
+        {
+            get
+            {
+                return resourceLoader.GetString("NoMemberRequests");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "There are no pending requests
+        ///to join the group."
+        /// </summary>
+        public static string NoMemberRequestsDescription
+        {
+            get
+            {
+                return resourceLoader.GetString("NoMemberRequestsDescription");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "No messages here yet..."
         /// </summary>
         public static string NoMessages
@@ -27295,6 +30204,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("NoMessages");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No messages for this day"
+        /// </summary>
+        public static string NoMessagesForThisDay
+        {
+            get
+            {
+                return resourceLoader.GetString("NoMessagesForThisDay");
             }
         }
         
@@ -27442,6 +30362,29 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "No recent calls"
+        /// </summary>
+        public static string NoRecentCalls
+        {
+            get
+            {
+                return resourceLoader.GetString("NoRecentCalls");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Your recent voice and video calls
+        ///will appear here."
+        /// </summary>
+        public static string NoRecentCallsInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("NoRecentCallsInfo");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "No recent GIFs"
         /// </summary>
         public static string NoRecentGIFs
@@ -27493,6 +30436,30 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("NoResult");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "**Oops!** Telegram doesn't see any stream coming from your streaming app.
+        ///    
+        ///    Please make sure you entered the right Server URL and Stream Key in your app."
+        /// </summary>
+        public static string NoRtmpStreamFromAppOwner
+        {
+            get
+            {
+                return resourceLoader.GetString("NoRtmpStreamFromAppOwner");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} is currently not broadcasting live stream data to Telegram."
+        /// </summary>
+        public static string NoRtmpStreamFromAppViewer
+        {
+            get
+            {
+                return resourceLoader.GetString("NoRtmpStreamFromAppViewer");
             }
         }
         
@@ -27636,6 +30603,29 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("NoStickersFound");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No join requests"
+        /// </summary>
+        public static string NoSubscribeRequests
+        {
+            get
+            {
+                return resourceLoader.GetString("NoSubscribeRequests");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "There are no pending requests
+        ///to join this channel."
+        /// </summary>
+        public static string NoSubscribeRequestsDescription
+        {
+            get
+            {
+                return resourceLoader.GetString("NoSubscribeRequestsDescription");
             }
         }
         
@@ -28410,7 +31400,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} started a voice chat in {1}"
+        /// Localized resource similar to "{0} started a video chat in {1}"
         /// </summary>
         public static string NotificationGroupCreatedCall
         {
@@ -28421,7 +31411,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} ended the voice chat in {1}"
+        /// Localized resource similar to "{0} ended the video chat in {1}"
         /// </summary>
         public static string NotificationGroupEndedCall
         {
@@ -28454,7 +31444,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} invited {2} to a voice chat in {1}"
+        /// Localized resource similar to "{0} invited {2} to a video chat in {1}"
         /// </summary>
         public static string NotificationGroupInvitedToCall
         {
@@ -28465,7 +31455,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} invited you to a voice chat in {1}"
+        /// Localized resource similar to "{0} invited you to a video chat in {1}"
         /// </summary>
         public static string NotificationGroupInvitedYouToCall
         {
@@ -30005,6 +32995,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "OPEN BOT"
+        /// </summary>
+        public static string OpenBot
+        {
+            get
+            {
+                return resourceLoader.GetString("OpenBot");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "VIEW CHANNEL"
         /// </summary>
         public static string OpenChannel
@@ -30023,6 +33024,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("OpenChannel2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "VIEW POST"
+        /// </summary>
+        public static string OpenChannelPost
+        {
+            get
+            {
+                return resourceLoader.GetString("OpenChannelPost");
             }
         }
         
@@ -30177,6 +33189,39 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("OpenUrlTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Optimizing Telegram..."
+        /// </summary>
+        public static string OptimizingTelegram
+        {
+            get
+            {
+                return resourceLoader.GetString("OptimizingTelegram");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This may take a while, depending on the size of the database. Please keep the app open until the process is finished."
+        /// </summary>
+        public static string OptimizingTelegramDescription1
+        {
+            get
+            {
+                return resourceLoader.GetString("OptimizingTelegramDescription1");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry for the inconvenience."
+        /// </summary>
+        public static string OptimizingTelegramDescription2
+        {
+            get
+            {
+                return resourceLoader.GetString("OptimizingTelegramDescription2");
             }
         }
         
@@ -32916,6 +35961,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Create a hint for your password."
+        /// </summary>
+        public static string PasswordHintTextLogin
+        {
+            get
+            {
+                return resourceLoader.GetString("PasswordHintTextLogin");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Off"
         /// </summary>
         public static string PasswordOff
@@ -32967,6 +36023,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("PasteFromClipboard");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Pause all"
+        /// </summary>
+        public static string PauseAll
+        {
+            get
+            {
+                return resourceLoader.GetString("PauseAll");
             }
         }
         
@@ -33631,6 +36698,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Transfer **{0}** to the {1} bot for **{2}**?"
+        /// </summary>
+        public static string PaymentTransactionMessage2
+        {
+            get
+            {
+                return resourceLoader.GetString("PaymentTransactionMessage2");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Transaction Review"
         /// </summary>
         public static string PaymentTransactionReview
@@ -33787,7 +36865,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} people joined"
+        /// Localized resource similar to "{0} person joined"
         /// </summary>
         public static string PeopleJoined_one
         {
@@ -34068,7 +37146,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Voice chat overlay"
+        /// Localized resource similar to "Video chat overlay"
         /// </summary>
         public static string PermissionDrawAboveOtherAppsGroupCallTitle
         {
@@ -34442,7 +37520,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Photo saved to downloads"
+        /// Localized resource similar to "Photo saved to Downloads"
         /// </summary>
         public static string PhotoSavedToDownloadsHint
         {
@@ -34695,6 +37773,72 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PinnedDialogsCount_few
+        {
+            get
+            {
+                return resourceLoader.GetString("PinnedDialogsCount_few");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PinnedDialogsCount_many
+        {
+            get
+            {
+                return resourceLoader.GetString("PinnedDialogsCount_many");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Chat pinned"
+        /// </summary>
+        public static string PinnedDialogsCount_one
+        {
+            get
+            {
+                return resourceLoader.GetString("PinnedDialogsCount_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} chats pinned"
+        /// </summary>
+        public static string PinnedDialogsCount_other
+        {
+            get
+            {
+                return resourceLoader.GetString("PinnedDialogsCount_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PinnedDialogsCount_two
+        {
+            get
+            {
+                return resourceLoader.GetString("PinnedDialogsCount_two");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PinnedDialogsCount_zero
+        {
+            get
+            {
+                return resourceLoader.GetString("PinnedDialogsCount_zero");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Pinned Message"
         /// </summary>
         public static string PinnedMessage
@@ -34933,6 +38077,39 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("PleaseEnterNewFirstPassword");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Enter new password"
+        /// </summary>
+        public static string PleaseEnterNewFirstPasswordHint
+        {
+            get
+            {
+                return resourceLoader.GetString("PleaseEnterNewFirstPasswordHint");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can now set a new password that will be used to log into your account."
+        /// </summary>
+        public static string PleaseEnterNewFirstPasswordLogin
+        {
+            get
+            {
+                return resourceLoader.GetString("PleaseEnterNewFirstPasswordLogin");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Re-enter new password"
+        /// </summary>
+        public static string PleaseEnterNewSecondPasswordHint
+        {
+            get
+            {
+                return resourceLoader.GetString("PleaseEnterNewSecondPasswordHint");
             }
         }
         
@@ -35263,6 +38440,732 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("PreviewFeedback2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PreviewForwardAudio_few
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardAudio_few");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PreviewForwardAudio_many
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardAudio_many");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Forward voice message"
+        /// </summary>
+        public static string PreviewForwardAudio_one
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardAudio_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Forward {0} voice messages"
+        /// </summary>
+        public static string PreviewForwardAudio_other
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardAudio_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PreviewForwardAudio_two
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardAudio_two");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PreviewForwardAudio_zero
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardAudio_zero");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PreviewForwardContact_few
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardContact_few");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PreviewForwardContact_many
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardContact_many");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Forward contact"
+        /// </summary>
+        public static string PreviewForwardContact_one
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardContact_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Forward {0} contacts"
+        /// </summary>
+        public static string PreviewForwardContact_other
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardContact_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PreviewForwardContact_two
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardContact_two");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PreviewForwardContact_zero
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardContact_zero");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PreviewForwardFile_few
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardFile_few");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PreviewForwardFile_many
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardFile_many");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Forward file"
+        /// </summary>
+        public static string PreviewForwardFile_one
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardFile_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Forward {0} files"
+        /// </summary>
+        public static string PreviewForwardFile_other
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardFile_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PreviewForwardFile_two
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardFile_two");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PreviewForwardFile_zero
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardFile_zero");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PreviewForwardLocation_few
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardLocation_few");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PreviewForwardLocation_many
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardLocation_many");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Forward location"
+        /// </summary>
+        public static string PreviewForwardLocation_one
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardLocation_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Forward {0} locations"
+        /// </summary>
+        public static string PreviewForwardLocation_other
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardLocation_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PreviewForwardLocation_two
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardLocation_two");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PreviewForwardLocation_zero
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardLocation_zero");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PreviewForwardMessagesCount_few
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardMessagesCount_few");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PreviewForwardMessagesCount_many
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardMessagesCount_many");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Forward message"
+        /// </summary>
+        public static string PreviewForwardMessagesCount_one
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardMessagesCount_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Forward {0} messages"
+        /// </summary>
+        public static string PreviewForwardMessagesCount_other
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardMessagesCount_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PreviewForwardMessagesCount_two
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardMessagesCount_two");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PreviewForwardMessagesCount_zero
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardMessagesCount_zero");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PreviewForwardMusic_few
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardMusic_few");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PreviewForwardMusic_many
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardMusic_many");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Forward audio file"
+        /// </summary>
+        public static string PreviewForwardMusic_one
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardMusic_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Forward {0} audio files"
+        /// </summary>
+        public static string PreviewForwardMusic_other
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardMusic_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PreviewForwardMusic_two
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardMusic_two");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PreviewForwardMusic_zero
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardMusic_zero");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PreviewForwardPhoto_few
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardPhoto_few");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PreviewForwardPhoto_many
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardPhoto_many");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Forward photo"
+        /// </summary>
+        public static string PreviewForwardPhoto_one
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardPhoto_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Forward {0} photos"
+        /// </summary>
+        public static string PreviewForwardPhoto_other
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardPhoto_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PreviewForwardPhoto_two
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardPhoto_two");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PreviewForwardPhoto_zero
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardPhoto_zero");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PreviewForwardPoll_few
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardPoll_few");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PreviewForwardPoll_many
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardPoll_many");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Forward poll"
+        /// </summary>
+        public static string PreviewForwardPoll_one
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardPoll_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Forward {0} polls"
+        /// </summary>
+        public static string PreviewForwardPoll_other
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardPoll_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PreviewForwardPoll_two
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardPoll_two");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PreviewForwardPoll_zero
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardPoll_zero");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PreviewForwardRound_few
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardRound_few");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PreviewForwardRound_many
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardRound_many");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Forward video message"
+        /// </summary>
+        public static string PreviewForwardRound_one
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardRound_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Forward {0} video messages"
+        /// </summary>
+        public static string PreviewForwardRound_other
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardRound_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PreviewForwardRound_two
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardRound_two");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PreviewForwardRound_zero
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardRound_zero");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PreviewForwardSticker_few
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardSticker_few");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PreviewForwardSticker_many
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardSticker_many");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Forward sticker"
+        /// </summary>
+        public static string PreviewForwardSticker_one
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardSticker_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Forward {0} stickers"
+        /// </summary>
+        public static string PreviewForwardSticker_other
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardSticker_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PreviewForwardSticker_two
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardSticker_two");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PreviewForwardSticker_zero
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardSticker_zero");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PreviewForwardVideo_few
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardVideo_few");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PreviewForwardVideo_many
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardVideo_many");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Forward video"
+        /// </summary>
+        public static string PreviewForwardVideo_one
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardVideo_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Forward {0} videos"
+        /// </summary>
+        public static string PreviewForwardVideo_other
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardVideo_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PreviewForwardVideo_two
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardVideo_two");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PreviewForwardVideo_zero
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewForwardVideo_zero");
             }
         }
         
@@ -35707,6 +39610,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "This public link opens a chat with you:"
+        /// </summary>
+        public static string PrivacyPhoneInfo4
+        {
+            get
+            {
+                return resourceLoader.GetString("PrivacyPhoneInfo4");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Who can see my phone number?"
         /// </summary>
         public static string PrivacyPhoneTitle
@@ -36048,7 +39962,18 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "PSA info test"
+        /// Localized resource similar to "This is an official message from the CEO of Telegram regarding the ongoing conflict."
+        /// </summary>
+        public static string PsaInfo_psa
+        {
+            get
+            {
+                return resourceLoader.GetString("PsaInfo_psa");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This message provides you with a public service announcement."
         /// </summary>
         public static string PsaInfoDefault
         {
@@ -36066,6 +39991,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("PsaMessage_covid");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Announcement"
+        /// </summary>
+        public static string PsaMessage_psa
+        {
+            get
+            {
+                return resourceLoader.GetString("PsaMessage_psa");
             }
         }
         
@@ -36092,6 +40028,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "This is an official message from the CEO of Telegram regarding the ongoing conflict."
+        /// </summary>
+        public static string PsaMessageInfo_psa
+        {
+            get
+            {
+                return resourceLoader.GetString("PsaMessageInfo_psa");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "This is an important notification."
         /// </summary>
         public static string PsaMessageInfoDefault
@@ -36110,6 +40057,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("PsaType_covid");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Announcement"
+        /// </summary>
+        public static string PsaType_psa
+        {
+            get
+            {
+                return resourceLoader.GetString("PsaType_psa");
             }
         }
         
@@ -36253,6 +40211,369 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Purple");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0}: {2} to your voice message in {1}"
+        /// </summary>
+        public static string PushChatReactAudio
+        {
+            get
+            {
+                return resourceLoader.GetString("PushChatReactAudio");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0}: {2} to your contact {3} in {1}"
+        /// </summary>
+        public static string PushChatReactContact
+        {
+            get
+            {
+                return resourceLoader.GetString("PushChatReactContact");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0}: {2} to your file in {1}"
+        /// </summary>
+        public static string PushChatReactDoc
+        {
+            get
+            {
+                return resourceLoader.GetString("PushChatReactDoc");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0}: {2} to your game in {1}"
+        /// </summary>
+        public static string PushChatReactGame
+        {
+            get
+            {
+                return resourceLoader.GetString("PushChatReactGame");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0}: {2} to your map in {1}"
+        /// </summary>
+        public static string PushChatReactGeo
+        {
+            get
+            {
+                return resourceLoader.GetString("PushChatReactGeo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0}: {2} to your live location in {1}"
+        /// </summary>
+        public static string PushChatReactGeoLive
+        {
+            get
+            {
+                return resourceLoader.GetString("PushChatReactGeoLive");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0}: {2} to your GIF in {1}"
+        /// </summary>
+        public static string PushChatReactGif
+        {
+            get
+            {
+                return resourceLoader.GetString("PushChatReactGif");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0}: {2} to your invoice in {1}"
+        /// </summary>
+        public static string PushChatReactInvoice
+        {
+            get
+            {
+                return resourceLoader.GetString("PushChatReactInvoice");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0}: {2} to your message in {1}"
+        /// </summary>
+        public static string PushChatReactNotext
+        {
+            get
+            {
+                return resourceLoader.GetString("PushChatReactNotext");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0}: {2} to your photo in {1}"
+        /// </summary>
+        public static string PushChatReactPhoto
+        {
+            get
+            {
+                return resourceLoader.GetString("PushChatReactPhoto");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0}: {2} to your poll "{3}" in {1}"
+        /// </summary>
+        public static string PushChatReactPoll
+        {
+            get
+            {
+                return resourceLoader.GetString("PushChatReactPoll");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0}: {2} to your quiz "{3}" in {1}"
+        /// </summary>
+        public static string PushChatReactQuiz
+        {
+            get
+            {
+                return resourceLoader.GetString("PushChatReactQuiz");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0}: {2} to your video message in {1}"
+        /// </summary>
+        public static string PushChatReactRound
+        {
+            get
+            {
+                return resourceLoader.GetString("PushChatReactRound");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0}: {2} to your {3} sticker in {1}"
+        /// </summary>
+        public static string PushChatReactSticker
+        {
+            get
+            {
+                return resourceLoader.GetString("PushChatReactSticker");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0}: {2} in {1} to your "{3}""
+        /// </summary>
+        public static string PushChatReactText
+        {
+            get
+            {
+                return resourceLoader.GetString("PushChatReactText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0}: {2} to your video in {1}"
+        /// </summary>
+        public static string PushChatReactVideo
+        {
+            get
+            {
+                return resourceLoader.GetString("PushChatReactVideo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0}: {1} to your voice message"
+        /// </summary>
+        public static string PushReactAudio
+        {
+            get
+            {
+                return resourceLoader.GetString("PushReactAudio");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0}: {1} to your contact {2}"
+        /// </summary>
+        public static string PushReactContect
+        {
+            get
+            {
+                return resourceLoader.GetString("PushReactContect");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0}: {1} to your file"
+        /// </summary>
+        public static string PushReactDoc
+        {
+            get
+            {
+                return resourceLoader.GetString("PushReactDoc");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0}: {1} to your game"
+        /// </summary>
+        public static string PushReactGame
+        {
+            get
+            {
+                return resourceLoader.GetString("PushReactGame");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0}: {1} to your map"
+        /// </summary>
+        public static string PushReactGeo
+        {
+            get
+            {
+                return resourceLoader.GetString("PushReactGeo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0}: {1} to your live location"
+        /// </summary>
+        public static string PushReactGeoLocation
+        {
+            get
+            {
+                return resourceLoader.GetString("PushReactGeoLocation");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0}: {1} to your GIF"
+        /// </summary>
+        public static string PushReactGif
+        {
+            get
+            {
+                return resourceLoader.GetString("PushReactGif");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0}: {1} to your invoice"
+        /// </summary>
+        public static string PushReactInvoice
+        {
+            get
+            {
+                return resourceLoader.GetString("PushReactInvoice");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0}: {1} to your message"
+        /// </summary>
+        public static string PushReactNoText
+        {
+            get
+            {
+                return resourceLoader.GetString("PushReactNoText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0}: {1} to your photo"
+        /// </summary>
+        public static string PushReactPhoto
+        {
+            get
+            {
+                return resourceLoader.GetString("PushReactPhoto");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0}: {1} to your poll "{2}""
+        /// </summary>
+        public static string PushReactPoll
+        {
+            get
+            {
+                return resourceLoader.GetString("PushReactPoll");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0}: {1} to your quiz "{2}""
+        /// </summary>
+        public static string PushReactQuiz
+        {
+            get
+            {
+                return resourceLoader.GetString("PushReactQuiz");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0}: {1} to your video message"
+        /// </summary>
+        public static string PushReactRound
+        {
+            get
+            {
+                return resourceLoader.GetString("PushReactRound");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0}: {1} to your {2} sticker"
+        /// </summary>
+        public static string PushReactSticker
+        {
+            get
+            {
+                return resourceLoader.GetString("PushReactSticker");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0}: {1} to your "{2}""
+        /// </summary>
+        public static string PushReactText
+        {
+            get
+            {
+                return resourceLoader.GetString("PushReactText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0}: {1} to your video"
+        /// </summary>
+        public static string PushReactVideo
+        {
+            get
+            {
+                return resourceLoader.GetString("PushReactVideo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "QR Code"
+        /// </summary>
+        public static string QrCode
+        {
+            get
+            {
+                return resourceLoader.GetString("QrCode");
             }
         }
         
@@ -36554,6 +40875,160 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string Reacted_few
+        {
+            get
+            {
+                return resourceLoader.GetString("Reacted_few");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string Reacted_many
+        {
+            get
+            {
+                return resourceLoader.GetString("Reacted_many");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} Reacted"
+        /// </summary>
+        public static string Reacted_one
+        {
+            get
+            {
+                return resourceLoader.GetString("Reacted_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} Reacted"
+        /// </summary>
+        public static string Reacted_other
+        {
+            get
+            {
+                return resourceLoader.GetString("Reacted_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string Reacted_two
+        {
+            get
+            {
+                return resourceLoader.GetString("Reacted_two");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string Reacted_zero
+        {
+            get
+            {
+                return resourceLoader.GetString("Reacted_zero");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Reactions"
+        /// </summary>
+        public static string Reactions
+        {
+            get
+            {
+                return resourceLoader.GetString("Reactions");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string ReactionsCount_few
+        {
+            get
+            {
+                return resourceLoader.GetString("ReactionsCount_few");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string ReactionsCount_many
+        {
+            get
+            {
+                return resourceLoader.GetString("ReactionsCount_many");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} reaction"
+        /// </summary>
+        public static string ReactionsCount_one
+        {
+            get
+            {
+                return resourceLoader.GetString("ReactionsCount_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} reactions"
+        /// </summary>
+        public static string ReactionsCount_other
+        {
+            get
+            {
+                return resourceLoader.GetString("ReactionsCount_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string ReactionsCount_two
+        {
+            get
+            {
+                return resourceLoader.GetString("ReactionsCount_two");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string ReactionsCount_zero
+        {
+            get
+            {
+                return resourceLoader.GetString("ReactionsCount_zero");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Off"
+        /// </summary>
+        public static string ReactionsOff
+        {
+            get
+            {
+                return resourceLoader.GetString("ReactionsOff");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Recent"
         /// </summary>
         public static string Recent
@@ -36627,6 +41102,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("RecentStickers");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Recent"
+        /// </summary>
+        public static string RecentStickersShort
+        {
+            get
+            {
+                return resourceLoader.GetString("RecentStickersShort");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Recently downloaded"
+        /// </summary>
+        public static string RecentlyDownloaded
+        {
+            get
+            {
+                return resourceLoader.GetString("RecentlyDownloaded");
             }
         }
         
@@ -36719,6 +41216,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "recording a video..."
+        /// </summary>
+        public static string RecordingVideoStatus
+        {
+            get
+            {
+                return resourceLoader.GetString("RecordingVideoStatus");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Recovery email"
         /// </summary>
         public static string RecoveryEmail
@@ -36792,6 +41300,39 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Regular");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Release to go to archived channels"
+        /// </summary>
+        public static string ReleaseToGoNextArchive
+        {
+            get
+            {
+                return resourceLoader.GetString("ReleaseToGoNextArchive");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Release to go to the next unread channel"
+        /// </summary>
+        public static string ReleaseToGoNextChannel
+        {
+            get
+            {
+                return resourceLoader.GetString("ReleaseToGoNextChannel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Release to go to the next unread folder"
+        /// </summary>
+        public static string ReleaseToGoNextFolder
+        {
+            get
+            {
+                return resourceLoader.GetString("ReleaseToGoNextFolder");
             }
         }
         
@@ -37183,11 +41724,33 @@ namespace Unigram.Strings
         /// <summary>
         /// Localized resource similar to "Other"
         /// </summary>
+        public static string ReportChatIllegalDrugs
+        {
+            get
+            {
+                return resourceLoader.GetString("ReportChatIllegalDrugs");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Illegal Drugs"
+        /// </summary>
         public static string ReportChatOther
         {
             get
             {
                 return resourceLoader.GetString("ReportChatOther");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Personal Details"
+        /// </summary>
+        public static string ReportChatPersonalDetails
+        {
+            get
+            {
+                return resourceLoader.GetString("ReportChatPersonalDetails");
             }
         }
         
@@ -37302,7 +41865,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Telegram moderators will study your report.
+        /// Localized resource similar to "Telegram moderators will review your report.
         ///Thank you for your cooperation!"
         /// </summary>
         public static string ReportSentInfo
@@ -37499,6 +42062,116 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ReportUserLocation");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "requested to join {0}"
+        /// </summary>
+        public static string RequestedToJoinAt
+        {
+            get
+            {
+                return resourceLoader.GetString("RequestedToJoinAt");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Request to Join Channel"
+        /// </summary>
+        public static string RequestToJoinChannel
+        {
+            get
+            {
+                return resourceLoader.GetString("RequestToJoinChannel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Your request to join the channel was approved"
+        /// </summary>
+        public static string RequestToJoinChannelApproved
+        {
+            get
+            {
+                return resourceLoader.GetString("RequestToJoinChannelApproved");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This channel accepts new subscribers only after they are approved by its admins."
+        /// </summary>
+        public static string RequestToJoinChannelDescription
+        {
+            get
+            {
+                return resourceLoader.GetString("RequestToJoinChannelDescription");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You will be added to the channel once its admins approve your request."
+        /// </summary>
+        public static string RequestToJoinChannelSentDescription
+        {
+            get
+            {
+                return resourceLoader.GetString("RequestToJoinChannelSentDescription");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Request to Join Group"
+        /// </summary>
+        public static string RequestToJoinGroup
+        {
+            get
+            {
+                return resourceLoader.GetString("RequestToJoinGroup");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Your request to join the group was approved"
+        /// </summary>
+        public static string RequestToJoinGroupApproved
+        {
+            get
+            {
+                return resourceLoader.GetString("RequestToJoinGroupApproved");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This group accepts new members only after they are approved by its admins."
+        /// </summary>
+        public static string RequestToJoinGroupDescription
+        {
+            get
+            {
+                return resourceLoader.GetString("RequestToJoinGroupDescription");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You will be added to the group once its admins approve your request."
+        /// </summary>
+        public static string RequestToJoinGroupSentDescription
+        {
+            get
+            {
+                return resourceLoader.GetString("RequestToJoinGroupSentDescription");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Join request sent"
+        /// </summary>
+        public static string RequestToJoinSent
+        {
+            get
+            {
+                return resourceLoader.GetString("RequestToJoinSent");
             }
         }
         
@@ -37771,6 +42444,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Reset password"
+        /// </summary>
+        public static string ResetPassword
+        {
+            get
+            {
+                return resourceLoader.GetString("ResetPassword");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You recently requested a password reset that was canceled. Please wait {0} before making a new request."
+        /// </summary>
+        public static string ResetPasswordWait
+        {
+            get
+            {
+                return resourceLoader.GetString("ResetPasswordWait");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Reset Statistics"
         /// </summary>
         public static string ResetStatistics
@@ -37872,6 +42567,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "If you don’t have access to your recovery email, your remaining options are either to remember your password or wait 7 days until your password is reset."
+        /// </summary>
+        public static string RestoreEmailTroubleText2
+        {
+            get
+            {
+                return resourceLoader.GetString("RestoreEmailTroubleText2");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Since you didn't provide a recovery email when setting up your password, your remaining options are either to remember your password or to reset your account."
         /// </summary>
         public static string RestorePasswordNoEmailText
@@ -37879,6 +42585,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("RestorePasswordNoEmailText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Since you didn’t provide a recovery email when setting up your password, your remaining options are either to remember your password or wait 7 days until your password is reset."
+        /// </summary>
+        public static string RestorePasswordNoEmailText2
+        {
+            get
+            {
+                return resourceLoader.GetString("RestorePasswordNoEmailText2");
             }
         }
         
@@ -37901,6 +42618,50 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("RestorePasswordResetAccount");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can reset your password in {0}."
+        /// </summary>
+        public static string RestorePasswordResetIn
+        {
+            get
+            {
+                return resourceLoader.GetString("RestorePasswordResetIn");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "RESET PASSWORD"
+        /// </summary>
+        public static string RestorePasswordResetPassword
+        {
+            get
+            {
+                return resourceLoader.GetString("RestorePasswordResetPassword");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Your 2-Step Verification password was reset."
+        /// </summary>
+        public static string RestorePasswordResetPasswordOk
+        {
+            get
+            {
+                return resourceLoader.GetString("RestorePasswordResetPasswordOk");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to reset your 2-Step Verification password?"
+        /// </summary>
+        public static string RestorePasswordResetPasswordText
+        {
+            get
+            {
+                return resourceLoader.GetString("RestorePasswordResetPasswordText");
             }
         }
         
@@ -37967,6 +42728,50 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Restrictions_zero");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Restrict saving content"
+        /// </summary>
+        public static string RestrictSavingContent
+        {
+            get
+            {
+                return resourceLoader.GetString("RestrictSavingContent");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Subscribers won't be able to copy, save and forward content from this channel."
+        /// </summary>
+        public static string RestrictSavingContentInfoChannel
+        {
+            get
+            {
+                return resourceLoader.GetString("RestrictSavingContentInfoChannel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Members won't be able to copy, save and forward content from this group."
+        /// </summary>
+        public static string RestrictSavingContentInfoGroup
+        {
+            get
+            {
+                return resourceLoader.GetString("RestrictSavingContentInfoGroup");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Resume all"
+        /// </summary>
+        public static string ResumeAll
+        {
+            get
+            {
+                return resourceLoader.GetString("ResumeAll");
             }
         }
         
@@ -38217,6 +43022,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "SAVE"
+        /// </summary>
+        public static string SaveLinkHeader
+        {
+            get
+            {
+                return resourceLoader.GetString("SaveLinkHeader");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "SAVE THEME"
         /// </summary>
         public static string SaveTheme
@@ -38228,7 +43044,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Save to downloads"
+        /// Localized resource similar to "Save to Downloads"
         /// </summary>
         public static string SaveToDownloads
         {
@@ -38279,6 +43095,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("SaveToMusic");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Saving content"
+        /// </summary>
+        public static string SavingContentTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("SavingContentTitle");
             }
         }
         
@@ -38659,6 +43486,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Search join requests"
+        /// </summary>
+        public static string SearchMemberRequests
+        {
+            get
+            {
+                return resourceLoader.GetString("SearchMemberRequests");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Search members"
         /// </summary>
         public static string SearchMembers
@@ -39011,6 +43849,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "M"
+        /// </summary>
+        public static string SecretChatTimerMonths
+        {
+            get
+            {
+                return resourceLoader.GetString("SecretChatTimerMonths");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "s"
         /// </summary>
         public static string SecretChatTimerSeconds
@@ -39154,6 +44003,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Select Days"
+        /// </summary>
+        public static string SelectDays
+        {
+            get
+            {
+                return resourceLoader.GetString("SelectDays");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please select one or more days first."
+        /// </summary>
+        public static string SelectDaysTooltip
+        {
+            get
+            {
+                return resourceLoader.GetString("SelectDaysTooltip");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Select File"
         /// </summary>
         public static string SelectFile
@@ -39187,6 +44058,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "selecting a contact to share..."
+        /// </summary>
+        public static string SelectingContact
+        {
+            get
+            {
+                return resourceLoader.GetString("SelectingContact");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "selecting a location to share..."
+        /// </summary>
+        public static string SelectingLocation
+        {
+            get
+            {
+                return resourceLoader.GetString("SelectingLocation");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Select another chat"
         /// </summary>
         public static string SelectOtherChat
@@ -39194,6 +44087,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("SelectOtherChat");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Select theme"
+        /// </summary>
+        public static string SelectTheme
+        {
+            get
+            {
+                return resourceLoader.GetString("SelectTheme");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Select this day"
+        /// </summary>
+        public static string SelectThisDay
+        {
+            get
+            {
+                return resourceLoader.GetString("SelectThisDay");
             }
         }
         
@@ -39583,6 +44498,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Send message as..."
+        /// </summary>
+        public static string SendMessageAsTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("SendMessageAsTitle");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Send Message"
         /// </summary>
         public static string SendMessageLocation
@@ -39616,7 +44542,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Send messages to {0}?"
+        /// Localized resource similar to "Send to {0}?"
         /// </summary>
         public static string SendMessagesTo
         {
@@ -39627,7 +44553,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Send messages to {0}?"
+        /// Localized resource similar to "Send to {0}?"
         /// </summary>
         public static string SendMessagesToGroup
         {
@@ -39856,6 +44782,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("SessionsInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The official Telegram app is available for Android, iPhone, iPad, Windows, macOS and Linux."
+        /// </summary>
+        public static string SessionsListInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("SessionsListInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sessions self-destruct"
+        /// </summary>
+        public static string SessionsSelfDestruct
+        {
+            get
+            {
+                return resourceLoader.GetString("SessionsSelfDestruct");
             }
         }
         
@@ -40091,6 +45039,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Browse Themes"
+        /// </summary>
+        public static string SettingsBrowseThemes
+        {
+            get
+            {
+                return resourceLoader.GetString("SettingsBrowseThemes");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Debug"
         /// </summary>
         public static string SettingsDebug
@@ -40164,6 +45123,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("SettingsSearchFaq");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Switch to Day Mode"
+        /// </summary>
+        public static string SettingsSwitchToDayMode
+        {
+            get
+            {
+                return resourceLoader.GetString("SettingsSwitchToDayMode");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Switch to Night Mode"
+        /// </summary>
+        public static string SettingsSwitchToNightMode
+        {
+            get
+            {
+                return resourceLoader.GetString("SettingsSwitchToNightMode");
             }
         }
         
@@ -40483,6 +45464,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("SharedMedia");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can hold and move this bar for faster scrolling"
+        /// </summary>
+        public static string SharedMediaFastScrollHint
+        {
+            get
+            {
+                return resourceLoader.GetString("SharedMediaFastScrollHint");
             }
         }
         
@@ -40828,6 +45820,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Share Camera Video"
+        /// </summary>
+        public static string ShareVideo
+        {
+            get
+            {
+                return resourceLoader.GetString("ShareVideo");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "This will send your current location to the bot."
         /// </summary>
         public static string ShareYouLocationInfo
@@ -41015,6 +46018,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Show caption"
+        /// </summary>
+        public static string ShowCaption
+        {
+            get
+            {
+                return resourceLoader.GetString("ShowCaption");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Show forwarding options"
+        /// </summary>
+        public static string ShowForwardingOptions
+        {
+            get
+            {
+                return resourceLoader.GetString("ShowForwardingOptions");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Show in chat"
         /// </summary>
         public static string ShowInChat
@@ -41022,6 +46047,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ShowInChat");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Show less"
+        /// </summary>
+        public static string ShowLess
+        {
+            get
+            {
+                return resourceLoader.GetString("ShowLess");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Show more"
+        /// </summary>
+        public static string ShowMore
+        {
+            get
+            {
+                return resourceLoader.GetString("ShowMore");
             }
         }
         
@@ -41037,7 +46084,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Show notifications for"
+        /// Localized resource similar to "Show notifications from"
         /// </summary>
         public static string ShowNotificationsFor
         {
@@ -41059,6 +46106,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Show senders’ names"
+        /// </summary>
+        public static string ShowSenderNames
+        {
+            get
+            {
+                return resourceLoader.GetString("ShowSenderNames");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Show sender’s name"
+        /// </summary>
+        public static string ShowSendersName
+        {
+            get
+            {
+                return resourceLoader.GetString("ShowSendersName");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Show stickers"
         /// </summary>
         public static string ShowStickers
@@ -41066,6 +46135,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ShowStickers");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Show Translate Button"
+        /// </summary>
+        public static string ShowTranslateButton
+        {
+            get
+            {
+                return resourceLoader.GetString("ShowTranslateButton");
             }
         }
         
@@ -41524,6 +46604,196 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Speed"
+        /// </summary>
+        public static string Speed
+        {
+            get
+            {
+                return resourceLoader.GetString("Speed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Fast"
+        /// </summary>
+        public static string SpeedFast
+        {
+            get
+            {
+                return resourceLoader.GetString("SpeedFast");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Normal"
+        /// </summary>
+        public static string SpeedNormal
+        {
+            get
+            {
+                return resourceLoader.GetString("SpeedNormal");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Slow"
+        /// </summary>
+        public static string SpeedSlow
+        {
+            get
+            {
+                return resourceLoader.GetString("SpeedSlow");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Very fast"
+        /// </summary>
+        public static string SpeedVeryFast
+        {
+            get
+            {
+                return resourceLoader.GetString("SpeedVeryFast");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Very slow"
+        /// </summary>
+        public static string SpeedVerySlow
+        {
+            get
+            {
+                return resourceLoader.GetString("SpeedVerySlow");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Spoiler"
+        /// </summary>
+        public static string Spoiler
+        {
+            get
+            {
+                return resourceLoader.GetString("Spoiler");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "sponsored"
+        /// </summary>
+        public static string SponsoredMessage
+        {
+            get
+            {
+                return resourceLoader.GetString("SponsoredMessage");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "LEARN MORE"
+        /// </summary>
+        public static string SponsoredMessageAlertLearnMore
+        {
+            get
+            {
+                return resourceLoader.GetString("SponsoredMessageAlertLearnMore");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "https://promote.telegram.org"
+        /// </summary>
+        public static string SponsoredMessageAlertLearnMoreUrl
+        {
+            get
+            {
+                return resourceLoader.GetString("SponsoredMessageAlertLearnMoreUrl");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unlike other apps, Telegram never uses your private data to target ads. No user data is mined or analyzed to display ads, and every user viewing a channel on Telegram sees the same sponsored message. We believe that everyone has the right to privacy, and technological platforms should respect that."
+        /// </summary>
+        public static string SponsoredMessageAlertText
+        {
+            get
+            {
+                return resourceLoader.GetString("SponsoredMessageAlertText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sponsored messages"
+        /// </summary>
+        public static string SponsoredMessageAlertTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("SponsoredMessageAlertTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "What are sponsored
+        ///messages?"
+        /// </summary>
+        public static string SponsoredMessageInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("SponsoredMessageInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unlike other apps, Telegram never uses your private data to target ads. Sponsored messages on Telegram are based solely on the topic of the public channels in which they are shown. This means that no user data is mined or analyzed to display ads, and every user viewing a channel on Telegram sees the same sponsored messages."
+        /// </summary>
+        public static string SponsoredMessageInfoDescription1
+        {
+            get
+            {
+                return resourceLoader.GetString("SponsoredMessageInfoDescription1");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unlike other apps, Telegram doesn't track whether you tapped on a sponsored message and doesn't profile you based on your activity. We also prevent external links in sponsored messages to ensure that third parties can’t spy on our users. We believe that everyone has the right to privacy, and technological platforms should respect that."
+        /// </summary>
+        public static string SponsoredMessageInfoDescription2
+        {
+            get
+            {
+                return resourceLoader.GetString("SponsoredMessageInfoDescription2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Telegram offers a free and unlimited service to hundreds of millions of users, which involves significant server and traffic costs. In order to remain independent and stay true to its values, Telegram developed a paid tool to promote messages with user privacy in mind. We welcome responsible advertisers at:"
+        /// </summary>
+        public static string SponsoredMessageInfoDescription3
+        {
+            get
+            {
+                return resourceLoader.GetString("SponsoredMessageInfoDescription3");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sponsored Messages are currently in test mode. Once they are fully launched and allow Telegram to cover its basic costs, we will start sharing ad revenue with the owners of public channels in which sponsored messages are displayed.
+        ///
+        ///Online ads should no longer be synonymous with abuse of user privacy. Let us redefine how a tech company should operate – together."
+        /// </summary>
+        public static string SponsoredMessageInfoDescription4
+        {
+            get
+            {
+                return resourceLoader.GetString("SponsoredMessageInfoDescription4");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Start"
         /// </summary>
         public static string Start
@@ -41667,7 +46937,18 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Do you want to start a voice chat in this channel?"
+        /// Localized resource similar to "Start Live stream"
+        /// </summary>
+        public static string StartVoipChannel
+        {
+            get
+            {
+                return resourceLoader.GetString("StartVoipChannel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to start a live stream in this channel?"
         /// </summary>
         public static string StartVoipChannelAlertText
         {
@@ -41678,7 +46959,18 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Start Voice chat"
+        /// Localized resource similar to "Live Stream"
+        /// </summary>
+        public static string StartVoipChannelTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("StartVoipChannelTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Start Video chat"
         /// </summary>
         public static string StartVoipChat
         {
@@ -41689,7 +46981,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Start a voice chat in this group?"
+        /// Localized resource similar to "Start a video chat in this group?"
         /// </summary>
         public static string StartVoipChatAlertText
         {
@@ -41700,7 +46992,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Manage Voice Chats"
+        /// Localized resource similar to "Manage Video Chats"
         /// </summary>
         public static string StartVoipChatPermission
         {
@@ -41711,7 +47003,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Voice Chat"
+        /// Localized resource similar to "Video Chat"
         /// </summary>
         public static string StartVoipChatTitle
         {
@@ -41975,7 +47267,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Stickers and Masks"
+        /// Localized resource similar to "Stickers and Emoji"
         /// </summary>
         public static string StickersName
         {
@@ -42316,6 +47608,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Join Requests"
+        /// </summary>
+        public static string SubscribeRequests
+        {
+            get
+            {
+                return resourceLoader.GetString("SubscribeRequests");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to ""
         /// </summary>
         public static string Subscribers_few
@@ -42613,6 +47916,50 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Pull up to go to archived channels"
+        /// </summary>
+        public static string SwipeToGoNextArchive
+        {
+            get
+            {
+                return resourceLoader.GetString("SwipeToGoNextArchive");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Pull up to go to the next unread channel"
+        /// </summary>
+        public static string SwipeToGoNextChannel
+        {
+            get
+            {
+                return resourceLoader.GetString("SwipeToGoNextChannel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You have no unread channels"
+        /// </summary>
+        public static string SwipeToGoNextChannelEnd
+        {
+            get
+            {
+                return resourceLoader.GetString("SwipeToGoNextChannelEnd");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Pull up to go to the next unread folder"
+        /// </summary>
+        public static string SwipeToGoNextFolder
+        {
+            get
+            {
+                return resourceLoader.GetString("SwipeToGoNextFolder");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Unmute"
         /// </summary>
         public static string SwipeUnmute
@@ -42754,6 +48101,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("SystemRoot");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Tap here for forwarding options"
+        /// </summary>
+        public static string TapForForwardingOptions
+        {
+            get
+            {
+                return resourceLoader.GetString("TapForForwardingOptions");
             }
         }
         
@@ -43178,6 +48536,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Automatically terminate old sessions"
+        /// </summary>
+        public static string TerminateOldSessionHeader
+        {
+            get
+            {
+                return resourceLoader.GetString("TerminateOldSessionHeader");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Terminate Session"
+        /// </summary>
+        public static string TerminateSession
+        {
+            get
+            {
+                return resourceLoader.GetString("TerminateSession");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Tap on a session to terminate."
         /// </summary>
         public static string TerminateSessionInfo
@@ -43351,6 +48731,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Theme");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Theme will be also applied for **{0}**."
+        /// </summary>
+        public static string ThemeAlsoAppliedForHint
+        {
+            get
+            {
+                return resourceLoader.GetString("ThemeAlsoAppliedForHint");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Theme will be also disabled for **{0}**."
+        /// </summary>
+        public static string ThemeAlsoDisabledForHint
+        {
+            get
+            {
+                return resourceLoader.GetString("ThemeAlsoDisabledForHint");
             }
         }
         
@@ -44316,13 +49718,90 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} Other Data"
+        /// Localized resource similar to "{0} Other Apps"
         /// </summary>
         public static string TotalDeviceSize
         {
             get
             {
                 return resourceLoader.GetString("TotalDeviceSize");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Translate"
+        /// </summary>
+        public static string TranslateMessage
+        {
+            get
+            {
+                return resourceLoader.GetString("TranslateMessage");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Translate Messages"
+        /// </summary>
+        public static string TranslateMessages
+        {
+            get
+            {
+                return resourceLoader.GetString("TranslateMessages");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The ‘Translate’ button will appear when you make a single tap on a text message."
+        /// </summary>
+        public static string TranslateMessagesInfo1
+        {
+            get
+            {
+                return resourceLoader.GetString("TranslateMessagesInfo1");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Google may have access to the messages you translate."
+        /// </summary>
+        public static string TranslateMessagesInfo2
+        {
+            get
+            {
+                return resourceLoader.GetString("TranslateMessagesInfo2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Translate more..."
+        /// </summary>
+        public static string TranslateMore
+        {
+            get
+            {
+                return resourceLoader.GetString("TranslateMore");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Translation failed. Try again later."
+        /// </summary>
+        public static string TranslationFailedAlert1
+        {
+            get
+            {
+                return resourceLoader.GetString("TranslationFailedAlert1");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Translation failed."
+        /// </summary>
+        public static string TranslationFailedAlert2
+        {
+            get
+            {
+                return resourceLoader.GetString("TranslationFailedAlert2");
             }
         }
         
@@ -44510,6 +49989,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("TypePrivateGroup");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Private restricted"
+        /// </summary>
+        public static string TypePrivateGroupRestrictedForwards
+        {
+            get
+            {
+                return resourceLoader.GetString("TypePrivateGroupRestrictedForwards");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Private restricted"
+        /// </summary>
+        public static string TypePrivateRestrictedForwards
+        {
+            get
+            {
+                return resourceLoader.GetString("TypePrivateRestrictedForwards");
             }
         }
         
@@ -44745,7 +50246,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Do you want to unpin this message?"
+        /// Localized resource similar to "Unpin this message?"
         /// </summary>
         public static string UnpinMessageAlert
         {
@@ -44763,6 +50264,72 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("UnpinMessageAlertTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string UnpinnedDialogsCount_few
+        {
+            get
+            {
+                return resourceLoader.GetString("UnpinnedDialogsCount_few");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string UnpinnedDialogsCount_many
+        {
+            get
+            {
+                return resourceLoader.GetString("UnpinnedDialogsCount_many");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Chat unpinned"
+        /// </summary>
+        public static string UnpinnedDialogsCount_one
+        {
+            get
+            {
+                return resourceLoader.GetString("UnpinnedDialogsCount_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} chats unpinned"
+        /// </summary>
+        public static string UnpinnedDialogsCount_other
+        {
+            get
+            {
+                return resourceLoader.GetString("UnpinnedDialogsCount_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string UnpinnedDialogsCount_two
+        {
+            get
+            {
+                return resourceLoader.GetString("UnpinnedDialogsCount_two");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string UnpinnedDialogsCount_zero
+        {
+            get
+            {
+                return resourceLoader.GetString("UnpinnedDialogsCount_zero");
             }
         }
         
@@ -45042,6 +50609,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Use Another App"
+        /// </summary>
+        public static string UseFileManger
+        {
+            get
+            {
+                return resourceLoader.GetString("UseFileManger");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Always"
         /// </summary>
         public static string UseLessDataAlways
@@ -45258,6 +50836,39 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("UseProxyUsername");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "un1 was accepted into the group"
+        /// </summary>
+        public static string UserAcceptedToGroupAction
+        {
+            get
+            {
+                return resourceLoader.GetString("UserAcceptedToGroupAction");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} was accepted into the group"
+        /// </summary>
+        public static string UserAcceptedToGroupPush
+        {
+            get
+            {
+                return resourceLoader.GetString("UserAcceptedToGroupPush");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{1}|{0} was accepted into the group"
+        /// </summary>
+        public static string UserAcceptedToGroupPushWithGroup
+        {
+            get
+            {
+                return resourceLoader.GetString("UserAcceptedToGroupPushWithGroup");
             }
         }
         
@@ -46244,7 +51855,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "This video is not optimized for streaming. You may need to download it in full to play it."
+        /// Localized resource similar to "Video not optimized for streaming. You may need to download it in full to play it."
         /// </summary>
         public static string VideoDoesNotSupportStreaming
         {
@@ -46262,6 +51873,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("VideoMessagesAutodownload");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Video Preview"
+        /// </summary>
+        public static string VideoPreview
+        {
+            get
+            {
+                return resourceLoader.GetString("VideoPreview");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Video from your camera will be shared with other members of this video chat"
+        /// </summary>
+        public static string VideoPreviewDesrciption
+        {
+            get
+            {
+                return resourceLoader.GetString("VideoPreviewDesrciption");
             }
         }
         
@@ -46354,7 +51987,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Video saved to downloads"
+        /// Localized resource similar to "Video saved to Downloads"
         /// </summary>
         public static string VideoSavedToDownloadsHint
         {
@@ -46948,6 +52581,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Phone"
+        /// </summary>
+        public static string VoipAudioRoutingPhone
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipAudioRoutingPhone");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Speaker"
         /// </summary>
         public static string VoipAudioRoutingSpeaker
@@ -46955,6 +52599,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("VoipAudioRoutingSpeaker");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "BACK CAMERA"
+        /// </summary>
+        public static string VoipBackCamera
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipBackCamera");
             }
         }
         
@@ -46981,7 +52636,238 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Subscribers of the channel will be notified that the voice chat will start in {0}."
+        /// Localized resource similar to "Camera"
+        /// </summary>
+        public static string VoipCamera
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipCamera");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Cancel live stream"
+        /// </summary>
+        public static string VoipChannelCancelChat
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChannelCancelChat");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "**{0}** joined the live stream."
+        /// </summary>
+        public static string VoipChannelChatJoined
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChannelChatJoined");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Edit live stream title"
+        /// </summary>
+        public static string VoipChannelEditTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChannelEditTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to end this live stream?"
+        /// </summary>
+        public static string VoipChannelEndAlertText
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChannelEndAlertText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "End live stream"
+        /// </summary>
+        public static string VoipChannelEndAlertTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChannelEndAlertTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "End live stream"
+        /// </summary>
+        public static string VoipChannelEndChat
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChannelEndChat");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You invited **{0}** to the live stream."
+        /// </summary>
+        public static string VoipChannelInvitedUser
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChannelInvitedUser");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Hey! Join our live stream: {0}"
+        /// </summary>
+        public static string VoipChannelInviteText
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChannelInviteText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't join live streams as an anonymous administrator."
+        /// </summary>
+        public static string VoipChannelJoinAnonymousAdmin
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChannelJoinAnonymousAdmin");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are sure you want to appear in this live stream as your personal account?"
+        /// </summary>
+        public static string VoipChannelJoinAnonymouseAlert
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChannelJoinAnonymouseAlert");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Join Live Stream as..."
+        /// </summary>
+        public static string VoipChannelJoinAs
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChannelJoinAs");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Join Live Stream"
+        /// </summary>
+        public static string VoipChannelJoinVoiceChatUrl
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChannelJoinVoiceChatUrl");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "End live stream"
+        /// </summary>
+        public static string VoipChannelLeaveAlertEndChat
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChannelLeaveAlertEndChat");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to leave this live stream?"
+        /// </summary>
+        public static string VoipChannelLeaveAlertText
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChannelLeaveAlertText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Leave live stream"
+        /// </summary>
+        public static string VoipChannelLeaveAlertTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChannelLeaveAlertTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Open live stream"
+        /// </summary>
+        public static string VoipChannelOpenVoiceChat
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChannelOpenVoiceChat");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Live stream is being recorded"
+        /// </summary>
+        public static string VoipChannelRecording
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChannelRecording");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Record live stream"
+        /// </summary>
+        public static string VoipChannelRecordVoiceChat
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChannelRecordVoiceChat");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to remove {0} from the live stream and ban them in {1}?"
+        /// </summary>
+        public static string VoipChannelRemoveMemberAlertText2
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChannelRemoveMemberAlertText2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Scheduled Live Stream"
+        /// </summary>
+        public static string VoipChannelScheduledVoiceChat
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChannelScheduledVoiceChat");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Subscribers of the channel will be notified that the live stream will start in {0}."
         /// </summary>
         public static string VoipChannelScheduleInfo
         {
@@ -46992,13 +52878,181 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Subscribers of this channel will be notified once you start the voice chat."
+        /// Localized resource similar to "Schedule Live Stream"
+        /// </summary>
+        public static string VoipChannelScheduleVoiceChat
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChannelScheduleVoiceChat");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Live stream sound muted."
+        /// </summary>
+        public static string VoipChannelSoundMuted
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChannelSoundMuted");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Live stream sound unmuted."
+        /// </summary>
+        public static string VoipChannelSoundUnmuted
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChannelSoundUnmuted");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Subscribers of this channel will be notified once you start the live stream."
         /// </summary>
         public static string VoipChannelStart2
         {
             get
             {
                 return resourceLoader.GetString("VoipChannelStart2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to start recording this live stream and save the result into a video file?
+        ///
+        ///Participants will see that the chat is being recorded."
+        /// </summary>
+        public static string VoipChannelStartRecordingVideoText
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChannelStartRecordingVideoText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Start Live Stream"
+        /// </summary>
+        public static string VoipChannelStartVoiceChat
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChannelStartVoiceChat");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to stop recording this live stream?"
+        /// </summary>
+        public static string VoipChannelStopRecordingText
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChannelStopRecordingText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Live stream title"
+        /// </summary>
+        public static string VoipChannelTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChannelTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, this live stream is full."
+        /// </summary>
+        public static string VoipChannelTooMuch
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChannelTooMuch");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Participants of this live stream will now see you as **{0}**"
+        /// </summary>
+        public static string VoipChannelUserChanged
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChannelUserChanged");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "**{0}** joined the live stream."
+        /// </summary>
+        public static string VoipChannelUserJoined
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChannelUserJoined");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The live stream is over {0}.
+        ///New participants only have access to the audio stream."
+        /// </summary>
+        public static string VoipChannelVideoNotAvailableAdmin
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChannelVideoNotAvailableAdmin");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "VIEW LIVE STREAM"
+        /// </summary>
+        public static string VoipChannelViewVoiceChat
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChannelViewVoiceChat");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Live Stream"
+        /// </summary>
+        public static string VoipChannelVoiceChat
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChannelVoiceChat");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Active video chats"
+        /// </summary>
+        public static string VoipChatActiveChats
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChatActiveChats");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "**{0}** joined the video chat."
+        /// </summary>
+        public static string VoipChatChatJoined
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChatChatJoined");
             }
         }
         
@@ -47036,6 +53090,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Recent calls"
+        /// </summary>
+        public static string VoipChatRecentCalls
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChatRecentCalls");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "We will notify you when it starts."
         /// </summary>
         public static string VoipChatReminderHint
@@ -47058,6 +53123,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Share screen"
+        /// </summary>
+        public static string VoipChatStartScreenCapture
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChatStartScreenCapture");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Starts in"
         /// </summary>
         public static string VoipChatStartsIn
@@ -47065,6 +53141,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("VoipChatStartsIn");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Stop sharing screen"
+        /// </summary>
+        public static string VoipChatStopScreenCapture
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChatStopScreenCapture");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "**{0}** joined the video chat."
+        /// </summary>
+        public static string VoipChatUserJoined
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChatUserJoined");
             }
         }
         
@@ -47212,6 +53310,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "FRONT CAMERA"
+        /// </summary>
+        public static string VoipFrontCamera
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipFrontCamera");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Add"
         /// </summary>
         public static string VoipGroupAdd
@@ -47267,6 +53376,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Audio"
+        /// </summary>
+        public static string VoipGroupAudio
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipGroupAudio");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Audio saved to **Saved Messages**."
         /// </summary>
         public static string VoipGroupAudioRecordSaved
@@ -47278,7 +53398,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Voice chat recording started."
+        /// Localized resource similar to "Audio recording started."
         /// </summary>
         public static string VoipGroupAudioRecordStarted
         {
@@ -47311,7 +53431,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Cancel voice chat"
+        /// Localized resource similar to "Cancel video chat"
         /// </summary>
         public static string VoipGroupCancelChat
         {
@@ -47432,7 +53552,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Edit voice chat title"
+        /// Localized resource similar to "Edit video chat title"
         /// </summary>
         public static string VoipGroupEditTitle
         {
@@ -47454,7 +53574,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Are you sure you want to end this voice chat?"
+        /// Localized resource similar to "Are you sure you want to end this video chat?"
         /// </summary>
         public static string VoipGroupEndAlertText
         {
@@ -47465,7 +53585,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "End voice chat"
+        /// Localized resource similar to "End video chat"
         /// </summary>
         public static string VoipGroupEndAlertTitle
         {
@@ -47476,7 +53596,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "End voice chat"
+        /// Localized resource similar to "End video chat"
         /// </summary>
         public static string VoipGroupEndChat
         {
@@ -47487,7 +53607,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Voice chat ended. Start a new one?"
+        /// Localized resource similar to "Video chat ended. Start a new one?"
         /// </summary>
         public static string VoipGroupEndedStartNew
         {
@@ -47498,7 +53618,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "The selected user is already in this voice chat."
+        /// Localized resource similar to "The selected user is already in this video chat."
         /// </summary>
         public static string VoipGroupInviteAlreadyParticipant
         {
@@ -47520,7 +53640,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 invited un2 to the voice chat"
+        /// Localized resource similar to "un1 invited un2 to the video chat"
         /// </summary>
         public static string VoipGroupInvitedToVoiceChat
         {
@@ -47531,7 +53651,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "You invited **{0}** to the voice chat."
+        /// Localized resource similar to "You invited **{0}** to the video chat."
         /// </summary>
         public static string VoipGroupInvitedUser
         {
@@ -47564,7 +53684,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Hey! Join our voice chat: {0}"
+        /// Localized resource similar to "Hey! Join our video chat: {0}"
         /// </summary>
         public static string VoipGroupInviteText
         {
@@ -47575,7 +53695,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Sorry, you can't join voice chats as an anonymous administrator."
+        /// Localized resource similar to "Sorry, you can't join video chats as an anonymous administrator."
         /// </summary>
         public static string VoipGroupJoinAnonymousAdmin
         {
@@ -47586,7 +53706,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Are sure you want to appear in this voice chat as your personal account?"
+        /// Localized resource similar to "Are sure you want to appear in this video chat as your personal account?"
         /// </summary>
         public static string VoipGroupJoinAnonymouseAlert
         {
@@ -47597,7 +53717,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Join Voice Chat as..."
+        /// Localized resource similar to "Join Video Chat as..."
         /// </summary>
         public static string VoipGroupJoinAs
         {
@@ -47630,7 +53750,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Join voice chat"
+        /// Localized resource similar to "Join video chat"
         /// </summary>
         public static string VoipGroupJoinCall
         {
@@ -47641,7 +53761,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Join Voice Chat"
+        /// Localized resource similar to "Join Video Chat"
         /// </summary>
         public static string VoipGroupJoinVoiceChatUrl
         {
@@ -47663,7 +53783,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "End voice chat"
+        /// Localized resource similar to "End video chat"
         /// </summary>
         public static string VoipGroupLeaveAlertEndChat
         {
@@ -47674,7 +53794,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Are you sure you want to leave this voice chat?"
+        /// Localized resource similar to "Are you sure you want to leave this video chat?"
         /// </summary>
         public static string VoipGroupLeaveAlertText
         {
@@ -47685,7 +53805,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Leave voice chat"
+        /// Localized resource similar to "Leave video chat"
         /// </summary>
         public static string VoipGroupLeaveAlertTitle
         {
@@ -47729,7 +53849,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Are you sure you want to mute **{0}** in this voice chat?"
+        /// Localized resource similar to "Are you sure you want to mute **{0}** in this video chat?"
         /// </summary>
         public static string VoipGroupMuteMemberAlertText
         {
@@ -47751,7 +53871,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "You're currently offline. Please connect to the Internet to join voice chats."
+        /// Localized resource similar to "You're currently offline. Please connect to the Internet to join video chats."
         /// </summary>
         public static string VoipGroupOffline
         {
@@ -47762,7 +53882,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "You currently have airplane mode enabled. Please turn it off or connect to Wi-Fi to join voice chats."
+        /// Localized resource similar to "You currently have airplane mode enabled. Please turn it off or connect to Wi-Fi to join video chats."
         /// </summary>
         public static string VoipGroupOfflineAirplane
         {
@@ -47828,7 +53948,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Open voice chat"
+        /// Localized resource similar to "Open video chat"
         /// </summary>
         public static string VoipGroupOpenVoiceChat
         {
@@ -47861,7 +53981,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Voice chat is being recorded"
+        /// Localized resource similar to "The audio stream is being recorded"
         /// </summary>
         public static string VoipGroupRecording
         {
@@ -47894,7 +54014,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Do you want to remove {0} from the voice chat and ban them in {1}?"
+        /// Localized resource similar to "Do you want to remove {0} from the video chat and ban them in {1}?"
         /// </summary>
         public static string VoipGroupRemoveMemberAlertText2
         {
@@ -47938,7 +54058,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Scheduled Voice Chat"
+        /// Localized resource similar to "Scheduled Video Chat"
         /// </summary>
         public static string VoipGroupScheduledVoiceChat
         {
@@ -47949,7 +54069,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Members of the group will be notified that the voice chat will start in {0}."
+        /// Localized resource similar to "Members of the group will be notified that the video chat will start in {0}."
         /// </summary>
         public static string VoipGroupScheduleInfo
         {
@@ -47960,7 +54080,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Schedule Voice Chat"
+        /// Localized resource similar to "Schedule Video Chat"
         /// </summary>
         public static string VoipGroupScheduleVoiceChat
         {
@@ -48015,7 +54135,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Voice chat sound muted."
+        /// Localized resource similar to "Video chat sound muted."
         /// </summary>
         public static string VoipGroupSoundMuted
         {
@@ -48026,7 +54146,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Voice chat sound unmuted."
+        /// Localized resource similar to "Video chat sound unmuted."
         /// </summary>
         public static string VoipGroupSoundUnmuted
         {
@@ -48037,7 +54157,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Members of this group will be notified once you start the voice chat."
+        /// Localized resource similar to "Members of this group will be notified once you start the video chat."
         /// </summary>
         public static string VoipGroupStart2
         {
@@ -48048,7 +54168,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Start Voice Chat as..."
+        /// Localized resource similar to "Start Video Chat as..."
         /// </summary>
         public static string VoipGroupStartAs
         {
@@ -48116,7 +54236,20 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Start Voice Chat"
+        /// Localized resource similar to "Do you want to start recording this chat and save the result into a video file?
+        ///
+        ///Other participants will see that the chat is being recorded."
+        /// </summary>
+        public static string VoipGroupStartRecordingVideoText
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipGroupStartRecordingVideoText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Start Video Chat"
         /// </summary>
         public static string VoipGroupStartVoiceChat
         {
@@ -48138,7 +54271,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Do you want to stop recording this voice chat?"
+        /// Localized resource similar to "Do you want to stop recording this video chat?"
         /// </summary>
         public static string VoipGroupStopRecordingText
         {
@@ -48160,7 +54293,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Voice chat title"
+        /// Localized resource similar to "Video chat title"
         /// </summary>
         public static string VoipGroupTitle
         {
@@ -48171,7 +54304,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Sorry, this voice chat is full."
+        /// Localized resource similar to "Sorry, this video chat is full."
         /// </summary>
         public static string VoipGroupTooMuch
         {
@@ -48248,7 +54381,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Participants of this voice chat will now see you as **{0}**"
+        /// Localized resource similar to "Participants of this video chat will now see you as **{0}**"
         /// </summary>
         public static string VoipGroupUserChanged
         {
@@ -48270,7 +54403,29 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "VIEW VOICE CHAT"
+        /// Localized resource similar to "Video saved to **Saved Messages**."
+        /// </summary>
+        public static string VoipGroupVideoRecordSaved
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipGroupVideoRecordSaved");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Video recording started."
+        /// </summary>
+        public static string VoipGroupVideoRecordStarted
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipGroupVideoRecordStarted");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "VIEW VIDEO CHAT"
         /// </summary>
         public static string VoipGroupViewVoiceChat
         {
@@ -48281,7 +54436,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Voice Chat"
+        /// Localized resource similar to "Video Chat"
         /// </summary>
         public static string VoipGroupVoiceChat
         {
@@ -48402,6 +54557,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Ongoing Live Stream"
+        /// </summary>
+        public static string VoipLiveStream
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipLiveStream");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Mute"
         /// </summary>
         public static string VoipMute
@@ -48479,6 +54645,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Telegram needs access to your camera so that you can make video calls."
+        /// </summary>
+        public static string VoipNeedCameraPermission
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipNeedCameraPermission");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Telegram needs access to your microphone and camera so that you can make video calls."
         /// </summary>
         public static string VoipNeedMicCameraPermission
@@ -48497,6 +54674,39 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("VoipNeedMicPermission");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Noise suppression"
+        /// </summary>
+        public static string VoipNoiseCancellation
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipNoiseCancellation");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Disabled"
+        /// </summary>
+        public static string VoipNoiseCancellationDisabled
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipNoiseCancellationDisabled");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Enabled"
+        /// </summary>
+        public static string VoipNoiseCancellationEnabled
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipNoiseCancellationEnabled");
             }
         }
         
@@ -48578,7 +54788,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "End call with **{0}** and start voice chat in **{1}**?"
+        /// Localized resource similar to "End call with **{0}** and start a video chat in **{1}**?"
         /// </summary>
         public static string VoipOngoingAlert2
         {
@@ -48600,7 +54810,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Leave voice chat in **{0}** and start a new one in **{1}**?"
+        /// Localized resource similar to "Leave video chat in **{0}** and start a new one in **{1}**?"
         /// </summary>
         public static string VoipOngoingChatAlert
         {
@@ -48611,7 +54821,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Leave voice chat in **{0}** and call **{1}**?"
+        /// Localized resource similar to "Leave video chat in **{0}** and call **{1}**?"
         /// </summary>
         public static string VoipOngoingChatAlert2
         {
@@ -48622,7 +54832,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Another voice chat in progress"
+        /// Localized resource similar to "Another video chat in progress"
         /// </summary>
         public static string VoipOngoingChatAlertTitle
         {
@@ -48699,6 +54909,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "PHONE SCREEN"
+        /// </summary>
+        public static string VoipPhoneScreen
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipPhoneScreen");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Respond with Text"
         /// </summary>
         public static string VoipQuickReplies
@@ -48743,6 +54964,72 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "AUDIO ONLY"
+        /// </summary>
+        public static string VoipRecordAudio
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipRecordAudio");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "LANDSCAPE VIDEO"
+        /// </summary>
+        public static string VoipRecordLandscape
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipRecordLandscape");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "PORTRAIT VIDEO"
+        /// </summary>
+        public static string VoipRecordPortrait
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipRecordPortrait");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Start Recording"
+        /// </summary>
+        public static string VoipRecordStart
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipRecordStart");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Record video chat"
+        /// </summary>
+        public static string VoipRecordVoiceChat
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipRecordVoiceChat");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Choose how to record this chat"
+        /// </summary>
+        public static string VoipRecordVoiceChatInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipRecordVoiceChatInfo");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Requesting"
         /// </summary>
         public static string VoipRequesting
@@ -48776,6 +55063,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Select audio output"
+        /// </summary>
+        public static string VoipSelectAudioOutput
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipSelectAudioOutput");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Set New Photo"
         /// </summary>
         public static string VoipSetNewPhoto
@@ -48794,6 +55092,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("VoipSettingsRingtone");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Share Video"
+        /// </summary>
+        public static string VoipShareVideo
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipShareVideo");
             }
         }
         
@@ -48919,6 +55228,86 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "To watch the video stream, update
+        ///Telegram to the latest version."
+        /// </summary>
+        public static string VoipVideoNotAvailable
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipVideoNotAvailable");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The video chat is over {0}.
+        ///New participants only have access to the audio stream."
+        /// </summary>
+        public static string VoipVideoNotAvailableAdmin
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipVideoNotAvailableAdmin");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Video on Pause"
+        /// </summary>
+        public static string VoipVideoOnPause
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipVideoOnPause");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Everything on your screen, including notifications, will be shared."
+        /// </summary>
+        public static string VoipVideoPrivateScreenSharing
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipVideoPrivateScreenSharing");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You are sharing your screen"
+        /// </summary>
+        public static string VoipVideoScreenSharing
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipVideoScreenSharing");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You are sharing
+        ///your screen"
+        /// </summary>
+        public static string VoipVideoScreenSharingTwoLines
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipVideoScreenSharingTwoLines");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "STOP SHARING"
+        /// </summary>
+        public static string VoipVideoScreenStopSharing
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipVideoScreenStopSharing");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Video"
         /// </summary>
         public static string VoipVideoUnavailable
@@ -48930,7 +55319,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Ongoing Voice Chat"
+        /// Localized resource similar to "Ongoing Video Chat"
         /// </summary>
         public static string VoipVoiceChat
         {
@@ -49058,6 +55447,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Warmth");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Warning"
+        /// </summary>
+        public static string Warning
+        {
+            get
+            {
+                return resourceLoader.GetString("Warning");
             }
         }
         
@@ -49794,6 +56194,51 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Your password"
+        /// </summary>
+        public static string YourPasswordHeader
+        {
+            get
+            {
+                return resourceLoader.GetString("YourPasswordHeader");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Your account is protected by 2-Step Verification.
+        ///Do you still remember your password?"
+        /// </summary>
+        public static string YourPasswordRemember
+        {
+            get
+            {
+                return resourceLoader.GetString("YourPasswordRemember");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Not sure"
+        /// </summary>
+        public static string YourPasswordRememberNo
+        {
+            get
+            {
+                return resourceLoader.GetString("YourPasswordRememberNo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Yes, definitely"
+        /// </summary>
+        public static string YourPasswordRememberYes
+        {
+            get
+            {
+                return resourceLoader.GetString("YourPasswordRememberYes");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Success!"
         /// </summary>
         public static string YourPasswordSuccess
@@ -49827,6 +56272,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "You (sender’s name hidden)"
+        /// </summary>
+        public static string YouSenderNameHidden
+        {
+            get
+            {
+                return resourceLoader.GetString("YouSenderNameHidden");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You (senders’ names hidden)"
+        /// </summary>
+        public static string YouSendersNameHidden
+        {
+            get
+            {
+                return resourceLoader.GetString("YouSendersNameHidden");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "you were removed"
         /// </summary>
         public static string YouWereKicked
@@ -49845,6 +56312,19824 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ZoomOut");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This message provides you with a public service announcement in relation to the ongoing COVID-19 pandemic. To remove it from your chats list, right click it and select **Hide**."
+        /// </summary>
+        public static string cloud_lng_about_psa_covid
+        {
+            get
+            {
+                return resourceLoader.GetString("cloud_lng_about_psa_covid");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "COVID-19 Notification from {channel}"
+        /// </summary>
+        public static string cloud_lng_forwarded_psa_covid
+        {
+            get
+            {
+                return resourceLoader.GetString("cloud_lng_forwarded_psa_covid");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This message provides you with a public service announcement. To remove it from your chats list, right click it and select **Hide**."
+        /// </summary>
+        public static string lng_about_psa_default
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_about_psa_default");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send a {emoji} emoji to any chat to try your luck."
+        /// </summary>
+        public static string lng_about_random
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_about_random");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Official free messaging app based on [a href="https://core.telegram.org/api"]Telegram API[/a]
+        ///for speed and security."
+        /// </summary>
+        public static string lng_about_text_1
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_about_text_1");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This software is licensed under [a href="https://github.com/telegramdesktop/tdesktop/blob/master/LICENSE"]GNU GPL[/a] version 3.
+        ///Source code is available on [a href="https://github.com/telegramdesktop/tdesktop"]GitHub[/a]."
+        /// </summary>
+        public static string lng_about_text_2
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_about_text_2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Visit {faq_open}Telegram FAQ{faq_close} for more info."
+        /// </summary>
+        public static string lng_about_text_3
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_about_text_3");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Official free messaging app based on {api_link}
+        ///for speed and security."
+        /// </summary>
+        public static string lng_about_text1
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_about_text1");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Telegram API"
+        /// </summary>
+        public static string lng_about_text1_api
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_about_text1_api");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This software is licensed under {gpl_link} version 3.
+        ///Source code is available on {github_link}."
+        /// </summary>
+        public static string lng_about_text2
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_about_text2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Visit the {faq_link} for more info."
+        /// </summary>
+        public static string lng_about_text3
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_about_text3");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "version {version}"
+        /// </summary>
+        public static string lng_about_version
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_about_version");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} added {user}"
+        /// </summary>
+        public static string lng_action_add_user
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_add_user");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{accumulated} and {user}"
+        /// </summary>
+        public static string lng_action_add_users_and_last
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_add_users_and_last");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{accumulated}, {user}"
+        /// </summary>
+        public static string lng_action_add_users_and_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_add_users_and_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} added {users}"
+        /// </summary>
+        public static string lng_action_add_users_many
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_add_users_many");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} added you to this channel"
+        /// </summary>
+        public static string lng_action_add_you
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_add_you");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} added you to this group"
+        /// </summary>
+        public static string lng_action_add_you_group
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_add_you_group");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You allowed this bot to message you when you logged in on {domain}."
+        /// </summary>
+        public static string lng_action_bot_allowed_from_domain
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_bot_allowed_from_domain");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} updated group photo"
+        /// </summary>
+        public static string lng_action_changed_photo
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_changed_photo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Channel photo updated"
+        /// </summary>
+        public static string lng_action_changed_photo_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_changed_photo_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} changed group name to «{title}»"
+        /// </summary>
+        public static string lng_action_changed_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_changed_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Channel name was changed to «{title}»"
+        /// </summary>
+        public static string lng_action_changed_title_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_changed_title_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} created the group «{title}»"
+        /// </summary>
+        public static string lng_action_created_chat
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_created_chat");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Live stream finished ({duration})"
+        /// </summary>
+        public static string lng_action_group_call_finished
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_group_call_finished");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} ended the video chat ({duration})"
+        /// </summary>
+        public static string lng_action_group_call_finished_group
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_group_call_finished_group");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Live stream scheduled for {date}"
+        /// </summary>
+        public static string lng_action_group_call_scheduled_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_group_call_scheduled_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} scheduled a video chat for {date}"
+        /// </summary>
+        public static string lng_action_group_call_scheduled_group
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_group_call_scheduled_group");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} started {chat}"
+        /// </summary>
+        public static string lng_action_group_call_started
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_group_call_started");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} started a video chat"
+        /// </summary>
+        public static string lng_action_group_call_started_group
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_group_call_started_group");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The group was upgraded to a supergroup"
+        /// </summary>
+        public static string lng_action_group_migrate
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_group_migrate");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} invited {user} to {chat}"
+        /// </summary>
+        public static string lng_action_invite_user
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_invite_user");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "the video chat"
+        /// </summary>
+        public static string lng_action_invite_user_chat
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_invite_user_chat");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{accumulated} and {user}"
+        /// </summary>
+        public static string lng_action_invite_users_and_last
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_invite_users_and_last");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{accumulated}, {user}"
+        /// </summary>
+        public static string lng_action_invite_users_and_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_invite_users_and_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} invited {users} to {chat}"
+        /// </summary>
+        public static string lng_action_invite_users_many
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_invite_users_many");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} removed {user}"
+        /// </summary>
+        public static string lng_action_kick_user
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_kick_user");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You successfully transferred {amount} to {user}"
+        /// </summary>
+        public static string lng_action_payment_done
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_payment_done");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You successfully transferred {amount} to {user} for {invoice}"
+        /// </summary>
+        public static string lng_action_payment_done_for
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_payment_done_for");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} pinned {media}"
+        /// </summary>
+        public static string lng_action_pinned_media
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_pinned_media");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "an audio file"
+        /// </summary>
+        public static string lng_action_pinned_media_audio
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_pinned_media_audio");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "a contact information"
+        /// </summary>
+        public static string lng_action_pinned_media_contact
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_pinned_media_contact");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "a {emoji} sticker"
+        /// </summary>
+        public static string lng_action_pinned_media_emoji_sticker
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_pinned_media_emoji_sticker");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "a file"
+        /// </summary>
+        public static string lng_action_pinned_media_file
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_pinned_media_file");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "the game «{game}»"
+        /// </summary>
+        public static string lng_action_pinned_media_game
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_pinned_media_game");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "a GIF"
+        /// </summary>
+        public static string lng_action_pinned_media_gif
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_pinned_media_gif");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "a location mark"
+        /// </summary>
+        public static string lng_action_pinned_media_location
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_pinned_media_location");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "a photo"
+        /// </summary>
+        public static string lng_action_pinned_media_photo
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_pinned_media_photo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "a sticker"
+        /// </summary>
+        public static string lng_action_pinned_media_sticker
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_pinned_media_sticker");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "a video"
+        /// </summary>
+        public static string lng_action_pinned_media_video
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_pinned_media_video");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "a video message"
+        /// </summary>
+        public static string lng_action_pinned_media_video_message
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_pinned_media_video_message");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "a voice message"
+        /// </summary>
+        public static string lng_action_pinned_media_voice
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_pinned_media_voice");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} pinned «{text}»"
+        /// </summary>
+        public static string lng_action_pinned_message
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_pinned_message");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} is now within {distance} from {user}"
+        /// </summary>
+        public static string lng_action_proximity_reached
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_proximity_reached");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} is now within {distance} from you"
+        /// </summary>
+        public static string lng_action_proximity_reached_you
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_proximity_reached_you");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} removed group photo"
+        /// </summary>
+        public static string lng_action_removed_photo
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_removed_photo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "address"
+        /// </summary>
+        public static string lng_action_secure_address
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_secure_address");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "email address"
+        /// </summary>
+        public static string lng_action_secure_email
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_secure_email");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "personal details"
+        /// </summary>
+        public static string lng_action_secure_personal_details
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_secure_personal_details");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "phone number"
+        /// </summary>
+        public static string lng_action_secure_phone
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_secure_phone");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "proof of address"
+        /// </summary>
+        public static string lng_action_secure_proof_of_address
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_secure_proof_of_address");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "proof of identity"
+        /// </summary>
+        public static string lng_action_secure_proof_of_identity
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_secure_proof_of_identity");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user} received the following documents: {documents}"
+        /// </summary>
+        public static string lng_action_secure_values_sent
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_secure_values_sent");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} changed the chat theme to {emoji}"
+        /// </summary>
+        public static string lng_action_theme_changed
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_theme_changed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} disabled the chat theme"
+        /// </summary>
+        public static string lng_action_theme_disabled
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_theme_disabled");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} took a screenshot!"
+        /// </summary>
+        public static string lng_action_took_screenshot
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_took_screenshot");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} set messages to auto-delete in {duration}"
+        /// </summary>
+        public static string lng_action_ttl_changed
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_ttl_changed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Messages in this channel will be automatically deleted after {duration}"
+        /// </summary>
+        public static string lng_action_ttl_changed_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_ttl_changed_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You set messages to auto-delete in {duration}"
+        /// </summary>
+        public static string lng_action_ttl_changed_you
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_ttl_changed_you");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} disabled the auto-delete timer"
+        /// </summary>
+        public static string lng_action_ttl_removed
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_ttl_removed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} joined the group"
+        /// </summary>
+        public static string lng_action_user_joined
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_user_joined");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} joined the group via invite link"
+        /// </summary>
+        public static string lng_action_user_joined_by_link
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_user_joined_by_link");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} was accepted to the group"
+        /// </summary>
+        public static string lng_action_user_joined_by_request
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_user_joined_by_request");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} left the group"
+        /// </summary>
+        public static string lng_action_user_left
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_user_left");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} joined Telegram"
+        /// </summary>
+        public static string lng_action_user_registered
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_user_registered");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You are now within {distance} from {user}"
+        /// </summary>
+        public static string lng_action_you_proximity_reached
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_you_proximity_reached");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You changed the chat theme to {emoji}"
+        /// </summary>
+        public static string lng_action_you_theme_changed
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_action_you_theme_changed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "What is this?"
+        /// </summary>
+        public static string lng_admin_log_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This is a list of all notable actions by group members and admins in the last 48 hours."
+        /// </summary>
+        public static string lng_admin_log_about_text
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_about_text");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add new admins"
+        /// </summary>
+        public static string lng_admin_log_admin_add_admins
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_admin_add_admins");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Invite users via link"
+        /// </summary>
+        public static string lng_admin_log_admin_invite_link
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_admin_invite_link");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Manage live streams"
+        /// </summary>
+        public static string lng_admin_log_admin_manage_calls_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_admin_manage_calls_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} allowed new video chat participants to speak"
+        /// </summary>
+        public static string lng_admin_log_allowed_unmute_self
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_allowed_unmute_self");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} allowed new live stream participants to speak"
+        /// </summary>
+        public static string lng_admin_log_allowed_unmute_self_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_allowed_unmute_self_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "banned {user}"
+        /// </summary>
+        public static string lng_admin_log_banned
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_banned");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} edited channel description:"
+        /// </summary>
+        public static string lng_admin_log_changed_description_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_changed_description_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} edited group description:"
+        /// </summary>
+        public static string lng_admin_log_changed_description_group
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_changed_description_group");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} changed channel link:"
+        /// </summary>
+        public static string lng_admin_log_changed_link_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_changed_link_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} changed group link:"
+        /// </summary>
+        public static string lng_admin_log_changed_link_group
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_changed_link_group");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} changed the linked channel to «{chat}»"
+        /// </summary>
+        public static string lng_admin_log_changed_linked_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_changed_linked_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} changed the discussion group to «{chat}»"
+        /// </summary>
+        public static string lng_admin_log_changed_linked_chat
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_changed_linked_chat");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} changed the group location to {address}"
+        /// </summary>
+        public static string lng_admin_log_changed_location_chat
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_changed_location_chat");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} changed channel photo"
+        /// </summary>
+        public static string lng_admin_log_changed_photo_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_changed_photo_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} changed group photo"
+        /// </summary>
+        public static string lng_admin_log_changed_photo_group
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_changed_photo_group");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} changed slow mode to {duration}"
+        /// </summary>
+        public static string lng_admin_log_changed_slow_mode
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_changed_slow_mode");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} changed the group {sticker_set}"
+        /// </summary>
+        public static string lng_admin_log_changed_stickers_group
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_changed_stickers_group");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "sticker set"
+        /// </summary>
+        public static string lng_admin_log_changed_stickers_set
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_changed_stickers_set");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} changed channel name to «{title}»"
+        /// </summary>
+        public static string lng_admin_log_changed_title_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_changed_title_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} changed group name to «{title}»"
+        /// </summary>
+        public static string lng_admin_log_changed_title_group
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_changed_title_group");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} deleted invite link {link}"
+        /// </summary>
+        public static string lng_admin_log_delete_invite_link
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_delete_invite_link");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} deleted message:"
+        /// </summary>
+        public static string lng_admin_log_deleted_message
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_deleted_message");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} muted new video chat participants"
+        /// </summary>
+        public static string lng_admin_log_disallowed_unmute_self
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_disallowed_unmute_self");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} muted new live stream participants"
+        /// </summary>
+        public static string lng_admin_log_disallowed_unmute_self_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_disallowed_unmute_self_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} ended the video chat"
+        /// </summary>
+        public static string lng_admin_log_discarded_group_call
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_discarded_group_call");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} ended the live stream"
+        /// </summary>
+        public static string lng_admin_log_discarded_group_call_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_discarded_group_call_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} edited caption:"
+        /// </summary>
+        public static string lng_admin_log_edited_caption
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_edited_caption");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "edited invite link {link}"
+        /// </summary>
+        public static string lng_admin_log_edited_invite_link
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_edited_invite_link");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} edited message:"
+        /// </summary>
+        public static string lng_admin_log_edited_message
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_edited_message");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Filter"
+        /// </summary>
+        public static string lng_admin_log_filter
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_filter");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "All users and admins"
+        /// </summary>
+        public static string lng_admin_log_filter_all_admins
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_filter_all_admins");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "New restrictions"
+        /// </summary>
+        public static string lng_admin_log_filter_restrictions
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_filter_restrictions");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Filter"
+        /// </summary>
+        public static string lng_admin_log_filter_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_filter_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Video chats"
+        /// </summary>
+        public static string lng_admin_log_filter_voice_chats
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_filter_voice_chats");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Live stream"
+        /// </summary>
+        public static string lng_admin_log_filter_voice_chats_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_filter_voice_chats_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} restricted content copying"
+        /// </summary>
+        public static string lng_admin_log_forwards_disabled
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_forwards_disabled");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} allowed content copying"
+        /// </summary>
+        public static string lng_admin_log_forwards_enabled
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_forwards_enabled");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} made group history hidden for new members"
+        /// </summary>
+        public static string lng_admin_log_history_made_hidden
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_history_made_hidden");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} made group history visible for new members"
+        /// </summary>
+        public static string lng_admin_log_history_made_visible
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_history_made_visible");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Expiry date: {previous} ? {limit}"
+        /// </summary>
+        public static string lng_admin_log_invite_link_expire_date
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_invite_link_expire_date");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Name: {previous} ? {limit}"
+        /// </summary>
+        public static string lng_admin_log_invite_link_label
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_invite_link_label");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Admin approval is now required to join."
+        /// </summary>
+        public static string lng_admin_log_invite_link_request_needed
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_invite_link_request_needed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Admin approval no longer required to join."
+        /// </summary>
+        public static string lng_admin_log_invite_link_request_not_needed
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_invite_link_request_not_needed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Usage limit: {previous} ? {limit}"
+        /// </summary>
+        public static string lng_admin_log_invite_link_usage_limit
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_invite_link_usage_limit");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "invited {user}"
+        /// </summary>
+        public static string lng_admin_log_invited
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_invited");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} disabled group invites"
+        /// </summary>
+        public static string lng_admin_log_invites_disabled
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_invites_disabled");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} enabled group invites"
+        /// </summary>
+        public static string lng_admin_log_invites_enabled
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_invites_enabled");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} changed messages auto-delete period from {previous} to {duration}"
+        /// </summary>
+        public static string lng_admin_log_messages_ttl_changed
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_messages_ttl_changed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} disabled messages auto-deletion after {duration}"
+        /// </summary>
+        public static string lng_admin_log_messages_ttl_removed
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_messages_ttl_removed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} enabled messages auto-delete after {duration}"
+        /// </summary>
+        public static string lng_admin_log_messages_ttl_set
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_messages_ttl_set");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} muted {user} in a video chat"
+        /// </summary>
+        public static string lng_admin_log_muted_participant
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_muted_participant");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} muted {user} in a live stream"
+        /// </summary>
+        public static string lng_admin_log_muted_participant_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_muted_participant_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No notable actions taken by the members and admins of this group in the last 48 hours."
+        /// </summary>
+        public static string lng_admin_log_no_events_text
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_no_events_text");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No notable actions taken
+        ///by the admins of this channel
+        ///in the last 48 hours."
+        /// </summary>
+        public static string lng_admin_log_no_events_text_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_no_events_text_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No actions yet"
+        /// </summary>
+        public static string lng_admin_log_no_events_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_no_events_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No recent actions that contain '{query}' have been found."
+        /// </summary>
+        public static string lng_admin_log_no_results_search_text
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_no_results_search_text");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No recent actions that match your query were found."
+        /// </summary>
+        public static string lng_admin_log_no_results_text
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_no_results_text");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No actions found"
+        /// </summary>
+        public static string lng_admin_log_no_results_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_no_results_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} was approved to join the group via {link} by {user}"
+        /// </summary>
+        public static string lng_admin_log_participant_approved_by_link
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_participant_approved_by_link");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} was approved to join the channel via {link} by {user}"
+        /// </summary>
+        public static string lng_admin_log_participant_approved_by_link_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_participant_approved_by_link_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} joined the group"
+        /// </summary>
+        public static string lng_admin_log_participant_joined
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_participant_joined");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} joined the group via {link}"
+        /// </summary>
+        public static string lng_admin_log_participant_joined_by_link
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_participant_joined_by_link");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} joined the channel via {link}"
+        /// </summary>
+        public static string lng_admin_log_participant_joined_by_link_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_participant_joined_by_link_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} joined the channel"
+        /// </summary>
+        public static string lng_admin_log_participant_joined_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_participant_joined_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} left the group"
+        /// </summary>
+        public static string lng_admin_log_participant_left
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_participant_left");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} left the channel"
+        /// </summary>
+        public static string lng_admin_log_participant_left_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_participant_left_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} changed video chat volume for {user} to {percent}"
+        /// </summary>
+        public static string lng_admin_log_participant_volume
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_participant_volume");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} changed live stream volume for {user} to {percent}"
+        /// </summary>
+        public static string lng_admin_log_participant_volume_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_participant_volume_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} pinned message:"
+        /// </summary>
+        public static string lng_admin_log_pinned_message
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_pinned_message");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "changed privileges for {user}"
+        /// </summary>
+        public static string lng_admin_log_promoted
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_promoted");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} disabled reactions"
+        /// </summary>
+        public static string lng_admin_log_reactions_disabled
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_reactions_disabled");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} updated the list of allowed reactions to: {emoji}"
+        /// </summary>
+        public static string lng_admin_log_reactions_updated
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_reactions_updated");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} removed caption"
+        /// </summary>
+        public static string lng_admin_log_removed_caption
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_removed_caption");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} removed channel description"
+        /// </summary>
+        public static string lng_admin_log_removed_description_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_removed_description_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} removed group description"
+        /// </summary>
+        public static string lng_admin_log_removed_description_group
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_removed_description_group");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} removed channel link"
+        /// </summary>
+        public static string lng_admin_log_removed_link_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_removed_link_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} removed group link"
+        /// </summary>
+        public static string lng_admin_log_removed_link_group
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_removed_link_group");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} removed the linked channel"
+        /// </summary>
+        public static string lng_admin_log_removed_linked_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_removed_linked_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} removed the discussion group"
+        /// </summary>
+        public static string lng_admin_log_removed_linked_chat
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_removed_linked_chat");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} removed the group location"
+        /// </summary>
+        public static string lng_admin_log_removed_location_chat
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_removed_location_chat");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} removed channel photo"
+        /// </summary>
+        public static string lng_admin_log_removed_photo_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_removed_photo_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} removed group photo"
+        /// </summary>
+        public static string lng_admin_log_removed_photo_group
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_removed_photo_group");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} disabled slow mode"
+        /// </summary>
+        public static string lng_admin_log_removed_slow_mode
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_removed_slow_mode");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} removed the group sticker set"
+        /// </summary>
+        public static string lng_admin_log_removed_stickers_group
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_removed_stickers_group");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "changed restrictions for {user} {until}"
+        /// </summary>
+        public static string lng_admin_log_restricted
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_restricted");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "indefinitely"
+        /// </summary>
+        public static string lng_admin_log_restricted_forever
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_restricted_forever");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "until {date}"
+        /// </summary>
+        public static string lng_admin_log_restricted_until
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_restricted_until");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} revoked invite link {link}"
+        /// </summary>
+        public static string lng_admin_log_revoke_invite_link
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_revoke_invite_link");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} sent this message:"
+        /// </summary>
+        public static string lng_admin_log_sent_message
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_sent_message");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} disabled signatures"
+        /// </summary>
+        public static string lng_admin_log_signatures_disabled
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_signatures_disabled");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} enabled signatures"
+        /// </summary>
+        public static string lng_admin_log_signatures_enabled
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_signatures_enabled");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} started a new video chat"
+        /// </summary>
+        public static string lng_admin_log_started_group_call
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_started_group_call");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} started a new live stream"
+        /// </summary>
+        public static string lng_admin_log_started_group_call_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_started_group_call_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} stopped poll:"
+        /// </summary>
+        public static string lng_admin_log_stopped_poll
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_stopped_poll");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Selected actions"
+        /// </summary>
+        public static string lng_admin_log_title_selected
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_title_selected");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "transferred ownership to {user}"
+        /// </summary>
+        public static string lng_admin_log_transferred
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_transferred");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "unbanned {user}"
+        /// </summary>
+        public static string lng_admin_log_unbanned
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_unbanned");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} unmuted {user} in a video chat"
+        /// </summary>
+        public static string lng_admin_log_unmuted_participant
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_unmuted_participant");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} unmuted {user} in a live stream"
+        /// </summary>
+        public static string lng_admin_log_unmuted_participant_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_unmuted_participant_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} unpinned message"
+        /// </summary>
+        public static string lng_admin_log_unpinned_message
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_unpinned_message");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{name} ({mention})"
+        /// </summary>
+        public static string lng_admin_log_user_with_username
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_admin_log_user_with_username");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Allow {bot_name} to pass your Telegram name and ID (not your phone number) to the web pages you open via this bot?"
+        /// </summary>
+        public static string lng_allow_bot_pass
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_allow_bot_pass");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Chat archived.
+        ///Muted chats stay archived when new messages arrive."
+        /// </summary>
+        public static string lng_archived_added
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_archived_added");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{accumulated}, {chat}"
+        /// </summary>
+        public static string lng_archived_last_list
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_archived_last_list");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Archived chats"
+        /// </summary>
+        public static string lng_archived_name
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_archived_name");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Chat restored from your archive."
+        /// </summary>
+        public static string lng_archived_removed
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_archived_removed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{chat}, {second_chat}"
+        /// </summary>
+        public static string lng_archived_unread_two
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_archived_unread_two");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Failed"
+        /// </summary>
+        public static string lng_attach_failed
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_attach_failed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Invalid background link."
+        /// </summary>
+        public static string lng_background_bad_link
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_background_bad_link");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Telegram Desktop doesn't support gradient backgrounds yet."
+        /// </summary>
+        public static string lng_background_gradient_unsupported
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_background_gradient_unsupported");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Background preview"
+        /// </summary>
+        public static string lng_background_header
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_background_header");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to delete this background?"
+        /// </summary>
+        public static string lng_background_sure_delete
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_background_sure_delete");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Choose your new chat background"
+        /// </summary>
+        public static string lng_backgrounds_header
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_backgrounds_header");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You have entered an invalid code."
+        /// </summary>
+        public static string lng_bad_code
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_bad_code");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Invalid Country Code"
+        /// </summary>
+        public static string lng_bad_country_code
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_bad_country_code");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please enter your first and last name."
+        /// </summary>
+        public static string lng_bad_name
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_bad_name");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Invalid phone number. Please try again."
+        /// </summary>
+        public static string lng_bad_phone
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_bad_phone");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Phone number not registered."
+        /// </summary>
+        public static string lng_bad_phone_noreg
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_bad_phone_noreg");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, Telegram can't process that type of image."
+        /// </summary>
+        public static string lng_bad_photo
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_bad_photo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Ban User"
+        /// </summary>
+        public static string lng_ban_user
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_ban_user");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Banned users"
+        /// </summary>
+        public static string lng_banned_list_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_banned_list_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Edit Your Bio"
+        /// </summary>
+        public static string lng_bio_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_bio_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Select user to block"
+        /// </summary>
+        public static string lng_blocked_list_add_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_blocked_list_add_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "already blocked"
+        /// </summary>
+        public static string lng_blocked_list_already_blocked
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_blocked_list_already_blocked");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Block"
+        /// </summary>
+        public static string lng_blocked_list_confirm_ok
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_blocked_list_confirm_ok");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to block {name} from messaging and calling you on Telegram?"
+        /// </summary>
+        public static string lng_blocked_list_confirm_text
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_blocked_list_confirm_text");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Block {name}"
+        /// </summary>
+        public static string lng_blocked_list_confirm_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_blocked_list_confirm_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No users found."
+        /// </summary>
+        public static string lng_blocked_list_not_found
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_blocked_list_not_found");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Restart"
+        /// </summary>
+        public static string lng_blocked_list_restart
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_blocked_list_restart");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Blocked users"
+        /// </summary>
+        public static string lng_blocked_list_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_blocked_list_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "unknown phone number"
+        /// </summary>
+        public static string lng_blocked_list_unknown_phone
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_blocked_list_unknown_phone");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The bot is already a member of the group."
+        /// </summary>
+        public static string lng_bot_already_in_group
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_bot_already_in_group");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No chats found"
+        /// </summary>
+        public static string lng_bot_chats_not_found
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_bot_chats_not_found");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Select a chat"
+        /// </summary>
+        public static string lng_bot_choose_chat
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_bot_choose_chat");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Select a Group"
+        /// </summary>
+        public static string lng_bot_choose_group
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_bot_choose_group");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No groups found"
+        /// </summary>
+        public static string lng_bot_groups_not_found
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_bot_groups_not_found");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You have no chats"
+        /// </summary>
+        public static string lng_bot_no_chats
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_bot_no_chats");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You have no groups"
+        /// </summary>
+        public static string lng_bot_no_groups
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_bot_no_groups");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, location sharing is currently unavailable in Telegram Desktop."
+        /// </summary>
+        public static string lng_bot_share_location_unavailable
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_bot_share_location_unavailable");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to share your phone number with this bot?"
+        /// </summary>
+        public static string lng_bot_share_phone
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_bot_share_phone");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add the bot to «{group}»?"
+        /// </summary>
+        public static string lng_bot_sure_invite
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_bot_sure_invite");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Share the game with {user}?"
+        /// </summary>
+        public static string lng_bot_sure_share_game
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_bot_sure_share_game");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Share the game with «{group}»?"
+        /// </summary>
+        public static string lng_bot_sure_share_game_group
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_bot_sure_share_game_group");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can finish this action only if you have:"
+        /// </summary>
+        public static string lng_bots_password_confirm_check_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_bots_password_confirm_check_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please enter your password to confirm the action."
+        /// </summary>
+        public static string lng_bots_password_confirm_description
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_bots_password_confirm_description");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Two-step verification"
+        /// </summary>
+        public static string lng_bots_password_confirm_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_bots_password_confirm_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Broadcast a message..."
+        /// </summary>
+        public static string lng_broadcast_ph
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_broadcast_ph");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Silent broadcast..."
+        /// </summary>
+        public static string lng_broadcast_silent_ph
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_broadcast_silent_ph");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Beginning"
+        /// </summary>
+        public static string lng_calendar_beginning
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_calendar_beginning");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Press and hold to jump to the end."
+        /// </summary>
+        public static string lng_calendar_end_tip
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_calendar_end_tip");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Select days"
+        /// </summary>
+        public static string lng_calendar_select_days
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_calendar_select_days");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Press and hold to jump to the start."
+        /// </summary>
+        public static string lng_calendar_start_tip
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_calendar_start_tip");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You haven't made any Telegram calls yet."
+        /// </summary>
+        public static string lng_call_box_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_call_box_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Clear All"
+        /// </summary>
+        public static string lng_call_box_clear_all
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_call_box_clear_all");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to completely clear your calls log?"
+        /// </summary>
+        public static string lng_call_box_clear_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_call_box_clear_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{date} at {time}"
+        /// </summary>
+        public static string lng_call_box_status_date
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_call_box_status_date");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "({amount}) {status}"
+        /// </summary>
+        public static string lng_call_box_status_group
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_call_box_status_group");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{time}"
+        /// </summary>
+        public static string lng_call_box_status_today
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_call_box_status_today");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "yesterday at {time}"
+        /// </summary>
+        public static string lng_call_box_status_yesterday
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_call_box_status_yesterday");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Cancelled call"
+        /// </summary>
+        public static string lng_call_cancelled
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_call_cancelled");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Declined call"
+        /// </summary>
+        public static string lng_call_declined
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_call_declined");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{time}, {duration}"
+        /// </summary>
+        public static string lng_call_duration_info
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_call_duration_info");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "End Call"
+        /// </summary>
+        public static string lng_call_end_call
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_call_end_call");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "There seems to be a problem with your sound card. Please make sure that your computer's speakers and microphone are working and try again."
+        /// </summary>
+        public static string lng_call_error_audio_io
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_call_error_audio_io");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can switch to video call once you're connected."
+        /// </summary>
+        public static string lng_call_error_camera_not_started
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_call_error_camera_not_started");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user}'s app does not support video calls. They need to update their app."
+        /// </summary>
+        public static string lng_call_error_camera_outdated
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_call_error_camera_outdated");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No camera could be found. Please make sure that your camera is connected to the computer."
+        /// </summary>
+        public static string lng_call_error_no_camera
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_call_error_no_camera");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you cannot call {user} because of their privacy settings."
+        /// </summary>
+        public static string lng_call_error_not_available
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_call_error_not_available");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user}'s app does not support calls. They need to update their app before you can call them."
+        /// </summary>
+        public static string lng_call_error_outdated
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_call_error_outdated");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "If emoji on {user}'s screen are the same, this call is 100% secure"
+        /// </summary>
+        public static string lng_call_fingerprint_tooltip
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_call_fingerprint_tooltip");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "End your active call and join this video chat?"
+        /// </summary>
+        public static string lng_call_leave_to_other_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_call_leave_to_other_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to end your active call and join a live stream in this channel?"
+        /// </summary>
+        public static string lng_call_leave_to_other_sure_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_call_leave_to_other_sure_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user}'s microphone is off"
+        /// </summary>
+        public static string lng_call_microphone_off
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_call_microphone_off");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Missed call"
+        /// </summary>
+        public static string lng_call_missed
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_call_missed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Outgoing call"
+        /// </summary>
+        public static string lng_call_outgoing
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_call_outgoing");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Comment (optional)"
+        /// </summary>
+        public static string lng_call_rate_comment
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_call_rate_comment");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please rate the quality of your call"
+        /// </summary>
+        public static string lng_call_rate_label
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_call_rate_label");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Redial"
+        /// </summary>
+        public static string lng_call_redial
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_call_redial");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Screencast"
+        /// </summary>
+        public static string lng_call_screencast
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_call_screencast");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "line busy"
+        /// </summary>
+        public static string lng_call_status_busy
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_call_status_busy");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "connecting..."
+        /// </summary>
+        public static string lng_call_status_connecting
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_call_status_connecting");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "call ended"
+        /// </summary>
+        public static string lng_call_status_ended
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_call_status_ended");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "exchanging encryption keys..."
+        /// </summary>
+        public static string lng_call_status_exchanging
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_call_status_exchanging");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "failed to connect"
+        /// </summary>
+        public static string lng_call_status_failed
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_call_status_failed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "hanging up..."
+        /// </summary>
+        public static string lng_call_status_hanging
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_call_status_hanging");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "is calling you..."
+        /// </summary>
+        public static string lng_call_status_incoming
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_call_status_incoming");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "requesting..."
+        /// </summary>
+        public static string lng_call_status_requesting
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_call_status_requesting");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "ringing..."
+        /// </summary>
+        public static string lng_call_status_ringing
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_call_status_ringing");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "waiting..."
+        /// </summary>
+        public static string lng_call_status_waiting
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_call_status_waiting");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{type} ({duration})"
+        /// </summary>
+        public static string lng_call_type_and_duration
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_call_type_and_duration");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Cancelled video call"
+        /// </summary>
+        public static string lng_call_video_cancelled
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_call_video_cancelled");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Declined video call"
+        /// </summary>
+        public static string lng_call_video_declined
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_call_video_declined");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Incoming video call"
+        /// </summary>
+        public static string lng_call_video_incoming
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_call_video_incoming");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Missed video call"
+        /// </summary>
+        public static string lng_call_video_missed
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_call_video_missed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Outgoing video call"
+        /// </summary>
+        public static string lng_call_video_outgoing
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_call_video_outgoing");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Cancel editing?"
+        /// </summary>
+        public static string lng_cancel_edit_post_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_cancel_edit_post_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, this action is unavailable."
+        /// </summary>
+        public static string lng_cant_do_this
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_cant_do_this");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, only admin can add this user."
+        /// </summary>
+        public static string lng_cant_invite_banned
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_cant_invite_banned");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Make admin"
+        /// </summary>
+        public static string lng_cant_invite_make_admin
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_cant_invite_make_admin");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can only add mutual contacts
+        ///to groups at the moment.
+        ///{more_info}"
+        /// </summary>
+        public static string lng_cant_invite_not_contact
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_cant_invite_not_contact");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you cannot add this user to groups because of their privacy settings."
+        /// </summary>
+        public static string lng_cant_invite_privacy
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_cant_invite_privacy");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you cannot add this user to channels because of their privacy settings."
+        /// </summary>
+        public static string lng_cant_invite_privacy_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_cant_invite_privacy_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "More info »"
+        /// </summary>
+        public static string lng_cant_more_info
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_cant_more_info");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can only send messages to
+        ///mutual contacts at the moment.
+        ///{more_info}"
+        /// </summary>
+        public static string lng_cant_send_to_not_contact
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_cant_send_to_not_contact");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can change your Telegram number
+        ///here. Your account and all your cloud data
+        ///— messages, media, contacts, etc. will be
+        ///moved to the new number."
+        /// </summary>
+        public static string lng_change_phone_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_change_phone_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "We've sent an SMS with a confirmation code to your phone {phone}."
+        /// </summary>
+        public static string lng_change_phone_code_description
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_change_phone_code_description");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can change your Telegram number
+        ///here. Your account and all your cloud data
+        ///— messages, media, contacts, etc. will be
+        ///moved to the new number."
+        /// </summary>
+        public static string lng_change_phone_description
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_change_phone_description");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Submit"
+        /// </summary>
+        public static string lng_change_phone_new_submit
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_change_phone_new_submit");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Enter new number"
+        /// </summary>
+        public static string lng_change_phone_new_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_change_phone_new_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The number {phone} is already connected to a Telegram account. Please delete that account before migrating to the new number."
+        /// </summary>
+        public static string lng_change_phone_occupied
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_change_phone_occupied");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Your phone number has been changed."
+        /// </summary>
+        public static string lng_change_phone_success
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_change_phone_success");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Change phone number"
+        /// </summary>
+        public static string lng_change_phone_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_change_phone_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add Administrator"
+        /// </summary>
+        public static string lng_channel_add_admin
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_channel_add_admin");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add exception"
+        /// </summary>
+        public static string lng_channel_add_exception
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_channel_add_exception");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Remove user"
+        /// </summary>
+        public static string lng_channel_add_removed
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_channel_add_removed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "not admin"
+        /// </summary>
+        public static string lng_channel_admin_status_not_admin
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_channel_admin_status_not_admin");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Promoted by {user}"
+        /// </summary>
+        public static string lng_channel_admin_status_promoted_by
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_channel_admin_status_promoted_by");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add {user} to administrators?"
+        /// </summary>
+        public static string lng_channel_admin_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_channel_admin_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Removed by {user}"
+        /// </summary>
+        public static string lng_channel_banned_status_removed_by
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_channel_banned_status_removed_by");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Restricted by {user}"
+        /// </summary>
+        public static string lng_channel_banned_status_restricted_by
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_channel_banned_status_restricted_by");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Banned users are removed from the channel.
+        ///Invite links don't work for them."
+        /// </summary>
+        public static string lng_channel_blocked_list_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_channel_blocked_list_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Discuss"
+        /// </summary>
+        public static string lng_channel_discuss
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_channel_discuss");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This channel is private.
+        ///Please join it to continue viewing its content."
+        /// </summary>
+        public static string lng_channel_invite_private
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_channel_invite_private");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, this channel is not accessible."
+        /// </summary>
+        public static string lng_channel_not_accessible
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_channel_not_accessible");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Link copied to clipboard."
+        /// </summary>
+        public static string lng_channel_public_link_copied
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_channel_public_link_copied");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Users removed from the channel by admins cannot rejoin it via invite links."
+        /// </summary>
+        public static string lng_channel_removed_list_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_channel_removed_list_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, the target user has too many location-based groups already. Please ask them to delete or transfer one of their existing ones first."
+        /// </summary>
+        public static string lng_channels_too_much_located_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_channels_too_much_located_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to revoke the link {link}?
+        ///
+        ///The channel «{group}» will become private."
+        /// </summary>
+        public static string lng_channels_too_much_public_revoke_confirm_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_channels_too_much_public_revoke_confirm_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to revoke the link {link}?
+        ///
+        ///The group «{group}» will become private."
+        /// </summary>
+        public static string lng_channels_too_much_public_revoke_confirm_group
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_channels_too_much_public_revoke_confirm_group");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Group admins can add and remove members, edit name and photo of the group."
+        /// </summary>
+        public static string lng_chat_about_admins
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_chat_about_admins");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Group members can add new members, edit name and photo of the group."
+        /// </summary>
+        public static string lng_chat_about_all_admins
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_chat_about_all_admins");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{members_count}, {online_count}"
+        /// </summary>
+        public static string lng_chat_status_members_online
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_chat_status_members_online");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "group is inaccessible"
+        /// </summary>
+        public static string lng_chat_status_unaccessible
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_chat_status_unaccessible");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't change the chat theme while you have an unsent voice message."
+        /// </summary>
+        public static string lng_chat_theme_cant_voice
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_chat_theme_cant_voice");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No
+        ///Theme"
+        /// </summary>
+        public static string lng_chat_theme_none
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_chat_theme_none");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Choose a file"
+        /// </summary>
+        public static string lng_choose_file
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_choose_file");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Choose Files"
+        /// </summary>
+        public static string lng_choose_files
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_choose_files");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Choose an image"
+        /// </summary>
+        public static string lng_choose_image
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_choose_image");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This password will be asked when you log in on a new device in addition to the SMS code."
+        /// </summary>
+        public static string lng_cloud_password_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_cloud_password_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Warning! Are you sure you don't want to
+        ///add a password recovery email?
+        ///
+        ///If you forget your password, you will
+        ///lose access to your Telegram account."
+        /// </summary>
+        public static string lng_cloud_password_about_recover
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_cloud_password_about_recover");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "A confirmation link was sent to the
+        ///email address you provided. Two-step verification will be enabled for your account as soon as you open that link."
+        /// </summary>
+        public static string lng_cloud_password_almost
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_cloud_password_almost");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Password and hint cannot be the same."
+        /// </summary>
+        public static string lng_cloud_password_bad
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_cloud_password_bad");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Invalid email"
+        /// </summary>
+        public static string lng_cloud_password_bad_email
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_cloud_password_bad_email");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Change cloud password"
+        /// </summary>
+        public static string lng_cloud_password_change
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_cloud_password_change");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Enter new password hint"
+        /// </summary>
+        public static string lng_cloud_password_change_hint
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_cloud_password_change_hint");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Confirm recovery email"
+        /// </summary>
+        public static string lng_cloud_password_confirm
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_cloud_password_confirm");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Telegram password"
+        /// </summary>
+        public static string lng_cloud_password_create
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_cloud_password_create");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Change cloud password"
+        /// </summary>
+        public static string lng_cloud_password_edit
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_cloud_password_edit");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Enter recovery email"
+        /// </summary>
+        public static string lng_cloud_password_email
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_cloud_password_email");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Enter current password"
+        /// </summary>
+        public static string lng_cloud_password_enter_old
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_cloud_password_enter_old");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add a password hint"
+        /// </summary>
+        public static string lng_cloud_password_hint
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_cloud_password_hint");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Password was not changed"
+        /// </summary>
+        public static string lng_cloud_password_is_same
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_cloud_password_is_same");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Remove cloud password"
+        /// </summary>
+        public static string lng_cloud_password_remove
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_cloud_password_remove");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Two-step verification was disabled."
+        /// </summary>
+        public static string lng_cloud_password_removed
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_cloud_password_removed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Code was resent."
+        /// </summary>
+        public static string lng_cloud_password_resent
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_cloud_password_resent");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Cancel password reset"
+        /// </summary>
+        public static string lng_cloud_password_reset_cancel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_cloud_password_reset_cancel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Reset password in"
+        /// </summary>
+        public static string lng_cloud_password_reset_in
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_cloud_password_reset_in");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You recently requested a password reset that was cancelled. Please wait {duration} before making a new request."
+        /// </summary>
+        public static string lng_cloud_password_reset_later
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_cloud_password_reset_later");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Since you didn't provide a recovery email when setting up your password, your remaining options are either to remember your password or wait 7 days until your password is reset."
+        /// </summary>
+        public static string lng_cloud_password_reset_no_email
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_cloud_password_reset_no_email");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "If you don't have access to your recovery email, your remaining options are either to remember your password or wait 7 days until your password resets."
+        /// </summary>
+        public static string lng_cloud_password_reset_with_email
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_cloud_password_reset_with_email");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Enable two-step verification"
+        /// </summary>
+        public static string lng_cloud_password_set
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_cloud_password_set");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Skip email"
+        /// </summary>
+        public static string lng_cloud_password_skip_email
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_cloud_password_skip_email");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Your cloud password was updated."
+        /// </summary>
+        public static string lng_cloud_password_updated
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_cloud_password_updated");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Confirmation link sent to {email}..."
+        /// </summary>
+        public static string lng_cloud_password_waiting
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_cloud_password_waiting");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Confirmation code sent to {email}..."
+        /// </summary>
+        public static string lng_cloud_password_waiting_code
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_cloud_password_waiting_code");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Two-step verification enabled."
+        /// </summary>
+        public static string lng_cloud_password_was_set
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_cloud_password_was_set");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Wrong cloud password"
+        /// </summary>
+        public static string lng_cloud_password_wrong
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_cloud_password_wrong");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Telegram will call you in {minutes}:{seconds}"
+        /// </summary>
+        public static string lng_code_call
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_code_call");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Telegram dialed your number"
+        /// </summary>
+        public static string lng_code_called
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_code_called");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Requesting a call from Telegram..."
+        /// </summary>
+        public static string lng_code_calling
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_code_calling");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "We've sent an activation code to your phone.
+        ///Please enter it below."
+        /// </summary>
+        public static string lng_code_desc
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_code_desc");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "A code was sent **via Telegram** to your other
+        ///devices, if you have any connected."
+        /// </summary>
+        public static string lng_code_from_telegram
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_code_from_telegram");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send code via SMS"
+        /// </summary>
+        public static string lng_code_no_telegram
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_code_no_telegram");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "If you already signed up for Telegram, please enter the code which was sent to your mobile app.
+        ///
+        ///If you haven’t signed up yet, please register from your phone or tablet first."
+        /// </summary>
+        public static string lng_code_register_phone
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_code_register_phone");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "We've sent a code [b]via Telegram[/b]
+        ///to your other devices. Please enter it below."
+        /// </summary>
+        public static string lng_code_telegram
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_code_telegram");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Somebody with access to your phone number {phone} has requested to delete your Telegram account and reset your 2-Step Verification password.
+        ///
+        ///If this wasn't you, please enter the code we've just sent you via SMS to your number. You can also cancel this by changing your phone number to a number you control."
+        /// </summary>
+        public static string lng_confirm_phone_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_confirm_phone_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please enter the code."
+        /// </summary>
+        public static string lng_confirm_phone_enter_code
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_confirm_phone_enter_code");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This link is broken or expired."
+        /// </summary>
+        public static string lng_confirm_phone_link_invalid
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_confirm_phone_link_invalid");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Success!
+        ///
+        ///The deletion process was cancelled for your account {phone}. You may close this window now."
+        /// </summary>
+        public static string lng_confirm_phone_success
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_confirm_phone_success");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Connecting to proxy..."
+        /// </summary>
+        public static string lng_connecting_to_proxy
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_connecting_to_proxy");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Default ({transport} used)"
+        /// </summary>
+        public static string lng_connection_auto
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_connection_auto");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Default (connecting...)"
+        /// </summary>
+        public static string lng_connection_auto_connecting
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_connection_auto_connecting");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Auto (TCP if available or HTTP)"
+        /// </summary>
+        public static string lng_connection_auto_rb
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_connection_auto_rb");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Connection type"
+        /// </summary>
+        public static string lng_connection_header
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_connection_header");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Hostname"
+        /// </summary>
+        public static string lng_connection_host_ph
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_connection_host_ph");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "HTTP with custom http-proxy"
+        /// </summary>
+        public static string lng_connection_http_proxy_rb
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_connection_http_proxy_rb");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{transport} with proxy"
+        /// </summary>
+        public static string lng_connection_proxy
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_connection_proxy");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Connecting through proxy..."
+        /// </summary>
+        public static string lng_connection_proxy_connecting
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_connection_proxy_connecting");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "TCP with custom socks5-proxy"
+        /// </summary>
+        public static string lng_connection_tcp_proxy_rb
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_connection_tcp_proxy_rb");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Try connecting through IPv6"
+        /// </summary>
+        public static string lng_connection_try_ipv6
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_connection_try_ipv6");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Connection type:"
+        /// </summary>
+        public static string lng_connection_type
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_connection_type");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unfortunately {name} has not joined Telegram yet, but you can send them an invitation.
+        ///
+        ///We will notify you when any of your contacts join Telegram."
+        /// </summary>
+        public static string lng_contact_not_joined
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_contact_not_joined");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Phone number will be visible once {user} adds you as a contact."
+        /// </summary>
+        public static string lng_contact_phone_after
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_contact_phone_after");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can make your phone visible to {user}."
+        /// </summary>
+        public static string lng_contact_phone_will_be_shared
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_contact_phone_will_be_shared");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Share my phone number"
+        /// </summary>
+        public static string lng_contact_share_phone
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_contact_share_phone");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No contacts found"
+        /// </summary>
+        public static string lng_contacts_not_found
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_contacts_not_found");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Move to chats list"
+        /// </summary>
+        public static string lng_context_archive_to_list
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_archive_to_list");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Move to main menu"
+        /// </summary>
+        public static string lng_context_archive_to_menu
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_archive_to_menu");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Archive moved to the main menu!
+        ///You can return it from the context menu of the archive button."
+        /// </summary>
+        public static string lng_context_archive_to_menu_info
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_archive_to_menu_info");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Attached Stickers"
+        /// </summary>
+        public static string lng_context_attached_stickers
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_attached_stickers");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "auto-deletes in {duration}"
+        /// </summary>
+        public static string lng_context_auto_delete_in
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_auto_delete_in");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Cancel Download"
+        /// </summary>
+        public static string lng_context_cancel_download
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_cancel_download");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Cancel Upload"
+        /// </summary>
+        public static string lng_context_cancel_upload
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_cancel_upload");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Clear Selection"
+        /// </summary>
+        public static string lng_context_clear_selection
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_clear_selection");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Copy Email Address"
+        /// </summary>
+        public static string lng_context_copy_email
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_copy_email");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Copy Hashtag"
+        /// </summary>
+        public static string lng_context_copy_hashtag
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_copy_hashtag");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Copy Image"
+        /// </summary>
+        public static string lng_context_copy_image
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_copy_image");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Copy Username"
+        /// </summary>
+        public static string lng_context_copy_mention
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_copy_mention");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Copy Message Link"
+        /// </summary>
+        public static string lng_context_copy_message_link
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_copy_message_link");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Copy Post Link"
+        /// </summary>
+        public static string lng_context_copy_post_link
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_copy_post_link");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Copy Selected Text"
+        /// </summary>
+        public static string lng_context_copy_selected
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_copy_selected");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Copy Selected as Text"
+        /// </summary>
+        public static string lng_context_copy_selected_items
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_copy_selected_items");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Copy Text"
+        /// </summary>
+        public static string lng_context_copy_text
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_copy_text");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete Selected"
+        /// </summary>
+        public static string lng_context_delete_selected
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_delete_selected");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Forward Selected"
+        /// </summary>
+        public static string lng_context_forward_selected
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_forward_selected");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Hide this announcement"
+        /// </summary>
+        public static string lng_context_hide_psa
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_hide_psa");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Mark all chats as read"
+        /// </summary>
+        public static string lng_context_mark_read_all
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_mark_read_all");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to mark all chats as read?"
+        /// </summary>
+        public static string lng_context_mark_read_all_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_mark_read_all_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Mark all mentions as read"
+        /// </summary>
+        public static string lng_context_mark_read_mentions_all
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_mark_read_mentions_all");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to mark all chats from this folder as read?"
+        /// </summary>
+        public static string lng_context_mark_read_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_mark_read_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Open GIF"
+        /// </summary>
+        public static string lng_context_open_gif
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_open_gif");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "View Sticker Set"
+        /// </summary>
+        public static string lng_context_pack_info
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_pack_info");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Remove from admins"
+        /// </summary>
+        public static string lng_context_remove_admin
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_remove_admin");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Reschedule Selected"
+        /// </summary>
+        public static string lng_context_reschedule_selected
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_reschedule_selected");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Save Voice Message As..."
+        /// </summary>
+        public static string lng_context_save_audio
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_save_audio");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Save Audio File As..."
+        /// </summary>
+        public static string lng_context_save_audio_file
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_save_audio_file");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Save File As..."
+        /// </summary>
+        public static string lng_context_save_file
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_save_file");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Save GIF"
+        /// </summary>
+        public static string lng_context_save_gif
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_save_gif");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Save Image As..."
+        /// </summary>
+        public static string lng_context_save_image
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_save_image");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Save Video As..."
+        /// </summary>
+        public static string lng_context_save_video
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_save_video");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Nobody Listened"
+        /// </summary>
+        public static string lng_context_seen_listened_none
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_seen_listened_none");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Show All Reactions"
+        /// </summary>
+        public static string lng_context_seen_reacted_all
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_seen_reacted_all");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Nobody Reacted"
+        /// </summary>
+        public static string lng_context_seen_reacted_none
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_seen_reacted_none");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Nobody Viewed"
+        /// </summary>
+        public static string lng_context_seen_text_none
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_seen_text_none");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Nobody Listened"
+        /// </summary>
+        public static string lng_context_seen_watched_none
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_seen_watched_none");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Select"
+        /// </summary>
+        public static string lng_context_select_msg
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_select_msg");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send selected now"
+        /// </summary>
+        public static string lng_context_send_now_selected
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_send_now_selected");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Show in Finder"
+        /// </summary>
+        public static string lng_context_show_in_finder
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_show_in_finder");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Show in Folder"
+        /// </summary>
+        public static string lng_context_show_in_folder
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_show_in_folder");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Go To Message"
+        /// </summary>
+        public static string lng_context_to_msg
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_to_msg");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "View channel info"
+        /// </summary>
+        public static string lng_context_view_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_view_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "View group info"
+        /// </summary>
+        public static string lng_context_view_group
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_view_group");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "View profile"
+        /// </summary>
+        public static string lng_context_view_profile
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_context_view_profile");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Country Code"
+        /// </summary>
+        public static string lng_country_code
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_country_code");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Country not found"
+        /// </summary>
+        public static string lng_country_none
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_country_none");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Select Country"
+        /// </summary>
+        public static string lng_country_select
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_country_select");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Select an area for the profile photo"
+        /// </summary>
+        public static string lng_create_channel_crop
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_create_channel_crop");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This link is available"
+        /// </summary>
+        public static string lng_create_channel_link_available
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_create_channel_link_available");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Only 0-9, a-z, and underscores allowed."
+        /// </summary>
+        public static string lng_create_channel_link_bad_symbols
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_create_channel_link_bad_symbols");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This link is invalid"
+        /// </summary>
+        public static string lng_create_channel_link_invalid
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_create_channel_link_invalid");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, this link is already occupied"
+        /// </summary>
+        public static string lng_create_channel_link_occupied
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_create_channel_link_occupied");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, this link is too short"
+        /// </summary>
+        public static string lng_create_channel_link_too_short
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_create_channel_link_too_short");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Select an area for group photo"
+        /// </summary>
+        public static string lng_create_group_crop
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_create_group_crop");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Invite link"
+        /// </summary>
+        public static string lng_create_group_invite_link
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_create_group_invite_link");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "People can be added, or join via invite link or "Groups nearby""
+        /// </summary>
+        public static string lng_create_invite_link_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_create_invite_link_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Invite link"
+        /// </summary>
+        public static string lng_create_invite_link_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_create_invite_link_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Permanent link"
+        /// </summary>
+        public static string lng_create_permanent_link_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_create_permanent_link_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Only people with a special invite link may join"
+        /// </summary>
+        public static string lng_create_private_channel_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_create_private_channel_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "People can only join if they are added or have an invite link"
+        /// </summary>
+        public static string lng_create_private_group_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_create_private_group_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Anyone can find the channel in search and join"
+        /// </summary>
+        public static string lng_create_public_channel_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_create_public_channel_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Anyone can find the group in search and join, chat history is available to everybody"
+        /// </summary>
+        public static string lng_create_public_group_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_create_public_group_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{date}, {duration}"
+        /// </summary>
+        public static string lng_date_and_duration
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_date_and_duration");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Month"
+        /// </summary>
+        public static string lng_date_input_month
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_date_input_month");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Year"
+        /// </summary>
+        public static string lng_date_input_year
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_date_input_year");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete all from this user"
+        /// </summary>
+        public static string lng_delete_all_from
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_delete_all_from");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Also delete for {user}"
+        /// </summary>
+        public static string lng_delete_for_other_check
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_delete_for_other_check");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unsend my messages"
+        /// </summary>
+        public static string lng_delete_for_other_my
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_delete_for_other_my");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to delete this photo?"
+        /// </summary>
+        public static string lng_delete_photo_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_delete_photo_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Deleted message"
+        /// </summary>
+        public static string lng_deleted_message
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_deleted_message");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Hide muted chats"
+        /// </summary>
+        public static string lng_dialogs_hide_muted_chats
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_dialogs_hide_muted_chats");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Show all chats"
+        /// </summary>
+        public static string lng_dialogs_show_all_chats
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_dialogs_show_all_chats");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "With results from archive"
+        /// </summary>
+        public static string lng_dialogs_show_archive_in_search
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_dialogs_show_archive_in_search");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Skip results from archive"
+        /// </summary>
+        public static string lng_dialogs_skip_archive_in_search
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_dialogs_skip_archive_in_search");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from}:"
+        /// </summary>
+        public static string lng_dialogs_text_from_wrapped
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_dialogs_text_from_wrapped");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{media_part} {caption}"
+        /// </summary>
+        public static string lng_dialogs_text_media
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_dialogs_text_media");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{media},"
+        /// </summary>
+        public static string lng_dialogs_text_media_wrapped
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_dialogs_text_media_wrapped");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from_part} {message}"
+        /// </summary>
+        public static string lng_dialogs_text_with_from
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_dialogs_text_with_from");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Disable notifications"
+        /// </summary>
+        public static string lng_disable_notifications_from_tray
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_disable_notifications_from_tray");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Search for messages"
+        /// </summary>
+        public static string lng_dlg_search_for_messages
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_dlg_search_for_messages");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "From: {user}"
+        /// </summary>
+        public static string lng_dlg_search_from
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_dlg_search_from");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Search messages in"
+        /// </summary>
+        public static string lng_dlg_search_in
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_dlg_search_in");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "File download could not be completed.
+        ///
+        ///Would you like to try again?"
+        /// </summary>
+        public static string lng_download_finish_failed
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_download_finish_failed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Download path"
+        /// </summary>
+        public static string lng_download_path
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_download_path");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Ask download path for each file"
+        /// </summary>
+        public static string lng_download_path_ask
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_download_path_ask");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Choose download path"
+        /// </summary>
+        public static string lng_download_path_choose
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_download_path_choose");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Clear all"
+        /// </summary>
+        public static string lng_download_path_clear
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_download_path_clear");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Cleared!"
+        /// </summary>
+        public static string lng_download_path_cleared
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_download_path_cleared");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Clearing..."
+        /// </summary>
+        public static string lng_download_path_clearing
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_download_path_clearing");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Default folder"
+        /// </summary>
+        public static string lng_download_path_default
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_download_path_default");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Telegram folder in system «Downloads»"
+        /// </summary>
+        public static string lng_download_path_default_radio
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_download_path_default_radio");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Custom folder, cleared only manually"
+        /// </summary>
+        public static string lng_download_path_dir_radio
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_download_path_dir_radio");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Don't ask download path for each file"
+        /// </summary>
+        public static string lng_download_path_dont_ask
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_download_path_dont_ask");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "File download could not be started.
+        ///
+        ///This might be because the download location you've selected is invalid. Try changing it in Settings > Advanced > Download Path."
+        /// </summary>
+        public static string lng_download_path_failed
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_download_path_failed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Choose download path"
+        /// </summary>
+        public static string lng_download_path_header
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_download_path_header");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Download path:"
+        /// </summary>
+        public static string lng_download_path_label
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_download_path_label");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Temp folder"
+        /// </summary>
+        public static string lng_download_path_temp
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_download_path_temp");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Temp folder, cleared on logout or uninstall"
+        /// </summary>
+        public static string lng_download_path_temp_radio
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_download_path_temp_radio");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Drop files here"
+        /// </summary>
+        public static string lng_drag_files_here
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_drag_files_here");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Drop images here"
+        /// </summary>
+        public static string lng_drag_images_here
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_drag_images_here");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Drop photos here"
+        /// </summary>
+        public static string lng_drag_photos_here
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_drag_photos_here");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "to send them as documents"
+        /// </summary>
+        public static string lng_drag_to_send_files
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_drag_to_send_files");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "to send them without compression"
+        /// </summary>
+        public static string lng_drag_to_send_no_compression
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_drag_to_send_no_compression");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "to send them in a quick way"
+        /// </summary>
+        public static string lng_drag_to_send_quick
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_drag_to_send_quick");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{duration}, {size}"
+        /// </summary>
+        public static string lng_duration_and_size
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_duration_and_size");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{minutes_count} {seconds_count}"
+        /// </summary>
+        public static string lng_duration_minutes_seconds
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_duration_minutes_seconds");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{played} / {duration}"
+        /// </summary>
+        public static string lng_duration_played
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_duration_played");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Edit Auto-Delete Settings"
+        /// </summary>
+        public static string lng_edit_auto_delete_settings
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_auto_delete_settings");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't attach new media while editing a message."
+        /// </summary>
+        public static string lng_edit_caption_attach
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_caption_attach");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't edit messages when you have an unsent voice message."
+        /// </summary>
+        public static string lng_edit_caption_voice
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_caption_voice");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Edit channel"
+        /// </summary>
+        public static string lng_edit_channel_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_channel_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Edit contact name"
+        /// </summary>
+        public static string lng_edit_contact_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_contact_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This message was deleted"
+        /// </summary>
+        public static string lng_edit_deleted
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_deleted");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can't edit this message."
+        /// </summary>
+        public static string lng_edit_error
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_error");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Edit group"
+        /// </summary>
+        public static string lng_edit_group
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_group");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "All members"
+        /// </summary>
+        public static string lng_edit_group_invites_everybody
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_group_invites_everybody");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Only admins"
+        /// </summary>
+        public static string lng_edit_group_invites_only_admins
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_group_invites_only_admins");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This file cannot be saved as a part of an album."
+        /// </summary>
+        public static string lng_edit_media_album_error
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_media_album_error");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, no way to use this file."
+        /// </summary>
+        public static string lng_edit_media_invalid_file
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_media_invalid_file");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Edit message"
+        /// </summary>
+        public static string lng_edit_message
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_message");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "New message..."
+        /// </summary>
+        public static string lng_edit_message_text
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_message_text");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Left-click on the photo to edit."
+        /// </summary>
+        public static string lng_edit_photo_editor_hint
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_photo_editor_hint");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Always allow"
+        /// </summary>
+        public static string lng_edit_privacy_calls_always_empty
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_calls_always_empty");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Always allow"
+        /// </summary>
+        public static string lng_edit_privacy_calls_always_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_calls_always_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can restrict who can call you:"
+        /// </summary>
+        public static string lng_edit_privacy_calls_description
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_calls_description");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Who can call me"
+        /// </summary>
+        public static string lng_edit_privacy_calls_header
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_calls_header");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Never allow"
+        /// </summary>
+        public static string lng_edit_privacy_calls_never_empty
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_calls_never_empty");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Never allow"
+        /// </summary>
+        public static string lng_edit_privacy_calls_never_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_calls_never_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Always allow"
+        /// </summary>
+        public static string lng_edit_privacy_calls_p2p_always_empty
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_calls_p2p_always_empty");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Always allow"
+        /// </summary>
+        public static string lng_edit_privacy_calls_p2p_always_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_calls_p2p_always_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "My contacts"
+        /// </summary>
+        public static string lng_edit_privacy_calls_p2p_contacts
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_calls_p2p_contacts");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Never allow"
+        /// </summary>
+        public static string lng_edit_privacy_calls_p2p_never_empty
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_calls_p2p_never_empty");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Never allow"
+        /// </summary>
+        public static string lng_edit_privacy_calls_p2p_never_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_calls_p2p_never_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Peer-to-peer in calls"
+        /// </summary>
+        public static string lng_edit_privacy_calls_p2p_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_calls_p2p_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "My contacts"
+        /// </summary>
+        public static string lng_edit_privacy_contacts
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_contacts");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Always allow"
+        /// </summary>
+        public static string lng_edit_privacy_forwards_always_empty
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_forwards_always_empty");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Always allow"
+        /// </summary>
+        public static string lng_edit_privacy_forwards_always_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_forwards_always_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "These settings will override the values above."
+        /// </summary>
+        public static string lng_edit_privacy_forwards_exceptions
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_forwards_exceptions");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Who can add a link to my account when forwarding my messages"
+        /// </summary>
+        public static string lng_edit_privacy_forwards_header
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_forwards_header");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Never allow"
+        /// </summary>
+        public static string lng_edit_privacy_forwards_never_empty
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_forwards_never_empty");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Never allow"
+        /// </summary>
+        public static string lng_edit_privacy_forwards_never_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_forwards_never_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Link if allowed by settings below."
+        /// </summary>
+        public static string lng_edit_privacy_forwards_sample_contacts
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_forwards_sample_contacts");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Link to your account."
+        /// </summary>
+        public static string lng_edit_privacy_forwards_sample_everyone
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_forwards_sample_everyone");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Reinhardt, we need to find you some new tunes ??"
+        /// </summary>
+        public static string lng_edit_privacy_forwards_sample_message
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_forwards_sample_message");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Not a link to your account."
+        /// </summary>
+        public static string lng_edit_privacy_forwards_sample_nobody
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_forwards_sample_nobody");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Forwarded messages privacy"
+        /// </summary>
+        public static string lng_edit_privacy_forwards_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_forwards_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Always allow"
+        /// </summary>
+        public static string lng_edit_privacy_groups_always_empty
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_groups_always_empty");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Always allow"
+        /// </summary>
+        public static string lng_edit_privacy_groups_always_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_groups_always_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can choose who can add you to groups and channels with granular precision:"
+        /// </summary>
+        public static string lng_edit_privacy_groups_description
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_groups_description");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Who can add me to groups and channels"
+        /// </summary>
+        public static string lng_edit_privacy_groups_header
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_groups_header");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Never allow"
+        /// </summary>
+        public static string lng_edit_privacy_groups_never_empty
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_groups_never_empty");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Never allow"
+        /// </summary>
+        public static string lng_edit_privacy_groups_never_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_groups_never_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Group invite settings"
+        /// </summary>
+        public static string lng_edit_privacy_groups_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_groups_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Always share with"
+        /// </summary>
+        public static string lng_edit_privacy_lastseen_always_empty
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_lastseen_always_empty");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Always share with"
+        /// </summary>
+        public static string lng_edit_privacy_lastseen_always_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_lastseen_always_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Who can see my last seen time"
+        /// </summary>
+        public static string lng_edit_privacy_lastseen_description
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_lastseen_description");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Who can see my last seen time"
+        /// </summary>
+        public static string lng_edit_privacy_lastseen_header
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_lastseen_header");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Never share with"
+        /// </summary>
+        public static string lng_edit_privacy_lastseen_never_empty
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_lastseen_never_empty");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Never share with"
+        /// </summary>
+        public static string lng_edit_privacy_lastseen_never_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_lastseen_never_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Last seen & online"
+        /// </summary>
+        public static string lng_edit_privacy_lastseen_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_lastseen_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You won't see Last Seen and Online statuses for people with whom you don't share yours. Approximate last seen will be shown instead (recently, within a week, within a month)."
+        /// </summary>
+        public static string lng_edit_privacy_lastseen_warning
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_lastseen_warning");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Always share with"
+        /// </summary>
+        public static string lng_edit_privacy_phone_number_always_empty
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_phone_number_always_empty");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Always share with"
+        /// </summary>
+        public static string lng_edit_privacy_phone_number_always_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_phone_number_always_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add users or groups to override the settings above."
+        /// </summary>
+        public static string lng_edit_privacy_phone_number_exceptions
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_phone_number_exceptions");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Who can find me by my number"
+        /// </summary>
+        public static string lng_edit_privacy_phone_number_find
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_phone_number_find");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Who can see my phone number"
+        /// </summary>
+        public static string lng_edit_privacy_phone_number_header
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_phone_number_header");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Never share with"
+        /// </summary>
+        public static string lng_edit_privacy_phone_number_never_empty
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_phone_number_never_empty");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Never share with"
+        /// </summary>
+        public static string lng_edit_privacy_phone_number_never_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_phone_number_never_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Phone number privacy"
+        /// </summary>
+        public static string lng_edit_privacy_phone_number_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_phone_number_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Always allow"
+        /// </summary>
+        public static string lng_edit_privacy_profile_photo_always_empty
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_profile_photo_always_empty");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "These settings will override the values above."
+        /// </summary>
+        public static string lng_edit_privacy_profile_photo_exceptions
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_profile_photo_exceptions");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Who can see my profile photo"
+        /// </summary>
+        public static string lng_edit_privacy_profile_photo_header
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_profile_photo_header");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Never allow"
+        /// </summary>
+        public static string lng_edit_privacy_profile_photo_never_empty
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_profile_photo_never_empty");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Profile Photo"
+        /// </summary>
+        public static string lng_edit_privacy_profile_photo_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_privacy_profile_photo_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Edit your name"
+        /// </summary>
+        public static string lng_edit_self_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_self_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sign messages"
+        /// </summary>
+        public static string lng_edit_sign_messages
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_sign_messages");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Your message text is too long"
+        /// </summary>
+        public static string lng_edit_too_long
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edit_too_long");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "edited: {date}"
+        /// </summary>
+        public static string lng_edited_date
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_edited_date");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Frequently used"
+        /// </summary>
+        public static string lng_emoji_category0
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_emoji_category0");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Nature"
+        /// </summary>
+        public static string lng_emoji_category2
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_emoji_category2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Food & Drink"
+        /// </summary>
+        public static string lng_emoji_category3
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_emoji_category3");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Travel & Places"
+        /// </summary>
+        public static string lng_emoji_category5
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_emoji_category5");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Symbols & Flags"
+        /// </summary>
+        public static string lng_emoji_category7
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_emoji_category7");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Click here to hide the emoji sidebar"
+        /// </summary>
+        public static string lng_emoji_hide_panel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_emoji_hide_panel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Choose emoji set"
+        /// </summary>
+        public static string lng_emoji_manage_sets
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_emoji_manage_sets");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Current set"
+        /// </summary>
+        public static string lng_emoji_set_active
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_emoji_set_active");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Download {size}"
+        /// </summary>
+        public static string lng_emoji_set_download
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_emoji_set_download");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{percent}, {progress}"
+        /// </summary>
+        public static string lng_emoji_set_loading
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_emoji_set_loading");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Downloaded"
+        /// </summary>
+        public static string lng_emoji_set_ready
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_emoji_set_ready");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Enable notifications"
+        /// </summary>
+        public static string lng_enable_notifications_from_tray
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_enable_notifications_from_tray");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you've reached the maximum number of admins for this group."
+        /// </summary>
+        public static string lng_error_admin_limit
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_error_admin_limit");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you've reached the maximum number of admins for this channel."
+        /// </summary>
+        public static string lng_error_admin_limit_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_error_admin_limit_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't add this user as an admin because they are not a member of this group and you are not allowed to invite them."
+        /// </summary>
+        public static string lng_error_cant_add_admin_invite
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_error_cant_add_admin_invite");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, this bot can't be added to groups."
+        /// </summary>
+        public static string lng_error_cant_add_bot
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_error_cant_add_bot");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't add the bot to this group. Ask a group admin to do it."
+        /// </summary>
+        public static string lng_error_cant_add_member
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_error_cant_add_member");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, copying from this channel is disabled by admins."
+        /// </summary>
+        public static string lng_error_nocopy_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_error_nocopy_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, copying from this group is disabled by admins."
+        /// </summary>
+        public static string lng_error_nocopy_group
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_error_nocopy_group");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, forwarding from this channel is disabled by admins."
+        /// </summary>
+        public static string lng_error_noforwards_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_error_noforwards_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, forwarding from this group is disabled by admins."
+        /// </summary>
+        public static string lng_error_noforwards_group
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_error_noforwards_group");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unfortunately, you are banned from participating in public groups.
+        ///{more_info}"
+        /// </summary>
+        public static string lng_error_public_groups_denied
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_error_public_groups_denied");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You have set a local passcode, so Telegram Desktop can't be launched minimized; it will ask you to enter your passcode before it can start working."
+        /// </summary>
+        public static string lng_error_start_minimized_passcoded
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_error_start_minimized_passcoded");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This page lists all chats from this export."
+        /// </summary>
+        public static string lng_export_about_chats
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_about_chats");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "If you allow access, your contacts are continuously synced with Telegram. Thanks to this, you can easily switch to Telegram and immediately connect with friends across all your devices. We use data about your contacts to let you know when they join Telegram, and to display them by the name you set for them in your phone.
+        ///
+        ///You can disable contact syncing or delete your stored contacts in Settings > Privacy & Security on Telegram's mobile apps."
+        /// </summary>
+        public static string lng_export_about_contacts
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_about_contacts");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Your data was successfully exported."
+        /// </summary>
+        public static string lng_export_about_done
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_about_done");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This rating shows which people you are likelier to message frequently. Telegram uses this data to populate the 'People' box at the top of the Search section. This rating is also calculated for inline bots so that the app can suggest the bots you are most likely to use in the attachment menu (or when you start a new message with "@").
+        ///
+        ///To delete this data, go to Settings > Privacy & Security and disable 'Suggest Frequent Contacts' (requires Telegram for iOS v.4.8.3 or Telegram for Android v.4.8.10 or higher)."
+        /// </summary>
+        public static string lng_export_about_frequent
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_about_frequent");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Below are the supergroups and channels from this export that you've left or where you were banned.
+        ///
+        ///Note that when you leave a channel or supergroup you've created, you have the option to either delete it, or simply leave (in case you want to rejoin later, or keep the community alive despite not being a member)."
+        /// </summary>
+        public static string lng_export_about_left_chats
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_about_left_chats");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "We store session info to display your connected devices in Settings > Privacy & Security > Active Sessions."
+        /// </summary>
+        public static string lng_export_about_sessions
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_about_sessions");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Here is the data you requested. Remember: Telegram is ad free, it doesn't use your data for ad targeting and doesn't sell it to others. Telegram only keeps the information it needs to function as a secure and feature-rich cloud service.
+        ///
+        ///Check out Settings > Privacy & Security on Telegram's mobile apps for the relevant settings."
+        /// </summary>
+        public static string lng_export_about_telegram
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_about_telegram");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "We store this to display the websites where you logged in using authentication via Telegram. This information is shown in Settings > Privacy & Security > Active Sessions."
+        /// </summary>
+        public static string lng_export_about_web_sessions
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_about_web_sessions");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "the oldest message"
+        /// </summary>
+        public static string lng_export_beginning
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_beginning");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "For security reasons, you will be able to begin downloading your data in {hours}. We have notified all your devices about the export request to make sure it's authorized and give you time to react if it's not.
+        ///
+        ///Please come back on {date} and repeat the request using the same device."
+        /// </summary>
+        public static string lng_export_delay
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_delay");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "less than an hour"
+        /// </summary>
+        public static string lng_export_delay_less_than_hour
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_delay_less_than_hour");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Show my data"
+        /// </summary>
+        public static string lng_export_done
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_done");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "present"
+        /// </summary>
+        public static string lng_export_end
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_end");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Data export completed."
+        /// </summary>
+        public static string lng_export_finished
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_finished");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Choose export folder"
+        /// </summary>
+        public static string lng_export_folder
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_folder");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Chat export settings"
+        /// </summary>
+        public static string lng_export_header_chats
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_header_chats");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Location and format"
+        /// </summary>
+        public static string lng_export_header_format
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_header_format");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Media export settings"
+        /// </summary>
+        public static string lng_export_header_media
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_header_media");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you have started a new data export, so this data export is now cancelled."
+        /// </summary>
+        public static string lng_export_invalid
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_invalid");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "From: {from}, to: {till}"
+        /// </summary>
+        public static string lng_export_limits
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_limits");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Bot chats"
+        /// </summary>
+        public static string lng_export_option_bot_chats
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_option_bot_chats");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Choose export format"
+        /// </summary>
+        public static string lng_export_option_choose_format
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_option_choose_format");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Contacts list"
+        /// </summary>
+        public static string lng_export_option_contacts
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_option_contacts");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "If you allow access, contacts are continuously synced with Telegram. You can adjust this in Settings > Privacy & Security on mobile devices."
+        /// </summary>
+        public static string lng_export_option_contacts_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_option_contacts_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Format: {format}, Path: {path}"
+        /// </summary>
+        public static string lng_export_option_format_location
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_option_format_location");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Human-readable HTML"
+        /// </summary>
+        public static string lng_export_option_html
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_option_html");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Account information"
+        /// </summary>
+        public static string lng_export_option_info
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_option_info");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Your chosen screen name, username, phone number and profile pictures."
+        /// </summary>
+        public static string lng_export_option_info_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_option_info_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Machine-readable JSON"
+        /// </summary>
+        public static string lng_export_option_json
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_option_json");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Download path: {path}"
+        /// </summary>
+        public static string lng_export_option_location
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_option_location");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Only my messages"
+        /// </summary>
+        public static string lng_export_option_only_my
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_option_only_my");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Miscellaneous data"
+        /// </summary>
+        public static string lng_export_option_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_option_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Other types of data not mentioned above (beta)."
+        /// </summary>
+        public static string lng_export_option_other_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_option_other_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Personal chats"
+        /// </summary>
+        public static string lng_export_option_personal_chats
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_option_personal_chats");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Private channels"
+        /// </summary>
+        public static string lng_export_option_private_channels
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_option_private_channels");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Private groups"
+        /// </summary>
+        public static string lng_export_option_private_groups
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_option_private_groups");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Public channels"
+        /// </summary>
+        public static string lng_export_option_public_channels
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_option_public_channels");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Public groups"
+        /// </summary>
+        public static string lng_export_option_public_groups
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_option_public_groups");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "We store this to display your connected devices in Settings > Privacy & Security > Active Sessions."
+        /// </summary>
+        public static string lng_export_option_sessions_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_option_sessions_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Size limit: {size}"
+        /// </summary>
+        public static string lng_export_option_size_limit
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_option_size_limit");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can close this window now. Please don't quit Telegram until the data export is completed."
+        /// </summary>
+        public static string lng_export_progress
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_progress");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Exporting your data"
+        /// </summary>
+        public static string lng_export_progress_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_progress_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Skip this file"
+        /// </summary>
+        public static string lng_export_skip_file
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_skip_file");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Processing chats..."
+        /// </summary>
+        public static string lng_export_state_chats_list
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_state_chats_list");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Animated GIF"
+        /// </summary>
+        public static string lng_export_state_gif
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_state_gif");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Initializing..."
+        /// </summary>
+        public static string lng_export_state_initializing
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_state_initializing");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{count} / {total}"
+        /// </summary>
+        public static string lng_export_state_progress
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_state_progress");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{ready} / {total}"
+        /// </summary>
+        public static string lng_export_state_ready_progress
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_state_ready_progress");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Profile pictures"
+        /// </summary>
+        public static string lng_export_state_userpics
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_state_userpics");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Video file"
+        /// </summary>
+        public static string lng_export_state_video_file
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_state_video_file");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Round video message"
+        /// </summary>
+        public static string lng_export_state_video_message
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_state_video_message");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Not now"
+        /// </summary>
+        public static string lng_export_suggest_cancel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_suggest_cancel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can now download the data you requested. Start exporting data?"
+        /// </summary>
+        public static string lng_export_suggest_text
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_suggest_text");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Data export ready"
+        /// </summary>
+        public static string lng_export_suggest_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_suggest_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to stop exporting your data?
+        ///
+        ///If you do, you'll need to start over."
+        /// </summary>
+        public static string lng_export_sure_stop
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_sure_stop");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Export Your Data"
+        /// </summary>
+        public static string lng_export_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Total files: {amount}."
+        /// </summary>
+        public static string lng_export_total_amount
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_total_amount");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Total files: {count}."
+        /// </summary>
+        public static string lng_export_total_files
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_total_files");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Total size: {size}."
+        /// </summary>
+        public static string lng_export_total_size
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_export_total_size");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, if a person is no longer part of a group, you need to add each other to your respective contact lists to be able to add them back.
+        ///
+        ///Note that they could still join via the group's invite link as long as they are not in the Removed users list."
+        /// </summary>
+        public static string lng_failed_add_not_mutual
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_failed_add_not_mutual");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, if a person left a channel, you need to be in their contact list to bring them back."
+        /// </summary>
+        public static string lng_failed_add_not_mutual_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_failed_add_not_mutual_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Could not add user. Please try again later."
+        /// </summary>
+        public static string lng_failed_add_participant
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_failed_add_participant");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Remove from Favorites"
+        /// </summary>
+        public static string lng_faved_stickers_remove
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_faved_stickers_remove");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add chats"
+        /// </summary>
+        public static string lng_filters_add_chats
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_filters_add_chats");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "All chats"
+        /// </summary>
+        public static string lng_filters_all
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_filters_all");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Edit Folder"
+        /// </summary>
+        public static string lng_filters_context_edit
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_filters_context_edit");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Create new folder"
+        /// </summary>
+        public static string lng_filters_create
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_filters_create");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please change at least one rule for this folder."
+        /// </summary>
+        public static string lng_filters_default
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_filters_default");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Edit Folder"
+        /// </summary>
+        public static string lng_filters_edit
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_filters_edit");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please choose at least one chat for this folder."
+        /// </summary>
+        public static string lng_filters_empty
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_filters_empty");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Choose chats and types of chats that will never appear in this folder."
+        /// </summary>
+        public static string lng_filters_exclude_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_filters_exclude_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Choose an icon"
+        /// </summary>
+        public static string lng_filters_icon_header
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_filters_icon_header");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Non-Contacts"
+        /// </summary>
+        public static string lng_filters_include_non_contacts
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_filters_include_non_contacts");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't create more folders."
+        /// </summary>
+        public static string lng_filters_limit
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_filters_limit");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No chats"
+        /// </summary>
+        public static string lng_filters_no_chats
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_filters_no_chats");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Recommended folders"
+        /// </summary>
+        public static string lng_filters_recommended
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_filters_recommended");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Remove chats"
+        /// </summary>
+        public static string lng_filters_remove_chats
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_filters_remove_chats");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This will remove the folder, your chats will not be deleted."
+        /// </summary>
+        public static string lng_filters_remove_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_filters_remove_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Undo"
+        /// </summary>
+        public static string lng_filters_restore
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_filters_restore");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "My folders"
+        /// </summary>
+        public static string lng_filters_subtitle
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_filters_subtitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Non-Contacts"
+        /// </summary>
+        public static string lng_filters_type_non_contacts
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_filters_type_non_contacts");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Too many tries. Please try again later."
+        /// </summary>
+        public static string lng_flood_error
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_flood_error");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Create link"
+        /// </summary>
+        public static string lng_formatting_link_create_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_formatting_link_create_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Text"
+        /// </summary>
+        public static string lng_formatting_link_text
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_formatting_link_text");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can remove the sender's name so that this message will look like it was sent by you."
+        /// </summary>
+        public static string lng_forward_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forward_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, no way to forward here :("
+        /// </summary>
+        public static string lng_forward_cant
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forward_cant");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Choose recipient..."
+        /// </summary>
+        public static string lng_forward_choose
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forward_choose");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can remove the senders’ names so that these messages will look like they were sent by you."
+        /// </summary>
+        public static string lng_forward_many_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forward_many_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, no way to send media here :("
+        /// </summary>
+        public static string lng_forward_send_files_cant
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forward_send_files_cant");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, no way to share contact here :("
+        /// </summary>
+        public static string lng_forward_share_cant
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forward_share_cant");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Share contact to {recipient}?"
+        /// </summary>
+        public static string lng_forward_share_contact
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forward_share_contact");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Show captions"
+        /// </summary>
+        public static string lng_forward_show_captions
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forward_show_captions");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Show sender's name"
+        /// </summary>
+        public static string lng_forward_show_sender
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forward_show_sender");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Show senders' names"
+        /// </summary>
+        public static string lng_forward_show_senders
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forward_show_senders");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Forward Message"
+        /// </summary>
+        public static string lng_forward_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forward_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Forwarded from {user}"
+        /// </summary>
+        public static string lng_forwarded
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forwarded");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Forwarded from {channel}"
+        /// </summary>
+        public static string lng_forwarded_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forwarded_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Forwarded from {channel} via {inline_bot}"
+        /// </summary>
+        public static string lng_forwarded_channel_via
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forwarded_channel_via");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Original: {date}"
+        /// </summary>
+        public static string lng_forwarded_date
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forwarded_date");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The account was hidden by the user."
+        /// </summary>
+        public static string lng_forwarded_hidden
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forwarded_hidden");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This message was imported from another app. It may not be real."
+        /// </summary>
+        public static string lng_forwarded_imported
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forwarded_imported");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Forwarded from {channel}"
+        /// </summary>
+        public static string lng_forwarded_psa_default
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forwarded_psa_default");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{channel} ({user})"
+        /// </summary>
+        public static string lng_forwarded_signed
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forwarded_signed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Forwarded from {user} via {inline_bot}"
+        /// </summary>
+        public static string lng_forwarded_via
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forwarded_via");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user} and {second_user}"
+        /// </summary>
+        public static string lng_forwarding_from_two
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_forwarding_from_two");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You received this message because you requested to join {name} on {date}."
+        /// </summary>
+        public static string lng_from_request_body
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_from_request_body");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{first_name} {last_name}"
+        /// </summary>
+        public static string lng_full_name
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_full_name");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "An error occurred while reading GIF"
+        /// </summary>
+        public static string lng_gif_error
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_gif_error");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You have no saved GIFs yet."
+        /// </summary>
+        public static string lng_gifs_no_saved
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_gifs_no_saved");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Convert"
+        /// </summary>
+        public static string lng_gigagroup_convert_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_gigagroup_convert_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Learn more"
+        /// </summary>
+        public static string lng_gigagroup_suggest_more
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_gigagroup_suggest_more");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Your group has reached a limit of **200,000** members.
+        ///
+        ///You can increase this limit by converting the group to a **broadcast group** where only admins can post. Interested?"
+        /// </summary>
+        public static string lng_gigagroup_suggest_text
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_gigagroup_suggest_text");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You have created a group."
+        /// </summary>
+        public static string lng_group_about_header
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_about_header");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Banned users are removed from the group and can only come back if added by an admin.
+        ///Invite links don't work for them."
+        /// </summary>
+        public static string lng_group_blocked_list_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_blocked_list_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Those users aren't members of «{group}». Add them to the group?"
+        /// </summary>
+        public static string lng_group_call_add_to_group_all
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_add_to_group_all");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user} isn't a member of «{group}». Add them to the group?"
+        /// </summary>
+        public static string lng_group_call_add_to_group_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_add_to_group_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Some of those users aren't members of «{group}». Add them to the group?"
+        /// </summary>
+        public static string lng_group_call_add_to_group_some
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_add_to_group_some");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Abort video chat"
+        /// </summary>
+        public static string lng_group_call_also_cancel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_also_cancel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Abort live stream"
+        /// </summary>
+        public static string lng_group_call_also_cancel_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_also_cancel_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can now speak in {chat}."
+        /// </summary>
+        public static string lng_group_call_can_speak
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_can_speak");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Abort Video Chat"
+        /// </summary>
+        public static string lng_group_call_cancel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_cancel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Abort Live Stream"
+        /// </summary>
+        public static string lng_group_call_cancel_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_cancel_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can't turn on video in this chat."
+        /// </summary>
+        public static string lng_group_call_chat_no_camera
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_chat_no_camera");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can't share your screen in this chat."
+        /// </summary>
+        public static string lng_group_call_chat_no_screen
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_chat_no_screen");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Video chat is scheduled. You can abort it or just close this panel."
+        /// </summary>
+        public static string lng_group_call_close_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_close_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Live stream is scheduled. You can abort it or just close this panel."
+        /// </summary>
+        public static string lng_group_call_close_sure_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_close_sure_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Pin video"
+        /// </summary>
+        public static string lng_group_call_context_pin_camera
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_context_pin_camera");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Pin screencast"
+        /// </summary>
+        public static string lng_group_call_context_pin_screen
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_context_pin_screen");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unpin video"
+        /// </summary>
+        public static string lng_group_call_context_unpin_camera
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_context_unpin_camera");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unpin screencast"
+        /// </summary>
+        public static string lng_group_call_context_unpin_screen
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_context_unpin_screen");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Copy Listener Link"
+        /// </summary>
+        public static string lng_group_call_copy_listener_link
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_copy_listener_link");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Copy Speaker Link"
+        /// </summary>
+        public static string lng_group_call_copy_speaker_link
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_copy_speaker_link");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to start a video chat in this channel as your personal account?"
+        /// </summary>
+        public static string lng_group_call_create_sure_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_create_sure_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Edit Video Chat Title"
+        /// </summary>
+        public static string lng_group_call_edit_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_edit_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "End Video Chat"
+        /// </summary>
+        public static string lng_group_call_end
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_end");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "End Live Stream"
+        /// </summary>
+        public static string lng_group_call_end_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_end_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Couldn't enable camera. Another app may be already using the camera. Try closing other apps first."
+        /// </summary>
+        public static string lng_group_call_failed_camera
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_failed_camera");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "An error occurred. Screencast has stopped."
+        /// </summary>
+        public static string lng_group_call_failed_screen
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_failed_screen");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You are in Listen Only mode"
+        /// </summary>
+        public static string lng_group_call_force_muted_sub
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_force_muted_sub");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You invited {user} to the video chat."
+        /// </summary>
+        public static string lng_group_call_invite_done_user
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_invite_done_user");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Search results"
+        /// </summary>
+        public static string lng_group_call_invite_search_results
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_invite_search_results");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Invite members"
+        /// </summary>
+        public static string lng_group_call_invite_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_invite_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The audio stream is being recorded."
+        /// </summary>
+        public static string lng_group_call_is_recorded
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_is_recorded");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Live stream is being recorded."
+        /// </summary>
+        public static string lng_group_call_is_recorded_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_is_recorded_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The video stream is being recorded."
+        /// </summary>
+        public static string lng_group_call_is_recorded_video
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_is_recorded_video");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Participants of this video chat will now see you as {name}"
+        /// </summary>
+        public static string lng_group_call_join_as_changed
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_join_as_changed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Participants of this live stream will now see you as {name}"
+        /// </summary>
+        public static string lng_group_call_join_as_changed_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_join_as_changed_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Join the video chat {chat}?"
+        /// </summary>
+        public static string lng_group_call_join_confirm
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_join_confirm");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to join the live stream {chat}?"
+        /// </summary>
+        public static string lng_group_call_join_confirm_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_join_confirm_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to join this video chat as your personal account?"
+        /// </summary>
+        public static string lng_group_call_join_sure_personal
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_join_sure_personal");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to leave your active live stream and join a video chat in this group?"
+        /// </summary>
+        public static string lng_group_call_leave_channel_to_other_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_leave_channel_to_other_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to leave your active live stream and join a live stream in this channel?"
+        /// </summary>
+        public static string lng_group_call_leave_channel_to_other_sure_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_leave_channel_to_other_sure_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to leave this video chat?"
+        /// </summary>
+        public static string lng_group_call_leave_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_leave_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to leave this live stream?"
+        /// </summary>
+        public static string lng_group_call_leave_sure_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_leave_sure_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Leave your currently active video chat and join this video chat?"
+        /// </summary>
+        public static string lng_group_call_leave_to_other_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_leave_to_other_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to leave your active video chat and join a live stream in this channel?"
+        /// </summary>
+        public static string lng_group_call_leave_to_other_sure_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_leave_to_other_sure_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Telegram Desktop does not have access to system wide keyboard input required for Push to Talk."
+        /// </summary>
+        public static string lng_group_call_mac_access
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_mac_access");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please allow **Accessibility** for Telegram in Privacy Settings.
+        ///
+        ///You may need to restart the app."
+        /// </summary>
+        public static string lng_group_call_mac_accessibility
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_mac_accessibility");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please allow **Input Monitoring** for Telegram in Privacy Settings."
+        /// </summary>
+        public static string lng_group_call_mac_input
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_mac_input");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please allow **Screen Recording** for Telegram in Privacy Settings."
+        /// </summary>
+        public static string lng_group_call_mac_recording
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_mac_recording");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Telegram Desktop does not have access to screen recording required for Screen Sharing."
+        /// </summary>
+        public static string lng_group_call_mac_screencast_access
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_mac_screencast_access");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Open Settings"
+        /// </summary>
+        public static string lng_group_call_mac_settings
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_mac_settings");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Microphone"
+        /// </summary>
+        public static string lng_group_call_microphone
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_microphone");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "More"
+        /// </summary>
+        public static string lng_group_call_more
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_more");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "muted by me"
+        /// </summary>
+        public static string lng_group_call_muted_by_me_status
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_muted_by_me_status");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can't turn on video while you're muted by admin."
+        /// </summary>
+        public static string lng_group_call_muted_no_camera
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_muted_no_camera");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can't share your screen while you're muted by admin."
+        /// </summary>
+        public static string lng_group_call_muted_no_screen
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_muted_no_screen");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Mute new participants"
+        /// </summary>
+        public static string lng_group_call_new_muted
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_new_muted");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Click to join"
+        /// </summary>
+        public static string lng_group_call_no_members
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_no_members");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Enable Noise Suppression"
+        /// </summary>
+        public static string lng_group_call_noise_suppression
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_noise_suppression");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can also {link}."
+        /// </summary>
+        public static string lng_group_call_or_schedule
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_or_schedule");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user}'s video is pinned."
+        /// </summary>
+        public static string lng_group_call_pinned_camera
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_pinned_camera");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Your video is pinned."
+        /// </summary>
+        public static string lng_group_call_pinned_camera_me
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_pinned_camera_me");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user}'s screencast is pinned."
+        /// </summary>
+        public static string lng_group_call_pinned_screen
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_pinned_screen");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Your screencast is pinned."
+        /// </summary>
+        public static string lng_group_call_pinned_screen_me
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_pinned_screen_me");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Release delay: {delay}"
+        /// </summary>
+        public static string lng_group_call_ptt_delay
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_ptt_delay");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{amount} ms"
+        /// </summary>
+        public static string lng_group_call_ptt_delay_ms
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_ptt_delay_ms");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{amount} s"
+        /// </summary>
+        public static string lng_group_call_ptt_delay_s
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_ptt_delay_s");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Stop Recording"
+        /// </summary>
+        public static string lng_group_call_ptt_recording
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_ptt_recording");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Edit Keyboard Shortcut"
+        /// </summary>
+        public static string lng_group_call_ptt_shortcut
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_ptt_shortcut");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Push to Talk Shortcut"
+        /// </summary>
+        public static string lng_group_call_push_to_talk
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_push_to_talk");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Click if you want to speak"
+        /// </summary>
+        public static string lng_group_call_raise_hand_tip
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_raise_hand_tip");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Recording of the audio stream saved to Saved Messages."
+        /// </summary>
+        public static string lng_group_call_recording_saved
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_recording_saved");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Video saved to Saved Messages."
+        /// </summary>
+        public static string lng_group_call_recording_saved_video
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_recording_saved_video");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This chat will be recorded into an audio file"
+        /// </summary>
+        public static string lng_group_call_recording_start_audio_subtitle
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_recording_start_audio_subtitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Also record video"
+        /// </summary>
+        public static string lng_group_call_recording_start_checkbox
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_recording_start_checkbox");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add Title"
+        /// </summary>
+        public static string lng_group_call_recording_start_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_recording_start_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Choose video orientation"
+        /// </summary>
+        public static string lng_group_call_recording_start_video_subtitle
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_recording_start_video_subtitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Started recording the audio stream."
+        /// </summary>
+        public static string lng_group_call_recording_started
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_recording_started");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Live stream recording started."
+        /// </summary>
+        public static string lng_group_call_recording_started_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_recording_started_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Started recording the video stream."
+        /// </summary>
+        public static string lng_group_call_recording_started_video
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_recording_started_video");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Stop Recording"
+        /// </summary>
+        public static string lng_group_call_recording_stop
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_recording_stop");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Recording stopped."
+        /// </summary>
+        public static string lng_group_call_recording_stopped
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_recording_stopped");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Live stream recording stopped."
+        /// </summary>
+        public static string lng_group_call_recording_stopped_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_recording_stopped_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Remove {channel} from the video chat and ban them?"
+        /// </summary>
+        public static string lng_group_call_remove_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_remove_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Remove {channel} from the live stream?"
+        /// </summary>
+        public static string lng_group_call_remove_channel_from_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_remove_channel_from_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "schedule a video chat"
+        /// </summary>
+        public static string lng_group_call_schedule
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_schedule");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "schedule a live stream"
+        /// </summary>
+        public static string lng_group_call_schedule_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_schedule_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Subscribers of the channel will be notified that the live stream will start in {duration}."
+        /// </summary>
+        public static string lng_group_call_schedule_notified_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_schedule_notified_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Members of the group will be notified that the video chat will start in {duration}."
+        /// </summary>
+        public static string lng_group_call_schedule_notified_group
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_schedule_notified_group");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Share System Audio"
+        /// </summary>
+        public static string lng_group_call_screen_share_audio
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_screen_share_audio");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Share Screen"
+        /// </summary>
+        public static string lng_group_call_screen_share_start
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_screen_share_start");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Stop Sharing"
+        /// </summary>
+        public static string lng_group_call_screen_share_stop
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_screen_share_stop");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Screen {index}"
+        /// </summary>
+        public static string lng_group_call_screen_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_screen_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Users with this link can speak"
+        /// </summary>
+        public static string lng_group_call_share_speaker
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_share_speaker");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Speakers"
+        /// </summary>
+        public static string lng_group_call_speakers
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_speakers");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Start Live Stream as..."
+        /// </summary>
+        public static string lng_group_call_start_as_header_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_start_as_header_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to start the video chat now?"
+        /// </summary>
+        public static string lng_group_call_start_now_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_start_now_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to start the live stream now?"
+        /// </summary>
+        public static string lng_group_call_start_now_sure_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_start_now_sure_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Video Chat starts {when}"
+        /// </summary>
+        public static string lng_group_call_starts
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_starts");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Live Stream starts {when}"
+        /// </summary>
+        public static string lng_group_call_starts_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_starts_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{date} at {time}"
+        /// </summary>
+        public static string lng_group_call_starts_date
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_starts_date");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Starts {when}"
+        /// </summary>
+        public static string lng_group_call_starts_short
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_starts_short");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{date}, {time}"
+        /// </summary>
+        public static string lng_group_call_starts_short_date
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_starts_short_date");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Today, {time}"
+        /// </summary>
+        public static string lng_group_call_starts_short_today
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_starts_short_today");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Tomorrow, {time}"
+        /// </summary>
+        public static string lng_group_call_starts_short_tomorrow
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_starts_short_tomorrow");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "today at {time}"
+        /// </summary>
+        public static string lng_group_call_starts_today
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_starts_today");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "tomorrow at {time}"
+        /// </summary>
+        public static string lng_group_call_starts_tomorrow
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_starts_tomorrow");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user} is sharing their screen. This action will pin your screencast for all participants."
+        /// </summary>
+        public static string lng_group_call_sure_screencast
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_sure_screencast");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Participants of this video chat will now see you as **{user}**"
+        /// </summary>
+        public static string lng_group_call_switch_done
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_switch_done");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Video chat title changed to {title}"
+        /// </summary>
+        public static string lng_group_call_title_changed
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_title_changed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Live stream title changed to {title}"
+        /// </summary>
+        public static string lng_group_call_title_changed_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_title_changed_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, this video chat has too many participants at the moment."
+        /// </summary>
+        public static string lng_group_call_too_many
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_too_many");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Your camera is off. Click here to enable camera."
+        /// </summary>
+        public static string lng_group_call_tooltip_camera
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_tooltip_camera");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Disable camera"
+        /// </summary>
+        public static string lng_group_call_tooltip_camera_off
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_tooltip_camera_off");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Muted by admin. Click if you want to speak."
+        /// </summary>
+        public static string lng_group_call_tooltip_force_muted
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_tooltip_force_muted");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You are on mute. Click here to speak."
+        /// </summary>
+        public static string lng_group_call_tooltip_microphone
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_tooltip_microphone");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You asked to speak. We let the speakers know."
+        /// </summary>
+        public static string lng_group_call_tooltip_raised_hand
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_tooltip_raised_hand");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Hold space bar to temporarily unmute."
+        /// </summary>
+        public static string lng_group_call_unmute_sub
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_unmute_sub");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user}'s video is unpinned."
+        /// </summary>
+        public static string lng_group_call_unpinned_camera
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_unpinned_camera");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Your video is unpinned."
+        /// </summary>
+        public static string lng_group_call_unpinned_camera_me
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_unpinned_camera_me");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user}'s screencast is unpinned."
+        /// </summary>
+        public static string lng_group_call_unpinned_screen
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_unpinned_screen");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Your screencast is unpinned."
+        /// </summary>
+        public static string lng_group_call_unpinned_screen_me
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_unpinned_screen_me");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Video is paused"
+        /// </summary>
+        public static string lng_group_call_video_paused
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_video_paused");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You are Live"
+        /// </summary>
+        public static string lng_group_call_you_are_live
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_call_you_are_live");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Telegram users will be able to join
+        ///your group by following this link."
+        /// </summary>
+        public static string lng_group_invite_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_invite_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Telegram users will be able to join
+        ///your channel by following this link."
+        /// </summary>
+        public static string lng_group_invite_about_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_invite_about_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Your previous link will be deactivated and we'll generate a new invite link for you."
+        /// </summary>
+        public static string lng_group_invite_about_new
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_invite_about_new");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can generate invite links that will expire after they've been used."
+        /// </summary>
+        public static string lng_group_invite_add_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_invite_add_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This invite link is invalid or has expired."
+        /// </summary>
+        public static string lng_group_invite_bad_link
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_invite_bad_link");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete all"
+        /// </summary>
+        public static string lng_group_invite_context_delete_all
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_invite_context_delete_all");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Get QR Code"
+        /// </summary>
+        public static string lng_group_invite_context_qr
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_invite_context_qr");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Create an invite link"
+        /// </summary>
+        public static string lng_group_invite_create
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_invite_create");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Revoke invite link"
+        /// </summary>
+        public static string lng_group_invite_create_new
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_invite_create_new");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to delete all revoked links? This action cannot be undone."
+        /// </summary>
+        public static string lng_group_invite_delete_all_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_invite_delete_all_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to delete that revoked link?"
+        /// </summary>
+        public static string lng_group_invite_delete_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_invite_delete_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Edit Link"
+        /// </summary>
+        public static string lng_group_invite_edit_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_invite_edit_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This link has expired."
+        /// </summary>
+        public static string lng_group_invite_expired_already
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_invite_expired_already");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This link expires {when}."
+        /// </summary>
+        public static string lng_group_invite_expires_at
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_invite_expires_at");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Link Name (optional)"
+        /// </summary>
+        public static string lng_group_invite_label_header
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_invite_label_header");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can create additional invite links that have limited time or number of usages."
+        /// </summary>
+        public static string lng_group_invite_manage_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_invite_manage_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unable to join this group because there are too many members in it already."
+        /// </summary>
+        public static string lng_group_invite_no_room
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_invite_no_room");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Links created by this admin"
+        /// </summary>
+        public static string lng_group_invite_other_list
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_invite_other_list");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Permanent link"
+        /// </summary>
+        public static string lng_group_invite_permanent
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_invite_permanent");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Permanent link of this admin"
+        /// </summary>
+        public static string lng_group_invite_permanent_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_invite_permanent_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "QR Code copied to clipboard."
+        /// </summary>
+        public static string lng_group_invite_qr_copied
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_invite_qr_copied");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Reactivate Link"
+        /// </summary>
+        public static string lng_group_invite_reactivate
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_invite_reactivate");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Request admin approval"
+        /// </summary>
+        public static string lng_group_invite_request_approve
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_invite_request_approve");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to revoke that invite link?"
+        /// </summary>
+        public static string lng_group_invite_revoke_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_invite_revoke_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Revoked links"
+        /// </summary>
+        public static string lng_group_invite_revoked_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_invite_revoked_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, this group is not accessible."
+        /// </summary>
+        public static string lng_group_not_accessible
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_not_accessible");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Users removed from the group by admins cannot rejoin it via invite links."
+        /// </summary>
+        public static string lng_group_removed_list_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_removed_list_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Request to Join"
+        /// </summary>
+        public static string lng_group_request_to_join
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_request_to_join");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You have no pending requests
+        ///to join your group."
+        /// </summary>
+        public static string lng_group_requests_none
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_requests_none");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You have no pending requests
+        ///to join your channel."
+        /// </summary>
+        public static string lng_group_requests_none_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_requests_none_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user} requested to join"
+        /// </summary>
+        public static string lng_group_requests_pending_user
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_requests_pending_user");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "requested to join {date} at {time}"
+        /// </summary>
+        public static string lng_group_requests_status_date_time
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_requests_status_date_time");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "requested to join today at {time}"
+        /// </summary>
+        public static string lng_group_requests_status_today
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_requests_status_today");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "requested to join yesterday at {time}"
+        /// </summary>
+        public static string lng_group_requests_status_yesterday
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_requests_status_yesterday");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user} has been added to the group."
+        /// </summary>
+        public static string lng_group_requests_was_added
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_requests_was_added");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user} has been added to the channel."
+        /// </summary>
+        public static string lng_group_requests_was_added_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_requests_was_added_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "group"
+        /// </summary>
+        public static string lng_group_status
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_status");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Group stickers"
+        /// </summary>
+        public static string lng_group_stickers
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_stickers");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Choose sticker set"
+        /// </summary>
+        public static string lng_group_stickers_add
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_stickers_add");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can choose a sticker set which will be available for every member while in the group chat."
+        /// </summary>
+        public static string lng_group_stickers_description
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_group_stickers_description");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "imported"
+        /// </summary>
+        public static string lng_imported
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_imported");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Album"
+        /// </summary>
+        public static string lng_in_dlg_album
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_in_dlg_album");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Audio file"
+        /// </summary>
+        public static string lng_in_dlg_audio_file
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_in_dlg_audio_file");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{emoji} Sticker"
+        /// </summary>
+        public static string lng_in_dlg_sticker_emoji
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_in_dlg_sticker_emoji");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "In reply to"
+        /// </summary>
+        public static string lng_in_reply_to
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_in_reply_to");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Bot Info"
+        /// </summary>
+        public static string lng_info_bot_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_info_bot_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Channel Info"
+        /// </summary>
+        public static string lng_info_channel_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_info_channel_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Group Info"
+        /// </summary>
+        public static string lng_info_group_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_info_group_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Share this contact"
+        /// </summary>
+        public static string lng_info_share_contact
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_info_share_contact");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "User Info"
+        /// </summary>
+        public static string lng_info_user_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_info_user_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No results."
+        /// </summary>
+        public static string lng_inline_bot_no_results
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_inline_bot_no_results");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "via {inline_bot}"
+        /// </summary>
+        public static string lng_inline_bot_via
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_inline_bot_via");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, no way to write here :("
+        /// </summary>
+        public static string lng_inline_switch_cant
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_inline_switch_cant");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Choose conversation..."
+        /// </summary>
+        public static string lng_inline_switch_choose
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_inline_switch_choose");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Welcome to the official Telegram Desktop app.
+        ///It's fast and secure."
+        /// </summary>
+        public static string lng_intro_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_intro_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "SIGN UP"
+        /// </summary>
+        public static string lng_intro_finish
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_intro_finish");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "NEXT"
+        /// </summary>
+        public static string lng_intro_next
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_intro_next");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Or log in using your phone number"
+        /// </summary>
+        public static string lng_intro_qr_skip
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_intro_qr_skip");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Open Telegram on your phone"
+        /// </summary>
+        public static string lng_intro_qr_step1
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_intro_qr_step1");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Go to Settings > Devices > Scan QR"
+        /// </summary>
+        public static string lng_intro_qr_step2
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_intro_qr_step2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Scan this image to Log In"
+        /// </summary>
+        public static string lng_intro_qr_step3
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_intro_qr_step3");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Scan From Mobile Telegram"
+        /// </summary>
+        public static string lng_intro_qr_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_intro_qr_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "SUBMIT"
+        /// </summary>
+        public static string lng_intro_submit
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_intro_submit");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you have joined too many channels and supergroups. Please leave some before joining this one."
+        /// </summary>
+        public static string lng_join_channel_error
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_join_channel_error");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You're already using this language pack. You can change your language back at any time in Settings."
+        /// </summary>
+        public static string lng_language_already
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_language_already");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, this language pack doesn't exist."
+        /// </summary>
+        public static string lng_language_not_found
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_language_not_found");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unfortunately, this custom language pack ({lang_name}) doesn't contain data for Telegram Desktop. You can contribute to this language pack using the {link}."
+        /// </summary>
+        public static string lng_language_not_ready_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_language_not_ready_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "translation platform"
+        /// </summary>
+        public static string lng_language_not_ready_link
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_language_not_ready_link");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You are about to apply a language pack ({lang_name}) that is {percent}% complete.
+        ///
+        ///This will translate the entire interface. You can suggest corrections in the {link}.
+        ///
+        ///You can change your language back at any time in Settings."
+        /// </summary>
+        public static string lng_language_switch_about_official
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_language_switch_about_official");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You are about to apply a custom language pack ({lang_name}) that is {percent}% complete.
+        ///
+        ///This will translate the entire interface. You can suggest corrections in the {link}.
+        ///
+        ///You can change your language back at any time in Settings."
+        /// </summary>
+        public static string lng_language_switch_about_unofficial
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_language_switch_about_unofficial");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "translation platform"
+        /// </summary>
+        public static string lng_language_switch_link
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_language_switch_link");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Don't ask me again"
+        /// </summary>
+        public static string lng_launch_exe_dont_ask
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_launch_exe_dont_ask");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Run"
+        /// </summary>
+        public static string lng_launch_exe_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_launch_exe_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This file has the extension {extension}
+        ///It may harm your computer.
+        ///Are you sure you want to run it?"
+        /// </summary>
+        public static string lng_launch_exe_warning
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_launch_exe_warning");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Opening this file can potentially expose your IP address to its creator. Continue?"
+        /// </summary>
+        public static string lng_launch_svg_warning
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_launch_svg_warning");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Redo"
+        /// </summary>
+        public static string lng_linux_menu_redo
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_linux_menu_redo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Tools"
+        /// </summary>
+        public static string lng_linux_menu_tools
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_linux_menu_tools");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Undo"
+        /// </summary>
+        public static string lng_linux_menu_undo
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_linux_menu_undo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You don't have any audio configuration applications installed."
+        /// </summary>
+        public static string lng_linux_no_audio_prefs
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_linux_no_audio_prefs");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Clear all"
+        /// </summary>
+        public static string lng_local_storage_clear
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_local_storage_clear");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Cleared!"
+        /// </summary>
+        public static string lng_local_storage_cleared
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_local_storage_cleared");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Clearing..."
+        /// </summary>
+        public static string lng_local_storage_clearing
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_local_storage_clearing");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No cached files"
+        /// </summary>
+        public static string lng_local_storage_empty
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_local_storage_empty");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Media cache"
+        /// </summary>
+        public static string lng_local_storage_media
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_local_storage_media");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Media cache limit: {size}"
+        /// </summary>
+        public static string lng_local_storage_media_limit
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_local_storage_media_limit");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Total size limit: {size}"
+        /// </summary>
+        public static string lng_local_storage_size_limit
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_local_storage_size_limit");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Summary"
+        /// </summary>
+        public static string lng_local_storage_summary
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_local_storage_summary");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Clear files older than: {limit}"
+        /// </summary>
+        public static string lng_local_storage_time_limit
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_local_storage_time_limit");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Local storage"
+        /// </summary>
+        public static string lng_local_storage_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_local_storage_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "All Applications"
+        /// </summary>
+        public static string lng_mac_all_apps
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mac_all_apps");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Always Open With"
+        /// </summary>
+        public static string lng_mac_always_open_with
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mac_always_open_with");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Choose Application"
+        /// </summary>
+        public static string lng_mac_choose_app
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mac_choose_app");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Other..."
+        /// </summary>
+        public static string lng_mac_choose_program_menu
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mac_choose_program_menu");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Choose an application to open the document "{file}"."
+        /// </summary>
+        public static string lng_mac_choose_text
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mac_choose_text");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Show:"
+        /// </summary>
+        public static string lng_mac_enable_filter
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mac_enable_filter");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "About {telegram}"
+        /// </summary>
+        public static string lng_mac_menu_about_telegram
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mac_menu_about_telegram");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Cut"
+        /// </summary>
+        public static string lng_mac_menu_cut
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mac_menu_cut");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Emoji & Symbols"
+        /// </summary>
+        public static string lng_mac_menu_emoji_and_symbols
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mac_menu_emoji_and_symbols");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Hide Others"
+        /// </summary>
+        public static string lng_mac_menu_hide_others
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mac_menu_hide_others");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Hide {telegram}"
+        /// </summary>
+        public static string lng_mac_menu_hide_telegram
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mac_menu_hide_telegram");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Paste"
+        /// </summary>
+        public static string lng_mac_menu_paste
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mac_menu_paste");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Resume"
+        /// </summary>
+        public static string lng_mac_menu_player_resume
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mac_menu_player_resume");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Preferences..."
+        /// </summary>
+        public static string lng_mac_menu_preferences
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mac_menu_preferences");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Quit {telegram}"
+        /// </summary>
+        public static string lng_mac_menu_quit_telegram
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mac_menu_quit_telegram");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Redo"
+        /// </summary>
+        public static string lng_mac_menu_redo
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mac_menu_redo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Select All"
+        /// </summary>
+        public static string lng_mac_menu_select_all
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mac_menu_select_all");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Services"
+        /// </summary>
+        public static string lng_mac_menu_services
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mac_menu_services");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Show Telegram"
+        /// </summary>
+        public static string lng_mac_menu_show
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mac_menu_show");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Show All"
+        /// </summary>
+        public static string lng_mac_menu_show_all
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mac_menu_show_all");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Undo"
+        /// </summary>
+        public static string lng_mac_menu_undo
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mac_menu_undo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Window"
+        /// </summary>
+        public static string lng_mac_menu_window
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mac_menu_window");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "It's not known if this application can open "{file}"."
+        /// </summary>
+        public static string lng_mac_not_known_app
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mac_not_known_app");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Recommended Applications"
+        /// </summary>
+        public static string lng_mac_recommended_apps
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mac_recommended_apps");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This application can open "{file}"."
+        /// </summary>
+        public static string lng_mac_this_app_can_open
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mac_this_app_can_open");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Favorite stickers"
+        /// </summary>
+        public static string lng_mac_touchbar_favorite_stickers
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mac_touchbar_favorite_stickers");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Channel Info"
+        /// </summary>
+        public static string lng_manage_channel_info
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_manage_channel_info");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "A link to {group} is shown to all subscribers in the bottom panel."
+        /// </summary>
+        public static string lng_manage_discussion_group_about_chosen
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_manage_discussion_group_about_chosen");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add a group"
+        /// </summary>
+        public static string lng_manage_discussion_group_add
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_manage_discussion_group_add");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Create a new group"
+        /// </summary>
+        public static string lng_manage_discussion_group_create
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_manage_discussion_group_create");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Link group"
+        /// </summary>
+        public static string lng_manage_discussion_group_link
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_manage_discussion_group_link");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Everything you post in the channel is forwarded to this group."
+        /// </summary>
+        public static string lng_manage_discussion_group_posted
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_manage_discussion_group_posted");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Anyone from the channel will be able to see messages in this group."
+        /// </summary>
+        public static string lng_manage_discussion_group_private
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_manage_discussion_group_private");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "private group"
+        /// </summary>
+        public static string lng_manage_discussion_group_private_status
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_manage_discussion_group_private_status");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to make {group} the discussion board for {channel}?"
+        /// </summary>
+        public static string lng_manage_discussion_group_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_manage_discussion_group_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unlink group"
+        /// </summary>
+        public static string lng_manage_discussion_group_unlink
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_manage_discussion_group_unlink");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""Chat history for new members" will be switched to **Visible**."
+        /// </summary>
+        public static string lng_manage_discussion_group_warning
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_manage_discussion_group_warning");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Group Info"
+        /// </summary>
+        public static string lng_manage_group_info
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_manage_group_info");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Linked channel"
+        /// </summary>
+        public static string lng_manage_linked_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_manage_linked_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This group is linked as the discussion board for {channel}."
+        /// </summary>
+        public static string lng_manage_linked_channel_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_manage_linked_channel_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Any member of this group will be able to see messages in the channel."
+        /// </summary>
+        public static string lng_manage_linked_channel_private
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_manage_linked_channel_private");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "private channel"
+        /// </summary>
+        public static string lng_manage_linked_channel_private_status
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_manage_linked_channel_private_status");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Restore linked channel"
+        /// </summary>
+        public static string lng_manage_linked_channel_restore
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_manage_linked_channel_restore");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unlink channel"
+        /// </summary>
+        public static string lng_manage_linked_channel_unlink
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_manage_linked_channel_unlink");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "1 day"
+        /// </summary>
+        public static string lng_manage_messages_ttl_after1
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_manage_messages_ttl_after1");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Banned users"
+        /// </summary>
+        public static string lng_manage_peer_banned_users
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_manage_peer_banned_users");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Expired link"
+        /// </summary>
+        public static string lng_manage_peer_link_expired
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_manage_peer_link_expired");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Invite link"
+        /// </summary>
+        public static string lng_manage_peer_link_invite
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_manage_peer_link_invite");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Permanent link"
+        /// </summary>
+        public static string lng_manage_peer_link_permanent
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_manage_peer_link_permanent");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Link type"
+        /// </summary>
+        public static string lng_manage_peer_link_type
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_manage_peer_link_type");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Members won't be able to forward messages from this group or save media files."
+        /// </summary>
+        public static string lng_manage_peer_no_forwards_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_manage_peer_no_forwards_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Subscribers won't be able to forward messages from this channel or save media files."
+        /// </summary>
+        public static string lng_manage_peer_no_forwards_about_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_manage_peer_no_forwards_about_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Recent actions"
+        /// </summary>
+        public static string lng_manage_peer_recent_actions
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_manage_peer_recent_actions");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Archive Masks"
+        /// </summary>
+        public static string lng_masks_archive_pack
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_masks_archive_pack");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Mask pack has been archived."
+        /// </summary>
+        public static string lng_masks_has_been_archived
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_masks_has_been_archived");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Mask pack has been installed."
+        /// </summary>
+        public static string lng_masks_installed
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_masks_installed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No voice messages here yet"
+        /// </summary>
+        public static string lng_media_audio_empty
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_media_audio_empty");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Automatic voice message download"
+        /// </summary>
+        public static string lng_media_auto_audio
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_media_auto_audio");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Automatic GIF download"
+        /// </summary>
+        public static string lng_media_auto_gif
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_media_auto_gif");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Groups and channels"
+        /// </summary>
+        public static string lng_media_auto_groups
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_media_auto_groups");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "In channels"
+        /// </summary>
+        public static string lng_media_auto_in_channels
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_media_auto_in_channels");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "In groups"
+        /// </summary>
+        public static string lng_media_auto_in_groups
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_media_auto_in_groups");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "In private chats"
+        /// </summary>
+        public static string lng_media_auto_in_private
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_media_auto_in_private");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Automatic photo download"
+        /// </summary>
+        public static string lng_media_auto_photo
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_media_auto_photo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Autoplay"
+        /// </summary>
+        public static string lng_media_auto_play
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_media_auto_play");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Private chats"
+        /// </summary>
+        public static string lng_media_auto_private_chats
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_media_auto_private_chats");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Automatically download"
+        /// </summary>
+        public static string lng_media_auto_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_media_auto_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No files here yet"
+        /// </summary>
+        public static string lng_media_file_empty
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_media_file_empty");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No files found"
+        /// </summary>
+        public static string lng_media_file_empty_search
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_media_file_empty_search");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No GIFs here yet"
+        /// </summary>
+        public static string lng_media_gif_empty
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_media_gif_empty");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "GIFs and animations"
+        /// </summary>
+        public static string lng_media_gif_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_media_gif_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No shared links here yet"
+        /// </summary>
+        public static string lng_media_link_empty
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_media_link_empty");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No shared links found"
+        /// </summary>
+        public static string lng_media_link_empty_search
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_media_link_empty_search");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Open With"
+        /// </summary>
+        public static string lng_media_open_with
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_media_open_with");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No photos here yet"
+        /// </summary>
+        public static string lng_media_photo_empty
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_media_photo_empty");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{ready} of {total} {mb}"
+        /// </summary>
+        public static string lng_media_save_progress
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_media_save_progress");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Limit by size"
+        /// </summary>
+        public static string lng_media_size_limit
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_media_size_limit");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "up to {size}"
+        /// </summary>
+        public static string lng_media_size_up_to
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_media_size_up_to");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No music files here yet"
+        /// </summary>
+        public static string lng_media_song_empty
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_media_song_empty");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No music files found"
+        /// </summary>
+        public static string lng_media_song_empty_search
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_media_song_empty_search");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Shared links"
+        /// </summary>
+        public static string lng_media_type_links
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_media_type_links");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No videos here yet"
+        /// </summary>
+        public static string lng_media_video_empty
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_media_video_empty");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Round video messages"
+        /// </summary>
+        public static string lng_media_video_messages_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_media_video_messages_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Channel Photo"
+        /// </summary>
+        public static string lng_mediaview_channel_photo
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mediaview_channel_photo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{date} at {time}"
+        /// </summary>
+        public static string lng_mediaview_date_time
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mediaview_date_time");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Downloads"
+        /// </summary>
+        public static string lng_mediaview_downloads
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mediaview_downloads");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{file} {n} of {amount}"
+        /// </summary>
+        public static string lng_mediaview_file_n_of_amount
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mediaview_file_n_of_amount");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{file} {n} of {count}"
+        /// </summary>
+        public static string lng_mediaview_file_n_of_count
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mediaview_file_n_of_count");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "View all files"
+        /// </summary>
+        public static string lng_mediaview_files_all
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mediaview_files_all");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Group Photo"
+        /// </summary>
+        public static string lng_mediaview_group_photo
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mediaview_group_photo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Photo {n} of {amount}"
+        /// </summary>
+        public static string lng_mediaview_n_of_amount
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mediaview_n_of_amount");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Photo {n} of {count}"
+        /// </summary>
+        public static string lng_mediaview_n_of_count
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mediaview_n_of_count");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "View all photos"
+        /// </summary>
+        public static string lng_mediaview_photos_all
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mediaview_photos_all");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Playback speed: {speed}"
+        /// </summary>
+        public static string lng_mediaview_playback_speed
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mediaview_playback_speed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Profile Photo"
+        /// </summary>
+        public static string lng_mediaview_profile_photo
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mediaview_profile_photo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Rotate video"
+        /// </summary>
+        public static string lng_mediaview_rotate_video
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mediaview_rotate_video");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Save As..."
+        /// </summary>
+        public static string lng_mediaview_save_as
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mediaview_save_as");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Image was saved to your [c]Downloads[/c] folder"
+        /// </summary>
+        public static string lng_mediaview_saved
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mediaview_saved");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Image was saved to your {downloads} folder"
+        /// </summary>
+        public static string lng_mediaview_saved_to
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mediaview_saved_to");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Single Photo"
+        /// </summary>
+        public static string lng_mediaview_single_photo
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mediaview_single_photo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "today at {time}"
+        /// </summary>
+        public static string lng_mediaview_today
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mediaview_today");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Loading - {percent}"
+        /// </summary>
+        public static string lng_mediaview_video_loading
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mediaview_video_loading");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "yesterday at {time}"
+        /// </summary>
+        public static string lng_mediaview_yesterday
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mediaview_yesterday");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "About"
+        /// </summary>
+        public static string lng_menu_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_menu_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Use this account"
+        /// </summary>
+        public static string lng_menu_activate
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_menu_activate");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Formatting"
+        /// </summary>
+        public static string lng_menu_formatting
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_menu_formatting");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Plain text"
+        /// </summary>
+        public static string lng_menu_formatting_clear
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_menu_formatting_clear");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Create link"
+        /// </summary>
+        public static string lng_menu_formatting_link_create
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_menu_formatting_link_create");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Monospace"
+        /// </summary>
+        public static string lng_menu_formatting_monospace
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_menu_formatting_monospace");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Insert Unicode control character"
+        /// </summary>
+        public static string lng_menu_insert_unicode
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_menu_insert_unicode");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Night Mode"
+        /// </summary>
+        public static string lng_menu_night_mode
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_menu_night_mode");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Update"
+        /// </summary>
+        public static string lng_menu_update
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_menu_update");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Empty Message"
+        /// </summary>
+        public static string lng_message_empty
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_message_empty");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Write a message..."
+        /// </summary>
+        public static string lng_message_ph
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_message_ph");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This message is not supported by your version of Telegram. Please update to the latest version in Settings > Advanced, or install it from {link}. If you are already using the latest version, this message might depend on a feature that is not yet implemented."
+        /// </summary>
+        public static string lng_message_unsupported
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_message_unsupported");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This action will convert the group to a supergroup. Unfortunately, you are a member of too many supergroups and channels. Please leave some of the channels or groups you don't need before proceeding."
+        /// </summary>
+        public static string lng_migrate_error
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_migrate_error");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Minimize to Tray"
+        /// </summary>
+        public static string lng_minimize_to_tray
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_minimize_to_tray");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{month} {day}"
+        /// </summary>
+        public static string lng_month_day
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_month_day");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{month} {day}, {year}"
+        /// </summary>
+        public static string lng_month_day_year
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_month_day_year");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{month} {year}"
+        /// </summary>
+        public static string lng_month_year
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_month_year");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Jan"
+        /// </summary>
+        public static string lng_month1_small
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_month1_small");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Oct"
+        /// </summary>
+        public static string lng_month10_small
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_month10_small");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Nov"
+        /// </summary>
+        public static string lng_month11_small
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_month11_small");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Dec"
+        /// </summary>
+        public static string lng_month12_small
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_month12_small");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Feb"
+        /// </summary>
+        public static string lng_month2_small
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_month2_small");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Mar"
+        /// </summary>
+        public static string lng_month3_small
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_month3_small");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Apr"
+        /// </summary>
+        public static string lng_month4_small
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_month4_small");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Jun"
+        /// </summary>
+        public static string lng_month6_small
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_month6_small");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Jul"
+        /// </summary>
+        public static string lng_month7_small
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_month7_small");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Aug"
+        /// </summary>
+        public static string lng_month8_small
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_month8_small");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sep"
+        /// </summary>
+        public static string lng_month9_small
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_month9_small");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Choose for how long you would like to turn off notifications for the following chat"
+        /// </summary>
+        public static string lng_mute_box_tip
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_mute_box_tip");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{name},
+        ///We detected a login to your account from a new device on {day}, {date} at {time}.
+        ///
+        ///Device: {device}
+        ///Location: {location}
+        ///
+        ///If this wasn't you, you can go to Settings > Privacy and Security > Show all sessions and terminate that session.
+        ///
+        ///If you think that somebody logged in to your account against your will, you can enable Two-Step Verification in Privacy and Security settings.
+        ///
+        ///Sincerely,
+        ///The Telegram Team"
+        /// </summary>
+        public static string lng_new_authorization
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_new_authorization");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user} is now in your contacts"
+        /// </summary>
+        public static string lng_new_contact_add_done
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_new_contact_add_done");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add {user} to contacts"
+        /// </summary>
+        public static string lng_new_contact_add_name
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_new_contact_add_name");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user} is now blocked"
+        /// </summary>
+        public static string lng_new_contact_block_done
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_new_contact_block_done");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user} is an admin of {name}, a channel you requested to join."
+        /// </summary>
+        public static string lng_new_contact_from_request_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_new_contact_from_request_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user} is an admin of {name}, a group you requested to join."
+        /// </summary>
+        public static string lng_new_contact_from_request_group
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_new_contact_from_request_group");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Share my phone number"
+        /// </summary>
+        public static string lng_new_contact_share
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_new_contact_share");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user} can now see your phone number."
+        /// </summary>
+        public static string lng_new_contact_share_done
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_new_contact_share_done");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to share your phone number {phone} with {user}?"
+        /// </summary>
+        public static string lng_new_contact_share_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_new_contact_share_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "— Bug fixes and other minor improvements"
+        /// </summary>
+        public static string lng_new_version_minor
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_new_version_minor");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Telegram Desktop was updated to version {version}
+        ///
+        ///{changes}
+        ///
+        ///Full version history is available here:
+        ///{link}"
+        /// </summary>
+        public static string lng_new_version_wrap
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_new_version_wrap");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Your chats will be here"
+        /// </summary>
+        public static string lng_no_chats
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_no_chats");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "In channels you can enable auto-delete for messages."
+        /// </summary>
+        public static string lng_no_clear_history_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_no_clear_history_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "In public groups you can enable auto-delete for messages."
+        /// </summary>
+        public static string lng_no_clear_history_group
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_no_clear_history_group");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You have no contacts"
+        /// </summary>
+        public static string lng_no_contacts
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_no_contacts");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Telegram needs microphone access so that you can make calls and record voice messages."
+        /// </summary>
+        public static string lng_no_mic_permission
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_no_mic_permission");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Hide all"
+        /// </summary>
+        public static string lng_notification_hide_all
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_notification_hide_all");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Reminder"
+        /// </summary>
+        public static string lng_notification_reminder
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_notification_reminder");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This is a sample notification"
+        /// </summary>
+        public static string lng_notification_sample
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_notification_sample");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Open Telegram"
+        /// </summary>
+        public static string lng_open_from_tray
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_open_from_tray");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Open this link?"
+        /// </summary>
+        public static string lng_open_this_link
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_open_this_link");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "So Telegram Desktop can update to newer versions."
+        /// </summary>
+        public static string lng_outdated_now
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_outdated_now");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Otherwise, Telegram Desktop will stop updating on {date}."
+        /// </summary>
+        public static string lng_outdated_soon
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_outdated_soon");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "PLEASE UPDATE YOUR OPERATING SYSTEM."
+        /// </summary>
+        public static string lng_outdated_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_outdated_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "PLEASE SWITCH TO A 64-BIT OPERATING SYSTEM."
+        /// </summary>
+        public static string lng_outdated_title_bits
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_outdated_title_bits");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "owner"
+        /// </summary>
+        public static string lng_owner_badge
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_owner_badge");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "When a local passcode is set, a lock icon appears at the top of your chat list. Click it to lock Telegram Desktop.
+        ///
+        ///Note: if you forget your local passcode, you'll need to log out of Telegram Desktop and log in again."
+        /// </summary>
+        public static string lng_passcode_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passcode_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Auto-Lock"
+        /// </summary>
+        public static string lng_passcode_autolock
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passcode_autolock");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Auto-Lock if away for..."
+        /// </summary>
+        public static string lng_passcode_autolock_away
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passcode_autolock_away");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{hours_count}h {minutes_count}m"
+        /// </summary>
+        public static string lng_passcode_autolock_hours_minutes
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passcode_autolock_hours_minutes");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Auto-Lock if inactive for..."
+        /// </summary>
+        public static string lng_passcode_autolock_inactive
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passcode_autolock_inactive");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Change passcode"
+        /// </summary>
+        public static string lng_passcode_change
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passcode_change");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Re-enter new passcode"
+        /// </summary>
+        public static string lng_passcode_confirm_new
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passcode_confirm_new");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Local passcode"
+        /// </summary>
+        public static string lng_passcode_create
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passcode_create");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Passcodes are different"
+        /// </summary>
+        public static string lng_passcode_differ
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passcode_differ");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Enter your local passcode"
+        /// </summary>
+        public static string lng_passcode_enter
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passcode_enter");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Enter new passcode"
+        /// </summary>
+        public static string lng_passcode_enter_new
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passcode_enter_new");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Enter current passcode"
+        /// </summary>
+        public static string lng_passcode_enter_old
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passcode_enter_old");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Passcode was not changed"
+        /// </summary>
+        public static string lng_passcode_is_same
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passcode_is_same");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You need to unlock me first."
+        /// </summary>
+        public static string lng_passcode_need_unblock
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passcode_need_unblock");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Your passcode"
+        /// </summary>
+        public static string lng_passcode_ph
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passcode_ph");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Remove local passcode"
+        /// </summary>
+        public static string lng_passcode_remove
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passcode_remove");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Submit"
+        /// </summary>
+        public static string lng_passcode_submit
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passcode_submit");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Turn off"
+        /// </summary>
+        public static string lng_passcode_turn_off
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passcode_turn_off");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Turn on local passcode"
+        /// </summary>
+        public static string lng_passcode_turn_on
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passcode_turn_on");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Wrong passcode"
+        /// </summary>
+        public static string lng_passcode_wrong
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passcode_wrong");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This password will also be required whenever
+        ///you log in to a new device."
+        /// </summary>
+        public static string lng_passport_about_password
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_about_password");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You accept the {policy} and allow their {bot} to send you messages."
+        /// </summary>
+        public static string lng_passport_accept_allow
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_accept_allow");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Tenancy agreement"
+        /// </summary>
+        public static string lng_passport_address_agreement
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_address_agreement");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Upload a scan of your tenancy agreement"
+        /// </summary>
+        public static string lng_passport_address_agreement_upload
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_address_agreement_upload");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Utility bill"
+        /// </summary>
+        public static string lng_passport_address_bill
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_address_bill");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Upload a scan of your utility bill"
+        /// </summary>
+        public static string lng_passport_address_bill_upload
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_address_bill_upload");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Passport registration"
+        /// </summary>
+        public static string lng_passport_address_registration
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_address_registration");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Upload a scan of your passport registration page"
+        /// </summary>
+        public static string lng_passport_address_registration_upload
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_address_registration_upload");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Bank statement"
+        /// </summary>
+        public static string lng_passport_address_statement
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_address_statement");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Upload a scan of your bank statement"
+        /// </summary>
+        public static string lng_passport_address_statement_upload
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_address_statement_upload");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Temporary registration"
+        /// </summary>
+        public static string lng_passport_address_temporary
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_address_temporary");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Upload a scan of your temporary registration"
+        /// </summary>
+        public static string lng_passport_address_temporary_upload
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_address_temporary_upload");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Residential address"
+        /// </summary>
+        public static string lng_passport_address_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_address_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You allow {bot} to send you messages."
+        /// </summary>
+        public static string lng_passport_allow
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_allow");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Authorize"
+        /// </summary>
+        public static string lng_passport_authorize
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_authorize");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Date of birth"
+        /// </summary>
+        public static string lng_passport_birth_date
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_birth_date");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Choose scan image"
+        /// </summary>
+        public static string lng_passport_choose_image
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_choose_image");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "A confirmation code was sent to
+        ///{email}"
+        /// </summary>
+        public static string lng_passport_code_sent
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_code_sent");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "We've sent a confirmation code to your email {email}."
+        /// </summary>
+        public static string lng_passport_confirm_email
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_confirm_email");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "We've sent an SMS with a confirmation code to your phone {phone}."
+        /// </summary>
+        public static string lng_passport_confirm_phone
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_confirm_phone");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Choose country"
+        /// </summary>
+        public static string lng_passport_country_choose
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_country_choose");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please create a password which will be used
+        ///to encrypt your personal data."
+        /// </summary>
+        public static string lng_passport_create_password
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_create_password");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete address information"
+        /// </summary>
+        public static string lng_passport_delete_address
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_delete_address");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to delete your address information?"
+        /// </summary>
+        public static string lng_passport_delete_address_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_delete_address_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to delete your personal details?"
+        /// </summary>
+        public static string lng_passport_delete_details_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_delete_details_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete document"
+        /// </summary>
+        public static string lng_passport_delete_document
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_delete_document");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to delete this document?"
+        /// </summary>
+        public static string lng_passport_delete_document_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_delete_document_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete email"
+        /// </summary>
+        public static string lng_passport_delete_email
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_delete_email");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to delete your email address?"
+        /// </summary>
+        public static string lng_passport_delete_email_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_delete_email_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete phone number"
+        /// </summary>
+        public static string lng_passport_delete_phone
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_delete_phone");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to delete your phone number?"
+        /// </summary>
+        public static string lng_passport_delete_phone_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_delete_phone_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Undo"
+        /// </summary>
+        public static string lng_passport_delete_scan_undo
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_delete_scan_undo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Document details"
+        /// </summary>
+        public static string lng_passport_document_details
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_document_details");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please choose the type of your document:"
+        /// </summary>
+        public static string lng_passport_document_type
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_document_type");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Validate"
+        /// </summary>
+        public static string lng_passport_email_validate
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_email_validate");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, this image has wrong dimensions."
+        /// </summary>
+        public static string lng_passport_error_bad_size
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_error_bad_size");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Can't read this file. Please choose an image."
+        /// </summary>
+        public static string lng_passport_error_cant_read
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_error_cant_read");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, this file is too large."
+        /// </summary>
+        public static string lng_passport_error_too_large
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_error_too_large");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Expiry date"
+        /// </summary>
+        public static string lng_passport_expiry_date
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_expiry_date");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please correct errors."
+        /// </summary>
+        public static string lng_passport_fix_errors
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_fix_errors");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Could not get authorization form."
+        /// </summary>
+        public static string lng_passport_form_error
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_form_error");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Upload a photo of the front side of the document."
+        /// </summary>
+        public static string lng_passport_front_side_description
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_front_side_description");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Scan"
+        /// </summary>
+        public static string lng_passport_front_side_name
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_front_side_name");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Front side"
+        /// </summary>
+        public static string lng_passport_front_side_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_front_side_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Requested information"
+        /// </summary>
+        public static string lng_passport_header
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_header");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Identity card"
+        /// </summary>
+        public static string lng_passport_identity_card
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_identity_card");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Upload proof of your identity"
+        /// </summary>
+        public static string lng_passport_identity_description
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_identity_description");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Internal passport"
+        /// </summary>
+        public static string lng_passport_identity_internal
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_identity_internal");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Driver's licence"
+        /// </summary>
+        public static string lng_passport_identity_license
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_identity_license");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Take a selfie with your document"
+        /// </summary>
+        public static string lng_passport_identity_selfie
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_identity_selfie");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Identity document"
+        /// </summary>
+        public static string lng_passport_identity_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_identity_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "A confirmation link was sent to
+        ///{email}"
+        /// </summary>
+        public static string lng_passport_link_sent
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_link_sent");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Upload a scan of the main page of your document."
+        /// </summary>
+        public static string lng_passport_main_page_description
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_main_page_description");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Scan"
+        /// </summary>
+        public static string lng_passport_main_page_name
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_main_page_name");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Main page"
+        /// </summary>
+        public static string lng_passport_main_page_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_main_page_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Your name in the language of your country of residence ({country})."
+        /// </summary>
+        public static string lng_passport_native_name_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_native_name_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Your name in {language}"
+        /// </summary>
+        public static string lng_passport_native_name_language
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_native_name_language");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Your name in the language of your country of residence."
+        /// </summary>
+        public static string lng_passport_native_name_language_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_native_name_language_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Name in country of residence"
+        /// </summary>
+        public static string lng_passport_native_name_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_native_name_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Or enter a new email"
+        /// </summary>
+        public static string lng_passport_new_email
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_new_email");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Note: You will receive a confirmation code to the email address you provide."
+        /// </summary>
+        public static string lng_passport_new_email_code
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_new_email_code");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{document} or {second_document}"
+        /// </summary>
+        public static string lng_passport_or_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_or_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Create a password"
+        /// </summary>
+        public static string lng_passport_password_create
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_password_create");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The password you entered is not valid."
+        /// </summary>
+        public static string lng_passport_password_wrong
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_password_wrong");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{bot} privacy policy"
+        /// </summary>
+        public static string lng_passport_policy
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_policy");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{bot} requests access to your personal data"
+        /// </summary>
+        public static string lng_passport_request1
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_request1");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "to sign you up for their services"
+        /// </summary>
+        public static string lng_passport_request2
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_request2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Restart"
+        /// </summary>
+        public static string lng_passport_restart
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_restart");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "An unexpected error has occurred. Perhaps some changes were made from a different Telegram application. Would you like to restart this authorization?"
+        /// </summary>
+        public static string lng_passport_restart_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_restart_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Reupload a scan of the front side"
+        /// </summary>
+        public static string lng_passport_reupload_front_side
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_reupload_front_side");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Reupload a scan of the main page"
+        /// </summary>
+        public static string lng_passport_reupload_main_page
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_reupload_main_page");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Reupload a scan of the reverse side"
+        /// </summary>
+        public static string lng_passport_reupload_reverse_side
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_reupload_reverse_side");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Reupload selfie"
+        /// </summary>
+        public static string lng_passport_reupload_selfie
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_reupload_selfie");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Upload a photo of the reverse side of the document."
+        /// </summary>
+        public static string lng_passport_reverse_side_description
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_reverse_side_description");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Scan"
+        /// </summary>
+        public static string lng_passport_reverse_side_name
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_reverse_side_name");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Reverse side"
+        /// </summary>
+        public static string lng_passport_reverse_side_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_reverse_side_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Saving..."
+        /// </summary>
+        public static string lng_passport_saving
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_saving");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Scan {index}"
+        /// </summary>
+        public static string lng_passport_scan_index
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_scan_index");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Uploaded on {date}"
+        /// </summary>
+        public static string lng_passport_scan_uploaded
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_scan_uploaded");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, that's too many scans for one document."
+        /// </summary>
+        public static string lng_passport_scans_limit_reached
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_scans_limit_reached");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Upload a photo of yourself holding your document. Make sure the ID and your face are clearly visible."
+        /// </summary>
+        public static string lng_passport_selfie_description
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_selfie_description");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to cancel setting up your password?"
+        /// </summary>
+        public static string lng_passport_stop_password_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_stop_password_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to stop this authorization?"
+        /// </summary>
+        public static string lng_passport_stop_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_stop_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Authorization successful!"
+        /// </summary>
+        public static string lng_passport_success
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_success");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "If you continue, your changes will be lost."
+        /// </summary>
+        public static string lng_passport_sure_cancel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_sure_cancel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add an English translation of your document"
+        /// </summary>
+        public static string lng_passport_translation_needed
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_translation_needed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Upload document"
+        /// </summary>
+        public static string lng_passport_upload_document
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_upload_document");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Upload a scan of the front side"
+        /// </summary>
+        public static string lng_passport_upload_front_side
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_upload_front_side");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Upload a scan of the main page"
+        /// </summary>
+        public static string lng_passport_upload_main_page
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_upload_main_page");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Upload additional scans"
+        /// </summary>
+        public static string lng_passport_upload_more
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_upload_more");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Upload a scan of the reverse side"
+        /// </summary>
+        public static string lng_passport_upload_reverse_side
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_upload_reverse_side");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Upload scans"
+        /// </summary>
+        public static string lng_passport_upload_scans
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_upload_scans");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Upload selfie"
+        /// </summary>
+        public static string lng_passport_upload_selfie
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_upload_selfie");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Uploading..."
+        /// </summary>
+        public static string lng_passport_uploading
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_uploading");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "USE {existing}"
+        /// </summary>
+        public static string lng_passport_use_existing
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_use_existing");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Use the same email address as on Telegram."
+        /// </summary>
+        public static string lng_passport_use_existing_email
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_use_existing_email");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please wait until the file has finished uploading."
+        /// </summary>
+        public static string lng_passport_wait_upload
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_passport_wait_upload");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Address 1"
+        /// </summary>
+        public static string lng_payments_address_street1
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_address_street1");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Address 2"
+        /// </summary>
+        public static string lng_payments_address_street2
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_address_street2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You have already paid for this item."
+        /// </summary>
+        public static string lng_payments_already_paid
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_already_paid");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Billing Information"
+        /// </summary>
+        public static string lng_payments_billing_address
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_billing_address");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Zip Code"
+        /// </summary>
+        public static string lng_payments_billing_zip_code
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_billing_zip_code");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "CVC"
+        /// </summary>
+        public static string lng_payments_card_cvc
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_card_cvc");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Your card was declined."
+        /// </summary>
+        public static string lng_payments_card_declined
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_card_declined");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "MM / YY"
+        /// </summary>
+        public static string lng_payments_card_expire_date
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_card_expire_date");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Cardholder name"
+        /// </summary>
+        public static string lng_payments_card_holder
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_card_holder");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "New Card"
+        /// </summary>
+        public static string lng_payments_card_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_card_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Paid"
+        /// </summary>
+        public static string lng_payments_date_label
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_date_label");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Invoice"
+        /// </summary>
+        public static string lng_payments_invoice_label
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_invoice_label");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Test invoice"
+        /// </summary>
+        public static string lng_payments_invoice_label_test
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_invoice_label_test");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can save your payment information for future use. Please turn on Two-Step Verification to enable this."
+        /// </summary>
+        public static string lng_payments_need_password
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_need_password");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "New Card..."
+        /// </summary>
+        public static string lng_payments_new_card
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_new_card");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, Telegram Desktop doesn't support payments yet. Please use one of our mobile apps to do this."
+        /// </summary>
+        public static string lng_payments_not_supported
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_not_supported");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Your card {card} is on file. To pay with this card, please enter your 2-Step-Verification password."
+        /// </summary>
+        public static string lng_payments_password_description
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_password_description");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Pay"
+        /// </summary>
+        public static string lng_payments_password_submit
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_password_submit");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Payment Confirmation"
+        /// </summary>
+        public static string lng_payments_password_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_password_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Pay {amount}"
+        /// </summary>
+        public static string lng_payments_pay_amount
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_pay_amount");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Payment failed. Your card has not been billed."
+        /// </summary>
+        public static string lng_payments_payment_failed
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_payment_failed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Payment Method"
+        /// </summary>
+        public static string lng_payments_payment_method
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_payment_method");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The bot couldn't process your payment. Your card has not been billed."
+        /// </summary>
+        public static string lng_payments_precheckout_failed
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_precheckout_failed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Processed by {provider}"
+        /// </summary>
+        public static string lng_payments_processed_by
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_processed_by");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Test receipt"
+        /// </summary>
+        public static string lng_payments_receipt_label_test
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_receipt_label_test");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Save Information for future use"
+        /// </summary>
+        public static string lng_payments_save_information
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_save_information");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Shipping Address"
+        /// </summary>
+        public static string lng_payments_shipping_address
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_shipping_address");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Shipping Method"
+        /// </summary>
+        public static string lng_payments_shipping_method
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_shipping_method");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Shipping to the selected country is not available."
+        /// </summary>
+        public static string lng_payments_shipping_not_available
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_shipping_not_available");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You paid {amount} for {title}."
+        /// </summary>
+        public static string lng_payments_success
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_success");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to close this payment form? The changes you made will be lost."
+        /// </summary>
+        public static string lng_payments_sure_close
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_sure_close");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add Tip"
+        /// </summary>
+        public static string lng_payments_tips_box_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_tips_box_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Max possible tip amount: {amount}"
+        /// </summary>
+        public static string lng_payments_tips_max
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_tips_max");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Email will be passed to {provider} as billing info."
+        /// </summary>
+        public static string lng_payments_to_provider_email
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_to_provider_email");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Phone will be passed to {provider} as billing info."
+        /// </summary>
+        public static string lng_payments_to_provider_phone
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_to_provider_phone");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Phone and Email will be passed to {provider} as billing info."
+        /// </summary>
+        public static string lng_payments_to_provider_phone_email
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_to_provider_phone_email");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Neither Telegram, nor {bot1} will have access to your credit card information. Credit card details will be handled only by the payment system, {provider}.
+        ///
+        ///Payments will go directly to the developer of {bot2}. Telegram cannot provide any guarantees, so proceed at your own risk. In case of problems, please contact the developer of {bot3} or your bank."
+        /// </summary>
+        public static string lng_payments_warning_body
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_warning_body");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please install {link}."
+        /// </summary>
+        public static string lng_payments_webview_install_edge
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_webview_install_edge");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please install WebKitGTK 4 (webkit2gtk-4.0) using your package manager."
+        /// </summary>
+        public static string lng_payments_webview_install_webkit
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_webview_install_webkit");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unfortunately, you can't add a new card with current system configuration."
+        /// </summary>
+        public static string lng_payments_webview_no_card
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_webview_no_card");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unfortunately, you can't use payments with current system configuration."
+        /// </summary>
+        public static string lng_payments_webview_no_use
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_webview_no_use");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Qt's window embedding doesn't work well with Mutter window manager. Please switch to another window manager or desktop environment."
+        /// </summary>
+        public static string lng_payments_webview_switch_mutter
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_webview_switch_mutter");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "There is no way to embed WebView window on Wayland. Please switch to X11."
+        /// </summary>
+        public static string lng_payments_webview_switch_wayland
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_payments_webview_switch_wayland");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please confirm your country code and
+        ///enter your mobile phone number."
+        /// </summary>
+        public static string lng_phone_desc
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_phone_desc");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "If you don't have a Telegram account yet,
+        ///please [b]sign up[/b] with {link_start}Android / iPhone{link_end} or {signup_start}here{signup_end}"
+        /// </summary>
+        public static string lng_phone_notreg
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_phone_notreg");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Your Phone Number"
+        /// </summary>
+        public static string lng_phone_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_phone_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Quick log in using QR code"
+        /// </summary>
+        public static string lng_phone_to_qr
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_phone_to_qr");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Also pin for {user}"
+        /// </summary>
+        public static string lng_pinned_also_for_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_pinned_also_for_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Don't show pinned messages"
+        /// </summary>
+        public static string lng_pinned_hide_all
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_pinned_hide_all");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to hide the pinned message bar? It will stay hidden until a new message is pinned."
+        /// </summary>
+        public static string lng_pinned_hide_all_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_pinned_hide_all_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Pinned message"
+        /// </summary>
+        public static string lng_pinned_message
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_pinned_message");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Would you like to pin this message?"
+        /// </summary>
+        public static string lng_pinned_pin_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_pinned_pin_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Previous message"
+        /// </summary>
+        public static string lng_pinned_previous
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_pinned_previous");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Pinned quiz"
+        /// </summary>
+        public static string lng_pinned_quiz
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_pinned_quiz");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to unpin all messages?"
+        /// </summary>
+        public static string lng_pinned_unpin_all_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_pinned_unpin_all_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Would you like to unpin this message?"
+        /// </summary>
+        public static string lng_pinned_unpin_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_pinned_unpin_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{date} at {time}"
+        /// </summary>
+        public static string lng_player_message_date
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_player_message_date");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "today at {time}"
+        /// </summary>
+        public static string lng_player_message_today
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_player_message_today");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "yesterday at {time}"
+        /// </summary>
+        public static string lng_player_message_yesterday
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_player_message_yesterday");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "playing a game"
+        /// </summary>
+        public static string lng_playing_game
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_playing_game");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No answers"
+        /// </summary>
+        public static string lng_polls_answers_none
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_polls_answers_none");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please enter at least two options."
+        /// </summary>
+        public static string lng_polls_choose_answers
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_polls_choose_answers");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please choose the correct answer."
+        /// </summary>
+        public static string lng_polls_choose_correct
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_polls_choose_correct");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please enter a question."
+        /// </summary>
+        public static string lng_polls_choose_question
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_polls_choose_question");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Final results"
+        /// </summary>
+        public static string lng_polls_closed
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_polls_closed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Create poll"
+        /// </summary>
+        public static string lng_polls_create
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_polls_create");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Click to choose the correct answer"
+        /// </summary>
+        public static string lng_polls_create_hint
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_polls_create_hint");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Quiz has only one right answer."
+        /// </summary>
+        public static string lng_polls_create_one_answer
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_polls_create_one_answer");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add an option..."
+        /// </summary>
+        public static string lng_polls_create_option_add
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_polls_create_option_add");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "New poll"
+        /// </summary>
+        public static string lng_polls_create_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_polls_create_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Poll results"
+        /// </summary>
+        public static string lng_polls_poll_results_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_polls_poll_results_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Quiz results"
+        /// </summary>
+        public static string lng_polls_quiz_results_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_polls_quiz_results_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Retract vote"
+        /// </summary>
+        public static string lng_polls_retract
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_polls_retract");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Users will see this comment after choosing a wrong answer, good for educational purposes."
+        /// </summary>
+        public static string lng_polls_solution_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_polls_solution_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add a Comment (Optional)"
+        /// </summary>
+        public static string lng_polls_solution_placeholder
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_polls_solution_placeholder");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Stop poll"
+        /// </summary>
+        public static string lng_polls_stop
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_polls_stop");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Vote"
+        /// </summary>
+        public static string lng_polls_submit_votes
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_polls_submit_votes");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "View results"
+        /// </summary>
+        public static string lng_polls_view_results
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_polls_view_results");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Bio:"
+        /// </summary>
+        public static string lng_profile_bio
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_bio");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Stop and block bot"
+        /// </summary>
+        public static string lng_profile_block_bot
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_block_bot");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Bot Help"
+        /// </summary>
+        public static string lng_profile_bot_help
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_bot_help");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Bot Privacy Policy"
+        /// </summary>
+        public static string lng_profile_bot_privacy
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_bot_privacy");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Bot Settings"
+        /// </summary>
+        public static string lng_profile_bot_settings
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_bot_settings");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete and leave"
+        /// </summary>
+        public static string lng_profile_clear_and_exit
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_clear_and_exit");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Convert"
+        /// </summary>
+        public static string lng_profile_convert_confirm
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_convert_confirm");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "— New members may see the full message history"
+        /// </summary>
+        public static string lng_profile_convert_feature1
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_convert_feature1");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "— Messages are deleted for all members"
+        /// </summary>
+        public static string lng_profile_convert_feature2
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_convert_feature2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "— Admins can add a description to the group"
+        /// </summary>
+        public static string lng_profile_convert_feature3
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_convert_feature3");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "— Owner can set a public link for the group"
+        /// </summary>
+        public static string lng_profile_convert_feature4
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_convert_feature4");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{bold_start}Note:{bold_end} This action can not be undone"
+        /// </summary>
+        public static string lng_profile_convert_warning
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_convert_warning");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Copy Name"
+        /// </summary>
+        public static string lng_profile_copy_fullname
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_copy_fullname");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Copy Phone Number"
+        /// </summary>
+        public static string lng_profile_copy_phone
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_copy_phone");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Create public link"
+        /// </summary>
+        public static string lng_profile_create_public_link
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_create_public_link");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "to set it as a group photo"
+        /// </summary>
+        public static string lng_profile_drop_area_subtitle
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_drop_area_subtitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "to set it as a channel photo"
+        /// </summary>
+        public static string lng_profile_drop_area_subtitle_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_drop_area_subtitle_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Drop your image here"
+        /// </summary>
+        public static string lng_profile_drop_area_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_drop_area_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Edit public link"
+        /// </summary>
+        public static string lng_profile_edit_public_link
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_edit_public_link");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Export channel history"
+        /// </summary>
+        public static string lng_profile_export_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_export_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Export chat history"
+        /// </summary>
+        public static string lng_profile_export_chat
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_export_chat");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Invite link"
+        /// </summary>
+        public static string lng_profile_invite_link_section
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_invite_link_section");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Link:"
+        /// </summary>
+        public static string lng_profile_link
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_link");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Manage administrators"
+        /// </summary>
+        public static string lng_profile_manage_admins
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_manage_admins");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Manage banned users"
+        /// </summary>
+        public static string lng_profile_manage_blocklist
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_manage_blocklist");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Manage restricted users"
+        /// </summary>
+        public static string lng_profile_manage_restrictedlist
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_manage_restrictedlist");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "To add more members, you can upgrade your group to a supergroup."
+        /// </summary>
+        public static string lng_profile_migrate_body
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_migrate_body");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Learn more »"
+        /// </summary>
+        public static string lng_profile_migrate_learn_more
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_migrate_learn_more");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Mobile:"
+        /// </summary>
+        public static string lng_profile_mobile_number
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_mobile_number");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Recent actions"
+        /// </summary>
+        public static string lng_profile_recent_actions
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_recent_actions");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Search for messages"
+        /// </summary>
+        public static string lng_profile_search_messages
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_search_messages");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Set Photo"
+        /// </summary>
+        public static string lng_profile_set_group_photo
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_set_group_photo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Shared links"
+        /// </summary>
+        public static string lng_profile_shared_links_header
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_shared_links_header");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Shared media"
+        /// </summary>
+        public static string lng_profile_shared_media
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_shared_media");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Remove {user} from the group?"
+        /// </summary>
+        public static string lng_profile_sure_kick
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_sure_kick");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Remove {user} from the channel?"
+        /// </summary>
+        public static string lng_profile_sure_kick_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_sure_kick_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Remove {user} from admins?"
+        /// </summary>
+        public static string lng_profile_sure_remove_admin
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_sure_remove_admin");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unblock bot"
+        /// </summary>
+        public static string lng_profile_unblock_bot
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_unblock_bot");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unblock user"
+        /// </summary>
+        public static string lng_profile_unblock_user
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_unblock_user");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Username:"
+        /// </summary>
+        public static string lng_profile_username
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_username");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "View Channel"
+        /// </summary>
+        public static string lng_profile_view_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_profile_view_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Proxy servers may be helpful in accessing Telegram if there is no connection in a specific region."
+        /// </summary>
+        public static string lng_proxy_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_proxy_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add proxy"
+        /// </summary>
+        public static string lng_proxy_add
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_proxy_add");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Socket address"
+        /// </summary>
+        public static string lng_proxy_address_label
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_proxy_address_label");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "available (ping: {ping} ms)"
+        /// </summary>
+        public static string lng_proxy_available
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_proxy_available");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "checking"
+        /// </summary>
+        public static string lng_proxy_checking
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_proxy_checking");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "connecting"
+        /// </summary>
+        public static string lng_proxy_connecting
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_proxy_connecting");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Credentials"
+        /// </summary>
+        public static string lng_proxy_credentials
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_proxy_credentials");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Credentials (optional)"
+        /// </summary>
+        public static string lng_proxy_credentials_optional
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_proxy_credentials_optional");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Your saved proxy list will be here."
+        /// </summary>
+        public static string lng_proxy_description
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_proxy_description");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Disable proxy"
+        /// </summary>
+        public static string lng_proxy_disable
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_proxy_disable");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Edit proxy"
+        /// </summary>
+        public static string lng_proxy_edit
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_proxy_edit");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The proxy link is invalid."
+        /// </summary>
+        public static string lng_proxy_invalid
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_proxy_invalid");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Restore"
+        /// </summary>
+        public static string lng_proxy_menu_restore
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_proxy_menu_restore");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Proxy settings"
+        /// </summary>
+        public static string lng_proxy_settings
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_proxy_settings");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This channel is shown by your proxy server.
+        ///To remove this channel from your chat list,
+        ///disable the proxy in Telegram Settings."
+        /// </summary>
+        public static string lng_proxy_sponsor_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_proxy_sponsor_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "not available"
+        /// </summary>
+        public static string lng_proxy_unavailable
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_proxy_unavailable");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Your Telegram Desktop version doesn't support this proxy type or the proxy link is invalid. Please update Telegram Desktop to the latest version."
+        /// </summary>
+        public static string lng_proxy_unsupported
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_proxy_unsupported");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Use proxy"
+        /// </summary>
+        public static string lng_proxy_use
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_proxy_use");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Use custom proxy"
+        /// </summary>
+        public static string lng_proxy_use_custom
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_proxy_use_custom");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Use system proxy settings"
+        /// </summary>
+        public static string lng_proxy_use_system_settings
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_proxy_use_system_settings");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Quit Telegram"
+        /// </summary>
+        public static string lng_quit_from_tray
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_quit_from_tray");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Recently used"
+        /// </summary>
+        public static string lng_recent_stickers
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_recent_stickers");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Try now"
+        /// </summary>
+        public static string lng_reconnecting_try_now
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_reconnecting_try_now");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Release outside this field to cancel"
+        /// </summary>
+        public static string lng_record_cancel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_record_cancel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please hold the mouse button pressed to record a voice message."
+        /// </summary>
+        public static string lng_record_hold_tip
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_record_hold_tip");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to discard your recorded voice message?"
+        /// </summary>
+        public static string lng_record_listen_cancel_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_record_listen_cancel_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to stop recording and discard your voice message?"
+        /// </summary>
+        public static string lng_record_lock_cancel_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_record_lock_cancel_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Remind me on..."
+        /// </summary>
+        public static string lng_remind_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_remind_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can't reply to messages from before this group was upgraded to a supergroup.
+        ///
+        ///Groups get automatically upgraded when they reach 200 members or when you start using advanced features like chat history permissions or granular admin settings."
+        /// </summary>
+        public static string lng_reply_cant
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_reply_cant");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't reply to a message that was sent before the group was upgraded to a supergroup. Do you wish to forward it and add your comment?"
+        /// </summary>
+        public static string lng_reply_cant_forward
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_reply_cant_forward");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Report bot"
+        /// </summary>
+        public static string lng_report_bot_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_report_bot_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Additional Details"
+        /// </summary>
+        public static string lng_report_details
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_report_details");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Report Group"
+        /// </summary>
+        public static string lng_report_group_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_report_group_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Report message"
+        /// </summary>
+        public static string lng_report_message_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_report_message_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Select Messages"
+        /// </summary>
+        public static string lng_report_messages_none
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_report_messages_none");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please select messages to report."
+        /// </summary>
+        public static string lng_report_please_select_messages
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_report_please_select_messages");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Report spam and leave"
+        /// </summary>
+        public static string lng_report_spam_and_leave
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_report_spam_and_leave");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Thank you for your report"
+        /// </summary>
+        public static string lng_report_spam_done
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_report_spam_done");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to report spam in this channel?"
+        /// </summary>
+        public static string lng_report_spam_sure_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_report_spam_sure_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to report spam in this group?"
+        /// </summary>
+        public static string lng_report_spam_sure_group
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_report_spam_sure_group");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Thank you for your report!"
+        /// </summary>
+        public static string lng_report_spam_thanks
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_report_spam_thanks");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Thank you! Your report will be reviewed by our team."
+        /// </summary>
+        public static string lng_report_thanks
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_report_thanks");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Report channel"
+        /// </summary>
+        public static string lng_report_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_report_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Restart"
+        /// </summary>
+        public static string lng_restart_button
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_restart_button");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The admins of this group have restricted you from posting GIFs here."
+        /// </summary>
+        public static string lng_restricted_send_gifs
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_restricted_send_gifs");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Posting GIFs isn't allowed in this group."
+        /// </summary>
+        public static string lng_restricted_send_gifs_all
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_restricted_send_gifs_all");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The admins of this group restricted you from posting GIFs here until {date}, {time}."
+        /// </summary>
+        public static string lng_restricted_send_gifs_until
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_restricted_send_gifs_until");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The admins of this group restricted you from posting inline content here."
+        /// </summary>
+        public static string lng_restricted_send_inline
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_restricted_send_inline");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Posting inline content isn't allowed in this group."
+        /// </summary>
+        public static string lng_restricted_send_inline_all
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_restricted_send_inline_all");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The admins of this group restricted you from posting inline content here until {date}, {time}."
+        /// </summary>
+        public static string lng_restricted_send_inline_until
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_restricted_send_inline_until");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The admins of this group have restricted you from posting media here."
+        /// </summary>
+        public static string lng_restricted_send_media
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_restricted_send_media");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Posting media content isn't allowed in this group."
+        /// </summary>
+        public static string lng_restricted_send_media_all
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_restricted_send_media_all");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The admins of this group restricted you from posting media content here until {date}, {time}."
+        /// </summary>
+        public static string lng_restricted_send_media_until
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_restricted_send_media_until");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Group admins have restricted you from messaging."
+        /// </summary>
+        public static string lng_restricted_send_message
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_restricted_send_message");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The admins of this group restricted you from writing here until {date}, {time}."
+        /// </summary>
+        public static string lng_restricted_send_message_until
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_restricted_send_message_until");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The admins of this group restricted you from posting polls here."
+        /// </summary>
+        public static string lng_restricted_send_polls
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_restricted_send_polls");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Posting polls isn't allowed in this group."
+        /// </summary>
+        public static string lng_restricted_send_polls_all
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_restricted_send_polls_all");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The admins of this group restricted you from posting polls here until {date}, {time}."
+        /// </summary>
+        public static string lng_restricted_send_polls_until
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_restricted_send_polls_until");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, polls with visible votes can't be forwarded to channels."
+        /// </summary>
+        public static string lng_restricted_send_public_polls
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_restricted_send_public_polls");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Posting stickers isn't allowed in this group."
+        /// </summary>
+        public static string lng_restricted_send_stickers_all
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_restricted_send_stickers_all");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The admins of this group restricted you from posting stickers here until {date}, {time}."
+        /// </summary>
+        public static string lng_restricted_send_stickers_until
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_restricted_send_stickers_until");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This admin will not be able to add new admins."
+        /// </summary>
+        public static string lng_rights_about_add_admins_no
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_about_add_admins_no");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This admin will be able to add new admins with the same (or more limited) permissions."
+        /// </summary>
+        public static string lng_rights_about_add_admins_yes
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_about_add_admins_yes");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You cannot change the restrictions for this user."
+        /// </summary>
+        public static string lng_rights_about_restriction_cant_edit
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_about_restriction_cant_edit");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add new admins"
+        /// </summary>
+        public static string lng_rights_add_admins
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_add_admins");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete messages of others"
+        /// </summary>
+        public static string lng_rights_channel_delete
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_channel_delete");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Edit messages of others"
+        /// </summary>
+        public static string lng_rights_channel_edit
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_channel_edit");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Change channel info"
+        /// </summary>
+        public static string lng_rights_channel_info
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_channel_info");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Manage live streams"
+        /// </summary>
+        public static string lng_rights_channel_manage_calls
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_channel_manage_calls");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Until {date}"
+        /// </summary>
+        public static string lng_rights_chat_banned_custom_date
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_chat_banned_custom_date");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "A custom title that will be shown to all members instead of '{title}'."
+        /// </summary>
+        public static string lng_rights_edit_admin_rank_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_edit_admin_rank_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Broadcast group"
+        /// </summary>
+        public static string lng_rights_gigagroup_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_gigagroup_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Remain anonymous"
+        /// </summary>
+        public static string lng_rights_group_anonymous
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_group_anonymous");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Change group info"
+        /// </summary>
+        public static string lng_rights_group_info
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_group_info");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Invite users via link"
+        /// </summary>
+        public static string lng_rights_group_invite_link
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_group_invite_link");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This option is enabled for all members in Group Permissions."
+        /// </summary>
+        public static string lng_rights_permission_for_all
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_permission_for_all");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This option is disabled for all members in Group Permissions."
+        /// </summary>
+        public static string lng_rights_restriction_for_all
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_restriction_for_all");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Members will be able to send only one message per this interval."
+        /// </summary>
+        public static string lng_rights_slowmode_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_slowmode_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Members will be able to send only one message {interval}."
+        /// </summary>
+        public static string lng_rights_slowmode_about_interval
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_slowmode_about_interval");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Slow mode"
+        /// </summary>
+        public static string lng_rights_slowmode_header
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_slowmode_header");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This will transfer the full **owner rights** for {group} to {user}."
+        /// </summary>
+        public static string lng_rights_transfer_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_transfer_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Transfer channel ownership"
+        /// </summary>
+        public static string lng_rights_transfer_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_transfer_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Security check"
+        /// </summary>
+        public static string lng_rights_transfer_check
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_transfer_check");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can transfer this group to {user} only if you have:"
+        /// </summary>
+        public static string lng_rights_transfer_check_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_transfer_check_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "• Enabled **Two-Step Verification** more than **7 days** ago."
+        /// </summary>
+        public static string lng_rights_transfer_check_password
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_transfer_check_password");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "• Logged in on this device more than **24 hours** ago."
+        /// </summary>
+        public static string lng_rights_transfer_check_session
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_transfer_check_session");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user} is now the owner of the channel."
+        /// </summary>
+        public static string lng_rights_transfer_done_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_transfer_done_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user} is now the owner of the group."
+        /// </summary>
+        public static string lng_rights_transfer_done_group
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_transfer_done_group");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Transfer group ownership"
+        /// </summary>
+        public static string lng_rights_transfer_group
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_transfer_group");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Two-step verification"
+        /// </summary>
+        public static string lng_rights_transfer_password_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_transfer_password_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Set password"
+        /// </summary>
+        public static string lng_rights_transfer_set_password
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_transfer_set_password");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Change owner"
+        /// </summary>
+        public static string lng_rights_transfer_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_transfer_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "User permissions"
+        /// </summary>
+        public static string lng_rights_user_restrictions
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_user_restrictions");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "What can this member do?"
+        /// </summary>
+        public static string lng_rights_user_restrictions_header
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_rights_user_restrictions_header");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Save voice message"
+        /// </summary>
+        public static string lng_save_audio
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_save_audio");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Save Audio File"
+        /// </summary>
+        public static string lng_save_audio_file
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_save_audio_file");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{ready} / {total} {mb}"
+        /// </summary>
+        public static string lng_save_downloaded
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_save_downloaded");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Save File"
+        /// </summary>
+        public static string lng_save_file
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_save_file");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Save Image"
+        /// </summary>
+        public static string lng_save_photo
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_save_photo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Save Video"
+        /// </summary>
+        public static string lng_save_video
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_save_video");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Forward messages here for quick access"
+        /// </summary>
+        public static string lng_saved_forward_here
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_saved_forward_here");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send this message on..."
+        /// </summary>
+        public static string lng_schedule_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_schedule_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Scheduled for {date}"
+        /// </summary>
+        public static string lng_scheduled_date
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_scheduled_date");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send message now?"
+        /// </summary>
+        public static string lng_scheduled_send_now
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_scheduled_send_now");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send when online"
+        /// </summary>
+        public static string lng_scheduled_send_until_online
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_scheduled_send_until_online");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Global search results"
+        /// </summary>
+        public static string lng_search_global_results
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_search_global_results");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Show messages from"
+        /// </summary>
+        public static string lng_search_messages_from
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_search_messages_from");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No messages found"
+        /// </summary>
+        public static string lng_search_no_results
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_search_no_results");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Cancel uploading?"
+        /// </summary>
+        public static string lng_selected_cancel_sure_this
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_selected_cancel_sure_this");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to delete this message?"
+        /// </summary>
+        public static string lng_selected_delete_sure_this
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_selected_delete_sure_this");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send now"
+        /// </summary>
+        public static string lng_selected_send_now
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_selected_send_now");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can also delete the message you sent from the inboxes of other group members by checking "Unsend my messages"."
+        /// </summary>
+        public static string lng_selected_unsend_about_group_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_selected_unsend_about_group_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can also delete the message you sent from {user}'s inbox by checking "Unsend my messages"."
+        /// </summary>
+        public static string lng_selected_unsend_about_user_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_selected_unsend_about_user_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "If you don't come online at least once within this period, your account will be deleted along with all groups, messages and contacts."
+        /// </summary>
+        public static string lng_self_destruct_description
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_self_destruct_description");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "If you don't come online from a specific session at least once within this period, it will be terminated."
+        /// </summary>
+        public static string lng_self_destruct_sessions_description
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_self_destruct_sessions_description");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Session termination"
+        /// </summary>
+        public static string lng_self_destruct_sessions_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_self_destruct_sessions_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Account self-destruction"
+        /// </summary>
+        public static string lng_self_destruct_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_self_destruct_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "choosing a sticker"
+        /// </summary>
+        public static string lng_send_action_choose_sticker
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_send_action_choose_sticker");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "recording a voice message"
+        /// </summary>
+        public static string lng_send_action_record_audio
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_send_action_record_audio");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "recording a video message"
+        /// </summary>
+        public static string lng_send_action_record_round
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_send_action_record_round");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "recording a video"
+        /// </summary>
+        public static string lng_send_action_record_video
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_send_action_record_video");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "sending a voice message"
+        /// </summary>
+        public static string lng_send_action_upload_audio
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_send_action_upload_audio");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "sending a file"
+        /// </summary>
+        public static string lng_send_action_upload_file
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_send_action_upload_file");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "sending a photo"
+        /// </summary>
+        public static string lng_send_action_upload_photo
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_send_action_upload_photo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "sending a video message"
+        /// </summary>
+        public static string lng_send_action_upload_round
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_send_action_upload_round");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "sending a video"
+        /// </summary>
+        public static string lng_send_action_upload_video
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_send_action_upload_video");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send as an album"
+        /// </summary>
+        public static string lng_send_album
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_send_album");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send anonymously..."
+        /// </summary>
+        public static string lng_send_anonymous_ph
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_send_anonymous_ph");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Anonymous admin"
+        /// </summary>
+        public static string lng_send_as_anonymous_admin
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_send_as_anonymous_admin");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Compress images"
+        /// </summary>
+        public static string lng_send_compressed
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_send_compressed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send as a file"
+        /// </summary>
+        public static string lng_send_file
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_send_file");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Group items"
+        /// </summary>
+        public static string lng_send_grouped
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_send_grouped");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "File: {name} is empty and can't be sent."
+        /// </summary>
+        public static string lng_send_image_empty
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_send_image_empty");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "File could not be sent, because it is larger than 2 GB: {name}
+        ///
+        ///You can send as many files as you like, but each must be smaller than 2 GB."
+        /// </summary>
+        public static string lng_send_image_too_large
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_send_image_too_large");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, no valid files found."
+        /// </summary>
+        public static string lng_send_media_invalid_files
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_send_media_invalid_files");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send as a photo"
+        /// </summary>
+        public static string lng_send_photo
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_send_photo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send as separate photos"
+        /// </summary>
+        public static string lng_send_separate_photos
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_send_separate_photos");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send as separate media"
+        /// </summary>
+        public static string lng_send_separate_photos_videos
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_send_separate_photos_videos");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sent: {date}"
+        /// </summary>
+        public static string lng_sent_date
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_sent_date");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Current session"
+        /// </summary>
+        public static string lng_sessions_header
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_sessions_header");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This location is based only on the IP address and may not always be accurate."
+        /// </summary>
+        public static string lng_sessions_location_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_sessions_location_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "System version"
+        /// </summary>
+        public static string lng_sessions_system
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_sessions_system");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Terminate all other sessions"
+        /// </summary>
+        public static string lng_sessions_terminate_all
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_sessions_terminate_all");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Any details such as age, occupation or city.
+        ///Example: 23 y.o. designer from San Francisco"
+        /// </summary>
+        public static string lng_settings_about_bio
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_about_bio");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Adaptive layout for wide screens"
+        /// </summary>
+        public static string lng_settings_adaptive_wide
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_adaptive_wide");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Place Telegram in "Send to" menu"
+        /// </summary>
+        public static string lng_settings_add_sendto
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_add_sendto");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Notifications position and count"
+        /// </summary>
+        public static string lng_settings_advanced_notifications
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_advanced_notifications");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Draw attention to the window"
+        /// </summary>
+        public static string lng_settings_alert_linux
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_alert_linux");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Bounce the Dock icon"
+        /// </summary>
+        public static string lng_settings_alert_mac
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_alert_mac");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Flash the taskbar icon"
+        /// </summary>
+        public static string lng_settings_alert_windows
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_alert_windows");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "ANGLE graphics backend"
+        /// </summary>
+        public static string lng_settings_angle_backend
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_angle_backend");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Auto"
+        /// </summary>
+        public static string lng_settings_angle_backend_auto
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_angle_backend_auto");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Direct3D 11"
+        /// </summary>
+        public static string lng_settings_angle_backend_d3d11
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_angle_backend_d3d11");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "D3D11on12"
+        /// </summary>
+        public static string lng_settings_angle_backend_d3d11on12
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_angle_backend_d3d11on12");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Direct3D 9"
+        /// </summary>
+        public static string lng_settings_angle_backend_d3d9
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_angle_backend_d3d9");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "OpenGL"
+        /// </summary>
+        public static string lng_settings_angle_backend_opengl
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_angle_backend_opengl");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Ask a Volunteer"
+        /// </summary>
+        public static string lng_settings_ask_ok
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_ask_ok");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please note that Telegram Support is done by volunteers. We try to respond as quickly as possible, but it may take a while.
+        ///
+        ///Please take a look at the Telegram FAQ: it has important troubleshooting tips and answers to most questions."
+        /// </summary>
+        public static string lng_settings_ask_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_ask_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Download dictionaries automatically"
+        /// </summary>
+        public static string lng_settings_auto_download_dictionaries
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_auto_download_dictionaries");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Match the system settings"
+        /// </summary>
+        public static string lng_settings_auto_night_enabled
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_auto_night_enabled");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Auto-night mode"
+        /// </summary>
+        public static string lng_settings_auto_night_mode
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_auto_night_mode");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You have enabled auto-night mode. If you want to change the dark mode settings, you'll need to disable it first."
+        /// </summary>
+        public static string lng_settings_auto_night_warning
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_auto_night_warning");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Launch Telegram when system starts"
+        /// </summary>
+        public static string lng_settings_auto_start
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_auto_start");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Starting with the system was disabled in Windows Settings.
+        ///
+        ///Please enable Telegram Desktop in the Startup Apps Settings."
+        /// </summary>
+        public static string lng_settings_auto_start_disabled_uwp
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_auto_start_disabled_uwp");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Badge counter"
+        /// </summary>
+        public static string lng_settings_badge_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_badge_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Launch theme editor"
+        /// </summary>
+        public static string lng_settings_bg_edit_theme
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_bg_edit_theme");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Choose from file"
+        /// </summary>
+        public static string lng_settings_bg_from_file
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_bg_from_file");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Choose from gallery"
+        /// </summary>
+        public static string lng_settings_bg_from_gallery
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_bg_from_gallery");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Show all themes"
+        /// </summary>
+        public static string lng_settings_bg_show_all
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_bg_show_all");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Edit theme"
+        /// </summary>
+        public static string lng_settings_bg_theme_edit
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_bg_theme_edit");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Tile background"
+        /// </summary>
+        public static string lng_settings_bg_tile
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_bg_tile");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Use default theme"
+        /// </summary>
+        public static string lng_settings_bg_use_default
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_bg_use_default");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Blocked users"
+        /// </summary>
+        public static string lng_settings_blocked_users
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_blocked_users");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Accept calls on this device"
+        /// </summary>
+        public static string lng_settings_call_accept_calls
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_call_accept_calls");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Mute other sounds during calls"
+        /// </summary>
+        public static string lng_settings_call_audio_ducking
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_call_audio_ducking");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Input device"
+        /// </summary>
+        public static string lng_settings_call_input_device
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_call_input_device");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Input volume: {percent}%"
+        /// </summary>
+        public static string lng_settings_call_input_volume
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_call_input_volume");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Open system sound preferences"
+        /// </summary>
+        public static string lng_settings_call_open_system_prefs
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_call_open_system_prefs");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Output device"
+        /// </summary>
+        public static string lng_settings_call_output_device
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_call_output_device");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Output volume: {percent}%"
+        /// </summary>
+        public static string lng_settings_call_output_volume
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_call_output_volume");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Microphone"
+        /// </summary>
+        public static string lng_settings_call_section_input
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_call_section_input");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Other settings"
+        /// </summary>
+        public static string lng_settings_call_section_other
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_call_section_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Speakers and headphones"
+        /// </summary>
+        public static string lng_settings_call_section_output
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_call_section_output");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Stop test"
+        /// </summary>
+        public static string lng_settings_call_stop_mic_test
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_call_stop_mic_test");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Test microphone"
+        /// </summary>
+        public static string lng_settings_call_test_mic
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_call_test_mic");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Peer-to-peer in calls"
+        /// </summary>
+        public static string lng_settings_calls_peer_to_peer
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_calls_peer_to_peer");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Peer-to-peer"
+        /// </summary>
+        public static string lng_settings_calls_peer_to_peer_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_calls_peer_to_peer_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Phone calls privacy"
+        /// </summary>
+        public static string lng_settings_calls_privacy
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_calls_privacy");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Change language"
+        /// </summary>
+        public static string lng_settings_change_lang
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_change_lang");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Change phone number"
+        /// </summary>
+        public static string lng_settings_change_phone
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_change_phone");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Check for updates"
+        /// </summary>
+        public static string lng_settings_check_now
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_check_now");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Choose username"
+        /// </summary>
+        public static string lng_settings_choose_username
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_choose_username");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to close this page? You didn't save your changes."
+        /// </summary>
+        public static string lng_settings_close_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_close_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Close to taskbar"
+        /// </summary>
+        public static string lng_settings_close_to_taskbar
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_close_to_taskbar");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Connection type"
+        /// </summary>
+        public static string lng_settings_connection_type
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_connection_type");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Count unread messages"
+        /// </summary>
+        public static string lng_settings_count_unread
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_count_unread");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Select an area for your profile photo"
+        /// </summary>
+        public static string lng_settings_crop_profile
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_crop_profile");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Version {version}"
+        /// </summary>
+        public static string lng_settings_current_version
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_current_version");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Version {version}:"
+        /// </summary>
+        public static string lng_settings_current_version_label
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_current_version_label");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Use spell checker"
+        /// </summary>
+        public static string lng_settings_custom_spellchecker
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_custom_spellchecker");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Data and storage"
+        /// </summary>
+        public static string lng_settings_data_storage
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_data_storage");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Default interface scale"
+        /// </summary>
+        public static string lng_settings_default_scale
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_default_scale");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Desktop notifications"
+        /// </summary>
+        public static string lng_settings_desktop_notify
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_desktop_notify");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "If away for..."
+        /// </summary>
+        public static string lng_settings_destroy_if
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_destroy_if");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Device name"
+        /// </summary>
+        public static string lng_settings_device_name
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_device_name");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Disable night mode"
+        /// </summary>
+        public static string lng_settings_disable_night_theme
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_disable_night_theme");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Downloading update {ready} / {total} MB..."
+        /// </summary>
+        public static string lng_settings_downloading
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_downloading");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Downloading update {progress}..."
+        /// </summary>
+        public static string lng_settings_downloading_update
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_downloading_update");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "to set it as your photo"
+        /// </summary>
+        public static string lng_settings_drop_area_subtitle
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_drop_area_subtitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Edit information"
+        /// </summary>
+        public static string lng_settings_edit_info
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_edit_info");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Enable animations"
+        /// </summary>
+        public static string lng_settings_enable_animations
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_enable_animations");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Enable night mode"
+        /// </summary>
+        public static string lng_settings_enable_night_theme
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_enable_night_theme");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Enable OpenGL rendering for media"
+        /// </summary>
+        public static string lng_settings_enable_opengl
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_enable_opengl");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Export Telegram data"
+        /// </summary>
+        public static string lng_settings_export_data
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_export_data");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Go to FAQ"
+        /// </summary>
+        public static string lng_settings_faq_button
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_faq_button");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Forwarded messages"
+        /// </summary>
+        public static string lng_settings_forwards_privacy
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_forwards_privacy");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Groups & channels"
+        /// </summary>
+        public static string lng_settings_groups_invite
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_groups_invite");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Groups and Channels invite settings"
+        /// </summary>
+        public static string lng_settings_groups_invite_privacy
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_groups_invite_privacy");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Include muted chats in unread count"
+        /// </summary>
+        public static string lng_settings_include_muted
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_include_muted");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Edit profile"
+        /// </summary>
+        public static string lng_settings_information
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_information");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Install beta versions"
+        /// </summary>
+        public static string lng_settings_install_beta
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_install_beta");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Large emoji"
+        /// </summary>
+        public static string lng_settings_large_emoji
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_large_emoji");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Last seen & online"
+        /// </summary>
+        public static string lng_settings_last_seen
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_last_seen");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Last seen privacy"
+        /// </summary>
+        public static string lng_settings_last_seen_privacy
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_last_seen_privacy");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Latest version is installed"
+        /// </summary>
+        public static string lng_settings_latest_installed
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_latest_installed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Loop animated stickers"
+        /// </summary>
+        public static string lng_settings_loop_stickers
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_loop_stickers");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Manage dictionaries"
+        /// </summary>
+        public static string lng_settings_manage_dictionaries
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_manage_dictionaries");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Dictionary is enabled"
+        /// </summary>
+        public static string lng_settings_manage_enabled_dictionary
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_manage_enabled_dictionary");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Manage local storage"
+        /// </summary>
+        public static string lng_settings_manage_local_storage
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_manage_local_storage");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Remove Dictionary"
+        /// </summary>
+        public static string lng_settings_manage_remove_dictionary
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_manage_remove_dictionary");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Use system window frame"
+        /// </summary>
+        public static string lng_settings_native_frame
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_native_frame");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Native notifications"
+        /// </summary>
+        public static string lng_settings_native_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_native_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You need to restart for applying some of the new settings. Restart now?"
+        /// </summary>
+        public static string lng_settings_need_restart
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_need_restart");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Network and proxy"
+        /// </summary>
+        public static string lng_settings_network_proxy
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_network_proxy");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No cached data found!"
+        /// </summary>
+        public static string lng_settings_no_data_cached
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_no_data_cached");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Notifications count"
+        /// </summary>
+        public static string lng_settings_notifications_count
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_notifications_count");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Location on the screen"
+        /// </summary>
+        public static string lng_settings_notifications_position
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_notifications_position");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "All accounts"
+        /// </summary>
+        public static string lng_settings_notify_all
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_notify_all");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Open Settings"
+        /// </summary>
+        public static string lng_settings_open_system_settings
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_open_system_settings");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Disable passcode"
+        /// </summary>
+        public static string lng_settings_passcode_disable
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_passcode_disable");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Local passcode"
+        /// </summary>
+        public static string lng_settings_passcode_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_passcode_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Disable cloud password"
+        /// </summary>
+        public static string lng_settings_password_disable
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_password_disable");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Re-enter recovery email"
+        /// </summary>
+        public static string lng_settings_password_reenter_email
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_password_reenter_email");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Two-step verification"
+        /// </summary>
+        public static string lng_settings_password_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_password_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Performance"
+        /// </summary>
+        public static string lng_settings_performance
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_performance");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Profile photo"
+        /// </summary>
+        public static string lng_settings_profile_photo_privacy
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_profile_photo_privacy");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Rename"
+        /// </summary>
+        public static string lng_settings_rename_device
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_rename_device");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Rename current device"
+        /// </summary>
+        public static string lng_settings_rename_device_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_rename_device_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Replace emoji automatically"
+        /// </summary>
+        public static string lng_settings_replace_emojis
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_replace_emojis");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Terminate all other sessions"
+        /// </summary>
+        public static string lng_settings_reset
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_reset");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to terminate this session?"
+        /// </summary>
+        public static string lng_settings_reset_one_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_reset_one_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to terminate
+        ///all other sessions?"
+        /// </summary>
+        public static string lng_settings_reset_sure
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_reset_sure");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Auto ({cur})"
+        /// </summary>
+        public static string lng_settings_scale_auto
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_scale_auto");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Advanced Settings"
+        /// </summary>
+        public static string lng_settings_section_advanced_settings
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_section_advanced_settings");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Chat background"
+        /// </summary>
+        public static string lng_settings_section_background
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_section_background");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Call Settings"
+        /// </summary>
+        public static string lng_settings_section_call_settings
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_section_call_settings");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Interface Scale"
+        /// </summary>
+        public static string lng_settings_section_scale
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_section_scale");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Account self-destruct settings"
+        /// </summary>
+        public static string lng_settings_self_destruct
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_self_destruct");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send with Cmd+Enter"
+        /// </summary>
+        public static string lng_settings_send_cmdenter
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_send_cmdenter");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send with Ctrl+Enter"
+        /// </summary>
+        public static string lng_settings_send_ctrlenter
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_send_ctrlenter");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send with Enter"
+        /// </summary>
+        public static string lng_settings_send_enter
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_send_enter");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Display sensitive media in public channels on all your Telegram devices."
+        /// </summary>
+        public static string lng_settings_sensitive_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_sensitive_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Disable filtering"
+        /// </summary>
+        public static string lng_settings_sensitive_disable_filtering
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_sensitive_disable_filtering");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sensitive content"
+        /// </summary>
+        public static string lng_settings_sensitive_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_sensitive_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Show sender's name"
+        /// </summary>
+        public static string lng_settings_show_name
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_show_name");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Show message preview"
+        /// </summary>
+        public static string lng_settings_show_preview
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_show_preview");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Show all sessions"
+        /// </summary>
+        public static string lng_settings_show_sessions
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_show_sessions");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Play sound"
+        /// </summary>
+        public static string lng_settings_sound_notify
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_sound_notify");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Spell checker"
+        /// </summary>
+        public static string lng_settings_spellchecker
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_spellchecker");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Launch minimized"
+        /// </summary>
+        public static string lng_settings_start_min
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_start_min");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Stickers and emoji"
+        /// </summary>
+        public static string lng_settings_stickers_emoji
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_stickers_emoji");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Suggest popular stickers by emoji"
+        /// </summary>
+        public static string lng_settings_suggest_by_emoji
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_suggest_by_emoji");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Suggest emoji replacements"
+        /// </summary>
+        public static string lng_settings_suggest_emoji
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_suggest_emoji");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "System integration"
+        /// </summary>
+        public static string lng_settings_system_integration
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_system_integration");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Use system spell checker"
+        /// </summary>
+        public static string lng_settings_system_spellchecker
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_system_spellchecker");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "If inactive for..."
+        /// </summary>
+        public static string lng_settings_terminate_if
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_terminate_if");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Terminate old sessions"
+        /// </summary>
+        public static string lng_settings_terminate_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_terminate_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Choose accent color"
+        /// </summary>
+        public static string lng_settings_theme_accent_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_theme_accent_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Matrix"
+        /// </summary>
+        public static string lng_settings_theme_matrix
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_theme_matrix");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Midnight"
+        /// </summary>
+        public static string lng_settings_theme_midnight
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_theme_midnight");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Tinted"
+        /// </summary>
+        public static string lng_settings_theme_tinted
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_theme_tinted");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Themes"
+        /// </summary>
+        public static string lng_settings_themes
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_themes");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Update automatically"
+        /// </summary>
+        public static string lng_settings_update_automatically
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_update_automatically");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Checking for updates..."
+        /// </summary>
+        public static string lng_settings_update_checking
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_update_checking");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Update check failed :("
+        /// </summary>
+        public static string lng_settings_update_fail
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_update_fail");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Restart Now"
+        /// </summary>
+        public static string lng_settings_update_now
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_update_now");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "New version is ready"
+        /// </summary>
+        public static string lng_settings_update_ready
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_update_ready");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Uploading photo..."
+        /// </summary>
+        public static string lng_settings_uploading_photo
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_uploading_photo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Use native notifications"
+        /// </summary>
+        public static string lng_settings_use_native_notifications
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_use_native_notifications");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Use Windows notifications"
+        /// </summary>
+        public static string lng_settings_use_windows
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_use_windows");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Username:"
+        /// </summary>
+        public static string lng_settings_username
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_username");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add username"
+        /// </summary>
+        public static string lng_settings_username_add
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_username_add");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Version and updates"
+        /// </summary>
+        public static string lng_settings_version_info
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_version_info");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "View list"
+        /// </summary>
+        public static string lng_settings_view_emojis
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_view_emojis");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Show tray icon"
+        /// </summary>
+        public static string lng_settings_workmode_tray
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_workmode_tray");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Show taskbar icon"
+        /// </summary>
+        public static string lng_settings_workmode_window
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_settings_workmode_window");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, no way to share here :("
+        /// </summary>
+        public static string lng_share_cant
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_share_cant");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Copy share link"
+        /// </summary>
+        public static string lng_share_copy_link
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_share_copy_link");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Done!"
+        /// </summary>
+        public static string lng_share_done
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_share_done");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Game link copied to clipboard."
+        /// </summary>
+        public static string lng_share_game_link_copied
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_share_game_link_copied");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Share to"
+        /// </summary>
+        public static string lng_share_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_share_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This game was opened from a different user."
+        /// </summary>
+        public static string lng_share_wrong_user
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_share_wrong_user");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Author: {user}"
+        /// </summary>
+        public static string lng_signed_author
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_signed_author");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You have entered a wrong password."
+        /// </summary>
+        public static string lng_signin_bad_password
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_signin_bad_password");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "If you can't restore access to the email, your remaining options are either to remember your password or to reset your account."
+        /// </summary>
+        public static string lng_signin_cant_email_forgot
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_signin_cant_email_forgot");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Code from the email"
+        /// </summary>
+        public static string lng_signin_code
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_signin_code");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please enter your cloud password."
+        /// </summary>
+        public static string lng_signin_desc
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_signin_desc");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Hint: {password_hint}"
+        /// </summary>
+        public static string lng_signin_hint
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_signin_hint");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Your cloud password"
+        /// </summary>
+        public static string lng_signin_password
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_signin_password");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Your cloud password was disabled.
+        ///You can set up a new one in Settings."
+        /// </summary>
+        public static string lng_signin_password_removed
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_signin_password_removed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please enter the code from the email
+        ///{email}"
+        /// </summary>
+        public static string lng_signin_recover_desc
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_signin_recover_desc");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "We sent a code to {recover_email}"
+        /// </summary>
+        public static string lng_signin_recover_hint
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_signin_recover_hint");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Password reset"
+        /// </summary>
+        public static string lng_signin_recover_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_signin_recover_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Reset your account"
+        /// </summary>
+        public static string lng_signin_reset_account
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_signin_reset_account");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{days_count} {hours_count} {minutes_count}"
+        /// </summary>
+        public static string lng_signin_reset_in_days
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_signin_reset_in_days");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{hours_count} {minutes_count}"
+        /// </summary>
+        public static string lng_signin_reset_in_hours
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_signin_reset_in_hours");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Since the account {phone_number} is active and protected by a password, it will be deleted in 1 week. This delay is required for security purposes. You can cancel this process anytime.
+        ///
+        ///You'll be able to reset your account in:
+        ///{when}"
+        /// </summary>
+        public static string lng_signin_reset_wait
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_signin_reset_wait");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Warning!
+        ///
+        ///You will lose all your chats and messages, along with any media and files you shared!
+        ///
+        ///Do you want to reset your account?"
+        /// </summary>
+        public static string lng_signin_sure_reset
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_signin_sure_reset");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Cloud password check"
+        /// </summary>
+        public static string lng_signin_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_signin_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unable to access your email?"
+        /// </summary>
+        public static string lng_signin_try_password
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_signin_try_password");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You have entered an invalid code."
+        /// </summary>
+        public static string lng_signin_wrong_code
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_signin_wrong_code");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please enter your name and
+        ///upload a photo."
+        /// </summary>
+        public static string lng_signup_desc
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_signup_desc");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Your Info"
+        /// </summary>
+        public static string lng_signup_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_signup_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Slow mode is enabled. You can send your next message in {left}."
+        /// </summary>
+        public static string lng_slowmode_enabled
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_slowmode_enabled");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Slow mode is enabled. You can't send more than one message at a time."
+        /// </summary>
+        public static string lng_slowmode_no_many
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_slowmode_no_many");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, this text is too long to send as one message.
+        ///
+        ///Slow mode is enabled. You can't send more than one message at a time."
+        /// </summary>
+        public static string lng_slowmode_too_long
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_slowmode_too_long");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add to Dictionary"
+        /// </summary>
+        public static string lng_spellchecker_add
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_spellchecker_add");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Ignore word"
+        /// </summary>
+        public static string lng_spellchecker_ignore
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_spellchecker_ignore");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Remove from Dictionary"
+        /// </summary>
+        public static string lng_spellchecker_remove
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_spellchecker_remove");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Spelling"
+        /// </summary>
+        public static string lng_spellchecker_submenu
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_spellchecker_submenu");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unlike other apps, Telegram never uses your private data to target ads. Sponsored messages on Telegram are based solely on the topic of the public channels in which they are shown. This means that no user data is mined or analyzed to display ads, and every user viewing a channel on Telegram sees the same sponsored messages.
+        ///
+        ///Unlike other apps, Telegram doesn't track whether you tapped on a sponsored message and doesn't profile you based on your activity. We also prevent external links in sponsored messages to ensure that third parties can’t spy on our users. We believe that everyone has the right to privacy, and technological platforms should respect that.
+        ///
+        ///Telegram offers a free and unlimited service to hundreds of millions of users, which involves significant server and traffic costs. In order to remain independent and stay true to its values, Telegram developed a paid tool to promote messages with user privacy in mind. We welcome responsible advertisers at:"
+        /// </summary>
+        public static string lng_sponsored_info_description1
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_sponsored_info_description1");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "What are sponsored messages?"
+        /// </summary>
+        public static string lng_sponsored_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_sponsored_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "START MESSAGING"
+        /// </summary>
+        public static string lng_start_msgs
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_start_msgs");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "connecting..."
+        /// </summary>
+        public static string lng_status_connecting
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_status_connecting");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "last seen {date}"
+        /// </summary>
+        public static string lng_status_lastseen_date
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_status_lastseen_date");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "last seen {date} at {time}"
+        /// </summary>
+        public static string lng_status_lastseen_date_time
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_status_lastseen_date_time");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "last seen just now"
+        /// </summary>
+        public static string lng_status_lastseen_now
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_status_lastseen_now");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "last seen today at {time}"
+        /// </summary>
+        public static string lng_status_lastseen_today
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_status_lastseen_today");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "last seen yesterday at {time}"
+        /// </summary>
+        public static string lng_status_lastseen_yesterday
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_status_lastseen_yesterday");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "service notifications"
+        /// </summary>
+        public static string lng_status_service_notifications
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_status_service_notifications");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add masks"
+        /// </summary>
+        public static string lng_stickers_add_masks
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_stickers_add_masks");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add stickers"
+        /// </summary>
+        public static string lng_stickers_add_pack
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_stickers_add_pack");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Archive Stickers"
+        /// </summary>
+        public static string lng_stickers_archive_pack
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_stickers_archive_pack");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sets of attached stickers"
+        /// </summary>
+        public static string lng_stickers_attached_sets
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_stickers_attached_sets");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Link copied to clipboard."
+        /// </summary>
+        public static string lng_stickers_copied
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_stickers_copied");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Great Minds"
+        /// </summary>
+        public static string lng_stickers_default_set
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_stickers_default_set");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Choose from trending stickers"
+        /// </summary>
+        public static string lng_stickers_group_from_featured
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_stickers_group_from_featured");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Group sticker set"
+        /// </summary>
+        public static string lng_stickers_group_set
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_stickers_group_set");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sticker pack has been archived."
+        /// </summary>
+        public static string lng_stickers_has_been_archived
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_stickers_has_been_archived");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This is a set of masks. Masks are only supported by mobile versions of Telegram."
+        /// </summary>
+        public static string lng_stickers_masks_pack
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_stickers_masks_pack");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sticker pack not found."
+        /// </summary>
+        public static string lng_stickers_not_found
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_stickers_not_found");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Some of your unused stickers were archived to make room for the sets you activated."
+        /// </summary>
+        public static string lng_stickers_packs_archived
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_stickers_packs_archived");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Remove group sticker set?"
+        /// </summary>
+        public static string lng_stickers_remove_group_set
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_stickers_remove_group_set");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Remove «{sticker_pack}»?"
+        /// </summary>
+        public static string lng_stickers_remove_pack
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_stickers_remove_pack");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Undo"
+        /// </summary>
+        public static string lng_stickers_return
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_stickers_return");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Share Masks"
+        /// </summary>
+        public static string lng_stickers_share_masks
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_stickers_share_masks");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Share Stickers"
+        /// </summary>
+        public static string lng_stickers_share_pack
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_stickers_share_pack");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Manage sticker sets"
+        /// </summary>
+        public static string lng_stickers_you_have
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_stickers_you_have");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You are receiving lots of new chats from users who are not in your Contact List.
+        ///
+        ///Do you want to have such chats **automatically muted** and **archived**?"
+        /// </summary>
+        public static string lng_suggest_hide_new_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_suggest_hide_new_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Go to Settings"
+        /// </summary>
+        public static string lng_suggest_hide_new_to_settings
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_suggest_hide_new_to_settings");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This user is not a member of this group. Add them to the group and promote them to admin?"
+        /// </summary>
+        public static string lng_sure_add_admin_invite
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_sure_add_admin_invite");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This user is not a subscriber of this channel. Add them to the channel and promote them to admin?"
+        /// </summary>
+        public static string lng_sure_add_admin_invite_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_sure_add_admin_invite_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This user is currently restricted or banned. Are you sure you want to unban and promote them?"
+        /// </summary>
+        public static string lng_sure_add_admin_unban
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_sure_add_admin_unban");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This user is currently restricted or removed. Are you sure you want to promote them?"
+        /// </summary>
+        public static string lng_sure_add_admin_unremove
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_sure_add_admin_unremove");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This user is an admin. Are you sure you want to go ahead and restrict them?"
+        /// </summary>
+        public static string lng_sure_ban_admin
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_sure_ban_admin");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Ban {user} from the channel?"
+        /// </summary>
+        public static string lng_sure_ban_user_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_sure_ban_user_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to ban {user} from the group?"
+        /// </summary>
+        public static string lng_sure_ban_user_group
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_sure_ban_user_group");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to remove all downloaded files from temp folder? It is done automatically on logout or program uninstall."
+        /// </summary>
+        public static string lng_sure_clear_downloads
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_sure_clear_downloads");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to delete all message history and leave «{group}»?
+        ///
+        ///This action cannot be undone."
+        /// </summary>
+        public static string lng_sure_delete_and_exit
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_sure_delete_and_exit");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to delete all messages for the **{days}**?
+        ///
+        ///This action cannot be undone."
+        /// </summary>
+        public static string lng_sure_delete_by_date_many
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_sure_delete_by_date_many");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to delete all messages for **{date}**?
+        ///
+        ///This action cannot be undone."
+        /// </summary>
+        public static string lng_sure_delete_by_date_one
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_sure_delete_by_date_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to delete this channel? All subscribers will be removed and all messages will be lost."
+        /// </summary>
+        public static string lng_sure_delete_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_sure_delete_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to delete {contact} from your contact list?"
+        /// </summary>
+        public static string lng_sure_delete_contact
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_sure_delete_contact");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to delete this group? All members will be removed, and all messages will be lost."
+        /// </summary>
+        public static string lng_sure_delete_group
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_sure_delete_group");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to delete all message history in «{group}»?
+        ///
+        ///This action cannot be undone."
+        /// </summary>
+        public static string lng_sure_delete_group_history
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_sure_delete_group_history");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to delete all message history with {contact}?
+        ///
+        ///This action cannot be undone."
+        /// </summary>
+        public static string lng_sure_delete_history
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_sure_delete_history");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to delete all your saved messages?
+        ///
+        ///This action cannot be undone."
+        /// </summary>
+        public static string lng_sure_delete_saved_messages
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_sure_delete_saved_messages");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to enable this proxy?
+        ///
+        ///Server: {server}
+        ///Port: {port}
+        ///
+        ///You can change your proxy server later in Settings > Advanced > Connection Type."
+        /// </summary>
+        public static string lng_sure_enable_socks
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_sure_enable_socks");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to leave
+        ///this channel?"
+        /// </summary>
+        public static string lng_sure_leave_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_sure_leave_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to leave this group?"
+        /// </summary>
+        public static string lng_sure_leave_group
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_sure_leave_group");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to log out?"
+        /// </summary>
+        public static string lng_sure_logout
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_sure_logout");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Remove {user} from the channel?"
+        /// </summary>
+        public static string lng_sure_remove_user_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_sure_remove_user_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Remove {user} from the group?"
+        /// </summary>
+        public static string lng_sure_remove_user_group
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_sure_remove_user_group");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Telegram will restart in order to change the language"
+        /// </summary>
+        public static string lng_sure_save_language
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_sure_save_language");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Agree & Continue"
+        /// </summary>
+        public static string lng_terms_agree
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_terms_agree");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please agree and proceed to {bot}."
+        /// </summary>
+        public static string lng_terms_agree_to_proceed
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_terms_agree_to_proceed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete now"
+        /// </summary>
+        public static string lng_terms_delete_now
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_terms_delete_now");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "By signing up,
+        ///you agree to the {link}."
+        /// </summary>
+        public static string lng_terms_signup
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_terms_signup");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "We're very sorry, but this means you can't sign up for Telegram.
+        ///
+        ///Unlike others, we don't use your data for ad targeting or other commercial purposes. Telegram only stores the information it needs to function as a secure and feature-rich cloud service. You can adjust how we use your data in the Privacy & Security settings.
+        ///
+        ///But if you're generally not OK with Telegram's modest requirements, it won't be possible for us to provide you with this service."
+        /// </summary>
+        public static string lng_terms_signup_sorry
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_terms_signup_sorry");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "We're very sorry, but this means we must part ways here. Unlike others, we don't use your data for ad targeting or other commercial purposes. Telegram only stores the information it needs to function as a secure and feature-rich cloud service. You can adjust how we use your data in Privacy & Security settings.
+        ///
+        ///But if you're generally not OK with Telegram's modest requirements, it won't be possible for us to provide you with this service. You can delete your account now — or look around some more and delete it later if you feel you're not happy with the way we use your data."
+        /// </summary>
+        public static string lng_terms_update_sorry
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_terms_update_sorry");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can create desktop part of your theme based on your currently selected colors and wallpaper. Alternatively, you can import existing theme or color palette from file."
+        /// </summary>
+        public static string lng_theme_editor_attach_description
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_theme_editor_attach_description");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Attach desktop theme"
+        /// </summary>
+        public static string lng_theme_editor_attach_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_theme_editor_attach_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Background Image"
+        /// </summary>
+        public static string lng_theme_editor_background_image
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_theme_editor_background_image");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can't apply a new theme while editing the color palette. Please close the theme editor first."
+        /// </summary>
+        public static string lng_theme_editor_cant_change_theme
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_theme_editor_cant_change_theme");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Choose Background Image"
+        /// </summary>
+        public static string lng_theme_editor_choose_image
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_theme_editor_choose_image");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Save Theme File"
+        /// </summary>
+        public static string lng_theme_editor_choose_name
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_theme_editor_choose_name");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "New theme will be based on your currently selected colors and wallpaper. Alternatively, you can import existing theme or color palette from file."
+        /// </summary>
+        public static string lng_theme_editor_create_description
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_theme_editor_create_description");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Create theme"
+        /// </summary>
+        public static string lng_theme_editor_create_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_theme_editor_create_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Theme exported successfully!"
+        /// </summary>
+        public static string lng_theme_editor_done
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_theme_editor_done");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The editor encountered an error :( See 'log.txt' for details."
+        /// </summary>
+        public static string lng_theme_editor_error
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_theme_editor_error");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Export theme"
+        /// </summary>
+        public static string lng_theme_editor_export_button
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_theme_editor_export_button");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Import existing theme"
+        /// </summary>
+        public static string lng_theme_editor_import_existing
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_theme_editor_import_existing");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Your theme will be updated for all users each time you change it. Anyone can install it using this link.
+        ///
+        ///Theme links must be longer than 5 characters and use a-z, 0-9 and underscores."
+        /// </summary>
+        public static string lng_theme_editor_link_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_theme_editor_link_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Export theme"
+        /// </summary>
+        public static string lng_theme_editor_menu_export
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_theme_editor_menu_export");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Import theme"
+        /// </summary>
+        public static string lng_theme_editor_menu_import
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_theme_editor_menu_import");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Show palette file"
+        /// </summary>
+        public static string lng_theme_editor_menu_show
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_theme_editor_menu_show");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Theme name"
+        /// </summary>
+        public static string lng_theme_editor_name
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_theme_editor_name");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You need to log in to save your theme."
+        /// </summary>
+        public static string lng_theme_editor_need_auth
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_theme_editor_need_auth");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You need to unlock Telegram to save your theme."
+        /// </summary>
+        public static string lng_theme_editor_need_unlock
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_theme_editor_need_unlock");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Not in the palette yet"
+        /// </summary>
+        public static string lng_theme_editor_new_keys
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_theme_editor_new_keys");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No keys in the palette yet"
+        /// </summary>
+        public static string lng_theme_editor_no_keys
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_theme_editor_no_keys");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "JPEG image, {size}"
+        /// </summary>
+        public static string lng_theme_editor_read_from_jpg
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_theme_editor_read_from_jpg");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "PNG image, {size}"
+        /// </summary>
+        public static string lng_theme_editor_read_from_png
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_theme_editor_read_from_png");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Save theme"
+        /// </summary>
+        public static string lng_theme_editor_save_button
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_theme_editor_save_button");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Save Palette File"
+        /// </summary>
+        public static string lng_theme_editor_save_palette
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_theme_editor_save_palette");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Save theme"
+        /// </summary>
+        public static string lng_theme_editor_save_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_theme_editor_save_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Saved to JPEG, {size}"
+        /// </summary>
+        public static string lng_theme_editor_saved_to_jpg
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_theme_editor_saved_to_jpg");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to close the editor? Your changes won't be saved."
+        /// </summary>
+        public static string lng_theme_editor_sure_close
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_theme_editor_sure_close");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Edit color palette"
+        /// </summary>
+        public static string lng_theme_editor_title
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_theme_editor_title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Keep changes"
+        /// </summary>
+        public static string lng_theme_keep_changes
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_theme_keep_changes");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, this theme doesn't include a version for Telegram Desktop."
+        /// </summary>
+        public static string lng_theme_no_desktop
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_theme_no_desktop");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, this theme doesn't include a version for Telegram Desktop."
+        /// </summary>
+        public static string lng_theme_no_desktop_version
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_theme_no_desktop_version");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Apply this theme"
+        /// </summary>
+        public static string lng_theme_preview_apply
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_theme_preview_apply");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Generating color theme preview..."
+        /// </summary>
+        public static string lng_theme_preview_generating
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_theme_preview_generating");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Invalid data in this theme file."
+        /// </summary>
+        public static string lng_theme_preview_invalid
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_theme_preview_invalid");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Revert"
+        /// </summary>
+        public static string lng_theme_revert
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_theme_revert");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Keep this theme?"
+        /// </summary>
+        public static string lng_theme_sure_keep
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_theme_sure_keep");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Telegram is still running here,
+        ///you can change this in Settings.
+        ///If it disappears from the tray,
+        ///you can drag it back from the hidden icons."
+        /// </summary>
+        public static string lng_tray_icon_text
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_tray_icon_text");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Try someone else"
+        /// </summary>
+        public static string lng_try_other_contact
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_try_other_contact");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "1 day"
+        /// </summary>
+        public static string lng_ttl_about_duration1
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_ttl_about_duration1");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "New messages in this chat will be automatically deleted in {duration}."
+        /// </summary>
+        public static string lng_ttl_about_tooltip
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_ttl_about_tooltip");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "New messages in this chat will be automatically deleted in {duration}."
+        /// </summary>
+        public static string lng_ttl_about_tooltip_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_ttl_about_tooltip_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Automatically delete new messages after a certain period of time for you and {user}."
+        /// </summary>
+        public static string lng_ttl_edit_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_ttl_edit_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Automatically delete new messages sent in this channel after a certain period of time."
+        /// </summary>
+        public static string lng_ttl_edit_about_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_ttl_edit_about_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} sent you a self-destructing photo. Please view it on your mobile."
+        /// </summary>
+        public static string lng_ttl_photo_received
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_ttl_photo_received");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You sent a self-destructing photo."
+        /// </summary>
+        public static string lng_ttl_photo_sent
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_ttl_photo_sent");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{from} sent you a self-destructing video. Please view it on your mobile."
+        /// </summary>
+        public static string lng_ttl_video_received
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_ttl_video_received");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You sent a self-destructing video."
+        /// </summary>
+        public static string lng_ttl_video_sent
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_ttl_video_sent");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "typing"
+        /// </summary>
+        public static string lng_typing
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_typing");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unread messages"
+        /// </summary>
+        public static string lng_unread_bar_some
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_unread_bar_some");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Allow {bot} to send me messages"
+        /// </summary>
+        public static string lng_url_auth_allow_messages
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_url_auth_allow_messages");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Log in to {domain} as {user}"
+        /// </summary>
+        public static string lng_url_auth_login_option
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_url_auth_login_option");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to open {link}?"
+        /// </summary>
+        public static string lng_url_auth_open_confirm
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_url_auth_open_confirm");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user} is choosing a sticker"
+        /// </summary>
+        public static string lng_user_action_choose_sticker
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_user_action_choose_sticker");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user} is recording a voice message"
+        /// </summary>
+        public static string lng_user_action_record_audio
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_user_action_record_audio");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user} is recording a video message"
+        /// </summary>
+        public static string lng_user_action_record_round
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_user_action_record_round");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user} is recording a video"
+        /// </summary>
+        public static string lng_user_action_record_video
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_user_action_record_video");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user} is sending a voice message"
+        /// </summary>
+        public static string lng_user_action_upload_audio
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_user_action_upload_audio");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user} is sending a file"
+        /// </summary>
+        public static string lng_user_action_upload_file
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_user_action_upload_file");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user} is sending a photo"
+        /// </summary>
+        public static string lng_user_action_upload_photo
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_user_action_upload_photo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user} is sending a video message"
+        /// </summary>
+        public static string lng_user_action_upload_round
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_user_action_upload_round");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user} is sending a video"
+        /// </summary>
+        public static string lng_user_action_upload_video
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_user_action_upload_video");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "watching {emoji}"
+        /// </summary>
+        public static string lng_user_action_watching_animations
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_user_action_watching_animations");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user} is playing a game"
+        /// </summary>
+        public static string lng_user_playing_game
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_user_playing_game");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user} is typing"
+        /// </summary>
+        public static string lng_user_typing
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_user_typing");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can choose a username on Telegram.
+        ///If you do, people will be able to find
+        ///you by this username and contact you
+        ///without needing your phone number.
+        ///
+        ///You can use a-z, 0-9 and underscores.
+        ///Minimum length is 5 characters."
+        /// </summary>
+        public static string lng_username_about
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_username_about");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This username is available."
+        /// </summary>
+        public static string lng_username_available
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_username_available");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Only a-z, 0-9, and underscores allowed."
+        /// </summary>
+        public static string lng_username_bad_symbols
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_username_bad_symbols");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Choose your username."
+        /// </summary>
+        public static string lng_username_choose
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_username_choose");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Link copied to clipboard."
+        /// </summary>
+        public static string lng_username_copied
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_username_copied");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This username is invalid."
+        /// </summary>
+        public static string lng_username_invalid
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_username_invalid");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This link opens a chat with you:"
+        /// </summary>
+        public static string lng_username_link
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_username_link");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This link will open a chat with you:"
+        /// </summary>
+        public static string lng_username_link_willbe
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_username_link_willbe");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Username @{user} not found."
+        /// </summary>
+        public static string lng_username_not_found
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_username_not_found");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This username is already occupied."
+        /// </summary>
+        public static string lng_username_occupied
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_username_occupied");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This username is too short."
+        /// </summary>
+        public static string lng_username_too_short
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_username_too_short");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user} and {second_user} are playing a game"
+        /// </summary>
+        public static string lng_users_playing_game
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_users_playing_game");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{user} and {second_user} are typing"
+        /// </summary>
+        public static string lng_users_typing
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_users_typing");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "View background"
+        /// </summary>
+        public static string lng_view_button_background
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_view_button_background");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "View bot"
+        /// </summary>
+        public static string lng_view_button_bot
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_view_button_bot");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "View channel"
+        /// </summary>
+        public static string lng_view_button_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_view_button_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "View group"
+        /// </summary>
+        public static string lng_view_button_group
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_view_button_group");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "View message"
+        /// </summary>
+        public static string lng_view_button_message
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_view_button_message");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Request to Join"
+        /// </summary>
+        public static string lng_view_button_request_join
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_view_button_request_join");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "View theme"
+        /// </summary>
+        public static string lng_view_button_theme
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_view_button_theme");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "View user"
+        /// </summary>
+        public static string lng_view_button_user
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_view_button_user");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Video chat"
+        /// </summary>
+        public static string lng_view_button_voice_chat
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_view_button_voice_chat");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Live stream"
+        /// </summary>
+        public static string lng_view_button_voice_chat_channel
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_view_button_voice_chat_channel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Mon"
+        /// </summary>
+        public static string lng_weekday1
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_weekday1");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Tue"
+        /// </summary>
+        public static string lng_weekday2
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_weekday2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Wed"
+        /// </summary>
+        public static string lng_weekday3
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_weekday3");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Thu"
+        /// </summary>
+        public static string lng_weekday4
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_weekday4");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Fri"
+        /// </summary>
+        public static string lng_weekday5
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_weekday5");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sat"
+        /// </summary>
+        public static string lng_weekday6
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_weekday6");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sun"
+        /// </summary>
+        public static string lng_weekday7
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_weekday7");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Select a chat to start messaging"
+        /// </summary>
+        public static string lng_willbe_history
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_willbe_history");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Choose Default Program..."
+        /// </summary>
+        public static string lng_wnd_choose_program_menu
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_wnd_choose_program_menu");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Redo"
+        /// </summary>
+        public static string lng_wnd_menu_redo
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_wnd_menu_redo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Undo"
+        /// </summary>
+        public static string lng_wnd_menu_undo
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_wnd_menu_undo");
             }
         }
     }

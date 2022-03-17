@@ -3,6 +3,7 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
+using Unigram.Navigation;
 using Unigram.ViewModels.Settings;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -16,7 +17,6 @@ namespace Unigram.Views.Settings
         public SettingsStoragePage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsStorageViewModel>();
 
             InitializeKeepMediaTicks();
         }
@@ -26,7 +26,7 @@ namespace Unigram.Views.Settings
             int j = 0;
             for (int i = 0; i < 4; i++)
             {
-                var label = new TextBlock { Text = ConvertKeepMediaTick(i), TextAlignment = TextAlignment.Center, HorizontalAlignment = HorizontalAlignment.Stretch, Style = App.Current.Resources["InfoCaptionTextBlockStyle"] as Style };
+                var label = new TextBlock { Text = ConvertKeepMediaTick(i), TextAlignment = TextAlignment.Center, HorizontalAlignment = HorizontalAlignment.Stretch, Style = BootStrapper.Current.Resources["InfoCaptionTextBlockStyle"] as Style };
                 Grid.SetColumn(label, j);
 
                 KeepMediaTicks.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
@@ -72,8 +72,16 @@ namespace Unigram.Views.Settings
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.Source = chat == null ? null : PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 36);
-                photo.Visibility = chat == null ? Visibility.Collapsed : Visibility.Visible;
+                if (chat == null)
+                {
+                    photo.Source = null;
+                    photo.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    photo.SetChat(ViewModel.ProtoService, chat, 36);
+                    photo.Visibility = Visibility.Visible;
+                }
             }
 
             if (args.Phase < 2)

@@ -37,8 +37,7 @@ namespace Unigram.Common
                 double ratioY = (double)requestedMinSide / height;
                 double ratio = Math.Min(ratioX, ratioY);
 
-                if (editState?.Rotation == BitmapRotation.Clockwise90Degrees ||
-                    editState?.Rotation == BitmapRotation.Clockwise270Degrees)
+                if (editState != null && editState.Rotation is BitmapRotation.Clockwise90Degrees or BitmapRotation.Clockwise270Degrees)
                 {
                     return ((int)(height * ratio), (int)(width * ratio));
                 }
@@ -46,8 +45,7 @@ namespace Unigram.Common
                 return ((int)(width * ratio), (int)(height * ratio));
             }
 
-            if (editState?.Rotation == BitmapRotation.Clockwise90Degrees ||
-                editState?.Rotation == BitmapRotation.Clockwise270Degrees)
+            if (editState != null && editState.Rotation is BitmapRotation.Clockwise90Degrees or BitmapRotation.Clockwise270Degrees)
             {
                 return ((int)height, (int)width);
             }
@@ -126,9 +124,6 @@ namespace Unigram.Common
             //{
             //    throw new InvalidCastException();
             //}
-
-            var originalPixelWidth = decoder.PixelWidth;
-            var originalPixelHeight = decoder.PixelHeight;
 
             using (var resizedStream = await resizedImageFile.OpenAsync(FileAccessMode.ReadWrite))
             {
@@ -278,8 +273,8 @@ namespace Unigram.Common
                     double ratioY = 1280d / cropHeight;
                     double ratio = Math.Min(ratioX, ratioY);
 
-                    cropWidth = cropWidth * ratio;
-                    cropHeight = cropHeight * ratio;
+                    cropWidth *= ratio;
+                    cropHeight *= ratio;
                 }
 
                 cropRectangle = new Rect(
@@ -299,7 +294,7 @@ namespace Unigram.Common
                 }
 
                 var (scaledCrop, scaledSize) = Scale(cropRectangle, new Size(decoder.PixelWidth, decoder.PixelHeight), new Size(cropWidth, cropHeight), min, max);
-                
+
                 var bounds = new BitmapBounds();
                 bounds.X = (uint)scaledCrop.X;
                 bounds.Y = (uint)scaledCrop.Y;
@@ -334,7 +329,7 @@ namespace Unigram.Common
             {
                 var point = new Point(height - area.Bottom, width - (width - area.X));
                 area = new Rect(point.X, point.Y, area.Height, area.Width);
-                
+
                 var temp = width;
                 width = height;
                 height = temp;
@@ -362,8 +357,8 @@ namespace Unigram.Common
                 double ratioY = min / height;
                 double ratio = Math.Min(ratioX, ratioY);
 
-                width = width * ratio;
-                height = height * ratio;
+                width *= ratio;
+                height *= ratio;
             }
 
             if (width < max || height < max)
@@ -372,8 +367,8 @@ namespace Unigram.Common
                 double ratioY = max / height;
                 double ratio = Math.Min(ratioX, ratioY);
 
-                width = width * ratio;
-                height = height * ratio;
+                width *= ratio;
+                height *= ratio;
             }
 
             var ratioW = start.Width * width / rect.Width;
@@ -421,8 +416,8 @@ namespace Unigram.Common
                 double ratioY = 1280d / cropHeight;
                 double ratio = Math.Min(ratioX, ratioY);
 
-                cropWidth = cropWidth * ratio;
-                cropHeight = cropHeight * ratio;
+                cropWidth *= ratio;
+                cropHeight *= ratio;
             }
 
             var cropRectangle = new Rect(
@@ -528,8 +523,7 @@ namespace Unigram.Common
             var offsetX = (float)rectangle.X * scaleX;
             var offsetY = (float)rectangle.Y * scaleY;
 
-            if (rotation == BitmapRotation.Clockwise270Degrees ||
-                rotation == BitmapRotation.Clockwise90Degrees)
+            if (rotation is BitmapRotation.Clockwise270Degrees or BitmapRotation.Clockwise90Degrees)
             {
                 size = new Vector2(size.Y, size.X);
 
@@ -629,8 +623,7 @@ namespace Unigram.Common
             var offsetX = (float)rectangle.X * scaleX;
             var offsetY = (float)rectangle.Y * scaleY;
 
-            if (rotation == BitmapRotation.Clockwise270Degrees ||
-                rotation == BitmapRotation.Clockwise90Degrees)
+            if (rotation is BitmapRotation.Clockwise270Degrees or BitmapRotation.Clockwise90Degrees)
             {
                 size = new Vector2(size.Y, size.X);
 

@@ -149,7 +149,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        private void Handle(ConnectionState state, int enabledProxyId)
+        private void Handle(ConnectionState state, long enabledProxyId)
         {
             foreach (var item in Items)
             {
@@ -198,14 +198,8 @@ namespace Unigram.ViewModels.Settings
         private ConnectionViewModel _selectedItem;
         public ConnectionViewModel SelectedItem
         {
-            get
-            {
-                return _selectedItem;
-            }
-            set
-            {
-                Set(ref _selectedItem, value);
-            }
+            get => _selectedItem;
+            set => Set(ref _selectedItem, value);
         }
 
         public RelayCommand AddCommand { get; }
@@ -297,7 +291,7 @@ namespace Unigram.ViewModels.Settings
         private async void ShareExecute(ProxyViewModel proxy)
         {
             var response = await ProtoService.SendAsync(new GetProxyLink(proxy.Id));
-            if (response is Text text && Uri.TryCreate(text.TextValue, UriKind.Absolute, out Uri uri))
+            if (response is HttpUrl httpUrl && Uri.TryCreate(httpUrl.Url, UriKind.Absolute, out Uri uri))
             {
                 await SharePopup.GetForCurrentView().ShowAsync(uri, Strings.Resources.Proxy);
             }

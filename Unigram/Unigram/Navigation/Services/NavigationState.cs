@@ -24,7 +24,7 @@ namespace Unigram.Navigation.Services
             return new NavigationState();
         }
 
-        public static NavigationState GetSwitchQuery(string query, int botId)
+        public static NavigationState GetSwitchQuery(string query, long botId)
         {
             return new NavigationState { { "switch_query", query }, { "switch_bot", botId } };
         }

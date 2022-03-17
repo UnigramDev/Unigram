@@ -14,8 +14,8 @@ namespace Unigram.Controls
 
         public string Glyph
         {
-            get { return (string)GetValue(GlyphProperty); }
-            set { SetValue(GlyphProperty, value); }
+            get => (string)GetValue(GlyphProperty);
+            set => SetValue(GlyphProperty, value);
         }
 
         public static readonly DependencyProperty GlyphProperty =
@@ -27,8 +27,8 @@ namespace Unigram.Controls
 
         public string CheckedGlyph
         {
-            get { return (string)GetValue(CheckedGlyphProperty); }
-            set { SetValue(CheckedGlyphProperty, value); }
+            get => (string)GetValue(CheckedGlyphProperty);
+            set => SetValue(CheckedGlyphProperty, value);
         }
 
         public static readonly DependencyProperty CheckedGlyphProperty =

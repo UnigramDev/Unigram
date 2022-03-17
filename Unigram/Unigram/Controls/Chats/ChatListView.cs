@@ -20,6 +20,8 @@ namespace Unigram.Controls.Chats
         public ScrollViewer ScrollingHost { get; private set; }
         public ItemsStackPanel ItemsStack { get; private set; }
 
+        public bool IsBottomReached => ScrollingHost?.VerticalOffset == ScrollingHost?.ScrollableHeight;
+
         public Action<bool> ViewVisibleMessages { get; set; }
 
         private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
@@ -152,6 +154,7 @@ namespace Unigram.Controls.Chats
             _loadingMore = false;
         }
 
+        private ItemsUpdatingScrollMode _currentMode;
         private ItemsUpdatingScrollMode? _pendingMode;
         private bool? _pendingForce;
 
@@ -186,17 +189,24 @@ namespace Unigram.Controls.Chats
                 return;
             }
 
+            if (_currentMode == _pendingMode)
+            {
+                _pendingMode = null;
+                _pendingForce = null;
+                return;
+            }
+
             if (mode == ItemsUpdatingScrollMode.KeepItemsInView && (force || scroll.VerticalOffset < 200))
             {
                 Debug.WriteLine("Changed scrolling mode to KeepItemsInView");
 
-                panel.ItemsUpdatingScrollMode = ItemsUpdatingScrollMode.KeepItemsInView;
+                panel.ItemsUpdatingScrollMode = _currentMode = ItemsUpdatingScrollMode.KeepItemsInView;
             }
             else if (mode == ItemsUpdatingScrollMode.KeepLastItemInView && (force || scroll.ScrollableHeight - scroll.VerticalOffset < 200))
             {
                 Debug.WriteLine("Changed scrolling mode to KeepLastItemInView");
 
-                panel.ItemsUpdatingScrollMode = ItemsUpdatingScrollMode.KeepLastItemInView;
+                panel.ItemsUpdatingScrollMode = _currentMode = ItemsUpdatingScrollMode.KeepLastItemInView;
             }
         }
 
@@ -226,33 +236,31 @@ namespace Unigram.Controls.Chats
             var scrollViewer = ScrollingHost;
             if (scrollViewer == null)
             {
-                Logs.Logger.Debug(Logs.LogTarget.Chat, "ScrollingHost == null");
+                ViewVisibleMessages?.Invoke(true);
 
+                Logs.Logger.Debug(Logs.LogTarget.Chat, "ScrollingHost == null");
                 return;
             }
 
             _programmaticScrolling = true;
 
-            // We are going to try two times, as the first one seem to fail sometimes
-            // leading the chat to the wrong scrolling position
-            var iter = 2;
+            ScrollIntoView(item, direction);
+            await this.UpdateLayoutAsync();
 
             var selectorItem = ContainerFromItem(item) as SelectorItem;
-            while (selectorItem == null && iter > 0)
+            if (selectorItem == null)
             {
-                Logs.Logger.Debug(Logs.LogTarget.Chat, string.Format("selectorItem == null, {0} try", iter + 1));
+                ScrollIntoView(item, direction);
+                await this.UpdateLayoutAsync();
 
-                // call task-based ScrollIntoViewAsync to realize the item
-                await this.ScrollIntoViewAsync(item, direction, false);
-
-                // this time the item shouldn't be null again
                 selectorItem = ContainerFromItem(item) as SelectorItem;
-                iter--;
             }
 
             if (selectorItem == null)
             {
                 _programmaticScrolling = _programmaticExternal = false;
+                ViewVisibleMessages?.Invoke(true);
+
                 Logs.Logger.Debug(Logs.LogTarget.Chat, "selectorItem == null, abort");
                 return;
             }
@@ -260,29 +268,6 @@ namespace Unigram.Controls.Chats
             // calculate the position object in order to know how much to scroll to
             var transform = selectorItem.TransformToVisual((UIElement)scrollViewer.Content);
             var position = transform.TransformPoint(new Point(0, 0));
-
-            // If position is negative layout should still happen, 
-            // Lets wait for it.
-            if (position.Y < 0)
-            {
-                Logs.Logger.Debug(Logs.LogTarget.Chat, "position.Y is negative, let's wait for layout");
-
-                // call task-based UpdateLayoutAsync to realize the item
-                await this.UpdateLayoutAsync(true);
-
-                // this time the item shouldn't be null again
-                selectorItem = ContainerFromItem(item) as SelectorItem;
-
-                if (selectorItem == null)
-                {
-                    _programmaticScrolling = _programmaticExternal = false;
-                    Logs.Logger.Debug(Logs.LogTarget.Chat, "selectorItem == null after layout, abort");
-                    return;
-                }
-
-                transform = selectorItem.TransformToVisual((UIElement)scrollViewer.Content);
-                position = transform.TransformPoint(new Point(0, 0));
-            }
 
             if (alignment == VerticalAlignment.Top)
             {

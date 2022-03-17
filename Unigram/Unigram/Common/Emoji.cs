@@ -304,7 +304,7 @@ namespace Unigram.Common
 
         public static void Assert()
         {
-            var stringify = String.Join(string.Empty, _rawEmojis);
+            var stringify = string.Join(string.Empty, _rawEmojis);
             var success = TryCountEmojis(stringify, out int count);
 
             Debug.Assert(success);
@@ -319,15 +319,15 @@ namespace Unigram.Common
             if (0xd800 <= high && high <= 0xdbff && text.Length >= 2)
             {
                 var low = text[1];
-                var codepoint = ((high - 0xd800) * 0x400) + (low - 0xdc00) + 0x10000;
+                var codepoint = (high - 0xd800) * 0x400 + (low - 0xdc00) + 0x10000;
 
-                return (0x1d000 <= codepoint && codepoint <= 0x1f77f);
+                return codepoint is >= 0x1d000 and <= 0x1f77f;
 
             }
             else
             {
                 // Not surrogate pair (U+2100-27BF)
-                return (0x2100 <= high && high <= 0x27bf);
+                return high is >= (char)0x2100 and <= (char)0x27bf;
             }
         }
 
@@ -346,7 +346,6 @@ namespace Unigram.Common
                     {
                         yield return last;
                         last = string.Empty;
-                        joiner = true;
                     }
 
                     if (!skin)
@@ -356,7 +355,7 @@ namespace Unigram.Common
                     }
 
                     joiner = IsRegionalIndicator(text, i) && last.Length == 2;
-                    joiner = joiner || (IsTagIndicator(text, i + 2) || IsTagIndicator(text, i));
+                    joiner = joiner || IsTagIndicator(text, i + 2) || IsTagIndicator(text, i);
                     i++;
                 }
                 else if (text[i] == 0x200D) // zero width joiner
@@ -451,7 +450,7 @@ namespace Unigram.Common
             if (char.IsHighSurrogate(highSurrogate) && char.IsLowSurrogate(lowSurrogate))
             {
                 var utf32 = char.ConvertToUtf32(highSurrogate, lowSurrogate);
-                return utf32 >= 0xE0061 && utf32 <= 0xE007A;
+                return utf32 is >= 0xE0061 and <= 0xE007A;
             }
 
             return false;
@@ -477,7 +476,7 @@ namespace Unigram.Common
             if (char.IsHighSurrogate(highSurrogate) && char.IsLowSurrogate(lowSurrogate))
             {
                 var utf32 = char.ConvertToUtf32(highSurrogate, lowSurrogate);
-                return utf32 >= 127462u && utf32 <= 127487u;
+                return utf32 is >= 0x1F1E6 and <= 0x1F1FF;
             }
 
             return false;

@@ -34,10 +34,10 @@ namespace Unigram.Controls
             var rect = visual.Compositor.CreateRoundedRectangleGeometry();
 
             var radius = ItemsPanelCornerRadius;
-            var size = root.GetActualSize();
+            var size = root.ActualSize;
             var offset = new Vector2();
 
-            if ((radius.TopLeft == 0 && radius.TopRight == 0) || (radius.BottomLeft == 0 || radius.BottomRight == 0))
+            if ((radius.TopLeft == 0 && radius.TopRight == 0) || radius.BottomLeft == 0 || radius.BottomRight == 0)
             {
                 size.Y += (float)radius.BottomLeft;
                 offset.Y = radius.TopLeft == 0 ? -(float)radius.BottomLeft : 0;
@@ -63,7 +63,7 @@ namespace Unigram.Controls
             var size = e.NewSize.ToVector2();
             var offset = new Vector2();
 
-            if ((radius.TopLeft == 0 && radius.TopRight == 0) || (radius.BottomLeft == 0 || radius.BottomRight == 0))
+            if ((radius.TopLeft == 0 && radius.TopRight == 0) || radius.BottomLeft == 0 || radius.BottomRight == 0)
             {
                 size.Y += (float)radius.BottomLeft;
                 offset.Y = radius.TopLeft == 0 ? -(float)radius.BottomLeft : 0;
@@ -77,8 +77,8 @@ namespace Unigram.Controls
 
         public CornerRadius ItemsPanelCornerRadius
         {
-            get { return (CornerRadius)GetValue(ItemsPanelCornerRadiusProperty); }
-            set { SetValue(ItemsPanelCornerRadiusProperty, value); }
+            get => (CornerRadius)GetValue(ItemsPanelCornerRadiusProperty);
+            set => SetValue(ItemsPanelCornerRadiusProperty, value);
         }
 
         public static readonly DependencyProperty ItemsPanelCornerRadiusProperty =
@@ -108,10 +108,10 @@ namespace Unigram.Controls
             var rect = clip.Geometry as CompositionRoundedRectangleGeometry;
 
             var radius = ((TableListView)d).ItemsPanelCornerRadius;
-            var size = root.GetActualSize();
+            var size = root.ActualSize;
             var offset = new Vector2();
 
-            if ((radius.TopLeft == 0 && radius.TopRight == 0) || (radius.BottomLeft == 0 || radius.BottomRight == 0))
+            if ((radius.TopLeft == 0 && radius.TopRight == 0) || radius.BottomLeft == 0 || radius.BottomRight == 0)
             {
                 size.Y += (float)radius.BottomLeft;
                 offset.Y = radius.TopLeft == 0 ? -(float)radius.BottomLeft : 0;

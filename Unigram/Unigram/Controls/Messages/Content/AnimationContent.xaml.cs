@@ -4,64 +4,89 @@ using Unigram.Common;
 using Unigram.Converters;
 using Unigram.ViewModels;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed partial class AnimationContent : AspectView, IContentWithFile, IContentWithPlayback
+    public sealed class AnimationContent : Control, IContent, IContentWithPlayback
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
+        private string _fileToken;
+        private string _thumbnailToken;
+
         public AnimationContent(MessageViewModel message)
         {
-            InitializeComponent();
-            UpdateMessage(message);
+            _message = message;
+
+            DefaultStyleKey = typeof(AnimationContent);
         }
+
+        #region InitializeComponent
+
+        private AspectView LayoutRoot;
+        private Image Texture;
+        private FileButton Button;
+        private AnimationView Player;
+        private Border Overlay;
+        private TextBlock Subtitle;
+        private bool _templateApplied;
+
+        protected override void OnApplyTemplate()
+        {
+            LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as AspectView;
+            Texture = GetTemplateChild(nameof(Texture)) as Image;
+            Button = GetTemplateChild(nameof(Button)) as FileButton;
+            Player = GetTemplateChild(nameof(Player)) as AnimationView;
+            Overlay = GetTemplateChild(nameof(Overlay)) as Border;
+            Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
+
+            Button.Click += Button_Click;
+
+            _templateApplied = true;
+
+            if (_message != null)
+            {
+                UpdateMessage(_message);
+            }
+        }
+
+        #endregion
 
         public void UpdateMessage(MessageViewModel message)
         {
             _message = message;
 
             var animation = GetContent(message.Content);
-            if (animation == null)
+            if (animation == null || !_templateApplied)
             {
                 return;
             }
 
-            Constraint = message;
+            LayoutRoot.Constraint = message;
             Texture.Source = null;
 
-            if (animation.Thumbnail != null)
-            {
-                UpdateThumbnail(message, animation.Thumbnail, animation.Thumbnail.File);
-            }
+            UpdateThumbnail(message, animation, animation.Thumbnail?.File, true);
 
+            UpdateManager.Subscribe(this, message, animation.AnimationValue, ref _fileToken, UpdateFile);
             UpdateFile(message, animation.AnimationValue);
         }
 
-        public void UpdateMessageContentOpened(MessageViewModel message)
+        private void UpdateFile(object target, File file)
         {
-            if (message.Ttl > 0)
-            {
-                //Timer.Maximum = message.Ttl;
-                //Timer.Value = DateTime.Now.AddSeconds(message.TtlExpiresIn);
-            }
+            UpdateFile(_message, file);
         }
 
-        public void UpdateFile(MessageViewModel message, File file)
+        private void UpdateFile(MessageViewModel message, File file)
         {
             var animation = GetContent(message.Content);
-            if (animation == null)
+            if (animation == null || !_templateApplied)
             {
                 return;
             }
 
-            if (animation.Thumbnail != null && animation.Thumbnail.File.Id == file.Id)
-            {
-                UpdateThumbnail(message, animation.Thumbnail, file);
-                return;
-            }
-            else if (animation.AnimationValue.Id != file.Id)
+            if (animation.AnimationValue.Id != file.Id)
             {
                 return;
             }
@@ -100,7 +125,7 @@ namespace Unigram.Controls.Messages.Content
 
                 Player.Source = null;
 
-                if (message.Delegate.CanBeDownloaded(message))
+                if (message.Delegate.CanBeDownloaded(animation, file))
                 {
                     _message.ProtoService.DownloadFile(file.Id, 32);
                 }
@@ -127,21 +152,56 @@ namespace Unigram.Controls.Messages.Content
                     Subtitle.Text = Strings.Resources.AttachGif;
                     Overlay.Opacity = 1;
 
-                    Player.Source = UriEx.ToLocal(file.Local.Path);
+                    Player.Source = new LocalVideoSource(file);
+                    message.Delegate.ViewVisibleMessages(false);
                 }
             }
         }
 
-        private void UpdateThumbnail(MessageViewModel message, Thumbnail thumbnail, File file)
+        private void UpdateThumbnail(object target, File file)
         {
-            if (file.Local.IsDownloadingCompleted && thumbnail.Format is ThumbnailFormatJpeg)
+            var animation = GetContent(_message.Content);
+            if (animation == null || !_templateApplied)
             {
-                //Texture.Source = new BitmapImage(UriEx.GetLocal(file.Local.Path));
-                Texture.Source = PlaceholderHelper.GetBlurred(file.Local.Path);
+                return;
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+
+            UpdateThumbnail(_message, animation, animation.Thumbnail?.File, false);
+        }
+
+        private void UpdateThumbnail(MessageViewModel message, Animation animation, File file, bool download)
+        {
+            var thumbnail = animation.Thumbnail;
+            var minithumbnail = animation.Minithumbnail;
+
+            if (thumbnail != null && thumbnail.Format is ThumbnailFormatJpeg)
             {
-                message.ProtoService.DownloadFile(file.Id, 1);
+                if (file.Local.IsDownloadingCompleted)
+                {
+                    Texture.Source = PlaceholderHelper.GetBlurred(file.Local.Path);
+                }
+                else if (download)
+                {
+                    if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                    {
+                        if (minithumbnail != null)
+                        {
+                            Texture.Source = PlaceholderHelper.GetBlurred(minithumbnail.Data);
+                        }
+
+                        message.ProtoService.DownloadFile(file.Id, 1);
+                    }
+
+                    UpdateManager.Subscribe(this, message, file, ref _thumbnailToken, UpdateThumbnail, true);
+                }
+            }
+            else if (minithumbnail != null)
+            {
+                Texture.Source = PlaceholderHelper.GetBlurred(minithumbnail.Data);
+            }
+            else
+            {
+                Texture.Source = null;
             }
         }
 
@@ -205,7 +265,7 @@ namespace Unigram.Controls.Messages.Content
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
-                _message.ProtoService.DownloadFile(file.Id, 32);
+                _message.ProtoService.DownloadFile(file.Id, 30);
             }
             else
             {

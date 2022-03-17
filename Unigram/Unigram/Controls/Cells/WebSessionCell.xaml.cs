@@ -1,5 +1,4 @@
 ﻿using Telegram.Td.Api;
-using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Services;
 using Windows.UI.Xaml.Controls;
@@ -21,7 +20,7 @@ namespace Unigram.Controls.Cells
                 return;
             }
 
-            Photo.Source = PlaceholderHelper.GetUser(protoService, bot, 18);
+            Photo.SetUser(protoService, bot, 18);
 
             Domain.Text = session.DomainName;
             Title.Text = string.Format("{0}, {1}, {2}", bot.FirstName, session.Browser, session.Platform);

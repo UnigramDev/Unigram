@@ -10,6 +10,7 @@ namespace Unigram.Selectors
         public DataTemplate PhotoTemplate { get; set; }
         public DataTemplate VideoTemplate { get; set; }
         public DataTemplate TextTemplate { get; set; }
+        public DataTemplate AnimationTemplate { get; set; }
         public DataTemplate MessageTemplate { get; set; }
         public DataTemplate HeaderDateTemplate { get; set; }
 
@@ -25,6 +26,8 @@ namespace Unigram.Selectors
                         return MessageTemplate ?? VideoTemplate;
                     case MessageText:
                         return MessageTemplate ?? TextTemplate;
+                    case MessageAnimation:
+                        return MessageTemplate ?? AnimationTemplate;
                     case MessageHeaderDate:
                         return HeaderDateTemplate;
                     default:
@@ -41,6 +44,8 @@ namespace Unigram.Selectors
                         return MessageTemplate ?? VideoTemplate;
                     case MessageText:
                         return MessageTemplate ?? TextTemplate;
+                    case MessageAnimation:
+                        return MessageTemplate ?? AnimationTemplate;
                     case MessageHeaderDate:
                         return HeaderDateTemplate;
                     default:

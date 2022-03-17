@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views.Popups"
+    xmlns:common="using:Unigram.Common"
     xmlns:controls="using:Unigram.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -395,7 +396,7 @@
         </Style>
     </ContentDialog.Resources>
 
-    <Grid>
+    <Grid Margin="-12,-8,-24,-24">
         <ListView x:Name="List"
                   SelectionMode="Multiple"
                   SelectionChanged="Admin_Toggled"
@@ -418,7 +419,7 @@
                         <CheckBox x:Name="MessageEdits" Click="Event_Toggled" Content="{CustomResource EventLogFilterEditedMessages}"/>
                         <CheckBox x:Name="MessagePins" Click="Event_Toggled" Content="{CustomResource EventLogFilterPinnedMessages}"/>
                         <CheckBox x:Name="MemberLeaves" Click="Event_Toggled" Content="{CustomResource EventLogFilterLeavingMembers}"/>
-                        <CheckBox x:Name="VoiceChatChanges" Click="Event_Toggled" Content="{CustomResource EventLogFilterCalls}"/>
+                        <CheckBox x:Name="VideoChatChanges" Click="Event_Toggled" Content="{CustomResource EventLogFilterCalls}"/>
                     </StackPanel>
 
                     <CheckBox x:Name="FieldAllAdmins"
@@ -442,5 +443,9 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+
+        <controls:ScrollViewerScrim
+            Background="{ThemeResource ContentDialogBackground}"
+            ScrollingHost="{x:Bind List}"/>
     </Grid>
 </controls:ContentPopup>

@@ -8,6 +8,8 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Navigation.Services;
 using Unigram.Services;
+using Unigram.Views.Popups;
+using Unigram.Views.Settings.Popups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -22,6 +24,8 @@ namespace Unigram.ViewModels.Settings
 
             TerminateCommand = new RelayCommand<Session>(TerminateExecute);
             TerminateOthersCommand = new RelayCommand(TerminateOtherExecute);
+            
+            SetInactiveSessionTtlCommand = new RelayCommand(SetInactiveSessionTtlExecute);
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -37,55 +41,59 @@ namespace Unigram.ViewModels.Settings
         //    });
         //}
 
+        private int _inactiveSessionTtlDays;
+        public int InactiveSessionTtlDays
+        {
+            get => _inactiveSessionTtlDays;
+            set => Set(ref _inactiveSessionTtlDays, value);
+        }
+
         private async Task UpdateSessionsAsync()
         {
-            ProtoService.Send(new GetActiveSessions(), result =>
+            var response = await ProtoService.SendAsync(new GetActiveSessions());
+            if (response is Sessions sessions)
             {
-                if (result is Sessions sessions)
+                InactiveSessionTtlDays = sessions.InactiveSessionTtlDays;
+
+                var results = new List<Session>();
+                var pending = new List<Session>();
+
+                foreach (var item in sessions.SessionsValue)
                 {
-                    BeginOnUIThread(() =>
+                    if (item.IsCurrent)
                     {
-                        var results = new List<Session>();
-                        var pending = new List<Session>();
+                        Current = item;
+                    }
+                    else if (item.IsPasswordPending)
+                    {
+                        pending.Add(item);
+                    }
+                    else
+                    {
+                        results.Add(item);
+                    }
+                }
 
-                        foreach (var item in sessions.SessionsValue)
-                        {
-                            if (item.IsCurrent)
-                            {
-                                Current = item;
-                            }
-                            else if (item.IsPasswordPending)
-                            {
-                                pending.Add(item);
-                            }
-                            else
-                            {
-                                results.Add(item);
-                            }
-                        }
-
-                        if (pending.Count > 0)
-                        {
-                            Items.ReplaceWith(new[]
-                            {
-                                new KeyedList<SessionsGroup, Session>(new SessionsGroup { Title = Strings.Resources.LoginAttempts }, pending.OrderByDescending(x => x.LastActiveDate)),
-                                new KeyedList<SessionsGroup, Session>(new SessionsGroup { Title = Strings.Resources.OtherSessions, Footer = Strings.Resources.LoginAttemptsInfo }, results.OrderByDescending(x => x.LastActiveDate))
-                            });
-                        }
-                        else if (results.Count > 0)
-                        {
-                            Items.ReplaceWith(new[]
-                            {
-                                new KeyedList<SessionsGroup, Session>(new SessionsGroup { Title = Strings.Resources.OtherSessions }, results.OrderByDescending(x => x.LastActiveDate))
-                            });
-                        }
-                        else
-                        {
-                            Items.Clear();
-                        }
+                if (pending.Count > 0)
+                {
+                    Items.ReplaceWith(new[]
+                    {
+                        new KeyedList<SessionsGroup, Session>(new SessionsGroup { Title = Strings.Resources.LoginAttempts }, pending.OrderByDescending(x => x.LastActiveDate)),
+                        new KeyedList<SessionsGroup, Session>(new SessionsGroup { Title = Strings.Resources.OtherSessions, Footer = Strings.Resources.LoginAttemptsInfo }, results.OrderByDescending(x => x.LastActiveDate))
                     });
                 }
-            });
+                else if (results.Count > 0)
+                {
+                    Items.ReplaceWith(new[]
+                    {
+                        new KeyedList<SessionsGroup, Session>(new SessionsGroup { Title = Strings.Resources.OtherSessions }, results.OrderByDescending(x => x.LastActiveDate))
+                    });
+                }
+                else
+                {
+                    Items.Clear();
+                }
+            }
         }
 
         public MvxObservableCollection<KeyedList<SessionsGroup, Session>> Items { get; private set; }
@@ -93,19 +101,33 @@ namespace Unigram.ViewModels.Settings
         private Session _current;
         public Session Current
         {
-            get
-            {
-                return _current;
-            }
-            set
-            {
-                Set(ref _current, value);
-            }
+            get => _current;
+            set => Set(ref _current, value);
         }
 
         public RelayCommand<Session> TerminateCommand { get; }
         private async void TerminateExecute(Session session)
         {
+            var dialog = new SettingsSessionPopup(session);
+
+            var confirm = await dialog.ShowQueuedAsync();
+            if (confirm != ContentDialogResult.Primary)
+            {
+                if (session.CanAcceptCalls != dialog.CanAcceptCalls && confirm == ContentDialogResult.Secondary)
+                {
+                    session.CanAcceptCalls = dialog.CanAcceptCalls;
+                    ProtoService.Send(new ToggleSessionCanAcceptCalls(session.Id, dialog.CanAcceptCalls));
+                }
+
+                if (session.CanAcceptSecretChats != dialog.CanAcceptSecretChats && confirm == ContentDialogResult.Secondary)
+                {
+                    session.CanAcceptSecretChats = dialog.CanAcceptSecretChats;
+                    ProtoService.Send(new ToggleSessionCanAcceptSecretChats(session.Id, dialog.CanAcceptSecretChats));
+                }
+
+                return;
+            }
+
             var terminate = await MessagePopup.ShowAsync(Strings.Resources.TerminateSessionQuestion, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (terminate == ContentDialogResult.Primary)
             {
@@ -138,6 +160,63 @@ namespace Unigram.ViewModels.Settings
                 else if (response is Error error)
                 {
                     Logs.Logger.Error(Logs.LogTarget.API, "auth.resetAuthotizations error " + error);
+                }
+            }
+        }
+
+        public RelayCommand SetInactiveSessionTtlCommand { get; }
+        private async void SetInactiveSessionTtlExecute()
+        {
+            SelectRadioItem GetSelectedPeriod(SelectRadioItem[] periods, SelectRadioItem defaultPeriod)
+            {
+                if (_inactiveSessionTtlDays == 0)
+                {
+                    return defaultPeriod;
+                }
+
+                SelectRadioItem period = null;
+
+                var max = 2147483647;
+                foreach (var current in periods)
+                {
+                    var days = (int)current.Value;
+                    int abs = Math.Abs(_inactiveSessionTtlDays - days);
+                    if (abs < max)
+                    {
+                        max = abs;
+                        period = current;
+                    }
+                }
+
+                return period ?? defaultPeriod;
+            };
+
+            var items = new[]
+            {
+                new SelectRadioItem(7, Locale.Declension("Weeks", 1), false),
+                new SelectRadioItem(30, Locale.Declension("Months", 1), false),
+                new SelectRadioItem(90, Locale.Declension("Months", 3), false),
+                new SelectRadioItem(180, Locale.Declension("Months", 6), false)
+            };
+
+            var selected = GetSelectedPeriod(items, items[2]);
+            if (selected != null)
+            {
+                selected.IsChecked = true;
+            }
+
+            var dialog = new ChooseRadioPopup(items);
+            dialog.Title = Strings.Resources.SessionsSelfDestruct;
+            dialog.PrimaryButtonText = Strings.Resources.OK;
+            dialog.SecondaryButtonText = Strings.Resources.Cancel;
+
+            var confirm = await dialog.ShowQueuedAsync();
+            if (confirm == ContentDialogResult.Primary && dialog.SelectedIndex is int days)
+            {
+                var response = await ProtoService.SendAsync(new SetInactiveSessionTtl(days));
+                if (response is Ok)
+                {
+                    InactiveSessionTtlDays = days;
                 }
             }
         }

@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Services;
-using Unigram.Services.Factories;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -18,13 +16,9 @@ namespace Unigram.ViewModels
 {
     public class ShareViewModel : TLViewModelBase
     {
-        private readonly IMessageFactory _messageFactory;
-
-        public ShareViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IMessageFactory messageFactory)
+        public ShareViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
-            _messageFactory = messageFactory;
-
             Items = new MvxObservableCollection<Chat>();
             SelectedItems = new MvxObservableCollection<Chat>();
 
@@ -34,30 +28,18 @@ namespace Unigram.ViewModels
         private SearchChatsCollection _search;
         public SearchChatsCollection Search
         {
-            get
-            {
-                return _search;
-            }
-            set
-            {
-                Set(ref _search, value);
-            }
+            get => _search;
+            set => Set(ref _search, value);
         }
 
         private TopChatsCollection _topChats;
         public TopChatsCollection TopChats
         {
-            get
-            {
-                return _topChats;
-            }
-            set
-            {
-                Set(ref _topChats, value);
-            }
+            get => _topChats;
+            set => Set(ref _topChats, value);
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, Navigation.Services.NavigationState state)
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             //if (mode == NavigationMode.New)
             //{
@@ -71,7 +53,7 @@ namespace Unigram.ViewModels
                 var list = ProtoService.GetChats(chats.ChatIds);
                 Items.Clear();
 
-                if (_searchType == SearchChatsType.Post || _searchType == SearchChatsType.All)
+                if (_searchType is SearchChatsType.Post or SearchChatsType.All)
                 {
                     var myId = CacheService.Options.MyId;
                     var self = list.FirstOrDefault(x => x.Type is ChatTypePrivate privata && privata.UserId == myId);
@@ -194,10 +176,7 @@ namespace Unigram.ViewModels
         private MvxObservableCollection<Chat> _selectedItems = new MvxObservableCollection<Chat>();
         public MvxObservableCollection<Chat> SelectedItems
         {
-            get
-            {
-                return _selectedItems;
-            }
+            get => _selectedItems;
             set
             {
                 Set(ref _selectedItems, value);
@@ -219,30 +198,18 @@ namespace Unigram.ViewModels
             set => Set(ref _title, value);
         }
 
-        private string _comment;
-        public string Comment
+        private FormattedText _caption;
+        public FormattedText Caption
         {
-            get
-            {
-                return _comment;
-            }
-            set
-            {
-                Set(ref _comment, value);
-            }
+            get => _caption;
+            set => Set(ref _caption, value);
         }
 
         private IList<Message> _messages;
         public IList<Message> Messages
         {
-            get
-            {
-                return _messages;
-            }
-            set
-            {
-                Set(ref _messages, value);
-            }
+            get => _messages;
+            set => Set(ref _messages, value);
         }
 
         private GroupCall _groupCall;
@@ -271,40 +238,22 @@ namespace Unigram.ViewModels
         private User _inviteBot;
         public User InviteBot
         {
-            get
-            {
-                return _inviteBot;
-            }
-            set
-            {
-                Set(ref _inviteBot, value);
-            }
+            get => _inviteBot;
+            set => Set(ref _inviteBot, value);
         }
 
         private string _inviteToken;
         public string InviteToken
         {
-            get
-            {
-                return _inviteToken;
-            }
-            set
-            {
-                Set(ref _inviteToken, value);
-            }
+            get => _inviteToken;
+            set => Set(ref _inviteToken, value);
         }
 
         private InputMessageContent _inputMedia;
         public InputMessageContent InputMedia
         {
-            get
-            {
-                return _inputMedia;
-            }
-            set
-            {
-                Set(ref _inputMedia, value);
-            }
+            get => _inputMedia;
+            set => Set(ref _inputMedia, value);
         }
 
         public bool IsWithMyScore { get; set; }
@@ -320,24 +269,21 @@ namespace Unigram.ViewModels
         private bool _sendAsCopy;
         public bool SendAsCopy
         {
-            get { return _sendAsCopy; }
-            set { Set(ref _sendAsCopy, value); }
+            get => _sendAsCopy;
+            set => Set(ref _sendAsCopy, value);
         }
 
         private bool _removeCaptions;
         public bool RemoveCaptions
         {
-            get { return _removeCaptions; }
-            set { Set(ref _removeCaptions, value); }
+            get => _removeCaptions;
+            set => Set(ref _removeCaptions, value);
         }
 
         private Uri _shareLink;
         public Uri ShareLink
         {
-            get
-            {
-                return _shareLink;
-            }
+            get => _shareLink;
             set
             {
                 Set(ref _shareLink, value);
@@ -348,94 +294,56 @@ namespace Unigram.ViewModels
         private string _shareTitle;
         public string ShareTitle
         {
-            get
-            {
-                return _shareTitle;
-            }
-            set
-            {
-                Set(ref _shareTitle, value);
-            }
+            get => _shareTitle;
+            set => Set(ref _shareTitle, value);
         }
 
         private bool _isCommentEnabled;
         public bool IsCommentEnabled
         {
-            get
-            {
-                return _isCommentEnabled;
-            }
-            set
-            {
-                Set(ref _isCommentEnabled, value);
-            }
+            get => _isCommentEnabled;
+            set => Set(ref _isCommentEnabled, value);
         }
 
         private bool _isSendCopyEnabled;
         public bool IsSendAsCopyEnabled
         {
-            get { return _isSendCopyEnabled; }
-            set { Set(ref _isSendCopyEnabled, value); }
+            get => _isSendCopyEnabled;
+            set => Set(ref _isSendCopyEnabled, value);
         }
 
         private SearchChatsType _searchType;
         public SearchChatsType SearchType
         {
-            get
-            {
-                return _searchType;
-            }
-            set
-            {
-                Set(ref _searchType, value);
-            }
+            get => _searchType;
+            set => Set(ref _searchType, value);
         }
 
         private InlineKeyboardButtonTypeSwitchInline _switchInline;
         public InlineKeyboardButtonTypeSwitchInline SwitchInline
         {
-            get { return _switchInline; }
-            set { _switchInline = value; }
+            get => _switchInline;
+            set => _switchInline = value;
         }
 
         private User _switchInlineBot;
         public User SwitchInlineBot
         {
-            get { return _switchInlineBot; }
-            set { _switchInlineBot = value; }
+            get => _switchInlineBot;
+            set => _switchInlineBot = value;
         }
 
         private DataPackageView _package;
         public DataPackageView Package
         {
-            get { return _package; }
-            set { _package = value; }
+            get => _package;
+            set => _package = value;
         }
 
-        public string SendMessage { get; set; }
-        public bool SendMessageUrl { get; set; }
+        public FormattedText SendMessage { get; set; }
 
         public bool IsChatSelection { get; set; }
         public IList<long> PreSelectedItems { get; set; }
-
-        public void Clear()
-        {
-            Package = null;
-            SwitchInline = null;
-            SwitchInlineBot = null;
-            SendMessage = null;
-            SendMessageUrl = false;
-            Comment = null;
-            ShareLink = null;
-            ShareTitle = null;
-            Messages = null;
-            InviteBot = null;
-            InputMedia = null;
-            IsWithMyScore = false;
-            PreSelectedItems = null;
-        }
-
-
 
         public MvxObservableCollection<Chat> Items { get; private set; }
 
@@ -450,13 +358,17 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            if (!string.IsNullOrEmpty(_comment))
+            if (!string.IsNullOrEmpty(SendMessage?.Text))
             {
-                var formatted = GetFormattedText(_comment);
+                _isCommentEnabled = true;
+                _caption = SendMessage;
+            }
 
+            if (_isCommentEnabled && !string.IsNullOrEmpty(_caption?.Text))
+            {
                 foreach (var chat in chats)
                 {
-                    var response = await ProtoService.SendAsync(new SendMessage(chat.Id, 0, 0, new MessageSendOptions(false, false, null), null, new InputMessageText(formatted, false, false)));
+                    var response = await ProtoService.SendAsync(new SendMessage(chat.Id, 0, 0, new MessageSendOptions(false, false, false, null), null, new InputMessageText(_caption, false, false)));
                 }
             }
 
@@ -466,7 +378,7 @@ namespace Unigram.ViewModels
                 {
                     if (IsWithMyScore)
                     {
-                        var response = await ProtoService.SendAsync(new SendMessage(chat.Id, 0, 0, new MessageSendOptions(false, false, null), null, new InputMessageForwarded(_messages[0].ChatId, _messages[0].Id, true, new MessageCopyOptions(false, false, null))));
+                        var response = await ProtoService.SendAsync(new SendMessage(chat.Id, 0, 0, new MessageSendOptions(false, false, false, null), null, new InputMessageForwarded(_messages[0].ChatId, _messages[0].Id, true, new MessageCopyOptions(false, false, null))));
                     }
                     else
                     {
@@ -478,7 +390,7 @@ namespace Unigram.ViewModels
                             album = first.MediaAlbumId != 0 && _messages.All(x => x.MediaAlbumId == first.MediaAlbumId);
                         }
 
-                        var response = await ProtoService.SendAsync(new ForwardMessages(chat.Id, _messages[0].ChatId, _messages.Select(x => x.Id).ToList(), new MessageSendOptions(false, false, null), _sendAsCopy, _removeCaptions));
+                        var response = await ProtoService.SendAsync(new ForwardMessages(chat.Id, _messages[0].ChatId, _messages.Select(x => x.Id).ToList(), new MessageSendOptions(false, false, false, null), _sendAsCopy || _removeCaptions, _removeCaptions, false));
                     }
                 }
 
@@ -488,7 +400,7 @@ namespace Unigram.ViewModels
             {
                 foreach (var chat in chats)
                 {
-                    var response = await ProtoService.SendAsync(new SendMessage(chat.Id, 0, 0, new MessageSendOptions(false, false, null), null, _inputMedia));
+                    var response = await ProtoService.SendAsync(new SendMessage(chat.Id, 0, 0, new MessageSendOptions(false, false, false, null), null, _inputMedia));
                 }
 
                 //NavigationService.GoBack();
@@ -499,7 +411,7 @@ namespace Unigram.ViewModels
 
                 foreach (var chat in chats)
                 {
-                    var response = await ProtoService.SendAsync(new SendMessage(chat.Id, 0, 0, new MessageSendOptions(false, false, null), null, new InputMessageText(formatted, false, false)));
+                    var response = await ProtoService.SendAsync(new SendMessage(chat.Id, 0, 0, new MessageSendOptions(false, false, false, null), null, new InputMessageText(formatted, false, false)));
                 }
 
                 //NavigationService.GoBack();
@@ -512,20 +424,21 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                var response = await ProtoService.SendAsync(new SetChatMemberStatus(chat.Id, new MessageSenderUser(_inviteBot.Id), new ChatMemberStatusMember()));
-                if (response is Ok)
+                var response = await ProtoService.SendAsync(new GetChatMember(chat.Id, new MessageSenderUser(_inviteBot.Id)));
+                if (response is ChatMember member && member.Status is ChatMemberStatusLeft)
                 {
-                    if (_inviteToken != null)
-                    {
-                        response = await ProtoService.SendAsync(new SendBotStartMessage(_inviteBot.Id, chat.Id, _inviteToken));
+                    await ProtoService.SendAsync(new SetChatMemberStatus(chat.Id, new MessageSenderUser(_inviteBot.Id), new ChatMemberStatusMember()));
+                }
 
-                        var service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId("Main" + ProtoService.SessionId);
-                        if (service != null)
-                        {
-                            service.NavigateToChat(chat, accessToken: _inviteToken);
-                        }
+                if (_inviteToken != null)
+                {
+                    response = await ProtoService.SendAsync(new SendBotStartMessage(_inviteBot.Id, chat.Id, _inviteToken));
+
+                    var service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId("Main" + ProtoService.SessionId);
+                    if (service != null)
+                    {
+                        service.NavigateToChat(chat, accessToken: _inviteToken);
                     }
-                    //NavigationService.GoBack();
                 }
             }
             else if (_switchInline != null && _switchInlineBot != null)
@@ -567,7 +480,7 @@ namespace Unigram.ViewModels
 
                     foreach (var chat in chats)
                     {
-                        await ProtoService.SendAsync(new SendMessage(chat.Id, 0, 0, new MessageSendOptions(false, false, null), null, new InputMessageText(formatted, false, false)));
+                        await ProtoService.SendAsync(new SendMessage(chat.Id, 0, 0, new MessageSendOptions(false, false, false, null), null, new InputMessageText(formatted, false, false)));
                     }
                 }
             }
@@ -576,30 +489,13 @@ namespace Unigram.ViewModels
             //NavigationService.GoBackAt(0);
         }
 
-        private FormattedText GetFormattedText(string text)
-        {
-            if (text == null)
-            {
-                return new FormattedText();
-            }
-
-            text = text.Format();
-            return Client.Execute(new ParseMarkdown(new FormattedText(text, new TextEntity[0]))) as FormattedText;
-        }
-
         #region Search
 
         private ListViewSelectionMode _selectionMode = ListViewSelectionMode.Multiple;
         public ListViewSelectionMode SelectionMode
         {
-            get
-            {
-                return _selectionMode;
-            }
-            set
-            {
-                Set(ref _selectionMode, value);
-            }
+            get => _selectionMode;
+            set => Set(ref _selectionMode, value);
         }
 
         #endregion

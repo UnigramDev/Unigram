@@ -1,12 +1,22 @@
-﻿using Windows.Foundation;
+﻿using Unigram.Common;
+using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Unigram.Controls
 {
+    public enum PaneToggleButtonVisibility
+    {
+        Visible,
+        Collapsed,
+        Back
+    }
+
     public class NavigationView : ContentControl
     {
-        private Button TogglePaneButton;
+        private Grid TogglePaneButtonRoot;
+        private ToggleButton TogglePaneButton;
         private SplitView RootSplitView;
 
         private Thickness? _previousTopPadding;
@@ -16,9 +26,15 @@ namespace Unigram.Controls
             DefaultStyleKey = typeof(NavigationView);
         }
 
+        public void ShowTeachingTip(string text)
+        {
+            Window.Current.ShowTeachingTip(TogglePaneButton, text, Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode.BottomRight);
+        }
+
         protected override void OnApplyTemplate()
         {
-            TogglePaneButton = GetTemplateChild("TogglePaneButton") as Button;
+            TogglePaneButtonRoot = GetTemplateChild("TogglePaneButtonRoot") as Grid;
+            TogglePaneButton = GetTemplateChild("TogglePaneButton") as ToggleButton;
             RootSplitView = GetTemplateChild("RootSplitView") as SplitView;
 
             TogglePaneButton.Click += Toggle_Click;
@@ -29,7 +45,14 @@ namespace Unigram.Controls
 
         private void Toggle_Click(object sender, RoutedEventArgs e)
         {
-            IsPaneOpen = !IsPaneOpen;
+            if (TogglePaneButton.IsChecked == true)
+            {
+                BackRequested?.Invoke(this, null);
+            }
+            else
+            {
+                IsPaneOpen = !IsPaneOpen;
+            }
         }
 
         private void OnPaneOpening(SplitView sender, object args)
@@ -55,6 +78,8 @@ namespace Unigram.Controls
             TogglePaneButton.RequestedTheme = ElementTheme.Default;
         }
 
+        public event TypedEventHandler<NavigationView, object> BackRequested;
+
         public event TypedEventHandler<SplitView, object> PaneOpening;
         public event TypedEventHandler<SplitView, SplitViewPaneClosingEventArgs> PaneClosing;
 
@@ -62,8 +87,8 @@ namespace Unigram.Controls
 
         public bool IsPaneOpen
         {
-            get { return (bool)GetValue(IsPaneOpenProperty); }
-            set { SetValue(IsPaneOpenProperty, value); }
+            get => (bool)GetValue(IsPaneOpenProperty);
+            set => SetValue(IsPaneOpenProperty, value);
         }
 
         public static readonly DependencyProperty IsPaneOpenProperty =
@@ -75,8 +100,8 @@ namespace Unigram.Controls
 
         public object PaneHeader
         {
-            get { return GetValue(PaneHeaderProperty); }
-            set { SetValue(PaneHeaderProperty, value); }
+            get => GetValue(PaneHeaderProperty);
+            set => SetValue(PaneHeaderProperty, value);
         }
 
         public static readonly DependencyProperty PaneHeaderProperty =
@@ -88,8 +113,8 @@ namespace Unigram.Controls
 
         public object PaneFooter
         {
-            get { return GetValue(PaneFooterProperty); }
-            set { SetValue(PaneFooterProperty, value); }
+            get => GetValue(PaneFooterProperty);
+            set => SetValue(PaneFooterProperty, value);
         }
 
         public static readonly DependencyProperty PaneFooterProperty =
@@ -99,14 +124,39 @@ namespace Unigram.Controls
 
         #region PaneToggleButtonVisibility
 
-        public Visibility PaneToggleButtonVisibility
+        public PaneToggleButtonVisibility PaneToggleButtonVisibility
         {
-            get { return (Visibility)GetValue(PaneToggleButtonVisibilityProperty); }
-            set { SetValue(PaneToggleButtonVisibilityProperty, value); }
+            get => (PaneToggleButtonVisibility)GetValue(PaneToggleButtonVisibilityProperty);
+            set => SetValue(PaneToggleButtonVisibilityProperty, value);
         }
 
         public static readonly DependencyProperty PaneToggleButtonVisibilityProperty =
-            DependencyProperty.Register("PaneToggleButtonVisibility", typeof(Visibility), typeof(NavigationView), new PropertyMetadata(Visibility.Visible));
+            DependencyProperty.Register("PaneToggleButtonVisibility", typeof(PaneToggleButtonVisibility), typeof(NavigationView), new PropertyMetadata(PaneToggleButtonVisibility.Visible, OnPaneToggleButtonVisibilityChanged));
+
+        private static void OnPaneToggleButtonVisibilityChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((NavigationView)d).OnPaneToggleButtonVisibilityChanged((PaneToggleButtonVisibility)e.NewValue, (PaneToggleButtonVisibility)e.OldValue);
+        }
+
+        private void OnPaneToggleButtonVisibilityChanged(PaneToggleButtonVisibility newValue, PaneToggleButtonVisibility oldValue)
+        {
+            if (TogglePaneButtonRoot == null)
+            {
+                return;
+            }
+
+            if (newValue == PaneToggleButtonVisibility.Collapsed)
+            {
+                TogglePaneButtonRoot.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                TogglePaneButtonRoot.Visibility = Visibility.Visible;
+                TogglePaneButton.IsChecked = newValue == PaneToggleButtonVisibility.Back;
+
+                Automation.SetToolTip(TogglePaneButton, newValue == PaneToggleButtonVisibility.Back ? Strings.Resources.AccDescrGoBack : Strings.Resources.AccDescrOpenMenu);
+            }
+        }
 
         #endregion
 
@@ -114,8 +164,8 @@ namespace Unigram.Controls
 
         public Thickness TopPadding
         {
-            get { return (Thickness)GetValue(TopPaddingProperty); }
-            set { SetValue(TopPaddingProperty, value); }
+            get => (Thickness)GetValue(TopPaddingProperty);
+            set => SetValue(TopPaddingProperty, value);
         }
 
         public static readonly DependencyProperty TopPaddingProperty =

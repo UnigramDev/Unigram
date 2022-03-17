@@ -1,0 +1,51 @@
+﻿# EditorConfig is awesome: http://EditorConfig.org
+
+# top-most EditorConfig file
+root = true
+
+[*.cs]
+
+# IDE0005: Using directive is unnecessary.
+dotnet_diagnostic.IDE0005.severity = error
+
+# IDE0058: Expression value is never used
+dotnet_diagnostic.IDE0058.severity = none
+
+# IDE0008: Use explicit type
+csharp_style_var_elsewhere = false
+
+# IDE0008: Use explicit type
+dotnet_diagnostic.IDE0008.severity = none
+
+# IDE0058: Expression value is never used
+csharp_style_unused_value_expression_statement_preference = unused_local_variable
+
+# IDE0032: Use auto property
+dotnet_style_prefer_auto_properties = false:none
+
+# IDE0010: Add missing cases
+dotnet_diagnostic.IDE0010.severity = none
+
+# IDE0045: Convert to conditional expression
+dotnet_style_prefer_conditional_expression_over_assignment = false
+
+# IDE0046: Convert to conditional expression
+dotnet_style_prefer_conditional_expression_over_return = false
+
+# IDE0019: Use pattern matching
+csharp_style_pattern_matching_over_as_with_null_check = false
+
+# IDE0017: Simplify object initialization
+dotnet_style_object_initializer = false
+
+# IDE0060: Remove unused parameter
+dotnet_diagnostic.IDE0060.severity = none
+
+# IDE0048: Add parentheses for clarity
+dotnet_style_parentheses_in_arithmetic_binary_operators = always_for_clarity
+
+# IDE0066: Convert switch statement to expression
+csharp_style_prefer_switch_expression = false
+
+# IDE0063: Use simple 'using' statement
+csharp_prefer_simple_using_statement = false

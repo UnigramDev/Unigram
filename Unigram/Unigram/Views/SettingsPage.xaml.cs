@@ -33,8 +33,6 @@ namespace Unigram.Views
 
         public void Dispose()
         {
-            //DataContext = null;
-            //Bindings?.Update();
             Bindings?.StopTracking();
         }
 
@@ -44,21 +42,25 @@ namespace Unigram.Views
             PackageId packageId = package.Id;
             PackageVersion version = packageId.Version;
 
+            var type = Package.Current.SignatureKind switch
+            {
+                PackageSignatureKind.Store => "",
+                PackageSignatureKind.Enterprise => " Direct",
+                _ => " Direct"
+            };
+
             if (version.Revision > 0)
             {
-                return string.Format("{0}.{1}.{3} ({2}) {4}", version.Major, version.Minor, version.Build, version.Revision, packageId.Architecture);
+                return string.Format("{0}.{1}.{3} ({2}) {4}{5}", version.Major, version.Minor, version.Build, version.Revision, packageId.Architecture, type);
             }
 
-            return string.Format("{0}.{1} ({2}) {3}", version.Major, version.Minor, version.Build, packageId.Architecture);
+            return string.Format("{0}.{1} ({2}) {3}{4}", version.Major, version.Minor, version.Build, packageId.Architecture, type);
         }
 
         private MasterDetailView _masterDetail;
         public MasterDetailView MasterDetail
         {
-            get
-            {
-                return _masterDetail;
-            }
+            get => _masterDetail;
             set
             {
                 _masterDetail = value;
@@ -66,16 +68,21 @@ namespace Unigram.Views
             }
         }
 
-        private void Advanced_Click(object sender, RoutedEventArgs e)
+        private async void Phone_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(SettingsAdvancedPage));
-            MasterDetail.NavigationService.GoBackAt(0, false);
-        }
+            var popup = new ChangePhoneNumberPopup();
+            var change = await popup.ShowQueuedAsync();
+            if (change != ContentDialogResult.Primary)
+            {
+                return;
+            }
 
-        private void Phone_Click(object sender, RoutedEventArgs e)
-        {
-            MasterDetail.NavigationService.Navigate(typeof(SettingsPhoneIntroPage));
-            MasterDetail.NavigationService.GoBackAt(0, false);
+            var confirm = await MessagePopup.ShowAsync(Strings.Resources.PhoneNumberAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            if (confirm == ContentDialogResult.Primary)
+            {
+                MasterDetail.NavigationService.Navigate(typeof(SettingsPhonePage));
+                MasterDetail.NavigationService.GoBackAt(0, false);
+            }
         }
 
         private void Username_Click(object sender, RoutedEventArgs e)
@@ -138,49 +145,85 @@ namespace Unigram.Views
 
         private void Privacy_Click(object sender, RoutedEventArgs e)
         {
+            Navigation.SelectedItem = sender;
+
             MasterDetail.NavigationService.Navigate(typeof(SettingsPrivacyAndSecurityPage));
             MasterDetail.NavigationService.GoBackAt(0, false);
         }
 
         private void Stickers_Click(object sender, RoutedEventArgs e)
         {
+            Navigation.SelectedItem = sender;
+
             MasterDetail.NavigationService.Navigate(typeof(SettingsStickersPage));
             MasterDetail.NavigationService.GoBackAt(0, false);
         }
 
         private void Data_Click(object sender, RoutedEventArgs e)
         {
+            Navigation.SelectedItem = sender;
+
             MasterDetail.NavigationService.Navigate(typeof(SettingsDataAndStoragePage));
             MasterDetail.NavigationService.GoBackAt(0, false);
         }
 
         private void Folders_Click(object sender, RoutedEventArgs e)
         {
+            Navigation.SelectedItem = sender;
+
             MasterDetail.NavigationService.Navigate(typeof(FoldersPage));
             MasterDetail.NavigationService.GoBackAt(0, false);
         }
 
         private void Notifications_Click(object sender, RoutedEventArgs e)
         {
+            Navigation.SelectedItem = sender;
+
             MasterDetail.NavigationService.Navigate(typeof(SettingsNotificationsPage));
             MasterDetail.NavigationService.GoBackAt(0, false);
         }
 
         private void Appearance_Click(object sender, RoutedEventArgs e)
         {
+            Navigation.SelectedItem = sender;
+
             MasterDetail.NavigationService.Navigate(typeof(SettingsAppearancePage));
+            MasterDetail.NavigationService.GoBackAt(0, false);
+        }
+
+        private void Sessions_Click(object sender, RoutedEventArgs e)
+        {
+            Navigation.SelectedItem = sender;
+
+            MasterDetail.NavigationService.Navigate(typeof(SettingsSessionsPage));
             MasterDetail.NavigationService.GoBackAt(0, false);
         }
 
         private void Language_Click(object sender, RoutedEventArgs e)
         {
+            Navigation.SelectedItem = sender;
+
             MasterDetail.NavigationService.Navigate(typeof(SettingsLanguagePage));
+            MasterDetail.NavigationService.GoBackAt(0, false);
+        }
+
+        private void Advanced_Click(object sender, RoutedEventArgs e)
+        {
+            Navigation.SelectedItem = sender;
+
+            MasterDetail.NavigationService.Navigate(typeof(SettingsAdvancedPage));
             MasterDetail.NavigationService.GoBackAt(0, false);
         }
 
         private void Questions_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.NavigateToInstant(Strings.Resources.TelegramFaqUrl);
+            MasterDetail.NavigationService.GoBackAt(0, false);
+        }
+
+        private void PrivacyPolicy_Click(object sender, RoutedEventArgs e)
+        {
+            MasterDetail.NavigationService.NavigateToInstant(Strings.Resources.PrivacyPolicyUrl);
             MasterDetail.NavigationService.GoBackAt(0, false);
         }
 
@@ -206,7 +249,7 @@ namespace Unigram.Views
                     return;
                 }
 
-                var viewModel = new UserPhotosViewModel(ViewModel.ProtoService, ViewModel.Aggregator, user, userFull);
+                var viewModel = new UserPhotosViewModel(ViewModel.ProtoService, ViewModel.StorageService, ViewModel.Aggregator, user, userFull);
                 await GalleryView.GetForCurrentView().ShowAsync(viewModel, () => Photo);
             }
         }
@@ -239,7 +282,7 @@ namespace Unigram.Views
 
         public void UpdateUser(Chat chat, User user, bool secret)
         {
-            Photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 64);
+            Photo.SetUser(ViewModel.ProtoService, user, 64);
             Title.Text = user.GetFullName();
 
             Verified.Visibility = user.IsVerified ? Visibility.Visible : Visibility.Collapsed;
@@ -279,28 +322,6 @@ namespace Unigram.Views
 
         public void UpdateChatPhoto(Chat chat)
         {
-        }
-
-
-
-        public void UpdateFile(File file)
-        {
-            var chat = ViewModel.Chat;
-            if (chat == null)
-            {
-                return;
-            }
-
-            var user = ViewModel.CacheService.GetUser(chat);
-            if (user == null)
-            {
-                return;
-            }
-
-            if (user.UpdateFile(file))
-            {
-                Photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 64);
-            }
         }
 
         #endregion

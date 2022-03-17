@@ -44,26 +44,14 @@ namespace Unigram.Views.Popups
 
         public string Message
         {
-            get
-            {
-                return TextBlockHelper.GetMarkdown(MessageLabel);
-            }
-            set
-            {
-                TextBlockHelper.SetMarkdown(MessageLabel, value);
-            }
+            get => TextBlockHelper.GetMarkdown(MessageLabel);
+            set => TextBlockHelper.SetMarkdown(MessageLabel, value);
         }
 
         public FormattedText FormattedMessage
         {
-            get
-            {
-                return TextBlockHelper.GetFormattedText(MessageLabel);
-            }
-            set
-            {
-                TextBlockHelper.SetFormattedText(MessageLabel, value);
-            }
+            get => TextBlockHelper.GetFormattedText(MessageLabel);
+            set => TextBlockHelper.SetFormattedText(MessageLabel, value);
         }
 
         public bool HasAccepted

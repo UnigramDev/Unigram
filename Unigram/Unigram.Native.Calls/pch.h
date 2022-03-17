@@ -169,3 +169,8 @@ inline winrt::hstring string_from_unmanaged(const std::string& from) {
 	auto tmp = to_wstring(from.data(), from.size());
 	return winrt::hstring(tmp);
 }
+
+template<typename R, typename T>
+inline std::vector<R> vector_to_unmanaged(winrt::Windows::Foundation::Collections::IVector<T> source) {
+	return std::vector<R>(begin(source), end(source));
+};

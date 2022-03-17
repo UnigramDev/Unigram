@@ -1,25 +1,23 @@
-﻿using System;
-using Telegram.Td.Api;
+﻿using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Navigation;
 using Unigram.Services;
-using Unigram.ViewModels.Delegates;
 using Unigram.Views.Popups;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
-using Windows.System;
 
 namespace Unigram.ViewModels.Gallery
 {
-    public abstract class GalleryViewModelBase : TLViewModelBase/*, IHandle<UpdateFile>*/
+    public abstract class GalleryViewModelBase : TLViewModelBase
     {
-        public IFileDelegate Delegate { get; set; }
+        private readonly IStorageService _storageService;
 
-        public GalleryViewModelBase(IProtoService protoService, IEventAggregator aggregator)
+        public GalleryViewModelBase(IProtoService protoService, IStorageService storageService, IEventAggregator aggregator)
             : base(protoService, protoService, null, aggregator)
         {
+            _storageService = storageService;
+
             StickersCommand = new RelayCommand(StickersExecute);
             ViewCommand = new RelayCommand(ViewExecute);
             ForwardCommand = new RelayCommand(ForwardExecute);
@@ -67,10 +65,7 @@ namespace Unigram.ViewModels.Gallery
         protected int _totalItems;
         public int TotalItems
         {
-            get
-            {
-                return _totalItems;
-            }
+            get => _totalItems;
             set
             {
                 Set(ref _totalItems, value);
@@ -81,10 +76,7 @@ namespace Unigram.ViewModels.Gallery
         protected GalleryContent _selectedItem;
         public GalleryContent SelectedItem
         {
-            get
-            {
-                return _selectedItem;
-            }
+            get => _selectedItem;
             set
             {
                 Set(ref _selectedItem, value);
@@ -96,27 +88,15 @@ namespace Unigram.ViewModels.Gallery
         protected GalleryContent _firstItem;
         public GalleryContent FirstItem
         {
-            get
-            {
-                return _firstItem;
-            }
-            set
-            {
-                Set(ref _firstItem, value);
-            }
+            get => _firstItem;
+            set => Set(ref _firstItem, value);
         }
 
         protected object _poster;
         public object Poster
         {
-            get
-            {
-                return _poster;
-            }
-            set
-            {
-                Set(ref _poster, value);
-            }
+            get => _poster;
+            set => Set(ref _poster, value);
         }
 
         public MvxObservableCollection<GalleryContent> Items { get; protected set; }
@@ -270,52 +250,11 @@ namespace Unigram.ViewModels.Gallery
                 return;
             }
 
-            var result = item.GetFileAndName();
-
-            var file = result.File;
-            if (file == null || !file.Local.IsDownloadingCompleted)
+            var file = item.GetFile();
+            if (file != null)
             {
-                return;
+                await _storageService.SaveAsAsync(file);
             }
-
-            var cached = await ProtoService.GetFileAsync(file);
-            if (cached == null)
-            {
-                return;
-            }
-
-            var fileName = result.FileName;
-            if (string.IsNullOrEmpty(fileName))
-            {
-                fileName = System.IO.Path.GetFileName(file.Local.Path);
-            }
-
-            var clean = ProtoService.Execute(new CleanFileName(fileName));
-            if (clean is Text text && !string.IsNullOrEmpty(text.TextValue))
-            {
-                fileName = text.TextValue;
-            }
-
-            var extension = System.IO.Path.GetExtension(fileName);
-            if (string.IsNullOrEmpty(extension))
-            {
-                extension = ".dat";
-            }
-
-            try
-            {
-                var picker = new FileSavePicker();
-                picker.FileTypeChoices.Add($"{extension.TrimStart('.').ToUpper()} File", new[] { extension });
-                picker.SuggestedStartLocation = PickerLocationId.Downloads;
-                picker.SuggestedFileName = fileName;
-
-                var picked = await picker.PickSaveFileAsync();
-                if (picked != null)
-                {
-                    await cached.CopyAndReplaceAsync(picked);
-                }
-            }
-            catch { }
         }
 
         public RelayCommand OpenWithCommand { get; }
@@ -328,16 +267,9 @@ namespace Unigram.ViewModels.Gallery
             }
 
             var file = item.GetFile();
-            if (file != null && file.Local.IsDownloadingCompleted)
+            if (file != null)
             {
-                var temp = await ProtoService.GetFileAsync(file);
-                if (temp != null)
-                {
-                    var options = new LauncherOptions();
-                    options.DisplayApplicationPicker = true;
-
-                    await Launcher.LaunchFileAsync(temp, options);
-                }
+                await _storageService.OpenWithAsync(file);
             }
         }
 

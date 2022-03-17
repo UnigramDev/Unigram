@@ -1,11 +1,7 @@
-﻿using LinqToVisualTree;
-using System.Linq;
-using Unigram.Common;
+﻿using Unigram.Common;
 using Unigram.Controls;
 using Windows.Globalization.NumberFormatting;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation.Peers;
-using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
@@ -43,33 +39,32 @@ namespace Unigram.Views.Popups
             {
                 case InputPopupType.Text:
                     FindName(nameof(Label));
-                    Label.Loaded += OnLoaded;
                     break;
                 case InputPopupType.Password:
                     FindName(nameof(Password));
-                    Password.Loaded += OnLoaded;
                     break;
                 case InputPopupType.Value:
                     FindName(nameof(Number));
-                    Number.Loaded += OnLoaded;
                     break;
             }
 
             Opened += OnOpened;
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
-        {
-            Label?.Focus(FocusState.Keyboard);
-            Password?.Focus(FocusState.Keyboard);
-            Number?.Focus(FocusState.Keyboard);
-        }
-
         private void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
         {
+            if (string.IsNullOrEmpty(Header))
+            {
+                MessageLabel.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                MessageLabel.Text = Header;
+                MessageLabel.Visibility = Visibility.Visible;
+            }
+
             if (Label != null)
             {
-                Label.Header = Header;
                 Label.PlaceholderText = PlaceholderText;
                 Label.Text = Text;
                 Label.MaxLength = MaxLength;
@@ -81,19 +76,26 @@ namespace Unigram.Views.Popups
                 scope.Names.Add(name);
 
                 Label.InputScope = scope;
+
+                Label.Focus(FocusState.Keyboard);
+                Label.SelectionStart = Label.Text.Length;
             }
             else if (Password != null)
             {
-                Password.Header = Header;
                 Password.PlaceholderText = PlaceholderText;
                 Password.Password = Text;
                 Password.MaxLength = MaxLength;
+
+                Password.Focus(FocusState.Keyboard);
+                Password.SelectAll();
             }
             else if (Number != null)
             {
                 Number.NumberFormatter = Formatter;
                 Number.Maximum = Maximum;
                 Number.Value = Value;
+
+                Number.Focus(FocusState.Keyboard);
             }
         }
 
@@ -145,16 +147,7 @@ namespace Unigram.Views.Popups
                 return;
             }
 
-            var button = this.Descendants<Button>().FirstOrDefault(x => x is Button btn && string.Equals(btn.Name, "PrimaryButton"));
-            if (button == null)
-            {
-                return;
-            }
-
-            var peer = ButtonAutomationPeer.CreatePeerForElement(button);
-            var pattern = peer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
-
-            pattern.Invoke();
+            Hide(ContentDialogResult.Primary);
         }
 
         private void Label_TextChanged(object sender, TextChangedEventArgs e)

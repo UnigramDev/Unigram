@@ -8,17 +8,13 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <!--<ContentDialog.TitleTemplate>
-         <DataTemplate x:DataType="x:String">
-         <Grid Height="{ThemeResource AppBarThemeCompactHeight}">
-         <TextBlock Text="{x:Bind Mode=OneWay}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
-         <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
-         </Grid>
-         </DataTemplate>
-         </ContentDialog.TitleTemplate>-->
-
     <StackPanel>
-        <TextBlock x:Name="MessageLabel" Margin="12,16,12,0" Style="{StaticResource BodyTextBlockStyle}"/>
-        <CheckBox x:Name="CheckBox" Margin="12,24,12,0" Visibility="Collapsed"/>
+        <TextBlock
+            x:Name="MessageLabel"
+            Style="{StaticResource BodyTextBlockStyle}"/>
+        <CheckBox
+            x:Name="CheckBox"
+            Margin="0,16,0,0"
+            Visibility="Collapsed"/>
     </StackPanel>
 </local:ContentPopup>

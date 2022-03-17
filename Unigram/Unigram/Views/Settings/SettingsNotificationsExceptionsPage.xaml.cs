@@ -13,7 +13,6 @@ namespace Unigram.Views.Settings
         public SettingsNotificationsExceptionsPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsNotificationsExceptionsViewModel>();
         }
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
@@ -117,7 +116,7 @@ namespace Unigram.Views.Settings
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 36);
+                photo.SetChat(ViewModel.ProtoService, chat, 36);
             }
 
             if (args.Phase < 2)
@@ -126,42 +125,6 @@ namespace Unigram.Views.Settings
             }
 
             args.Handled = true;
-        }
-
-        public void Handle(UpdateFile update)
-        {
-            this.BeginOnUIThread(() =>
-            {
-                var panel = List.ItemsPanelRoot as ItemsStackPanel;
-                if (panel == null)
-                {
-                    return;
-                }
-
-                if (panel.FirstCacheIndex < 0)
-                {
-                    return;
-                }
-
-                //for (int i = panel.FirstCacheIndex; i <= panel.LastCacheIndex; i++)
-                for (int i = 0; i < ViewModel.Items.Count; i++)
-                {
-                    var chat = ViewModel.Items[i];
-                    if (chat.UpdateFile(update.File))
-                    {
-                        var container = List.ContainerFromItem(chat) as ListViewItem;
-                        if (container == null)
-                        {
-                            return;
-                        }
-
-                        var content = container.ContentTemplateRoot as Grid;
-
-                        var photo = content.Children[0] as ProfilePicture;
-                        photo.Source = PlaceholderHelper.GetChat(null, chat, 36);
-                    }
-                }
-            });
         }
     }
 }

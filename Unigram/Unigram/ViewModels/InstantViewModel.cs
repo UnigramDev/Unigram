@@ -16,19 +16,23 @@ namespace Unigram.ViewModels
 {
     public class InstantViewModel : TLViewModelBase
     {
+        private readonly ITranslateService _translateService;
         private readonly IMessageFactory _messageFactory;
 
-        public InstantViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IMessageFactory messageFactory, IEventAggregator aggregator)
+        public InstantViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IStorageService storageService, ITranslateService translateService, IMessageFactory messageFactory, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
+            _translateService = translateService;
             _messageFactory = messageFactory;
-            _gallery = new InstantGalleryViewModel(protoService, aggregator);
+            _gallery = new InstantGalleryViewModel(protoService, storageService, aggregator);
 
             ShareCommand = new RelayCommand(ShareExecute);
             FeedbackCommand = new RelayCommand(FeedbackExecute);
             BrowserCommand = new RelayCommand(BrowserExecute);
             CopyCommand = new RelayCommand(CopyExecute);
         }
+
+        public ITranslateService TranslateService => _translateService;
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
@@ -50,21 +54,15 @@ namespace Unigram.ViewModels
         private InstantGalleryViewModel _gallery;
         public InstantGalleryViewModel Gallery
         {
-            get
-            {
-                return _gallery;
-            }
-            set
-            {
-                Set(ref _gallery, value);
-            }
+            get => _gallery;
+            set => Set(ref _gallery, value);
         }
 
         private string _title;
         public string Title
         {
-            get { return _title; }
-            set { Set(ref _title, value); }
+            get => _title;
+            set => Set(ref _title, value);
         }
 
         public RelayCommand ShareCommand { get; }

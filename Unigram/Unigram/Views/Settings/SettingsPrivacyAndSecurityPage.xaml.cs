@@ -3,6 +3,7 @@ using Unigram.ViewModels.Settings;
 using Unigram.Views.Settings.Privacy;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Settings
 {
@@ -13,17 +14,14 @@ namespace Unigram.Views.Settings
         public SettingsPrivacyAndSecurityPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsPrivacyAndSecurityViewModel>();
+        }
 
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
             if (ApiInfo.IsPackagedRelease && ViewModel.CacheService.Options.CanIgnoreSensitiveContentRestrictions)
             {
                 FindName(nameof(SensitiveContent));
             }
-        }
-
-        private void Sessions_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(SettingsSessionsPage));
         }
 
         private void WebSessions_Click(object sender, RoutedEventArgs e)
@@ -38,7 +36,7 @@ namespace Unigram.Views.Settings
 
         private void ShowPhone_Click(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(SettingsPrivacyShowPhonePage));
+            Frame.Navigate(typeof(SettingsPrivacyPhonePage));
         }
 
         private void StatusTimestamp_Click(object sender, RoutedEventArgs e)

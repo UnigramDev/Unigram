@@ -14,8 +14,8 @@ namespace Unigram.Controls
 
         public object Constraint
         {
-            get { return GetValue(ConstraintProperty); }
-            set { SetValue(ConstraintProperty, value); }
+            get => GetValue(ConstraintProperty);
+            set => SetValue(ConstraintProperty, value);
         }
 
         public static readonly DependencyProperty ConstraintProperty =
@@ -273,7 +273,7 @@ namespace Unigram.Controls
             }
 
             Calculate:
-            if (width > availableWidth || height > availableHeight)
+            if (width > availableWidth || height > availableHeight || Constraint is Size)
             {
                 var ratioX = availableWidth / width;
                 var ratioY = availableHeight / height;

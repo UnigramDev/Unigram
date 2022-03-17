@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Telegram.Td.Api;
+﻿using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.ViewModels;
 using Windows.UI.Composition;
@@ -9,16 +8,21 @@ using Windows.UI.Xaml.Hosting;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed partial class StickerContent : ImageView, IContentWithFile, IContentWithMask
+    public sealed class StickerContent : ImageView, IContent, IContentWithMask
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
+
+        private string _fileToken;
 
         private CompositionAnimation _thumbnailShimmer;
 
         public StickerContent(MessageViewModel message)
         {
-            InitializeComponent();
+            DefaultStyleKey = typeof(StickerContent);
+
+            Click += Button_Click;
+
             UpdateMessage(message);
         }
 
@@ -32,21 +36,16 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            Background = null;
-            Texture.Source = null;
-            Texture.Constraint = message;
-
-            if (!sticker.StickerValue.Local.IsDownloadingCompleted)
-            {
-                UpdateThumbnail(message, sticker.Outline);
-            }
-
+            Constraint = message;
             UpdateFile(message, sticker.StickerValue);
         }
 
-        public void UpdateMessageContentOpened(MessageViewModel message) { }
+        private void UpdateFile(object target, File file)
+        {
+            UpdateFile(_message, file);
+        }
 
-        public async void UpdateFile(MessageViewModel message, File file)
+        private async void UpdateFile(MessageViewModel message, File file)
         {
             var sticker = GetContent(message.Content);
             if (sticker == null)
@@ -61,18 +60,28 @@ namespace Unigram.Controls.Messages.Content
 
             if (file.Local.IsDownloadingCompleted)
             {
-                Texture.Source = await PlaceholderHelper.GetWebPFrameAsync(file.Local.Path);
+                Source = await PlaceholderHelper.GetWebPFrameAsync(file.Local.Path);
                 ElementCompositionPreview.SetElementChildVisual(this, null);
+
+                UpdateManager.Unsubscribe(this, ref _fileToken);
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+            else 
             {
-                message.ProtoService.DownloadFile(file.Id, 1);
+                Source = null;
+                UpdateThumbnail(message, sticker);
+
+                UpdateManager.Subscribe(this, message, sticker.StickerValue, ref _fileToken, UpdateFile, true);
+
+                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                {
+                    message.ProtoService.DownloadFile(file.Id, 1);
+                }
             }
         }
 
-        private void UpdateThumbnail(MessageViewModel message, IList<ClosedVectorPath> contours)
+        private void UpdateThumbnail(MessageViewModel message, Sticker sticker)
         {
-            _thumbnailShimmer = CompositionPathParser.ParseThumbnail(contours, out ShapeVisual visual);
+            _thumbnailShimmer = CompositionPathParser.ParseThumbnail(sticker, out ShapeVisual visual);
             ElementCompositionPreview.SetElementChildVisual(this, visual);
         }
 
@@ -80,11 +89,11 @@ namespace Unigram.Controls.Messages.Content
         {
             if (content is MessageSticker sticker)
             {
-                return !sticker.Sticker.IsAnimated;
+                return sticker.Sticker.Type is StickerTypeStatic or StickerTypeMask;
             }
             else if (content is MessageText text && text.WebPage != null && !primary)
             {
-                return text.WebPage.Sticker != null && !text.WebPage.Sticker.IsAnimated;
+                return text.WebPage.Sticker != null && text.WebPage.Sticker.Type is StickerTypeStatic or StickerTypeMask;
             }
 
             return false;

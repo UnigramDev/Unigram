@@ -159,26 +159,25 @@ namespace Unigram.Common
             }
         }
 
-        public static void NavigateToChat(this INavigationService service, Chat chat, long? message = null, long? thread = null, string accessToken = null, NavigationState state = null, bool scheduled = false, bool force = true)
+        public static void NavigateToChat(this INavigationService service, Chat chat, long? message = null, long? thread = null, string accessToken = null, NavigationState state = null, bool scheduled = false, bool force = true, bool createNewWindow = false)
         {
             if (service is TLNavigationService serviceEx)
             {
-                serviceEx.NavigateToChat(chat, message, thread, accessToken, state, scheduled, force);
+                serviceEx.NavigateToChat(chat, message, thread, accessToken, state, scheduled, force, createNewWindow);
             }
         }
 
-        public static void NavigateToChat(this INavigationService service, long chatId, long? message = null, long? thread = null, string accessToken = null, NavigationState state = null, bool scheduled = false, bool force = true)
+        public static void NavigateToChat(this INavigationService service, long chatId, long? message = null, long? thread = null, string accessToken = null, NavigationState state = null, bool scheduled = false, bool force = true, bool createNewWindow = false)
         {
             if (service is TLNavigationService serviceEx)
             {
-                serviceEx.NavigateToChat(chatId, message, thread, accessToken, state, scheduled, force);
+                serviceEx.NavigateToChat(chatId, message, thread, accessToken, state, scheduled, force, createNewWindow);
             }
         }
 
         public static void NavigateToMain(this INavigationService service, string parameter)
         {
-            NavigatedEventHandler handler = null;
-            handler = (s, args) =>
+            void handler(object s, NavigationEventArgs args)
             {
                 service.Frame.Navigated -= handler;
 
@@ -186,7 +185,7 @@ namespace Unigram.Common
                 {
                     page.Activate(parameter);
                 }
-            };
+            }
 
             service.Frame.Navigated += handler;
             service.Navigate(typeof(MainPage));
@@ -276,9 +275,8 @@ namespace Unigram.Common
 
         public static Task<T> NavigateWithResult<T>(this INavigationService service, Type type, object parameter = null)
         {
-            TaskCompletionSource<T> tsc = new TaskCompletionSource<T>();
-            NavigatedEventHandler handler = null;
-            handler = (s, args) =>
+            var tsc = new TaskCompletionSource<T>();
+            void handler(object s, NavigationEventArgs args)
             {
                 service.Frame.Navigated -= handler;
 
@@ -294,7 +292,7 @@ namespace Unigram.Common
                         withResult.SetAwaiter(tsc, parameter);
                     }
                 }
-            };
+            }
 
             service.Frame.Navigated += handler;
             service.Navigate(type);

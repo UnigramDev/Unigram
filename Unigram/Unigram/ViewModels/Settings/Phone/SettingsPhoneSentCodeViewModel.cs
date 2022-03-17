@@ -2,6 +2,7 @@
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Entities;
+using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views.Settings;
@@ -48,23 +49,14 @@ namespace Unigram.ViewModels.Settings
         private AuthenticationCodeInfo _codeInfo;
         public AuthenticationCodeInfo CodeInfo
         {
-            get
-            {
-                return _codeInfo;
-            }
-            set
-            {
-                Set(ref _codeInfo, value);
-            }
+            get => _codeInfo;
+            set => Set(ref _codeInfo, value);
         }
 
         private string _phoneCode;
         public string PhoneCode
         {
-            get
-            {
-                return _phoneCode;
-            }
+            get => _phoneCode;
             set
             {
                 Set(ref _phoneCode, value);
@@ -195,7 +187,7 @@ namespace Unigram.ViewModels.Settings
             var response = await ProtoService.SendAsync(function);
             if (response is AuthenticationCodeInfo info)
             {
-                App.Current.SessionState["x_codeinfo"] = info;
+                BootStrapper.Current.SessionState["x_codeinfo"] = info;
                 NavigationService.Navigate(typeof(SettingsPhoneSentCodePage));
                 NavigationService.Refresh();
             }

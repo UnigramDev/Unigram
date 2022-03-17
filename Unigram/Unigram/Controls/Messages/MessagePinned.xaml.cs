@@ -41,6 +41,8 @@ namespace Unigram.Controls.Messages
 
             _textVisual = _textVisual1;
 
+            _templateApplied = true;
+
             Unloaded += OnUnloaded;
         }
 
@@ -84,7 +86,7 @@ namespace Unigram.Controls.Messages
                 ShowHide(true);
             }
 
-            var title = Strings.Resources.PinnedMessage + (value >= 0 && maximum > 1 ? " #" : "");
+            var title = Strings.Resources.PinnedMessage + (value >= 0 && maximum > 1 && value + 1 < maximum ? $" #{value + 1}" : "");
 
             if (_loading || (_chatId == chat.Id && _messageId == 0))
             {
@@ -92,7 +94,6 @@ namespace Unigram.Controls.Messages
                 UpdateMessage(message, message == null, title);
 
                 Line.UpdateIndex(value, maximum, 0);
-                Number.Value = maximum > 1 ? value + 1 : -1;
 
                 _chatId = chat.Id;
                 _messageId = message?.Id ?? 0;
@@ -129,7 +130,7 @@ namespace Unigram.Controls.Messages
             var prev = _messageId < message?.Id;
 
             Line.UpdateIndex(value, maximum, prev ? 1 : -1);
-            Number.Value = maximum > 1 ? value + 1 : -1;
+            TitleLabel.Text = title;
 
             _chatId = chat.Id;
             _messageId = message?.Id ?? 0;
@@ -302,24 +303,20 @@ namespace Unigram.Controls.Messages
             }
         }
 
-        protected override void SetText(string title, string service, string message)
+        protected override void SetText(string title, string service, FormattedText message)
         {
             TitleLabel.Text = title;
 
             var serviceShow = _textVisual == _textVisual1 ? ServiceLabel2 : ServiceLabel1;
             serviceShow.Text = service;
 
-            var messageShow = _textVisual == _textVisual1 ? MessageLabel2 : MessageLabel1;
-            messageShow.Text = message;
-        }
-
-        protected override void AppendText(string service, string message)
-        {
-            var serviceShow = _textVisual == _textVisual1 ? ServiceLabel2 : ServiceLabel1;
-            serviceShow.Text += service;
+            if (!string.IsNullOrEmpty(message?.Text) && !string.IsNullOrEmpty(service))
+            {
+                serviceShow.Text += ", ";
+            }
 
             var messageShow = _textVisual == _textVisual1 ? MessageLabel2 : MessageLabel1;
-            messageShow.Text += message;
+            messageShow.Text = message?.Text.Replace('\n', ' ') ?? string.Empty;
         }
 
         #endregion
@@ -335,7 +332,6 @@ namespace Unigram.Controls.Messages
 
         public MessagePinnedLine()
         {
-            RegisterPropertyChangedCallback(ForegroundProperty, OnForegroundChanged);
             RegisterPropertyChangedCallback(BackgroundProperty, OnBackgroundChanged);
             RegisterPropertyChangedCallback(BorderBrushProperty, OnBorderBrushChanged);
 
@@ -378,13 +374,50 @@ namespace Unigram.Controls.Messages
             ElementCompositionPreview.SetElementChildVisual(this, visual);
         }
 
-        private void OnForegroundChanged(DependencyObject sender, DependencyProperty dp)
+        #region Stroke
+
+        private long _strokeToken;
+
+        public Brush Stroke
         {
-            if (_fore != null)
-            {
-                _fore.FillBrush = GetBrush(dp);
-            }
+            get => (Brush)GetValue(StrokeProperty);
+            set => SetValue(StrokeProperty, value);
         }
+
+        public static readonly DependencyProperty StrokeProperty =
+            DependencyProperty.Register("Stroke", typeof(Brush), typeof(MessagePinnedLine), new PropertyMetadata(null, OnStrokeChanged));
+
+        private static void OnStrokeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var sender = d as MessagePinnedLine;
+            var solid = e.NewValue as SolidColorBrush;
+
+            if (e.OldValue is SolidColorBrush old && sender._strokeToken != 0)
+            {
+                old.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, sender._strokeToken);
+            }
+
+            if (solid == null || sender._fore == null)
+            {
+                return;
+            }
+
+            sender._fore.FillBrush = Window.Current.Compositor.CreateColorBrush(solid.Color);
+            sender._strokeToken = solid.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, sender.OnStrokeChanged);
+        }
+
+        private void OnStrokeChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            var solid = sender as SolidColorBrush;
+            if (solid == null || _fore == null)
+            {
+                return;
+            }
+
+            _fore.FillBrush = Window.Current.Compositor.CreateColorBrush(solid.Color);
+        }
+
+        #endregion
 
         private void OnBackgroundChanged(DependencyObject sender, DependencyProperty dp)
         {
@@ -444,7 +477,7 @@ namespace Unigram.Controls.Messages
 
             if (maximum < 4)
             {
-                h = (36f - ((maximum - 1) * m)) / maximum;
+                h = (36f - (maximum - 1) * m) / maximum;
             }
 
             _forePath.Size = new Vector2(2, h);
@@ -609,7 +642,7 @@ namespace Unigram.Controls.Messages
 
             if (maximum < 4)
             {
-                h = (36f - ((maximum - 1) * m)) / maximum;
+                h = (36f - (maximum - 1) * m) / maximum;
             }
 
             var geometries = new CanvasGeometry[4];

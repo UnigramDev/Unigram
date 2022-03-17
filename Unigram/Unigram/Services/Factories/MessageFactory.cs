@@ -29,13 +29,11 @@ namespace Unigram.Services.Factories
     {
         private readonly IProtoService _protoService;
         private readonly IPlaybackService _playbackService;
-        private readonly IEventAggregator _aggregator;
 
-        public MessageFactory(IProtoService protoService, IPlaybackService playbackService, IEventAggregator aggregator)
+        public MessageFactory(IProtoService protoService, IPlaybackService playbackService)
         {
             _protoService = protoService;
             _playbackService = playbackService;
-            _aggregator = aggregator;
         }
 
         public MessageViewModel Create(IMessageDelegate delegato, Message message)
@@ -104,8 +102,8 @@ namespace Unigram.Services.Factories
 
             if (profile != null)
             {
-                videoWidth = videoProps.Orientation == VideoOrientation.Rotate180 || videoProps.Orientation == VideoOrientation.Normal ? (int)profile.Video.Width : (int)profile.Video.Height;
-                videoHeight = videoProps.Orientation == VideoOrientation.Rotate180 || videoProps.Orientation == VideoOrientation.Normal ? (int)profile.Video.Height : (int)profile.Video.Width;
+                videoWidth = videoProps.Orientation is VideoOrientation.Rotate180 or VideoOrientation.Normal ? (int)profile.Video.Width : (int)profile.Video.Height;
+                videoHeight = videoProps.Orientation is VideoOrientation.Rotate180 or VideoOrientation.Normal ? (int)profile.Video.Height : (int)profile.Video.Width;
             }
 
             var conversion = new VideoConversion();
@@ -119,7 +117,7 @@ namespace Unigram.Services.Factories
 
                 if (transform != null)
                 {
-                    conversion.Transcode = true;
+                    //conversion.Transcode = true;
                     conversion.Transform = true;
                     conversion.Rotation = transform.Rotation;
                     conversion.OutputSize = transform.OutputSize;
@@ -171,8 +169,8 @@ namespace Unigram.Services.Factories
 
             if (profile != null)
             {
-                videoWidth = videoProps.Orientation == VideoOrientation.Rotate180 || videoProps.Orientation == VideoOrientation.Normal ? (int)profile.Video.Width : (int)profile.Video.Height;
-                videoHeight = videoProps.Orientation == VideoOrientation.Rotate180 || videoProps.Orientation == VideoOrientation.Normal ? (int)profile.Video.Height : (int)profile.Video.Width;
+                videoWidth = videoProps.Orientation is VideoOrientation.Rotate180 or VideoOrientation.Normal ? (int)profile.Video.Width : (int)profile.Video.Height;
+                videoHeight = videoProps.Orientation is VideoOrientation.Rotate180 or VideoOrientation.Normal ? (int)profile.Video.Height : (int)profile.Video.Width;
             }
 
             var conversion = new VideoConversion();
@@ -181,7 +179,12 @@ namespace Unigram.Services.Factories
                 conversion.Transcode = true;
                 conversion.Width = profile.Video.Width;
                 conversion.Height = profile.Video.Height;
-                conversion.Bitrate = profile.Video.Bitrate;
+                conversion.VideoBitrate = profile.Video.Bitrate;
+
+                if (profile.Audio != null)
+                {
+                    conversion.AudioBitrate = profile.Audio.Bitrate;
+                }
 
                 if (transform != null)
                 {
@@ -215,19 +218,22 @@ namespace Unigram.Services.Factories
                 {
                     //var buffer = await FileIO.ReadBufferAsync(file);
                     //var webp = WebPImage.DecodeFromBuffer(buffer);
-                    
+
                     // This isn't supposed to work.
                     var webp = PlaceholderHelper.GetWebPFrame(file.Path) as Windows.UI.Xaml.Media.Imaging.BitmapImage;
 
                     var width = webp.PixelWidth;
                     var height = webp.PixelHeight;
 
-                    return new InputMessageFactory
+                    if ((width == 512 && height <= width) || (height == 512 && width <= height))
                     {
-                        InputFile = generated,
-                        Type = new FileTypeSticker(),
-                        Delegate = (inputFile, caption) => new InputMessageSticker(inputFile, null, width, height, string.Empty)
-                    };
+                        return new InputMessageFactory
+                        {
+                            InputFile = generated,
+                            Type = new FileTypeSticker(),
+                            Delegate = (inputFile, caption) => new InputMessageSticker(inputFile, null, width, height, string.Empty)
+                        };
+                    }
                 }
                 catch
                 {

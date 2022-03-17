@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Services;
 using Unigram.Services.Settings;
 using Unigram.ViewModels.Drawers;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media.Imaging;
@@ -50,8 +47,6 @@ namespace Unigram.Controls.Drawers
         private readonly AnimatedListHandler<Animation> _handler;
         private readonly ZoomableListHandler _zoomer;
 
-        private readonly FileContext<Animation> _animations = new FileContext<Animation>();
-
         private bool _isActive;
 
         public AnimationDrawer()
@@ -64,6 +59,7 @@ namespace Unigram.Controls.Drawers
             _zoomer.Opening = _handler.UnloadVisibleItems;
             _zoomer.Closing = _handler.ThrottleVisibleItems;
             _zoomer.DownloadFile = fileId => ViewModel.ProtoService.DownloadFile(fileId, 32);
+            _zoomer.SessionId = () => ViewModel.ProtoService.SessionId;
 
             ElementCompositionPreview.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
 
@@ -72,7 +68,7 @@ namespace Unigram.Controls.Drawers
             var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => FieldAnimations.TextChanged += new TextChangedEventHandler(handler));
             debouncer.Invoked += (s, args) =>
             {
-                ViewModel.FindAnimations(FieldAnimations.Text);
+                ViewModel.Search(FieldAnimations.Text);
             };
         }
 
@@ -87,7 +83,7 @@ namespace Unigram.Controls.Drawers
         public void Deactivate()
         {
             _isActive = false;
-            _handler.UnloadVisibleItems();
+            _handler.UnloadItems();
         }
 
         public void LoadVisibleItems()
@@ -151,13 +147,19 @@ namespace Unigram.Controls.Drawers
 
             if (file.Local.IsDownloadingCompleted)
             {
-                view.Source = UriEx.ToLocal(file.Local.Path);
+                view.Source = new LocalVideoSource(file);
                 view.Thumbnail = null;
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+            else
             {
                 view.Source = null;
-                DownloadFile(file.Id, animation);
+
+                UpdateManager.Subscribe(content, ViewModel.ProtoService, file, UpdateFile, true);
+
+                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                {
+                    ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                }
 
                 var thumbnail = animation.Thumbnail?.File;
                 if (thumbnail != null)
@@ -166,10 +168,16 @@ namespace Unigram.Controls.Drawers
                     {
                         view.Thumbnail = new BitmapImage(UriEx.ToLocal(thumbnail.Local.Path));
                     }
-                    else if (thumbnail.Local.CanBeDownloaded && !thumbnail.Local.IsDownloadingActive)
+                    else
                     {
                         view.Thumbnail = null;
-                        DownloadFile(thumbnail.Id, animation);
+
+                        UpdateManager.Subscribe(view, ViewModel.ProtoService, thumbnail, UpdateThumbnail, true);
+
+                        if (thumbnail.Local.CanBeDownloaded && !thumbnail.Local.IsDownloadingActive)
+                        {
+                            ViewModel.ProtoService.DownloadFile(thumbnail.Id, 1);
+                        }
                     }
                 }
             }
@@ -197,45 +205,27 @@ namespace Unigram.Controls.Drawers
             return items;
         }
 
-        private void DownloadFile(int id, Animation animation = null)
+        private void UpdateFile(object target, File file)
         {
-            if (animation != null)
+            var content = target as Border;
+            if (content == null)
             {
-                _animations[id].Add(animation);
+                return;
             }
 
-            ViewModel.ProtoService.DownloadFile(id, 1);
+            if (content.Child is AnimationView view)
+            {
+                view.Source = new LocalVideoSource(file);
+                _handler.ThrottleVisibleItems();
+            }
         }
 
-        public void UpdateFile(File file)
+        private void UpdateThumbnail(object target, File file)
         {
-            if (_animations.TryGetValue(file.Id, out List<Animation> items) && items.Count > 0)
+            if (target is AnimationView view)
             {
-                foreach (var item in items)
-                {
-                    item.UpdateFile(file);
-
-                    var container = List.ContainerFromItem(item) as SelectorItem;
-                    if (container == null)
-                    {
-                        continue;
-                    }
-
-                    var content = container.ContentTemplateRoot as Border;
-                    if (content == null)
-                    {
-                        continue;
-                    }
-
-                    if (content.Child is AnimationView view)
-                    {
-                        view.Source = UriEx.ToLocal(file.Local.Path);
-                        _handler.ThrottleVisibleItems();
-                    }
-                }
+                view.Thumbnail = new BitmapImage(UriEx.ToLocal(file.Local.Path));
             }
-
-            _zoomer.UpdateFile(file);
         }
     }
 }

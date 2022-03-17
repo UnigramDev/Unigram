@@ -68,8 +68,8 @@ namespace Unigram.Controls
 
         public Country Country
         {
-            get { return (Country)GetValue(CountryProperty); }
-            set { SetValue(CountryProperty, value); }
+            get => (Country)GetValue(CountryProperty);
+            set => SetValue(CountryProperty, value);
         }
 
         public static readonly DependencyProperty CountryProperty =

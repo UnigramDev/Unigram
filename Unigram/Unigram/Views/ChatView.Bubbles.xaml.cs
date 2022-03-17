@@ -47,7 +47,7 @@ namespace Unigram.Views
                 Arrow.Visibility = Visibility.Collapsed;
                 //VisualUtilities.SetIsVisible(Arrow, false);
             }
-            else if (ViewModel.Type == DialogType.History || ViewModel.Type == DialogType.Thread)
+            else if (ViewModel.Type is DialogType.History or DialogType.Thread)
             {
                 Arrow.Visibility = Visibility.Visible;
                 //VisualUtilities.SetIsVisible(Arrow, true);
@@ -153,7 +153,7 @@ namespace Unigram.Views
                 {
                     var transform = container.TransformToVisual(DateHeaderRelative);
                     var point = transform.TransformPoint(new Point());
-                    var height = (float)DateHeader.ActualHeight;
+                    var height = DateHeader.ActualSize.Y;
                     var offset = (float)point.Y + height;
 
                     minDate = false;
@@ -191,7 +191,26 @@ namespace Unigram.Views
 
                 if (message.ContainsUnreadMention)
                 {
-                    ViewModel.SetLastViewedMention(message.Id);
+                    ViewModel.Mentions.SetLastViewedMessage(message.Id);
+                }
+
+                if (message.UnreadReactions?.Count > 0)
+                {
+                    ViewModel.Reactions.SetLastViewedMessage(message.Id);
+
+                    var root = container.ContentTemplateRoot as FrameworkElement;
+                    if (root != null)
+                    {
+                        if (root is MessageBubble == false)
+                        {
+                            root = root.FindName("Bubble") as FrameworkElement;
+                        }
+
+                        if (root is MessageBubble bubble)
+                        {
+                            bubble.UpdateMessageReactions(message, null);
+                        }
+                    }
                 }
 
                 if (message.Content is MessageAlbum album)
@@ -210,9 +229,14 @@ namespace Unigram.Views
                 }
             }
 
+            if (minDate)
+            {
+                _dateHeader.Offset = Vector3.Zero;
+            }
+
             _dateHeaderTimer.Stop();
             _dateHeaderTimer.Start();
-            ShowHideDateHeader(minDateIndex > 0, minDateIndex > 0 && minDateIndex < int.MaxValue);
+            ShowHideDateHeader(minDateIndex > 0, minDateIndex is > 0 and < int.MaxValue);
 
             // Read and play messages logic:
             if (messages.Count > 0 && !Messages.IsProgrammaticScrolling && _windowContext.ActivationMode == CoreWindowActivationMode.ActivatedInForeground)
@@ -374,11 +398,11 @@ namespace Unigram.Views
                     GalleryViewModelBase viewModel;
                     if (message.Content is MessageAnimation)
                     {
-                        viewModel = new ChatGalleryViewModel(ViewModel.ProtoService, ViewModel.Aggregator, message.ChatId, ViewModel.ThreadId, message.Get());
+                        viewModel = new ChatGalleryViewModel(ViewModel.ProtoService, ViewModel.StorageService, ViewModel.Aggregator, message.ChatId, ViewModel.ThreadId, message.Get());
                     }
                     else
                     {
-                        viewModel = new SingleGalleryViewModel(ViewModel.ProtoService, ViewModel.Aggregator, new GalleryMessage(ViewModel.ProtoService, message.Get()));
+                        viewModel = new SingleGalleryViewModel(ViewModel.ProtoService, ViewModel.StorageService, ViewModel.Aggregator, new GalleryMessage(ViewModel.ProtoService, message.Get()));
                     }
 
                     await GalleryView.GetForCurrentView().ShowAsync(viewModel, () => target);
@@ -417,7 +441,7 @@ namespace Unigram.Views
                 var message = pair.Message;
                 var container = pair.Container;
 
-                var animation = message.IsAnimatedStickerDownloadCompleted();
+                var animation = message.IsAnimatedContentDownloadCompleted();
                 if (animation == false)
                 {
                     continue;
@@ -569,7 +593,6 @@ namespace Unigram.Views
                 if (test is MessageBubble bubbu)
                 {
                     bubbu.UnregisterEvents();
-                    bubbu.UpdateMessage(null);
                 }
 
                 if (_sizeChangedHandler != null)
@@ -614,7 +637,7 @@ namespace Unigram.Views
                             var user = message.ProtoService.GetUser(fromUser.SenderUserId);
                             if (user != null)
                             {
-                                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 30);
+                                photo.SetUser(ViewModel.ProtoService, user, 30);
                             }
                         }
                         else if (message.ForwardInfo?.Origin is MessageForwardOriginChat fromChat)
@@ -622,7 +645,7 @@ namespace Unigram.Views
                             var chat = message.ProtoService.GetChat(fromChat.SenderChatId);
                             if (chat != null)
                             {
-                                photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 30);
+                                photo.SetChat(ViewModel.ProtoService, chat, 30);
                             }
                         }
                         else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel)
@@ -630,7 +653,7 @@ namespace Unigram.Views
                             var chat = message.ProtoService.GetChat(fromChannel.ChatId);
                             if (chat != null)
                             {
-                                photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 30);
+                                photo.SetChat(ViewModel.ProtoService, chat, 30);
                             }
                         }
                         else if (message.ForwardInfo?.Origin is MessageForwardOriginMessageImport fromImport)
@@ -642,13 +665,13 @@ namespace Unigram.Views
                             photo.Source = PlaceholderHelper.GetNameForUser(fromHiddenUser.SenderName, 30);
                         }
                     }
-                    else if (message.ProtoService.TryGetUser(message.Sender, out User senderUser))
+                    else if (message.ProtoService.TryGetUser(message.SenderId, out User senderUser))
                     {
-                        photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, senderUser, 30);
+                        photo.SetUser(ViewModel.ProtoService, senderUser, 30);
                     }
-                    else if (message.ProtoService.TryGetChat(message.Sender, out Chat senderChat))
+                    else if (message.ProtoService.TryGetChat(message.SenderId, out Chat senderChat))
                     {
-                        photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, senderChat, 30);
+                        photo.SetChat(ViewModel.ProtoService, senderChat, 30);
                     }
                 }
 
@@ -691,7 +714,7 @@ namespace Unigram.Views
 
                 content = grid.FindName("Bubble") as FrameworkElement;
             }
-            else if (content is StackPanel panel and not MessageBubble)
+            else if (content is StackPanel panel)
             {
                 content = panel.FindName("Service") as FrameworkElement;
 
@@ -782,8 +805,10 @@ namespace Unigram.Views
                 {
                     message.IsInitial = false;
                 }
-
-                return;
+                else
+                {
+                    return;
+                }
             }
 
             if (index >= panel.FirstVisibleIndex && index <= panel.LastVisibleIndex)

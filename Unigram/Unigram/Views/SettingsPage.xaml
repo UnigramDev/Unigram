@@ -3,186 +3,274 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:local="using:Unigram.Views"
       xmlns:controls="using:Unigram.Controls"
+      xmlns:icons="using:Unigram.Assets.Icons"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:contract7Present="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 7)"
       mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
-        <ScrollViewer
-            x:Name="ScrollingHost"
-            VerticalScrollBarVisibility="Auto"
-            VerticalScrollMode="Auto"
-            Grid.Row="1">
-            <StackPanel Padding="0,16,0,24">
-                <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-                    <contract7Present:Grid.BackgroundTransition>
-                        <contract7Present:BrushTransition/>
-                    </contract7Present:Grid.BackgroundTransition>
-
+    <Grid>
+        <ScrollViewer x:Name="ScrollingHost"
+                      VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto"
+                      Grid.Row="1">
+            <StackPanel Padding="0,4,0,24">
+                <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <controls:ProfilePicture
-                        x:Name="Photo"
-                        Click="Photo_Click"
-                        AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"
-                        Height="64"
-                        Width="64"
-                        Margin="12,8"
-                        Grid.RowSpan="2"/>
+                    <controls:ProfilePicture x:Name="Photo"
+                                             Click="Photo_Click"
+                                             AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"
+                                             Height="64"
+                                             Width="64"
+                                             Margin="12,8"
+                                             Grid.RowSpan="2" />
 
-                    <Grid VerticalAlignment="Bottom" HorizontalAlignment="Left" Grid.Column="1">
+                    <Grid VerticalAlignment="Bottom"
+                          HorizontalAlignment="Left"
+                          Grid.Column="1">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock x:Name="Title" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" FontFamily="{ThemeResource EmojiThemeFontFamily}" Style="{StaticResource BaseTextBlockStyle}"/>
-                        <Grid Margin="4,0,0,-2" x:Name="Verified" Grid.Column="2">
-                            <Path Width="16" Height="16" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z M31.485,14.514L35.727,18.757 23.707,30.778 19.464,35.021 15.221,30.778 10.271,25.828 14.514,21.586 19.464,26.535z" Fill="{ThemeResource ChatVerifiedBadgeBrush}" StrokeThickness="0" />
+                        <TextBlock x:Name="Title"
+                                   TextWrapping="NoWrap"
+                                   TextTrimming="CharacterEllipsis"
+                                   FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                   Style="{StaticResource BaseTextBlockStyle}" />
+                        <Grid Margin="4,0,0,-2"
+                              x:Name="Verified"
+                              Grid.Column="2">
+                            <Path Width="16"
+                                  Height="16"
+                                  Stretch="Uniform"
+                                  Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z M31.485,14.514L35.727,18.757 23.707,30.778 19.464,35.021 15.221,30.778 10.271,25.828 14.514,21.586 19.464,26.535z"
+                                  Fill="{ThemeResource ChatVerifiedBadgeBrush}"
+                                  StrokeThickness="0" />
                         </Grid>
                     </Grid>
-                    <TextBlock
-                        x:Name="Subtitle"
-                        Text="{CustomResource Online}"
-                        Style="{StaticResource CaptionTextBlockStyle}"
-                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                        VerticalAlignment="Top"
-                        Grid.Row="1"
-                        Grid.Column="1"/>
+                    <TextBlock x:Name="Subtitle"
+                               Text="{CustomResource Online}"
+                               Style="{StaticResource CaptionTextBlockStyle}"
+                               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                               VerticalAlignment="Top"
+                               Grid.Row="1"
+                               Grid.Column="1" />
 
-                    <Border VerticalAlignment="Center" Width="36" Height="36" CornerRadius="18" Margin="8,12,12,12" Grid.Column="2" Grid.RowSpan="2">
-                        <Border.Background>
-                            <SolidColorBrush Opacity="0.2" Color="{ThemeResource SystemAccentColor}"/>
-                        </Border.Background>
-                        <controls:GlyphButton
-                            Glyph="&#xE722;"
-                            Click="EditPhoto_Click"
-                            Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
-                            AutomationProperties.Name="{CustomResource AccDescrChangeProfilePicture}"
-                            ToolTipService.ToolTip="{CustomResource AccDescrChangeProfilePicture}"
-                            Style="{StaticResource RoundGlyphButtonStyle}"
+                    <Border Background="{ThemeResource TinyButtonBackgroundBrush}"
+                            VerticalAlignment="Center"
                             Width="36"
                             Height="36"
                             CornerRadius="18"
-                            Padding="0,0,0,0"/>
+                            Margin="8,12,12,12"
+                            Grid.Column="2"
+                            Grid.RowSpan="2">
+                        <controls:GlyphButton Glyph="&#xE722;"
+                                              Click="EditPhoto_Click"
+                                              Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                                              AutomationProperties.Name="{CustomResource AccDescrChangeProfilePicture}"
+                                              ToolTipService.ToolTip="{CustomResource AccDescrChangeProfilePicture}"
+                                              Style="{StaticResource RoundGlyphButtonStyle}"
+                                              Width="36"
+                                              Height="36"
+                                              CornerRadius="18"
+                                              Padding="0,0,0,0" />
                     </Border>
                 </Grid>
 
-                <StackPanel
-                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-                    <contract7Present:StackPanel.BackgroundTransition>
-                        <contract7Present:BrushTransition/>
-                    </contract7Present:StackPanel.BackgroundTransition>
-                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,0,0,0" />
-                    
-                    <controls:BadgeButton
-                        x:Name="PhoneNumber"
-                        Content="{CustomResource Phone}"
-                        Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
-                        Glyph="&#xE717;"
-                        Click="Phone_Click"/>
-                    <controls:BadgeButton
-                        x:Name="Username"
-                        Content="{CustomResource Username}"
-                        Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
-                        Glyph="&#xE168;"
-                        Click="Username_Click"/>
-                    <controls:BadgeButton
-                        x:Name="Bio"
-                        Content="{CustomResource UserBio}"
-                        Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
-                        Glyph="&#xE946;"
-                        Click="About_Click"/>
+                <StackPanel>
+                    <controls:BadgeButton x:Name="PhoneNumber"
+                                          Content="{CustomResource Phone}"
+                                          Style="{StaticResource IconSubtitleBadgeButtonStyle}"
+                                          Click="Phone_Click">
+                        <controls:BadgeButton.IconSource>
+                            <icons:Phone />
+                        </controls:BadgeButton.IconSource>
+                    </controls:BadgeButton>
+                    <controls:BadgeButton x:Name="Username"
+                                          Content="{CustomResource Username}"
+                                          Style="{StaticResource IconSubtitleBadgeButtonStyle}"
+                                          Click="Username_Click">
+                        <controls:BadgeButton.IconSource>
+                            <icons:Username />
+                        </controls:BadgeButton.IconSource>
+                    </controls:BadgeButton>
+                    <controls:BadgeButton x:Name="Bio"
+                                          Content="{CustomResource UserBio}"
+                                          Style="{StaticResource IconSubtitleBadgeButtonStyle}"
+                                          Click="About_Click">
+                        <controls:BadgeButton.IconSource>
+                            <icons:Info />
+                        </controls:BadgeButton.IconSource>
+                    </controls:BadgeButton>
                 </StackPanel>
 
-                <StackPanel
-                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                    Margin="0,16,0,0">
-                    <contract7Present:StackPanel.BackgroundTransition>
-                        <contract7Present:BrushTransition/>
-                    </contract7Present:StackPanel.BackgroundTransition>
-                    <controls:BadgeButton
-                        Content="{CustomResource Filters}"
-                        Glyph="&#xF12B;"
-                        Click="Folders_Click"
-                        Style="{StaticResource GlyphBadgeButtonStyle}"/>
+                <Rectangle Fill="{ThemeResource NavigationViewItemSeparatorForeground}"
+                           Margin="12,2"
+                           Height="1" />
+
+                <controls:TopNavView x:Name="Navigation"
+                                     Orientation="Vertical"
+                                     Height="Auto">
+                    <controls:TopNavView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel />
+                        </ItemsPanelTemplate>
+                    </controls:TopNavView.ItemsPanel>
+                    <controls:TopNavView.ItemContainerStyle>
+                        <Style TargetType="controls:TopNavViewItem">
+                            <Setter Property="HorizontalAlignment"
+                                    Value="Stretch" />
+                            <Setter Property="VerticalAlignment"
+                                    Value="Stretch" />
+                            <Setter Property="HorizontalContentAlignment"
+                                    Value="Stretch" />
+                            <Setter Property="VerticalContentAlignment"
+                                    Value="Stretch" />
+                            <Setter Property="UseSystemFocusVisuals"
+                                    Value="True" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="controls:TopNavViewItem">
+                                        <Grid Background="Transparent">
+                                            <ContentPresenter x:Name="ContentPresenter"
+                                                              Grid.Column="1"
+                                                              Margin="0"
+                                                              TextWrapping="NoWrap"
+                                                              Foreground="{TemplateBinding Foreground}"
+                                                              ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                              Content="{TemplateBinding Content}"
+                                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                              ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                                              VerticalAlignment="Center"
+                                                              AutomationProperties.AccessibilityView="Raw" />
+                                            <Grid x:Name="SelectionIndicatorGrid"
+                                                  Margin="4,4,0,4"
+                                                  HorizontalAlignment="Left"
+                                                  VerticalAlignment="Center">
+                                                <Rectangle x:Name="SelectionIndicator"
+                                                           Width="3"
+                                                           Height="16"
+                                                           Fill="{ThemeResource NavigationViewSelectionIndicatorForeground}"
+                                                           Opacity="0"
+                                                           RadiusX="{Binding Source={ThemeResource ControlCornerRadius}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
+                                                           RadiusY="{Binding Source={ThemeResource ControlCornerRadius}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}" />
+                                            </Grid>
+                                        </Grid>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </controls:TopNavView.ItemContainerStyle>
+                    <controls:BadgeButton Content="{CustomResource NotificationsAndSounds}"
+                                          Click="Notifications_Click"
+                                          Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:BadgeButton.IconSource>
+                            <icons:Notifications />
+                        </controls:BadgeButton.IconSource>
+                    </controls:BadgeButton>
+                    <controls:BadgeButton Content="{CustomResource PrivacySettings}"
+                                          Click="Privacy_Click"
+                                          Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:BadgeButton.IconSource>
+                            <icons:Privacy />
+                        </controls:BadgeButton.IconSource>
+                    </controls:BadgeButton>
+                    <controls:BadgeButton Content="{CustomResource DataSettings}"
+                                          Click="Data_Click"
+                                          Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:BadgeButton.IconSource>
+                            <icons:Data />
+                        </controls:BadgeButton.IconSource>
+                    </controls:BadgeButton>
+                    <controls:BadgeButton Content="{CustomResource StickersName}"
+                                          Click="Stickers_Click"
+                                          Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:BadgeButton.IconSource>
+                            <icons:Stickers />
+                        </controls:BadgeButton.IconSource>
+                    </controls:BadgeButton>
+                    <controls:BadgeButton Content="{CustomResource ChatSettings}"
+                                          Click="Appearance_Click"
+                                          Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:BadgeButton.IconSource>
+                            <icons:Appearance />
+                        </controls:BadgeButton.IconSource>
+                    </controls:BadgeButton>
+                    <controls:BadgeButton Content="{CustomResource Filters}"
+                                          Click="Folders_Click"
+                                          Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:BadgeButton.IconSource>
+                            <icons:Folders />
+                        </controls:BadgeButton.IconSource>
+                    </controls:BadgeButton>
+                    <controls:BadgeButton Content="{CustomResource Devices}"
+                                          Click="Sessions_Click"
+                                          Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:BadgeButton.IconSource>
+                            <icons:Devices />
+                        </controls:BadgeButton.IconSource>
+                    </controls:BadgeButton>
+                    <controls:BadgeButton Content="{CustomResource Language}"
+                                          Click="Language_Click"
+                                          Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:BadgeButton.IconSource>
+                            <icons:Language />
+                        </controls:BadgeButton.IconSource>
+                    </controls:BadgeButton>
+                    <controls:BadgeButton Content="{CustomResource PrivacyAdvanced}"
+                                          Click="Advanced_Click"
+                                          Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:BadgeButton.IconSource>
+                            <icons:Advanced />
+                        </controls:BadgeButton.IconSource>
+                    </controls:BadgeButton>
+                </controls:TopNavView>
+
+                <Rectangle Fill="{ThemeResource NavigationViewItemSeparatorForeground}"
+                           Margin="12,2"
+                           Height="1" />
+
+                <StackPanel>
+                    <controls:BadgeButton Content="{CustomResource AskAQuestion}"
+                                          Command="{x:Bind ViewModel.AskCommand}"
+                                          Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:BadgeButton.IconSource>
+                            <icons:AskQ />
+                        </controls:BadgeButton.IconSource>
+                    </controls:BadgeButton>
+                    <controls:BadgeButton Content="{CustomResource TelegramFAQ}"
+                                          Click="Questions_Click"
+                                          Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:BadgeButton.IconSource>
+                            <icons:FAQ />
+                        </controls:BadgeButton.IconSource>
+                    </controls:BadgeButton>
+                    <controls:BadgeButton Content="{CustomResource PrivacyPolicy}"
+                                          Click="PrivacyPolicy_Click"
+                                          Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:BadgeButton.IconSource>
+                            <icons:PrivacyPolicy />
+                        </controls:BadgeButton.IconSource>
+                    </controls:BadgeButton>
                 </StackPanel>
-                
-                <StackPanel
-                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                    Margin="0,16,0,0">
-                    <contract7Present:StackPanel.BackgroundTransition>
-                        <contract7Present:BrushTransition/>
-                    </contract7Present:StackPanel.BackgroundTransition>
-                    <controls:BadgeButton
-                        Content="{CustomResource NotificationsAndSounds}"
-                        Glyph="&#xEC42;"
-                        Click="Notifications_Click"
-                        Style="{StaticResource GlyphBadgeButtonStyle}"/>
-                    <controls:BadgeButton
-                        Content="{CustomResource PrivacySettings}"
-                        Glyph="&#xE72E;"
-                        Click="Privacy_Click"
-                        Style="{StaticResource GlyphBadgeButtonStyle}"/>
-                    <controls:BadgeButton
-                        Content="{CustomResource DataSettings}"
-                        Glyph="&#xEB05;"
-                        Click="Data_Click"
-                        Style="{StaticResource GlyphBadgeButtonStyle}"/>
-                    <controls:BadgeButton
-                        Content="{CustomResource StickersName}"
-                        Glyph="&#xF4AA;"
-                        Click="Stickers_Click"
-                        Style="{StaticResource GlyphBadgeButtonStyle}"/>
-                    <controls:BadgeButton
-                        Content="{CustomResource ChatSettings}"
-                        Glyph="&#xE90F;"
-                        Click="Appearance_Click"
-                        Style="{StaticResource GlyphBadgeButtonStyle}"/>
-                    <controls:BadgeButton
-                        Content="{CustomResource Language}"
-                        Glyph="&#xE774;"
-                        Click="Language_Click"
-                        Style="{StaticResource GlyphBadgeButtonStyle}"/>
-                    <controls:BadgeButton
-                        Content="{CustomResource PrivacyAdvanced}"
-                        Glyph="&#xE9E9;"
-                        Click="Advanced_Click"
-                        Style="{StaticResource GlyphBadgeButtonStyle}"/>
-                </StackPanel>
-                
-                <StackPanel
-                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                    Margin="0,16,0,0">
-                    <contract7Present:StackPanel.BackgroundTransition>
-                        <contract7Present:BrushTransition/>
-                    </contract7Present:StackPanel.BackgroundTransition>
-                    <controls:BadgeButton
-                        Content="{CustomResource AskAQuestion}"
-                        Glyph="&#xED15;"
-                        Command="{x:Bind ViewModel.AskCommand}"
-                        Style="{StaticResource GlyphBadgeButtonStyle}"/>
-                    <controls:BadgeButton
-                        Content="{CustomResource TelegramFAQ}"
-                        Glyph="&#xE783;"
-                        Click="Questions_Click"
-                        Style="{StaticResource GlyphBadgeButtonStyle}"/>
-                </StackPanel>
-                
+
                 <Grid>
-                    <TextBlock
-                        x:Name="Diagnostics"
-                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                        Style="{StaticResource CaptionTextBlockStyle}"
-                        Margin="12,8,12,0"/>
-                    <Button Click="Diagnostics_Click" Opacity="0" Style="{StaticResource EmptyButtonStyle}"/>
+                    <TextBlock x:Name="Diagnostics"
+                               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                               Style="{StaticResource CaptionTextBlockStyle}"
+                               Margin="12,8,12,0" />
+                    <Button Click="Diagnostics_Click"
+                            Opacity="0"
+                            Style="{StaticResource EmptyButtonStyle}" />
                 </Grid>
             </StackPanel>
         </ScrollViewer>

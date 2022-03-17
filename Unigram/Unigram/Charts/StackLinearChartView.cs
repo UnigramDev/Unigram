@@ -37,8 +37,8 @@ namespace Unigram.Charts
         {
             if (chartData != null)
             {
-                float fullWidth = (chartWidth / (pickerDelegate.pickerEnd - pickerDelegate.pickerStart));
-                float offset = fullWidth * (pickerDelegate.pickerStart) - HORIZONTAL_PADDING;
+                float fullWidth = chartWidth / (pickerDelegate.pickerEnd - pickerDelegate.pickerStart);
+                float offset = fullWidth * pickerDelegate.pickerStart - HORIZONTAL_PADDING;
 
                 float cX = chartArea.centerX();
                 float cY = chartArea.centerY() + 16;
@@ -56,7 +56,6 @@ namespace Unigram.Charts
                     startFromY = new float[chartData.lines.Count];
                 }
 
-                bool hasEmptyPoint = false;
                 int transitionAlpha = 255;
                 float transitionProgressHalf = 0;
                 if (transitionMode == TRANSITION_MODE_PARENT)
@@ -71,7 +70,7 @@ namespace Unigram.Charts
 
                     float radiusStart = (float)(chartArea.Width > chartArea.Height ? chartArea.Width : chartArea.Height);
                     float radiusEnd = (float)(chartArea.Width > chartArea.Height ? chartArea.Height : chartArea.Width) * 0.45f;
-                    float radius = radiusEnd + ((radiusStart - radiusEnd) / 2) * (1 - transitionParams.progress);
+                    float radius = radiusEnd + (radiusStart - radiusEnd) / 2 * (1 - transitionParams.progress);
 
                     Rect rectF = CreateRect(
                         cX - radius,
@@ -85,11 +84,6 @@ namespace Unigram.Charts
                 {
                     transitionAlpha = (int)(transitionParams.progress * 255);
                 }
-
-                float dX = 0;
-                float dY = 0;
-                float x1 = 0;
-                float y1 = 0;
 
                 float p;
                 if (chartData.xPercentage.Length < 2)
@@ -180,9 +174,8 @@ namespace Unigram.Charts
 
                         if (yPercentage == 0 && k == lastEnabled)
                         {
-                            hasEmptyPoint = true;
                         }
-                        float height = (yPercentage) * (MeasuredHeight - chartBottom - SIGNATURE_TEXT_HEIGHT);
+                        float height = yPercentage * (MeasuredHeight - chartBottom - SIGNATURE_TEXT_HEIGHT);
                         float yPoint = MeasuredHeight - chartBottom - height - stackOffset;
                         startFromY[k] = yPoint;
 
@@ -197,6 +190,11 @@ namespace Unigram.Charts
                         {
                             startXPoint = xPoint;
                         }
+
+                        float dX;
+                        float dY;
+                        float x1;
+                        float y1;
                         if (transitionMode == TRANSITION_MODE_PARENT && k != lastEnabled)
                         {
                             if (xPoint < cX)
@@ -300,7 +298,7 @@ namespace Unigram.Charts
                         }
 
                         float transitionProgress = transitionParams == null ? 0f : transitionParams.progress;
-                        if (yPercentage == 0 && (i > 0 && y[i - 1] == 0) && (i < localEnd && y[i + 1] == 0) && transitionMode != TRANSITION_MODE_PARENT)
+                        if (yPercentage == 0 && i > 0 && y[i - 1] == 0 && i < localEnd && y[i + 1] == 0 && transitionMode != TRANSITION_MODE_PARENT)
                         {
                             if (!skipPoints[k])
                             {
@@ -566,11 +564,11 @@ namespace Unigram.Charts
                             }
                             else
                             {
-                                yPercentage = (chartData.simplifiedY[k][i] * line.alpha) / sum;
+                                yPercentage = chartData.simplifiedY[k][i] * line.alpha / sum;
                             }
                         }
 
-                        float height = (yPercentage) * (pickerHeight);
+                        float height = yPercentage * pickerHeight;
                         float yPoint = pickerHeight - height - stackOffset;
 
                         if (i == 0)
@@ -580,7 +578,7 @@ namespace Unigram.Charts
                             skipPoints[k] = false;
                         }
 
-                        if (chartData.simplifiedY[k][i] == 0 && (i > 0 && chartData.simplifiedY[k][i - 1] == 0) && (i < n - 1 && chartData.simplifiedY[k][i + 1] == 0))
+                        if (chartData.simplifiedY[k][i] == 0 && i > 0 && chartData.simplifiedY[k][i - 1] == 0 && i < n - 1 && chartData.simplifiedY[k][i + 1] == 0)
                         {
                             if (!skipPoints[k])
                             {
@@ -656,8 +654,8 @@ namespace Unigram.Charts
             {
                 return;
             }
-            float fullWidth = (chartWidth / (pickerDelegate.pickerEnd - pickerDelegate.pickerStart));
-            float offset = fullWidth * (pickerDelegate.pickerStart) - HORIZONTAL_PADDING;
+            float fullWidth = chartWidth / (pickerDelegate.pickerEnd - pickerDelegate.pickerStart);
+            float offset = fullWidth * pickerDelegate.pickerStart - HORIZONTAL_PADDING;
 
             float p;
             if (chartData.xPercentage.Length < 2)
@@ -742,7 +740,7 @@ namespace Unigram.Charts
                     }
 
                     float xPoint = chartData.xPercentage[i] * fullWidth - offset;
-                    float height = (yPercentage) * (MeasuredHeight - chartBottom - SIGNATURE_TEXT_HEIGHT);
+                    float height = yPercentage * (MeasuredHeight - chartBottom - SIGNATURE_TEXT_HEIGHT);
                     float yPoint = MeasuredHeight - chartBottom - height - stackOffset;
                     stackOffset += (int)height;
 

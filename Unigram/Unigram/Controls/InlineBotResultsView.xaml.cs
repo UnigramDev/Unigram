@@ -1,12 +1,10 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Converters;
-using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -18,22 +16,20 @@ namespace Unigram.Controls
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
-        private readonly AnimatedRepeaterHandler<InlineQueryResult> _handler;
-        private readonly ZoomableRepeaterHandler _zoomer;
-
-        private readonly FileContext<InlineQueryResult> _files = new FileContext<InlineQueryResult>();
-        private readonly FileContext<InlineQueryResult> _thumbnails = new FileContext<InlineQueryResult>();
+        private readonly AnimatedListHandler<InlineQueryResult> _handler;
+        private readonly ZoomableListHandler _zoomer;
 
         public InlineBotResultsView()
         {
             InitializeComponent();
 
-            _handler = new AnimatedRepeaterHandler<InlineQueryResult>(Repeater, ScrollingHost);
+            _handler = new AnimatedListHandler<InlineQueryResult>(ScrollingHost);
 
-            _zoomer = new ZoomableRepeaterHandler(Repeater);
+            _zoomer = new ZoomableListHandler(ScrollingHost);
             _zoomer.Opening = _handler.UnloadVisibleItems;
             _zoomer.Closing = _handler.ThrottleVisibleItems;
             _zoomer.DownloadFile = fileId => ViewModel.ProtoService.DownloadFile(fileId, 32);
+            _zoomer.SessionId = () => ViewModel.ProtoService.SessionId;
         }
 
         public void UpdateCornerRadius(double radius)
@@ -95,115 +91,54 @@ namespace Unigram.Controls
             PermissionsLabel.Text = label ?? string.Empty;
         }
 
-        public void UpdateFile(File file)
+        private void UpdateFile(object target, File file)
         {
-            if (!file.Local.IsDownloadingCompleted)
+            if (target is Grid content)
             {
-                return;
-            }
-
-            if (_thumbnails.TryGetValue(file.Id, out List<InlineQueryResult> items) && items.Count > 0)
-            {
-                foreach (var result in items)
+                if (content.Children[0] is LottieView stickerView)
                 {
-                    result.UpdateFile(file);
-
-                    var index = ViewModel.InlineBotResults?.IndexOf(result) ?? -1;
-                    if (index < 0)
-                    {
-                        continue;
-                    }
-
-                    var button = Repeater.TryGetElement(index) as Button;
-                    if (button == null)
-                    {
-                        continue;
-                    }
-
-                    var content = button.Content as Grid;
-                    if (content.Children[0] is Image image)
-                    {
-                        if (result is InlineQueryResultPhoto || result is InlineQueryResultVideo)
-                        {
-                            image.Source = new BitmapImage(UriEx.ToLocal(file.Local.Path));
-                        }
-                        else if (result is InlineQueryResultSticker)
-                        {
-                            image.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
-                        }
-                    }
-                    else if (content.Children[0] is AnimationView animationView)
-                    {
-                        animationView.Thumbnail = new BitmapImage(UriEx.ToLocal(file.Local.Path));
-                    }
-                    else if (content.Children[0] is Grid presenter)
-                    {
-                        //var presenter = content.Children[0] as Grid;
-                        var thumb = presenter.Children[0] as Image;
-                        thumb.Source = new BitmapImage(UriEx.ToLocal(file.Local.Path));
-                    }
+                    stickerView.Source = UriEx.ToLocal(file.Local.Path);
+                }
+                else if (content.Children[0] is AnimationView animationView)
+                {
+                    animationView.Source = new LocalVideoSource(file);
                 }
             }
 
-            if (_files.TryGetValue(file.Id, out List<InlineQueryResult> items2) && items2.Count > 0)
+            _handler.ThrottleVisibleItems();
+        }
+
+        private void UpdateThumbnail(object target, File file)
+        {
+            if (target is Image image)
             {
-                foreach (var result in items2)
+                if (image.Tag is InlineQueryResultSticker)
                 {
-                    result.UpdateFile(file);
-
-                    var index = ViewModel.InlineBotResults?.IndexOf(result) ?? -1;
-                    if (index < 0)
-                    {
-                        continue;
-                    }
-
-                    var button = Repeater.TryGetElement(index) as Button;
-                    if (button == null)
-                    {
-                        continue;
-                    }
-
-                    var content = button.Content as Grid;
-                    if (content.Children[0] is LottieView stickerView)
-                    {
-                        stickerView.Source = UriEx.ToLocal(file.Local.Path);
-                    }
-                    else if (content.Children[0] is AnimationView animationView)
-                    {
-                        animationView.Source = UriEx.ToLocal(file.Local.Path);
-                        animationView.Thumbnail = null;
-                    }
-
-                    _handler.ThrottleVisibleItems();
+                    image.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
+                }
+                else
+                {
+                    image.Source = new BitmapImage(UriEx.ToLocal(file.Local.Path));
                 }
             }
-
-            _zoomer.UpdateFile(file);
+            else if (target is AnimationView animationView)
+            {
+                animationView.Thumbnail = new BitmapImage(UriEx.ToLocal(file.Local.Path));
+            }
         }
 
-        private void Item_Click(object item)
+        private void OnItemClick(object sender, ItemClickEventArgs e)
         {
-            var collection = ViewModel.InlineBotResults;
-            if (collection == null)
+            if (e.ClickedItem is InlineQueryResult result)
             {
-                return;
+                var collection = ViewModel.InlineBotResults;
+                if (collection == null)
+                {
+                    return;
+                }
+
+                ViewModel.SendBotInlineResult(result, collection.GetQueryId(result));
             }
-
-            var result = item as InlineQueryResult;
-            if (result == null)
-            {
-                return;
-            }
-
-            ViewModel.SendBotInlineResult(result, collection.GetQueryId(result));
-        }
-
-        private void Result_Click(object sender, RoutedEventArgs e)
-        {
-            var button = sender as Button;
-            var result = button.DataContext as InlineQueryResult;
-
-            Item_Click(result);
         }
 
         private object ConvertSource(BotResultsCollection collection)
@@ -212,36 +147,71 @@ namespace Unigram.Controls
             {
                 return null;
             }
-            else if (collection.All(x => x.IsMedia()) /* animation, photo, video without title */)
+            else if (collection.All(x => x is InlineQueryResultSticker) || collection.All(x => x.IsMedia()))
             {
-                Repeater.Layout = Resources["MosaicLayout"] as Layout;
-                Repeater.ItemTemplate = Resources["MediaTemplateSelector"];
+                if (ScrollingHost.ItemsPanel != VerticalGrid)
+                {
+                    ScrollingHost.ItemsPanel = VerticalGrid;
+                    ScrollingHost.ItemTemplate = null;
+                    ScrollingHost.ItemTemplateSelector = MediaTemplateSelector;
+
+                    FluidGridView.Update(ScrollingHost);
+                }
             }
-            else if (collection.All(x => x is InlineQueryResultSticker))
+            else if (ScrollingHost.ItemsPanel != VerticalStack)
             {
-                Repeater.Layout = Resources["GridLayout"] as Layout;
-                Repeater.ItemTemplate = Resources["MediaTemplateSelector"];
-            }
-            else
-            {
-                Repeater.Layout = Resources["StackLayout"] as Layout;
-                Repeater.ItemTemplate = Resources["ResultTemplate"];
+                ScrollingHost.ItemsPanel = VerticalStack;
+                ScrollingHost.ItemTemplate = ResultTemplate;
+                ScrollingHost.ItemTemplateSelector = null;
             }
 
             return new object();
         }
 
-        private void OnElementPrepared(ItemsRepeater sender, ItemsRepeaterElementPreparedEventArgs args)
+        private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
         {
-            var button = args.Element as Button;
-            var result = button.DataContext as InlineQueryResult;
+            if (args.ItemContainer == null)
+            {
+                if (sender.ItemsPanel == VerticalStack)
+                {
+                    args.ItemContainer = new ListViewItem();
+                }
+                else
+                {
+                    args.ItemContainer = new GridViewItem
+                    {
+                        Margin = new Thickness(2)
+                    };
+                }
 
-            var content = button.Content as Grid;
+                if (sender.ItemTemplateSelector != null)
+                {
+                    args.ItemContainer.ContentTemplate = sender.ItemTemplateSelector.SelectTemplate(args.Item, args.ItemContainer);
+                }
+                else
+                {
+                    args.ItemContainer.ContentTemplate = sender.ItemTemplate;
+                }
+
+                args.ItemContainer.HorizontalContentAlignment = HorizontalAlignment.Stretch;
+                args.ItemContainer.VerticalContentAlignment = VerticalAlignment.Stretch;
+
+                _zoomer.ElementPrepared(args.ItemContainer);
+            }
+
+            args.IsContainerPrepared = true;
+        }
+
+        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            var content = args.ItemContainer.ContentTemplateRoot as Grid;
+            var result = args.Item as InlineQueryResult;
+
             if (content.Children[0] is Image image)
             {
-                _zoomer.ElementPrepared(args.Element);
+                image.Tag = args.Item;
 
-                if (result is InlineQueryResultPhoto || result is InlineQueryResultVideo)
+                if (result is InlineQueryResultPhoto or InlineQueryResultVideo)
                 {
                     File file = null;
                     if (result is InlineQueryResultPhoto photo)
@@ -262,15 +232,20 @@ namespace Unigram.Controls
                     {
                         image.Source = new BitmapImage(UriEx.ToLocal(file.Local.Path));
                     }
-                    else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                    else 
                     {
                         image.Source = null;
-                        DownloadFile(_thumbnails, file.Id, result);
+                        UpdateManager.Subscribe(image, ViewModel.ProtoService, file, UpdateThumbnail, true);
+
+                        if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                        {
+                            ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                        }
                     }
                 }
                 else if (result is InlineQueryResultSticker sticker)
                 {
-                    var file = sticker.Sticker.Thumbnail.File;
+                    var file = sticker.Sticker.StickerValue;
                     if (file == null)
                     {
                         return;
@@ -280,36 +255,74 @@ namespace Unigram.Controls
                     {
                         image.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
                     }
-                    else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                    else
                     {
                         image.Source = null;
-                        DownloadFile(_thumbnails, file.Id, result);
+                        UpdateManager.Subscribe(image, ViewModel.ProtoService, file, UpdateThumbnail, true);
+
+                        if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                        {
+                            ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                        }
                     }
                 }
             }
-            else if (content.Children[0] is LottieView stickerView && result is InlineQueryResultSticker sticker)
+            else if (result is InlineQueryResultSticker sticker)
             {
-                _zoomer.ElementPrepared(args.Element);
+                if (content.Children[0] is LottieView stickerView)
+                {
+                    stickerView.Tag = args.Item;
 
-                var file = sticker.Sticker.StickerValue;
-                if (file == null)
-                {
-                    return;
-                }
+                    var file = sticker.Sticker.StickerValue;
+                    if (file == null)
+                    {
+                        return;
+                    }
 
-                if (file.Local.IsDownloadingCompleted)
-                {
-                    stickerView.Source = UriEx.ToLocal(file.Local.Path);
+                    if (file.Local.IsDownloadingCompleted)
+                    {
+                        stickerView.Source = UriEx.ToLocal(file.Local.Path);
+                    }
+                    else
+                    {
+                        stickerView.Source = null;
+                        UpdateManager.Subscribe(content, ViewModel.ProtoService, file, UpdateFile, true);
+
+                        if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                        {
+                            ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                        }
+                    }
                 }
-                else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                else if (content.Children[0] is AnimationView animationView)
                 {
-                    stickerView.Source = null;
-                    DownloadFile(_files, file.Id, result);
+                    animationView.Tag = args.Item;
+
+                    var file = sticker.Sticker.StickerValue;
+                    if (file == null)
+                    {
+                        return;
+                    }
+
+                    if (file.Local.IsDownloadingCompleted)
+                    {
+                        animationView.Source = new LocalVideoSource(file);
+                    }
+                    else
+                    {
+                        animationView.Source = null;
+                        UpdateManager.Subscribe(content, ViewModel.ProtoService, file, UpdateFile, true);
+
+                        if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                        {
+                            ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                        }
+                    }
                 }
             }
             else if (content.Children[0] is AnimationView animationView && result is InlineQueryResultAnimation animation)
             {
-                _zoomer.ElementPrepared(args.Element);
+                animationView.Tag = args.Item;
 
                 var file = animation.Animation.AnimationValue;
                 if (file == null)
@@ -319,12 +332,17 @@ namespace Unigram.Controls
 
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    animationView.Source = UriEx.ToLocal(file.Local.Path);
+                    animationView.Source = new LocalVideoSource(file);
                 }
-                else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                else
                 {
                     animationView.Source = null;
-                    DownloadFile(_files, file.Id, result);
+                    UpdateManager.Subscribe(content, ViewModel.ProtoService, file, UpdateFile, true);
+
+                    if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                    {
+                        ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                    }
 
                     var thumbnail = animation.Animation.Thumbnail?.File;
                     if (thumbnail != null)
@@ -333,18 +351,21 @@ namespace Unigram.Controls
                         {
                             animationView.Thumbnail = new BitmapImage(UriEx.ToLocal(thumbnail.Local.Path));
                         }
-                        else if (thumbnail.Local.CanBeDownloaded && !thumbnail.Local.IsDownloadingActive)
+                        else
                         {
                             animationView.Thumbnail = null;
-                            DownloadFile(_thumbnails, thumbnail.Id, animation);
+                            UpdateManager.Subscribe(animationView, ViewModel.ProtoService, thumbnail, UpdateThumbnail, true);
+
+                            if (thumbnail.Local.CanBeDownloaded && !thumbnail.Local.IsDownloadingActive)
+                            {
+                                ViewModel.ProtoService.DownloadFile(thumbnail.Id, 1);
+                            }
                         }
                     }
                 }
             }
             else if (content.Children[0] is Grid presenter)
             {
-                _zoomer.ElementClearing(args.Element);
-
                 //var presenter = content.Children[0] as Grid;
                 var thumb = presenter.Children[0] as Image;
 
@@ -354,7 +375,13 @@ namespace Unigram.Controls
                 File file = null;
                 Uri uri = null;
 
-                if (result is InlineQueryResultArticle article)
+                if (result is InlineQueryResultAnimation animation2)
+                {
+                    file = animation2.Animation.Thumbnail?.File;
+                    title.Text = animation2.Title;
+                    description.Text = string.Empty;
+                }
+                else if (result is InlineQueryResultArticle article)
                 {
                     file = article.Thumbnail?.File;
                     title.Text = article.Title;
@@ -437,10 +464,15 @@ namespace Unigram.Controls
                     {
                         thumb.Source = new BitmapImage(UriEx.ToLocal(file.Local.Path));
                     }
-                    else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                    else
                     {
                         thumb.Source = null;
-                        DownloadFile(_thumbnails, file.Id, result);
+                        UpdateManager.Subscribe(thumb, ViewModel.ProtoService, file, UpdateThumbnail, true);
+
+                        if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                        {
+                            ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                        }
                     }
                 }
                 else if (uri != null)
@@ -454,60 +486,17 @@ namespace Unigram.Controls
             }
         }
 
-        private void OnElementClearing(ItemsRepeater sender, ItemsRepeaterElementClearingEventArgs args)
+        private async void ItemsWrapGrid_Loading(FrameworkElement sender, object args)
         {
-            _zoomer.ElementClearing(args.Element);
-
-            if (args.Element is Button button && button.Content is Grid content && content.Children[0] is Image image)
-            {
-                if (content.Children.Count > 1)
-                {
-                    content.Children.RemoveAt(1);
-                }
-
-                image.Source = null;
-            }
-        }
-
-        private void DownloadFile<T>(FileContext<T> context, int id, T result)
-        {
-            context[id].Add(result);
-            ViewModel.ProtoService.DownloadFile(id, 1);
-        }
-
-        private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
-        private bool _loadMoreDrop;
-
-        private async void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
-        {
-            var results = ViewModel.InlineBotResults;
-            if (results == null || !results.HasMoreItems)
-            {
-                return;
-            }
-
-            if (_loadMoreDrop)
-            {
-                return;
-            }
-
-            using (await _loadMoreLock.WaitAsync())
-            {
-                _loadMoreDrop = true;
-
-                if (ScrollingHost.ScrollableHeight - ScrollingHost.VerticalOffset < 200 && ScrollingHost.ScrollableHeight > 0 && !e.IsIntermediate)
-                {
-                    await results.LoadMoreItemsAsync(0);
-                }
-
-                _loadMoreDrop = false;
-            }
+            await sender.UpdateLayoutAsync();
+            FluidGridView.Update(ScrollingHost);
         }
     }
 
     public class InlineQueryTemplateSelector : DataTemplateSelector
     {
         public DataTemplate AnimatedStickerTemplate { get; set; }
+        public DataTemplate VideoStickerTemplate { get; set; }
         public DataTemplate StickerTemplate { get; set; }
         public DataTemplate AnimationTemplate { get; set; }
         public DataTemplate MediaTemplate { get; set; }
@@ -516,7 +505,12 @@ namespace Unigram.Controls
         {
             if (item is InlineQueryResultSticker sticker)
             {
-                return sticker.Sticker.IsAnimated ? AnimatedStickerTemplate : StickerTemplate;
+                return sticker.Sticker.Type switch
+                {
+                    StickerTypeAnimated => AnimatedStickerTemplate,
+                    StickerTypeVideo => VideoStickerTemplate,
+                    _ => StickerTemplate
+                };
             }
             else if (item is InlineQueryResultAnimation)
             {

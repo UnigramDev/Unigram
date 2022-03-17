@@ -4,6 +4,7 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Entities;
+using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views.Settings;
@@ -82,10 +83,10 @@ namespace Unigram.ViewModels.Settings
 
             await ProtoService.SendAsync(new SetOption("x_phonenumber", new OptionValueString(phoneNumber)));
 
-            var response = await ProtoService.SendAsync(new ChangePhoneNumber(phoneNumber, new PhoneNumberAuthenticationSettings(false, false, false)));
+            var response = await ProtoService.SendAsync(new ChangePhoneNumber(phoneNumber, new PhoneNumberAuthenticationSettings(false, false, false, false, new string[0])));
             if (response is AuthenticationCodeInfo info)
             {
-                App.Current.SessionState["x_codeinfo"] = info;
+                BootStrapper.Current.SessionState["x_codeinfo"] = info;
                 NavigationService.Navigate(typeof(SettingsPhoneSentCodePage));
             }
             else if (response is Error error)

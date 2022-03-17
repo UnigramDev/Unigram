@@ -81,7 +81,7 @@ namespace Unigram.ViewModels
                         }
 
                         var outgoing = message.IsOutgoing;
-                        var missed = call.DiscardReason is CallDiscardReasonMissed || call.DiscardReason is CallDiscardReasonDeclined;
+                        var missed = call.DiscardReason is CallDiscardReasonMissed or CallDiscardReasonDeclined;
                         var failed = !outgoing && missed;
                         var time = Converter.DateTime(message.Date);
 
@@ -194,13 +194,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public Message Message
-        {
-            get
-            {
-                return Items.FirstOrDefault();
-            }
-        }
+        public Message Message => Items.FirstOrDefault();
 
         private enum TLCallDisplayType
         {
@@ -228,7 +222,7 @@ namespace Unigram.ViewModels
                 }
 
                 var outgoing = message.IsOutgoing;
-                var missed = call.DiscardReason is CallDiscardReasonMissed || call.DiscardReason is CallDiscardReasonDeclined;
+                var missed = call.DiscardReason is CallDiscardReasonMissed or CallDiscardReasonDeclined;
 
                 var type = missed ? (outgoing ? TLCallDisplayType.Cancelled : TLCallDisplayType.Missed) : (outgoing ? TLCallDisplayType.Outgoing : TLCallDisplayType.Incoming);
 
@@ -271,7 +265,7 @@ namespace Unigram.ViewModels
                     return string.Empty;
                 }
 
-                var missed = call.DiscardReason is CallDiscardReasonMissed || call.DiscardReason is CallDiscardReasonDeclined;
+                var missed = call.DiscardReason is CallDiscardReasonMissed or CallDiscardReasonDeclined;
 
                 var duration = missed || call.Duration < 1 ? null : Locale.FormatCallDuration(call.Duration);
                 finalType = duration != null ? string.Format("{0} ({1})", finalType, duration) : finalType;

@@ -45,13 +45,7 @@ namespace Unigram.Views.Popups
             }
         }
 
-        public string Server
-        {
-            get
-            {
-                return FieldServer.Text ?? string.Empty;
-            }
-        }
+        public string Server => FieldServer.Text ?? string.Empty;
 
         public int Port
         {
@@ -118,10 +112,9 @@ namespace Unigram.Views.Popups
             {
                 builder.Add("server=" + Server);
             }
-            if (Port != null)
-            {
-                builder.Add("port=" + Port);
-            }
+
+            builder.Add("port=" + Port);
+
             //if (Username != null)
             //{
             //    builder.Add("user=" + Username);
@@ -162,7 +155,7 @@ namespace Unigram.Views.Popups
                     ? Strings.Resources.UseProxyTelegramInfo + Environment.NewLine + Environment.NewLine + Strings.Resources.UseProxyTelegramInfo2
                     : TypeHttp.IsChecked == true
                     ? "Enable if server supports transparent TCP connections via HTTP CONNECT method." + Environment.NewLine + Environment.NewLine + "When supported, it may improve connection speed dramatically. Try changing this option if this proxy doesn't work."
-                    : String.Empty;
+                    : string.Empty;
             }
         }
     }

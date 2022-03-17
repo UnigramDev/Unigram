@@ -52,7 +52,7 @@ namespace Unigram.Converters
         {
             var now = System.DateTime.Now;
 
-            var difference = Math.Abs((date.Month - now.Month) + 12 * (date.Year - now.Year));
+            var difference = Math.Abs(date.Month - now.Month + 12 * (date.Year - now.Year));
             if (difference >= 12)
             {
                 return MonthFullYear.Format(date);
@@ -65,7 +65,7 @@ namespace Unigram.Converters
         {
             var now = System.DateTime.Now;
 
-            var difference = Math.Abs((date.Month - now.Month) + 12 * (date.Year - now.Year));
+            var difference = Math.Abs(date.Month - now.Month + 12 * (date.Year - now.Year));
             if (difference >= 12)
             {
                 return DayMonthFullYear.Format(date);
@@ -106,7 +106,7 @@ namespace Unigram.Converters
                 }
                 else
                 {
-                    String arg;
+                    string arg;
                     if (distance % 5280 == 0)
                     {
                         arg = string.Format("{0}", (int)(distance / 5280));
@@ -127,7 +127,7 @@ namespace Unigram.Converters
                 }
                 else
                 {
-                    String arg;
+                    string arg;
                     if (distance % 1000 == 0)
                     {
                         arg = string.Format("{0}", (int)(distance / 1000));

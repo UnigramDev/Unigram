@@ -4,6 +4,7 @@ using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Services.Updates;
 using Unigram.Views.Popups;
+using Unigram.Views.Settings.Popups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -55,10 +56,7 @@ namespace Unigram.ViewModels.Settings
 
         public int AutolockTimeout
         {
-            get
-            {
-                return _passcodeService.AutolockTimeout;
-            }
+            get => _passcodeService.AutolockTimeout;
             set
             {
                 _passcodeService.AutolockTimeout = value;
@@ -68,10 +66,7 @@ namespace Unigram.ViewModels.Settings
 
         public bool IsBiometricsEnabled
         {
-            get
-            {
-                return _passcodeService.IsBiometricsEnabled;
-            }
+            get => _passcodeService.IsBiometricsEnabled;
             set
             {
                 _passcodeService.IsBiometricsEnabled = value;
@@ -136,7 +131,7 @@ namespace Unigram.ViewModels.Settings
                 new SelectRadioItem(5 * 60 * 60, Locale.FormatAutoLock(5 * 60 * 60), timeout == 5 * 60 * 60)
             };
 
-            var dialog = new SelectRadioPopup(items);
+            var dialog = new ChooseRadioPopup(items);
             dialog.Title = Strings.Resources.AutoLock;
             dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.SecondaryButtonText = Strings.Resources.Cancel;

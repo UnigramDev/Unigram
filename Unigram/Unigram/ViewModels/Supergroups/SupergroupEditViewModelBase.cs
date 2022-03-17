@@ -34,66 +34,36 @@ namespace Unigram.ViewModels.Supergroups
         protected Chat _chat;
         public Chat Chat
         {
-            get
-            {
-                return _chat;
-            }
-            set
-            {
-                Set(ref _chat, value);
-            }
+            get => _chat;
+            set => Set(ref _chat, value);
         }
 
         protected bool _isPublic = true;
         public bool IsPublic
         {
-            get
-            {
-                return _isPublic;
-            }
-            set
-            {
-                Set(ref _isPublic, value);
-            }
+            get => _isPublic;
+            set => Set(ref _isPublic, value);
         }
 
         protected string _username;
         public string Username
         {
-            get
-            {
-                return _username;
-            }
-            set
-            {
-                Set(ref _username, value);
-            }
+            get => _username;
+            set => Set(ref _username, value);
         }
 
         protected bool _hasTooMuchUsernames;
         public bool HasTooMuchUsernames
         {
-            get
-            {
-                return _hasTooMuchUsernames;
-            }
-            set
-            {
-                Set(ref _hasTooMuchUsernames, value);
-            }
+            get => _hasTooMuchUsernames;
+            set => Set(ref _hasTooMuchUsernames, value);
         }
 
         protected string _inviteLink;
         public string InviteLink
         {
-            get
-            {
-                return _inviteLink;
-            }
-            set
-            {
-                Set(ref _inviteLink, value);
-            }
+            get => _inviteLink;
+            set => Set(ref _inviteLink, value);
         }
 
         public MvxObservableCollection<Chat> AdminedPublicChannels { get; private set; }
@@ -319,40 +289,22 @@ namespace Unigram.ViewModels.Supergroups
         private bool _isValid;
         public bool IsValid
         {
-            get
-            {
-                return _isValid;
-            }
-            set
-            {
-                Set(ref _isValid, value);
-            }
+            get => _isValid;
+            set => Set(ref _isValid, value);
         }
 
         private bool _isAvailable;
         public bool IsAvailable
         {
-            get
-            {
-                return _isAvailable;
-            }
-            set
-            {
-                Set(ref _isAvailable, value);
-            }
+            get => _isAvailable;
+            set => Set(ref _isAvailable, value);
         }
 
         private string _errorMessage;
         public string ErrorMessage
         {
-            get
-            {
-                return _errorMessage;
-            }
-            set
-            {
-                Set(ref _errorMessage, value);
-            }
+            get => _errorMessage;
+            set => Set(ref _errorMessage, value);
         }
 
         public async void CheckAvailability(string text)

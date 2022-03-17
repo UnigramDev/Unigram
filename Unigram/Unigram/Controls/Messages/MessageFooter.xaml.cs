@@ -9,20 +9,21 @@ using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Messages
 {
-    public sealed partial class MessageFooter : ContentPresenter
+    public sealed class MessageFooter : Control
     {
         private MessageTicksState _ticksState;
 
-        private MessageViewModel _mesage;
+        private MessageViewModel _message;
 
         public MessageFooter()
         {
-            InitializeComponent();
+            DefaultStyleKey = typeof(MessageFooter);
 
             // Due to an UWP bug we can't have composition geometries here due to Pointer*ThemeAnimations:
             // https://github.com/microsoft/WindowsCompositionSamples/issues/329
@@ -32,9 +33,53 @@ namespace Unigram.Controls.Messages
             //}
         }
 
+        #region InitializeComponent
+
+        private TextBlock Label;
+        private ToolTip ToolTip;
+        private Run PinnedGlyph;
+        private Run RepliesGlyph;
+        private Run RepliesLabel;
+        private Run ViewsGlyph;
+        private Run ViewsLabel;
+        private Run EditedLabel;
+        private Run DateLabel;
+        private Run StateLabel;
+        private bool _templateApplied;
+
+        protected override void OnApplyTemplate()
+        {
+            Label = GetTemplateChild(nameof(Label)) as TextBlock;
+            ToolTip = GetTemplateChild(nameof(ToolTip)) as ToolTip;
+            PinnedGlyph = GetTemplateChild(nameof(PinnedGlyph)) as Run;
+            RepliesGlyph = GetTemplateChild(nameof(RepliesGlyph)) as Run;
+            RepliesLabel = GetTemplateChild(nameof(RepliesLabel)) as Run;
+            ViewsGlyph = GetTemplateChild(nameof(ViewsGlyph)) as Run;
+            ViewsLabel = GetTemplateChild(nameof(ViewsLabel)) as Run;
+            EditedLabel = GetTemplateChild(nameof(EditedLabel)) as Run;
+            DateLabel = GetTemplateChild(nameof(DateLabel)) as Run;
+            StateLabel = GetTemplateChild(nameof(StateLabel)) as Run;
+
+            ToolTip.Opened += ToolTip_Opened;
+
+            _templateApplied = true;
+
+            if (_message != null)
+            {
+                UpdateMessage(_message);
+            }
+        }
+
+        #endregion
+
         public void UpdateMessage(MessageViewModel message)
         {
-            _mesage = message;
+            _message = message;
+
+            if (message == null || !_templateApplied)
+            {
+                return;
+            }
 
             UpdateMessageState(message);
             UpdateMessageDate(message);
@@ -75,6 +120,11 @@ namespace Unigram.Controls.Messages
 
         public void UpdateMessageInteractionInfo(MessageViewModel message)
         {
+            if (message == null || !_templateApplied)
+            {
+                return;
+            }
+
             if (message.InteractionInfo?.ReplyInfo?.ReplyCount > 0 && !message.IsChannelPost)
             {
                 RepliesGlyph.Text = "\uE93E\u00A0\u00A0";
@@ -109,6 +159,11 @@ namespace Unigram.Controls.Messages
 
         public void UpdateMessageEdited(MessageViewModel message)
         {
+            if (message == null || !_templateApplied)
+            {
+                return;
+            }
+
             //var message = ViewModel;
             //var bot = false;
             //if (message.From != null)
@@ -117,7 +172,7 @@ namespace Unigram.Controls.Messages
             //}
 
             var bot = false;
-            if (message.ProtoService.TryGetUser(message.Sender, out User senderUser))
+            if (message.ProtoService.TryGetUser(message.SenderId, out User senderUser))
             {
                 bot = senderUser.Type is UserTypeBot;
             }
@@ -127,6 +182,11 @@ namespace Unigram.Controls.Messages
 
         public void UpdateMessageIsPinned(MessageViewModel message)
         {
+            if (message == null || !_templateApplied)
+            {
+                return;
+            }
+
             if (message.IsPinned)
             {
                 PinnedGlyph.Text = "\uE93F\u00A0\u00A0\u00A0";
@@ -139,6 +199,11 @@ namespace Unigram.Controls.Messages
 
         public void UpdateMessageState(MessageViewModel message)
         {
+            if (message == null || !_templateApplied)
+            {
+                return;
+            }
+
             StateLabel.Text = UpdateStateIcon(message);
         }
 
@@ -192,7 +257,7 @@ namespace Unigram.Controls.Messages
 
         private void ToolTip_Opened(object sender, RoutedEventArgs e)
         {
-            var message = _mesage;
+            var message = _message;
             if (message == null)
             {
                 return;
@@ -227,7 +292,7 @@ namespace Unigram.Controls.Messages
             }
 
             var bot = false;
-            if (message.ProtoService.TryGetUser(message.Sender, out User senderUser))
+            if (message.ProtoService.TryGetUser(message.SenderId, out User senderUser))
             {
                 bot = senderUser.Type is UserTypeBot;
             }
@@ -276,8 +341,8 @@ namespace Unigram.Controls.Messages
 
         public Brush Stroke
         {
-            get { return (Brush)GetValue(StrokeProperty); }
-            set { SetValue(StrokeProperty, value); }
+            get => (Brush)GetValue(StrokeProperty);
+            set => SetValue(StrokeProperty, value);
         }
 
         public static readonly DependencyProperty StrokeProperty =
@@ -313,9 +378,9 @@ namespace Unigram.Controls.Messages
 
             var sqrt = (float)Math.Sqrt(2);
 
-            var side = (stroke / sqrt) / 2f;
+            var side = stroke / sqrt / 2f;
             var diagonal = height * sqrt;
-            var length = (diagonal / 2f) / sqrt;
+            var length = diagonal / 2f / sqrt;
 
             var join = stroke / 2 * sqrt;
 
@@ -421,7 +486,7 @@ namespace Unigram.Controls.Messages
             var sqrt = (float)Math.Sqrt(2);
 
             var diagonal = height * sqrt;
-            var length = (diagonal / 2f) / sqrt;
+            var length = diagonal / 2f / sqrt;
 
             var duration = 250;
             var percent = stroke / length;
@@ -431,7 +496,7 @@ namespace Unigram.Controls.Messages
             var anim11 = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
             anim11.InsertKeyFrame(0, 0);
             anim11.InsertKeyFrame(1, 1, linear);
-            anim11.Duration = TimeSpan.FromMilliseconds(duration - (percent * duration));
+            anim11.Duration = TimeSpan.FromMilliseconds(duration - percent * duration);
 
             var anim12 = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
             anim12.InsertKeyFrame(0, 0);

@@ -1,20 +1,79 @@
 ﻿using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.ViewModels;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Messages
 {
-    public sealed partial class MessageReference : MessageReferenceBase
+    public sealed class MessageReference : MessageReferenceBase
     {
         public MessageReference()
         {
-            InitializeComponent();
+            DefaultStyleKey = typeof(MessageReference);
+        }
+
+        #region InitializeComponent
+
+        private TextBlock Label;
+        private Run TitleLabel;
+        private Run ServiceLabel;
+        private Run MessageLabel;
+
+        // Lazy loaded
+        private Border ThumbRoot;
+        private Border ThumbEllipse;
+        private ImageBrush ThumbImage;
+
+        protected override void OnApplyTemplate()
+        {
+            Label = GetTemplateChild(nameof(Label)) as TextBlock;
+            TitleLabel = GetTemplateChild(nameof(TitleLabel)) as Run;
+            ServiceLabel = GetTemplateChild(nameof(ServiceLabel)) as Run;
+            MessageLabel = GetTemplateChild(nameof(MessageLabel)) as Run;
+
+            _templateApplied = true;
+
+            if (_light)
+            {
+                VisualStateManager.GoToState(this, "LightState", false);
+            }
+
+            if (_messageReply != null)
+            {
+                UpdateMessageReply(_messageReply);
+            }
+            else if (_message != null)
+            {
+                UpdateMessage(_message, _loading, _title);
+            }
+            else if (Message != null)
+            {
+                OnMessageChanged(Message as MessageComposerHeader);
+            }
+        }
+
+        #endregion
+
+        private bool _light;
+
+        public void ToLightState()
+        {
+            _light = true;
+            VisualStateManager.GoToState(this, "LightState", false);
+        }
+
+        public void ToNormalState()
+        {
+            _light = false;
+            VisualStateManager.GoToState(this, "NormalState", false);
         }
 
         #region Overrides
 
-        private static readonly CornerRadius _defaultRadius = new CornerRadius(2);
+        private static readonly CornerRadius _defaultRadius = new(2);
 
         protected override void HideThumbnail()
         {
@@ -26,12 +85,14 @@ namespace Unigram.Controls.Messages
 
         protected override void ShowThumbnail(CornerRadius radius = default)
         {
-            FindName(nameof(ThumbRoot));
-            if (ThumbRoot != null)
+            if (ThumbRoot == null)
             {
-                ThumbRoot.Visibility = Visibility.Visible;
+                ThumbRoot = GetTemplateChild(nameof(ThumbRoot)) as Border;
+                ThumbEllipse = GetTemplateChild(nameof(ThumbEllipse)) as Border;
+                ThumbImage = GetTemplateChild(nameof(ThumbImage)) as ImageBrush;
             }
 
+            ThumbRoot.Visibility = Visibility.Visible;
             ThumbRoot.CornerRadius =
                 ThumbEllipse.CornerRadius = radius == default ? _defaultRadius : radius;
         }
@@ -44,17 +105,46 @@ namespace Unigram.Controls.Messages
             }
         }
 
-        protected override void SetText(string title, string service, string message)
+        protected override void SetText(string title, string service, FormattedText message)
         {
-            TitleLabel.Text = title;
-            ServiceLabel.Text = service;
-            MessageLabel.Text = message;
-        }
+            if (TitleLabel != null)
+            {
+                TitleLabel.Text = title;
+                ServiceLabel.Text = service;
+                MessageLabel.Text = message?.Text.Replace('\n', ' ') ?? string.Empty;
 
-        protected override void AppendText(string service, string message)
-        {
-            ServiceLabel.Text += service;
-            MessageLabel.Text += message;
+                if (!string.IsNullOrEmpty(message?.Text) && !string.IsNullOrEmpty(service))
+                {
+                    ServiceLabel.Text += ", ";
+                }
+
+                Label.TextHighlighters.Clear();
+                TextHighlighter spoiler = null;
+
+                if (message?.Entities == null)
+                {
+                    return;
+                }
+
+                var offset = title.Length + 1 + service.Length;
+
+                foreach (var entity in message.Entities)
+                {
+                    if (entity.Type is TextEntityTypeSpoiler)
+                    {
+                        spoiler ??= new TextHighlighter();
+                        spoiler.Ranges.Add(new TextRange { StartIndex = offset + entity.Offset, Length = entity.Length });
+                    }
+                }
+
+                if (spoiler?.Ranges.Count > 0)
+                {
+                    spoiler.Foreground = Label.Foreground;
+                    spoiler.Background = Label.Foreground;
+
+                    Label.TextHighlighters.Add(spoiler);
+                }
+            }
         }
 
         #endregion
@@ -87,7 +177,7 @@ namespace Unigram.Controls.Messages
                 return $"{sticker.Sticker.Emoji} {Strings.Resources.AttachSticker}";
             }
 
-            string GetCaption(string caption)
+            static string GetCaption(string caption)
             {
                 return string.IsNullOrEmpty(caption) ? string.Empty : ", ";
             }
@@ -99,6 +189,10 @@ namespace Unigram.Controls.Messages
             else if (message.Content is MessageVideo video)
             {
                 return (video.IsSecret ? Strings.Resources.AttachDestructingVideo : Strings.Resources.AttachVideo) + GetCaption(video.Caption.Text);
+            }
+            else if (message.Content is MessageAnimatedEmoji animatedEmoji)
+            {
+                return animatedEmoji.Emoji;
             }
             else if (message.Content is MessageAnimation animation)
             {
@@ -137,7 +231,7 @@ namespace Unigram.Controls.Messages
             }
             else if (message.Content is MessageLocation location)
             {
-                return (location.LivePeriod > 0 ? Strings.Resources.AttachLiveLocation : Strings.Resources.AttachLocation);
+                return location.LivePeriod > 0 ? Strings.Resources.AttachLiveLocation : Strings.Resources.AttachLocation;
             }
             else if (message.Content is MessageVenue)
             {
@@ -182,6 +276,9 @@ namespace Unigram.Controls.Messages
 
                 case MessageText text:
                     return text.Text.Text.Replace('\n', ' ');
+
+                case MessageAnimatedEmoji animatedEmoji:
+                    return animatedEmoji.Emoji;
 
                 case MessageDice dice:
                     return dice.Emoji;

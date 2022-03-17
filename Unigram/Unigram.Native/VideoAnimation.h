@@ -51,6 +51,10 @@ namespace winrt::Unigram::Native::implementation
 	{
 	public:
 		virtual ~VideoAnimation() {
+			Close();
+		}
+
+		void Close() {
 			if (video_dec_ctx) {
 				avcodec_close(video_dec_ctx);
 				video_dec_ctx = nullptr;
@@ -63,10 +67,10 @@ namespace winrt::Unigram::Native::implementation
 				av_frame_free(&frame);
 				frame = nullptr;
 			}
-			//if (src) {
-			//    delete[] src;
-			//    src = nullptr;
-			//}
+			if (pixels) {
+				delete[] pixels;
+				pixels = nullptr;
+			}
 			if (ioContext != nullptr) {
 				if (ioContext->buffer) {
 					av_freep(&ioContext->buffer);
@@ -92,7 +96,7 @@ namespace winrt::Unigram::Native::implementation
 			audio_stream = nullptr;
 		}
 
-		static winrt::Unigram::Native::VideoAnimation LoadFromFile(hstring filePath, bool preview, bool limitFps);
+		static winrt::Unigram::Native::VideoAnimation LoadFromFile(IVideoAnimationSource file, bool preview, bool limitFps);
 
 		VideoAnimation() = default;
 
@@ -100,7 +104,8 @@ namespace winrt::Unigram::Native::implementation
 		void PrepareToSeek();
 		void SeekToMilliseconds(int64_t ms, bool precise);
 
-		int RenderSync(CanvasBitmap bitmap, bool preview);
+		int RenderSync(CanvasBitmap bitmap, bool preview, int32_t& seconds);
+		int RenderSync(uint8_t* pixels, bool preview, int32_t& seconds, bool& completed);
 
 		int PixelWidth()
 		{
@@ -112,16 +117,24 @@ namespace winrt::Unigram::Native::implementation
 			return pixelHeight;
 		}
 
+		double FrameRate()
+		{
+			return framerate;
+		}
+
 	private:
 		int decode_packet(VideoAnimation* info, int* got_frame);
 		static void requestFd(VideoAnimation* info);
 		static int readCallback(void* opaque, uint8_t* buf, int buf_size);
 		static int64_t seekCallback(void* opaque, int64_t offset, int whence);
 
+		static void RedirectLoggingOutputs(void* ptr, int level, const char* fmt, va_list vargs);
+
 
 
 		AVFormatContext* fmt_ctx = nullptr;
-		const wchar_t* src = nullptr;
+		IVideoAnimationSource file{ nullptr };
+		HANDLE fileEvent = INVALID_HANDLE_VALUE;
 		int video_stream_idx = -1;
 		AVStream* video_stream = nullptr;
 		AVStream* audio_stream = nullptr;
@@ -136,13 +149,14 @@ namespace winrt::Unigram::Native::implementation
 		uint8_t* dst_data[1];
 		int32_t dst_linesize[1];
 
+		uint8_t* pixels;
+
 		struct SwsContext* sws_ctx = nullptr;
 
 		AVIOContext* ioContext = nullptr;
 		unsigned char* ioBuffer = nullptr;
 		HANDLE fd = INVALID_HANDLE_VALUE;
-		int64_t file_size = 0;
-		int64_t last_seek_p = 0;
+		//int64_t last_seek_p = 0;
 
 		bool limitFps;
 		const int64_t limitedDuration = 1000 / 30;
@@ -157,7 +171,7 @@ namespace winrt::Unigram::Native::implementation
 
 		int32_t rotation;
 		int32_t duration;
-		int32_t framerate;
+		double framerate;
 	};
 } // namespace winrt::Unigram::Native::implementation
 

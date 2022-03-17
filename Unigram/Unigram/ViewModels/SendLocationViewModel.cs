@@ -40,14 +40,8 @@ namespace Unigram.ViewModels
         private Location _location;
         public Location Location
         {
-            get
-            {
-                return _location;
-            }
-            set
-            {
-                Set(ref _location, value);
-            }
+            get => _location;
+            set => Set(ref _location, value);
         }
 
         #region Search
@@ -67,14 +61,8 @@ namespace Unigram.ViewModels
         private MvxObservableCollection<Venue> _search;
         public MvxObservableCollection<Venue> Search
         {
-            get
-            {
-                return _search;
-            }
-            set
-            {
-                Set(ref _search, value);
-            }
+            get => _search;
+            set => Set(ref _search, value);
         }
 
         #endregion

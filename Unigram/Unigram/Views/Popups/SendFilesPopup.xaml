@@ -1,41 +1,59 @@
-﻿<controls:ContentPopup
-    x:Class="Unigram.Views.Popups.SendFilesPopup"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Unigram.Views.Popups"
-    xmlns:controls="using:Unigram.Controls"
-    xmlns:entities="using:Unigram.Entities"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    TitleTemplate="{x:Null}"
-    PrimaryButtonText="Button1"
-    SecondaryButtonText="Button2"
-    PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-    SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
-    FocusPrimaryButton="False"
-    IsLightDismissEnabled="False">
+﻿<controls:ContentPopup x:Class="Unigram.Views.Popups.SendFilesPopup"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:local="using:Unigram.Views.Popups"
+                       xmlns:controls="using:Unigram.Controls"
+                       xmlns:drawers="using:Unigram.Controls.Drawers"
+                       xmlns:entities="using:Unigram.Entities"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       mc:Ignorable="d"
+                       PrimaryButtonText="Button1"
+                       SecondaryButtonText="Button2"
+                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
+                       FocusPrimaryButton="False"
+                       IsLightDismissEnabled="False">
 
     <ContentControl.Resources>
-        <Style x:Key="ModernPivotRadioButtonStyle" TargetType="controls:PivotRadioButton">
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
-            <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="Padding" Value="0" />
-            <Setter Property="HorizontalAlignment" Value="Left" />
-            <Setter Property="HorizontalContentAlignment" Value="Center" />
-            <Setter Property="VerticalAlignment" Value="Top" />
-            <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="FontFamily" Value="{StaticResource SymbolThemeFontFamily}" />
-            <Setter Property="Glyph" Value="&#xE700;" />
-            <Setter Property="Height" Value="{ThemeResource AppBarThemeCompactHeight}" />
-            <Setter Property="Width" Value="{ThemeResource AppBarThemeCompactHeight}" />
-            <Setter Property="MinHeight" Value="{ThemeResource AppBarThemeCompactHeight}" />
-            <Setter Property="MinWidth" Value="{ThemeResource AppBarThemeCompactHeight}" />
-            <Setter Property="FontWeight" Value="Normal" />
-            <Setter Property="FontSize" Value="{StaticResource GlyphMediumFontSize}" />
-            <Setter Property="CornerRadius" Value="{StaticResource GlyphButtonCornerRadius}" />
+        <Style x:Key="ModernPivotRadioButtonStyle"
+               TargetType="controls:PivotRadioButton">
+            <Setter Property="Background"
+                    Value="Transparent" />
+            <Setter Property="Foreground"
+                    Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+            <Setter Property="BorderBrush"
+                    Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+            <Setter Property="BorderThickness"
+                    Value="0" />
+            <Setter Property="Padding"
+                    Value="0" />
+            <Setter Property="HorizontalAlignment"
+                    Value="Left" />
+            <Setter Property="HorizontalContentAlignment"
+                    Value="Center" />
+            <Setter Property="VerticalAlignment"
+                    Value="Top" />
+            <Setter Property="VerticalContentAlignment"
+                    Value="Center" />
+            <Setter Property="FontFamily"
+                    Value="{StaticResource SymbolThemeFontFamily}" />
+            <Setter Property="Glyph"
+                    Value="&#xE700;" />
+            <Setter Property="Height"
+                    Value="{ThemeResource AppBarThemeCompactHeight}" />
+            <Setter Property="Width"
+                    Value="{ThemeResource AppBarThemeCompactHeight}" />
+            <Setter Property="MinHeight"
+                    Value="{ThemeResource AppBarThemeCompactHeight}" />
+            <Setter Property="MinWidth"
+                    Value="{ThemeResource AppBarThemeCompactHeight}" />
+            <Setter Property="FontWeight"
+                    Value="Normal" />
+            <Setter Property="FontSize"
+                    Value="{StaticResource GlyphMediumFontSize}" />
+            <Setter Property="CornerRadius"
+                    Value="{StaticResource GlyphButtonCornerRadius}" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="controls:PivotRadioButton">
@@ -48,28 +66,38 @@
                                     <VisualState x:Name="Normal" />
                                     <VisualState x:Name="PointerOver">
                                         <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
+                                                                           Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{ThemeResource SystemControlBackgroundListLowBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumHighBrush}"/>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
+                                                                           Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{ThemeResource SystemControlHighlightBaseMediumHighBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </VisualState>
                                     <VisualState x:Name="Pressed">
                                         <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
+                                                                           Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{ThemeResource SystemControlBackgroundListMediumBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumBrush}"/>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
+                                                                           Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{ThemeResource SystemControlHighlightBaseMediumBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </VisualState>
                                     <VisualState x:Name="Disabled">
                                         <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
+                                                                           Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{ThemeResource SystemControlForegroundBaseLowBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </VisualState>
@@ -77,33 +105,33 @@
                                 <VisualStateGroup x:Name="CheckStates">
                                     <VisualState x:Name="Checked">
                                         <VisualState.Setters>
-                                            <Setter Target="ContentPresenter.Visibility" Value="Collapsed"/>
-                                            <Setter Target="CheckedContentPresenter.Visibility" Value="Visible"/>
+                                            <Setter Target="ContentPresenter.Visibility"
+                                                    Value="Collapsed" />
+                                            <Setter Target="CheckedContentPresenter.Visibility"
+                                                    Value="Visible" />
                                         </VisualState.Setters>
                                     </VisualState>
                                     <VisualState x:Name="Unchecked" />
                                     <VisualState x:Name="Indeterminate" />
                                 </VisualStateGroup>
                             </VisualStateManager.VisualStateGroups>
-                            <Border x:Name="BackgroundElement"/>
-                            <TextBlock
-                                x:Name="ContentPresenter"
-                                TextAlignment="Center"
-                                VerticalAlignment="Center"
-                                AutomationProperties.AccessibilityView="Raw"
-                                Text="{TemplateBinding Glyph}"/>
-                            <TextBlock
-                                x:Name="CheckedContentPresenter"
-                                TextAlignment="Center"
-                                VerticalAlignment="Center"
-                                AutomationProperties.AccessibilityView="Raw"
-                                Text="{TemplateBinding CheckedGlyph}"
-                                Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
-                                Visibility="Collapsed"/>
+                            <Border x:Name="BackgroundElement" />
+                            <TextBlock x:Name="ContentPresenter"
+                                       TextAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       AutomationProperties.AccessibilityView="Raw"
+                                       Text="{TemplateBinding Glyph}" />
+                            <TextBlock x:Name="CheckedContentPresenter"
+                                       TextAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       AutomationProperties.AccessibilityView="Raw"
+                                       Text="{TemplateBinding CheckedGlyph}"
+                                       Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                                       Visibility="Collapsed" />
 
                             <ContentPresenter HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                               VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                              Padding="{TemplateBinding Padding}"/>
+                                              Padding="{TemplateBinding Padding}" />
                         </Grid>
                     </ControlTemplate>
                 </Setter.Value>
@@ -111,46 +139,64 @@
         </Style>
 
         <DataTemplate x:Key="FileItemTemplate">
-            <Grid Padding="12,6">
+            <Grid Padding="0,6">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
                 </Grid.ColumnDefinitions>
-                <Border x:Name="Overlay" Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageMediaBackgroundBrush}" VerticalAlignment="Top">
+                <Border x:Name="Overlay"
+                        Width="48"
+                        Height="48"
+                        CornerRadius="24"
+                        Background="{ThemeResource MessageMediaBackgroundBrush}"
+                        VerticalAlignment="Top">
                     <!--<controls:FileButton x:Name="Button" Style="{StaticResource InlineFileButtonStyle}"/>-->
-                    <TextBlock
-                        x:Name="Glyph"
-                        Foreground="{ThemeResource MessageMediaForegroundBrush}"
-                        FontFamily="{StaticResource SymbolThemeFontFamily}"
-                        FontSize="{StaticResource GlyphLargeFontSize}"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Text="&#xE7C3;"/>
+                    <TextBlock x:Name="Glyph"
+                               Foreground="{ThemeResource MessageMediaForegroundBrush}"
+                               FontFamily="{StaticResource SymbolThemeFontFamily}"
+                               FontSize="{StaticResource GlyphLargeFontSize}"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Text="&#xE7C3;" />
                 </Border>
-                <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="1">
-                    <TextBlock x:Name="Title" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
-                    <TextBlock x:Name="Subtitle" Style="{StaticResource DisabledCaptionTextBlockStyle}"/>
+                <StackPanel Margin="8,0,0,2"
+                            VerticalAlignment="Center"
+                            Grid.Column="1">
+                    <TextBlock x:Name="Title"
+                               Foreground="{ThemeResource MessageForegroundBrush}"
+                               TextWrapping="NoWrap"
+                               TextTrimming="CharacterEllipsis"
+                               Style="{StaticResource BaseTextBlockStyle}" />
+                    <TextBlock x:Name="Subtitle"
+                               Style="{StaticResource DisabledCaptionTextBlockStyle}" />
                 </StackPanel>
             </Grid>
         </DataTemplate>
 
-        <DataTemplate x:Key="MediaItemTemplate" x:DataType="entities:StorageMedia">
-            <Grid MinHeight="48" MaxHeight="294">
-                <Image
-                    x:Name="Preview"
-                    Source="{x:Bind Preview, Mode=OneWay}"
-                    Stretch="Uniform"/>
+        <DataTemplate x:Key="MediaItemTemplate"
+                      x:DataType="entities:StorageMedia">
+            <controls:AspectView MinHeight="48"
+                                 MaxHeight="294">
+                <Image x:Name="Preview"
+                       Source="{x:Bind Preview, Mode=OneWay}"
+                       Stretch="Uniform" />
 
-                <Border x:Name="Overlay" DataContextChanged="Grid_DataContextChanged" Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Border x:Name="Overlay"
+                        DataContextChanged="Grid_DataContextChanged"
+                        Width="48"
+                        Height="48"
+                        CornerRadius="24"
+                        Background="{ThemeResource MessageOverlayBackgroundBrush}"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center">
                     <!--<controls:FileButton x:Name="Button" Style="{StaticResource InlineFileButtonStyle}"/>-->
-                    <TextBlock
-                        x:Name="Glyph"
-                        Text="&#xE768;"
-                        Foreground="{ThemeResource MessageMediaForegroundBrush}"
-                        FontFamily="{StaticResource SymbolThemeFontFamily}"
-                        FontSize="{StaticResource GlyphLargeFontSize}"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"/>
+                    <TextBlock x:Name="Glyph"
+                               Text="&#xE768;"
+                               Foreground="{ThemeResource MessageMediaForegroundBrush}"
+                               FontFamily="{StaticResource SymbolThemeFontFamily}"
+                               FontSize="{StaticResource GlyphLargeFontSize}"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
                 </Border>
 
                 <Grid HorizontalAlignment="Right"
@@ -160,61 +206,57 @@
                       CornerRadius="15"
                       Margin="4">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
                     </Grid.ColumnDefinitions>
-                    <controls:GlyphToggleButton
-                        x:Name="Mute"
-                        Click="Mute_Click"
-                        Glyph="&#xE906;"
-                        CheckedGlyph="&#xE906;"
-                        CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
-                        Tag="{x:Bind}"
-                        Width="40"
-                        Height="40"
-                        FontFamily="{StaticResource TelegramThemeFontFamily}"
-                        FontSize="18"
-                        CornerRadius="12,4,4,12"/>
-                    
-                    <controls:GlyphToggleButton
-                        x:Name="Crop"
-                        Click="Crop_Click" 
-                        Glyph="&#xEE56;"
-                        CheckedGlyph="&#xE7A8;"
-                        CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
-                        Tag="{x:Bind}"
-                        Width="40"
-                        Height="40"
-                        IsChecked="{x:Bind IsEdited, Mode=OneWay}"
-                        AutomationProperties.Name="{CustomResource CropImage}"
-                        ToolTipService.ToolTip="{CustomResource CropImage}"
-                        CornerRadius="12,4,4,12"/>
+                    <controls:GlyphToggleButton x:Name="Mute"
+                                                Click="Mute_Click"
+                                                Glyph="&#xE906;"
+                                                CheckedGlyph="&#xE906;"
+                                                CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
+                                                Tag="{x:Bind}"
+                                                Width="40"
+                                                Height="40"
+                                                FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                                FontSize="18"
+                                                CornerRadius="12,4,4,12" />
 
-                    <controls:GlyphToggleButton
-                        x:Name="Ttl"
-                        Click="Ttl_Click"
-                        Tag="{x:Bind}"
-                        Width="40"
-                        Height="40"
-                        IsChecked="{x:Bind IsSecret, Mode=OneWay}"
-                        Glyph="&#xE916;"
-                        CheckedGlyph="&#xE916;"
-                        CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
-                        AutomationProperties.Name="{CustomResource SetTimer}"
-                        ToolTipService.ToolTip="{CustomResource SetTimer}"
-                        Grid.Column="1"/>
+                    <controls:GlyphToggleButton x:Name="Crop"
+                                                Click="Crop_Click"
+                                                Glyph="&#xEE56;"
+                                                CheckedGlyph="&#xE7A8;"
+                                                CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
+                                                Tag="{x:Bind}"
+                                                Width="40"
+                                                Height="40"
+                                                IsChecked="{x:Bind IsEdited, Mode=OneWay}"
+                                                AutomationProperties.Name="{CustomResource CropImage}"
+                                                ToolTipService.ToolTip="{CustomResource CropImage}"
+                                                CornerRadius="12,4,4,12" />
 
-                    <controls:GlyphButton
-                        Glyph="&#xE74D;"
-                        Click="Remove_Click"
-                        Tag="{x:Bind}"
-                        Width="40"
-                        Height="40"
-                        CornerRadius="4,12,12,4"
-                        Grid.Column="2"/>
+                    <controls:GlyphToggleButton x:Name="Ttl"
+                                                Click="Ttl_Click"
+                                                Tag="{x:Bind}"
+                                                Width="40"
+                                                Height="40"
+                                                IsChecked="{x:Bind IsSecret, Mode=OneWay}"
+                                                Glyph="&#xE916;"
+                                                CheckedGlyph="&#xE916;"
+                                                CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
+                                                AutomationProperties.Name="{CustomResource SetTimer}"
+                                                ToolTipService.ToolTip="{CustomResource SetTimer}"
+                                                Grid.Column="1" />
+
+                    <controls:GlyphButton Glyph="&#xE74D;"
+                                          Click="Remove_Click"
+                                          Tag="{x:Bind}"
+                                          Width="40"
+                                          Height="40"
+                                          CornerRadius="4,12,12,4"
+                                          Grid.Column="2" />
                 </Grid>
-            </Grid>
+            </controls:AspectView>
             <!--<cells:SendMediaCell
                 Media="{x:Bind}"
                 Source="{x:Bind Preview, Mode=OneWay}"
@@ -224,108 +266,118 @@
         </DataTemplate>
 
         <ItemsPanelTemplate x:Key="FilesPanelTemplate">
-            <ItemsStackPanel/>
+            <ItemsStackPanel />
         </ItemsPanelTemplate>
 
         <ItemsPanelTemplate x:Key="AlbumPanelTemplate">
-            <local:SendFilesAlbumPanel Loading="SendFilesAlbumPanel_Loading" Margin="0,0,-2,-2"/>
+            <local:SendFilesAlbumPanel Loading="SendFilesAlbumPanel_Loading"
+                                       Margin="0,0,-2,-2" />
         </ItemsPanelTemplate>
 
     </ContentControl.Resources>
 
     <ContentDialog.Title>
-        <Grid Height="{ThemeResource AppBarThemeCompactHeight}">
+        <Grid Height="48"
+              Margin="0,-8,-12,-12">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <controls:PivotRadioButton
-                Glyph="&#xEB9F;"
-                CheckedGlyph="&#xEB9F;"
-                Click="PivotRadioButton_Click"
-                Style="{StaticResource ModernPivotRadioButtonStyle}"
-                IsChecked="{x:Bind IsMediaSelected, Mode=TwoWay}"
-                Visibility="{x:Bind IsMediaOnly, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-            <controls:PivotRadioButton
-                Glyph="&#xE7C3;"
-                CheckedGlyph="&#xE7C3;"
-                Click="PivotRadioButton_Click"
-                Style="{StaticResource ModernPivotRadioButtonStyle}"
-                IsChecked="{x:Bind IsFilesSelected, Mode=TwoWay}"
-                Grid.Column="1"/>
-            <controls:PivotRadioButton
-                Glyph="&#xE7B8;"
-                CheckedGlyph="&#xE7B8;"
-                Style="{StaticResource ModernPivotRadioButtonStyle}"
-                Visibility="Collapsed"
-                Grid.Column="2"/>
+            <CheckBox Click="PivotRadioButton_Click"
+                      IsChecked="{x:Bind IsFilesSelected, Mode=TwoWay}"
+                      Visibility="{x:Bind IsMediaOnly, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                      Content="{x:Bind SendWithoutCompression, Mode=OneWay}"
+                      VerticalAlignment="Center" />
 
-            <controls:GlyphToggleButton
-                x:Name="AlbumButton"
-                CheckedGlyph="&#xE90C;"
-                Glyph="&#xE90C;"
-                CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
-                Click="Album_Click"
-                FontFamily="{StaticResource TelegramThemeFontFamily}"
-                Visibility="{x:Bind IsAlbumAvailable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                IsChecked="{x:Bind IsAlbum, Mode=OneWay}"
-                IsOneWay="False"
-                Grid.Column="4"/>
+            <TextBlock Visibility="{x:Bind IsMediaOnly, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
+                       Text="{x:Bind SendWithoutCompression, Mode=OneWay}"
+                       VerticalAlignment="Center" />
 
-            <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="5"/>
+            <controls:GlyphToggleButton x:Name="AlbumButton"
+                                        CheckedGlyph="&#xE90C;"
+                                        Glyph="&#xE90C;"
+                                        CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
+                                        Click="Album_Click"
+                                        FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                        Visibility="{x:Bind IsAlbumAvailable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                        IsChecked="{x:Bind IsAlbum, Mode=OneWay}"
+                                        IsOneWay="False"
+                                        FontSize="24"
+                                        Grid.Column="2" />
         </Grid>
     </ContentDialog.Title>
 
-    <Grid>
+    <Grid Margin="0,0,-24,-16">
         <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <ListView x:Name="List"
-                  ItemsSource="{x:Bind Items}"
-                  ItemsPanel="{StaticResource FilesPanelTemplate}"
-                  ContainerContentChanging="OnContainerContentChanging"
-                  SelectionMode="None"
-                  DragEnter="ListView_DragEnter"
-                  Drop="ListView_Drop"
-                  CanReorderItems="True"
-                  CanDragItems="True"
-                  AllowDrop="True"
-                  Padding="0,6">
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                    <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-                    <Setter Property="MinWidth" Value="0"/>
-                    <Setter Property="MinHeight" Value="0"/>
-                    <Setter Property="Padding" Value="0"/>
-                </Style>
-            </ListView.ItemContainerStyle>
-        </ListView>
-        <ListView x:Name="Album"
-                  x:Load="False"
-                  ItemsSource="{x:Bind Items}"
-                  ItemTemplate="{StaticResource MediaItemTemplate}"
-                  ItemsPanel="{StaticResource AlbumPanelTemplate}"
-                  ContainerContentChanging="OnContainerContentChanging"
-                  SelectionMode="None"
-                  DragEnter="ListView_DragEnter"
-                  Drop="ListView_Drop"
-                  AllowDrop="True">
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                    <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-                    <Setter Property="MinWidth" Value="0"/>
-                    <Setter Property="MinHeight" Value="0"/>
-                    <Setter Property="Padding" Value="0"/>
-                    <Setter Property="Margin" Value="0,0,2,2"/>
-                </Style>
-            </ListView.ItemContainerStyle>
-        </ListView>
+        <Grid x:Name="ListPanel"
+              x:Load="False">
+            <ListView x:Name="List"
+                      ItemsSource="{x:Bind Items}"
+                      ItemsPanel="{StaticResource FilesPanelTemplate}"
+                      ContainerContentChanging="OnContainerContentChanging"
+                      SelectionMode="None"
+                      DragEnter="ListView_DragEnter"
+                      Drop="ListView_Drop"
+                      CanReorderItems="True"
+                      CanDragItems="True"
+                      AllowDrop="True"
+                      Padding="0,0,24,16">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment"
+                                Value="Stretch" />
+                        <Setter Property="VerticalContentAlignment"
+                                Value="Stretch" />
+                        <Setter Property="MinWidth"
+                                Value="0" />
+                        <Setter Property="MinHeight"
+                                Value="0" />
+                        <Setter Property="Padding"
+                                Value="0" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </ListView>
+
+            <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
+                                        ScrollingHost="{x:Bind List}" />
+        </Grid>
+        <Grid x:Name="AlbumPanel"
+              x:Load="False">
+            <ListView x:Name="Album"
+                      ItemsSource="{x:Bind Items}"
+                      ItemTemplate="{StaticResource MediaItemTemplate}"
+                      ItemsPanel="{StaticResource AlbumPanelTemplate}"
+                      ContainerContentChanging="OnContainerContentChanging"
+                      SelectionMode="None"
+                      DragEnter="ListView_DragEnter"
+                      Drop="ListView_Drop"
+                      AllowDrop="True"
+                      Padding="0,0,24,16">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment"
+                                Value="Stretch" />
+                        <Setter Property="VerticalContentAlignment"
+                                Value="Stretch" />
+                        <Setter Property="MinWidth"
+                                Value="0" />
+                        <Setter Property="MinHeight"
+                                Value="0" />
+                        <Setter Property="Padding"
+                                Value="0" />
+                        <Setter Property="Margin"
+                                Value="0,0,2,2" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </ListView>
+
+            <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
+                                        ScrollingHost="{x:Bind Album}" />
+        </Grid>
 
         <ListView x:Name="ListAutocomplete"
                   VerticalAlignment="Bottom"
@@ -339,7 +391,8 @@
                   AllowFocusOnInteraction="False"
                   IsItemClickEnabled="True"
                   ItemClick="Autocomplete_ItemClick"
-                  ContainerContentChanging="Autocomplete_ContainerContentChanging">
+                  ContainerContentChanging="Autocomplete_ContainerContentChanging"
+                  Padding="0,0,24,0">
             <!--<ListView.Header>
                 <Border x:Name="AutocompleteHeader"
                             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -352,24 +405,51 @@
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>-->
             <ListView.ItemContainerTransitions>
-                <TransitionCollection/>
+                <TransitionCollection />
             </ListView.ItemContainerTransitions>
         </ListView>
 
-        <Grid x:Name="CaptionPanel" Grid.Row="2">
-            <controls:CaptionTextBox
-                x:Name="CaptionInput"
-                Loaded="OnLoaded"
-                Unloaded="OnUnloaded"
-                View="{x:Bind}"
-                Autocomplete="{x:Bind ListAutocomplete}"
-                DataContext="{x:Bind ViewModel}"
-                Paste="OnPaste"
-                InputScope="Chat"
-                FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                PlaceholderText="{CustomResource AddCaption}"
-                Margin="12,8,12,0"
-                Grid.Row="1"/>
+        <Grid x:Name="CaptionPanel"
+              Margin="0,0,24,0"
+              Grid.Row="2">
+            <controls:CaptionTextBox x:Name="CaptionInput"
+                                     Loaded="OnLoaded"
+                                     Unloaded="OnUnloaded"
+                                     View="{x:Bind}"
+                                     Autocomplete="{x:Bind ListAutocomplete}"
+                                     DataContext="{x:Bind ViewModel}"
+                                     Paste="OnPaste"
+                                     InputScope="Chat"
+                                     FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                     PlaceholderText="{CustomResource AddCaption}"
+                                     Padding="10,6,36,5"
+                                     Grid.Row="1">
+                <FlyoutBase.AttachedFlyout>
+                    <Flyout x:Name="EmojiFlyout"
+                            Placement="Top"
+                            ShowMode="Transient">
+                        <Flyout.FlyoutPresenterStyle>
+                            <Style TargetType="FlyoutPresenter">
+                                <Setter Property="Padding"
+                                        Value="0" />
+                            </Style>
+                        </Flyout.FlyoutPresenterStyle>
+                        <drawers:EmojiDrawer ItemClick="Emoji_ItemClick"
+                                             x:Name="EmojiPanel"
+                                             Width="300"
+                                             Height="360" />
+                    </Flyout>
+                </FlyoutBase.AttachedFlyout>
+            </controls:CaptionTextBox>
+
+            <controls:GlyphButton Click="Emoji_Click"
+                                  Glyph="&#xE76E;"
+                                  AllowFocusOnInteraction="False"
+                                  HorizontalAlignment="Right"
+                                  VerticalAlignment="Top"
+                                  Width="40"
+                                  Height="40"
+                                  Margin="0,-4,-4,-4" />
         </Grid>
     </Grid>
 

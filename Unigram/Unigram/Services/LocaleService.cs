@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Security;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Telegram.Td;
@@ -18,7 +20,7 @@ namespace Unigram.Services
     {
         Task<BaseObject> SetLanguageAsync(LanguagePackInfo info, bool refresh);
 
-        string Language { get; }
+        CultureInfo CurrentCulture { get; }
 
         string GetString(string key);
         string GetString(string key, int quantity);
@@ -39,7 +41,10 @@ namespace Unigram.Services
 
         private readonly ConcurrentDictionary<string, ConcurrentDictionary<string, string>> _languagePack = new ConcurrentDictionary<string, ConcurrentDictionary<string, string>>();
         private string _languageCode;
+        private string _languageBase;
         private string _languagePlural;
+
+        private CultureInfo _currentCulture;
 
         private readonly string _languagePath;
 
@@ -50,7 +55,31 @@ namespace Unigram.Services
             _languagePath = Path.Combine(ApplicationData.Current.LocalFolder.Path, "langpack");
 
             _languageCode = SettingsService.Current.LanguagePackId;
+            _languageBase = SettingsService.Current.LanguageBaseId;
             _languagePlural = SettingsService.Current.LanguagePluralId;
+
+            string[] args;
+            if (!string.IsNullOrEmpty(_languagePlural))
+            {
+                args = _languagePlural.Split('_');
+            }
+            else if (!string.IsNullOrEmpty(_languageBase))
+            {
+                args = _languageBase.Split('_');
+            }
+            else
+            {
+                args = _languageCode.Split('_');
+            }
+
+            if (args.Length == 1)
+            {
+                _currentCulture = new CultureInfo(args[0]);
+            }
+            else
+            {
+                _currentCulture = new CultureInfo($"{args[0]}_{args[1]}");
+            }
 
             Locale.SetRules(_languagePlural);
         }
@@ -58,7 +87,7 @@ namespace Unigram.Services
         private static ILocaleService _current;
         public static ILocaleService Current => _current ??= new LocaleService();
 
-        public string Language => _languageCode;
+        public CultureInfo CurrentCulture => _currentCulture;
 
         public async Task<BaseObject> SetLanguageAsync(LanguagePackInfo info, bool refresh)
         {
@@ -66,6 +95,7 @@ namespace Unigram.Services
             _languagePlural = info.PluralCode;
 
             SettingsService.Current.LanguagePackId = info.Id;
+            SettingsService.Current.LanguageBaseId = info.BaseLanguagePackId;
             SettingsService.Current.LanguagePluralId = info.PluralCode;
 
             Locale.SetRules(info.PluralCode);
@@ -78,7 +108,7 @@ namespace Unigram.Services
                 var test = await protoService.SendAsync(new GetLanguagePackStrings(info.Id, new string[0]));
                 if (test is LanguagePackStrings strings)
                 {
-                    saveRemoteLocaleStrings(info.Id, strings);
+                    SaveRemoteLocaleStrings(info.Id, strings);
                 }
 
                 return new Error();
@@ -108,9 +138,9 @@ namespace Unigram.Services
             return new Ok();
         }
 
-        public void saveRemoteLocaleStrings(string lang, LanguagePackStrings difference)
+        public void SaveRemoteLocaleStrings(string lang, LanguagePackStrings difference)
         {
-            var fileName = Path.Combine(ApplicationData.Current.LocalFolder.Path, "test", lang, "Resources.resw");
+            var fileName = Path.Combine(ApplicationData.Current.LocalFolder.Path, "test", lang, "Android.resw");
             try
             {
                 var values = new Dictionary<string, string>();
@@ -233,7 +263,7 @@ namespace Unigram.Services
                     }
                     else
                     {
-                        writer.Write($"    <value>{entry.Value.Replace("&", "&amp;")}</value>\n");
+                        writer.Write($"    <value>{SecurityElement.Escape(entry.Value)}</value>\n");
                     }
                     writer.Write($"  </data>\n");
                 }
@@ -424,7 +454,7 @@ namespace Unigram.Services
                         values[value.Key + "Many"] = GetValue(pluralized.ManyValue);
                         values[value.Key + "Other"] = GetValue(pluralized.OtherValue);
                         break;
-                    case LanguagePackStringValueDeleted _:
+                    case LanguagePackStringValueDeleted:
                         values.TryRemove(value.Key, out _);
                         break;
                 }

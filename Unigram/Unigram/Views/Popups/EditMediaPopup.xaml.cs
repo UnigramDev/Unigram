@@ -75,8 +75,8 @@ namespace Unigram.Views.Popups
 
         public bool IsCropEnabled
         {
-            get { return Cropper.IsCropEnabled; }
-            set { Cropper.IsCropEnabled = value; }
+            get => Cropper.IsCropEnabled;
+            set => Cropper.IsCropEnabled = value;
         }
 
         public Rect CropRectangle

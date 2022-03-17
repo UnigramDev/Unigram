@@ -16,44 +16,84 @@ namespace Unigram.Controls.Cells
         {
             InitializeComponent();
             InitializeSelection();
+
+            Loaded += OnLoaded;
+            Unloaded += OnUnloaded;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            if (Stroke is SolidColorBrush stroke && _strokeToken == 0)
+            {
+                _strokeToken = stroke.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, OnStrokeChanged);
+            }
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            if (Stroke is SolidColorBrush stroke && _strokeToken != 0)
+            {
+                stroke.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, _strokeToken);
+                _strokeToken = 0;
+            }
         }
 
         public ProfilePicture Photo => PhotoElement;
 
-        #region Accent
+        #region Stroke
 
-        public Color Accent
+        private long _strokeToken;
+
+        public Brush Stroke
         {
-            get { return (Color)GetValue(AccentProperty); }
-            set { SetValue(AccentProperty, value); }
+            get => (Brush)GetValue(StrokeProperty);
+            set => SetValue(StrokeProperty, value);
         }
 
-        public static readonly DependencyProperty AccentProperty =
-            DependencyProperty.Register("Accent", typeof(Color), typeof(ChatShareCell), new PropertyMetadata(default(Color), OnAccentChanged));
+        public static readonly DependencyProperty StrokeProperty =
+            DependencyProperty.Register("Stroke", typeof(Brush), typeof(ChatShareCell), new PropertyMetadata(null, OnStrokeChanged));
 
-        private static void OnAccentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnStrokeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var sender = d as ChatShareCell;
-            var solid = (Color)e.NewValue;
+            ((ChatShareCell)d).OnStrokeChanged(e.NewValue as SolidColorBrush, e.OldValue as SolidColorBrush);
+        }
 
-            if (solid == null || sender._ellipse == null)
+        private void OnStrokeChanged(SolidColorBrush newValue, SolidColorBrush oldValue)
+        {
+            if (oldValue != null && _strokeToken != 0)
+            {
+                oldValue.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, _strokeToken);
+                _strokeToken = 0;
+            }
+
+            if (newValue == null || _ellipse == null)
             {
                 return;
             }
 
-            var brush = Window.Current.Compositor.CreateColorBrush(solid);
+            _ellipse.FillBrush = Window.Current.Compositor.CreateColorBrush(newValue.Color);
+            _strokeToken = newValue.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, OnStrokeChanged);
+        }
 
-            sender._ellipse.FillBrush = brush;
+        private void OnStrokeChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            var solid = sender as SolidColorBrush;
+            if (solid == null || _ellipse == null)
+            {
+                return;
+            }
+
+            _ellipse.FillBrush = Window.Current.Compositor.CreateColorBrush(solid.Color);
         }
 
         #endregion
 
-        #region Accent
+        #region SelectionStroke
 
         public SolidColorBrush SelectionStroke
         {
-            get { return (SolidColorBrush)GetValue(SelectionStrokeProperty); }
-            set { SetValue(SelectionStrokeProperty, value); }
+            get => (SolidColorBrush)GetValue(SelectionStrokeProperty);
+            set => SetValue(SelectionStrokeProperty, value);
         }
 
         public static readonly DependencyProperty SelectionStrokeProperty =
@@ -88,7 +128,7 @@ namespace Unigram.Controls.Cells
 
         private void InitializeSelection()
         {
-            CompositionPath GetCheckMark()
+            static CompositionPath GetCheckMark()
             {
                 CanvasGeometry result;
                 using (var builder = new CanvasPathBuilder(null))
@@ -116,7 +156,7 @@ namespace Unigram.Controls.Cells
                 var shape1 = compositor.CreateSpriteShape();
                 shape1.Geometry = polygon;
                 shape1.StrokeThickness = 1.5f;
-                shape1.StrokeBrush = compositor.CreateColorBrush(Windows.UI.Colors.White);
+                shape1.StrokeBrush = compositor.CreateColorBrush(Colors.White);
 
                 var ellipse = compositor.CreateEllipseGeometry();
                 ellipse.Radius = new Vector2(8);
@@ -124,7 +164,7 @@ namespace Unigram.Controls.Cells
 
                 var shape2 = compositor.CreateSpriteShape();
                 shape2.Geometry = ellipse;
-                shape2.FillBrush = compositor.CreateColorBrush(Windows.UI.Colors.Black);
+                shape2.FillBrush = compositor.CreateColorBrush(Colors.Black);
 
                 var outer = compositor.CreateEllipseGeometry();
                 outer.Radius = new Vector2(10);
@@ -132,7 +172,7 @@ namespace Unigram.Controls.Cells
 
                 var shape3 = compositor.CreateSpriteShape();
                 shape3.Geometry = outer;
-                shape3.FillBrush = compositor.CreateColorBrush(Windows.UI.Colors.White);
+                shape3.FillBrush = compositor.CreateColorBrush(Colors.White);
 
                 var visual = compositor.CreateShapeVisual();
                 visual.Shapes.Add(shape3);
@@ -151,7 +191,7 @@ namespace Unigram.Controls.Cells
                 _visual = visual;
             }
 
-            _selectionPhoto = ElementCompositionPreview.GetElementVisual(Photo);
+            _selectionPhoto = ElementCompositionPreview.GetElementVisual(PhotoElement);
             _selectionOutline = ElementCompositionPreview.GetElementVisual(SelectionOutline);
             _selectionPhoto.CenterPoint = new Vector3(18);
             _selectionOutline.CenterPoint = new Vector3(18);

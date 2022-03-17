@@ -59,7 +59,7 @@ namespace Unigram.Services
         event EventHandler PlaylistChanged;
     }
 
-    public class PlaybackService : BindableBase, IPlaybackService, IHandle<UpdateFile>
+    public class PlaybackService : BindableBase, IPlaybackService
     {
         private readonly IProtoService _protoService;
         private readonly ICacheService _cacheService;
@@ -71,7 +71,6 @@ namespace Unigram.Services
         private readonly SystemMediaTransportControls _transport;
 
         private readonly Dictionary<string, PlaybackItem> _mapping;
-        private readonly FileContext<RemoteFileStream> _streams = new FileContext<RemoteFileStream>();
 
         private long _threadId;
 
@@ -85,15 +84,15 @@ namespace Unigram.Services
 
         public PlaybackService(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
         {
-            if (!ApiInfo.IsMediaSupported)
-            {
-                return;
-            }
-
             _protoService = protoService;
             _cacheService = cacheService;
             _settingsService = settingsService;
             _aggregator = aggregator;
+
+            if (!ApiInfo.IsMediaSupported)
+            {
+                return;
+            }
 
             _mediaPlayer = new MediaPlayer();
             _mediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
@@ -110,13 +109,9 @@ namespace Unigram.Services
             _transport.AutoRepeatMode = _settingsService.Playback.RepeatMode;
             _isRepeatEnabled = _settingsService.Playback.RepeatMode == MediaPlaybackAutoRepeatMode.Track
                 ? null
-                : _settingsService.Playback.RepeatMode == MediaPlaybackAutoRepeatMode.List
-                ? true
-                : false;
+                : _settingsService.Playback.RepeatMode == MediaPlaybackAutoRepeatMode.List;
 
             _mapping = new Dictionary<string, PlaybackItem>();
-
-            aggregator.Subscribe(this);
         }
 
         #region SystemMediaTransportControls
@@ -135,10 +130,10 @@ namespace Unigram.Services
             switch (args.Button)
             {
                 case SystemMediaTransportControlsButton.Play:
-                    _mediaPlayer.Play();
+                    Play();
                     break;
                 case SystemMediaTransportControlsButton.Pause:
-                    _mediaPlayer.Pause();
+                    Pause();
                     break;
                 case SystemMediaTransportControlsButton.Rewind:
                     _mediaPlayer.StepBackwardOneFrame();
@@ -184,7 +179,7 @@ namespace Unigram.Services
             {
                 if (item.Message.Content is MessageAudio && _isRepeatEnabled == null)
                 {
-                    _mediaPlayer.Play();
+                    Play();
                 }
                 else
                 {
@@ -194,7 +189,7 @@ namespace Unigram.Services
                         if (item.Message.Content is MessageAudio && _isRepeatEnabled == true)
                         {
                             _mediaPlayer.Source = _items[_isReversed ? _items.Count - 1 : 0].Source;
-                            _mediaPlayer.Play();
+                            Play();
                         }
                         else
                         {
@@ -204,7 +199,7 @@ namespace Unigram.Services
                     else
                     {
                         _mediaPlayer.Source = _items[_isReversed ? index - 1 : index + 1].Source;
-                        _mediaPlayer.Play();
+                        Play();
                     }
                 }
             }
@@ -233,6 +228,7 @@ namespace Unigram.Services
                     break;
                 case MediaPlaybackState.None:
                     _transport.PlaybackStatus = MediaPlaybackStatus.Stopped;
+                    PlaybackState = MediaPlaybackState.None;
                     break;
             }
 
@@ -245,7 +241,7 @@ namespace Unigram.Services
             //    Debugger.Break();
             //}
 
-            PlaybackStateChanged?.Invoke(this, args);
+            //PlaybackStateChanged?.Invoke(this, args);
         }
 
         private void OnPositionChanged(MediaPlaybackSession sender, object args)
@@ -304,21 +300,12 @@ namespace Unigram.Services
             _transport.DisplayUpdater.Update();
         }
 
-        public IReadOnlyList<PlaybackItem> Items
-        {
-            get
-            {
-                return _items ?? (IReadOnlyList<PlaybackItem>)new PlaybackItem[0];
-            }
-        }
+        public IReadOnlyList<PlaybackItem> Items => _items ?? (IReadOnlyList<PlaybackItem>)new PlaybackItem[0];
 
         private PlaybackItem _currentPlayback;
         public PlaybackItem CurrentPlayback
         {
-            get
-            {
-                return _currentPlayback;
-            }
+            get => _currentPlayback;
             private set
             {
                 _currentItem = value?.Message;
@@ -329,13 +316,7 @@ namespace Unigram.Services
             }
         }
         private Message _currentItem;
-        public Message CurrentItem
-        {
-            get
-            {
-                return _currentItem;
-            }
-        }
+        public Message CurrentItem => _currentItem;
 
         public TimeSpan Position
         {
@@ -367,25 +348,35 @@ namespace Unigram.Services
             }
         }
 
+        private MediaPlaybackState _playbackState;
         public MediaPlaybackState PlaybackState
         {
-            get
+            get { return _playbackState; }
+            private set
             {
-                try
+                if (_playbackState != value)
                 {
-                    return _mediaPlayer?.PlaybackSession?.PlaybackState ?? MediaPlaybackState.None;
-                }
-                catch
-                {
-                    return MediaPlaybackState.None;
+                    _playbackState = value;
+                    PlaybackStateChanged?.Invoke(this, null);
                 }
             }
+            //get
+            //{
+            //    try
+            //    {
+            //        return _mediaPlayer?.PlaybackSession?.PlaybackState ?? MediaPlaybackState.None;
+            //    }
+            //    catch
+            //    {
+            //        return MediaPlaybackState.None;
+            //    }
+            //}
         }
 
         private bool? _isRepeatEnabled = false;
         public bool? IsRepeatEnabled
         {
-            get { return _isRepeatEnabled; }
+            get => _isRepeatEnabled;
             set
             {
                 _isRepeatEnabled = value;
@@ -401,14 +392,14 @@ namespace Unigram.Services
         private bool _isReversed = false;
         public bool IsReversed
         {
-            get { return _isReversed; }
-            set { _isReversed = value; }
+            get => _isReversed;
+            set => _isReversed = value;
         }
 
         private bool _isShuffleEnabled;
         public bool IsShuffleEnabled
         {
-            get { return _isShuffleEnabled; }
+            get => _isShuffleEnabled;
             set
             {
                 _isShuffleEnabled = value;
@@ -419,13 +410,11 @@ namespace Unigram.Services
         private double _playbackRate = 1.0;
         public double PlaybackRate
         {
-            get
-            {
-                return _playbackRate;
-            }
+            get => _playbackRate;
             set
             {
                 _playbackRate = value;
+                _settingsService.Playback.PlaybackRate = value;
                 try
                 {
                     _mediaPlayer.PlaybackSession.PlaybackRate = value;
@@ -450,12 +439,14 @@ namespace Unigram.Services
             if (_mediaPlayer.PlaybackSession.CanPause)
             {
                 _mediaPlayer.Pause();
+                PlaybackState = MediaPlaybackState.Paused;
             }
         }
 
         public void Play()
         {
             _mediaPlayer.Play();
+            PlaybackState = MediaPlaybackState.Playing;
         }
 
         public void Seek(TimeSpan span)
@@ -492,7 +483,7 @@ namespace Unigram.Services
                 SetSource(items, _isReversed ? index - 1 : index + 1);
             }
 
-            _mediaPlayer.Play();
+            Play();
         }
 
         public void MovePrevious()
@@ -513,7 +504,7 @@ namespace Unigram.Services
                 SetSource(items, _isReversed ? index + 1 : index - 1);
             }
 
-            _mediaPlayer.Play();
+            Play();
         }
 
         private void SetSource(List<PlaybackItem> items, int index)
@@ -526,6 +517,8 @@ namespace Unigram.Services
 
         public void Clear()
         {
+            PlaybackState = MediaPlaybackState.None;
+
             //Execute.BeginOnUIThread(() => CurrentItem = null);
             CurrentPlayback = null;
             Dispose();
@@ -550,7 +543,7 @@ namespace Unigram.Services
                 if (already != null)
                 {
                     _mediaPlayer.Source = already.Source;
-                    _mediaPlayer.Play();
+                    Play();
 
                     return;
                 }
@@ -562,6 +555,10 @@ namespace Unigram.Services
             {
                 PlaybackRate = 1;
             }
+            else
+            {
+                PlaybackRate = _settingsService.Playback.PlaybackRate;
+            }
 
             var item = GetPlaybackItem(message);
             var items = _items = new List<PlaybackItem>();
@@ -570,7 +567,7 @@ namespace Unigram.Services
             _threadId = threadId;
 
             _mediaPlayer.Source = item.Source;
-            _mediaPlayer.Play();
+            Play();
 
             if (message.Content is MessageText)
             {
@@ -586,11 +583,11 @@ namespace Unigram.Services
                 {
                     foreach (var add in message.Content is MessageAudio ? messages.MessagesValue.OrderBy(x => x.Id) : messages.MessagesValue.OrderByDescending(x => x.Id))
                     {
-                        if (add.Id > message.Id && message.Content is MessageAudio)
+                        if (add.Id > message.Id && add.Content is MessageAudio)
                         {
                             items.Insert(0, GetPlaybackItem(add));
                         }
-                        else if (add.Id < message.Id && (message.Content is MessageVoiceNote || message.Content is MessageVideoNote))
+                        else if (add.Id < message.Id && (add.Content is MessageVoiceNote || add.Content is MessageVideoNote))
                         {
                             items.Insert(0, GetPlaybackItem(add));
                         }
@@ -598,11 +595,11 @@ namespace Unigram.Services
 
                     foreach (var add in message.Content is MessageAudio ? messages.MessagesValue.OrderByDescending(x => x.Id) : messages.MessagesValue.OrderBy(x => x.Id))
                     {
-                        if (add.Id < message.Id && message.Content is MessageAudio)
+                        if (add.Id < message.Id && add.Content is MessageAudio)
                         {
                             items.Add(GetPlaybackItem(add));
                         }
-                        else if (add.Id > message.Id && (message.Content is MessageVoiceNote || message.Content is MessageVideoNote))
+                        else if (add.Id > message.Id && (add.Content is MessageVoiceNote || add.Content is MessageVideoNote))
                         {
                             items.Add(GetPlaybackItem(add));
                         }
@@ -617,7 +614,7 @@ namespace Unigram.Services
         private PlaybackItem GetPlaybackItem(Message message)
         {
             var token = $"{message.ChatId}_{message.Id}";
-            var file = GetFile(message);
+            var file = message.GetFile();
 
             var source = CreateMediaSource(message, file);
             var item = new PlaybackItem(source)
@@ -656,10 +653,8 @@ namespace Unigram.Services
             var mime = GetMimeType(message);
             var duration = GetDuration(message);
 
-            var stream = new RemoteFileStream(_protoService, file, TimeSpan.FromSeconds(duration));
+            var stream = new RemoteFileStream(_protoService, file, duration);
             var source = MediaSource.CreateFromStream(stream, mime);
-
-            _streams[file.Id].Add(stream);
 
             source.CustomProperties["file"] = file.Id;
             source.CustomProperties["message"] = message.Id;
@@ -667,39 +662,6 @@ namespace Unigram.Services
             source.CustomProperties["token"] = token;
 
             return source;
-        }
-
-        private File GetFile(Message message)
-        {
-            if (message.Content is MessageAudio audio)
-            {
-                return audio.Audio.AudioValue;
-            }
-            else if (message.Content is MessageVoiceNote voiceNote)
-            {
-                return voiceNote.VoiceNote.Voice;
-            }
-            else if (message.Content is MessageVideoNote videoNote)
-            {
-                return videoNote.VideoNote.Video;
-            }
-            else if (message.Content is MessageText text && text.WebPage != null)
-            {
-                if (text.WebPage.Audio != null)
-                {
-                    return text.WebPage.Audio.AudioValue;
-                }
-                else if (text.WebPage.VoiceNote != null)
-                {
-                    return text.WebPage.VoiceNote.Voice;
-                }
-                else if (text.WebPage.VideoNote != null)
-                {
-                    return text.WebPage.VideoNote.Video;
-                }
-            }
-
-            return null;
         }
 
         private string GetMimeType(Message message)
@@ -768,17 +730,6 @@ namespace Unigram.Services
             return 0;
         }
 
-        public void Handle(UpdateFile update)
-        {
-            if (_streams.TryGetValue(update.File.Id, out List<RemoteFileStream> streams))
-            {
-                foreach (var stream in streams)
-                {
-                    stream.UpdateFile(update.File);
-                }
-            }
-        }
-
         private void Dispose()
         {
             if (_mediaPlayer != null)
@@ -838,11 +789,6 @@ namespace Unigram.Services
         public PlaybackItem(MediaSource source)
         {
             Source = source;
-        }
-
-        public bool UpdateFile(File file)
-        {
-            return Message.UpdateFile(file);
         }
     }
 }

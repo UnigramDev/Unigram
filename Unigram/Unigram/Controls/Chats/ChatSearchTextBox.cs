@@ -10,7 +10,7 @@ namespace Unigram.Controls.Chats
         private ChatSearchState _state;
         public ChatSearchState State
         {
-            get { return _state; }
+            get => _state;
             set
             {
                 _state = value;
@@ -39,23 +39,15 @@ namespace Unigram.Controls.Chats
         private MessageSender _from;
         public MessageSender From
         {
-            get { return _from; }
-            set
-            {
-                _from = value;
-                //Header = _from?.FirstName ?? string.Empty;
-            }
+            get => _from;
+            set => _from = value;//Header = _from?.FirstName ?? string.Empty;
         }
 
         private ChatSearchMediaFilter _filter;
         public ChatSearchMediaFilter Filter
         {
-            get { return _filter; }
-            set
-            {
-                _filter = value;
-                //Header = _filter?.Text ?? string.Empty;
-            }
+            get => _filter;
+            set => _filter = value;//Header = _filter?.Text ?? string.Empty;
         }
     }
 

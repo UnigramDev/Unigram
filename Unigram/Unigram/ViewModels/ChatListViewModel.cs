@@ -37,6 +37,7 @@ namespace Unigram.ViewModels
 
             SearchFilters = new MvxObservableCollection<ISearchChatsFilter>();
 
+            ChatOpenCommand = new RelayCommand<Chat>(ChatOpenExecute);
             ChatPinCommand = new RelayCommand<Chat>(ChatPinExecute);
             ChatArchiveCommand = new RelayCommand<Chat>(ChatArchiveExecute);
             ChatMarkCommand = new RelayCommand<Chat>(ChatMarkExecute);
@@ -71,22 +72,22 @@ namespace Unigram.ViewModels
         private long? _selectedItem;
         public long? SelectedItem
         {
-            get { return _selectedItem; }
-            set { Set(ref _selectedItem, value); }
+            get => _selectedItem;
+            set => Set(ref _selectedItem, value);
         }
 
         private MvxObservableCollection<Chat> _selectedItems;
         public MvxObservableCollection<Chat> SelectedItems
         {
-            get { return _selectedItems; }
-            set { Set(ref _selectedItems, value); }
+            get => _selectedItems;
+            set => Set(ref _selectedItems, value);
         }
 
         private ListViewSelectionMode _selectionMode = ListViewSelectionMode.None;
         public ListViewSelectionMode SelectionMode
         {
-            get { return _selectionMode; }
-            set { Set(ref _selectionMode, value); }
+            get => _selectionMode;
+            set => Set(ref _selectionMode, value);
         }
 
         #endregion
@@ -98,14 +99,8 @@ namespace Unigram.ViewModels
         private SearchChatsCollection _search;
         public SearchChatsCollection Search
         {
-            get
-            {
-                return _search;
-            }
-            set
-            {
-                Set(ref _search, value);
-            }
+            get => _search;
+            set => Set(ref _search, value);
         }
 
         public MvxObservableCollection<ISearchChatsFilter> SearchFilters { get; private set; }
@@ -113,15 +108,19 @@ namespace Unigram.ViewModels
         private TopChatsCollection _topChats;
         public TopChatsCollection TopChats
         {
-            get
-            {
-                return _topChats;
-            }
-            set
-            {
-                Set(ref _topChats, value);
-            }
+            get => _topChats;
+            set => Set(ref _topChats, value);
         }
+
+        #region Open
+
+        public RelayCommand<Chat> ChatOpenCommand { get; }
+        private void ChatOpenExecute(Chat chat)
+        {
+            NavigationService.NavigateToChat(chat, createNewWindow: true);
+        }
+
+        #endregion
 
         #region Pin
 
@@ -262,7 +261,7 @@ namespace Unigram.ViewModels
         public RelayCommand<Chat> ChatNotifyCommand { get; }
         private void ChatNotifyExecute(Chat chat)
         {
-            _notificationsService.SetMuteFor(chat, CacheService.GetNotificationSettingsMuteFor(chat) > 0 ? 0 : 632053052);
+            _notificationsService.SetMuteFor(chat, CacheService.Notifications.GetMutedFor(chat) > 0 ? 0 : 632053052);
         }
 
         #endregion
@@ -273,7 +272,7 @@ namespace Unigram.ViewModels
         private void ChatsNotifyExecute()
         {
             var chats = SelectedItems.ToList();
-            var muted = chats.Any(x => CacheService.GetNotificationSettingsMuteFor(x) > 0);
+            var muted = chats.Any(x => CacheService.Notifications.GetMutedFor(x) > 0);
 
             foreach (var chat in chats)
             {
@@ -329,7 +328,7 @@ namespace Unigram.ViewModels
                     {
                         await ProtoService.SendAsync(new CloseSecretChat(secret.SecretChatId));
                     }
-                    else if (delete.Type is ChatTypeBasicGroup || delete.Type is ChatTypeSupergroup)
+                    else if (delete.Type is ChatTypeBasicGroup or ChatTypeSupergroup)
                     {
                         await ProtoService.SendAsync(new LeaveChat(delete.Id));
                     }
@@ -385,7 +384,7 @@ namespace Unigram.ViewModels
                         {
                             await ProtoService.SendAsync(new CloseSecretChat(secret.SecretChatId));
                         }
-                        else if (delete.Type is ChatTypeBasicGroup || delete.Type is ChatTypeSupergroup)
+                        else if (delete.Type is ChatTypeBasicGroup or ChatTypeSupergroup)
                         {
                             await ProtoService.SendAsync(new LeaveChat(delete.Id));
                         }

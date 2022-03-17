@@ -35,7 +35,7 @@ namespace Unigram.Services
         private readonly DisposableMutex _syncLock;
         private readonly object _importedPhonesRoot;
 
-        private HashSet<int> _contacts;
+        private HashSet<long> _contacts;
 
         private CancellationTokenSource _syncToken;
 
@@ -49,7 +49,7 @@ namespace Unigram.Services
             _syncLock = new DisposableMutex();
             _importedPhonesRoot = new object();
 
-            _contacts = new HashSet<int>();
+            _contacts = new HashSet<long>();
 
             _aggregator.Subscribe(this);
         }
@@ -272,7 +272,7 @@ namespace Unigram.Services
                 return;
             }
 
-            var remove = new List<int>();
+            var remove = new List<long>();
 
             var prev = _contacts;
             var next = result.UserIds.ToHashSet();
@@ -485,17 +485,17 @@ namespace Unigram.Services
             }
         }
 
-        public static Task<int?> GetContactIdAsync(Contact contact)
+        public static Task<long?> GetContactIdAsync(Contact contact)
         {
             if (contact == null)
             {
-                return Task.FromResult<int?>(null);
+                return Task.FromResult<long?>(null);
             }
 
             return GetContactIdAsync(contact.Id);
         }
 
-        public static async Task<int?> GetContactIdAsync(string contactId)
+        public static async Task<long?> GetContactIdAsync(string contactId)
         {
             var annotationStore = await ContactManager.RequestAnnotationStoreAsync(ContactAnnotationStoreAccessType.AppAnnotationsReadWrite);
             var store = await ContactManager.RequestStoreAsync(ContactStoreAccessType.AppContactsReadWrite);
@@ -518,7 +518,7 @@ namespace Unigram.Services
                     }
 
                     var remote = first.RemoteId;
-                    if (int.TryParse(remote.Substring(1), out int userId))
+                    if (long.TryParse(remote.Substring(1), out long userId))
                     {
                         return userId;
                     }

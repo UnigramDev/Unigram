@@ -9,7 +9,6 @@ namespace Unigram.Views.Settings.Password
         public SettingsPasswordConfirmPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsPasswordConfirmViewModel>();
         }
 
         #region Binding

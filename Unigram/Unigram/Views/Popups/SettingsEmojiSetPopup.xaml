@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
+    Background="{ThemeResource PageBackgroundDarkBrush}"
     Title="TITLE"
     PrimaryButtonText="Button1"
     SecondaryButtonText="Button2"
@@ -14,7 +15,7 @@
     SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
     Closed="OnClosed">
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+    <Grid Margin="-24,0">
         <controls:TableListView
             x:Name="List"
             SelectionMode="None"
@@ -22,15 +23,17 @@
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                    <!--<Setter Property="Padding" Value="0"/>-->
                 </Style>
             </ListView.ItemContainerStyle>
-            <ListView.Header>
-                <Border Height="16"/>
-            </ListView.Header>
-            <ListView.Footer>
-                <Border Height="16"/>
-            </ListView.Footer>
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ItemsStackPanel
+                        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                        VerticalAlignment="Top"
+                        Margin="24,0"
+                        MaxWidth="640"/>
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <RadioButton GroupName="EmojiFont"

@@ -15,7 +15,7 @@ namespace Unigram.Common
             Year
         }
 
-        private readonly static Dictionary<string, DateRangeFormat> _formats = new Dictionary<string, DateRangeFormat>
+        private static readonly Dictionary<string, DateRangeFormat> _formats = new Dictionary<string, DateRangeFormat>
         {
             { "dd MMM yyyy", DateRangeFormat.Day },
             { "dd MMM", DateRangeFormat.Day },
@@ -94,7 +94,7 @@ namespace Unigram.Common
             return results;
         }
 
-        static bool TryParseExact(string text, string format, CultureInfo cultureEngl, CultureInfo cultureInLocal, out DateTime result)
+        private static bool TryParseExact(string text, string format, CultureInfo cultureEngl, CultureInfo cultureInLocal, out DateTime result)
         {
             if (DateTime.TryParseExact(text, format, cultureEngl, DateTimeStyles.None, out result))
             {

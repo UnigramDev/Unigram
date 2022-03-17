@@ -1,5 +1,4 @@
-﻿using System;
-using Telegram.Td.Api;
+﻿using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
@@ -19,7 +18,6 @@ namespace Unigram.Views.Folders
         public FolderPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<FolderViewModel>();
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -40,7 +38,7 @@ namespace Unigram.Views.Folders
             if (element is FilterChat chat)
             {
                 title.Text = ViewModel.ProtoService.GetTitle(chat.Chat);
-                photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat.Chat, 36);
+                photo.SetChat(ViewModel.ProtoService, chat.Chat, 36);
             }
             else if (element is FilterFlag flag)
             {

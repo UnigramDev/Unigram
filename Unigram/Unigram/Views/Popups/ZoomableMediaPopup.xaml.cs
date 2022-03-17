@@ -13,6 +13,9 @@ namespace Unigram.Views.Popups
     {
         private readonly ApplicationView _applicationView;
 
+        private string _fileToken;
+        private string _thumbnailToken;
+
         private object _lastItem;
 
         public ZoomableMediaPopup()
@@ -26,6 +29,8 @@ namespace Unigram.Views.Popups
         }
 
         public Action<int> DownloadFile { get; set; }
+
+        public Func<int> SessionId { get; set; }
 
         private void OnVisibleBoundsChanged(ApplicationView sender, object args)
         {
@@ -42,30 +47,6 @@ namespace Unigram.Views.Popups
             {
                 Margin = new Thickness();
             }
-        }
-
-        private void OnLoaded(object sender, RoutedEventArgs e)
-        {
-            Padding = new Thickness(0, 0, 0, InputPane.GetForCurrentView().OccludedRect.Height);
-
-            InputPane.GetForCurrentView().Showing += InputPane_Showing;
-            InputPane.GetForCurrentView().Hiding += InputPane_Hiding;
-        }
-
-        private void OnUnloaded(object sender, RoutedEventArgs e)
-        {
-            InputPane.GetForCurrentView().Showing -= InputPane_Showing;
-            InputPane.GetForCurrentView().Hiding -= InputPane_Hiding;
-        }
-
-        private void InputPane_Showing(InputPane sender, InputPaneVisibilityEventArgs args)
-        {
-            Padding = new Thickness(0, 0, 0, args.OccludedRect.Height);
-        }
-
-        private void InputPane_Hiding(InputPane sender, InputPaneVisibilityEventArgs args)
-        {
-            Padding = new Thickness();
         }
 
         public void SetSticker(Sticker sticker)
@@ -102,7 +83,7 @@ namespace Unigram.Views.Popups
             UpdateFile(animation, animation.AnimationValue, true);
         }
 
-        public void UpdateFile(File file)
+        private void UpdateFile(object target, File file)
         {
             if (_lastItem is Sticker sticker && file.Local.IsDownloadingCompleted)
             {
@@ -121,76 +102,73 @@ namespace Unigram.Views.Popups
                 {
                     UpdateFile(animation, file, false);
                 }
-                else if (animation.Thumbnail?.File.Id == file.Id && animation.Thumbnail.Format is ThumbnailFormatJpeg)
-                {
-                    UpdateThumbnail(file, false);
-                }
             }
         }
 
         private void UpdateFile(Sticker sticker, File file, bool download)
         {
-            if (Dispatcher.HasThreadAccess)
+            if (file.Local.IsDownloadingCompleted)
             {
-                if (file.Local.IsDownloadingCompleted)
+                if (sticker.Type is StickerTypeAnimated)
                 {
-                    if (sticker.IsAnimated)
-                    {
-                        Thumbnail.Opacity = 0;
-                        Texture.Source = null;
-                        Container.Child = new LottieView { Source = UriEx.ToLocal(file.Local.Path) };
-                    }
-                    else
-                    {
-                        Thumbnail.Opacity = 0;
-                        Texture.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
-                        Container.Child = new Border();
-                    }
-                }
-                else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-                {
-                    Thumbnail.Opacity = 1;
+                    Thumbnail.Opacity = 0;
                     Texture.Source = null;
+                    Container.Child = new LottieView { Source = UriEx.ToLocal(file.Local.Path) };
+                }
+                else if (sticker.Type is StickerTypeVideo)
+                {
+                    Thumbnail.Opacity = 0;
+                    Texture.Source = null;
+                    Container.Child = new AnimationView { Source = new LocalVideoSource(file) };
+                }
+                else
+                {
+                    Thumbnail.Opacity = 0;
+                    Texture.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
                     Container.Child = new Border();
-
-                    if (download)
-                    {
-                        DownloadFile?.Invoke(file.Id);
-                    }
                 }
             }
             else
             {
-                _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => UpdateFile(sticker, file, download));
+                Thumbnail.Opacity = 1;
+                Texture.Source = null;
+                Container.Child = new Border();
+
+                UpdateManager.Subscribe(this, SessionId(), file, ref _fileToken, UpdateFile, true);
+
+                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && download)
+                {
+                    DownloadFile?.Invoke(file.Id);
+                }
             }
         }
 
         private void UpdateFile(Animation animation, File file, bool download)
         {
-            if (Dispatcher.HasThreadAccess)
+            if (file.Local.IsDownloadingCompleted)
             {
-                if (file.Local.IsDownloadingCompleted)
-                {
-                    Thumbnail.Opacity = 0;
-                    Texture.Source = null;
-                    Container.Child = new AnimationView { Source = UriEx.ToLocal(file.Local.Path) };
-                }
-                else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-                {
-                    Thumbnail.Opacity = 1;
-                    Texture.Source = null;
-                    Container.Child = new Border();
-
-                    if (download)
-                    {
-                        DownloadFile?.Invoke(file.Id);
-                    }
-                }
+                Thumbnail.Opacity = 0;
+                Texture.Source = null;
+                Container.Child = new AnimationView { Source = new LocalVideoSource(file) };
             }
             else
             {
-                _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => UpdateFile(animation, file, download));
+                Thumbnail.Opacity = 1;
+                Texture.Source = null;
+                Container.Child = new Border();
+
+                UpdateManager.Subscribe(this, SessionId(), file, ref _fileToken, UpdateFile, true);
+
+                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && download)
+                {
+                    DownloadFile?.Invoke(file.Id);
+                }
             }
+        }
+
+        private void UpdateThumbnail(object target, File file)
+        {
+            UpdateThumbnail(file, false);
         }
 
         private void UpdateThumbnail(File file, bool download)
@@ -199,11 +177,13 @@ namespace Unigram.Views.Popups
             {
                 Thumbnail.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+            else
             {
                 Thumbnail.Source = null;
 
-                if (download)
+                UpdateManager.Subscribe(this, SessionId(), file, ref _thumbnailToken, UpdateThumbnail, true);
+
+                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && download)
                 {
                     DownloadFile?.Invoke(file.Id);
                 }

@@ -1,0 +1,14 @@
+namespace Unigram.Native
+{
+    [default_interface]
+    runtimeclass QrBuffer
+    {
+        static QrBuffer FromString(String text);
+
+        Int32 Size{ get; };
+        Windows.Foundation.Collections.IVector<Boolean> Values{ get; };
+
+        Int32 ReplaceFrom{ get; };
+        Int32 ReplaceTill{ get; };
+    }
+}

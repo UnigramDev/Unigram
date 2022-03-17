@@ -68,17 +68,14 @@ namespace Unigram.Services
         private ISessionService _previousItem;
         public ISessionService PreviousItem
         {
-            get { return _previousItem; }
-            set { _previousItem = value; }
+            get => _previousItem;
+            set => _previousItem = value;
         }
 
         private ISessionService _activeItem;
         public ISessionService ActiveItem
         {
-            get
-            {
-                return _activeItem;
-            }
+            get => _activeItem;
             set
             {
                 if (_activeItem == value)
@@ -106,7 +103,7 @@ namespace Unigram.Services
 
         public ISessionService Create(bool update = true, bool test = false)
         {
-            var app = App.Current as App;
+            var app = BootStrapper.Current as App;
             var sessions = TLContainer.Current.GetSessions().ToList();
             var id = sessions.Count > 0 ? sessions.Max(x => x.Id) + 1 : 0;
 
@@ -131,7 +128,7 @@ namespace Unigram.Services
         public ISessionService Remove(ISessionService item, ISessionService active)
         {
             TLContainer.Current.Destroy(item.Id);
-            active = active ?? _previousItem ?? Create();
+            active ??= _previousItem ?? Create();
             Update(active);
 
             item.Aggregator.Unsubscribe(item);
@@ -148,7 +145,7 @@ namespace Unigram.Services
             ISessionService replace = null;
             if (item.IsActive)
             {
-                ActiveItem = replace = _previousItem ?? Items.Where(x => x.Id != item.Id).FirstOrDefault() ?? Create(false);
+                ActiveItem = replace = _previousItem ?? Items.FirstOrDefault(x => x.Id != item.Id) ?? Create(false);
             }
 
             TLContainer.Current.Destroy(item.Id);

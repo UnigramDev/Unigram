@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Telegram.Td.Api;
+using Unigram.Common;
 using Unigram.Controls.Cells;
 using Unigram.ViewModels.Settings;
 using Windows.UI.Xaml;
@@ -16,7 +17,6 @@ namespace Unigram.Views.Settings
         public SettingsSessionsPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsSessionsViewModel>();
         }
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
@@ -59,5 +59,23 @@ namespace Unigram.Views.Settings
                 presenter.CornerRadius = new CornerRadius(first ? 8 : 0, first ? 8 : 0, last ? 8 : 0, last ? 8 : 0);
             }
         }
+
+        #region Binding
+
+        private string ConvertTtl(int days)
+        {
+            if (days >= 365)
+            {
+                return Locale.Declension("Years", days / 365);
+            }
+            else if (days >= 30)
+            {
+                return Locale.Declension("Months", days / 30);
+            }
+
+            return Locale.Declension("Weeks", days / 7);
+        }
+
+        #endregion
     }
 }

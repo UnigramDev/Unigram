@@ -1,14 +1,21 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views.Popups;
+using Windows.ApplicationModel.Core;
+using Windows.ApplicationModel.DataTransfer;
+using Windows.Devices.Enumeration;
+using Windows.Media.Capture;
+using Windows.Media.MediaProperties;
 using Windows.Storage;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -24,6 +31,9 @@ namespace Unigram.ViewModels
             Tags = new MvxObservableCollection<DiagnosticsTag>();
 
             VerbosityCommand = new RelayCommand(VerbosityExecute);
+            VideoInfoCommand = new RelayCommand(VideoInfoExecute);
+
+            DisableDatabaseCommand = new RelayCommand(DisableDatabaseExecute);
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -33,6 +43,13 @@ namespace Unigram.ViewModels
             {
                 var basic = await calls.GetBasicPropertiesAsync();
                 LogCallsSize = basic.Size;
+            }
+
+            var group = await ApplicationData.Current.LocalFolder.TryGetItemAsync("tgcalls_group.txt") as StorageFile;
+            if (group != null)
+            {
+                var basic = await group.GetBasicPropertiesAsync();
+                LogGroupCallsSize = basic.Size;
             }
 
             var log = await ApplicationData.Current.LocalFolder.TryGetItemAsync("tdlib_log.txt") as StorageFile;
@@ -119,6 +136,16 @@ namespace Unigram.ViewModels
             }
         }
 
+        public bool CopyFormattedCode
+        {
+            get => Settings.Diagnostics.CopyFormattedCode;
+            set
+            {
+                Settings.Diagnostics.CopyFormattedCode = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public VerbosityLevel Verbosity
         {
             get => (VerbosityLevel)Settings.VerbosityLevel;
@@ -129,10 +156,9 @@ namespace Unigram.ViewModels
             }
         }
 
-        public bool CanUseTestDC
-        {
-            get => ProtoService.AuthorizationState is not AuthorizationStateReady;
-        }
+        public bool CanUseTestDC => ProtoService.AuthorizationState is not AuthorizationStateReady;
+
+        public bool DisableDatabase => Settings.Diagnostics.DisableDatabase;
 
         public bool UseTestDC
         {
@@ -150,6 +176,13 @@ namespace Unigram.ViewModels
         {
             get => _logCallsSize;
             set => Set(ref _logCallsSize, value);
+        }
+
+        private ulong _logGroupCallsSize;
+        public ulong LogGroupCallsSize
+        {
+            get => _logGroupCallsSize;
+            set => Set(ref _logGroupCallsSize, value);
         }
 
         private ulong _logSize;
@@ -174,7 +207,7 @@ namespace Unigram.ViewModels
                 return new SelectRadioItem(x, Enum.GetName(typeof(VerbosityLevel), x), x == Verbosity);
             }).ToArray();
 
-            var dialog = new SelectRadioPopup(items);
+            var dialog = new ChooseRadioPopup(items);
             dialog.Title = "Verbosity Level";
             dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.SecondaryButtonText = Strings.Resources.Cancel;
@@ -185,6 +218,104 @@ namespace Unigram.ViewModels
                 Verbosity = index;
                 Client.Execute(new SetLogVerbosityLevel((int)index));
             }
+        }
+
+        public RelayCommand VideoInfoCommand { get; }
+        public async void VideoInfoExecute()
+        {
+            var devices = await DeviceInformation.FindAllAsync(DeviceClass.VideoCapture);
+            var builder = new StringBuilder();
+
+            foreach (var device in devices)
+            {
+                builder.AppendLine(string.Format("- {0}:", device.Id));
+                builder.AppendLine(string.Format("    name: {0}", device.Name));
+
+                FillVideoCaptureCapabilityFromDeviceProfiles(builder, device.Id);
+                await FillVideoCaptureCapabilityFromDeviceWithoutProfiles(builder, device.Id);
+            }
+
+            var dataPackage = new DataPackage();
+            dataPackage.SetText(builder.ToString());
+            ClipboardEx.TrySetContent(dataPackage);
+
+            try
+            {
+                var file = await ApplicationData.Current.LocalFolder.CreateFileAsync("video_info.txt", CreationCollisionOption.ReplaceExisting);
+
+                await FileIO.WriteTextAsync(file, builder.ToString());
+                await SharePopup.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(file.Path), null, true, null));
+            }
+            catch { }
+        }
+
+        private static void FillVideoCaptureCapabilityFromDeviceProfiles(StringBuilder builder, string deviceId)
+        {
+            builder.AppendLine("    video_profiles:");
+
+            foreach (var profile in MediaCapture.FindAllVideoProfiles(deviceId))
+            {
+                var profile_description_list = profile.SupportedRecordMediaDescription;
+                var profile_id = profile.Id;
+
+                foreach (var description in profile_description_list)
+                {
+                    var width = description.Width;
+                    var height = description.Height;
+                    var framerate = description.FrameRate;
+                    var sub_type = description.Subtype;
+
+                    builder.AppendLine(string.Format("    - size: {0}x{1}, fps: {2}, subtype: {3}", width, height, framerate, sub_type));
+                }
+            }
+        }
+
+        private static async Task FillVideoCaptureCapabilityFromDeviceWithoutProfiles(StringBuilder builder, string deviceId)
+        {
+            var settings = new MediaCaptureInitializationSettings();
+            settings.VideoDeviceId = deviceId;
+            settings.StreamingCaptureMode = StreamingCaptureMode.AudioAndVideo;
+            settings.MemoryPreference = MediaCaptureMemoryPreference.Cpu;
+
+            builder.AppendLine("    video_properties:");
+
+            var mediaCapture = new MediaCapture();
+            await mediaCapture.InitializeAsync(settings);
+
+            var availableProperties = mediaCapture.VideoDeviceController.GetAvailableMediaStreamProperties(MediaStreamType.VideoRecord);
+
+            foreach (var profile in availableProperties.OfType<VideoEncodingProperties>())
+            {
+                var width = profile.Width;
+                var height = profile.Height;
+                var framerate = (profile.FrameRate.Denominator != 0) ? profile.FrameRate.Numerator / profile.FrameRate.Denominator : 0;
+                var sub_type = profile.Subtype;
+
+                builder.AppendLine(string.Format("    - size: {0}x{1}, fps: {2}, subtype: {3}", width, height, framerate, sub_type));
+            }
+        }
+
+        public RelayCommand DisableDatabaseCommand { get; }
+        private async void DisableDatabaseExecute()
+        {
+            if (Settings.Diagnostics.DisableDatabase)
+            {
+                Settings.Diagnostics.DisableDatabase = false;
+            }
+            else
+            {
+                var confirm = await MessagePopup.ShowAsync("If you disable the messages database some **features** might **stop to work** as expected, **secret chats** will become **inaccessible** and app won't recognize downloaded files after download.\r\n\r\nAre you sure you want to proceed? You can re-enable messages database anytime from here.", Strings.Resources.Warning, Strings.Resources.OK, Strings.Resources.Cancel);
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    Settings.Diagnostics.DisableDatabase = true;
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            await CoreApplication.RequestRestartAsync(string.Empty);
         }
     }
 
@@ -243,7 +374,7 @@ namespace Unigram.ViewModels
                 return new SelectRadioItem(x, Enum.GetName(typeof(VerbosityLevel), x), x == _value);
             }).ToArray();
 
-            var dialog = new SelectRadioPopup(items);
+            var dialog = new ChooseRadioPopup(items);
             dialog.Title = Name;
             dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.SecondaryButtonText = Strings.Resources.Cancel;

@@ -1,5 +1,8 @@
-﻿using Telegram.Td.Api;
+﻿using System.Threading.Tasks;
+using Telegram.Td.Api;
+using Unigram.Navigation.Services;
 using Unigram.Services;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Supergroups
 {
@@ -10,12 +13,30 @@ namespace Unigram.ViewModels.Supergroups
         {
         }
 
+        private bool _hasProtectedContent;
+        public bool HasProtectedContent
+        {
+            get => _hasProtectedContent;
+            set => Set(ref _hasProtectedContent, value);
+        }
+
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        {
+            await base.OnNavigatedToAsync(parameter, mode, state);
+            HasProtectedContent = Chat?.HasProtectedContent ?? false;
+        }
+
         protected override async void SendExecute()
         {
             var chat = _chat;
             if (chat == null)
             {
                 return;
+            }
+
+            if (chat.HasProtectedContent != HasProtectedContent)
+            {
+                await ProtoService.SendAsync(new ToggleChatHasProtectedContent(Chat.Id, HasProtectedContent));
             }
 
             var username = _isPublic ? (_username?.Trim() ?? string.Empty) : string.Empty;

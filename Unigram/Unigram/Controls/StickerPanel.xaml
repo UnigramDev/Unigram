@@ -110,52 +110,27 @@
     </UserControl.Resources>
 
     <Grid>
-        <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup>
-                <VisualState x:Name="NarrowState"/>
-                <VisualState x:Name="SidebarState"/>
-                <VisualState x:Name="FilledState">
-                    <VisualState.Setters>
-                        <Setter Target="ShowColumn.Width" Value="362*"/>
-                        <Setter Target="ShowColumn.MaxWidth" Value="362"/>
-                        <Setter Target="HideColumn.Width" Value="*"/>
-                        <Setter Target="BackgroundElement.BorderThickness" Value="1"/>
-                        <Setter Target="BackgroundElement.CornerRadius" Value="4"/>
-
-                        <Setter Target="ShowRow.Height" Value="736*"/>
-                        <Setter Target="ShowRow.MaxHeight" Value="736"/>
-                        <Setter Target="HideRow.Height" Value="*"/>
-                        
-                        <Setter Target="PaddingTopRow.Height" Value="8"/>
-                        <Setter Target="PaddingLeftColumn.Width" Value="12"/>
-                        <Setter Target="PaddingBottomRow.Height" Value="4"/>
-                        <Setter Target="PaddingRightColumn.Width" Value="12"/>
-                    </VisualState.Setters>
-                </VisualState>
-            </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition x:Name="HideColumn" Width="0"/>
-            <ColumnDefinition x:Name="PaddingLeftColumn" Width="0"/>
-            <ColumnDefinition x:Name="ShowColumn"/>
-            <ColumnDefinition x:Name="PaddingRightColumn" Width="0"/>
+            <ColumnDefinition x:Name="HideColumn" Width="*"/>
+            <ColumnDefinition x:Name="PaddingLeftColumn" Width="12"/>
+            <ColumnDefinition x:Name="ShowColumn" Width="362*" MaxWidth="362"/>
+            <ColumnDefinition x:Name="PaddingRightColumn" Width="12"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition x:Name="HideRow" Height="0"/>
+            <RowDefinition x:Name="HideRow" Height="*"/>
             <RowDefinition x:Name="PaddingTopRow" Height="0"/>
-            <RowDefinition x:Name="ShowRow"/>
-            <RowDefinition x:Name="PaddingBottomRow" Height="0"/>
+            <RowDefinition x:Name="ShowRow" Height="736*" MaxHeight="736"/>
+            <RowDefinition x:Name="PaddingBottomRow" Height="4"/>
         </Grid.RowDefinitions>
-
-        <Border x:Name="ShadowElement" Grid.ColumnSpan="2" Grid.RowSpan="2"/>
 
         <Border x:Name="TransparentElement" Background="Transparent" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="3" Grid.RowSpan="3"/>
 
-        <Border x:Name="CanvasElement" Background="Transparent" Grid.Column="2" Grid.Row="2">
+        <Grid x:Name="CanvasElement" Background="Transparent" Grid.Column="2" Grid.Row="2">
+            <Border x:Name="ShadowElement" />
+
             <Grid x:Name="BackgroundElement"
                   Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                  BorderBrush="{ThemeResource TelegramBackgroundAccentBrush}"
-                  BorderThickness="0,0,0,0">
+                  CornerRadius="4">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition/>
@@ -165,7 +140,9 @@
                 <Pivot x:Name="Pivot" Style="{StaticResource HeaderlessPivotStyle}" SelectionChanged="Pivot_SelectionChanged" Grid.Row="1">
                     <PivotItem>
                         <Grid>
-                            <drawers:EmojiDrawer x:Name="EmojisRoot" ItemClick="Emojis_ItemClick"/>
+                            <Border x:Name="EmojisPanel">
+                                <drawers:EmojiDrawer x:Name="EmojisRoot" x:Load="False" ItemClick="Emojis_ItemClick"/>
+                            </Border>
                             <TextBlock
                                 x:Name="EmojisPermission"
                                 VerticalAlignment="Center"
@@ -177,7 +154,9 @@
                     </PivotItem>
                     <PivotItem>
                         <Grid>
-                            <drawers:AnimationDrawer x:Name="AnimationsRoot"/>
+                            <Border x:Name="AnimationsPanel">
+                                <drawers:AnimationDrawer x:Name="AnimationsRoot" x:Load="False"/>
+                            </Border>
                             <TextBlock
                                 x:Name="AnimationsPermission"
                                 VerticalAlignment="Center"
@@ -189,7 +168,9 @@
                     </PivotItem>
                     <PivotItem>
                         <Grid>
-                            <drawers:StickerDrawer x:Name="StickersRoot"/>
+                            <Border x:Name="StickersPanel">
+                                <drawers:StickerDrawer x:Name="StickersRoot" x:Load="False"/>
+                            </Border>
                             <TextBlock
                                 x:Name="StickersPermission"
                                 VerticalAlignment="Center"
@@ -256,6 +237,6 @@
                     </Grid>
                 </Grid>
             </Grid>
-        </Border>
+        </Grid>
     </Grid>
 </UserControl>

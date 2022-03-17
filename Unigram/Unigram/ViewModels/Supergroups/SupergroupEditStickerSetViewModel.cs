@@ -25,49 +25,28 @@ namespace Unigram.ViewModels.Supergroups
         protected Chat _chat;
         public Chat Chat
         {
-            get
-            {
-                return _chat;
-            }
-            set
-            {
-                Set(ref _chat, value);
-            }
+            get => _chat;
+            set => Set(ref _chat, value);
         }
 
         private bool _isAvailable = true;
         public bool IsAvailable
         {
-            get
-            {
-                return _isAvailable;
-            }
-            set
-            {
-                Set(ref _isAvailable, value);
-            }
+            get => _isAvailable;
+            set => Set(ref _isAvailable, value);
         }
 
         private string _shortName;
         public string ShortName
         {
-            get
-            {
-                return _shortName;
-            }
-            set
-            {
-                Set(ref _shortName, value);
-            }
+            get => _shortName;
+            set => Set(ref _shortName, value);
         }
 
         private StickerSetInfo _selectedItem;
         public StickerSetInfo SelectedItem
         {
-            get
-            {
-                return _selectedItem;
-            }
+            get => _selectedItem;
             set
             {
                 if (value == _selectedItem)
@@ -91,10 +70,7 @@ namespace Unigram.ViewModels.Supergroups
         private StickerSetInfo _listSelectedItem;
         public StickerSetInfo ListSelectedItem
         {
-            get
-            {
-                return _listSelectedItem;
-            }
+            get => _listSelectedItem;
             set
             {
                 if (value == _listSelectedItem)
@@ -183,7 +159,7 @@ namespace Unigram.ViewModels.Supergroups
                 var response = await ProtoService.SendAsync(new GetStickerSet(fullInfo.StickerSetId));
                 if (response is StickerSet set)
                 {
-                    SelectedItem = new StickerSetInfo(set.Id, set.Title, set.Name, set.Thumbnail, set.ThumbnailOutline, set.IsInstalled, set.IsArchived, set.IsOfficial, set.IsAnimated, set.IsMasks, set.IsViewed, set.Stickers.Count, set.Stickers);
+                    SelectedItem = new StickerSetInfo(set.Id, set.Title, set.Name, set.Thumbnail, set.ThumbnailOutline, set.IsInstalled, set.IsArchived, set.IsOfficial, set.StickerType, set.IsViewed, set.Stickers.Count, set.Stickers);
                     ShortName = set.Name;
                 }
             }
@@ -240,7 +216,7 @@ namespace Unigram.ViewModels.Supergroups
             {
                 IsLoading = false;
                 IsAvailable = true;
-                SelectedItem = new StickerSetInfo(stickerSet.Id, stickerSet.Title, stickerSet.Name, stickerSet.Thumbnail, stickerSet.ThumbnailOutline, stickerSet.IsInstalled, stickerSet.IsArchived, stickerSet.IsOfficial, stickerSet.IsAnimated, stickerSet.IsMasks, stickerSet.IsViewed, stickerSet.Stickers.Count, stickerSet.Stickers);
+                SelectedItem = new StickerSetInfo(stickerSet.Id, stickerSet.Title, stickerSet.Name, stickerSet.Thumbnail, stickerSet.ThumbnailOutline, stickerSet.IsInstalled, stickerSet.IsArchived, stickerSet.IsOfficial, stickerSet.StickerType, stickerSet.IsViewed, stickerSet.Stickers.Count, stickerSet.Stickers);
                 ShortName = stickerSet.Name;
             }
             else

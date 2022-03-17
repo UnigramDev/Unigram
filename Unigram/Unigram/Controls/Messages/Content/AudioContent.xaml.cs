@@ -2,6 +2,7 @@
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Converters;
+using Unigram.Navigation;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.Media.Playback;
@@ -12,21 +13,58 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed partial class AudioContent : Grid, IContentWithFile
+    public sealed class AudioContent : Control, IContent
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
+        private string _fileToken;
+        private string _thumbnailToken;
+
         public AudioContent(MessageViewModel message)
         {
-            InitializeComponent();
-            UpdateMessage(message);
+            _message = message;
+
+            DefaultStyleKey = typeof(AudioContent);
+            Unloaded += OnUnloaded;
         }
 
         public AudioContent()
         {
-            InitializeComponent();
+            DefaultStyleKey = typeof(AudioContent);
         }
+
+        #region InitializeComponent
+
+        private Border Texture;
+        private FileButton Button;
+        private Grid DownloadPanel;
+        private FileButton Download;
+        private TextBlock Title;
+        private TextBlock Subtitle;
+        private bool _templateApplied;
+
+        protected override void OnApplyTemplate()
+        {
+            Texture = GetTemplateChild(nameof(Texture)) as Border;
+            Button = GetTemplateChild(nameof(Button)) as FileButton;
+            DownloadPanel = GetTemplateChild(nameof(DownloadPanel)) as Grid;
+            Download = GetTemplateChild(nameof(Download)) as FileButton;
+            Title = GetTemplateChild(nameof(Title)) as TextBlock;
+            Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
+
+            Button.Click += Button_Click;
+            Download.Click += Download_Click;
+
+            _templateApplied = true;
+
+            if (_message != null)
+            {
+                UpdateMessage(_message);
+            }
+        }
+
+        #endregion
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
@@ -46,26 +84,29 @@ namespace Unigram.Controls.Messages.Content
             _message = message;
 
             message.PlaybackService.PropertyChanged -= OnCurrentItemChanged;
-            message.PlaybackService.PropertyChanged += OnCurrentItemChanged;
 
             var audio = GetContent(message.Content);
-            if (audio == null)
+            if (audio == null || !_templateApplied)
             {
                 return;
             }
+
+            message.PlaybackService.PropertyChanged += OnCurrentItemChanged;
 
             Title.Text = audio.GetTitle();
 
             if (audio.AlbumCoverThumbnail != null)
             {
+                UpdateManager.Subscribe(this, message, audio.AlbumCoverThumbnail.File, ref _thumbnailToken, UpdateThumbnail, true);
                 UpdateThumbnail(message, audio.AlbumCoverThumbnail, audio.AlbumCoverThumbnail.File);
             }
             else
             {
                 Texture.Background = null;
-                Button.Style = App.Current.Resources["InlineFileButtonStyle"] as Style;
+                Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
             }
 
+            UpdateManager.Subscribe(this, message, audio.AudioValue, ref _fileToken, UpdateFile);
             UpdateFile(message, audio.AudioValue);
         }
 
@@ -74,7 +115,8 @@ namespace Unigram.Controls.Messages.Content
             Title.Text = audio.Audio.GetTitle();
             Subtitle.Text = audio.Audio.GetDuration() + ", " + FileSizeConverter.Convert(4190000);
 
-            Button.SetGlyph(0, MessageContentState.Download);
+            Button.SetGlyph(0, MessageContentState.Play);
+            Download.SetGlyph(0, MessageContentState.Download);
         }
 
         #region Playback
@@ -106,30 +148,6 @@ namespace Unigram.Controls.Messages.Content
             this.BeginOnUIThread(UpdatePosition);
         }
 
-        private void UpdateDuration()
-        {
-            var message = _message;
-            if (message == null)
-            {
-                return;
-            }
-
-            var audio = GetContent(message.Content);
-            if (audio == null)
-            {
-                return;
-            }
-
-            if (message.Content is MessageAudio)
-            {
-                Subtitle.Text = audio.GetDuration();
-            }
-            else
-            {
-                Subtitle.Text = audio.GetDuration();
-            }
-        }
-
         private void UpdatePosition()
         {
             var message = _message;
@@ -158,32 +176,23 @@ namespace Unigram.Controls.Messages.Content
 
         #endregion
 
-        public void UpdateMessageContentOpened(MessageViewModel message)
+        private void UpdateFile(object target, File file)
         {
-            if (message.Ttl > 0)
-            {
-                //Timer.Maximum = message.Ttl;
-                //Timer.Value = DateTime.Now.AddSeconds(message.TtlExpiresIn);
-            }
+            UpdateFile(_message, file);
         }
 
-        public void UpdateFile(MessageViewModel message, File file)
+        private void UpdateFile(MessageViewModel message, File file)
         {
             message.PlaybackService.PlaybackStateChanged -= OnPlaybackStateChanged;
             message.PlaybackService.PositionChanged -= OnPositionChanged;
 
             var audio = GetContent(message.Content);
-            if (audio == null)
+            if (audio == null || !_templateApplied)
             {
                 return;
             }
 
-            if (audio.AlbumCoverThumbnail != null && audio.AlbumCoverThumbnail.File.Id == file.Id)
-            {
-                UpdateThumbnail(message, audio.AlbumCoverThumbnail, file);
-                return;
-            }
-            else if (audio.AudioValue.Id != file.Id)
+            if (audio.AudioValue.Id != file.Id)
             {
                 return;
             }
@@ -236,7 +245,7 @@ namespace Unigram.Controls.Messages.Content
 
                 Subtitle.Text = audio.GetDuration() + " - " + FileSizeConverter.Convert(size);
 
-                if (message.Delegate.CanBeDownloaded(message))
+                if (message.Delegate.CanBeDownloaded(audio, file))
                 {
                     _message.ProtoService.DownloadFile(file.Id, 32);
                 }
@@ -293,8 +302,24 @@ namespace Unigram.Controls.Messages.Content
             Button.Progress = 1;
         }
 
+        private void UpdateThumbnail(object target, File file)
+        {
+            var audio = GetContent(_message.Content);
+            if (audio == null || !_templateApplied)
+            {
+                return;
+            }
+
+            UpdateThumbnail(_message, audio.AlbumCoverThumbnail, file);
+        }
+
         private void UpdateThumbnail(MessageViewModel message, Thumbnail thumbnail, File file)
         {
+            if (thumbnail.File.Id != file.Id)
+            {
+                return;
+            }
+
             if (file.Local.IsDownloadingCompleted)
             {
                 double ratioX = (double)48 / thumbnail.Width;
@@ -304,15 +329,23 @@ namespace Unigram.Controls.Messages.Content
                 var width = (int)(thumbnail.Width * ratio);
                 var height = (int)(thumbnail.Height * ratio);
 
-                Texture.Background = new ImageBrush { ImageSource = new BitmapImage(UriEx.ToLocal(file.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height }, Stretch = Stretch.UniformToFill, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
-                Button.Style = App.Current.Resources["ImmersiveFileButtonStyle"] as Style;
+                try
+                {
+                    Texture.Background = new ImageBrush { ImageSource = new BitmapImage(UriEx.ToLocal(file.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height }, Stretch = Stretch.UniformToFill, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
+                    Button.Style = BootStrapper.Current.Resources["ImmersiveFileButtonStyle"] as Style;
+                }
+                catch
+                {
+                    Texture.Background = null;
+                    Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
+                }
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
                 message.ProtoService.DownloadFile(file.Id, 1);
 
                 Texture.Background = null;
-                Button.Style = App.Current.Resources["InlineFileButtonStyle"] as Style;
+                Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
             }
         }
 
@@ -403,7 +436,14 @@ namespace Unigram.Controls.Messages.Content
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
-                _message.ProtoService.DownloadFile(file.Id, 32);
+                if (_message.Content is not MessageAudio)
+                {
+                    _message.ProtoService.DownloadFile(file.Id, 30);
+                }
+                else
+                {
+                    _message.ProtoService.AddFileToDownloads(file.Id, _message.ChatId, _message.Id);
+                }
             }
             else
             {

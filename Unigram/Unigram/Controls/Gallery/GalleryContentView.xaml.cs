@@ -1,7 +1,6 @@
 ﻿using System;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls.Messages.Content;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Gallery;
@@ -11,6 +10,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
+using Point = Windows.Foundation.Point;
 
 namespace Unigram.Controls.Gallery
 {
@@ -20,7 +20,19 @@ namespace Unigram.Controls.Gallery
         private GalleryContent _item;
 
         public GalleryContent Item => _item;
+
+        private string _fileToken;
+        private string _thumbnailToken;
+
         public Grid Presenter => Panel;
+
+        private bool _areInteractionsEnabled = true;
+        public bool AreInteractionsEnabled => ScrollingHost.ZoomFactor == 1;
+
+        public bool CanZoomIn => ScrollingHost.ZoomFactor < ScrollingHost.MaxZoomFactor;
+        public bool CanZoomOut => ScrollingHost.ZoomFactor > ScrollingHost.MinZoomFactor;
+
+        public event EventHandler InteractionsEnabledChanged;
 
         public GalleryContentView()
         {
@@ -44,31 +56,30 @@ namespace Unigram.Controls.Gallery
                 return;
             }
 
-            var data = item.GetFile();
-            var thumb = item.GetThumbnail();
+            var file = item.GetFile();
+            var thumbnail = item.GetThumbnail();
 
             Panel.Constraint = item.Constraint;
             Panel.InvalidateMeasure();
 
-            if (thumb != null && (item.IsVideo || (item.IsPhoto && !data.Local.IsDownloadingCompleted)))
-            {
-                UpdateThumbnail(item, thumb);
-            }
+            UpdateManager.Subscribe(this, delegato.ProtoService, file, ref _fileToken, UpdateFile);
+            UpdateFile(item, file);
 
-            UpdateFile(item, data);
+            if (thumbnail != null && (item.IsVideo || (item.IsPhoto && !file.Local.IsDownloadingCompleted)))
+            {
+                UpdateThumbnail(item, thumbnail, true);
+            }
         }
 
-        public async void UpdateFile(GalleryContent item, File file)
+        private void UpdateFile(object target, File file)
         {
-            var data = item.GetFile();
-            var thumb = item.GetThumbnail();
+            UpdateFile(_item, file);
+        }
 
-            if (thumb != null && thumb.Id != data.Id && thumb.Id == file.Id)
-            {
-                UpdateThumbnail(item, file);
-                return;
-            }
-            else if (data == null || data.Id != file.Id)
+        private async void UpdateFile(GalleryContent item, File file)
+        {
+            var reference = item?.GetFile();
+            if (reference == null || reference.Id != file.Id)
             {
                 return;
             }
@@ -131,16 +142,26 @@ namespace Unigram.Controls.Gallery
             }
         }
 
-        private void UpdateThumbnail(GalleryContent item, File file)
+        private void UpdateThumbnail(object target, File file)
+        {
+            UpdateThumbnail(_item, file, false);
+        }
+
+        private void UpdateThumbnail(GalleryContent item, File file, bool download)
         {
             if (file.Local.IsDownloadingCompleted)
             {
                 //Texture.Source = new BitmapImage(UriEx.GetLocal(file.Local.Path));
                 Panel.Background = new ImageBrush { ImageSource = PlaceholderHelper.GetBlurred(file.Local.Path), Stretch = Stretch.UniformToFill };
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+            else if (download)
             {
-                item.ProtoService.DownloadFile(file.Id, 1);
+                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                {
+                    item.ProtoService.DownloadFile(file.Id, 1);
+                }
+
+                UpdateManager.Subscribe(this, _delegate.ProtoService, file, ref _thumbnailToken, UpdateThumbnail, true);
             }
         }
 
@@ -191,6 +212,36 @@ namespace Unigram.Controls.Gallery
             ScrollingHost.ChangeView(0, 0, 1, true);
         }
 
+        public void Zoom(bool zoomIn)
+        {
+            var factor = ScrollingHost.ZoomFactor + (zoomIn ? 0.25f : -0.25f);
+            if (factor <= ScrollingHost.MaxZoomFactor)
+            {
+                var horizontal = Panel.ActualWidth * factor - ScrollingHost.ActualWidth;
+                var vertical = Panel.ActualHeight * factor - ScrollingHost.ActualHeight;
+
+                if (ScrollingHost.ScrollableWidth > 0)
+                {
+                    horizontal *= ScrollingHost.HorizontalOffset / ScrollingHost.ScrollableWidth;
+                }
+                else
+                {
+                    horizontal /= 2;
+                }
+
+                if (ScrollingHost.ScrollableHeight > 0)
+                {
+                    vertical *= ScrollingHost.VerticalOffset / ScrollingHost.ScrollableHeight;
+                }
+                else
+                {
+                    vertical /= 2;
+                }
+
+                ScrollingHost.ChangeView(horizontal, vertical, factor);
+            }
+        }
+
         protected override Size MeasureOverride(Size availableSize)
         {
             Panel.MaxWidth = availableSize.Width;
@@ -201,7 +252,65 @@ namespace Unigram.Controls.Gallery
 
         private void ScrollingHost_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
+            if (ScrollingHost.ZoomFactor > 1 && _areInteractionsEnabled)
+            {
+                _areInteractionsEnabled = false;
+                InteractionsEnabledChanged?.Invoke(this, EventArgs.Empty);
+            }
+            else if (ScrollingHost.ZoomFactor == 1 && !_areInteractionsEnabled)
+            {
+                _areInteractionsEnabled = true;
+                InteractionsEnabledChanged?.Invoke(this, EventArgs.Empty);
+            }
+
+            Button.IsEnabled = ScrollingHost.ZoomFactor == 1;
             Panel.ManipulationMode = ScrollingHost.ZoomFactor == 1 ? ManipulationModes.TranslateY | ManipulationModes.TranslateRailsY | ManipulationModes.System : ManipulationModes.System;
+        }
+
+        private bool _pointerPressed;
+        private Point _pointerPosition;
+
+        private void ScrollingHost_PointerPressed(object sender, PointerRoutedEventArgs e)
+        {
+            ScrollingHost.CapturePointer(e.Pointer);
+
+            _pointerPressed = true;
+            _pointerPosition = e.GetCurrentPoint(ScrollingHost).Position;
+
+            _pointerPosition.X += ScrollingHost.HorizontalOffset;
+            _pointerPosition.Y += ScrollingHost.VerticalOffset;
+        }
+
+        private void ScrollingHost_PointerMoved(object sender, PointerRoutedEventArgs e)
+        {
+            if (_pointerPressed)
+            {
+                var point = e.GetCurrentPoint(ScrollingHost);
+
+                var diffX = _pointerPosition.X - point.Position.X;
+                var diffY = _pointerPosition.Y - point.Position.Y;
+
+                ScrollingHost.ChangeView(diffX, diffY, null, true);
+            }
+        }
+
+        private void ScrollingHost_PointerReleased(object sender, PointerRoutedEventArgs e)
+        {
+            if (ScrollingHost.PointerCaptures?.Count > 0)
+            {
+                ScrollingHost.ReleasePointerCapture(e.Pointer);
+            }
+
+            _pointerPressed = false;
+            _pointerPosition = default;
+        }
+
+        private void ScrollingHost_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            if (ScrollingHost.ZoomFactor > 1)
+            {
+                _delegate?.OpenItem(null);
+            }
         }
     }
 }

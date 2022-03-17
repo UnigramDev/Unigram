@@ -1,8 +1,11 @@
 ﻿using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Text;
 using System;
+using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Native;
+using Unigram.Navigation;
 using Windows.Foundation;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
@@ -35,7 +38,8 @@ namespace Unigram.Controls.Messages
         {
             var text = Children[0] as RichTextBlock;
             var media = Children[1] as FrameworkElement;
-            var footer = Children[2] as MessageFooter;
+            var footer = Children[3] as MessageFooter;
+            var reactions = Children[2] as ReactionsPanel;
 
             var textRow = Grid.GetRow(text);
             var mediaRow = Grid.GetRow(media);
@@ -45,7 +49,14 @@ namespace Unigram.Controls.Messages
             media.Measure(availableSize);
             footer.Measure(availableSize);
 
-            if (textRow == footerRow)
+            reactions.Footer = footer.DesiredSize;
+            reactions.Measure(availableSize);
+
+            if (reactions.HasReactions)
+            {
+                _margin = new Size(0, 0);
+            }
+            else if (textRow == footerRow)
             {
                 _margin = Margins(availableSize.Width);
             }
@@ -63,15 +74,16 @@ namespace Unigram.Controls.Messages
                 ? media.DesiredSize.Width
                 : Math.Max(media.DesiredSize.Width, text.DesiredSize.Width + margin.Width);
 
-            return new Size(Math.Max(footer.DesiredSize.Width, width),
-                text.DesiredSize.Height + media.DesiredSize.Height + margin.Height);
+            return new Size(Math.Max(Math.Max(reactions.DesiredSize.Width, footer.DesiredSize.Width), width),
+                text.DesiredSize.Height + media.DesiredSize.Height + reactions.DesiredSize.Height + margin.Height);
         }
 
         protected override Size ArrangeOverride(Size finalSize)
         {
             var text = Children[0] as RichTextBlock;
             var media = Children[1] as FrameworkElement;
-            var footer = Children[2] as MessageFooter;
+            var footer = Children[3] as MessageFooter;
+            var reactions = Children[2] as ReactionsPanel;
 
             var textRow = Grid.GetRow(text);
             var mediaRow = Grid.GetRow(media);
@@ -87,11 +99,13 @@ namespace Unigram.Controls.Messages
                 text.Arrange(new Rect(0, media.DesiredSize.Height, finalSize.Width, text.DesiredSize.Height));
             }
 
+            reactions.Arrange(new Rect(0, text.DesiredSize.Height + media.DesiredSize.Height, finalSize.Width, reactions.DesiredSize.Height));
+
             var margin = _margin;
             var footerWidth = footer.DesiredSize.Width /*- footer.Margin.Right + footer.Margin.Left*/;
             var footerHeight = footer.DesiredSize.Height /*- footer.Margin.Bottom + footer.Margin.Top*/;
             footer.Arrange(new Rect(finalSize.Width - footerWidth,
-                text.DesiredSize.Height + media.DesiredSize.Height - footerHeight + margin.Height,
+                text.DesiredSize.Height + media.DesiredSize.Height + reactions.DesiredSize.Height - footerHeight + margin.Height,
                 footer.DesiredSize.Width,
                 footer.DesiredSize.Height));
 
@@ -101,7 +115,8 @@ namespace Unigram.Controls.Messages
         private Size Margins(double availableWidth)
         {
             var text = Children[0] as RichTextBlock;
-            var footer = Children[2] as MessageFooter;
+            var footer = Children[3] as MessageFooter;
+            var reactions = Children[2] as ReactionsPanel;
 
             var marginLeft = 0d;
             var marginBottom = 0d;
@@ -119,10 +134,10 @@ namespace Unigram.Controls.Messages
                 var width = text.DesiredSize.Width;
                 var rect = ContentEnd(availableWidth);
 
-                var diff = width - rect.Right;
+                var diff = width - rect.X;
                 if (diff < footerWidth /*|| _placeholderVertical*/)
                 {
-                    if (rect.Right + footerWidth < maxWidth /*&& !_placeholderVertical*/)
+                    if (rect.X + footerWidth < maxWidth /*&& !_placeholderVertical*/)
                     {
                         marginLeft = footerWidth - diff;
                     }
@@ -136,33 +151,29 @@ namespace Unigram.Controls.Messages
             return new Size(marginLeft, marginBottom);
         }
 
-        private Rect ContentEnd(double availableWidth)
+        private Vector2 ContentEnd(double availableWidth)
         {
             var caption = Content?.GetCaption();
             if (string.IsNullOrEmpty(caption?.Text))
             {
-                return Rect.Empty;
+                return Vector2.Zero;
             }
 
             var text = Children[0] as RichTextBlock;
-            var width = (float)(availableWidth - text.Margin.Left - text.Margin.Right);
+            var fontSize = Theme.Current.MessageFontSize * BootStrapper.Current.UISettings.TextScaleFactor;
+            var width = availableWidth - text.Margin.Left - text.Margin.Right;
 
             try
             {
-                var textLayout = GetTextLayout(caption, width);
-                if (textLayout != null)
+                var bounds = PlaceholderImageHelper.Current.ContentEnd(caption.Text, fontSize, width);
+                if (bounds.Y < text.DesiredSize.Height)
                 {
-                    textLayout.GetCaretPosition(caption.Text.Length - 1, false, out CanvasTextLayoutRegion region);
-
-                    if (region.LayoutBounds.Bottom < text.DesiredSize.Height)
-                    {
-                        return region.LayoutBounds;
-                    }
+                    return bounds;
                 }
             }
             catch { }
 
-            return new Rect(0, 0, int.MaxValue, 0);
+            return new Vector2(int.MaxValue, 0);
         }
 
         private CanvasTextFormat _format;
@@ -178,7 +189,9 @@ namespace Unigram.Controls.Messages
                 return _layout;
             }
 
-            _format ??= new CanvasTextFormat { FontFamily = "Assets\\Emoji\\apple.ttf#Segoe UI Emoji", FontSize = Theme.Current.MessageFontSize };
+            var fontSize = (float)(Theme.Current.MessageFontSize * BootStrapper.Current.UISettings.TextScaleFactor);
+
+            _format ??= new CanvasTextFormat { FontFamily = "Assets\\Emoji\\apple.ttf#Segoe UI Emoji", FontSize = fontSize };
             _layout = new CanvasTextLayout(CanvasDevice.GetSharedDevice(), caption.Text, _format, width, float.PositiveInfinity);
 
             foreach (var entity in caption.Entities)
@@ -191,7 +204,7 @@ namespace Unigram.Controls.Messages
                 {
                     _layout.SetFontStyle(entity.Offset, entity.Length, FontStyle.Italic);
                 }
-                else if (entity.Type is TextEntityTypeCode || entity.Type is TextEntityTypePre || entity.Type is TextEntityTypePreCode)
+                else if (entity.Type is TextEntityTypeCode or TextEntityTypePre or TextEntityTypePreCode)
                 {
                     _layout.SetFontFamily(entity.Offset, entity.Length, "Consolas");
                 }

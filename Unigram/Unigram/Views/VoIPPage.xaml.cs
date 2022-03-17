@@ -6,8 +6,10 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Native.Calls;
+using Unigram.Navigation;
 using Unigram.Services;
 using Windows.Devices.Enumeration;
+using Windows.System.Display;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.ViewManagement;
@@ -46,6 +48,8 @@ namespace Unigram.Views
 
         private readonly DispatcherTimer _debugTimer;
         private readonly DispatcherTimer _durationTimer;
+
+        private readonly DisplayRequest _displayRequest = new();
 
         private bool _viewfinderPressed;
         private Vector2 _viewfinderDelta;
@@ -252,6 +256,11 @@ namespace Unigram.Views
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                _displayRequest.RequestActive();
+            }
+            catch { }
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -260,6 +269,12 @@ namespace Unigram.Views
 
             BackgroundPanel.RemoveFromVisualTree();
             Viewfinder.RemoveFromVisualTree();
+
+            try
+            {
+                _displayRequest.RequestRelease();
+            }
+            catch { }
         }
 
         public void Dispose()
@@ -329,7 +344,7 @@ namespace Unigram.Views
 
         private bool _capturerWasNull = true;
 
-        public void Connect(VoipVideoCapture capturer)
+        public void Connect(IVoipVideoCapture capturer)
         {
             if (_disposed)
             {
@@ -343,7 +358,7 @@ namespace Unigram.Views
                 Video.IsChecked = true;
                 ViewfinderPanel.Visibility = Visibility.Visible;
 
-                capturer.SetOutput(Viewfinder);
+                capturer.SetOutput(Viewfinder, false);
             }
             else if (capturer == null && !_capturerWasNull)
             {
@@ -410,7 +425,7 @@ namespace Unigram.Views
             var user = _cacheService.GetUser(call.UserId);
             if (user != null)
             {
-                Image.Source = PlaceholderHelper.GetUser(_protoService, user, 144);
+                Image.SetUser(_protoService, user, 144);
 
                 //if (user.ProfilePhoto != null)
                 //{
@@ -750,32 +765,24 @@ namespace Unigram.Views
             _protoService.Send(new DiscardCall(call.Id, false, (int)duration.TotalSeconds, _service.Capturer != null, relay));
         }
 
-        private void Video_Click(object sender, RoutedEventArgs e)
+        private async void Video_Click(object sender, RoutedEventArgs e)
         {
-            if (_service.Manager != null)
+            var capturer = await _service.ToggleCapturingAsync(_service.CaptureType == VoipCaptureType.Video
+                ? VoipCaptureType.None
+                : VoipCaptureType.Video);
+
+            if (capturer != null)
             {
-                if (_service.Capturer != null)
-                {
-                    ViewfinderPanel.Visibility = Visibility.Collapsed;
+                ViewfinderPanel.Visibility = Visibility.Visible;
 
-                    _service.Capturer.SetOutput(null);
-                    _service.Manager.SetVideoCapture(null);
-
-                    _service.Capturer.Dispose();
-                    _service.Capturer = null;
-                }
-                else
-                {
-                    ViewfinderPanel.Visibility = Visibility.Visible;
-
-                    _service.Capturer = new VoipVideoCapture(string.Empty);
-
-                    _service.Capturer.SetOutput(Viewfinder);
-                    _service.Manager.SetVideoCapture(_service.Capturer);
-                }
-
-                CheckConstraints();
+                capturer.SetOutput(Viewfinder, false);
             }
+            else
+            {
+                ViewfinderPanel.Visibility = Visibility.Collapsed;
+            }
+
+            CheckConstraints();
         }
 
         private void Audio_Click(object sender, RoutedEventArgs e)
@@ -796,7 +803,7 @@ namespace Unigram.Views
 
             var video = new MenuFlyoutSubItem();
             video.Text = "Webcam";
-            video.Icon = new FontIcon { Glyph = Icons.MicOn, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
+            video.Icon = new FontIcon { Glyph = Icons.Camera, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
 
             var videoDevices = await DeviceInformation.FindAllAsync(DeviceClass.VideoCapture);
             foreach (var device in videoDevices)
@@ -822,7 +829,7 @@ namespace Unigram.Views
 
             var input = new MenuFlyoutSubItem();
             input.Text = "Microphone";
-            input.Icon = new FontIcon { Glyph = Icons.MicOn, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
+            input.Icon = new FontIcon { Glyph = Icons.MicOn, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
             input.Items.Add(defaultInput);
 
             var inputDevices = await DeviceInformation.FindAllAsync(DeviceClass.AudioCapture);
@@ -849,7 +856,7 @@ namespace Unigram.Views
 
             var output = new MenuFlyoutSubItem();
             output.Text = "Speaker";
-            output.Icon = new FontIcon { Glyph = Icons.Speaker, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
+            output.Icon = new FontIcon { Glyph = Icons.Speaker, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
             output.Items.Add(defaultOutput);
 
             var outputDevices = await DeviceInformation.FindAllAsync(DeviceClass.AudioRender);

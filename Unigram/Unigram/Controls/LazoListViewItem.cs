@@ -19,6 +19,10 @@ namespace Unigram.Controls
             {
                 _parent.OnPointerPressed(this, e);
             }
+            else if (e.OriginalSource is Grid grid && string.Equals(grid.Name, "ContentPresenterGrid") && !CantSelect())
+            {
+                _parent.OnPointerPressed(this, e);
+            }
 
             base.OnPointerPressed(e);
         }
@@ -26,6 +30,10 @@ namespace Unigram.Controls
         protected override void OnPointerEntered(PointerRoutedEventArgs e)
         {
             if (e.OriginalSource is ListViewItemPresenter)
+            {
+                _parent.OnPointerEntered(this, e);
+            }
+            else if (e.OriginalSource is Grid grid && string.Equals(grid.Name, "ContentPresenterGrid") && !CantSelect())
             {
                 _parent.OnPointerEntered(this, e);
             }
@@ -39,6 +47,10 @@ namespace Unigram.Controls
             {
                 _parent.OnPointerMoved(this, e);
             }
+            else if (e.OriginalSource is Grid grid && string.Equals(grid.Name, "ContentPresenterGrid") && !CantSelect())
+            {
+                _parent.OnPointerMoved(this, e);
+            }
 
             base.OnPointerMoved(e);
         }
@@ -49,6 +61,10 @@ namespace Unigram.Controls
             {
                 _parent.OnPointerReleased(this, e);
             }
+            else if (e.OriginalSource is Grid grid && string.Equals(grid.Name, "ContentPresenterGrid") && !CantSelect())
+            {
+                _parent.OnPointerReleased(this, e);
+            }
 
             base.OnPointerReleased(e);
         }
@@ -56,6 +72,10 @@ namespace Unigram.Controls
         protected override void OnPointerCanceled(PointerRoutedEventArgs e)
         {
             if (e.OriginalSource is ListViewItemPresenter)
+            {
+                _parent.OnPointerCanceled(this, e);
+            }
+            else if (e.OriginalSource is Grid grid && string.Equals(grid.Name, "ContentPresenterGrid") && !CantSelect())
             {
                 _parent.OnPointerCanceled(this, e);
             }

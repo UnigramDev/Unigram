@@ -5,6 +5,7 @@ using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Converters;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views;
@@ -21,9 +22,9 @@ namespace Unigram.ViewModels.Settings
         {
             Scopes = new MvxObservableCollection<SettingsNotificationsScope>
             {
-                new SettingsNotificationsScope(protoService, typeof(NotificationSettingsScopePrivateChats), Strings.Resources.NotificationsForPrivateChats),
-                new SettingsNotificationsScope(protoService, typeof(NotificationSettingsScopeGroupChats), Strings.Resources.NotificationsForGroups),
-                new SettingsNotificationsScope(protoService, typeof(NotificationSettingsScopeChannelChats), Strings.Resources.NotificationsForChannels),
+                new SettingsNotificationsScope(protoService, typeof(NotificationSettingsScopePrivateChats), Strings.Resources.NotificationsPrivateChats, Icons.Person),
+                new SettingsNotificationsScope(protoService, typeof(NotificationSettingsScopeGroupChats), Strings.Resources.NotificationsGroups, Icons.People),
+                new SettingsNotificationsScope(protoService, typeof(NotificationSettingsScopeChannelChats), Strings.Resources.NotificationsChannels, Icons.Megaphone),
             };
 
             foreach (var scope in Scopes)
@@ -36,14 +37,10 @@ namespace Unigram.ViewModels.Settings
             Aggregator.Subscribe(this);
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            foreach (var scope in Scopes)
-            {
-                scope.Update();
-            }
-
-            return Task.CompletedTask;
+            await base.OnNavigatedToAsync(parameter, mode, state);
+            RaisePropertyChanged(nameof(IsPinnedEnabled));
         }
 
         public MvxObservableCollection<SettingsNotificationsScope> Scopes { get; private set; }
@@ -52,10 +49,7 @@ namespace Unigram.ViewModels.Settings
 
         public bool InAppFlash
         {
-            get
-            {
-                return Settings.Notifications.InAppFlash;
-            }
+            get => Settings.Notifications.InAppFlash;
             set
             {
                 Settings.Notifications.InAppFlash = value;
@@ -65,10 +59,7 @@ namespace Unigram.ViewModels.Settings
 
         public bool InAppSounds
         {
-            get
-            {
-                return Settings.Notifications.InAppSounds;
-            }
+            get => Settings.Notifications.InAppSounds;
             set
             {
                 Settings.Notifications.InAppSounds = value;
@@ -78,10 +69,7 @@ namespace Unigram.ViewModels.Settings
 
         public bool InAppPreview
         {
-            get
-            {
-                return Settings.Notifications.InAppPreview;
-            }
+            get => Settings.Notifications.InAppPreview;
             set
             {
                 Settings.Notifications.InAppPreview = value;
@@ -93,38 +81,35 @@ namespace Unigram.ViewModels.Settings
 
         public bool IsContactEnabled
         {
-            get
-            {
-                return !CacheService.Options.DisableContactRegisteredNotifications && Settings.Notifications.IsContactEnabled;
-            }
+            get => !CacheService.Options.DisableContactRegisteredNotifications;
             set
             {
-                CacheService.Options.DisableContactRegisteredNotifications = !(Settings.Notifications.IsContactEnabled = value);
+                CacheService.Options.DisableContactRegisteredNotifications = !value;
                 RaisePropertyChanged();
             }
         }
 
         public bool IsPinnedEnabled
         {
-            get
+            get => Scopes.All(x => !x.DisablePinnedMessage);
+            set => SetPinnedEnabled(value);
+        }
+        
+        private async void SetPinnedEnabled(bool value)
+        {
+            foreach (var scope in Scopes)
             {
-                return !CacheService.Options.DisablePinnedMessageNotifications && Settings.Notifications.IsPinnedEnabled;
+                await scope.ToggleDisablePinnedMessage(!value);
             }
-            set
-            {
-                CacheService.Options.DisablePinnedMessageNotifications = !(Settings.Notifications.IsPinnedEnabled = value);
-                RaisePropertyChanged();
-            }
+
+            RaisePropertyChanged();
         }
 
         public bool IsAllAccountsAvailable => TLContainer.Current.GetSessions().Count() > 1;
 
         public bool IsAllAccountsNotifications
         {
-            get
-            {
-                return SettingsService.Current.IsAllAccountsNotifications;
-            }
+            get => SettingsService.Current.IsAllAccountsNotifications;
             set
             {
                 SettingsService.Current.IsAllAccountsNotifications = value;
@@ -134,10 +119,7 @@ namespace Unigram.ViewModels.Settings
 
         public bool IncludeMutedChats
         {
-            get
-            {
-                return Settings.Notifications.IncludeMutedChats;
-            }
+            get => Settings.Notifications.IncludeMutedChats;
             set
             {
                 Settings.Notifications.IncludeMutedChats = value;
@@ -151,10 +133,7 @@ namespace Unigram.ViewModels.Settings
 
         public bool CountUnreadMessages
         {
-            get
-            {
-                return Settings.Notifications.CountUnreadMessages;
-            }
+            get => Settings.Notifications.CountUnreadMessages;
             set
             {
                 Settings.Notifications.CountUnreadMessages = value;
@@ -198,46 +177,53 @@ namespace Unigram.ViewModels.Settings
     {
         private readonly Type _type;
         private readonly string _title;
+        private readonly string _glyph;
 
-        public SettingsNotificationsScope(IProtoService protoService, Type type, string title)
+        public SettingsNotificationsScope(IProtoService protoService, Type type, string title, string glyph)
             : base(protoService, null, null, null)
         {
             _type = type;
             _title = title;
+            _glyph = glyph;
         }
 
         public string Title => _title;
 
+        public string Glyph => _glyph;
+
         private bool _alert;
         public bool Alert
         {
-            get { return _alert; }
-            set { Set(ref _alert, value); }
+            get => _alert;
+            set => Set(ref _alert, value);
         }
 
         private bool _preview;
         public bool Preview
         {
-            get { return _preview; }
-            set { Set(ref _preview, value); }
+            get => _preview;
+            set => Set(ref _preview, value);
         }
 
         private string _sound;
         public string Sound
         {
-            get { return _sound; }
-            set { Set(ref _sound, value); }
+            get => _sound;
+            set => Set(ref _sound, value);
         }
 
         private string _exceptionsCount;
         public string ExceptionsCount
         {
-            get { return _exceptionsCount; }
-            set { Set(ref _exceptionsCount, value); }
+            get => _exceptionsCount;
+            set => Set(ref _exceptionsCount, value);
         }
 
         private bool _disableMention;
+        public bool DisableMention => _disableMention;
+
         private bool _disablePinnedMessage;
+        public bool DisablePinnedMessage => _disablePinnedMessage;
 
         public void Reset()
         {
@@ -261,39 +247,39 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public void Update()
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            ProtoService.Send(new GetScopeNotificationSettings(GetScope()), result =>
+            var settings = await ProtoService.SendAsync(new GetScopeNotificationSettings(GetScope())) as ScopeNotificationSettings;
+            if (settings != null)
             {
-                if (result is ScopeNotificationSettings settings)
-                {
-                    BeginOnUIThread(() =>
-                    {
-                        Alert = settings.MuteFor == 0;
-                        Preview = settings.ShowPreview;
-                        Sound = string.Empty;
-                        _disablePinnedMessage = settings.DisablePinnedMessageNotifications;
-                        _disableMention = settings.DisableMentionNotifications;
-                    });
-                }
-            });
+                Alert = settings.MuteFor == 0;
+                Preview = settings.ShowPreview;
+                Sound = string.Empty;
 
-            ProtoService.Send(new GetChatNotificationSettingsExceptions(GetScope(), false), result =>
+                _disablePinnedMessage = settings.DisablePinnedMessageNotifications;
+                _disableMention = settings.DisableMentionNotifications;
+            }
+
+            var chats = await ProtoService.SendAsync(new GetChatNotificationSettingsExceptions(GetScope(), false)) as Telegram.Td.Api.Chats;
+            if (chats != null)
             {
-                if (result is Telegram.Td.Api.Chats chats)
-                {
-                    BeginOnUIThread(() =>
-                    {
-                        ExceptionsCount = Locale.Declension("Chats", chats.ChatIds.Count);
-                    });
-                }
-            });
+                ExceptionsCount = string.Format("{0}, {1}", Alert ? Strings.Resources.NotificationsOn : Strings.Resources.NotificationsOff, Locale.Declension("Exception", chats.ChatIds.Count));
+            }
         }
 
         public RelayCommand SendCommand { get; }
-        public async void SendExecute()
+        public void SendExecute()
         {
-            await ProtoService.SendAsync(new SetScopeNotificationSettings(GetScope(), new ScopeNotificationSettings(_alert ? 0 : int.MaxValue, string.Empty, _preview, _disablePinnedMessage, _disableMention)));
+            ProtoService.Send(new SetScopeNotificationSettings(GetScope(), new ScopeNotificationSettings(_alert ? 0 : int.MaxValue, string.Empty, _preview, _disablePinnedMessage, _disableMention)));
+        }
+
+        public async Task ToggleDisablePinnedMessage(bool disable)
+        {
+            var settings = await ProtoService.SendAsync(new GetScopeNotificationSettings(GetScope())) as ScopeNotificationSettings;
+            if (settings != null)
+            {
+                await ProtoService.SendAsync(new SetScopeNotificationSettings(GetScope(), new ScopeNotificationSettings(settings.MuteFor, settings.Sound, settings.ShowPreview, disable, settings.DisableMentionNotifications)));
+            }
         }
 
         public RelayCommand ExceptionsCommand { get; }

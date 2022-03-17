@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
@@ -8,17 +9,18 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Cells;
 using Unigram.Converters;
+using Unigram.Navigation;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Folders;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI;
 using Windows.UI.Core;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
@@ -53,6 +55,28 @@ namespace Unigram.Views.Popups
             };
         }
 
+        protected override void OnApplyTemplate()
+        {
+            IsPrimaryButtonSplit = ViewModel.IsSendAsCopyEnabled;
+
+            var button = GetTemplateChild("PrimarySplitButton") as Button;
+            if (button != null && ViewModel.IsSendAsCopyEnabled)
+            {
+                button.Click += PrimaryButton_ContextRequested;
+            }
+
+            base.OnApplyTemplate();
+        }
+
+        private void PrimaryButton_ContextRequested(object sender, RoutedEventArgs args)
+        {
+            var flyout = new MenuFlyout();
+            flyout.CreateFlyoutItem(new RelayCommand(() => { ViewModel.SendAsCopy = true; Hide(ContentDialogResult.Primary); }), Strings.Resources.HideSenderNames.Replace("\\’", "’"), new FontIcon { Glyph = Icons.DocumentCopy });
+            flyout.CreateFlyoutItem(new RelayCommand(() => { ViewModel.RemoveCaptions = true; Hide(ContentDialogResult.Primary); }), Strings.Resources.HideCaption, new FontIcon { Glyph = Icons.Block });
+
+            flyout.ShowAt(sender as FrameworkElement, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedRight });
+        }
+
         private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (string.Equals(e.PropertyName, "PreSelectedItems", StringComparison.OrdinalIgnoreCase))
@@ -70,21 +94,9 @@ namespace Unigram.Views.Popups
 
         #region Show
 
-        private static readonly Dictionary<int, WeakReference<SharePopup>> _windowContext = new Dictionary<int, WeakReference<SharePopup>>();
         public static SharePopup GetForCurrentView()
         {
             return new SharePopup();
-
-            var id = ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow);
-            if (_windowContext.TryGetValue(id, out WeakReference<SharePopup> reference) && reference.TryGetTarget(out SharePopup value))
-            {
-                return value;
-            }
-
-            var context = new SharePopup();
-            _windowContext[id] = new WeakReference<SharePopup>(context);
-
-            return context;
         }
 
         public static async Task<Chat> PickChatAsync(string title)
@@ -133,7 +145,6 @@ namespace Unigram.Views.Popups
             ViewModel.IsSendAsCopyEnabled = false;
             ViewModel.IsChatSelection = false;
 
-            ViewModel.Clear();
             ViewModel.GroupCall = call;
 
             return ShowAsync();
@@ -147,7 +158,6 @@ namespace Unigram.Views.Popups
             ViewModel.IsSendAsCopyEnabled = false;
             ViewModel.IsChatSelection = false;
 
-            ViewModel.Clear();
             ViewModel.Package = package;
 
             return ShowAsync();
@@ -161,14 +171,13 @@ namespace Unigram.Views.Popups
             ViewModel.IsSendAsCopyEnabled = false;
             ViewModel.IsChatSelection = false;
 
-            ViewModel.Clear();
             ViewModel.SwitchInline = switchInline;
             ViewModel.SwitchInlineBot = bot;
 
             return ShowAsync();
         }
 
-        public Task<ContentDialogResult> ShowAsync(string message, bool hasUrl)
+        public Task<ContentDialogResult> ShowAsync(FormattedText message)
         {
             ChatsPanel.SelectionMode = ListViewSelectionMode.Single;
             ViewModel.SearchType = SearchChatsType.Post;
@@ -176,9 +185,7 @@ namespace Unigram.Views.Popups
             ViewModel.IsSendAsCopyEnabled = false;
             ViewModel.IsChatSelection = false;
 
-            ViewModel.Clear();
             ViewModel.SendMessage = message;
-            ViewModel.SendMessageUrl = hasUrl;
 
             return ShowAsync();
         }
@@ -191,7 +198,6 @@ namespace Unigram.Views.Popups
             ViewModel.IsSendAsCopyEnabled = true;
             ViewModel.IsChatSelection = false;
 
-            ViewModel.Clear();
             ViewModel.Messages = new[] { message };
             ViewModel.IsWithMyScore = withMyScore;
 
@@ -239,7 +245,6 @@ namespace Unigram.Views.Popups
             ViewModel.IsSendAsCopyEnabled = true;
             ViewModel.IsChatSelection = false;
 
-            ViewModel.Clear();
             ViewModel.Messages = messages;
             ViewModel.IsWithMyScore = withMyScore;
 
@@ -254,7 +259,6 @@ namespace Unigram.Views.Popups
             ViewModel.IsSendAsCopyEnabled = false;
             ViewModel.IsChatSelection = false;
 
-            ViewModel.Clear();
             ViewModel.ShareLink = link;
             ViewModel.ShareTitle = title;
 
@@ -269,7 +273,6 @@ namespace Unigram.Views.Popups
             ViewModel.IsSendAsCopyEnabled = false;
             ViewModel.IsChatSelection = false;
 
-            ViewModel.Clear();
             ViewModel.InputMedia = inputMedia;
 
             //if (inputMedia is TLInputMediaGame gameMedia && gameMedia.Id is TLInputGameShortName shortName)
@@ -288,7 +291,6 @@ namespace Unigram.Views.Popups
             ViewModel.IsSendAsCopyEnabled = false;
             ViewModel.IsChatSelection = false;
 
-            ViewModel.Clear();
             ViewModel.InviteBot = bot;
             ViewModel.InviteToken = token;
 
@@ -303,7 +305,6 @@ namespace Unigram.Views.Popups
             ViewModel.IsSendAsCopyEnabled = false;
             ViewModel.IsChatSelection = true;
 
-            ViewModel.Clear();
             ViewModel.PreSelectedItems = selectedItems;
 
             return ShowAsync();
@@ -351,8 +352,8 @@ namespace Unigram.Views.Popups
             var header = new ListView();
             header.SelectionMode = ListViewSelectionMode.Multiple;
             header.ItemsSource = flags;
-            header.ItemTemplate = App.Current.Resources["FolderPickerTemplate"] as DataTemplate;
-            header.ItemContainerStyle = App.Current.Resources["DefaultListViewItemStyle"] as Style;
+            header.ItemTemplate = BootStrapper.Current.Resources["FolderPickerTemplate"] as DataTemplate;
+            header.ItemContainerStyle = BootStrapper.Current.Resources["DefaultListViewItemStyle"] as Style;
             header.ContainerContentChanging += Header_ContainerContentChanging;
 
             foreach (var filter in target.OfType<FilterFlag>())
@@ -367,27 +368,27 @@ namespace Unigram.Views.Popups
             var panel = new StackPanel();
             panel.Children.Add(new Border
             {
-                Background = App.Current.Resources["PageBackgroundDarkBrush"] as Brush,
+                Background = BootStrapper.Current.Resources["PageBackgroundDarkBrush"] as Brush,
                 Child = new TextBlock
                 {
                     Text = Strings.Resources.FilterChatTypes,
                     Padding = new Thickness(12, 0, 0, 0),
-                    Style = App.Current.Resources["SettingsGroupTextBlockStyle"] as Style
+                    Style = BootStrapper.Current.Resources["SettingsGroupTextBlockStyle"] as Style
                 }
             });
             panel.Children.Add(header);
             panel.Children.Add(new Border
             {
-                Background = App.Current.Resources["PageBackgroundDarkBrush"] as Brush,
+                Background = BootStrapper.Current.Resources["PageBackgroundDarkBrush"] as Brush,
                 Child = new TextBlock
                 {
                     Text = Strings.Resources.FilterChats,
                     Padding = new Thickness(12, 0, 0, 0),
-                    Style = App.Current.Resources["SettingsGroupTextBlockStyle"] as Style
+                    Style = BootStrapper.Current.Resources["SettingsGroupTextBlockStyle"] as Style
                 }
             });
 
-            var dialog = SharePopup.GetForCurrentView();
+            var dialog = GetForCurrentView();
             dialog.ViewModel.Title = include ? Strings.Resources.FilterAlwaysShow : Strings.Resources.FilterNeverShow;
             dialog.ViewModel.AllowEmptySelection = true;
             dialog.Header = panel;
@@ -474,7 +475,7 @@ namespace Unigram.Views.Popups
         {
             if (args.ItemContainer == null)
             {
-                args.ItemContainer = new MultipleListViewItem();
+                args.ItemContainer = new MultipleListViewItem(false);
                 args.ItemContainer.Style = ChatsPanel.ItemContainerStyle;
                 args.ItemContainer.ContentTemplate = ChatsPanel.ItemTemplate;
             }
@@ -497,7 +498,7 @@ namespace Unigram.Views.Popups
             var photo = content.Photo;
             var title = content.Children[1] as TextBlock;
 
-            photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 36);
+            photo.SetChat(ViewModel.ProtoService, chat, 36);
             title.Text = ViewModel.ProtoService.GetTitle(chat);
         }
 
@@ -604,11 +605,11 @@ namespace Unigram.Views.Popups
                     var photo = content.Children[0] as ProfilePicture;
                     if (result.Chat != null)
                     {
-                        photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, result.Chat, 36);
+                        photo.SetChat(ViewModel.ProtoService, result.Chat, 36);
                     }
                     else if (result.User != null)
                     {
-                        photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, result.User, 36);
+                        photo.SetUser(ViewModel.ProtoService, result.User, 36);
                     }
                 }
 
@@ -636,7 +637,7 @@ namespace Unigram.Views.Popups
             var photo = grid.Children[0] as ProfilePicture;
             var title = content.Children[1] as TextBlock;
 
-            photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 48);
+            photo.SetChat(ViewModel.ProtoService, chat, 48);
             title.Text = ViewModel.ProtoService.GetTitle(chat, true);
 
             var badge = grid.Children[1] as Border;
@@ -652,10 +653,11 @@ namespace Unigram.Views.Popups
 
         private void Search_Click(object sender, RoutedEventArgs e)
         {
-            MainHeader.Visibility = Visibility.Collapsed;
-            SearchField.Visibility = Visibility.Visible;
+            if (SearchField.FocusState == FocusState.Keyboard && sender == SearchField)
+            {
+                return;
+            }
 
-            SearchField.Focus(FocusState.Keyboard);
             Search_TextChanged(null, null);
         }
 
@@ -663,9 +665,6 @@ namespace Unigram.Views.Popups
         {
             if (string.IsNullOrEmpty(SearchField.Text))
             {
-                MainHeader.Visibility = Visibility.Visible;
-                SearchField.Visibility = Visibility.Collapsed;
-
                 Focus(FocusState.Programmatic);
             }
 
@@ -676,14 +675,24 @@ namespace Unigram.Views.Popups
         {
             if (SearchField.FocusState == FocusState.Unfocused && string.IsNullOrEmpty(SearchField.Text))
             {
-                DialogsSearchListView.Visibility = Visibility.Collapsed;
+                if (SearchPanel != null)
+                {
+                    SearchPanel.Visibility = Visibility.Collapsed;
+                }
 
                 ViewModel.TopChats = null;
                 ViewModel.Search = null;
             }
             else if (SearchField.FocusState != FocusState.Unfocused)
             {
-                DialogsSearchListView.Visibility = Visibility.Visible;
+                if (SearchPanel == null)
+                {
+                    FindName(nameof(SearchPanel));
+                    SearchPanel.Width = ChatsPanel.ActualWidth;
+                    SearchPanel.Height = ChatsPanel.ActualHeight;
+                }
+
+                SearchPanel.Visibility = Visibility.Visible;
 
                 if (string.IsNullOrEmpty(SearchField.Text))
                 {
@@ -712,7 +721,7 @@ namespace Unigram.Views.Popups
                 return;
             }
 
-            if (e.Key == Windows.System.VirtualKey.Up || e.Key == Windows.System.VirtualKey.Down)
+            if (e.Key is Windows.System.VirtualKey.Up or Windows.System.VirtualKey.Down)
             {
                 var index = e.Key == Windows.System.VirtualKey.Up ? -1 : 1;
                 var next = activeList.SelectedIndex + index;
@@ -750,13 +759,19 @@ namespace Unigram.Views.Popups
 
         #endregion
 
+        #region Binding
+
+        private bool ConvertButtonEnabled(bool allowEmpty, int count)
+        {
+            return allowEmpty || count > 0;
+        }
+
+        #endregion
+
         private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ViewModel.SelectedItems = new MvxObservableCollection<Chat>(ChatsPanel.SelectedItems.Cast<Chat>());
 
-            CommentPanel.Visibility = ViewModel.SelectedItems.Count > 0 && ViewModel.IsCommentEnabled ? Visibility.Visible : Visibility.Collapsed;
-
-            IsPrimaryButtonEnabled = ViewModel.AllowEmptySelection || ViewModel.SelectedItems.Count > 0;
         }
 
         private void List_ItemClick(object sender, ItemClickEventArgs e)
@@ -846,9 +861,11 @@ namespace Unigram.Views.Popups
 
         private void List_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Header2.Width = e.NewSize.Width;
-            DialogsSearchListView.Width = e.NewSize.Width;
-            DialogsSearchListView.Height = e.NewSize.Height;
+            if (SearchPanel != null)
+            {
+                SearchPanel.Width = e.NewSize.Width;
+                SearchPanel.Height = e.NewSize.Height;
+            }
         }
 
         private void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
@@ -864,36 +881,93 @@ namespace Unigram.Views.Popups
 
         private void OnCharacterReceived(CoreWindow sender, CharacterReceivedEventArgs args)
         {
-            var character = System.Text.Encoding.UTF32.GetString(BitConverter.GetBytes(args.KeyCode));
+            var character = Encoding.UTF32.GetString(BitConverter.GetBytes(args.KeyCode));
             if (character.Length == 0)
             {
                 return;
             }
-            else if (/*character != "\r" &&*/ char.IsControl(character[0]))
+            else if (character != "\u0016" && character != "\r" && char.IsControl(character[0]))
             {
                 return;
             }
-            else if (/*character != "\r" &&*/ char.IsWhiteSpace(character[0]))
+            else if (character != "\u0016" && character != "\r" && char.IsWhiteSpace(character[0]))
             {
                 return;
             }
 
             var focused = FocusManager.GetFocusedElement();
-            if (focused == null || (focused is TextBox == false && focused is RichEditBox == false))
+            if (focused is null or (not TextBox and not RichEditBox))
             {
-                //if (IsPrimaryButtonEnabled && character == "\r")
-                //{
-                //    ViewModel.SendCommand.Execute();
-                //}
-                //else
+                if (character == "\u0016" && CaptionInput.CanPasteClipboardContent)
+                {
+                    CaptionInput.Focus(FocusState.Keyboard);
+                    CaptionInput.PasteFromClipboard();
+                }
+                else if (character == "\r" && IsPrimaryButtonEnabled)
+                {
+                    Accept();
+                }
+                else
                 {
                     Search_Click(null, null);
+
+                    SearchField.Focus(FocusState.Keyboard);
                     SearchField.Text = character;
                     SearchField.SelectionStart = character.Length;
                 }
 
                 args.Handled = true;
             }
+        }
+
+        private void Accept()
+        {
+            if (CaptionInput.HandwritingView.IsOpen)
+            {
+                void handler(object s, RoutedEventArgs args)
+                {
+                    CaptionInput.HandwritingView.Unloaded -= handler;
+
+                    ViewModel.Caption = CaptionInput.GetFormattedText();
+                    Hide(ContentDialogResult.Primary);
+                }
+
+                CaptionInput.HandwritingView.Unloaded += handler;
+                CaptionInput.HandwritingView.TryClose();
+            }
+            else
+            {
+                ViewModel.Caption = CaptionInput.GetFormattedText();
+                Hide(ContentDialogResult.Primary);
+            }
+        }
+
+        private void Emoji_Click(object sender, RoutedEventArgs e)
+        {
+            // We don't want to unfocus the text are when the context menu gets opened
+            EmojiFlyout.ShowAt(CaptionInput, new FlyoutShowOptions { ShowMode = FlyoutShowMode.Transient });
+        }
+
+        private void Emoji_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            if (e.ClickedItem is EmojiData emoji)
+            {
+                EmojiFlyout.Hide();
+
+                CaptionInput.InsertText(emoji.Value);
+                CaptionInput.Focus(FocusState.Programmatic);
+            }
+        }
+
+        private void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            ViewModel.Caption = CaptionInput.GetFormattedText();
+            ViewModel.SendCommand.Execute();
+        }
+
+        private void CaptionInput_Accept(FormattedTextBox sender, EventArgs args)
+        {
+            Accept();
         }
     }
 }

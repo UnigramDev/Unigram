@@ -17,12 +17,11 @@ using Windows.UI.Xaml.Input;
 
 namespace Unigram.Controls
 {
-    public sealed partial class PlaybackHeader : UserControl, IHandle<UpdateFile>
+    public sealed partial class PlaybackHeader : UserControl
     {
         private IProtoService _cacheService;
         private IPlaybackService _playbackService;
         private INavigationService _navigationService;
-        private IEventAggregator _aggregator;
 
         private readonly Visual _visual1;
         private readonly Visual _visual2;
@@ -47,12 +46,11 @@ namespace Unigram.Controls
             _visual = _visual1;
         }
 
-        public void Update(IProtoService cacheService, IPlaybackService playbackService, INavigationService navigationService, IEventAggregator aggregator)
+        public void Update(IProtoService cacheService, IPlaybackService playbackService, INavigationService navigationService)
         {
             _cacheService = cacheService;
             _playbackService = playbackService;
             _navigationService = navigationService;
-            _aggregator = aggregator;
 
             _playbackService.MediaFailed -= OnMediaFailed;
             _playbackService.MediaFailed += OnMediaFailed;
@@ -114,37 +112,6 @@ namespace Unigram.Controls
             });
         }
 
-        public void Handle(UpdateFile update)
-        {
-            UpdateFile(update.File);
-        }
-
-        private void UpdateFile(File file)
-        {
-            foreach (var item in _playbackService.Items)
-            {
-                if (item.UpdateFile(file))
-                {
-                    this.BeginOnUIThread(() =>
-                    {
-                        var container = Items.ContainerFromItem(item) as SelectorItem;
-                        if (container == null)
-                        {
-                            return;
-                        }
-
-                        var cell = container.ContentTemplateRoot as SharedAudioCell;
-                        if (cell == null)
-                        {
-                            return;
-                        }
-
-                        cell.UpdateFile(item.Message, file);
-                    });
-                }
-            }
-        }
-
         private void UpdatePosition()
         {
             if (_scrubbing)
@@ -164,8 +131,6 @@ namespace Unigram.Controls
                 _chatId = 0;
                 _messageId = 0;
 
-                _aggregator.Unsubscribe(this);
-
                 TitleLabel1.Text = TitleLabel2.Text = string.Empty;
                 SubtitleLabel1.Text = SubtitleLabel2.Text = string.Empty;
                 Visibility = Visibility.Collapsed;
@@ -174,7 +139,6 @@ namespace Unigram.Controls
             }
             else
             {
-                _aggregator.Subscribe(this);
                 Visibility = Visibility.Visible;
             }
 
@@ -190,11 +154,11 @@ namespace Unigram.Controls
                 var title = string.Empty;
                 var date = Converter.DateTime(message.Date);
 
-                if (_cacheService.TryGetUser(message.Sender, out Telegram.Td.Api.User senderUser))
+                if (_cacheService.TryGetUser(message.SenderId, out Telegram.Td.Api.User senderUser))
                 {
                     title = senderUser.Id == _cacheService.Options.MyId ? Strings.Resources.ChatYourSelfName : senderUser.GetFullName();
                 }
-                else if (_cacheService.TryGetChat(message.Sender, out Chat senderChat))
+                else if (_cacheService.TryGetChat(message.SenderId, out Chat senderChat))
                 {
                     title = _cacheService.GetTitle(senderChat);
                 }
@@ -302,7 +266,7 @@ namespace Unigram.Controls
 
         private void UpdateRate()
         {
-            RateButton.Visibility = _playbackService.IsSupportedPlaybackRateRange(2.0, 2.0) ? Visibility.Visible : Visibility.Collapsed;
+            RateButton.Visibility = Visibility.Visible; //_playbackService.IsSupportedPlaybackRateRange(2.0, 2.0) ? Visibility.Visible : Visibility.Collapsed;
             RateButton.IsChecked = _playbackService.PlaybackRate != 1.0;
         }
 
@@ -344,7 +308,7 @@ namespace Unigram.Controls
                 case double n when n >= 1d / 2d:
                     VolumeButton.Glyph = Icons.Speaker;
                     break;
-                case double n when n > 0 && n < 1d / 2d:
+                case double n when n is > 0 and < (1d / 2d):
                     VolumeButton.Glyph = Icons.Speaker1;
                     break;
 
@@ -392,14 +356,15 @@ namespace Unigram.Controls
         private void Rate_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
             var flyout = new MenuFlyout();
-            var rates = new double[] { 0.25, 0.5, 0.75, 1, 1.25, 1.50, 1.75, 2 };
+            var rates = new double[] { 0.25, 0.5, 1, 1.5, 2 };
+            var labels = new string[] { Strings.Resources.SpeedVerySlow, Strings.Resources.SpeedSlow, Strings.Resources.SpeedNormal, Strings.Resources.SpeedFast, Strings.Resources.SpeedVeryFast };
 
             for (int i = 0; i < rates.Length; i++)
             {
                 var rate = rates[i];
                 var toggle = new ToggleMenuFlyoutItem
                 {
-                    Text = $"{rate}",
+                    Text = labels[i],
                     IsChecked = _playbackService.PlaybackRate == rate,
                     CommandParameter = rate,
                     Command = new RelayCommand<double>(x =>

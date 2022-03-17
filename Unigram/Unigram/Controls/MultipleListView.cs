@@ -13,12 +13,16 @@ namespace Unigram.Controls
 
     public class MultipleListViewItem : TextListViewItem
     {
+        private readonly bool _multi;
         private bool _selected;
 
-        public MultipleListViewItem()
+        public MultipleListViewItem(bool multi = true)
         {
+            _multi = multi;
             DefaultStyleKey = typeof(MultipleListViewItem);
         }
+
+        public bool IsSingle => !_multi;
 
         public void UpdateState(bool selected)
         {
@@ -29,10 +33,14 @@ namespace Unigram.Controls
 
             if (ContentTemplateRoot is IMultipleElement test)
             {
+                _selected = selected;
                 test.UpdateState(selected, true);
             }
+        }
 
-            _selected = selected;
+        protected override bool GoToElementStateCore(string stateName, bool useTransitions)
+        {
+            return base.GoToElementStateCore(stateName, useTransitions);
         }
     }
 
@@ -56,9 +64,9 @@ namespace Unigram.Controls
             if (group.Name == "MultiSelectStates")
             {
                 _multi = stateName == "MultiSelectEnabled";
-                selector.UpdateState(_multi && selector.IsSelected);
+                selector.UpdateState((_multi || selector.IsSingle) && selector.IsSelected);
             }
-            else if (_multi && stateName.EndsWith("Selected"))
+            else if ((_multi || selector.IsSingle) && stateName.EndsWith("Selected"))
             {
                 stateName = stateName.Replace("Selected", string.Empty);
 

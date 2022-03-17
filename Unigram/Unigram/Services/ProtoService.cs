@@ -1,12 +1,8 @@
-﻿using Microsoft.Toolkit.HighPerformance.Buffers;
-using Microsoft.Toolkit.HighPerformance.Extensions;
-using System;
+﻿using System;
 using System.Buffers;
-using System.Buffers.Text;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Td;
@@ -36,6 +32,7 @@ namespace Unigram.Services
         Task<StorageFile> GetFileAsync(File file, bool completed = true);
         Task<StorageFile> GetFileAsync(string path);
 
+        void AddFileToDownloads(int fileId, long chatId, long messageId, int priority = 30);
         void DownloadFile(int fileId, int priority, int offset = 0, int limit = 0, bool synchronous = false);
         void CancelDownloadFile(int fileId, bool onlyIfPending = false);
         bool IsDownloadFileCanceled(int fileId);
@@ -49,6 +46,8 @@ namespace Unigram.Services
 
     public interface ICacheService
     {
+        IDictionary<string, Reaction> Reactions { get; }
+
         IOptionsService Options { get; }
         JsonValueObject Config { get; }
 
@@ -67,10 +66,13 @@ namespace Unigram.Services
         string GetTitle(Chat chat, bool tiny = false);
         string GetTitle(MessageForwardInfo info);
 
+        IList<Reaction> GetAvailableReactions(Chat chat);
+        Task<IList<Reaction>> GetAvailableReactionsAsync(Message message);
+
         Chat GetChat(long id);
         IList<Chat> GetChats(IList<long> ids);
 
-        IDictionary<int, ChatAction> GetChatActions(long id);
+        IDictionary<MessageSender, ChatAction> GetChatActions(long id);
 
         bool IsSavedMessages(User user);
         bool IsSavedMessages(Chat chat);
@@ -86,42 +88,44 @@ namespace Unigram.Services
         bool TryGetChat(long chatId, out Chat chat);
         bool TryGetChat(MessageSender sender, out Chat value);
 
+        bool TryGetChatFromUser(long userId, out long value);
+
         SecretChat GetSecretChat(int id);
         SecretChat GetSecretChat(Chat chat);
-        SecretChat GetSecretChatForUser(int id);
+        SecretChat GetSecretChatForUser(long id);
 
         User GetUser(Chat chat);
-        User GetUser(int id);
-        bool TryGetUser(int id, out User value);
+        User GetUser(long id);
+        bool TryGetUser(long id, out User value);
         bool TryGetUser(Chat chat, out User value);
         bool TryGetUser(MessageSender sender, out User value);
 
-        UserFullInfo GetUserFull(int id);
+        UserFullInfo GetUserFull(long id);
         UserFullInfo GetUserFull(Chat chat);
-        IList<User> GetUsers(IList<int> ids);
+        bool TryGetUserFull(long id, out UserFullInfo value);
+        bool TryGetUserFull(Chat chat, out UserFullInfo value);
 
-        BasicGroup GetBasicGroup(int id);
+        IList<User> GetUsers(IList<long> ids);
+
+        BasicGroup GetBasicGroup(long id);
         BasicGroup GetBasicGroup(Chat chat);
-        bool TryGetBasicGroup(int id, out BasicGroup value);
+        bool TryGetBasicGroup(long id, out BasicGroup value);
         bool TryGetBasicGroup(Chat chat, out BasicGroup value);
 
-        BasicGroupFullInfo GetBasicGroupFull(int id);
+        BasicGroupFullInfo GetBasicGroupFull(long id);
         BasicGroupFullInfo GetBasicGroupFull(Chat chat);
-        bool TryGetBasicGroupFull(int id, out BasicGroupFullInfo value);
+        bool TryGetBasicGroupFull(long id, out BasicGroupFullInfo value);
         bool TryGetBasicGroupFull(Chat chat, out BasicGroupFullInfo value);
 
-        Supergroup GetSupergroup(int id);
+        Supergroup GetSupergroup(long id);
         Supergroup GetSupergroup(Chat chat);
-        bool TryGetSupergroup(int id, out Supergroup value);
+        bool TryGetSupergroup(long id, out Supergroup value);
         bool TryGetSupergroup(Chat chat, out Supergroup value);
 
-        SupergroupFullInfo GetSupergroupFull(int id);
+        SupergroupFullInfo GetSupergroupFull(long id);
         SupergroupFullInfo GetSupergroupFull(Chat chat);
-        bool TryGetSupergroupFull(int id, out SupergroupFullInfo value);
+        bool TryGetSupergroupFull(long id, out SupergroupFullInfo value);
         bool TryGetSupergroupFull(Chat chat, out SupergroupFullInfo value);
-
-        bool TryGetChatForFileId(int fileId, out Chat chat);
-        bool TryGetUserForFileId(int fileId, out User user);
 
         bool IsAnimationSaved(int id);
         bool IsStickerFavorite(int id);
@@ -130,13 +134,12 @@ namespace Unigram.Services
         ChatListUnreadCount GetUnreadCount(ChatList chatList);
         void SetUnreadCount(ChatList chatList, UpdateUnreadChatCount chatCount = null, UpdateUnreadMessageCount messageCount = null);
 
-        int GetNotificationSettingsMuteFor(Chat chat);
-        ScopeNotificationSettings GetScopeNotificationSettings(Chat chat);
+        ChatTheme GetChatTheme(string themeName);
+        IList<ChatTheme> GetChatThemes();
 
-        Task<StickerSet> GetAnimatedSetAsync(AnimatedSetType type);
         bool IsDiceEmoji(string text, out string dice);
 
-        File GetEmojiSound(string emoji);
+        Settings.NotificationsSettings Notifications { get; }
     }
 
     public partial class ProtoService : IProtoService, ClientResultHandler
@@ -151,32 +154,27 @@ namespace Unigram.Services
         private readonly ILocaleService _locale;
         private readonly IEventAggregator _aggregator;
 
+        private readonly Action<BaseObject> _processFilesDelegate;
+
         private readonly Dictionary<long, Chat> _chats = new Dictionary<long, Chat>();
-        private readonly ConcurrentDictionary<long, ConcurrentDictionary<int, ChatAction>> _chatActions = new ConcurrentDictionary<long, ConcurrentDictionary<int, ChatAction>>();
+        private readonly ConcurrentDictionary<long, ConcurrentDictionary<MessageSender, ChatAction>> _chatActions = new ConcurrentDictionary<long, ConcurrentDictionary<MessageSender, ChatAction>>();
 
         private readonly Dictionary<int, SecretChat> _secretChats = new Dictionary<int, SecretChat>();
 
-        private readonly Dictionary<int, User> _users = new Dictionary<int, User>();
-        private readonly Dictionary<int, UserFullInfo> _usersFull = new Dictionary<int, UserFullInfo>();
+        private readonly Dictionary<long, long> _usersToChats = new Dictionary<long, long>();
 
-        private readonly Dictionary<int, BasicGroup> _basicGroups = new Dictionary<int, BasicGroup>();
-        private readonly Dictionary<int, BasicGroupFullInfo> _basicGroupsFull = new Dictionary<int, BasicGroupFullInfo>();
+        private readonly Dictionary<long, User> _users = new Dictionary<long, User>();
+        private readonly Dictionary<long, UserFullInfo> _usersFull = new Dictionary<long, UserFullInfo>();
 
-        private readonly Dictionary<int, Supergroup> _supergroups = new Dictionary<int, Supergroup>();
-        private readonly Dictionary<int, SupergroupFullInfo> _supergroupsFull = new Dictionary<int, SupergroupFullInfo>();
+        private readonly Dictionary<long, BasicGroup> _basicGroups = new Dictionary<long, BasicGroup>();
+        private readonly Dictionary<long, BasicGroupFullInfo> _basicGroupsFull = new Dictionary<long, BasicGroupFullInfo>();
 
-        private readonly Dictionary<Type, ScopeNotificationSettings> _scopeNotificationSettings = new Dictionary<Type, ScopeNotificationSettings>();
+        private readonly Dictionary<long, Supergroup> _supergroups = new Dictionary<long, Supergroup>();
+        private readonly Dictionary<long, SupergroupFullInfo> _supergroupsFull = new Dictionary<long, SupergroupFullInfo>();
 
         private readonly Dictionary<int, ChatListUnreadCount> _unreadCounts = new Dictionary<int, ChatListUnreadCount>();
 
-        private readonly FlatFileContext<long> _chatsMap = new FlatFileContext<long>();
-        private readonly FlatFileContext<int> _usersMap = new FlatFileContext<int>();
-
-        private readonly StickerSet[] _animatedSet = new StickerSet[2] { null, null };
-        private readonly TaskCompletionSource<StickerSet>[] _animatedSetTask = new TaskCompletionSource<StickerSet>[2] { null, null };
-
-        private readonly Dictionary<string, File> _animatedSounds = new Dictionary<string, File>();
-        private readonly FlatFileContext<string> _animatedSoundsMap = new FlatFileContext<string>();
+        private readonly Dictionary<int, File> _files = new Dictionary<int, File>();
 
         private IList<string> _diceEmojis;
 
@@ -187,7 +185,11 @@ namespace Unigram.Services
 
         private IList<ChatFilterInfo> _chatFilters = new ChatFilterInfo[0];
 
+        private IDictionary<string, Reaction> _reactions = new Dictionary<string, Reaction>();
+
         private UpdateAnimationSearchParameters _animationSearchParameters;
+
+        private UpdateChatThemes _chatThemes;
 
         private AuthorizationState _authorizationState;
         private ConnectionState _connectionState;
@@ -199,6 +201,9 @@ namespace Unigram.Services
 
         private bool _initializeAfterClose;
 
+        private static volatile Task _longRunningTask;
+        private static volatile object _longRunningLock = new object();
+
         public ProtoService(int session, bool online, IDeviceInfoService deviceInfoService, ISettingsService settings, ILocaleService locale, IEventAggregator aggregator)
         {
             _session = session;
@@ -208,12 +213,14 @@ namespace Unigram.Services
             _options = new OptionsService(this);
             _aggregator = aggregator;
 
+            _processFilesDelegate = new Action<BaseObject>(ProcessFiles);
+
             Initialize(online);
         }
 
         public bool TryInitialize()
         {
-            if (_authorizationState == null || _authorizationState is AuthorizationStateClosed)
+            if (_authorizationState is null or AuthorizationStateClosed)
             {
                 Initialize();
                 return true;
@@ -230,6 +237,15 @@ namespace Unigram.Services
 
         private void Initialize(bool online = true)
         {
+            lock (_longRunningLock)
+            {
+                if (_longRunningTask == null)
+                {
+                    InitializeDiagnostics();
+                    _longRunningTask = Task.Factory.StartNew(Client.Run, TaskCreationOptions.LongRunning);
+                }
+            }
+
             _client = Client.Create(this);
 
             var parameters = new TdlibParameters
@@ -245,6 +261,12 @@ namespace Unigram.Services
                 DeviceModel = _deviceInfoService.DeviceModel,
                 UseTestDc = _settings.UseTestDC
             };
+
+            if (_settings.Diagnostics.DisableDatabase)
+            {
+                // ¯\_(ツ)_/¯
+                parameters.UseMessageDatabase = false;
+            }
 
 #if MOCKUP
             ProfilePhoto ProfilePhoto(string name)
@@ -349,19 +371,19 @@ namespace Unigram.Services
                 }
 
                 InitializeDiagnostics();
-                InitializeFlush();
 
+                _client.Send(new SetOption("ignore_background_updates", new OptionValueBoolean(_settings.Diagnostics.DisableDatabase)));
                 _client.Send(new SetOption("language_pack_database_path", new OptionValueString(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "langpack"))));
                 _client.Send(new SetOption("localization_target", new OptionValueString("android")));
                 _client.Send(new SetOption("language_pack_id", new OptionValueString(SettingsService.Current.LanguagePackId)));
                 //_client.Send(new SetOption("online", new OptionValueBoolean(online)));
                 _client.Send(new SetOption("online", new OptionValueBoolean(false)));
+                _client.Send(new SetOption("use_pfs", new OptionValueBoolean(true)));
                 _client.Send(new SetOption("notification_group_count_max", new OptionValueInteger(25)));
                 _client.Send(new SetTdlibParameters(parameters));
                 _client.Send(new CheckDatabaseEncryptionKey(new byte[0]));
                 _client.Send(new GetApplicationConfig(), UpdateConfig);
-                _client.Run();
-            }, TaskCreationOptions.LongRunning);
+            });
         }
 
         private void InitializeDiagnostics()
@@ -380,6 +402,11 @@ namespace Unigram.Services
                 var level = Client.Execute(new GetLogTagVerbosityLevel(tag)) as LogVerbosityLevel;
 
                 var saved = _settings.Diagnostics.GetValueOrDefault(tag, -1);
+                if (tag == "td_init")
+                {
+                    saved = 1;
+                }
+
                 if (saved != level.VerbosityLevel && saved > -1)
                 {
                     Client.Execute(new SetLogTagVerbosityLevel(tag, saved));
@@ -389,7 +416,7 @@ namespace Unigram.Services
 
         private void InitializeReady()
         {
-            Send(new GetChats(new ChatListMain(), long.MaxValue, 0, 20));
+            Send(new LoadChats(new ChatListMain(), 20));
 
             UpdateVersion();
         }
@@ -417,131 +444,17 @@ namespace Unigram.Services
             });
         }
 
-        private async void UpdateConfig(BaseObject value)
+        private void UpdateConfig(BaseObject value)
         {
             if (value is JsonValueObject obj)
             {
                 _config = obj;
-
-                // This is a temporary solution until sounds aren't provided
-                // through standard API.
-                var sounds = obj.GetNamedObject("emojies_sounds");
-                if (sounds != null)
-                {
-                    foreach (var member in sounds.Members)
-                    {
-                        if (member.Value is JsonValueObject sound)
-                        {
-                            try
-                            {
-                                var id = sound.GetNamedString("id", null);
-                                var access_hash = sound.GetNamedString("access_hash", null);
-                                var file_reference_base64 = sound.GetNamedString("file_reference_base64", null);
-
-                                var base64 = EncodeToBase64(id, access_hash, file_reference_base64);
-
-                                var response = await _client.SendAsync(new GetRemoteFile(base64, new FileTypeVoiceNote()));
-                                if (response is File file)
-                                {
-                                    _animatedSounds[member.Key] = file;
-                                    _animatedSoundsMap[file.Id] = member.Key;
-                                }
-                            }
-                            catch { }
-                        }
-                    }
-                }
-            }
-        }
-
-        private unsafe string EncodeToBase64(string id, string accessHash, string fileReferenceBase64)
-        {
-            using var bufferWriter = new ArrayPoolBufferWriter<byte>();
-
-            int fileType = 3 | (1 << 25);
-            int dcId = 2;
-            long id_ = long.Parse(id);
-            long access_hash_ = long.Parse(accessHash);
-
-            bufferWriter.Write(fileType);
-            bufferWriter.Write(dcId);
-
-            var maxUtf8Length = Encoding.UTF8.GetMaxByteCount(fileReferenceBase64.Length);
-
-            using (var utf8Buffer = SpanOwner<byte>.Allocate(maxUtf8Length))
-            {
-                int utf8BytesCount;
-
-                fixed (char* pSource = fileReferenceBase64)
-                fixed (byte* pDestination = &utf8Buffer.DangerousGetReference())
-                {
-                    utf8BytesCount = Encoding.UTF8.GetBytes(pSource, fileReferenceBase64.Length, pDestination, utf8Buffer.Length);
-                }
-
-                if (utf8BytesCount <= 253)
-                {
-                    bufferWriter.Write((byte)utf8BytesCount);
-                }
-                else
-                {
-                    bufferWriter.Write((byte)254);
-                    bufferWriter.Write((byte)utf8BytesCount);
-                    bufferWriter.Write((byte)(utf8BytesCount >> 8));
-                    bufferWriter.Write((byte)(utf8BytesCount >> 16));
-                }
-
-                bufferWriter.Write<byte>(utf8Buffer.Span.Slice(0, utf8BytesCount));
-
-                int j = utf8BytesCount <= 253 ? 1 : 4;
-                while ((utf8BytesCount + j) % 4 != 0)
-                {
-                    bufferWriter.Write((byte)0);
-                    j++;
-                }
-            }
-
-            bufferWriter.Write(id_);
-            bufferWriter.Write(access_hash_);
-
-            bufferWriter.Write((byte)30);
-            bufferWriter.Write((byte)4);
-
-            var bytes = bufferWriter.WrittenSpan;
-            using var resultBuffer = new ArrayPoolBufferWriter<byte>(bytes.Length);
-
-            for (int n = bytes.Length, i = 0; i < n; i++)
-            {
-                resultBuffer.Write(bytes[i]);
-                if (bytes[i] == 0)
-                {
-                    byte cnt = 1;
-                    while (cnt < 250 && i + cnt < n && bytes[i + cnt] == bytes[i])
-                    {
-                        cnt++;
-                    }
-
-                    resultBuffer.Write(cnt);
-                    i += cnt - 1;
-                }
-            }
-
-            var maxBase64Length = Base64.GetMaxEncodedToUtf8Length(resultBuffer.WrittenCount);
-
-            using (var utf8Buffer = SpanOwner<byte>.Allocate(maxBase64Length))
-            {
-                Base64.EncodeToUtf8(resultBuffer.WrittenSpan, utf8Buffer.Span, out _, out int bytesWritten);
-
-                fixed (byte* p = utf8Buffer.Span)
-                {
-                    return Encoding.UTF8.GetString(p, bytesWritten)
-                        .TrimEnd('=').Replace('+', '-').Replace('/', '_');
-                }
             }
         }
 
         private async void UpdateVersion()
         {
-            if (_settings.Version < SettingsService.CurrentVersion && _settings.Version > 0)
+            if (_settings.Version is < SettingsService.CurrentVersion and > 0)
             {
                 var response = await SendAsync(new CreatePrivateChat(777000, false));
                 if (response is Chat chat)
@@ -558,7 +471,7 @@ namespace Unigram.Services
 
                     foreach (var entity in formattedText.Entities)
                     {
-                        if (entity.Type is TextEntityTypeTextUrl || entity.Type is TextEntityTypeUrl)
+                        if (entity.Type is TextEntityTypeTextUrl or TextEntityTypeUrl)
                         {
                             await SendAsync(new GetWebPagePreview(formattedText));
                             break;
@@ -610,10 +523,16 @@ Read more about how to update your device [here](https://support.microsoft.com/h
         {
             _options.Clear();
 
+            _files.Clear();
+
+            _reactions.Clear();
+
             _chats.Clear();
             _chatActions.Clear();
 
             _secretChats.Clear();
+
+            _usersToChats.Clear();
 
             _users.Clear();
             _usersFull.Clear();
@@ -624,20 +543,9 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             _supergroups.Clear();
             _supergroupsFull.Clear();
 
-            _scopeNotificationSettings.Clear();
+            _settings.Notifications.Scope.Clear();
 
             _unreadCounts.Clear();
-
-            _chatsMap.Clear();
-            _usersMap.Clear();
-
-            _animatedSet[0] = null;
-            _animatedSet[1] = null;
-            _animatedSetTask[0] = null;
-            _animatedSetTask[1] = null;
-
-            _animatedSounds.Clear();
-            _animatedSoundsMap.Clear();
 
             _diceEmojis = null;
 
@@ -681,12 +589,19 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 
         public void Send(Function function, Action<BaseObject> handler = null)
         {
-            _client.Send(function, handler);
+            if (handler != null)
+            {
+                _client.Send(function, _processFilesDelegate + handler);
+            }
+            else
+            {
+                _client.Send(function, _processFilesDelegate);
+            }
         }
 
         public Task<BaseObject> SendAsync(Function function)
         {
-            return _client.SendAsync(function);
+            return _client.SendAsync(function, ProcessFiles);
         }
 
 
@@ -818,6 +733,11 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             return false;
         }
 
+        public void AddFileToDownloads(int fileId, long chatId, long messageId, int priority = 30)
+        {
+            _client.Send(new AddFileToDownloads(fileId, chatId, messageId, priority));
+        }
+
         public void DownloadFile(int fileId, int priority, int offset = 0, int limit = 0, bool synchronous = false)
         {
             _client.Send(new DownloadFile(fileId, priority, offset, limit, synchronous));
@@ -827,6 +747,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
         {
             _canceledDownloads.Add(fileId);
             _client.Send(new CancelDownloadFile(fileId, onlyIfPending));
+            _client.Send(new RemoveFileFromDownloads(fileId, false));
         }
 
         public bool IsDownloadFileCanceled(int fileId)
@@ -878,7 +799,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 
         private int GetIdFromChatList(ChatList chatList)
         {
-            if (chatList is ChatListMain || chatList == null)
+            if (chatList is ChatListMain or null)
             {
                 return 0;
             }
@@ -894,30 +815,6 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             return -1;
         }
 
-        public bool TryGetChatForFileId(int fileId, out Chat chat)
-        {
-            if (_chatsMap.TryGetValue(fileId, out long chatId))
-            {
-                chat = GetChat(chatId);
-                return true;
-            }
-
-            chat = null;
-            return false;
-        }
-
-        public bool TryGetUserForFileId(int fileId, out User user)
-        {
-            if (_usersMap.TryGetValue(fileId, out int userId))
-            {
-                user = GetUser(userId);
-                return true;
-            }
-
-            user = null;
-            return false;
-        }
-
 
 
         public AuthorizationState GetAuthorizationState()
@@ -927,43 +824,26 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 
         public AuthorizationState AuthorizationState => _authorizationState;
 
+        public Settings.NotificationsSettings Notifications => _settings.Notifications;
+
         public ConnectionState GetConnectionState()
         {
             return _connectionState;
         }
 
-        public IOptionsService Options
-        {
-            get { return _options; }
-        }
+        public IOptionsService Options => _options;
 
-        public JsonValueObject Config
-        {
-            get { return _config; }
-        }
+        public JsonValueObject Config => _config;
 
-        public IList<ChatFilterInfo> ChatFilters
-        {
-            get { return _chatFilters; }
-        }
+        public IList<ChatFilterInfo> ChatFilters => _chatFilters;
 
-        public IList<string> AnimationSearchEmojis
-        {
-            get => _animationSearchParameters?.Emojis ?? new string[0];
-        }
+        public IDictionary<string, Reaction> Reactions => _reactions;
 
-        public string AnimationSearchProvider
-        {
-            get => _animationSearchParameters?.Provider;
-        }
+        public IList<string> AnimationSearchEmojis => _animationSearchParameters?.Emojis ?? new string[0];
 
-        public Background SelectedBackground
-        {
-            get
-            {
-                return GetSelectedBackground(_settings.Appearance.IsDarkTheme());
-            }
-        }
+        public string AnimationSearchProvider => _animationSearchParameters?.Provider;
+
+        public Background SelectedBackground => GetSelectedBackground(_settings.Appearance.IsDarkTheme());
 
         public Background GetSelectedBackground(bool darkTheme)
         {
@@ -1032,6 +912,22 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             return null;
         }
 
+        public IList<Reaction> GetAvailableReactions(Chat chat)
+        {
+            return chat.AvailableReactions.Join(_reactions.Values, x => x, y => y.ReactionValue, (x, y) => y).ToArray();
+        }
+
+        public async Task<IList<Reaction>> GetAvailableReactionsAsync(Message message)
+        {
+            var response = await SendAsync(new GetMessageAvailableReactions(message.ChatId, message.Id));
+            if (response is AvailableReactions available)
+            {
+                return available.Reactions.Join(_reactions.Values, x => x, y => y.ReactionValue, (x, y) => y).ToArray();
+            }
+
+            return Array.Empty<Reaction>();
+        }
+
         public Chat GetChat(long id)
         {
             if (_chats.TryGetValue(id, out Chat value))
@@ -1042,9 +938,9 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             return null;
         }
 
-        public IDictionary<int, ChatAction> GetChatActions(long id)
+        public IDictionary<MessageSender, ChatAction> GetChatActions(long id)
         {
-            if (_chatActions.TryGetValue(id, out ConcurrentDictionary<int, ChatAction> value))
+            if (_chatActions.TryGetValue(id, out ConcurrentDictionary<MessageSender, ChatAction> value))
             {
                 return value;
             }
@@ -1142,6 +1038,11 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             return false;
         }
 
+        public bool TryGetChatFromUser(long userId, out long value)
+        {
+            return _usersToChats.TryGetValue(userId, out value);
+        }
+
         public IList<Chat> GetChats(IList<long> ids)
         {
 #if MOCKUP
@@ -1162,7 +1063,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             return result;
         }
 
-        public IList<User> GetUsers(IList<int> ids)
+        public IList<User> GetUsers(IList<long> ids)
         {
             var result = new List<User>(ids.Count);
 
@@ -1198,7 +1099,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             return null;
         }
 
-        public SecretChat GetSecretChatForUser(int id)
+        public SecretChat GetSecretChatForUser(long id)
         {
             return _secretChats.FirstOrDefault(x => x.Value.UserId == id).Value;
         }
@@ -1217,7 +1118,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             return null;
         }
 
-        public User GetUser(int id)
+        public User GetUser(long id)
         {
             if (_users.TryGetValue(id, out User value))
             {
@@ -1227,7 +1128,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             return null;
         }
 
-        public bool TryGetUser(int id, out User value)
+        public bool TryGetUser(long id, out User value)
         {
             return _users.TryGetValue(id, out value);
         }
@@ -1260,7 +1161,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 
 
 
-        public UserFullInfo GetUserFull(int id)
+        public UserFullInfo GetUserFull(long id)
         {
             if (_usersFull.TryGetValue(id, out UserFullInfo value))
             {
@@ -1284,9 +1185,29 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             return null;
         }
 
+        public bool TryGetUserFull(long id, out UserFullInfo value)
+        {
+            return _usersFull.TryGetValue(id, out value);
+        }
+
+        public bool TryGetUserFull(Chat chat, out UserFullInfo value)
+        {
+            if (chat?.Type is ChatTypePrivate privata)
+            {
+                return TryGetUserFull(privata.UserId, out value);
+            }
+            else if (chat?.Type is ChatTypeSecret secret)
+            {
+                return TryGetUserFull(secret.UserId, out value);
+            }
+
+            value = null;
+            return false;
+        }
 
 
-        public BasicGroup GetBasicGroup(int id)
+
+        public BasicGroup GetBasicGroup(long id)
         {
             if (_basicGroups.TryGetValue(id, out BasicGroup value))
             {
@@ -1306,7 +1227,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             return null;
         }
 
-        public bool TryGetBasicGroup(int id, out BasicGroup value)
+        public bool TryGetBasicGroup(long id, out BasicGroup value)
         {
             return _basicGroups.TryGetValue(id, out value);
         }
@@ -1324,7 +1245,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 
 
 
-        public BasicGroupFullInfo GetBasicGroupFull(int id)
+        public BasicGroupFullInfo GetBasicGroupFull(long id)
         {
             if (_basicGroupsFull.TryGetValue(id, out BasicGroupFullInfo value))
             {
@@ -1344,7 +1265,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             return null;
         }
 
-        public bool TryGetBasicGroupFull(int id, out BasicGroupFullInfo value)
+        public bool TryGetBasicGroupFull(long id, out BasicGroupFullInfo value)
         {
             return _basicGroupsFull.TryGetValue(id, out value);
         }
@@ -1362,7 +1283,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 
 
 
-        public Supergroup GetSupergroup(int id)
+        public Supergroup GetSupergroup(long id)
         {
             if (_supergroups.TryGetValue(id, out Supergroup value))
             {
@@ -1382,7 +1303,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             return null;
         }
 
-        public bool TryGetSupergroup(int id, out Supergroup value)
+        public bool TryGetSupergroup(long id, out Supergroup value)
         {
             return _supergroups.TryGetValue(id, out value);
         }
@@ -1400,7 +1321,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 
 
 
-        public SupergroupFullInfo GetSupergroupFull(int id)
+        public SupergroupFullInfo GetSupergroupFull(long id)
         {
             if (_supergroupsFull.TryGetValue(id, out SupergroupFullInfo value))
             {
@@ -1420,7 +1341,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             return null;
         }
 
-        public bool TryGetSupergroupFull(int id, out SupergroupFullInfo value)
+        public bool TryGetSupergroupFull(long id, out SupergroupFullInfo value)
         {
             return _supergroupsFull.TryGetValue(id, out value);
         }
@@ -1434,61 +1355,6 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 
             value = null;
             return false;
-        }
-
-
-
-        public int GetNotificationSettingsMuteFor(Chat chat)
-        {
-            if (chat.NotificationSettings.UseDefaultMuteFor)
-            {
-                Type scope = null;
-                switch (chat.Type)
-                {
-                    case ChatTypePrivate:
-                    case ChatTypeSecret:
-                        scope = typeof(NotificationSettingsScopePrivateChats);
-                        break;
-                    case ChatTypeBasicGroup:
-                        scope = typeof(NotificationSettingsScopeGroupChats);
-                        break;
-                    case ChatTypeSupergroup supergroup:
-                        scope = supergroup.IsChannel ? typeof(NotificationSettingsScopeChannelChats) : typeof(NotificationSettingsScopeGroupChats);
-                        break;
-                }
-
-                if (scope != null && _scopeNotificationSettings.TryGetValue(scope, out ScopeNotificationSettings value))
-                {
-                    return value.MuteFor;
-                }
-            }
-
-            return chat.NotificationSettings.MuteFor;
-        }
-
-        public ScopeNotificationSettings GetScopeNotificationSettings(Chat chat)
-        {
-            Type scope = null;
-            switch (chat.Type)
-            {
-                case ChatTypePrivate:
-                case ChatTypeSecret:
-                    scope = typeof(NotificationSettingsScopePrivateChats);
-                    break;
-                case ChatTypeBasicGroup:
-                    scope = typeof(NotificationSettingsScopeGroupChats);
-                    break;
-                case ChatTypeSupergroup supergroup:
-                    scope = supergroup.IsChannel ? typeof(NotificationSettingsScopeChannelChats) : typeof(NotificationSettingsScopeGroupChats);
-                    break;
-            }
-
-            if (scope != null && _scopeNotificationSettings.TryGetValue(scope, out ScopeNotificationSettings value))
-            {
-                return value;
-            }
-
-            return null;
         }
 
 
@@ -1523,52 +1389,25 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             return false;
         }
 
-        public async Task<StickerSet> GetAnimatedSetAsync(AnimatedSetType type)
+        public ChatTheme GetChatTheme(string themeName)
         {
-            var set = _animatedSet[(int)type];
-            if (set != null)
-            {
-                return set;
-            }
-
-            var tsc = _animatedSetTask[(int)type];
-            if (tsc != null)
-            {
-                return await tsc.Task;
-            }
-
-            tsc = _animatedSetTask[(int)type] = new TaskCompletionSource<StickerSet>();
-
-            var task = GetAnimatedSetAsyncInternal(type);
-            var result = await Task.WhenAny(task, Task.Delay(2000));
-
-            set = result == task ? task.Result : null;
-            tsc.TrySetResult(set);
-
-            return set;
-        }
-
-        private async Task<StickerSet> GetAnimatedSetAsyncInternal(AnimatedSetType type)
-        {
-            string name;
-            if (type == AnimatedSetType.Emoji)
-            {
-                name = Options.AnimatedEmojiStickerSetName ?? "AnimatedEmojies";
-            }
-            else
+            if (string.IsNullOrEmpty(themeName))
             {
                 return null;
             }
 
-            var response = await SendAsync(new SearchStickerSet(name));
-            if (response is StickerSet set)
+            var themes = GetChatThemes();
+            if (themes != null)
             {
-                _animatedSet[(int)type] = set;
-                _animatedSetTask[(int)type].TrySetResult(set);
-                return set;
+                return themes.FirstOrDefault(x => string.Equals(x.Name, themeName));
             }
 
             return null;
+        }
+
+        public IList<ChatTheme> GetChatThemes()
+        {
+            return _chatThemes?.ChatThemes ?? new ChatTheme[0];
         }
 
         public bool IsDiceEmoji(string text, out string dice)
@@ -1585,22 +1424,14 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             return _diceEmojis.Contains(text);
         }
 
-        public File GetEmojiSound(string emoji)
-        {
-            if (_animatedSounds.TryGetValue(Emoji.RemoveModifiers(emoji, false), out File value))
-            {
-                return value;
-            }
-
-            return null;
-        }
-
         #endregion
 
 
 
         public void OnResult(BaseObject update)
         {
+            ProcessFiles(update);
+
             if (update is UpdateAuthorizationState updateAuthorizationState)
             {
                 switch (updateAuthorizationState.AuthorizationState)
@@ -1634,6 +1465,18 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             {
 
             }
+            else if (update is UpdateChatAction updateUserChatAction)
+            {
+                var actions = _chatActions.GetOrAdd(updateUserChatAction.ChatId, x => new ConcurrentDictionary<MessageSender, ChatAction>(new MessageSenderEqualityComparer()));
+                if (updateUserChatAction.Action is ChatActionCancel)
+                {
+                    actions.TryRemove(updateUserChatAction.SenderId, out _);
+                }
+                else
+                {
+                    actions[updateUserChatAction.SenderId] = updateUserChatAction.Action;
+                }
+            }
             else if (update is UpdateChatActionBar updateChatActionBar)
             {
                 if (_chats.TryGetValue(updateChatActionBar.ChatId, out Chat value))
@@ -1641,11 +1484,32 @@ Read more about how to update your device [here](https://support.microsoft.com/h
                     value.ActionBar = updateChatActionBar.ActionBar;
                 }
             }
+            else if (update is UpdateChatAvailableReactions chatAvailableReactions)
+            {
+                if (_chats.TryGetValue(chatAvailableReactions.ChatId, out Chat value))
+                {
+                    value.AvailableReactions = chatAvailableReactions.AvailableReactions;
+                }
+            }
+            else if (update is UpdateChatHasProtectedContent updateChatHasProtectedContent)
+            {
+                if (_chats.TryGetValue(updateChatHasProtectedContent.ChatId, out Chat value))
+                {
+                    value.HasProtectedContent = updateChatHasProtectedContent.HasProtectedContent;
+                }
+            }
             else if (update is UpdateChatDefaultDisableNotification updateChatDefaultDisableNotification)
             {
                 if (_chats.TryGetValue(updateChatDefaultDisableNotification.ChatId, out Chat value))
                 {
                     value.DefaultDisableNotification = updateChatDefaultDisableNotification.DefaultDisableNotification;
+                }
+            }
+            else if (update is UpdateChatMessageSender updateChatMessageSender)
+            {
+                if (_chats.TryGetValue(updateChatMessageSender.ChatId, out Chat value))
+                {
+                    value.MessageSenderId = updateChatMessageSender.MessageSenderId;
                 }
             }
             else if (update is UpdateChatDraftMessage updateChatDraftMessage)
@@ -1704,6 +1568,13 @@ Read more about how to update your device [here](https://support.microsoft.com/h
                     value.NotificationSettings = updateNotificationSettings.NotificationSettings;
                 }
             }
+            else if (update is UpdateChatPendingJoinRequests updateChatPendingJoinRequests)
+            {
+                if (_chats.TryGetValue(updateChatPendingJoinRequests.ChatId, out Chat value))
+                {
+                    value.PendingJoinRequests = updateChatPendingJoinRequests.PendingJoinRequests;
+                }
+            }
             else if (update is UpdateChatPermissions updateChatPermissions)
             {
                 if (_chats.TryGetValue(updateChatPermissions.ChatId, out Chat value))
@@ -1716,12 +1587,6 @@ Read more about how to update your device [here](https://support.microsoft.com/h
                 if (_chats.TryGetValue(updateChatPhoto.ChatId, out Chat value))
                 {
                     value.Photo = updateChatPhoto.Photo;
-                }
-
-                if (updateChatPhoto.Photo != null)
-                {
-                    _chatsMap[updateChatPhoto.Photo.Small.Id] = updateChatPhoto.ChatId;
-                    _chatsMap[updateChatPhoto.Photo.Big.Id] = updateChatPhoto.ChatId;
                 }
             }
             else if (update is UpdateChatPosition updateChatPosition)
@@ -1780,6 +1645,17 @@ Read more about how to update your device [here](https://support.microsoft.com/h
                     value.ReplyMarkupMessageId = updateChatReplyMarkup.ReplyMarkupMessageId;
                 }
             }
+            else if (update is UpdateChatTheme updateChatTheme)
+            {
+                if (_chats.TryGetValue(updateChatTheme.ChatId, out Chat value))
+                {
+                    value.ThemeName = updateChatTheme.ThemeName;
+                }
+            }
+            else if (update is UpdateChatThemes updateChatThemes)
+            {
+                _chatThemes = updateChatThemes;
+            }
             else if (update is UpdateChatTitle updateChatTitle)
             {
                 if (_chats.TryGetValue(updateChatTitle.ChatId, out Chat value))
@@ -1794,11 +1670,18 @@ Read more about how to update your device [here](https://support.microsoft.com/h
                     value.UnreadMentionCount = updateChatUnreadMentionCount.UnreadMentionCount;
                 }
             }
-            else if (update is UpdateChatVoiceChat updateChatVoiceChat)
+            else if (update is UpdateChatUnreadReactionCount updateChatUnreadReactionCount)
             {
-                if (_chats.TryGetValue(updateChatVoiceChat.ChatId, out Chat value))
+                if (_chats.TryGetValue(updateChatUnreadReactionCount.ChatId, out Chat value))
                 {
-                    value.VoiceChat = updateChatVoiceChat.VoiceChat;
+                    value.UnreadReactionCount = updateChatUnreadReactionCount.UnreadReactionCount;
+                }
+            }
+            else if (update is UpdateChatVideoChat updateChatVideoChat)
+            {
+                if (_chats.TryGetValue(updateChatVideoChat.ChatId, out Chat value))
+                {
+                    value.VideoChat = updateChatVideoChat.VideoChat;
                 }
             }
             else if (update is UpdateConnectionState updateConnectionState)
@@ -1819,20 +1702,10 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             }
             else if (update is UpdateFile updateFile)
             {
-                if (TryGetChatForFileId(updateFile.File.Id, out Chat chat))
-                {
-                    chat.UpdateFile(updateFile.File);
-                }
+                EventAggregator.Default.Send(updateFile.File, $"{SessionId}_{updateFile.File.Id}",
+                    updateFile.File.Local.IsDownloadingCompleted);
 
-                if (TryGetUserForFileId(updateFile.File.Id, out User user))
-                {
-                    user.UpdateFile(updateFile.File);
-                }
-
-                if (_animatedSoundsMap.TryGetValue(updateFile.File.Id, out string emoji))
-                {
-                    _animatedSounds[emoji].Update(updateFile.File);
-                }
+                //return;
             }
             else if (update is UpdateFileGenerationStart updateFileGenerationStart)
             {
@@ -1888,17 +1761,12 @@ Read more about how to update your device [here](https://support.microsoft.com/h
                     value.UnreadMentionCount = updateMessageMentionRead.UnreadMentionCount;
                 }
             }
-            else if (update is UpdateMessageSendAcknowledged updateMessageSendAcknowledged)
+            else if (update is UpdateMessageUnreadReactions updateMessageUnreadReactions)
             {
-
-            }
-            else if (update is UpdateMessageSendFailed updateMessageSendFailed)
-            {
-
-            }
-            else if (update is UpdateMessageSendSucceeded updateMessageSendSucceeded)
-            {
-
+                if (_chats.TryGetValue(updateMessageUnreadReactions.ChatId, out Chat value))
+                {
+                    value.UnreadReactionCount = updateMessageUnreadReactions.UnreadReactionCount;
+                }
             }
             else if (update is UpdateNewChat updateNewChat)
             {
@@ -1908,31 +1776,10 @@ Read more about how to update your device [here](https://support.microsoft.com/h
                 SetChatPositions(updateNewChat.Chat, updateNewChat.Chat.Positions);
                 Monitor.Exit(updateNewChat.Chat);
 
-                if (updateNewChat.Chat.Photo != null)
+                if (updateNewChat.Chat.Type is ChatTypePrivate privata)
                 {
-                    if (!(updateNewChat.Chat.Photo.Small.Local.IsDownloadingCompleted && updateNewChat.Chat.Photo.Small.Remote.IsUploadingCompleted))
-                    {
-                        _chatsMap[updateNewChat.Chat.Photo.Small.Id] = updateNewChat.Chat.Id;
-                    }
-
-                    if (!(updateNewChat.Chat.Photo.Big.Local.IsDownloadingCompleted && updateNewChat.Chat.Photo.Big.Remote.IsUploadingCompleted))
-                    {
-                        _chatsMap[updateNewChat.Chat.Photo.Big.Id] = updateNewChat.Chat.Id;
-                    }
+                    _usersToChats[privata.UserId] = updateNewChat.Chat.Id;
                 }
-
-                //if (updateNewChat.Chat.Type is ChatTypePrivate privata)
-                //{
-                //    _userToChat[privata.UserId] = updateNewChat.Chat.Id;
-                //}
-                //else if (updateNewChat.Chat.Type is ChatTypeSecret secret)
-                //{
-                //    _secretChatToChat[secret.SecretChatId] = updateNewChat.Chat.Id;
-                //}
-            }
-            else if (update is UpdateNewMessage updateNewMessage)
-            {
-
             }
             else if (update is UpdateOption updateOption)
             {
@@ -1947,6 +1794,10 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 #endif
                 }
             }
+            else if (update is UpdateReactions updateReactions)
+            {
+                _reactions = updateReactions.Reactions.ToDictionary(x => x.ReactionValue);
+            }
             else if (update is UpdateRecentStickers updateRecentStickers)
             {
 
@@ -1957,7 +1808,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             }
             else if (update is UpdateScopeNotificationSettings updateScopeNotificationSettings)
             {
-                _scopeNotificationSettings[updateScopeNotificationSettings.Scope.GetType()] = updateScopeNotificationSettings.NotificationSettings;
+                _settings.Notifications.Scope[updateScopeNotificationSettings.Scope.GetType()] = updateScopeNotificationSettings.NotificationSettings;
             }
             else if (update is UpdateSecretChat updateSecretChat)
             {
@@ -1980,10 +1831,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             }
             else if (update is UpdateStickerSet updateStickerSet)
             {
-                if (string.Equals(updateStickerSet.StickerSet.Name, Options.AnimatedEmojiStickerSetName, StringComparison.OrdinalIgnoreCase))
-                {
-                    _animatedSet[(int)AnimatedSetType.Emoji] = updateStickerSet.StickerSet;
-                }
+
             }
             else if (update is UpdateSupergroup updateSupergroup)
             {
@@ -2012,31 +1860,6 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             else if (update is UpdateUser updateUser)
             {
                 _users[updateUser.User.Id] = updateUser.User;
-
-                if (updateUser.User.ProfilePhoto != null)
-                {
-                    if (!(updateUser.User.ProfilePhoto.Small.Local.IsDownloadingCompleted && updateUser.User.ProfilePhoto.Small.Remote.IsUploadingCompleted))
-                    {
-                        _usersMap[updateUser.User.ProfilePhoto.Small.Id] = updateUser.User.Id;
-                    }
-
-                    if (!(updateUser.User.ProfilePhoto.Big.Local.IsDownloadingCompleted && updateUser.User.ProfilePhoto.Big.Remote.IsUploadingCompleted))
-                    {
-                        _usersMap[updateUser.User.ProfilePhoto.Big.Id] = updateUser.User.Id;
-                    }
-                }
-            }
-            else if (update is UpdateUserChatAction updateUserChatAction)
-            {
-                var actions = _chatActions.GetOrAdd(updateUserChatAction.ChatId, x => new ConcurrentDictionary<int, ChatAction>());
-                if (updateUserChatAction.Action is ChatActionCancel)
-                {
-                    actions.TryRemove(updateUserChatAction.UserId, out _);
-                }
-                else
-                {
-                    actions[updateUserChatAction.UserId] = updateUserChatAction.Action;
-                }
             }
             else if (update is UpdateUserFullInfo updateUserFullInfo)
             {
@@ -2056,11 +1879,6 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 
             _aggregator.Publish(update);
         }
-    }
-
-    public enum AnimatedSetType
-    {
-        Emoji
     }
 
     public class ChatListUnreadCount
@@ -2084,34 +1902,11 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 
                 return this[id] = new List<T>();
             }
-            set
-            {
-                base[id] = value;
-            }
+            set => base[id] = value;
         }
     }
 
-    public class FlatFileContext<T> : Dictionary<int, T>
-    {
-        //public new T this[int id]
-        //{
-        //    get
-        //    {
-        //        if (TryGetValue(id, out T item))
-        //        {
-        //            return item;
-        //        }
-
-        //        return this[id] = new List<T>();
-        //    }
-        //    set
-        //    {
-        //        base[id] = value;
-        //    }
-        //}
-    }
-
-    static class TdExtensions
+    static class TdClientExtensions
     {
         public static void Send(this Client client, Function function, Action<BaseObject> handler)
         {
@@ -2130,9 +1925,9 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             client.Send(function, null);
         }
 
-        public static Task<BaseObject> SendAsync(this Client client, Function function)
+        public static Task<BaseObject> SendAsync(this Client client, Function function, Action<BaseObject> closure)
         {
-            var tsc = new TdCompletionSource();
+            var tsc = new TdCompletionSource(closure);
             client.Send(function, tsc);
 
             return tsc.Task;
@@ -2177,8 +1972,16 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 
     class TdCompletionSource : TaskCompletionSource<BaseObject>, ClientResultHandler
     {
+        private readonly Action<BaseObject> _closure;
+
+        public TdCompletionSource(Action<BaseObject> closure)
+        {
+            _closure = closure;
+        }
+
         public void OnResult(BaseObject result)
         {
+            _closure(result);
             SetResult(result);
         }
     }
@@ -2194,7 +1997,38 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 
         public void OnResult(BaseObject result)
         {
-            _callback(result);
+            try
+            {
+                _callback(result);
+            }
+            catch
+            {
+                // We need to explicitly catch here because
+                // an exception on the handler thread will cause
+                // the app to no longer receive any update from TDLib.
+            }
+        }
+    }
+
+    public class MessageSenderEqualityComparer : IEqualityComparer<MessageSender>
+    {
+        public bool Equals(MessageSender x, MessageSender y)
+        {
+            return x.IsEqual(y);
+        }
+
+        public int GetHashCode(MessageSender obj)
+        {
+            if (obj is MessageSenderUser user)
+            {
+                return user.UserId.GetHashCode();
+            }
+            else if (obj is MessageSenderChat chat)
+            {
+                return chat.ChatId.GetHashCode();
+            }
+
+            return obj.GetHashCode();
         }
     }
 }

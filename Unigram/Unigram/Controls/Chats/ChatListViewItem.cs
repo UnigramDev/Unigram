@@ -10,7 +10,6 @@ using Windows.UI.Composition.Interactions;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
@@ -33,7 +32,7 @@ namespace Unigram.Controls.Chats
         private bool _forward;
         private bool _reply;
 
-        private ListViewItemPresenter _presenter;
+        private FrameworkElement _presenter;
 
         public ChatListViewItem(ChatListView parent)
             : base(parent)
@@ -52,7 +51,14 @@ namespace Unigram.Controls.Chats
         {
             base.OnApplyTemplate();
 
-            _presenter = GetTemplateChild("Presenter") as ListViewItemPresenter;
+            if (ApiInfo.IsWindows11)
+            {
+                _presenter = VisualTreeHelper.GetChild(this, 0) as FrameworkElement;
+            }
+            else
+            {
+                _presenter = GetTemplateChild("ContentBorder") as FrameworkElement;
+            }
 
             DetachEventHandlers();
             AttachEventHandlers();
@@ -61,13 +67,11 @@ namespace Unigram.Controls.Chats
         private void AttachEventHandlers()
         {
             Loaded += OnLoaded;
-            SizeChanged += OnSizeChanged;
         }
 
         private void DetachEventHandlers()
         {
             Loaded -= OnLoaded;
-            SizeChanged -= OnSizeChanged;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -78,10 +82,11 @@ namespace Unigram.Controls.Chats
 
                 _hitTest = _visual.Compositor.CreateSpriteVisual();
                 _hitTest.Brush = _visual.Compositor.CreateColorBrush(Windows.UI.Colors.Transparent);
+                _hitTest.RelativeSizeAdjustment = Vector2.One;
 
                 _container = _visual.Compositor.CreateContainerVisual();
                 _container.Children.InsertAtBottom(_hitTest);
-                _container.Size = _hitTest.Size = new Vector2((float)ActualWidth, (float)ActualHeight);
+                _container.RelativeSizeAdjustment = Vector2.One;
 
                 ElementCompositionPreview.SetElementChildVisual(this, _container);
 
@@ -89,14 +94,6 @@ namespace Unigram.Controls.Chats
             }
 
             _hasInitialLoadedEventFired = true;
-        }
-
-        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            if (_hitTest != null)
-            {
-                _hitTest.Size = _container.Size = e.NewSize.ToVector2();
-            }
         }
 
         private void ConfigureInteractionTracker()
@@ -146,8 +143,8 @@ namespace Unigram.Controls.Chats
 
         public Thickness ContentMargin
         {
-            get { return (Thickness)GetValue(ContentMarginProperty); }
-            set { SetValue(ContentMarginProperty, value); }
+            get => (Thickness)GetValue(ContentMarginProperty);
+            set => SetValue(ContentMarginProperty, value);
         }
 
         public static readonly DependencyProperty ContentMarginProperty =
@@ -157,7 +154,7 @@ namespace Unigram.Controls.Chats
 
         private void OnPointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            if (e.Pointer.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Touch || e.Pointer.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Pen)
+            if (e.Pointer.PointerDeviceType is Windows.Devices.Input.PointerDeviceType.Touch or Windows.Devices.Input.PointerDeviceType.Pen)
             {
                 try
                 {
@@ -224,7 +221,7 @@ namespace Unigram.Controls.Chats
                     var supergroup = _parent.ViewModel.ProtoService.GetSupergroup(supergroupType.SupergroupId);
                     if (supergroup.IsChannel)
                     {
-                        return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator;
+                        return supergroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator;
                     }
                     else if (supergroup.Status is ChatMemberStatusRestricted restricted)
                     {
@@ -270,7 +267,7 @@ namespace Unigram.Controls.Chats
                 ellipse.Radius = new Vector2(15);
 
                 var ellipseShape = _visual.Compositor.CreateSpriteShape(ellipse);
-                ellipseShape.FillBrush = _visual.Compositor.CreateColorBrush((Windows.UI.Color)App.Current.Resources["MessageServiceBackgroundColor"]);
+                ellipseShape.FillBrush = _visual.Compositor.CreateColorBrush((Windows.UI.Color)Navigation.BootStrapper.Current.Resources["MessageServiceBackgroundColor"]);
                 ellipseShape.Offset = new Vector2(15);
 
                 var shape = _visual.Compositor.CreateShapeVisual();
@@ -328,7 +325,7 @@ namespace Unigram.Controls.Chats
 
         public void IdleStateEntered(InteractionTracker sender, InteractionTrackerIdleStateEnteredArgs args)
         {
-
+            ConfigureAnimations(_visual, null);
         }
 
         public void InteractingStateEntered(InteractionTracker sender, InteractionTrackerInteractingStateEnteredArgs args)

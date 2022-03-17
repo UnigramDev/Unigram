@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -44,7 +45,7 @@ namespace Unigram.ViewModels.SignIn
             });
 
             var authState = ProtoService.GetAuthorizationState();
-            var waitState = authState is AuthorizationStateWaitPhoneNumber || authState is AuthorizationStateWaitCode || authState is AuthorizationStateWaitPassword;
+            var waitState = authState is AuthorizationStateWaitPhoneNumber or AuthorizationStateWaitCode or AuthorizationStateWaitPassword;
 
             if (waitState && mode != NavigationMode.Refresh)
             {
@@ -65,7 +66,17 @@ namespace Unigram.ViewModels.SignIn
 
                             if (mode == QrCodeMode.Primary)
                             {
-                                ProtoService.Send(new RequestQrCodeAuthentication());
+                                var userIds = new List<long>();
+
+                                foreach (var session in _lifetimeService.Items)
+                                {
+                                    if (Settings.UseTestDC == session.Settings.UseTestDC && session.UserId != 0)
+                                    {
+                                        userIds.Add(session.UserId);
+                                    }
+                                }
+
+                                ProtoService.Send(new RequestQrCodeAuthentication(userIds));
                             }
 
                             return;
@@ -77,8 +88,10 @@ namespace Unigram.ViewModels.SignIn
             }
             else if (authState is AuthorizationStateWaitOtherDeviceConfirmation waitOtherDeviceConfirmation)
             {
+                var firstTime = _token == null;
+
                 Token = waitOtherDeviceConfirmation.Link;
-                Delegate?.UpdateQrCode(waitOtherDeviceConfirmation.Link);
+                Delegate?.UpdateQrCode(waitOtherDeviceConfirmation.Link, firstTime);
 
                 if (mode != NavigationMode.Refresh)
                 {
@@ -181,9 +194,8 @@ namespace Unigram.ViewModels.SignIn
 
             await _notificationsService.CloseAsync();
 
-            var function = new SetAuthenticationPhoneNumber(phoneNumber, new PhoneNumberAuthenticationSettings(false, false, false));
-            var request = default(Task<BaseObject>);
-
+            var function = new SetAuthenticationPhoneNumber(phoneNumber, new PhoneNumberAuthenticationSettings(false, false, false, false, new string[0]));
+            Task<BaseObject> request;
             if (ProtoService.AuthorizationState is AuthorizationStateWaitOtherDeviceConfirmation)
             {
                 request = _sessionService.SetAuthenticationPhoneNumberAsync(function);

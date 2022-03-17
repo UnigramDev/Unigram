@@ -4,31 +4,68 @@ using Unigram.Converters;
 using Unigram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Documents;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed partial class CallContent : UserControl, IContent
+    public sealed class CallContent : Windows.UI.Xaml.Controls.Control, IContent
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
         public CallContent(MessageViewModel message)
         {
-            InitializeComponent();
-            UpdateMessage(message);
+            _message = message;
+
+            DefaultStyleKey = typeof(CallContent);
         }
+
+        #region InitializeComponent
+
+        private Border Texture;
+        private GlyphHyperlinkButton Button;
+        private TextBlock TitleLabel;
+        private ToolTip Tip;
+        private Run ReasonGlyph;
+        private Run DateLabel;
+        private Run DurationLabel;
+        private bool _templateApplied;
+
+        protected override void OnApplyTemplate()
+        {
+            Texture = GetTemplateChild(nameof(Texture)) as Border;
+            Button = GetTemplateChild(nameof(Button)) as GlyphHyperlinkButton;
+            TitleLabel = GetTemplateChild(nameof(TitleLabel)) as TextBlock;
+            Tip = GetTemplateChild(nameof(Tip)) as ToolTip;
+            ReasonGlyph = GetTemplateChild(nameof(ReasonGlyph)) as Run;
+            DateLabel = GetTemplateChild(nameof(DateLabel)) as Run;
+            DurationLabel = GetTemplateChild(nameof(DurationLabel)) as Run;
+
+            Button.Click += Button_Click;
+            Tip.Opened += ToolTip_Opened;
+
+            _templateApplied = true;
+
+            if (_message != null)
+            {
+                UpdateMessage(_message);
+            }
+        }
+
+        #endregion
 
         public void UpdateMessage(MessageViewModel message)
         {
             _message = message;
+
             var call = message.Content as MessageCall;
-            if (call == null)
+            if (call == null || !_templateApplied)
             {
                 return;
             }
 
             var outgoing = message.IsOutgoing;
-            var missed = call.DiscardReason is CallDiscardReasonMissed || call.DiscardReason is CallDiscardReasonDeclined;
+            var missed = call.DiscardReason is CallDiscardReasonMissed or CallDiscardReasonDeclined;
 
             Button.Glyph = call.IsVideo ? Icons.Video : Icons.Phone;
             //Button.FontSize = call.IsVideo ? 24 : 20;

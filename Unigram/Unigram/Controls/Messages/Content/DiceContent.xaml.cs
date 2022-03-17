@@ -13,25 +13,54 @@ using Windows.UI.Xaml.Hosting;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed partial class DiceContent : HyperlinkButton, IContentWithFile, IContentWithPlayback
+    public sealed class DiceContent : HyperlinkButton, IContentWithFile, IContentWithPlayback
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
+
+        private string _part1Token;
+        private string _part2Token;
+        private string _part3Token;
+        private string _part4Token;
+        private string _part5Token;
 
         private CompositionAnimation _thumbnailShimmer;
 
         public DiceContent(MessageViewModel message)
         {
-            InitializeComponent();
-            UpdateMessage(message);
+            _message = message;
+
+            DefaultStyleKey = typeof(DiceContent);
+            Click += Button_Click;
         }
+
+        #region InitializeComponent
+
+        private DiceView Player;
+        private bool _templateApplied;
+
+        protected override void OnApplyTemplate()
+        {
+            Player = GetTemplateChild(nameof(Player)) as DiceView;
+
+            Player.FirstFrameRendered += Player_FirstFrameRendered;
+
+            _templateApplied = true;
+
+            if (_message != null)
+            {
+                UpdateMessage(_message);
+            }
+        }
+
+        #endregion
 
         public void UpdateMessage(MessageViewModel message)
         {
             _message = message;
 
             var dice = message.Content as MessageDice;
-            if (dice == null)
+            if (dice == null || !_templateApplied)
             {
                 return;
             }
@@ -44,7 +73,7 @@ namespace Unigram.Controls.Messages.Content
             {
                 if (!regular.Sticker.StickerValue.Local.IsDownloadingCompleted)
                 {
-                    UpdateThumbnail(message, regular.Sticker.Outline);
+                    UpdateThumbnail(message, regular.Sticker);
                 }
             }
 
@@ -53,16 +82,21 @@ namespace Unigram.Controls.Messages.Content
 
         public void UpdateMessageContentOpened(MessageViewModel message) { }
 
-        public void UpdateFile(MessageViewModel message, File file)
+        private void UpdateFile(object target, File file)
+        {
+            UpdateFile(_message, file);
+        }
+
+        private void UpdateFile(MessageViewModel message, File file)
         {
             var dice = _message?.Content as MessageDice;
-            if (dice == null)
+            if (dice == null || !_templateApplied)
             {
                 return;
             }
 
             var state = dice.GetState();
-            if (state == null || (file != null && !state.UpdateFile(file)))
+            if (state == null)
             {
                 return;
             }
@@ -85,6 +119,8 @@ namespace Unigram.Controls.Messages.Content
                 Player.IsContentUnread = message.GeneratedContentUnread;
                 Player.SetValue(state, state == dice.FinalState ? dice.Value : 0);
 
+                Player.IndexChanged -= OnIndexChanged;
+
                 if (message.IsOutgoing &&
                     message.GeneratedContentUnread &&
                     dice.IsFinalState() &&
@@ -92,10 +128,8 @@ namespace Unigram.Controls.Messages.Content
                 {
                     Player.IndexChanged += OnIndexChanged;
                 }
-                else
-                {
-                    Player.IndexChanged -= OnIndexChanged;
-                }
+
+                message.Delegate.ViewVisibleMessages(false);
             }
             else
             {
@@ -112,9 +146,9 @@ namespace Unigram.Controls.Messages.Content
             }
         }
 
-        private void UpdateThumbnail(MessageViewModel message, IList<ClosedVectorPath> contours)
+        private void UpdateThumbnail(MessageViewModel message, Sticker sticker)
         {
-            _thumbnailShimmer = CompositionPathParser.ParseThumbnail(contours, out ShapeVisual visual);
+            _thumbnailShimmer = CompositionPathParser.ParseThumbnail(sticker, out ShapeVisual visual);
             ElementCompositionPreview.SetElementChildVisual(Player, visual);
         }
 
@@ -130,6 +164,10 @@ namespace Unigram.Controls.Messages.Content
             {
                 if (regular.Sticker.StickerValue.Local.CanBeDownloaded && !regular.Sticker.StickerValue.Local.IsDownloadingActive)
                 {
+                    // Unsubscribe all tokens
+                    UpdateManager.Unsubscribe(this);
+
+                    UpdateManager.Subscribe(this, message, regular.Sticker.StickerValue, ref _part1Token, UpdateFile, true);
                     message.ProtoService.DownloadFile(regular.Sticker.StickerValue.Id, 1);
                 }
             }
@@ -137,22 +175,27 @@ namespace Unigram.Controls.Messages.Content
             {
                 if (slotMachine.Background.StickerValue.Local.CanBeDownloaded && !slotMachine.Background.StickerValue.Local.IsDownloadingActive)
                 {
+                    UpdateManager.Subscribe(this, message, slotMachine.Background.StickerValue, ref _part1Token, UpdateFile, true);
                     message.ProtoService.DownloadFile(slotMachine.Background.StickerValue.Id, 1);
                 }
                 if (slotMachine.LeftReel.StickerValue.Local.CanBeDownloaded && !slotMachine.LeftReel.StickerValue.Local.IsDownloadingActive)
                 {
+                    UpdateManager.Subscribe(this, message, slotMachine.LeftReel.StickerValue, ref _part2Token, UpdateFile, true);
                     message.ProtoService.DownloadFile(slotMachine.LeftReel.StickerValue.Id, 1);
                 }
                 if (slotMachine.CenterReel.StickerValue.Local.CanBeDownloaded && !slotMachine.CenterReel.StickerValue.Local.IsDownloadingActive)
                 {
+                    UpdateManager.Subscribe(this, message, slotMachine.CenterReel.StickerValue, ref _part3Token, UpdateFile, true);
                     message.ProtoService.DownloadFile(slotMachine.CenterReel.StickerValue.Id, 1);
                 }
                 if (slotMachine.RightReel.StickerValue.Local.CanBeDownloaded && !slotMachine.RightReel.StickerValue.Local.IsDownloadingActive)
                 {
+                    UpdateManager.Subscribe(this, message, slotMachine.RightReel.StickerValue, ref _part4Token, UpdateFile, true);
                     message.ProtoService.DownloadFile(slotMachine.RightReel.StickerValue.Id, 1);
                 }
                 if (slotMachine.Lever.StickerValue.Local.CanBeDownloaded && !slotMachine.Lever.StickerValue.Local.IsDownloadingActive)
                 {
+                    UpdateManager.Subscribe(this, message, slotMachine.Lever.StickerValue, ref _part5Token, UpdateFile, true);
                     message.ProtoService.DownloadFile(slotMachine.Lever.StickerValue.Id, 1);
                 }
             }

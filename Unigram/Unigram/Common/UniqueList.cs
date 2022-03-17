@@ -19,10 +19,7 @@ namespace Unigram.Common
 
         public TValue this[int index]
         {
-            get
-            {
-                return _inner.Values[index];
-            }
+            get => _inner.Values[index];
             set { }
         }
 

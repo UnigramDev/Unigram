@@ -2,40 +2,79 @@
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Converters;
+using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed partial class VideoContent : AspectView, IContentWithFile
+    public sealed class VideoContent : Control, IContentWithFile, IContentWithPlayback
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
+        private RemoteVideoSource _source;
+
+        private string _fileToken;
+        private string _thumbnailToken;
+
         public VideoContent(MessageViewModel message)
         {
-            InitializeComponent();
-            UpdateMessage(message);
+            _message = message;
+
+            DefaultStyleKey = typeof(VideoContent);
         }
+
+        #region InitializeComponent
+
+        private AspectView LayoutRoot;
+        private Image Texture;
+        private FileButton Button;
+        private AnimationView Player;
+        private FileButton Overlay;
+        private TextBlock Subtitle;
+        private bool _templateApplied;
+
+        protected override void OnApplyTemplate()
+        {
+            LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as AspectView;
+            Texture = GetTemplateChild(nameof(Texture)) as Image;
+            Button = GetTemplateChild(nameof(Button)) as FileButton;
+            Player = GetTemplateChild(nameof(Player)) as AnimationView;
+            Overlay = GetTemplateChild(nameof(Overlay)) as FileButton;
+            Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
+
+            Button.Click += Play_Click;
+            Player.PositionChanged += Player_PositionChanged;
+            Overlay.Click += Button_Click;
+
+            _templateApplied = true;
+
+            if (_message != null)
+            {
+                UpdateMessage(_message);
+            }
+        }
+
+        #endregion
 
         public void UpdateMessage(MessageViewModel message)
         {
             _message = message;
 
             var video = GetContent(message.Content);
-            if (video == null)
+            if (video == null || !_templateApplied)
             {
                 return;
             }
 
-            Constraint = message;
+            LayoutRoot.Constraint = message;
             Texture.Source = null;
 
-            if (video.Thumbnail != null)
-            {
-                UpdateThumbnail(message, video.Thumbnail, video.Thumbnail.File);
-            }
+            UpdateThumbnail(message, video, video.Thumbnail?.File, true);
 
+            UpdateManager.Subscribe(this, message, video.VideoValue, ref _fileToken, UpdateFile);
             UpdateFile(message, video.VideoValue);
         }
 
@@ -48,20 +87,20 @@ namespace Unigram.Controls.Messages.Content
             }
         }
 
-        public void UpdateFile(MessageViewModel message, File file)
+        private void UpdateFile(object target, File file)
+        {
+            UpdateFile(_message, file);
+        }
+
+        private void UpdateFile(MessageViewModel message, File file)
         {
             var video = GetContent(message.Content);
-            if (video == null)
+            if (video == null || !_templateApplied)
             {
                 return;
             }
 
-            if (video.Thumbnail != null && video.Thumbnail.File.Id == file.Id)
-            {
-                UpdateThumbnail(message, video.Thumbnail, file);
-                return;
-            }
-            else if (video.VideoValue.Id != file.Id)
+            if (video.VideoValue.Id != file.Id)
             {
                 return;
             }
@@ -101,7 +140,7 @@ namespace Unigram.Controls.Messages.Content
 
                     Subtitle.Text = string.Format("{0}, {1}", Locale.FormatTtl(message.Ttl, true), FileSizeConverter.Convert(size));
 
-                    if (message.Delegate.CanBeDownloaded(message))
+                    if (message.Delegate.CanBeDownloaded(video, file))
                     {
                         _message.ProtoService.DownloadFile(file.Id, 32);
                     }
@@ -119,17 +158,27 @@ namespace Unigram.Controls.Messages.Content
                 var size = Math.Max(file.Size, file.ExpectedSize);
                 if (file.Local.IsDownloadingActive)
                 {
+                    if (message.Delegate.CanBeDownloaded(video, file))
+                    {
+                        UpdateSource(message, file, video.Duration);
+                    }
+
                     Button.SetGlyph(file.Id, MessageContentState.Play);
                     Button.Progress = 0;
                     Overlay.SetGlyph(file.Id, MessageContentState.Downloading);
                     Overlay.Progress = (double)file.Local.DownloadedSize / size;
                     Overlay.ProgressVisibility = Visibility.Visible;
 
-                    Subtitle.Text = video.GetDuration() + Environment.NewLine + string.Format("{0} / {1}", FileSizeConverter.Convert(file.Local.DownloadedSize, size), FileSizeConverter.Convert(size));
+                    if (_source == null)
+                    {
+                        Subtitle.Text = video.GetDuration() + Environment.NewLine + string.Format("{0} / {1}", FileSizeConverter.Convert(file.Local.DownloadedSize, size), FileSizeConverter.Convert(size));
+                    }
                 }
                 else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed)
                 {
                     var generating = file.Local.DownloadedSize < size;
+
+                    UpdateSource(null, null, 0);
 
                     Button.SetGlyph(file.Id, MessageContentState.Uploading);
                     Button.Progress = (double)(generating ? file.Local.DownloadedSize : file.Remote.UploadedSize) / size;
@@ -154,13 +203,23 @@ namespace Unigram.Controls.Messages.Content
 
                     Subtitle.Text = video.GetDuration() + Environment.NewLine + FileSizeConverter.Convert(size);
 
-                    if (message.Delegate.CanBeDownloaded(message))
+                    if (message.Delegate.CanBeDownloaded(video, file))
                     {
                         _message.ProtoService.DownloadFile(file.Id, 32);
+                        UpdateSource(message, file, video.Duration);
+                    }
+                    else
+                    {
+                        UpdateSource(null, null, 0);
                     }
                 }
                 else
                 {
+                    if (message.Delegate.CanBeDownloaded(video, file))
+                    {
+                        UpdateSource(message, file, video.Duration);
+                    }
+
                     Button.SetGlyph(file.Id, message.SendingState is MessageSendingStatePending && message.MediaAlbumId != 0 ? MessageContentState.Confirm : MessageContentState.Play);
                     Button.Progress = 0;
                     Overlay.Progress = 1;
@@ -171,16 +230,84 @@ namespace Unigram.Controls.Messages.Content
             }
         }
 
-        private void UpdateThumbnail(MessageViewModel message, Thumbnail thumbnail, File file)
+        private void UpdateThumbnail(object target, File file)
         {
-            if (file.Local.IsDownloadingCompleted && thumbnail.Format is ThumbnailFormatJpeg)
+            var video = GetContent(_message.Content);
+            if (video == null || !_templateApplied)
             {
-                //Texture.Source = new BitmapImage(UriEx.GetLocal(file.Local.Path));
-                Texture.Source = PlaceholderHelper.GetBlurred(file.Local.Path);
+                return;
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+
+            UpdateThumbnail(_message, video, file, false);
+        }
+
+        private void UpdateThumbnail(MessageViewModel message, Video video, File file, bool download)
+        {
+            var thumbnail = video.Thumbnail;
+            var minithumbnail = video.Minithumbnail;
+
+            if (thumbnail != null && thumbnail.Format is ThumbnailFormatJpeg)
             {
-                message.ProtoService.DownloadFile(file.Id, 1);
+                if (file.Local.IsDownloadingCompleted)
+                {
+                    Texture.Source = PlaceholderHelper.GetBlurred(file.Local.Path);
+                }
+                else if (download)
+                {
+                    if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                    {
+                        if (minithumbnail != null)
+                        {
+                            Texture.Source = PlaceholderHelper.GetBlurred(minithumbnail.Data);
+                        }
+
+                        message.ProtoService.DownloadFile(file.Id, 1);
+                    }
+
+                    UpdateManager.Subscribe(this, message, file, ref _thumbnailToken, UpdateThumbnail, true);
+                }
+            }
+            else if (minithumbnail != null)
+            {
+                Texture.Source = PlaceholderHelper.GetBlurred(minithumbnail.Data);
+            }
+            else
+            {
+                Texture.Source = null;
+            }
+        }
+
+        private void UpdateSource(MessageViewModel message, File file, int duration)
+        {
+            if (message == null || file == null || !SettingsService.Current.IsAutoPlayVideosEnabled)
+            {
+                Player.Source = _source = null;
+            }
+            else
+            {
+                if (_source?.Id != file.Id)
+                {
+                    Player.Source = _source = new RemoteVideoSource(message.ProtoService, file, duration);
+                }
+            }
+        }
+
+        private void Player_PositionChanged(object sender, int seconds)
+        {
+            var video = GetContent(_message?.Content);
+            if (video == null)
+            {
+                return;
+            }
+
+            var position = TimeSpan.FromSeconds(video.Duration - seconds);
+            if (position.TotalHours >= 1)
+            {
+                Subtitle.Text = position.ToString("h\\:mm\\:ss");
+            }
+            else
+            {
+                Subtitle.Text = position.ToString("mm\\:ss");
             }
         }
 
@@ -212,15 +339,20 @@ namespace Unigram.Controls.Messages.Content
             return null;
         }
 
+        public IPlayerView GetPlaybackElement()
+        {
+            return Player;
+        }
+
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var video = GetContent(_message.Content);
-            if (video == null)
+            if (_message.IsSecret())
             {
                 return;
             }
 
-            if (_message.IsSecret())
+            var video = GetContent(_message.Content);
+            if (video == null)
             {
                 return;
             }
@@ -236,7 +368,14 @@ namespace Unigram.Controls.Messages.Content
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
-                _message.ProtoService.DownloadFile(file.Id, 32);
+                if (_message.Content is not MessageVideo)
+                {
+                    _message.ProtoService.DownloadFile(file.Id, 30);
+                }
+                else
+                {
+                    _message.ProtoService.AddFileToDownloads(file.Id, _message.ChatId, _message.Id);
+                }
             }
             else
             {
@@ -265,7 +404,14 @@ namespace Unigram.Controls.Messages.Content
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
                 {
-                    _message.ProtoService.DownloadFile(file.Id, 32);
+                    if (_message.Content is not MessageVideo)
+                    {
+                        _message.ProtoService.DownloadFile(file.Id, 30);
+                    }
+                    else
+                    {
+                        _message.ProtoService.AddFileToDownloads(file.Id, _message.ChatId, _message.Id);
+                    }
                 }
                 else
                 {

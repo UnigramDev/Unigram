@@ -26,8 +26,8 @@ namespace Unigram.Controls.Chats
 
         public int SlowModeDelay
         {
-            get { return (int)GetValue(SlowModeDelayProperty); }
-            set { SetValue(SlowModeDelayProperty, value); }
+            get => (int)GetValue(SlowModeDelayProperty);
+            set => SetValue(SlowModeDelayProperty, value);
         }
 
         public static readonly DependencyProperty SlowModeDelayProperty =
@@ -44,8 +44,8 @@ namespace Unigram.Controls.Chats
 
         public double SlowModeDelayExpiresIn
         {
-            get { return (double)GetValue(SlowModeDelayExpiresInProperty); }
-            set { SetValue(SlowModeDelayExpiresInProperty, value); }
+            get => (double)GetValue(SlowModeDelayExpiresInProperty);
+            set => SetValue(SlowModeDelayExpiresInProperty, value);
         }
 
         public static readonly DependencyProperty SlowModeDelayExpiresInProperty =

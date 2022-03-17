@@ -11,8 +11,6 @@ using Telegram.Td.Api;
 using Unigram.Controls.Messages;
 using Unigram.Entities;
 using Unigram.Native;
-using Unigram.Navigation;
-using Unigram.Navigation.Services;
 using Unigram.Services;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
@@ -28,7 +26,6 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Media.Imaging;
 using static Unigram.Services.GenerationService;
 using Point = Windows.Foundation.Point;
@@ -65,32 +62,9 @@ namespace Unigram.Common
             return result.TrimEnd('&');
         }
 
-        public static Vector2 GetActualSize(this FrameworkElement element)
-        {
-            return new Vector2((float)element.ActualWidth, (float)element.ActualHeight);
-        }
-
         public static void ShowTeachingTip(this Window app, FrameworkElement target, string text, Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode placement = Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode.TopRight)
         {
             ShowTeachingTip(app, target, new FormattedText(text, new TextEntity[0]), placement);
-            return;
-
-            var tip = new Microsoft.UI.Xaml.Controls.TeachingTip
-            {
-                Target = target,
-                PreferredPlacement = placement,
-                IsLightDismissEnabled = true,
-                Subtitle = text
-            };
-            if (app.Content is FrameworkElement element)
-            {
-                element.Resources["TeachingTip"] = tip;
-            }
-            else
-            {
-                target.Resources["TeachingTip"] = tip;
-            }
-            tip.IsOpen = true;
         }
 
         public static void ShowTeachingTip(this Window app, FrameworkElement target, FormattedText text, Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode placement = Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode.TopRight)
@@ -140,32 +114,38 @@ namespace Unigram.Common
             return (int)(dateTime.ToUniversalTime() - dtDateTime).TotalSeconds;
         }
 
-        public static bool TryGet<T>(this ResourceDictionary dict, string key, out T value)
+        public static long ToTimestampMilliseconds(this DateTime dateTime)
         {
-            object tryGetValue;
-            bool success = false;
-            if (success = dict.TryGetValue(key, out tryGetValue))
+            var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+            DateTime.SpecifyKind(dtDateTime, DateTimeKind.Utc);
+
+            return (long)(dateTime.ToUniversalTime() - dtDateTime).TotalMilliseconds;
+        }
+
+        public static bool TryGet<T>(this ResourceDictionary dict, object key, out T value)
+        {
+            bool success;
+            if (success = dict.TryGetValue(key, out object tryGetValue))
             {
                 value = (T)tryGetValue;
             }
             else
             {
-                value = default(T);
+                value = default;
             }
             return success;
         }
 
         public static bool TryGet<T>(this IDictionary<string, object> dict, string key, out T value)
         {
-            object tryGetValue;
-            bool success = false;
-            if (success = dict.TryGetValue(key, out tryGetValue))
+            bool success;
+            if (success = dict.TryGetValue(key, out object tryGetValue))
             {
                 value = (T)tryGetValue;
             }
             else
             {
-                value = default(T);
+                value = default;
             }
             return success;
         }
@@ -228,12 +208,12 @@ namespace Unigram.Common
 
         public static uint GetHeight(this VideoProperties props)
         {
-            return props.Orientation == VideoOrientation.Rotate180 || props.Orientation == VideoOrientation.Normal ? props.Height : props.Width;
+            return props.Orientation is VideoOrientation.Rotate180 or VideoOrientation.Normal ? props.Height : props.Width;
         }
 
         public static uint GetWidth(this VideoProperties props)
         {
-            return props.Orientation == VideoOrientation.Rotate180 || props.Orientation == VideoOrientation.Normal ? props.Width : props.Height;
+            return props.Orientation is VideoOrientation.Rotate180 or VideoOrientation.Normal ? props.Width : props.Height;
         }
 
         public static T[] Shift<T>(this T[] array, int offset)
@@ -288,25 +268,25 @@ namespace Unigram.Common
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="UriFormatException"></exception>
         /// <exception cref="InvalidOperationException"></exception>
-        public static String MakeRelativePath(String fromPath, String toPath)
+        public static string MakeRelativePath(string fromPath, string toPath)
         {
-            if (String.IsNullOrEmpty(fromPath))
+            if (string.IsNullOrEmpty(fromPath))
             {
                 throw new ArgumentNullException("fromPath");
             }
 
-            if (String.IsNullOrEmpty(toPath))
+            if (string.IsNullOrEmpty(toPath))
             {
                 throw new ArgumentNullException("toPath");
             }
 
-            Uri fromUri = new Uri(fromPath);
-            Uri toUri = new Uri(toPath);
+            var fromUri = new Uri(fromPath);
+            var toUri = new Uri(toPath);
 
             if (fromUri.Scheme != toUri.Scheme) { return toPath; } // path can't be made relative.
 
-            Uri relativeUri = fromUri.MakeRelativeUri(toUri);
-            String relativePath = Uri.UnescapeDataString(relativeUri.ToString());
+            var relativeUri = fromUri.MakeRelativeUri(toUri);
+            string relativePath = Uri.UnescapeDataString(relativeUri.ToString());
 
             if (toUri.Scheme.Equals("file", StringComparison.OrdinalIgnoreCase))
             {
@@ -368,7 +348,7 @@ namespace Unigram.Common
                 return last;
             }
 
-            return default(T);
+            return default;
         }
 
         public static bool IsEmpty<T>(this ICollection<T> items)
@@ -400,7 +380,7 @@ namespace Unigram.Common
 
         public static bool IsEmpty(this Rect rect)
         {
-            return rect == default(Rect) || (rect.Width == 0 && rect.Height == 0);
+            return rect == default || (rect.Width == 0 && rect.Height == 0);
         }
 
         public static bool GetBoolean(this ApplicationDataContainer container, string key, bool defaultValue)
@@ -464,11 +444,11 @@ namespace Unigram.Common
                 return false;
             }
 
-            return Type.Equals(o1.GetType(), o2.GetType());
+            return Equals(o1.GetType(), o2.GetType());
         }
 
         public static Regex _pattern = new Regex("[\\-0-9]+", RegexOptions.Compiled);
-        public static int ToInt32(this String value)
+        public static int ToInt32(this string value)
         {
             if (value == null)
             {
@@ -609,7 +589,7 @@ namespace Unigram.Common
             var result = new List<T>(count);
             for (int i = 0; i < count; i++)
             {
-                result.Add(default(T));
+                result.Add(default);
             }
 
             return result;
@@ -688,80 +668,15 @@ namespace Unigram.Common
             return control;
         }
 
-        public static T GetParent<T>(this FrameworkElement element, string message = null) where T : DependencyObject
-        {
-            var parent = element.Parent as T;
-
-            if (parent == null)
-            {
-                if (message == null)
-                {
-                    message = "Parent element should not be null! Check the default Generic.xaml.";
-                }
-
-                throw new NullReferenceException(message);
-            }
-
-            return parent;
-        }
-
-        public static T GetChild<T>(this Border element, string message = null) where T : DependencyObject
-        {
-            var child = element.Child as T;
-
-            if (child == null)
-            {
-                if (message == null)
-                {
-                    message = $"{nameof(Border)}'s child should not be null! Check the default Generic.xaml.";
-                }
-
-                throw new NullReferenceException(message);
-            }
-
-            return child;
-        }
-
-        public static Storyboard GetStoryboard(this FrameworkElement element, string name, string message = null)
-        {
-            var storyboard = element.Resources[name] as Storyboard;
-
-            if (storyboard == null)
-            {
-                if (message == null)
-                {
-                    message = $"Storyboard '{name}' cannot be found! Check the default Generic.xaml.";
-                }
-
-                throw new NullReferenceException(message);
-            }
-
-            return storyboard;
-        }
-
-        public static CompositeTransform GetCompositeTransform(this FrameworkElement element, string message = null)
-        {
-            var transform = element.RenderTransform as CompositeTransform;
-
-            if (transform == null)
-            {
-                if (message == null)
-                {
-                    message = $"{element.Name}'s RenderTransform should be a CompositeTransform! Check the default Generic.xaml.";
-                }
-
-                throw new NullReferenceException(message);
-            }
-
-            return transform;
-        }
-
-
         public static async Task UpdateLayoutAsync(this FrameworkElement element, bool update = false)
         {
             var tcs = new TaskCompletionSource<object>();
 
-            EventHandler<object> layoutUpdated = (s1, e1) => tcs.TrySetResult(null);
+            void layoutUpdated(object s1, object e1)
+            {
+                tcs.TrySetResult(null);
+            }
+
             try
             {
                 element.LayoutUpdated += layoutUpdated;
@@ -796,7 +711,7 @@ namespace Unigram.Common
     // Modified from: https://stackoverflow.com/a/32559623/1680863
     public static class ListViewExtensions
     {
-        public async static Task ScrollToItem2(this ListViewBase listViewBase, object item, VerticalAlignment alignment, bool highlight, double? pixel = null)
+        public static async Task ScrollToItem2(this ListViewBase listViewBase, object item, VerticalAlignment alignment, bool highlight, double? pixel = null)
         {
             var scrollViewer = listViewBase.GetScrollViewer();
             if (scrollViewer == null)
@@ -867,8 +782,12 @@ namespace Unigram.Common
             var tcs = new TaskCompletionSource<object>();
             var scrollViewer = listViewBase.GetScrollViewer();
 
-            EventHandler<object> layoutUpdated = (s1, e1) => tcs.TrySetResult(null);
-            EventHandler<ScrollViewerViewChangedEventArgs> viewChanged = (s, e) =>
+            void layoutUpdated(object s1, object e1)
+            {
+                tcs.TrySetResult(null);
+            }
+
+            void viewChanged(object s, ScrollViewerViewChangedEventArgs e)
             {
                 scrollViewer.LayoutUpdated += layoutUpdated;
 
@@ -876,7 +795,7 @@ namespace Unigram.Common
                 {
                     scrollViewer.UpdateLayout();
                 }
-            };
+            }
             try
             {
                 scrollViewer.ViewChanged += viewChanged;
@@ -894,8 +813,12 @@ namespace Unigram.Common
         {
             var tcs = new TaskCompletionSource<object>();
 
-            EventHandler<object> layoutUpdated = (s1, e1) => tcs.TrySetResult(null);
-            EventHandler<ScrollViewerViewChangedEventArgs> viewChanged = (s, e) =>
+            void layoutUpdated(object s1, object e1)
+            {
+                tcs.TrySetResult(null);
+            }
+
+            void viewChanged(object s, ScrollViewerViewChangedEventArgs e)
             {
                 if (e.IsIntermediate)
                 {
@@ -908,7 +831,7 @@ namespace Unigram.Common
                 {
                     scrollViewer.UpdateLayout();
                 }
-            };
+            }
             try
             {
                 scrollViewer.ViewChanged += viewChanged;
@@ -948,15 +871,6 @@ namespace Unigram.Common
 
             Window.Current.Close();
         }
-    }
-
-    public static class Template10Utils
-    {
-        public static WindowContext GetWindowWrapper(this INavigationService service)
-            => WindowContext.ActiveWrappers.FirstOrDefault(x => x.NavigationServices.Contains(service));
-
-        public static IDispatcherContext GetDispatcherWrapper(this INavigationService service)
-            => service.GetWindowWrapper()?.Dispatcher;
     }
 
     public static class UriEx

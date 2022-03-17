@@ -16,7 +16,6 @@ namespace Unigram.Views.Settings
         public SettingsProxiesPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsProxiesViewModel>();
         }
 
         private void List_ItemClick(object sender, ItemClickEventArgs e)
@@ -32,12 +31,12 @@ namespace Unigram.Views.Settings
             var element = sender as FrameworkElement;
 
             var proxy = List.ItemFromContainer(element) as ProxyViewModel;
-            if (proxy == null || proxy is SystemProxyViewModel)
+            if (proxy is null or SystemProxyViewModel)
             {
                 return;
             }
 
-            if (proxy.Type is ProxyTypeMtproto || proxy.Type is ProxyTypeSocks5)
+            if (proxy.Type is ProxyTypeMtproto or ProxyTypeSocks5)
             {
                 flyout.CreateFlyoutItem(ViewModel.ShareCommand, proxy, Strings.Resources.ShareFile, new FontIcon { Glyph = Icons.Share });
             }

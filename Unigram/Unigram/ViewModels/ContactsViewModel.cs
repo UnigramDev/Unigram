@@ -85,7 +85,7 @@ namespace Unigram.ViewModels
 
         public bool IsSortedByEpoch
         {
-            get { return Settings.IsContactsSortedByEpoch; }
+            get => Settings.IsContactsSortedByEpoch;
             set
             {
                 if (Settings.IsContactsSortedByEpoch != value)
@@ -126,14 +126,8 @@ namespace Unigram.ViewModels
         private SearchUsersCollection _search;
         public SearchUsersCollection Search
         {
-            get
-            {
-                return _search;
-            }
-            set
-            {
-                Set(ref _search, value);
-            }
+            get => _search;
+            set => Set(ref _search, value);
         }
 
         #region Handle

@@ -25,7 +25,7 @@ namespace Unigram.Views.Popups
 
         private Visibility ConvertVisibility(int rating)
         {
-            return rating >= 0 && rating <= 3 ? Visibility.Visible : Visibility.Collapsed;
+            return rating is >= 0 and <= 3 ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private string ConvertPlaceholder(int rating)
@@ -33,29 +33,11 @@ namespace Unigram.Views.Popups
             return rating < 3 ? Strings.Resources.CallReportIncludeLogs : Strings.Resources.VoipFeedbackCommentHint;
         }
 
-        public int Rating
-        {
-            get
-            {
-                return RatingBar.Value;
-            }
-        }
+        public int Rating => RatingBar.Value;
 
-        public string Comment
-        {
-            get
-            {
-                return CommentField.Text;
-            }
-        }
+        public string Comment => CommentField.Text;
 
-        public bool IncludeDebugLogs
-        {
-            get
-            {
-                return DebugLogs.IsChecked == true;
-            }
-        }
+        public bool IncludeDebugLogs => DebugLogs.IsChecked == true;
 
         private void RatingBar_ValueChanged(object sender, RatingBarValueChangedEventArgs e)
         {

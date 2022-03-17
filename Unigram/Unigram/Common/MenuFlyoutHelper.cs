@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Input;
 using Unigram.Controls.Drawers;
+using Unigram.Navigation;
 using Windows.Foundation;
 using Windows.System;
 using Windows.UI.Xaml;
@@ -67,20 +68,28 @@ namespace Unigram.Common
             args.Handled = true;
         }
 
-        public static void CreateFlyoutSeparator(this MenuFlyout flyout)
+        public static MenuFlyoutSeparator CreateFlyoutSeparator(this MenuFlyout flyout)
         {
             if (flyout.Items.Count > 0 && (flyout.Items[flyout.Items.Count - 1] is MenuFlyoutItem or MenuFlyoutSubItem))
             {
-                flyout.Items.Add(new MenuFlyoutSeparator());
+                var separator = new MenuFlyoutSeparator();
+                flyout.Items.Add(separator);
+                return separator;
             }
+
+            return null;
         }
 
-        public static void CreateFlyoutSeparator(this MenuFlyoutSubItem flyout)
+        public static MenuFlyoutSeparator CreateFlyoutSeparator(this MenuFlyoutSubItem flyout)
         {
             if (flyout.Items.Count > 0 && (flyout.Items[flyout.Items.Count - 1] is MenuFlyoutItem or MenuFlyoutSubItem))
             {
-                flyout.Items.Add(new MenuFlyoutSeparator());
+                var separator = new MenuFlyoutSeparator();
+                flyout.Items.Add(separator);
+                return separator;
             }
+
+            return null;
         }
 
         public static void CreateFlyoutItem<T>(this MenuFlyout flyout, Func<T, bool> visibility, ICommand command, T parameter, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control) where T : class
@@ -117,8 +126,9 @@ namespace Unigram.Common
                 {
                     if (icon is FontIcon fontIcon)
                     {
+                        //fontIcon.Margin = new Thickness(-2);
                         fontIcon.FontSize = 20;
-                        fontIcon.FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily;
+                        fontIcon.FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily;
                     }
 
                     flyoutItem.Icon = icon;
@@ -148,8 +158,9 @@ namespace Unigram.Common
                 {
                     if (icon is FontIcon fontIcon)
                     {
+                        //fontIcon.Margin = new Thickness(-2);
                         fontIcon.FontSize = 20;
-                        fontIcon.FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily;
+                        fontIcon.FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily;
                     }
 
                     flyoutItem.Icon = icon;
@@ -164,12 +175,12 @@ namespace Unigram.Common
             }
         }
 
-        public static void CreateFlyoutItem(this MenuFlyout flyout, Action command, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
+        public static MenuFlyoutItem CreateFlyoutItem(this MenuFlyout flyout, Action command, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
         {
-            CreateFlyoutItem(flyout, new RelayCommand(command), text, icon, key, modifiers);
+            return CreateFlyoutItem(flyout, new RelayCommand(command), text, icon, key, modifiers);
         }
 
-        public static void CreateFlyoutItem(this MenuFlyout flyout, ICommand command, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
+        public static MenuFlyoutItem CreateFlyoutItem(this MenuFlyout flyout, ICommand command, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
         {
             var flyoutItem = new MenuFlyoutItem();
             flyoutItem.IsEnabled = command != null;
@@ -180,7 +191,9 @@ namespace Unigram.Common
             {
                 if (icon is FontIcon fontIcon)
                 {
-                    fontIcon.FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily;
+                    //fontIcon.Margin = new Thickness(-2);
+                    fontIcon.FontSize = 20;
+                    fontIcon.FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily;
                 }
 
                 flyoutItem.Icon = icon;
@@ -192,39 +205,40 @@ namespace Unigram.Common
             }
 
             flyout.Items.Add(flyoutItem);
+            return flyoutItem;
         }
 
-        public static void CreateFlyoutItem(this MenuFlyout flyout, ICommand command, object parameter, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
+        public static MenuFlyoutItem CreateFlyoutItem(this MenuFlyout flyout, ICommand command, object parameter, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
         {
-            flyout.Items.CreateFlyoutItem(command != null, command, parameter, text, icon, key, modifiers);
+            return flyout.Items.CreateFlyoutItem(command != null, command, parameter, text, icon, key, modifiers);
         }
 
-        public static void CreateFlyoutItem(this MenuFlyoutSubItem flyout, ICommand command, object parameter, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
+        public static MenuFlyoutItem CreateFlyoutItem(this MenuFlyoutSubItem flyout, ICommand command, object parameter, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
         {
-            flyout.Items.CreateFlyoutItem(command != null, command, parameter, text, icon, key, modifiers);
+            return flyout.Items.CreateFlyoutItem(command != null, command, parameter, text, icon, key, modifiers);
         }
 
-        public static void CreateFlyoutItem(this MenuFlyout flyout, bool enabled, Action command, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
+        public static MenuFlyoutItem CreateFlyoutItem(this MenuFlyout flyout, bool enabled, Action command, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
         {
-            flyout.Items.CreateFlyoutItem(enabled, new RelayCommand(command), null, text, icon, key, modifiers);
+            return flyout.Items.CreateFlyoutItem(enabled, new RelayCommand(command), null, text, icon, key, modifiers);
         }
 
-        public static void CreateFlyoutItem(this MenuFlyoutSubItem flyout, bool enabled, Action command, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
+        public static MenuFlyoutItem CreateFlyoutItem(this MenuFlyoutSubItem flyout, bool enabled, Action command, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
         {
-            flyout.Items.CreateFlyoutItem(enabled, new RelayCommand(command), null, text, icon, key, modifiers);
+            return flyout.Items.CreateFlyoutItem(enabled, new RelayCommand(command), null, text, icon, key, modifiers);
         }
 
-        public static void CreateFlyoutItem<T>(this MenuFlyout flyout, Action<T> command, T parameter, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
+        public static MenuFlyoutItem CreateFlyoutItem<T>(this MenuFlyout flyout, Action<T> command, T parameter, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
         {
-            flyout.Items.CreateFlyoutItem(true, new RelayCommand<T>(command), parameter, text, icon, key, modifiers);
+            return flyout.Items.CreateFlyoutItem(true, new RelayCommand<T>(command), parameter, text, icon, key, modifiers);
         }
 
-        public static void CreateFlyoutItem<T>(this MenuFlyoutSubItem flyout, Action<T> command, T parameter, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
+        public static MenuFlyoutItem CreateFlyoutItem<T>(this MenuFlyoutSubItem flyout, Action<T> command, T parameter, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
         {
-            flyout.Items.CreateFlyoutItem(true, new RelayCommand<T>(command), parameter, text, icon, key, modifiers);
+            return flyout.Items.CreateFlyoutItem(true, new RelayCommand<T>(command), parameter, text, icon, key, modifiers);
         }
 
-        public static void CreateFlyoutItem(this IList<MenuFlyoutItemBase> items, bool enabled, ICommand command, object parameter, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
+        public static MenuFlyoutItem CreateFlyoutItem(this IList<MenuFlyoutItemBase> items, bool enabled, ICommand command, object parameter, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
         {
             var flyoutItem = new MenuFlyoutItem();
             flyoutItem.IsEnabled = enabled;
@@ -236,8 +250,9 @@ namespace Unigram.Common
             {
                 if (icon is FontIcon fontIcon)
                 {
+                    //fontIcon.Margin = new Thickness(-2);
                     fontIcon.FontSize = 20;
-                    fontIcon.FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily;
+                    fontIcon.FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily;
                 }
 
                 flyoutItem.Icon = icon;
@@ -249,6 +264,17 @@ namespace Unigram.Common
             }
 
             items.Add(flyoutItem);
+            return flyoutItem;
+        }
+
+        public static FontIcon Icon(string glyph)
+        {
+            return new FontIcon
+            {
+                Glyph = glyph,
+                FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily,
+                Margin = new Thickness(-2)
+            };
         }
     }
 }

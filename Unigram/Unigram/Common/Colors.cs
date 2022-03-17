@@ -18,20 +18,20 @@ namespace Unigram.Common
 
         public byte R
         {
-            get { return _r; }
-            set { _r = value; }
+            get => _r;
+            set => _r = value;
         }
 
         public byte G
         {
-            get { return _g; }
-            set { _g = value; }
+            get => _g;
+            set => _g = value;
         }
 
         public byte B
         {
-            get { return _b; }
-            set { _b = value; }
+            get => _b;
+            set => _b = value;
         }
 
         public bool Equals(RGB rgb)
@@ -91,11 +91,11 @@ namespace Unigram.Common
 
                 if (h < 0.0)
                 {
-                    h = h + 360;
+                    h += 360;
                 }
             }
 
-            return new HSV(h, s, (v / 255));
+            return new HSV(h, s, v / 255);
         }
 
         public HSL ToHSL()
@@ -103,9 +103,9 @@ namespace Unigram.Common
             RGB rgb = this;
             HSL hsl = new HSL();
 
-            float r = (rgb.R / 255.0f);
-            float g = (rgb.G / 255.0f);
-            float b = (rgb.B / 255.0f);
+            float r = rgb.R / 255.0f;
+            float g = rgb.G / 255.0f;
+            float b = rgb.B / 255.0f;
 
             float min = Math.Min(Math.Min(r, g), b);
             float max = Math.Max(Math.Max(r, g), b);
@@ -126,15 +126,15 @@ namespace Unigram.Common
 
                 if (r == max)
                 {
-                    hue = ((g - b) / 6) / delta;
+                    hue = (g - b) / 6 / delta;
                 }
                 else if (g == max)
                 {
-                    hue = (1.0f / 3) + ((b - r) / 6) / delta;
+                    hue = 1.0f / 3 + (b - r) / 6 / delta;
                 }
                 else
                 {
-                    hue = (2.0f / 3) + ((r - g) / 6) / delta;
+                    hue = 2.0f / 3 + (r - g) / 6 / delta;
                 }
 
                 if (hue < 0)
@@ -169,20 +169,20 @@ namespace Unigram.Common
 
         public double H
         {
-            get { return _h; }
-            set { _h = value; }
+            get => _h;
+            set => _h = value;
         }
 
         public double S
         {
-            get { return _s; }
-            set { _s = value; }
+            get => _s;
+            set => _s = value;
         }
 
         public double V
         {
-            get { return _v; }
-            set { _v = value; }
+            get => _v;
+            set => _v = value;
         }
 
         public bool Equals(HSV hsv)
@@ -193,7 +193,9 @@ namespace Unigram.Common
         public RGB ToRGB()
         {
             HSV hsv = this;
-            double r = 0, g = 0, b = 0;
+            double r;
+            double g;
+            double b;
 
             if (hsv.S == 0)
             {
@@ -212,15 +214,15 @@ namespace Unigram.Common
                 }
                 else
                 {
-                    hsv.H = hsv.H / 60;
+                    hsv.H /= 60;
                 }
 
                 i = (int)Math.Truncate(hsv.H);
                 f = hsv.H - i;
 
                 p = hsv.V * (1.0 - hsv.S);
-                q = hsv.V * (1.0 - (hsv.S * f));
-                t = hsv.V * (1.0 - (hsv.S * (1.0 - f)));
+                q = hsv.V * (1.0 - hsv.S * f);
+                t = hsv.V * (1.0 - hsv.S * (1.0 - f));
 
                 switch (i)
                 {
@@ -282,20 +284,20 @@ namespace Unigram.Common
 
         public int H
         {
-            get { return _h; }
-            set { _h = value; }
+            get => _h;
+            set => _h = value;
         }
 
         public double S
         {
-            get { return _s; }
-            set { _s = value; }
+            get => _s;
+            set => _s = value;
         }
 
         public double L
         {
-            get { return _l; }
-            set { _l = value; }
+            get => _l;
+            set => _l = value;
         }
 
         public bool Equals(HSL hsl)
@@ -306,9 +308,9 @@ namespace Unigram.Common
         public RGB ToRGB()
         {
             var hsl = this;
-            byte r = 0;
-            byte g = 0;
-            byte b = 0;
+            byte r;
+            byte g;
+            byte b;
 
             if (hsl.S == 0)
             {
@@ -319,12 +321,12 @@ namespace Unigram.Common
                 double v1, v2;
                 double hue = (float)hsl.H / 360;
 
-                v2 = (hsl.L < 0.5) ? (hsl.L * (1 + hsl.S)) : ((hsl.L + hsl.S) - (hsl.L * hsl.S));
+                v2 = (hsl.L < 0.5) ? (hsl.L * (1 + hsl.S)) : (hsl.L + hsl.S - hsl.L * hsl.S);
                 v1 = 2 * hsl.L - v2;
 
-                r = (byte)(255 * HueToRGB(v1, v2, hue + (1.0f / 3)));
+                r = (byte)(255 * HueToRGB(v1, v2, hue + 1.0f / 3));
                 g = (byte)(255 * HueToRGB(v1, v2, hue));
-                b = (byte)(255 * HueToRGB(v1, v2, hue - (1.0f / 3)));
+                b = (byte)(255 * HueToRGB(v1, v2, hue - 1.0f / 3));
             }
 
             return new RGB(r, g, b);
@@ -344,7 +346,7 @@ namespace Unigram.Common
 
             if ((6 * vH) < 1)
             {
-                return (v1 + (v2 - v1) * 6 * vH);
+                return v1 + (v2 - v1) * 6 * vH;
             }
 
             if ((2 * vH) < 1)
@@ -354,7 +356,7 @@ namespace Unigram.Common
 
             if ((3 * vH) < 2)
             {
-                return (v1 + (v2 - v1) * ((2.0f / 3) - vH) * 6);
+                return v1 + (v2 - v1) * (2.0f / 3 - vH) * 6;
             }
 
             return v1;
@@ -367,24 +369,34 @@ namespace Unigram.Common
             return Color.FromArgb(alpha, color.R, color.G, color.B);
         }
 
-        public static Color FromHex(uint hexValue)
+        public static Color FromHex(uint hexValue, bool allowDefault = false)
         {
             byte a = (byte)((hexValue & 0xff000000) >> 24);
             byte r = (byte)((hexValue & 0x00ff0000) >> 16);
             byte g = (byte)((hexValue & 0x0000ff00) >> 8);
             byte b = (byte)(hexValue & 0x000000ff);
 
-            return Color.FromArgb(a, r, g, b);
+            if (a == 0 && r == 0 && g == 0 && b == 0 && allowDefault)
+            {
+                return default;
+            }
+
+            return Color.FromArgb(a > 0 ? a : (byte)0xFF, r, g, b);
         }
 
-        public static Color FromHex(int hexValue)
+        public static Color FromHex(int hexValue, bool allowDefault = false)
         {
             byte a = (byte)((hexValue & 0xff000000) >> 24);
             byte r = (byte)((hexValue & 0x00ff0000) >> 16);
             byte g = (byte)((hexValue & 0x0000ff00) >> 8);
             byte b = (byte)(hexValue & 0x000000ff);
 
-            return Color.FromArgb(a, r, g, b);
+            if (a == 0 && r == 0 && g == 0 && b == 0 && allowDefault)
+            {
+                return default;
+            }
+
+            return Color.FromArgb(a > 0 ? a : (byte)0xFF, r, g, b);
         }
 
         public static int ToHex(Color color)
@@ -434,11 +446,11 @@ namespace Unigram.Common
 
                 if (h < 0.0)
                 {
-                    h = h + 360;
+                    h += 360;
                 }
             }
 
-            return new HSV(h, s, (v / 255));
+            return new HSV(h, s, v / 255);
         }
 
 
@@ -447,9 +459,9 @@ namespace Unigram.Common
             RGB rgb = color;
             HSL hsl = new HSL();
 
-            float r = (rgb.R / 255.0f);
-            float g = (rgb.G / 255.0f);
-            float b = (rgb.B / 255.0f);
+            float r = rgb.R / 255.0f;
+            float g = rgb.G / 255.0f;
+            float b = rgb.B / 255.0f;
 
             float min = Math.Min(Math.Min(r, g), b);
             float max = Math.Max(Math.Max(r, g), b);
@@ -470,15 +482,15 @@ namespace Unigram.Common
 
                 if (r == max)
                 {
-                    hue = ((g - b) / 6) / delta;
+                    hue = (g - b) / 6 / delta;
                 }
                 else if (g == max)
                 {
-                    hue = (1.0f / 3) + ((b - r) / 6) / delta;
+                    hue = 1.0f / 3 + (b - r) / 6 / delta;
                 }
                 else
                 {
-                    hue = (2.0f / 3) + ((r - g) / 6) / delta;
+                    hue = 2.0f / 3 + (r - g) / 6 / delta;
                 }
 
                 if (hue < 0)
@@ -497,15 +509,15 @@ namespace Unigram.Common
             return hsl;
         }
 
-        public static Color GetPatternColor(Color color)
+        public static Color GetPatternColor(Color color, bool alwaysDark = false)
         {
             var rgb = (RGB)color;
             var hsb = rgb.ToHSV();
             if (hsb.S > 0.0f || (hsb.V < 1.0f && hsb.V > 0.0f))
             {
-                hsb.S = Math.Min(1.0f, hsb.S + 0.05f + 0.1f * (1.0f - hsb.S));
+                hsb.S = Math.Min(1.0f, hsb.S + (alwaysDark ? 0.15f : 0.05f) + 0.1f * (1.0f - hsb.S));
             }
-            if (hsb.V > 0.5f)
+            if (alwaysDark || hsb.V > 0.5f)
             {
                 hsb.V = Math.Max(0.0f, hsb.V * 0.65f);
             }
@@ -515,7 +527,7 @@ namespace Unigram.Common
             }
 
             var result = hsb.ToRGB();
-            return Color.FromArgb(0x66, result.R, result.G, result.B);
+            return Color.FromArgb(0x64, result.R, result.G, result.B);
         }
 
         public static Color GetAverageColor(Color color1, Color color2)
@@ -528,6 +540,36 @@ namespace Unigram.Common
             double b2 = color2.B;
 
             return Color.FromArgb(255, (byte)(r1 / 2d + r2 / 2d), (byte)(g1 / 2d + g2 / 2d), (byte)(b1 / 2d + b2 / 2d));
+        }
+
+        public static Color GetAverageColor(int color1, int color2)
+        {
+            return GetAverageColor(color1.ToColor(), color2.ToColor());
+        }
+
+        public static Color GetAverageColor(Color color1, int color2)
+        {
+            return GetAverageColor(color1, color2.ToColor());
+        }
+
+        public static Color GetAverageColor(int color1, Color color2)
+        {
+            return GetAverageColor(color1.ToColor(), color2);
+        }
+
+        public static bool IsDark(int color1, int color2, int color3, int color4)
+        {
+            Color averageColor = GetAverageColor(color1, color2);
+            if (color3 != 0)
+            {
+                averageColor = GetAverageColor(averageColor, color3);
+            }
+            if (color4 != 0)
+            {
+                averageColor = GetAverageColor(averageColor, color4);
+            }
+            HSV hsb = averageColor.ToHSV();
+            return hsb.V < 0.3f;
         }
     }
 }

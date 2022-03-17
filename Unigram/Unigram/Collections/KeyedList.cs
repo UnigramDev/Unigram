@@ -8,15 +8,8 @@ namespace Unigram.Collections
         private TKey _key;
         public TKey Key
         {
-            get
-            {
-                return _key;
-            }
-            set
-            {
-                _key = value;
-                //PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Key"));
-            }
+            get => _key;
+            set => _key = value;//PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Key"));
         }
 
         public KeyedList(TKey key)

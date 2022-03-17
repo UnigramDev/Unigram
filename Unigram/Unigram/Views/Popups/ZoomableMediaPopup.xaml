@@ -9,9 +9,7 @@
     Background="{ThemeResource SystemControlPageBackgroundMediumAltMediumBrush}"
     IsHitTestVisible="False"
     d:DesignHeight="300"
-    d:DesignWidth="400"
-    Loaded="OnLoaded"
-    Unloaded="OnUnloaded">
+    d:DesignWidth="400">
 
     <StackPanel VerticalAlignment="Center">
         <StackPanel.Resources>

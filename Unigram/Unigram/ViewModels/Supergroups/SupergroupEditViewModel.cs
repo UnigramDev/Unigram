@@ -19,7 +19,6 @@ namespace Unigram.ViewModels.Supergroups
 {
     public class SupergroupEditViewModel : TLViewModelBase,
         IDelegable<ISupergroupEditDelegate>,
-        IHandle<UpdateFile>,
         IHandle<UpdateChatPhoto>,
         IHandle<UpdateSupergroup>,
         IHandle<UpdateSupergroupFullInfo>,
@@ -42,6 +41,7 @@ namespace Unigram.ViewModels.Supergroups
 
             SendCommand = new RelayCommand(SendExecute);
 
+            ReactionsCommand = new RelayCommand(ReactionsExecute);
             MembersCommand = new RelayCommand(MembersExecute);
             AdminsCommand = new RelayCommand(AdminsExecute);
             BannedCommand = new RelayCommand(BannedExecute);
@@ -51,36 +51,36 @@ namespace Unigram.ViewModels.Supergroups
         protected Chat _chat;
         public Chat Chat
         {
-            get { return _chat; }
-            set { Set(ref _chat, value); }
+            get => _chat;
+            set => Set(ref _chat, value);
         }
 
         private string _title;
         public string Title
         {
-            get { return _title; }
-            set { Set(ref _title, value); }
+            get => _title;
+            set => Set(ref _title, value);
         }
 
         private string _about;
         public string About
         {
-            get { return _about; }
-            set { Set(ref _about, value); }
+            get => _about;
+            set => Set(ref _about, value);
         }
 
         private bool _isSignatures;
         public bool IsSignatures
         {
-            get { return _isSignatures; }
-            set { Set(ref _isSignatures, value); }
+            get => _isSignatures;
+            set => Set(ref _isSignatures, value);
         }
 
         private bool _isAllHistoryAvailable;
         public bool IsAllHistoryAvailable
         {
-            get { return _isAllHistoryAvailable; }
-            set { Set(ref _isAllHistoryAvailable, value); }
+            get => _isAllHistoryAvailable;
+            set => Set(ref _isAllHistoryAvailable, value);
         }
 
         #region Initialize
@@ -140,20 +140,6 @@ namespace Unigram.ViewModels.Supergroups
         {
             Aggregator.Unsubscribe(this);
             return Task.CompletedTask;
-        }
-
-        public void Handle(UpdateFile update)
-        {
-            var chat = _chat;
-            if (chat?.Photo == null)
-            {
-                return;
-            }
-
-            if (update.File.Local.IsDownloadingCompleted && chat.Photo.UpdateFile(update.File))
-            {
-                BeginOnUIThread(() => Delegate?.UpdateChatPhoto(chat));
-            }
         }
 
         public void Handle(UpdateChatPhoto update)
@@ -412,7 +398,7 @@ namespace Unigram.ViewModels.Supergroups
                 new SelectRadioItem(false, Strings.Resources.ChatHistoryHidden, !initialValue) { Footer = Strings.Resources.ChatHistoryHiddenInfo }
             };
 
-            var dialog = new SelectRadioPopup(items);
+            var dialog = new ChooseRadioPopup(items);
             dialog.Title = Strings.Resources.ChatHistory;
             dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.SecondaryButtonText = Strings.Resources.Cancel;
@@ -484,18 +470,7 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            Function function;
-            if (chat.Type is ChatTypeSupergroup)
-            {
-                function = new DeleteChat(chat.Id);
-            }
-            else
-            {
-                await ProtoService.SendAsync(new LeaveChat(chat.Id));
-                function = new DeleteChatHistory(chat.Id, true, false);
-            }
-
-            var response = await ProtoService.SendAsync(function);
+            var response = await ProtoService.SendAsync(new DeleteChat(chat.Id));
             if (response is Ok)
             {
                 NavigationService.RemovePeerFromStack(chat.Id);
@@ -507,6 +482,18 @@ namespace Unigram.ViewModels.Supergroups
         }
 
         #region Navigation
+
+        public RelayCommand ReactionsCommand { get; }
+        private void ReactionsExecute()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            NavigationService.Navigate(typeof(SupergroupReactionsPage), chat.Id);
+        }
 
         public RelayCommand AdminsCommand { get; }
         private void AdminsExecute()

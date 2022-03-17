@@ -14,8 +14,8 @@ namespace Unigram.ViewModels.Chats
         private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
         private readonly Chat _chat;
 
-        public ChatPhotosViewModel(IProtoService protoService, IEventAggregator aggregator, Chat chat, ChatPhoto photo)
-            : base(protoService, aggregator)
+        public ChatPhotosViewModel(IProtoService protoService, IStorageService storageService, IEventAggregator aggregator, Chat chat, ChatPhoto photo)
+            : base(protoService, storageService, aggregator)
         {
             _chat = chat;
             Items = new MvxObservableCollection<GalleryContent> { new GalleryChatPhoto(protoService, chat, photo, 0) };

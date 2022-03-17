@@ -76,14 +76,6 @@ namespace Unigram.ViewModels.Settings
                 }
             });
 
-            ProtoService.Send(new GetActiveSessions(), result =>
-            {
-                if (result is Sessions sessions)
-                {
-                    BeginOnUIThread(() => ActiveSessions = sessions.SessionsValue.Count);
-                }
-            });
-
             ProtoService.Send(new GetPasswordState(), result =>
             {
                 if (result is PasswordState passwordState)
@@ -128,13 +120,6 @@ namespace Unigram.ViewModels.Settings
             set => Set(ref _blockedUsers, value);
         }
 
-        private int _activeSessions;
-        public int ActiveSessions
-        {
-            get => _activeSessions;
-            set => Set(ref _activeSessions, value);
-        }
-
         private bool _isPasswordEnabled;
         public bool IsPasswordEnabled
         {
@@ -151,10 +136,7 @@ namespace Unigram.ViewModels.Settings
 
         public bool IsContactsSyncEnabled
         {
-            get
-            {
-                return Settings.IsContactsSyncEnabled;
-            }
+            get => Settings.IsContactsSyncEnabled;
             set
             {
                 Settings.IsContactsSyncEnabled = value;
@@ -164,22 +146,13 @@ namespace Unigram.ViewModels.Settings
 
         public bool IsContactsSuggestEnabled
         {
-            get
-            {
-                return !CacheService.Options.DisableTopChats;
-            }
-            set
-            {
-                SetSuggestContacts(value);
-            }
+            get => !CacheService.Options.DisableTopChats;
+            set => SetSuggestContacts(value);
         }
 
         public bool IsArchiveAndMuteEnabled
         {
-            get
-            {
-                return ProtoService.Options.ArchiveAndMuteNewChatsFromUnknownUsers;
-            }
+            get => ProtoService.Options.ArchiveAndMuteNewChatsFromUnknownUsers;
             set
             {
                 ProtoService.Options.ArchiveAndMuteNewChatsFromUnknownUsers = value;
@@ -189,10 +162,7 @@ namespace Unigram.ViewModels.Settings
 
         public bool IsSecretPreviewsEnabled
         {
-            get
-            {
-                return Settings.IsSecretPreviewsEnabled;
-            }
+            get => Settings.IsSecretPreviewsEnabled;
             set
             {
                 Settings.IsSecretPreviewsEnabled = value;
@@ -202,10 +172,7 @@ namespace Unigram.ViewModels.Settings
 
         public bool IgnoreSensitiveContentRestrictions
         {
-            get
-            {
-                return CacheService.Options.IgnoreSensitiveContentRestrictions;
-            }
+            get => CacheService.Options.IgnoreSensitiveContentRestrictions;
             set
             {
                 if (CacheService.Options.CanIgnoreSensitiveContentRestrictions)
@@ -408,7 +375,7 @@ namespace Unigram.ViewModels.Settings
                 selected.IsChecked = true;
             }
 
-            var dialog = new SelectRadioPopup(items);
+            var dialog = new ChooseRadioPopup(items);
             dialog.Title = Strings.Resources.DeleteAccountTitle;
             dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.SecondaryButtonText = Strings.Resources.Cancel;

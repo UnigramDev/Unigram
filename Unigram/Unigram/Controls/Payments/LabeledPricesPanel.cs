@@ -17,10 +17,7 @@ namespace Unigram.Controls.Payments
         private string _currency;
         public string Currency
         {
-            get
-            {
-                return _currency;
-            }
+            get => _currency;
             set
             {
                 _currency = value;
@@ -31,10 +28,7 @@ namespace Unigram.Controls.Payments
         private IList<LabeledPricePart> _prices;
         public IList<LabeledPricePart> Prices
         {
-            get
-            {
-                return _prices;
-            }
+            get => _prices;
             set
             {
                 _prices = value;
@@ -54,19 +48,19 @@ namespace Unigram.Controls.Payments
                     var price = _prices[i];
 
                     var label = new TextBlock();
-                    label.Style = App.Current.Resources["DisabledBodyTextBlockStyle"] as Style;
+                    label.Style = Navigation.BootStrapper.Current.Resources["DisabledBodyTextBlockStyle"] as Style;
                     label.Text = price.Label;
                     label.Margin = new Thickness(12, 4, 0, 4);
 
                     var amount = new TextBlock();
-                    amount.Style = App.Current.Resources["DisabledBodyTextBlockStyle"] as Style;
+                    amount.Style = Navigation.BootStrapper.Current.Resources["DisabledBodyTextBlockStyle"] as Style;
                     amount.Text = Converter.FormatAmount(price.Amount, _currency);
                     amount.Margin = new Thickness(8, 4, 12, 4);
                     amount.TextAlignment = TextAlignment.Right;
 
-                    Grid.SetRow(label, i);
-                    Grid.SetRow(amount, i);
-                    Grid.SetColumn(amount, 1);
+                    SetRow(label, i);
+                    SetRow(amount, i);
+                    SetColumn(amount, 1);
 
                     Children.Add(label);
                     Children.Add(amount);

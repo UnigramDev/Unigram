@@ -4,10 +4,10 @@ using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Controls;
 using Unigram.Converters;
+using Unigram.Native;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Services;
-using Unigram.ViewModels;
 using Unigram.Views;
 using Unigram.Views.Host;
 using Unigram.Views.Popups;
@@ -22,6 +22,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Point = Windows.Foundation.Point;
+using User = Telegram.Td.Api.User;
 
 namespace Unigram.Common
 {
@@ -54,7 +55,7 @@ namespace Unigram.Common
         private static bool IsRandALCat(int c)
         {
             bool hasRandALCat = false;
-            if (c >= 0x5BE && c <= 0x10B7F)
+            if (c is >= 0x5BE and <= 0x10B7F)
             {
                 if (c <= 0x85E)
                 {
@@ -62,71 +63,71 @@ namespace Unigram.Common
                     else if (c == 0x5C0) hasRandALCat = true;
                     else if (c == 0x5C3) hasRandALCat = true;
                     else if (c == 0x5C6) hasRandALCat = true;
-                    else if (0x5D0 <= c && c <= 0x5EA) hasRandALCat = true;
-                    else if (0x5F0 <= c && c <= 0x5F4) hasRandALCat = true;
+                    else if (c is >= 0x5D0 and <= 0x5EA) hasRandALCat = true;
+                    else if (c is >= 0x5F0 and <= 0x5F4) hasRandALCat = true;
                     else if (c == 0x608) hasRandALCat = true;
                     else if (c == 0x60B) hasRandALCat = true;
                     else if (c == 0x60D) hasRandALCat = true;
                     else if (c == 0x61B) hasRandALCat = true;
-                    else if (0x61E <= c && c <= 0x64A) hasRandALCat = true;
-                    else if (0x66D <= c && c <= 0x66F) hasRandALCat = true;
-                    else if (0x671 <= c && c <= 0x6D5) hasRandALCat = true;
-                    else if (0x6E5 <= c && c <= 0x6E6) hasRandALCat = true;
-                    else if (0x6EE <= c && c <= 0x6EF) hasRandALCat = true;
-                    else if (0x6FA <= c && c <= 0x70D) hasRandALCat = true;
+                    else if (c is >= 0x61E and <= 0x64A) hasRandALCat = true;
+                    else if (c is >= 0x66D and <= 0x66F) hasRandALCat = true;
+                    else if (c is >= 0x671 and <= 0x6D5) hasRandALCat = true;
+                    else if (c is >= 0x6E5 and <= 0x6E6) hasRandALCat = true;
+                    else if (c is >= 0x6EE and <= 0x6EF) hasRandALCat = true;
+                    else if (c is >= 0x6FA and <= 0x70D) hasRandALCat = true;
                     else if (c == 0x710) hasRandALCat = true;
-                    else if (0x712 <= c && c <= 0x72F) hasRandALCat = true;
-                    else if (0x74D <= c && c <= 0x7A5) hasRandALCat = true;
+                    else if (c is >= 0x712 and <= 0x72F) hasRandALCat = true;
+                    else if (c is >= 0x74D and <= 0x7A5) hasRandALCat = true;
                     else if (c == 0x7B1) hasRandALCat = true;
-                    else if (0x7C0 <= c && c <= 0x7EA) hasRandALCat = true;
-                    else if (0x7F4 <= c && c <= 0x7F5) hasRandALCat = true;
+                    else if (c is >= 0x7C0 and <= 0x7EA) hasRandALCat = true;
+                    else if (c is >= 0x7F4 and <= 0x7F5) hasRandALCat = true;
                     else if (c == 0x7FA) hasRandALCat = true;
-                    else if (0x800 <= c && c <= 0x815) hasRandALCat = true;
+                    else if (c is >= 0x800 and <= 0x815) hasRandALCat = true;
                     else if (c == 0x81A) hasRandALCat = true;
                     else if (c == 0x824) hasRandALCat = true;
                     else if (c == 0x828) hasRandALCat = true;
-                    else if (0x830 <= c && c <= 0x83E) hasRandALCat = true;
-                    else if (0x840 <= c && c <= 0x858) hasRandALCat = true;
+                    else if (c is >= 0x830 and <= 0x83E) hasRandALCat = true;
+                    else if (c is >= 0x840 and <= 0x858) hasRandALCat = true;
                     else if (c == 0x85E) hasRandALCat = true;
                 }
                 else if (c == 0x200F) hasRandALCat = true;
                 else if (c >= 0xFB1D)
                 {
                     if (c == 0xFB1D) hasRandALCat = true;
-                    else if (0xFB1F <= c && c <= 0xFB28) hasRandALCat = true;
-                    else if (0xFB2A <= c && c <= 0xFB36) hasRandALCat = true;
-                    else if (0xFB38 <= c && c <= 0xFB3C) hasRandALCat = true;
+                    else if (c is >= 0xFB1F and <= 0xFB28) hasRandALCat = true;
+                    else if (c is >= 0xFB2A and <= 0xFB36) hasRandALCat = true;
+                    else if (c is >= 0xFB38 and <= 0xFB3C) hasRandALCat = true;
                     else if (c == 0xFB3E) hasRandALCat = true;
-                    else if (0xFB40 <= c && c <= 0xFB41) hasRandALCat = true;
-                    else if (0xFB43 <= c && c <= 0xFB44) hasRandALCat = true;
-                    else if (0xFB46 <= c && c <= 0xFBC1) hasRandALCat = true;
-                    else if (0xFBD3 <= c && c <= 0xFD3D) hasRandALCat = true;
-                    else if (0xFD50 <= c && c <= 0xFD8F) hasRandALCat = true;
-                    else if (0xFD92 <= c && c <= 0xFDC7) hasRandALCat = true;
-                    else if (0xFDF0 <= c && c <= 0xFDFC) hasRandALCat = true;
-                    else if (0xFE70 <= c && c <= 0xFE74) hasRandALCat = true;
-                    else if (0xFE76 <= c && c <= 0xFEFC) hasRandALCat = true;
-                    else if (0x10800 <= c && c <= 0x10805) hasRandALCat = true;
+                    else if (c is >= 0xFB40 and <= 0xFB41) hasRandALCat = true;
+                    else if (c is >= 0xFB43 and <= 0xFB44) hasRandALCat = true;
+                    else if (c is >= 0xFB46 and <= 0xFBC1) hasRandALCat = true;
+                    else if (c is >= 0xFBD3 and <= 0xFD3D) hasRandALCat = true;
+                    else if (c is >= 0xFD50 and <= 0xFD8F) hasRandALCat = true;
+                    else if (c is >= 0xFD92 and <= 0xFDC7) hasRandALCat = true;
+                    else if (c is >= 0xFDF0 and <= 0xFDFC) hasRandALCat = true;
+                    else if (c is >= 0xFE70 and <= 0xFE74) hasRandALCat = true;
+                    else if (c is >= 0xFE76 and <= 0xFEFC) hasRandALCat = true;
+                    else if (c is >= 0x10800 and <= 0x10805) hasRandALCat = true;
                     else if (c == 0x10808) hasRandALCat = true;
-                    else if (0x1080A <= c && c <= 0x10835) hasRandALCat = true;
-                    else if (0x10837 <= c && c <= 0x10838) hasRandALCat = true;
+                    else if (c is >= 0x1080A and <= 0x10835) hasRandALCat = true;
+                    else if (c is >= 0x10837 and <= 0x10838) hasRandALCat = true;
                     else if (c == 0x1083C) hasRandALCat = true;
-                    else if (0x1083F <= c && c <= 0x10855) hasRandALCat = true;
-                    else if (0x10857 <= c && c <= 0x1085F) hasRandALCat = true;
-                    else if (0x10900 <= c && c <= 0x1091B) hasRandALCat = true;
-                    else if (0x10920 <= c && c <= 0x10939) hasRandALCat = true;
+                    else if (c is >= 0x1083F and <= 0x10855) hasRandALCat = true;
+                    else if (c is >= 0x10857 and <= 0x1085F) hasRandALCat = true;
+                    else if (c is >= 0x10900 and <= 0x1091B) hasRandALCat = true;
+                    else if (c is >= 0x10920 and <= 0x10939) hasRandALCat = true;
                     else if (c == 0x1093F) hasRandALCat = true;
                     else if (c == 0x10A00) hasRandALCat = true;
-                    else if (0x10A10 <= c && c <= 0x10A13) hasRandALCat = true;
-                    else if (0x10A15 <= c && c <= 0x10A17) hasRandALCat = true;
-                    else if (0x10A19 <= c && c <= 0x10A33) hasRandALCat = true;
-                    else if (0x10A40 <= c && c <= 0x10A47) hasRandALCat = true;
-                    else if (0x10A50 <= c && c <= 0x10A58) hasRandALCat = true;
-                    else if (0x10A60 <= c && c <= 0x10A7F) hasRandALCat = true;
-                    else if (0x10B00 <= c && c <= 0x10B35) hasRandALCat = true;
-                    else if (0x10B40 <= c && c <= 0x10B55) hasRandALCat = true;
-                    else if (0x10B58 <= c && c <= 0x10B72) hasRandALCat = true;
-                    else if (0x10B78 <= c && c <= 0x10B7F) hasRandALCat = true;
+                    else if (c is >= 0x10A10 and <= 0x10A13) hasRandALCat = true;
+                    else if (c is >= 0x10A15 and <= 0x10A17) hasRandALCat = true;
+                    else if (c is >= 0x10A19 and <= 0x10A33) hasRandALCat = true;
+                    else if (c is >= 0x10A40 and <= 0x10A47) hasRandALCat = true;
+                    else if (c is >= 0x10A50 and <= 0x10A58) hasRandALCat = true;
+                    else if (c is >= 0x10A60 and <= 0x10A7F) hasRandALCat = true;
+                    else if (c is >= 0x10B00 and <= 0x10B35) hasRandALCat = true;
+                    else if (c is >= 0x10B40 and <= 0x10B55) hasRandALCat = true;
+                    else if (c is >= 0x10B58 and <= 0x10B72) hasRandALCat = true;
+                    else if (c is >= 0x10B78 and <= 0x10B7F) hasRandALCat = true;
                 }
             }
 
@@ -164,362 +165,130 @@ namespace Unigram.Common
             return string.Equals(uri.Scheme, "tg", StringComparison.OrdinalIgnoreCase);
         }
 
-        public static async void OpenTelegramScheme(IProtoService protoService, INavigationService navigation, Uri scheme)
+        public static async void OpenTelegramUrl(IProtoService protoService, INavigationService navigation, Uri uri)
         {
-            string username = null;
-            string message = null;
-            string group = null;
-            string sticker = null;
-            string[] instantView = null;
-            Dictionary<string, object> auth = null;
-            string botUser = null;
-            string botChat = null;
-            string comment = null;
-            string phone = null;
-            string game = null;
-            string phoneHash = null;
-            string post = null;
-            string server = null;
-            string port = null;
-            string user = null;
-            string pass = null;
-            string secret = null;
-            string phoneCode = null;
-            string lang = null;
-            string channel = null;
-            string voiceChat = null;
-            bool hasUrl = false;
-
-            var query = scheme.Query.ParseQueryString();
-            if (scheme.AbsoluteUri.StartsWith("tg:resolve") || scheme.AbsoluteUri.StartsWith("tg://resolve"))
+            var url = uri.ToString();
+            if (url.Contains("telegra.ph"))
             {
-                username = query.GetParameter("domain");
-
-                if (string.Equals(username, "telegrampassport", StringComparison.OrdinalIgnoreCase))
-                {
-                    username = null;
-                    auth = new Dictionary<string, object>();
-                    var scope = query.GetParameter("scope");
-                    if (!string.IsNullOrEmpty(scope) && scope.StartsWith("{") && scope.EndsWith("}"))
-                    {
-                        auth.Add("nonce", query.GetParameter("nonce"));
-                    }
-                    else
-                    {
-                        auth.Add("payload", query.GetParameter("payload"));
-                    }
-
-                    auth.Add("bot_id", int.Parse(query.GetParameter("bot_id")));
-                    auth.Add("scope", scope);
-                    auth.Add("public_key", query.GetParameter("public_key"));
-                    auth.Add("callback_url", query.GetParameter("callback_url"));
-                }
-                else
-                {
-                    botUser = query.GetParameter("start");
-                    botChat = query.GetParameter("startgroup");
-                    game = query.GetParameter("game");
-                    post = query.GetParameter("post");
-                    comment = query.GetParameter("comment");
-                    voiceChat = query.GetParameter("voicechat");
-                }
-            }
-            else if (scheme.AbsoluteUri.StartsWith("tg:join") || scheme.AbsoluteUri.StartsWith("tg://join"))
-            {
-                group = query.GetParameter("invite");
-            }
-            else if (scheme.AbsoluteUri.StartsWith("tg:addstickers") || scheme.AbsoluteUri.StartsWith("tg://addstickers"))
-            {
-                sticker = query.GetParameter("set");
-            }
-            else if (scheme.AbsoluteUri.StartsWith("tg:msg") || scheme.AbsoluteUri.StartsWith("tg://msg") || scheme.AbsoluteUri.StartsWith("tg://share") || scheme.AbsoluteUri.StartsWith("tg:share"))
-            {
-                message = query.GetParameter("url");
-                if (message == null)
-                {
-                    message = "";
-                }
-                if (query.GetParameter("text") != null)
-                {
-                    if (message.Length > 0)
-                    {
-                        hasUrl = true;
-                        message += "\n";
-                    }
-                    message += query.GetParameter("text");
-                }
-                if (message.Length > 4096 * 4)
-                {
-                    message = message.Substring(0, 4096 * 4);
-                }
-                while (message.EndsWith("\n"))
-                {
-                    message = message.Substring(0, message.Length - 1);
-                }
-            }
-            else if (scheme.AbsoluteUri.StartsWith("tg:confirmphone") || scheme.AbsoluteUri.StartsWith("tg://confirmphone"))
-            {
-                phone = query.GetParameter("phone");
-                phoneHash = query.GetParameter("hash");
-            }
-            else if (scheme.AbsoluteUri.StartsWith("tg:passport") || scheme.AbsoluteUri.StartsWith("tg://passport") || scheme.AbsoluteUri.StartsWith("tg:secureid") || scheme.AbsoluteUri.StartsWith("tg://secureid"))
-            {
-                //url = url.replace("tg:passport", "tg://telegram.org").replace("tg://passport", "tg://telegram.org").replace("tg:secureid", "tg://telegram.org");
-                //data = Uri.parse(url);
-                //auth = new HashMap<>();
-                //String scope = data.getQueryParameter("scope");
-                //if (!TextUtils.isEmpty(scope) && scope.startsWith("{") && scope.endsWith("}"))
-                //{
-                //    auth.put("nonce", data.getQueryParameter("nonce"));
-                //}
-                //else
-                //{
-                //    auth.put("payload", data.getQueryParameter("payload"));
-                //}
-                //auth.put("bot_id", data.getQueryParameter("bot_id"));
-                //auth.put("scope", scope);
-                //auth.put("public_key", data.getQueryParameter("public_key"));
-                //auth.put("callback_url", data.getQueryParameter("callback_url"));
-            }
-            else if (scheme.AbsoluteUri.StartsWith("tg:socks") || scheme.AbsoluteUri.StartsWith("tg://socks") || scheme.AbsoluteUri.StartsWith("tg:proxy") || scheme.AbsoluteUri.StartsWith("tg://proxy"))
-            {
-                server = query.GetParameter("server");
-                port = query.GetParameter("port");
-                user = query.GetParameter("user");
-                pass = query.GetParameter("pass");
-                secret = query.GetParameter("secret");
-            }
-            else if (scheme.AbsoluteUri.StartsWith("tg:login") || scheme.AbsoluteUri.StartsWith("tg://login"))
-            {
-                phoneCode = query.GetParameter("code");
-            }
-            //tg://setlanguage?lang=he-beta
-            else if (scheme.AbsoluteUri.StartsWith("tg:setlanguage") || scheme.AbsoluteUri.StartsWith("tg://setlanguage"))
-            {
-                lang = query.GetParameter("lang");
-            }
-            else if (scheme.AbsoluteUri.StartsWith("tg:privatepost") || scheme.AbsoluteUri.StartsWith("tg://privatepost"))
-            {
-                channel = query.GetParameter("channel");
-                post = query.GetParameter("post");
-            }
-            else if (scheme.AbsoluteUri.StartsWith("tg:settings") || scheme.AbsoluteUri.StartsWith("tg://settings"))
-            {
-                if (scheme.Segments.Length == 2)
-                {
-                    switch (scheme.Segments[1])
-                    {
-                        case "themes":
-                        case "devices":
-                        case "folders":
-                        case "change_number":
-                            break;
-                    }
-                }
+                navigation.NavigateToInstant(url);
+                return;
             }
 
-            if (message != null && message.StartsWith("@"))
+            var response = await protoService.SendAsync(new GetInternalLinkType(url));
+            if (response is InternalLinkTypeActiveSessions)
             {
-                message = " " + message;
-            }
 
-            if (phone != null || phoneHash != null)
-            {
-                NavigateToConfirmPhone(protoService, phone, phoneHash);
             }
-            if (server != null && int.TryParse(port, out int portCode))
+            else if (response is InternalLinkTypeAuthenticationCode)
             {
-                NavigateToProxy(protoService, server, portCode, user, pass, secret);
+
             }
-            else if (group != null)
+            else if (response is InternalLinkTypeBackground background)
             {
-                NavigateToInviteLink(protoService, navigation, group);
+                NavigateToBackground(protoService, navigation, background.BackgroundName);
             }
-            else if (sticker != null)
+            else if (response is InternalLinkTypeBotStart botStart)
             {
-                NavigateToStickerSet(sticker);
+                NavigateToUsername(protoService, navigation, botStart.BotUsername, botStart.StartParameter, null, null, null, null);
             }
-            else if (username != null)
+            else if (response is InternalLinkTypeBotStartInGroup botStartInGroup)
             {
-                NavigateToUsername(protoService, navigation, username, botUser ?? botChat, voiceChat, post, comment, game);
+                NavigateToUsername(protoService, navigation, botStartInGroup.BotUsername, botStartInGroup.StartParameter, null, null, null, null, PageKind.Search);
             }
-            else if (username != null && username.StartsWith('+'))
+            else if (response is InternalLinkTypeChangePhoneNumber)
             {
-                NavigateToInviteLink(protoService, navigation, username.TrimStart('+'));
+
             }
-            else if (message != null)
+            else if (response is InternalLinkTypeChatInvite)
             {
-                NavigateToShare(message, hasUrl);
+                NavigateToInviteLink(protoService, navigation, uri.ToString());
             }
-            else if (phoneCode != null)
+            else if (response is InternalLinkTypeFilterSettings)
             {
-                NavigateToSendCode(protoService, phoneCode);
+
             }
-            else if (lang != null)
+            else if (response is InternalLinkTypeGame game)
             {
-                NavigateToLanguage(protoService, navigation, lang);
+                NavigateToUsername(protoService, navigation, game.BotUsername, null, null, null, null, game.GameShortName);
             }
-            else if (channel != null && post != null)
+            else if (response is InternalLinkTypeLanguagePack languagePack)
             {
-                NavigateToMessage(protoService, navigation, channel, post);
+                NavigateToLanguage(protoService, navigation, languagePack.LanguagePackId);
             }
-            else
+            else if (response is InternalLinkTypeMessage)
             {
-                var response = await protoService.SendAsync(new GetDeepLinkInfo(scheme.AbsoluteUri));
-                if (response is DeepLinkInfo info)
+                NavigateToMessage(protoService, navigation, uri.ToString());
+            }
+            else if (response is InternalLinkTypeMessageDraft messageDraft)
+            {
+                NavigateToShare(messageDraft.Text, messageDraft.ContainsLink);
+            }
+            else if (response is InternalLinkTypePassportDataRequest)
+            {
+
+            }
+            else if (response is InternalLinkTypePhoneNumberConfirmation phoneNumberConfirmation)
+            {
+                NavigateToConfirmPhone(protoService, phoneNumberConfirmation.PhoneNumber, phoneNumberConfirmation.Hash);
+            }
+            else if (response is InternalLinkTypeProxy proxy)
+            {
+                NavigateToProxy(protoService, proxy.Server, proxy.Port, proxy.Type);
+            }
+            else if (response is InternalLinkTypePublicChat publicChat)
+            {
+                NavigateToUsername(protoService, navigation, publicChat.ChatUsername, null, null, null, null, null);
+            }
+            else if (response is InternalLinkTypeQrCodeAuthentication)
+            {
+
+            }
+            else if (response is InternalLinkTypeSettings)
+            {
+
+            }
+            else if (response is InternalLinkTypeStickerSet stickerSet)
+            {
+                NavigateToStickerSet(stickerSet.StickerSetName);
+            }
+            else if (response is InternalLinkTypeTheme theme)
+            {
+                NavigateToTheme(protoService, theme.ThemeName);
+            }
+            else if (response is InternalLinkTypeThemeSettings)
+            {
+
+            }
+            else if (response is InternalLinkTypeUnknownDeepLink)
+            {
+                NavigateToUnknownDeepLink(protoService, uri.ToString());
+            }
+            else if (response is InternalLinkTypeUserPhoneNumber phoneNumber)
+            {
+                NavigateToPhoneNumber(protoService, navigation, phoneNumber.PhoneNumber);
+            }
+            else if (response is InternalLinkTypeVideoChat videoChat)
+            {
+                NavigateToUsername(protoService, navigation, videoChat.ChatUsername, null, videoChat.InviteHash, null, null, null);
+            }
+        }
+
+        private static async void NavigateToUnknownDeepLink(IProtoService protoService, string url)
+        {
+            var response = await protoService.SendAsync(new GetDeepLinkInfo(url));
+            if (response is DeepLinkInfo info)
+            {
+                var confirm = await MessagePopup.ShowAsync(info.Text, Strings.Resources.AppName, Strings.Resources.OK, info.NeedUpdateApplication ? Strings.Resources.UpdateApp : null);
+                if (confirm == ContentDialogResult.Secondary)
                 {
-                    var confirm = await MessagePopup.ShowAsync(info.Text, Strings.Resources.AppName, Strings.Resources.OK, info.NeedUpdateApplication ? Strings.Resources.UpdateApp : null);
-                    if (confirm == ContentDialogResult.Secondary)
-                    {
-                        await Launcher.LaunchUriAsync(new Uri("ms-windows-store://pdp/?PFN=" + Package.Current.Id.FamilyName));
-                    }
+                    await Launcher.LaunchUriAsync(new Uri("ms-windows-store://pdp/?PFN=" + Package.Current.Id.FamilyName));
                 }
             }
         }
 
-        public static void OpenTelegramUrl(IProtoService protoService, INavigationService navigation, Uri uri)
+        private static async void NavigateToBackground(IProtoService protoService, INavigationService navigation, string slug)
         {
-            if (IsTelegramScheme(uri))
-            {
-                OpenTelegramScheme(protoService, navigation, uri);
-            }
-            else
-            {
-                var url = uri.ToString();
-                if (url.Contains("telegra.ph"))
-                {
-                    navigation.NavigateToInstant(url);
-                }
-                else if (url.Contains("joinchat"))
-                {
-                    var index = url.TrimEnd('/').LastIndexOf("/", StringComparison.OrdinalIgnoreCase);
-                    if (index != -1)
-                    {
-                        var text = url.Substring(index).Replace("/", string.Empty);
-                        if (!string.IsNullOrEmpty(text))
-                        {
-                            NavigateToInviteLink(protoService, navigation, url);
-                        }
-                    }
-                }
-                else if (url.Contains("addstickers"))
-                {
-                    var index = url.TrimEnd('/').LastIndexOf("/", StringComparison.OrdinalIgnoreCase);
-                    if (index != -1)
-                    {
-                        var text = url.Substring(index).Replace("/", string.Empty);
-                        if (!string.IsNullOrEmpty(text))
-                        {
-                            NavigateToStickerSet(text);
-                        }
-                    }
-                }
-                else
-                {
-                    var query = url.ParseQueryString();
-
-                    var accessToken = GetAccessToken(query, out PageKind pageKind);
-                    var post = query.GetParameter("post");
-                    var game = query.GetParameter("game");
-                    var comment = query.GetParameter("comment");
-                    var voiceChat = query.GetParameter("voicechat");
-                    var result = url.StartsWith("http") ? url : ("https://" + url);
-
-                    if (uri.Segments.Length >= 2)
-                    {
-                        var username = uri.Segments[1].Replace("/", string.Empty);
-                        if (string.IsNullOrEmpty(post) && uri.Segments.Length >= 3)
-                        {
-                            post = uri.Segments[2].Replace("/", string.Empty);
-                        }
-                        if (!string.IsNullOrEmpty(username))
-                        {
-                            if (username.Equals("confirmphone", StringComparison.OrdinalIgnoreCase))
-                            {
-                                var phone = query.GetParameter("phone");
-                                var hash = query.GetParameter("hash");
-
-                                NavigateToConfirmPhone(null, phone, hash);
-                            }
-                            else if (username.Equals("login", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(post))
-                            {
-                                NavigateToSendCode(protoService, post);
-                            }
-                            else if (username.Equals("iv", StringComparison.OrdinalIgnoreCase))
-                            {
-                                navigation.NavigateToInstant(url);
-                            }
-                            else if (username.Equals("proxy", StringComparison.OrdinalIgnoreCase) || username.Equals("socks", StringComparison.OrdinalIgnoreCase))
-                            {
-                                var server = query.GetParameter("server");
-                                var port = query.GetParameter("port");
-                                var user = query.GetParameter("user");
-                                var pass = query.GetParameter("pass");
-                                var secret = query.GetParameter("secret");
-
-                                if (server != null && int.TryParse(port, out int portCode))
-                                {
-                                    NavigateToProxy(protoService, server, portCode, user, pass, secret);
-                                }
-                            }
-                            else if (username.Equals("share"))
-                            {
-                                var hasUrl = false;
-                                var text = query.GetParameter("url");
-                                if (text == null)
-                                {
-                                    text = "";
-                                }
-                                if (query.GetParameter("text") != null)
-                                {
-                                    if (text.Length > 0)
-                                    {
-                                        hasUrl = true;
-                                        text += "\n";
-                                    }
-                                    text += query.GetParameter("text");
-                                }
-                                if (text.Length > 4096 * 4)
-                                {
-                                    text = text.Substring(0, 4096 * 4);
-                                }
-                                while (text.EndsWith("\n"))
-                                {
-                                    text = text.Substring(0, text.Length - 1);
-                                }
-
-
-                                NavigateToShare(text, hasUrl);
-                            }
-                            else if (username.Equals("setlanguage", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(post))
-                            {
-                                NavigateToLanguage(protoService, navigation, post);
-                            }
-                            else if (username.Equals("c", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(post) && uri.Segments.Length >= 4)
-                            {
-                                NavigateToMessage(protoService, navigation, post, uri.Segments[3].Replace("/", string.Empty));
-                            }
-                            else if (username.Equals("bg", StringComparison.OrdinalIgnoreCase))
-                            {
-                                NavigateToBackground(protoService, navigation, post + uri.Query);
-                            }
-                            else if (username.StartsWith('+'))
-                            {
-                                NavigateToInviteLink(protoService, navigation, url);
-                            }
-                            else
-                            {
-                                NavigateToUsername(protoService, navigation, username, accessToken, voiceChat, post, string.IsNullOrEmpty(comment) ? null : comment, string.IsNullOrEmpty(game) ? null : game, pageKind);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        private static void NavigateToBackground(IProtoService protoService, INavigationService navigation, string slug)
-        {
-            navigation.Navigate(typeof(BackgroundPage), slug);
+            await new BackgroundPopup(slug).ShowQueuedAsync();
 
             //var response = await protoService.SendAsync(new SearchBackground(slug));
             //if (response is Background background)
@@ -528,24 +297,36 @@ namespace Unigram.Common
             //}
         }
 
-        private static async void NavigateToMessage(IProtoService protoService, INavigationService navigation, string post, string message)
+        private static async void NavigateToMessage(IProtoService protoService, INavigationService navigation, string url)
         {
-            if (int.TryParse(post, out int supergroup) && long.TryParse(message, out long msgId))
+            var response = await protoService.SendAsync(new GetMessageLinkInfo(url));
+            if (response is MessageLinkInfo info && info.ChatId != 0)
             {
-                var response = await protoService.SendAsync(new CreateSupergroupChat(supergroup, false));
-                if (response is Chat chat)
+                if (info.Message != null)
                 {
-                    navigation.NavigateToChat(chat, msgId << 20);
+                    if (info.ForComment)
+                    {
+                        navigation.NavigateToThread(info.ChatId, info.Message.Id, message: info.Message.Id);
+                    }
+                    else
+                    {
+                        navigation.NavigateToChat(info.ChatId, message: info.Message.Id);
+                    }
                 }
                 else
                 {
-                    await MessagePopup.ShowAsync(Strings.Resources.LinkNotFound, Strings.Resources.AppName, Strings.Resources.OK);
+                    navigation.NavigateToChat(info.ChatId);
                 }
             }
             else
             {
-                // TODO: error
+                await MessagePopup.ShowAsync(Strings.Resources.LinkNotFound, Strings.Resources.AppName, Strings.Resources.OK);
             }
+        }
+
+        private static async void NavigateToTheme(IProtoService protoService, string slug)
+        {
+            await MessagePopup.ShowAsync(Strings.Resources.ThemeNotSupported, Strings.Resources.Theme, Strings.Resources.OK);
         }
 
         public static async void NavigateToLanguage(IProtoService protoService, INavigationService navigation, string languagePackId)
@@ -681,30 +462,37 @@ namespace Unigram.Common
             }
         }
 
-        public static async void NavigateToShare(string text, bool hasUrl)
+        public static async void NavigateToShare(FormattedText text, bool hasUrl)
         {
-            await SharePopup.GetForCurrentView().ShowAsync(text, hasUrl);
+            await SharePopup.GetForCurrentView().ShowAsync(text);
         }
 
-        public static async void NavigateToProxy(IProtoService protoService, string server, int port, string username, string password, string secret)
+        public static async void NavigateToProxy(IProtoService protoService, string server, int port, ProxyType type)
         {
-            var userText = username != null ? $"{Strings.Resources.UseProxyUsername}: {username}\n" : string.Empty;
-            var passText = password != null ? $"{Strings.Resources.UseProxyPassword}: {password}\n" : string.Empty;
-            var secretText = secret != null ? $"{Strings.Resources.UseProxySecret}: {secret}\n" : string.Empty;
-            var secretInfo = secret != null ? $"\n\n{Strings.Resources.UseProxyTelegramInfo2}" : string.Empty;
+            string userText = string.Empty;
+            string passText = string.Empty;
+            string secretText = string.Empty;
+            string secretInfo = string.Empty;
+
+            if (type is ProxyTypeHttp http)
+            {
+                userText = !string.IsNullOrEmpty(http.Username) ? $"{Strings.Resources.UseProxyUsername}: {http.Username}\n" : string.Empty;
+                passText = !string.IsNullOrEmpty(http.Password) ? $"{Strings.Resources.UseProxyPassword}: {http.Password}\n" : string.Empty;
+            }
+            else if (type is ProxyTypeSocks5 socks5)
+            {
+                userText = !string.IsNullOrEmpty(socks5.Username) ? $"{Strings.Resources.UseProxyUsername}: {socks5.Username}\n" : string.Empty;
+                passText = !string.IsNullOrEmpty(socks5.Password) ? $"{Strings.Resources.UseProxyPassword}: {socks5.Password}\n" : string.Empty;
+            }
+            else if (type is ProxyTypeMtproto mtproto)
+            {
+                secretText = !string.IsNullOrEmpty(mtproto.Secret) ? $"{Strings.Resources.UseProxySecret}: {mtproto.Secret}\n" : string.Empty;
+                secretInfo = !string.IsNullOrEmpty(mtproto.Secret) ? $"\n\n{Strings.Resources.UseProxyTelegramInfo2}" : string.Empty;
+            }
+
             var confirm = await MessagePopup.ShowAsync($"{Strings.Resources.EnableProxyAlert}\n\n{Strings.Resources.UseProxyAddress}: {server}\n{Strings.Resources.UseProxyPort}: {port}\n{userText}{passText}{secretText}\n{Strings.Resources.EnableProxyAlert2}{secretInfo}", Strings.Resources.Proxy, Strings.Resources.ConnectingConnectProxy, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
-                ProxyType type;
-                if (secret != null)
-                {
-                    type = new ProxyTypeMtproto(secret);
-                }
-                else
-                {
-                    type = new ProxyTypeSocks5(username ?? string.Empty, password ?? string.Empty);
-                }
-
                 protoService.Send(new AddProxy(server ?? string.Empty, port, true, type));
             }
         }
@@ -745,8 +533,29 @@ namespace Unigram.Common
         {
             await StickerSetPopup.GetForCurrentView().ShowAsync(text);
         }
+        
+        public static async void NavigateToPhoneNumber(IProtoService protoService, INavigationService navigation, string phoneNumber)
+        {
+            var response = await protoService.SendAsync(new SearchUserByPhoneNumber(phoneNumber));
+            if (response is User user)
+            {
+                var chat = await protoService.SendAsync(new CreatePrivateChat(user.Id, false)) as Chat;
+                if (chat != null)
+                {
+                    navigation.Navigate(typeof(ProfilePage), chat.Id);
+                }
+                else
+                {
+                    await MessagePopup.ShowAsync(Strings.Resources.NoUsernameFound, Strings.Resources.AppName, Strings.Resources.OK);
+                }
+            }
+            else
+            {
+                await MessagePopup.ShowAsync(Strings.Resources.NoUsernameFound, Strings.Resources.AppName, Strings.Resources.OK);
+            }
+        }
 
-        public static async void NavigateToUsername(IProtoService protoService, INavigationService navigation, string username, string accessToken, string voiceChat, string post, string comment, string game, PageKind kind = PageKind.Dialog)
+        public static async void NavigateToUsername(IProtoService protoService, INavigationService navigation, string username, string accessToken, string videoChat, string post, string comment, string game, PageKind kind = PageKind.Dialog)
         {
             if (username.StartsWith("@"))
             {
@@ -800,9 +609,9 @@ namespace Unigram.Common
                             navigation.NavigateToChat(chat, message: message << 20);
                         }
                     }
-                    else if (voiceChat != null)
+                    else if (videoChat != null)
                     {
-                        navigation.NavigateToChat(chat, state: new NavigationState { { "voiceChat", voiceChat } });
+                        navigation.NavigateToChat(chat, state: new NavigationState { { "videoChat", videoChat } });
                     }
                     else
                     {
@@ -968,7 +777,7 @@ namespace Unigram.Common
 
                     try
                     {
-                        await Windows.System.Launcher.LaunchUriAsync(uri);
+                        await Launcher.LaunchUriAsync(uri);
                     }
                     catch { }
                 }
@@ -977,82 +786,28 @@ namespace Unigram.Common
 
         #region Entity
 
-        public static void Hyperlink_ContextRequested(MessageViewModel message, UIElement sender, ContextRequestedEventArgs args)
+        public static void Hyperlink_ContextRequested(ITranslateService service, UIElement sender, ContextRequestedEventArgs args)
         {
             var text = sender as RichTextBlock;
             if (args.TryGetPosition(sender, out Point point))
             {
-                if (point.X < 0 || point.Y < 0)
+                var items = Hyperlink_ContextRequested(service, text, point);
+                if (items.Count > 0)
                 {
-                    point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
-                }
-
-                var length = text.SelectedText.Length;
-                if (length > 0)
-                {
-                    var link = text.SelectedText;
-
-                    var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.DocumentCopy, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
-                    copy.Click += LinkCopy_Click;
-
                     var flyout = new MenuFlyout();
-                    flyout.Items.Add(copy);
+
+                    foreach (var item in items)
+                    {
+                        flyout.Items.Add(item);
+                    }
 
                     // We don't want to unfocus the text are when the context menu gets opened
                     flyout.ShowAt(sender, new FlyoutShowOptions { Position = point, ShowMode = FlyoutShowMode.Transient });
-
                     args.Handled = true;
                 }
                 else
                 {
-                    var hyperlink = text.GetHyperlinkFromPoint(point);
-                    if (hyperlink == null)
-                    {
-                        args.Handled = false;
-                        return;
-                    }
-
-                    var link = GetEntityData(hyperlink);
-                    if (link == null)
-                    {
-                        args.Handled = false;
-                        return;
-                    }
-
-                    var type = GetEntityType(hyperlink);
-                    //if (type == null)
-                    //{
-                    //    args.Handled = false;
-                    //    return;
-                    //}
-
-                    var flyout = new MenuFlyout();
-
-                    if (type == null || type is TextEntityTypeUrl || type is TextEntityTypeTextUrl)
-                    {
-                        var open = new MenuFlyoutItem { Text = Strings.Resources.Open, DataContext = link, Icon = new FontIcon { Glyph = Icons.OpenIn, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
-
-                        var action = GetEntityAction(hyperlink);
-                        if (action != null)
-                        {
-                            open.Click += (s, args) => action();
-                        }
-                        else
-                        {
-                            open.Click += LinkOpen_Click;
-                        }
-
-                        flyout.Items.Add(open);
-                    }
-
-                    var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.DocumentCopy, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
-                    copy.Click += LinkCopy_Click;
-                    flyout.Items.Add(copy);
-
-                    // We don't want to unfocus the text when the context menu gets opened
-                    flyout.ShowAt(sender, new FlyoutShowOptions { Position = point, ShowMode = FlyoutShowMode.Transient });
-
-                    args.Handled = true;
+                    args.Handled = false;
                 }
             }
             else
@@ -1061,7 +816,7 @@ namespace Unigram.Common
             }
         }
 
-        public static IList<MenuFlyoutItemBase> Hyperlink_ContextRequested(MessageViewModel message, RichTextBlock text, Point point)
+        public static IList<MenuFlyoutItemBase> Hyperlink_ContextRequested(ITranslateService service, RichTextBlock text, Point point)
         {
             if (point.X < 0 || point.Y < 0)
             {
@@ -1075,10 +830,18 @@ namespace Unigram.Common
             {
                 var link = text.SelectedText;
 
-                var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.DocumentCopy, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
+                var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.DocumentCopy, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
                 copy.Click += LinkCopy_Click;
 
                 items.Add(copy);
+
+                if (service != null && service.CanTranslate(link))
+                {
+                    var translate = new MenuFlyoutItem { Text = Strings.Resources.TranslateMessage, DataContext = link, Tag = service, Icon = new FontIcon { Glyph = Icons.Translate, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
+                    translate.Click += LinkTranslate_Click;
+
+                    items.Add(translate);
+                }
             }
             else
             {
@@ -1095,9 +858,9 @@ namespace Unigram.Common
                 }
 
                 var type = GetEntityType(hyperlink);
-                if (type == null || type is TextEntityTypeUrl || type is TextEntityTypeTextUrl)
+                if (type is null or TextEntityTypeUrl or TextEntityTypeTextUrl)
                 {
-                    var open = new MenuFlyoutItem { Text = Strings.Resources.Open, DataContext = link, Icon = new FontIcon { Glyph = Icons.OpenIn, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
+                    var open = new MenuFlyoutItem { Text = Strings.Resources.Open, DataContext = link, Icon = new FontIcon { Glyph = Icons.OpenIn, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
 
                     var action = GetEntityAction(hyperlink);
                     if (action != null)
@@ -1112,8 +875,9 @@ namespace Unigram.Common
                     items.Add(open);
                 }
 
-                var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.DocumentCopy, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
+                var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.DocumentCopy, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
                 copy.Click += LinkCopy_Click;
+
                 items.Add(copy);
             }
 
@@ -1129,8 +893,8 @@ namespace Unigram.Common
                     point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
                 }
 
-                var open = new MenuFlyoutItem { Text = Strings.Resources.Open, DataContext = link, Icon = new FontIcon { Glyph = Icons.OpenIn, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
-                var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.DocumentCopy, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
+                var open = new MenuFlyoutItem { Text = Strings.Resources.Open, DataContext = link, Icon = new FontIcon { Glyph = Icons.OpenIn, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
+                var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.DocumentCopy, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
 
                 open.Click += LinkOpen_Click;
                 copy.Click += LinkCopy_Click;
@@ -1146,7 +910,7 @@ namespace Unigram.Common
             }
         }
 
-        private async static void LinkOpen_Click(object sender, RoutedEventArgs e)
+        private static async void LinkOpen_Click(object sender, RoutedEventArgs e)
         {
             var item = sender as MenuFlyoutItem;
             var entity = item.DataContext as string;
@@ -1169,6 +933,17 @@ namespace Unigram.Common
             var dataPackage = new DataPackage();
             dataPackage.SetText(entity);
             ClipboardEx.TrySetContent(dataPackage);
+        }
+
+        private static async void LinkTranslate_Click(object sender, RoutedEventArgs e)
+        {
+            var item = sender as MenuFlyoutItem;
+            var entity = item.DataContext as string;
+            var service = item.Tag as ITranslateService;
+
+            var language = LanguageIdentification.IdentifyLanguage(entity);
+            var popup = new TranslatePopup(service, entity, language, LocaleService.Current.CurrentCulture.TwoLetterISOLanguageName, true);
+            await popup.ShowQueuedAsync();
         }
 
         public static void CopyText(string text)

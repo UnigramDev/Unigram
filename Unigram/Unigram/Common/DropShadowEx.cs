@@ -10,7 +10,7 @@ namespace Unigram.Common
 {
     public static class DropShadowEx
     {
-        public static Visual Attach(UIElement element, float radius = 20, float opacity = 0.25f)
+        public static SpriteVisual Attach(UIElement element, float radius = 20, float opacity = 0.25f)
         {
             var shadow = Window.Current.Compositor.CreateDropShadow();
             shadow.BlurRadius = radius;

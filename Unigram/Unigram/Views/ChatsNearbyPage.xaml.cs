@@ -14,7 +14,6 @@ namespace Unigram.Views
         public ChatsNearbyPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<ChatsNearbyViewModel>();
         }
 
         private void OnElementPrepared(Microsoft.UI.Xaml.Controls.ItemsRepeater sender, Microsoft.UI.Xaml.Controls.ItemsRepeaterElementPreparedEventArgs args)
@@ -45,7 +44,7 @@ namespace Unigram.Views
             }
 
             var photo = content.Children[0] as ProfilePicture;
-            photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 36);
+            photo.SetChat(ViewModel.ProtoService, chat, 36);
 
             button.Command = ViewModel.OpenChatCommand;
             button.CommandParameter = nearby;

@@ -14,7 +14,7 @@
     SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
 
     <Grid>
-        <ComboBox x:Name="FieldSeconds" SelectedItem="{x:Bind Value, Mode=TwoWay, Converter={StaticResource ChatTtlConverter}}" HorizontalAlignment="Stretch" Margin="12,12,12,8">
+        <ComboBox x:Name="FieldSeconds" SelectedItem="{x:Bind Value, Mode=TwoWay, Converter={StaticResource ChatTtlConverter}}" HorizontalAlignment="Stretch" Margin="0,12,0,0">
             <ComboBox.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding Converter={StaticResource ChatTtlConverter}, ConverterParameter=string}"/>

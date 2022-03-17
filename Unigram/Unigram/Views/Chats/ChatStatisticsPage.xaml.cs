@@ -22,7 +22,6 @@ namespace Unigram.Views.Chats
         public ChatStatisticsPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<ChatStatisticsViewModel, IChatDelegate>(this);
         }
 
         #region Delegate
@@ -40,7 +39,7 @@ namespace Unigram.Views.Chats
 
         public void UpdateChatPhoto(Chat chat)
         {
-            Photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 36);
+            Photo.SetChat(ViewModel.ProtoService, chat, 36);
         }
 
         #endregion
@@ -163,6 +162,10 @@ namespace Unigram.Views.Chats
                     {
                         title.Text = Strings.Resources.AttachContact;
                     }
+                    else if (message.Content is MessageAnimatedEmoji animatedEmoji)
+                    {
+                        title.Text = animatedEmoji.Emoji;
+                    }
                     else if (message.Content is MessageLocation location)
                     {
                         title.Text = location.LivePeriod > 0 ? Strings.Resources.AttachLiveLocation : Strings.Resources.AttachLocation;
@@ -258,7 +261,7 @@ namespace Unigram.Views.Chats
 
                     title.Text = user.GetFullName();
                     subtitle.Text = stringBuilder.ToString();
-                    photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
+                    photo.SetUser(ViewModel.ProtoService, user, 36);
 
                     button.CommandParameter = senderInfo.UserId;
                     button.Command = ViewModel.OpenProfileCommand;
@@ -299,7 +302,7 @@ namespace Unigram.Views.Chats
 
                     title.Text = user.GetFullName();
                     subtitle.Text = stringBuilder.ToString();
-                    photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
+                    photo.SetUser(ViewModel.ProtoService, user, 36);
 
                     button.CommandParameter = adminInfo.UserId;
                     button.Command = ViewModel.OpenProfileCommand;
@@ -322,7 +325,7 @@ namespace Unigram.Views.Chats
                     }
 
                     title.Text = user.GetFullName();
-                    photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
+                    photo.SetUser(ViewModel.ProtoService, user, 36);
 
                     button.CommandParameter = inviterInfo.UserId;
                     button.Command = ViewModel.OpenProfileCommand;

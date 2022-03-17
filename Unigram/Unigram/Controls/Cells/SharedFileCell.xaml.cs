@@ -1,13 +1,15 @@
 ﻿using System;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls.Messages.Content;
 using Unigram.Converters;
+using Unigram.Navigation;
 using Unigram.Services;
+using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Controls.Cells
 {
@@ -17,9 +19,21 @@ namespace Unigram.Controls.Cells
         private IMessageDelegate _delegate;
         private Message _message;
 
+        private string _fileToken;
+
         public SharedFileCell()
         {
             InitializeComponent();
+        }
+
+        public void UpdateFileDownload(DownloadsViewModel viewModel, FileDownloadViewModel fileDownload)
+        {
+            if (fileDownload == null)
+            {
+                return;
+            }
+
+            UpdateMessage(viewModel.ProtoService, null, fileDownload.Message);
         }
 
         public void UpdateMessage(IProtoService protoService, IMessageDelegate delegato, Message message)
@@ -29,7 +43,7 @@ namespace Unigram.Controls.Cells
 
             _message = message;
 
-            var data = message.GetFileAndName(false);
+            var data = message.GetFileAndThumbnailAndName();
             if (data.File == null)
             {
                 return;
@@ -39,11 +53,11 @@ namespace Unigram.Controls.Cells
 
             if (string.IsNullOrEmpty(data.FileName))
             {
-                if (_protoService.TryGetUser(message.Sender, out User user))
+                if (_protoService.TryGetUser(message.SenderId, out User user))
                 {
                     Title.Text = user.GetFullName();
                 }
-                else if (_protoService.TryGetChat(message.Sender, out Chat chat))
+                else if (_protoService.TryGetChat(message.SenderId, out Chat chat))
                 {
                     Title.Text = chat.Title;
                 }
@@ -57,18 +71,39 @@ namespace Unigram.Controls.Cells
                 Title.Text = data.FileName;
             }
 
+            if (data.Thumbnail != null)
+            {
+                UpdateThumbnail(message, data.Thumbnail, data.Thumbnail.File);
+            }
+            else
+            {
+                Texture.Background = null;
+                Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
+            }
+
+            UpdateManager.Subscribe(this, protoService, data.File, ref _fileToken, UpdateFile);
             UpdateFile(message, data.File);
         }
 
-        public void UpdateFile(Message message, File file)
+        private void UpdateFile(object target, File file)
         {
-            var data = message.GetFileAndName(false);
+            UpdateFile(_message, file);
+        }
+
+        private void UpdateFile(Message message, File file)
+        {
+            var data = message.GetFileAndThumbnailAndName();
             if (data.File == null)
             {
                 return;
             }
 
-            if (data.File.Id != file.Id)
+            if (data.Thumbnail != null && data.Thumbnail.File.Id == file.Id)
+            {
+                UpdateThumbnail(message, data.Thumbnail, file);
+                return;
+            }
+            else if (data.File.Id != file.Id)
             {
                 return;
             }
@@ -108,14 +143,48 @@ namespace Unigram.Controls.Cells
             }
         }
 
+        private void UpdateThumbnail(Message message, Thumbnail thumbnail, File file)
+        {
+            if (file.Local.IsDownloadingCompleted)
+            {
+                double ratioX = (double)48 / thumbnail.Width;
+                double ratioY = (double)48 / thumbnail.Height;
+                double ratio = Math.Max(ratioX, ratioY);
+
+                var width = (int)(thumbnail.Width * ratio);
+                var height = (int)(thumbnail.Height * ratio);
+
+                try
+                {
+                    Texture.Background = new ImageBrush { ImageSource = new BitmapImage(UriEx.ToLocal(file.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height }, Stretch = Stretch.UniformToFill, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
+                    Button.Style = BootStrapper.Current.Resources["ImmersiveFileButtonStyle"] as Style;
+                }
+                catch
+                {
+                    Texture.Background = null;
+                    Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
+                }
+            }
+            else
+            {
+                Texture.Background = null;
+                Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
+
+                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                {
+                    _protoService.DownloadFile(file.Id, 1);
+                }
+            }
+        }
+
         private Brush UpdateEllipseBrush(string name)
         {
             var brushes = new[]
             {
-                App.Current.Resources["Placeholder0Brush"],
-                App.Current.Resources["Placeholder1Brush"],
-                App.Current.Resources["Placeholder2Brush"],
-                App.Current.Resources["Placeholder3Brush"]
+                BootStrapper.Current.Resources["Placeholder0Brush"],
+                BootStrapper.Current.Resources["Placeholder1Brush"],
+                BootStrapper.Current.Resources["Placeholder2Brush"],
+                BootStrapper.Current.Resources["Placeholder3Brush"]
             };
 
             if (name == null)
@@ -125,7 +194,7 @@ namespace Unigram.Controls.Cells
 
             if (name.Length > 0)
             {
-                var color = -1;
+                int color;
                 if (name.EndsWith(".doc") || name.EndsWith(".txt") || name.EndsWith(".psd"))
                 {
                     color = 0;
@@ -167,22 +236,43 @@ namespace Unigram.Controls.Cells
             return Converter.BannedUntil(message.Date);
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            var data = _message.GetFileAndName(false);
-            if (data.File == null)
+            var file = _message.GetFile();
+            if (file == null)
             {
                 return;
             }
 
-            var file = data.File;
             if (file.Local.IsDownloadingActive)
             {
-                _protoService.Send(new CancelDownloadFile(file.Id, false));
+                if (_delegate != null)
+                {
+                    _protoService.CancelDownloadFile(file.Id);
+                }
+                else
+                {
+                    _protoService.Send(new ToggleDownloadIsPaused(file.Id, true));
+                }
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
-                _protoService.DownloadFile(file.Id, 32);
+                if (_delegate != null)
+                {
+                    _protoService.AddFileToDownloads(file.Id, _message.ChatId, _message.Id);
+                }
+                else
+                {
+                    _protoService.Send(new ToggleDownloadIsPaused(file.Id, false));
+                }
+            }
+            else if (_delegate == null)
+            {
+                var temp = await _protoService.GetFileAsync(file);
+                if (temp != null)
+                {
+                    await Windows.System.Launcher.LaunchFileAsync(temp);
+                }
             }
             else
             {

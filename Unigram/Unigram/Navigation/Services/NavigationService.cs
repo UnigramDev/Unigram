@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Unigram.Common;
 using Unigram.Logs;
 using Unigram.Services.ViewService;
 using Unigram.Views;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
-using Windows.UI.ViewManagement;
+using Windows.System;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
@@ -24,6 +23,8 @@ namespace Unigram.Navigation.Services
 
         bool Navigate(Type page, object parameter = null, NavigationState state = null, NavigationTransitionInfo infoOverride = null);
 
+        event EventHandler<NavigatingEventArgs> Navigating;
+
         bool CanGoBack { get; }
         bool CanGoForward { get; }
 
@@ -37,7 +38,7 @@ namespace Unigram.Navigation.Services
 
 
 
-        Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null, ViewSizePreference size = ViewSizePreference.UseHalf);
+        Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null, Size size = default);
 
         object CurrentPageParam { get; }
         Type CurrentPageType { get; }
@@ -77,13 +78,13 @@ namespace Unigram.Navigation.Services
         public Frame Frame => FrameFacade.Frame;
         public object Content => Frame.Content;
 
-        public IDispatcherContext Dispatcher => this.GetDispatcherWrapper();
+        public IDispatcherContext Dispatcher { get; }
 
 
         public string NavigationState
         {
-            get { return Frame.GetNavigationState(); }
-            set { Frame.SetNavigationState(value); }
+            get => Frame.GetNavigationState();
+            set => Frame.SetNavigationState(value);
         }
 
         public int SessionId { get; private set; }
@@ -97,6 +98,7 @@ namespace Unigram.Navigation.Services
         {
             IsInMainView = CoreApplication.MainView == CoreApplication.GetCurrentView();
             SessionId = session;
+            Dispatcher = new DispatcherContext(DispatcherQueue.GetForCurrentThread());
             FrameFacade = new FrameFacade(this, frame, id);
             FrameFacade.Navigating += async (s, e) =>
             {
@@ -109,7 +111,7 @@ namespace Unigram.Navigation.Services
                 if (page != null)
                 {
                     // call navagable override (navigating)
-                    var dataContext = ResolveForPage(page);
+                    var dataContext = ViewModelForPage(page);
                     if (dataContext != null)
                     {
                         // allow the viewmodel to cancel navigation
@@ -134,31 +136,23 @@ namespace Unigram.Navigation.Services
                     parameter = CacheKeyToChatId[cacheKey];
                 }
 
-                var currentContent = FrameFacade.Frame.Content;
-                //await this.GetDispatcherWrapper().DispatchAsync(async () =>
-                //{
                 try
                 {
-                    if (currentContent == FrameFacade.Frame.Content)
-                    {
-                        await NavigateToAsync(e.NavigationMode, parameter, FrameFacade.Frame.Content).ConfigureAwait(false);
-                    }
+                    await NavigateToAsync(e.NavigationMode, parameter, FrameFacade.Frame.Content).ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error($"DispatchAsync/NavigateToAsync {ex.Message}");
-                    throw;
+                    Logger.Error($"NavigateToAsync {ex.Message}");
                 }
-                //}, 1).ConfigureAwait(false);
             };
         }
 
-        private INavigable ResolveForPage(Page page)
+        private INavigable ViewModelForPage(Page page)
         {
-            if (page.DataContext is not INavigable || page.DataContext == null)
+            if (page.DataContext is not INavigable or null)
             {
                 // to support dependency injection, but keeping it optional.
-                var viewModel = BootStrapper.Current.ResolveForPage(page, this);
+                var viewModel = BootStrapper.Current.ViewModelForPage(page, this);
                 if (viewModel != null)
                 {
                     page.DataContext = viewModel;
@@ -169,12 +163,12 @@ namespace Unigram.Navigation.Services
         }
 
         // before navigate (cancellable)
-        bool NavigatingFrom(Page page, Type targetPageType, object targetPageParameter, INavigable dataContext, bool suspending, NavigationMode mode)
+        private bool NavigatingFrom(Page page, Type targetPageType, object targetPageParameter, INavigable dataContext, bool suspending, NavigationMode mode)
         {
             Logger.Info($"Suspending: {suspending}");
 
             dataContext.NavigationService = this;
-            dataContext.Dispatcher = this.GetDispatcherWrapper();
+            dataContext.Dispatcher = Dispatcher;
             dataContext.SessionState = BootStrapper.Current.SessionState;
 
             var args = new NavigatingEventArgs
@@ -191,32 +185,30 @@ namespace Unigram.Navigation.Services
         }
 
         // after navigate
-        async Task NavigateFromAsync(Page page, INavigable dataContext, bool suspending)
+        private async Task NavigateFromAsync(Page page, INavigable dataContext, bool suspending)
         {
             Logger.Info($"Suspending: {suspending}");
 
             dataContext.NavigationService = this;
-            dataContext.Dispatcher = this.GetDispatcherWrapper();
+            dataContext.Dispatcher = Dispatcher;
             dataContext.SessionState = BootStrapper.Current.SessionState;
 
             var pageState = FrameFacade.PageStateSettingsService(page.GetType()).Values;
             await dataContext.OnNavigatedFromAsync(pageState, suspending).ConfigureAwait(false);
         }
 
-        async Task NavigateToAsync(NavigationMode mode, object parameter, object frameContent = null)
+        private async Task NavigateToAsync(NavigationMode mode, object parameter, object frameContent = null)
         {
             Logger.Info($"Mode: {mode}, Parameter: {parameter} FrameContent: {frameContent}");
 
-            frameContent = frameContent ?? FrameFacade.Frame.Content;
+            frameContent ??= FrameFacade.Frame.Content;
 
             var page = frameContent as Page;
             if (page != null)
             {
-                var cleaned = false;
                 if (page is IActivablePage cleanup)
                 {
-                    cleaned = true;
-                    cleanup.Activate();
+                    cleanup.Activate(SessionId);
                 }
 
                 //if (mode == NavigationMode.New)
@@ -225,12 +217,12 @@ namespace Unigram.Navigation.Services
                 //    pageState?.Clear();
                 //}
 
-                var dataContext = ResolveForPage(page);
+                var dataContext = ViewModelForPage(page);
                 if (dataContext != null)
                 {
                     // prepare for state load
                     dataContext.NavigationService = this;
-                    dataContext.Dispatcher = this.GetDispatcherWrapper();
+                    dataContext.Dispatcher = Dispatcher;
                     dataContext.SessionState = BootStrapper.Current.SessionState;
                     var pageState = FrameFacade.PageStateSettingsService(page.GetType(), parameter: parameter).Values;
                     await dataContext.OnNavigatedToAsync(parameter, mode, pageState);
@@ -238,11 +230,13 @@ namespace Unigram.Navigation.Services
             }
         }
 
-        public Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null, ViewSizePreference size = ViewSizePreference.UseHalf)
+        public Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null, Size size = default)
         {
             Logger.Info($"Page: {page}, Parameter: {parameter}, Title: {title}, Size: {size}");
             return viewService.OpenAsync(page, parameter, title, size, SessionId);
         }
+
+        public event EventHandler<NavigatingEventArgs> Navigating;
 
         public bool Navigate(Type page, object parameter = null, NavigationState state = null, NavigationTransitionInfo infoOverride = null)
         {
@@ -272,6 +266,12 @@ namespace Unigram.Navigation.Services
                 {
                     pageState[item.Key] = item.Value;
                 }
+            }
+
+            var handler = Navigating;
+            if (handler != null)
+            {
+                handler(this, new NavigatingEventArgs(page, parameter, state, null));
             }
 
             if (page == typeof(ChatPage))
@@ -310,9 +310,9 @@ namespace Unigram.Navigation.Services
                 throw new InvalidOperationException("State container is unexpectedly null");
             }
 
-            state.Write<string>("CurrentPageType", CurrentPageType.AssemblyQualifiedName);
-            state.Write<object>("CurrentPageParam", CurrentPageParam);
-            state.Write<string>("NavigateState", FrameFacade?.NavigationService.NavigationState);
+            state.Write("CurrentPageType", CurrentPageType.AssemblyQualifiedName);
+            state.Write("CurrentPageParam", CurrentPageParam);
+            state.Write("NavigateState", FrameFacade?.NavigationService.NavigationState);
 
             await Task.CompletedTask;
         }
@@ -398,11 +398,11 @@ namespace Unigram.Navigation.Services
             var page = FrameFacade.Content as Page;
             if (page != null)
             {
-                var dataContext = ResolveForPage(page);
+                var dataContext = ViewModelForPage(page);
                 if (dataContext != null)
                 {
                     dataContext.NavigationService = this;
-                    dataContext.Dispatcher = this.GetDispatcherWrapper();
+                    dataContext.Dispatcher = Dispatcher;
                     dataContext.SessionState = BootStrapper.Current.SessionState;
                     var pageState = FrameFacade.PageStateSettingsService(page.GetType(), parameter: FrameFacade.CurrentPageParam).Values;
                     await dataContext.OnNavigatedToAsync(FrameFacade.CurrentPageParam, NavigationMode.Refresh, pageState);
@@ -419,7 +419,7 @@ namespace Unigram.Navigation.Services
             var page = FrameFacade.Content as Page;
             if (page != null)
             {
-                var dataContext = ResolveForPage(page);
+                var dataContext = ViewModelForPage(page);
                 if (dataContext != null)
                 {
                     await NavigateFromAsync(page, dataContext, true).ConfigureAwait(false);

@@ -10,7 +10,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed partial class PollContent : StackPanel, IContent
+    public sealed class PollContent : Control, IContent
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
@@ -20,13 +20,11 @@ namespace Unigram.Controls.Messages.Content
 
         public PollContent(MessageViewModel message)
         {
-            InitializeComponent();
-            UpdateMessage(message);
-        }
+            _message = message;
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
-        {
+            DefaultStyleKey = typeof(PollContent);
 
+            Unloaded += OnUnloaded;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -35,12 +33,58 @@ namespace Unigram.Controls.Messages.Content
             _timeoutTimer = null;
         }
 
+        #region InitializeComponent
+
+        private TextBlock Question;
+        private TextBlock Type;
+        private RecentUserHeads RecentVoters;
+        private StackPanel TimeoutLabel;
+        private TextBlock Timeout;
+        private TextBlock TimeoutGlyph;
+        private GlyphButton Explanation;
+        private StackPanel Options;
+        private TextBlock Votes;
+        private Button Submit;
+        private Button View;
+        private bool _templateApplied;
+
+        protected override void OnApplyTemplate()
+        {
+            Question = GetTemplateChild(nameof(Question)) as TextBlock;
+            Type = GetTemplateChild(nameof(Type)) as TextBlock;
+            RecentVoters = GetTemplateChild(nameof(RecentVoters)) as RecentUserHeads;
+            TimeoutLabel = GetTemplateChild(nameof(TimeoutLabel)) as StackPanel;
+            Timeout = GetTemplateChild(nameof(Timeout)) as TextBlock;
+            TimeoutGlyph = GetTemplateChild(nameof(TimeoutGlyph)) as TextBlock;
+            Explanation = GetTemplateChild(nameof(Explanation)) as GlyphButton;
+            Options = GetTemplateChild(nameof(Options)) as StackPanel;
+            Votes = GetTemplateChild(nameof(Votes)) as TextBlock;
+            Submit = GetTemplateChild(nameof(Submit)) as Button;
+            View = GetTemplateChild(nameof(View)) as Button;
+
+            RecentVoters.RecentUserHeadChanged += RecentVoters_RecentUserHeadChanged;
+            Explanation.Click += Explanation_Click;
+            Submit.Click += Submit_Click;
+            View.Click += View_Click;
+
+            _templateApplied = true;
+
+            if (_message != null)
+            {
+                UpdateMessage(_message);
+            }
+        }
+
+        #endregion
+
         public void UpdateMessage(MessageViewModel message)
         {
+            var recycled = _message?.Id == message.Id;
+
             _message = message;
 
             var poll = message.Content as MessagePoll;
-            if (poll == null)
+            if (poll == null | !_templateApplied)
             {
                 return;
             }
@@ -162,31 +206,33 @@ namespace Unigram.Controls.Messages.Content
                 }
             }
 
-            RecentVoters.Children.Clear();
+            var destination = RecentVoters.Items;
+            var origin = poll.Poll.RecentVoterUserIds.Select(x => new MessageSenderUser(x));
 
-            foreach (var id in poll.Poll.RecentVoterUserIds)
+            if (destination.Count > 0 && recycled)
             {
-                var user = message.ProtoService.GetUser(id);
-                if (user == null)
-                {
-                    continue;
-                }
+                destination.ReplaceDiff(origin);
+            }
+            else
+            {
+                destination.Clear();
+                destination.AddRange(origin);
+            }
+        }
 
-                var picture = new ProfilePicture();
-                picture.Source = PlaceholderHelper.GetUser(message.ProtoService, user, 16);
-                picture.Width = 16;
-                picture.Height = 16;
-
-                if (RecentVoters.Children.Count > 0)
-                {
-                    picture.Margin = new Thickness(-6, -1, 0, 0);
-                }
-                else
-                {
-                    picture.Margin = new Thickness(0, -1, 0, 0);
-                }
-
-                RecentVoters.Children.Add(picture);
+        private void RecentVoters_RecentUserHeadChanged(ProfilePicture photo, MessageSender sender)
+        {
+            if (_message.ProtoService.TryGetUser(sender, out User user))
+            {
+                photo.SetUser(_message.ProtoService, user, 20);
+            }
+            else if (_message.ProtoService.TryGetChat(sender, out Chat chat))
+            {
+                photo.SetChat(_message.ProtoService, chat, 20);
+            }
+            else
+            {
+                photo.Source = null;
             }
         }
 
@@ -209,12 +255,12 @@ namespace Unigram.Controls.Messages.Content
                 if (diff <= 5 && !_runningOut)
                 {
                     _runningOut = true;
-                    VisualStateManager.GoToState(LayoutRoot, "RunningOut", false);
+                    VisualStateManager.GoToState(this, "RunningOut", false);
                 }
                 else if (diff > 5 && _runningOut)
                 {
                     _runningOut = false;
-                    VisualStateManager.GoToState(LayoutRoot, "Default", false);
+                    VisualStateManager.GoToState(this, "Default", false);
                 }
             }
             else

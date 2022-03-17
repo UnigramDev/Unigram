@@ -1,8 +1,8 @@
 ﻿using System;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls.Messages.Content;
 using Unigram.Converters;
+using Unigram.Navigation;
 using Unigram.Services;
 using Windows.Media.Playback;
 using Windows.UI.Xaml;
@@ -18,6 +18,8 @@ namespace Unigram.Controls.Cells
         private IProtoService _protoService;
         private Message _message;
         public Message Message => _message;
+
+        private string _fileToken;
 
         public SharedAudioCell()
         {
@@ -72,9 +74,10 @@ namespace Unigram.Controls.Cells
             else
             {
                 Texture.Background = null;
-                Button.Style = App.Current.Resources["InlineFileButtonStyle"] as Style;
+                Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
             }
 
+            UpdateManager.Subscribe(this, protoService, audio.AudioValue, ref _fileToken, UpdateFile);
             UpdateFile(message, audio.AudioValue);
         }
 
@@ -143,7 +146,12 @@ namespace Unigram.Controls.Cells
 
         #endregion
 
-        public void UpdateFile(Message message, File file)
+        private void UpdateFile(object target, File file)
+        {
+            UpdateFile(_message, file);
+        }
+
+        private void UpdateFile(Message message, File file)
         {
             _playbackService.PlaybackStateChanged -= OnPlaybackStateChanged;
             _playbackService.PositionChanged -= OnPositionChanged;
@@ -281,14 +289,14 @@ namespace Unigram.Controls.Cells
                 var height = (int)(thumbnail.Height * ratio);
 
                 Texture.Background = new ImageBrush { ImageSource = new BitmapImage(UriEx.ToLocal(file.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height }, Stretch = Stretch.UniformToFill, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
-                Button.Style = App.Current.Resources["ImmersiveFileButtonStyle"] as Style;
+                Button.Style = BootStrapper.Current.Resources["ImmersiveFileButtonStyle"] as Style;
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
                 _protoService.DownloadFile(file.Id, 1);
 
                 Texture.Background = null;
-                Button.Style = App.Current.Resources["InlineFileButtonStyle"] as Style;
+                Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
             }
         }
 
@@ -360,7 +368,7 @@ namespace Unigram.Controls.Cells
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
-                _protoService.DownloadFile(file.Id, 32);
+                _protoService.AddFileToDownloads(file.Id, _message.ChatId, _message.Id);
             }
             else
             {

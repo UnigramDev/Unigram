@@ -1,4 +1,6 @@
-﻿using Unigram.ViewModels;
+﻿using Unigram.Common;
+using Unigram.Controls;
+using Unigram.ViewModels;
 using Unigram.Views.Host;
 using Unigram.Views.Settings;
 using Windows.UI.Xaml;
@@ -13,7 +15,6 @@ namespace Unigram.Views
         public LogOutPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<LogOutViewModel>();
         }
 
         private void AddAnotherAccount_Click(object sender, RoutedEventArgs e)
@@ -34,9 +35,20 @@ namespace Unigram.Views
             Frame.Navigate(typeof(SettingsStoragePage));
         }
 
-        private void ChangePhoneNumber_Click(object sender, RoutedEventArgs e)
+        private async void ChangePhoneNumber_Click(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(SettingsPhoneIntroPage));
+            var popup = new ChangePhoneNumberPopup();
+            var change = await popup.ShowQueuedAsync();
+            if (change != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            var confirm = await MessagePopup.ShowAsync(Strings.Resources.PhoneNumberAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            if (confirm == ContentDialogResult.Primary)
+            {
+                Frame.Navigate(typeof(SettingsPhonePage));
+            }
         }
     }
 }

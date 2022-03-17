@@ -11,23 +11,47 @@ using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed partial class GameContent : StackPanel, IContentWithFile, IContentWithPlayback
+    public sealed class GameContent : Control, IContent, IContentWithPlayback
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
         public GameContent(MessageViewModel message)
         {
-            InitializeComponent();
-            UpdateMessage(message);
+            _message = message;
+
+            DefaultStyleKey = typeof(GameContent);
         }
+
+        #region InitializeComponent
+
+        private TextBlock TitleLabel;
+        private Span Span;
+        private Border Media;
+        private bool _templateApplied;
+
+        protected override void OnApplyTemplate()
+        {
+            TitleLabel = GetTemplateChild(nameof(TitleLabel)) as TextBlock;
+            Span = GetTemplateChild(nameof(Span)) as Span;
+            Media = GetTemplateChild(nameof(Media)) as Border;
+
+            _templateApplied = true;
+
+            if (_message != null)
+            {
+                UpdateMessage(_message);
+            }
+        }
+
+        #endregion
 
         public void UpdateMessage(MessageViewModel message)
         {
             _message = message;
 
             var game = message.Content as MessageGame;
-            if (game == null)
+            if (game == null || !_templateApplied)
             {
                 return;
             }
@@ -47,8 +71,6 @@ namespace Unigram.Controls.Messages.Content
 
             UpdateContent(message, game.Game);
         }
-
-        public void UpdateMessageContentOpened(MessageViewModel message) { }
 
         private void UpdateContent(MessageViewModel message, Game game)
         {
@@ -74,14 +96,6 @@ namespace Unigram.Controls.Messages.Content
             }
         }
 
-        public void UpdateFile(MessageViewModel message, File file)
-        {
-            if (Media.Child is IContentWithFile content && content.IsValid(message.Content, false))
-            {
-                content.UpdateFile(message, file);
-            }
-        }
-
         public bool IsValid(MessageContent content, bool primary)
         {
             return content is MessageGame;
@@ -89,7 +103,7 @@ namespace Unigram.Controls.Messages.Content
 
         public IPlayerView GetPlaybackElement()
         {
-            if (Media.Child is IContentWithPlayback content)
+            if (Media?.Child is IContentWithPlayback content)
             {
                 return content.GetPlaybackElement();
             }
@@ -138,7 +152,7 @@ namespace Unigram.Controls.Messages.Content
                     // TODO any additional
                     span.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontFamily = new FontFamily("Consolas") });
                 }
-                else if (entity.Type is TextEntityTypeUrl || entity.Type is TextEntityTypeEmailAddress || entity.Type is TextEntityTypePhoneNumber || entity.Type is TextEntityTypeMention || entity.Type is TextEntityTypeHashtag || entity.Type is TextEntityTypeCashtag || entity.Type is TextEntityTypeBotCommand)
+                else if (entity.Type is TextEntityTypeUrl or TextEntityTypeEmailAddress or TextEntityTypePhoneNumber or TextEntityTypeMention or TextEntityTypeHashtag or TextEntityTypeCashtag or TextEntityTypeBotCommand)
                 {
                     var hyperlink = new Hyperlink();
                     var data = text.Substring(entity.Offset, entity.Length);
@@ -153,7 +167,7 @@ namespace Unigram.Controls.Messages.Content
                         MessageHelper.SetEntityData(hyperlink, data);
                     }
                 }
-                else if (entity.Type is TextEntityTypeTextUrl || entity.Type is TextEntityTypeMentionName)
+                else if (entity.Type is TextEntityTypeTextUrl or TextEntityTypeMentionName)
                 {
                     var hyperlink = new Hyperlink();
                     object data;
@@ -200,7 +214,7 @@ namespace Unigram.Controls.Messages.Content
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
-                _message.ProtoService.DownloadFile(file.Id, 32);
+                _message.ProtoService.DownloadFile(file.Id, 30);
             }
             else
             {

@@ -7,6 +7,20 @@ using Windows.Globalization;
 using Windows.Storage;
 using Windows.System.Profile;
 
+#if !ENABLE_CALLS
+
+namespace Unigram.Native.Calls
+{
+    public enum VoipDataSaving
+    {
+        Never,
+        Mobile,
+        Always,
+    }
+}
+
+#endif
+
 namespace Unigram.Services
 {
     public interface ISettingsService
@@ -26,10 +40,11 @@ namespace Unigram.Services
         FiltersSettings Filters { get; }
         PasscodeLockSettings PasscodeLock { get; }
         PlaybackSettings Playback { get; }
+        VoIPSettings VoIP { get; }
 
         DiagnosticsSettings Diagnostics { get; }
 
-        int UserId { get; set; }
+        long UserId { get; set; }
         long PushReceiverId { get; set; }
 
         string FilesDirectory { get; set; }
@@ -37,14 +52,12 @@ namespace Unigram.Services
         int VerbosityLevel { get; set; }
         bool UseTestDC { get; set; }
 
-        bool CollapseArchivedChats { get; set; }
+        bool HideArchivedChats { get; set; }
         bool IsAdaptiveWideEnabled { get; set; }
         bool IsTrayVisible { get; set; }
         bool IsLaunchMinimized { get; set; }
         bool IsSendByEnterEnabled { get; set; }
-        bool IsTextFormattingVisible { get; set; }
         bool IsReplaceEmojiEnabled { get; set; }
-        bool IsLargeEmojiEnabled { get; set; }
         bool IsContactsSyncEnabled { get; set; }
         bool IsContactsSyncRequested { get; set; }
         bool IsContactsSortedByEpoch { get; set; }
@@ -61,6 +74,8 @@ namespace Unigram.Services
 
         bool IsLeftTabsEnabled { get; set; }
 
+        bool IsTranslateEnabled { get; set; }
+
         Vector2 Pencil { get; set; }
 
         DistanceUnits DistanceUnits { get; set; }
@@ -75,7 +90,10 @@ namespace Unigram.Services
 
         string LanguagePackId { get; set; }
         string LanguagePluralId { get; set; }
+        string LanguageBaseId { get; set; }
         string LanguageShownId { get; set; }
+
+        string[] DoNotTranslate { get; set; }
 
         string PushToken { get; set; }
 
@@ -111,7 +129,7 @@ namespace Unigram.Services
 
 
 
-        public bool AddOrUpdateValue(string key, Object value)
+        public bool AddOrUpdateValue(string key, object value)
         {
             return AddOrUpdateValue(_container, key, value);
         }
@@ -128,7 +146,7 @@ namespace Unigram.Services
             return AddOrUpdateValue(container, key, value);
         }
 
-        protected bool AddOrUpdateValue(ApplicationDataContainer container, string key, Object value)
+        protected bool AddOrUpdateValue(ApplicationDataContainer container, string key, object value)
         {
             bool valueChanged = false;
 
@@ -151,7 +169,7 @@ namespace Unigram.Services
 
         public valueType GetValueOrDefault<valueType>(string key, valueType defaultValue)
         {
-            return GetValueOrDefault<valueType>(_container, key, defaultValue);
+            return GetValueOrDefault(_container, key, defaultValue);
         }
 
         protected valueType GetValueOrDefault<valueType>(ApplicationDataContainer container, string key, valueType defaultValue)
@@ -211,19 +229,22 @@ namespace Unigram.Services
 
         public ApplicationDataContainer Container => _container;
 
-        #region App version
+#region App version
 
-        public const ulong CurrentVersion = (7UL << 48) | (7UL << 32) | (0UL << 16);
-        public const string CurrentChangelog = @"Payments 2.0, Scheduled Voice Chats
+        public const ulong CurrentVersion = (8UL << 48) | (6UL << 32) | (0UL << 16);
+        public const string CurrentChangelog = @"Download Manager, Live Streams with other apps and More
 
-**Payments 2.0**
-• Offer real goods and services for sale in any group, channel or bot – Telegram doesn't charge a commission.
-• Pay for goods securely using one of the 8 integrated payment providers – Telegram doesn't collect your payment info.
-• See how this works in our @TestStore.
+**Download Manager**
+• Check the status of media and file downloads by tapping the new icon in the Search bar. 
+• View recently downloaded files from the new ‘Downloads’ tab in Search.
+• Pause and resume unfinished downloads.
 
-**Scheduled Voice Chats**
-• Schedule voice chats to let participants know about them in advance.
-• View a countdown to the voice chat and get notified when it starts.";
+**Live Streams with other apps **
+• Manage Live Streams in your groups and channels using external software such as OBS Studio or XSplit Broadcaster.
+
+**Phone Number Links**
+• Share a direct t.me link to your phone number that instantly opens a chat with you.
+• Use the full number in international format, like t.me/+123456789";
 
         public int Session => _session;
 
@@ -251,7 +272,7 @@ namespace Unigram.Services
             SystemVersion = build;
         }
 
-        #endregion
+#endregion
 
         private ChatSettingsBase _chats;
         public ChatSettingsBase Chats => _chats ??= new ChatSettingsBase(_own);
@@ -268,10 +289,7 @@ namespace Unigram.Services
         private AutoDownloadSettings _autoDownload;
         public AutoDownloadSettings AutoDownload
         {
-            get
-            {
-                return _autoDownload ??= new AutoDownloadSettings(_own.CreateContainer("AutoDownload", ApplicationDataCreateDisposition.Always));
-            }
+            get => _autoDownload ??= new AutoDownloadSettings(_own.CreateContainer("AutoDownload", ApplicationDataCreateDisposition.Always));
             set
             {
                 _autoDownload = value ?? AutoDownloadSettings.Default;
@@ -322,10 +340,10 @@ namespace Unigram.Services
             set => AddOrUpdateValue(ref _useTestDC, _own, "UseTestDC", value);
         }
 
-        private int? _userId;
-        public int UserId
+        private long? _userId;
+        public long UserId
         {
-            get => _userId ??= GetValueOrDefault(_own, "UserId", 0);
+            get => _userId ??= GetValueOrDefault(_own, "UserId", 0L);
             set
             {
                 _userId = value;
@@ -396,11 +414,11 @@ namespace Unigram.Services
             set => AddOrUpdateValue(ref _isLaunchMinimized, _local, "IsLaunchMinimized", value);
         }
 
-        private static bool? _collapseArchivedChats;
-        public bool CollapseArchivedChats
+        private static bool? _hideArchivedChats;
+        public bool HideArchivedChats
         {
-            get => _collapseArchivedChats ??= GetValueOrDefault(_local, "CollapseArchivedChats", false);
-            set => AddOrUpdateValue(ref _collapseArchivedChats, _local, "CollapseArchivedChats", value);
+            get => _hideArchivedChats ??= GetValueOrDefault(_local, "HideArchivedChats", false);
+            set => AddOrUpdateValue(ref _hideArchivedChats, _local, "HideArchivedChats", value);
         }
 
         private static bool? _isAccountsSelectorExpanded;
@@ -458,6 +476,13 @@ namespace Unigram.Services
             set => AddOrUpdateValue(ref _isLeftTabsEnabled, _local, "IsLeftTabsEnabled", value);
         }
 
+        private static bool? _isTranslateEnabled;
+        public bool IsTranslateEnabled
+        {
+            get => _isTranslateEnabled ??= GetValueOrDefault(_local, "IsTranslateEnabled", false);
+            set => AddOrUpdateValue(ref _isTranslateEnabled, _local, "IsTranslateEnabled", value);
+        }
+
         private static bool? _fullScreenGallery;
         public bool FullScreenGallery
         {
@@ -472,18 +497,11 @@ namespace Unigram.Services
             set => AddOrUpdateValue(ref _disableHighlightWords, _local, "DisableHighlightWords", value);
         }
 
-        private bool? _isSendByEnterEnabled;
+        private static bool? _isSendByEnterEnabled;
         public bool IsSendByEnterEnabled
         {
-            get => _isSendByEnterEnabled ??= GetValueOrDefault("IsSendByEnterEnabled", true);
-            set => AddOrUpdateValue(ref _isSendByEnterEnabled, "IsSendByEnterEnabled", value);
-        }
-
-        private bool? _isTextFormattingVisible;
-        public bool IsTextFormattingVisible
-        {
-            get => _isTextFormattingVisible ??= GetValueOrDefault("IsTextFormattingVisible", false);
-            set => AddOrUpdateValue(ref _isTextFormattingVisible, "IsTextFormattingVisible", value);
+            get => _isSendByEnterEnabled ??= GetValueOrDefault(_local, "IsSendByEnterEnabled", true);
+            set => AddOrUpdateValue(ref _isSendByEnterEnabled, _local, "IsSendByEnterEnabled", value);
         }
 
         private bool? _isReplaceEmojiEnabled;
@@ -491,13 +509,6 @@ namespace Unigram.Services
         {
             get => _isReplaceEmojiEnabled ??= GetValueOrDefault("IsReplaceEmojiEnabled", true);
             set => AddOrUpdateValue(ref _isReplaceEmojiEnabled, "IsReplaceEmojiEnabled", value);
-        }
-
-        private static bool? _isLargeEmojiEnabled;
-        public bool IsLargeEmojiEnabled
-        {
-            get => _isLargeEmojiEnabled ??= GetValueOrDefault(_local, "IsLargeEmojiEnabled", true);
-            set => AddOrUpdateValue(ref _isLargeEmojiEnabled, _local, "IsLargeEmojiEnabled", value);
         }
 
         private bool? _isContactsSyncEnabled;
@@ -528,17 +539,17 @@ namespace Unigram.Services
             set => AddOrUpdateValue(ref _isSecretPreviewsEnabled, "IsSecretPreviewsEnabled", value);
         }
 
-        private bool? _isAutoPlayEnabled;
+        private bool? _isAutoPlayAnimationsEnabled;
         public bool IsAutoPlayAnimationsEnabled
         {
-            get => _isAutoPlayEnabled ??= GetValueOrDefault("IsAutoPlayEnabled", true);
-            set => AddOrUpdateValue(ref _isAutoPlayEnabled, "IsAutoPlayEnabled", value);
+            get => _isAutoPlayAnimationsEnabled ??= GetValueOrDefault("IsAutoPlayEnabled", true);
+            set => AddOrUpdateValue(ref _isAutoPlayAnimationsEnabled, "IsAutoPlayEnabled", value);
         }
 
         private bool? _isAutoPlayVideosEnabled;
         public bool IsAutoPlayVideosEnabled
         {
-            get => _isAutoPlayVideosEnabled ??= GetValueOrDefault("IsAutoPlayVideosEnabled", false);
+            get => _isAutoPlayVideosEnabled ??= GetValueOrDefault("IsAutoPlayVideosEnabled", true);
             set => AddOrUpdateValue(ref _isAutoPlayVideosEnabled, "IsAutoPlayVideosEnabled", value);
         }
 
@@ -621,11 +632,29 @@ namespace Unigram.Services
             set => AddOrUpdateValue(ref _languagePluralId, _local, "LanguagePluralId", value);
         }
 
+        private string _languageBaseId;
+        public string LanguageBaseId
+        {
+            get => _languageBaseId ??= GetValueOrDefault(_local, "LanguageBaseId", ApplicationLanguages.Languages[0].Split('-').First());
+            set => AddOrUpdateValue(ref _languageBaseId, _local, "LanguageBaseId", value);
+        }
+
         private string _languageShownId;
         public string LanguageShownId
         {
             get => _languageShownId ??= GetValueOrDefault<string>(_local, "LanguageShownId", null);
             set => AddOrUpdateValue(ref _languageShownId, _local, "LanguageShownId", value);
+        }
+
+        private string[] _doNotTranslate;
+        public string[] DoNotTranslate
+        {
+            get => _doNotTranslate ??= GetValueOrDefault<string>(_local, "DoNotTranslate", null)?.Split(';', StringSplitOptions.RemoveEmptyEntries);
+            set
+            {
+                _doNotTranslate = value?.Length > 0 ? value : null;
+                AddOrUpdateValue(_local, "DoNotTranslate", value?.Length > 0 ? string.Join(';', value) : null);
+            }
         }
 
         private string _pushToken;

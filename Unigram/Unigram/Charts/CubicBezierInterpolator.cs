@@ -19,11 +19,11 @@ namespace Unigram.Charts
 
         public CubicBezierInterpolator(Vector2 start, Vector2 end)
         {
-            if (start.X < 0 || start.X > 1)
+            if (start.X is < 0 or > 1)
             {
                 throw new ArgumentOutOfRangeException("startX value must be in the range [0, 1]");
             }
-            if (end.X < 0 || end.X > 1)
+            if (end.X is < 0 or > 1)
             {
                 throw new ArgumentOutOfRangeException("endX value must be in the range [0, 1]");
             }

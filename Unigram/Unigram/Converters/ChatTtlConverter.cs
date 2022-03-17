@@ -11,7 +11,7 @@ namespace Unigram.Converters
             if (parameter == null)
             {
                 var which = (int)value;
-                if (which > 0 && which < 16)
+                if (which is > 0 and < 16)
                 {
                     return which;
                 }
@@ -50,7 +50,7 @@ namespace Unigram.Converters
             {
                 return Strings.Resources.ShortMessageLifetimeForever;
             }
-            else if (value >= 1 && value < 16)
+            else if (value is >= 1 and < 16)
             {
                 return Locale.FormatTtl(value);
             }
@@ -81,7 +81,7 @@ namespace Unigram.Converters
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
             var which = (int)value;
-            if (which >= 0 && which < 16)
+            if (which is >= 0 and < 16)
             {
                 return which;
             }

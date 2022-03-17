@@ -280,7 +280,8 @@ namespace Unigram.Navigation.Services
                 }
             }
         }
-        void FacadeNavigatedEventHandler(object sender, Windows.UI.Xaml.Navigation.NavigationEventArgs e)
+
+        private void FacadeNavigatedEventHandler(object sender, NavigationEventArgs e)
         {
             Logger.Info();
 
@@ -295,6 +296,7 @@ namespace Unigram.Navigation.Services
             }
 
             var args = new NavigatedEventArgs(e, Content as Page);
+            args.Parameter = CurrentPageParam;
 
             if (NavigationModeHint != NavigationMode.New)
             {
@@ -327,6 +329,7 @@ namespace Unigram.Navigation.Services
                 }
             }
         }
+
         private void FacadeNavigatingCancelEventHandler(object sender, NavigatingCancelEventArgs e)
         {
             Logger.Info();

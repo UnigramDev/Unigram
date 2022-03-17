@@ -20,8 +20,8 @@ namespace Unigram.ViewModels.Chats
 
         private readonly MvxObservableCollection<GalleryContent> _group;
 
-        public ChatGalleryViewModel(IProtoService protoService, IEventAggregator aggregator, long chatId, long threadId, Message selected, bool mirrored = false)
-            : base(protoService, aggregator)
+        public ChatGalleryViewModel(IProtoService protoService, IStorageService storageService, IEventAggregator aggregator, long chatId, long threadId, Message selected, bool mirrored = false)
+            : base(protoService, storageService, aggregator)
         {
             _isMirrored = mirrored;
 
@@ -73,7 +73,7 @@ namespace Unigram.ViewModels.Chats
 
                     foreach (var message in messages.MessagesValue.Where(x => x != null && x.Id < fromMessageId).OrderByDescending(x => x.Id))
                     {
-                        if (message.Content is MessagePhoto || message.Content is MessageVideo || message.Content is MessageAnimation)
+                        if (message.Content is MessagePhoto or MessageVideo or MessageAnimation)
                         {
                             Items.Put(!_isMirrored, new GalleryMessage(ProtoService, message));
                         }
@@ -85,7 +85,7 @@ namespace Unigram.ViewModels.Chats
 
                     foreach (var message in messages.MessagesValue.Where(x => x != null && x.Id > fromMessageId).OrderBy(x => x.Id))
                     {
-                        if (message.Content is MessagePhoto || message.Content is MessageVideo || message.Content is MessageAnimation)
+                        if (message.Content is MessagePhoto or MessageVideo or MessageAnimation)
                         {
                             Items.Put(_isMirrored, new GalleryMessage(ProtoService, message));
                         }
@@ -122,7 +122,7 @@ namespace Unigram.ViewModels.Chats
 
                     foreach (var message in _isMirrored ? messages.MessagesValue.Where(x => x != null && x.Id > fromMessageId).OrderBy(x => x.Id) : messages.MessagesValue.Where(x => x != null && x.Id < fromMessageId).OrderByDescending(x => x.Id))
                     {
-                        if (message.Content is MessagePhoto || message.Content is MessageVideo || message.Content is MessageAnimation)
+                        if (message.Content is MessagePhoto or MessageVideo or MessageAnimation)
                         {
                             Items.Insert(0, new GalleryMessage(ProtoService, message));
                         }
@@ -159,7 +159,7 @@ namespace Unigram.ViewModels.Chats
 
                     foreach (var message in _isMirrored ? messages.MessagesValue.Where(x => x != null && x.Id < fromMessageId).OrderByDescending(x => x.Id) : messages.MessagesValue.Where(x => x != null && x.Id > fromMessageId).OrderBy(x => x.Id))
                     {
-                        if (message.Content is MessagePhoto || message.Content is MessageVideo || message.Content is MessageAnimation)
+                        if (message.Content is MessagePhoto or MessageVideo or MessageAnimation)
                         {
                             Items.Add(new GalleryMessage(ProtoService, message));
                         }

@@ -13,13 +13,13 @@ namespace Unigram.Converters
             {
                 return parameter == null ? (object)seconds ?? 0 : Strings.Resources.ShortMessageLifetimeForever;
             }
-            else if (seconds >= 1 && seconds < 21)
+            else if (seconds is >= 1 and < 21)
             {
                 return parameter == null ? seconds : GetString(seconds, parameter);
             }
             else
             {
-                return parameter == null ? (seconds / 5) + 16 : GetString(seconds, parameter);
+                return parameter == null ? seconds / 5 + 16 : GetString(seconds, parameter);
             }
         }
 
@@ -29,7 +29,7 @@ namespace Unigram.Converters
             {
                 return Strings.Resources.ShortMessageLifetimeForever;
             }
-            else if (index >= 1 && index < 21)
+            else if (index is >= 1 and < 21)
             {
                 return GetString(index, null);
             }
@@ -45,13 +45,13 @@ namespace Unigram.Converters
             {
                 return 0;
             }
-            else if (seconds >= 1 && seconds < 21)
+            else if (seconds is >= 1 and < 21)
             {
                 return seconds;
             }
             else
             {
-                return (seconds / 5) + 16;
+                return seconds / 5 + 16;
             }
         }
 
@@ -70,7 +70,7 @@ namespace Unigram.Converters
                 return seconds.ToString();
             }
 
-            if (seconds >= 1 && seconds < 21)
+            if (seconds is >= 1 and < 21)
             {
                 return Locale.FormatTtl(seconds);
             }
@@ -84,7 +84,7 @@ namespace Unigram.Converters
             {
                 return 0;
             }
-            else if (seconds >= 1 && seconds < 21)
+            else if (seconds is >= 1 and < 21)
             {
                 return seconds;
             }
@@ -102,7 +102,7 @@ namespace Unigram.Converters
             {
                 return 0;
             }
-            else if (seconds >= 1 && seconds < 21)
+            else if (seconds is >= 1 and < 21)
             {
                 return seconds;
             }

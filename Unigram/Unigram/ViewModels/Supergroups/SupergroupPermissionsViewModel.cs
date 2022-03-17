@@ -45,10 +45,7 @@ namespace Unigram.ViewModels.Supergroups
         private bool _canSendMessages;
         public bool CanSendMessages
         {
-            get
-            {
-                return _canSendMessages;
-            }
+            get => _canSendMessages;
             set
             {
                 Set(ref _canSendMessages, value);
@@ -64,10 +61,7 @@ namespace Unigram.ViewModels.Supergroups
         private bool _canSendMediaMessages;
         public bool CanSendMediaMessages
         {
-            get
-            {
-                return _canSendMediaMessages;
-            }
+            get => _canSendMediaMessages;
             set
             {
                 Set(ref _canSendMediaMessages, value);
@@ -95,10 +89,7 @@ namespace Unigram.ViewModels.Supergroups
         private bool _canSendOtherMessages;
         public bool CanSendOtherMessages
         {
-            get
-            {
-                return _canSendOtherMessages;
-            }
+            get => _canSendOtherMessages;
             set
             {
                 Set(ref _canSendOtherMessages, value);
@@ -114,10 +105,7 @@ namespace Unigram.ViewModels.Supergroups
         private bool _canSendPolls;
         public bool CanSendPolls
         {
-            get
-            {
-                return _canSendPolls;
-            }
+            get => _canSendPolls;
             set
             {
                 Set(ref _canSendPolls, value);
@@ -133,10 +121,7 @@ namespace Unigram.ViewModels.Supergroups
         private bool _canAddWebPagePreviews;
         public bool CanAddWebPagePreviews
         {
-            get
-            {
-                return _canAddWebPagePreviews;
-            }
+            get => _canAddWebPagePreviews;
             set
             {
                 Set(ref _canAddWebPagePreviews, value);
@@ -153,40 +138,22 @@ namespace Unigram.ViewModels.Supergroups
         private bool _canInviteUsers;
         public bool CanInviteUsers
         {
-            get
-            {
-                return _canInviteUsers;
-            }
-            set
-            {
-                Set(ref _canInviteUsers, value);
-            }
+            get => _canInviteUsers;
+            set => Set(ref _canInviteUsers, value);
         }
 
         private bool _canPinMessages;
         public bool CanPinMessages
         {
-            get
-            {
-                return _canPinMessages;
-            }
-            set
-            {
-                Set(ref _canPinMessages, value);
-            }
+            get => _canPinMessages;
+            set => Set(ref _canPinMessages, value);
         }
 
         private bool _canChangeInfo;
         public bool CanChangeInfo
         {
-            get
-            {
-                return _canChangeInfo;
-            }
-            set
-            {
-                Set(ref _canChangeInfo, value);
-            }
+            get => _canChangeInfo;
+            set => Set(ref _canChangeInfo, value);
         }
 
         #endregion

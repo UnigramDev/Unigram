@@ -20,7 +20,6 @@ namespace Unigram.Views.Supergroups
         public SupergroupBannedPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SupergroupBannedViewModel, ISupergroupDelegate>(this);
 
             var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
             debouncer.Invoked += (s, args) =>
@@ -38,7 +37,7 @@ namespace Unigram.Views.Supergroups
 
         public void Search()
         {
-            Search_Click(null, null);
+            SearchField.Focus(FocusState.Keyboard);
         }
 
         public void OnBackRequested(HandledEventArgs args)
@@ -46,7 +45,6 @@ namespace Unigram.Views.Supergroups
             if (ContentPanel.Visibility == Visibility.Collapsed)
             {
                 SearchField.Text = string.Empty;
-                Search_LostFocus(null, null);
                 args.Handled = true;
             }
         }
@@ -127,8 +125,8 @@ namespace Unigram.Views.Supergroups
             args.ItemContainer.Tag = args.Item;
             content.Tag = args.Item;
 
-            var user = ViewModel.ProtoService.GetMessageSender(member.MemberId) as User;
-            if (user == null)
+            var messageSender = ViewModel.ProtoService.GetMessageSender(member.MemberId);
+            if (messageSender == null)
             {
                 return;
             }
@@ -136,7 +134,14 @@ namespace Unigram.Views.Supergroups
             if (args.Phase == 0)
             {
                 var title = content.Children[1] as TextBlock;
-                title.Text = user.GetFullName();
+                if (messageSender is User user)
+                {
+                    title.Text = user.GetFullName();
+                }
+                else if (messageSender is Chat chat)
+                {
+                    title.Text = chat.Title;
+                }
             }
             else if (args.Phase == 1)
             {
@@ -146,7 +151,14 @@ namespace Unigram.Views.Supergroups
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
+                if (messageSender is User user)
+                {
+                    photo.SetUser(ViewModel.ProtoService, user, 36);
+                }
+                else if (messageSender is Chat chat)
+                {
+                    photo.SetChat(ViewModel.ProtoService, chat, 36);
+                }
             }
 
             if (args.Phase < 2)
@@ -158,25 +170,6 @@ namespace Unigram.Views.Supergroups
         }
 
         #endregion
-
-        private void Search_Click(object sender, RoutedEventArgs e)
-        {
-            MainHeader.Visibility = Visibility.Collapsed;
-            SearchField.Visibility = Visibility.Visible;
-
-            SearchField.Focus(FocusState.Keyboard);
-        }
-
-        private void Search_LostFocus(object sender, RoutedEventArgs e)
-        {
-            if (string.IsNullOrEmpty(SearchField.Text))
-            {
-                MainHeader.Visibility = Visibility.Visible;
-                SearchField.Visibility = Visibility.Collapsed;
-
-                Focus(FocusState.Programmatic);
-            }
-        }
 
         private void Search_TextChanged(object sender, TextChangedEventArgs e)
         {

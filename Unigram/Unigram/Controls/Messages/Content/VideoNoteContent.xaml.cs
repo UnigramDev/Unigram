@@ -4,32 +4,71 @@ using Unigram.Common;
 using Unigram.ViewModels;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed partial class VideoNoteContent : AspectView, IContentWithFile, IContentWithMask, IContentWithPlayback
+    public sealed class VideoNoteContent : Control, IContentWithFile, IContentWithMask, IContentWithPlayback
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
+        private string _fileToken;
+        private string _thumbnailToken;
+
         public VideoNoteContent(MessageViewModel message)
         {
-            InitializeComponent();
-            UpdateMessage(message);
+            _message = message;
+
+            DefaultStyleKey = typeof(VideoNoteContent);
         }
+
+        #region InitializeComponent
+
+        private AspectView LayoutRoot;
+        private Ellipse Holder;
+        private ImageBrush Texture;
+        private FileButton Button;
+        private AnimationView Player;
+        private Border Overlay;
+        private TextBlock Subtitle;
+        private bool _templateApplied;
+
+        protected override void OnApplyTemplate()
+        {
+            LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as AspectView;
+            Holder = GetTemplateChild(nameof(Holder)) as Ellipse;
+            Texture = GetTemplateChild(nameof(Texture)) as ImageBrush;
+            Button = GetTemplateChild(nameof(Button)) as FileButton;
+            Player = GetTemplateChild(nameof(Player)) as AnimationView;
+            Overlay = GetTemplateChild(nameof(Overlay)) as Border;
+            Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
+
+            Button.Click += Button_Click;
+
+            _templateApplied = true;
+
+            if (_message != null)
+            {
+                UpdateMessage(_message);
+            }
+        }
+
+        #endregion
 
         public void UpdateMessage(MessageViewModel message)
         {
             _message = message;
 
             var videoNote = GetContent(message.Content);
-            if (videoNote == null)
+            if (videoNote == null || !_templateApplied)
             {
                 return;
             }
 
-            Constraint = message;
+            LayoutRoot.Constraint = message;
             Texture.ImageSource = null;
 
             if (message.Content is MessageVideoNote videoNoteMessage)
@@ -41,11 +80,9 @@ namespace Unigram.Controls.Messages.Content
                 Subtitle.Text = videoNote.GetDuration();
             }
 
-            if (videoNote.Thumbnail != null)
-            {
-                UpdateThumbnail(message, videoNote.Thumbnail, videoNote.Thumbnail.File);
-            }
+            UpdateThumbnail(message, videoNote, videoNote.Thumbnail?.File, true);
 
+            UpdateManager.Subscribe(this, message, videoNote.Video, ref _fileToken, UpdateFile);
             UpdateFile(message, videoNote.Video);
         }
 
@@ -57,20 +94,20 @@ namespace Unigram.Controls.Messages.Content
             }
         }
 
-        public void UpdateFile(MessageViewModel message, File file)
+        private void UpdateFile(object target, File file)
+        {
+            UpdateFile(_message, file);
+        }
+
+        private void UpdateFile(MessageViewModel message, File file)
         {
             var videoNote = GetContent(message.Content);
-            if (videoNote == null)
+            if (videoNote == null || !_templateApplied)
             {
                 return;
             }
 
-            if (videoNote.Thumbnail != null && videoNote.Thumbnail.File.Id == file.Id)
-            {
-                UpdateThumbnail(message, videoNote.Thumbnail, file);
-                return;
-            }
-            else if (videoNote.Video.Id != file.Id)
+            if (videoNote.Video.Id != file.Id)
             {
                 return;
             }
@@ -100,7 +137,7 @@ namespace Unigram.Controls.Messages.Content
 
                 Player.Source = null;
 
-                if (message.Delegate.CanBeDownloaded(message))
+                if (message.Delegate.CanBeDownloaded(videoNote, file))
                 {
                     _message.ProtoService.DownloadFile(file.Id, 32);
                 }
@@ -121,21 +158,56 @@ namespace Unigram.Controls.Messages.Content
                     Button.SetGlyph(file.Id, MessageContentState.Play);
                     Button.Progress = 1;
 
-                    Player.Source = UriEx.ToLocal(file.Local.Path);
+                    Player.Source = new LocalVideoSource(file);
+                    message.Delegate.ViewVisibleMessages(false);
                 }
             }
         }
 
-        private void UpdateThumbnail(MessageViewModel message, Thumbnail thumbnail, File file)
+        private void UpdateThumbnail(object target, File file)
         {
-            if (file.Local.IsDownloadingCompleted)
+            var videoNote = GetContent(_message.Content);
+            if (videoNote == null || !_templateApplied)
             {
-                //Texture.Source = new BitmapImage(UriEx.GetLocal(file.Local.Path));
-                Texture.ImageSource = PlaceholderHelper.GetBlurred(file.Local.Path);
+                return;
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+
+            UpdateThumbnail(_message, videoNote, file, false);
+        }
+
+        private void UpdateThumbnail(MessageViewModel message, VideoNote videoNote, File file, bool download)
+        {
+            var thumbnail = videoNote.Thumbnail;
+            var minithumbnail = videoNote.Minithumbnail;
+
+            if (thumbnail != null && thumbnail.Format is ThumbnailFormatJpeg)
             {
-                message.ProtoService.DownloadFile(file.Id, 1);
+                if (file.Local.IsDownloadingCompleted)
+                {
+                    Texture.ImageSource = PlaceholderHelper.GetBlurred(file.Local.Path);
+                }
+                else if (download)
+                {
+                    if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                    {
+                        if (minithumbnail != null)
+                        {
+                            Texture.ImageSource = PlaceholderHelper.GetBlurred(minithumbnail.Data);
+                        }
+
+                        message.ProtoService.DownloadFile(file.Id, 1);
+                    }
+
+                    UpdateManager.Subscribe(this, message, file, ref _thumbnailToken, UpdateThumbnail, true);
+                }
+            }
+            else if (minithumbnail != null)
+            {
+                Texture.ImageSource = PlaceholderHelper.GetBlurred(minithumbnail.Data);
+            }
+            else
+            {
+                Texture.ImageSource = null;
             }
         }
 
@@ -201,7 +273,14 @@ namespace Unigram.Controls.Messages.Content
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
-                _message.ProtoService.DownloadFile(file.Id, 32);
+                if (_message.Content is not MessageVideoNote)
+                {
+                    _message.ProtoService.DownloadFile(file.Id, 30);
+                }
+                else
+                {
+                    _message.ProtoService.AddFileToDownloads(file.Id, _message.ChatId, _message.Id);
+                }
             }
             else
             {

@@ -1,13 +1,72 @@
-﻿using Windows.Storage;
+﻿using System;
+using System.Collections.Generic;
+using Telegram.Td.Api;
+using Windows.Storage;
 
 namespace Unigram.Services.Settings
 {
     public class NotificationsSettings : SettingsServiceBase
     {
+        private readonly Dictionary<Type, ScopeNotificationSettings> _scopeNotificationSettings = new Dictionary<Type, ScopeNotificationSettings>();
+
         public NotificationsSettings(ApplicationDataContainer container)
             : base(container)
         {
 
+        }
+
+        public Dictionary<Type, ScopeNotificationSettings> Scope => _scopeNotificationSettings;
+
+        public int GetMutedFor(Chat chat)
+        {
+            if (chat.NotificationSettings.UseDefaultMuteFor && TryGetScope(chat, out var scope))
+            {
+                return scope.MuteFor;
+            }
+
+            return chat.NotificationSettings.MuteFor;
+        }
+
+        public bool GetShowPreview(Chat chat)
+        {
+            if (chat.NotificationSettings.UseDefaultShowPreview && TryGetScope(chat, out var scope))
+            {
+                return scope.ShowPreview;
+            }
+
+            return chat.NotificationSettings.ShowPreview;
+        }
+
+        public ScopeNotificationSettings GetScope(Chat chat)
+        {
+            TryGetScope(chat, out var scope);
+            return scope;
+        }
+
+        private bool TryGetScope(Chat chat, out ScopeNotificationSettings value)
+        {
+            Type scope = null;
+            switch (chat.Type)
+            {
+                case ChatTypePrivate:
+                case ChatTypeSecret:
+                    scope = typeof(NotificationSettingsScopePrivateChats);
+                    break;
+                case ChatTypeBasicGroup:
+                    scope = typeof(NotificationSettingsScopeGroupChats);
+                    break;
+                case ChatTypeSupergroup supergroup:
+                    scope = supergroup.IsChannel ? typeof(NotificationSettingsScopeChannelChats) : typeof(NotificationSettingsScopeGroupChats);
+                    break;
+            }
+
+            if (scope != null && _scopeNotificationSettings.TryGetValue(scope, out value))
+            {
+                return true;
+            }
+
+            value = null;
+            return false;
         }
 
         private bool? _inAppPreview;
@@ -50,20 +109,6 @@ namespace Unigram.Services.Settings
         {
             get => _countUnreadMessages ??= GetValueOrDefault("CountUnreadMessages", true);
             set => AddOrUpdateValue(ref _countUnreadMessages, "CountUnreadMessages", value);
-        }
-
-        private bool? _isPinnedEnabled;
-        public bool IsPinnedEnabled
-        {
-            get => _isPinnedEnabled ??= GetValueOrDefault("IsPinnedEnabled", true);
-            set => AddOrUpdateValue(ref _isPinnedEnabled, "IsPinnedEnabled", value);
-        }
-
-        private bool? _isContactEnabled;
-        public bool IsContactEnabled
-        {
-            get => _isContactEnabled ??= GetValueOrDefault("IsContactEnabled", true);
-            set => AddOrUpdateValue(ref _isContactEnabled, "IsContactEnabled", value);
         }
     }
 }

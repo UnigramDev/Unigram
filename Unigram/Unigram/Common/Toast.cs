@@ -19,7 +19,7 @@ namespace Unigram.Common
 
                 foreach (var t in BackgroundTaskRegistration.AllTasks)
                 {
-                    if (t.Value.Name == "NotificationTask" || t.Value.Name == "NewNotificationTask")
+                    if (t.Value.Name is "NotificationTask" or "NewNotificationTask" or "InProcessNotificationTask")
                     {
                         t.Value.Unregister(false);
                     }
@@ -36,13 +36,12 @@ namespace Unigram.Common
                 }
 
                 var access = await BackgroundExecutionManager.RequestAccessAsync();
-                if (access == BackgroundAccessStatus.DeniedByUser || access == BackgroundAccessStatus.DeniedBySystemPolicy)
+                if (access is BackgroundAccessStatus.DeniedByUser or BackgroundAccessStatus.DeniedBySystemPolicy)
                 {
                     return;
                 }
 
-                Register("InProcessNotificationTask", null, () => new PushNotificationTrigger());
-                //Register("NewNotificationTask2", null, () => new PushNotificationTrigger());
+                //Register("InProcessNotificationTask", null, () => new PushNotificationTrigger());
                 Register("NewInteractiveTask", null, () => new ToastNotificationActionTrigger());
                 //BackgroundTaskManager.Register("InteractiveTask", "Unigram.Tasks.InteractiveTask", new ToastNotificationActionTrigger());
             }

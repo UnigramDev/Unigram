@@ -10,7 +10,7 @@ namespace Unigram.Services
     {
         NavigationState Values { get; }
         bool Exists(string key);
-        T Read<T>(string key, T fallback = default(T));
+        T Read<T>(string key, T fallback = default);
         void Remove(string key);
         void Write<T>(string key, T value);
         ISettingsLegacyService Open(string folderName, bool createFolderIsNotExists = true);
@@ -73,8 +73,7 @@ namespace Unigram.Services
 
         public ISettingsLegacyService Open(string folderName, bool createFolderIfNotExists = true)
         {
-            NavigationState values;
-            if (!_keys.TryGetValue(folderName, out values))
+            if (!_keys.TryGetValue(folderName, out NavigationState values))
             {
                 _keys[folderName] = values = new NavigationState();
             }
@@ -101,8 +100,6 @@ namespace Unigram.Services
                 _keys.Clear();
             }
         }
-
-        const int MaxValueSize = 8000;
 
         public void Write<T>(string key, T value)
         {
@@ -140,7 +137,7 @@ namespace Unigram.Services
             Values[key] = value;
         }
 
-        public T Read<T>(string key, T fallback = default(T))
+        public T Read<T>(string key, T fallback = default)
         {
             try
             {
@@ -188,7 +185,7 @@ namespace Unigram.Services
             // Some of these types are surely supported by ApplicationDataContainer,
             // but most likely not by Frame.
 
-            if (parameter is sbyte || parameter is Int16 || parameter is UInt16 || parameter is Int32 || parameter is UInt32 || parameter is Int64 || parameter is UInt64 || parameter is Single || parameter is Double)
+            if (parameter is sbyte or short or ushort or int or uint or long or ulong or float or double)
             {
                 return true;
             }
@@ -196,15 +193,15 @@ namespace Unigram.Services
             {
                 return true;
             }
-            else if (parameter is char || parameter is string)
+            else if (parameter is char or string)
             {
                 return true;
             }
-            else if (parameter is DateTime || parameter is TimeSpan)
+            else if (parameter is DateTime or TimeSpan)
             {
                 return true;
             }
-            else if (parameter is Guid || parameter is Point || parameter is Size || parameter is Rect)
+            else if (parameter is Guid or Point or Size or Rect)
             {
                 return true;
             }

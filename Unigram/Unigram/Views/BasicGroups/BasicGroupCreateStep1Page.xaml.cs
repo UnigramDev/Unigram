@@ -19,7 +19,6 @@ namespace Unigram.Views.BasicGroups
         public BasicGroupCreateStep1Page()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<BasicGroupCreateStep1ViewModel>();
         }
 
         private void Title_Loaded(object sender, RoutedEventArgs e)
@@ -92,7 +91,7 @@ namespace Unigram.Views.BasicGroups
             //}
 
             var photo = content.Children[0] as ProfilePicture;
-            photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 36);
+            photo.SetChat(ViewModel.ProtoService, chat, 36);
 
             //button.Command = ViewModel.OpenChatCommand;
             //button.CommandParameter = nearby;

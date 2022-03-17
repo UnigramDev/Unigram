@@ -6,71 +6,51 @@ namespace Unigram.Services.ViewService
 {
     class SecondaryViewSynchronizationContextDecorator : SynchronizationContext
     {
-        private readonly ViewLifetimeControl control;
-        private readonly SynchronizationContext context;
+        private readonly ViewLifetimeControl _control;
+        private readonly SynchronizationContext _context;
 
         public SecondaryViewSynchronizationContextDecorator(ViewLifetimeControl control, SynchronizationContext context)
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-
-            if (control == null)
-            {
-                throw new ArgumentNullException(nameof(control));
-            }
-
-            this.control = control;
-            this.context = context;
+            _control = control ?? throw new ArgumentNullException(nameof(control));
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
 
         public override void OperationStarted()
         {
-
-            try
+            var count = _control.StartViewInUse();
+            if (count != -1)
             {
-                var count = control.StartViewInUse();
+                _context.OperationStarted();
                 Logger.Info("SecondaryViewSynchronizationContextDecorator : OperationStarted: " + count);
-                context.OperationStarted();
             }
-            catch (ViewLifetimeControl.ViewLifeTimeException)
-            {
-                //Don't need to do anything, operation can't be started
-            }
-
         }
 
         public override void Send(SendOrPostCallback d, object state)
         {
-            context.Send(d, state);
+            _context.Send(d, state);
         }
 
         public override void Post(SendOrPostCallback d, object state)
         {
-            context.Post(d, state);
+            _context.Post(d, state);
         }
 
         public override void OperationCompleted()
         {
-            try
+            _context.OperationCompleted();
+
+            var count = _control.StopViewInUse();
+            if (count != -1)
             {
-                context.OperationCompleted();
-                var count = control.StopViewInUse();
                 Logger.Info("SecondaryViewSynchronizationContextDecorator : OperationCompleted: " + count);
-            }
-            catch (ViewLifetimeControl.ViewLifeTimeException)
-            {
-                //Don't need to do anything, operation can't be completed
             }
         }
 
         public override SynchronizationContext CreateCopy()
         {
-            var copyControl = ViewLifetimeControl.GetForCurrentView();
-            copyControl = copyControl != control ? copyControl : control;
-            return new SecondaryViewSynchronizationContextDecorator(copyControl, context.CreateCopy());
+            var control = ViewLifetimeControl.GetForCurrentView();
+            return new SecondaryViewSynchronizationContextDecorator(control, _context.CreateCopy());
         }
     }
 }

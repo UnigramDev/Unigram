@@ -2,6 +2,7 @@
 using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Navigation;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Chats;
 using Windows.UI.Core;
@@ -18,12 +19,14 @@ namespace Unigram.Controls.Chats
     {
         public ChatSearchViewModel ViewModel => DataContext as ChatSearchViewModel;
 
+        private readonly EventDebouncer<TextChangedEventArgs> _debouncer;
+
         public ChatSearchBar()
         {
             InitializeComponent();
 
-            var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => Field.TextChanged += new TextChangedEventHandler(handler));
-            debouncer.Invoked += (s, args) =>
+            _debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => Field.TextChanged += new TextChangedEventHandler(handler));
+            _debouncer.Invoked += (s, args) =>
             {
                 if (Field.State != ChatSearchState.Members)
                 {
@@ -44,7 +47,7 @@ namespace Unigram.Controls.Chats
 
             if (viewModel != null)
             {
-                var history = viewModel.Dialog.Type != DialogType.History && viewModel.Dialog.Type != DialogType.Thread;
+                var history = viewModel.Dialog.Type is not DialogType.History and not DialogType.Thread;
                 SearchPrevious.Visibility = history ? Visibility.Collapsed : Visibility.Visible;
                 SearchNext.Visibility = history ? Visibility.Collapsed : Visibility.Visible;
                 ToolsPanel.Visibility = history ? Visibility.Collapsed : Visibility.Visible;
@@ -131,7 +134,7 @@ namespace Unigram.Controls.Chats
                 name.Text = user.GetFullName();
                 username.Text = string.IsNullOrEmpty(user.Username) ? string.Empty : $" @{user.Username}";
 
-                photo.Source = PlaceholderHelper.GetUser(ViewModel?.ProtoService, user, 36);
+                photo.SetUser(ViewModel.ProtoService, user, 36);
             }
             else if (args.Item is ChatSearchMediaFilter filter)
             {
@@ -144,11 +147,11 @@ namespace Unigram.Controls.Chats
 
                 if (filter.Filter is SearchMessagesFilterVideoNote)
                 {
-                    glyph.FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily;
+                    glyph.FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily;
                 }
                 else
                 {
-                    glyph.FontFamily = App.Current.Resources["SymbolThemeFontFamily"] as FontFamily;
+                    glyph.FontFamily = BootStrapper.Current.Resources["SymbolThemeFontFamily"] as FontFamily;
                 }
             }
         }
@@ -193,6 +196,7 @@ namespace Unigram.Controls.Chats
 
             if (e.Key == Windows.System.VirtualKey.Enter && !shift && Field.State != ChatSearchState.Members)
             {
+                _debouncer.Cancel();
                 ViewModel?.Search(Field.Text, Field.From, Field.Filter?.Filter);
                 e.Handled = true;
             }
@@ -210,6 +214,7 @@ namespace Unigram.Controls.Chats
 
         private void Search_Click(object sender, RoutedEventArgs e)
         {
+            _debouncer.Cancel();
             ViewModel?.Search(Field.Text, Field.From, Field.Filter?.Filter);
         }
 
@@ -296,7 +301,7 @@ namespace Unigram.Controls.Chats
                     viewModel.Autocomplete = null;
                     break;
                 default:
-                    ToolsPanel.Visibility = viewModel.Dialog.Type != DialogType.History && viewModel.Dialog.Type != DialogType.Thread ? Visibility.Collapsed : Visibility.Visible;
+                    ToolsPanel.Visibility = viewModel.Dialog.Type is not DialogType.History and not DialogType.Thread ? Visibility.Collapsed : Visibility.Visible;
                     viewModel.Autocomplete = null;
                     break;
             }
@@ -318,7 +323,7 @@ namespace Unigram.Controls.Chats
             {
                 SetState(ChatSearchState.Media);
             }
-            else if (Field.State == ChatSearchState.Members || Field.State == ChatSearchState.Media)
+            else if (Field.State is ChatSearchState.Members or ChatSearchState.Media)
             {
                 SetState(ChatSearchState.Text);
             }

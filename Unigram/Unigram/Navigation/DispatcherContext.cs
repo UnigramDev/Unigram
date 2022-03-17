@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using Unigram.Common;
 using Unigram.Logs;
 using Windows.System;
 
@@ -29,14 +28,14 @@ namespace Unigram.Navigation
             _dispatcher = dispatcher;
         }
 
-        public bool HasThreadAccess => ApiInfo.CanCheckThreadAccess && _dispatcher.HasThreadAccess;
+        public bool HasThreadAccess => _dispatcher.HasThreadAccess;
 
         private readonly DispatcherQueue _dispatcher;
 
         [DebuggerNonUserCode]
         public Task DispatchAsync(Action action, DispatcherQueuePriority priority = DispatcherQueuePriority.Normal)
         {
-            if (ApiInfo.CanCheckThreadAccess && _dispatcher.HasThreadAccess && priority == DispatcherQueuePriority.Normal)
+            if (_dispatcher.HasThreadAccess && priority == DispatcherQueuePriority.Normal)
             {
                 action();
                 return Task.CompletedTask;
@@ -69,7 +68,7 @@ namespace Unigram.Navigation
         [DebuggerNonUserCode]
         public Task DispatchAsync(Func<Task> func, DispatcherQueuePriority priority = DispatcherQueuePriority.Normal)
         {
-            if (ApiInfo.CanCheckThreadAccess && _dispatcher.HasThreadAccess && priority == DispatcherQueuePriority.Normal)
+            if (_dispatcher.HasThreadAccess && priority == DispatcherQueuePriority.Normal)
             {
                 return func();
             }
@@ -101,7 +100,7 @@ namespace Unigram.Navigation
         [DebuggerNonUserCode]
         public Task<T> DispatchAsync<T>(Func<T> func, DispatcherQueuePriority priority = DispatcherQueuePriority.Normal)
         {
-            if (ApiInfo.CanCheckThreadAccess && _dispatcher.HasThreadAccess && priority == DispatcherQueuePriority.Normal)
+            if (_dispatcher.HasThreadAccess && priority == DispatcherQueuePriority.Normal)
             {
                 return Task.FromResult(func());
             }
@@ -134,7 +133,7 @@ namespace Unigram.Navigation
         [DebuggerNonUserCode]
         public Task<T> DispatchAsync<T>(Func<Task<T>> func, DispatcherQueuePriority priority = DispatcherQueuePriority.Normal)
         {
-            if (ApiInfo.CanCheckThreadAccess && _dispatcher.HasThreadAccess && priority == DispatcherQueuePriority.Normal)
+            if (_dispatcher.HasThreadAccess && priority == DispatcherQueuePriority.Normal)
             {
                 return func();
             }
@@ -166,7 +165,7 @@ namespace Unigram.Navigation
         [DebuggerNonUserCode]
         public void Dispatch(DispatcherQueueHandler action, DispatcherQueuePriority priority = DispatcherQueuePriority.Normal)
         {
-            if (ApiInfo.CanCheckThreadAccess && _dispatcher.HasThreadAccess && priority == DispatcherQueuePriority.Normal)
+            if (_dispatcher.HasThreadAccess && priority == DispatcherQueuePriority.Normal)
             {
                 action();
             }

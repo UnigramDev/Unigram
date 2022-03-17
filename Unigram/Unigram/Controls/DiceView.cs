@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -66,9 +67,10 @@ namespace Unigram.Controls
 
         private readonly LoopThread _thread;
         private readonly LoopThread _threadUI;
+        private readonly object _subscribeLock = new object();
         private bool _subscribed;
+        private bool _unsubscribe;
 
-        private bool _loaded;
         private bool _unloaded;
 
         public DiceView()
@@ -107,7 +109,7 @@ namespace Unigram.Controls
             base.OnApplyTemplate();
         }
 
-        private void Load()
+        private bool Load()
         {
             if (_unloaded && _layoutRoot != null && _layoutRoot.IsLoaded)
             {
@@ -125,22 +127,29 @@ namespace Unigram.Controls
 
                 _unloaded = false;
                 SetValue(_previousState, _previous);
+
+                return true;
             }
+
+            return false;
         }
 
         private void OnLoading(FrameworkElement sender, object args)
         {
-            _loaded = true;
             Load();
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            _loaded = true;
             Load();
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            Unload();
+        }
+
+        public void Unload()
         {
             _shouldPlay = false;
             _unloaded = true;
@@ -171,7 +180,11 @@ namespace Unigram.Controls
             }
             catch
             {
-                _ = Dispatcher.RunIdleAsync(idle => Subscribe(false));
+                lock (_subscribeLock)
+                {
+                    _unsubscribe = true;
+                    _thread.Tick -= OnTick;
+                }
             }
         }
 
@@ -213,6 +226,18 @@ namespace Unigram.Controls
                     FirstFrameRendered?.Invoke(this, EventArgs.Empty);
                 }
             }
+
+            Monitor.Enter(_subscribeLock);
+            if (_unsubscribe)
+            {
+                _unsubscribe = false;
+                Monitor.Exit(_subscribeLock);
+                Subscribe(false);
+            }
+            else
+            {
+                Monitor.Exit(_subscribeLock);
+            }
         }
 
         public void Invalidate()
@@ -241,7 +266,7 @@ namespace Unigram.Controls
 
             for (int i = 0; i < animations.Length; i++)
             {
-                if (_bitmaps[i] == null)
+                if (_bitmaps[i] == null || animations[i] == null)
                 {
                     if (animations[i] != null)
                     {
@@ -279,8 +304,12 @@ namespace Unigram.Controls
                     }
                     else if (i == 1)
                     {
-                        _subscribed = false;
-                        _ = Dispatcher.RunIdleAsync(idle => Subscribe(false));
+                        lock (_subscribeLock)
+                        {
+                            _subscribed = false;
+                            _unsubscribe = true;
+                            _thread.Tick -= OnTick;
+                        }
                     }
                 }
             }
@@ -299,7 +328,7 @@ namespace Unigram.Controls
         public async void SetValue(DiceStickers state, int newValue)
         {
             var canvas = _canvas;
-            if (canvas == null)
+            if (canvas == null  && !Load())
             {
                 _previous = newValue;
                 _previousState = state;
@@ -353,13 +382,13 @@ namespace Unigram.Controls
             {
                 if (state is DiceStickersSlotMachine slotMachine)
                 {
-                    animations[0] = _backAnimation ??= LottieAnimation.LoadFromFile(slotMachine.Background.StickerValue.Local.Path, false, null);
-                    animations[1] = LottieAnimation.LoadFromData(MergeReels(slotMachine), $"{newValue}", false, null);
-                    animations[2] = _frontAnimation ??= LottieAnimation.LoadFromFile(slotMachine.Lever.StickerValue.Local.Path, false, null);
+                    animations[0] = _backAnimation ??= LottieAnimation.LoadFromFile(slotMachine.Background.StickerValue.Local.Path, _frameSize, false, null);
+                    animations[1] = LottieAnimation.LoadFromData(MergeReels(slotMachine), _frameSize, $"{newValue}", false, null);
+                    animations[2] = _frontAnimation ??= LottieAnimation.LoadFromFile(slotMachine.Lever.StickerValue.Local.Path, _frameSize, false, null);
                 }
                 else if (state is DiceStickersRegular regular)
                 {
-                    animations[1] = LottieAnimation.LoadFromFile(regular.Sticker.StickerValue.Local.Path, false, null);
+                    animations[1] = LottieAnimation.LoadFromFile(regular.Sticker.StickerValue.Local.Path, _frameSize, false, null);
                 }
             });
 
@@ -508,15 +537,22 @@ namespace Unigram.Controls
 
         private void Subscribe(bool subscribe)
         {
-            _subscribed = subscribe;
-
-            _thread.Tick -= OnTick;
-            _threadUI.Invalidate -= OnInvalidate;
-
-            if (subscribe)
+            lock (_subscribeLock)
             {
-                _thread.Tick += OnTick;
-                _threadUI.Invalidate += OnInvalidate;
+                if (subscribe)
+                {
+                    _unsubscribe = false;
+                }
+
+                _subscribed = subscribe;
+                _thread.Tick -= OnTick;
+                _threadUI.Invalidate -= OnInvalidate;
+
+                if (subscribe)
+                {
+                    _thread.Tick += OnTick;
+                    _threadUI.Invalidate += OnInvalidate;
+                }
             }
         }
 
@@ -524,8 +560,8 @@ namespace Unigram.Controls
 
         public SizeInt32 FrameSize
         {
-            get { return (SizeInt32)GetValue(FrameSizeProperty); }
-            set { SetValue(FrameSizeProperty, value); }
+            get => (SizeInt32)GetValue(FrameSizeProperty);
+            set => SetValue(FrameSizeProperty, value);
         }
 
         public static readonly DependencyProperty FrameSizeProperty =
@@ -542,8 +578,8 @@ namespace Unigram.Controls
 
         public bool AutoPlay
         {
-            get { return (bool)GetValue(AutoPlayProperty); }
-            set { SetValue(AutoPlayProperty, value); }
+            get => (bool)GetValue(AutoPlayProperty);
+            set => SetValue(AutoPlayProperty, value);
         }
 
         public static readonly DependencyProperty AutoPlayProperty =
@@ -555,8 +591,8 @@ namespace Unigram.Controls
 
         public bool IsContentUnread
         {
-            get { return (bool)GetValue(IsContentUnreadProperty); }
-            set { SetValue(IsContentUnreadProperty, value); }
+            get => (bool)GetValue(IsContentUnreadProperty);
+            set => SetValue(IsContentUnreadProperty, value);
         }
 
         public static readonly DependencyProperty IsContentUnreadProperty =

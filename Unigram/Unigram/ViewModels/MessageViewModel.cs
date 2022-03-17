@@ -1,4 +1,5 @@
-﻿using Telegram.Td.Api;
+﻿using System.Collections.Generic;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
@@ -31,17 +32,22 @@ namespace Unigram.ViewModels
         public bool IsFirst { get; set; } = true;
         public bool IsLast { get; set; } = true;
 
+        // Used only by animated emojis
+        public Sticker Interaction { get; set; }
+
+
         public ReplyMarkup ReplyMarkup { get => _message.ReplyMarkup; set => _message.ReplyMarkup = value; }
         public MessageContent Content { get => _message.Content; set => _message.Content = value; }
         public long MediaAlbumId => _message.MediaAlbumId;
         public MessageInteractionInfo InteractionInfo { get => _message.InteractionInfo; set => _message.InteractionInfo = value; }
         public string AuthorSignature => _message.AuthorSignature;
-        public int ViaBotUserId => _message.ViaBotUserId;
+        public long ViaBotUserId => _message.ViaBotUserId;
         public double TtlExpiresIn { get => _message.TtlExpiresIn; set => _message.TtlExpiresIn = value; }
         public int Ttl => _message.Ttl;
         public long ReplyToMessageId { get => _message.ReplyToMessageId; set => _message.ReplyToMessageId = value; }
         public long ReplyInChatId => _message.ReplyInChatId;
         public MessageForwardInfo ForwardInfo => _message.ForwardInfo;
+        public IList<UnreadReaction> UnreadReactions { get => _message.UnreadReactions; set => _message.UnreadReactions = value; }
         public int EditDate { get => _message.EditDate; set => _message.EditDate = value; }
         public int Date => _message.Date;
         public bool ContainsUnreadMention { get => _message.ContainsUnreadMention; set => _message.ContainsUnreadMention = value; }
@@ -50,19 +56,20 @@ namespace Unigram.ViewModels
         public bool CanBeDeletedOnlyForSelf => _message.CanBeDeletedOnlyForSelf;
         public bool CanBeForwarded => _message.CanBeForwarded;
         public bool CanBeEdited => _message.CanBeEdited;
+        public bool CanBeSaved => _message.CanBeSaved;
         public bool CanGetMessageThread => _message.CanGetMessageThread;
         public bool CanGetStatistics => _message.CanGetStatistics;
+        public bool CanGetViewers => _message.CanGetViewers;
         public bool IsOutgoing { get => _message.IsOutgoing; set => _message.IsOutgoing = value; }
         public bool IsPinned { get => _message.IsPinned; set => _message.IsPinned = value; }
         public MessageSchedulingState SchedulingState => _message.SchedulingState;
         public MessageSendingState SendingState => _message.SendingState;
         public long ChatId => _message.ChatId;
         public long MessageThreadId => _message.MessageThreadId;
-        public MessageSender Sender => _message.Sender;
+        public MessageSender SenderId => _message.SenderId;
         public long Id => _message.Id;
 
         public Photo GetPhoto() => _message.GetPhoto();
-        public File GetAnimation() => _message.GetAnimation();
 
         public bool IsService() => _message.IsService();
         public bool IsSaved() => _message.IsSaved(_protoService.Options.MyId);
@@ -79,11 +86,11 @@ namespace Unigram.ViewModels
 
         public BaseObject GetSender()
         {
-            if (_message.Sender is MessageSenderUser user)
+            if (_message.SenderId is MessageSenderUser user)
             {
                 return ProtoService.GetUser(user.UserId);
             }
-            else if (_message.Sender is MessageSenderChat chat)
+            else if (_message.SenderId is MessageSenderChat chat)
             {
                 return ProtoService.GetChat(chat.ChatId);
             }
@@ -98,7 +105,7 @@ namespace Unigram.ViewModels
                 return ProtoService.GetUser(_message.ViaBotUserId);
             }
 
-            if (ProtoService.TryGetUser(_message.Sender, out User user) && user.Type is UserTypeBot)
+            if (ProtoService.TryGetUser(_message.SenderId, out User user) && user.Type is UserTypeBot)
             {
                 return user;
             }
@@ -121,120 +128,59 @@ namespace Unigram.ViewModels
             _message = message;
         }
 
-        public bool UpdateFile(File file)
-        {
-            var message = _message.UpdateFile(file);
-            var generated = UpdateGeneratedFile(file);
-
-            var reply = ReplyToMessage;
-            if (reply != null)
-            {
-                return reply.UpdateFile(file) || message;
-            }
-
-            return message || generated;
-        }
-
-        private bool UpdateGeneratedFile(File file)
-        {
-            switch (GeneratedContent)
-            {
-                case MessageAlbum album:
-                    return album.UpdateFile(file);
-                case MessageAnimation animation:
-                    return animation.UpdateFile(file);
-                case MessageAudio audio:
-                    return audio.UpdateFile(file);
-                case MessageDocument document:
-                    return document.UpdateFile(file);
-                case MessageGame game:
-                    return game.UpdateFile(file);
-                case MessageInvoice invoice:
-                    return invoice.UpdateFile(file);
-                case MessagePhoto photo:
-                    return photo.UpdateFile(file);
-                case MessageSticker sticker:
-                    return sticker.UpdateFile(file);
-                case MessageText text:
-                    return text.UpdateFile(file);
-                case MessageVideo video:
-                    return video.UpdateFile(file);
-                case MessageVideoNote videoNote:
-                    return videoNote.UpdateFile(file);
-                case MessageVoiceNote voiceNote:
-                    return voiceNote.UpdateFile(file);
-                case MessageChatChangePhoto chatChangePhoto:
-                    return chatChangePhoto.UpdateFile(file);
-                default:
-                    return false;
-            }
-        }
-
         public bool IsShareable()
         {
-            var message = this;
-            if (message.SchedulingState != null)
+            if (SchedulingState != null)
             {
                 return false;
             }
-            //if (currentPosition != null && !currentPosition.last)
+            //else if (eventId != 0)
             //{
             //    return false;
             //}
-            //else if (messageObject.eventId != 0)
-            //{
-            //    return false;
-            //}
-            //else if (messageObject.messageOwner.fwd_from != null && !messageObject.isOutOwner() && messageObject.messageOwner.fwd_from.saved_from_peer != null && messageObject.getDialogId() == UserConfig.getInstance(currentAccount).getClientUserId())
-            //{
-            //    drwaShareGoIcon = true;
-            //    return true;
-            //}
-            //else 
-            if (message.Content is MessageSticker)
+            else if (IsSaved())
+            {
+                return true;
+            }
+            else if (Content is MessageSticker or MessageDice)
             {
                 return false;
             }
-            //else if (messageObject.messageOwner.fwd_from != null && messageObject.messageOwner.fwd_from.channel_id != 0 && !messageObject.isOutOwner())
-            //{
-            //    return true;
-            //}
-            else if (message.Sender is MessageSenderUser)
+            else if (ForwardInfo?.Origin is MessageForwardOriginChannel && !IsOutgoing)
             {
-                if (message.Content is MessageText)
+                return true;
+            }
+            else if (SenderId is MessageSenderUser senderUser)
+            {
+                if (Content is MessageText text && text.WebPage == null)
                 {
                     return false;
                 }
 
-                if (ProtoService.TryGetUser(message.Sender, out User user) && user.Type is UserTypeBot)
+                var user = ProtoService.GetUser(senderUser.UserId);
+                if (user != null && user.Type is UserTypeBot)
                 {
                     return true;
                 }
-                if (!message.IsOutgoing)
+
+                if (!IsOutgoing)
                 {
-                    if (message.Content is MessageGame || message.Content is MessageInvoice)
+                    if (Content is MessageGame or MessageInvoice)
                     {
                         return true;
                     }
 
-                    var chat = message.ProtoService.GetChat(message.ChatId);
+                    var chat = ProtoService.GetChat(ChatId);
                     if (chat != null && chat.Type is ChatTypeSupergroup super && !super.IsChannel)
                     {
-                        var supergroup = message.ProtoService.GetSupergroup(super.SupergroupId);
-                        return supergroup != null && supergroup.Username.Length > 0 && message.Content is not MessageContact && message.Content is not MessageLocation;
+                        var supergroup = ProtoService.GetSupergroup(super.SupergroupId);
+                        return supergroup != null && supergroup.Username.Length > 0 && Content is not MessageContact and not MessageLocation;
                     }
                 }
             }
-            //else if (messageObject.messageOwner.from_id < 0 || messageObject.messageOwner.post)
-            //{
-            //    if (messageObject.messageOwner.to_id.channel_id != 0 && (messageObject.messageOwner.via_bot_id == 0 && messageObject.messageOwner.reply_to_msg_id == 0 || messageObject.type != 13))
-            //    {
-            //        return true;
-            //    }
-            //}
-            else if (message.IsChannelPost)
+            else if (IsChannelPost)
             {
-                if (message.ViaBotUserId == 0 && message.ReplyToMessageId == 0 || message.Content is not MessageSticker)
+                if (ViaBotUserId == 0 && ReplyToMessageId == 0 || Content is not MessageSticker)
                 {
                     return true;
                 }
@@ -278,6 +224,7 @@ namespace Unigram.ViewModels
             _message.CanBeDeletedForAllUsers = message.CanBeDeletedForAllUsers;
             _message.CanBeDeletedOnlyForSelf = message.CanBeDeletedOnlyForSelf;
             _message.CanBeEdited = message.CanBeEdited;
+            _message.CanBeSaved = message.CanBeSaved;
             _message.CanBeForwarded = message.CanBeForwarded;
             _message.CanGetMessageThread = message.CanGetMessageThread;
             _message.CanGetStatistics = message.CanGetStatistics;
@@ -296,12 +243,13 @@ namespace Unigram.ViewModels
             _message.ReplyMarkup = message.ReplyMarkup;
             _message.ReplyInChatId = message.ReplyInChatId;
             _message.ReplyToMessageId = message.ReplyToMessageId;
-            _message.Sender = message.Sender;
+            _message.SenderId = message.SenderId;
             _message.SendingState = message.SendingState;
             _message.Ttl = message.Ttl;
             _message.TtlExpiresIn = message.TtlExpiresIn;
             _message.ViaBotUserId = message.ViaBotUserId;
             _message.InteractionInfo = message.InteractionInfo;
+            _message.UnreadReactions = message.UnreadReactions;
 
             if (_message.Content is MessageAlbum album)
             {

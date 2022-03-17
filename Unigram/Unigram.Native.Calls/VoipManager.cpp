@@ -215,12 +215,11 @@ namespace winrt::Unigram::Native::Calls::implementation
 	void VoipManager::SetIncomingVideoOutput(winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl canvas) {
 		if (m_impl) {
 			if (canvas != nullptr) {
-				//m_renderer = std::make_shared<VoipVideoRenderer>(canvas);
-				m_impl->setIncomingVideoOutput(std::make_shared<VoipVideoRenderer>(canvas));
+				m_renderer = std::make_shared<VoipVideoRenderer>(canvas, false, false);
+				m_impl->setIncomingVideoOutput(m_renderer);
 			}
 			else {
-				m_impl->setIncomingVideoOutput(nullptr);
-				//m_renderer = nullptr;
+				m_renderer.reset();
 			}
 		}
 	}
@@ -303,10 +302,12 @@ namespace winrt::Unigram::Native::Calls::implementation
 	}
 
 	//virtual void setVideoCapture(std::shared_ptr<VideoCaptureInterface> videoCapture) = 0;
-	void VoipManager::SetVideoCapture(Unigram::Native::Calls::VoipVideoCapture videoCapture) {
+	void VoipManager::SetVideoCapture(Unigram::Native::Calls::IVoipVideoCapture videoCapture) {
 		if (m_impl) {
 			if (videoCapture) {
-				auto implementation = winrt::get_self<implementation::VoipVideoCapture>(videoCapture);
+				auto implementation = winrt::get_self<VoipVideoCapture>(videoCapture
+					.as<winrt::default_interface<VoipVideoCapture>>());
+
 				m_capturer = implementation->m_impl;
 			}
 			else {

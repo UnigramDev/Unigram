@@ -22,7 +22,12 @@ namespace Unigram.Navigation
                 }
 
                 //var mainDispatcher = CoreApplication.MainView.Dispatcher;
-                var mainDispatcher = CoreApplication.MainView.CoreWindow.Dispatcher;
+                var mainDispatcher = CoreApplication.MainView.CoreWindow?.Dispatcher;
+                if (mainDispatcher == null)
+                {
+                    return null;
+                }
+
                 return ActiveWrappers.FirstOrDefault(x => x.Window.Dispatcher == mainDispatcher) ??
                         ActiveWrappers.FirstOrDefault();
             }
@@ -38,13 +43,11 @@ namespace Unigram.Navigation
 
         public UIElement Content => Window.Content;
 
-        public readonly static List<WindowContext> ActiveWrappers = new List<WindowContext>();
+        public static readonly List<WindowContext> ActiveWrappers = new List<WindowContext>();
 
         public static WindowContext GetForCurrentView() => ActiveWrappers.FirstOrDefault(x => x.Window == Window.Current) ?? Default();
 
         public static WindowContext Current(Window window) => ActiveWrappers.FirstOrDefault(x => x.Window == window);
-
-        public static WindowContext Current(INavigationService nav) => ActiveWrappers.FirstOrDefault(x => x.NavigationServices.Contains(nav));
 
         public WindowContext(Window window)
         {
@@ -83,7 +86,7 @@ namespace Unigram.Navigation
                 for (int i = list.Length - 1; i >= 0; i--)
                 {
                     list[i].DynamicInvoke(sender, args);
-                    
+
                     if (args.Handled)
                     {
                         return;

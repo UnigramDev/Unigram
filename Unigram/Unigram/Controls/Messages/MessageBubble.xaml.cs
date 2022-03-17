@@ -26,7 +26,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Messages
 {
-    public sealed partial class MessageBubble : StackPanel
+    public sealed class MessageBubble : Control
     {
         private MessageViewModel _message;
 
@@ -34,21 +34,30 @@ namespace Unigram.Controls.Messages
 
         private bool _ignoreSizeChanged = true;
 
-        private readonly DirectRectangleClip _cornerRadius;
+        private bool _ignoreSpoilers = false;
+
+        private DirectRectangleClip _cornerRadius;
 
         public MessageBubble()
         {
-            InitializeComponent();
+            DefaultStyleKey = typeof(MessageBubble);
+            Unloaded += OnUnloaded;
+        }
 
-            var content = ElementCompositionPreview.GetElementVisual(ContentPanel);
-            //var shadow = ElementCompositionPreview.GetElementVisual(ShadowPanel);
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            if (IsLoaded)
+            {
+                return;
+            }
 
-            _cornerRadius = CompositionDevice.CreateRectangleClip(content);
-            //CompositionDevice.SetClip(shadow, _cornerRadius);
-
-            ElementCompositionPreview.SetIsTranslationEnabled(Header, true);
-            ElementCompositionPreview.SetIsTranslationEnabled(Message, true);
-            ElementCompositionPreview.SetIsTranslationEnabled(Media, true);
+            foreach (var element in Span.Inlines)
+            {
+                if (element is Hyperlink)
+                {
+                    ToolTipService.SetToolTip(element, null);
+                }
+            }
         }
 
         public void UpdateQuery(string text)
@@ -56,10 +65,87 @@ namespace Unigram.Controls.Messages
             _query = text;
         }
 
+        #region InitializeComponent
+
+        private Grid ContentPanel;
+        private Grid Header;
+        private TextBlock HeaderLabel;
+        private TextBlock AdminLabel;
+        private MessageBubblePanel Panel;
+        private RichTextBlock Message;
+        private Span Span;
+        private Border Media;
+        private MessageFooter Footer;
+        private ReactionsPanel Reactions;
+
+        // Lazy loaded
+        private Border BackgroundPanel;
+        private Border CrossPanel;
+
+        private GlyphButton PsaInfo;
+
+        private MessageReference Reply;
+
+        private HyperlinkButton Thread;
+        private StackPanel RecentRepliers;
+        private TextBlock ThreadGlyph;
+        private TextBlock ThreadLabel;
+
+        private ReactionsPanel MediaReactions;
+        private ReplyMarkupPanel Markup;
+
+        private bool _templateApplied;
+
+        protected override void OnApplyTemplate()
+        {
+            ContentPanel = GetTemplateChild(nameof(ContentPanel)) as Grid;
+            Header = GetTemplateChild(nameof(Header)) as Grid;
+            HeaderLabel = GetTemplateChild(nameof(HeaderLabel)) as TextBlock;
+            AdminLabel = GetTemplateChild(nameof(AdminLabel)) as TextBlock;
+            Panel = GetTemplateChild(nameof(Panel)) as MessageBubblePanel;
+            Message = GetTemplateChild(nameof(Message)) as RichTextBlock;
+            Span = GetTemplateChild(nameof(Span)) as Span;
+            Media = GetTemplateChild(nameof(Media)) as Border;
+            Footer = GetTemplateChild(nameof(Footer)) as MessageFooter;
+            Reactions = GetTemplateChild(nameof(Reactions)) as ReactionsPanel;
+            MediaReactions = GetTemplateChild(nameof(MediaReactions)) as ReactionsPanel;
+
+            ContentPanel.SizeChanged += OnSizeChanged;
+            Message.ContextMenuOpening += Message_ContextMenuOpening;
+            Footer.SizeChanged += Footer_SizeChanged;
+
+            ElementCompositionPreview.SetIsTranslationEnabled(Header, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(Message, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(Media, true);
+
+            _cornerRadius = CompositionDevice.CreateRectangleClip(ContentPanel);
+
+            _templateApplied = true;
+
+            if (_message != null)
+            {
+                UpdateMessage(_message);
+            }
+        }
+
+        #endregion
+
+        public UIElement MediaTemplateRoot => Media.Child;
+
         public void UpdateMessage(MessageViewModel message)
         {
+            if (_message?.Id != message?.Id)
+            {
+                _ignoreSpoilers = false;
+            }
+
             _message = message;
             Tag = message;
+
+            if (!_templateApplied)
+            {
+                return;
+            }
 
             if (message != null)
             {
@@ -107,14 +193,18 @@ namespace Unigram.Controls.Messages
             {
                 title = message.ProtoService.GetTitle(message.ForwardInfo);
             }
-            else
+            else if (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup supergroup && !supergroup.IsChannel)
             {
-                if (message.ProtoService.TryGetUser(message.Sender, out User senderUser))
+                if (message.IsOutgoing)
+                {
+                    title = null;
+                }
+                else if (message.ProtoService.TryGetUser(message.SenderId, out User senderUser))
                 {
                     senderBot = senderUser.Type is UserTypeBot;
                     title = senderUser.GetFullName();
                 }
-                else if (message.ProtoService.TryGetChat(message.Sender, out Chat senderChat))
+                else if (message.ProtoService.TryGetChat(message.SenderId, out Chat senderChat))
                 {
                     title = message.ProtoService.GetTitle(senderChat);
                 }
@@ -128,11 +218,11 @@ namespace Unigram.Controls.Messages
 
             if (message.ReplyToMessage != null)
             {
-                if (message.ProtoService.TryGetUser(message.ReplyToMessage.Sender, out User replyUser))
+                if (message.ProtoService.TryGetUser(message.ReplyToMessage.SenderId, out User replyUser))
                 {
                     builder.AppendLine($"{Strings.Resources.AccDescrReplying} {replyUser.GetFullName()}. ");
                 }
-                else if (message.ProtoService.TryGetChat(message.ReplyToMessage.Sender, out Chat replyChat))
+                else if (message.ProtoService.TryGetChat(message.ReplyToMessage.SenderId, out Chat replyChat))
                 {
                     builder.AppendLine($"{Strings.Resources.AccDescrReplying} {message.ProtoService.GetTitle(replyChat)}. ");
                 }
@@ -196,6 +286,11 @@ namespace Unigram.Controls.Messages
 
         public void UpdateAttach(MessageViewModel message, bool wide = false)
         {
+            if (!_templateApplied)
+            {
+                return;
+            }
+
             //var topLeft = 15d;
             //var topRight = 15d;
             //var bottomRight = 15d;
@@ -250,7 +345,7 @@ namespace Unigram.Controls.Messages
             var content = message.GeneratedContent ?? message.Content;
             if (message.ReplyMarkup is ReplyMarkupInlineKeyboard)
             {
-                if (content is MessageSticker || content is MessageDice || content is MessageVideoNote || content is MessageBigEmoji)
+                if (content is MessageSticker or MessageDice or MessageVideoNote or MessageBigEmoji)
                 {
                     _cornerRadius.Set(0);
                 }
@@ -264,7 +359,7 @@ namespace Unigram.Controls.Messages
                     Markup.CornerRadius = new CornerRadius(small, small, bottomRight, bottomLeft);
                 }
             }
-            else if (content is MessageSticker || content is MessageDice || content is MessageVideoNote || content is MessageBigEmoji)
+            else if (content is MessageSticker or MessageDice or MessageVideoNote or MessageBigEmoji)
             {
                 _cornerRadius.Set(0);
             }
@@ -278,9 +373,15 @@ namespace Unigram.Controls.Messages
 
         public void UpdateMessageReply(MessageViewModel message)
         {
+            if (!_templateApplied)
+            {
+                return;
+            }
+
             if (Reply == null && message.ReplyToMessageId != 0 && message.ReplyToMessageState != ReplyToMessageState.Hidden)
             {
-                FindName("Reply");
+                Reply = GetTemplateChild(nameof(Reply)) as MessageReference;
+                Reply.Click += Reply_Click;
             }
 
             if (Reply != null)
@@ -291,22 +392,26 @@ namespace Unigram.Controls.Messages
 
         public void UpdateMessageHeader(MessageViewModel message)
         {
+            if (!_templateApplied)
+            {
+                return;
+            }
+
             var paragraph = HeaderLabel;
             var admin = AdminLabel;
             var parent = Header;
 
             paragraph.Inlines.Clear();
 
-            if (message == null)
+            var chat = message?.GetChat();
+            if (chat == null)
             {
                 return;
             }
 
-            var chat = message.GetChat();
             var content = message.GeneratedContent ?? message.Content;
 
-            var sticker = content is MessageSticker;
-            var light = sticker || content is MessageDice || content is MessageVideoNote || content is MessageBigEmoji;
+            var light = content is MessageSticker or MessageDice or MessageVideoNote or MessageBigEmoji;
             var shown = false;
 
             if (!light && message.IsFirst && !message.IsOutgoing && !message.IsChannelPost && (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup))
@@ -351,7 +456,7 @@ namespace Unigram.Controls.Messages
                     paragraph.Inlines.Add(hyperlink);
                     shown = true;
                 }
-                else if (message.ProtoService.TryGetUser(message.Sender, out User senderUser))
+                else if (message.ProtoService.TryGetUser(message.SenderId, out User senderUser))
                 {
                     var hyperlink = new Hyperlink();
                     hyperlink.Inlines.Add(new Run { Text = senderUser.GetFullName() });
@@ -362,7 +467,7 @@ namespace Unigram.Controls.Messages
                     paragraph.Inlines.Add(hyperlink);
                     shown = true;
                 }
-                else if (message.ProtoService.TryGetChat(message.Sender, out Chat senderChat))
+                else if (message.ProtoService.TryGetChat(message.SenderId, out Chat senderChat))
                 {
                     var hyperlink = new Hyperlink();
                     hyperlink.Inlines.Add(new Run { Text = senderChat.Title });
@@ -444,7 +549,7 @@ namespace Unigram.Controls.Messages
 
             var forward = false;
 
-            if (message.ForwardInfo != null && !sticker && !message.IsSaved())
+            if (message.ForwardInfo != null && !message.IsSaved())
             {
                 if (paragraph.Inlines.Count > 0)
                 {
@@ -463,7 +568,12 @@ namespace Unigram.Controls.Messages
                         paragraph.Inlines.Add(new Run { Text = Strings.Resources.PsaMessageDefault, FontWeight = FontWeights.Normal });
                     }
 
-                    FindName(nameof(PsaInfo));
+                    if (PsaInfo == null)
+                    {
+                        PsaInfo = GetTemplateChild(nameof(PsaInfo)) as GlyphButton;
+                        PsaInfo.Click += PsaInfo_Click;
+                    }
+
                     PsaInfo.Visibility = Visibility.Visible;
                 }
                 else
@@ -523,7 +633,7 @@ namespace Unigram.Controls.Messages
             if (viaBot != null && viaBot.Type is UserTypeBot && !string.IsNullOrEmpty(viaBot.Username))
             {
                 var hyperlink = new Hyperlink();
-                hyperlink.Inlines.Add(new Run { Text = (paragraph.Inlines.Count > 0 ? " via @" : "via @"), FontWeight = FontWeights.Normal });
+                hyperlink.Inlines.Add(new Run { Text = paragraph.Inlines.Count > 0 ? " via @" : "via @", FontWeight = FontWeights.Normal });
                 hyperlink.Inlines.Add(new Run { Text = viaBot.Username });
                 hyperlink.UnderlineStyle = UnderlineStyle.None;
                 hyperlink.Foreground = light ? new SolidColorBrush(Colors.White) : GetBrush("MessageHeaderForegroundBrush");
@@ -547,7 +657,7 @@ namespace Unigram.Controls.Messages
                     admin.Visibility = Visibility.Visible;
                     admin.Text = title;
                 }
-                else if (admin != null && shown && !message.IsChannelPost && message.Sender is MessageSenderChat && message.ForwardInfo != null)
+                else if (admin != null && shown && !message.IsChannelPost && message.SenderId is MessageSenderChat && message.ForwardInfo != null)
                 {
                     admin.Visibility = Visibility.Visible;
                     admin.Text = Strings.Resources.DiscussChannel;
@@ -600,7 +710,7 @@ namespace Unigram.Controls.Messages
 
         private void From_Click(MessageViewModel message)
         {
-            if (message.ProtoService.TryGetChat(message.Sender, out Chat senderChat))
+            if (message.ProtoService.TryGetChat(message.SenderId, out Chat senderChat))
             {
                 if (senderChat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
                 {
@@ -611,7 +721,7 @@ namespace Unigram.Controls.Messages
                     message.Delegate.OpenChat(senderChat.Id, true);
                 }
             }
-            else if (message.Sender is MessageSenderUser senderUser)
+            else if (message.SenderId is MessageSenderUser senderUser)
             {
                 message.Delegate.OpenUser(senderUser.UserId);
             }
@@ -619,11 +729,21 @@ namespace Unigram.Controls.Messages
 
         public void UpdateMessageState(MessageViewModel message)
         {
+            if (!_templateApplied)
+            {
+                return;
+            }
+
             Footer.UpdateMessageState(message);
         }
 
         public void UpdateMessageEdited(MessageViewModel message)
         {
+            if (!_templateApplied)
+            {
+                return;
+            }
+
             Footer.UpdateMessageEdited(message);
             UpdateMessageReplyMarkup(message);
         }
@@ -634,27 +754,40 @@ namespace Unigram.Controls.Messages
             {
                 if (Markup == null)
                 {
-                    FindName(nameof(Markup));
+                    Markup = GetTemplateChild(nameof(Markup)) as ReplyMarkupPanel;
+                    Markup.InlineButtonClick += ReplyMarkup_ButtonClick;
                 }
 
+                Markup.Visibility = Visibility.Visible;
                 Markup.Update(message, message.ReplyMarkup);
             }
             else
             {
                 if (Markup != null)
                 {
-                    UnloadObject(Markup);
+                    Markup.Visibility = Visibility.Collapsed;
+                    Markup.Children.Clear();
                 }
             }
         }
 
         public void UpdateMessageIsPinned(MessageViewModel message)
         {
+            if (!_templateApplied)
+            {
+                return;
+            }
+
             Footer.UpdateMessageIsPinned(message);
         }
 
         public void UpdateMessageInteractionInfo(MessageViewModel message)
         {
+            if (!_templateApplied)
+            {
+                return;
+            }
+
             var info = message.InteractionInfo?.ReplyInfo;
             if (info == null || !message.IsChannelPost || !message.CanGetMessageThread)
             {
@@ -662,7 +795,12 @@ namespace Unigram.Controls.Messages
                 {
                     if (Thread == null)
                     {
-                        FindName(nameof(Thread));
+                        Thread = GetTemplateChild(nameof(Thread)) as HyperlinkButton;
+                        RecentRepliers = GetTemplateChild(nameof(RecentRepliers)) as StackPanel;
+                        ThreadGlyph = GetTemplateChild(nameof(ThreadGlyph)) as TextBlock;
+                        ThreadLabel = GetTemplateChild(nameof(ThreadLabel)) as TextBlock;
+
+                        Thread.Click += Thread_Click;
                     }
 
                     RecentRepliers.Children.Clear();
@@ -682,12 +820,17 @@ namespace Unigram.Controls.Messages
             {
                 if (Thread == null)
                 {
-                    FindName(nameof(Thread));
+                    Thread = GetTemplateChild(nameof(Thread)) as HyperlinkButton;
+                    RecentRepliers = GetTemplateChild(nameof(RecentRepliers)) as StackPanel;
+                    ThreadGlyph = GetTemplateChild(nameof(ThreadGlyph)) as TextBlock;
+                    ThreadLabel = GetTemplateChild(nameof(ThreadLabel)) as TextBlock;
+
+                    Thread.Click += Thread_Click;
                 }
 
                 RecentRepliers.Children.Clear();
 
-                foreach (var sender in info.RecentRepliers)
+                foreach (var sender in info.RecentReplierIds)
                 {
                     var picture = new ProfilePicture();
                     picture.Width = 24;
@@ -696,11 +839,11 @@ namespace Unigram.Controls.Messages
 
                     if (message.ProtoService.TryGetUser(sender, out User user))
                     {
-                        picture.Source = PlaceholderHelper.GetUser(message.ProtoService, user, 24);
+                        picture.SetUser(message.ProtoService, user, 24);
                     }
                     else if (message.ProtoService.TryGetChat(sender, out Chat chat))
                     {
-                        picture.Source = PlaceholderHelper.GetChat(message.ProtoService, chat, 24);
+                        picture.SetChat(message.ProtoService, chat, 24);
                     }
 
                     if (RecentRepliers.Children.Count > 0)
@@ -728,10 +871,34 @@ namespace Unigram.Controls.Messages
             }
 
             Footer.UpdateMessageInteractionInfo(message);
+            UpdateMessageReactions(message, false);
+        }
+
+        public void UpdateMessageReactions(MessageViewModel message, bool? animate)
+        {
+            var media = Grid.GetRow(Media);
+            var footer = Grid.GetRow(Footer);
+
+            var content = message.GeneratedContent ?? message.Content;
+            if (content is MessageSticker or MessageDice or MessageVideoNote or MessageBigEmoji || (media == footer && IsFullMedia(content)))
+            {
+                Reactions.UpdateMessageReactions(null);
+                MediaReactions.UpdateMessageReactions(message, animate);
+            }
+            else
+            {
+                Reactions.UpdateMessageReactions(message, animate);
+                MediaReactions.UpdateMessageReactions(null);
+            }
         }
 
         public void UpdateMessageContentOpened(MessageViewModel message)
         {
+            if (!_templateApplied)
+            {
+                return;
+            }
+
             if (Media.Child is IContentWithFile content && content.IsValid(message.GeneratedContent ?? message.Content, true))
             {
                 content.UpdateMessageContentOpened(message);
@@ -740,6 +907,11 @@ namespace Unigram.Controls.Messages
 
         public void UpdateMessageContent(MessageViewModel message)
         {
+            if (!_templateApplied)
+            {
+                return;
+            }
+
             Panel.Content = message?.GeneratedContent ?? message?.Content;
 
             var content = message.GeneratedContent ?? message.Content;
@@ -792,7 +964,7 @@ namespace Unigram.Controls.Messages
                 Grid.SetRow(Message, caption ? 4 : 2);
                 Panel.Placeholder = caption;
             }
-            else if (content is MessageSticker || content is MessageDice || content is MessageVideoNote || content is MessageBigEmoji)
+            else if (content is MessageSticker or MessageDice or MessageVideoNote or MessageBigEmoji)
             {
                 ContentPanel.Padding = new Thickness(0);
                 Media.Margin = new Thickness(0);
@@ -812,7 +984,7 @@ namespace Unigram.Controls.Messages
                     Panel.Placeholder = content is MessageBigEmoji;
                 }
             }
-            else if ((content is MessageText webPage && webPage.WebPage != null) || content is MessageGame || (content is MessageContact contact && !string.IsNullOrEmpty(contact.Contact.Vcard)))
+            else if ((content is MessageText webPage && webPage.WebPage != null) || content is MessageGame)
             {
                 ContentPanel.Padding = new Thickness(0, 4, 0, 0);
                 Media.Margin = new Thickness(10, -6, 10, 0);
@@ -840,6 +1012,15 @@ namespace Unigram.Controls.Messages
                 Grid.SetRow(Footer, caption ? 3 : 4);
                 Grid.SetRow(Message, 2);
                 Panel.Placeholder = caption;
+            }
+            else if (content is MessageContact)
+            {
+                ContentPanel.Padding = new Thickness(0, 4, 0, 0);
+                Media.Margin = new Thickness(10, 4, 10, 0);
+                FooterToNormal();
+                Grid.SetRow(Footer, 4);
+                Grid.SetRow(Message, 2);
+                Panel.Placeholder = false;
             }
             else
             {
@@ -936,9 +1117,13 @@ namespace Unigram.Controls.Messages
                 }
                 else if (content is MessageSticker sticker)
                 {
-                    if (sticker.Sticker.IsAnimated)
+                    if (sticker.Sticker.Type is StickerTypeAnimated)
                     {
                         Media.Child = new AnimatedStickerContent(message);
+                    }
+                    else if (sticker.Sticker.Type is StickerTypeVideo)
+                    {
+                        Media.Child = new VideoStickerContent(message);
                     }
                     else
                     {
@@ -970,7 +1155,7 @@ namespace Unigram.Controls.Messages
 
         public IPlayerView GetPlaybackElement()
         {
-            if (Media.Child is IContentWithPlayback content)
+            if (Media?.Child is IContentWithPlayback content)
             {
                 return content.GetPlaybackElement();
             }
@@ -978,21 +1163,16 @@ namespace Unigram.Controls.Messages
             return null;
         }
 
-        public void UpdateFile(MessageViewModel message, File file)
-        {
-            if (Media.Child is IContentWithFile content)
-            {
-                content.UpdateFile(message, file);
-            }
-
-            if (Reply != null)
-            {
-                Reply.UpdateFile(message, file);
-            }
-        }
-
         private void UpdateMessageText(MessageViewModel message)
         {
+            foreach (var element in Span.Inlines)
+            {
+                if (element is Hyperlink)
+                {
+                    ToolTipService.SetToolTip(element, null);
+                }
+            }
+
             Span.Inlines.Clear();
 
             var result = false;
@@ -1075,7 +1255,7 @@ namespace Unigram.Controls.Messages
                     return ReplaceEntities(message, span, text, entities.Entities, out adjust);
                 }
 
-                Span.Inlines.Add(new Run { Text = text });
+                span.Inlines.Add(new Run { Text = text });
 
                 adjust = false;
                 return true;
@@ -1101,7 +1281,12 @@ namespace Unigram.Controls.Messages
                 return false;
             }
 
-            var runs = TextStyleRun.GetRuns(text, entities);
+            Message.TextHighlighters.Clear();
+            TextHighlighter spoiler = null;
+
+            var preformatted = false;
+
+            var runs = TextStyleRun.GetRuns(text, entities, !_ignoreSpoilers);
             var previous = 0;
 
             foreach (var entity in runs)
@@ -1120,22 +1305,44 @@ namespace Unigram.Controls.Messages
                 if (entity.HasFlag(TextStyle.Monospace))
                 {
                     var data = text.Substring(entity.Offset, entity.Length);
-                    var hyperlink = new Hyperlink();
-                    hyperlink.Click += (s, args) => Entity_Click(message, entity.Type, data);
-                    hyperlink.Foreground = GetBrush("MessageForegroundBrush");
-                    hyperlink.UnderlineStyle = UnderlineStyle.None;
-                    //hyperlink.Foreground = foreground;
 
-                    span.Inlines.Add(hyperlink);
-                    hyperlink.Inlines.Add(new Run { Text = data, FontFamily = new FontFamily("Consolas") });
+                    if (message.Delegate.Settings.Diagnostics.CopyFormattedCode && entity.Type is TextEntityTypeCode)
+                    {
+                        var hyperlink = new Hyperlink();
+                        hyperlink.Click += (s, args) => Entity_Click(message, entity.Type, data);
+                        hyperlink.Foreground = Message.Foreground;
+                        hyperlink.UnderlineStyle = UnderlineStyle.None;
+
+                        span.Inlines.Add(hyperlink);
+                        hyperlink.Inlines.Add(new Run { Text = data, FontFamily = new FontFamily("Consolas") });
+                    }
+                    else
+                    {
+                        span.Inlines.Add(new Run { Text = data, FontFamily = new FontFamily("Consolas") });
+                        preformatted = entity.Type is TextEntityTypePre or TextEntityTypePreCode;
+                    }
                 }
                 else
                 {
                     var local = span;
 
-                    if (entity.HasFlag(TextStyle.Mention) || entity.HasFlag(TextStyle.Url))
+                    if (entity.HasFlag(TextStyle.Spoiler))
                     {
-                        if (entity.Type is TextEntityTypeMentionName || entity.Type is TextEntityTypeTextUrl)
+                        var hyperlink = new Hyperlink();
+                        hyperlink.Click += (s, args) => Entity_Click(message, entity.Type, null);
+                        hyperlink.Foreground = Message.Foreground;
+                        hyperlink.UnderlineStyle = UnderlineStyle.None;
+                        //hyperlink.Foreground = foreground;
+
+                        spoiler ??= new TextHighlighter();
+                        spoiler.Ranges.Add(new TextRange { StartIndex = entity.Offset, Length = entity.Length });
+
+                        span.Inlines.Add(hyperlink);
+                        local = hyperlink;
+                    }
+                    else if (entity.HasFlag(TextStyle.Mention) || entity.HasFlag(TextStyle.Url))
+                    {
+                        if (entity.Type is TextEntityTypeMentionName or TextEntityTypeTextUrl)
                         {
                             var hyperlink = new Hyperlink();
                             object data;
@@ -1247,6 +1454,8 @@ namespace Unigram.Controls.Messages
                 previous = entity.Offset + entity.Length;
             }
 
+            MaxWidth = preformatted ? double.PositiveInfinity : 432;
+
             if (text.Length > previous)
             {
                 span.Inlines.Add(new Run { Text = text.Substring(previous) });
@@ -1274,25 +1483,28 @@ namespace Unigram.Controls.Messages
                 }
             }
 
+            if (spoiler?.Ranges.Count > 0)
+            {
+                spoiler.Foreground = new SolidColorBrush(Colors.Black);
+                spoiler.Background = new SolidColorBrush(Colors.Black);
+
+                Message.TextHighlighters.Add(spoiler);
+            }
+
             span.FontSize = Theme.Current.MessageFontSize;
 
             if (ApiInfo.FlowDirection == FlowDirection.LeftToRight && MessageHelper.IsAnyCharacterRightToLeft(text))
             {
-                //Footer.HorizontalAlignment = HorizontalAlignment.Left;
-                //span.Inlines.Add(new LineBreak());
                 Message.FlowDirection = FlowDirection.RightToLeft;
                 adjust = true;
             }
             else if (ApiInfo.FlowDirection == FlowDirection.RightToLeft && !MessageHelper.IsAnyCharacterRightToLeft(text))
             {
-                //Footer.HorizontalAlignment = HorizontalAlignment.Left;
-                //span.Inlines.Add(new LineBreak());
                 Message.FlowDirection = FlowDirection.LeftToRight;
                 adjust = true;
             }
             else
             {
-                //Footer.HorizontalAlignment = HorizontalAlignment.Right;
                 Message.FlowDirection = ApiInfo.FlowDirection;
                 adjust = false;
             }
@@ -1302,19 +1514,38 @@ namespace Unigram.Controls.Messages
 
         private Brush GetBrush(string key)
         {
-            if (Resources.TryGetValue(key, out object value))
+            var message = _message;
+            if (message == null)
             {
-                return value as SolidColorBrush;
+                return null;
             }
 
-            return App.Current.Resources[key] as SolidColorBrush;
+            if (message.IsOutgoing && !message.IsChannelPost)
+            {
+                if (ActualTheme == ElementTheme.Light)
+                {
+                    return ThemeOutgoing.Light[key].Brush;
+                }
+                else
+                {
+                    return ThemeOutgoing.Dark[key].Brush;
+                }
+            }
+            else if (ActualTheme == ElementTheme.Light)
+            {
+                return ThemeIncoming.Light[key].Brush;
+            }
+            else
+            {
+                return ThemeIncoming.Dark[key].Brush;
+            }
         }
 
-        private void Entity_Click(MessageViewModel message, TextEntityType type, string data)
+        private void Entity_Click(MessageViewModel message, TextEntityType type, object data)
         {
-            if (type is TextEntityTypeBotCommand)
+            if (type is TextEntityTypeBotCommand && data is string command)
             {
-                message.Delegate.SendBotCommand(data);
+                message.Delegate.SendBotCommand(command);
             }
             else if (type is TextEntityTypeEmailAddress)
             {
@@ -1324,13 +1555,13 @@ namespace Unigram.Controls.Messages
             {
                 message.Delegate.OpenUrl("tel:" + data, false);
             }
-            else if (type is TextEntityTypeHashtag or TextEntityTypeCashtag)
+            else if (type is TextEntityTypeHashtag or TextEntityTypeCashtag && data is string hashtag)
             {
-                message.Delegate.OpenHashtag(data);
+                message.Delegate.OpenHashtag(hashtag);
             }
-            else if (type is TextEntityTypeMention)
+            else if (type is TextEntityTypeMention && data is string username)
             {
-                message.Delegate.OpenUsername(data);
+                message.Delegate.OpenUsername(username);
             }
             else if (type is TextEntityTypeMentionName mentionName)
             {
@@ -1340,62 +1571,71 @@ namespace Unigram.Controls.Messages
             {
                 message.Delegate.OpenUrl(textUrl.Url, true);
             }
-            else if (type is TextEntityTypeUrl)
+            else if (type is TextEntityTypeUrl && data is string url)
             {
-                message.Delegate.OpenUrl(data, false);
+                message.Delegate.OpenUrl(url, false);
             }
-            else if (type is TextEntityTypeBankCardNumber)
+            else if (type is TextEntityTypeBankCardNumber && data is string cardNumber)
             {
-                message.Delegate.OpenBankCardNumber(data);
+                message.Delegate.OpenBankCardNumber(cardNumber);
             }
-            else if (type is TextEntityTypeCode or TextEntityTypePre or TextEntityTypePreCode)
+            else if (type is TextEntityTypeMediaTimestamp mediaTimestamp && message.ReplyToMessage != null)
             {
-                MessageHelper.CopyText(data);
+                message.Delegate.OpenMedia(message.ReplyToMessage, null, mediaTimestamp.MediaTimestamp);
+            }
+            else if (type is TextEntityTypeCode or TextEntityTypePre or TextEntityTypePreCode && data is string code)
+            {
+                MessageHelper.CopyText(code);
+            }
+            else if (type is TextEntityTypeSpoiler)
+            {
+                _ignoreSpoilers = true;
+                UpdateMessageText(message);
             }
         }
 
         private void FooterToLightMedia(bool isOut)
         {
-            VisualStateManager.GoToState(LayoutRoot, "LightState" + (isOut ? "Out" : string.Empty), false);
+            VisualStateManager.GoToState(this, "LightState" + (isOut ? "Out" : string.Empty), false);
 
             if (Reply != null)
             {
-                VisualStateManager.GoToState(Reply.Content as UserControl, "LightState", false);
+                Reply.ToLightState();
             }
 
             if (BackgroundPanel != null)
             {
-                UnloadObject(BackgroundPanel);
+                BackgroundPanel.Visibility = Visibility.Collapsed;
             }
         }
 
         private void FooterToMedia()
         {
-            VisualStateManager.GoToState(LayoutRoot, "MediaState", false);
+            VisualStateManager.GoToState(this, "MediaState", false);
 
             if (Reply != null)
             {
-                VisualStateManager.GoToState(Reply.Content as UserControl, "Normal", false);
+                Reply.ToNormalState();
             }
         }
 
         private void FooterToHidden()
         {
-            VisualStateManager.GoToState(LayoutRoot, "HiddenState", false);
+            VisualStateManager.GoToState(this, "HiddenState", false);
 
             if (Reply != null)
             {
-                VisualStateManager.GoToState(Reply.Content as UserControl, "Normal", false);
+                Reply.ToNormalState();
             }
         }
 
         private void FooterToNormal()
         {
-            VisualStateManager.GoToState(LayoutRoot, "Normal", false);
+            VisualStateManager.GoToState(this, "Normal", false);
 
             if (Reply != null)
             {
-                VisualStateManager.GoToState(Reply.Content as UserControl, "Normal", false);
+                Reply.ToNormalState();
             }
         }
 
@@ -1429,6 +1669,11 @@ namespace Unigram.Controls.Messages
 
         public void AnimateSendout(float xScale, float yScale, float fontScale, double outer, double inner, double delay, bool reply)
         {
+            if (!_templateApplied)
+            {
+                return;
+            }
+
             var content = _message?.GeneratedContent ?? _message?.Content;
             var panel = ElementCompositionPreview.GetElementVisual(ContentPanel);
 
@@ -1450,7 +1695,8 @@ namespace Unigram.Controls.Messages
 
                 if (BackgroundPanel == null)
                 {
-                    FindName(nameof(BackgroundPanel));
+                    BackgroundPanel = GetTemplateChild(nameof(BackgroundPanel)) as Border;
+                    CrossPanel = GetTemplateChild(nameof(CrossPanel)) as Border;
                 }
 
                 var cross = ElementCompositionPreview.GetElementVisual(CrossPanel);
@@ -1483,6 +1729,8 @@ namespace Unigram.Controls.Messages
             scale.InsertKeyFrame(0, new Vector3(xScale, 1, 1));
             scale.InsertKeyFrame(1, new Vector3(1));
             scale.Duration = TimeSpan.FromMilliseconds(inner);
+            scale.DelayTime = TimeSpan.FromMilliseconds(delay);
+            scale.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
 
             var factor = Window.Current.Compositor.CreateExpressionAnimation("Vector3(1 / content.Scale.X, 1, 1)");
             factor.SetReferenceParameter("content", panel);
@@ -1566,6 +1814,8 @@ namespace Unigram.Controls.Messages
             textOffset.InsertKeyFrame(0, new Vector3(-textOffsetX, textOffsetY, 0));
             textOffset.InsertKeyFrame(1, new Vector3());
             textOffset.Duration = TimeSpan.FromMilliseconds(textOffsetY > 0 ? outer : inner);
+            textOffset.DelayTime = TimeSpan.FromMilliseconds(delay);
+            textOffset.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
 
             if (content is MessageSticker or MessageDice)
             {
@@ -1591,7 +1841,7 @@ namespace Unigram.Controls.Messages
             }
 
             var content = message.GeneratedContent ?? message.Content;
-            if (content is MessageSticker || content is MessageDice || content is MessageVideoNote || content is MessageBigEmoji)
+            if (content is MessageSticker or MessageDice or MessageVideoNote or MessageBigEmoji)
             {
                 return;
             }
@@ -1609,33 +1859,33 @@ namespace Unigram.Controls.Messages
             panel.CenterPoint = new Vector3(outgoing ? next.X : 0, 0, 0);
             panel.StartAnimation("Scale", anim);
 
-            if (ApiInfo.CanUseActualFloats)
-            {
-                var factor = Window.Current.Compositor.CreateExpressionAnimation("Vector3(1 / content.Scale.X, 1 / content.Scale.Y, 1)");
-                factor.SetReferenceParameter("content", panel);
+            var factor = Window.Current.Compositor.CreateExpressionAnimation("Vector3(1 / content.Scale.X, 1 / content.Scale.Y, 1)");
+            factor.SetReferenceParameter("content", panel);
 
-                var header = ElementCompositionPreview.GetElementVisual(Header);
-                var text = ElementCompositionPreview.GetElementVisual(Message);
-                var media = ElementCompositionPreview.GetElementVisual(Media);
-                var footer = ElementCompositionPreview.GetElementVisual(Footer);
+            var header = ElementCompositionPreview.GetElementVisual(Header);
+            var text = ElementCompositionPreview.GetElementVisual(Message);
+            var media = ElementCompositionPreview.GetElementVisual(Media);
+            var footer = ElementCompositionPreview.GetElementVisual(Footer);
+            var reactions = ElementCompositionPreview.GetElementVisual(Reactions);
 
-                var headerLeft = (float)Header.Margin.Left;
-                var textLeft = (float)Message.Margin.Left;
-                var mediaLeft = (float)Media.Margin.Left;
+            var headerLeft = (float)Header.Margin.Left;
+            var textLeft = (float)Message.Margin.Left;
+            var mediaLeft = (float)Media.Margin.Left;
 
-                var footerRight = (float)Footer.Margin.Right;
-                var footerBottom = (float)Footer.Margin.Bottom;
+            var footerRight = (float)Footer.Margin.Right;
+            var footerBottom = (float)Footer.Margin.Bottom;
 
-                header.CenterPoint = new Vector3(-headerLeft, 0, 0);
-                text.CenterPoint = new Vector3(-textLeft, 0, 0);
-                media.CenterPoint = new Vector3(-mediaLeft, 0, 0);
-                footer.CenterPoint = new Vector3(Footer.ActualSize.X + footerRight, Footer.ActualSize.Y + footerBottom, 0);
+            header.CenterPoint = new Vector3(-headerLeft, 0, 0);
+            text.CenterPoint = new Vector3(-textLeft, 0, 0);
+            media.CenterPoint = new Vector3(-mediaLeft, 0, 0);
+            footer.CenterPoint = new Vector3(Footer.ActualSize.X + footerRight, Footer.ActualSize.Y + footerBottom, 0);
+            reactions.CenterPoint = new Vector3(0, Reactions.ActualSize.Y, 0);
 
-                header.StartAnimation("Scale", factor);
-                text.StartAnimation("Scale", factor);
-                media.StartAnimation("Scale", factor);
-                footer.StartAnimation("Scale", factor);
-            }
+            header.StartAnimation("Scale", factor);
+            text.StartAnimation("Scale", factor);
+            media.StartAnimation("Scale", factor);
+            footer.StartAnimation("Scale", factor);
+            reactions.StartAnimation("Scale", factor);
         }
 
         private void Footer_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -1702,7 +1952,7 @@ namespace Unigram.Controls.Messages
                 }
             }
 
-            overlay.Size = new System.Numerics.Vector2((float)target.ActualWidth, (float)target.ActualHeight);
+            overlay.Size = target.ActualSize;
             overlay.Opacity = 0f;
             overlay.Brush = brush;
 
@@ -1772,6 +2022,18 @@ namespace Unigram.Controls.Messages
 
         public void Mockup(string message, bool outgoing, DateTime date, bool first = true, bool last = true)
         {
+            if (!_templateApplied)
+            {
+                void loaded(object o, RoutedEventArgs e)
+                {
+                    Loaded -= loaded;
+                    Mockup(message, outgoing, date, first, last);
+                }
+
+                Loaded += loaded;
+                return;
+            }
+
             UpdateMockup(outgoing, first, last);
 
             Header.Visibility = Visibility.Collapsed;
@@ -1802,6 +2064,18 @@ namespace Unigram.Controls.Messages
 
         public void Mockup(string message, string forwarded, bool link, bool outgoing, DateTime date, bool first = true, bool last = true)
         {
+            if (!_templateApplied)
+            {
+                void loaded(object o, RoutedEventArgs e)
+                {
+                    Loaded -= loaded;
+                    Mockup(message, forwarded, link, outgoing, date, first, last);
+                }
+
+                Loaded += loaded;
+                return;
+            }
+
             UpdateMockup(outgoing, first, last);
 
             Header.Visibility = Visibility.Collapsed;
@@ -1847,16 +2121,40 @@ namespace Unigram.Controls.Messages
 
         public void Mockup(string message, string sender, string reply, bool outgoing, DateTime date, bool first = true, bool last = true)
         {
+            if (!_templateApplied)
+            {
+                void loaded(object o, RoutedEventArgs e)
+                {
+                    Loaded -= loaded;
+                    Mockup(message, sender, reply, outgoing, date, first, last);
+                }
+
+                Loaded += loaded;
+                return;
+            }
+
             UpdateMockup(outgoing, first, last);
 
             Header.Visibility = Visibility.Visible;
             HeaderLabel.Visibility = Visibility.Collapsed;
             AdminLabel.Visibility = Visibility.Collapsed;
 
-            FindName("Reply");
+            if (Reply == null)
+            {
+                void layoutUpdated(object o, object e)
+                {
+                    Reply.LayoutUpdated -= layoutUpdated;
+                    Reply.Mockup(sender, reply);
+                }
 
-            Reply.Visibility = Visibility.Visible;
-            Reply.Mockup(sender, reply);
+                Reply = GetTemplateChild(nameof(Reply)) as MessageReference;
+                Reply.LayoutUpdated += layoutUpdated;
+            }
+            else
+            {
+                Reply.Visibility = Visibility.Visible;
+                Reply.Mockup(sender, reply);
+            }
 
             Footer.Mockup(outgoing, date);
             Panel.Content = new MessageText { Text = new FormattedText(message, new TextEntity[0]) };
@@ -1884,6 +2182,18 @@ namespace Unigram.Controls.Messages
 
         public void Mockup(MessageContent content, bool outgoing, DateTime date, bool first = true, bool last = true)
         {
+            if (!_templateApplied)
+            {
+                void loaded(object o, RoutedEventArgs e)
+                {
+                    Loaded -= loaded;
+                    Mockup(content, outgoing, date, first, last);
+                }
+
+                Loaded += loaded;
+                return;
+            }
+
             UpdateMockup(outgoing, first, last);
 
             Header.Visibility = Visibility.Collapsed;
@@ -1892,7 +2202,7 @@ namespace Unigram.Controls.Messages
             Footer.Mockup(outgoing, date);
             Panel.Content = content;
 
-            Media.Margin = new Thickness(10, 4, 10, 2);
+            Media.Margin = new Thickness(10, 4, 10, 8);
             FooterToNormal();
             Grid.SetRow(Footer, 3);
             Grid.SetRow(Message, 2);
@@ -1901,15 +2211,27 @@ namespace Unigram.Controls.Messages
             if (content is MessageVoiceNote voiceNote)
             {
                 var presenter = new VoiceNoteContent();
-                presenter.Mockup(voiceNote);
 
+                void layoutUpdated(object o, object e)
+                {
+                    presenter.LayoutUpdated -= layoutUpdated;
+                    presenter.Mockup(voiceNote);
+                }
+
+                presenter.LayoutUpdated += layoutUpdated;
                 Media.Child = presenter;
             }
             else if (content is MessageAudio audio)
             {
                 var presenter = new AudioContent();
-                presenter.Mockup(audio);
 
+                void layoutUpdated(object o, object e)
+                {
+                    presenter.LayoutUpdated -= layoutUpdated;
+                    presenter.Mockup(audio);
+                }
+
+                presenter.LayoutUpdated += layoutUpdated;
                 Media.Child = presenter;
             }
 
@@ -1920,6 +2242,18 @@ namespace Unigram.Controls.Messages
 
         public void Mockup(MessageContent content, string caption, bool outgoing, DateTime date, bool first = true, bool last = true)
         {
+            if (!_templateApplied)
+            {
+                void loaded(object o, RoutedEventArgs e)
+                {
+                    Loaded -= loaded;
+                    Mockup(content, caption, outgoing, date, first, last);
+                }
+
+                Loaded += loaded;
+                return;
+            }
+
             UpdateMockup(outgoing, first, last);
 
             Header.Visibility = Visibility.Collapsed;
@@ -1936,8 +2270,14 @@ namespace Unigram.Controls.Messages
             if (content is MessagePhoto photo)
             {
                 var presenter = new PhotoContent();
-                presenter.Mockup(photo);
 
+                void layoutUpdated(object o, object e)
+                {
+                    presenter.LayoutUpdated -= layoutUpdated;
+                    presenter.Mockup(photo);
+                }
+
+                presenter.LayoutUpdated += layoutUpdated;
                 Media.Child = presenter;
             }
 
@@ -1958,7 +2298,7 @@ namespace Unigram.Controls.Messages
 
         public void UpdateMockup()
         {
-            Span.FontSize = (double)App.Current.Resources["MessageFontSize"];
+            Span.FontSize = (double)Navigation.BootStrapper.Current.Resources["MessageFontSize"];
             ContentPanel.CornerRadius = new CornerRadius(SettingsService.Current.Appearance.BubbleRadius);
         }
 
@@ -2172,14 +2512,13 @@ namespace Unigram.Controls.Messages
             else if (constraint is VoiceNote voiceNote)
             {
                 width = Math.Min(Math.Max(4, voiceNote.Duration), 30) / 30d * availableSize.Width;
-                height = 48;
 
                 //return base.MeasureOverride(new Size(width, availableSize.Height));
             }
 
             return base.MeasureOverride(availableSize);
 
-            Calculate:
+        Calculate:
 
             if (Footer.DesiredSize.IsEmpty)
             {

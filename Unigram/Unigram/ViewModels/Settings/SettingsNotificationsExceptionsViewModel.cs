@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
+using Unigram.Converters;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Windows.Foundation;
@@ -10,7 +11,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsNotificationsExceptionsViewModel : TLViewModelBase
+    public class SettingsNotificationsExceptionsViewModel : TLMultipleViewModelBase
     {
         public SettingsNotificationsExceptionsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
@@ -24,21 +25,29 @@ namespace Unigram.ViewModels.Settings
                 switch (scope)
                 {
                     case SettingsNotificationsExceptionsScope.PrivateChats:
+                        Scope = new SettingsNotificationsScope(ProtoService, typeof(NotificationSettingsScopePrivateChats), Strings.Resources.NotificationsPrivateChats, Icons.Person);
                         Items = new ItemsCollection(ProtoService, new NotificationSettingsScopePrivateChats());
                         break;
                     case SettingsNotificationsExceptionsScope.GroupChats:
+                        Scope = new SettingsNotificationsScope(ProtoService, typeof(NotificationSettingsScopeGroupChats), Strings.Resources.NotificationsGroups, Icons.People);
                         Items = new ItemsCollection(ProtoService, new NotificationSettingsScopeGroupChats());
                         break;
                     case SettingsNotificationsExceptionsScope.ChannelChats:
+                        Scope = new SettingsNotificationsScope(ProtoService, typeof(NotificationSettingsScopeChannelChats), Strings.Resources.NotificationsChannels, Icons.Megaphone);
                         Items = new ItemsCollection(ProtoService, new NotificationSettingsScopeChannelChats());
                         break;
                 }
 
+                RaisePropertyChanged(nameof(Scope));
                 RaisePropertyChanged(nameof(Items));
+
+                Children.Add(Scope);
             }
 
-            return Task.CompletedTask;
+            return base.OnNavigatedToAsync(parameter, mode, state);
         }
+
+        public SettingsNotificationsScope Scope { get; private set; }
 
         public ItemsCollection Items { get; private set; }
 

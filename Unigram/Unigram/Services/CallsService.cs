@@ -11,19 +11,29 @@ using Unigram.ViewModels;
 using Unigram.Views;
 using Unigram.Views.Popups;
 using Windows.Devices.Enumeration;
+using Windows.Graphics.Capture;
 using Windows.Storage;
 using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Services
 {
+    public enum VoipCaptureType
+    {
+        None,
+        Video,
+        Screencast
+    }
+
     public interface IVoipService : IHandle<UpdateCall>, IHandle<UpdateNewCallSignalingData>
     {
         string CurrentAudioInput { get; set; }
         string CurrentAudioOutput { get; set; }
         string CurrentVideoInput { get; set; }
 
+#if ENABLE_CALLS
         VoipManager Manager { get; }
-        VoipVideoCapture Capturer { get; set; }
+        IVoipVideoCapture Capturer { get; set; }
+#endif
 
         Call Call { get; }
         DateTime CallStarted { get; }
@@ -33,6 +43,11 @@ namespace Unigram.Services
         void Start(long chatId, bool video);
 
         CallProtocol GetProtocol();
+
+#if ENABLE_CALLS
+        VoipCaptureType CaptureType { get; }
+        Task<IVoipVideoCapture> ToggleCapturingAsync(VoipCaptureType type);
+#endif
     }
 
     public class VoipService : TLViewModelBase, IVoipService
@@ -48,10 +63,14 @@ namespace Unigram.Services
 
         private Call _call;
         private DateTime _callStarted;
+
+#if ENABLE_CALLS
         private VoipManager _manager;
-        private VoipVideoCapture _capturer;
+        private IVoipVideoCapture _capturer;
 
         private VoIPPage _callPage;
+#endif
+
         private ViewLifetimeControl _callLifetime;
 
         public VoipService(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IViewService viewService)
@@ -59,9 +78,11 @@ namespace Unigram.Services
         {
             _viewService = viewService;
 
-            _videoWatcher = new MediaDeviceWatcher(DeviceClass.VideoCapture, id => _capturer?.SwitchToDevice(id));
+#if ENABLE_CALLS
+            _videoWatcher = new MediaDeviceWatcher(DeviceClass.VideoCapture, id => SetVideoInputDevice(id));
             _inputWatcher = new MediaDeviceWatcher(DeviceClass.AudioCapture, id => _manager?.SetAudioInputDevice(id));
             _outputWatcher = new MediaDeviceWatcher(DeviceClass.AudioRender, id => _manager?.SetAudioOutputDevice(id));
+#endif
 
             aggregator.Subscribe(this);
         }
@@ -71,12 +92,84 @@ namespace Unigram.Services
             return new CallProtocol(true, true, 92, 92, new[] { "3.0.0" });
         }
 
+#if ENABLE_CALLS
+
+        private void SetVideoInputDevice(string id)
+        {
+            if (_capturer is VoipVideoCapture capturer)
+            {
+                capturer.SwitchToDevice(id);
+            }
+        }
+
+        public async Task<IVoipVideoCapture> ToggleCapturingAsync(VoipCaptureType type)
+        {
+            void Disable()
+            {
+                if (_capturer != null)
+                {
+                    _capturer.SetOutput(null);
+                    _manager.SetVideoCapture(null);
+
+                    _capturer.Dispose();
+                    _capturer = null;
+                }
+            }
+
+            if (type == VoipCaptureType.None)
+            {
+                Disable();
+            }
+            else if (type == VoipCaptureType.Video && _capturer is not VoipVideoCapture)
+            {
+                Disable();
+
+                if (_manager == null)
+                {
+                    return null;
+                }
+
+                _capturer = new VoipVideoCapture(await _videoWatcher.GetAndUpdateAsync());
+                _manager?.SetVideoCapture(_capturer);
+            }
+            else if (type == VoipCaptureType.Screencast && _capturer is not VoipScreenCapture)
+            {
+                Disable();
+
+                if (_manager == null || !GraphicsCaptureSession.IsSupported())
+                {
+                    return null;
+                }
+
+                var picker = new GraphicsCapturePicker();
+                var item = await picker.PickSingleItemAsync();
+
+                if (item == null || _manager == null)
+                {
+                    return null;
+                }
+
+                _capturer = new VoipScreenCapture(item);
+                _manager?.SetVideoCapture(_capturer);
+            }
+
+            return _capturer;
+        }
+
         public VoipManager Manager => _manager;
-        public VoipVideoCapture Capturer
+        public IVoipVideoCapture Capturer
         {
             get => _capturer;
             set => _capturer = value;
         }
+
+        public VoipCaptureType CaptureType => _capturer is VoipVideoCapture
+            ? VoipCaptureType.Video
+            : _capturer is VoipScreenCapture
+            ? VoipCaptureType.Screencast
+            : VoipCaptureType.None;
+
+#endif
 
         public async void Start(long chatId, bool video)
         {
@@ -144,13 +237,13 @@ namespace Unigram.Services
             }
         }
 
-        public string CurrentAudioInput
+        public string CurrentVideoInput
         {
             get => _videoWatcher.Get();
             set => _videoWatcher.Set(value);
         }
 
-        public string CurrentVideoInput
+        public string CurrentAudioInput
         {
             get => _inputWatcher.Get();
             set => _inputWatcher.Set(value);
@@ -164,14 +257,17 @@ namespace Unigram.Services
 
         public void Handle(UpdateNewCallSignalingData update)
         {
+#if ENABLE_CALLS
             if (_manager != null)
             {
                 _manager.ReceiveSignalingData(update.Data);
             }
+#endif
         }
 
         public async void Handle(UpdateCall update)
         {
+#if ENABLE_CALLS
             using (await _updateLock.WaitAsync())
             {
                 if (_call != null && _call.Id != update.Call.Id)
@@ -218,21 +314,6 @@ namespace Unigram.Services
                         _manager = null;
                     }
 
-                    //var config = new VoIPConfig
-                    //{
-                    //    initTimeout = call_packet_timeout_ms / 1000.0,
-                    //    recvTimeout = call_connect_timeout_ms / 1000.0,
-                    //    dataSaving = base.Settings.UseLessData,
-                    //    enableAEC = true,
-                    //    enableNS = true,
-                    //    enableAGC = true,
-
-                    //    enableVolumeControl = true,
-
-                    //    logFilePath = logFile,
-                    //    statsDumpFilePath = statsDumpFile
-                    //};
-
                     _capturer = update.Call.IsVideo
                         ? new VoipVideoCapture(await _videoWatcher.GetAndUpdateAsync())
                         : null;
@@ -257,7 +338,7 @@ namespace Unigram.Services
                     _manager.Start();
 
                     await ShowAsync(update.Call, _manager, _capturer, _callStarted);
-                }
+        }
                 else if (update.Call.State is CallStateDiscarded discarded)
                 {
                     if (discarded.NeedDebugInformation)
@@ -269,6 +350,7 @@ namespace Unigram.Services
                     {
                         BeginOnUIThread(async () => await SendRatingAsync(update.Call.Id));
                     }
+
 
                     if (_manager != null)
                     {
@@ -286,6 +368,7 @@ namespace Unigram.Services
                         _capturer.Dispose();
                         _capturer = null;
                     }
+
 
                     _call = null;
                 }
@@ -336,7 +419,7 @@ namespace Unigram.Services
 
         private void OnStateUpdated(VoipManager sender, VoipState args)
         {
-            if (args == VoipState.WaitInit || args == VoipState.WaitInitAck)
+            if (args is VoipState.WaitInit or VoipState.WaitInitAck)
             {
                 SoundEffects.Play(SoundEffect.VoipConnecting);
             }
@@ -362,6 +445,8 @@ namespace Unigram.Services
                     _manager.SignalingDataEmitted -= OnSignalingDataEmitted;
 
                     _manager.SetIncomingVideoOutput(null);
+                    _manager.SetVideoCapture(null);
+
                     _manager.Dispose();
                     _manager = null;
                 }
@@ -373,6 +458,7 @@ namespace Unigram.Services
                     _capturer = null;
                 }
             }
+#endif
         }
 
         private async Task SendRatingAsync(int callId)
@@ -399,7 +485,7 @@ namespace Unigram.Services
                         return;
                     }
 
-                    ProtoService.Send(new SendMessage(chat.Id, 0, 0, new MessageSendOptions(false, false, null), null, new InputMessageDocument(new InputFileLocal(file.Path), null, false, null)));
+                    ProtoService.Send(new SendMessage(chat.Id, 0, 0, new MessageSendOptions(false, false, false, null), null, new InputMessageDocument(new InputFileLocal(file.Path), null, false, null)));
                 }
             }
         }
@@ -409,6 +495,7 @@ namespace Unigram.Services
 
         public async void Show()
         {
+#if ENABLE_CALLS
             if (_call != null)
             {
                 await ShowAsync(_call, _manager, _capturer, _callStarted);
@@ -419,7 +506,7 @@ namespace Unigram.Services
             }
         }
 
-        private async Task ShowAsync(Call call, VoipManager controller, VoipVideoCapture capturer, DateTime started)
+        private async Task ShowAsync(Call call, VoipManager controller, IVoipVideoCapture capturer, DateTime started)
         {
             if (_callPage == null)
             {
@@ -479,6 +566,7 @@ namespace Unigram.Services
         {
             _callPage = null;
             _callLifetime = null;
+#endif
         }
     }
 }
