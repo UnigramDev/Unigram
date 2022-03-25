@@ -1659,6 +1659,37 @@ namespace Unigram.Common
             return basicGroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator or ChatMemberStatusMember;
         }
 
+        public static bool CanJoin(this Supergroup group)
+        {
+            if (group.IsChannel || group.IsBroadcastGroup)
+            {
+                if ((group.Status is ChatMemberStatusLeft && (group.Username.Length > 0 /*|| ViewModel.CacheService.IsChatAccessible(chat)*/)) || (group.Status is ChatMemberStatusCreator creator && !creator.IsMember))
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                if ((group.Status is ChatMemberStatusLeft && (group.Username.Length > 0 || group.HasLocation || group.HasLinkedChat /*|| ViewModel.CacheService.IsChatAccessible(chat)*/)) || (group.Status is ChatMemberStatusCreator creator && !creator.IsMember))
+                {
+                    return true;
+                }
+                else if (group.Status is ChatMemberStatusCreator || group.Status is ChatMemberStatusAdministrator administrator)
+                {
+                    return false;
+                }
+                else if (group.Status is ChatMemberStatusRestricted restrictedSend)
+                {
+                    if (!restrictedSend.IsMember && group.Username.Length > 0)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
         public static void Update(this File file, File update)
         {
             file.ExpectedSize = update.ExpectedSize;
