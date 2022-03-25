@@ -92,6 +92,7 @@ namespace Unigram.Converters
         public const string Reactions = "\uE980";
         public const string Mention16 = "\uE986";
         public const string HeartFilled16 = "\uE985";
+        public const string HeartFilled12 = "\uE998";
         public const string Heart = "\uE987";
 
         public const string Star = "\uE734";
@@ -115,6 +116,9 @@ namespace Unigram.Converters
         public const string SaveAs = "\uE792";
         public const string FolderOpen = "\uE838";
         public const string OpenIn = "\uE7AC";
+
+        public const string ArrowExit = "\uE999";
+        public const string ArrowEnter = "\uE99B";
 
         public const string ShareScreenStart = "\uE92F";
         public const string ShareScreenStop = "\uE92E";

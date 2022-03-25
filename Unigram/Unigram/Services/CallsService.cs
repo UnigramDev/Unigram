@@ -173,12 +173,6 @@ namespace Unigram.Services
 
         public async void Start(long chatId, bool video)
         {
-            var permissions = await MediaDeviceWatcher.CheckAccessAsync(video);
-            if (permissions == false)
-            {
-                return;
-            }
-
             var chat = CacheService.GetChat(chatId);
             if (chat == null)
             {
@@ -214,7 +208,13 @@ namespace Unigram.Services
             var fullInfo = CacheService.GetUserFull(user.Id);
             if (fullInfo != null && fullInfo.HasPrivateCalls)
             {
-                await MessagePopup.ShowAsync(string.Format(Strings.Resources.CallNotAvailable, user.GetFullName()), Strings.Resources.VoipFailed, Strings.Resources.OK);
+                await MessagePopup.ShowAsync(string.Format(Strings.Resources.CallNotAvailable, user.FirstName), Strings.Resources.VoipFailed, Strings.Resources.OK);
+                return;
+            }
+
+            var permissions = await MediaDeviceWatcher.CheckAccessAsync(video);
+            if (permissions == false)
+            {
                 return;
             }
 

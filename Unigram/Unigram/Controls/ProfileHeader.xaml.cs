@@ -46,7 +46,7 @@ namespace Unigram.Controls
             get => _chat;
             set => SetChat(value);
         }
-        
+
         private void SetChat(Chat chat)
         {
             _chat = chat;
@@ -230,8 +230,8 @@ namespace Unigram.Controls
             Location.Visibility = Visibility.Collapsed;
             Edit.Visibility = Visibility.Collapsed;
 
+            Join.Visibility = Visibility.Collapsed;
             GroupLeave.Visibility = Visibility.Collapsed;
-            GroupInvite.Visibility = Visibility.Collapsed;
 
             ChannelMembersPanel.Visibility = Visibility.Collapsed;
             MembersPanel.Visibility = Visibility.Collapsed;
@@ -256,7 +256,9 @@ namespace Unigram.Controls
 
             //UserCommonChats.Badge = fullInfo.GroupInCommonCount;
             //UserCommonChats.Visibility = fullInfo.GroupInCommonCount > 0 ? Visibility.Visible : Visibility.Collapsed;
-            Call.Visibility = fullInfo.CanBeCalled ? Visibility.Visible : Visibility.Collapsed;
+            Call.Visibility = Visibility.Visible;
+            Call.Content = Strings.Resources.Call;
+            Call.Glyph = Icons.Phone;
             VideoCall.Visibility = fullInfo.CanBeCalled && fullInfo.SupportsVideoCalls ? Visibility.Visible : Visibility.Collapsed;
         }
 
@@ -318,14 +320,34 @@ namespace Unigram.Controls
             //Restricted.Visibility = Visibility.Collapsed;
             //Members.Visibility = Visibility.Collapsed;
 
-            GroupInvite.Visibility = group.Status is ChatMemberStatusCreator || (group.Status is ChatMemberStatusAdministrator administrator && administrator.CanInviteUsers) || chat.Permissions.CanInviteUsers ? Visibility.Visible : Visibility.Collapsed;
-
-            Edit.Visibility = chat.Permissions.CanChangeInfo || group.Status is ChatMemberStatusCreator || group.Status is ChatMemberStatusAdministrator ? Visibility.Visible : Visibility.Collapsed;
             Edit.Glyph = Icons.Edit;
             Edit.Content = Strings.Resources.ChannelEdit;
 
+            if (chat.Permissions.CanChangeInfo || group.Status is ChatMemberStatusCreator || group.Status is ChatMemberStatusAdministrator)
+            {
+                Edit.Visibility = Visibility.Visible;
+                Join.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                Edit.Visibility = Visibility.Collapsed;
+                Join.Visibility = Visibility.Visible;
+                Join.Content = Strings.Resources.VoipGroupLeave;
+                Join.Glyph = Icons.ArrowExit;
+            }
+
             // Unused:
-            Call.Visibility = Visibility.Collapsed;
+            if (chat.VideoChat.GroupCallId != 0 || group.CanManageVideoChats())
+            {
+                Call.Visibility = Visibility.Visible;
+                Call.Content = Strings.Resources.VoipGroupVoiceChat;
+                Call.Glyph = Icons.VideoChat;
+            }
+            else
+            {
+                Call.Visibility = Visibility.Collapsed;
+            }
+
             VideoCall.Visibility = Visibility.Collapsed;
         }
 
@@ -368,14 +390,43 @@ namespace Unigram.Controls
             //Restricted.Visibility = Visibility.Collapsed;
             //Members.Visibility = Visibility.Collapsed;
 
-            Call.Visibility = Visibility.Collapsed;
+            if (chat.VideoChat.GroupCallId != 0 || group.CanManageVideoChats())
+            {
+                Call.Visibility = Visibility.Visible;
+                Call.Content = Strings.Resources.VoipGroupVoiceChat;
+                Call.Glyph = Icons.VideoChat;
+            }
+            else
+            {
+                Call.Visibility = Visibility.Collapsed;
+            }
+
             VideoCall.Visibility = Visibility.Collapsed;
 
-            Edit.Visibility = group.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator ? Visibility.Visible : Visibility.Collapsed;
-            Edit.Glyph = Icons.Edit;
-            Edit.Content = group.IsChannel ? Strings.Resources.ManageChannelMenu : Strings.Resources.ManageGroupMenu;
+            if (group.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator)
+            {
+                Edit.Visibility = Visibility.Visible;
+                Join.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                Edit.Visibility = Visibility.Collapsed;
+                Join.Visibility = Visibility.Visible;
 
-            GroupInvite.Visibility = !group.IsChannel && (group.Status is ChatMemberStatusCreator || (group.Status is ChatMemberStatusAdministrator administrator && administrator.CanInviteUsers) || chat.Permissions.CanInviteUsers) ? Visibility.Visible : Visibility.Collapsed;
+                if (group.CanJoin())
+                {
+                    Join.Content = Strings.Resources.VoipChatJoin;
+                    Join.Glyph = Icons.ArrowEnter;
+                }
+                else
+                {
+                    Join.Content = Strings.Resources.VoipGroupLeave;
+                    Join.Glyph = Icons.ArrowExit;
+                }
+            }
+
+            Edit.Glyph = Icons.Edit;
+            Edit.Content = Edit.Content = Strings.Resources.ChannelEdit; //group.IsChannel ? Strings.Resources.ManageChannelMenu : Strings.Resources.ManageGroupMenu;
 
             // Unused:
             UserPhone.Visibility = Visibility.Collapsed;
@@ -551,18 +602,13 @@ namespace Unigram.Controls
 
                 if (supergroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator)
                 {
-                    if (chat.VideoChat.GroupCallId == 0 && supergroup.CanManageVideoChats())
-                    {
-                        flyout.CreateFlyoutItem(ViewModel.CallCommand, false, supergroup.IsChannel ? Strings.Resources.StartVoipChannel : Strings.Resources.StartVoipChat, new FontIcon { Glyph = Icons.VideoChat });
-                    }
-
                     if (supergroup.IsChannel)
                     {
                         //flyout.CreateFlyoutItem(ViewModel.EditCommand, Strings.Resources.ManageChannelMenu, new FontIcon { Glyph = Icons.Edit });
                     }
-                    else
+                    else if (supergroup.Status is ChatMemberStatusCreator || (supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanInviteUsers) || chat.Permissions.CanInviteUsers)
                     {
-                        flyout.CreateFlyoutItem(ViewModel.EditCommand, Strings.Resources.ManageGroupMenu, new FontIcon { Glyph = Icons.Edit });
+                        flyout.CreateFlyoutItem(ViewModel.InviteCommand, Strings.Resources.AddMember, new FontIcon { Glyph = Icons.PersonAdd });
                     }
                 }
 
@@ -593,14 +639,9 @@ namespace Unigram.Controls
                     return;
                 }
 
-                if (chat.VideoChat.GroupCallId == 0 && basicGroup.CanManageVideoChats())
+                if (basicGroup.Status is ChatMemberStatusCreator || (basicGroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanInviteUsers) || chat.Permissions.CanInviteUsers)
                 {
-                    flyout.CreateFlyoutItem(ViewModel.CallCommand, false, Strings.Resources.StartVoipChat, new FontIcon { Glyph = Icons.VideoChat });
-                }
-
-                if (chat.Permissions.CanChangeInfo || basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator)
-                {
-                    flyout.CreateFlyoutItem(ViewModel.EditCommand, Strings.Resources.ChannelEdit, new FontIcon { Glyph = Icons.Edit });
+                    flyout.CreateFlyoutItem(ViewModel.InviteCommand, Strings.Resources.AddMember, new FontIcon { Glyph = Icons.PersonAdd });
                 }
 
                 flyout.CreateFlyoutItem(ViewModel.MembersCommand, Strings.Resources.SearchMembers, new FontIcon { Glyph = Icons.Search });

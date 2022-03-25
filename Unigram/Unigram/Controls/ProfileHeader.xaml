@@ -65,8 +65,9 @@
                            TextAlignment="Center" />
             </Border>
 
-            <Grid ColumnSpacing="8"
-                  Margin="0,24,0,0"
+            <Grid x:Name="Buttons"
+                  ColumnSpacing="8"
+                  Margin="0,24,0,-8"
                   Grid.Row="3">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
@@ -75,12 +76,18 @@
                     <ColumnDefinition />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
+                <controls:BadgeButton Content="{CustomResource VoipGroupOpenChat}"
+                                      Command="{x:Bind ViewModel.SendMessageCommand}"
+                                      Style="{StaticResource GlyphGridBadgeButtonStyle}"
+                                      Glyph="&#xE8BD;" />
+
                 <!-- User -->
                 <controls:BadgeButton x:Name="Call"
                                       Content="{CustomResource Call}"
                                       Command="{x:Bind ViewModel.CallCommand}"
                                       Style="{StaticResource GlyphGridBadgeButtonStyle}"
-                                      Glyph="&#xE717;">
+                                      Glyph="&#xE717;"
+                                      Grid.Column="1">
                     <Button.CommandParameter>
                         <x:Boolean>True</x:Boolean>
                     </Button.CommandParameter>
@@ -91,23 +98,20 @@
                                       Command="{x:Bind ViewModel.CallCommand}"
                                       Style="{StaticResource GlyphGridBadgeButtonStyle}"
                                       Glyph="&#xE714;"
-                                      Grid.Column="1">
+                                      Grid.Column="2">
                     <Button.CommandParameter>
                         <x:Boolean>True</x:Boolean>
                     </Button.CommandParameter>
                 </controls:BadgeButton>
 
                 <!-- Channel -->
-                <controls:BadgeButton x:Name="GroupInvite"
-                                      Glyph="&#xE8FA;"
-                                      Content="{CustomResource AddMember}"
-                                      ToolTipService.ToolTip="{CustomResource AddMember}"
-                                      Command="{x:Bind ViewModel.InviteCommand}"
-                                      Style="{StaticResource GlyphGridBadgeButtonStyle}"
-                                      Grid.Column="1" />
-
                 <controls:BadgeButton x:Name="Edit"
                                       Glyph="&#xE713;"
+                                      Command="{x:Bind ViewModel.EditCommand}"
+                                      Style="{StaticResource GlyphGridBadgeButtonStyle}"
+                                      Grid.Column="2" />
+                <controls:BadgeButton x:Name="Join"
+                                      Glyph="&#xE99B;"
                                       Command="{x:Bind ViewModel.EditCommand}"
                                       Style="{StaticResource GlyphGridBadgeButtonStyle}"
                                       Grid.Column="2" />
@@ -119,10 +123,7 @@
                                       Style="{StaticResource GlyphGridBadgeButtonStyle}"
                                       Glyph="&#xEA8F;"
                                       Grid.Column="3" />
-                <!--<controls:BadgeButton Content="Search"
-                                      Style="{StaticResource GlyphGridBadgeButtonStyle}"
-                                      Glyph="&#xE721;"
-                                      Grid.Column="2" />-->
+
                 <controls:BadgeButton Content="{CustomResource lng_group_call_more}"
                                       Click="Menu_ContextRequested"
                                       Style="{StaticResource GlyphGridBadgeButtonStyle}"
