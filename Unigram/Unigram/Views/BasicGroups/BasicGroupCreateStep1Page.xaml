@@ -6,7 +6,8 @@
                   xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                  mc:Ignorable="d">
+                  mc:Ignorable="d"
+                  IsNavigationRoot="True">
 
     <Page.Transitions>
         <TransitionCollection>
@@ -27,45 +28,42 @@
             <ScrollViewer VerticalScrollBarVisibility="Auto"
                           VerticalScrollMode="Auto">
                 <StackPanel>
-                    <controls:HeaderedControl>
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <controls:ProfilePicture x:Name="Photo"
-                                                     Source="{x:Bind ConvertPhoto(ViewModel.Title, ViewModel.Preview), Mode=OneWay}"
-                                                     Click="EditPhoto_Click"
-                                                     Height="64"
-                                                     Width="64"
-                                                     Margin="12,8"
-                                                     Grid.RowSpan="2" />
-                            <controls:GlyphButton Visibility="{x:Bind ConvertPhotoVisibility(ViewModel.Title, ViewModel.Preview), Mode=OneWay}"
-                                                  Click="EditPhoto_Click"
-                                                  Glyph="&#xE722;"
-                                                  CornerRadius="32"
-                                                  Width="64"
-                                                  Height="64"
-                                                  RequestedTheme="Dark"
-                                                  Margin="12,6" />
+                    <Grid Margin="24,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition MaxWidth="1000" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <controls:ProfilePicture x:Name="Photo"
+                                                 Source="{x:Bind ConvertPhoto(ViewModel.Title, ViewModel.Preview), Mode=OneWay}"
+                                                 Click="EditPhoto_Click"
+                                                 Height="140"
+                                                 Width="140" />
+                        <Border Background="{ThemeResource MessageServiceBackgroundBrush}"
+                                CornerRadius="70"
+                                Height="140"
+                                Width="140" />
 
-                            <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                    VerticalAlignment="Center"
-                                    Margin="0,8,12,8"
-                                    Grid.Column="1"
-                                    Grid.RowSpan="2">
-                                <TextBox x:Name="TitleLabel"
-                                         Loaded="Title_Loaded"
-                                         Text="{x:Bind ViewModel.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                         MaxLength="{StaticResource ChatTitleMaxLength}"
-                                         PlaceholderText="{CustomResource EnterGroupNamePlaceholder}" />
-                            </Border>
-                        </Grid>
-                    </controls:HeaderedControl>
+                        <controls:GlyphButton Visibility="{x:Bind ConvertPhotoVisibility(ViewModel.Title, ViewModel.Preview), Mode=OneWay}"
+                                              Click="EditPhoto_Click"
+                                              Glyph="&#xE722;"
+                                              AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"
+                                              Style="{StaticResource RoundGlyphButtonStyle}"
+                                              HorizontalAlignment="Center"
+                                              RequestedTheme="Dark"
+                                              CornerRadius="70"
+                                              Height="140"
+                                              Width="140"
+                                              FontSize="48" />
+                    </Grid>
+
+                    <TextBox x:Name="TitleLabel"
+                             Loaded="Title_Loaded"
+                             Text="{x:Bind ViewModel.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             MaxLength="{StaticResource ChatTitleMaxLength}"
+                             PlaceholderText="{CustomResource EnterGroupNamePlaceholder}"
+                             HorizontalAlignment="Left"
+                             Width="280"
+                             Margin="24,8,24,0" />
 
                     <controls:HeaderedControl Header="{CustomResource ChannelMembers}">
                         <controls:BadgeButton Content="{CustomResource ChannelAddMembers}"
