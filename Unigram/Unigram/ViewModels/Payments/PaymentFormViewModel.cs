@@ -318,9 +318,9 @@ namespace Unigram.ViewModels.Payments
             }
 
             var items = validatedInfo.ShippingOptions.Select(
-                x => new SelectRadioItem(x, Converter.ShippingOption(x, _paymentForm.Invoice.Currency), _shipping?.Id == x.Id));
+                x => new ChooseOptionItem(x, Converter.ShippingOption(x, _paymentForm.Invoice.Currency), _shipping?.Id == x.Id));
 
-            var popup = new ChooseRadioPopup(items);
+            var popup = new ChooseOptionPopup(items);
             popup.Title = Strings.Resources.PaymentCheckoutShippingMethod;
             popup.PrimaryButtonText = Strings.Resources.OK;
             popup.SecondaryButtonText = Strings.Resources.Cancel;

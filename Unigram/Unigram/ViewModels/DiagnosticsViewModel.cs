@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,7 +31,6 @@ namespace Unigram.ViewModels
             Options = new MvxObservableCollection<DiagnosticsOption>();
             Tags = new MvxObservableCollection<DiagnosticsTag>();
 
-            VerbosityCommand = new RelayCommand(VerbosityExecute);
             VideoInfoCommand = new RelayCommand(VideoInfoExecute);
 
             DisableDatabaseCommand = new RelayCommand(DisableDatabaseExecute);
@@ -146,16 +146,6 @@ namespace Unigram.ViewModels
             }
         }
 
-        public VerbosityLevel Verbosity
-        {
-            get => (VerbosityLevel)Settings.VerbosityLevel;
-            set
-            {
-                Settings.VerbosityLevel = (int)value;
-                RaisePropertyChanged();
-            }
-        }
-
         public bool CanUseTestDC => ProtoService.AuthorizationState is not AuthorizationStateReady;
 
         public bool DisableDatabase => Settings.Diagnostics.DisableDatabase;
@@ -199,26 +189,38 @@ namespace Unigram.ViewModels
             set => Set(ref _logOldSize, value);
         }
 
-        public RelayCommand VerbosityCommand { get; }
-        private async void VerbosityExecute()
+        public int Verbosity
         {
-            var items = Enum.GetValues(typeof(VerbosityLevel)).Cast<VerbosityLevel>().Select(x =>
+            get => Array.IndexOf(_verbosityIndexer, Settings.VerbosityLevel);
+            set
             {
-                return new SelectRadioItem(x, Enum.GetName(typeof(VerbosityLevel), x), x == Verbosity);
-            }).ToArray();
-
-            var dialog = new ChooseRadioPopup(items);
-            dialog.Title = "Verbosity Level";
-            dialog.PrimaryButtonText = Strings.Resources.OK;
-            dialog.SecondaryButtonText = Strings.Resources.Cancel;
-
-            var confirm = await dialog.ShowQueuedAsync();
-            if (confirm == ContentDialogResult.Primary && dialog.SelectedIndex is VerbosityLevel index)
-            {
-                Verbosity = index;
-                Client.Execute(new SetLogVerbosityLevel((int)index));
+                if (value >= 0 && value < _verbosityIndexer.Length && Settings.VerbosityLevel != _verbosityIndexer[value])
+                {
+                    Client.Execute(new SetLogVerbosityLevel(Settings.VerbosityLevel = _verbosityIndexer[value]));
+                    RaisePropertyChanged();
+                }
             }
         }
+
+        private readonly int[] _verbosityIndexer = new[]
+        {
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+        };
+
+        public List<SettingsOptionItem<int>> VerbosityOptions => new List<SettingsOptionItem<int>>
+        {
+            new SettingsOptionItem<int>(0, nameof(VerbosityLevel.Assert)),
+            new SettingsOptionItem<int>(1, nameof(VerbosityLevel.Error)),
+            new SettingsOptionItem<int>(2, nameof(VerbosityLevel.Warning)),
+            new SettingsOptionItem<int>(3, nameof(VerbosityLevel.Info)),
+            new SettingsOptionItem<int>(4, nameof(VerbosityLevel.Debug)),
+            new SettingsOptionItem<int>(5, nameof(VerbosityLevel.Verbose)),
+        };
 
         public RelayCommand VideoInfoCommand { get; }
         public async void VideoInfoExecute()
@@ -371,10 +373,10 @@ namespace Unigram.ViewModels
         {
             var items = Enum.GetValues(typeof(VerbosityLevel)).Cast<VerbosityLevel>().Select(x =>
             {
-                return new SelectRadioItem(x, Enum.GetName(typeof(VerbosityLevel), x), x == _value);
+                return new ChooseOptionItem(x, Enum.GetName(typeof(VerbosityLevel), x), x == _value);
             }).ToArray();
 
-            var dialog = new ChooseRadioPopup(items);
+            var dialog = new ChooseOptionPopup(items);
             dialog.Title = Name;
             dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.SecondaryButtonText = Strings.Resources.Cancel;

@@ -3162,16 +3162,16 @@ namespace Unigram.ViewModels
 
             var items = new[]
             {
-                new SelectRadioItem(new ChatReportReasonSpam(), Strings.Resources.ReportChatSpam, true),
-                new SelectRadioItem(new ChatReportReasonViolence(), Strings.Resources.ReportChatViolence, false),
-                new SelectRadioItem(new ChatReportReasonChildAbuse(), Strings.Resources.ReportChatChild, false),
-                new SelectRadioItem(new ChatReportReasonIllegalDrugs(), Strings.Resources.ReportChatIllegalDrugs, false),
-                new SelectRadioItem(new ChatReportReasonPersonalDetails(), Strings.Resources.ReportChatPersonalDetails, false),
-                new SelectRadioItem(new ChatReportReasonPornography(), Strings.Resources.ReportChatPornography, false),
-                new SelectRadioItem(new ChatReportReasonCustom(), Strings.Resources.ReportChatOther, false)
+                new ChooseOptionItem(new ChatReportReasonSpam(), Strings.Resources.ReportChatSpam, true),
+                new ChooseOptionItem(new ChatReportReasonViolence(), Strings.Resources.ReportChatViolence, false),
+                new ChooseOptionItem(new ChatReportReasonChildAbuse(), Strings.Resources.ReportChatChild, false),
+                new ChooseOptionItem(new ChatReportReasonIllegalDrugs(), Strings.Resources.ReportChatIllegalDrugs, false),
+                new ChooseOptionItem(new ChatReportReasonPersonalDetails(), Strings.Resources.ReportChatPersonalDetails, false),
+                new ChooseOptionItem(new ChatReportReasonPornography(), Strings.Resources.ReportChatPornography, false),
+                new ChooseOptionItem(new ChatReportReasonCustom(), Strings.Resources.ReportChatOther, false)
             };
 
-            var dialog = new ChooseRadioPopup(items);
+            var dialog = new ChooseOptionPopup(items);
             dialog.Title = Strings.Resources.ReportChat;
             dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.SecondaryButtonText = Strings.Resources.Cancel;

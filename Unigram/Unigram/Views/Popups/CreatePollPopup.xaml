@@ -18,134 +18,141 @@
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
             <StackPanel Margin="0,0,0,16">
-                <controls:HeaderedControl Header="{CustomResource Question}">
-                    <TextBox x:Name="QuestionText"
-                             TextChanged="Question_TextChanged"
-                             PlaceholderText="{CustomResource QuestionHint}"
-                             AcceptsReturn="True"
-                             TextWrapping="Wrap"
-                             MaxLength="255"
-                             Margin="12,8,12,8" />
-                </controls:HeaderedControl>
+                <TextBlock Text="{CustomResource Question}"
+                           Style="{StaticResource BaseTextBlockStyle}"
+                           Margin="24,16,24,8" />
+                <TextBox x:Name="QuestionText"
+                         TextChanged="Question_TextChanged"
+                         PlaceholderText="{CustomResource QuestionHint}"
+                         AcceptsReturn="True"
+                         TextWrapping="Wrap"
+                         MaxLength="255"
+                         Margin="24,0,24,8" />
 
-                <controls:HeaderedControl x:Name="OptionsPanel"
-                                          Header="{CustomResource PollOptions}">
-                    <ItemsControl x:Name="Presenter"
-                                  ItemsSource="{x:Bind Items}"
-                                  IsTabStop="False">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate x:DataType="local:PollOptionViewModel">
-                                <Grid Margin="12,8,12,0">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition />
-                                    </Grid.ColumnDefinitions>
-                                    <Grid.Resources>
-                                        <Style x:Name="DeleteButtonStyle"
-                                               TargetType="Button">
-                                            <Setter Property="Template">
-                                                <Setter.Value>
-                                                    <ControlTemplate TargetType="Button">
-                                                        <Grid x:Name="ButtonLayoutGrid"
-                                                              BorderBrush="{ThemeResource TextControlButtonBorderBrush}"
-                                                              BorderThickness="{TemplateBinding BorderThickness}"
-                                                              Background="{ThemeResource TextControlButtonBackground}">
-                                                            <VisualStateManager.VisualStateGroups>
-                                                                <VisualStateGroup x:Name="CommonStates">
-                                                                    <VisualState x:Name="Normal" />
-                                                                    <VisualState x:Name="PointerOver">
-                                                                        <Storyboard>
-                                                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid"
-                                                                                                           Storyboard.TargetProperty="Background">
-                                                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                                                        Value="{ThemeResource TextControlButtonBackgroundPointerOver}" />
-                                                                            </ObjectAnimationUsingKeyFrames>
-                                                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid"
-                                                                                                           Storyboard.TargetProperty="BorderBrush">
-                                                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                                                        Value="{ThemeResource TextControlButtonBorderBrushPointerOver}" />
-                                                                            </ObjectAnimationUsingKeyFrames>
-                                                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GlyphElement"
-                                                                                                           Storyboard.TargetProperty="Foreground">
-                                                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                                                        Value="{ThemeResource TextControlButtonForegroundPointerOver}" />
-                                                                            </ObjectAnimationUsingKeyFrames>
-                                                                        </Storyboard>
-                                                                    </VisualState>
-                                                                    <VisualState x:Name="Pressed">
-                                                                        <Storyboard>
-                                                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid"
-                                                                                                           Storyboard.TargetProperty="Background">
-                                                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                                                        Value="{ThemeResource TextControlButtonBackgroundPressed}" />
-                                                                            </ObjectAnimationUsingKeyFrames>
-                                                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid"
-                                                                                                           Storyboard.TargetProperty="BorderBrush">
-                                                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                                                        Value="{ThemeResource TextControlButtonBorderBrushPressed}" />
-                                                                            </ObjectAnimationUsingKeyFrames>
-                                                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GlyphElement"
-                                                                                                           Storyboard.TargetProperty="Foreground">
-                                                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                                                        Value="{ThemeResource TextControlButtonForegroundPressed}" />
-                                                                            </ObjectAnimationUsingKeyFrames>
-                                                                        </Storyboard>
-                                                                    </VisualState>
-                                                                    <VisualState x:Name="Disabled">
-                                                                        <Storyboard>
-                                                                            <DoubleAnimation Storyboard.TargetName="ButtonLayoutGrid"
-                                                                                             Storyboard.TargetProperty="Opacity"
-                                                                                             To="0"
-                                                                                             Duration="0" />
-                                                                        </Storyboard>
-                                                                    </VisualState>
-                                                                </VisualStateGroup>
-                                                            </VisualStateManager.VisualStateGroups>
-                                                            <TextBlock x:Name="GlyphElement"
-                                                                       Foreground="{ThemeResource TextControlButtonForeground}"
-                                                                       VerticalAlignment="Center"
-                                                                       HorizontalAlignment="Center"
-                                                                       FontStyle="Normal"
-                                                                       FontSize="12"
-                                                                       Text="&#xE711;"
-                                                                       FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                                                       AutomationProperties.AccessibilityView="Raw" />
-                                                        </Grid>
-                                                    </ControlTemplate>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Style>
-                                    </Grid.Resources>
-                                    <CheckBox IsChecked="{x:Bind IsChecked, Mode=TwoWay}"
-                                              Visibility="{x:Bind IsQuiz, Mode=OneWay}"
-                                              Checked="Option_Checked"
-                                              Unchecked="Option_Unchecked"
-                                              MinWidth="0" />
+                <TextBlock Text="{CustomResource PollOptions}"
+                           Style="{StaticResource BaseTextBlockStyle}"
+                           Margin="24,16,24,0" />
 
-                                    <TextBox Text="{x:Bind Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                             PlaceholderText="{CustomResource OptionHint}"
-                                             MaxLength="100"
-                                             Loaded="Option_Loaded"
-                                             KeyDown="Option_KeyDown"
-                                             TextChanged="Question_TextChanged"
-                                             Grid.Column="1" />
+                <ItemsControl x:Name="Presenter"
+                              ItemsSource="{x:Bind Items}"
+                              IsTabStop="False">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="local:PollOptionViewModel">
+                            <Grid Margin="24,8,24,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <Grid.Resources>
+                                    <Style x:Name="DeleteButtonStyle"
+                                           TargetType="Button">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Grid x:Name="ButtonLayoutGrid"
+                                                          BorderBrush="{ThemeResource TextControlButtonBorderBrush}"
+                                                          BorderThickness="{TemplateBinding BorderThickness}"
+                                                          Background="{ThemeResource TextControlButtonBackground}">
+                                                        <VisualStateManager.VisualStateGroups>
+                                                            <VisualStateGroup x:Name="CommonStates">
+                                                                <VisualState x:Name="Normal" />
+                                                                <VisualState x:Name="PointerOver">
+                                                                    <Storyboard>
+                                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid"
+                                                                                                       Storyboard.TargetProperty="Background">
+                                                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                                                    Value="{ThemeResource TextControlButtonBackgroundPointerOver}" />
+                                                                        </ObjectAnimationUsingKeyFrames>
+                                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid"
+                                                                                                       Storyboard.TargetProperty="BorderBrush">
+                                                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                                                    Value="{ThemeResource TextControlButtonBorderBrushPointerOver}" />
+                                                                        </ObjectAnimationUsingKeyFrames>
+                                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GlyphElement"
+                                                                                                       Storyboard.TargetProperty="Foreground">
+                                                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                                                    Value="{ThemeResource TextControlButtonForegroundPointerOver}" />
+                                                                        </ObjectAnimationUsingKeyFrames>
+                                                                    </Storyboard>
+                                                                </VisualState>
+                                                                <VisualState x:Name="Pressed">
+                                                                    <Storyboard>
+                                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid"
+                                                                                                       Storyboard.TargetProperty="Background">
+                                                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                                                    Value="{ThemeResource TextControlButtonBackgroundPressed}" />
+                                                                        </ObjectAnimationUsingKeyFrames>
+                                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid"
+                                                                                                       Storyboard.TargetProperty="BorderBrush">
+                                                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                                                    Value="{ThemeResource TextControlButtonBorderBrushPressed}" />
+                                                                        </ObjectAnimationUsingKeyFrames>
+                                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GlyphElement"
+                                                                                                       Storyboard.TargetProperty="Foreground">
+                                                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                                                    Value="{ThemeResource TextControlButtonForegroundPressed}" />
+                                                                        </ObjectAnimationUsingKeyFrames>
+                                                                    </Storyboard>
+                                                                </VisualState>
+                                                                <VisualState x:Name="Disabled">
+                                                                    <Storyboard>
+                                                                        <DoubleAnimation Storyboard.TargetName="ButtonLayoutGrid"
+                                                                                         Storyboard.TargetProperty="Opacity"
+                                                                                         To="0"
+                                                                                         Duration="0" />
+                                                                    </Storyboard>
+                                                                </VisualState>
+                                                            </VisualStateGroup>
+                                                        </VisualStateManager.VisualStateGroups>
+                                                        <TextBlock x:Name="GlyphElement"
+                                                                   Foreground="{ThemeResource TextControlButtonForeground}"
+                                                                   VerticalAlignment="Center"
+                                                                   HorizontalAlignment="Center"
+                                                                   FontStyle="Normal"
+                                                                   FontSize="12"
+                                                                   Text="&#xE711;"
+                                                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                                                   AutomationProperties.AccessibilityView="Raw" />
+                                                    </Grid>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </Grid.Resources>
+                                <CheckBox IsChecked="{x:Bind IsChecked, Mode=TwoWay}"
+                                          Visibility="{x:Bind IsQuiz, Mode=OneWay}"
+                                          Checked="Option_Checked"
+                                          Unchecked="Option_Unchecked"
+                                          MinWidth="0" />
 
-                                    <Button Style="{StaticResource DeleteButtonStyle}"
-                                            Command="{x:Bind RemoveCommand}"
-                                            HorizontalAlignment="Right"
-                                            VerticalAlignment="Stretch"
-                                            Width="32"
-                                            Height="32"
-                                            Grid.Column="1" />
-                                </Grid>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                                <TextBox Text="{x:Bind Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                         PlaceholderText="{CustomResource OptionHint}"
+                                         MaxLength="100"
+                                         Loaded="Option_Loaded"
+                                         KeyDown="Option_KeyDown"
+                                         TextChanged="Question_TextChanged"
+                                         Grid.Column="1" />
 
-                    <controls:BadgeButton x:Name="Add"
-                                          Content="{CustomResource AddAnOption}"
-                                          Click="Add_Click" />
-                </controls:HeaderedControl>
+                                <Button Style="{StaticResource DeleteButtonStyle}"
+                                        Command="{x:Bind RemoveCommand}"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Stretch"
+                                        Width="32"
+                                        Height="32"
+                                        Grid.Column="1" />
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <HyperlinkButton x:Name="Add"
+                                 Content="{CustomResource AddAnOption}"
+                                 Click="Add_Click"
+                                 Margin="12,4,12,0"/>
+
+                <TextBlock x:Name="AddInfo"
+                           Style="{StaticResource InfoCaptionTextBlockStyle}"
+                           Margin="24,0,24,8"/>
 
                 <controls:HeaderedControl x:Name="Settings"
                                           Footer="{CustomResource QuizInfo}">

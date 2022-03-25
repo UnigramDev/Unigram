@@ -3,13 +3,12 @@ using System.Linq;
 using Unigram.Controls;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Views.Popups
 {
-    public sealed partial class ChooseRadioPopup : ContentPopup
+    public sealed partial class ChooseOptionPopup : ContentPopup
     {
-        public ChooseRadioPopup(IEnumerable<SelectRadioItem> options)
+        public ChooseOptionPopup(IEnumerable<ChooseOptionItem> options)
         {
             InitializeComponent();
 
@@ -23,21 +22,16 @@ namespace Unigram.Views.Popups
                 radio.Content = option.Text;
                 radio.Tag = option;
                 radio.IsChecked = option.IsChecked;
-                radio.Margin = new Thickness(12, option.Value == first ? 6 : 0, 0, 0);
-
-                var rect = new Rectangle();
-                rect.Style = Resources["RectangleStyle"] as Style;
-                rect.Margin = new Thickness(12, 6, 0, option.Value == last ? 0 : 6);
+                radio.Style = App.Current.Resources["SettingsRadioButtonStyle"] as Style;
 
                 LayoutRoot.Items.Add(radio);
-                LayoutRoot.Items.Add(rect);
             }
         }
 
         private void Radio_Checked(object sender, RoutedEventArgs e)
         {
             var radio = sender as RadioButton;
-            var item = radio.Tag as SelectRadioItem;
+            var item = radio.Tag as ChooseOptionItem;
 
             LayoutRoot.Footer = item.Footer ?? string.Empty;
         }
@@ -46,7 +40,7 @@ namespace Unigram.Views.Popups
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            SelectedIndex = ((SelectRadioItem)LayoutRoot.Items.OfType<RadioButton>().FirstOrDefault(x => x.IsChecked == true)?.Tag)?.Value;
+            SelectedIndex = ((ChooseOptionItem)LayoutRoot.Items.OfType<RadioButton>().FirstOrDefault(x => x.IsChecked == true)?.Tag)?.Value;
         }
 
         private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -54,9 +48,9 @@ namespace Unigram.Views.Popups
         }
     }
 
-    public class SelectRadioItem
+    public class ChooseOptionItem
     {
-        public SelectRadioItem(object value, string text, bool check)
+        public ChooseOptionItem(object value, string text, bool check)
         {
             Value = value;
             Text = text;

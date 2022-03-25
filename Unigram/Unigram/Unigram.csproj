@@ -631,8 +631,8 @@
     <Compile Include="Views\Popups\ChooseColorPopup.xaml.cs">
       <DependentUpon>ChooseColorPopup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Popups\ChooseRadioPopup.xaml.cs">
-      <DependentUpon>ChooseRadioPopup.xaml</DependentUpon>
+    <Compile Include="Views\Popups\ChooseOptionPopup.xaml.cs">
+      <DependentUpon>ChooseOptionPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\DoNotTranslatePopup.xaml.cs">
       <DependentUpon>DoNotTranslatePopup.xaml</DependentUpon>
@@ -1855,7 +1855,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Popups\ChooseRadioPopup.xaml">
+    <Page Include="Views\Popups\ChooseOptionPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

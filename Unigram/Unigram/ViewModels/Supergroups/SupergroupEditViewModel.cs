@@ -394,11 +394,11 @@ namespace Unigram.ViewModels.Supergroups
 
             var items = new[]
             {
-                new SelectRadioItem(true, Strings.Resources.ChatHistoryVisible, initialValue) { Footer = Strings.Resources.ChatHistoryVisibleInfo },
-                new SelectRadioItem(false, Strings.Resources.ChatHistoryHidden, !initialValue) { Footer = Strings.Resources.ChatHistoryHiddenInfo }
+                new ChooseOptionItem(true, Strings.Resources.ChatHistoryVisible, initialValue) { Footer = Strings.Resources.ChatHistoryVisibleInfo },
+                new ChooseOptionItem(false, Strings.Resources.ChatHistoryHidden, !initialValue) { Footer = Strings.Resources.ChatHistoryHiddenInfo }
             };
 
-            var dialog = new ChooseRadioPopup(items);
+            var dialog = new ChooseOptionPopup(items);
             dialog.Title = Strings.Resources.ChatHistory;
             dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.SecondaryButtonText = Strings.Resources.Cancel;

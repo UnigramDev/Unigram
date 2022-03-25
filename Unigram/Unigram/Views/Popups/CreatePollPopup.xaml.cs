@@ -97,12 +97,12 @@ namespace Unigram.Views.Popups
             if (MAXIMUM_OPTIONS - Items.Count <= 0)
             {
                 Add.Visibility = Visibility.Collapsed;
-                OptionsPanel.Footer = Strings.Resources.AddAnOptionInfoMax;
+                AddInfo.Text = Strings.Resources.AddAnOptionInfoMax;
             }
             else
             {
                 Add.Visibility = Visibility.Visible;
-                OptionsPanel.Footer = string.Format(Strings.Resources.AddAnOptionInfo, Locale.Declension("Option", MAXIMUM_OPTIONS - Items.Count));
+                AddInfo.Text = string.Format(Strings.Resources.AddAnOptionInfo, Locale.Declension("Option", MAXIMUM_OPTIONS - Items.Count));
             }
 
             UpdatePrimaryButton();
