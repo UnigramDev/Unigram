@@ -151,12 +151,12 @@
                             </Setter>
                         </Style>
                     </controls:TopNavView.ItemContainerStyle>
-                    <controls:BadgeButton x:Name="Username"
+                    <controls:BadgeButton x:Name="Profile"
                                           Content="{CustomResource lng_settings_information}"
                                           Style="{StaticResource IconBadgeButtonStyle}"
-                                          Click="Username_Click">
+                                          Click="Profile_Click">
                         <controls:BadgeButton.IconSource>
-                            <icons:Phone />
+                            <icons:Profile />
                         </controls:BadgeButton.IconSource>
                     </controls:BadgeButton>
                     <controls:BadgeButton x:Name="Notifications"

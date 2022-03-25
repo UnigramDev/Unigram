@@ -12,6 +12,7 @@
       xmlns:navigation="using:Unigram.Navigation.Services"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:icons="using:Unigram.Assets.Icons"
       mc:Ignorable="d"
       Loaded="OnLoaded"
       Unloaded="OnUnloaded">
@@ -1206,13 +1207,19 @@
                                         <StackPanel>
                                             <controls:BadgeButton Content="{CustomResource AddPeopleNearby}"
                                                                   Click="ChatsNearby_Click"
-                                                                  Style="{StaticResource GlyphBadgeButtonStyle}"
-                                                                  Glyph="&#xE1C4;" />
+                                                                  Style="{StaticResource IconBadgeButtonStyle}">
+                                                <controls:BadgeButton.IconSource>
+                                                    <icons:Location />
+                                                </controls:BadgeButton.IconSource>
+                                            </controls:BadgeButton>
 
                                             <controls:BadgeButton Content="{CustomResource CreateNewContact}"
                                                                   Click="NewContact_Click"
-                                                                  Style="{StaticResource GlyphBadgeButtonStyle}"
-                                                                  Glyph="&#xE8FA;" />
+                                                                  Style="{StaticResource IconBadgeButtonStyle}">
+                                                <controls:BadgeButton.IconSource>
+                                                    <icons:PersonAdd />
+                                                </controls:BadgeButton.IconSource>
+                                            </controls:BadgeButton>
 
                                             <Border>
                                                 <TextBlock Text="{x:Bind ConvertSortedBy(ViewModel.Contacts.IsSortedByEpoch), Mode=OneWay}"

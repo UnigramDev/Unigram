@@ -31,13 +31,13 @@ namespace Unigram.Views
 
             _settings = new Dictionary<Type, object>
             {
-                { typeof(SettingsProfilePage), Username },
+                { typeof(SettingsProfilePage), Profile },
+                { typeof(SettingsNotificationsPage), Notifications },
+                { typeof(SettingsDataAndStoragePage), Data },
                 { typeof(SettingsPrivacyAndSecurityPage), Privacy },
                 { typeof(SettingsStickersPage), Stickers },
-                { typeof(SettingsDataAndStoragePage), Data },
-                { typeof(FoldersPage), Folders },
-                { typeof(SettingsNotificationsPage), Notifications },
                 { typeof(SettingsAppearancePage), Appearance },
+                { typeof(FoldersPage), Folders },
                 { typeof(SettingsSessionsPage), Sessions },
                 { typeof(SettingsLanguagePage), Language },
                 { typeof(SettingsAdvancedPage), Advanced }
@@ -107,7 +107,7 @@ namespace Unigram.Views
             Navigation.SelectedItem = FindRoot();
         }
 
-        private void Username_Click(object sender, RoutedEventArgs e)
+        private void Profile_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(SettingsProfilePage));
             MasterDetail.NavigationService.GoBackAt(0, false);
