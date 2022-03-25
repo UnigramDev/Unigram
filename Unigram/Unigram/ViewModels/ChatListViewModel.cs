@@ -784,7 +784,7 @@ namespace Unigram.ViewModels
             {
                 using (await _loadMoreLock.WaitAsync())
                 {
-                    if (order > _lastOrder || (order == _lastOrder && chat.Id >= _lastChatId))
+                    if (order > 0 && (order > _lastOrder || (order == _lastOrder && chat.Id >= _lastChatId)))
                     {
                         var next = NextIndexOf(chat, order);
                         if (next >= 0)
