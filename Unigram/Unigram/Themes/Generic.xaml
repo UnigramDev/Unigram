@@ -958,11 +958,10 @@
                                           AutomationProperties.AccessibilityView="Raw" />
                         <Grid x:Name="SelectionIndicatorGrid"
                               Margin="12,0,12,4"
-                              HorizontalAlignment="Center"
+                              HorizontalAlignment="Stretch"
                               VerticalAlignment="Bottom">
                             <Rectangle x:Name="SelectionIndicator"
                                        Height="3"
-                                       Width="24"
                                        Fill="{ThemeResource NavigationViewSelectionIndicatorForeground}"
                                        Opacity="0"
                                        RadiusX="3"

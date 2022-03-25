@@ -7,8 +7,10 @@ using Unigram.Native.Composition;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Views;
+using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
@@ -21,6 +23,8 @@ namespace Unigram.Controls
         private ContentPresenter MasterPresenter;
         private Grid DetailPresenter;
         private BreadcrumbBar DetailHeaderPresenter;
+        private FrameworkElement BackgroundPart;
+        private Border BorderPart;
 
         public NavigationService NavigationService { get; private set; }
         public Frame ParentFrame { get; private set; }
@@ -167,6 +171,60 @@ namespace Unigram.Controls
             }
         }
 
+        private bool _backgroundCollapsed;
+
+        // CORRECT SHOWHIDE IMPLEMENTATION
+        public void ShowHideBackground(bool show, bool animate)
+        {
+            if ((show && BackgroundPart.Visibility == Visibility.Visible && !_backgroundCollapsed) || (!show && (BackgroundPart.Visibility == Visibility.Collapsed || _backgroundCollapsed)))
+            {
+                return;
+            }
+
+            var visual = ElementCompositionPreview.GetElementVisual(BackgroundPart);
+            var border = ElementCompositionPreview.GetElementVisual(BorderPart);
+
+            if (animate)
+            {
+                _backgroundCollapsed = !show;
+                BackgroundPart.Visibility = Visibility.Visible;
+                BorderPart.Visibility = Visibility.Visible;
+
+                var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+                batch.Completed += (s, args) =>
+                {
+                    if (show)
+                    {
+                        _backgroundCollapsed = false;
+                    }
+                    else
+                    {
+                        BackgroundPart.Visibility = Visibility.Collapsed;
+                        BorderPart.Visibility = Visibility.Collapsed;
+                    }
+                };
+
+                var opacity = visual.Compositor.CreateScalarKeyFrameAnimation();
+                opacity.InsertKeyFrame(show ? 0 : 1, 0);
+                opacity.InsertKeyFrame(show ? 1 : 0, 1);
+                //clip.Duration = TimeSpan.FromMilliseconds(150);
+
+                visual.StartAnimation("Opacity", opacity);
+                border.StartAnimation("Opacity", opacity);
+                batch.End();
+            }
+            else
+            {
+                _backgroundCollapsed = !show;
+
+                visual.Opacity = show ? 1 : 0;
+                border.Opacity = show ? 1 : 0;
+
+                BackgroundPart.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
+                BorderPart.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+
         protected override void OnApplyTemplate()
         {
             VisualStateManager.GoToState(this, "ResetState", false);
@@ -174,6 +232,8 @@ namespace Unigram.Controls
             MasterPresenter = GetTemplateChild("MasterFrame") as ContentPresenter;
             DetailPresenter = GetTemplateChild(nameof(DetailPresenter)) as Grid;
             DetailHeaderPresenter = GetTemplateChild(nameof(DetailHeaderPresenter)) as BreadcrumbBar;
+            BackgroundPart = GetTemplateChild(nameof(BackgroundPart)) as FrameworkElement;
+            BorderPart = GetTemplateChild(nameof(BorderPart)) as Border;
             AdaptivePanel = GetTemplateChild(nameof(AdaptivePanel)) as MasterDetailPanel;
             AdaptivePanel.ViewStateChanged += OnViewStateChanged;
 
@@ -464,23 +524,11 @@ namespace Unigram.Controls
             DependencyProperty.Register("DetailFooter", typeof(UIElement), typeof(MasterDetailView), new PropertyMetadata(null));
 
         #endregion
-
-        #region BackgroundOpacity
-
-        public double BackgroundOpacity
-        {
-            get => (double)GetValue(BackgroundOpacityProperty);
-            set => SetValue(BackgroundOpacityProperty, value);
-        }
-
-        public static readonly DependencyProperty BackgroundOpacityProperty =
-            DependencyProperty.Register("BackgroundOpacity", typeof(double), typeof(MasterDetailView), new PropertyMetadata(1d));
-
-        #endregion
     }
 
     public enum MasterDetailState
     {
+        Unknown,
         Minimal,
         Compact,
         Expanded

@@ -65,7 +65,6 @@
                             <chats:ChatBackgroundPresenter x:Name="BackgroundPart"
                                                            CornerRadius="{ThemeResource NavigationViewContentGridCornerRadius}"
                                                            Background="{ThemeResource ChatPageBackgroundBrush}"
-                                                           Opacity="{TemplateBinding BackgroundOpacity}"
                                                            Loading="ChatBackgroundPresenter_Loading" />
 
                             <Grid>
@@ -117,7 +116,6 @@
                             <Grid x:Name="DetailPresenter" />
 
                             <Border x:Name="BorderPart"
-                                    Opacity="{TemplateBinding BackgroundOpacity}"
                                     BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
                                     BorderThickness="{ThemeResource NavigationViewContentGridBorderThickness}"
                                     CornerRadius="{ThemeResource NavigationViewContentGridCornerRadius}"

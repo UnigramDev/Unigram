@@ -735,8 +735,6 @@
                         <ContentPresenter x:Name="ContentPresenter"
                                           TextWrapping="Wrap"
                                           AutomationProperties.AccessibilityView="Raw"
-                                          BorderBrush="{TemplateBinding BorderBrush}"
-                                          BorderThickness="{TemplateBinding BorderThickness}"
                                           ContentTemplate="{TemplateBinding ContentTemplate}"
                                           ContentTransitions="{TemplateBinding ContentTransitions}"
                                           Content="{TemplateBinding Content}"

@@ -20,7 +20,7 @@ namespace Unigram.Controls
         private double gripWidthRatio = SettingsService.Current.DialogsWidthRatio;
         private double dialogsWidthRatio = SettingsService.Current.DialogsWidthRatio;
 
-        private MasterDetailState _currentState;
+        private MasterDetailState _currentState = MasterDetailState.Unknown;
         public MasterDetailState CurrentState
         {
             get => _currentState;

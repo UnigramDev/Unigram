@@ -1320,7 +1320,10 @@ namespace Unigram.Views
                 allowed &= e.SourcePageType != typeof(BlankPage);
             }
 
-            MasterDetail.BackgroundOpacity = allowed ? 1 : 0;
+            if (MasterDetail.CurrentState != MasterDetailState.Unknown)
+            {
+                MasterDetail.ShowHideBackground(allowed, true);
+            }
         }
 
         private void OnNavigated(object sender, NavigatedEventArgs e)
@@ -1395,7 +1398,10 @@ namespace Unigram.Views
                 allowed &= frame.CurrentSourcePageType != typeof(BlankPage);
             }
 
-            MasterDetail.BackgroundOpacity = allowed ? 1 : 0;
+            if (MasterDetail.CurrentState != MasterDetailState.Unknown)
+            {
+                MasterDetail.ShowHideBackground(allowed, false);
+            }
         }
 
         private void UpdatePaneToggleButtonVisibility()
