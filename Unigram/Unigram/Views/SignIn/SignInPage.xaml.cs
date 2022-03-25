@@ -29,6 +29,8 @@ namespace Unigram.Views.SignIn
             Diagnostics.Text = $"Unigram " + SettingsPage.GetVersion();
         }
 
+        private bool _waiting = true;
+
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             ViewModel.PropertyChanged += OnPropertyChanged;
@@ -84,6 +86,7 @@ namespace Unigram.Views.SignIn
 
         private async void Switch1_Click(object sender, RoutedEventArgs e)
         {
+            _waiting = false;
             TokenPanel.Visibility = Visibility.Visible;
             PhonePanel.Visibility = Visibility.Visible;
 
@@ -163,6 +166,7 @@ namespace Unigram.Views.SignIn
 
         private async void Switch2_Click(object sender, RoutedEventArgs e)
         {
+            _waiting = true;
             TokenPanel.Visibility = Visibility.Visible;
             PhonePanel.Visibility = Visibility.Visible;
 
@@ -244,8 +248,12 @@ namespace Unigram.Views.SignIn
         {
             if (mode is QrCodeMode.Loading or QrCodeMode.Primary)
             {
-                TokenPanel.Visibility = Visibility.Visible;
-                PhonePanel.Visibility = Visibility.Collapsed;
+                if (_waiting)
+                {
+                    TokenPanel.Visibility = Visibility.Visible;
+                    PhonePanel.Visibility = Visibility.Collapsed;
+                }
+
                 Switch2.Visibility = Visibility.Visible;
 
                 if (mode == QrCodeMode.Loading)
