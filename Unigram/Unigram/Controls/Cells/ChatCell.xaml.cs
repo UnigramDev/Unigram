@@ -1,4 +1,5 @@
 ﻿using Microsoft.Graphics.Canvas.Geometry;
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -108,11 +109,10 @@ namespace Unigram.Controls.Cells
         private TextBlock TypingLabel;
         private Border PinnedIcon;
         private Border UnreadMentionsBadge;
-        private Border UnreadBadge;
+        private InfoBadge UnreadBadge;
         private Border FailedBadge;
         private Rectangle DropVisual;
         private TextBlock FailedLabel;
-        private TextBlock UnreadLabel;
         private TextBlock UnreadMentionsLabel;
         private Run FromLabel;
         private Run DraftLabel;
@@ -139,11 +139,10 @@ namespace Unigram.Controls.Cells
             TypingLabel = GetTemplateChild(nameof(TypingLabel)) as TextBlock;
             PinnedIcon = GetTemplateChild(nameof(PinnedIcon)) as Border;
             UnreadMentionsBadge = GetTemplateChild(nameof(UnreadMentionsBadge)) as Border;
-            UnreadBadge = GetTemplateChild(nameof(UnreadBadge)) as Border;
+            UnreadBadge = GetTemplateChild(nameof(UnreadBadge)) as InfoBadge;
             FailedBadge = GetTemplateChild(nameof(FailedBadge)) as Border;
             DropVisual = GetTemplateChild(nameof(DropVisual)) as Rectangle;
             FailedLabel = GetTemplateChild(nameof(FailedLabel)) as TextBlock;
-            UnreadLabel = GetTemplateChild(nameof(UnreadLabel)) as TextBlock;
             UnreadMentionsLabel = GetTemplateChild(nameof(UnreadMentionsLabel)) as TextBlock;
             FromLabel = GetTemplateChild(nameof(FromLabel)) as Run;
             DraftLabel = GetTemplateChild(nameof(DraftLabel)) as Run;
@@ -222,7 +221,7 @@ namespace Unigram.Controls.Cells
             StateIcon.Glyph = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, null, message, message.SendingState);
 
             UpdateBriefSpoiler(chat.DraftMessage == null ? message : null);
-            UpdateMinithumbnail(message);
+            UpdateMinithumbnail(chat, chat.DraftMessage == null ? message : null);
         }
 
         public async void UpdateChatList(IProtoService protoService, ChatList chatList)
@@ -264,7 +263,7 @@ namespace Unigram.Controls.Cells
 
                 var unreadCount = protoService.GetUnreadCount(chatList);
                 UnreadBadge.Visibility = unreadCount.UnreadChatCount.UnreadCount > 0 ? Visibility.Visible : Visibility.Collapsed;
-                UnreadLabel.Text = $"{unreadCount.UnreadChatCount.UnreadCount}";
+                UnreadBadge.Value = unreadCount.UnreadChatCount.UnreadCount;
 
                 BriefInfo.Inlines.Clear();
 
@@ -438,7 +437,7 @@ namespace Unigram.Controls.Cells
             FailedBadge.Visibility = chat.LastMessage?.SendingState is MessageSendingStateFailed ? Visibility.Visible : Visibility.Collapsed;
 
             UpdateBriefSpoiler(chat.DraftMessage == null ? chat.LastMessage : null);
-            UpdateMinithumbnail(chat.LastMessage);
+            UpdateMinithumbnail(chat, chat.DraftMessage == null ? chat.LastMessage : null);
         }
 
         public void UpdateChatReadInbox(Chat chat, ChatPosition position = null)
@@ -455,7 +454,7 @@ namespace Unigram.Controls.Cells
 
             PinnedIcon.Visibility = chat.UnreadCount == 0 && !chat.IsMarkedAsUnread && (position?.IsPinned ?? false) ? Visibility.Visible : Visibility.Collapsed;
             UnreadBadge.Visibility = (chat.UnreadCount > 0 || chat.IsMarkedAsUnread) ? chat.UnreadMentionCount == 1 && chat.UnreadCount == 1 ? Visibility.Collapsed : Visibility.Visible : Visibility.Collapsed;
-            UnreadLabel.Text = chat.UnreadCount > 0 ? chat.UnreadCount.ToString() : string.Empty;
+            UnreadBadge.Value = chat.UnreadCount;
 
             //UpdateAutomation(_protoService, chat, chat.LastMessage);
         }
@@ -825,8 +824,16 @@ namespace Unigram.Controls.Cells
             VisualStateManager.GoToState(this, compact ? "Compact" : "Expanded", false);
         }
 
-        private void UpdateMinithumbnail(Message message)
+        private void UpdateMinithumbnail(Chat chat, Message message)
         {
+            if (chat.Type is ChatTypePrivate && (message == null || (message.IsOutgoing && message.UnreadReactions.Count > 0)))
+            {
+                MinithumbnailPanel.Visibility = Visibility.Collapsed;
+                Minithumbnail.Source = null;
+
+                return;
+            }
+
             var thumbnail = message?.GetMinithumbnail(false);
             if (thumbnail != null && SettingsService.Current.Diagnostics.Minithumbnails)
             {
@@ -907,6 +914,11 @@ namespace Unigram.Controls.Cells
             var topMessage = chat.LastMessage;
             if (topMessage != null)
             {
+                if (chat.Type is ChatTypePrivate && topMessage.IsOutgoing && topMessage.UnreadReactions.Count > 0)
+                {
+                    return String.Format("Reacted {0} to your message", topMessage.UnreadReactions[0].Reaction);
+                }
+
                 return UpdateBriefLabel(chat, topMessage, true, true);
             }
             else if (chat.Type is ChatTypeSecret secretType)
@@ -1021,6 +1033,10 @@ namespace Unigram.Controls.Cells
             if (message.IsService())
             {
                 return MessageService.GetText(new ViewModels.MessageViewModel(_protoService, null, null, message));
+            }
+            else if (chat.Type is ChatTypePrivate && message.IsOutgoing && message.UnreadReactions.Count > 0)
+            {
+                return string.Empty;
             }
 
             var format = "{0}: ";
@@ -1449,7 +1465,7 @@ namespace Unigram.Controls.Cells
 
             PinnedIcon.Visibility = pinned ? Visibility.Visible : Visibility.Collapsed;
             UnreadBadge.Visibility = unread > 0 ? Visibility.Visible : Visibility.Collapsed;
-            UnreadLabel.Text = unread.ToString();
+            UnreadBadge.Value = unread;
             UnreadMentionsBadge.Visibility = Visibility.Collapsed;
 
             DraftLabel.Text = string.Empty;
@@ -1481,7 +1497,7 @@ namespace Unigram.Controls.Cells
         }
 
         public static readonly DependencyProperty SelectionStrokeProperty =
-            DependencyProperty.Register("SelectionStroke", typeof(SolidColorBrush), typeof(ChatCell), new PropertyMetadata(default(Color), OnSelectionStrokeChanged));
+            DependencyProperty.Register("SelectionStroke", typeof(SolidColorBrush), typeof(ChatCell), new PropertyMetadata(null, OnSelectionStrokeChanged));
 
         private static void OnSelectionStrokeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {

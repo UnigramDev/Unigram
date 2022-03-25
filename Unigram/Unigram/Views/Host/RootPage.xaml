@@ -118,20 +118,13 @@
                            VerticalAlignment="Center"
                            Grid.Column="1" />
 
-                <Border Background="{ThemeResource ChatUnreadBadgeBrush}"
-                        Visibility="{x:Bind UnreadCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"
-                        MinWidth="20"
-                        Height="20"
-                        CornerRadius="10"
-                        VerticalAlignment="Center"
-                        Margin="8,0,12,0"
-                        Grid.Column="2">
-                    <TextBlock Text="{x:Bind UnreadCount, Mode=OneWay}"
-                               Style="{StaticResource CaptionTextBlockStyle}"
-                               Foreground="{ThemeResource ChatUnreadLabelBrush}"
-                               TextAlignment="Center"
-                               Margin="4,2,4,0" />
-                </Border>
+                <muxc:InfoBadge Value="{x:Bind UnreadCount, Mode=OneWay}"
+                                Visibility="{x:Bind UnreadCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"
+                                Background="{ThemeResource ChatUnreadBadgeBrush}"
+                                Foreground="{ThemeResource ChatUnreadLabelBrush}"
+                                VerticalAlignment="Center"
+                                Margin="8,0,12,0"
+                                Grid.Column="2" />
             </Grid>
         </DataTemplate>
 

@@ -4,6 +4,7 @@
                     xmlns:controls="using:Unigram.Controls"
                     xmlns:chats="using:Unigram.Controls.Chats"
                     xmlns:media="using:Microsoft.UI.Xaml.Media"
+                    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                     mc:Ignorable="d"
@@ -47,7 +48,7 @@
                                     <VisualState.Setters>
                                         <Setter Target="UnreadBadge.Background"
                                                 Value="{ThemeResource ChatUnreadBadgeMutedBrush}" />
-                                        <Setter Target="UnreadLabel.Foreground"
+                                        <Setter Target="UnreadBadge.Foreground"
                                                 Value="{ThemeResource ChatUnreadLabelMutedBrush}" />
                                     </VisualState.Setters>
                                 </VisualState>
@@ -217,25 +218,16 @@
                                        VerticalAlignment="Center"
                                        TextAlignment="Center" />
                         </Border>
-                        <Border x:Name="UnreadBadge"
-                                Background="{ThemeResource ChatUnreadBadgeBrush}"
-                                MinWidth="20"
-                                Height="20"
-                                CornerRadius="10"
-                                VerticalAlignment="Bottom"
-                                HorizontalAlignment="Right"
-                                Margin="8,0,0,0"
-                                Visibility="Collapsed"
-                                Grid.Column="5"
-                                Grid.Row="1">
-                            <TextBlock x:Name="UnreadLabel"
-                                       Style="{StaticResource CaptionTextBlockStyle}"
-                                       Foreground="{ThemeResource ChatUnreadLabelBrush}"
-                                       TextAlignment="Center"
-                                       TextLineBounds="Tight"
-                                       VerticalAlignment="Center"
-                                       Margin="6,0,6,2" />
-                        </Border>
+                        <muxc:InfoBadge x:Name="UnreadBadge"
+                                        Background="{ThemeResource ChatUnreadBadgeBrush}"
+                                        Foreground="{ThemeResource ChatUnreadLabelBrush}"
+                                        VerticalAlignment="Bottom"
+                                        HorizontalAlignment="Right"
+                                        Margin="8,0,0,0"
+                                        Visibility="Collapsed"
+                                        Grid.Column="5"
+                                        Grid.Row="1" />
+
 
                         <Border x:Name="FailedBadge"
                                 Background="{ThemeResource ChatFailedBadgeBrush}"
