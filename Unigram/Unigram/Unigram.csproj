@@ -131,13 +131,16 @@
     <Compile Include="Assets\Icons\Folders.cs" />
     <Compile Include="Assets\Icons\Info.cs" />
     <Compile Include="Assets\Icons\Language.cs" />
+    <Compile Include="Assets\Icons\Location.cs" />
     <Compile Include="Assets\Icons\Notifications.cs" />
+    <Compile Include="Assets\Icons\PersonAdd.cs" />
     <Compile Include="Assets\Icons\Phone.cs" />
     <Compile Include="Assets\Icons\Privacy.cs" />
     <Compile Include="Assets\Icons\PrivacyPolicy.cs" />
     <Compile Include="Assets\Icons\ReactionsMore.cs" />
     <Compile Include="Assets\Icons\Stickers.cs" />
     <Compile Include="Assets\Icons\Username.cs" />
+    <Compile Include="Assets\Icons\Profile.cs" />
     <Compile Include="Charts\Animator.cs" />
     <Compile Include="Charts\BarChartView.cs" />
     <Compile Include="Charts\BaseChartView.cs" />
@@ -1355,6 +1358,8 @@
     <Content Include="Assets\Animations\Passcode.tgs" />
     <Content Include="Assets\Animations\Qr.tgs" />
     <Content Include="Assets\Animations\DownloadsEmpty.tgs" />
+    <Content Include="Assets\Animations\ChangeNumber.tgs" />
+    <Content Include="Assets\Animations\StartLiveStream.tgs" />
     <None Include="Assets\i420.hlsl" />
     <Content Include="Assets\Images\BoxArt.png" />
     <Content Include="Assets\Images\Reply.scale-100.png" />

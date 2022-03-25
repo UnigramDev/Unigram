@@ -20,14 +20,22 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
+        <controls:LottieView Source="ms-appx:///Assets/Animations/StartLiveStream.tgs"
+                             IsCachingEnabled="False"
+                             Width="140"
+                             Height="140"
+                             Margin="0,0,0,12" />
+
         <TextBlock Text="To stream video with another app, enter these Server URL and Stream Key in your streaming app."
-                   Style="{StaticResource BodyTextBlockStyle}" />
+                   Style="{StaticResource BodyTextBlockStyle}"
+                   Grid.Row="1" />
 
         <TextBlock Text="Server URL"
                    Style="{StaticResource InfoCaptionTextBlockStyle}"
                    Margin="0,12,0,4"
-                   Grid.Row="1" />
+                   Grid.Row="2" />
 
         <controls:LoadingTextBlock x:Name="ServerField"
                                    PlaceholderText="rtmps://dc4-1.rtmp.t.me/s/"
@@ -35,12 +43,12 @@
                                    VerticalAlignment="Bottom"
                                    IsTextSelectionEnabled="True"
                                    Margin="-4"
-                                   Grid.Row="2" />
+                                   Grid.Row="3" />
 
         <TextBlock Text="Stream Key"
                    Style="{StaticResource InfoCaptionTextBlockStyle}"
                    Margin="0,12,0,4"
-                   Grid.Row="3" />
+                   Grid.Row="4" />
 
         <controls:LoadingTextBlock x:Name="StreamKeyField"
                                    PlaceholderText="1471070970:_hTkPyitg8sw8kimE7v3FQ"
@@ -48,18 +56,18 @@
                                    VerticalAlignment="Bottom"
                                    IsTextSelectionEnabled="True"
                                    Margin="-4"
-                                   Grid.Row="4" />
+                                   Grid.Row="5" />
 
         <TextBlock Text="Please make sure you entered the right Server URL and Stream Key in your app."
                    Style="{StaticResource BodyTextBlockStyle}"
                    Margin="0,12"
-                   Grid.Row="5" />
+                   Grid.Row="6" />
 
         <HyperlinkButton x:Name="Schedule"
                          Click="Schedule_Click"
                          Content="{CustomResource VoipChannelScheduleVoiceChat}"
                          HorizontalAlignment="Left"
                          Margin="-12,0,0,-16"
-                         Grid.Row="6" />
+                         Grid.Row="7" />
     </Grid>
 </controls:ContentPopup>
