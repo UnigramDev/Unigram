@@ -274,17 +274,6 @@ namespace Unigram.Controls.Gallery
                     ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", _closing());
                 }
 
-                if (_compactLifetime != null)
-                {
-                    var compact = _compactLifetime;
-                    await compact.Dispatcher.DispatchAsync(() =>
-                    {
-                        compact.Window.Close();
-                    });
-
-                    _compactLifetime = null;
-                }
-
                 parameter.Items.CollectionChanged -= OnCollectionChanged;
                 parameter.Items.CollectionChanged += OnCollectionChanged;
 
@@ -462,6 +451,17 @@ namespace Unigram.Controls.Gallery
                         if (item.IsVideo && container != null)
                         {
                             Play(container.Presenter, item, item.GetFile());
+
+                            if (GalleryCompactView.Current is ViewLifetimeControl compact)
+                            {
+                                compact.Dispatcher.Dispatch(() =>
+                                {
+                                    if (compact.Window.Content is GalleryCompactView player)
+                                    {
+                                        player.MediaPlayer?.Pause();
+                                    }
+                                });
+                            }
                         }
                     }
 
@@ -637,7 +637,7 @@ namespace Unigram.Controls.Gallery
 
             if (_fileStream != null)
             {
-                if (_compactLifetime == null)
+                if (GalleryCompactView.Current == null)
                 {
                     _fileStream.Dispose();
                 }
@@ -657,7 +657,7 @@ namespace Unigram.Controls.Gallery
                 //_mediaPlayerElement.TransportControls = null;
                 //_mediaPlayerElement = null;
 
-                if (_compactLifetime == null)
+                if (GalleryCompactView.Current == null)
                 {
                     _mediaPlayer.Dispose();
                 }
@@ -1108,8 +1108,6 @@ namespace Unigram.Controls.Gallery
 
         #region Compact overlay
 
-        private static ViewLifetimeControl _compactLifetime;
-
         private async void Compact_Click(object sender, RoutedEventArgs e)
         {
             var item = ViewModel?.SelectedItem;
@@ -1165,16 +1163,32 @@ namespace Unigram.Controls.Gallery
             var mediaPlayer = _mediaPlayer;
             var fileStream = _fileStream;
 
-            var parameters = new ViewServiceParams
+            if (GalleryCompactView.Current is ViewLifetimeControl control)
             {
-                ViewMode = ApplicationViewMode.CompactOverlay,
-                Width = width,
-                Height = height,
-                PersistentId = "PIP",
-                Content = control => new GalleryCompactView(aggregator, control, mediaPlayer, fileStream)
-            };
+                control.Dispatcher.Dispatch(() =>
+                {
+                    if (control.Window.Content is GalleryCompactView player)
+                    {
+                        player.Update(mediaPlayer, fileStream);
+                    }
 
-            _compactLifetime = await viewService.OpenAsync(parameters);
+                    ApplicationView.GetForCurrentView().TryResizeView(new Size(width, height));
+                });
+            }
+            else
+            {
+                var parameters = new ViewServiceParams
+                {
+                    ViewMode = ApplicationViewMode.CompactOverlay,
+                    Width = width,
+                    Height = height,
+                    PersistentId = "PIP",
+                    Content = control => new GalleryCompactView(control, mediaPlayer, fileStream)
+                };
+
+                await viewService.OpenAsync(parameters);
+            }
+
             OnBackRequestedOverride(this, new HandledEventArgs());
         }
 

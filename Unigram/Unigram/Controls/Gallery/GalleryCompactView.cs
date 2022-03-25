@@ -1,6 +1,5 @@
 ﻿using System;
 using Unigram.Common;
-using Unigram.Services;
 using Unigram.Services.ViewService;
 using Windows.Media.Playback;
 using Windows.UI.Xaml;
@@ -10,21 +9,21 @@ namespace Unigram.Controls.Gallery
 {
     public class GalleryCompactView : MediaPlayerElement
     {
-        private readonly IEventAggregator _aggregator;
         private readonly ViewLifetimeControl _lifetime;
 
         private MediaPlayer _mediaPlayer;
         private RemoteFileStream _fileStream;
 
-        public GalleryCompactView(IEventAggregator aggregator, ViewLifetimeControl lifetime, MediaPlayer player, RemoteFileStream fileStream)
+        public static ViewLifetimeControl Current { get; private set; }
+
+        public GalleryCompactView(ViewLifetimeControl lifetime, MediaPlayer player, RemoteFileStream fileStream)
         {
-            _aggregator = aggregator;
             _lifetime = lifetime;
 
             _mediaPlayer = player;
             _fileStream = fileStream;
 
-            _aggregator.Subscribe(this);
+            Current = lifetime;
 
             RequestedTheme = ElementTheme.Dark;
             TransportControls = new MediaTransportControls
@@ -52,13 +51,28 @@ namespace Unigram.Controls.Gallery
             lifetime.Released += OnReleased;
         }
 
+        public void Update(MediaPlayer player, RemoteFileStream fileStream)
+        {
+            Dispose();
+
+            _mediaPlayer = player;
+            _fileStream = fileStream;
+
+            SetMediaPlayer(player);
+        }
+
         private void OnReleased(object sender, EventArgs e)
         {
             _lifetime.Closed -= OnReleased;
             _lifetime.Released -= OnReleased;
 
-            _aggregator.Unsubscribe(this);
+            Current = null;
 
+            Dispose();
+        }
+
+        private void Dispose()
+        {
             if (_mediaPlayer != null)
             {
                 _mediaPlayer.Source = null;
