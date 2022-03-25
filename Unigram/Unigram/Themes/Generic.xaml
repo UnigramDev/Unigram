@@ -2618,9 +2618,6 @@
                                 IsHitTestVisible="False"
                                 Grid.ColumnSpan="3" />
 
-                        <local:BackButton Width="40"
-                                          Margin="0,0,-12,0"
-                                          Visibility="{TemplateBinding BackVisibility}" />
                         <TextBlock Text="{TemplateBinding Text}"
                                    Foreground="{TemplateBinding Foreground}"
                                    FontFamily="{ThemeResource EmojiThemeFontFamily}"
@@ -2680,9 +2677,6 @@
                                           HorizontalContentAlignment="Stretch"
                                           VerticalContentAlignment="Stretch"
                                           Grid.Column="1" />
-                        <local:BackButton Width="40"
-                                          Margin="0,0,-12,0"
-                                          Visibility="{TemplateBinding BackVisibility}" />
                         <microsoft:ProgressBar IsIndeterminate="{TemplateBinding IsLoading}"
                                                Background="Transparent"
                                                VerticalAlignment="Bottom"
@@ -2723,9 +2717,6 @@
                                 IsHitTestVisible="False"
                                 Grid.ColumnSpan="2" />
 
-                        <local:BackButton Width="40"
-                                          Margin="0,0,-12,0"
-                                          Visibility="{TemplateBinding BackVisibility}" />
                         <TextBlock Text="{TemplateBinding Text}"
                                    Foreground="{TemplateBinding Foreground}"
                                    FontFamily="{ThemeResource EmojiThemeFontFamily}"

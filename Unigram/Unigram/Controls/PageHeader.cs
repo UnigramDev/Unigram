@@ -11,19 +11,6 @@ namespace Unigram.Controls
             DefaultStyleKey = typeof(PageHeader);
         }
 
-        #region BackVisibility
-
-        public Visibility BackVisibility
-        {
-            get => (Visibility)GetValue(BackVisibilityProperty);
-            set => SetValue(BackVisibilityProperty, value);
-        }
-
-        public static readonly DependencyProperty BackVisibilityProperty =
-            DependencyProperty.Register("BackVisibility", typeof(Visibility), typeof(PageHeader), new PropertyMetadata(Visibility.Visible));
-
-        #endregion
-
         #region Text
 
         public string Text
@@ -130,19 +117,6 @@ namespace Unigram.Controls
         {
             DefaultStyleKey = typeof(ContentPageHeader);
         }
-
-        #region BackVisibility
-
-        public Visibility BackVisibility
-        {
-            get => (Visibility)GetValue(BackVisibilityProperty);
-            set => SetValue(BackVisibilityProperty, value);
-        }
-
-        public static readonly DependencyProperty BackVisibilityProperty =
-            DependencyProperty.Register("BackVisibility", typeof(Visibility), typeof(ContentPageHeader), new PropertyMetadata(Visibility.Visible));
-
-        #endregion
 
         #region IsLoading
 

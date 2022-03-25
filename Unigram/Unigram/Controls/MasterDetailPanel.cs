@@ -65,6 +65,8 @@ namespace Unigram.Controls
             var master = Children[5];
             var grip = Children[6] as FrameworkElement;
 
+            var detailHeaderDesiredSizeHeight = 48;
+
             if (_registerEvents)
             {
                 _registerEvents = false;
@@ -87,7 +89,7 @@ namespace Unigram.Controls
                 banner.Measure(availableSize);
 
                 master.Measure(CreateSize(availableSize.Width, Math.Max(0, availableSize.Height - banner.DesiredSize.Height)));
-                detail.Measure(CreateSize(availableSize.Width, Math.Max(0, availableSize.Height - banner.DesiredSize.Height - Math.Max(48, detailHeader.DesiredSize.Height))));
+                detail.Measure(CreateSize(availableSize.Width, Math.Max(0, availableSize.Height - banner.DesiredSize.Height - detailHeaderDesiredSizeHeight)));
                 border.Measure(CreateSize(availableSize.Width, Math.Max(0, availableSize.Height)));
 
                 grip.Measure(CreateSize(0, 0));
@@ -109,7 +111,7 @@ namespace Unigram.Controls
                 background.Measure(CreateSize(availableSize.Width - result, availableSize.Height));
 
                 master.Measure(CreateSize(result, availableSize.Height));
-                detail.Measure(CreateSize(availableSize.Width - result, availableSize.Height - banner.DesiredSize.Height - Math.Max(48, detailHeader.DesiredSize.Height)));
+                detail.Measure(CreateSize(availableSize.Width - result, availableSize.Height - banner.DesiredSize.Height - detailHeaderDesiredSizeHeight));
                 border.Measure(CreateSize(availableSize.Width - result, availableSize.Height));
 
                 grip.Measure(CreateSize(8, availableSize.Height));
@@ -128,6 +130,8 @@ namespace Unigram.Controls
             var master = Children[5];
             var grip = Children[6];
 
+            var detailHeaderDesiredSizeHeight = 48;
+
             // Single column mode
             if (finalSize.Width < columnMinimalWidthLeft + columnMinimalWidthMain)
             {
@@ -138,8 +142,8 @@ namespace Unigram.Controls
                 detailHeader.Arrange(CreateRect(0, banner.DesiredSize.Height, finalSize.Width, detailHeader.DesiredSize.Height));
 
                 master.Arrange(CreateRect(0, banner.DesiredSize.Height, finalSize.Width, finalSize.Height - banner.DesiredSize.Height));
-                detail.Arrange(CreateRect(0, banner.DesiredSize.Height + Math.Max(48, detailHeader.DesiredSize.Height), finalSize.Width, finalSize.Height - banner.DesiredSize.Height - Math.Max(48, detailHeader.DesiredSize.Height)));
-                border.Arrange(CreateRect(0, banner.DesiredSize.Height + Math.Max(48, detailHeader.DesiredSize.Height), finalSize.Width, finalSize.Height));
+                detail.Arrange(CreateRect(0, banner.DesiredSize.Height + detailHeaderDesiredSizeHeight, finalSize.Width, finalSize.Height - banner.DesiredSize.Height - detailHeaderDesiredSizeHeight));
+                border.Arrange(CreateRect(0, banner.DesiredSize.Height + detailHeaderDesiredSizeHeight, finalSize.Width, finalSize.Height));
 
                 grip.Arrange(CreateRect(0, 0, 0, 0));
             }
@@ -162,7 +166,7 @@ namespace Unigram.Controls
                 detailHeader.Arrange(CreateRect(result, banner.DesiredSize.Height, finalSize.Width - result, detailHeader.DesiredSize.Height));
 
                 master.Arrange(CreateRect(0, 0, result, finalSize.Height));
-                detail.Arrange(CreateRect(result, banner.DesiredSize.Height + Math.Max(48, detailHeader.DesiredSize.Height), finalSize.Width - result, finalSize.Height - banner.DesiredSize.Height - detailHeader.DesiredSize.Height));
+                detail.Arrange(CreateRect(result, banner.DesiredSize.Height + detailHeaderDesiredSizeHeight, finalSize.Width - result, finalSize.Height - banner.DesiredSize.Height - detailHeaderDesiredSizeHeight));
                 border.Arrange(CreateRect(result, banner.DesiredSize.Height, finalSize.Width - result, finalSize.Height - banner.DesiredSize.Height));
 
                 grip.Arrange(CreateRect(result, 0, 8, finalSize.Height));
