@@ -604,7 +604,7 @@ namespace Unigram.Views
             };
 
             var offset = visual.Compositor.CreateVector3KeyFrameAnimation();
-            offset.InsertKeyFrame(show ? 0 : 1, new Vector3(0, -40, 0));
+            offset.InsertKeyFrame(show ? 0 : 1, new Vector3(0, -32, 0));
             offset.InsertKeyFrame(show ? 1 : 0, new Vector3());
             //offset.Duration = TimeSpan.FromMilliseconds(150);
 
@@ -1432,6 +1432,11 @@ namespace Unigram.Views
 
         private void SetPaneToggleButtonVisibility(PaneToggleButtonVisibility visibility)
         {
+            if (MasterDetail.NavigationService.CanGoBack)
+            {
+                visibility = PaneToggleButtonVisibility.Back;
+            }
+
             Root?.SetPaneToggleButtonVisibility(visibility);
 
             var visible = visibility == PaneToggleButtonVisibility.Back;
@@ -1704,14 +1709,20 @@ namespace Unigram.Views
                     Root?.SetSelectedIndex(RootDestination.Chats);
                     break;
                 case 1:
+                    _shouldGoBackWithDetail = false;
+
                     Root?.SetSelectedIndex(RootDestination.Contacts);
                     FindName(nameof(ContactsRoot));
                     break;
                 case 2:
+                    _shouldGoBackWithDetail = false;
+
                     Root?.SetSelectedIndex(RootDestination.Calls);
                     FindName(nameof(CallsRoot));
                     break;
                 case 3:
+                    _shouldGoBackWithDetail = false;
+
                     Root?.SetSelectedIndex(RootDestination.Settings);
 
                     if (SettingsView == null)
@@ -1862,8 +1873,14 @@ namespace Unigram.Views
                 return;
             }
 
+            _shouldGoBackWithDetail = false;
+
             rpMasterTitlebar.IsLocked = true;
             MasterDetail.AllowCompact = false;
+
+            ComposeButton.Visibility = string.IsNullOrEmpty(SearchField.Text)
+                ? Visibility.Visible
+                : Visibility.Collapsed;
 
             if (rpMasterTitlebar.SelectedIndex == 0)
             {
@@ -2714,19 +2731,18 @@ namespace Unigram.Views
             batch.End();
         }
 
+        private bool _shouldGoBackWithDetail = true;
+
         public void BackRequested()
         {
-            if (!_searchCollapsed)
+            if (_shouldGoBackWithDetail && MasterDetail.NavigationService.CanGoBack)
             {
-                Search_LostFocus(null, null);
+                BootStrapper.Current.RaiseBackRequested();
             }
-            else if (rpMasterTitlebar.SelectedIndex > 0)
+            else
             {
-                rpMasterTitlebar.SelectedIndex = 0;
-            }
-            else if (ViewModel.Chats.Items.ChatList is ChatListArchive)
-            {
-                UpdateFilter(ChatFilterViewModel.Main);
+                _shouldGoBackWithDetail = true;
+                OnBackRequested(new HandledEventArgs());
             }
         }
 

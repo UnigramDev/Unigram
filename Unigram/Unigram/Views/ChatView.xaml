@@ -323,10 +323,81 @@
         </DataTemplate>
     </UserControl.Resources>
 
-    <local:HostedPage.Header>
+    <Grid x:Name="LayoutRoot"
+          Background="Transparent"
+          AllowDrop="True"
+          DragOver="OnDragOver"
+          Drop="OnDrop"
+          Margin="0,-48,0,0">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="FilledState" />
+                <VisualState x:Name="SidebarState">
+                    <VisualState.Setters>
+                        <Setter Target="StickersPanel.(Grid.Column)"
+                                Value="1" />
+                        <Setter Target="StickersPanel.(Grid.Row)"
+                                Value="0" />
+                        <Setter Target="StickersPanel.(Grid.RowSpan)"
+                                Value="5" />
+                        <Setter Target="StickersPanel.Width"
+                                Value="320" />
+                        <Setter Target="StickersPanel.Margin"
+                                Value="0" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                </VisualState>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="500" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="Show.Width"
+                                Value="376*" />
+                        <Setter Target="Show.MaxWidth"
+                                Value="376" />
+                        <Setter Target="Hide.Width"
+                                Value="*" />
+                        <!--<Setter Target="BackgroundElement.BorderThickness" Value="1"/>
+                             <Setter Target="BackgroundElement.Margin" Value="8"/>-->
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+            <RowDefinition x:Name="KeyboardPlaceholder"
+                           Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <chats:ChatBackgroundPresenter x:Name="BackgroundPresenter"
+                                       x:Load="False"
+                                       Grid.RowSpan="5" />
+
+        <Grid Padding="0,0,0,8"
+              VerticalAlignment="Bottom"
+              Grid.RowSpan="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="Show" />
+                <ColumnDefinition x:Name="Hide"
+                                  Width="0" />
+            </Grid.ColumnDefinitions>
+            <Border x:Name="FlyoutArea"
+                    MinHeight="{ThemeResource TelegramToolBarHeight}" />
+        </Grid>
+
         <controls:ContentPageHeader x:Name="Header"
                                     Background="Transparent"
-                                    Canvas.ZIndex="1">
+                                    Canvas.ZIndex="3">
             <Grid x:Name="InfoPanel"
                   Margin="12,0,0,0">
                 <Grid.ColumnDefinitions>
@@ -416,6 +487,7 @@
                                       FontSize="20"
                                       AutomationProperties.Name="{CustomResource VideoCall}"
                                       ToolTipService.ToolTip="{CustomResource VideoCall}"
+                                      Margin="0,0,-4,0"
                                       Grid.Column="2">
                     <Button.CommandParameter>
                         <x:Boolean>True</x:Boolean>
@@ -429,6 +501,7 @@
                                       Glyph="&#xE717;"
                                       AutomationProperties.Name="{CustomResource Call}"
                                       ToolTipService.ToolTip="{CustomResource Call}"
+                                      Margin="0,0,-4,0"
                                       Grid.Column="3">
                     <Button.CommandParameter>
                         <x:Boolean>False</x:Boolean>
@@ -440,6 +513,7 @@
                                       Glyph="&#xE721;"
                                       AutomationProperties.Name="{CustomResource Search}"
                                       ToolTipService.ToolTip="{CustomResource Search}"
+                                      Margin="0,0,-4,0"
                                       Grid.Column="4" />
 
                 <controls:MoreButton x:Name="Options"
@@ -447,78 +521,6 @@
                                      Grid.Column="5" />
             </Grid>
         </controls:ContentPageHeader>
-    </local:HostedPage.Header>
-
-    <Grid x:Name="LayoutRoot"
-          Background="Transparent"
-          AllowDrop="True"
-          DragOver="OnDragOver"
-          Drop="OnDrop">
-        <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup>
-                <VisualState x:Name="FilledState" />
-                <VisualState x:Name="SidebarState">
-                    <VisualState.Setters>
-                        <Setter Target="StickersPanel.(Grid.Column)"
-                                Value="1" />
-                        <Setter Target="StickersPanel.(Grid.Row)"
-                                Value="0" />
-                        <Setter Target="StickersPanel.(Grid.RowSpan)"
-                                Value="5" />
-                        <Setter Target="StickersPanel.Width"
-                                Value="320" />
-                        <Setter Target="StickersPanel.Margin"
-                                Value="0" />
-                    </VisualState.Setters>
-                </VisualState>
-            </VisualStateGroup>
-            <VisualStateGroup>
-                <VisualState>
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="0" />
-                    </VisualState.StateTriggers>
-                </VisualState>
-                <VisualState>
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="500" />
-                    </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <Setter Target="Show.Width"
-                                Value="376*" />
-                        <Setter Target="Show.MaxWidth"
-                                Value="376" />
-                        <Setter Target="Hide.Width"
-                                Value="*" />
-                        <!--<Setter Target="BackgroundElement.BorderThickness" Value="1"/>
-                             <Setter Target="BackgroundElement.Margin" Value="8"/>-->
-                    </VisualState.Setters>
-                </VisualState>
-            </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-            <RowDefinition Height="Auto" />
-            <RowDefinition x:Name="KeyboardPlaceholder"
-                           Height="Auto" />
-        </Grid.RowDefinitions>
-
-        <chats:ChatBackgroundPresenter x:Name="BackgroundPresenter"
-                                       x:Load="False"
-                                       Grid.RowSpan="5" />
-
-        <Grid Padding="0,0,0,8"
-              VerticalAlignment="Bottom"
-              Grid.RowSpan="4">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition x:Name="Show" />
-                <ColumnDefinition x:Name="Hide"
-                                  Width="0" />
-            </Grid.ColumnDefinitions>
-            <Border x:Name="FlyoutArea"
-                    MinHeight="{ThemeResource TelegramToolBarHeight}" />
-        </Grid>
 
         <StackPanel x:Name="ClipperOuter"
                     Canvas.ZIndex="2"

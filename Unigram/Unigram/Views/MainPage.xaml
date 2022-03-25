@@ -68,9 +68,7 @@
                                                            Opacity="{TemplateBinding BackgroundOpacity}"
                                                            Loading="ChatBackgroundPresenter_Loading" />
 
-                            <!--<Grid BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding Padding}" VerticalAlignment="Top"/>-->
-
-                            <Grid Canvas.ZIndex="1">
+                            <Grid>
                                 <ContentControl x:Name="DetailHeaderPresenter2"
                                                 Content="{TemplateBinding DetailHeader}"
                                                 CornerRadius="{ThemeResource NavigationViewContentGridCornerRadius}"
@@ -114,8 +112,7 @@
                                             IsTabStop="False"
                                             HorizontalContentAlignment="Stretch"
                                             VerticalContentAlignment="Stretch"
-                                            VerticalAlignment="Top"
-                                            Canvas.ZIndex="1" />
+                                            VerticalAlignment="Top" />
 
                             <Grid x:Name="DetailPresenter" />
 
@@ -441,7 +438,7 @@
                 </Grid.RowDefinitions>
                 <controls:ContentPageHeader x:Name="PageHeader"
                                             Background="Transparent"
-                                            BackVisibility="Collapsed"
+                                            BorderBrush="Transparent"
                                             Margin="0,-8,0,0">
                     <Grid x:Name="Header">
                         <Grid.ColumnDefinitions>
@@ -538,7 +535,8 @@
                                         Orientation="Horizontal"
                                         VerticalAlignment="Center"
                                         Grid.Column="2">
-                                <controls:GlyphButton Glyph="&#xE996;"
+                                <controls:GlyphButton x:Name="ComposeButton"
+                                                      Glyph="&#xE996;"
                                                       AutomationProperties.Name="{CustomResource NewConversationShortcut}"
                                                       ToolTipService.ToolTip="{CustomResource NewConversationShortcut}"
                                                       FontSize="16"
@@ -595,7 +593,6 @@
                         </Grid>
 
                         <Grid x:Name="ManagePanel"
-                              Background="{ThemeResource PageHeaderBackgroundBrush}"
                               Visibility="Collapsed"
                               Grid.ColumnSpan="3">
                             <Grid.ColumnDefinitions>
@@ -610,23 +607,35 @@
                             </Grid.ColumnDefinitions>
                             <controls:GlyphButton x:Name="ManageMute"
                                                   Command="{x:Bind ViewModel.Chats.ChatsNotifyCommand}"
-                                                  Style="{StaticResource HeaderGlyphButtonStyle}" />
+                                                  Style="{StaticResource HeaderGlyphButtonStyle}"
+                                                  VerticalAlignment="Center"
+                                                  Width="40"
+                                                  Height="40" />
                             <controls:GlyphButton x:Name="ManageMark"
                                                   Command="{x:Bind ViewModel.Chats.ChatsMarkCommand}"
                                                   FontFamily="{StaticResource TelegramThemeFontFamily}"
                                                   Style="{StaticResource HeaderGlyphButtonStyle}"
+                                                  VerticalAlignment="Center"
+                                                  Width="40"
+                                                  Height="40"
                                                   Grid.Column="1" />
                             <controls:GlyphButton Glyph="&#xE7B8;"
                                                   Command="{x:Bind ViewModel.Chats.ChatsArchiveCommand}"
                                                   AutomationProperties.Name="{CustomResource Archive}"
                                                   ToolTipService.ToolTip="{CustomResource Archive}"
                                                   Style="{StaticResource HeaderGlyphButtonStyle}"
+                                                  VerticalAlignment="Center"
+                                                  Width="40"
+                                                  Height="40"
                                                   Grid.Column="2" />
                             <controls:GlyphButton Glyph="&#xE74D;"
                                                   Command="{x:Bind ViewModel.Chats.ChatsDeleteCommand}"
                                                   AutomationProperties.Name="{CustomResource Delete}"
                                                   ToolTipService.ToolTip="{CustomResource Delete}"
                                                   Style="{StaticResource HeaderGlyphButtonStyle}"
+                                                  VerticalAlignment="Center"
+                                                  Width="40"
+                                                  Height="40"
                                                   Grid.Column="3" />
                             <controls:GlyphButton x:Name="ManageClear"
                                                   Glyph="&#xEA99;"
@@ -634,6 +643,9 @@
                                                   AutomationProperties.Name="{CustomResource ClearHistory}"
                                                   ToolTipService.ToolTip="{CustomResource ClearHistory}"
                                                   Style="{StaticResource HeaderGlyphButtonStyle}"
+                                                  VerticalAlignment="Center"
+                                                  Width="40"
+                                                  Height="40"
                                                   Grid.Column="4" />
 
                             <ContentControl Content="{x:Bind ViewModel.Chats.SelectedItems.Count, Mode=OneWay}"
@@ -641,7 +653,7 @@
                                             VerticalContentAlignment="Center"
                                             FontWeight="SemiBold"
                                             Padding="12,0"
-                                            Height="{ThemeResource AppBarThemeCompactHeight}"
+                                            Height="48"
                                             Grid.Column="6">
                                 <ContentControl.ContentTransitions>
                                     <TransitionCollection>
@@ -652,12 +664,6 @@
                                     <RectangleGeometry Rect="0,0,200,48" />
                                 </ContentControl.Clip>
                             </ContentControl>
-
-                            <controls:GlyphButton Click="Manage_Click"
-                                                  Glyph="&#xE711;"
-                                                  Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
-                                                  Style="{StaticResource HeaderGlyphButtonStyle}"
-                                                  Grid.Column="7" />
                         </Grid>
                     </Grid>
                 </controls:ContentPageHeader>
@@ -957,7 +963,8 @@
                                                                  DragItemsStarting="ChatFilters_DragItemsStarting"
                                                                  DragItemsCompleted="ChatFilters_DragItemsCompleted"
                                                                  ScrollViewer.IsHorizontalScrollChainingEnabled="False"
-                                                                 Height="40">
+                                                                 Height="40"
+                                                                 Margin="0,-8,0,0">
                                                 <controls:TopNavView.ItemTemplate>
                                                     <DataTemplate x:DataType="viewModels:ChatFilterViewModel">
                                                         <StackPanel Orientation="Horizontal">
@@ -979,10 +986,6 @@
                                                     </DataTemplate>
                                                 </controls:TopNavView.ItemTemplate>
                                             </controls:TopNavView>
-
-                                            <Border BorderBrush="{ThemeResource PageHeaderBorderBrush}"
-                                                    BorderThickness="0,0,0,1"
-                                                    VerticalAlignment="Bottom" />
                                         </Grid>
                                     </Border>
 

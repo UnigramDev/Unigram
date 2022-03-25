@@ -529,9 +529,6 @@ namespace Unigram.Views
 
             StickersPanel.MaxWidth = SettingsService.Current.IsAdaptiveWideEnabled ? 664 : double.PositiveInfinity;
 
-            //Header.BackVisibility = ViewModel.NavigationService.CanGoBack
-            //    ? Visibility.Visible
-            //    : Visibility.Collapsed;
             Options.Visibility = ViewModel.Type == DialogType.History
                 ? Visibility.Visible
                 : Visibility.Collapsed;
