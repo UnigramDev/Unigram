@@ -195,14 +195,14 @@
                                       FontSize="16"
                                       FontFamily="{StaticResource TelegramThemeFontFamily}"
                                       Foreground="{ThemeResource TextFillColorTertiaryBrush}"
-                                      HorizontalAlignment="Center"
+                                      HorizontalAlignment="Right"
                                       VerticalAlignment="Center" />
                         </Border>
                         <Border x:Name="UnreadMentionsBadge"
                                 Background="{ThemeResource ChatUnreadBadgeBrush}"
-                                MinWidth="20"
-                                Height="20"
-                                CornerRadius="10"
+                                Width="16"
+                                Height="16"
+                                CornerRadius="8"
                                 VerticalAlignment="Bottom"
                                 HorizontalAlignment="Right"
                                 Margin="8,0,0,0"
@@ -211,7 +211,7 @@
                                 Grid.Row="1">
                             <TextBlock x:Name="UnreadMentionsLabel"
                                        Text="&#xE986;"
-                                       FontSize="16"
+                                       FontSize="12"
                                        FontFamily="{StaticResource SymbolThemeFontFamily}"
                                        Style="{StaticResource CaptionTextBlockStyle}"
                                        Foreground="{ThemeResource ChatUnreadLabelBrush}"
