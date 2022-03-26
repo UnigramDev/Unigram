@@ -1663,6 +1663,13 @@ Read more about how to update your device [here](https://support.microsoft.com/h
                     value.Title = updateChatTitle.Title;
                 }
             }
+            else if (update is UpdateChatMessageTtl updateChatMessageTtl)
+            {
+                if (_chats.TryGetValue(updateChatMessageTtl.ChatId, out Chat value))
+                {
+                    value.MessageTtl = updateChatMessageTtl.MessageTtl;
+                }
+            }
             else if (update is UpdateChatUnreadMentionCount updateChatUnreadMentionCount)
             {
                 if (_chats.TryGetValue(updateChatUnreadMentionCount.ChatId, out Chat value))

@@ -1728,7 +1728,30 @@ namespace Unigram.Views
             }
             if (user != null || (basicGroup != null && basicGroup.CanDeleteMessages()) || (supergroup != null && supergroup.CanDeleteMessages()))
             {
-                flyout.CreateFlyoutItem(ViewModel.SetTimerCommand, Strings.Resources.SetTimer, new FontIcon { Glyph = Icons.Timer });
+                var autodelete = new MenuFlyoutSubItem();
+                autodelete.Text = Strings.Resources.EnableAutoDelete;
+                autodelete.Icon = new FontIcon { Glyph = Icons.Timer, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
+
+                void AddToggle(int value, int parameter, string text)
+                {
+                    var item = new ToggleMenuFlyoutItem();
+                    item.Text = text;
+                    item.IsChecked = value == parameter;
+                    item.CommandParameter = parameter;
+                    item.Command = ViewModel.SetTimerCommand;
+
+                    autodelete.Items.Add(item);
+                }
+
+                AddToggle(chat.MessageTtl, 0, Strings.Resources.ShortMessageLifetimeForever);
+
+                autodelete.CreateFlyoutSeparator();
+
+                AddToggle(chat.MessageTtl, 60 * 60 * 24, Locale.FormatTtl(60 * 60 * 24));
+                AddToggle(chat.MessageTtl, 60 * 60 * 24 * 7, Locale.FormatTtl(60 * 60 * 24 * 7));
+                AddToggle(chat.MessageTtl, 60 * 60 * 24 * 31, Locale.FormatTtl(60 * 60 * 24 * 31));
+
+                flyout.Items.Add(autodelete);
             }
             if (ViewModel.SelectionMode != ListViewSelectionMode.Multiple)
             {

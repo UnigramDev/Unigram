@@ -228,7 +228,7 @@ namespace Unigram.Common
             {
                 return Declension("Minutes", ttl / 60);
             }
-            else if (ttl < 60 * 60 * 24)
+            else if (ttl <= 60 * 60 * 24)
             {
                 return Declension("Hours", ttl / 60 / 60);
             }
@@ -236,7 +236,7 @@ namespace Unigram.Common
             {
                 return Declension("Days", ttl / 60 / 60 / 24);
             }
-            else
+            else if (ttl < 60 * 60 * 24 * 31)
             {
                 int days = ttl / 60 / 60 / 24;
                 if (ttl % 7 == 0)
@@ -247,6 +247,10 @@ namespace Unigram.Common
                 {
                     return string.Format("{0} {1}", Declension("Weeks", days / 7), Declension("Days", days % 7));
                 }
+            }
+            else
+            {
+                return Declension("Months", ttl / 60 / 60 / 24 / 31);
             }
         }
 

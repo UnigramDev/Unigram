@@ -157,7 +157,7 @@ namespace Unigram.ViewModels
             ReadMentionsCommand = new RelayCommand(ReadMentionsExecute);
             SendCommand = new RelayCommand<string>(SendMessage);
             SwitchCommand = new RelayCommand<string>(SwitchExecute);
-            SetTimerCommand = new RelayCommand(SetTimerExecute);
+            SetTimerCommand = new RelayCommand<int>(SetTimerExecute);
             SetThemeCommand = new RelayCommand(SetThemeExecute);
             ActionCommand = new RelayCommand(ActionExecute);
             JoinRequestsCommand = new RelayCommand(JoinRequestsExecute);
@@ -3215,8 +3215,8 @@ namespace Unigram.ViewModels
 
         #region Set timer
 
-        public RelayCommand SetTimerCommand { get; }
-        private async void SetTimerExecute()
+        public RelayCommand<int> SetTimerCommand { get; }
+        private async void SetTimerExecute(int ttl)
         {
             var chat = _chat;
             if (chat == null)
@@ -3224,14 +3224,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var dialog = new ChatTtlPopup(chat.Type is ChatTypeSecret);
-            dialog.Value = chat.MessageTtl;
-
-            var confirm = await dialog.ShowQueuedAsync();
-            if (confirm == ContentDialogResult.Primary)
-            {
-                ProtoService.Send(new SetChatMessageTtl(chat.Id, dialog.Value));
-            }
+            ProtoService.Send(new SetChatMessageTtl(chat.Id, ttl));
         }
 
         #endregion
