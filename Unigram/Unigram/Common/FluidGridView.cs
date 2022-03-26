@@ -530,7 +530,7 @@ namespace Unigram.Common
                 }
 
                 maximumRowsOrColumns = itemsCount;
-                return parentLength / itemsCount;
+                return Math.Floor(parentLength / itemsCount);
             }
         }
 
