@@ -72,6 +72,7 @@ namespace Unigram.ViewModels
             AddCommand = new RelayCommand(AddExecute);
             DiscussCommand = new RelayCommand(DiscussExecute);
             EditCommand = new RelayCommand(EditExecute);
+            JoinCommand = new RelayCommand(JoinExecute);
             DeleteCommand = new RelayCommand(DeleteExecute);
             ShareCommand = new RelayCommand(ShareExecute);
             SecretChatCommand = new RelayCommand(SecretChatExecute);
@@ -864,6 +865,18 @@ namespace Unigram.ViewModels
 
                 NavigationService.NavigateToChat(fullInfo.LinkedChatId);
             }
+        }
+
+        public RelayCommand JoinCommand { get; }
+        private void JoinExecute()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            ProtoService.Send(new JoinChat(chat.Id));
         }
 
         public RelayCommand DeleteCommand { get; }

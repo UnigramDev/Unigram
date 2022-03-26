@@ -332,6 +332,8 @@ namespace Unigram.Controls
             {
                 Edit.Visibility = Visibility.Collapsed;
                 Join.Visibility = Visibility.Visible;
+
+                Join.Command = ViewModel.DeleteCommand;
                 Join.Content = Strings.Resources.VoipGroupLeave;
                 Join.Glyph = Icons.ArrowExit;
             }
@@ -415,11 +417,13 @@ namespace Unigram.Controls
 
                 if (group.CanJoin())
                 {
+                    Join.Command = ViewModel.JoinCommand;
                     Join.Content = Strings.Resources.VoipChatJoin;
                     Join.Glyph = Icons.ArrowEnter;
                 }
                 else
                 {
+                    Join.Command = ViewModel.DeleteCommand;
                     Join.Content = Strings.Resources.VoipGroupLeave;
                     Join.Glyph = Icons.ArrowExit;
                 }
@@ -620,11 +624,6 @@ namespace Unigram.Controls
                 if (!super.IsChannel)
                 {
                     flyout.CreateFlyoutItem(ViewModel.MembersCommand, Strings.Resources.SearchMembers, new FontIcon { Glyph = Icons.Search });
-
-                    if (supergroup.Status is not ChatMemberStatusCreator and not ChatMemberStatusLeft and not ChatMemberStatusBanned)
-                    {
-                        flyout.CreateFlyoutItem(ViewModel.DeleteCommand, Strings.Resources.LeaveMegaMenu, new FontIcon { Glyph = Icons.Delete });
-                    }
                 }
                 else if (supergroup.HasLinkedChat)
                 {
@@ -645,8 +644,6 @@ namespace Unigram.Controls
                 }
 
                 flyout.CreateFlyoutItem(ViewModel.MembersCommand, Strings.Resources.SearchMembers, new FontIcon { Glyph = Icons.Search });
-
-                flyout.CreateFlyoutItem(ViewModel.DeleteCommand, Strings.Resources.DeleteAndExit, new FontIcon { Glyph = Icons.Delete });
             }
 
             //flyout.CreateFlyoutItem(null, Strings.Resources.AddShortcut, new FontIcon { Glyph = Icons.Pin });
