@@ -191,7 +191,7 @@ namespace Unigram.Controls
         {
             var result = Math.Round(width * ratio);
             result = Math.Max(result, columnMinimalWidthLeft);
-            result = Math.Min(result, width - columnMinimalWidthMain);
+            result = Math.Min(result, columnMaximalWidthLeft);
 
             return result;
         }
