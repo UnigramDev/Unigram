@@ -205,6 +205,8 @@ namespace Unigram.Views.Chats
         private TextBlock _dateHeaderLabel;
         public TextBlock DateHeaderLabel => _dateHeaderLabel ??= FindName(nameof(DateHeaderLabel)) as TextBlock;
 
+        protected virtual float TopPadding => 48;
+
         protected void List_Loaded(object sender, RoutedEventArgs e)
         {
             var scrollingHost = ScrollingHost.GetScrollViewer();
@@ -224,6 +226,7 @@ namespace Unigram.Views.Chats
 
                 _properties = visual.Compositor.CreatePropertySet();
                 _properties.InsertScalar("ActualHeight", ProfileHeader.ActualSize.Y + 16);
+                _properties.InsertScalar("TopPadding", TopPadding);
 
                 var translation = visual.Compositor.CreateExpressionAnimation(
                     "scrollViewer.Translation.Y > -properties.ActualHeight ? 0 : -scrollViewer.Translation.Y - properties.ActualHeight");
@@ -233,7 +236,7 @@ namespace Unigram.Views.Chats
                 visual.StartAnimation("Translation.Y", translation);
 
                 var clip = visual.Compositor.CreateExpressionAnimation(
-                    "scrollViewer.Translation.Y > -properties.ActualHeight ? 0 : -scrollViewer.Translation.Y - properties.ActualHeight - 48");
+                    "scrollViewer.Translation.Y > -properties.ActualHeight ? 0 : -scrollViewer.Translation.Y - properties.ActualHeight - properties.TopPadding");
                 clip.SetReferenceParameter("scrollViewer", properties);
                 clip.SetReferenceParameter("properties", _properties);
 

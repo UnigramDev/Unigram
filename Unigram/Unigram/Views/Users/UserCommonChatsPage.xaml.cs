@@ -13,6 +13,8 @@ namespace Unigram.Views.Users
             InitializeComponent();
         }
 
+        protected override float TopPadding => 0;
+
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
             if (e.ClickedItem is Chat chat)

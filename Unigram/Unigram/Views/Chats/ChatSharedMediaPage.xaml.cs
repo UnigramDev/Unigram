@@ -57,6 +57,8 @@ namespace Unigram.Views.Chats
             }
         }
 
+        protected override float TopPadding => 0;
+
         private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 

@@ -67,15 +67,6 @@
                                                  Grid.RowSpan="1" />
                         </Grid>
                     </Grid>
-
-                    <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                            MaxWidth="640"
-                            Margin="12,0">
-                        <TextBox x:Name="Search"
-                                 PlaceholderText="{CustomResource Search}"
-                                 Margin="12,8"
-                                 InputScope="Search" />
-                    </Border>
                 </StackPanel>
             </ListView.Header>
             <ListView.Footer>
