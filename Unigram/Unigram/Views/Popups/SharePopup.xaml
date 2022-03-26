@@ -1,117 +1,111 @@
-﻿<controls:ContentPopup
-    x:Class="Unigram.Views.Popups.SharePopup"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Unigram.Views.Popups"
-    xmlns:cells="using:Unigram.Controls.Cells"
-    xmlns:controls="using:Unigram.Controls"
-    xmlns:common="using:Unigram.Common"
-    xmlns:drawers="using:Unigram.Controls.Drawers"
-    xmlns:selectors="using:Unigram.Selectors"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    Title="{x:Bind ViewModel.Title, Mode=OneWay}"
-    PrimaryButtonText="OK"
-    PrimaryButtonClick="OnPrimaryButtonClick"
-    IsPrimaryButtonEnabled="{x:Bind ConvertButtonEnabled(ViewModel.AllowEmptySelection, ViewModel.SelectedItems.Count), Mode=OneWay}"
-    SecondaryButtonText="Cancel"
-    Opened="OnOpened"
-    Closing="OnClosing">
+﻿<controls:ContentPopup x:Class="Unigram.Views.Popups.SharePopup"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:local="using:Unigram.Views.Popups"
+                       xmlns:cells="using:Unigram.Controls.Cells"
+                       xmlns:controls="using:Unigram.Controls"
+                       xmlns:common="using:Unigram.Common"
+                       xmlns:drawers="using:Unigram.Controls.Drawers"
+                       xmlns:selectors="using:Unigram.Selectors"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       mc:Ignorable="d"
+                       Title="{x:Bind ViewModel.Title, Mode=OneWay}"
+                       PrimaryButtonText="OK"
+                       PrimaryButtonClick="OnPrimaryButtonClick"
+                       IsPrimaryButtonEnabled="{x:Bind ConvertButtonEnabled(ViewModel.AllowEmptySelection, ViewModel.SelectedItems.Count), Mode=OneWay}"
+                       SecondaryButtonText="Cancel"
+                       Opened="OnOpened"
+                       Closing="OnClosing">
 
     <ContentControl.Resources>
-        <CollectionViewSource x:Name="ChatsResults" Source="{x:Bind ViewModel.Search, Mode=OneWay}" IsSourceGrouped="True"/>
+        <CollectionViewSource x:Name="ChatsResults"
+                              Source="{x:Bind ViewModel.Search, Mode=OneWay}"
+                              IsSourceGrouped="True" />
     </ContentControl.Resources>
 
     <Grid Margin="0,0,0,-24">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Button
-            x:Name="FocusTarget"
-            Content="Nothing to see here, tab further"
-            Width="12"
-            Height="12"
-            Opacity="0"/>
+        <Button x:Name="FocusTarget"
+                Content="Nothing to see here, tab further"
+                Width="12"
+                Height="12"
+                Opacity="0" />
 
-        <TextBox
-            x:Name="SearchField"
-            PlaceholderText="{CustomResource Search}"
-            PreventKeyboardDisplayOnProgrammaticFocus="True"
-            VerticalAlignment="Center"
-            GotFocus="Search_Click"
-            TextChanged="Search_TextChanged"
-            KeyDown="Search_KeyDown"/>
+        <TextBox x:Name="SearchField"
+                 PlaceholderText="{CustomResource Search}"
+                 PreventKeyboardDisplayOnProgrammaticFocus="True"
+                 VerticalAlignment="Center"
+                 GotFocus="Search_Click"
+                 TextChanged="Search_TextChanged"
+                 KeyDown="Search_KeyDown" />
 
-        <Grid Margin="-12,2,-12,0" Grid.Row="1">
-            <ListView
-                x:Name="ChatsPanel"
-                IsItemClickEnabled="True"
-                ItemsSource="{x:Bind ViewModel.Items}"
-                SelectionMode="Multiple"
-                SizeChanged="List_SizeChanged"
-                SelectionChanged="List_SelectionChanged"
-                ItemClick="List_ItemClick"
-                ChoosingItemContainer="OnChoosingItemContainer"
-                ContainerContentChanging="OnContainerContentChanging">
+        <Grid Margin="-12,2,-12,0"
+              Grid.Row="1">
+            <ListView x:Name="ChatsPanel"
+                      IsItemClickEnabled="True"
+                      ItemsSource="{x:Bind ViewModel.Items}"
+                      SelectionMode="Multiple"
+                      SizeChanged="List_SizeChanged"
+                      SelectionChanged="List_SelectionChanged"
+                      ItemClick="List_ItemClick"
+                      ChoosingItemContainer="OnChoosingItemContainer"
+                      ContainerContentChanging="OnContainerContentChanging">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <cells:ChatShareCell
-                            SelectionStroke="{ThemeResource ContentDialogBackground}"
-                            Stroke="{ThemeResource ChatLastMessageStateBrush}"/>
+                        <cells:ChatShareCell SelectionStroke="{ThemeResource ContentDialogBackground}"
+                                             Stroke="{ThemeResource ChatLastMessageStateBrush}" />
                     </DataTemplate>
                 </ListView.ItemTemplate>
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
-                        <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}"/>
+                        <Setter Property="CornerRadius"
+                                Value="{ThemeResource ControlCornerRadius}" />
                     </Style>
                 </ListView.ItemContainerStyle>
                 <ListView.Header>
-                    <Border Height="10"/>
+                    <Border Height="10" />
                 </ListView.Header>
                 <ListView.Footer>
-                    <Border Height="12"/>
+                    <Border Height="12" />
                 </ListView.Footer>
                 <ListView.ItemContainerTransitions>
-                    <TransitionCollection/>
+                    <TransitionCollection />
                 </ListView.ItemContainerTransitions>
             </ListView>
 
-            <controls:ScrollViewerScrim
-                Background="{ThemeResource ContentDialogBackground}"
-                ScrollingHost="{x:Bind ChatsPanel}"/>
+            <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
+                                        ScrollingHost="{x:Bind ChatsPanel}" />
 
-            <Grid x:Name="SearchPanel" x:Load="False">
-                <controls:TextListView
-                    x:Name="DialogsSearchListView"
-                    Background="{ThemeResource ContentDialogBackground}"
-                    ItemsSource="{x:Bind ChatsResults.View, Mode=OneWay}"
-                    IsItemClickEnabled="True"
-                    SelectionMode="None"
-                    ItemClick="ListView_ItemClick"
-                    ContainerContentChanging="DialogsSearchListView_ContainerContentChanging">
+            <Grid x:Name="SearchPanel"
+                  x:Load="False">
+                <controls:TextListView x:Name="DialogsSearchListView"
+                                       Background="{ThemeResource ContentDialogBackground}"
+                                       ItemsSource="{x:Bind ChatsResults.View, Mode=OneWay}"
+                                       IsItemClickEnabled="True"
+                                       SelectionMode="None"
+                                       ItemClick="ListView_ItemClick"
+                                       ContainerContentChanging="DialogsSearchListView_ContainerContentChanging">
                     <ListView.Header>
                         <StackPanel Visibility="{x:Bind ViewModel.TopChats, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
-                            <Border>
-                                <TextBlock
-                                    Text="{CustomResource ChatHints}"
-                                    Style="{StaticResource SettingsGroupTextBlockStyle}"
-                                    Margin="12,16,12,6" />
-                            </Border>
-                            <controls:TextListView
-                                SelectionMode="None"
-                                IsItemClickEnabled="True"
-                                ItemClick="ListView_ItemClick"
-                                ContainerContentChanging="TopChats_ContainerContentChanging"
-                                ItemsSource="{x:Bind ViewModel.TopChats, Mode=OneWay}"
-                                Style="{StaticResource HorizontalListViewStyle}">
+                            <controls:TextListView SelectionMode="None"
+                                                   IsItemClickEnabled="True"
+                                                   ItemClick="ListView_ItemClick"
+                                                   ContainerContentChanging="TopChats_ContainerContentChanging"
+                                                   ItemsSource="{x:Bind ViewModel.TopChats, Mode=OneWay}"
+                                                   Style="{StaticResource HorizontalListViewStyle}">
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
-                                        <StackPanel Width="72" Margin="0,12">
-                                            <Grid Width="48" Height="48" Margin="12,0">
-                                                <controls:ProfilePicture IsHitTestVisible="False"/>
+                                        <StackPanel Width="72"
+                                                    Margin="0,12">
+                                            <Grid Width="48"
+                                                  Height="48"
+                                                  Margin="12,0">
+                                                <controls:ProfilePicture IsHitTestVisible="False" />
                                                 <Border Background="{ThemeResource ChatUnreadBadgeBrush}"
                                                         MinWidth="20"
                                                         Height="20"
@@ -123,53 +117,71 @@
                                                     <TextBlock Style="{StaticResource CaptionTextBlockStyle}"
                                                                Foreground="{ThemeResource ChatUnreadLabelBrush}"
                                                                TextAlignment="Center"
-                                                               Margin="4,2,4,0"/>
+                                                               Margin="4,2,4,0" />
                                                 </Border>
                                             </Grid>
 
-                                            <TextBlock Margin="0,8,0,0" TextAlignment="Center" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" FontFamily="{ThemeResource EmojiThemeFontFamily}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                                            <TextBlock Margin="0,8,0,0"
+                                                       TextAlignment="Center"
+                                                       TextWrapping="NoWrap"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                                       Style="{StaticResource CaptionTextBlockStyle}" />
                                         </StackPanel>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
                                 <ListView.ItemContainerStyle>
-                                    <Style TargetType="ListViewItem">
-                                        <Setter Property="MinWidth" Value="0"/>
-                                        <Setter Property="Padding" Value="0"/>
+                                    <Style TargetType="ListViewItem"
+                                           BasedOn="{StaticResource DefaultListViewItemStyle}">
+                                        <Setter Property="MinWidth"
+                                                Value="0" />
+                                        <Setter Property="Padding"
+                                                Value="0" />
                                     </Style>
                                 </ListView.ItemContainerStyle>
                             </controls:TextListView>
 
-                            <Border>
-                                <TextBlock
-                                    Text="{CustomResource Recent}"
-                                    Style="{StaticResource SettingsGroupTextBlockStyle}"
-                                    Margin="12,16,12,6" />
-                            </Border>
+                            <TextBlock Text="{CustomResource Recent}"
+                                       Style="{StaticResource BaseTextBlockStyle}"
+                                       Margin="12,16,12,8" />
                         </StackPanel>
                     </ListView.Header>
                     <ListView.ItemTemplateSelector>
                         <selectors:SearchTemplateSelector>
                             <selectors:SearchTemplateSelector.ChatTemplate>
                                 <DataTemplate>
-                                    <Grid Margin="0,6">
+                                    <Grid Padding="12,6">
                                         <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
                                         </Grid.RowDefinitions>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition/>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition />
                                         </Grid.ColumnDefinitions>
-                                        <controls:ProfilePicture Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
+                                        <controls:ProfilePicture Width="36"
+                                                                 Height="36"
+                                                                 Margin="0,0,12,0"
+                                                                 Grid.RowSpan="2" />
 
-                                        <Grid VerticalAlignment="Bottom" HorizontalAlignment="Left" Grid.Column="1">
+                                        <Grid VerticalAlignment="Bottom"
+                                              HorizontalAlignment="Left"
+                                              Grid.Column="1">
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition/>
-                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition />
+                                                <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
-                                            <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" VerticalAlignment="Bottom"/>
-                                            <Grid Margin="4,0,0,-2" Grid.Column="1">
-                                                <Path Width="16" Height="16" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z M31.485,14.514L35.727,18.757 23.707,30.778 19.464,35.021 15.221,30.778 10.271,25.828 14.514,21.586 19.464,26.535z" Fill="{ThemeResource ChatVerifiedBadgeBrush}" StrokeThickness="0" />
+                                            <TextBlock TextWrapping="NoWrap"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       VerticalAlignment="Bottom" />
+                                            <Grid Margin="4,0,0,-2"
+                                                  Grid.Column="1">
+                                                <Path Width="16"
+                                                      Height="16"
+                                                      Stretch="Uniform"
+                                                      Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z M31.485,14.514L35.727,18.757 23.707,30.778 19.464,35.021 15.221,30.778 10.271,25.828 14.514,21.586 19.464,26.535z"
+                                                      Fill="{ThemeResource ChatVerifiedBadgeBrush}"
+                                                      StrokeThickness="0" />
                                             </Grid>
                                         </Grid>
                                         <TextBlock VerticalAlignment="Top"
@@ -180,39 +192,51 @@
                                                    TextWrapping="NoWrap"
                                                    Grid.Column="1"
                                                    Grid.Row="1"
-                                                   MaxLines="1"/>
+                                                   MaxLines="1" />
                                     </Grid>
                                 </DataTemplate>
                             </selectors:SearchTemplateSelector.ChatTemplate>
                         </selectors:SearchTemplateSelector>
                     </ListView.ItemTemplateSelector>
                     <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        <Style TargetType="ListViewItem"
+                               BasedOn="{StaticResource DefaultListViewItemStyle}">
+                            <Setter Property="HorizontalContentAlignment"
+                                    Value="Stretch" />
                         </Style>
                     </ListView.ItemContainerStyle>
                     <ListView.ItemContainerTransitions>
-                        <TransitionCollection/>
+                        <TransitionCollection />
                     </ListView.ItemContainerTransitions>
                     <ListView.GroupStyle>
                         <GroupStyle>
                             <GroupStyle.HeaderTemplate>
                                 <DataTemplate>
-                                    <!--<TextBlock Text="{Binding Key}" Style="{StaticResource BaseTextBlockStyle}"/>-->
-                                    <TextBlock Text="{Binding Key}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                                    <TextBlock Text="{Binding Key}"
+                                               Style="{StaticResource BaseTextBlockStyle}"
+                                               Margin="0,16,0,8"/>
                                 </DataTemplate>
                             </GroupStyle.HeaderTemplate>
                             <GroupStyle.HeaderContainerStyle>
                                 <Style TargetType="ListViewHeaderItem">
-                                    <Setter Property="Background" Value="{ThemeResource PageSubHeaderBackgroundBrush}" />
-                                    <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
-                                    <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
-                                    <Setter Property="Margin" Value="0,0,0,0"/>
-                                    <Setter Property="Padding" Value="12,0,12,0"/>
-                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                    <Setter Property="VerticalContentAlignment" Value="Top" />
-                                    <Setter Property="MinHeight" Value="0"/>
-                                    <Setter Property="UseSystemFocusVisuals" Value="True" />
+                                    <Setter Property="Background"
+                                            Value="Transparent" />
+                                    <Setter Property="FontFamily"
+                                            Value="{ThemeResource ContentControlThemeFontFamily}" />
+                                    <Setter Property="FontSize"
+                                            Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
+                                    <Setter Property="Margin"
+                                            Value="0,0,0,0" />
+                                    <Setter Property="Padding"
+                                            Value="12,0,12,0" />
+                                    <Setter Property="HorizontalContentAlignment"
+                                            Value="Stretch" />
+                                    <Setter Property="VerticalContentAlignment"
+                                            Value="Top" />
+                                    <Setter Property="MinHeight"
+                                            Value="0" />
+                                    <Setter Property="UseSystemFocusVisuals"
+                                            Value="True" />
                                     <Setter Property="Template">
                                         <Setter.Value>
                                             <ControlTemplate TargetType="ListViewHeaderItem">
@@ -227,7 +251,7 @@
                                                                           ContentTemplate="{TemplateBinding ContentTemplate}"
                                                                           ContentTransitions="{TemplateBinding ContentTransitions}"
                                                                           HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
                                                     </Border>
                                                 </Border>
                                             </ControlTemplate>
@@ -239,44 +263,46 @@
                     </ListView.GroupStyle>
                 </controls:TextListView>
 
-                <controls:ScrollViewerScrim
-                    Background="{ThemeResource ContentDialogBackground}"
-                    ScrollingHost="{x:Bind DialogsSearchListView}"/>
+                <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
+                                            ScrollingHost="{x:Bind DialogsSearchListView}" />
             </Grid>
         </Grid>
 
-        <Grid x:Name="CommentPanel" Padding="0,0,0,8" Visibility="{x:Bind ViewModel.IsCommentEnabled, Mode=OneWay}" Grid.Row="2">
-            <controls:FormattedTextBox
-                x:Name="CaptionInput"
-                Accept="CaptionInput_Accept"
-                Padding="10,6,36,5"
-                FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                PlaceholderText="{CustomResource ShareComment}">
+        <Grid x:Name="CommentPanel"
+              Padding="0,0,0,8"
+              Visibility="{x:Bind ViewModel.IsCommentEnabled, Mode=OneWay}"
+              Grid.Row="2">
+            <controls:FormattedTextBox x:Name="CaptionInput"
+                                       Accept="CaptionInput_Accept"
+                                       Padding="10,6,36,5"
+                                       FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                       PlaceholderText="{CustomResource ShareComment}">
                 <FlyoutBase.AttachedFlyout>
-                    <Flyout x:Name="EmojiFlyout" Placement="Top" ShowMode="Transient">
+                    <Flyout x:Name="EmojiFlyout"
+                            Placement="Top"
+                            ShowMode="Transient">
                         <Flyout.FlyoutPresenterStyle>
-                            <Style TargetType="FlyoutPresenter">
-                                <Setter Property="Padding" Value="0"/>
+                            <Style TargetType="FlyoutPresenter"
+                                   BasedOn="{StaticResource DefaultFlyoutPresenterStyle}">
+                                <Setter Property="Padding"
+                                        Value="0" />
                             </Style>
                         </Flyout.FlyoutPresenterStyle>
-                        <drawers:EmojiDrawer
-                            ItemClick="Emoji_ItemClick"
-                            x:Name="EmojiPanel"
-                            Width="300"
-                            Height="360"/>
+                        <drawers:EmojiDrawer ItemClick="Emoji_ItemClick"
+                                             x:Name="EmojiPanel"
+                                             Width="300"
+                                             Height="360" />
                     </Flyout>
                 </FlyoutBase.AttachedFlyout>
             </controls:FormattedTextBox>
 
-            <controls:GlyphButton
-                Click="Emoji_Click"
-                Glyph="&#xE76E;"
-                AllowFocusOnInteraction="False"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Top"
-                Width="40"
-                Height="40"
-                Margin="0,-4,-4,-4"/>
+            <controls:GlyphButton Click="Emoji_Click"
+                                  Glyph="&#xE76E;"
+                                  AllowFocusOnInteraction="False"
+                                  HorizontalAlignment="Right"
+                                  VerticalAlignment="Center"
+                                  Width="36"
+                                  Height="32" />
         </Grid>
     </Grid>
 </controls:ContentPopup>

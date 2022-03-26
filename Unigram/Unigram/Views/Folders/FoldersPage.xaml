@@ -45,6 +45,7 @@
                                 <DataTemplate>
                                     <controls:BadgeButton FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                                           Style="{StaticResource GlyphBadgeButtonStyle}"
+                                                          IsChevronVisible="True"
                                                           ContextRequested="Item_ContextRequested" />
                                 </DataTemplate>
                             </muxc:ItemsRepeater.ItemTemplate>

@@ -349,7 +349,7 @@ namespace Unigram.Views.Popups
                 flags.Add(new FilterFlag { Flag = ChatListFilterFlags.ExcludeArchived });
             }
 
-            var header = new ListView();
+            var header = new MultipleListView();
             header.SelectionMode = ListViewSelectionMode.Multiple;
             header.ItemsSource = flags;
             header.ItemTemplate = BootStrapper.Current.Resources["FolderPickerTemplate"] as DataTemplate;
@@ -368,23 +368,21 @@ namespace Unigram.Views.Popups
             var panel = new StackPanel();
             panel.Children.Add(new Border
             {
-                Background = BootStrapper.Current.Resources["PageBackgroundDarkBrush"] as Brush,
                 Child = new TextBlock
                 {
                     Text = Strings.Resources.FilterChatTypes,
-                    Padding = new Thickness(12, 0, 0, 0),
-                    Style = BootStrapper.Current.Resources["SettingsGroupTextBlockStyle"] as Style
+                    Padding = new Thickness(12, 16, 0, 8),
+                    Style = BootStrapper.Current.Resources["BaseTextBlockStyle"] as Style
                 }
             });
             panel.Children.Add(header);
             panel.Children.Add(new Border
             {
-                Background = BootStrapper.Current.Resources["PageBackgroundDarkBrush"] as Brush,
                 Child = new TextBlock
                 {
                     Text = Strings.Resources.FilterChats,
-                    Padding = new Thickness(12, 0, 0, 0),
-                    Style = BootStrapper.Current.Resources["SettingsGroupTextBlockStyle"] as Style
+                    Padding = new Thickness(12, 16, 0, 8),
+                    Style = BootStrapper.Current.Resources["BaseTextBlockStyle"] as Style
                 }
             });
 

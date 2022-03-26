@@ -183,6 +183,7 @@ namespace Unigram.Controls
 
             var visual = ElementCompositionPreview.GetElementVisual(BackgroundPart);
             var border = ElementCompositionPreview.GetElementVisual(BorderPart);
+            var bread = ElementCompositionPreview.GetElementVisual(DetailHeaderPresenter);
 
             if (animate)
             {
@@ -207,10 +208,15 @@ namespace Unigram.Controls
                 var opacity = visual.Compositor.CreateScalarKeyFrameAnimation();
                 opacity.InsertKeyFrame(show ? 0 : 1, 0);
                 opacity.InsertKeyFrame(show ? 1 : 0, 1);
-                //clip.Duration = TimeSpan.FromMilliseconds(150);
+
+                var fadeIn = visual.Compositor.CreateScalarKeyFrameAnimation();
+                fadeIn.InsertKeyFrame(show ? 0 : 1, 1);
+                fadeIn.InsertKeyFrame(show ? 1 : 0, 0);
 
                 visual.StartAnimation("Opacity", opacity);
                 border.StartAnimation("Opacity", opacity);
+                bread.StartAnimation("Opacity", fadeIn);
+
                 batch.End();
             }
             else
@@ -219,6 +225,7 @@ namespace Unigram.Controls
 
                 visual.Opacity = show ? 1 : 0;
                 border.Opacity = show ? 1 : 0;
+                bread.Opacity = show ? 0 : 1;
 
                 BackgroundPart.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
                 BorderPart.Visibility = show ? Visibility.Visible : Visibility.Collapsed;

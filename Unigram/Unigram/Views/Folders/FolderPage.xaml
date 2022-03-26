@@ -28,7 +28,8 @@
         <muxc:ItemsRepeaterScrollHost>
             <ScrollViewer VerticalScrollBarVisibility="Auto"
                           VerticalScrollMode="Auto">
-                <StackPanel>
+                <StackPanel Spacing="16"
+                            Margin="0,0,0,32">
                     <Grid Margin="24,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition MaxWidth="1000" />
@@ -42,22 +43,29 @@
                                              Margin="0,24,0,0" />
                     </Grid>
 
-                    <controls:HeaderedControl Header="{CustomResource FilterNameHint}">
-                        <Grid>
+                    <StackPanel>
+                        <TextBlock Text="{CustomResource FilterNameHint}"
+                                   Style="{StaticResource BaseTextBlockStyle}"
+                                   Margin="24,16,24,8" />
+
+                        <Grid Margin="24,0,0,0">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
+                                <ColumnDefinition Width="280" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <TextBox x:Name="TitleField"
                                      Text="{x:Bind ViewModel.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                      FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                     MaxLength="12"
-                                     Margin="12,8,0,8" />
+                                     VerticalAlignment="Top"
+                                     MaxLength="12" />
 
                             <controls:AnimatedGlyphButton x:Name="EmojiButton"
                                                           FontFamily="{StaticResource TelegramThemeFontFamily}"
                                                           Glyph="{x:Bind ConvertEmoji(ViewModel.Icon), Mode=OneWay}"
                                                           Click="Emoji_Click"
+                                                          Width="40"
+                                                          Height="40"
+                                                          Margin="0,-4,0,0"
                                                           Grid.Column="1">
                                 <FlyoutBase.AttachedFlyout>
                                     <Flyout>
@@ -68,7 +76,7 @@
                                                   ScrollViewer.HorizontalScrollMode="Disabled"
                                                   SelectionMode="Single"
                                                   IsItemClickEnabled="True"
-                                                  Margin="0,0,-4,-14"
+                                                  Margin="-8,-7,-12,-23"
                                                   Width="258">
                                             <GridView.ItemTemplate>
                                                 <DataTemplate>
@@ -79,7 +87,8 @@
                                                 </DataTemplate>
                                             </GridView.ItemTemplate>
                                             <GridView.ItemContainerStyle>
-                                                <Style TargetType="GridViewItem">
+                                                <Style TargetType="GridViewItem"
+                                                       BasedOn="{StaticResource DefaultGridViewItemStyle}">
                                                     <Setter Property="FontFamily"
                                                             Value="{StaticResource TelegramThemeFontFamily}" />
                                                     <Setter Property="FontSize"
@@ -103,7 +112,7 @@
                                 </FlyoutBase.AttachedFlyout>
                             </controls:AnimatedGlyphButton>
                         </Grid>
-                    </controls:HeaderedControl>
+                    </StackPanel>
 
                     <controls:HeaderedControl Header="{CustomResource FilterInclude}"
                                               Footer="{CustomResource FilterIncludeInfo}">
