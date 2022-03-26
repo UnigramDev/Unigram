@@ -111,7 +111,8 @@
                                             IsTabStop="False"
                                             HorizontalContentAlignment="Stretch"
                                             VerticalContentAlignment="Stretch"
-                                            VerticalAlignment="Top" />
+                                            VerticalAlignment="Top"
+                                            Canvas.ZIndex="2" />
 
                             <Grid x:Name="DetailPresenter" />
 

@@ -255,7 +255,7 @@
     </UserControl.Resources>
 
     <Grid Background="{ThemeResource SettingsItemBackground}"
-          Margin="0,8,12,8"
+          Margin="0,0,12,8"
           CornerRadius="8">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -393,7 +393,8 @@
             <controls:GlyphButton.Flyout>
                 <Flyout Placement="Bottom">
                     <Flyout.FlyoutPresenterStyle>
-                        <Style TargetType="FlyoutPresenter">
+                        <Style TargetType="FlyoutPresenter"
+                               BasedOn="{StaticResource DefaultFlyoutPresenterStyle}">
                             <Setter Property="MinWidth"
                                     Value="0" />
                         </Style>
