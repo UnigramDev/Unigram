@@ -19,7 +19,7 @@
             <td class="column2 style1 s">Alt + Arrow Up</td>
           </tr>
           <tr class="row3">
-            <td class="column2 style1 s">Ctrl + Pagup</td>
+            <td class="column2 style1 s">Ctrl + Page Down</td>
           </tr>
           <tr class="row4">
             <td class="column1 style2 s style2" rowspan="3">Previous chat</td>
@@ -29,12 +29,12 @@
             <td class="column2 style1 s">Alt + Arrow Down</td>
           </tr>
           <tr class="row6">
-            <td class="column2 style1 s">Ctrl + Pagdown</td>
+            <td class="column2 style1 s">Ctrl + Page Up</td>
           </tr>
           <tr class="row7">
             <td class="column0 style2 s style2" rowspan="2">Search</td>
             <td class="column1 style1 s">Chat search</td>
-            <td class="column2 style1 s">Ctrl + K</td>
+            <td class="column2 style1 s">Ctrl + E</td>
           </tr>
           <tr class="row8">
             <td class="column1 style1 s">Messages search per chat</td>
@@ -75,7 +75,7 @@
           </tr>
           <tr class="row17">
             <td class="column1 style1 s">Create Link</td>
-            <td class="column2 style1 s">Unavaiable</td>
+            <td class="column2 style1 s">Ctrl + K</td>
           </tr>
           <tr class="row18">
             <td class="column1 style1 s">Monospace</td>
@@ -156,6 +156,10 @@
             <td class="column2 style1 s">Ctrl + R</td>
           </tr>
           <tr class="row35">
+              <td class="column1 style2 s style2">Send Recorded</td>
+              <td class="column2 style1 s">Ctrl + R (again)</td>
+          </tr>
+          <tr class="row36">
             <td class="column1 style2 s style2">Stop Record</td>
             <td class="column2 style1 s">Ctrl + D</td>
           </tr>
