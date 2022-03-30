@@ -4,10 +4,11 @@ using Unigram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Unigram.Controls
 {
-    public class ChatListListView : MultipleListView
+    public class ChatListListView : TopNavView
     {
         public ChatListViewModel ViewModel => DataContext as ChatListViewModel;
 
@@ -15,6 +16,8 @@ namespace Unigram.Controls
 
         public ChatListListView()
         {
+            DefaultStyleKey = typeof(ListView);
+
             ContainerContentChanging += OnContainerContentChanging;
             RegisterPropertyChangedCallback(SelectionModeProperty, OnSelectionModeChanged);
         }
@@ -59,7 +62,7 @@ namespace Unigram.Controls
 
             for (int i = panel.FirstCacheIndex; i <= panel.LastCacheIndex; i++)
             {
-                var container = ContainerFromIndex(i) as ListViewItem;
+                var container = ContainerFromIndex(i) as SelectorItem;
                 if (container == null)
                 {
                     continue;
@@ -85,14 +88,35 @@ namespace Unigram.Controls
         }
     }
 
-    public class ChatListListViewItem : MultipleListViewItem
+    public class ChatListListViewItem : TopNavViewItem
     {
         private readonly ChatListListView _list;
 
+        private readonly bool _multi;
+        private bool _selected;
+
         public ChatListListViewItem()
         {
+            _multi = true;
             DefaultStyleKey = typeof(ChatListListViewItem);
         }
+
+        public bool IsSingle => !_multi;
+
+        public void UpdateState(bool selected)
+        {
+            if (_selected == selected)
+            {
+                return;
+            }
+
+            if (ContentTemplateRoot is IMultipleElement test)
+            {
+                _selected = selected;
+                test.UpdateState(selected, true);
+            }
+        }
+
 
         protected override AutomationPeer OnCreateAutomationPeer()
         {
@@ -103,6 +127,7 @@ namespace Unigram.Controls
         {
             DefaultStyleKey = typeof(ChatListListViewItem);
 
+            _multi = true;
             _list = list;
             RegisterPropertyChangedCallback(IsSelectedProperty, OnSelectedChanged);
         }
@@ -114,6 +139,37 @@ namespace Unigram.Controls
             {
                 content.UpdateViewState(_list.ItemFromContainer(this) as Chat, _list._viewState == MasterDetailState.Compact);
             }
+        }
+    }
+
+    public class ChatListVisualStateManager : VisualStateManager
+    {
+        private bool _multi;
+
+        protected override bool GoToStateCore(Control control, FrameworkElement templateRoot, string stateName, VisualStateGroup group, VisualState state, bool useTransitions)
+        {
+            var selector = control as ChatListListViewItem;
+            if (selector == null)
+            {
+                return false;
+            }
+
+            if (group.Name == "MultiSelectStates")
+            {
+                _multi = stateName == "MultiSelectEnabled";
+                selector.UpdateState((_multi || selector.IsSingle) && selector.IsSelected);
+            }
+            else if ((_multi || selector.IsSingle) && stateName.EndsWith("Selected"))
+            {
+                stateName = stateName.Replace("Selected", string.Empty);
+
+                if (string.IsNullOrEmpty(stateName))
+                {
+                    stateName = "Normal";
+                }
+            }
+
+            return base.GoToStateCore(control, templateRoot, stateName, group, state, useTransitions);
         }
     }
 
