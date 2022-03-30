@@ -103,6 +103,11 @@ namespace Unigram.Controls
 
         protected override Size ArrangeOverride(Size finalSize)
         {
+            if (Root == null)
+            {
+                return base.ArrangeOverride(finalSize);
+            }
+
             Root.Arrange(new Rect(0, 0, Math.Min(finalSize.Width, 1000), finalSize.Height));
             return finalSize;
         }
