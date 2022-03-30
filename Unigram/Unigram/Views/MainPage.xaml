@@ -746,19 +746,10 @@
                                                                   Margin="12,0">
                                                                 <controls:ProfilePicture IsHitTestVisible="False"
                                                                                          IsTabStop="False" />
-                                                                <Border Background="{ThemeResource ChatUnreadBadgeBrush}"
-                                                                        MinWidth="20"
-                                                                        Height="20"
-                                                                        CornerRadius="10"
-                                                                        VerticalAlignment="Top"
-                                                                        HorizontalAlignment="Right"
-                                                                        Margin="0,-2,-2,0"
-                                                                        Visibility="Collapsed">
-                                                                    <TextBlock Style="{StaticResource CaptionTextBlockStyle}"
-                                                                               Foreground="{ThemeResource ChatUnreadLabelBrush}"
-                                                                               TextAlignment="Center"
-                                                                               Margin="4,2,4,0" />
-                                                                </Border>
+                                                                <muxc:InfoBadge Background="{ThemeResource ChatUnreadBadgeBrush}"
+                                                                                Foreground="{ThemeResource ChatUnreadLabelBrush}"
+                                                                                VerticalAlignment="Top"
+                                                                                HorizontalAlignment="Right" />
                                                                 <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                                                         Width="13"
                                                                         Height="13"
@@ -819,7 +810,7 @@
                                         <selectors:SearchTemplateSelector>
                                             <selectors:SearchTemplateSelector.ChatTemplate>
                                                 <DataTemplate>
-                                                    <Grid Margin="12,6">
+                                                    <Grid Padding="12,6">
                                                         <Grid.RowDefinitions>
                                                             <RowDefinition Height="Auto" />
                                                             <RowDefinition Height="Auto" />
@@ -888,10 +879,9 @@
                                         <GroupStyle>
                                             <GroupStyle.HeaderTemplate>
                                                 <DataTemplate>
-                                                    <!--<TextBlock Text="{Binding Key}" Style="{StaticResource BaseTextBlockStyle}"/>-->
                                                     <TextBlock Text="{Binding Key}"
                                                                Style="{StaticResource BaseTextBlockStyle}"
-                                                               Margin="12,16,12,8" />
+                                                               Margin="0,16,0,8" />
                                                 </DataTemplate>
                                             </GroupStyle.HeaderTemplate>
                                             <GroupStyle.HeaderContainerStyle>
@@ -1027,6 +1017,9 @@
                                             </Grid>
                                         </ListView.Header>
                                     </local:ChatListPage>
+                                    <controls:ChatListSkeleton x:Name="Skeleton"
+                                                               x:Load="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
+                                                               Grid.Row="1" />
                                 </Grid>
 
                                 <controls:DownloadsFooter x:Name="Downloads"

@@ -1,4 +1,5 @@
 ﻿using LinqToVisualTree;
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -2382,11 +2383,9 @@ namespace Unigram.Views
             photo.SetChat(ViewModel.ProtoService, chat, 48);
             title.Text = ViewModel.ProtoService.GetTitle(chat, true);
 
-            var badge = grid.Children[1] as Border;
-            var text = badge.Child as TextBlock;
-
+            var badge = grid.Children[1] as InfoBadge;
             badge.Visibility = chat.UnreadCount > 0 ? Visibility.Visible : Visibility.Collapsed;
-            text.Text = chat.UnreadCount.ToString();
+            badge.Value = chat.UnreadCount;
 
             var user = ViewModel.CacheService.GetUser(chat);
             if (user != null)
