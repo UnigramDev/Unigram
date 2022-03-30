@@ -551,10 +551,10 @@ namespace Unigram.Assets.Icons
                 result.SetReferenceParameter("_", _root);
                 // Frame 10.
                 result.InsertExpressionKeyFrame(0.222222209F, "Pow(1-_.t0,3)*Vector2(10,10)+(3*Square(1-_.t0)*_.t0*Vector2(10,9.583))+(3*(1-_.t0)*Square(_.t0)*Vector2(10,7.333))+(Pow(_.t0,3)*Vector2(10,7.5))", StepThenHoldEasingFunction());
+                // Frame 10.
+                result.InsertKeyFrame(0.222222224F, new Vector2(10F, 7.5F), StepThenHoldEasingFunction());
                 // Frame 20.
-                //result.InsertKeyFrame(0.444444448F, new Vector2(10F, 7.5F), StepThenHoldEasingFunction());
-                // Frame 20.
-                result.InsertKeyFrame(0.444444478F, new Vector2(10F, 11F), _c.CreateCubicBezierEasingFunction(new Vector2(0.600000024F, 0F), new Vector2(0.400000006F, 1F)));
+                result.InsertKeyFrame(0.444444448F, new Vector2(10F, 11F), _c.CreateCubicBezierEasingFunction(new Vector2(0.600000024F, 0F), new Vector2(0.400000006F, 1F)));
                 // Frame 30.
                 result.InsertExpressionKeyFrame(0.666666627F, "Pow(1-_.t3,3)*Vector2(10,11)+(3*Square(1-_.t3)*_.t3*Vector2(10,11.417))+(3*(1-_.t3)*Square(_.t3)*Vector2(10,10.167))+(Pow(_.t3,3)*Vector2(10,10))", StepThenHoldEasingFunction());
                 // Frame 30.
@@ -574,10 +574,10 @@ namespace Unigram.Assets.Icons
                 result.InsertKeyFrame(0.111111112F, new Vector2(10F, 10F), HoldThenStepEasingFunction());
                 // Frame 15.
                 result.InsertExpressionKeyFrame(0.333333313F, "Pow(1-_.t1,3)*Vector2(10,10)+(3*Square(1-_.t1)*_.t1*Vector2(10,9.583))+(3*(1-_.t1)*Square(_.t1)*Vector2(10,7.333))+(Pow(_.t1,3)*Vector2(10,7.5))", StepThenHoldEasingFunction());
+                // Frame 15.
+                result.InsertKeyFrame(0.333333343F, new Vector2(10F, 7.5F), StepThenHoldEasingFunction());
                 // Frame 25.
-                //result.InsertKeyFrame(0.555555582F, new Vector2(10F, 7.5F), StepThenHoldEasingFunction());
-                // Frame 25.
-                result.InsertKeyFrame(0.555555642F, new Vector2(10F, 11F), _c.CreateCubicBezierEasingFunction(new Vector2(0.600000024F, 0F), new Vector2(0.400000006F, 1F)));
+                result.InsertKeyFrame(0.555555582F, new Vector2(10F, 11F), _c.CreateCubicBezierEasingFunction(new Vector2(0.600000024F, 0F), new Vector2(0.400000006F, 1F)));
                 // Frame 35.
                 result.InsertExpressionKeyFrame(0.777777731F, "Pow(1-_.t1,3)*Vector2(10,11)+(3*Square(1-_.t1)*_.t1*Vector2(10,11.417))+(3*(1-_.t1)*Square(_.t1)*Vector2(10,10.167))+(Pow(_.t1,3)*Vector2(10,10))", StepThenHoldEasingFunction());
                 // Frame 35.
@@ -597,10 +597,10 @@ namespace Unigram.Assets.Icons
                 result.InsertKeyFrame(0.222222224F, new Vector2(10F, 10F), HoldThenStepEasingFunction());
                 // Frame 20.
                 result.InsertExpressionKeyFrame(0.444444418F, "Pow(1-_.t0,3)*Vector2(10,10)+(3*Square(1-_.t0)*_.t0*Vector2(10,9.583))+(3*(1-_.t0)*Square(_.t0)*Vector2(10,7.333))+(Pow(_.t0,3)*Vector2(10,7.5))", StepThenHoldEasingFunction());
+                // Frame 20.
+                result.InsertKeyFrame(0.444444448F, new Vector2(10F, 7.5F), StepThenHoldEasingFunction());
                 // Frame 30.
-                //result.InsertKeyFrame(0.666666687F, new Vector2(10F, 7.5F), StepThenHoldEasingFunction());
-                // Frame 30.
-                result.InsertKeyFrame(0.666666746F, new Vector2(10F, 11F), _c.CreateCubicBezierEasingFunction(new Vector2(0.600000024F, 0F), new Vector2(0.400000006F, 1F)));
+                result.InsertKeyFrame(0.666666687F, new Vector2(10F, 11F), _c.CreateCubicBezierEasingFunction(new Vector2(0.600000024F, 0F), new Vector2(0.400000006F, 1F)));
                 // Frame 40.
                 result.InsertExpressionKeyFrame(0.888888836F, "Pow(1-_.t2,3)*Vector2(10,11)+(3*Square(1-_.t2)*_.t2*Vector2(10,11.417))+(3*(1-_.t2)*Square(_.t2)*Vector2(10,10.167))+(Pow(_.t2,3)*Vector2(10,10))", StepThenHoldEasingFunction());
                 // Frame 40.
