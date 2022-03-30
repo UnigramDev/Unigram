@@ -301,14 +301,17 @@ namespace Unigram.Views.Host
             {
                 _navigationViewItems.Insert(0, RootDestination.Separator);
 
-                if (TLContainer.Current.Count < 3)
+                if (items.Count < 3)
                 {
                     _navigationViewItems.Insert(0, RootDestination.AddAccount);
                 }
 
-                foreach (var item in items.OrderByDescending(x => { int index = Array.IndexOf(SettingsService.Current.AccountsSelectorOrder, x.Id); return index < 0 ? x.Id : index; }))
+                if (items.Count > 1)
                 {
-                    _navigationViewItems.Insert(0, item);
+                    foreach (var item in items.OrderByDescending(x => { int index = Array.IndexOf(SettingsService.Current.AccountsSelectorOrder, x.Id); return index < 0 ? x.Id : index; }))
+                    {
+                        _navigationViewItems.Insert(0, item);
+                    }
                 }
             }
         }

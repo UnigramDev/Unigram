@@ -16,6 +16,11 @@ namespace Unigram.Views
         {
             InitializeComponent();
             Title = Strings.Resources.LogOutTitle;
+
+            if (TLContainer.Current.Count < 3)
+            {
+                FindName(nameof(AddAccount));
+            }
         }
 
         private void AddAnotherAccount_Click(object sender, RoutedEventArgs e)

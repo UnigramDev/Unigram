@@ -13,7 +13,9 @@
                       VerticalScrollMode="Auto">
             <StackPanel>
                 <controls:HeaderedControl Header="{CustomResource AlternativeOptions}">
-                    <controls:BadgeButton Badge="{CustomResource AddAnotherAccountInfo}"
+                    <controls:BadgeButton x:Name="AddAccount"
+                                          x:Load="False"
+                                          Badge="{CustomResource AddAnotherAccountInfo}"
                                           Content="{CustomResource AddAnotherAccount}"
                                           Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
                                           Glyph="&#xE8FA;"
