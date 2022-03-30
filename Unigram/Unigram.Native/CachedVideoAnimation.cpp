@@ -161,7 +161,6 @@ namespace winrt::Unigram::Native::implementation
 				return;
 			}
 
-			int32_t seconds;
 			bool completed;
 			m_animation->RenderSync(pixels, false, seconds, completed);
 
