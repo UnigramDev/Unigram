@@ -93,7 +93,7 @@ namespace Unigram.Common
                         {
                             ScaledWidth = width,
                             ScaledHeight = height,
-                            InterpolationMode = BitmapInterpolationMode.Linear
+                            InterpolationMode = quality == 1 ? BitmapInterpolationMode.Fant : BitmapInterpolationMode.Linear
                         };
                     }
                     else

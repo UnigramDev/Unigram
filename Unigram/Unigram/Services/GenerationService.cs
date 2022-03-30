@@ -206,7 +206,7 @@ namespace Unigram.Services
                 }
                 else
                 {
-                    await ImageHelper.ScaleJpegAsync(file, temp, 1280, 0.77);
+                    await ImageHelper.ScaleJpegAsync(file, temp, 1280, 1);
                 }
 
                 _protoService.Send(new FinishFileGeneration(update.GenerationId, null));
