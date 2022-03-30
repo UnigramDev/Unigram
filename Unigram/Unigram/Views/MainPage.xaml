@@ -92,8 +92,7 @@
                                                         VerticalAlignment="Top">
                                         <muxc:BreadcrumbBar.ItemTemplate>
                                             <DataTemplate x:DataType="navigation:NavigationStackItem">
-                                                <!--<TextBlock Text="{x:Bind Title}" />-->
-                                                <muxc:BreadcrumbBarItem Content="{x:Bind Title, Mode=OneWay}" />
+                                                <TextBlock Text="{x:Bind Title, Mode=OneWay}" />
                                             </DataTemplate>
                                         </muxc:BreadcrumbBar.ItemTemplate>
                                     </muxc:BreadcrumbBar>

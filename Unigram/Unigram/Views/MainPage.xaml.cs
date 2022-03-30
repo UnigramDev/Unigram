@@ -1337,23 +1337,10 @@ namespace Unigram.Views
                 MasterDetail.AllowCompact = e.SourcePageType != typeof(BlankPage) && rpMasterTitlebar.SelectedIndex == 0;
             }
 
+            _shouldGoBackWithDetail = true;
+
             UpdatePaneToggleButtonVisibility();
             UpdateListViewsSelectedItem(MasterDetail.NavigationService.GetPeerFromBackStack());
-
-            //var allowed = e.SourcePageType == typeof(ChatPage)
-            //    || e.SourcePageType == typeof(ChatEventLogPage)
-            //    || e.SourcePageType == typeof(ChatPinnedPage)
-            //    || e.SourcePageType == typeof(ChatScheduledPage)
-            //    || e.SourcePageType == typeof(ChatThreadPage);
-            //if (allowed && e.Parameter is long chatId)
-            //{
-            //    var profile = MasterDetail.Descendants<ProfilePage>().FirstOrDefault();
-            //    if (profile != null)
-            //    {
-            //        profile.NavigatedTo(null);
-            //        profile.ViewModel.OnNavigatedToAsync(chatId, NavigationMode.New, new NavigationState());
-            //    }
-            //}
         }
 
         private void OnStateChanged(object sender, EventArgs e)
@@ -2430,22 +2417,18 @@ namespace Unigram.Views
             if (destination == RootDestination.Chats)
             {
                 rpMasterTitlebar.SelectedIndex = 0;
-                MasterDetail.Push(true);
             }
             else if (destination == RootDestination.Contacts)
             {
                 rpMasterTitlebar.SelectedIndex = 1;
-                MasterDetail.Push(true);
             }
             else if (destination == RootDestination.Calls)
             {
                 rpMasterTitlebar.SelectedIndex = 2;
-                MasterDetail.Push(true);
             }
             else if (destination == RootDestination.Settings)
             {
                 rpMasterTitlebar.SelectedIndex = 3;
-                MasterDetail.Push(true);
             }
             else if (destination == RootDestination.ArchivedChats)
             {

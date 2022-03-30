@@ -134,19 +134,6 @@ namespace Unigram.Controls
 
         #endregion
 
-        public void Push(bool hamburger)
-        {
-            //if (hamburger)
-            //{
-            //    while (_backStack.Contains(BackStackType.Hamburger))
-            //    {
-            //        _backStack.Remove(BackStackType.Hamburger);
-            //    }
-            //}
-
-            //_backStack.AddLast(hamburger ? BackStackType.Hamburger : BackStackType.Navigation);
-        }
-
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             if (CurrentState != MasterDetailState.Minimal)
@@ -176,6 +163,11 @@ namespace Unigram.Controls
         // CORRECT SHOWHIDE IMPLEMENTATION
         public void ShowHideBackground(bool show, bool animate)
         {
+            if (BackgroundPart == null)
+            {
+                return;
+            }
+
             if ((show && BackgroundPart.Visibility == Visibility.Visible && !_backgroundCollapsed) || (!show && (BackgroundPart.Visibility == Visibility.Collapsed || _backgroundCollapsed)))
             {
                 return;
@@ -248,6 +240,9 @@ namespace Unigram.Controls
             DetailHeaderPresenter.ItemClicked += DetailHeaderPresenter_ItemClicked;
 
             MasterPresenter.RegisterPropertyChangedCallback(VisibilityProperty, OnVisibilityChanged);
+
+            BackgroundPart.Visibility = _backgroundCollapsed ? Visibility.Collapsed : Visibility.Visible;
+            BorderPart.Visibility = _backgroundCollapsed ? Visibility.Collapsed : Visibility.Visible;
 
             if (DetailFrame != null)
             {
@@ -357,11 +352,6 @@ namespace Unigram.Controls
             if (AdaptivePanel == null)
             {
                 return;
-            }
-
-            if (e.NavigationMode == NavigationMode.New && DetailFrame.CanGoBack)
-            {
-                Push(false);
             }
 
             UpdateMasterVisibility();
