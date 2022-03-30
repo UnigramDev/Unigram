@@ -182,6 +182,7 @@ namespace Unigram.Controls
                 _backgroundCollapsed = !show;
                 BackgroundPart.Visibility = Visibility.Visible;
                 BorderPart.Visibility = Visibility.Visible;
+                DetailHeaderPresenter.Visibility = Visibility.Visible;
 
                 var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
                 batch.Completed += (s, args) =>
@@ -189,6 +190,7 @@ namespace Unigram.Controls
                     if (show)
                     {
                         _backgroundCollapsed = false;
+                        DetailHeaderPresenter.Visibility = Visibility.Collapsed;
                     }
                     else
                     {
@@ -221,6 +223,7 @@ namespace Unigram.Controls
 
                 BackgroundPart.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
                 BorderPart.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
+                DetailHeaderPresenter.Visibility = show ? Visibility.Collapsed : Visibility.Visible;
             }
         }
 
