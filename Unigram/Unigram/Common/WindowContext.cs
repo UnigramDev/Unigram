@@ -162,7 +162,7 @@ namespace Unigram.Common
                         break;
                     case AuthorizationStateWaitPhoneNumber waitPhoneNumber:
                     case AuthorizationStateWaitOtherDeviceConfirmation waitOtherDeviceConfirmation:
-                        service.Navigate(service.CurrentPageType != null ? typeof(SignInPage) : typeof(IntroPage));
+                        service.Navigate(typeof(SignInPage));
                         break;
                     case AuthorizationStateWaitCode waitCode:
                         service.Navigate(typeof(SignInSentCodePage));

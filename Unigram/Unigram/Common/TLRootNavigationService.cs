@@ -53,7 +53,7 @@ namespace Unigram.Common
                         }
                         else
                         {
-                            Navigate(typeof(IntroPage));
+                            Navigate(typeof(SignInPage));
                         }
                     }
                     break;

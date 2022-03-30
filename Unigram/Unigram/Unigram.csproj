@@ -132,6 +132,7 @@
     <Compile Include="Assets\Icons\Info.cs" />
     <Compile Include="Assets\Icons\Language.cs" />
     <Compile Include="Assets\Icons\Location.cs" />
+    <Compile Include="Assets\Icons\More.cs" />
     <Compile Include="Assets\Icons\Notifications.cs" />
     <Compile Include="Assets\Icons\PersonAdd.cs" />
     <Compile Include="Assets\Icons\Phone.cs" />
@@ -301,6 +302,7 @@
       <DependentUpon>ChatJoinRequestsHeader.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ChatListListView.cs" />
+    <Compile Include="Controls\ChatListSkeleton.cs" />
     <Compile Include="Controls\ChatStatisticsOverview.xaml.cs">
       <DependentUpon>ChatStatisticsOverview.xaml</DependentUpon>
     </Compile>
@@ -1247,9 +1249,6 @@
     </Compile>
     <Compile Include="Views\SignIn\SignInPage.xaml.cs">
       <DependentUpon>SignInPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\IntroPage.xaml.cs">
-      <DependentUpon>IntroPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
@@ -2268,10 +2267,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\SignIn\SignUpPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\IntroPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
