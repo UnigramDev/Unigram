@@ -118,6 +118,7 @@
 
             <FontFamily x:Key="TelegramThemeFontFamily">ms-appx:///Assets/Fonts/Telegram.ttf#Telegram</FontFamily>
             <FontFamily x:Key="SymbolThemeFontFamily">ms-appx:///Assets/Fonts/Telegram.ttf#Telegram</FontFamily>
+            <FontFamily x:Key="SpoilerFontFamily">ms-appx:///Assets/Emoji/spoiler.ttf#Segoe UI Emoji</FontFamily>
             <FontFamily x:Key="LegacyThemeFontFamily">Segoe MDL2 Assets</FontFamily>
             <FontFamily x:Key="MonospaceDigitsFontFamily">Segoe UI</FontFamily>
 

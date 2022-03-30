@@ -1348,9 +1348,10 @@ namespace Unigram.Controls.Messages
                     if (entity.HasFlag(TextStyle.Spoiler))
                     {
                         var hyperlink = new Hyperlink();
-                        hyperlink.Click += (s, args) => Entity_Click(message, entity.Type, null);
+                        hyperlink.Click += (s, args) => Entity_Click(message, new TextEntityTypeSpoiler(), null);
                         hyperlink.Foreground = Message.Foreground;
                         hyperlink.UnderlineStyle = UnderlineStyle.None;
+                        hyperlink.FontFamily = App.Current.Resources["SpoilerFontFamily"] as FontFamily;
                         //hyperlink.Foreground = foreground;
 
                         spoiler ??= new TextHighlighter();
