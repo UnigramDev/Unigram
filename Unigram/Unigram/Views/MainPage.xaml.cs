@@ -381,7 +381,7 @@ namespace Unigram.Views
             {
                 ShowHideLeftTabs(ViewModel.Chats.Settings.IsLeftTabsEnabled && update.ChatFilters.Count > 0);
                 ShowHideTopTabs(!ViewModel.Chats.Settings.IsLeftTabsEnabled && update.ChatFilters.Count > 0);
-                ShowHideArchive(ViewModel.SelectedFilter == null || ViewModel.SelectedFilter.ChatList is ChatListMain);
+                ShowHideArchive(ViewModel.SelectedFilter?.ChatList is ChatListMain or null);
 
                 UpdatePaneToggleButtonVisibility();
             });
@@ -2493,9 +2493,9 @@ namespace Unigram.Views
 
         private ChatFilterViewModel ConvertFilter(ChatFilterViewModel filter)
         {
-            ShowHideTopTabs(!ViewModel.Chats.Settings.IsLeftTabsEnabled && ViewModel.Filters.Count > 0 && !(filter.ChatList is ChatListArchive));
+            ShowHideTopTabs(!ViewModel.Chats.Settings.IsLeftTabsEnabled && ViewModel.Filters.Count > 0 && filter.ChatList is not ChatListArchive);
             ShowHideLeftTabs(ViewModel.Chats.Settings.IsLeftTabsEnabled && ViewModel.Filters.Count > 0);
-            ShowHideArchive((filter == null || filter.ChatList is ChatListMain) && ViewModel.Chats.Items.ChatList is not ChatListArchive);
+            ShowHideArchive(filter?.ChatList is ChatListMain or null && ViewModel.Chats.Items.ChatList is not ChatListArchive);
 
             UpdatePaneToggleButtonVisibility();
 
@@ -2504,7 +2504,7 @@ namespace Unigram.Views
 
         private void ConvertFilterBack(object obj)
         {
-            if (obj is ChatFilterViewModel filter && !filter.IsNavigationItem && !(ViewModel.Chats.Items.ChatList is ChatListArchive))
+            if (obj is ChatFilterViewModel filter && !filter.IsNavigationItem && ViewModel.Chats.Items.ChatList is not ChatListArchive)
             {
                 UpdateFilter(filter);
             }
