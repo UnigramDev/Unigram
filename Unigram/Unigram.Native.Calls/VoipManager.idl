@@ -8,7 +8,9 @@ namespace Unigram.Native.Calls
 {
     runtimeclass VoipManager : Windows.Foundation.IClosable
     {
-        VoipManager(VoipDescriptor descriptor);
+        static Telegram.Td.Api.CallProtocol Protocol{ get; };
+
+        VoipManager(String version, VoipDescriptor descriptor);
         void Start();
 
 

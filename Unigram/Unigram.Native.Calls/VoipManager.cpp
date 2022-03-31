@@ -26,16 +26,12 @@
 #include "media/base/video_adapter.h"
 #include "media/base/video_broadcaster.h"
 
-#include <winrt/Telegram.Td.Api.h>
-
-using namespace winrt::Telegram::Td::Api;
-
 namespace winrt::Unigram::Native::Calls::implementation
 {
-	VoipManager::VoipManager(VoipDescriptor descriptor)
+	VoipManager::VoipManager(hstring version, VoipDescriptor descriptor)
 	{
+		m_version = version;
 		m_descriptor = descriptor;
-		tgcalls::Register<tgcalls::InstanceImpl>();
 	}
 
 	void VoipManager::Close() {
@@ -51,35 +47,35 @@ namespace winrt::Unigram::Native::Calls::implementation
 
 		tgcalls::Config config = tgcalls::Config
 		{
-			/*double initializationTimeout =*/ m_descriptor.InitializationTimeout(),
-			/*double receiveTimeout =*/ m_descriptor.ReceiveTimeout(),
-			/*DataSaving dataSaving =*/ tgcalls::DataSaving::Never,
-			/*bool enableP2P =*/ m_descriptor.EnableP2p(),
-			/*bool allowTCP =*/ false,
-			/*bool enableStunMarking =*/ false,
-			/*bool enableAEC =*/ true,
-			/*bool enableNS =*/ true,
-			/*bool enableAGC =*/ true,
-			/*bool enableCallUpgrade =*/ false,
-			/*bool enableVolumeControl =*/ false,
+			.initializationTimeout = m_descriptor.InitializationTimeout(),
+			.receiveTimeout = m_descriptor.ReceiveTimeout(),
+			.dataSaving = tgcalls::DataSaving::Never,
+			.enableP2P = m_descriptor.EnableP2p(),
+			.allowTCP = false,
+			.enableStunMarking = false,
+			.enableAEC = true,
+			.enableNS = true,
+			.enableAGC = true,
+			.enableCallUpgrade = false,
+			.enableVolumeControl = false,
 		#ifndef _WIN32
 			std::string logPath;
 			std::string statsLogPath;
 		#else
-			/*std::wstring logPath*/ logPath.data(), //L"C:\\Users\\Fela\\AppData\\Local\\Packages\\4ad57552-10ee-4389-8171-0fcec0b928b3_k580v1fv7e4c6\\LocalState\\tgcalls.txt",
-			/*std::wstring statsLogPath*/ L"",
+			.logPath = logPath.data(),
+			.statsLogPath = L"",
 		#endif
-			/*int maxApiLayer =*/ 92,
-			/*bool enableHighBitrateVideo =*/ false,
-			/*std::vector<std::string> preferredVideoCodecs =*/std::vector<std::string>(),
-			/*ProtocolVersion protocolVersion =*/ tgcalls::ProtocolVersion::V1
+			.maxApiLayer = 92,
+			.enableHighBitrateVideo = false,
+			.preferredVideoCodecs = std::vector<std::string>(),
+			.protocolVersion = tgcalls::ProtocolVersion::V1
 		};
 
 		tgcalls::MediaDevicesConfig mediaConfig = {
-			/*audioInputId =*/ string_to_unmanaged(m_descriptor.AudioInputId()),
-			/*audioOutputId =*/ string_to_unmanaged(m_descriptor.AudioOutputId()),
-			/*inputVolume =*/ 1.f,
-			/*outputVolume =*/ 1.f
+			.audioInputId = string_to_unmanaged(m_descriptor.AudioInputId()),
+			.audioOutputId = string_to_unmanaged(m_descriptor.AudioOutputId()),
+			.inputVolume = 1.f,
+			.outputVolume = 1.f
 		};
 
 		std::vector<uint8_t> persistentState = {};
@@ -143,42 +139,42 @@ namespace winrt::Unigram::Native::Calls::implementation
 
 		tgcalls::Descriptor descriptor = tgcalls::Descriptor
 		{
-			/*config =*/ config,
-			/*persistentState =*/ persistentState,
-			/*endpoints =*/ std::vector<tgcalls::Endpoint>(),
-			/*proxy =*/ NULL,
-			/*rtcServers =*/ rtc,
-			/*initialNetworkType =*/ tgcalls::NetworkType(),
-			/*encryptionKey =*/ tgcalls::EncryptionKey(encryptionKeyPointer, m_descriptor.IsOutgoing()),
-			/*mediaDevicesConfig =*/ mediaConfig,
-			/*videoCapture =*/ m_capturer,
-			/*stateUpdated =*/ [this](tgcalls::State state) {
+			.config = config,
+			.persistentState = persistentState,
+			.endpoints = std::vector<tgcalls::Endpoint>(),
+			.proxy = NULL,
+			.rtcServers = rtc,
+			.initialNetworkType = tgcalls::NetworkType(),
+			.encryptionKey = tgcalls::EncryptionKey(encryptionKeyPointer, m_descriptor.IsOutgoing()),
+			.mediaDevicesConfig = mediaConfig,
+			.videoCapture = m_capturer,
+			.stateUpdated = [this](tgcalls::State state) {
 				m_stateUpdatedEventSource(*this, (VoipState)state);
 			},
-			/*signalBarsUpdated =*/ [this](int signalBars) {
+			.signalBarsUpdated = [this](int signalBars) {
 				m_signalBarsUpdatedEventSource(*this, signalBars);
 			},
-				/*audioLevelUpdated =*/ [this](float level) {
-					m_audioLevelUpdated(*this, level);
-				},
-				/*remoteBatteryLevelIsLowUpdated =*/ [this](bool low) {
-					m_remoteBatteryLevelIsLowUpdatedEventSource(*this, low);
-				},
-					/*remoteMediaStateUpdated =*/ [this](tgcalls::AudioState audio, tgcalls::VideoState video) {
-						auto args = winrt::make_self<winrt::Unigram::Native::Calls::implementation::RemoteMediaStateUpdatedEventArgs>((VoipAudioState)audio, (VoipVideoState)video);
-						m_remoteMediaStateUpdatedEventSource(*this, *args);
-					},
-					/*remotePrefferedAspectRatioUpdated =*/ [this](float aspect) {
-						m_remotePrefferedAspectRatioUpdatedEventSource(*this, aspect);
-					},
-						/*signalingDataEmitted =*/ [this](std::vector<uint8_t> data) {
-							auto bytes = winrt::single_threaded_vector<uint8_t>(std::move(data));
-							auto args = winrt::make_self<winrt::Unigram::Native::Calls::implementation::SignalingDataEmittedEventArgs>(bytes);
-							m_signalingDataEmittedEventSource(*this, *args);
-						}
+			.audioLevelUpdated = [this](float level) {
+				m_audioLevelUpdated(*this, level);
+			},
+			.remoteBatteryLevelIsLowUpdated = [this](bool low) {
+				m_remoteBatteryLevelIsLowUpdatedEventSource(*this, low);
+			},
+			.remoteMediaStateUpdated = [this](tgcalls::AudioState audio, tgcalls::VideoState video) {
+				auto args = winrt::make_self<winrt::Unigram::Native::Calls::implementation::RemoteMediaStateUpdatedEventArgs>((VoipAudioState)audio, (VoipVideoState)video);
+				m_remoteMediaStateUpdatedEventSource(*this, *args);
+			},
+			.remotePrefferedAspectRatioUpdated = [this](float aspect) {
+				m_remotePrefferedAspectRatioUpdatedEventSource(*this, aspect);
+			},
+			.signalingDataEmitted = [this](std::vector<uint8_t> data) {
+				auto bytes = winrt::single_threaded_vector<uint8_t>(std::move(data));
+				auto args = winrt::make_self<winrt::Unigram::Native::Calls::implementation::SignalingDataEmittedEventArgs>(bytes);
+				m_signalingDataEmittedEventSource(*this, *args);
+			}
 		};
 
-		m_impl = tgcalls::Meta::Create("3.0.0", std::move(descriptor));
+		m_impl = tgcalls::Meta::Create(winrt::to_string(m_version), std::move(descriptor));
 		//impl->setVideoCapture(capturer);
 	}
 

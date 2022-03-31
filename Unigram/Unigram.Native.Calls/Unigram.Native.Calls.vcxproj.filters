@@ -132,6 +132,21 @@
     <ClCompile Include="..\Libraries\tgcalls\tgcalls\group\AVIOContextImpl.cpp">
       <Filter>tgcalls\group</Filter>
     </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2\ContentNegotiation.cpp">
+      <Filter>tgcalls\v2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2\InstanceV2Impl.cpp">
+      <Filter>tgcalls\v2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2\NativeNetworkingImpl.cpp">
+      <Filter>tgcalls\v2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2\Signaling.cpp">
+      <Filter>tgcalls\v2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2\SignalingEncryption.cpp">
+      <Filter>tgcalls\v2</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -302,6 +317,21 @@
     <ClInclude Include="..\Libraries\tgcalls\tgcalls\group\AVIOContextImpl.h">
       <Filter>tgcalls\group</Filter>
     </ClInclude>
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\ContentNegotiation.h">
+      <Filter>tgcalls\v2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\InstanceV2Impl.h">
+      <Filter>tgcalls\v2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\NativeNetworkingImpl.h">
+      <Filter>tgcalls\v2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\Signaling.h">
+      <Filter>tgcalls\v2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\SignalingEncryption.h">
+      <Filter>tgcalls\v2</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="VoipManager.rc" />
@@ -354,6 +384,9 @@
     </Filter>
     <Filter Include="tgcalls\platform\uwp">
       <UniqueIdentifier>{eee909dd-ec13-4c3c-b8dc-250a4267947f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tgcalls\v2">
+      <UniqueIdentifier>{e945ae12-e8e5-4df7-997e-8af91cd5e70f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

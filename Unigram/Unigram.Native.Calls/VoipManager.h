@@ -4,6 +4,7 @@
 #include "VoipVideoCapture.h"
 #include "Instance.h"
 #include "InstanceImpl.h"
+#include "v2/InstanceV2Impl.h"
 #include "VideoCaptureInterface.h"
 #include "SignalingDataEmittedEventArgs.h"
 #include "RemoteMediaStateUpdatedEventArgs.h"
@@ -11,14 +12,43 @@
 //using namespace winrt::Windows::Foundation;
 //using namespace winrt::Windows::Foundation::Collections;
 
+#include <winrt/Telegram.Td.Api.h>
+
+using namespace winrt::Telegram::Td::Api;
+
 namespace winrt::Unigram::Native::Calls::implementation
 {
+	const auto RegisterTag = tgcalls::Register<tgcalls::InstanceImpl>();
+	const auto RegisterTagV2 = tgcalls::Register<tgcalls::InstanceV2Impl>();
+
 	struct VoipManager : VoipManagerT<VoipManager>
 	{
-		VoipManager(VoipDescriptor descriptor);
+		static CallProtocol Protocol() {
+			auto minLayer = 92;
+			auto maxLayer = tgcalls::Meta::MaxLayer();
+			auto versions = tgcalls::Meta::Versions();
+
+			auto CompareVersions = [](std::string a, std::string b) {
+				return a > b;
+			};
+
+			// Server processes them newer to older
+			std::sort(versions.begin(), versions.end(), CompareVersions);
+
+			auto args = winrt::single_threaded_vector<hstring>();
+
+			for (const std::string& x : versions) {
+				args.Append(winrt::to_hstring(x));
+			}
+
+			return CallProtocol(true, true, minLayer, maxLayer, args);
+		}
+
+		VoipManager(hstring version, VoipDescriptor descriptor);
 
 		void Close();
 
+		hstring m_version;
 		VoipDescriptor m_descriptor = nullptr;
 
 		std::unique_ptr<tgcalls::Instance> m_impl = nullptr;

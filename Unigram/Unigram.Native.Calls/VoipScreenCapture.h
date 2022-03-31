@@ -10,9 +10,19 @@ using namespace winrt::Windows::Graphics::Capture;
 
 namespace winrt::Unigram::Native::Calls::implementation
 {
-	struct VoipScreenCapture : VoipScreenCaptureT<VoipScreenCapture, VoipVideoCapture>
+	struct VoipScreenCapture : VoipScreenCaptureT<VoipScreenCapture>
 	{
 		VoipScreenCapture(GraphicsCaptureItem item);
+		~VoipScreenCapture();
+
+		void Close();
+
+		void SwitchToDevice(hstring deviceId);
+		void SetState(VoipVideoState state);
+		void SetPreferredAspectRatio(float aspectRatio);
+		void SetOutput(winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl canvas, bool enableBlur = true);
+
+		std::shared_ptr<tgcalls::VideoCaptureInterface> m_impl = nullptr;
 
 		winrt::event_token FatalErrorOccurred(Windows::Foundation::TypedEventHandler<
 			winrt::Unigram::Native::Calls::VoipScreenCapture,

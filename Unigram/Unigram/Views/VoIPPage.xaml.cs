@@ -720,7 +720,7 @@ namespace Unigram.Views
 
             if (call.IsOutgoing && call.State is CallStateDiscarded discarded && discarded.Reason is CallDiscardReasonDeclined)
             {
-                _protoService.Send(new CreateCall(call.UserId, _service.GetProtocol(), false));
+                _protoService.Send(new CreateCall(call.UserId, _service.Protocol, false));
             }
             else if (call.State is CallStateReady || (call.State is CallStatePending && call.IsOutgoing))
             {
@@ -742,7 +742,7 @@ namespace Unigram.Views
                 }
                 else
                 {
-                    _protoService.Send(new AcceptCall(call.Id, _service.GetProtocol()));
+                    _protoService.Send(new AcceptCall(call.Id, _service.Protocol));
                 }
             }
         }

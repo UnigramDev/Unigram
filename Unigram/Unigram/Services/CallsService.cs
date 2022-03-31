@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -33,6 +34,8 @@ namespace Unigram.Services
 #if ENABLE_CALLS
         VoipManager Manager { get; }
         IVoipVideoCapture Capturer { get; set; }
+
+        CallProtocol Protocol { get; }
 #endif
 
         Call Call { get; }
@@ -41,8 +44,6 @@ namespace Unigram.Services
         void Show();
 
         void Start(long chatId, bool video);
-
-        CallProtocol GetProtocol();
 
 #if ENABLE_CALLS
         VoipCaptureType CaptureType { get; }
@@ -85,11 +86,6 @@ namespace Unigram.Services
 #endif
 
             aggregator.Subscribe(this);
-        }
-
-        public CallProtocol GetProtocol()
-        {
-            return new CallProtocol(true, true, 92, 92, new[] { "3.0.0" });
         }
 
 #if ENABLE_CALLS
@@ -163,6 +159,8 @@ namespace Unigram.Services
             set => _capturer = value;
         }
 
+        public CallProtocol Protocol => VoipManager.Protocol;
+
         public VoipCaptureType CaptureType => _capturer is VoipVideoCapture
             ? VoipCaptureType.Video
             : _capturer is VoipScreenCapture
@@ -218,7 +216,7 @@ namespace Unigram.Services
                 return;
             }
 
-            var protocol = GetProtocol();
+            var protocol = VoipManager.Protocol;
 
             var response = await ProtoService.SendAsync(new CreateCall(user.Id, protocol, video));
             if (response is Error error)
@@ -318,6 +316,7 @@ namespace Unigram.Services
                         ? new VoipVideoCapture(await _videoWatcher.GetAndUpdateAsync())
                         : null;
 
+                    var version = ready.Protocol.LibraryVersions[0];
                     var descriptor = new VoipDescriptor
                     {
                         InitializationTimeout = call_packet_timeout_ms / 1000.0,
@@ -331,14 +330,14 @@ namespace Unigram.Services
                         AudioOutputId = await _outputWatcher.GetAndUpdateAsync()
                     };
 
-                    _manager = new VoipManager(descriptor);
+                    _manager = new VoipManager(version, descriptor);
                     _manager.StateUpdated += OnStateUpdated;
                     _manager.SignalingDataEmitted += OnSignalingDataEmitted;
 
                     _manager.Start();
 
                     await ShowAsync(update.Call, _manager, _capturer, _callStarted);
-        }
+                }
                 else if (update.Call.State is CallStateDiscarded discarded)
                 {
                     if (discarded.NeedDebugInformation)
