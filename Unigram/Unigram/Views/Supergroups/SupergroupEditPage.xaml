@@ -51,7 +51,6 @@
                                           Height="140"
                                           Width="140"
                                           FontSize="48" />
-
                 </Grid>
  
                 <controls:HeaderedControl>

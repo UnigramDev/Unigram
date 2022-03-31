@@ -10,7 +10,7 @@
              d:DesignWidth="400">
 
     <Grid Background="{ThemeResource SettingsItemBackground}"
-          Margin="0,8,12,8"
+          Margin="0,0,12,8"
           CornerRadius="8"
           Height="40">
         <xaml:CanvasControl x:Name="Canvas"

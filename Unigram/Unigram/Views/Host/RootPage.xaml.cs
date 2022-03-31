@@ -425,15 +425,6 @@ namespace Unigram.Views.Host
                 if (content != null)
                 {
                     content.IsChecked = destination == _navigationViewSelected;
-
-                    //if (destination == RootDestination.SavedMessages)
-                    //{
-                    //    content.FontFamily = new FontFamily("ms-appx:///Assets/Fonts/Telegram.ttf#Telegram");
-                    //}
-                    //else
-                    //{
-                    //    content.FontFamily = new FontFamily("Segoe MDL2 Assets");
-                    //}
                 }
 
                 switch (destination)
@@ -449,7 +440,7 @@ namespace Unigram.Views.Host
                         break;
                     case RootDestination.Contacts:
                         content.Text = Strings.Resources.Contacts;
-                        content.Glyph = Icons.Person;
+                        content.Glyph = Icons.People;
                         break;
                     case RootDestination.Calls:
                         content.Text = Strings.Resources.Calls;

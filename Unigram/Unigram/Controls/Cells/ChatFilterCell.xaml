@@ -17,14 +17,7 @@
             <VisualStateGroup x:Name="CommonStates"
                               CurrentStateChanged="OnCurrentStateChanged">
                 <VisualState x:Name="Normal" />
-                <VisualState x:Name="PointerOver">
-                    <VisualState.Setters>
-                        <Setter Target="UnselectedIcon.Opacity"
-                                Value="1" />
-                        <Setter Target="TitlePresenter.Opacity"
-                                Value="1" />
-                    </VisualState.Setters>
-                </VisualState>
+                <VisualState x:Name="PointerOver" />
                 <VisualState x:Name="Pressed" />
                 <VisualState x:Name="Selected" />
                 <VisualState x:Name="PointerOverSelected" />

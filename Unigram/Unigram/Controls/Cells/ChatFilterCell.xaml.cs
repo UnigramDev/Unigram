@@ -14,7 +14,7 @@ namespace Unigram.Controls.Cells
         public ChatFilterCell()
         {
             InitializeComponent();
-            DataContextChanged += ChatFilterCell_DataContextChanged;
+            DataContextChanged += OnDataContextChanged;
 
             ElementCompositionPreview.SetIsTranslationEnabled(UnselectedIcon, true);
             ElementCompositionPreview.SetIsTranslationEnabled(SelectedIcon, true);
@@ -26,7 +26,7 @@ namespace Unigram.Controls.Cells
             iconSelected.Opacity = 0;
         }
 
-        private void ChatFilterCell_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+        private void OnDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
         {
             Bindings.Update();
         }
@@ -41,7 +41,17 @@ namespace Unigram.Controls.Cells
             var iconUnselected = ElementCompositionPreview.GetElementVisual(UnselectedIcon);
             var iconSelected = ElementCompositionPreview.GetElementVisual(SelectedIcon);
 
-            if (next == "Pressed")
+            var title = ElementCompositionPreview.GetElementVisual(Title);
+
+            if (next == "PointerOver")
+            {
+                title.StopAnimation("Opacity");
+                title.Opacity = 1;
+
+                iconUnselected.StopAnimation("Opacity");
+                iconUnselected.Opacity = 1;
+            }
+            else if (next == "Pressed")
             {
                 var offset = compositor.CreateVector3KeyFrameAnimation();
                 offset.InsertKeyFrame(0, new Vector3());
@@ -49,11 +59,17 @@ namespace Unigram.Controls.Cells
 
                 iconUnselected.StartAnimation("Translation", offset);
                 iconSelected.StartAnimation("Translation", offset);
+
+                title.StopAnimation("Opacity");
+                title.Opacity = 0.8f;
+
+                iconUnselected.StopAnimation("Opacity");
+                iconUnselected.Opacity = 0.6f;
             }
             else if (next == "Selected" && prev == null)
             {
-                var text = ElementCompositionPreview.GetElementVisual(Title);
-                text.Opacity = 0;
+                title.StopAnimation("Opacity");
+                title.Opacity = 0;
 
                 iconUnselected.Opacity = 0;
                 iconUnselected.Properties.InsertVector3("Translation", new Vector3(0, 7, 0));
@@ -63,8 +79,6 @@ namespace Unigram.Controls.Cells
             }
             else if (next.Contains("Selected") && prev != null && !prev.Contains("Selected"))
             {
-                var text = ElementCompositionPreview.GetElementVisual(Title);
-
                 var spring = compositor.CreateSpringVector3Animation();
                 spring.InitialValue = new Vector3(0, -3, 0);
                 spring.FinalValue = new Vector3(0, 7, 0);
@@ -85,19 +99,17 @@ namespace Unigram.Controls.Cells
                 iconSelected.StartAnimation("Translation", spring);
 
                 fadeOut.Duration = TimeSpan.FromMilliseconds(150);
-                text.StartAnimation("Opacity", fadeOut);
+                title.StartAnimation("Opacity", fadeOut);
             }
             else if (next == "Normal" && prev == "Selected")
             {
-                var text = ElementCompositionPreview.GetElementVisual(Title);
-
                 var offset = compositor.CreateVector3KeyFrameAnimation();
                 offset.InsertKeyFrame(0, new Vector3(0, 7, 0));
                 offset.InsertKeyFrame(1, new Vector3());
 
                 var fadeIn = compositor.CreateScalarKeyFrameAnimation();
                 fadeIn.InsertKeyFrame(0, 0);
-                fadeIn.InsertKeyFrame(1, 1);
+                fadeIn.InsertKeyFrame(1, 0.6f);
 
                 var fadeOut = compositor.CreateScalarKeyFrameAnimation();
                 fadeOut.InsertKeyFrame(0, 1);
@@ -109,8 +121,17 @@ namespace Unigram.Controls.Cells
                 iconSelected.StartAnimation("Opacity", fadeOut);
                 iconSelected.StartAnimation("Translation", offset);
 
+                fadeIn.InsertKeyFrame(1, 0.8f);
                 fadeIn.Duration = TimeSpan.FromMilliseconds(150);
-                text.StartAnimation("Opacity", fadeIn);
+                title.StartAnimation("Opacity", fadeIn);
+            }
+            else if (next == "Normal")
+            {
+                title.StopAnimation("Opacity");
+                title.Opacity = 0.8f;
+
+                iconUnselected.StopAnimation("Opacity");
+                iconUnselected.Opacity = 0.6f;
             }
         }
     }
