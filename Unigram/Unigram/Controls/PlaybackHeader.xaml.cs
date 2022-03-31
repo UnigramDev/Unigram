@@ -47,6 +47,21 @@ namespace Unigram.Controls
             _visual = _visual1;
         }
 
+        private bool _collapsed;
+        private bool _hidden;
+
+        public bool IsHidden
+        {
+            get => _hidden;
+            set
+            {
+                _hidden = value;
+                Visibility = value || _collapsed
+                    ? Visibility.Collapsed
+                    : Visibility.Visible;
+            }
+        }
+
         public void Update(IProtoService cacheService, IPlaybackService playbackService, INavigationService navigationService)
         {
             _cacheService = cacheService;
@@ -134,13 +149,18 @@ namespace Unigram.Controls
 
                 TitleLabel1.Text = TitleLabel2.Text = string.Empty;
                 SubtitleLabel1.Text = SubtitleLabel2.Text = string.Empty;
+
+                _collapsed = true;
                 Visibility = Visibility.Collapsed;
 
                 return;
             }
             else
             {
-                Visibility = Visibility.Visible;
+                _collapsed = false;
+                Visibility = _hidden
+                    ? Visibility.Collapsed
+                    : Visibility.Visible;
             }
 
             VolumeSlider.Value = _playbackService.Volume * 100;

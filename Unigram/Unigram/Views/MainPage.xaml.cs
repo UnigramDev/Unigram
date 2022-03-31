@@ -499,19 +499,32 @@ namespace Unigram.Views
 
         public void Handle(UpdateCallDialog update)
         {
+            void UpdatePlaybackHidden(bool hidden)
+            {
+                if (Playback != null)
+                {
+                    Playback.IsHidden = hidden;
+                }
+            }
+
             this.BeginOnUIThread(() =>
             {
                 if (update.Call != null && update.Call.IsValidState())
                 {
+                    UpdatePlaybackHidden(true);
                     FindName(nameof(CallBanner));
                 }
                 else if (update.GroupCall != null && (update.GroupCall.IsJoined || update.GroupCall.NeedRejoin))
                 {
+                    UpdatePlaybackHidden(true);
                     FindName(nameof(GroupCallBanner));
+
                     GroupCallBanner.Update(ViewModel.GroupCallService);
                 }
                 else
                 {
+                    UpdatePlaybackHidden(false);
+
                     if (CallBanner != null)
                     {
                         UnloadObject(CallBanner);

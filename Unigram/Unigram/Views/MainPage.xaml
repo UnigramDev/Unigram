@@ -88,6 +88,7 @@
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
                                     <muxc:BreadcrumbBar x:Name="DetailHeaderPresenter"
+                                                        Visibility="Collapsed"
                                                         Margin="0,-4,0,0"
                                                         VerticalAlignment="Top">
                                         <muxc:BreadcrumbBar.ItemTemplate>
@@ -409,20 +410,24 @@
 
                     <Grid x:Name="CallBanner"
                           x:Load="False"
+                          Margin="0,0,12,8"
+                          CornerRadius="8"
                           Height="40"
                           Background="{ThemeResource SystemControlHighlightAccentBrush}"
                           Grid.Row="2">
+                        <Border BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
+                                BorderThickness="1"
+                                CornerRadius="8" />
+
                         <Button Command="{x:Bind ViewModel.ReturnToCallCommand}"
                                 HorizontalContentAlignment="Center"
                                 VerticalContentAlignment="Center"
+                                Background="Transparent"
                                 Style="{StaticResource EmptyButtonStyle}">
                             <TextBlock Text="{CustomResource ReturnToCall}"
                                        Foreground="White"
                                        Style="{StaticResource CaptionTextBlockStyle}" />
                         </Button>
-                        <Border BorderThickness="0,0,0,1"
-                                BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                                IsHitTestVisible="False" />
                     </Grid>
 
                     <controls:GroupCallActiveHeader x:Load="False"
