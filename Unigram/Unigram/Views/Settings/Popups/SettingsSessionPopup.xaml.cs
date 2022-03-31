@@ -7,6 +7,7 @@ using Unigram.Controls;
 using Unigram.Controls.Cells;
 using Unigram.Converters;
 using Windows.Foundation;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
@@ -25,7 +26,7 @@ namespace Unigram.Views.Settings.Popups
             
             if (icon.Animation != null)
             {
-                Icon.ColorReplacements = new Dictionary<int, int> { { 0x00000, icon.Backgroud.ToValue() } };
+                Icon.ColorReplacements = new Dictionary<int, int> { { 0x000000, icon.Backgroud.ToValue() } };
                 Icon.FrameSize = new Size(50, 50);
                 Icon.DecodeFrameType = DecodePixelType.Logical;
                 Icon.Source = new Uri($"ms-appx:///Assets/Animations/Device{icon.Animation}.json");
@@ -42,16 +43,20 @@ namespace Unigram.Views.Settings.Popups
             Location.Badge = session.Country;
             Address.Badge = session.Ip;
 
-            AcceptCalls.IsOn = session.CanAcceptCalls;
-            AcceptSecretChats.IsOn = session.CanAcceptSecretChats;
+            AcceptCalls.IsChecked = session.CanAcceptCalls;
+
+            AcceptSecretChats.IsChecked = session.CanAcceptSecretChats;
+            AcceptSecretChatsPanel.Visibility = session.ApiId == 2040 || session.ApiId == 2496
+                ? Visibility.Collapsed
+                : Visibility.Visible;
 
             PrimaryButtonText = Strings.Resources.Terminate;
             SecondaryButtonText = Strings.Resources.Done;
         }
 
-        public bool CanAcceptCalls => AcceptCalls.IsOn;
+        public bool CanAcceptCalls => AcceptCalls.IsChecked == true;
 
-        public bool CanAcceptSecretChats => AcceptSecretChats.IsOn;
+        public bool CanAcceptSecretChats => AcceptSecretChats.IsChecked == true;
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
@@ -65,6 +70,16 @@ namespace Unigram.Views.Settings.Popups
         {
             await Task.Delay(1000);
             Icon.Play();
+        }
+
+        private void AcceptCallsPanel_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            AcceptCalls.IsChecked = AcceptCalls.IsChecked != true;
+        }
+
+        private void AcceptSecretChatsPanel_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            AcceptSecretChats.IsChecked = AcceptSecretChats.IsChecked != true;
         }
     }
 }

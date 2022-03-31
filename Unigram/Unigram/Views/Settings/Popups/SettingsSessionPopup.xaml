@@ -44,7 +44,7 @@
         </StackPanel>
     </controls:ContentPopup.Title>
 
-    <Grid Margin="-12">
+    <Grid Margin="-24,-12,-24,0">
         <controls:HeaderedControl>
             <controls:BadgeButton x:Name="Application"
                                   Content="{CustomResource Application}"
@@ -59,43 +59,29 @@
                                   Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
                                   Glyph="&#xE774;" />
 
-            <Grid x:Name="AcceptCallsPanel">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="48" />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <TextBlock FontSize="{StaticResource GlyphMediumFontSize}"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
-                           AutomationProperties.AccessibilityView="Raw"
-                           Text="&#xE717;"
-                           FontFamily="{StaticResource SymbolThemeFontFamily}" />
+            <controls:BadgeButton x:Name="AcceptCallsPanel"
+                                  Click="AcceptCallsPanel_Click"
+                                  Content="{CustomResource AcceptCalls}"
+                                  Style="{StaticResource GlyphBadgeButtonStyle}"
+                                  Glyph="&#xE717;">
+                <controls:BadgeButton.Badge>
+                    <CheckBox x:Name="AcceptCalls"
+                              MinWidth="0"
+                              Padding="0" />
+                </controls:BadgeButton.Badge>
+            </controls:BadgeButton>
 
-                <ToggleSwitch x:Name="AcceptCalls"
-                              Padding="48,11,12,12"
-                              Header="{CustomResource AcceptCalls}"
-                              Style="{StaticResource CheckButtonStyle}"
-                              Grid.ColumnSpan="2" />
-            </Grid>
-
-            <Grid x:Name="AcceptSecretChatsPanel">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="48" />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <TextBlock FontSize="{StaticResource GlyphMediumFontSize}"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
-                           AutomationProperties.AccessibilityView="Raw"
-                           Text="&#xE72E;"
-                           FontFamily="{StaticResource SymbolThemeFontFamily}" />
-
-                <ToggleSwitch x:Name="AcceptSecretChats"
-                              Padding="48,11,12,12"
-                              Header="{CustomResource AcceptSecretChats}"
-                              Style="{StaticResource CheckButtonStyle}"
-                              Grid.ColumnSpan="2" />
-            </Grid>
+            <controls:BadgeButton x:Name="AcceptSecretChatsPanel"
+                                  Click="AcceptSecretChatsPanel_Click"
+                                  Content="{CustomResource AcceptSecretChats}"
+                                  Style="{StaticResource GlyphBadgeButtonStyle}"
+                                  Glyph="&#xE72E;">
+                <controls:BadgeButton.Badge>
+                    <CheckBox x:Name="AcceptSecretChats"
+                              MinWidth="0"
+                              Padding="0" />
+                </controls:BadgeButton.Badge>
+            </controls:BadgeButton>
         </controls:HeaderedControl>
     </Grid>
 </controls:ContentPopup>
