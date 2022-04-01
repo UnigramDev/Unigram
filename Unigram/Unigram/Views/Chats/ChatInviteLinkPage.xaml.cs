@@ -18,6 +18,7 @@ namespace Unigram.Views.Chats
         public ChatInviteLinkPage()
         {
             InitializeComponent();
+            Title = Strings.Resources.InviteLink;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)

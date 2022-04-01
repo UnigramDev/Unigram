@@ -75,8 +75,14 @@ namespace Unigram.Converters
 
         public const string Live = "\uE98D";
 
+        public const string Options = "\uE9E9";
+
         public const string AlertOff = "\uE7ED";
         public const string Alert = "\uEA8F";
+        public const string AlertSnooze = "\uE99C";
+
+        public const string MusicNote2 = "\uE99D";
+        public const string MusicNoteOff2 = "\uE99E";
 
         public const string Pin = "\uE840";
         public const string PinOff = "\uE77A";
@@ -94,6 +100,11 @@ namespace Unigram.Converters
         public const string HeartFilled16 = "\uE985";
         public const string HeartFilled12 = "\uE998";
         public const string Heart = "\uE987";
+
+        public const string AutoDeleteOff = "\uE99F";
+        public const string AutoDeleteDay = "\uE9A0";
+        public const string AutoDeleteWeek = "\uE9A1";
+        public const string AutoDeleteMonth = "\uE9A2";
 
         public const string Star = "\uE734";
         public const string StarOff = "\uE8D9";

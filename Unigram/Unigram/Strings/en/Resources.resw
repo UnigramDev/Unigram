@@ -1755,6 +1755,9 @@ To confirm Telegram login, please go to Settings &gt; Devices &gt; Scan QR and s
   <data name="AutoDeleteNever" xml:space="preserve">
     <value>Off</value>
   </data>
+  <data name="AutoDeletePopupTitle" xml:space="preserve">
+    <value>Auto-Delete</value>
+  </data>
   <data name="AutoDeleteSet" xml:space="preserve">
     <value>Set for this chat</value>
   </data>
@@ -8228,11 +8231,20 @@ This may take a few moments. You can continue using the app while the files are 
   <data name="MusicInfo" xml:space="preserve">
     <value>To send music files</value>
   </data>
+  <data name="Mute" xml:space="preserve">
+    <value>Mute</value>
+  </data>
   <data name="MuteDisable" xml:space="preserve">
     <value>Disable</value>
   </data>
   <data name="MuteFor" xml:space="preserve">
     <value>Mute for {0}</value>
+  </data>
+  <data name="MuteFor1h" xml:space="preserve">
+    <value>Mute for 1 hour</value>
+  </data>
+  <data name="MuteForPopup" xml:space="preserve">
+    <value>Mute for...</value>
   </data>
   <data name="MuteNotifications" xml:space="preserve">
     <value>Mute notifications</value>
@@ -13173,6 +13185,12 @@ Slow Mode is enabled. You can't send more than one message at once.</value>
   </data>
   <data name="SoundMuted" xml:space="preserve">
     <value>Sound muted</value>
+  </data>
+  <data name="SoundOff" xml:space="preserve">
+    <value>Sound off</value>
+  </data>
+  <data name="SoundOn" xml:space="preserve">
+    <value>Sound on</value>
   </data>
   <data name="Speaking" xml:space="preserve">
     <value>speaking</value>

@@ -301,31 +301,31 @@
                                                 <VisualState x:Name="PointerOver">
                                                     <VisualState.Setters>
                                                         <Setter Target="Plate.Background"
-                                                                Value="{ThemeResource ControlAltFillColorQuarternaryBrush}" />
+                                                                Value="{ThemeResource NavigationViewItemBackgroundPointerOver}" />
                                                     </VisualState.Setters>
                                                 </VisualState>
                                                 <VisualState x:Name="Pressed">
                                                     <VisualState.Setters>
                                                         <Setter Target="Plate.Background"
-                                                                Value="{ThemeResource ControlAltFillColorTertiaryBrush}" />
+                                                                Value="{ThemeResource NavigationViewItemBackgroundPressed}" />
                                                     </VisualState.Setters>
                                                 </VisualState>
                                                 <VisualState x:Name="Selected">
                                                     <VisualState.Setters>
                                                         <Setter Target="Plate.Background"
-                                                                Value="{ThemeResource ControlSolidFillColorDefaultBrush}" />
+                                                                Value="{ThemeResource NavigationViewItemBackgroundSelected}" />
                                                     </VisualState.Setters>
                                                 </VisualState>
                                                 <VisualState x:Name="PointerOverSelected">
                                                     <VisualState.Setters>
                                                         <Setter Target="Plate.Background"
-                                                                Value="{ThemeResource ControlSolidFillColorDefaultBrush}" />
+                                                                Value="{ThemeResource NavigationViewItemBackgroundSelectedPointerOver}" />
                                                     </VisualState.Setters>
                                                 </VisualState>
                                                 <VisualState x:Name="PressedSelected">
                                                     <VisualState.Setters>
                                                         <Setter Target="Plate.Background"
-                                                                Value="{ThemeResource ControlSolidFillColorDefaultBrush}" />
+                                                                Value="{ThemeResource NavigationViewItemBackgroundSelectedPressed}" />
                                                     </VisualState.Setters>
                                                 </VisualState>
                                             </VisualStateGroup>

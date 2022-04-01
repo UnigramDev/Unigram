@@ -1,39 +1,52 @@
-﻿<controls:ContentPopup
-    x:Class="Unigram.Views.Popups.DeleteChatPopup"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Unigram.Views.Popups"
-    xmlns:controls="using:Unigram.Controls"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    DefaultButton="None"
-    PrimaryButtonStyle="{StaticResource DangerButtonStyle}"
-    FocusPrimaryButton="False">
+﻿<controls:ContentPopup x:Class="Unigram.Views.Popups.DeleteChatPopup"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:local="using:Unigram.Views.Popups"
+                       xmlns:controls="using:Unigram.Controls"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       mc:Ignorable="d"
+                       DefaultButton="None"
+                       PrimaryButtonStyle="{StaticResource DangerButtonStyle}"
+                       FocusPrimaryButton="False">
 
     <controls:ContentPopup.Resources>
-        <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeChecked" Color="#D13438" />
-        <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeCheckedPointerOver" Color="#FF6469" />
-        <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeCheckedPressed" Color="#992629" />
-        <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeIndeterminate" Color="#D13438" />
-        <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeIndeterminatePointerOver" Color="#FF6469" />
-        <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeIndeterminatePressed" Color="#992629" />
-        <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillChecked" Color="#D13438" />
-        <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillCheckedPointerOver" Color="#FF6469" />
-        <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillCheckedPressed" Color="#992629" />
-        <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillIndeterminate" Color="#D13438" />
-        <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillIndeterminatePointerOver" Color="#FF6469" />
-        <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillIndeterminatePressed" Color="#992629" />
+        <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeChecked"
+                         Color="#D13438" />
+        <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeCheckedPointerOver"
+                         Color="#FF6469" />
+        <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeCheckedPressed"
+                         Color="#992629" />
+        <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeIndeterminate"
+                         Color="#D13438" />
+        <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeIndeterminatePointerOver"
+                         Color="#FF6469" />
+        <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeIndeterminatePressed"
+                         Color="#992629" />
+        <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillChecked"
+                         Color="#D13438" />
+        <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillCheckedPointerOver"
+                         Color="#FF6469" />
+        <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillCheckedPressed"
+                         Color="#992629" />
+        <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillIndeterminate"
+                         Color="#D13438" />
+        <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillIndeterminatePointerOver"
+                         Color="#FF6469" />
+        <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillIndeterminatePressed"
+                         Color="#992629" />
     </controls:ContentPopup.Resources>
 
     <StackPanel>
-        <TextBlock
-            x:Name="Subtitle"
-            TextWrapping="Wrap"
-            TextTrimming="CharacterEllipsis"
-            FontFamily="{ThemeResource EmojiThemeFontFamily}"
-            Style="{StaticResource BodyTextBlockStyle}"/>
+        <TextBlock x:Name="Subtitle"
+                   TextWrapping="Wrap"
+                   TextTrimming="CharacterEllipsis"
+                   FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                   Style="{StaticResource BodyTextBlockStyle}" />
 
-        <CheckBox x:Name="CheckBox" Margin="0,16,0,0" Visibility="Collapsed" Grid.Row="2"/>
+        <CheckBox x:Name="CheckBox"
+                  Margin="0,16,0,0"
+                  Visibility="Collapsed"
+                  Grid.Row="2" />
     </StackPanel>
 </controls:ContentPopup>

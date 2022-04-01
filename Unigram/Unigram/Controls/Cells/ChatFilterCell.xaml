@@ -41,7 +41,7 @@
             <FontIcon x:Name="SelectedIcon"
                       Glyph="{x:Bind ViewModel.FilledIconGlyph, Mode=OneWay}"
                       FontFamily="{StaticResource SymbolThemeFontFamily}"
-                      Foreground="{ThemeResource ChatUnreadBadgeBrush}"
+                      Foreground="{ThemeResource AccentFillColorDefaultBrush}"
                       HorizontalAlignment="Center"
                       FontSize="24" />
             <muxc:InfoBadge Value="{x:Bind ViewModel.UnreadCount, Mode=OneWay}"
