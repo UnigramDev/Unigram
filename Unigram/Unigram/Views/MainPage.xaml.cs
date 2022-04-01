@@ -645,14 +645,10 @@ namespace Unigram.Views
                 return;
             }
 
-            if (show)
-            {
-                _tabsLeftCollapsed = false;
-            }
-
+            _tabsLeftCollapsed = !show;
             Root?.SetSidebarEnabled(show);
 
-            Photo.Visibility = show
+            Photo.Visibility = show || rpMasterTitlebar.SelectedIndex == 3
                 ? Visibility.Collapsed
                 : Visibility.Visible;
 
@@ -1771,7 +1767,9 @@ namespace Unigram.Views
                 }
             }
 
-            Photo.Visibility = _tabsLeftCollapsed && rpMasterTitlebar.SelectedIndex != 3 ? Visibility.Visible : Visibility.Collapsed;
+            Photo.Visibility = _tabsLeftCollapsed && rpMasterTitlebar.SelectedIndex != 3
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
 
         private void UpdateHeader()
