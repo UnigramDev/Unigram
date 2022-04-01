@@ -876,17 +876,17 @@ namespace Unigram.ViewModels
 
         public async void KeyboardButtonExecute(MessageViewModel message, object button)
         {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
             if (button is InlineKeyboardButton inline)
             {
                 if (message.SchedulingState != null)
                 {
                     await MessagePopup.ShowAsync(Strings.Resources.MessageScheduledBotAction, Strings.Resources.AppName, Strings.Resources.OK);
-                    return;
-                }
-
-                var chat = message.GetChat();
-                if (chat == null)
-                {
                     return;
                 }
 
@@ -1062,15 +1062,8 @@ namespace Unigram.ViewModels
             {
                 if (keyboardButton.Type is KeyboardButtonTypeRequestPhoneNumber)
                 {
-                    var response = await ProtoService.SendAsync(new GetMe());
-                    if (response is Telegram.Td.Api.User cached)
+                    if (CacheService.TryGetUser(CacheService.Options.MyId, out Telegram.Td.Api.User cached))
                     {
-                        var chat = CacheService.GetChat(message?.ChatId ?? _chat?.Id ?? 0);
-                        if (chat == null)
-                        {
-                            return;
-                        }
-
                         var content = Strings.Resources.AreYouSureShareMyContactInfo;
                         if (chat.Type is ChatTypePrivate privata)
                         {
@@ -1096,12 +1089,6 @@ namespace Unigram.ViewModels
                         var location = await _locationService.GetPositionAsync();
                         if (location != null)
                         {
-                            var chat = _chat; // CacheService.GetChat(message.ChatId);
-                            if (chat == null)
-                            {
-                                return;
-                            }
-
                             await SendMessageAsync(chat, 0, new InputMessageLocation(location, 0, 0, 0), null);
                         }
                     }
@@ -1112,7 +1099,8 @@ namespace Unigram.ViewModels
                 }
                 else if (keyboardButton.Type is KeyboardButtonTypeText)
                 {
-                    await SendMessageAsync(keyboardButton.Text);
+                    var input = new InputMessageText(new FormattedText(keyboardButton.Text, null), false, true);
+                    await SendMessageAsync(chat, chat.Type is ChatTypeSupergroup or ChatTypeBasicGroup ? message.Id : 0, input, null);
                 }
             }
         }

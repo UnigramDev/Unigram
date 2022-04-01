@@ -18,9 +18,9 @@ namespace Unigram.Controls
             OneTime = oneTime;
         }
 
-        public KeyboardButton Button { get; private set; }
+        public KeyboardButton Button { get; }
 
-        public bool OneTime { get; private set; }
+        public bool OneTime { get; }
     }
 
     public class ReplyMarkupInlineButtonClickEventArgs : EventArgs
@@ -30,7 +30,7 @@ namespace Unigram.Controls
             Button = button;
         }
 
-        public InlineKeyboardButton Button { get; private set; }
+        public InlineKeyboardButton Button { get; }
     }
 
     public class ReplyMarkupPanel : Grid
@@ -86,6 +86,7 @@ namespace Unigram.Controls
             }
 
             _oneTime = oneTime;
+            Tag = message;
 
             UpdateSize(markup, inline);
             Children.Clear();
