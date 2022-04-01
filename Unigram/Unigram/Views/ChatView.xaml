@@ -404,9 +404,6 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
                     <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <controls:ProfilePicture x:Name="Photo"
                                          Click="Photo_Click"
@@ -479,46 +476,53 @@
                     </HyperlinkButton.Content>
                 </HyperlinkButton>
 
-                <controls:GlyphButton x:Name="VideoCall"
-                                      Visibility="Collapsed"
-                                      Command="{x:Bind ViewModel.CallCommand}"
-                                      Style="{StaticResource HeaderGlyphButtonStyle}"
-                                      Glyph="&#xE714;"
-                                      FontSize="20"
-                                      AutomationProperties.Name="{CustomResource VideoCall}"
-                                      ToolTipService.ToolTip="{CustomResource VideoCall}"
-                                      Margin="0,0,-4,0"
-                                      Grid.Column="2">
-                    <Button.CommandParameter>
-                        <x:Boolean>True</x:Boolean>
-                    </Button.CommandParameter>
-                </controls:GlyphButton>
+                <Grid x:Name="Options"
+                      Grid.Column="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <controls:GlyphButton x:Name="VideoCall"
+                                          Visibility="Collapsed"
+                                          Command="{x:Bind ViewModel.CallCommand}"
+                                          Style="{StaticResource HeaderGlyphButtonStyle}"
+                                          Glyph="&#xE714;"
+                                          FontSize="20"
+                                          AutomationProperties.Name="{CustomResource VideoCall}"
+                                          ToolTipService.ToolTip="{CustomResource VideoCall}"
+                                          Margin="0,0,-4,0">
+                        <Button.CommandParameter>
+                            <x:Boolean>True</x:Boolean>
+                        </Button.CommandParameter>
+                    </controls:GlyphButton>
 
-                <controls:GlyphButton x:Name="Call"
-                                      Visibility="Collapsed"
-                                      Command="{x:Bind ViewModel.CallCommand}"
-                                      Style="{StaticResource HeaderGlyphButtonStyle}"
-                                      Glyph="&#xE717;"
-                                      AutomationProperties.Name="{CustomResource Call}"
-                                      ToolTipService.ToolTip="{CustomResource Call}"
-                                      Margin="0,0,-4,0"
-                                      Grid.Column="3">
-                    <Button.CommandParameter>
-                        <x:Boolean>False</x:Boolean>
-                    </Button.CommandParameter>
-                </controls:GlyphButton>
+                    <controls:GlyphButton x:Name="Call"
+                                          Visibility="Collapsed"
+                                          Command="{x:Bind ViewModel.CallCommand}"
+                                          Style="{StaticResource HeaderGlyphButtonStyle}"
+                                          Glyph="&#xE717;"
+                                          AutomationProperties.Name="{CustomResource Call}"
+                                          ToolTipService.ToolTip="{CustomResource Call}"
+                                          Margin="0,0,-4,0"
+                                          Grid.Column="1">
+                        <Button.CommandParameter>
+                            <x:Boolean>False</x:Boolean>
+                        </Button.CommandParameter>
+                    </controls:GlyphButton>
 
-                <controls:GlyphButton Command="{x:Bind ViewModel.SearchCommand}"
-                                      Style="{StaticResource HeaderGlyphButtonStyle}"
-                                      Glyph="&#xE721;"
-                                      AutomationProperties.Name="{CustomResource Search}"
-                                      ToolTipService.ToolTip="{CustomResource Search}"
-                                      Margin="0,0,-4,0"
-                                      Grid.Column="4" />
+                    <controls:GlyphButton Command="{x:Bind ViewModel.SearchCommand}"
+                                          Style="{StaticResource HeaderGlyphButtonStyle}"
+                                          Glyph="&#xE721;"
+                                          AutomationProperties.Name="{CustomResource Search}"
+                                          ToolTipService.ToolTip="{CustomResource Search}"
+                                          Margin="0,0,-4,0"
+                                          Grid.Column="2" />
 
-                <controls:MoreButton x:Name="Options"
-                                     Click="Menu_ContextRequested"
-                                     Grid.Column="5" />
+                    <controls:MoreButton Click="Menu_ContextRequested"
+                                         Grid.Column="3" />
+                </Grid>
             </Grid>
         </controls:ContentPageHeader>
 
