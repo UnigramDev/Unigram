@@ -627,11 +627,6 @@ namespace Unigram.Common
 
         public static async void NavigateToInviteLink(IProtoService protoService, INavigationService navigation, string link)
         {
-            if (!link.StartsWith("http"))
-            {
-                link = "https://t.me/joinchat/" + link;
-            }
-
             var response = await protoService.CheckChatInviteLinkAsync(link);
             if (response is ChatInviteLinkInfo info)
             {
