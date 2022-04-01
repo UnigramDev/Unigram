@@ -12,12 +12,15 @@ namespace Unigram.Controls
 {
     public class ReplyMarkupButtonClickEventArgs : EventArgs
     {
-        public ReplyMarkupButtonClickEventArgs(KeyboardButton button)
+        public ReplyMarkupButtonClickEventArgs(KeyboardButton button, bool oneTime)
         {
             Button = button;
+            OneTime = oneTime;
         }
 
         public KeyboardButton Button { get; private set; }
+
+        public bool OneTime { get; private set; }
     }
 
     public class ReplyMarkupInlineButtonClickEventArgs : EventArgs
@@ -33,6 +36,8 @@ namespace Unigram.Controls
     public class ReplyMarkupPanel : Grid
     {
         private readonly double _keyboardHeight = 260;
+
+        private bool _oneTime;
 
         private void UpdateSize(ReplyMarkup markup, bool inline)
         {
@@ -61,12 +66,14 @@ namespace Unigram.Controls
             //var inline = Message is TLMessage;
             //var inline = true;
             var resize = false;
+            var oneTime = false;
 
             List<List<object>> rows = null;
             if (markup is ReplyMarkupShowKeyboard keyboardMarkup && !inline)
             {
                 rows = keyboardMarkup.Rows.Select(x => x.Select(y => y as object).ToList()).ToList();
                 resize = keyboardMarkup.ResizeKeyboard;
+                oneTime = keyboardMarkup.OneTime;
             }
             else if (markup is ReplyMarkupInlineKeyboard inlineMarkup && inline)
             {
@@ -77,6 +84,8 @@ namespace Unigram.Controls
                 //    Height = double.NaN;
                 //}
             }
+
+            _oneTime = oneTime;
 
             UpdateSize(markup, inline);
             Children.Clear();
@@ -198,7 +207,7 @@ namespace Unigram.Controls
             var button = sender as Button;
             if (button.Tag is KeyboardButton btn)
             {
-                ButtonClick?.Invoke(this, new ReplyMarkupButtonClickEventArgs(btn));
+                ButtonClick?.Invoke(this, new ReplyMarkupButtonClickEventArgs(btn, _oneTime));
             }
             else if (button.Tag is InlineKeyboardButton inlineBtn)
             {

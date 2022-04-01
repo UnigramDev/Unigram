@@ -1533,6 +1533,11 @@ namespace Unigram.Views
             {
                 ViewModel.KeyboardButtonExecute(panel.DataContext as MessageViewModel, e.Button);
             }
+
+            if (e.OneTime)
+            {
+                CollapseMarkup(false);
+            }
         }
 
         private void Stickers_Click(object sender, RoutedEventArgs e)
