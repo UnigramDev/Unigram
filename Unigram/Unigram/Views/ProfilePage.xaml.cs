@@ -95,6 +95,8 @@ namespace Unigram.Views
 
         public void UpdateChatTitle(Chat chat)
         {
+            Title = chat.Title;
+
             ProfileHeader?.UpdateChatTitle(chat);
 
             if (MediaFrame.Content is ChatSharedMediaPageBase sharedMedia)
