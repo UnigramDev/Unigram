@@ -82,6 +82,7 @@ namespace Unigram.Views
             };
 
             _service = voipService;
+            _service.MutedChanged += OnMutedChanged;
             _service.PropertyChanged += OnParticipantsChanged;
 
             if (_service.Participants != null)
@@ -218,6 +219,11 @@ namespace Unigram.Views
             }
         }
 
+        private void OnMutedChanged(object sender, EventArgs e)
+        {
+            this.BeginOnUIThread(() => UpdateNetworkState(_service?.Call, _service?.CurrentUser, _service?.IsConnected));
+        }
+
         private void OnParticipantsChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (_disposed || _service?.Participants == null)
@@ -282,6 +288,7 @@ namespace Unigram.Views
 
             if (_service != null)
             {
+                _service.MutedChanged -= OnMutedChanged;
                 _service.PropertyChanged -= OnParticipantsChanged;
                 _service = null;
             }
@@ -997,14 +1004,20 @@ namespace Unigram.Views
 
             foreach (var level in levels)
             {
+                var value = level.Value.Key;
+                if (level.Key == 0 && sender.IsMuted)
+                {
+                    value = 0;
+                }
+
                 if (level.Key == 0)
                 {
-                    _drawable.SetAmplitude(MathF.Min(8500, level.Value.Key * 4000) / 8500);
+                    _drawable.SetAmplitude(MathF.Min(8500, value * 4000) / 8500);
                 }
 
                 if (participants.TryGetFromAudioSourceId(level.Key, out var participant))
                 {
-                    validLevels[participant] = level.Value.Key;
+                    validLevels[participant] = value;
 
                     var endpoint = participant.ScreenSharingVideoInfo?.EndpointId ?? participant.VideoInfo?.EndpointId;
                     if (endpoint != null && endpoint == _selectedEndpointId)
@@ -1013,7 +1026,7 @@ namespace Unigram.Views
                         const int cutoffTimeout = 3000;
                         const int silentTimeout = 2000;
 
-                        if (level.Value.Key > speakingLevelThreshold && level.Value.Value)
+                        if (value > speakingLevelThreshold && level.Value.Value)
                         {
                             _selectedTimestamp = Environment.TickCount;
                         }

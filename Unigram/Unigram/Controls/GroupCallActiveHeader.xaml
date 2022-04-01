@@ -39,6 +39,7 @@
                                             Click="Audio_Click"
                                             Glyph="&#xE610;"
                                             CheckedGlyph="&#xE720;"
+                                            IsOneWay="True"
                                             Width="40"
                                             Height="40" />
 
@@ -47,7 +48,7 @@
                               Height="40"
                               Grid.Column="7"
                               HorizontalAlignment="Right"
-                              AutomationProperties.Name="{CustomResource AccDescrClosePlayer}"
-                              ToolTipService.ToolTip="{CustomResource AccDescrClosePlayer}" />
+                              AutomationProperties.Name="{CustomResource VoipGroupLeave}"
+                              ToolTipService.ToolTip="{CustomResource VoipGroupLeave}" />
     </Grid>
 </UserControl>

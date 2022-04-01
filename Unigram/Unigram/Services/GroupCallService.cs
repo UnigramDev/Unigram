@@ -38,6 +38,7 @@ namespace Unigram.Services
 
 #if ENABLE_CALLS
         bool IsMuted { get; set; }
+        event EventHandler MutedChanged;
 
         bool IsNoiseSuppressionEnabled { get; set; }
 
@@ -902,9 +903,10 @@ namespace Unigram.Services
             get => _manager.IsMuted;
             set
             {
-                if (_manager != null)
+                if (_manager != null && _manager.IsMuted != value)
                 {
                     _manager.IsMuted = value;
+                    MutedChanged?.Invoke(_manager, EventArgs.Empty);
 
                     //if (value)
                     //{
@@ -921,6 +923,8 @@ namespace Unigram.Services
                 }
             }
         }
+
+        public event EventHandler MutedChanged;
 
         public bool IsNoiseSuppressionEnabled
         {

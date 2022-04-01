@@ -33,16 +33,31 @@ namespace Unigram.Controls
 #if ENABLE_CALLS
             if (_service?.Manager != null)
             {
+                _service.MutedChanged -= OnMutedChanged;
                 _service.Manager.AudioLevelsUpdated -= OnAudioLevelsUpdated;
             }
 
             if (service?.Manager != null)
             {
                 _service = service;
+                _service.MutedChanged += OnMutedChanged;
                 _service.Manager.AudioLevelsUpdated += OnAudioLevelsUpdated;
 
                 TitleInfo.Text = service.Call.Title.Length > 0 ? service.Call.Title : service.CacheService.GetTitle(_service.Chat);
                 Audio.IsChecked = !_service.IsMuted;
+                Automation.SetToolTip(Audio, _service.IsMuted ? Strings.Resources.VoipGroupUnmute : Strings.Resources.VoipGroupMute);
+            }
+        }
+
+        private void OnMutedChanged(object sender, EventArgs e)
+        {
+            if (sender is VoipGroupManager service && service.IsMuted is bool muted)
+            {
+                this.BeginOnUIThread(() =>
+                {
+                    Audio.IsChecked = !muted;
+                    Automation.SetToolTip(Audio, muted ? Strings.Resources.VoipGroupUnmute : Strings.Resources.VoipGroupMute);
+                });
             }
         }
 
@@ -54,7 +69,7 @@ namespace Unigram.Controls
 
                 foreach (var level in args)
                 {
-                    average = MathF.Max(average, level.Value.Key);
+                    average = MathF.Max(average, level.Key == 0 && sender.IsMuted ? 0 : level.Value.Key);
                 }
 
                 _drawable.setAmplitude(MathF.Max(0, MathF.Log(average, short.MaxValue / 4000)));
@@ -87,7 +102,7 @@ namespace Unigram.Controls
             var service = _service;
             if (service != null)
             {
-                service.IsMuted = Audio.IsChecked == false;
+                service.IsMuted = !service.IsMuted;
             }
 #endif
         }
