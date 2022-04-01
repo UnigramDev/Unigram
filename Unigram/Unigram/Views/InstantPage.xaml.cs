@@ -74,14 +74,6 @@ namespace Unigram.Views
 
         private void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
-            if (sender is ScrollViewer scroll && scroll.ScrollableHeight > 0)
-            {
-                Reading.Value = scroll.VerticalOffset / scroll.ScrollableHeight * 100;
-            }
-            else
-            {
-                Reading.Value = 0;
-            }
         }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
