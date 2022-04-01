@@ -38,7 +38,14 @@ namespace Unigram.Controls
 
         private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            AnimateSelectionChanged(SelectedItem);
+            if (SelectionMode == ListViewSelectionMode.Single)
+            {
+                AnimateSelectionChanged(SelectedItem);
+            }
+            else
+            {
+                AnimateSelectionChanged(null);
+            }
         }
 
         protected override DependencyObject GetContainerForItemOverride()
