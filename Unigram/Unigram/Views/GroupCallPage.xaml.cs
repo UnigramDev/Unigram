@@ -1170,12 +1170,10 @@ namespace Unigram.Views
                 }
 
                 _service.IsMuted = false;
-                _protoService.Send(new ToggleGroupCallParticipantIsMuted(call.Id, currentUser.ParticipantId, false));
             }
             else if (currentUser != null && !_service.IsMuted)
             {
                 _service.IsMuted = true;
-                _protoService.Send(new ToggleGroupCallParticipantIsMuted(call.Id, currentUser.ParticipantId, true));
             }
             else if (currentUser != null)
             {

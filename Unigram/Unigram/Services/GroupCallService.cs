@@ -906,6 +906,7 @@ namespace Unigram.Services
                 if (_manager != null && _manager.IsMuted != value)
                 {
                     _manager.IsMuted = value;
+                    ProtoService.Send(new ToggleGroupCallParticipantIsMuted(_call.Id, _currentUser.ParticipantId, value));
                     MutedChanged?.Invoke(_manager, EventArgs.Empty);
 
                     //if (value)
