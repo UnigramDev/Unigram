@@ -653,19 +653,15 @@ namespace Unigram.Controls.Messages
                 return title;
             }
 
-            if (message.ProtoService.TryGetChat(message.SenderId, out Chat senderChat))
+            var forwardedTitle = message.ProtoService.GetTitle(message.ForwardInfo);
+            if (forwardedTitle != null)
+            {
+                return forwardedTitle;
+            }
+            else if (message.ProtoService.TryGetChat(message.SenderId, out Chat senderChat))
             {
                 return message.ProtoService.GetTitle(senderChat);
             }
-            else if (message.IsSaved())
-            {
-                var forward = message.ProtoService.GetTitle(message.ForwardInfo);
-                if (forward != null)
-                {
-                    return forward;
-                }
-            }
-
             if (message.ProtoService.TryGetUser(message.SenderId, out User user))
             {
                 return user.GetFullName();
