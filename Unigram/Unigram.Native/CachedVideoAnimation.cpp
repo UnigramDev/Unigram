@@ -162,9 +162,9 @@ namespace winrt::Unigram::Native::implementation
 			}
 
 			bool completed;
-			m_animation->RenderSync(pixels, false, seconds, completed);
+			auto result = m_animation->RenderSync(pixels, false, seconds, completed);
 
-			if (rendered) {
+			if (result && rendered) {
 				*rendered = true;
 			}
 

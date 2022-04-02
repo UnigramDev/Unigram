@@ -67,10 +67,6 @@ namespace winrt::Unigram::Native::implementation
 				av_frame_free(&frame);
 				frame = nullptr;
 			}
-			if (pixels) {
-				delete[] pixels;
-				pixels = nullptr;
-			}
 			if (ioContext != nullptr) {
 				if (ioContext->buffer) {
 					av_freep(&ioContext->buffer);
@@ -148,8 +144,6 @@ namespace winrt::Unigram::Native::implementation
 
 		uint8_t* dst_data[1];
 		int32_t dst_linesize[1];
-
-		uint8_t* pixels;
 
 		struct SwsContext* sws_ctx = nullptr;
 
