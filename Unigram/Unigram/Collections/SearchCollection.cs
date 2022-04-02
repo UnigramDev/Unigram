@@ -15,6 +15,7 @@ namespace Unigram.Collections
         private readonly Func<object, string, TSource> _factory;
         private readonly object _sender;
 
+        private readonly DisposableMutex _mutex = new();
         private CancellationTokenSource _token;
 
         private TSource _source;
@@ -64,8 +65,12 @@ namespace Unigram.Collections
                 _source = source;
                 _incrementalSource = incremental;
 
-                await incremental.LoadMoreItemsAsync(0);
+                using (await _mutex.WaitAsync())
+                {
+                    await incremental.LoadMoreItemsAsync(0);
+                }
 
+                // 100% redundant
                 if (token.IsCancellationRequested)
                 {
                     return;
@@ -84,30 +89,31 @@ namespace Unigram.Collections
 
         public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
-            if (_token != null)
-            {
-                _token.Cancel();
-            }
-
             return AsyncInfo.Run(async _ =>
             {
-                var token = new CancellationTokenSource();
-
-                _token = token;
-
-                var result = await _incrementalSource?.LoadMoreItemsAsync(count);
-
-                if (token.IsCancellationRequested)
+                using (await _mutex.WaitAsync())
                 {
+                    if (_token != null)
+                    {
+                        _token.Cancel();
+                    }
+
+                    var token = _token = new CancellationTokenSource();
+                    var result = await _incrementalSource?.LoadMoreItemsAsync(count);
+
+                    // 100% redundant
+                    if (token.IsCancellationRequested)
+                    {
+                        return result;
+                    }
+
+                    if (result.Count > 0)
+                    {
+                        ReplaceDiff(_source);
+                    }
+
                     return result;
                 }
-
-                if (result.Count > 0)
-                {
-                    ReplaceDiff(_source);
-                }
-
-                return result;
             });
         }
 
