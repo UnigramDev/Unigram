@@ -492,7 +492,7 @@ namespace Unigram.Controls
             var basicGroup = chat.Type is ChatTypeBasicGroup basicGroupType ? ViewModel.ProtoService.GetBasicGroup(basicGroupType.BasicGroupId) : null;
             var supergroup = chat.Type is ChatTypeSupergroup supergroupType ? ViewModel.ProtoService.GetSupergroup(supergroupType.SupergroupId) : null;
 
-            if (user != null || (basicGroup != null && basicGroup.CanDeleteMessages()) || (supergroup != null && supergroup.CanDeleteMessages()))
+            if ((user != null && user.Type is not UserTypeBot) || (basicGroup != null && basicGroup.CanDeleteMessages()) || (supergroup != null && supergroup.CanDeleteMessages()))
             {
                 var icon = chat.MessageTtl switch
                 {
