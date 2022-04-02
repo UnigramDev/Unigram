@@ -79,12 +79,24 @@ namespace Unigram.Common
 
         public static string Declension(string key, int count)
         {
+            return Declension(key, count, true);
+        }
+
+        public static string Declension(string key, int count, bool format)
+        {
             if (_currentRules == null)
             {
                 _currentRules = _allRules["en"];
             }
 
-            return string.Format(LocaleService.Current.GetString(key, _currentRules.QuantityForNumber(count)), count.ToString("N0"));
+            if (format)
+            {
+                return string.Format(LocaleService.Current.GetString(key, _currentRules.QuantityForNumber(count)), count.ToString("N0"));
+            }
+            else
+            {
+                return string.Format(LocaleService.Current.GetString(key, _currentRules.QuantityForNumber(count)), string.Empty).Trim();
+            }
         }
 
         public static CurrencyNumberFormatter GetCurrencyFormatter(string currency)
@@ -228,7 +240,7 @@ namespace Unigram.Common
             {
                 return Declension("Minutes", ttl / 60);
             }
-            else if (ttl <= 60 * 60 * 24)
+            else if (ttl < 60 * 60 * 24)
             {
                 return Declension("Hours", ttl / 60 / 60);
             }
