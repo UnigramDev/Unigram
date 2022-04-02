@@ -12,6 +12,14 @@
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                   mc:Ignorable="d">
 
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <SlideNavigationTransitionInfo Effect="FromRight" />
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
     <!--<local:HostedPage.Header>
         <controls:ContentPageHeader>
             <Grid x:Name="Header">

@@ -12,6 +12,14 @@
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                   mc:Ignorable="d">
 
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <SlideNavigationTransitionInfo Effect="FromRight" />
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
     <Page.Resources>
         <DataTemplate x:Key="PostTemplate">
             <Button Style="{StaticResource EmptyButtonStyle}">
@@ -158,14 +166,15 @@
         </DataTemplate>
     </Page.Resources>
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+    <Grid Background="{ThemeResource SettingsPageBackground}">
         <ListView ItemsSource="{x:Bind ViewModel.Items}"
                   ContainerContentChanging="OnContainerContentChanging"
                   SelectionMode="None">
             <ListView.Header>
                 <controls:HeaderedControl Header="{CustomResource StatisticOverview}"
                                           Footer="{x:Bind ConvertPeriod(ViewModel.Period.StartDate, ViewModel.Period.EndDate), Mode=OneWay}"
-                                          Style="{StaticResource FooteredControlStyle}">
+                                          Style="{StaticResource FooteredControlStyle}"
+                                          Background="{ThemeResource SettingsItemBackground}">
                     <ContentControl Content="{x:Bind ViewModel.Statistics, Mode=OneWay, FallbackValue=''}"
                                     HorizontalContentAlignment="Stretch"
                                     VerticalContentAlignment="Stretch">
@@ -178,7 +187,8 @@
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <cells:ChartCell Background="{ThemeResource SettingsItemBackground}" />
+                    <cells:ChartCell Background="{ThemeResource SettingsItemBackground}"
+                                     Margin="0,16,0,0" />
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.Footer>

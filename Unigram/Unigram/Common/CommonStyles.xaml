@@ -157,45 +157,60 @@
     <Style x:Key="FooteredControlStyle"
            TargetType="controls:HeaderedControl">
         <Setter Property="CornerRadius"
-                Value="8" />
+                Value="4" />
         <Setter Property="Padding"
                 Value="0,16,0,0" />
+        <Setter Property="IsTabStop"
+                Value="False" />
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <controls:HeaderedControlPanel />
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ItemPresenterStyle">
+            <Setter.Value>
+                <Style TargetType="ContentPresenter">
+                    <Setter Property="BorderBrush"
+                            Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+                </Style>
+            </Setter.Value>
+        </Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:HeaderedControl">
                     <Grid x:Name="ContentRoot"
-                          Margin="12,0"
                           Padding="{TemplateBinding Padding}"
-                          MaxWidth="640">
+                          Margin="24,0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock x:Name="HeaderLabel"
-                                       Text="{TemplateBinding Header}"
-                                       Margin="12,0,12,6"
-                                       Style="{StaticResource SettingsGroupTextBlockStyle}"
-                                       Visibility="{Binding Header, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource NullToVisibilityConverter}}" />
-                            <TextBlock x:Name="FooterLabel"
-                                       Text="{TemplateBinding Footer}"
-                                       Margin="12,0,12,6"
-                                       Style="{StaticResource InfoCaptionTextBlockStyle}"
-                                       Visibility="{Binding Footer, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource NullToVisibilityConverter}}"
-                                       Grid.Column="1" />
-                        </Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition MaxWidth="1000" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock x:Name="HeaderLabel"
+                                   Text="{TemplateBinding Header}"
+                                   Margin="0,0,0,8"
+                                   Style="{StaticResource BaseTextBlockStyle}"
+                                   Visibility="{Binding Header, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource NullToVisibilityConverter}}" />
+
+                        <TextBlock x:Name="FooterLabel"
+                                   Text="{TemplateBinding Footer}"
+                                   Style="{StaticResource InfoCaptionTextBlockStyle}"
+                                   Visibility="{Binding Footer, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource NullToVisibilityConverter}}"
+                                   Margin="0,0,0,8"
+                                   HorizontalAlignment="Right" />
 
                         <Border x:Name="ContentPanel"
-                                Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1"
                                 CornerRadius="{TemplateBinding CornerRadius}"
-                                Grid.Column="1"
                                 Grid.Row="1">
-                            <ItemsPresenter x:Name="Presenter"
-                                            Margin="0,0,0,-1" />
+                            <ItemsPresenter x:Name="Presenter" />
                         </Border>
                     </Grid>
                 </ControlTemplate>
@@ -678,7 +693,7 @@
         <Setter Property="BorderBrush"
                 Value="{ThemeResource CheckBoxBorderBrushUnchecked}" />
         <Setter Property="Padding"
-                Value="8,5,0,0" />
+                Value="8,3,0,0" />
         <Setter Property="HorizontalAlignment"
                 Value="Left" />
         <Setter Property="VerticalAlignment"
@@ -703,6 +718,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="CheckBox">
                     <Grid x:Name="NormalRectangle"
+                          BackgroundSizing="OuterBorderEdge"
                           Background="{TemplateBinding Background}"
                           BorderBrush="{TemplateBinding BorderBrush}"
                           BorderThickness="2"
@@ -1000,7 +1016,7 @@
                         </VisualStateManager.VisualStateGroups>
 
                         <Grid x:Name="CheckedRoot"
-                              Margin="12,0"
+                              Margin="8,0,12,0"
                               Opacity="0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
@@ -1008,7 +1024,7 @@
                             </Grid.ColumnDefinitions>
 
                             <Grid VerticalAlignment="Top"
-                                  Height="32">
+                                  Height="28">
                                 <FontIcon x:Name="CheckGlyph"
                                           FontFamily="{StaticResource SymbolThemeFontFamily}"
                                           Glyph="&#xE001;"
@@ -1031,13 +1047,13 @@
 
                         </Grid>
 
-                        <Grid Height="32">
+                        <Grid Height="28">
                             <ContentPresenter x:Name="UncheckedRoot"
                                               Foreground="{ThemeResource CheckBoxCheckGlyphForegroundUnchecked}"
                                               ContentTemplate="{TemplateBinding ContentTemplate}"
                                               ContentTransitions="{TemplateBinding ContentTransitions}"
                                               Content="{TemplateBinding Content}"
-                                              Margin="12,5,12,0"
+                                              Margin="12,3,12,0"
                                               HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                               VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                               Grid.Column="1"
