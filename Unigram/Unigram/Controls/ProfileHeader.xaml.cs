@@ -5,6 +5,7 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls.Gallery;
 using Unigram.Converters;
+using Unigram.Navigation;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Chats;
 using Unigram.ViewModels.Users;
@@ -201,27 +202,9 @@ namespace Unigram.Controls
 
             Description.Content = user.Type is UserTypeBot ? Strings.Resources.DescriptionPlaceholder : Strings.Resources.UserBio;
 
-            if (secret)
+            if (secret is false)
             {
-                UserStartSecret.Visibility = Visibility.Collapsed;
-            }
-            else
-            {
-                if (user.Type is UserTypeBot ||
-                    user.Id == ViewModel.CacheService.Options.MyId ||
-                    LastSeenConverter.IsServiceUser(user) ||
-                    LastSeenConverter.IsSupportUser(user) ||
-                    user.Type is UserTypeDeleted)
-                {
-                    MiscPanel.Visibility = Visibility.Collapsed;
-                    UserStartSecret.Visibility = Visibility.Collapsed;
-                }
-                else
-                {
-                    MiscPanel.Visibility = Visibility.Visible;
-                    UserStartSecret.Visibility = Visibility.Visible;
-                }
-
+                MiscPanel.Visibility = Visibility.Collapsed;
                 SecretLifetime.Visibility = Visibility.Collapsed;
                 SecretHashKey.Visibility = Visibility.Collapsed;
             }
@@ -304,8 +287,6 @@ namespace Unigram.Controls
             Description.Visibility = Visibility.Collapsed;
 
             //UserCommonChats.Visibility = Visibility.Collapsed;
-            UserStartSecret.Visibility = Visibility.Collapsed;
-
             MiscPanel.Visibility = Visibility.Collapsed;
 
             SecretLifetime.Visibility = Visibility.Collapsed;
@@ -435,7 +416,6 @@ namespace Unigram.Controls
             // Unused:
             UserPhone.Visibility = Visibility.Collapsed;
             //UserCommonChats.Visibility = Visibility.Collapsed;
-            UserStartSecret.Visibility = Visibility.Collapsed;
             SecretLifetime.Visibility = Visibility.Collapsed;
             SecretHashKey.Visibility = Visibility.Collapsed;
         }
@@ -498,11 +478,6 @@ namespace Unigram.Controls
             }
         }
 
-        #endregion
-
-
-        #region Context menu
-
         private void Menu_ContextRequested(object sender, RoutedEventArgs e)
         {
             var flyout = new MenuFlyout();
@@ -513,17 +488,54 @@ namespace Unigram.Controls
                 return;
             }
 
-            if (chat.Type is ChatTypePrivate or ChatTypeSecret)
+            var user = chat.Type is ChatTypePrivate or ChatTypeSecret ? ViewModel.CacheService.GetUser(chat) : null;
+            var basicGroup = chat.Type is ChatTypeBasicGroup basicGroupType ? ViewModel.ProtoService.GetBasicGroup(basicGroupType.BasicGroupId) : null;
+            var supergroup = chat.Type is ChatTypeSupergroup supergroupType ? ViewModel.ProtoService.GetSupergroup(supergroupType.SupergroupId) : null;
+
+            if (user != null || (basicGroup != null && basicGroup.CanDeleteMessages()) || (supergroup != null && supergroup.CanDeleteMessages()))
+            {
+                var icon = chat.MessageTtl switch
+                {
+                    60 * 60 * 24 => Icons.AutoDeleteDay,
+                    60 * 60 * 24 * 7 => Icons.AutoDeleteWeek,
+                    60 * 60 * 24 * 31 => Icons.AutoDeleteMonth,
+                    _ => Icons.Timer
+                };
+
+                var autodelete = new MenuFlyoutSubItem();
+                autodelete.Text = Strings.Resources.AutoDeletePopupTitle;
+                autodelete.Icon = new FontIcon { Glyph = icon, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
+
+                void AddToggle(int value, int? parameter, string text, string icon)
+                {
+                    var item = new ToggleMenuFlyoutItem();
+                    item.Text = text;
+                    item.IsChecked = parameter == null ? false : value == parameter;
+                    item.CommandParameter = parameter;
+                    item.Command = ViewModel.SetTimerCommand;
+                    item.Icon = new FontIcon { Glyph = icon, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
+
+                    autodelete.Items.Add(item);
+                }
+
+                AddToggle(chat.MessageTtl, 0, Strings.Resources.ShortMessageLifetimeForever, Icons.AutoDeleteOff);
+
+                autodelete.CreateFlyoutSeparator();
+
+                AddToggle(chat.MessageTtl, 60 * 60 * 24, Locale.FormatTtl(60 * 60 * 24), Icons.AutoDeleteDay);
+                AddToggle(chat.MessageTtl, 60 * 60 * 24 * 7, Locale.FormatTtl(60 * 60 * 24 * 7), Icons.AutoDeleteWeek);
+                AddToggle(chat.MessageTtl, 60 * 60 * 24 * 31, Locale.FormatTtl(60 * 60 * 24 * 31), Icons.AutoDeleteMonth);
+                AddToggle(chat.MessageTtl, null, Strings.Resources.AutoDownloadCustom, Icons.Options);
+
+                flyout.Items.Add(autodelete);
+                flyout.CreateFlyoutSeparator();
+            }
+
+            if (chat.Type is ChatTypePrivate or ChatTypeSecret && user != null)
             {
                 var userId = chat.Type is ChatTypePrivate privata ? privata.UserId : chat.Type is ChatTypeSecret secret ? secret.UserId : 0;
                 if (userId != ViewModel.CacheService.Options.MyId)
                 {
-                    var user = ViewModel.CacheService.GetUser(userId);
-                    if (user == null)
-                    {
-                        return;
-                    }
-
                     var fullInfo = ViewModel.CacheService.GetUserFull(userId);
                     if (fullInfo == null)
                     {
@@ -574,6 +586,13 @@ namespace Unigram.Controls
                             }
                         }
                     }
+
+                    if (user.Type is not UserTypeBot and not UserTypeDeleted
+                        && !LastSeenConverter.IsServiceUser(user)
+                        && !LastSeenConverter.IsSupportUser(user))
+                    {
+                        flyout.CreateFlyoutItem(ViewModel.SecretChatCommand, Strings.Resources.StartEncryptedChat, new FontIcon { Glyph = Icons.Timer });
+                    }
                 }
                 else
                 {
@@ -594,14 +613,8 @@ namespace Unigram.Controls
             //        writeButton.setPadding(0, 0, 0, 0);
             //    }
             //}
-            if (chat.Type is ChatTypeSupergroup super)
+            if (chat.Type is ChatTypeSupergroup super && supergroup != null)
             {
-                var supergroup = ViewModel.ProtoService.GetSupergroup(super.SupergroupId);
-                if (supergroup == null)
-                {
-                    return;
-                }
-
                 var fullInfo = ViewModel.ProtoService.GetSupergroupFull(super.SupergroupId);
 
                 if (supergroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator)
@@ -630,14 +643,8 @@ namespace Unigram.Controls
                     flyout.CreateFlyoutItem(ViewModel.DiscussCommand, Strings.Resources.ViewDiscussion, new FontIcon { Glyph = Icons.Comment });
                 }
             }
-            else if (chat.Type is ChatTypeBasicGroup basic)
+            else if (chat.Type is ChatTypeBasicGroup basic && basicGroup != null)
             {
-                var basicGroup = ViewModel.ProtoService.GetBasicGroup(basic.BasicGroupId);
-                if (basicGroup == null)
-                {
-                    return;
-                }
-
                 if (basicGroup.Status is ChatMemberStatusCreator || (basicGroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanInviteUsers) || chat.Permissions.CanInviteUsers)
                 {
                     flyout.CreateFlyoutItem(ViewModel.InviteCommand, Strings.Resources.AddMember, new FontIcon { Glyph = Icons.PersonAdd });
@@ -790,5 +797,48 @@ namespace Unigram.Controls
         }
 
         #endregion
+
+        private void Notifications_Click(object sender, RoutedEventArgs e)
+        {
+            var chat = ViewModel.Chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            var muted = ViewModel.CacheService.Notifications.GetMutedFor(chat) > 0;
+            if (muted)
+            {
+                ViewModel.ToggleMuteCommand.Execute();
+            }
+            else
+            {
+                var silent = chat.DefaultDisableNotification;
+
+                var flyout = new MenuFlyout();
+
+                if (muted is false)
+                {
+                    flyout.CreateFlyoutItem(true, () => { },
+                        silent ? Strings.Resources.SoundOn : Strings.Resources.SoundOff,
+                        new FontIcon { Glyph = silent ? Icons.MusicNote2 : Icons.MusicNoteOff2 });
+                }
+
+                flyout.CreateFlyoutItem(ViewModel.MuteForCommand, 60 * 60, Strings.Resources.MuteFor1h, new FontIcon { Glyph = Icons.ClockAlarmHour });
+                flyout.CreateFlyoutItem(ViewModel.MuteForCommand, null, Strings.Resources.MuteForPopup, new FontIcon { Glyph = Icons.AlertSnooze });
+
+                var toggle = flyout.CreateFlyoutItem(
+                    ViewModel.ToggleMuteCommand,
+                    muted ? Strings.Resources.UnmuteNotifications : Strings.Resources.MuteNotifications,
+                    new FontIcon { Glyph = muted ? Icons.Speaker : Icons.SpeakerOff });
+
+                if (muted is false)
+                {
+                    toggle.Foreground = App.Current.Resources["DangerButtonBackground"] as Brush;
+                }
+
+                flyout.ShowAt(sender as FrameworkElement, new FlyoutShowOptions { Placement = FlyoutPlacementMode.Bottom });
+            }
+        }
     }
 }

@@ -157,7 +157,8 @@ namespace Unigram.ViewModels
             ReadMentionsCommand = new RelayCommand(ReadMentionsExecute);
             SendCommand = new RelayCommand<string>(SendMessage);
             SwitchCommand = new RelayCommand<string>(SwitchExecute);
-            SetTimerCommand = new RelayCommand<int>(SetTimerExecute);
+            MuteForCommand = new RelayCommand<int?>(MuteForExecute);
+            SetTimerCommand = new RelayCommand<int?>(SetTimerExecute);
             SetThemeCommand = new RelayCommand(SetThemeExecute);
             ActionCommand = new RelayCommand(ActionExecute);
             JoinRequestsCommand = new RelayCommand(JoinRequestsExecute);
@@ -3144,6 +3145,41 @@ namespace Unigram.ViewModels
 
         #endregion
 
+        #region Mute for
+
+        public RelayCommand<int?> MuteForCommand { get; }
+        private async void MuteForExecute(int? value)
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            if (value is int update)
+            {
+                _pushService.SetMuteFor(chat, update);
+            }
+            else
+            {
+                var mutedFor = Settings.Notifications.GetMutedFor(chat);
+                var popup = new ChatMutePopup(mutedFor);
+
+                var confirm = await popup.ShowQueuedAsync();
+                if (confirm != ContentDialogResult.Primary)
+                {
+                    return;
+                }
+
+                if (mutedFor != popup.Value)
+                {
+                    _pushService.SetMuteFor(chat, popup.Value);
+                }
+            }
+        }
+
+        #endregion
+
         #region Report Chat
 
         public RelayCommand ReportCommand { get; }
@@ -3165,8 +3201,8 @@ namespace Unigram.ViewModels
                 new ChooseOptionItem(new ChatReportReasonSpam(), Strings.Resources.ReportChatSpam, true),
                 new ChooseOptionItem(new ChatReportReasonViolence(), Strings.Resources.ReportChatViolence, false),
                 new ChooseOptionItem(new ChatReportReasonChildAbuse(), Strings.Resources.ReportChatChild, false),
-                new ChooseOptionItem(new ChatReportReasonIllegalDrugs(), Strings.Resources.ReportChatIllegalDrugs, false),
-                new ChooseOptionItem(new ChatReportReasonPersonalDetails(), Strings.Resources.ReportChatPersonalDetails, false),
+                //new ChooseOptionItem(new ChatReportReasonIllegalDrugs(), Strings.Resources.ReportChatIllegalDrugs, false),
+                //new ChooseOptionItem(new ChatReportReasonPersonalDetails(), Strings.Resources.ReportChatPersonalDetails, false),
                 new ChooseOptionItem(new ChatReportReasonPornography(), Strings.Resources.ReportChatPornography, false),
                 new ChooseOptionItem(new ChatReportReasonCustom(), Strings.Resources.ReportChatOther, false)
             };
@@ -3215,8 +3251,8 @@ namespace Unigram.ViewModels
 
         #region Set timer
 
-        public RelayCommand<int> SetTimerCommand { get; }
-        private async void SetTimerExecute(int ttl)
+        public RelayCommand<int?> SetTimerCommand { get; }
+        private async void SetTimerExecute(int? ttl)
         {
             var chat = _chat;
             if (chat == null)
@@ -3224,7 +3260,23 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            ProtoService.Send(new SetChatMessageTtl(chat.Id, ttl));
+            if (ttl is int value)
+            {
+                ProtoService.Send(new SetChatMessageTtl(chat.Id, value));
+            }
+            else
+            {
+                var dialog = new ChatTtlPopup(chat.Type is ChatTypeSecret);
+                dialog.Value = chat.MessageTtl;
+
+                var confirm = await dialog.ShowQueuedAsync();
+                if (confirm != ContentDialogResult.Primary)
+                {
+                    return;
+                }
+
+                ProtoService.Send(new SetChatMessageTtl(chat.Id, dialog.Value));
+            }
         }
 
         #endregion

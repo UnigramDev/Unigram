@@ -1701,7 +1701,7 @@ namespace Unigram.Views
             }
 
             //var user = chat.Type is ChatTypePrivate privata ? ViewModel.ProtoService.GetUser(privata.UserId) : null;
-            var user = ViewModel.CacheService.GetUser(chat);
+            var user = chat.Type is ChatTypePrivate or ChatTypeSecret ? ViewModel.CacheService.GetUser(chat) : null;
             var secret = chat.Type is ChatTypeSecret;
             var basicGroup = chat.Type is ChatTypeBasicGroup basicGroupType ? ViewModel.ProtoService.GetBasicGroup(basicGroupType.BasicGroupId) : null;
             var supergroup = chat.Type is ChatTypeSupergroup supergroupType ? ViewModel.ProtoService.GetSupergroup(supergroupType.SupergroupId) : null;
@@ -1731,33 +1731,6 @@ namespace Unigram.Views
                     }
                 }
             }
-            if (user != null || (basicGroup != null && basicGroup.CanDeleteMessages()) || (supergroup != null && supergroup.CanDeleteMessages()))
-            {
-                var autodelete = new MenuFlyoutSubItem();
-                autodelete.Text = Strings.Resources.EnableAutoDelete;
-                autodelete.Icon = new FontIcon { Glyph = Icons.Timer, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
-
-                void AddToggle(int value, int parameter, string text)
-                {
-                    var item = new ToggleMenuFlyoutItem();
-                    item.Text = text;
-                    item.IsChecked = value == parameter;
-                    item.CommandParameter = parameter;
-                    item.Command = ViewModel.SetTimerCommand;
-
-                    autodelete.Items.Add(item);
-                }
-
-                AddToggle(chat.MessageTtl, 0, Strings.Resources.ShortMessageLifetimeForever);
-
-                autodelete.CreateFlyoutSeparator();
-
-                AddToggle(chat.MessageTtl, 60 * 60 * 24, Locale.FormatTtl(60 * 60 * 24));
-                AddToggle(chat.MessageTtl, 60 * 60 * 24 * 7, Locale.FormatTtl(60 * 60 * 24 * 7));
-                AddToggle(chat.MessageTtl, 60 * 60 * 24 * 31, Locale.FormatTtl(60 * 60 * 24 * 31));
-
-                flyout.Items.Add(autodelete);
-            }
             if (ViewModel.SelectionMode != ListViewSelectionMode.Multiple)
             {
                 if (user != null || basicGroup != null || (supergroup != null && !supergroup.IsChannel && string.IsNullOrEmpty(supergroup.Username)))
@@ -1776,10 +1749,33 @@ namespace Unigram.Views
             if ((user != null && user.Id != ViewModel.CacheService.Options.MyId) || basicGroup != null || (supergroup != null && !supergroup.IsChannel))
             {
                 var muted = ViewModel.CacheService.Notifications.GetMutedFor(chat) > 0;
-                flyout.CreateFlyoutItem(
+                var silent = chat.DefaultDisableNotification;
+
+                var mute = new MenuFlyoutSubItem();
+                mute.Text = Strings.Resources.Mute;
+                mute.Icon = new FontIcon { Glyph = muted ? Icons.Alert : Icons.AlertOff, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
+
+                if (muted is false)
+                {
+                    mute.CreateFlyoutItem(true, () => { },
+                        silent ? Strings.Resources.SoundOn : Strings.Resources.SoundOff,
+                        new FontIcon { Glyph = silent ? Icons.MusicNote2 : Icons.MusicNoteOff2 });
+                }
+
+                mute.CreateFlyoutItem(ViewModel.MuteForCommand, 60 * 60, Strings.Resources.MuteFor1h, new FontIcon { Glyph = Icons.ClockAlarmHour });
+                mute.CreateFlyoutItem(ViewModel.MuteForCommand, null, Strings.Resources.MuteForPopup, new FontIcon { Glyph = Icons.AlertSnooze });
+
+                var toggle = mute.CreateFlyoutItem(
                     muted ? ViewModel.UnmuteCommand : ViewModel.MuteCommand,
                     muted ? Strings.Resources.UnmuteNotifications : Strings.Resources.MuteNotifications,
-                    new FontIcon { Glyph = muted ? Icons.Alert : Icons.AlertOff });
+                    new FontIcon { Glyph = muted ? Icons.Speaker : Icons.SpeakerOff });
+
+                if (muted is false)
+                {
+                    toggle.Foreground = App.Current.Resources["DangerButtonBackground"] as Brush;
+                }
+
+                flyout.Items.Add(mute);
             }
 
             //if (currentUser == null || !currentUser.IsSelf)

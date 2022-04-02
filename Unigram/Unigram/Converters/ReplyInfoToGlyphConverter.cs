@@ -73,11 +73,14 @@ namespace Unigram.Converters
         public const string Broom = "\uEA99";
         public const string CalendarClock = "\uE81C";
 
+        public const string ClockAlarmHour = "\uE9A3";
+
         public const string Live = "\uE98D";
 
         public const string Options = "\uE9E9";
 
         public const string AlertOff = "\uE7ED";
+        public const string AlertOn = "\uE9A4";
         public const string Alert = "\uEA8F";
         public const string AlertSnooze = "\uE99C";
 
@@ -184,6 +187,7 @@ namespace Unigram.Converters
         public const string Speaker = "\uE995";
         public const string Speaker1 = "\uE993";
         public const string SpeakerNone = "\uE74F";
+        public const string SpeakerOff = "\uE9A5";
         public const string SendFilled = "\uE919";
 
         public const string VideoChat = "\uE900";

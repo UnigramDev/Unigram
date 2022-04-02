@@ -374,6 +374,7 @@
     <Compile Include="Controls\LazoListView.cs" />
     <Compile Include="Controls\LazoListViewItem.cs" />
     <Compile Include="Controls\LoadingTextBlock.cs" />
+    <Compile Include="Controls\LoopingPicker.cs" />
     <Compile Include="Controls\MasterDetailPanel.cs" />
     <Compile Include="Controls\Media\SolidGaussianBrush.cs" />
     <Compile Include="Controls\Media\TiledBrush.cs" />
@@ -629,6 +630,9 @@
     </Compile>
     <Compile Include="Views\Popups\ChatJoinRequestsPopup.xaml.cs">
       <DependentUpon>ChatJoinRequestsPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Popups\ChatTtlPopup.xaml.cs">
+      <DependentUpon>ChatTtlPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\ChooseColorPopup.xaml.cs">
       <DependentUpon>ChooseColorPopup.xaml</DependentUpon>
@@ -929,8 +933,8 @@
     <Compile Include="Views\Popups\CallRatingPopup.xaml.cs">
       <DependentUpon>CallRatingPopup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Popups\ChatTtlPopup.xaml.cs">
-      <DependentUpon>ChatTtlPopup.xaml</DependentUpon>
+    <Compile Include="Views\Popups\ChatMutePopup.xaml.cs">
+      <DependentUpon>ChatMutePopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\CreateLinkPopup.xaml.cs">
       <DependentUpon>CreateLinkPopup.xaml</DependentUpon>
@@ -1851,6 +1855,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Popups\ChatTtlPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Popups\ChooseColorPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2007,7 +2015,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Popups\ChatTtlPopup.xaml">
+    <Page Include="Views\Popups\ChatMutePopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

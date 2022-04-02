@@ -19,7 +19,6 @@
                            CanReorderItems="False"
                            DragItemsStarting="Chats_DragItemsStarting"
                            DragItemsCompleted="Chats_DragItemsCompleted"
-                           ChoosingItemContainer="ChatsList_ChoosingItemContainer"
                            Orientation="Vertical">
     <!--
     ItemClick="ChatsList_ItemClick"-->

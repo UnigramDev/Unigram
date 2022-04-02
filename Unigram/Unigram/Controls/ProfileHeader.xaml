@@ -118,7 +118,7 @@
 
 
                 <controls:BadgeButton x:Name="Notifications"
-                                      Command="{x:Bind ViewModel.ToggleMuteCommand}"
+                                      Click="Notifications_Click"
                                       Content="Mute"
                                       Style="{StaticResource GlyphGridBadgeButtonStyle}"
                                       Glyph="&#xEA8F;"
@@ -263,12 +263,6 @@
                                     <Image x:Name="SecretIdenticon" Width="24" Height="24"/>
                                     </controls:BadgeButton.Badge>-->
             </controls:BadgeButton>
-
-            <controls:BadgeButton x:Name="UserStartSecret"
-                                  Visibility="Collapsed"
-                                  Content="{CustomResource StartEncryptedChat}"
-                                  Command="{x:Bind ViewModel.SecretChatCommand}"
-                                  Foreground="{ThemeResource TelegramSecretChatForegroundBrush}" />
 
             <controls:BadgeButton x:Name="GroupLeave"
                                   Visibility="Collapsed"

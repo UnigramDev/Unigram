@@ -42,6 +42,7 @@ namespace Unigram.ViewModels
             ChatArchiveCommand = new RelayCommand<Chat>(ChatArchiveExecute);
             ChatMarkCommand = new RelayCommand<Chat>(ChatMarkExecute);
             ChatNotifyCommand = new RelayCommand<Chat>(ChatNotifyExecute);
+            ChatMuteForCommand = new RelayCommand<(Chat, int?)>(ChatMuteForExecute);
             ChatDeleteCommand = new RelayCommand<Chat>(ChatDeleteExecute);
             ChatClearCommand = new RelayCommand<Chat>(ChatClearExecute);
             ChatSelectCommand = new RelayCommand<Chat>(ChatSelectExecute);
@@ -265,6 +266,42 @@ namespace Unigram.ViewModels
         }
 
         #endregion
+
+        #region Mute for
+
+        public RelayCommand<(Chat, int?)> ChatMuteForCommand { get; }
+        private async void ChatMuteForExecute((Chat Chat, int? MutedFor) value)
+        {
+            var chat = value.Chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            if (value.MutedFor is int update)
+            {
+                _notificationsService.SetMuteFor(chat, update);
+            }
+            else
+            {
+                var mutedFor = Settings.Notifications.GetMutedFor(chat);
+                var popup = new ChatMutePopup(mutedFor);
+
+                var confirm = await popup.ShowQueuedAsync();
+                if (confirm != ContentDialogResult.Primary)
+                {
+                    return;
+                }
+
+                if (mutedFor != popup.Value)
+                {
+                    _notificationsService.SetMuteFor(chat, popup.Value);
+                }
+            }
+        }
+
+        #endregion
+
 
         #region Multiple Notify
 
@@ -631,6 +668,7 @@ namespace Unigram.ViewModels
                 _aggregator = aggregator;
 
                 _viewModel = viewModel;
+                _viewModel.IsLoading = true;
 
                 _chatList = chatList;
 
@@ -643,6 +681,8 @@ namespace Unigram.ViewModels
 
             public async Task ReloadAsync(ChatList chatList)
             {
+                _viewModel.IsLoading = true;
+
                 using (await _loadMoreLock.WaitAsync())
                 {
                     _aggregator.Unsubscribe(this);
@@ -698,6 +738,7 @@ namespace Unigram.ViewModels
                         _hasMoreItems = chats.ChatIds.Count > 0;
                         _aggregator.Subscribe(this);
 
+                        _viewModel.IsLoading = false;
                         _viewModel.Delegate?.SetSelectedItems(_viewModel._selectedItems);
 
                         if (_hasMoreItems == false)

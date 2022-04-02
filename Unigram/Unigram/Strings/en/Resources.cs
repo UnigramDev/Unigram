@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 03/31/2022 20:51:05
+// 	Generated: 04/02/2022 13:44:02
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -6100,6 +6100,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Auto-delete after {0}"
+        /// </summary>
+        public static string AutoDeleteAfter
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDeleteAfter");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Automatically delete new messages after a certain period of time for subscribers of this channel."
         /// </summary>
         public static string AutoDeleteAlertChannelInfo
@@ -6151,6 +6162,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AutoDeleteConfirm");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Custom"
+        /// </summary>
+        public static string AutoDeleteCustom
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDeleteCustom");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Disable"
+        /// </summary>
+        public static string AutoDeleteDisable
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDeleteDisable");
             }
         }
         
@@ -29705,6 +29738,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("MuteFor1h");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Mute notifications for..."
+        /// </summary>
+        public static string MuteForAlert
+        {
+            get
+            {
+                return resourceLoader.GetString("MuteForAlert");
             }
         }
         

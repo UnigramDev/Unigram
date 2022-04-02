@@ -1405,6 +1405,77 @@
         </Setter>
     </Style>
 
+    <Style TargetType="local:LoopingPicker">
+        <Setter Property="IsTabStop"
+                Value="True" />
+        <Setter Property="UseSystemFocusVisuals"
+                Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:LoopingPicker">
+                    <StackPanel>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="FocusStates">
+                                <VisualState x:Name="Unfocused" />
+                                <VisualState x:Name="PointerFocused" />
+                                <VisualState x:Name="Focused">
+                                    <VisualState.Setters>
+                                        <Setter Target="FocusHighlight.Background"
+                                                Value="{ThemeResource ControlAltFillColorTertiaryBrush}" />
+                                        <Setter Target="ValueText.Foreground"
+                                                Value="{ThemeResource TextFillColorPrimaryBrush}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <local:GlyphButton x:Name="NextButton"
+                                           HorizontalAlignment="Center"
+                                           Glyph="&#xE0E4;"
+                                           IsTabStop="False"
+                                           AutomationProperties.AccessibilityView="Raw"
+                                           Width="40"
+                                           Height="40" />
+
+                        <Grid x:Name="FocusHighlight"
+                              Background="Transparent"
+                              MinWidth="72"
+                              Height="72"
+                              CornerRadius="2"
+                              Padding="0,6"
+                              Margin="0,4"
+                              Control.IsTemplateFocusTarget="True">
+                            <TextBlock x:Name="ValueText"
+                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                       Padding="0,12,0,20"
+                                       FontFamily="Segoe UI"
+                                       FontSize="40"
+                                       FontWeight="Bold"
+                                       TextLineBounds="Tight"
+                                       TextAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center" />
+                            
+                            <TextBlock Text="{TemplateBinding Header}"
+                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                       TextLineBounds="Tight"
+                                       TextAlignment="Center"
+                                       VerticalAlignment="Bottom"
+                                       HorizontalAlignment="Center" />
+                        </Grid>
+
+                        <local:GlyphButton x:Name="PrevButton"
+                                           HorizontalAlignment="Center"
+                                           Glyph="&#xE0E5;"
+                                           IsTabStop="False"
+                                           AutomationProperties.AccessibilityView="Raw"
+                                           Width="40"
+                                           Height="40" />
+                    </StackPanel>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="local:ContentPopup">
         <Setter Property="Foreground"
                 Value="{ThemeResource ContentDialogForeground}" />

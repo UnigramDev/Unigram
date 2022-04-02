@@ -5,6 +5,18 @@
                     xmlns:contract6Present="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract,6)"
                     xmlns:contract7Present="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract,7)">
 
+    <Thickness x:Key="MenuFlyoutItemPlaceholderThemeThickness">28,0,0,0</Thickness>
+    <Thickness x:Key="MenuFlyoutItemDoublePlaceholderThemeThickness">56,0,0,0</Thickness>
+    
+    <x:Double x:Key="MenuFlyoutSeparatorHeight">1</x:Double>
+    <Thickness x:Key="MenuFlyoutPresenterThemePadding">0,2,0,2</Thickness>
+    <x:Double x:Key="MenuFlyoutThemeMinHeight">32</x:Double>
+    <Thickness x:Key="MenuFlyoutItemChevronMargin">24,0,0,-1</Thickness>
+    <Thickness x:Key="MenuFlyoutSeparatorThemePadding">-4,1,-4,1</Thickness>
+    <Thickness x:Key="MenuFlyoutItemMargin">4,2,4,2</Thickness>
+    <Thickness x:Key="MenuFlyoutItemThemePadding">9,8,9,9</Thickness>
+    <Thickness x:Key="MenuFlyoutItemThemePaddingNarrow">9,4,9,5</Thickness>
+
     <Style TargetType="MenuFlyoutPresenter"
            BasedOn="{StaticResource DefaultMenuFlyoutPresenterStyle}">
         <Setter Property="MaxHeight"
@@ -360,10 +372,11 @@
                         <FontIcon x:Name="CheckGlyph"
                                   FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                   Glyph="&#xE001;"
-                                  FontSize="16"
+                                  FontSize="20"
                                   Foreground="{ThemeResource MenuFlyoutSubItemChevron}"
                                   Opacity="0"
-                                  Margin="0,0,12,0" />
+                                  Margin="12,0,0,0"
+                                  Grid.Column="2" />
                         <Viewbox x:Name="IconRoot"
                                  Grid.Column="1"
                                  HorizontalAlignment="Left"
@@ -554,7 +567,7 @@
                                       Grid.Column="1"
                                       Glyph="&#xE0E3;"
                                       FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                      FontSize="12"
+                                      FontSize="16"
                                       AutomationProperties.AccessibilityView="Raw"
                                       Foreground="{ThemeResource MenuFlyoutSubItemChevron}"
                                       Margin="{StaticResource MenuFlyoutItemChevronMargin}"

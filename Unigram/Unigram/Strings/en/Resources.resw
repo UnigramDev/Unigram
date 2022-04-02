@@ -1722,6 +1722,9 @@ To confirm Telegram login, please go to Settings &gt; Devices &gt; Scan QR and s
   <data name="AutoDelete7Days" xml:space="preserve">
     <value>1 week</value>
   </data>
+  <data name="AutoDeleteAfter" xml:space="preserve">
+    <value>Auto-delete after {0}</value>
+  </data>
   <data name="AutoDeleteAlertChannelInfo" xml:space="preserve">
     <value>Automatically delete new messages after a certain period of time for subscribers of this channel.</value>
   </data>
@@ -1736,6 +1739,12 @@ To confirm Telegram login, please go to Settings &gt; Devices &gt; Scan QR and s
   </data>
   <data name="AutoDeleteConfirm" xml:space="preserve">
     <value>Confirm</value>
+  </data>
+  <data name="AutoDeleteCustom" xml:space="preserve">
+    <value>Custom</value>
+  </data>
+  <data name="AutoDeleteDisable" xml:space="preserve">
+    <value>Disable</value>
   </data>
   <data name="AutoDeleteHeader" xml:space="preserve">
     <value>Auto-delete messages in this chat</value>
@@ -8242,6 +8251,9 @@ This may take a few moments. You can continue using the app while the files are 
   </data>
   <data name="MuteFor1h" xml:space="preserve">
     <value>Mute for 1 hour</value>
+  </data>
+  <data name="MuteForAlert" xml:space="preserve">
+    <value>Mute notifications for...</value>
   </data>
   <data name="MuteForPopup" xml:space="preserve">
     <value>Mute for...</value>

@@ -76,7 +76,8 @@ namespace Unigram.ViewModels
             DeleteCommand = new RelayCommand(DeleteExecute);
             ShareCommand = new RelayCommand(ShareExecute);
             SecretChatCommand = new RelayCommand(SecretChatExecute);
-            SetTimerCommand = new RelayCommand(SetTimerExecute);
+            MuteForCommand = new RelayCommand<int?>(MuteForExecute);
+            SetTimerCommand = new RelayCommand<int?>(SetTimerExecute);
             IdenticonCommand = new RelayCommand(IdenticonExecute);
             MigrateCommand = new RelayCommand(MigrateExecute);
             InviteCommand = new RelayCommand(InviteExecute);
@@ -965,10 +966,10 @@ namespace Unigram.ViewModels
             //}
         }
 
-        #region Set timer
+        #region Mute for
 
-        public RelayCommand SetTimerCommand { get; }
-        private async void SetTimerExecute()
+        public RelayCommand<int?> MuteForCommand { get; }
+        private async void MuteForExecute(int? value)
         {
             var chat = _chat;
             if (chat == null)
@@ -976,16 +977,58 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var dialog = new ChatTtlPopup(chat.Type is ChatTypeSecret);
-            dialog.Value = chat.MessageTtl;
+            if (value is int update)
+            {
+                _notificationsService.SetMuteFor(chat, update);
+            }
+            else
+            {
+                var mutedFor = Settings.Notifications.GetMutedFor(chat);
+                var popup = new ChatMutePopup(mutedFor);
 
-            var confirm = await dialog.ShowQueuedAsync();
-            if (confirm != ContentDialogResult.Primary)
+                var confirm = await popup.ShowQueuedAsync();
+                if (confirm != ContentDialogResult.Primary)
+                {
+                    return;
+                }
+
+                if (mutedFor != popup.Value)
+                {
+                    _notificationsService.SetMuteFor(chat, popup.Value);
+                }
+            }
+        }
+
+        #endregion
+
+        #region Set timer
+
+        public RelayCommand<int?> SetTimerCommand { get; }
+        private async void SetTimerExecute(int? ttl)
+        {
+            var chat = _chat;
+            if (chat == null)
             {
                 return;
             }
 
-            ProtoService.Send(new SetChatMessageTtl(chat.Id, dialog.Value));
+            if (ttl is int value)
+            {
+                ProtoService.Send(new SetChatMessageTtl(chat.Id, value));
+            }
+            else
+            {
+                var dialog = new ChatTtlPopup(chat.Type is ChatTypeSecret);
+                dialog.Value = chat.MessageTtl;
+
+                var confirm = await dialog.ShowQueuedAsync();
+                if (confirm != ContentDialogResult.Primary)
+                {
+                    return;
+                }
+
+                ProtoService.Send(new SetChatMessageTtl(chat.Id, dialog.Value));
+            }
         }
 
         #endregion
