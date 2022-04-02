@@ -720,7 +720,14 @@ namespace Unigram.Services
                     {
                         if (item.Action.DispatcherQueue != null)
                         {
-                            item.Action.DispatcherQueue.TryEnqueue(() => executeAction.ExecuteWithObject(message));
+                            item.Action.DispatcherQueue.TryEnqueue(() =>
+                            {
+                                try
+                                {
+                                    executeAction.ExecuteWithObject(message);
+                                }
+                                catch { }
+                            });
                         }
                         else
                         {

@@ -63,6 +63,8 @@
             <!-- WinUI bug: https://github.com/microsoft/microsoft-ui-xaml/issues/xxxx -->
             <x:Boolean x:Key="HyperlinkUnderlineVisible">True</x:Boolean>
 
+            <x:Boolean x:Key="ListViewItemSelectionIndicatorVisualEnabled">True</x:Boolean>
+
             <!-- WinUI bug: https://github.com/microsoft/microsoft-ui-xaml/issues/2623 -->
             <!--<muxc:StackLayout x:Name="ThreadStackLayout"/>-->
 

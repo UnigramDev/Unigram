@@ -171,7 +171,6 @@ namespace Unigram.Controls
                 return;
             }
 
-            //_bitmap = animation.RenderSync(_device, index, 256, 256);
             animation.RenderSync(_bitmap, out _nextSeconds);
 
             if (_hideThumbnail == null)

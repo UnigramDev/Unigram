@@ -170,26 +170,19 @@
             </controls:NavigationView.PaneFooter>
         </controls:NavigationView>
 
-        <Border x:Name="Transition" />
-
-        <controls:SwitchThemeButton x:Name="Theme"
-                                    Click="Theme_Click"
-                                    Visibility="Collapsed"
-                                    VerticalAlignment="Top"
-                                    HorizontalAlignment="Left"
-                                    IsTabStop="False"
-                                    Width="40"
-                                    Height="40" />
-
         <Button x:Name="Accounts"
                 Visibility="Collapsed"
                 Click="Expand_Click"
                 Background="Transparent"
-                Style="{StaticResource EmptyButtonStyle}"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
                 Margin="0,32,0,0"
                 Width="240">
+            <Button.Template>
+                <ControlTemplate>
+                    <ContentPresenter />
+                </ControlTemplate>
+            </Button.Template>
             <Grid Padding="12,0,12,8">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -232,6 +225,17 @@
                           Grid.Column="2" />
             </Grid>
         </Button>
+
+        <Border x:Name="Transition" />
+
+        <controls:SwitchThemeButton x:Name="Theme"
+                                    Click="Theme_Click"
+                                    Visibility="Collapsed"
+                                    VerticalAlignment="Top"
+                                    HorizontalAlignment="Left"
+                                    IsTabStop="False"
+                                    Width="40"
+                                    Height="40" />
 
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>

@@ -182,6 +182,16 @@ namespace Unigram.Common
 
         public static MenuFlyoutItem CreateFlyoutItem(this MenuFlyout flyout, ICommand command, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
         {
+            return CreateFlyoutItem(flyout.Items, command, text, icon, key, modifiers);
+        }
+
+        public static MenuFlyoutItem CreateFlyoutItem(this MenuFlyoutSubItem flyout, ICommand command, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
+        {
+            return CreateFlyoutItem(flyout.Items, command, text, icon, key, modifiers);
+        }
+
+        public static MenuFlyoutItem CreateFlyoutItem(this IList<MenuFlyoutItemBase> items, ICommand command, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
+        {
             var flyoutItem = new MenuFlyoutItem();
             flyoutItem.IsEnabled = command != null;
             flyoutItem.Command = command;
@@ -204,7 +214,7 @@ namespace Unigram.Common
                 flyoutItem.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = modifiers, Key = key.Value, IsEnabled = false });
             }
 
-            flyout.Items.Add(flyoutItem);
+            items.Add(flyoutItem);
             return flyoutItem;
         }
 

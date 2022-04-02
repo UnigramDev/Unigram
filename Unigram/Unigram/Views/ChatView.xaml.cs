@@ -638,6 +638,8 @@ namespace Unigram.Views
                         }
 
                         Canvas.SetZIndex(TextArea, 0);
+                        Canvas.SetZIndex(InlinePanel, 0);
+                        Canvas.SetZIndex(Separator, 0);
 
                         if (messages.Clip is InsetClip messagesClip)
                         {
@@ -647,6 +649,8 @@ namespace Unigram.Views
 
                     _collectionChanging++;
                     Canvas.SetZIndex(TextArea, -1);
+                    Canvas.SetZIndex(InlinePanel, -2);
+                    Canvas.SetZIndex(Separator, -3);
 
                     if (messages.Clip is InsetClip messagesClip)
                     {
@@ -1531,7 +1535,7 @@ namespace Unigram.Views
         {
             if (sender is ReplyMarkupPanel panel)
             {
-                ViewModel.KeyboardButtonExecute(panel.DataContext as MessageViewModel, e.Button);
+                ViewModel.KeyboardButtonExecute(panel.Tag as MessageViewModel, e.Button);
             }
 
             if (e.OneTime)

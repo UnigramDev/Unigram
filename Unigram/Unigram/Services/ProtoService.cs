@@ -371,6 +371,7 @@ namespace Unigram.Services
                 }
 
                 InitializeDiagnostics();
+                InitializeFlush();
 
                 _client.Send(new SetOption("ignore_background_updates", new OptionValueBoolean(_settings.Diagnostics.DisableDatabase)));
                 _client.Send(new SetOption("language_pack_database_path", new OptionValueString(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "langpack"))));

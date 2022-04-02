@@ -2066,6 +2066,7 @@ namespace Unigram.Views
             {
                 args.ItemContainer = new TextListViewItem();
                 args.ItemContainer.Style = DialogsSearchListView.ItemContainerStyle;
+                args.ItemContainer.ContextRequested += Chat_ContextRequested;
             }
 
             args.ItemContainer.ContentTemplate = DialogsSearchListView.ItemTemplateSelector.SelectTemplate(args.Item, args.ItemContainer);
@@ -2076,6 +2077,8 @@ namespace Unigram.Views
         {
             if (args.Item is SearchResult result)
             {
+                args.ItemContainer.Tag = result.Chat;
+
                 var content = args.ItemContainer.ContentTemplateRoot as Grid;
                 if (content == null)
                 {
@@ -2202,6 +2205,7 @@ namespace Unigram.Views
                     return;
                 }
 
+                args.ItemContainer.Tag = null;
                 content.UpdateMessage(ViewModel.ProtoService, message);
             }
 
@@ -2963,7 +2967,7 @@ namespace Unigram.Views
                 ManageMark.Glyph = unread ? Icons.MarkAsRead : Icons.MarkAsUnread;
                 Automation.SetToolTip(ManageMark, unread ? Strings.Resources.MarkAsRead : Strings.Resources.MarkAsUnread);
 
-                ManageClear.IsEnabled = ViewModel.Chats.SelectedItems.All(x => ChatsList.DialogClear_Loaded(x));
+                ManageClear.IsEnabled = ViewModel.Chats.SelectedItems.All(x => DialogClear_Loaded(x));
             }
         }
 
@@ -3167,6 +3171,247 @@ namespace Unigram.Views
         {
             MasterDetail.NavigationService.Navigate(typeof(ChannelCreateStep1Page));
         }
+
+        private void ChatsList_ChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+        {
+            if (args.ItemContainer == null)
+            {
+                args.ItemContainer = new ChatListListViewItem(ChatsList);
+                //args.ItemContainer.Style = ChatsList.ItemContainerStyle;
+                args.ItemContainer.ContentTemplate = ChatsList.ItemTemplate;
+                args.ItemContainer.ContextRequested += Chat_ContextRequested;
+            }
+
+            args.IsContainerPrepared = true;
+        }
+
+        #region Context menu
+
+        private async void Chat_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+            var viewModel = ViewModel.Chats;
+            if (viewModel == null)
+            {
+                return;
+            }
+
+            var flyout = new MenuFlyout();
+
+            var element = sender as FrameworkElement;
+            var chat = element.Tag as Chat;
+
+            var position = chat?.GetPosition(viewModel.Items.ChatList);
+            if (position == null)
+            {
+                return;
+            }
+
+            var muted = ViewModel.CacheService.Notifications.GetMutedFor(chat) > 0;
+            flyout.CreateFlyoutItem(DialogArchive_Loaded, viewModel.ChatArchiveCommand, chat, chat.Positions.Any(x => x.List is ChatListArchive) ? Strings.Resources.Unarchive : Strings.Resources.Archive, new FontIcon { Glyph = Icons.Archive });
+            flyout.CreateFlyoutItem(DialogPin_Loaded, viewModel.ChatPinCommand, chat, position.IsPinned ? Strings.Resources.UnpinFromTop : Strings.Resources.PinToTop, new FontIcon { Glyph = position.IsPinned ? Icons.PinOff : Icons.Pin });
+
+            if (viewModel.Items.ChatList is ChatListFilter chatListFilter)
+            {
+                flyout.CreateFlyoutItem(viewModel.FolderRemoveCommand, (chatListFilter.ChatFilterId, chat), Strings.Resources.FilterRemoveFrom, new FontIcon { Glyph = Icons.FolderMove });
+            }
+            else
+            {
+                var response = await ViewModel.ProtoService.SendAsync(new GetChatListsToAddChat(chat.Id)) as ChatLists;
+                if (response != null && response.ChatListsValue.Count > 0)
+                {
+                    var filters = ViewModel.CacheService.ChatFilters;
+
+                    var item = new MenuFlyoutSubItem();
+                    item.Text = Strings.Resources.FilterAddTo;
+                    item.Icon = new FontIcon { Glyph = Icons.FolderAdd, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
+
+                    foreach (var chatList in response.ChatListsValue.OfType<ChatListFilter>())
+                    {
+                        var filter = filters.FirstOrDefault(x => x.Id == chatList.ChatFilterId);
+                        if (filter != null)
+                        {
+                            var icon = Icons.ParseFilter(filter.IconName);
+                            var glyph = Icons.FilterToGlyph(icon);
+
+                            item.CreateFlyoutItem(viewModel.FolderAddCommand, (filter.Id, chat), filter.Title, new FontIcon { Glyph = glyph.Item1 });
+                        }
+                    }
+
+                    if (filters.Count < 10 && item.Items.Count > 0)
+                    {
+                        item.CreateFlyoutSeparator();
+                        item.CreateFlyoutItem(viewModel.FolderCreateCommand, chat, Strings.Resources.CreateNewFilter, new FontIcon { Glyph = Icons.Add });
+                    }
+
+                    if (item.Items.Count > 0)
+                    {
+                        flyout.Items.Add(item);
+                    }
+                }
+            }
+
+            if (DialogNotify_Loaded(chat))
+            {
+                var silent = chat.DefaultDisableNotification;
+
+                var mute = new MenuFlyoutSubItem();
+                mute.Text = Strings.Resources.Mute;
+                mute.Icon = new FontIcon { Glyph = muted ? Icons.Alert : Icons.AlertOff, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
+
+                if (muted is false)
+                {
+                    mute.CreateFlyoutItem(true, () => { },
+                        silent ? Strings.Resources.SoundOn : Strings.Resources.SoundOff,
+                        new FontIcon { Glyph = silent ? Icons.MusicNote2 : Icons.MusicNoteOff2 });
+                }
+
+                mute.CreateFlyoutItem(ViewModel.Chats.ChatMuteForCommand, Tuple.Create<Chat, int?>(chat, 60 * 60), Strings.Resources.MuteFor1h, new FontIcon { Glyph = Icons.ClockAlarmHour });
+                mute.CreateFlyoutItem(ViewModel.Chats.ChatMuteForCommand, Tuple.Create<Chat, int?>(chat, null), Strings.Resources.MuteForPopup, new FontIcon { Glyph = Icons.AlertSnooze });
+
+                var toggle = mute.CreateFlyoutItem(
+                    ViewModel.Chats.ChatNotifyCommand,
+                    chat,
+                    muted ? Strings.Resources.UnmuteNotifications : Strings.Resources.MuteNotifications,
+                    new FontIcon { Glyph = muted ? Icons.Speaker : Icons.SpeakerOff });
+
+                if (muted is false)
+                {
+                    toggle.Foreground = App.Current.Resources["DangerButtonBackground"] as Brush;
+                }
+
+                flyout.Items.Add(mute);
+
+            }
+
+            flyout.CreateFlyoutItem(DialogMark_Loaded, viewModel.ChatMarkCommand, chat, chat.IsUnread() ? Strings.Resources.MarkAsRead : Strings.Resources.MarkAsUnread, new FontIcon { Glyph = chat.IsUnread() ? Icons.MarkAsRead : Icons.MarkAsUnread, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily });
+            flyout.CreateFlyoutItem(DialogClear_Loaded, viewModel.ChatClearCommand, chat, Strings.Resources.ClearHistory, new FontIcon { Glyph = Icons.Broom });
+            flyout.CreateFlyoutItem(DialogDelete_Loaded, viewModel.ChatDeleteCommand, chat, DialogDelete_Text(chat), new FontIcon { Glyph = Icons.Delete });
+
+            if (viewModel.SelectionMode != ListViewSelectionMode.Multiple)
+            {
+                flyout.CreateFlyoutSeparator();
+                flyout.CreateFlyoutItem(viewModel.ChatOpenCommand, chat, "Open in new window", new FontIcon { Glyph = Icons.WindowNew });
+                flyout.CreateFlyoutSeparator();
+                flyout.CreateFlyoutItem(viewModel.ChatSelectCommand, chat, Strings.Resources.lng_context_select_msg, new FontIcon { Glyph = Icons.CheckmarkCircle });
+            }
+
+            args.ShowAt(flyout, element);
+        }
+
+        private bool DialogMark_Loaded(Chat chat)
+        {
+            return true;
+        }
+
+        private bool DialogPin_Loaded(Chat chat)
+        {
+            //if (!chat.IsPinned)
+            //{
+            //    var count = ViewModel.Dialogs.LegacyItems.Where(x => x.IsPinned).Count();
+            //    var max = ViewModel.CacheService.Config.PinnedDialogsCountMax;
+
+            //    return count < max ? Visibility.Visible : Visibility.Collapsed;
+            //}
+
+            var position = chat.GetPosition(ViewModel.Chats.Items.ChatList);
+            if (position?.Source != null)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool DialogArchive_Loaded(Chat chat)
+        {
+            var position = chat.GetPosition(ViewModel.Chats.Items.ChatList);
+            if (ViewModel.CacheService.IsSavedMessages(chat) || position?.Source != null || chat.Id == 777000)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool DialogNotify_Loaded(Chat chat)
+        {
+            var position = chat.GetPosition(ViewModel.Chats.Items.ChatList);
+            if (ViewModel.CacheService.IsSavedMessages(chat) || position?.Source is ChatSourcePublicServiceAnnouncement)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public bool DialogClear_Loaded(Chat chat)
+        {
+            var position = chat.GetPosition(ViewModel.Chats.Items.ChatList);
+            if (position?.Source != null)
+            {
+                return false;
+            }
+
+            if (chat.Type is ChatTypeSupergroup super)
+            {
+                var supergroup = ViewModel.ProtoService.GetSupergroup(super.SupergroupId);
+                if (supergroup != null)
+                {
+                    return string.IsNullOrEmpty(supergroup.Username) && !super.IsChannel;
+                }
+            }
+
+            return true;
+        }
+
+        private bool DialogDelete_Loaded(Chat chat)
+        {
+            var position = chat.GetPosition(ViewModel.Chats.Items.ChatList);
+            if (position?.Source is ChatSourceMtprotoProxy)
+            {
+                return false;
+            }
+
+            //if (dialog.With is TLChannel channel)
+            //{
+            //    return Visibility.Visible;
+            //}
+            //else if (dialog.Peer is TLPeerUser userPeer)
+            //{
+            //    return Visibility.Visible;
+            //}
+            //else if (dialog.Peer is TLPeerChat chatPeer)
+            //{
+            //    return dialog.With is TLChatForbidden || dialog.With is TLChatEmpty ? Visibility.Visible : Visibility.Collapsed;
+            //}
+
+            //return Visibility.Collapsed;
+
+            return true;
+        }
+
+        private string DialogDelete_Text(Chat chat)
+        {
+            var position = chat.GetPosition(ViewModel.Chats.Items.ChatList);
+            if (position?.Source is ChatSourcePublicServiceAnnouncement)
+            {
+                return Strings.Resources.PsaHide;
+            }
+            else if (chat.Type is ChatTypeSupergroup super)
+            {
+                return super.IsChannel ? Strings.Resources.LeaveChannelMenu : Strings.Resources.LeaveMegaMenu;
+            }
+            else if (chat.Type is ChatTypeBasicGroup)
+            {
+                return Strings.Resources.DeleteAndExit;
+            }
+
+            return Strings.Resources.Delete;
+        }
+
+        #endregion
+
+
     }
 
     public class HostedPage : Page

@@ -991,6 +991,7 @@
                                                         ItemsSource="{x:Bind ViewModel.Chats.Items, Mode=OneWay}"
                                                         SelectionMode="{x:Bind ViewModel.Chats.SelectionMode, Mode=TwoWay}"
                                                         SelectionChanged="ListView_SelectionChanged"
+                                                        ChoosingItemContainer="ChatsList_ChoosingItemContainer"
                                                         Grid.Row="1">
                                         <ListView.Header>
                                             <Grid x:Name="ArchivedChatsPresenter">
