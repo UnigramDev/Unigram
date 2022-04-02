@@ -300,9 +300,9 @@ namespace Unigram.Common
         {
             if (_passcodeService.IsEnabled)
             {
-                var dialog = new SettingsPasscodeConfirmPopup();
+                var popup = new SettingsPasscodeConfirmPopup();
 
-                var confirm = await dialog.ShowQueuedAsync();
+                var confirm = await popup.ShowQueuedAsync();
                 if (confirm == ContentDialogResult.Primary)
                 {
                     Navigate(typeof(SettingsPasscodePage));
@@ -316,9 +316,9 @@ namespace Unigram.Common
                 if (confirm == ContentDialogResult.Primary)
                 {
                     var viewModel = TLContainer.Current.Resolve<SettingsPasscodeViewModel>(SessionId);
-                    if (viewModel != null)
+                    if (viewModel != null && await viewModel.ToggleAsync())
                     {
-                        viewModel.ToggleCommand.Execute();
+                        Navigate(typeof(SettingsPasscodePage));
                     }
                 }
             }

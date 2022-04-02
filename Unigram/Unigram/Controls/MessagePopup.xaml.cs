@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Navigation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -56,7 +57,7 @@ namespace Unigram.Controls
             set => CheckBox.IsChecked = value;
         }
 
-        public static Task<ContentDialogResult> ShowAsync(string message, string title = null, string primary = null, string secondary = null)
+        public static Task<ContentDialogResult> ShowAsync(string message, string title = null, string primary = null, string secondary = null, bool dangerous = false)
         {
             var popup = new MessagePopup
             {
@@ -66,10 +67,16 @@ namespace Unigram.Controls
                 SecondaryButtonText = secondary ?? string.Empty
             };
 
+            if (dangerous)
+            {
+                popup.DefaultButton = ContentDialogButton.None;
+                popup.PrimaryButtonStyle = BootStrapper.Current.Resources["DangerButtonStyle"] as Style;
+            }
+
             return popup.ShowQueuedAsync();
         }
 
-        public static Task<ContentDialogResult> ShowAsync(FormattedText message, string title = null, string primary = null, string secondary = null)
+        public static Task<ContentDialogResult> ShowAsync(FormattedText message, string title = null, string primary = null, string secondary = null, bool dangerous = false)
         {
             var popup = new MessagePopup
             {
@@ -78,6 +85,12 @@ namespace Unigram.Controls
                 PrimaryButtonText = primary ?? string.Empty,
                 SecondaryButtonText = secondary ?? string.Empty
             };
+
+            if (dangerous)
+            {
+                popup.DefaultButton = ContentDialogButton.None;
+                popup.PrimaryButtonStyle = BootStrapper.Current.Resources["DangerButtonStyle"] as Style;
+            }
 
             return popup.ShowQueuedAsync();
         }

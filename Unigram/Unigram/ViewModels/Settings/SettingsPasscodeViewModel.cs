@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Services.Updates;
@@ -99,26 +100,39 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand ToggleCommand { get; }
         private async void ToggleExecute()
         {
+            await ToggleAsync();
+        }
+
+        public async Task<bool> ToggleAsync()
+        {
             if (_passcodeService.IsEnabled)
             {
-                _passcodeService.Reset();
+                var confirm = await MessagePopup.ShowAsync(Strings.Resources.DisablePasscodeConfirmMessage, Strings.Resources.DisablePasscode, Strings.Resources.DisablePasscodeTurnOff, Strings.Resources.Cancel, true);
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    _passcodeService.Reset();
+                    NavigationService.GoBack();
+                }
             }
             else
             {
                 var timeout = _passcodeService.AutolockTimeout + 0;
-                var dialog = new SettingsPasscodeInputPopup();
-                dialog.IsSimple = _passcodeService.IsSimple;
+                var popup = new SettingsPasscodeInputPopup();
+                popup.IsSimple = _passcodeService.IsSimple;
 
-                var confirm = await dialog.ShowQueuedAsync();
+                var confirm = await popup.ShowQueuedAsync();
                 if (confirm == ContentDialogResult.Primary)
                 {
-                    var passcode = dialog.Passcode;
-                    var simple = dialog.IsSimple;
+                    var passcode = popup.Passcode;
+                    var simple = popup.IsSimple;
                     _passcodeService.Set(passcode, simple, timeout);
 
                     InactivityHelper.Initialize(timeout);
+                    return true;
                 }
             }
+
+            return false;
         }
 
         public RelayCommand EditCommand { get; }

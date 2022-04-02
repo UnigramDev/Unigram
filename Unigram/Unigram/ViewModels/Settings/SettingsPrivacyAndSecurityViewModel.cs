@@ -160,7 +160,7 @@ namespace Unigram.ViewModels.Settings
             new SettingsOptionItem<int>(365, Locale.Declension("Years", 1))
         };
 
-    private int _blockedUsers;
+        private int _blockedUsers;
         public int BlockedUsers
         {
             get => _blockedUsers;

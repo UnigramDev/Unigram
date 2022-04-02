@@ -325,7 +325,7 @@ namespace Unigram.Navigation.Services
             return viewService.OpenAsync(page, parameter, title, size, SessionId);
         }
 
-        public Task<ContentDialogResult> ShowAsync(Type sourcePopupType, object parameter)
+        public Task<ContentDialogResult> ShowAsync(Type sourcePopupType, object parameter = null)
         {
             var popup = Activator.CreateInstance(sourcePopupType) as ContentPopup;
             if (popup != null)
