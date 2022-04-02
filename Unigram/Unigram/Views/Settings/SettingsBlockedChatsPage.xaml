@@ -24,12 +24,27 @@
                                 ContainerContentChanging="OnContainerContentChanging"
                                 SelectionMode="None">
             <ListView.Header>
-                <controls:HeaderedControl Margin="0,0,0,16">
-                    <controls:BadgeButton Content="{CustomResource BlockUser}"
-                                          Command="{x:Bind ViewModel.BlockCommand}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xE98B;" />
-                </controls:HeaderedControl>
+                <StackPanel Spacing="16">
+                    <Grid Margin="24,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition MaxWidth="1000" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <controls:LottieView Source="ms-appx:///Assets/Animations/BlockedChats.tgs"
+                                             IsLoopingEnabled="False"
+                                             IsCachingEnabled="False"
+                                             Width="140"
+                                             Height="140"
+                                             Margin="0,16,0,0" />
+                    </Grid>
+
+                    <controls:HeaderedControl Margin="0,0,0,16">
+                        <controls:BadgeButton Content="{CustomResource BlockUser}"
+                                              Command="{x:Bind ViewModel.BlockCommand}"
+                                              Style="{StaticResource GlyphBadgeButtonStyle}"
+                                              Glyph="&#xE98B;" />
+                    </controls:HeaderedControl>
+                </StackPanel>
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate>

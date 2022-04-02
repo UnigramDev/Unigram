@@ -1364,6 +1364,7 @@
     <Content Include="Assets\Animations\ChangeNumber.tgs" />
     <Content Include="Assets\Animations\StartLiveStream.tgs" />
     <Content Include="Assets\Emoji\spoiler.ttf" />
+    <Content Include="Assets\Animations\BlockedChats.tgs" />
     <None Include="Assets\i420.hlsl" />
     <Content Include="Assets\Images\BoxArt.png" />
     <Content Include="Assets\Images\Reply.scale-100.png" />

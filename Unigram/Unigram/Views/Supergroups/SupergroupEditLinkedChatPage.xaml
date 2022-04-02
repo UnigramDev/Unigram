@@ -56,7 +56,7 @@
             <ScrollViewer VerticalScrollBarVisibility="Auto"
                           VerticalScrollMode="Auto">
                 <StackPanel Margin="0,0,0,32">
-                    <Grid>
+                    <Grid Margin="24,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition MaxWidth="1000" />
                             <ColumnDefinition Width="Auto" />
@@ -70,7 +70,7 @@
                                              IsCachingEnabled="False"
                                              Width="140"
                                              Height="140"
-                                             Margin="0,24,0,0" />
+                                             Margin="0,16,0,0" />
                         <TextBlock x:Name="Headline"
                                    Text="{CustomResource DiscussionChannelGroupSetHelp}"
                                    Style="{StaticResource InfoCaptionTextBlockStyle}"
