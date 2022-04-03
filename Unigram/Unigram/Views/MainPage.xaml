@@ -50,8 +50,6 @@
                                     <VisualState x:Name="Expanded" />
                                     <VisualState x:Name="Minimal">
                                         <VisualState.Setters>
-                                            <Setter Target="BackgroundPart.CornerRadius"
-                                                    Value="0" />
                                             <Setter Target="DetailHeaderPresenter2.CornerRadius"
                                                     Value="0" />
                                             <Setter Target="BorderPart.CornerRadius"
@@ -62,26 +60,24 @@
                                     </VisualState>
                                 </VisualStateGroup>
                             </VisualStateManager.VisualStateGroups>
-                            <chats:ChatBackgroundPresenter x:Name="BackgroundPart"
-                                                           CornerRadius="{ThemeResource NavigationViewContentGridCornerRadius}"
-                                                           Background="{ThemeResource ChatPageBackgroundBrush}"
-                                                           Loading="ChatBackgroundPresenter_Loading" />
+                            <ContentControl Content="{TemplateBinding Banner}"
+                                            IsTabStop="False"
+                                            HorizontalContentAlignment="Stretch"
+                                            VerticalContentAlignment="Stretch"
+                                            VerticalAlignment="Top"
+                                            Canvas.ZIndex="2" />
 
-                            <Grid>
-                                <ContentControl x:Name="DetailHeaderPresenter2"
-                                                Content="{TemplateBinding DetailHeader}"
-                                                CornerRadius="{ThemeResource NavigationViewContentGridCornerRadius}"
-                                                IsTabStop="False"
-                                                HorizontalContentAlignment="Stretch"
-                                                VerticalContentAlignment="Stretch"
-                                                VerticalAlignment="Top"
-                                                Canvas.ZIndex="1">
-                                    <ContentControl.Template>
-                                        <ControlTemplate TargetType="ContentControl">
-                                            <ContentPresenter CornerRadius="{TemplateBinding CornerRadius}" />
-                                        </ControlTemplate>
-                                    </ContentControl.Template>
-                                </ContentControl>
+                            <Grid x:Name="DetailHeaderPresenter2"
+                                  CornerRadius="{ThemeResource NavigationViewContentGridCornerRadius}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="40" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+
+                                <chats:ChatBackgroundPresenter x:Name="BackgroundPart"
+                                                               Loading="ChatBackgroundPresenter_Loading"
+                                                               Grid.RowSpan="2" />
+
                                 <Grid Margin="24,0">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition MaxWidth="1000" />
@@ -105,22 +101,16 @@
                                                     VerticalAlignment="Top"
                                                     Canvas.ZIndex="1" />
                                 </Grid>
+
+                                <Grid x:Name="DetailPresenter"
+                                      Grid.Row="1" />
+
+                                <Border x:Name="BorderPart"
+                                        BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
+                                        BorderThickness="{ThemeResource NavigationViewContentGridBorderThickness}"
+                                        CornerRadius="{ThemeResource NavigationViewContentGridCornerRadius}"
+                                        Grid.RowSpan="2" />
                             </Grid>
-
-                            <ContentControl Content="{TemplateBinding Banner}"
-                                            IsTabStop="False"
-                                            HorizontalContentAlignment="Stretch"
-                                            VerticalContentAlignment="Stretch"
-                                            VerticalAlignment="Top"
-                                            Canvas.ZIndex="2" />
-
-                            <Grid x:Name="DetailPresenter" />
-
-                            <Border x:Name="BorderPart"
-                                    BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
-                                    BorderThickness="{ThemeResource NavigationViewContentGridBorderThickness}"
-                                    CornerRadius="{ThemeResource NavigationViewContentGridCornerRadius}"
-                                    Canvas.ZIndex="1" />
 
                             <ContentPresenter x:Name="MasterFrame"
                                               Content="{TemplateBinding Content}"
