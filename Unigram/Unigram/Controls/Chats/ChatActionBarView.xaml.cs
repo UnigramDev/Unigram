@@ -4,6 +4,7 @@ using System.Windows.Input;
 using Telegram.Td.Api;
 using Unigram.Navigation;
 using Unigram.ViewModels;
+using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -111,6 +112,7 @@ namespace Unigram.Controls.Chats
 
             var button = new Button();
             button.Style = BootStrapper.Current.Resources["EmptyButtonStyle"] as Style;
+            button.Background = new SolidColorBrush(Colors.Transparent);
             button.HorizontalContentAlignment = HorizontalAlignment.Center;
             button.VerticalContentAlignment = VerticalAlignment.Center;
             button.Content = label;
@@ -166,12 +168,12 @@ namespace Unigram.Controls.Chats
             };
 
             var clip = visual.Compositor.CreateScalarKeyFrameAnimation();
-            clip.InsertKeyFrame(show ? 0 : 1, 40);
+            clip.InsertKeyFrame(show ? 0 : 1, 32);
             clip.InsertKeyFrame(show ? 1 : 0, 0);
             clip.Duration = TimeSpan.FromMilliseconds(150);
 
             var offset = visual.Compositor.CreateVector3KeyFrameAnimation();
-            offset.InsertKeyFrame(show ? 0 : 1, new Vector3(0, -40, 0));
+            offset.InsertKeyFrame(show ? 0 : 1, new Vector3(0, -32, 0));
             offset.InsertKeyFrame(show ? 1 : 0, new Vector3());
             offset.Duration = TimeSpan.FromMilliseconds(150);
 

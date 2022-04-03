@@ -463,6 +463,7 @@
             ToolTipService.ToolTip="{CustomResource Shuffle}"/>-->
         <controls:GlyphButton Click="Clear_Click"
                               Glyph="&#xE711;"
+                              Width="40"
                               Height="40"
                               Grid.Column="7"
                               AutomationProperties.Name="{CustomResource AccDescrClosePlayer}"
