@@ -3,17 +3,18 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls.Messages;
 using Unigram.ViewModels;
-using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Point = Windows.Foundation.Point;
 
 namespace Unigram.Controls.Chats
 {
-    public class ChatListView : PaddedListView
+    public class ChatListView : LazoListView
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
@@ -213,6 +214,73 @@ namespace Unigram.Controls.Chats
         protected override DependencyObject GetContainerForItemOverride()
         {
             return new ChatListViewItem(this);
+        }
+
+        protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
+        {
+            var container = element as ListViewItem;
+            var message = item as MessageViewModel;
+            var chat = message?.GetChat();
+
+            if (container != null && message != null && chat != null)
+            {
+                var action = message.IsSaved() || message.IsShareable();
+
+                if (message.IsService())
+                {
+                    container.Padding = new Thickness(12, 0, 12, 0);
+
+                    container.HorizontalAlignment = HorizontalAlignment.Stretch;
+                    container.Width = double.NaN;
+                    container.Height = double.NaN;
+                    container.Margin = new Thickness();
+                }
+                else if (message.IsSaved() || (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup) && !message.IsChannelPost)
+                {
+                    if (message.IsOutgoing && !message.IsSaved())
+                    {
+                        if (message.Content is MessageSticker or MessageVideoNote)
+                        {
+                            container.Padding = new Thickness(12, 0, 12, 0);
+                        }
+                        else
+                        {
+                            container.Padding = new Thickness(50, 0, 12, 0);
+                        }
+                    }
+                    else
+                    {
+                        if (message.Content is MessageSticker or MessageVideoNote)
+                        {
+                            container.Padding = new Thickness(12, 0, 12, 0);
+                        }
+                        else
+                        {
+                            container.Padding = new Thickness(12, 0, action ? 14 : 50, 0);
+                        }
+                    }
+                }
+                else
+                {
+                    if (message.Content is MessageSticker or MessageVideoNote)
+                    {
+                        container.Padding = new Thickness(12, 0, 12, 0);
+                    }
+                    else
+                    {
+                        if (message.IsOutgoing && !message.IsChannelPost)
+                        {
+                            container.Padding = new Thickness(50, 0, 12, 0);
+                        }
+                        else
+                        {
+                            container.Padding = new Thickness(12, 0, action ? 14 : 50, 0);
+                        }
+                    }
+                }
+            }
+
+            base.PrepareContainerForItemOverride(element, item);
         }
 
         protected override bool CantSelect(object item)

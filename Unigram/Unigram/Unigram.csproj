@@ -482,7 +482,6 @@
     <Compile Include="Controls\NavigationViewItemSeparator.cs" />
     <Compile Include="Controls\NumericTextBlock.cs" />
     <Compile Include="Controls\OverlayPage.cs" />
-    <Compile Include="Controls\PaddedListView.cs" />
     <Compile Include="Controls\PageHeader.cs" />
     <Compile Include="Controls\BadgeButton.cs" />
     <Compile Include="Controls\GlyphRadioButton.cs" />
