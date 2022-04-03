@@ -321,7 +321,7 @@ namespace Unigram.Controls
                 return false;
             }
 
-            if (_index == animation.TotalFrame - 1 && !_isLoopingEnabled && !_backward)
+            if (_index >= animation.TotalFrame - 2 && !_isLoopingEnabled && !_backward)
             {
                 _index = 0;
             }
