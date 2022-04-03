@@ -1008,7 +1008,7 @@ namespace Unigram.ViewModels
                 if (panel != null && panel.LastVisibleIndex >= 0 && panel.LastVisibleIndex < Items.Count - 1 && Items.Count > 0)
                 {
                     var start = Items[panel.LastVisibleIndex].Id;
-                    if (start < chat.LastReadInboxMessageId)
+                    if (start < chat.LastReadInboxMessageId && chat.LastReadInboxMessageId < lastMessageId)
                     {
                         lastMessageId = lastReadInboxMessageId;
                     }
