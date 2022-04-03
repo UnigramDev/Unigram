@@ -251,7 +251,7 @@ namespace Unigram.Controls
             {
                 var clip = CompositionDevice.CreateRectangleClip(DetailFrame);
                 clip.Left = 0;
-                clip.Top = -48;
+                clip.Top = -40;
                 clip.Right = float.MaxValue;
                 clip.Bottom = float.MaxValue;
                 clip.TopLeft = 8;
