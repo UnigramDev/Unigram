@@ -281,8 +281,8 @@
                                  Style="{StaticResource SkinToneRadioButtonStyle}">
                         <common:EmojiSkinTone>Fitz6</common:EmojiSkinTone>
                     </RadioButton>
-                    <ListView x:Name="Toolbar"
-                              Style="{StaticResource StaticListViewStyle}"
+                    <GridView x:Name="Toolbar"
+                              Style="{StaticResource StaticGridViewStyle}"
                               Height="{ThemeResource AppBarThemeCompactHeight}"
                               IsItemClickEnabled="True"
                               ItemClick="Toolbar_ItemClick"
@@ -291,14 +291,30 @@
                               ScrollViewer.HorizontalScrollMode="Auto"
                               ScrollViewer.VerticalScrollBarVisibility="Disabled"
                               ScrollViewer.VerticalScrollMode="Disabled"
+                              Padding="0"
                               Grid.Row="1">
-                        <ListView.ItemsPanel>
+                        <GridView.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <ItemsStackPanel Orientation="Horizontal"
                                                  HorizontalAlignment="Center" />
                             </ItemsPanelTemplate>
-                        </ListView.ItemsPanel>
-                        <ListView.ItemContainerStyle>
+                        </GridView.ItemsPanel>
+                        <GridView.ItemContainerStyle>
+                            <Style TargetType="GridViewItem"
+                                   BasedOn="{StaticResource DefaultGridViewItemStyle}">
+                                <Setter Property="Margin"
+                                        Value="0,4,4,4" />
+                                <Setter Property="MinHeight"
+                                        Value="0" />
+                                <Setter Property="MinWidth"
+                                        Value="0" />
+                                <Setter Property="Height"
+                                        Value="40" />
+                                <Setter Property="Width"
+                                        Value="40" />
+                            </Style>
+                        </GridView.ItemContainerStyle>
+                        <!--<GridView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
                                 <Setter Property="FontFamily"
                                         Value="{ThemeResource ContentControlThemeFontFamily}" />
@@ -380,8 +396,8 @@
                                     </Setter.Value>
                                 </Setter>
                             </Style>
-                        </ListView.ItemContainerStyle>
-                        <ListView.ItemTemplate>
+                        </GridView.ItemContainerStyle>-->
+                        <GridView.ItemTemplate>
                             <DataTemplate x:DataType="common:EmojiGroup">
                                 <Border AutomationProperties.Name="{x:Bind Title}"
                                         ToolTipService.ToolTip="{x:Bind Title}"
@@ -391,14 +407,15 @@
                                                FontSize="20"
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"
-                                               IsColorFontEnabled="False" />
+                                               IsColorFontEnabled="False"
+                                               Margin="10"/>
                                 </Border>
                             </DataTemplate>
-                        </ListView.ItemTemplate>
-                        <ListView.ItemContainerTransitions>
+                        </GridView.ItemTemplate>
+                        <GridView.ItemContainerTransitions>
                             <TransitionCollection />
-                        </ListView.ItemContainerTransitions>
-                    </ListView>
+                        </GridView.ItemContainerTransitions>
+                    </GridView>
                 </Grid>
             </ScrollViewer>
         </Grid>

@@ -165,9 +165,8 @@
 
         <Grid x:Name="ToolbarContainer">
             <Border x:Name="Separator" />
-            <!--
-                    Background="{ThemeResource PageSubHeaderBackgroundBrush}"-->
-            <ListView x:Name="Toolbar"
+
+            <GridView x:Name="Toolbar"
                       ItemsSource="{x:Bind ViewModel.SavedStickers}"
                       Height="{ThemeResource AppBarThemeCompactHeight}"
                       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
@@ -179,100 +178,32 @@
                       ScrollViewer.IsHorizontalScrollChainingEnabled="False"
                       ScrollViewer.VerticalScrollBarVisibility="Disabled"
                       ScrollViewer.VerticalScrollMode="Disabled"
+                      Padding="4,0,0,0"
                       Grid.Row="0">
-                <ListView.ItemsPanel>
+                <GridView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <ItemsStackPanel Orientation="Horizontal" />
                     </ItemsPanelTemplate>
-                </ListView.ItemsPanel>
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-                        <Setter Property="FontFamily"
-                                Value="{ThemeResource ContentControlThemeFontFamily}" />
-                        <Setter Property="FontSize"
-                                Value="{ThemeResource ControlContentThemeFontSize}" />
-                        <Setter Property="Background"
-                                Value="{ThemeResource ListViewItemBackground}" />
-                        <Setter Property="Foreground"
-                                Value="{ThemeResource ListViewItemForeground}" />
-                        <Setter Property="TabNavigation"
-                                Value="Local" />
-                        <Setter Property="IsHoldingEnabled"
-                                Value="True" />
+                </GridView.ItemsPanel>
+                <GridView.ItemContainerStyle>
+                    <Style TargetType="GridViewItem"
+                           BasedOn="{StaticResource DefaultGridViewItemStyle}">
                         <Setter Property="Margin"
-                                Value="0" />
-                        <Setter Property="Padding"
-                                Value="0" />
-                        <Setter Property="HorizontalContentAlignment"
-                                Value="Stretch" />
-                        <Setter Property="VerticalContentAlignment"
-                                Value="Stretch" />
-                        <Setter Property="Width"
-                                Value="{ThemeResource AppBarThemeCompactHeight}" />
-                        <Setter Property="Height"
-                                Value="{ThemeResource AppBarThemeCompactHeight}" />
-                        <Setter Property="MinWidth"
-                                Value="0" />
+                                Value="0,4,4,4" />
                         <Setter Property="MinHeight"
                                 Value="0" />
-                        <Setter Property="AllowDrop"
-                                Value="False" />
-                        <Setter Property="UseSystemFocusVisuals"
-                                Value="True" />
-                        <Setter Property="FocusVisualMargin"
+                        <Setter Property="MinWidth"
                                 Value="0" />
-                        <Setter Property="FocusVisualPrimaryBrush"
-                                Value="{ThemeResource ListViewItemFocusVisualPrimaryBrush}" />
-                        <Setter Property="FocusVisualPrimaryThickness"
-                                Value="2" />
-                        <Setter Property="FocusVisualSecondaryBrush"
-                                Value="{ThemeResource ListViewItemFocusVisualSecondaryBrush}" />
-                        <Setter Property="FocusVisualSecondaryThickness"
-                                Value="1" />
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="ListViewItem">
-                                    <ListViewItemPresenter ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                           Control.IsTemplateFocusTarget="True"
-                                                           FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
-                                                           FocusVisualPrimaryBrush="{TemplateBinding FocusVisualPrimaryBrush}"
-                                                           FocusVisualPrimaryThickness="{TemplateBinding FocusVisualPrimaryThickness}"
-                                                           FocusVisualSecondaryBrush="{TemplateBinding FocusVisualSecondaryBrush}"
-                                                           FocusVisualSecondaryThickness="{TemplateBinding FocusVisualSecondaryThickness}"
-                                                           SelectionCheckMarkVisualEnabled="{ThemeResource ListViewItemSelectionCheckMarkVisualEnabled}"
-                                                           CheckBrush="{ThemeResource ListViewItemCheckBrush}"
-                                                           CheckBoxBrush="{ThemeResource ListViewItemCheckBoxBrush}"
-                                                           DragBackground="{ThemeResource ListViewItemDragBackground}"
-                                                           DragForeground="{ThemeResource ListViewItemDragForeground}"
-                                                           FocusBorderBrush="{ThemeResource ListViewItemFocusBorderBrush}"
-                                                           FocusSecondaryBorderBrush="{ThemeResource ListViewItemFocusSecondaryBorderBrush}"
-                                                           PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackground}"
-                                                           PointerOverBackground="{ThemeResource ListViewItemBackgroundPointerOver}"
-                                                           PointerOverForeground="{ThemeResource ListViewItemForegroundPointerOver}"
-                                                           SelectedBackground="{ThemeResource ListViewItemBackgroundSelected}"
-                                                           SelectedForeground="{ThemeResource ListViewItemForegroundSelected}"
-                                                           SelectedPointerOverBackground="{ThemeResource ListViewItemBackgroundSelectedPointerOver}"
-                                                           PressedBackground="{ThemeResource ListViewItemBackgroundPressed}"
-                                                           SelectedPressedBackground="{ThemeResource ListViewItemBackgroundSelectedPressed}"
-                                                           DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
-                                                           DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
-                                                           ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
-                                                           HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                           VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                           ContentMargin="{TemplateBinding Padding}"
-                                                           CheckMode="{ThemeResource ListViewItemCheckMode}"
-                                                           CornerRadius="{StaticResource GlyphButtonCornerRadius}"
-                                                           Margin="{StaticResource GlyphButtonPadding}" />
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
+                        <Setter Property="Height"
+                                Value="40" />
+                        <Setter Property="Width"
+                                Value="40" />
                     </Style>
-                </ListView.ItemContainerStyle>
-                <ListView.ItemTemplateSelector>
+                </GridView.ItemContainerStyle>
+                <GridView.ItemTemplateSelector>
                     <selectors:StickerSetTemplateSelector>
                         <selectors:StickerSetTemplateSelector.ItemTemplate>
                             <DataTemplate x:DataType="viewModels:StickerSetViewModel">
-                                <!--<Image Margin="6" Source="{x:Bind Cover, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" ToolTipService.ToolTip="{x:Bind Title}"/>-->
                                 <Grid Padding="6">
                                     <Image />
                                 </Grid>
@@ -301,19 +232,19 @@
                             </DataTemplate>
                         </selectors:StickerSetTemplateSelector.FavedTemplate>
                     </selectors:StickerSetTemplateSelector>
-                </ListView.ItemTemplateSelector>
-                <ListView.Footer>
+                </GridView.ItemTemplateSelector>
+                <GridView.Footer>
                     <StackPanel Orientation="Horizontal">
                         <controls:GlyphButton Click="Settings_Click"
                                               Width="{ThemeResource AppBarThemeCompactHeight}"
                                               Height="{ThemeResource AppBarThemeCompactHeight}"
                                               Glyph="&#xE713;" />
                     </StackPanel>
-                </ListView.Footer>
-                <ListView.ItemContainerTransitions>
+                </GridView.Footer>
+                <GridView.ItemContainerTransitions>
                     <TransitionCollection />
-                </ListView.ItemContainerTransitions>
-            </ListView>
+                </GridView.ItemContainerTransitions>
+            </GridView>
         </Grid>
     </Grid>
 
