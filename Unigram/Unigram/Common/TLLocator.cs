@@ -7,6 +7,7 @@
         private readonly Unigram.Services.ILifetimeService _lifetimeService;
         private readonly Unigram.Services.ILocaleService _localeService;
         private readonly Unigram.Services.IPasscodeService _passcodeService;
+        private readonly Unigram.Services.IPlaybackService _playbackService;
 
         private readonly Unigram.Services.IDeviceInfoService _deviceInfoService;
         private readonly Unigram.Services.ISettingsService _settingsService;
@@ -28,18 +29,18 @@
         private Unigram.Services.ILocationService _locationService;
         private Unigram.Services.IThemeService _themeService;
         private Unigram.Services.Factories.IMessageFactory _messageFactory;
-        private Unigram.Services.IPlaybackService _playbackService;
         private Unigram.Services.ViewService.IViewService _viewService;
         private Unigram.Services.IStorageService _storageService;
         private Unigram.Services.ITranslateService _translateService;
 
-        public TLLocator(Unigram.Services.ILifetimeService lifetimeService, Unigram.Services.ILocaleService localeService, Unigram.Services.IPasscodeService passcodeService, int session, bool active)
+        public TLLocator(Unigram.Services.ILifetimeService lifetimeService, Unigram.Services.ILocaleService localeService, Unigram.Services.IPasscodeService passcodeService, Unigram.Services.IPlaybackService playbackService, int session, bool active)
         {
             _session = session;
 
             _lifetimeService = lifetimeService;
             _localeService = localeService;
             _passcodeService = passcodeService;
+            _playbackService = playbackService;
 
             _deviceInfoService = new Unigram.Services.DeviceInfoService();
             _settingsService = new Unigram.Services.SettingsService(_session);
@@ -159,11 +160,7 @@
                         _protoService,
                         _networkService,
                         _eventAggregator),
-                    _playbackService ??= new Unigram.Services.PlaybackService(
-                        _protoService,
-                        _cacheService,
-                        _settingsService,
-                        _eventAggregator),
+                    _playbackService,
                     _shortcutsService ??= new Unigram.Services.ShortcutsService(
                         _protoService,
                         _cacheService,
@@ -200,11 +197,7 @@
                         _protoService,
                         _cacheService),
                     _notificationsService,
-                    _playbackService ??= new Unigram.Services.PlaybackService(
-                        _protoService,
-                        _cacheService,
-                        _settingsService,
-                        _eventAggregator),
+                    _playbackService,
                     _voipService ??= new Unigram.Services.VoipService(
                         _protoService,
                         _cacheService,
@@ -224,11 +217,7 @@
                         _settingsService),
                     _messageFactory ??= new Unigram.Services.Factories.MessageFactory(
                         _protoService,
-                        _playbackService ??= new Unigram.Services.PlaybackService(
-                            _protoService,
-                            _cacheService,
-                            _settingsService,
-                            _eventAggregator)));
+                        _playbackService));
             }
             else if (type == typeof(Unigram.ViewModels.DialogThreadViewModel))
             {
@@ -241,11 +230,7 @@
                         _protoService,
                         _cacheService),
                     _notificationsService,
-                    _playbackService ??= new Unigram.Services.PlaybackService(
-                        _protoService,
-                        _cacheService,
-                        _settingsService,
-                        _eventAggregator),
+                    _playbackService,
                     _voipService ??= new Unigram.Services.VoipService(
                         _protoService,
                         _cacheService,
@@ -265,11 +250,7 @@
                         _settingsService),
                     _messageFactory ??= new Unigram.Services.Factories.MessageFactory(
                         _protoService,
-                        _playbackService ??= new Unigram.Services.PlaybackService(
-                            _protoService,
-                            _cacheService,
-                            _settingsService,
-                            _eventAggregator)));
+                        _playbackService));
             }
             else if (type == typeof(Unigram.ViewModels.DialogPinnedViewModel))
             {
@@ -282,11 +263,7 @@
                         _protoService,
                         _cacheService),
                     _notificationsService,
-                    _playbackService ??= new Unigram.Services.PlaybackService(
-                        _protoService,
-                        _cacheService,
-                        _settingsService,
-                        _eventAggregator),
+                    _playbackService,
                     _voipService ??= new Unigram.Services.VoipService(
                         _protoService,
                         _cacheService,
@@ -306,11 +283,7 @@
                         _settingsService),
                     _messageFactory ??= new Unigram.Services.Factories.MessageFactory(
                         _protoService,
-                        _playbackService ??= new Unigram.Services.PlaybackService(
-                            _protoService,
-                            _cacheService,
-                            _settingsService,
-                            _eventAggregator)));
+                        _playbackService));
             }
             else if (type == typeof(Unigram.ViewModels.DialogScheduledViewModel))
             {
@@ -323,11 +296,7 @@
                         _protoService,
                         _cacheService),
                     _notificationsService,
-                    _playbackService ??= new Unigram.Services.PlaybackService(
-                        _protoService,
-                        _cacheService,
-                        _settingsService,
-                        _eventAggregator),
+                    _playbackService,
                     _voipService ??= new Unigram.Services.VoipService(
                         _protoService,
                         _cacheService,
@@ -347,11 +316,7 @@
                         _settingsService),
                     _messageFactory ??= new Unigram.Services.Factories.MessageFactory(
                         _protoService,
-                        _playbackService ??= new Unigram.Services.PlaybackService(
-                            _protoService,
-                            _cacheService,
-                            _settingsService,
-                            _eventAggregator)));
+                        _playbackService));
             }
             else if (type == typeof(Unigram.ViewModels.DialogEventLogViewModel))
             {
@@ -364,11 +329,7 @@
                         _protoService,
                         _cacheService),
                     _notificationsService,
-                    _playbackService ??= new Unigram.Services.PlaybackService(
-                        _protoService,
-                        _cacheService,
-                        _settingsService,
-                        _eventAggregator),
+                    _playbackService,
                     _voipService ??= new Unigram.Services.VoipService(
                         _protoService,
                         _cacheService,
@@ -388,11 +349,7 @@
                         _settingsService),
                     _messageFactory ??= new Unigram.Services.Factories.MessageFactory(
                         _protoService,
-                        _playbackService ??= new Unigram.Services.PlaybackService(
-                            _protoService,
-                            _cacheService,
-                            _settingsService,
-                            _eventAggregator)));
+                        _playbackService));
             }
             else if (type == typeof(Unigram.ViewModels.Drawers.AnimationDrawerViewModel))
             {
@@ -417,11 +374,7 @@
                     _cacheService,
                     _settingsService,
                     _eventAggregator,
-                    _playbackService ??= new Unigram.Services.PlaybackService(
-                        _protoService,
-                        _cacheService,
-                        _settingsService,
-                        _eventAggregator),
+                    _playbackService,
                     _voipService ??= new Unigram.Services.VoipService(
                         _protoService,
                         _cacheService,
@@ -579,11 +532,7 @@
                     _settingsService,
                     _storageService ??= new Unigram.Services.StorageService(_protoService),
                     _eventAggregator,
-                    _playbackService ??= new Unigram.Services.PlaybackService(
-                        _protoService,
-                        _cacheService,
-                        _settingsService,
-                        _eventAggregator));
+                    _playbackService);
             }
             else if (type == typeof(Unigram.ViewModels.Chats.ChatStatisticsViewModel))
             {
@@ -637,11 +586,7 @@
                         _settingsService),
                     _messageFactory ??= new Unigram.Services.Factories.MessageFactory(
                         _protoService,
-                        _playbackService ??= new Unigram.Services.PlaybackService(
-                            _protoService,
-                            _cacheService,
-                            _settingsService,
-                            _eventAggregator)),
+                        _playbackService),
                     _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.LogOutViewModel))
@@ -1244,19 +1189,7 @@
             {
                 return (T)(_messageFactory ??= new Unigram.Services.Factories.MessageFactory(
                     _protoService,
-                    _playbackService ??= new Unigram.Services.PlaybackService(
-                        _protoService,
-                        _cacheService,
-                        _settingsService,
-                        _eventAggregator)));
-            }
-            else if (type == typeof(Unigram.Services.IPlaybackService))
-            {
-                return (T)(_playbackService ??= new Unigram.Services.PlaybackService(
-                    _protoService,
-                    _cacheService,
-                    _settingsService,
-                    _eventAggregator));
+                    _playbackService));
             }
             else if (type == typeof(Unigram.Services.ViewService.IViewService))
             {

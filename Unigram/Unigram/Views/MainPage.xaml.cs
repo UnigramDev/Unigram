@@ -791,6 +791,8 @@ namespace Unigram.Views
 
             OnStateChanged(null, null);
 
+            ShowHideBanner(ViewModel.PlaybackService.CurrentItem != null);
+
             var update = new UpdateConnectionState(ViewModel.CacheService.GetConnectionState());
             if (update.State != null)
             {

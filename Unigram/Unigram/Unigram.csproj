@@ -755,7 +755,6 @@
     <Compile Include="Services\Updates\UpdateChatFiltersLayout.cs" />
     <Compile Include="Services\Updates\UpdateConfetti.cs" />
     <Compile Include="Services\Updates\UpdatePasscodeLock.cs" />
-    <Compile Include="Services\Updates\UpdatePlaybackItem.cs" />
     <Compile Include="Services\Updates\UpdateWindowActivated.cs" />
     <Compile Include="Services\ViewService\SecondaryViewSynchronizationContextDecorator.cs" />
     <Compile Include="Services\ViewService\ViewLifetimeControl.cs" />

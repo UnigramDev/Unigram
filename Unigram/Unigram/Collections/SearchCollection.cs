@@ -21,6 +21,8 @@ namespace Unigram.Collections
         private TSource _source;
         private ISupportIncrementalLoading _incrementalSource;
 
+        private bool _initialized;
+
         public SearchCollection(Func<object, string, TSource> factory, IDiffHandler<T> handler)
             : this(factory, null, handler)
         {
@@ -65,24 +67,27 @@ namespace Unigram.Collections
                 _source = source;
                 _incrementalSource = incremental;
 
-                using (await _mutex.WaitAsync())
+                if (_initialized)
                 {
-                    await incremental.LoadMoreItemsAsync(0);
-                }
+                    using (await _mutex.WaitAsync())
+                    {
+                        await incremental.LoadMoreItemsAsync(0);
+                    }
 
-                // 100% redundant
-                if (token.IsCancellationRequested)
-                {
-                    return;
-                }
+                    // 100% redundant
+                    if (token.IsCancellationRequested)
+                    {
+                        return;
+                    }
 
-                ReplaceDiff(source);
+                    ReplaceDiff(source);
 
-                if (Count < 1 && incremental.HasMoreItems)
-                {
-                    // This is 100% illegal and will cause a lot
-                    // but really a lot of problems for sure.
-                    Add(default);
+                    if (Count < 1 && incremental.HasMoreItems)
+                    {
+                        // This is 100% illegal and will cause a lot
+                        // but really a lot of problems for sure.
+                        Add(default);
+                    }
                 }
             }
         }
@@ -93,6 +98,8 @@ namespace Unigram.Collections
             {
                 using (await _mutex.WaitAsync())
                 {
+                    _initialized = true;
+
                     if (_token != null)
                     {
                         _token.Cancel();

@@ -5,7 +5,6 @@ using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Navigation;
-using Unigram.Services.Updates;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Media;
@@ -18,7 +17,7 @@ namespace Unigram.Services
     {
         IReadOnlyList<PlaybackItem> Items { get; }
 
-        Message CurrentItem { get; }
+        MessageWithOwner CurrentItem { get; }
 
         double PlaybackRate { get; set; }
 
@@ -34,8 +33,7 @@ namespace Unigram.Services
 
         void Clear();
 
-        void Play(MessageViewModel message, long threadId = 0);
-        void Play(Message message, long threadId = 0);
+        void Play(MessageWithOwner message, long threadId = 0);
 
         TimeSpan Position { get; }
         TimeSpan Duration { get; }
@@ -61,10 +59,7 @@ namespace Unigram.Services
 
     public class PlaybackService : BindableBase, IPlaybackService
     {
-        private readonly IProtoService _protoService;
-        private readonly ICacheService _cacheService;
         private readonly ISettingsService _settingsService;
-        private readonly IEventAggregator _aggregator;
 
         private readonly MediaPlayer _mediaPlayer;
 
@@ -82,12 +77,9 @@ namespace Unigram.Services
         public event TypedEventHandler<IPlaybackService, object> PositionChanged;
         public event EventHandler PlaylistChanged;
 
-        public PlaybackService(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+        public PlaybackService(ISettingsService settingsService)
         {
-            _protoService = protoService;
-            _cacheService = cacheService;
             _settingsService = settingsService;
-            _aggregator = aggregator;
 
             if (!ApiInfo.IsMediaSupported)
             {
@@ -168,7 +160,7 @@ namespace Unigram.Services
                 var message = item.Message;
                 if ((message.Content is MessageVideoNote videoNote && !videoNote.IsViewed && !message.IsOutgoing) || (message.Content is MessageVoiceNote voiceNote && !voiceNote.IsListened && !message.IsOutgoing))
                 {
-                    _protoService.Send(new OpenMessageContent(message.ChatId, message.Id));
+                    message.ProtoService.Send(new OpenMessageContent(message.ChatId, message.Id));
                 }
             }
         }
@@ -284,7 +276,7 @@ namespace Unigram.Services
             {
                 try
                 {
-                    var file = await _protoService.GetFileAsync(item.File);
+                    var file = await item.Message.ProtoService.GetFileAsync(item.File);
                     await _transport.DisplayUpdater.CopyFromFileAsync(MediaPlaybackType.Music, file);
                 }
                 catch
@@ -310,13 +302,12 @@ namespace Unigram.Services
             {
                 _currentItem = value?.Message;
                 _currentPlayback = value;
-                _aggregator.Publish(new UpdatePlaybackItem(value?.Message));
                 RaisePropertyChanged(nameof(CurrentItem));
                 UpdateTransport();
             }
         }
-        private Message _currentItem;
-        public Message CurrentItem => _currentItem;
+        private MessageWithOwner _currentItem;
+        public MessageWithOwner CurrentItem => _currentItem;
 
         public TimeSpan Position
         {
@@ -524,12 +515,7 @@ namespace Unigram.Services
             Dispose();
         }
 
-        public void Play(MessageViewModel message, long threadId)
-        {
-            Play(message.Get(), threadId);
-        }
-
-        public void Play(Message message, long threadId)
+        public void Play(MessageWithOwner message, long threadId)
         {
             if (message == null)
             {
@@ -577,7 +563,7 @@ namespace Unigram.Services
             var offset = -49;
             var filter = message.Content is MessageAudio ? new SearchMessagesFilterAudio() : (SearchMessagesFilter)new SearchMessagesFilterVoiceAndVideoNote();
 
-            _protoService.Send(new SearchChatMessages(message.ChatId, string.Empty, null, message.Id, offset, 100, filter, _threadId), result =>
+            message.ProtoService.Send(new SearchChatMessages(message.ChatId, string.Empty, null, message.Id, offset, 100, filter, _threadId), result =>
             {
                 if (result is Messages messages)
                 {
@@ -585,11 +571,11 @@ namespace Unigram.Services
                     {
                         if (add.Id > message.Id && add.Content is MessageAudio)
                         {
-                            items.Insert(0, GetPlaybackItem(add));
+                            items.Insert(0, GetPlaybackItem(new MessageWithOwner(message.ProtoService, add)));
                         }
                         else if (add.Id < message.Id && (add.Content is MessageVoiceNote || add.Content is MessageVideoNote))
                         {
-                            items.Insert(0, GetPlaybackItem(add));
+                            items.Insert(0, GetPlaybackItem(new MessageWithOwner(message.ProtoService, add)));
                         }
                     }
 
@@ -597,11 +583,11 @@ namespace Unigram.Services
                     {
                         if (add.Id < message.Id && add.Content is MessageAudio)
                         {
-                            items.Add(GetPlaybackItem(add));
+                            items.Add(GetPlaybackItem(new MessageWithOwner(message.ProtoService, add)));
                         }
                         else if (add.Id > message.Id && (add.Content is MessageVoiceNote || add.Content is MessageVideoNote))
                         {
-                            items.Add(GetPlaybackItem(add));
+                            items.Add(GetPlaybackItem(new MessageWithOwner(message.ProtoService, add)));
                         }
                     }
 
@@ -611,7 +597,7 @@ namespace Unigram.Services
             });
         }
 
-        private PlaybackItem GetPlaybackItem(Message message)
+        private PlaybackItem GetPlaybackItem(MessageWithOwner message)
         {
             var token = $"{message.ChatId}_{message.Id}";
             var file = message.GetFile();
@@ -646,14 +632,14 @@ namespace Unigram.Services
             return item;
         }
 
-        private MediaSource CreateMediaSource(Message message, File file)
+        private MediaSource CreateMediaSource(MessageWithOwner message, File file)
         {
             var token = $"{message.ChatId}_{message.Id}";
 
             var mime = GetMimeType(message);
             var duration = GetDuration(message);
 
-            var stream = new RemoteFileStream(_protoService, file, duration);
+            var stream = new RemoteFileStream(message.ProtoService, file, duration);
             var source = MediaSource.CreateFromStream(stream, mime);
 
             source.CustomProperties["file"] = file.Id;
@@ -664,7 +650,7 @@ namespace Unigram.Services
             return source;
         }
 
-        private string GetMimeType(Message message)
+        private string GetMimeType(MessageWithOwner message)
         {
             if (message.Content is MessageAudio audio)
             {
@@ -697,7 +683,7 @@ namespace Unigram.Services
             return null;
         }
 
-        private int GetDuration(Message message)
+        private int GetDuration(MessageWithOwner message)
         {
             if (message.Content is MessageAudio audio)
             {
@@ -779,7 +765,7 @@ namespace Unigram.Services
         public MediaSource Source { get; set; }
         public string Token { get; set; }
 
-        public Message Message { get; set; }
+        public MessageWithOwner Message { get; set; }
 
         public File File { get; set; }
 

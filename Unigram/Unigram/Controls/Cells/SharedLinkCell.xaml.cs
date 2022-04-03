@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Navigation.Services;
-using Unigram.Services;
+using Unigram.ViewModels;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -15,8 +15,7 @@ namespace Unigram.Controls.Cells
 {
     public sealed partial class SharedLinkCell : Grid
     {
-        private readonly Message _message;
-        private IProtoService _protoService;
+        private MessageWithOwner _message;
         private INavigationService _navigationService;
 
         public SharedLinkCell()
@@ -24,10 +23,10 @@ namespace Unigram.Controls.Cells
             InitializeComponent();
         }
 
-        public void UpdateMessage(IProtoService protoService, INavigationService navigationService, Message message)
+        public void UpdateMessage(INavigationService navigationService, MessageWithOwner message)
         {
-            _protoService = protoService;
             _navigationService = navigationService;
+            _message = message;
 
             var caption = message.GetCaption();
             if (caption == null)
@@ -280,7 +279,7 @@ namespace Unigram.Controls.Cells
         {
             if (MessageHelper.IsTelegramUrl(uri))
             {
-                MessageHelper.OpenTelegramUrl(_protoService, _navigationService, uri);
+                MessageHelper.OpenTelegramUrl(_message.ProtoService, _navigationService, uri);
             }
             else
             {

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
@@ -16,11 +17,13 @@ namespace Unigram.Views
         private readonly ILifetimeService _lifetime;
         private readonly IPasscodeService _passcode;
         private readonly ILocaleService _locale;
+        private readonly IPlaybackService _playback;
 
         private TLContainer()
         {
             _lifetime = new LifetimeService();
             _passcode = new PasscodeService(SettingsService.Current.PasscodeLock);
+            _playback = new PlaybackService(SettingsService.Current);
             _locale = LocaleService.Current;
         }
 
@@ -114,7 +117,7 @@ namespace Unigram.Views
 
         public TLLocator Build(int id)
         {
-            return _containers[id] = new TLLocator(_lifetime, _locale, _passcode, id, id == SettingsService.Current.ActiveSession);
+            return _containers[id] = new TLLocator(_lifetime, _locale, _passcode, _playback, id, id == SettingsService.Current.ActiveSession);
         }
 
         public void Destroy(int id)

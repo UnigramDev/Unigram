@@ -3,6 +3,7 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Services;
+using Unigram.ViewModels;
 using Windows.Media.Playback;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -12,9 +13,8 @@ namespace Unigram.Controls.Cells
     public sealed partial class SharedVoiceCell : Grid
     {
         private IPlaybackService _playbackService;
-        private IProtoService _protoService;
-        private Message _message;
-        public Message Message => _message;
+        private MessageWithOwner _message;
+        public MessageWithOwner Message => _message;
 
         private string _fileToken;
 
@@ -36,10 +36,9 @@ namespace Unigram.Controls.Cells
             _playbackService.PositionChanged -= OnPositionChanged;
         }
 
-        public void UpdateMessage(IPlaybackService playbackService, IProtoService protoService, Message message)
+        public void UpdateMessage(IPlaybackService playbackService, MessageWithOwner message)
         {
             _playbackService = playbackService;
-            _protoService = protoService;
             _message = message;
 
             _playbackService.PropertyChanged -= OnCurrentItemChanged;
@@ -51,11 +50,11 @@ namespace Unigram.Controls.Cells
                 return;
             }
 
-            if (_protoService.TryGetUser(message.SenderId, out User user))
+            if (message.ProtoService.TryGetUser(message.SenderId, out User user))
             {
                 Title.Text = user.GetFullName();
             }
-            else if (_protoService.TryGetChat(message.SenderId, out Chat chat))
+            else if (message.ProtoService.TryGetChat(message.SenderId, out Chat chat))
             {
                 Title.Text = chat.Title;
             }
@@ -64,7 +63,7 @@ namespace Unigram.Controls.Cells
                 Title.Text = string.Empty;
             }
 
-            UpdateManager.Subscribe(this, _protoService, voiceNote.Voice, ref _fileToken, UpdateFile);
+            UpdateManager.Subscribe(this, message, voiceNote.Voice, ref _fileToken, UpdateFile);
             UpdateFile(message, voiceNote.Voice);
         }
 
@@ -130,7 +129,7 @@ namespace Unigram.Controls.Cells
             UpdateFile(_message, file);
         }
 
-        private void UpdateFile(Message message, File file)
+        private void UpdateFile(MessageWithOwner message, File file)
         {
             _playbackService.PlaybackStateChanged -= OnPlaybackStateChanged;
             _playbackService.PositionChanged -= OnPositionChanged;
@@ -234,11 +233,11 @@ namespace Unigram.Controls.Cells
             var file = voiceNote.Voice;
             if (file.Local.IsDownloadingActive)
             {
-                _protoService.Send(new CancelDownloadFile(file.Id, false));
+                _message.ProtoService.Send(new CancelDownloadFile(file.Id, false));
             }
             else if (file.Remote.IsUploadingActive || _message.SendingState is MessageSendingStateFailed)
             {
-                _protoService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
+                _message.ProtoService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {

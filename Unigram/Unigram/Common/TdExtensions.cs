@@ -288,7 +288,7 @@ namespace Unigram.Common
             return x.Id == y.Id && x.ChatId == y.ChatId;
         }
 
-        public static bool IsEqualTo(this MessageViewModel x, Message y)
+        public static bool IsEqualTo(this Message x, MessageWithOwner y)
         {
             if (x == null || y == null)
             {
@@ -298,7 +298,17 @@ namespace Unigram.Common
             return x.Id == y.Id && x.ChatId == y.ChatId;
         }
 
-        public static bool IsEqualTo(this MessageViewModel x, MessageViewModel y)
+        public static bool IsEqualTo(this MessageWithOwner x, Message y)
+        {
+            if (x == null || y == null)
+            {
+                return false;
+            }
+
+            return x.Id == y.Id && x.ChatId == y.ChatId;
+        }
+
+        public static bool IsEqualTo(this MessageWithOwner x, MessageWithOwner y)
         {
             if (x == null || y == null)
             {
@@ -445,9 +455,19 @@ namespace Unigram.Common
             }
         }
 
+        public static (File File, Thumbnail Thumbnail, string FileName) GetFileAndThumbnailAndName(this MessageWithOwner message)
+        {
+            return GetFileAndThumbnailAndName(message.Content);
+        }
+
         public static (File File, Thumbnail Thumbnail, string FileName) GetFileAndThumbnailAndName(this Message message)
         {
-            switch (message.Content)
+            return GetFileAndThumbnailAndName(message.Content);
+        }
+
+        public static (File File, Thumbnail Thumbnail, string FileName) GetFileAndThumbnailAndName(this MessageContent content)
+        {
+            switch (content)
             {
                 case MessageAnimation animation:
                     return (animation.Animation.AnimationValue, animation.Animation.Thumbnail, animation.Animation.FileName);
@@ -529,9 +549,14 @@ namespace Unigram.Common
             return (null, null, null);
         }
 
-        public static File GetFile(this MessageViewModel message)
+        public static File GetFile(this MessageWithOwner message)
         {
-            return GetFile(message.GeneratedContent ?? message.Content);
+            if (message is MessageViewModel viewModel)
+            {
+                return GetFile(viewModel.GeneratedContent ?? message.Content);
+            }
+
+            return GetFile(message.Content);
         }
 
         public static File GetFile(this Message message)
@@ -817,7 +842,7 @@ namespace Unigram.Common
             return null;
         }
 
-        public static FormattedText GetCaption(this MessageViewModel message)
+        public static FormattedText GetCaption(this MessageWithOwner message)
         {
             return message.Content.GetCaption();
         }

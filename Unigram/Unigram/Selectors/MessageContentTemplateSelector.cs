@@ -34,7 +34,7 @@ namespace Unigram.Selectors
                         return MessageTemplate;
                 }
             }
-            else if (item is MessageViewModel viewModel)
+            else if (item is MessageWithOwner viewModel)
             {
                 switch (viewModel.Content)
                 {

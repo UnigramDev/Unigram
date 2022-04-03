@@ -4,6 +4,7 @@ using Telegram.Td.Api;
 using Unigram.Controls.Messages;
 using Unigram.Converters;
 using Unigram.Services;
+using Unigram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
@@ -130,6 +131,11 @@ namespace Unigram.Common
             }
 
             return builder.ToString();
+        }
+
+        public static string GetSummary(MessageWithOwner message, bool details = false)
+        {
+            return GetSummary(message.ProtoService, message.Get(), details);
         }
 
         public static string GetSummary(IProtoService protoService, Message message, bool details = false)

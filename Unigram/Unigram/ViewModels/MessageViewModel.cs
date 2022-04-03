@@ -6,24 +6,18 @@ using Unigram.ViewModels.Delegates;
 
 namespace Unigram.ViewModels
 {
-    public class MessageViewModel
+    public class MessageViewModel : MessageWithOwner
     {
-        private readonly IProtoService _protoService;
         private readonly IPlaybackService _playbackService;
         private readonly IMessageDelegate _delegate;
 
-        private Message _message;
-
         public MessageViewModel(IProtoService protoService, IPlaybackService playbackService, IMessageDelegate delegato, Message message)
+            : base(protoService, message)
         {
-            _protoService = protoService;
             _playbackService = playbackService;
             _delegate = delegato;
-
-            _message = message;
         }
 
-        public IProtoService ProtoService => _protoService;
         public IPlaybackService PlaybackService => _playbackService;
         public IMessageDelegate Delegate => _delegate;
 
@@ -35,39 +29,6 @@ namespace Unigram.ViewModels
         // Used only by animated emojis
         public Sticker Interaction { get; set; }
 
-
-        public ReplyMarkup ReplyMarkup { get => _message.ReplyMarkup; set => _message.ReplyMarkup = value; }
-        public MessageContent Content { get => _message.Content; set => _message.Content = value; }
-        public long MediaAlbumId => _message.MediaAlbumId;
-        public MessageInteractionInfo InteractionInfo { get => _message.InteractionInfo; set => _message.InteractionInfo = value; }
-        public string AuthorSignature => _message.AuthorSignature;
-        public long ViaBotUserId => _message.ViaBotUserId;
-        public double TtlExpiresIn { get => _message.TtlExpiresIn; set => _message.TtlExpiresIn = value; }
-        public int Ttl => _message.Ttl;
-        public long ReplyToMessageId { get => _message.ReplyToMessageId; set => _message.ReplyToMessageId = value; }
-        public long ReplyInChatId => _message.ReplyInChatId;
-        public MessageForwardInfo ForwardInfo => _message.ForwardInfo;
-        public IList<UnreadReaction> UnreadReactions { get => _message.UnreadReactions; set => _message.UnreadReactions = value; }
-        public int EditDate { get => _message.EditDate; set => _message.EditDate = value; }
-        public int Date => _message.Date;
-        public bool ContainsUnreadMention { get => _message.ContainsUnreadMention; set => _message.ContainsUnreadMention = value; }
-        public bool IsChannelPost => _message.IsChannelPost;
-        public bool CanBeDeletedForAllUsers => _message.CanBeDeletedForAllUsers;
-        public bool CanBeDeletedOnlyForSelf => _message.CanBeDeletedOnlyForSelf;
-        public bool CanBeForwarded => _message.CanBeForwarded;
-        public bool CanBeEdited => _message.CanBeEdited;
-        public bool CanBeSaved => _message.CanBeSaved;
-        public bool CanGetMessageThread => _message.CanGetMessageThread;
-        public bool CanGetStatistics => _message.CanGetStatistics;
-        public bool CanGetViewers => _message.CanGetViewers;
-        public bool IsOutgoing { get => _message.IsOutgoing; set => _message.IsOutgoing = value; }
-        public bool IsPinned { get => _message.IsPinned; set => _message.IsPinned = value; }
-        public MessageSchedulingState SchedulingState => _message.SchedulingState;
-        public MessageSendingState SendingState => _message.SendingState;
-        public long ChatId => _message.ChatId;
-        public long MessageThreadId => _message.MessageThreadId;
-        public MessageSender SenderId => _message.SenderId;
-        public long Id => _message.Id;
 
         public Photo GetPhoto() => _message.GetPhoto();
 
@@ -116,11 +77,6 @@ namespace Unigram.ViewModels
         public Chat GetChat()
         {
             return ProtoService.GetChat(_message.ChatId);
-        }
-
-        public Message Get()
-        {
-            return _message;
         }
 
         public void Replace(Message message)
@@ -189,28 +145,9 @@ namespace Unigram.ViewModels
             return false;
         }
 
-        public override bool Equals(object obj)
-        {
-            if (obj is Message y)
-            {
-                return Id == y.Id && ChatId == y.ChatId;
-            }
-            else if (obj is MessageViewModel ym)
-            {
-                return Id == ym.Id && ChatId == ym.ChatId;
-            }
-
-            return base.Equals(obj);
-        }
-
         public int AnimationHash()
         {
             return base.GetHashCode();
-        }
-
-        public override int GetHashCode()
-        {
-            return Id.GetHashCode() ^ ChatId.GetHashCode();
         }
 
         public void UpdateWith(MessageViewModel message)
@@ -281,6 +218,77 @@ namespace Unigram.ViewModels
 
                 album.Caption = caption ?? new FormattedText();
             }
+        }
+    }
+
+    public class MessageWithOwner
+    {
+        protected readonly IProtoService _protoService;
+        protected Message _message;
+
+        public MessageWithOwner(IProtoService protoService, Message message)
+        {
+            _protoService = protoService;
+            _message = message;
+        }
+
+        public IProtoService ProtoService => _protoService;
+
+        public ReplyMarkup ReplyMarkup { get => _message.ReplyMarkup; set => _message.ReplyMarkup = value; }
+        public MessageContent Content { get => _message.Content; set => _message.Content = value; }
+        public long MediaAlbumId => _message.MediaAlbumId;
+        public MessageInteractionInfo InteractionInfo { get => _message.InteractionInfo; set => _message.InteractionInfo = value; }
+        public string AuthorSignature => _message.AuthorSignature;
+        public long ViaBotUserId => _message.ViaBotUserId;
+        public double TtlExpiresIn { get => _message.TtlExpiresIn; set => _message.TtlExpiresIn = value; }
+        public int Ttl => _message.Ttl;
+        public long ReplyToMessageId { get => _message.ReplyToMessageId; set => _message.ReplyToMessageId = value; }
+        public long ReplyInChatId => _message.ReplyInChatId;
+        public MessageForwardInfo ForwardInfo => _message.ForwardInfo;
+        public IList<UnreadReaction> UnreadReactions { get => _message.UnreadReactions; set => _message.UnreadReactions = value; }
+        public int EditDate { get => _message.EditDate; set => _message.EditDate = value; }
+        public int Date => _message.Date;
+        public bool ContainsUnreadMention { get => _message.ContainsUnreadMention; set => _message.ContainsUnreadMention = value; }
+        public bool IsChannelPost => _message.IsChannelPost;
+        public bool CanBeDeletedForAllUsers => _message.CanBeDeletedForAllUsers;
+        public bool CanBeDeletedOnlyForSelf => _message.CanBeDeletedOnlyForSelf;
+        public bool CanBeForwarded => _message.CanBeForwarded;
+        public bool CanBeEdited => _message.CanBeEdited;
+        public bool CanBeSaved => _message.CanBeSaved;
+        public bool CanGetMessageThread => _message.CanGetMessageThread;
+        public bool CanGetStatistics => _message.CanGetStatistics;
+        public bool CanGetViewers => _message.CanGetViewers;
+        public bool IsOutgoing { get => _message.IsOutgoing; set => _message.IsOutgoing = value; }
+        public bool IsPinned { get => _message.IsPinned; set => _message.IsPinned = value; }
+        public MessageSchedulingState SchedulingState => _message.SchedulingState;
+        public MessageSendingState SendingState => _message.SendingState;
+        public long ChatId => _message.ChatId;
+        public long MessageThreadId => _message.MessageThreadId;
+        public MessageSender SenderId => _message.SenderId;
+        public long Id => _message.Id;
+
+        public override bool Equals(object obj)
+        {
+            if (obj is Message y)
+            {
+                return Id == y.Id && ChatId == y.ChatId;
+            }
+            else if (obj is MessageViewModel ym)
+            {
+                return Id == ym.Id && ChatId == ym.ChatId;
+            }
+
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode() ^ ChatId.GetHashCode();
+        }
+
+        public Message Get()
+        {
+            return _message;
         }
     }
 

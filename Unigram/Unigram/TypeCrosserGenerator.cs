@@ -1,15 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Text.RegularExpressions;
+using Windows.Storage;
 
-namespace Unigram.CodeGen
+namespace Unigram
 {
     public class TypeCrosserGenerator
     {
         public static async void Generate()
         {
-            var schemeInfo = new FileInfo("scheme.tl");
+            var schemeInfo = new FileInfo(Path.Combine(ApplicationData.Current.LocalFolder.Path, "scheme.tl"));
             if (schemeInfo.Exists is false)
             {
                 using var client = new HttpClient();
@@ -69,7 +72,7 @@ namespace Unigram.CodeGen
 
                     var targets = new Dictionary<string, string>();
 
-                    foreach (var item in split[1..])
+                    foreach (var item in split.Skip(1))
                     {
                         var pair = item.Split(':');
                         if (pair.Length < 2)
@@ -185,4 +188,92 @@ namespace Unigram.CodeGen
             var a = 2+3;
         }
     }
+
+    public class FormattedBuilder
+    {
+        private readonly StringBuilder _builder;
+        private int _indent;
+
+        public FormattedBuilder(string text, int indent)
+        {
+            _builder = new StringBuilder(text);
+            _indent = indent;
+        }
+
+        public FormattedBuilder()
+        {
+            _builder = new StringBuilder();
+        }
+
+        public void Append(string text)
+        {
+            _builder.Append(text);
+        }
+
+        public void AppendLine(string text)
+        {
+            if (text == "}")
+            {
+                _indent--;
+            }
+
+            AppendIndent();
+            _builder.Append(text);
+            _builder.AppendLine();
+
+            if (text == "{")
+            {
+                _indent++;
+            }
+        }
+
+        public void AppendIndent(string text)
+        {
+            if (text == "}")
+            {
+                _indent--;
+            }
+
+            AppendIndent();
+            _builder.Append(text);
+
+            if (text == "{")
+            {
+                _indent++;
+            }
+        }
+
+        public void AppendLine()
+        {
+            _builder.AppendLine();
+        }
+
+        private void AppendIndent()
+        {
+            for (int i = 0; i < _indent; i++)
+            {
+                _builder.Append("    ");
+            }
+        }
+
+        public override string ToString()
+        {
+            return _builder.ToString();
+        }
+    }
+
+    public static class Extensions
+    {
+        public static string TitleCase(this string str)
+        {
+            var split = str.Split('_');
+            return string.Join("", split.Select(x => x.Substring(0, 1).ToUpperInvariant() + x.Substring(1)));
+        }
+
+        public static string CamelCase(this string str)
+        {
+            return str.Substring(0, 1).ToLowerInvariant() + str.Substring(1);
+        }
+    }
+
 }

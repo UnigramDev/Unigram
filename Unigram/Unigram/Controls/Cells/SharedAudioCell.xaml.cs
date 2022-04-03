@@ -4,6 +4,7 @@ using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Navigation;
 using Unigram.Services;
+using Unigram.ViewModels;
 using Windows.Media.Playback;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -15,9 +16,8 @@ namespace Unigram.Controls.Cells
     public sealed partial class SharedAudioCell : Grid
     {
         private IPlaybackService _playbackService;
-        private IProtoService _protoService;
-        private Message _message;
-        public Message Message => _message;
+        private MessageWithOwner _message;
+        public MessageWithOwner Message => _message;
 
         private string _fileToken;
 
@@ -34,7 +34,7 @@ namespace Unigram.Controls.Cells
                 return;
             }
 
-            UpdateMessage(_playbackService, _protoService, message);
+            UpdateMessage(_playbackService, message);
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -50,10 +50,9 @@ namespace Unigram.Controls.Cells
             _playbackService.PositionChanged -= OnPositionChanged;
         }
 
-        public void UpdateMessage(IPlaybackService playbackService, IProtoService protoService, Message message)
+        public void UpdateMessage(IPlaybackService playbackService, MessageWithOwner message)
         {
             _playbackService = playbackService;
-            _protoService = protoService;
             _message = message;
 
             _playbackService.PropertyChanged -= OnCurrentItemChanged;
@@ -77,7 +76,7 @@ namespace Unigram.Controls.Cells
                 Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
             }
 
-            UpdateManager.Subscribe(this, protoService, audio.AudioValue, ref _fileToken, UpdateFile);
+            UpdateManager.Subscribe(this, message, audio.AudioValue, ref _fileToken, UpdateFile);
             UpdateFile(message, audio.AudioValue);
         }
 
@@ -151,7 +150,7 @@ namespace Unigram.Controls.Cells
             UpdateFile(_message, file);
         }
 
-        private void UpdateFile(Message message, File file)
+        private void UpdateFile(MessageWithOwner message, File file)
         {
             _playbackService.PlaybackStateChanged -= OnPlaybackStateChanged;
             _playbackService.PositionChanged -= OnPositionChanged;
@@ -241,7 +240,7 @@ namespace Unigram.Controls.Cells
             }
         }
 
-        private void UpdatePlayback(Message message, Audio audio, File file)
+        private void UpdatePlayback(MessageWithOwner message, Audio audio, File file)
         {
             if (message.IsEqualTo(_playbackService.CurrentItem))
             {
@@ -277,7 +276,7 @@ namespace Unigram.Controls.Cells
             Button.Progress = 1;
         }
 
-        private void UpdateThumbnail(Message message, Thumbnail thumbnail, File file)
+        private void UpdateThumbnail(MessageWithOwner message, Thumbnail thumbnail, File file)
         {
             if (file.Local.IsDownloadingCompleted)
             {
@@ -293,7 +292,7 @@ namespace Unigram.Controls.Cells
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
-                _protoService.DownloadFile(file.Id, 1);
+                message.ProtoService.DownloadFile(file.Id, 1);
 
                 Texture.Background = null;
                 Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
@@ -360,15 +359,15 @@ namespace Unigram.Controls.Cells
             var file = audio.AudioValue;
             if (file.Local.IsDownloadingActive)
             {
-                _protoService.CancelDownloadFile(file.Id);
+                _message.ProtoService.CancelDownloadFile(file.Id);
             }
             else if (file.Remote.IsUploadingActive || _message.SendingState is MessageSendingStateFailed)
             {
-                _protoService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
+                _message.ProtoService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
-                _protoService.AddFileToDownloads(file.Id, _message.ChatId, _message.Id);
+                _message.ProtoService.AddFileToDownloads(file.Id, _message.ChatId, _message.Id);
             }
             else
             {

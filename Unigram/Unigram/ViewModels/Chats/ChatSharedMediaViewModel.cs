@@ -48,12 +48,12 @@ namespace Unigram.ViewModels.Chats
 
             Items = new ObservableCollection<ProfileItem>();
 
-            Media = new SearchCollection<Message, MediaCollection>(SetSearch, new SearchMessagesFilterPhotoAndVideo(), new MessageDiffHandler());
-            Files = new SearchCollection<Message, MediaCollection>(SetSearch, new SearchMessagesFilterDocument(), new MessageDiffHandler());
-            Links = new SearchCollection<Message, MediaCollection>(SetSearch, new SearchMessagesFilterUrl(), new MessageDiffHandler());
-            Music = new SearchCollection<Message, MediaCollection>(SetSearch, new SearchMessagesFilterAudio(), new MessageDiffHandler());
-            Voice = new SearchCollection<Message, MediaCollection>(SetSearch, new SearchMessagesFilterVoiceNote(), new MessageDiffHandler());
-            Animations = new SearchCollection<Message, MediaCollection>(SetSearch, new SearchMessagesFilterAnimation(), new MessageDiffHandler());
+            Media = new SearchCollection<MessageWithOwner, MediaCollection>(SetSearch, new SearchMessagesFilterPhotoAndVideo(), new MessageDiffHandler());
+            Files = new SearchCollection<MessageWithOwner, MediaCollection>(SetSearch, new SearchMessagesFilterDocument(), new MessageDiffHandler());
+            Links = new SearchCollection<MessageWithOwner, MediaCollection>(SetSearch, new SearchMessagesFilterUrl(), new MessageDiffHandler());
+            Music = new SearchCollection<MessageWithOwner, MediaCollection>(SetSearch, new SearchMessagesFilterAudio(), new MessageDiffHandler());
+            Voice = new SearchCollection<MessageWithOwner, MediaCollection>(SetSearch, new SearchMessagesFilterVoiceNote(), new MessageDiffHandler());
+            Animations = new SearchCollection<MessageWithOwner, MediaCollection>(SetSearch, new SearchMessagesFilterAnimation(), new MessageDiffHandler());
 
             MessagesForwardCommand = new RelayCommand(MessagesForwardExecute, MessagesForwardCanExecute);
             MessagesDeleteCommand = new RelayCommand(MessagesDeleteExecute, MessagesDeleteCanExecute);
@@ -214,7 +214,7 @@ namespace Unigram.ViewModels.Chats
             }
         }
 
-        private void UpdateDeleteMessages(IList<Message> target, ImmutableHashSet<long> table)
+        private void UpdateDeleteMessages(IList<MessageWithOwner> target, ImmutableHashSet<long> table)
         {
             for (int i = 0; i < target.Count; i++)
             {
@@ -241,12 +241,12 @@ namespace Unigram.ViewModels.Chats
             set => Set(ref _selectedIndex, value);
         }
 
-        public SearchCollection<Message, MediaCollection> Media { get; private set; }
-        public SearchCollection<Message, MediaCollection> Files { get; private set; }
-        public SearchCollection<Message, MediaCollection> Links { get; private set; }
-        public SearchCollection<Message, MediaCollection> Music { get; private set; }
-        public SearchCollection<Message, MediaCollection> Voice { get; private set; }
-        public SearchCollection<Message, MediaCollection> Animations { get; private set; }
+        public SearchCollection<MessageWithOwner, MediaCollection> Media { get; private set; }
+        public SearchCollection<MessageWithOwner, MediaCollection> Files { get; private set; }
+        public SearchCollection<MessageWithOwner, MediaCollection> Links { get; private set; }
+        public SearchCollection<MessageWithOwner, MediaCollection> Music { get; private set; }
+        public SearchCollection<MessageWithOwner, MediaCollection> Voice { get; private set; }
+        public SearchCollection<MessageWithOwner, MediaCollection> Animations { get; private set; }
 
         public MediaCollection SetSearch(object sender, string query)
         {
@@ -258,14 +258,14 @@ namespace Unigram.ViewModels.Chats
             return null;
         }
 
-        public class MessageDiffHandler : IDiffHandler<Message>
+        public class MessageDiffHandler : IDiffHandler<MessageWithOwner>
         {
-            public bool CompareItems(Message oldItem, Message newItem)
+            public bool CompareItems(MessageWithOwner oldItem, MessageWithOwner newItem)
             {
                 return oldItem?.Id == newItem?.Id && oldItem?.ChatId == newItem?.ChatId;
             }
 
-            public void UpdateItem(Message oldItem, Message newItem)
+            public void UpdateItem(MessageWithOwner oldItem, MessageWithOwner newItem)
             {
             }
         }

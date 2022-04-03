@@ -496,7 +496,7 @@ namespace Unigram.Controls
 
             if (args.Item is PlaybackItem item && args.ItemContainer.ContentTemplateRoot is SharedAudioCell cell)
             {
-                cell.UpdateMessage(_playbackService, _cacheService, item.Message);
+                cell.UpdateMessage(_playbackService, item.Message);
             }
         }
 

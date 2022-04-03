@@ -18,8 +18,9 @@ using Unigram.ViewModels.Settings.Privacy;
 using Unigram.ViewModels.SignIn;
 using Unigram.ViewModels.Supergroups;
 using Unigram.ViewModels.Users;
+using Windows.Storage;
 
-namespace Unigram.CodeGen
+namespace Unigram
 {
     public class TypeContainerGenerator
     {
@@ -34,7 +35,8 @@ namespace Unigram.CodeGen
             {
                 typeof(ILifetimeService),
                 typeof(ILocaleService),
-                typeof(IPasscodeService)
+                typeof(IPasscodeService),
+                typeof(IPlaybackService)
             };
 
             _singletons = new List<(Type, Type)>
@@ -61,7 +63,6 @@ namespace Unigram.CodeGen
                 ( typeof(ILocationService), typeof(LocationService) ),
                 ( typeof(IThemeService), typeof(ThemeService) ),
                 ( typeof(IMessageFactory), typeof(MessageFactory) ),
-                ( typeof(IPlaybackService), typeof(PlaybackService) ),
                 ( typeof(IViewService), typeof(ViewService) ),
                 ( typeof(ISessionService), typeof(SessionService) ),
                 ( typeof(IStorageService), typeof(StorageService) ),
@@ -136,6 +137,7 @@ namespace Unigram.CodeGen
                 typeof(SettingsPrivacyAllowFindingByPhoneNumberViewModel),
                 typeof(SettingsPrivacyShowPhotoViewModel),
                 typeof(SettingsPrivacyShowStatusViewModel),
+                typeof(SettingsProfileViewModel),
                 typeof(SettingsPasswordViewModel),
                 typeof(SettingsPasswordIntroViewModel),
                 typeof(SettingsPasswordCreateViewModel),
@@ -195,7 +197,7 @@ namespace Unigram.CodeGen
                 var ctor = x.Value.GetConstructors().FirstOrDefault();
                 var args = ctor?.GetParameters();
 
-                if (args.Any(x => x.ParameterType == y.Key))
+                if (args.Any(k => k.ParameterType == y.Key))
                 {
                     return 1;
                 }
@@ -321,7 +323,7 @@ namespace Unigram.CodeGen
             builder.AppendLine("}");
 
             var test = builder.ToString();
-            File.WriteAllText("TLLocator.cs", builder.ToString());
+            File.WriteAllText(Path.Combine(ApplicationData.Current.LocalFolder.Path, "TLLocator.cs"), builder.ToString());
         }
 
         private static string GenerateConstructor(Type type, int depth)

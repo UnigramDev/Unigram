@@ -3,6 +3,7 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Gallery;
+using Unigram.ViewModels;
 using Unigram.ViewModels.Chats;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
@@ -26,14 +27,14 @@ namespace Unigram.Views.Chats
 
             args.ItemContainer.Tag = args.Item;
 
-            var message = args.Item as Message;
+            var message = args.Item as MessageWithOwner;
             if (message == null)
             {
                 return;
             }
 
             AutomationProperties.SetName(args.ItemContainer,
-                Automation.GetSummary(ViewModel.ProtoService, message, true));
+                Automation.GetSummary(message, true));
 
             if (args.ItemContainer.ContentTemplateRoot is Grid content)
             {

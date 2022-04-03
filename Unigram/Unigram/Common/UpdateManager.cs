@@ -8,7 +8,7 @@ namespace Unigram.Common
     {
         #region Subscribe by ref
 
-        public static void Subscribe(object sender, MessageViewModel message, File file, ref string token, UpdateHandler<File> handler, bool completionOnly = false, bool keepTargetAlive = false)
+        public static void Subscribe(object sender, MessageWithOwner message, File file, ref string token, UpdateHandler<File> handler, bool completionOnly = false, bool keepTargetAlive = false)
         {
             Subscribe(sender, message.ProtoService.SessionId, file, ref token, handler, completionOnly, keepTargetAlive);
         }

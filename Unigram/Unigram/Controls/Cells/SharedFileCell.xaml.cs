@@ -3,7 +3,6 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Navigation;
-using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
 using Windows.UI.Xaml;
@@ -15,9 +14,8 @@ namespace Unigram.Controls.Cells
 {
     public sealed partial class SharedFileCell : Grid
     {
-        private IProtoService _protoService;
         private IMessageDelegate _delegate;
-        private Message _message;
+        private MessageWithOwner _message;
 
         private string _fileToken;
 
@@ -33,14 +31,12 @@ namespace Unigram.Controls.Cells
                 return;
             }
 
-            UpdateMessage(viewModel.ProtoService, null, fileDownload.Message);
+            UpdateMessage(null, new MessageWithOwner(viewModel.ProtoService, fileDownload.Message));
         }
 
-        public void UpdateMessage(IProtoService protoService, IMessageDelegate delegato, Message message)
+        public void UpdateMessage(IMessageDelegate delegato, MessageWithOwner message)
         {
-            _protoService = protoService;
             _delegate = delegato;
-
             _message = message;
 
             var data = message.GetFileAndThumbnailAndName();
@@ -53,11 +49,11 @@ namespace Unigram.Controls.Cells
 
             if (string.IsNullOrEmpty(data.FileName))
             {
-                if (_protoService.TryGetUser(message.SenderId, out User user))
+                if (message.ProtoService.TryGetUser(message.SenderId, out User user))
                 {
                     Title.Text = user.GetFullName();
                 }
-                else if (_protoService.TryGetChat(message.SenderId, out Chat chat))
+                else if (message.ProtoService.TryGetChat(message.SenderId, out Chat chat))
                 {
                     Title.Text = chat.Title;
                 }
@@ -81,7 +77,7 @@ namespace Unigram.Controls.Cells
                 Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
             }
 
-            UpdateManager.Subscribe(this, protoService, data.File, ref _fileToken, UpdateFile);
+            UpdateManager.Subscribe(this, message, data.File, ref _fileToken, UpdateFile);
             UpdateFile(message, data.File);
         }
 
@@ -90,7 +86,7 @@ namespace Unigram.Controls.Cells
             UpdateFile(_message, file);
         }
 
-        private void UpdateFile(Message message, File file)
+        private void UpdateFile(MessageWithOwner message, File file)
         {
             var data = message.GetFileAndThumbnailAndName();
             if (data.File == null)
@@ -143,7 +139,7 @@ namespace Unigram.Controls.Cells
             }
         }
 
-        private void UpdateThumbnail(Message message, Thumbnail thumbnail, File file)
+        private void UpdateThumbnail(MessageWithOwner message, Thumbnail thumbnail, File file)
         {
             if (file.Local.IsDownloadingCompleted)
             {
@@ -172,7 +168,7 @@ namespace Unigram.Controls.Cells
 
                 if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
-                    _protoService.DownloadFile(file.Id, 1);
+                    message.ProtoService.DownloadFile(file.Id, 1);
                 }
             }
         }
@@ -231,7 +227,7 @@ namespace Unigram.Controls.Cells
             return brushes[0] as SolidColorBrush;
         }
 
-        private string UpdateTimeLabel(Message message)
+        private string UpdateTimeLabel(MessageWithOwner message)
         {
             return Converter.BannedUntil(message.Date);
         }
@@ -248,27 +244,27 @@ namespace Unigram.Controls.Cells
             {
                 if (_delegate != null)
                 {
-                    _protoService.CancelDownloadFile(file.Id);
+                    _message.ProtoService.CancelDownloadFile(file.Id);
                 }
                 else
                 {
-                    _protoService.Send(new ToggleDownloadIsPaused(file.Id, true));
+                    _message.ProtoService.Send(new ToggleDownloadIsPaused(file.Id, true));
                 }
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
                 if (_delegate != null)
                 {
-                    _protoService.AddFileToDownloads(file.Id, _message.ChatId, _message.Id);
+                    _message.ProtoService.AddFileToDownloads(file.Id, _message.ChatId, _message.Id);
                 }
                 else
                 {
-                    _protoService.Send(new ToggleDownloadIsPaused(file.Id, false));
+                    _message.ProtoService.Send(new ToggleDownloadIsPaused(file.Id, false));
                 }
             }
             else if (_delegate == null)
             {
-                var temp = await _protoService.GetFileAsync(file);
+                var temp = await _message.ProtoService.GetFileAsync(file);
                 if (temp != null)
                 {
                     await Windows.System.Launcher.LaunchFileAsync(temp);

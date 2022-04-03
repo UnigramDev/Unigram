@@ -1,6 +1,6 @@
-﻿using Telegram.Td.Api;
-using Unigram.Common;
+﻿using Unigram.Common;
 using Unigram.Controls.Cells;
+using Unigram.ViewModels;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 
@@ -22,18 +22,18 @@ namespace Unigram.Views.Chats
 
             args.ItemContainer.Tag = args.Item;
 
-            var message = args.Item as Message;
+            var message = args.Item as MessageWithOwner;
             if (message == null)
             {
                 return;
             }
 
             AutomationProperties.SetName(args.ItemContainer,
-                Automation.GetSummary(ViewModel.ProtoService, message, true));
+                Automation.GetSummary(message, true));
 
             if (args.ItemContainer.ContentTemplateRoot is SharedLinkCell linkCell)
             {
-                linkCell.UpdateMessage(ViewModel.ProtoService, ViewModel.NavigationService, message);
+                linkCell.UpdateMessage(ViewModel.NavigationService, message);
                 linkCell.Tag = message;
             }
         }
