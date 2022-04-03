@@ -86,18 +86,8 @@
                                             <VisualStateManager.VisualStateGroups>
                                                 <VisualStateGroup x:Name="CommonStates">
                                                     <VisualState x:Name="Normal" />
-                                                    <VisualState x:Name="PointerOver">
-                                                        <VisualState.Setters>
-                                                            <Setter Target="LayoutRoot.Background"
-                                                                    Value="{ThemeResource NavigationViewItemBackgroundPointerOver}" />
-                                                        </VisualState.Setters>
-                                                    </VisualState>
-                                                    <VisualState x:Name="Pressed">
-                                                        <VisualState.Setters>
-                                                            <Setter Target="LayoutRoot.Background"
-                                                                    Value="{ThemeResource NavigationViewItemBackgroundPressed}" />
-                                                        </VisualState.Setters>
-                                                    </VisualState>
+                                                    <VisualState x:Name="PointerOver" />
+                                                    <VisualState x:Name="Pressed" />
                                                     <VisualState x:Name="Selected">
                                                         <VisualState.Setters>
                                                             <Setter Target="LayoutRoot.Background"
@@ -110,12 +100,7 @@
                                                                     Value="{ThemeResource NavigationViewItemBackgroundSelectedPointerOver}" />
                                                         </VisualState.Setters>
                                                     </VisualState>
-                                                    <VisualState x:Name="PressedSelected">
-                                                        <VisualState.Setters>
-                                                            <Setter Target="LayoutRoot.Background"
-                                                                    Value="{ThemeResource NavigationViewItemBackgroundSelectedPressed}" />
-                                                        </VisualState.Setters>
-                                                    </VisualState>
+                                                    <VisualState x:Name="PressedSelected" />
                                                 </VisualStateGroup>
                                             </VisualStateManager.VisualStateGroups>
                                             <Border x:Name="LayoutRoot"

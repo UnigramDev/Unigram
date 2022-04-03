@@ -582,8 +582,8 @@
         <controls:TableListView x:Name="List"
                                 ContainerContentChanging="OnContainerContentChanging"
                                 SelectionMode="None"
-                                Margin="-12,0,-24,0"
-                                Padding="0,16,12,24">
+                                Margin="-24,0,-24,0"
+                                Padding="0,16,0,24">
             <ListView.Header>
                 <Grid Margin="0,0,0,24">
                     <controls:StorageChart x:Name="Chart"
