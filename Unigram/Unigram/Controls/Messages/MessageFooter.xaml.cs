@@ -139,7 +139,8 @@ namespace Unigram.Controls.Messages
         public void Mockup(bool outgoing, DateTime date)
         {
             DateLabel.Text = Converter.ShortTime.Format(date);
-            StateLabel.Text = outgoing ? "\u00A0\u00A0\uE601" : string.Empty;
+            StateLabel.Text = outgoing ? "\u00A0\u00A0\uE603" : string.Empty;
+            UpdateTicks(outgoing ? true : null);
         }
 
         public void UpdateMessageInteractionInfo(MessageViewModel message)
