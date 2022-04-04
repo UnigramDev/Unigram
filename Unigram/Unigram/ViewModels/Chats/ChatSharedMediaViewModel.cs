@@ -58,11 +58,11 @@ namespace Unigram.ViewModels.Chats
             MessagesForwardCommand = new RelayCommand(MessagesForwardExecute, MessagesForwardCanExecute);
             MessagesDeleteCommand = new RelayCommand(MessagesDeleteExecute, MessagesDeleteCanExecute);
             MessagesUnselectCommand = new RelayCommand(MessagesUnselectExecute);
-            MessageViewCommand = new RelayCommand<Message>(MessageViewExecute);
-            MessageSaveCommand = new RelayCommand<Message>(MessageSaveExecute);
-            MessageDeleteCommand = new RelayCommand<Message>(MessageDeleteExecute);
-            MessageForwardCommand = new RelayCommand<Message>(MessageForwardExecute);
-            MessageSelectCommand = new RelayCommand<Message>(MessageSelectExecute);
+            MessageViewCommand = new RelayCommand<MessageWithOwner>(MessageViewExecute);
+            MessageSaveCommand = new RelayCommand<MessageWithOwner>(MessageSaveExecute);
+            MessageDeleteCommand = new RelayCommand<MessageWithOwner>(MessageDeleteExecute);
+            MessageForwardCommand = new RelayCommand<MessageWithOwner>(MessageForwardExecute);
+            MessageSelectCommand = new RelayCommand<MessageWithOwner>(MessageSelectExecute);
         }
 
         public ObservableCollection<ProfileItem> Items { get; }
@@ -277,8 +277,8 @@ namespace Unigram.ViewModels.Chats
             set => Set(ref _selectionMode, value);
         }
 
-        private List<Message> _selectedItems = new List<Message>();
-        public List<Message> SelectedItems
+        private List<MessageWithOwner> _selectedItems = new List<MessageWithOwner>();
+        public List<MessageWithOwner> SelectedItems
         {
             get => _selectedItems;
             set
@@ -291,8 +291,8 @@ namespace Unigram.ViewModels.Chats
 
         #region View
 
-        public RelayCommand<Message> MessageViewCommand { get; }
-        private void MessageViewExecute(Message message)
+        public RelayCommand<MessageWithOwner> MessageViewCommand { get; }
+        private void MessageViewExecute(MessageWithOwner message)
         {
             var chat = _chat;
             if (chat == null)
@@ -307,8 +307,8 @@ namespace Unigram.ViewModels.Chats
 
         #region Save
 
-        public RelayCommand<Message> MessageSaveCommand { get; }
-        private async void MessageSaveExecute(Message message)
+        public RelayCommand<MessageWithOwner> MessageSaveCommand { get; }
+        private async void MessageSaveExecute(MessageWithOwner message)
         {
             var file = message.GetFile();
             if (file != null)
@@ -321,8 +321,8 @@ namespace Unigram.ViewModels.Chats
 
         #region Delete
 
-        public RelayCommand<Message> MessageDeleteCommand { get; }
-        private void MessageDeleteExecute(Message message)
+        public RelayCommand<MessageWithOwner> MessageDeleteCommand { get; }
+        private void MessageDeleteExecute(MessageWithOwner message)
         {
             if (message == null)
             {
@@ -345,7 +345,7 @@ namespace Unigram.ViewModels.Chats
             MessagesDelete(chat, new[] { message });
         }
 
-        private async void MessagesDelete(Chat chat, IList<Message> messages)
+        private async void MessagesDelete(Chat chat, IList<MessageWithOwner> messages)
         {
             var first = messages.FirstOrDefault();
             if (first == null)
@@ -353,14 +353,16 @@ namespace Unigram.ViewModels.Chats
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new GetMessages(chat.Id, messages.Select(x => x.Id).ToArray()));
+            var items = messages.Select(x => x.Get()).ToArray();
+
+            var response = await ProtoService.SendAsync(new GetMessages(chat.Id, items.Select(x => x.Id).ToArray()));
             if (response is Messages updated)
             {
                 for (int i = 0; i < updated.MessagesValue.Count; i++)
                 {
                     if (updated.MessagesValue[i] != null)
                     {
-                        messages[i] = updated.MessagesValue[i];
+                        items[i] = updated.MessagesValue[i];
                     }
                     else
                     {
@@ -373,7 +375,7 @@ namespace Unigram.ViewModels.Chats
             }
 
             var sameUser = messages.All(x => x.SenderId.IsEqual(first.SenderId));
-            var dialog = new DeleteMessagesPopup(CacheService, messages.Where(x => x != null).ToArray());
+            var dialog = new DeleteMessagesPopup(CacheService, items.Where(x => x != null).ToArray());
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm != ContentDialogResult.Primary)
@@ -407,11 +409,11 @@ namespace Unigram.ViewModels.Chats
 
         #region Forward
 
-        public RelayCommand<Message> MessageForwardCommand { get; }
-        private async void MessageForwardExecute(Message message)
+        public RelayCommand<MessageWithOwner> MessageForwardCommand { get; }
+        private async void MessageForwardExecute(MessageWithOwner message)
         {
             SelectionMode = ListViewSelectionMode.None;
-            await SharePopup.GetForCurrentView().ShowAsync(message);
+            await SharePopup.GetForCurrentView().ShowAsync(message.Get());
         }
 
         #endregion
@@ -421,7 +423,7 @@ namespace Unigram.ViewModels.Chats
         public RelayCommand MessagesDeleteCommand { get; }
         private void MessagesDeleteExecute()
         {
-            var messages = new List<Message>(SelectedItems);
+            var messages = new List<MessageWithOwner>(SelectedItems);
 
             var first = messages.FirstOrDefault();
             if (first == null)
@@ -450,7 +452,7 @@ namespace Unigram.ViewModels.Chats
         public RelayCommand MessagesForwardCommand { get; }
         private async void MessagesForwardExecute()
         {
-            var messages = SelectedItems.Where(x => x.CanBeForwarded).OrderBy(x => x.Id).ToList();
+            var messages = SelectedItems.Where(x => x.CanBeForwarded).OrderBy(x => x.Id).Select(x => x.Get()).ToList();
             if (messages.Count > 0)
             {
                 SelectionMode = ListViewSelectionMode.None;
@@ -467,12 +469,12 @@ namespace Unigram.ViewModels.Chats
 
         #region Select
 
-        public RelayCommand<Message> MessageSelectCommand { get; }
-        private void MessageSelectExecute(Message message)
+        public RelayCommand<MessageWithOwner> MessageSelectCommand { get; }
+        private void MessageSelectExecute(MessageWithOwner message)
         {
             SelectionMode = ListViewSelectionMode.Multiple;
 
-            SelectedItems = new List<Message> { message };
+            SelectedItems = new List<MessageWithOwner> { message };
             RaisePropertyChanged("SelectedItems");
         }
 

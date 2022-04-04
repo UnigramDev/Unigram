@@ -98,7 +98,7 @@ namespace Unigram.Views.Chats
             var flyout = new MenuFlyout();
 
             var element = sender as FrameworkElement;
-            var message = element.Tag as Message;
+            var message = element.Tag as MessageWithOwner;
 
             var selected = ViewModel.SelectedItems;
             if (selected.Count > 0)
@@ -135,27 +135,27 @@ namespace Unigram.Views.Chats
             args.ShowAt(flyout, element);
         }
 
-        private bool MessageView_Loaded(Message message)
+        private bool MessageView_Loaded(MessageWithOwner message)
         {
             return true;
         }
 
-        private bool MessageSave_Loaded(Message message)
+        private bool MessageSave_Loaded(MessageWithOwner message)
         {
             return true;
         }
 
-        private bool MessageDelete_Loaded(Message message)
+        private bool MessageDelete_Loaded(MessageWithOwner message)
         {
             return message.CanBeDeletedOnlyForSelf || message.CanBeDeletedForAllUsers;
         }
 
-        private bool MessageForward_Loaded(Message message)
+        private bool MessageForward_Loaded(MessageWithOwner message)
         {
             return message.CanBeForwarded;
         }
 
-        private bool MessageSelect_Loaded(Message message)
+        private bool MessageSelect_Loaded(MessageWithOwner message)
         {
             return true;
         }
