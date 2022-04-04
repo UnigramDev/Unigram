@@ -68,7 +68,12 @@
                 <StackPanel>
                     <controls:HeaderedControl Header="{CustomResource CurrentSession}"
                                               Footer="{CustomResource ClearOtherSessionsHelp}">
-                        <cells:SessionCell Session="{x:Bind ViewModel.Current, Mode=OneWay}" />
+                        <Button CommandParameter="{x:Bind ViewModel.Current, Mode=OneWay}"
+                                Command="{x:Bind ViewModel.TerminateCommand}"
+                                Style="{StaticResource EmptyButtonStyle}">
+                            <cells:SessionCell Session="{x:Bind ViewModel.Current, Mode=OneWay}"
+                                               Background="Transparent" />
+                        </Button>
 
                         <controls:BadgeButton Content="{CustomResource TerminateAllSessions}"
                                               Foreground="Red"
