@@ -869,6 +869,33 @@ namespace Unigram.Common
             };
         }
 
+        public static string ReplaceSpoilers(this FormattedText text, bool singleLine = true)
+        {
+            var rep = new StringBuilder(text.Text);
+            var chars = "⠁⠂⠄⠈⠐⠠⡀⢀⠃⠅⠆⠉⠊⠌⠑⠒⠔⠘⠡⠢⠤⠨⠰⡁⡂⡄⡈⡐⡠⢁⢂⢄⢈⢐⢠⣀⠇⠋⠍⠎⠓⠕⠖⠙⠚⠜⠣⠥⠦⠩⠪⠬⠱⠲⠴⠸⡃⡅⡆⡉⡊⡌⡑⡒⡔⡘⡡⡢⡤⡨⡰⢃⢅⢆⢉⢊⢌⢑⢒⢔⢘⢡⢢⢤⢨⢰⣁⣂⣄⣈⣐⣠⠏⠗⠛⠝⠞⠧⠫⠭⠮⠳⠵⠶⠹⠺⠼⡇⡋⡍⡎⡓⡕⡖⡙⡚⡜⡣⡥⡦⡩⡪⡬⡱⡲⡴⡸⢇⢋⢍⢎⢓⢕⢖⢙⢚⢜⢣⢥⢦⢩⢪⢬⢱⢲⢴⢸⣃⣅⣆⣉⣊⣌⣑⣒⣔⣘⣡⣢⣤⣨⣰⠟⠯⠷⠻⠽⠾⡏⡗⡛⡝⡞⡧⡫⡭⡮⡳⡵⡶⡹⡺⡼⢏⢗⢛⢝⢞⢧⢫⢭⢮⢳⢵⢶⢹⢺⢼⣇⣋⣍⣎⣓⣕⣖⣙⣚⣜⣣⣥⣦⣩⣪⣬⣱⣲⣴⣸⠿⡟⡯⡷⡻⡽⡾⢟⢯⢷⢻⢽⢾⣏⣗⣛⣝⣞⣧⣫⣭⣮⣳⣵⣶⣹⣺⣼⡿⢿⣟⣯⣷⣻⣽⣾⣿";
+
+            if (text.Entities != null)
+            {
+                foreach (var entity in text.Entities)
+                {
+                    if (entity.Type is TextEntityTypeSpoiler)
+                    {
+                        for (int i = 0; i < entity.Length; i++)
+                        {
+                            rep[entity.Offset + i] = chars[text.Text[entity.Offset + i] % chars.Length];
+                        }
+                    }
+                }
+            }
+
+            if (singleLine)
+            {
+                return rep.Replace('\n', ' ').ToString();
+            }
+
+            return rep.ToString();
+        }
+
         public static bool HasCaption(this MessageContent content)
         {
             var caption = content.GetCaption();

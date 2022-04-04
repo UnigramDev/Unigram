@@ -111,38 +111,11 @@ namespace Unigram.Controls.Messages
             {
                 TitleLabel.Text = title;
                 ServiceLabel.Text = service;
-                MessageLabel.Text = message?.Text.Replace('\n', ' ') ?? string.Empty;
+                MessageLabel.Text = message?.ReplaceSpoilers() ?? string.Empty;
 
                 if (!string.IsNullOrEmpty(message?.Text) && !string.IsNullOrEmpty(service))
                 {
                     ServiceLabel.Text += ", ";
-                }
-
-                Label.TextHighlighters.Clear();
-                TextHighlighter spoiler = null;
-
-                if (message?.Entities == null)
-                {
-                    return;
-                }
-
-                var offset = title.Length + 1 + service.Length;
-
-                foreach (var entity in message.Entities)
-                {
-                    if (entity.Type is TextEntityTypeSpoiler)
-                    {
-                        spoiler ??= new TextHighlighter();
-                        spoiler.Ranges.Add(new TextRange { StartIndex = offset + entity.Offset, Length = entity.Length });
-                    }
-                }
-
-                if (spoiler?.Ranges.Count > 0)
-                {
-                    spoiler.Foreground = Label.Foreground;
-                    spoiler.Background = Label.Foreground;
-
-                    Label.TextHighlighters.Add(spoiler);
                 }
             }
         }

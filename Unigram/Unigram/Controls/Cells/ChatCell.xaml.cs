@@ -220,7 +220,6 @@ namespace Unigram.Controls.Cells
             TimeLabel.Text = UpdateTimeLabel(message);
             StateIcon.Glyph = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, null, message, message.SendingState);
 
-            UpdateBriefSpoiler(chat.DraftMessage == null ? message : null);
             UpdateMinithumbnail(chat, chat.DraftMessage == null ? message : null);
         }
 
@@ -436,7 +435,6 @@ namespace Unigram.Controls.Cells
             StateIcon.Glyph = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, chat.DraftMessage, chat.LastMessage, chat.LastMessage?.SendingState);
             FailedBadge.Visibility = chat.LastMessage?.SendingState is MessageSendingStateFailed ? Visibility.Visible : Visibility.Collapsed;
 
-            UpdateBriefSpoiler(chat.DraftMessage == null ? chat.LastMessage : null);
             UpdateMinithumbnail(chat, chat.DraftMessage == null ? chat.LastMessage : null);
         }
 
@@ -862,48 +860,6 @@ namespace Unigram.Controls.Cells
             }
         }
 
-        private void UpdateBriefSpoiler(Message message)
-        {
-            BriefInfo.TextHighlighters.Clear();
-            TextHighlighter spoiler = null;
-
-            var offset = FromLabel.Text.Length + DraftLabel.Text.Length;
-            var entities = message?.Content switch
-            {
-                MessageAnimation animation => animation.Caption.Entities,
-                MessageAudio audio => audio.Caption.Entities,
-                MessageDocument document => document.Caption.Entities,
-                MessagePhoto photo => photo.Caption.Entities,
-                MessageVideo video => video.Caption.Entities,
-                MessageVoiceNote voiceNote => voiceNote.Caption.Entities,
-                MessageText text => text.Text.Entities,
-                _ => null
-            };
-
-            if (entities == null)
-            {
-                return;
-            }
-
-            foreach (var entity in entities)
-            {
-                if (entity.Type is TextEntityTypeSpoiler)
-                {
-                    spoiler ??= new TextHighlighter();
-                    spoiler.Ranges.Add(new TextRange { StartIndex = offset + entity.Offset, Length = entity.Length });
-                }
-            }
-
-            if (spoiler?.Ranges.Count > 0)
-            {
-                spoiler.Foreground = BriefInfo.Foreground;
-                spoiler.Background = BriefInfo.Foreground;
-
-                BriefInfo.TextHighlighters.Add(spoiler);
-            }
-
-        }
-
         private string UpdateBriefLabel(Chat chat, ChatPosition position)
         {
             if (position?.Source is ChatSourcePublicServiceAnnouncement psa && !string.IsNullOrEmpty(psa.Text))
@@ -977,13 +933,13 @@ namespace Unigram.Controls.Cells
 
             return value.Content switch
             {
-                MessageAnimation animation => animation.Caption.Text.Replace('\n', ' '),
-                MessageAudio audio => audio.Caption.Text.Replace('\n', ' '),
-                MessageDocument document => document.Caption.Text.Replace('\n', ' '),
-                MessagePhoto photo => photo.Caption.Text.Replace('\n', ' '),
-                MessageVideo video => video.Caption.Text.Replace('\n', ' '),
-                MessageVoiceNote voiceNote => voiceNote.Caption.Text.Replace('\n', ' '),
-                MessageText text => text.Text.Text.Replace('\n', ' '),
+                MessageAnimation animation => animation.Caption.ReplaceSpoilers(),
+                MessageAudio audio => audio.Caption.ReplaceSpoilers(),
+                MessageDocument document => document.Caption.ReplaceSpoilers(),
+                MessagePhoto photo => photo.Caption.ReplaceSpoilers(),
+                MessageVideo video => video.Caption.ReplaceSpoilers(),
+                MessageVoiceNote voiceNote => voiceNote.Caption.ReplaceSpoilers(),
+                MessageText text => text.Text.ReplaceSpoilers(),
                 MessageAnimatedEmoji animatedEmoji => animatedEmoji.Emoji,
                 MessageDice dice => dice.Emoji,
                 _ => string.Empty,
