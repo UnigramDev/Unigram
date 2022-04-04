@@ -2760,6 +2760,7 @@ namespace Unigram.Views
                 ConvertFilter(filter);
             }
 
+            Search_LostFocus(null, null);
             return;
 
             var visual = ElementCompositionPreview.GetElementVisual(TabChats);
