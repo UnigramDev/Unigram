@@ -19,11 +19,11 @@
                                  Loaded="List_Loaded"
                                  ChoosingItemContainer="OnChoosingItemContainer"
                                  ContainerContentChanging="OnContainerContentChanging"
-                                 Padding="12,0,0,8"
+                                 Padding="20,0,20,8"
+                                 common:FluidGridView.MaxLength="1008"
                                  common:FluidGridView.OrientationOnly="False">
             <common:FluidGridView.Triggers>
-                <common:LengthGridViewTrigger ItemLength="120"
-                                              MaxLength="1008" />
+                <common:LengthGridViewTrigger ItemLength="120" />
             </common:FluidGridView.Triggers>
             <GridView.ItemContainerStyle>
                 <Style TargetType="GridViewItem"
@@ -39,7 +39,7 @@
                 </Style>
             </GridView.ItemContainerStyle>
             <GridView.Header>
-                <StackPanel Margin="-12,0,0,0">
+                <StackPanel Margin="-20,0,-20,0">
                     <controls:ProfileHeader x:Name="ProfileHeader"
                                             Chat="{x:Bind ViewModel.Chat}"
                                             SizeChanged="ProfileHeader_SizeChanged"
@@ -117,8 +117,7 @@
             </GridView.ItemTemplateSelector>
             <GridView.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <ItemsWrapGrid Orientation="Horizontal"
-                                   Margin="8,0"/>
+                    <ItemsWrapGrid Orientation="Horizontal" />
                 </ItemsPanelTemplate>
             </GridView.ItemsPanel>
         </controls:SelectGridView>

@@ -77,6 +77,12 @@ namespace Unigram.Common
 
             if (trigger != null)
             {
+                var maxLength = GetMaxLength(owner);
+                if (parentLength > maxLength && !double.IsNaN(maxLength))
+                {
+                    parentLength = maxLength;
+                }
+
                 //var itemLength = trigger.GetItemLength(parentLength - paddingNear - paddingFar);
                 var itemLength = trigger.GetItemLength(Math.Floor(parentLength), out int maximumRowsOrColumns);
 
@@ -150,6 +156,25 @@ namespace Unigram.Common
             }
         }
         #endregion
+
+        #region MaxLength
+
+        public static double GetMaxLength(DependencyObject obj)
+        {
+            return (double)obj.GetValue(MaxLengthProperty);
+        }
+
+        public static void SetMaxLength(DependencyObject obj, double value)
+        {
+            obj.SetValue(MaxLengthProperty, value);
+        }
+
+        public static readonly DependencyProperty MaxLengthProperty =
+            DependencyProperty.RegisterAttached("MaxLength", typeof(double), typeof(FluidGridViewTriggerCollection), new PropertyMetadata(0d));
+
+        #endregion
+
+
 
         #region Reference
         private static WrapGridReference GetReference(DependencyObject obj)
@@ -488,26 +513,8 @@ namespace Unigram.Common
             DependencyProperty.Register("ItemLength", typeof(double), typeof(LengthGridViewTrigger), new PropertyMetadata(0d, OnPropertyChanged));
         #endregion
 
-        #region MaxLength
-
-        public double MaxLength
-        {
-            get { return (double)GetValue(MaxLengthProperty); }
-            set { SetValue(MaxLengthProperty, value); }
-        }
-
-        public static readonly DependencyProperty MaxLengthProperty =
-            DependencyProperty.Register("MaxLength", typeof(double), typeof(LengthGridViewTrigger), new PropertyMetadata(double.NaN));
-
-        #endregion
-
         public override double GetItemLength(double parentLength, out int maximumRowsOrColumns)
         {
-            if (parentLength > MaxLength && !double.IsNaN(MaxLength))
-            {
-                parentLength = MaxLength;
-            }
-
             if (parentLength <= 400)
             {
                 maximumRowsOrColumns = 3;

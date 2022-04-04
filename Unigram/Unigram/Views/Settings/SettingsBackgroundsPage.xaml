@@ -26,19 +26,24 @@
                   IsItemClickEnabled="True"
                   SelectionMode="None"
                   ChoosingItemContainer="OnChoosingItemContainer"
-                  ContainerContentChanging="OnContainerContentChanging">
+                  ContainerContentChanging="OnContainerContentChanging"
+                  common:FluidGridView.MaxLength="1008"
+                  Padding="20,0">
             <common:FluidGridView.Triggers>
-                <common:LengthGridViewTrigger ItemLength="216"
-                                              MaxLength="1008" />
+                <common:FluidGridViewTrigger MinLength="0"
+                                             RowsOrColumns="3" />
+                <common:FluidGridViewTrigger MinLength="600"
+                                             RowsOrColumns="4" />
+                <common:FluidGridViewTrigger MinLength="800"
+                                             RowsOrColumns="5" />
             </common:FluidGridView.Triggers>
             <GridView.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <ItemsWrapGrid Orientation="Horizontal"
-                                   Margin="20,0" />
+                    <ItemsWrapGrid Orientation="Horizontal" />
                 </ItemsPanelTemplate>
             </GridView.ItemsPanel>
             <GridView.Header>
-                <controls:HeaderedControl Margin="0,0,0,8">
+                <controls:HeaderedControl Margin="-20,0,-20,8">
                     <controls:BadgeButton Content="{CustomResource SelectFromGallery}"
                                           Command="{x:Bind ViewModel.LocalCommand}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
