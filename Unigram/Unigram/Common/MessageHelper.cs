@@ -215,9 +215,9 @@ namespace Unigram.Common
             {
                 NavigateToLanguage(protoService, navigation, languagePack.LanguagePackId);
             }
-            else if (response is InternalLinkTypeMessage)
+            else if (response is InternalLinkTypeMessage message)
             {
-                NavigateToMessage(protoService, navigation, uri.ToString());
+                NavigateToMessage(protoService, navigation, message.Url);
             }
             else if (response is InternalLinkTypeMessageDraft messageDraft)
             {
@@ -306,7 +306,7 @@ namespace Unigram.Common
                 {
                     if (info.ForComment)
                     {
-                        navigation.NavigateToThread(info.ChatId, info.Message.Id, message: info.Message.Id);
+                        navigation.NavigateToThread(info.ChatId, info.Message.MessageThreadId, message: info.Message.Id);
                     }
                     else
                     {
