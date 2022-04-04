@@ -1682,13 +1682,7 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                var message = await ProtoService.SendAsync(new GetMessage(result1, result2)) as Message;
-                if (message?.MessageThreadId == 0)
-                {
-                    return;
-                }
-
-                Thread = await ProtoService.SendAsync(new GetMessageThread(message.ChatId, message.MessageThreadId)) as MessageThreadInfo;
+                Thread = await ProtoService.SendAsync(new GetMessageThread(result1, result2)) as MessageThreadInfo;
                 parameter = _thread?.ChatId;
 
                 if (parameter == null)
