@@ -423,7 +423,7 @@ namespace Unigram.Controls
             _contentDialog = contentDialog;
         }
 
-        public void GoBack(NavigationTransitionInfo infoOverride = null)
+        public void GoBack(NavigationState state = null, NavigationTransitionInfo infoOverride = null)
         {
             _contentDialog.TryHide(ContentDialogResult.None);
         }

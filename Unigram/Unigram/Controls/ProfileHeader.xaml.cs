@@ -214,7 +214,6 @@ namespace Unigram.Controls
             Edit.Visibility = Visibility.Collapsed;
 
             Join.Visibility = Visibility.Collapsed;
-            GroupLeave.Visibility = Visibility.Collapsed;
 
             ChannelMembersPanel.Visibility = Visibility.Collapsed;
             MembersPanel.Visibility = Visibility.Collapsed;
@@ -243,6 +242,9 @@ namespace Unigram.Controls
             Call.Content = Strings.Resources.Call;
             Call.Glyph = Icons.Phone;
             VideoCall.Visibility = fullInfo.CanBeCalled && fullInfo.SupportsVideoCalls ? Visibility.Visible : Visibility.Collapsed;
+
+            Search.Visibility = fullInfo.CanBeCalled && fullInfo.SupportsVideoCalls ? Visibility.Collapsed : Visibility.Visible;
+            Grid.SetColumn(Search, 2);
         }
 
         public void UpdateUserStatus(Chat chat, User user)
@@ -292,8 +294,6 @@ namespace Unigram.Controls
             SecretLifetime.Visibility = Visibility.Collapsed;
             SecretHashKey.Visibility = Visibility.Collapsed;
 
-            GroupLeave.Visibility = Visibility.Collapsed;
-
             ChannelMembersPanel.Visibility = Visibility.Collapsed;
             MembersPanel.Visibility = Visibility.Collapsed;
             //Admins.Visibility = Visibility.Collapsed;
@@ -325,10 +325,15 @@ namespace Unigram.Controls
                 Call.Visibility = Visibility.Visible;
                 Call.Content = Strings.Resources.VoipGroupVoiceChat;
                 Call.Glyph = Icons.VideoChat;
+
+                Search.Visibility = Visibility.Collapsed;
             }
             else
             {
                 Call.Visibility = Visibility.Collapsed;
+
+                Search.Visibility = Visibility.Visible;
+                Grid.SetColumn(Search, 1);
             }
 
             VideoCall.Visibility = Visibility.Collapsed;
@@ -355,17 +360,6 @@ namespace Unigram.Controls
 
             Location.Visibility = group.HasLocation ? Visibility.Visible : Visibility.Collapsed;
 
-            if (group.IsChannel && group.Status is not ChatMemberStatusCreator && group.Status is not ChatMemberStatusLeft && group.Status is not ChatMemberStatusBanned)
-            {
-                MiscPanel.Visibility = Visibility.Visible;
-                GroupLeave.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                MiscPanel.Visibility = Visibility.Collapsed;
-                GroupLeave.Visibility = Visibility.Collapsed;
-            }
-
             ChannelMembersPanel.Visibility = group.IsChannel && (group.Status is ChatMemberStatusCreator || group.Status is ChatMemberStatusAdministrator) ? Visibility.Visible : Visibility.Collapsed;
             MembersPanel.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Collapsed;
             //Admins.Visibility = Visibility.Collapsed;
@@ -378,10 +372,15 @@ namespace Unigram.Controls
                 Call.Visibility = Visibility.Visible;
                 Call.Content = Strings.Resources.VoipGroupVoiceChat;
                 Call.Glyph = Icons.VideoChat;
+
+                Search.Visibility = Visibility.Collapsed;
             }
             else
             {
                 Call.Visibility = Visibility.Collapsed;
+
+                Search.Visibility = Visibility.Visible;
+                Grid.SetColumn(Search, 1);
             }
 
             VideoCall.Visibility = Visibility.Collapsed;
@@ -414,6 +413,7 @@ namespace Unigram.Controls
             Edit.Content = Edit.Content = Strings.Resources.ChannelEdit; //group.IsChannel ? Strings.Resources.ManageChannelMenu : Strings.Resources.ManageGroupMenu;
 
             // Unused:
+            MiscPanel.Visibility = Visibility.Collapsed;
             UserPhone.Visibility = Visibility.Collapsed;
             //UserCommonChats.Visibility = Visibility.Collapsed;
             SecretLifetime.Visibility = Visibility.Collapsed;

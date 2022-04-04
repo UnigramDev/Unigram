@@ -104,6 +104,13 @@
                     </Button.CommandParameter>
                 </controls:BadgeButton>
 
+                <controls:BadgeButton x:Name="Search"
+                                      Content="{CustomResource Search}"
+                                      Command="{x:Bind ViewModel.SearchCommand}"
+                                      Style="{StaticResource GlyphGridBadgeButtonStyle}"
+                                      Glyph="&#xE721;"
+                                      Grid.Column="2" />
+
                 <!-- Channel -->
                 <controls:BadgeButton x:Name="Edit"
                                       Glyph="&#xE713;"
@@ -263,12 +270,6 @@
                                     <Image x:Name="SecretIdenticon" Width="24" Height="24"/>
                                     </controls:BadgeButton.Badge>-->
             </controls:BadgeButton>
-
-            <controls:BadgeButton x:Name="GroupLeave"
-                                  Visibility="Collapsed"
-                                  Content="{CustomResource LeaveChannel}"
-                                  Command="{x:Bind ViewModel.DeleteCommand}"
-                                  Foreground="Red" />
         </controls:HeaderedControl>
 
         <Border x:Name="MembersPanel"

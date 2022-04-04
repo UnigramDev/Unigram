@@ -1715,6 +1715,12 @@ namespace Unigram.ViewModels
                 AccessToken = accessToken;
             }
 
+            if (state.TryGet("search", out bool search))
+            {
+                state.Remove("search");
+                SearchExecute();
+            }
+
 #pragma warning disable CS4014
             if (_type == DialogType.ScheduledMessages)
             {

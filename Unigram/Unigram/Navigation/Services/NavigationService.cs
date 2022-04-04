@@ -17,7 +17,7 @@ namespace Unigram.Navigation.Services
 {
     public interface INavigationService
     {
-        void GoBack(NavigationTransitionInfo infoOverride = null);
+        void GoBack(NavigationState state = null, NavigationTransitionInfo infoOverride = null);
         void GoBackAt(int index, bool back = true);
         void GoForward();
 
@@ -470,10 +470,28 @@ namespace Unigram.Navigation.Services
         public void Refresh() { FrameFacade.Refresh(); }
         public void Refresh(object param) { FrameFacade.Refresh(param); }
 
-        public void GoBack(NavigationTransitionInfo infoOverride = null)
+        public void GoBack(NavigationState state = null, NavigationTransitionInfo infoOverride = null)
         {
             if (FrameFacade.CanGoBack)
             {
+                if (state != null)
+                {
+                    var entry = Frame.BackStack[Frame.BackStack.Count - 1];
+
+                    var parameter = entry.Parameter;
+                    if (parameter is string cacheKey && entry.SourcePageType == typeof(ChatPage))
+                    {
+                        parameter = CacheKeyToChatId[cacheKey];
+                    }
+
+                    var pageState = FrameFacade.PageStateSettingsService(entry.SourcePageType, 0, parameter).Values;
+
+                    foreach (var item in state)
+                    {
+                        pageState[item.Key] = item.Value;
+                    }
+                }
+
                 FrameFacade.GoBack(infoOverride);
             }
         }

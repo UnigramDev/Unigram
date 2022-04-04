@@ -13,6 +13,7 @@ using Unigram.ViewModels.Chats;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Supergroups;
 using Unigram.ViewModels.Users;
+using Unigram.Views;
 using Unigram.Views.Chats;
 using Unigram.Views.Popups;
 using Unigram.Views.Supergroups;
@@ -60,6 +61,7 @@ namespace Unigram.ViewModels
             _supergroupMembersVieModel.IsEmbedded = true;
 
             SendMessageCommand = new RelayCommand(SendMessageExecute);
+            SearchCommand = new RelayCommand(SearchExecute);
             SystemCallCommand = new RelayCommand(SystemCallExecute);
             BlockCommand = new RelayCommand(BlockExecute);
             UnblockCommand = new RelayCommand(UnblockExecute);
@@ -341,17 +343,18 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            if (chat.Type is ChatTypeSupergroup super && super.IsChannel)
+            var last = NavigationService.Frame.BackStack.LastOrDefault();
+            if (last?.SourcePageType == typeof(ChatPage) && NavigationService.TryGetPeerFromParameter(last.Parameter, out long chatId))
             {
-                var fullInfo = CacheService.GetSupergroupFull(chat);
-                if (fullInfo != null && fullInfo.LinkedChatId != 0)
+                if (chat.Id == chatId)
                 {
-                    NavigationService.NavigateToChat(fullInfo.LinkedChatId);
-                    return;
+                    NavigationService.GoBack();
                 }
             }
-
-            NavigationService.NavigateToChat(chat);
+            else
+            {
+                NavigationService.NavigateToChat(chat);
+            }
         }
 
         public RelayCommand StatisticsCommand { get; }
@@ -773,6 +776,33 @@ namespace Unigram.ViewModels
 
             _notificationsService.SetMuteFor(chat, CacheService.Notifications.GetMutedFor(chat) > 0 ? 0 : 632053052);
         }
+
+        #region Search
+
+        public RelayCommand SearchCommand { get; }
+        private void SearchExecute()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            var last = NavigationService.Frame.BackStack.LastOrDefault();
+            if (last?.SourcePageType == typeof(ChatPage) && NavigationService.TryGetPeerFromParameter(last.Parameter, out long chatId))
+            {
+                if (chat.Id == chatId)
+                {
+                    NavigationService.GoBack(new NavigationState { { "search", true } });
+                }
+            }
+            else
+            {
+                NavigationService.NavigateToChat(chat, state: new NavigationState { { "search", true } });
+            }
+        }
+
+        #endregion
 
         #region Call
 
