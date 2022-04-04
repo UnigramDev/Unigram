@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using Unigram.Collections;
-using Unigram.Native.Composition;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Views;
@@ -249,13 +248,6 @@ namespace Unigram.Controls
 
             if (DetailFrame != null)
             {
-                var clip = CompositionDevice.CreateRectangleClip(DetailFrame);
-                clip.Left = 0;
-                clip.Top = -40;
-                clip.Right = float.MaxValue;
-                clip.Bottom = float.MaxValue;
-                clip.TopLeft = 8;
-
                 var parent = VisualTreeHelper.GetParent(DetailFrame) as UIElement;
                 if (parent != null && parent != DetailPresenter)
                 {

@@ -52,6 +52,8 @@
                                         <VisualState.Setters>
                                             <Setter Target="DetailHeaderPresenter2.CornerRadius"
                                                     Value="0" />
+                                            <Setter Target="BackgroundPart.CornerRadius"
+                                                    Value="0" />
                                             <Setter Target="BorderPart.CornerRadius"
                                                     Value="0" />
                                             <Setter Target="BorderPart.BorderThickness"
@@ -75,6 +77,7 @@
                                 </Grid.RowDefinitions>
 
                                 <chats:ChatBackgroundPresenter x:Name="BackgroundPart"
+                                                               CornerRadius="9,0,0,0"
                                                                Loading="ChatBackgroundPresenter_Loading"
                                                                Grid.RowSpan="2" />
 
