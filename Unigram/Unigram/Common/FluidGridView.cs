@@ -170,7 +170,7 @@ namespace Unigram.Common
         }
 
         public static readonly DependencyProperty MaxLengthProperty =
-            DependencyProperty.RegisterAttached("MaxLength", typeof(double), typeof(FluidGridViewTriggerCollection), new PropertyMetadata(0d));
+            DependencyProperty.RegisterAttached("MaxLength", typeof(double), typeof(FluidGridViewTriggerCollection), new PropertyMetadata(double.NaN));
 
         #endregion
 
