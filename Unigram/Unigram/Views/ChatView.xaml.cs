@@ -984,6 +984,11 @@ namespace Unigram.Views
                 btnVoiceMessage.StopRecording(true);
                 args.Handled = true;
             }
+            else if (args.VirtualKey == Windows.System.VirtualKey.O && args.KeyStatus.RepeatCount == 1 && ctrl && !alt && !shift)
+            {
+                ViewModel.SendDocumentCommand.Execute();
+                args.Handled = true;
+            }
             else if (args.VirtualKey == Windows.System.VirtualKey.Escape && !ctrl && !alt && !shift)
             {
                 if (ViewModel.ComposerHeader != null && ViewModel.ComposerHeader.ReplyToMessage != null)
