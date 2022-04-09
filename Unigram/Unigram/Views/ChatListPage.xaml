@@ -29,20 +29,6 @@
                             SelectionStroke="{ThemeResource ApplicationPageBackgroundThemeBrush}" />
         </DataTemplate>
     </ListView.ItemTemplate>
-    <ListView.Footer>
-        <Border MinHeight="6">
-            <Border Background="{ThemeResource PageBackgroundDarkBrush}">
-                <TextBlock x:Name="Footer"
-                           x:Load="{x:Bind ViewModel.Items.HasMoreItems, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
-                           Text="{x:Bind ConvertCount(ViewModel.Items.Count), Mode=OneWay}"
-                           Style="{StaticResource InfoCaptionTextBlockStyle}"
-                           Visibility="{Binding Footer, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource NullToVisibilityConverter}}"
-                           Margin="12,8,12,8"
-                           Grid.Column="1"
-                           Grid.Row="2" />
-            </Border>
-        </Border>
-    </ListView.Footer>
     <ListView.ItemContainerTransitions>
         <TransitionCollection>
             <!-- Reordering items for some reason requires AddDeleteThemeTransition. -->

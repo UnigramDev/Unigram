@@ -1019,6 +1019,37 @@
                                     <controls:ChatListSkeleton x:Name="Skeleton"
                                                                x:Load="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
                                                                Grid.Row="1" />
+
+                                    <Grid x:Name="EmptyState"
+                                          x:Load="{x:Bind ViewModel.Chats.Items.IsEmpty, Mode=OneWay}"
+                                          Grid.Row="1">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition />
+                                        </Grid.RowDefinitions>
+                                        <controls:LottieView Source="ms-appx:///Assets/Animations/EmptyFolder.tgs"
+                                                             IsLoopingEnabled="False"
+                                                             IsCachingEnabled="False"
+                                                             VerticalAlignment="Top"
+                                                             Width="96"
+                                                             Height="96"
+                                                             Margin="0,-96,0,0"
+                                                             Grid.Row="1" />
+                                        <TextBlock Text="{CustomResource FilterNoChatsToDisplay}"
+                                                   Style="{StaticResource BaseTextBlockStyle}"
+                                                   TextAlignment="Center"
+                                                   Margin="12,16,12,4"
+                                                   Grid.Row="2" />
+                                        <TextBlock Text="{CustomResource FilterNoChatsToDisplayInfo}"
+                                                   Style="{StaticResource InfoCaptionTextBlockStyle}"
+                                                   TextAlignment="Center"
+                                                   Margin="12,0,12,8"
+                                                   Grid.Row="3" />
+
+                                    </Grid>
                                 </Grid>
 
                                 <controls:DownloadsFooter x:Name="Downloads"
