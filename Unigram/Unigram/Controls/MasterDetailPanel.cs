@@ -49,9 +49,9 @@ namespace Unigram.Controls
             }
         }
 
-        public double ActualMasterWidth => ((FrameworkElement)Children[6]).ActualWidth;
+        public double ActualMasterWidth => ((FrameworkElement)Children[2]).ActualWidth;
 
-        public double ActualDetailWidth => ((FrameworkElement)Children[4]).ActualWidth;
+        public double ActualDetailWidth => ((FrameworkElement)Children[1]).ActualWidth;
 
         private bool _registerEvents = true;
 
