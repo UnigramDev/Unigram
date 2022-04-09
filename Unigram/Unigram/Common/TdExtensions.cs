@@ -1556,7 +1556,7 @@ namespace Unigram.Common
                 return false;
             }
 
-            return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanPinMessages;
+            return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanPinMessages;
         }
 
         public static bool CanDeleteMessages(this Supergroup supergroup)
@@ -1566,7 +1566,7 @@ namespace Unigram.Common
                 return false;
             }
 
-            return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanDeleteMessages;
+            return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanDeleteMessages;
         }
 
         public static bool CanPinMessages(this BasicGroup basicGroup)
@@ -1576,7 +1576,7 @@ namespace Unigram.Common
                 return false;
             }
 
-            return basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanPinMessages;
+            return basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanPinMessages;
         }
 
         public static bool CanDeleteMessages(this BasicGroup basicGroup)
@@ -1586,7 +1586,7 @@ namespace Unigram.Common
                 return false;
             }
 
-            return basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanDeleteMessages;
+            return basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanDeleteMessages;
         }
 
         public static bool CanChangeInfo(this Supergroup supergroup)
@@ -1596,7 +1596,7 @@ namespace Unigram.Common
                 return false;
             }
 
-            return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanChangeInfo;
+            return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanChangeInfo;
         }
 
         public static bool CanManageVideoChats(this Supergroup supergroup)
@@ -1606,7 +1606,7 @@ namespace Unigram.Common
                 return false;
             }
 
-            return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanManageVideoChats;
+            return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanManageVideoChats;
         }
 
         public static bool CanManageVideoChats(this BasicGroup basicGroup)
@@ -1616,7 +1616,7 @@ namespace Unigram.Common
                 return false;
             }
 
-            return basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanManageVideoChats;
+            return basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanManageVideoChats;
         }
 
         public static bool CanPostMessages(this Supergroup supergroup)
@@ -1628,7 +1628,7 @@ namespace Unigram.Common
 
             if (supergroup.IsChannel)
             {
-                return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanPostMessages;
+                return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanPostMessages;
             }
             else
             {
@@ -1643,7 +1643,7 @@ namespace Unigram.Common
                 return false;
             }
 
-            return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanRestrictMembers;
+            return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanRestrictMembers;
         }
 
         public static bool CanPromoteMembers(this Supergroup supergroup)
@@ -1653,7 +1653,7 @@ namespace Unigram.Common
                 return false;
             }
 
-            return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanPromoteMembers;
+            return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanPromoteMembers;
         }
 
         public static bool CanPromoteMembers(this BasicGroup basicGroup)
@@ -1683,7 +1683,7 @@ namespace Unigram.Common
             //    return true;
             //}
 
-            return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanInviteUsers;
+            return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanInviteUsers;
         }
 
         public static bool CanInviteUsers(this BasicGroup basicGroup)
@@ -1698,7 +1698,7 @@ namespace Unigram.Common
             //    return true;
             //}
 
-            return basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanInviteUsers;
+            return basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanInviteUsers;
         }
 
         public static bool CanPostMessages(this BasicGroup basicGroup)

@@ -658,28 +658,32 @@ namespace Unigram.ViewModels
                     return new MessageText(new FormattedText(builder.ToString(), entities), null);
                 }
 
-                ChatMemberStatusAdministrator o = null;
-                ChatMemberStatusAdministrator n = null;
+                ChatAdministratorRights o = null;
+                ChatAdministratorRights n = null;
+                string oldTitle = null;
+                string newTitle = null;
 
                 if (memberPromoted.OldStatus is ChatMemberStatusAdministrator oldAdmin)
                 {
-                    o = oldAdmin;
+                    o = oldAdmin.Rights;
+                    oldTitle = oldAdmin.CustomTitle;
                 }
                 if (memberPromoted.NewStatus is ChatMemberStatusAdministrator newAdmin)
                 {
-                    n = newAdmin;
+                    n = newAdmin.Rights;
+                    newTitle = newAdmin.CustomTitle;
                 }
 
                 if (o == null)
                 {
-                    o = new ChatMemberStatusAdministrator();
+                    o = new ChatAdministratorRights();
                 }
                 if (n == null)
                 {
-                    n = new ChatMemberStatusAdministrator();
+                    n = new ChatAdministratorRights();
                 }
 
-                if (!string.Equals(o.CustomTitle, n.CustomTitle))
+                if (!string.Equals(oldTitle, newTitle))
                 {
                     if (!added)
                     {
@@ -687,7 +691,7 @@ namespace Unigram.ViewModels
                         added = true;
                     }
 
-                    if (string.IsNullOrEmpty(n.CustomTitle))
+                    if (string.IsNullOrEmpty(newTitle))
                     {
                         builder.Append('\n').Append('-').Append(' ');
                         builder.Append(Strings.Resources.EventLogPromotedRemovedTitle);
@@ -695,7 +699,7 @@ namespace Unigram.ViewModels
                     else
                     {
                         builder.Append('\n').Append('+').Append(' ');
-                        builder.AppendFormat(Strings.Resources.EventLogPromotedTitle, n.CustomTitle);
+                        builder.AppendFormat(Strings.Resources.EventLogPromotedTitle, newTitle);
                     }
                 }
 

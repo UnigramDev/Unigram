@@ -59,7 +59,7 @@ namespace Unigram.ViewModels.Payments
                 return;
             }
 
-            var paymentForm = await ProtoService.SendAsync(new GetPaymentForm(message.ChatId, message.Id, new PaymentFormTheme())) as PaymentForm;
+            var paymentForm = await ProtoService.SendAsync(new GetPaymentForm(message.ChatId, message.Id, new ThemeParameters())) as PaymentForm;
             if (paymentForm == null)
             {
                 return;

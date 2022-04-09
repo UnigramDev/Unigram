@@ -164,7 +164,7 @@ namespace Unigram.ViewModels.Chats
                 var chat = _chat;
                 if (chat != null && CacheService.TryGetSupergroup(chat, out Supergroup supergroup))
                 {
-                    if (supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanChangeInfo)
+                    if (supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanChangeInfo)
                     {
                         return true;
                     }
@@ -173,7 +173,7 @@ namespace Unigram.ViewModels.Chats
                 }
                 else if (chat != null && CacheService.TryGetBasicGroup(chat, out BasicGroup basicGroup))
                 {
-                    if (basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanChangeInfo)
+                    if (basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanChangeInfo)
                     {
                         return true;
                     }

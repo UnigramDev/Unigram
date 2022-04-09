@@ -77,16 +77,16 @@ namespace Unigram.ViewModels.Supergroups
 
                 if (member.Status is ChatMemberStatusAdministrator administrator)
                 {
-                    CanChangeInfo = administrator.CanChangeInfo;
-                    CanDeleteMessages = administrator.CanDeleteMessages;
-                    CanEditMessages = administrator.CanEditMessages;
-                    CanInviteUsers = administrator.CanInviteUsers;
-                    CanPinMessages = administrator.CanPinMessages;
-                    CanPostMessages = administrator.CanPostMessages;
-                    CanPromoteMembers = administrator.CanPromoteMembers;
-                    CanRestrictMembers = administrator.CanRestrictMembers;
-                    CanManageVideoChats = administrator.CanManageVideoChats;
-                    IsAnonymous = administrator.IsAnonymous;
+                    CanChangeInfo = administrator.Rights.CanChangeInfo;
+                    CanDeleteMessages = administrator.Rights.CanDeleteMessages;
+                    CanEditMessages = administrator.Rights.CanEditMessages;
+                    CanInviteUsers = administrator.Rights.CanInviteUsers;
+                    CanPinMessages = administrator.Rights.CanPinMessages;
+                    CanPostMessages = administrator.Rights.CanPostMessages;
+                    CanPromoteMembers = administrator.Rights.CanPromoteMembers;
+                    CanRestrictMembers = administrator.Rights.CanRestrictMembers;
+                    CanManageVideoChats = administrator.Rights.CanManageVideoChats;
+                    IsAnonymous = administrator.Rights.IsAnonymous;
 
                     CustomTitle = administrator.CustomTitle;
                 }
@@ -308,16 +308,19 @@ namespace Unigram.ViewModels.Supergroups
             {
                 status = new ChatMemberStatusAdministrator
                 {
-                    IsAnonymous = channel ? false : _isAnonymous,
-                    CanChangeInfo = _canChangeInfo,
-                    CanDeleteMessages = _canDeleteMessages,
-                    CanEditMessages = channel ? _canEditMessages : false,
-                    CanInviteUsers = _canInviteUsers,
-                    CanPinMessages = channel ? false : _canPinMessages,
-                    CanPostMessages = channel ? _canPostMessages : false,
-                    CanPromoteMembers = _canPromoteMembers,
-                    CanRestrictMembers = channel ? false : _canRestrictMembers,
-                    CanManageVideoChats = channel ? false : _canManageVideoChats,
+                    Rights = new ChatAdministratorRights
+                    {
+                        IsAnonymous = channel ? false : _isAnonymous,
+                        CanChangeInfo = _canChangeInfo,
+                        CanDeleteMessages = _canDeleteMessages,
+                        CanEditMessages = channel ? _canEditMessages : false,
+                        CanInviteUsers = _canInviteUsers,
+                        CanPinMessages = channel ? false : _canPinMessages,
+                        CanPostMessages = channel ? _canPostMessages : false,
+                        CanPromoteMembers = _canPromoteMembers,
+                        CanRestrictMembers = channel ? false : _canRestrictMembers,
+                        CanManageVideoChats = channel ? false : _canManageVideoChats
+                    },
                     CustomTitle = _customTitle ?? string.Empty
                 };
             }

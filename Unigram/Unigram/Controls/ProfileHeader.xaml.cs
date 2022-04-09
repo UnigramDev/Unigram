@@ -225,10 +225,10 @@ namespace Unigram.Controls
 
         public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret, bool accessToken)
         {
-            if (user.Type is UserTypeBot)
+            if (user.Type is UserTypeBot && fullInfo.BotInfo != null)
             {
-                GetEntities(fullInfo.ShareText);
-                Description.Visibility = string.IsNullOrEmpty(fullInfo.ShareText) ? Visibility.Collapsed : Visibility.Visible;
+                GetEntities(fullInfo.BotInfo.ShareText);
+                Description.Visibility = string.IsNullOrEmpty(fullInfo.BotInfo.ShareText) ? Visibility.Collapsed : Visibility.Visible;
             }
             else
             {
@@ -623,7 +623,7 @@ namespace Unigram.Controls
                     {
                         //flyout.CreateFlyoutItem(ViewModel.EditCommand, Strings.Resources.ManageChannelMenu, new FontIcon { Glyph = Icons.Edit });
                     }
-                    else if (supergroup.Status is ChatMemberStatusCreator || (supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanInviteUsers) || chat.Permissions.CanInviteUsers)
+                    else if (supergroup.Status is ChatMemberStatusCreator || (supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanInviteUsers) || chat.Permissions.CanInviteUsers)
                     {
                         flyout.CreateFlyoutItem(ViewModel.InviteCommand, Strings.Resources.AddMember, new FontIcon { Glyph = Icons.PersonAdd });
                     }
@@ -645,7 +645,7 @@ namespace Unigram.Controls
             }
             else if (chat.Type is ChatTypeBasicGroup basic && basicGroup != null)
             {
-                if (basicGroup.Status is ChatMemberStatusCreator || (basicGroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanInviteUsers) || chat.Permissions.CanInviteUsers)
+                if (basicGroup.Status is ChatMemberStatusCreator || (basicGroup.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanInviteUsers) || chat.Permissions.CanInviteUsers)
                 {
                     flyout.CreateFlyoutItem(ViewModel.InviteCommand, Strings.Resources.AddMember, new FontIcon { Glyph = Icons.PersonAdd });
                 }

@@ -1041,7 +1041,7 @@ namespace Unigram.Controls.Messages
                     }
                     else
                     {
-                        content = ReplaceWithLink(string.Format(Strings.Resources.ActionTTLChanged, "un1", Locale.FormatTtl(chatSetTtl.Ttl)), "un1", message.GetSender(), ref entities);
+                        content = ReplaceWithLink(string.Format(Strings.Resources.ActionTTLChanged, Locale.FormatTtl(chatSetTtl.Ttl)), "un1", message.GetSender(), ref entities);
                     }
                 }
                 else
@@ -1052,7 +1052,7 @@ namespace Unigram.Controls.Messages
                     }
                     else
                     {
-                        content = ReplaceWithLink(string.Format(Strings.Resources.ActionTTLDisabled, "un1"), "un1", message.GetSender(), ref entities);
+                        content = ReplaceWithLink(Strings.Resources.ActionTTLDisabled, "un1", message.GetSender(), ref entities);
                     }
                 }
             }

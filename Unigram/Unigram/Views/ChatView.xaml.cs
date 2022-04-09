@@ -1798,14 +1798,14 @@ namespace Unigram.Views
             if (user != null && user.Type is UserTypeBot)
             {
                 var fullInfo = ViewModel.ProtoService.GetUserFull(user.Id);
-                if (fullInfo != null)
+                if (fullInfo?.BotInfo != null)
                 {
-                    if (fullInfo.Commands.Any(x => x.Command.Equals("Settings")))
+                    if (fullInfo.BotInfo.Commands.Any(x => x.Command.Equals("Settings")))
                     {
                         flyout.CreateFlyoutItem(() => { }, Strings.Resources.BotSettings);
                     }
 
-                    if (fullInfo.Commands.Any(x => x.Command.Equals("help")))
+                    if (fullInfo.BotInfo.Commands.Any(x => x.Command.Equals("help")))
                     {
                         flyout.CreateFlyoutItem(() => { }, Strings.Resources.BotHelp);
                     }
@@ -2282,7 +2282,7 @@ namespace Unigram.Views
                     return false;
                 }
 
-                if (supergroup.Status is ChatMemberStatusCreator || (supergroup.Status is ChatMemberStatusAdministrator admin && (admin.CanPinMessages || supergroup.IsChannel && admin.CanEditMessages)))
+                if (supergroup.Status is ChatMemberStatusCreator || (supergroup.Status is ChatMemberStatusAdministrator admin && (admin.Rights.CanPinMessages || supergroup.IsChannel && admin.Rights.CanEditMessages)))
                 {
                     return true;
                 }
@@ -2299,7 +2299,7 @@ namespace Unigram.Views
                     return false;
                 }
 
-                if (basicGroup.Status is ChatMemberStatusCreator || (basicGroup.Status is ChatMemberStatusAdministrator admin && admin.CanPinMessages))
+                if (basicGroup.Status is ChatMemberStatusCreator || (basicGroup.Status is ChatMemberStatusAdministrator admin && admin.Rights.CanPinMessages))
                 {
                     return true;
                 }
@@ -3609,7 +3609,7 @@ namespace Unigram.Views
                     return;
                 }
 
-                if (group.Status is ChatMemberStatusCreator || group.Status is ChatMemberStatusAdministrator administrator && administrator.CanPostMessages)
+                if (group.Status is ChatMemberStatusCreator || group.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanPostMessages)
                 {
                 }
                 else if (group.Status is ChatMemberStatusLeft)
@@ -3662,7 +3662,7 @@ namespace Unigram.Views
                             ? Strings.Resources.ChannelSilentBroadcast
                             : Strings.Resources.ChannelBroadcast;
                     }
-                    else if (supergroup.Status is ChatMemberStatusCreator creator && creator.IsAnonymous || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.IsAnonymous)
+                    else if (supergroup.Status is ChatMemberStatusCreator creator && creator.IsAnonymous || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.IsAnonymous)
                     {
                         return Strings.Resources.SendAnonymously;
                     }
@@ -4206,9 +4206,9 @@ namespace Unigram.Views
                 ShowArea();
             }
 
-            if (fullInfo.Commands.Count > 0)
+            if (fullInfo.BotInfo?.Commands.Count > 0)
             {
-                ViewModel.BotCommands = fullInfo.Commands.Select(x => new UserCommand(user.Id, x)).ToList();
+                ViewModel.BotCommands = fullInfo.BotInfo.Commands.Select(x => new UserCommand(user.Id, x)).ToList();
                 ViewModel.HasBotCommands = false;
                 ShowHideBotCommands(true);
             }
@@ -4348,7 +4348,7 @@ namespace Unigram.Views
                 {
                     ShowAction(Strings.Resources.ChannelJoin, true);
                 }
-                else if (group.Status is ChatMemberStatusCreator || group.Status is ChatMemberStatusAdministrator administrator && administrator.CanPostMessages)
+                else if (group.Status is ChatMemberStatusCreator || group.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanPostMessages)
                 {
                     ShowArea();
                 }
@@ -4427,7 +4427,7 @@ namespace Unigram.Views
                     ? Strings.Resources.ChannelSilentBroadcast
                     : Strings.Resources.ChannelBroadcast;
             }
-            else if (group.Status is ChatMemberStatusCreator creator && creator.IsAnonymous || group.Status is ChatMemberStatusAdministrator administrator && administrator.IsAnonymous)
+            else if (group.Status is ChatMemberStatusCreator creator && creator.IsAnonymous || group.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.IsAnonymous)
             {
                 TextField.PlaceholderText = Strings.Resources.SendAnonymously;
             }
