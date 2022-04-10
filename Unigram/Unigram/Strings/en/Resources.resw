@@ -595,6 +595,9 @@
   <data name="ActionBotDocumentUtilityBill" xml:space="preserve">
     <value>Utility Bill</value>
   </data>
+  <data name="ActionBotWebViewData" xml:space="preserve">
+    <value>Data from button «{0}» was sent to the bot.</value>
+  </data>
   <data name="ActionChangedPhoto" xml:space="preserve">
     <value>un1 changed the group photo</value>
   </data>
@@ -897,11 +900,35 @@ to: {1}</value>
   <data name="AddAnotherAccountInfo" xml:space="preserve">
     <value>Connect other Telegram accounts and easily switch between them.</value>
   </data>
+  <data name="AddAsAdmin" xml:space="preserve">
+    <value>Add as admin</value>
+  </data>
   <data name="AddBannedErrorAdmin" xml:space="preserve">
     <value>Sorry, you can't ban this user because they are an admin in this group and you are not allowed to demote them.</value>
   </data>
+  <data name="AddBot" xml:space="preserve">
+    <value>Add Bot</value>
+  </data>
+  <data name="AddBotAdmin" xml:space="preserve">
+    <value>Add bot as admin</value>
+  </data>
   <data name="AddBotAsAdmin" xml:space="preserve">
     <value>Bots can only be added as administrators.</value>
+  </data>
+  <data name="AddBotButton" xml:space="preserve">
+    <value>Add bot</value>
+  </data>
+  <data name="AddBotButtonAsAdmin" xml:space="preserve">
+    <value>as Admin</value>
+  </data>
+  <data name="AddBotButtonAsMember" xml:space="preserve">
+    <value>as Member</value>
+  </data>
+  <data name="AddBotMessageAdminChannel" xml:space="preserve">
+    <value>Are you sure you want to add this bot as an admin to the channel **{0}**?</value>
+  </data>
+  <data name="AddBotMessageAdminGroup" xml:space="preserve">
+    <value>Are you sure you want to add this bot as an admin to the group **{0}**?</value>
   </data>
   <data name="AddCaption" xml:space="preserve">
     <value>Add a caption...</value>
@@ -1017,6 +1044,9 @@ to: {1}</value>
   <data name="AddToGroup" xml:space="preserve">
     <value>Add to Group</value>
   </data>
+  <data name="AddToGroupOrChannel" xml:space="preserve">
+    <value>Add to Group or Channel</value>
+  </data>
   <data name="AddToMasks" xml:space="preserve">
     <value>Add to Masks</value>
   </data>
@@ -1067,6 +1097,12 @@ to: {1}</value>
   </data>
   <data name="AllowBackgroundActivityInfo" xml:space="preserve">
     <value>This will improve reliability for incoming notifications and Telegram calls.</value>
+  </data>
+  <data name="AllowBackgroundActivityInfoOneUIAboveS" xml:space="preserve">
+    <value>This will improve reliability for incoming notifications and Telegram calls. Please select **Optimised** or **Unrestricted** in Settings &gt; Battery.</value>
+  </data>
+  <data name="AllowBackgroundActivityInfoOneUIBelowS" xml:space="preserve">
+    <value>This will improve reliability for incoming notifications and Telegram calls. Tap Settings -&gt; Battery and turn **Allow background activity** on.</value>
   </data>
   <data name="AllowCustomQuickReply" xml:space="preserve">
     <value>Allow Custom</value>
@@ -1713,6 +1749,12 @@ To confirm Telegram login, please go to Settings &gt; Devices &gt; Scan QR and s
   <data name="AuthAnotherWebClientUrl" xml:space="preserve">
     <value>https://web.telegram.org/</value>
   </data>
+  <data name="AutoDelete1Day" xml:space="preserve">
+    <value>1 day</value>
+  </data>
+  <data name="AutoDelete1Hour" xml:space="preserve">
+    <value>1 hour</value>
+  </data>
   <data name="AutoDelete1Month" xml:space="preserve">
     <value>1 month</value>
   </data>
@@ -1724,6 +1766,9 @@ To confirm Telegram login, please go to Settings &gt; Devices &gt; Scan QR and s
   </data>
   <data name="AutoDeleteAfter" xml:space="preserve">
     <value>Auto-delete after {0}</value>
+  </data>
+  <data name="AutoDeleteAfteTitle" xml:space="preserve">
+    <value>Auto-delete after...</value>
   </data>
   <data name="AutoDeleteAlertChannelInfo" xml:space="preserve">
     <value>Automatically delete new messages after a certain period of time for subscribers of this channel.</value>
@@ -1763,6 +1808,9 @@ To confirm Telegram login, please go to Settings &gt; Devices &gt; Scan QR and s
   </data>
   <data name="AutoDeleteNever" xml:space="preserve">
     <value>Off</value>
+  </data>
+  <data name="AutoDeletePopupDescription" xml:space="preserve">
+    <value>Automatically delete messages sent in this chat after a certain period of time.</value>
   </data>
   <data name="AutoDeletePopupTitle" xml:space="preserve">
     <value>Auto-Delete</value>
@@ -2206,8 +2254,23 @@ Sunrise: {1}</value>
   <data name="Bot" xml:space="preserve">
     <value>bot</value>
   </data>
+  <data name="BotAddToMenu" xml:space="preserve">
+    <value>Add to Menu</value>
+  </data>
+  <data name="BotAlreadyAddedToAttachMenu" xml:space="preserve">
+    <value>This bot has already been added to your attachments menu.</value>
+  </data>
+  <data name="BotCantAddToAttachMenu" xml:space="preserve">
+    <value>This bot can't be added to attachments menu.</value>
+  </data>
   <data name="BotCantJoinGroups" xml:space="preserve">
     <value>This bot can't join groups.</value>
+  </data>
+  <data name="BotCantOpenAttachMenuChannel" xml:space="preserve">
+    <value>This bot can't be opened in channels.</value>
+  </data>
+  <data name="BotCantOpenAttachMenuGroup" xml:space="preserve">
+    <value>This bot can't be opened in groups.</value>
   </data>
   <data name="BotHelp" xml:space="preserve">
     <value>Help</value>
@@ -2217,6 +2280,17 @@ Sunrise: {1}</value>
   </data>
   <data name="BotInvite" xml:space="preserve">
     <value>Add to group</value>
+  </data>
+  <data name="BotMessagePreview" xml:space="preserve">
+    <value>Message Preview</value>
+  </data>
+  <data name="BotOpenPageMessage" xml:space="preserve">
+    <value>**{0}** would like to open its web app to proceed.
+
+It will be able to access your **IP address** and basic device info.</value>
+  </data>
+  <data name="BotOpenPageTitle" xml:space="preserve">
+    <value>Open page</value>
   </data>
   <data name="BotOwnershipTransfer" xml:space="preserve">
     <value>Transfer Bot Ownership</value>
@@ -2233,8 +2307,23 @@ Sunrise: {1}</value>
   <data name="BotPermissionGameAlert" xml:space="preserve">
     <value>Allow {0} to pass your Telegram name and id (not your phone number) to pages you open with this bot?</value>
   </data>
+  <data name="BotRemoveFromMenu" xml:space="preserve">
+    <value>Remove **{0}** from attachments menu?</value>
+  </data>
+  <data name="BotRemoveFromMenuTitle" xml:space="preserve">
+    <value>Remove bot</value>
+  </data>
+  <data name="BotRequestAttachPermission" xml:space="preserve">
+    <value>**{0}** asks your permission to be added as an option to your attachments menu so you could access it from any chat.</value>
+  </data>
   <data name="BotRestart" xml:space="preserve">
     <value>Restart bot</value>
+  </data>
+  <data name="BotRestrictionsCanDo" xml:space="preserve">
+    <value>What can this bot do?</value>
+  </data>
+  <data name="BotSetAttachLinkNotBot" xml:space="preserve">
+    <value>This link does not lead to a bot.</value>
   </data>
   <data name="BotSettings" xml:space="preserve">
     <value>Settings</value>
@@ -2259,6 +2348,60 @@ Sunrise: {1}</value>
   </data>
   <data name="BotUnblock" xml:space="preserve">
     <value>RESTART</value>
+  </data>
+  <data name="BotWebViewDeleteBot" xml:space="preserve">
+    <value>Delete bot</value>
+  </data>
+  <data name="BotWebViewFileChooserTitle" xml:space="preserve">
+    <value>Choose a file</value>
+  </data>
+  <data name="BotWebViewOpenBot" xml:space="preserve">
+    <value>Open bot</value>
+  </data>
+  <data name="BotWebViewReloadPage" xml:space="preserve">
+    <value>Reload page</value>
+  </data>
+  <data name="BotWebViewRequestAllow" xml:space="preserve">
+    <value>Allow</value>
+  </data>
+  <data name="BotWebViewRequestCameraPermission" xml:space="preserve">
+    <value>Allow **{0}** to access to your camera?
+
+The developer of **{0}** will be able to access your camera while you are using this web app.</value>
+  </data>
+  <data name="BotWebViewRequestCameraPermissionWithHint" xml:space="preserve">
+    <value>Allow **{0}** to access to your camera?
+
+The developer of **{0}** will be able to access your camera while you are using this web app.
+
+To allow access to your camera tap Settings -&gt; Permissions, and turn **Camera** on.</value>
+  </data>
+  <data name="BotWebViewRequestDontAllow" xml:space="preserve">
+    <value>Don't Allow</value>
+  </data>
+  <data name="BotWebViewRequestGeolocationPermission" xml:space="preserve">
+    <value>Allow **{0}** to access to your location?
+
+The developer of **{0}** will be able to access your location while you are using this web app.</value>
+  </data>
+  <data name="BotWebViewRequestGeolocationPermissionWithHint" xml:space="preserve">
+    <value>Allow **{0}** to access to your location?
+
+The developer of **{0}** will be able to access your location while you are using this web app.
+
+To allow access to your location tap Settings -&gt; Permissions, and turn **Location** on.</value>
+  </data>
+  <data name="BotWebViewRequestMicrophonePermission" xml:space="preserve">
+    <value>Allow **{0}** to access to your microphone?
+
+The developer of **{0}** will be able to access your microphone while you are using this web app.</value>
+  </data>
+  <data name="BotWebViewRequestMicrophonePermissionWithHint" xml:space="preserve">
+    <value>Allow **{0}** to access to your microphone?
+
+The developer of **{0}** will be able to access your microphone while you are using this web app.
+
+To allow access to your microphone tap Settings -&gt; Permissions, and turn **Microphone** on.</value>
   </data>
   <data name="BroadcastGroup" xml:space="preserve">
     <value>Broadcast Group</value>
@@ -3356,6 +3499,12 @@ Minimum length is 5 characters.</value>
   <data name="ChooseTheme" xml:space="preserve">
     <value>Choose theme</value>
   </data>
+  <data name="ChooseTimeForAutoDelete" xml:space="preserve">
+    <value>Choose time for auto-delete</value>
+  </data>
+  <data name="ChooseTimeForMute" xml:space="preserve">
+    <value>Choose time</value>
+  </data>
   <data name="ChooseYourLanguage" xml:space="preserve">
     <value>Choose your language</value>
   </data>
@@ -3991,6 +4140,9 @@ You can always switch back to the default Telegram theme here.</value>
   <data name="DebugMenuClearMediaCache" xml:space="preserve">
     <value>Clear sent media cache</value>
   </data>
+  <data name="DebugMenuClearWebViewCache" xml:space="preserve">
+    <value>Clear WebView cache</value>
+  </data>
   <data name="DebugMenuDisableCamera" xml:space="preserve">
     <value>Disable in-app camera</value>
   </data>
@@ -4225,6 +4377,9 @@ You can always switch back to the default Telegram theme here.</value>
   <data name="DeleteMessagesOptionAlso" xml:space="preserve">
     <value>Also delete for {0}</value>
   </data>
+  <data name="DeleteMessagesOptionAlsoChat" xml:space="preserve">
+    <value>Also clear for all members</value>
+  </data>
   <data name="DeleteMessagesText" xml:space="preserve">
     <value>You can also delete the {0} you sent from **{1}**'s inbox by checking "Unsend my messages".</value>
   </data>
@@ -4284,6 +4439,42 @@ You can always switch back to the default Telegram theme here.</value>
   </data>
   <data name="DeleteThisGroup" xml:space="preserve">
     <value>Delete this group</value>
+  </data>
+  <data name="DeleteTones_few" xml:space="preserve">
+    <value>Delete {0} tones</value>
+  </data>
+  <data name="DeleteTones_many" xml:space="preserve">
+    <value>Delete {0} tones</value>
+  </data>
+  <data name="DeleteTones_one" xml:space="preserve">
+    <value>Delete {0} tone</value>
+  </data>
+  <data name="DeleteTones_other" xml:space="preserve">
+    <value>Delete {0} tones</value>
+  </data>
+  <data name="DeleteTones_two" xml:space="preserve">
+    <value>Delete {0} tones</value>
+  </data>
+  <data name="DeleteTones_zero" xml:space="preserve">
+    <value>Delete {0} tones</value>
+  </data>
+  <data name="DeleteTonesMessage_few" xml:space="preserve">
+    <value>Are you sure you want to delete **{0} notification sounds**?</value>
+  </data>
+  <data name="DeleteTonesMessage_many" xml:space="preserve">
+    <value>Are you sure you want to delete **{0} notification sounds**?</value>
+  </data>
+  <data name="DeleteTonesMessage_one" xml:space="preserve">
+    <value>Are you sure you want to delete notification sound?</value>
+  </data>
+  <data name="DeleteTonesMessage_other" xml:space="preserve">
+    <value>Are you sure you want to delete **{0} notification sounds**?</value>
+  </data>
+  <data name="DeleteTonesMessage_two" xml:space="preserve">
+    <value>Are you sure you want to delete **{0} notification sounds**?</value>
+  </data>
+  <data name="DeleteTonesMessage_zero" xml:space="preserve">
+    <value>Are you sure you want to delete **{0} notification sounds**?</value>
   </data>
   <data name="Deletions_few" xml:space="preserve">
     <value />
@@ -4390,6 +4581,12 @@ Your remaining options are to try another number or to contact Telegram Support.
   </data>
   <data name="DiscardChanges" xml:space="preserve">
     <value>Discard changes?</value>
+  </data>
+  <data name="DiscardSelectionAlertMessage" xml:space="preserve">
+    <value>Are you sure you want to discard the selection?</value>
+  </data>
+  <data name="DiscardSelectionAlertTitle" xml:space="preserve">
+    <value>Discard selection?</value>
   </data>
   <data name="DiscardVideoMessageDescription" xml:space="preserve">
     <value>Are you sure you want to stop recording and discard your video message?</value>
@@ -4937,6 +5134,15 @@ Please enter theme name:</value>
   </data>
   <data name="ErrorOccurred" xml:space="preserve">
     <value>An error occurred.</value>
+  </data>
+  <data name="ErrorRingtoneDurationTooLong" xml:space="preserve">
+    <value>The duration is longer than 5 seconds.</value>
+  </data>
+  <data name="ErrorRingtoneInvalidFormat" xml:space="preserve">
+    <value>The file is not in mp3 or ogg format.</value>
+  </data>
+  <data name="ErrorRingtoneSizeTooBig" xml:space="preserve">
+    <value>The size is over 100 Kb.</value>
   </data>
   <data name="ErrorSendRestrictedMedia" xml:space="preserve">
     <value>Sorry, the admins of this group have restricted you from sending media.</value>
@@ -6730,7 +6936,7 @@ Messages will be imported into the current day but will also include their origi
 Messages will be imported into the current day but will also include their original timestamps. Both sides will see the messages.</value>
   </data>
   <data name="ImportUploading" xml:space="preserve">
-    <value>Importing messages and media... **%d%**</value>
+    <value>Importing messages and media... **{0}%**</value>
   </data>
   <data name="InactiveChannelSignature" xml:space="preserve">
     <value>channel, inactive for {0}</value>
@@ -6794,6 +7000,9 @@ Messages will be imported into the current day but will also include their origi
   </data>
   <data name="InvalidFirstName" xml:space="preserve">
     <value>Invalid first name</value>
+  </data>
+  <data name="InvalidFormatError" xml:space="preserve">
+    <value>Invalid format</value>
   </data>
   <data name="InvalidLastName" xml:space="preserve">
     <value>Sorry, this last name can't be used</value>
@@ -7554,6 +7763,12 @@ Your phone number will remain hidden.</value>
   <data name="MakeMyselfVisibleTitle" xml:space="preserve">
     <value>Show Your Profile?</value>
   </data>
+  <data name="ManageAllFilesRational" xml:space="preserve">
+    <value>Please allow **Telegram** to manage all files to open in-app file browser</value>
+  </data>
+  <data name="ManageAllFilesRational2" xml:space="preserve">
+    <value>Telegram needs permission to manage all files to migrate old cache files to Scoped Storage</value>
+  </data>
   <data name="ManageChannel" xml:space="preserve">
     <value>Manage Channel</value>
   </data>
@@ -8094,6 +8309,9 @@ Minimum length is 5 characters.</value>
   <data name="Mi" xml:space="preserve">
     <value>mi</value>
   </data>
+  <data name="MigrateOldFolder" xml:space="preserve">
+    <value>Migrate old folder to Scoped Storage</value>
+  </data>
   <data name="MigrateOldFolderButton" xml:space="preserve">
     <value>Move Files Now</value>
   </data>
@@ -8255,11 +8473,20 @@ This may take a few moments. You can continue using the app while the files are 
   <data name="MuteForAlert" xml:space="preserve">
     <value>Mute notifications for...</value>
   </data>
+  <data name="MuteForButton" xml:space="preserve">
+    <value>Mute for {0}</value>
+  </data>
   <data name="MuteForPopup" xml:space="preserve">
     <value>Mute for...</value>
   </data>
   <data name="MuteNotifications" xml:space="preserve">
     <value>Mute notifications</value>
+  </data>
+  <data name="MyChannels" xml:space="preserve">
+    <value>My Channels</value>
+  </data>
+  <data name="MyGroups" xml:space="preserve">
+    <value>My Groups</value>
   </data>
   <data name="NearbyCreateGroup" xml:space="preserve">
     <value>Create a Local Group</value>
@@ -8672,6 +8899,9 @@ Please make sure you entered the right Server URL and Stream Key in your app.</v
   <data name="NoSubscribeRequestsDescription" xml:space="preserve">
     <value>There are no pending requests
 to join this channel.</value>
+  </data>
+  <data name="NotfificationsFrequencyTitle" xml:space="preserve">
+    <value>Notifications frequency</value>
   </data>
   <data name="NotificationActionPinnedContact" xml:space="preserve">
     <value>{0} pinned a contact in the group {1}</value>
@@ -9144,6 +9374,9 @@ to join this channel.</value>
   <data name="NotificationsForPrivateChats" xml:space="preserve">
     <value>Notifications for private chats</value>
   </data>
+  <data name="NotificationsFrequencyDivider" xml:space="preserve">
+    <value>in</value>
+  </data>
   <data name="NotificationsGroups" xml:space="preserve">
     <value>Groups</value>
   </data>
@@ -9227,6 +9460,18 @@ to join this channel.</value>
   </data>
   <data name="NotificationsSilent" xml:space="preserve">
     <value>Silent</value>
+  </data>
+  <data name="NotificationsSound" xml:space="preserve">
+    <value>Notification Sound</value>
+  </data>
+  <data name="NotificationsSoundChannels" xml:space="preserve">
+    <value>Channels Sound</value>
+  </data>
+  <data name="NotificationsSoundGroup" xml:space="preserve">
+    <value>Groups Sound</value>
+  </data>
+  <data name="NotificationsSoundPrivate" xml:space="preserve">
+    <value>Private Chats Sound</value>
   </data>
   <data name="NotificationsTurnOff" xml:space="preserve">
     <value>Turn Off</value>
@@ -10597,6 +10842,9 @@ We will access your location only for the duration you choose, and you can stop 
   <data name="PhoneNumberHelp" xml:space="preserve">
     <value>You can change your Telegram number here. Your account and all your cloud data — messages, media, contacts, etc. will be moved to the new number.</value>
   </data>
+  <data name="PhoneNumberKeepButton" xml:space="preserve">
+    <value>Keep {0}</value>
+  </data>
   <data name="PhoneNumberSearch" xml:space="preserve">
     <value>Phone number</value>
   </data>
@@ -11203,6 +11451,9 @@ We will access your location only for the duration you choose, and you can stop 
   <data name="PrivacyPhoneInfo3" xml:space="preserve">
     <value>Users who add your number to their contacts will see it on Telegram only if they are your contacts.</value>
   </data>
+  <data name="PrivacyPhoneInfo4" xml:space="preserve">
+    <value>This public link opens a chat with you:</value>
+  </data>
   <data name="PrivacyPhoneTitle" xml:space="preserve">
     <value>Who can see my phone number?</value>
   </data>
@@ -11569,6 +11820,9 @@ We will access your location only for the duration you choose, and you can stop 
   <data name="Reactions" xml:space="preserve">
     <value>Reactions</value>
   </data>
+  <data name="ReactionsCount" xml:space="preserve">
+    <value>{0}/{1}</value>
+  </data>
   <data name="ReactionsCount_few" xml:space="preserve">
     <value />
   </data>
@@ -11704,6 +11958,9 @@ We will access your location only for the duration you choose, and you can stop 
   <data name="RemovedFromRecent" xml:space="preserve">
     <value>Sticker was removed from Recent</value>
   </data>
+  <data name="RemoveDocumentsAlertMessage" xml:space="preserve">
+    <value>They will be deleted from your disk, but will remain accessible in the cloud.</value>
+  </data>
   <data name="RemoveDocumentsMessage_few" xml:space="preserve">
     <value />
   </data>
@@ -11714,7 +11971,7 @@ We will access your location only for the duration you choose, and you can stop 
     <value>Do you want remove this item from Downloads?</value>
   </data>
   <data name="RemoveDocumentsMessage_other" xml:space="preserve">
-    <value>Do you want remove these **%d items** from Downloads?</value>
+    <value>Do you want remove these **{0} items** from Downloads?</value>
   </data>
   <data name="RemoveDocumentsMessage_two" xml:space="preserve">
     <value />
@@ -11729,10 +11986,10 @@ We will access your location only for the duration you choose, and you can stop 
     <value />
   </data>
   <data name="RemoveDocumentsTitle_one" xml:space="preserve">
-    <value>Remove %d download</value>
+    <value>Remove {0} download</value>
   </data>
   <data name="RemoveDocumentsTitle_other" xml:space="preserve">
-    <value>Remove %d downloads</value>
+    <value>Remove {0} downloads</value>
   </data>
   <data name="RemoveDocumentsTitle_two" xml:space="preserve">
     <value />
@@ -11827,8 +12084,14 @@ We will access your location only for the duration you choose, and you can stop 
   <data name="ReportChatFakeAccount" xml:space="preserve">
     <value>Fake Account</value>
   </data>
+  <data name="ReportChatIllegalDrugs" xml:space="preserve">
+    <value>Illegal Drugs</value>
+  </data>
   <data name="ReportChatOther" xml:space="preserve">
     <value>Other</value>
+  </data>
+  <data name="ReportChatPersonalDetails" xml:space="preserve">
+    <value>Personal Details</value>
   </data>
   <data name="ReportChatPornography" xml:space="preserve">
     <value>Pornography</value>
@@ -12193,6 +12456,9 @@ The channel "**{1}**" will become private.</value>
   </data>
   <data name="SavedMessagesInfo" xml:space="preserve">
     <value>Forward here to save.</value>
+  </data>
+  <data name="SaveForNotifications" xml:space="preserve">
+    <value>Save for notifications</value>
   </data>
   <data name="SaveLink" xml:space="preserve">
     <value>Save Link</value>
@@ -13192,17 +13458,32 @@ Slow Mode is enabled. You can't send more than one message at once.</value>
   <data name="Sound" xml:space="preserve">
     <value>Sound</value>
   </data>
+  <data name="SoundAdded" xml:space="preserve">
+    <value>Sound added</value>
+  </data>
+  <data name="SoundAddedSubtitle" xml:space="preserve">
+    <value>You can now use this sound as a notification tone in your **custom notification settings**.</value>
+  </data>
   <data name="SoundDefault" xml:space="preserve">
     <value>Default</value>
   </data>
   <data name="SoundMuted" xml:space="preserve">
     <value>Sound muted</value>
   </data>
+  <data name="SoundNameEmpty" xml:space="preserve">
+    <value>Message dated {0}</value>
+  </data>
   <data name="SoundOff" xml:space="preserve">
-    <value>Sound off</value>
+    <value>Disable sound</value>
+  </data>
+  <data name="SoundOffHint" xml:space="preserve">
+    <value>You will receive silent notifications. </value>
   </data>
   <data name="SoundOn" xml:space="preserve">
-    <value>Sound on</value>
+    <value>Enable sound</value>
+  </data>
+  <data name="SoundOnHint" xml:space="preserve">
+    <value>You will receive notifications with sound.</value>
   </data>
   <data name="Speaking" xml:space="preserve">
     <value>speaking</value>
@@ -13629,6 +13910,9 @@ If '**Sync Contacts**' is enabled, contacts will be re-synced.</value>
   <data name="SystemRoot" xml:space="preserve">
     <value>System Root</value>
   </data>
+  <data name="SystemTones" xml:space="preserve">
+    <value>System tones</value>
+  </data>
   <data name="TapForForwardingOptions" xml:space="preserve">
     <value>Tap here for forwarding options</value>
   </data>
@@ -13735,6 +14019,9 @@ This password will also be required whenever you log in to Telegram on a new dev
   </data>
   <data name="TelegramPassportDeleteTitle" xml:space="preserve">
     <value>Delete Telegram passport</value>
+  </data>
+  <data name="TelegramTones" xml:space="preserve">
+    <value>Telegram tones</value>
   </data>
   <data name="TelegramVersion" xml:space="preserve">
     <value>Telegram for Android {0}</value>
@@ -14022,6 +14309,12 @@ Minimum length is 5 characters.</value>
   <data name="TodayAtFormattedWithToday" xml:space="preserve">
     <value>today at {0}</value>
   </data>
+  <data name="TooLargeError" xml:space="preserve">
+    <value>Too large</value>
+  </data>
+  <data name="TooLongError" xml:space="preserve">
+    <value>Too long</value>
+  </data>
   <data name="TooManyCommunities" xml:space="preserve">
     <value>Too Many Communities</value>
   </data>
@@ -14211,6 +14504,9 @@ But if you're generally not OK with Telegram's modest needs, it won't be possibl
   <data name="UnlockFingerprint" xml:space="preserve">
     <value>Unlock with Fingerprint</value>
   </data>
+  <data name="Unmute" xml:space="preserve">
+    <value>Unmute</value>
+  </data>
   <data name="UnmuteNotifications" xml:space="preserve">
     <value>Unmute</value>
   </data>
@@ -14313,6 +14609,9 @@ But if you're generally not OK with Telegram's modest needs, it won't be possibl
   <data name="UploadItems" xml:space="preserve">
     <value>Upload {0}</value>
   </data>
+  <data name="UploadSound" xml:space="preserve">
+    <value>Upload sound</value>
+  </data>
   <data name="URL" xml:space="preserve">
     <value>URL</value>
   </data>
@@ -14396,6 +14695,9 @@ But if you're generally not OK with Telegram's modest needs, it won't be possibl
   </data>
   <data name="UserAcceptedToGroupPushWithGroup" xml:space="preserve">
     <value>{1}|{0} was accepted into the group</value>
+  </data>
+  <data name="UserAddedAsAdminHint" xml:space="preserve">
+    <value>**{0}** added as admin</value>
   </data>
   <data name="UserBio" xml:space="preserve">
     <value>Bio</value>
@@ -14483,6 +14785,15 @@ You can use **a–z**, **0–9** and underscores. Minimum length is **5** charac
   </data>
   <data name="UserRestrictionsCanDo" xml:space="preserve">
     <value>What can this user do?</value>
+  </data>
+  <data name="UserRestrictionsCantModify" xml:space="preserve">
+    <value>Can't Modify This Option</value>
+  </data>
+  <data name="UserRestrictionsCantModifyDisabled" xml:space="preserve">
+    <value>This action is disabled for all members — please, change it in Group Permissions</value>
+  </data>
+  <data name="UserRestrictionsCantModifyEnabled" xml:space="preserve">
+    <value>This action is enabled for all members — please, change it in Group Permissions</value>
   </data>
   <data name="UserRestrictionsChangeInfo" xml:space="preserve">
     <value>Change Chat Info</value>
@@ -14979,6 +15290,9 @@ You can use **a–z**, **0–9** and underscores. Minimum length is **5** charac
   <data name="VoipChannelStart2" xml:space="preserve">
     <value>Subscribers of this channel will be notified once you start the live stream.</value>
   </data>
+  <data name="VoipChannelStartRecordingRtmpVideoText" xml:space="preserve">
+    <value>Do you want to start recording this live stream and save the result into a video file?</value>
+  </data>
   <data name="VoipChannelStartRecordingVideoText" xml:space="preserve">
     <value>Do you want to start recording this live stream and save the result into a video file?
 
@@ -15338,6 +15652,12 @@ New participants only have access to the audio stream.</value>
   </data>
   <data name="VoipGroupStartNow" xml:space="preserve">
     <value>Start Now</value>
+  </data>
+  <data name="VoipGroupStartRecordingRtmpText" xml:space="preserve">
+    <value>Do you want to start recording this chat and save the result into an audio file?</value>
+  </data>
+  <data name="VoipGroupStartRecordingRtmpVideoText" xml:space="preserve">
+    <value>Do you want to start recording this chat and save the result into a video file?</value>
   </data>
   <data name="VoipGroupStartRecordingText" xml:space="preserve">
     <value>Record this chat and save the result into an audio file?
@@ -15949,6 +16269,9 @@ Do you still remember your password?</value>
   </data>
   <data name="cloud_lng_forwarded_psa_covid" xml:space="preserve">
     <value>COVID-19 Notification from {channel}</value>
+  </data>
+  <data name="lng_about_dice" xml:space="preserve">
+    <value>Send a 🎲 emoji to any chat to get a random number from Telegram.</value>
   </data>
   <data name="lng_about_psa_default" xml:space="preserve">
     <value>This message provides you with a public service announcement. To remove it from your chats list, right click it and select **Hide**.</value>
@@ -16909,9 +17232,6 @@ The group «{group}» will become private.</value>
   <data name="lng_chat_theme_none" xml:space="preserve">
     <value>No
 Theme</value>
-  </data>
-  <data name="lng_choose_file" xml:space="preserve">
-    <value>Choose a file</value>
   </data>
   <data name="lng_choose_files" xml:space="preserve">
     <value>Choose Files</value>
@@ -18864,9 +19184,6 @@ Are you sure you want to run it?</value>
   </data>
   <data name="lng_manage_linked_channel_unlink" xml:space="preserve">
     <value>Unlink channel</value>
-  </data>
-  <data name="lng_manage_messages_ttl_after1" xml:space="preserve">
-    <value>1 day</value>
   </data>
   <data name="lng_manage_peer_banned_users" xml:space="preserve">
     <value>Banned users</value>
@@ -20956,6 +21273,11 @@ Unlike other apps, Telegram doesn't track whether you tapped on a sponsored mess
 
 Telegram offers a free and unlimited service to hundreds of millions of users, which involves significant server and traffic costs. In order to remain independent and stay true to its values, Telegram developed a paid tool to promote messages with user privacy in mind. We welcome responsible advertisers at:</value>
   </data>
+  <data name="lng_sponsored_info_description2" xml:space="preserve">
+    <value>Sponsored Messages are currently in test mode. Once they are fully launched and allow Telegram to cover its basic costs, we will start sharing ad revenue with the owners of public channels in which sponsored messages are displayed.
+
+Online ads should no longer be synonymous with abuse of user privacy. Let us redefine how a tech company should operate – together.</value>
+  </data>
   <data name="lng_sponsored_title" xml:space="preserve">
     <value>What are sponsored messages?</value>
   </data>
@@ -21281,9 +21603,6 @@ you can drag it back from the hidden icons.</value>
   </data>
   <data name="lng_try_other_contact" xml:space="preserve">
     <value>Try someone else</value>
-  </data>
-  <data name="lng_ttl_about_duration1" xml:space="preserve">
-    <value>1 day</value>
   </data>
   <data name="lng_ttl_about_tooltip" xml:space="preserve">
     <value>New messages in this chat will be automatically deleted in {duration}.</value>
