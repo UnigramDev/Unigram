@@ -42,7 +42,7 @@ namespace Unigram.ViewModels
             ChatArchiveCommand = new RelayCommand<Chat>(ChatArchiveExecute);
             ChatMarkCommand = new RelayCommand<Chat>(ChatMarkExecute);
             ChatNotifyCommand = new RelayCommand<Chat>(ChatNotifyExecute);
-            ChatMuteForCommand = new RelayCommand<(Chat, int?)>(ChatMuteForExecute);
+            ChatMuteForCommand = new RelayCommand<Tuple<Chat, int?>>(ChatMuteForExecute);
             ChatDeleteCommand = new RelayCommand<Chat>(ChatDeleteExecute);
             ChatClearCommand = new RelayCommand<Chat>(ChatClearExecute);
             ChatSelectCommand = new RelayCommand<Chat>(ChatSelectExecute);
@@ -269,16 +269,16 @@ namespace Unigram.ViewModels
 
         #region Mute for
 
-        public RelayCommand<(Chat, int?)> ChatMuteForCommand { get; }
-        private async void ChatMuteForExecute((Chat Chat, int? MutedFor) value)
+        public RelayCommand<Tuple<Chat, int?>> ChatMuteForCommand { get; }
+        private async void ChatMuteForExecute(Tuple<Chat, int?> value)
         {
-            var chat = value.Chat;
+            var chat = value.Item1;
             if (chat == null)
             {
                 return;
             }
 
-            if (value.MutedFor is int update)
+            if (value.Item2 is int update)
             {
                 _notificationsService.SetMuteFor(chat, update);
             }
@@ -735,6 +735,8 @@ namespace Unigram.ViewModels
                             }
                         }
 
+                        IsEmpty = Count == 0;
+
                         _hasMoreItems = chats.ChatIds.Count > 0;
                         _aggregator.Subscribe(this);
 
@@ -871,6 +873,8 @@ namespace Unigram.ViewModels
                                 _viewModel.SelectedItems.Remove(chat);
                                 _viewModel.Delegate?.SetSelectedItems(_viewModel.SelectedItems);
                             }
+
+                            IsEmpty = Count == 0;
                         });
 
                         //if (!_hasMoreItems)
@@ -926,6 +930,23 @@ namespace Unigram.ViewModels
             }
 
             #endregion
+
+            private bool _isEmpty;
+            public bool IsEmpty
+            {
+                get
+                {
+                    return _isEmpty;
+                }
+                set
+                {
+                    if (_isEmpty != value)
+                    {
+                        _isEmpty = value;
+                        OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsEmpty)));
+                    }
+                }
+            }
         }
     }
 
