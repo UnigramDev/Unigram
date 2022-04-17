@@ -567,6 +567,7 @@ namespace Unigram
                 // Popups
                 Unigram.Views.Settings.Popups.SettingsUsernamePopup => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.SettingsUsernameViewModel>(sessionId),
                 Unigram.Views.Settings.Popups.SettingsDataAutoPopup => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.SettingsDataAutoViewModel>(sessionId),
+                Unigram.Views.Popups.ChooseSoundPopup => TLContainer.Current.Resolve<Unigram.ViewModels.ChooseSoundViewModel>(sessionId),
                 _ => null
             };
         }

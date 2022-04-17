@@ -1084,6 +1084,14 @@
                     _storageService ??= new Unigram.Services.StorageService(_protoService),
                     _eventAggregator);
             }
+            else if (type == typeof(Unigram.ViewModels.ChooseSoundViewModel))
+            {
+                return (T)(object)new Unigram.ViewModels.ChooseSoundViewModel(
+                    _protoService,
+                    _cacheService,
+                    _settingsService,
+                    _eventAggregator);
+            }
             else if (type == typeof(Unigram.Services.IDeviceInfoService))
             {
                 return (T)_deviceInfoService;

@@ -546,7 +546,7 @@ namespace Unigram.Controls
             throw new NotImplementedException();
         }
 
-        public Task<ContentDialogResult> ShowAsync(Type sourcePopupType, object parameter)
+        public Task<ContentDialogResult> ShowAsync(Type sourcePopupType, object parameter = null, TaskCompletionSource<object> tsc = null)
         {
             throw new NotImplementedException();
         }

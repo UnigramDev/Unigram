@@ -2044,6 +2044,7 @@ namespace Unigram.Views
 
                 // Files
                 flyout.CreateFlyoutItem(MessageSaveAnimation_Loaded, ViewModel.MessageSaveAnimationCommand, message, Strings.Resources.SaveToGIFs, new FontIcon { Glyph = Icons.Gif });
+                flyout.CreateFlyoutItem(MessageSaveSound_Loaded, ViewModel.MessageSaveSoundCommand, message, Strings.Resources.SaveForNotifications, new FontIcon { Glyph = Icons.MusicNote2 });
                 flyout.CreateFlyoutItem(MessageSaveMedia_Loaded, ViewModel.MessageSaveMediaCommand, message, Strings.Resources.lng_mediaview_save_as, new FontIcon { Glyph = Icons.SaveAs });
                 flyout.CreateFlyoutItem(MessageSaveMedia_Loaded, ViewModel.MessageOpenWithCommand, message, Strings.Resources.OpenInExternalApp, new FontIcon { Glyph = Icons.OpenIn });
                 flyout.CreateFlyoutItem(MessageSaveMedia_Loaded, ViewModel.MessageOpenFolderCommand, message, Strings.Resources.lng_context_show_in_folder, new FontIcon { Glyph = Icons.FolderOpen });
@@ -2554,6 +2555,41 @@ namespace Unigram.Views
             else if (message.Content is MessageAnimation)
             {
                 return true;
+            }
+
+            return false;
+        }
+
+        private bool MessageSaveSound_Loaded(MessageViewModel message)
+        {
+            if (message.CanBeSaved is false)
+            {
+                return false;
+            }
+
+            // TODO: max count
+            if (message.Content is MessageText text)
+            {
+                if (text.WebPage?.Audio != null)
+                {
+                    return text.WebPage.Audio.Duration <= ViewModel.CacheService.Options.NotificationSoundDurationMax
+                        && text.WebPage.Audio.AudioValue.Size <= ViewModel.CacheService.Options.NotificationSoundSizeMax;
+                }
+                else if (text.WebPage?.VoiceNote != null)
+                {
+                    return text.WebPage.VoiceNote.Duration <= ViewModel.CacheService.Options.NotificationSoundDurationMax
+                        && text.WebPage.VoiceNote.Voice.Size <= ViewModel.CacheService.Options.NotificationSoundSizeMax;
+                }
+            }
+            else if (message.Content is MessageAudio audio)
+            {
+                return audio.Audio.Duration <= ViewModel.CacheService.Options.NotificationSoundDurationMax
+                    && audio.Audio.AudioValue.Size <= ViewModel.CacheService.Options.NotificationSoundSizeMax;
+            }
+            else if (message.Content is MessageVoiceNote voiceNote)
+            {
+                return voiceNote.VoiceNote.Duration <= ViewModel.CacheService.Options.NotificationSoundDurationMax
+                    && voiceNote.VoiceNote.Voice.Size <= ViewModel.CacheService.Options.NotificationSoundSizeMax;
             }
 
             return false;

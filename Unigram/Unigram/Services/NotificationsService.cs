@@ -16,6 +16,7 @@ using Windows.ApplicationModel.AppService;
 using Windows.Data.Xml.Dom;
 using Windows.Foundation.Collections;
 using Windows.Networking.PushNotifications;
+using Windows.Storage;
 using Windows.UI.Notifications;
 using Windows.UI.Xaml.Controls;
 
@@ -398,17 +399,17 @@ namespace Unigram.Services
                 case NotificationTypeNewCall:
                     break;
                 case NotificationTypeNewMessage newMessage:
-                    ProcessNewMessage(group, notification.Id, newMessage.Message, notification.Date, notification.IsSilent);
+                    ProcessNewMessage(group, notification.Id, newMessage.Message, notification.Date, notification.SoundId);
                     break;
                 case NotificationTypeNewPushMessage newPushMessage:
-                    ProcessNewPushMessage(group, notification.Id, chatId, newPushMessage, notification.Date, notification.IsSilent);
+                    ProcessNewPushMessage(group, notification.Id, chatId, newPushMessage, notification.Date, notification.SoundId);
                     break;
                 case NotificationTypeNewSecretChat:
                     break;
             }
         }
 
-        private async void ProcessNewPushMessage(int groupId, int id, long chatId, NotificationTypeNewPushMessage message, int date, bool silent)
+        private async void ProcessNewPushMessage(int groupId, int id, long chatId, NotificationTypeNewPushMessage message, int date, long soundId)
         {
             var chat = _protoService.GetChat(chatId);
             if (chat == null)
@@ -418,11 +419,20 @@ namespace Unigram.Services
 
             var caption = GetCaption(chat);
             var content = GetContent(chat, message);
-            var sound = silent ? "silent" : string.Empty;
+            var sound = soundId == 0 ? "silent" : string.Empty;
             var launch = GetLaunch(chat, message);
             var picture = GetPhoto(chat);
             var dateTime = Converter.DateTime(date).ToUniversalTime().ToString("s") + "Z";
             var canReply = !(chat.Type is ChatTypeSupergroup super && super.IsChannel);
+
+            if (soundId != 0)
+            {
+                var response = await _protoService.SendAsync(new GetSavedNotificationSound(soundId));
+                if (response is NotificationSound notificationSound && notificationSound.Sound.Local.IsDownloadingCompleted)
+                {
+                    sound = "ms-appdata:///local/" + Path.GetRelativePath(ApplicationData.Current.LocalFolder.Path, notificationSound.Sound.Local.Path);
+                }
+            }
 
             var user = _protoService.GetUser(_protoService.Options.MyId);
             var attribution = user?.GetFullName() ?? string.Empty;
@@ -444,7 +454,7 @@ namespace Unigram.Services
             });
         }
 
-        private async void ProcessNewMessage(int groupId, int id, Message message, int date, bool silent)
+        private async void ProcessNewMessage(int groupId, int id, Message message, int date, long soundId)
         {
             var chat = _protoService.GetChat(message.ChatId);
             if (chat == null)
@@ -454,11 +464,20 @@ namespace Unigram.Services
 
             var caption = GetCaption(chat);
             var content = GetContent(chat, message);
-            var sound = silent ? "silent" : string.Empty;
+            var sound = soundId == 0 ? "silent" : string.Empty;
             var launch = GetLaunch(chat, message);
             var picture = GetPhoto(chat);
             var dateTime = Converter.DateTime(date).ToUniversalTime().ToString("s") + "Z";
             var canReply = !(chat.Type is ChatTypeSupergroup super && super.IsChannel);
+
+            if (soundId != 0)
+            {
+                var response = await _protoService.SendAsync(new GetSavedNotificationSound(soundId));
+                if (response is NotificationSound notificationSound && notificationSound.Sound.Local.IsDownloadingCompleted)
+                {
+                    sound = "ms-appdata:///local/" + Path.GetRelativePath(ApplicationData.Current.LocalFolder.Path, notificationSound.Sound.Local.Path);
+                }
+            }
 
             var user = _protoService.GetUser(_protoService.Options.MyId);
             var attribution = user?.GetFullName() ?? string.Empty;
@@ -1417,7 +1436,7 @@ namespace Unigram.Services
             _protoService.Send(new SetChatNotificationSettings(chat.Id,
                 new ChatNotificationSettings(
                     useDefault, muteFor,
-                    settings.UseDefaultSound, settings.Sound,
+                    settings.UseDefaultSound, settings.SoundId,
                     settings.UseDefaultShowPreview, settings.ShowPreview,
                     settings.UseDefaultDisablePinnedMessageNotifications, settings.DisablePinnedMessageNotifications,
                     settings.UseDefaultDisableMentionNotifications, settings.DisableMentionNotifications)));

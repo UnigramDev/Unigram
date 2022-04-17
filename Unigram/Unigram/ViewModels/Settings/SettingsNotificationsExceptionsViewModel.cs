@@ -2,10 +2,13 @@
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
+using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Navigation.Services;
 using Unigram.Services;
+using Unigram.Views.Popups;
 using Windows.Foundation;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Navigation;
 
@@ -16,6 +19,7 @@ namespace Unigram.ViewModels.Settings
         public SettingsNotificationsExceptionsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
+            ChooseSoundCommand = new RelayCommand(ChooseSound);
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -90,6 +94,25 @@ namespace Unigram.ViewModels.Settings
             }
 
             public bool HasMoreItems => _hasMoreItems;
+        }
+
+        public RelayCommand ChooseSoundCommand { get; }
+        private async void ChooseSound()
+        {
+            var tsc = new TaskCompletionSource<object>();
+
+            var confirm = await NavigationService.ShowAsync(typeof(ChooseSoundPopup), Scope.SoundId, tsc);
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            var selected = await tsc.Task;
+            if (selected is NotificationSound sound)
+            {
+                Scope.SoundId = sound.Id;
+                Scope.SendExecute();
+            }
         }
     }
 

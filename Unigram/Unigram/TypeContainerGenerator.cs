@@ -164,6 +164,7 @@ namespace Unigram
                 typeof(FoldersViewModel),
                 typeof(FolderViewModel),
                 typeof(DownloadsViewModel),
+                typeof(ChooseSoundViewModel),
             };
 
             // Preprocess: find out lazy singletons used by singletons to promote

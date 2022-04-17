@@ -1,62 +1,19 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Text;
-using System.Text.RegularExpressions;
-using Windows.Storage;
 
 namespace Unigram
 {
     public class TypeCrosserGenerator
     {
-        public static async void Generate()
+        public static void Generate()
         {
-            var schemeInfo = new FileInfo(Path.Combine(ApplicationData.Current.LocalFolder.Path, "scheme.tl"));
-            if (schemeInfo.Exists is false)
-            {
-                using var client = new HttpClient();
-                var response = await client.GetStringAsync("https://raw.githubusercontent.com/tdlib/td/master/td/generate/scheme/td_api.tl");
+            var types = typeof(Telegram.Td.Api.File).Assembly.GetTypes();
 
-                File.WriteAllText("scheme.tl", response);
-            }
-
-            var scheme = File.ReadAllLines(schemeInfo.FullName);
-            var functions = false;
-
-            //var types = new Dictionary<string, string>();
-            var types = new List<KeyValuePair<string, string>>();
-
-            foreach (var line in scheme)
-            {
-                if (string.IsNullOrEmpty(line) || line.StartsWith("//"))
-                {
-                    continue;
-                }
-                else if (line.Equals("---functions---"))
-                {
-                    functions = true;
-                    continue;
-                }
-
-                var split = line.Split('=');
-                var type = split[1].Trim(' ', ';');
-
-                if (functions)
-                {
-
-                }
-                else
-                {
-                }
-                types.Add(new KeyValuePair<string, string>(type, split[0]));
-            }
-
-            var typesToCross = new List<string>();
-            var typesToCrossMap = new List<KeyValuePair<string, Dictionary<string, string>>>();
+            var typesToCross = new List<Type>();
+            var typesToCrossMap = new Dictionary<Type, Dictionary<string, Type>>();
             var addedSomething = true;
-
-            var vectorRegex = new Regex("vector<(.*?)>", RegexOptions.Compiled);
 
             while (addedSomething)
             {
@@ -64,58 +21,52 @@ namespace Unigram
 
                 foreach (var type in types)
                 {
-                    var split = type.Value.Split(' ');
-                    if (split.Length <= 1)
+                    if (type.IsInterface)
                     {
                         continue;
                     }
 
-                    var targets = new Dictionary<string, string>();
+                    var properties = type.GetProperties();
+                    var targets = new Dictionary<string, Type>();
 
-                    foreach (var item in split.Skip(1))
+                    foreach (var item in properties)
                     {
-                        var pair = item.Split(':');
-                        if (pair.Length < 2)
+                        var property = item.PropertyType;
+                        if (property.IsGenericType)
                         {
-                            continue;
+                            property = item.PropertyType.GenericTypeArguments[0];
                         }
 
-                        var match = vectorRegex.Match(pair[1]);
-                        if (match.Success)
+                        if (property == typeof(Telegram.Td.Api.File) || typesToCross.Contains(property))
                         {
-                            pair[1] = match.Groups[1].Value;
-                        }
-
-                        var pair1 = pair[1].CamelCase();
-                        if (pair1 == "file" || typesToCross.Contains(pair1))
-                        {
-                            if (match.Success)
-                            {
-                                targets[pair[0]] = match.Value;
-                            }
-                            else
-                            {
-                                targets[pair[0]] = pair1;
-                            }
+                            targets[item.Name] = item.PropertyType;
                         }
                     }
 
                     if (targets.Count > 0)
                     {
-                        var split0 = split[0].CamelCase();
-                        if (!typesToCross.Contains(split0))
+                        if (typesToCrossMap.TryGetValue(type, out var existing))
                         {
-                            typesToCrossMap.Add(new KeyValuePair<string, Dictionary<string, string>>(split0, targets));
-
-                            typesToCross.Add(split0);
+                            if (existing.Count < targets.Count)
+                            {
+                                addedSomething = true;
+                            }
+                        }
+                        else
+                        {
+                            typesToCross.Add(type);
                             addedSomething = true;
                         }
 
-                        var key = type.Key.CamelCase();
-                        if (!typesToCross.Contains(key))
+                        typesToCrossMap[type] = targets;
+
+                        foreach (var baseType in type.GetInterfaces())
                         {
-                            typesToCross.Add(key);
-                            addedSomething = true;
+                            if (baseType.IsPublic && baseType.IsVisible && !typesToCross.Contains(baseType))
+                            {
+                                typesToCross.Add(baseType);
+                                addedSomething = true;
+                            }
                         }
                     }
                 }
@@ -127,10 +78,15 @@ namespace Unigram
 
             var first = true;
 
-            foreach (var type in typesToCrossMap)
+            foreach (var type in typesToCrossMap.OrderBy(x => x.Key.Name))
             {
-                var key = type.Key.TitleCase();
-                var name = type.Key.CamelCase();
+                if (type.Key == typeof(Telegram.Td.Api.ChatTheme))
+                {
+                    System.Diagnostics.Debugger.Break();
+                }
+
+                var key = type.Key.Name;
+                var name = type.Key.Name.CamelCase();
 
                 if (first)
                 {
@@ -146,14 +102,9 @@ namespace Unigram
 
                 foreach (var property in type.Value)
                 {
-                    var propertyKey = property.Key.TitleCase();
-                    if (property.Key == name)
-                    {
-                        propertyKey += "Value";
-                    }
+                    var propertyKey = property.Key;
 
-                    var match = vectorRegex.Match(property.Value);
-                    if (match.Success)
+                    if (property.Value.IsGenericType)
                     {
                         builder.AppendLine($"foreach (var item in {name}.{propertyKey})");
                         builder.AppendLine("{");
@@ -165,7 +116,7 @@ namespace Unigram
                         builder.AppendLine($"if ({name}.{propertyKey} != null)");
                         builder.AppendLine("{");
 
-                        if (property.Value == "file")
+                        if (property.Value == typeof(Telegram.Td.Api.File))
                         {
                             builder.AppendLine($"{name}.{propertyKey} = ProcessFile({name}.{propertyKey});");
                         }
@@ -185,7 +136,7 @@ namespace Unigram
             var c = builder.ToString();
 
             var b = string.Join(", ", typesToCross);
-            var a = 2+3;
+            var a = 2 + 3;
         }
     }
 

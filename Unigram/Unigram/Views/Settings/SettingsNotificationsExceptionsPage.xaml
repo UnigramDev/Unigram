@@ -40,9 +40,11 @@
                                   Content="{CustomResource MessagePreview}"
                                   Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                        <controls:BadgeButton IsEnabled="False"
+                        <controls:BadgeButton Command="{x:Bind ViewModel.ChooseSoundCommand}"
                                               Content="{CustomResource Sound}"
-                                              Badge="{CustomResource SoundDefault}" />
+                                              Badge="{x:Bind ViewModel.Scope.SoundTitle, Mode=OneWay}"
+                                              Style="{StaticResource GlyphBadgeButtonStyle}"
+                                              Glyph="&#xE99D;" />
                     </controls:HeaderedControl>
 
                     <TextBlock x:Name="HeaderLabel"

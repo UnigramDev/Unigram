@@ -205,11 +205,18 @@ namespace Unigram.ViewModels.Settings
             set => Set(ref _preview, value);
         }
 
-        private string _sound;
-        public string Sound
+        private long _soundId;
+        public long SoundId
         {
-            get => _sound;
-            set => Set(ref _sound, value);
+            get => _soundId;
+            set => Set(ref _soundId, value);
+        }
+
+        private string _soundTitle;
+        public string SoundTitle
+        {
+            get => _soundTitle;
+            set => Set(ref _soundTitle, value);
         }
 
         private string _exceptionsCount;
@@ -229,7 +236,7 @@ namespace Unigram.ViewModels.Settings
         {
             Alert = true;
             Preview = true;
-            Sound = string.Empty;
+            SoundId = 0;
         }
 
         public void Update(UpdateScopeNotificationSettings update)
@@ -240,7 +247,8 @@ namespace Unigram.ViewModels.Settings
                 {
                     Alert = update.NotificationSettings.MuteFor == 0;
                     Preview = update.NotificationSettings.ShowPreview;
-                    Sound = string.Empty;
+                    SoundId = update.NotificationSettings.SoundId;
+
                     _disablePinnedMessage = false;
                     _disableMention = false;
                 });
@@ -254,10 +262,12 @@ namespace Unigram.ViewModels.Settings
             {
                 Alert = settings.MuteFor == 0;
                 Preview = settings.ShowPreview;
-                Sound = string.Empty;
+                SoundId = settings.SoundId;
 
                 _disablePinnedMessage = settings.DisablePinnedMessageNotifications;
                 _disableMention = settings.DisableMentionNotifications;
+
+                ReloadSound();
             }
 
             var chats = await ProtoService.SendAsync(new GetChatNotificationSettingsExceptions(GetScope(), false)) as Telegram.Td.Api.Chats;
@@ -268,9 +278,15 @@ namespace Unigram.ViewModels.Settings
         }
 
         public RelayCommand SendCommand { get; }
-        public void SendExecute()
+        public async void SendExecute()
         {
-            ProtoService.Send(new SetScopeNotificationSettings(GetScope(), new ScopeNotificationSettings(_alert ? 0 : int.MaxValue, string.Empty, _preview, _disablePinnedMessage, _disableMention)));
+            var settings = await ProtoService.SendAsync(new GetScopeNotificationSettings(GetScope())) as ScopeNotificationSettings;
+            if (settings != null)
+            {
+                await ProtoService.SendAsync(new SetScopeNotificationSettings(GetScope(), new ScopeNotificationSettings(_alert ? 0 : int.MaxValue, _soundId, _preview, _disablePinnedMessage, _disableMention)));
+
+                ReloadSound();
+            }
         }
 
         public async Task ToggleDisablePinnedMessage(bool disable)
@@ -278,7 +294,7 @@ namespace Unigram.ViewModels.Settings
             var settings = await ProtoService.SendAsync(new GetScopeNotificationSettings(GetScope())) as ScopeNotificationSettings;
             if (settings != null)
             {
-                await ProtoService.SendAsync(new SetScopeNotificationSettings(GetScope(), new ScopeNotificationSettings(settings.MuteFor, settings.Sound, settings.ShowPreview, disable, settings.DisableMentionNotifications)));
+                await ProtoService.SendAsync(new SetScopeNotificationSettings(GetScope(), new ScopeNotificationSettings(settings.MuteFor, settings.SoundId, settings.ShowPreview, disable, settings.DisableMentionNotifications)));
             }
         }
 
@@ -302,6 +318,26 @@ namespace Unigram.ViewModels.Settings
         private NotificationSettingsScope GetScope()
         {
             return Activator.CreateInstance(_type) as NotificationSettingsScope;
+        }
+
+        private async void ReloadSound()
+        {
+            if (_soundId != 0)
+            {
+                var response = await ProtoService.SendAsync(new GetSavedNotificationSound(_soundId));
+                if (response is NotificationSound sound)
+                {
+                    SoundTitle = sound.Title;
+                }
+                else
+                {
+                    SoundTitle = Strings.Resources.SoundDefault;
+                }
+            }
+            else
+            {
+                SoundTitle = Strings.Resources.NoSound;
+            }
         }
     }
 }

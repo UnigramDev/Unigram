@@ -194,6 +194,7 @@ namespace Unigram.ViewModels
             MessageUnfaveStickerCommand = new RelayCommand<MessageViewModel>(MessageUnfaveStickerExecute);
             MessageSaveMediaCommand = new RelayCommand<MessageViewModel>(MessageSaveMediaExecute);
             MessageSaveAnimationCommand = new RelayCommand<MessageViewModel>(MessageSaveAnimationExecute);
+            MessageSaveSoundCommand = new RelayCommand<MessageViewModel>(MessageSaveSoundExecute);
             MessageOpenWithCommand = new RelayCommand<MessageViewModel>(MessageOpenWithExecute);
             MessageOpenFolderCommand = new RelayCommand<MessageViewModel>(MessageOpenFolderExecute);
             MessageAddContactCommand = new RelayCommand<MessageViewModel>(MessageAddContactExecute);

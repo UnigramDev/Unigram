@@ -1187,6 +1187,34 @@ namespace Unigram.ViewModels
 
         #endregion
 
+        #region Save for Notifications
+
+        public RelayCommand<MessageViewModel> MessageSaveSoundCommand { get; }
+        private void MessageSaveSoundExecute(MessageViewModel message)
+        {
+            if (message.Content is MessageAudio audio)
+            {
+                ProtoService.Send(new AddSavedNotificationSound(new InputFileId(audio.Audio.AudioValue.Id)));
+            }
+            if (message.Content is MessageVoiceNote voiceNote)
+            {
+                ProtoService.Send(new AddSavedNotificationSound(new InputFileId(voiceNote.VoiceNote.Voice.Id)));
+            }
+            else if (message.Content is MessageText text && text.WebPage != null)
+            {
+                if (text.WebPage.Audio != null)
+                {
+                    ProtoService.Send(new AddSavedNotificationSound(new InputFileId(text.WebPage.Audio.AudioValue.Id)));
+                }
+                else if (text.WebPage.VoiceNote != null)
+                {
+                    ProtoService.Send(new AddSavedNotificationSound(new InputFileId(text.WebPage.VoiceNote.Voice.Id)));
+                }
+            }
+        }
+
+        #endregion
+
         #region Open with
 
         public RelayCommand<MessageViewModel> MessageOpenWithCommand { get; }

@@ -1,0 +1,53 @@
+﻿<controls:ContentPopup x:Class="Unigram.Views.Popups.ChooseSoundPopup"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:local="using:Unigram.Views.Popups"
+                       xmlns:controls="using:Unigram.Controls"
+                       xmlns:viewModels="using:Unigram.ViewModels"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       mc:Ignorable="d"
+                       Title="TITLE"
+                       PrimaryButtonText="Button1"
+                       SecondaryButtonText="Button2"
+                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+
+    <StackPanel>
+        <TextBlock Text="{CustomResource TelegramTones}"
+                   Style="{StaticResource BaseTextBlockStyle}"
+                   Margin="0,8,0,4" />
+
+        <ItemsControl ItemsSource="{x:Bind ViewModel.Items}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="viewModels:NotificationSoundViewModel">
+                    <RadioButton Content="{x:Bind Title}"
+                                 IsChecked="{x:Bind IsSelected, Mode=TwoWay}"
+                                 GroupName="NotificationSound" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <HyperlinkButton Command="{x:Bind ViewModel.UploadCommand}"
+                         Visibility="{x:Bind ViewModel.CanUploadMore, Mode=OneWay}"
+                         Margin="-12,0">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="&#xE99D;"
+                           FontFamily="{StaticResource SymbolThemeFontFamily}"
+                           FontSize="20" />
+                <TextBlock Text="{CustomResource UploadSound}"
+                           Margin="8,0,0,0" />
+            </StackPanel>
+        </HyperlinkButton>
+
+        <TextBlock Text="{CustomResource SystemTones}"
+                   Style="{StaticResource BaseTextBlockStyle}"
+                   Margin="0,16,0,4" />
+        <RadioButton x:Name="NoSound"
+                     Content="{CustomResource NoSound}"
+                     GroupName="NotificationSound" />
+        <RadioButton x:Name="SoundDefault"
+                     Content="{CustomResource SoundDefault}"
+                     GroupName="NotificationSound" />
+    </StackPanel>
+</controls:ContentPopup>

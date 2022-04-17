@@ -41,7 +41,7 @@ namespace Unigram.Navigation.Services
 
 
         Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null, Size size = default);
-        Task<ContentDialogResult> ShowAsync(Type sourcePopupType, object parameter = null);
+        Task<ContentDialogResult> ShowAsync(Type sourcePopupType, object parameter = null, TaskCompletionSource<object> tsc = null);
 
         object CurrentPageParam { get; }
         Type CurrentPageType { get; }
@@ -325,9 +325,9 @@ namespace Unigram.Navigation.Services
             return viewService.OpenAsync(page, parameter, title, size, SessionId);
         }
 
-        public Task<ContentDialogResult> ShowAsync(Type sourcePopupType, object parameter = null)
+        public Task<ContentDialogResult> ShowAsync(Type sourcePopupType, object parameter = null, TaskCompletionSource<object> tsc = null)
         {
-            var popup = Activator.CreateInstance(sourcePopupType) as ContentPopup;
+            var popup = (tsc != null ? Activator.CreateInstance(sourcePopupType, tsc) : Activator.CreateInstance(sourcePopupType)) as ContentPopup;
             if (popup != null)
             {
                 var viewModel = BootStrapper.Current.ViewModelForPage(popup, SessionId);
