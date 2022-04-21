@@ -585,9 +585,9 @@ namespace Unigram.Views
             if (args.InRecycleQueue == true)
             {
                 var test = args.ItemContainer.ContentTemplateRoot as FrameworkElement;
-                if (test is Grid grudd)
+                if (test is not MessageBubble)
                 {
-                    test = grudd.FindName("Bubble") as FrameworkElement;
+                    test = test.FindName("Bubble") as FrameworkElement;
                 }
 
                 if (test is MessageBubble bubbu)
@@ -620,6 +620,14 @@ namespace Unigram.Views
             if (args.ItemContainer is ChatListViewItem selector)
             {
                 selector.PrepareForItemOverride(message);
+            }
+
+            if (content is MessageSelector checkbox)
+            {
+                checkbox.UpdateMessage(message);
+                checkbox.UpdateSelectionEnabled(ViewModel.IsSelectionEnabled, false);
+
+                content = checkbox.Content as FrameworkElement;
             }
 
             if (content is Grid grid)

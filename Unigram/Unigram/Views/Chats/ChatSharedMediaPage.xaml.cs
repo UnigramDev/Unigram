@@ -68,9 +68,9 @@ namespace Unigram.Views.Chats
         private async void Photo_Click(object sender, RoutedEventArgs e)
         {
             var element = sender as FrameworkElement;
-            var message = element.Tag as Message;
+            var message = element.Tag as MessageWithOwner;
 
-            var viewModel = new ChatGalleryViewModel(ViewModel.ProtoService, ViewModel.StorageService, ViewModel.Aggregator, message.ChatId, 0, message, true);
+            var viewModel = new ChatGalleryViewModel(ViewModel.ProtoService, ViewModel.StorageService, ViewModel.Aggregator, message.ChatId, 0, message.Get(), true);
             await GalleryView.GetForCurrentView().ShowAsync(viewModel, () => element);
         }
     }

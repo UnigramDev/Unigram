@@ -796,7 +796,11 @@ namespace Unigram.Views
             {
                 CheckMessageBoxEmpty();
             }
-            else if (e.PropertyName.Equals("Search"))
+            else if (e.PropertyName.Equals(nameof(ViewModel.IsSelectionEnabled)))
+            {
+                ShowHideManagePanel(ViewModel.IsSelectionEnabled);
+            }
+            else if (e.PropertyName.Equals(nameof(ViewModel.Search)))
             {
                 SearchMask.Update(ViewModel.Search);
             }
@@ -964,12 +968,12 @@ namespace Unigram.Views
             var ctrl = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
             var shift = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
 
-            if (args.VirtualKey == Windows.System.VirtualKey.Delete && ViewModel.SelectionMode != ListViewSelectionMode.None && ViewModel.SelectedItems != null && ViewModel.SelectedItems.Count > 0)
+            if (args.VirtualKey == Windows.System.VirtualKey.Delete && ViewModel.IsSelectionEnabled && ViewModel.SelectedItems.Count > 0)
             {
                 ViewModel.MessagesDeleteCommand.Execute();
                 args.Handled = true;
             }
-            else if (args.VirtualKey == Windows.System.VirtualKey.C && ctrl && !alt && !shift && ViewModel.SelectionMode != ListViewSelectionMode.None && ViewModel.SelectedItems != null && ViewModel.SelectedItems.Count > 0)
+            else if (args.VirtualKey == Windows.System.VirtualKey.C && ctrl && !alt && !shift && ViewModel.IsSelectionEnabled && ViewModel.SelectedItems.Count > 0)
             {
                 ViewModel.MessagesCopyCommand.Execute();
                 args.Handled = true;
@@ -1098,9 +1102,9 @@ namespace Unigram.Views
                 args.Handled = true;
             }
 
-            if (ViewModel.SelectionMode != ListViewSelectionMode.None)
+            if (ViewModel.IsSelectionEnabled)
             {
-                ViewModel.SelectionMode = ListViewSelectionMode.None;
+                ViewModel.IsSelectionEnabled = false;
                 args.Handled = true;
             }
 
@@ -1690,7 +1694,7 @@ namespace Unigram.Views
         {
             if (_selectionFromItemClick && Messages.SelectedItems.Count < 1)
             {
-                ViewModel.SelectionMode = ListViewSelectionMode.None;
+                ViewModel.IsSelectionEnabled = false;
             }
 
             _selectionFromItemClick = false;
@@ -1740,7 +1744,7 @@ namespace Unigram.Views
                     }
                 }
             }
-            if (ViewModel.SelectionMode != ListViewSelectionMode.Multiple)
+            if (ViewModel.IsSelectionEnabled is false)
             {
                 if (user != null || basicGroup != null || (supergroup != null && !supergroup.IsChannel && string.IsNullOrEmpty(supergroup.Username)))
                 {
@@ -1935,7 +1939,7 @@ namespace Unigram.Views
             var selected = ViewModel.SelectedItems;
             if (selected.Count > 0)
             {
-                if (selected.Contains(message))
+                if (selected.ContainsKey(message.Id))
                 {
                     flyout.CreateFlyoutItem(ViewModel.MessagesForwardCommand, "Forward Selected", new FontIcon { Glyph = Icons.Share });
 
@@ -3028,14 +3032,7 @@ namespace Unigram.Views
 
         private void List_SelectionModeChanged(DependencyObject sender, DependencyProperty dp)
         {
-            if (ViewModel.SelectionMode == ListViewSelectionMode.None)
-            {
-                ShowHideManagePanel(false);
-            }
-            else
-            {
-                ShowHideManagePanel(true);
-            }
+            ShowHideManagePanel(ViewModel.IsSelectionEnabled);
         }
 
         private bool _manageCollapsed;
@@ -3120,11 +3117,6 @@ namespace Unigram.Views
         public string ConvertEmptyText(long userId)
         {
             return userId != 777000 && userId != 429000 && userId != 4244000 && (userId / 1000 == 333 || userId % 1000 == 0) ? Strings.Resources.GotAQuestion : Strings.Resources.NoMessages;
-        }
-
-        private bool ConvertClickEnabled(ListViewSelectionMode mode)
-        {
-            return mode == ListViewSelectionMode.Multiple;
         }
 
         #endregion
@@ -4136,8 +4128,8 @@ namespace Unigram.Views
             btnVoiceMessage.CornerRadius = new CornerRadius(4, max, min, 4);
             btnSendMessage.CornerRadius = new CornerRadius(4, max, min, 4);
             btnEdit.CornerRadius = new CornerRadius(4, max, min, 4);
-            ButtonManage.CornerRadius = new CornerRadius(4, min, min, 4);
-            ButtonForward.CornerRadius = new CornerRadius(min, 4, 4, min);
+            ButtonDelete.CornerRadius = new CornerRadius(4, min, min, 4);
+            ButtonManage.CornerRadius = new CornerRadius(min, 4, 4, min);
 
             ComposerHeaderCancel.CornerRadius = new CornerRadius(4, min, 4, 4);
             TextRoot.CornerRadius = ChatFooter.CornerRadius = ChatRecord.CornerRadius = ManagePanel.CornerRadius = new CornerRadius(radius, radius, 0, 0);

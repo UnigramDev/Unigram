@@ -566,5 +566,29 @@ namespace Unigram.ViewModels
 
             return null;
         }
+
+        public void Select(MessageViewModel message)
+        {
+            SelectedItems[message.Id] = message;
+
+            MessagesForwardCommand.RaiseCanExecuteChanged();
+            MessagesDeleteCommand.RaiseCanExecuteChanged();
+            MessagesCopyCommand.RaiseCanExecuteChanged();
+            MessagesReportCommand.RaiseCanExecuteChanged();
+
+            RaisePropertyChanged(nameof(SelectedCount));
+        }
+
+        public void Unselect(long messageId)
+        {
+            SelectedItems.Remove(messageId);
+
+            MessagesForwardCommand.RaiseCanExecuteChanged();
+            MessagesDeleteCommand.RaiseCanExecuteChanged();
+            MessagesCopyCommand.RaiseCanExecuteChanged();
+            MessagesReportCommand.RaiseCanExecuteChanged();
+
+            RaisePropertyChanged(nameof(SelectedCount));
+        }
     }
 }

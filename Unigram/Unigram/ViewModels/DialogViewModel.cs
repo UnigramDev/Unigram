@@ -30,19 +30,9 @@ namespace Unigram.ViewModels
 {
     public partial class DialogViewModel : TLViewModelBase, IDelegable<IDialogDelegate>
     {
-        private List<MessageViewModel> _selectedItems = new List<MessageViewModel>();
-        public List<MessageViewModel> SelectedItems
-        {
-            get => _selectedItems;
-            set
-            {
-                Set(ref _selectedItems, value);
-                MessagesForwardCommand.RaiseCanExecuteChanged();
-                MessagesDeleteCommand.RaiseCanExecuteChanged();
-                MessagesCopyCommand.RaiseCanExecuteChanged();
-                MessagesReportCommand.RaiseCanExecuteChanged();
-            }
-        }
+        public IDictionary<long, MessageViewModel> SelectedItems { get; } = new Dictionary<long, MessageViewModel>();
+
+        public int SelectedCount => SelectedItems.Count;
 
         public void ExpandSelection(IEnumerable<MessageViewModel> vector)
         {
@@ -69,7 +59,7 @@ namespace Unigram.ViewModels
                 }
             }
 
-            SelectedItems = messages;
+            //SelectedItems = messages;
         }
 
         protected bool _wasScreenCaptureEnabled;
@@ -443,17 +433,21 @@ namespace Unigram.ViewModels
             }
         }
 
-        private ListViewSelectionMode _selectionMode = ListViewSelectionMode.None;
-        public ListViewSelectionMode SelectionMode
+        private bool _isSelectionEnabled;
+        public bool IsSelectionEnabled
         {
-            get => _selectionMode;
+            get => _isSelectionEnabled;
             set
             {
-                Set(ref _selectionMode, value);
+                Set(ref _isSelectionEnabled, value);
 
-                if (value != ListViewSelectionMode.None)
+                if (value)
                 {
                     DisposeSearch();
+                }
+                else
+                {
+                    SelectedItems.Clear();
                 }
             }
         }
@@ -1952,8 +1946,9 @@ namespace Unigram.ViewModels
 
             _groupedMessages.Clear();
             _hasLoadedLastPinnedMessage = false;
-            _selectedItems = new List<MessageViewModel>();
             _chatActionManager = null;
+
+            SelectedItems.Clear();
 
             OnlineCount = null;
 
@@ -1962,7 +1957,7 @@ namespace Unigram.ViewModels
             LockedPinnedMessageId = 0;
 
             DisposeSearch();
-            SelectionMode = ListViewSelectionMode.None;
+            IsSelectionEnabled = false;
 
             IsLastSliceLoaded = null;
             IsFirstSliceLoaded = null;
@@ -2201,7 +2196,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            if (_selectionMode != ListViewSelectionMode.None && !clear)
+            if (_isSelectionEnabled && !clear)
             {
                 return;
             }

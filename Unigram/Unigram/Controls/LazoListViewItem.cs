@@ -1,86 +1,44 @@
-﻿using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
+﻿using Unigram.Controls.Chats;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
 namespace Unigram.Controls
 {
     public class LazoListViewItem : ListViewItem
     {
-        private readonly LazoListView _parent;
+        private readonly ChatListView _parent;
 
-        public LazoListViewItem(LazoListView parent)
+        public LazoListViewItem(ChatListView parent)
         {
             _parent = parent;
         }
 
-        protected override void OnPointerPressed(PointerRoutedEventArgs e)
+        public new void PointerPressed(PointerRoutedEventArgs e)
         {
-            if (e.OriginalSource is ListViewItemPresenter && !CantSelect())
+            if (!CantSelect())
             {
                 _parent.OnPointerPressed(this, e);
             }
-            else if (e.OriginalSource is Grid grid && string.Equals(grid.Name, "ContentPresenterGrid") && !CantSelect())
-            {
-                _parent.OnPointerPressed(this, e);
-            }
-
-            base.OnPointerPressed(e);
         }
 
-        protected override void OnPointerEntered(PointerRoutedEventArgs e)
+        public new void PointerEntered(PointerRoutedEventArgs e)
         {
-            if (e.OriginalSource is ListViewItemPresenter)
-            {
-                _parent.OnPointerEntered(this, e);
-            }
-            else if (e.OriginalSource is Grid grid && string.Equals(grid.Name, "ContentPresenterGrid") && !CantSelect())
-            {
-                _parent.OnPointerEntered(this, e);
-            }
-
-            base.OnPointerEntered(e);
+            _parent.OnPointerEntered(this, e);
         }
 
-        protected override void OnPointerMoved(PointerRoutedEventArgs e)
+        public new void PointerMoved(PointerRoutedEventArgs e)
         {
-            if (e.OriginalSource is ListViewItemPresenter)
-            {
-                _parent.OnPointerMoved(this, e);
-            }
-            else if (e.OriginalSource is Grid grid && string.Equals(grid.Name, "ContentPresenterGrid") && !CantSelect())
-            {
-                _parent.OnPointerMoved(this, e);
-            }
-
-            base.OnPointerMoved(e);
+            _parent.OnPointerMoved(this, e);
         }
 
-        protected override void OnPointerReleased(PointerRoutedEventArgs e)
+        public new void PointerReleased(PointerRoutedEventArgs e)
         {
-            if (e.OriginalSource is ListViewItemPresenter)
-            {
-                _parent.OnPointerReleased(this, e);
-            }
-            else if (e.OriginalSource is Grid grid && string.Equals(grid.Name, "ContentPresenterGrid") && !CantSelect())
-            {
-                _parent.OnPointerReleased(this, e);
-            }
-
-            base.OnPointerReleased(e);
+            _parent.OnPointerReleased(this, e);
         }
 
-        protected override void OnPointerCanceled(PointerRoutedEventArgs e)
+        public new void PointerCanceled(PointerRoutedEventArgs e)
         {
-            if (e.OriginalSource is ListViewItemPresenter)
-            {
-                _parent.OnPointerCanceled(this, e);
-            }
-            else if (e.OriginalSource is Grid grid && string.Equals(grid.Name, "ContentPresenterGrid") && !CantSelect())
-            {
-                _parent.OnPointerCanceled(this, e);
-            }
-
-            base.OnPointerCanceled(e);
+            _parent.OnPointerCanceled(this, e);
         }
 
         public virtual bool CantSelect()

@@ -1,0 +1,48 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="using:Unigram.Controls.Messages"
+                    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+                    xmlns:icons="using:Unigram.Assets.Icons"
+                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    mc:Ignorable="d"
+                    d:DesignHeight="300"
+                    d:DesignWidth="400">
+
+    <Style TargetType="local:MessageSelector">
+        <Setter Property="HorizontalAlignment"
+                Value="Stretch" />
+        <Setter Property="VerticalAlignment"
+                Value="Stretch" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:MessageSelector">
+                    <Grid x:Name="LayoutRoot"
+                          Background="Transparent"
+                          Margin="-36,0,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <muxc:AnimatedIcon x:Name="Icon"
+                                           x:Load="False"
+                                           muxc:AnimatedIcon.State="Normal"
+                                           AutomationProperties.AccessibilityView="Raw"
+                                           Margin="12,0,0,0"
+                                           Width="24"
+                                           Height="24">
+                            <icons:Select />
+                        </muxc:AnimatedIcon>
+
+                        <ContentPresenter x:Name="Presenter"
+                                          Content="{TemplateBinding Content}"
+                                          Padding="{TemplateBinding Padding}"
+                                          HorizontalContentAlignment="Stretch"
+                                          VerticalContentAlignment="Stretch"
+                                          Grid.Column="1" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

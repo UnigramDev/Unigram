@@ -11,6 +11,13 @@ namespace Unigram.ViewModels.Delegates
 
         IEventAggregator Aggregator { get; }
 
+        IDictionary<long, MessageViewModel> SelectedItems { get; }
+
+        bool IsSelectionEnabled { get; }
+
+        void Select(MessageViewModel message);
+        void Unselect(long messageId);
+
         bool CanBeDownloaded(object content, File file);
         void DownloadFile(MessageViewModel message, File file);
 

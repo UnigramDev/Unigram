@@ -3,18 +3,21 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls.Messages;
 using Unigram.ViewModels;
+using Windows.Devices.Input;
+using Windows.UI.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 using Point = Windows.Foundation.Point;
 
 namespace Unigram.Controls.Chats
 {
-    public class ChatListView : LazoListView
+    public class ChatListView : SelectListView
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
@@ -41,15 +44,12 @@ namespace Unigram.Controls.Chats
         {
             DefaultStyleKey = typeof(ListView);
 
-            Loaded += OnLoaded;
-        }
+            _recognizer = new GestureRecognizer();
+            _recognizer.GestureSettings = GestureSettings.DoubleTap;
+            _recognizer.Tapped += Recognizer_Tapped;
 
-        protected override void OnDoubleTapped(SelectorItem selector)
-        {
-            if (selector.ContentTemplateRoot is FrameworkElement root && root.Tag is MessageViewModel message)
-            {
-                ViewModel.ReplyToMessage(message);
-            }
+
+            Loaded += OnLoaded;
         }
 
         public void ScrollToBottom()
@@ -216,89 +216,6 @@ namespace Unigram.Controls.Chats
             return new ChatListViewItem(this);
         }
 
-        protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
-        {
-            var container = element as ListViewItem;
-            var message = item as MessageViewModel;
-            var chat = message?.GetChat();
-
-            if (container != null && message != null && chat != null)
-            {
-                var action = message.IsSaved() || message.IsShareable();
-
-                if (message.IsService())
-                {
-                    container.Padding = new Thickness(12, 0, 12, 0);
-
-                    container.HorizontalAlignment = HorizontalAlignment.Stretch;
-                    container.Width = double.NaN;
-                    container.Height = double.NaN;
-                    container.Margin = new Thickness();
-                }
-                else if (message.IsSaved() || (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup) && !message.IsChannelPost)
-                {
-                    if (message.IsOutgoing && !message.IsSaved())
-                    {
-                        if (message.Content is MessageSticker or MessageVideoNote)
-                        {
-                            container.Padding = new Thickness(12, 0, 12, 0);
-                        }
-                        else
-                        {
-                            container.Padding = new Thickness(50, 0, 12, 0);
-                        }
-                    }
-                    else
-                    {
-                        if (message.Content is MessageSticker or MessageVideoNote)
-                        {
-                            container.Padding = new Thickness(12, 0, 12, 0);
-                        }
-                        else
-                        {
-                            container.Padding = new Thickness(12, 0, action ? 14 : 50, 0);
-                        }
-                    }
-                }
-                else
-                {
-                    if (message.Content is MessageSticker or MessageVideoNote)
-                    {
-                        container.Padding = new Thickness(12, 0, 12, 0);
-                    }
-                    else
-                    {
-                        if (message.IsOutgoing && !message.IsChannelPost)
-                        {
-                            container.Padding = new Thickness(50, 0, 12, 0);
-                        }
-                        else
-                        {
-                            container.Padding = new Thickness(12, 0, action ? 14 : 50, 0);
-                        }
-                    }
-                }
-            }
-
-            base.PrepareContainerForItemOverride(element, item);
-        }
-
-        protected override bool CantSelect(object item)
-        {
-            return item is MessageViewModel message && message.IsService();
-        }
-
-        protected override long IdFromContainer(DependencyObject container)
-        {
-            var item = ItemFromContainer(container) as MessageViewModel;
-            if (item != null)
-            {
-                return item.Id;
-            }
-
-            return -1;
-        }
-
         public async Task ScrollToItem(object item, VerticalAlignment alignment, bool highlight, double? pixel = null, ScrollIntoViewAlignment direction = ScrollIntoViewAlignment.Leading, bool? disableAnimation = null)
         {
             var scrollViewer = ScrollingHost;
@@ -382,5 +299,334 @@ namespace Unigram.Controls.Chats
             _programmaticScrolling = _programmaticExternal = false;
             ViewVisibleMessages?.Invoke(true);
         }
+
+        #region Selection
+
+        private bool _isSelectionEnabled;
+
+        public bool IsSelectionEnabled
+        {
+            get { return (bool)GetValue(IsSelectionEnabledProperty); }
+            set { SetValue(IsSelectionEnabledProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for IsSelectionEnabled.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty IsSelectionEnabledProperty =
+            DependencyProperty.Register("IsSelectionEnabled", typeof(bool), typeof(ChatListView), new PropertyMetadata(false, OnSelectionEnabledChanged));
+
+        private static void OnSelectionEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((ChatListView)d).OnSelectionEnabledChanged((bool)e.OldValue, (bool)e.NewValue);
+        }
+
+        private void OnSelectionEnabledChanged(bool oldValue, bool newValue)
+        {
+            _isSelectionEnabled = newValue;
+
+            var panel = ItemsPanelRoot as ItemsStackPanel;
+            if (panel == null)
+            {
+                return;
+            }
+
+            for (int i = panel.FirstCacheIndex; i <= panel.LastCacheIndex; i++)
+            {
+                var container = ContainerFromIndex(i) as ListViewItem;
+                if (container == null)
+                {
+                    continue;
+                }
+
+                var content = container.ContentTemplateRoot as MessageSelector;
+                if (content != null)
+                {
+                    content.UpdateSelectionEnabled(newValue, true);
+                }
+            }
+        }
+
+        private MessageViewModel _firstItem;
+        private MessageViewModel _lastItem;
+        private bool _operation;
+        private SelectionDirection _direction;
+
+        private bool _pressed;
+        private Point _position;
+
+        private readonly GestureRecognizer _recognizer;
+
+        private void Recognizer_Tapped(GestureRecognizer sender, TappedEventArgs args)
+        {
+            if (args.TapCount == 2 && args.PointerDeviceType == PointerDeviceType.Mouse)
+            {
+                sender.CompleteGesture();
+
+                var children = VisualTreeHelper.FindElementsInHostCoordinates(args.Position, this);
+                var selector = children?.FirstOrDefault(x => x is SelectorItem) as SelectorItem;
+                if (selector != null)
+                {
+                    OnDoubleTapped(selector);
+                }
+            }
+        }
+
+        protected void OnDoubleTapped(SelectorItem selector)
+        {
+            if (selector.ContentTemplateRoot is FrameworkElement root && root.Tag is MessageViewModel message)
+            {
+                ViewModel.ReplyToMessage(message);
+            }
+        }
+
+        internal void OnPointerPressed(LazoListViewItem item, PointerRoutedEventArgs e)
+        {
+            if (IsSelectionEnabled is false)
+            {
+                var point = e.GetCurrentPoint(Window.Current.Content as FrameworkElement);
+                if (point.Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonPressed && e.Pointer.PointerDeviceType == PointerDeviceType.Mouse)
+                {
+                    try
+                    {
+                        _recognizer.ProcessDownEvent(point);
+                    }
+                    catch
+                    {
+                        _recognizer.CompleteGesture();
+                    }
+                }
+            }
+
+            _pressed = true;
+        }
+
+        internal void OnPointerEntered(LazoListViewItem item, PointerRoutedEventArgs e)
+        {
+            if (_firstItem == null || !_pressed || !e.Pointer.IsInContact /*|| SelectionMode != ListViewSelectionMode.Multiple*/ || e.Pointer.PointerDeviceType != PointerDeviceType.Mouse)
+            {
+                return;
+            }
+
+            var point = e.GetCurrentPoint(item);
+            if (!point.Properties.IsLeftButtonPressed)
+            {
+                return;
+            }
+
+            e.Handled = true;
+
+            if (IsSelectionEnabled is false)
+            {
+                IsSelectionEnabled = true;
+            }
+
+            var message = ItemFromContainer(item) as MessageViewModel;
+            if (message == null)
+            {
+                return;
+            }
+
+            if (_direction == SelectionDirection.None)
+            {
+                _direction = message.Id > _firstItem.Id
+                    ? SelectionDirection.Down
+                    : SelectionDirection.Up;
+            }
+
+            var direction = message.Id > _lastItem.Id
+                ? SelectionDirection.Down
+                : SelectionDirection.Up;
+
+            if (direction != SelectionDirection.None)
+            {
+                var contains = ViewModel.SelectedItems.ContainsKey(message.Id);
+
+                if (direction == _direction)
+                {
+                    if (_operation && !contains)
+                    {
+                        ViewModel.Select(message);
+                        ViewModel.Select(_lastItem);
+                    }
+                    else if (!_operation && contains)
+                    {
+                        ViewModel.Unselect(message.Id);
+                        ViewModel.Unselect(_lastItem.Id);
+                    }
+                }
+                else if (direction != _direction)
+                {
+                    System.Diagnostics.Debug.WriteLine(" - Opposite direction");
+
+                    if (!_operation && !contains)
+                    {
+                        ViewModel.Select(message);
+                        ViewModel.Select(_lastItem);
+                    }
+                    else if (_operation && contains)
+                    {
+                        ViewModel.Unselect(message.Id);
+                        ViewModel.Unselect(_lastItem.Id);
+                    }
+                }
+
+                var last = ContainerFromItem(_lastItem) as SelectorItem;
+                if (last?.ContentTemplateRoot is MessageSelector lastSelector)
+                {
+                    lastSelector.UpdateMessage(_lastItem);
+                }
+
+                if (item.ContentTemplateRoot is MessageSelector selector)
+                {
+                    selector.UpdateMessage(message);
+                }
+            }
+
+            _lastItem = message;
+        }
+
+        internal void OnPointerMoved(LazoListViewItem item, PointerRoutedEventArgs e)
+        {
+            if (!_pressed || !e.Pointer.IsInContact || e.Pointer.PointerDeviceType != PointerDeviceType.Mouse)
+            {
+                return;
+            }
+
+            var message = ItemFromContainer(item) as MessageViewModel;
+            if (message == null)
+            {
+                return;
+            }
+
+            if (_firstItem != null && _firstItem != message)
+            {
+                return;
+            }
+
+            var point = e.GetCurrentPoint(item);
+            if (!point.Properties.IsLeftButtonPressed)
+            {
+                return;
+            }
+
+            e.Handled = true;
+
+            if (_firstItem == null)
+            {
+                _firstItem = _lastItem = message;
+                _operation = !ViewModel.SelectedItems.ContainsKey(message.Id);
+
+                _position = point.Position;
+            }
+            else if (_firstItem == message)
+            {
+                var contains = ViewModel.SelectedItems.ContainsKey(message.Id);
+
+                var delta = Math.Abs(point.Position.Y - _position.Y);
+                if (delta > 10)
+                {
+                    if (_operation && !contains)
+                    {
+                        ViewModel.Select(message);
+                    }
+                    else if (!_operation && contains)
+                    {
+                        ViewModel.Unselect(message.Id);
+                    }
+
+                    IsSelectionEnabled = true;
+
+                    if (item.ContentTemplateRoot is MessageSelector selector)
+                    {
+                        selector.ReleasePointerCapture(e.Pointer);
+                        selector.UpdateMessage(message);
+                    }
+                }
+                else
+                {
+                    if (_operation && contains)
+                    {
+                        ViewModel.Unselect(message.Id);
+                    }
+                    else if (!_operation && !contains)
+                    {
+                        ViewModel.Select(message);
+                    }
+
+                    _direction = SelectionDirection.None;
+                    _lastItem = message;
+
+                    if (item.ContentTemplateRoot is MessageSelector selector)
+                    {
+                        selector.UpdateMessage(message);
+                    }
+                }
+            }
+        }
+
+        internal void OnPointerReleased(LazoListViewItem item, PointerRoutedEventArgs e)
+        {
+            var point = e.GetCurrentPoint(Window.Current.Content as FrameworkElement);
+            if (point.Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonReleased && e.Pointer.PointerDeviceType == PointerDeviceType.Mouse)
+            {
+                try
+                {
+                    _recognizer.ProcessUpEvent(point);
+                }
+                catch
+                {
+                    _recognizer.CompleteGesture();
+                }
+            }
+
+            var handled = _firstItem != null && ViewModel.SelectedItems.ContainsKey(_firstItem.Id) == _operation;
+
+            _firstItem = null;
+            _lastItem = null;
+
+            _pressed = false;
+            _position = new Point();
+
+            if (IsSelectionEnabled is false)
+            {
+                return;
+            }
+
+            if (ViewModel.SelectedItems.Count < 1)
+            {
+                IsSelectionEnabled = false;
+            }
+
+            e.Handled = handled;
+        }
+
+        internal void OnPointerCanceled(LazoListViewItem item, PointerRoutedEventArgs e)
+        {
+            _recognizer.CompleteGesture();
+        }
+
+        protected bool CantSelect(object item)
+        {
+            return item is MessageViewModel message && message.IsService();
+        }
+
+        protected long IdFromContainer(DependencyObject container)
+        {
+            var item = ItemFromContainer(container) as MessageViewModel;
+            if (item != null)
+            {
+                return item.Id;
+            }
+
+            return -1;
+        }
+
+        enum SelectionDirection
+        {
+            None,
+            Up,
+            Down,
+        }
+
+        #endregion
     }
 }

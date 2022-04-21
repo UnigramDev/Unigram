@@ -483,6 +483,11 @@ namespace Unigram.ViewModels.Chats
         #region Unselect
 
         public RelayCommand MessagesUnselectCommand { get; }
+
+        IDictionary<long, MessageViewModel> IMessageDelegate.SelectedItems => throw new NotImplementedException();
+
+        public bool IsSelectionEnabled => false;
+
         private void MessagesUnselectExecute()
         {
             SelectionMode = ListViewSelectionMode.None;
@@ -670,6 +675,16 @@ namespace Unigram.ViewModels.Chats
         }
 
         public void OpenThread(MessageViewModel message)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Select(MessageViewModel message)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Unselect(long messageId)
         {
             throw new NotImplementedException();
         }
