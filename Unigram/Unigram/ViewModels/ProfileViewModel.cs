@@ -350,6 +350,10 @@ namespace Unigram.ViewModels
                 {
                     NavigationService.GoBack();
                 }
+                else
+                {
+                    NavigationService.NavigateToChat(chat);
+                }
             }
             else
             {
