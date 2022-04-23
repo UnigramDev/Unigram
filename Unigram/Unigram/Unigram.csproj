@@ -139,6 +139,7 @@
     <Compile Include="Assets\Icons\Privacy.cs" />
     <Compile Include="Assets\Icons\PrivacyPolicy.cs" />
     <Compile Include="Assets\Icons\ReactionsMore.cs" />
+    <Compile Include="Assets\Icons\Select.cs" />
     <Compile Include="Assets\Icons\Stickers.cs" />
     <Compile Include="Assets\Icons\Username.cs" />
     <Compile Include="Assets\Icons\Profile.cs" />
@@ -371,7 +372,6 @@
     <Compile Include="Controls\InlineBotResultsView.xaml.cs">
       <DependentUpon>InlineBotResultsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\LazoListView.cs" />
     <Compile Include="Controls\LazoListViewItem.cs" />
     <Compile Include="Controls\LoadingTextBlock.cs" />
     <Compile Include="Controls\LoopingPicker.cs" />
@@ -420,6 +420,9 @@
       <DependentUpon>MessagePinned.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Messages\MessageReferenceBase.cs" />
+    <Compile Include="Controls\Messages\MessageSelector.xaml.cs">
+      <DependentUpon>MessageSelector.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Messages\MessageService.cs" />
     <Compile Include="Controls\Messages\Content\AnimationContent.xaml.cs">
       <DependentUpon>AnimationContent.xaml</DependentUpon>
@@ -672,6 +675,9 @@
     </Compile>
     <Compile Include="Views\Popups\VideoChatStreamsPopup.xaml.cs">
       <DependentUpon>VideoChatStreamsPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Popups\WebBotPopup.xaml.cs">
+      <DependentUpon>WebBotPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\ZoomableMediaPopup.xaml.cs">
       <DependentUpon>ZoomableMediaPopup.xaml</DependentUpon>
@@ -1735,6 +1741,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Messages\MessageSelector.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\PlaybackHeader.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1912,6 +1922,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Popups\VideoChatStreamsPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Popups\WebBotPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

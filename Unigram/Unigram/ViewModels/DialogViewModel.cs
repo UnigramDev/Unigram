@@ -30,7 +30,8 @@ namespace Unigram.ViewModels
 {
     public partial class DialogViewModel : TLViewModelBase, IDelegable<IDialogDelegate>
     {
-        public IDictionary<long, MessageViewModel> SelectedItems { get; } = new Dictionary<long, MessageViewModel>();
+        private readonly ConcurrentDictionary<long, MessageViewModel> _selectedItems = new ConcurrentDictionary<long, MessageViewModel>();
+        public IDictionary<long, MessageViewModel> SelectedItems => _selectedItems;
 
         public int SelectedCount => SelectedItems.Count;
 

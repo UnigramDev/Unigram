@@ -19,6 +19,7 @@ namespace Unigram.Controls.Messages
         private bool _templateApplied;
 
         private MessageViewModel _message;
+        private LazoListViewItem _parent;
 
         public MessageSelector()
         {
@@ -67,10 +68,14 @@ namespace Unigram.Controls.Messages
 
             if (e.OriginalSource is Grid grid && grid.Name == "LayoutRoot")
             {
-                var selector = this.Ancestors<LazoListViewItem>().FirstOrDefault();
-                if (selector != null)
+                if (_parent == null)
                 {
-                    selector.PointerPressed(e);
+                    _parent = this.Ancestors<LazoListViewItem>().FirstOrDefault();
+                }
+
+                if (_parent != null)
+                {
+                    _parent.PointerPressed(e);
                 }
             }
         }
@@ -79,12 +84,16 @@ namespace Unigram.Controls.Messages
         {
             base.OnPointerEntered(e);
 
-            if (_message.Delegate.IsSelectionEnabled && e.OriginalSource is Grid grid && grid.Name == "LayoutRoot")
+            if (e.OriginalSource is Grid grid && grid.Name == "LayoutRoot")
             {
-                var selector = this.Ancestors<LazoListViewItem>().FirstOrDefault();
-                if (selector != null)
+                if (_parent == null)
                 {
-                    selector.PointerEntered(e);
+                    _parent = this.Ancestors<LazoListViewItem>().FirstOrDefault();
+                }
+
+                if (_parent != null)
+                {
+                    _parent.PointerEntered(e);
                 }
             }
         }
@@ -93,12 +102,16 @@ namespace Unigram.Controls.Messages
         {
             base.OnPointerMoved(e);
 
-            if (_message.Delegate.IsSelectionEnabled && e.OriginalSource is Grid grid && grid.Name == "LayoutRoot")
+            if (e.OriginalSource is Grid grid && grid.Name == "LayoutRoot")
             {
-                var selector = this.Ancestors<LazoListViewItem>().FirstOrDefault();
-                if (selector != null)
+                if (_parent == null)
                 {
-                    selector.PointerMoved(e);
+                    _parent = this.Ancestors<LazoListViewItem>().FirstOrDefault();
+                }
+
+                if (_parent != null)
+                {
+                    _parent.PointerMoved(e);
                 }
             }
         }
@@ -107,12 +120,16 @@ namespace Unigram.Controls.Messages
         {
             base.OnPointerReleased(e);
 
-            if (_message.Delegate.IsSelectionEnabled && e.OriginalSource is Grid grid && grid.Name == "LayoutRoot")
+            if (e.OriginalSource is Grid grid && grid.Name == "LayoutRoot")
             {
-                var selector = this.Ancestors<LazoListViewItem>().FirstOrDefault();
-                if (selector != null)
+                if (_parent == null)
                 {
-                    selector.PointerReleased(e);
+                    _parent = this.Ancestors<LazoListViewItem>().FirstOrDefault();
+                }
+
+                if (_parent != null)
+                {
+                    _parent.PointerReleased(e);
                 }
             }
         }
@@ -121,24 +138,35 @@ namespace Unigram.Controls.Messages
         {
             base.OnPointerCanceled(e);
 
-            if (_message.Delegate.IsSelectionEnabled && e.OriginalSource is Grid grid && grid.Name == "LayoutRoot")
+            if (e.OriginalSource is Grid grid && grid.Name == "LayoutRoot")
             {
-                var selector = this.Ancestors<LazoListViewItem>().FirstOrDefault();
-                if (selector != null)
+                if (_parent == null)
                 {
-                    selector.PointerCanceled(e);
+                    _parent = this.Ancestors<LazoListViewItem>().FirstOrDefault();
+                }
+
+                if (_parent != null)
+                {
+                    _parent.PointerCanceled(e);
                 }
             }
         }
 
         public void UpdateMessage(MessageViewModel message)
         {
+            if (_message?.Id != message?.Id || _message?.ChatId != message?.ChatId)
+            {
+                _parent = null;
+            }
+
             _message = message;
 
             var chat = message?.GetChat();
 
             if (message != null && chat != null && _templateApplied)
             {
+                message.UpdateSelectionCallback(this, UpdateSelection);
+
                 IsChecked = _isSelectionEnabled && message.Delegate.SelectedItems.ContainsKey(message.Id);
                 Presenter.IsHitTestVisible = !_isSelectionEnabled;
 
@@ -268,6 +296,30 @@ namespace Unigram.Controls.Messages
                     }
 
                     presenter.Properties.InsertVector3("Translation", new Vector3(value && incoming ? 36 : 0, 0, 0));
+                }
+            }
+        }
+
+        public void UpdateSelection()
+        {
+            var message = _message;
+
+            var chat = message?.GetChat();
+
+            if (message != null && chat != null && _templateApplied)
+            {
+                IsChecked = _isSelectionEnabled && message.Delegate.SelectedItems.ContainsKey(message.Id);
+                Presenter.IsHitTestVisible = !_isSelectionEnabled;
+
+                if (_isSelectionEnabled && Icon == null)
+                {
+                    Icon = GetTemplateChild(nameof(Icon)) as AnimatedIcon;
+                    ElementCompositionPreview.SetIsTranslationEnabled(Icon, true);
+                }
+
+                if (Icon != null)
+                {
+                    AnimatedIcon.SetState(Icon, IsChecked is true ? "Checked" : "Normal");
                 }
             }
         }

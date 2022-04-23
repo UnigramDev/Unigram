@@ -302,8 +302,6 @@ namespace Unigram.Controls.Chats
 
         #region Selection
 
-        private bool _isSelectionEnabled;
-
         public bool IsSelectionEnabled
         {
             get { return (bool)GetValue(IsSelectionEnabledProperty); }
@@ -321,8 +319,6 @@ namespace Unigram.Controls.Chats
 
         private void OnSelectionEnabledChanged(bool oldValue, bool newValue)
         {
-            _isSelectionEnabled = newValue;
-
             var panel = ItemsPanelRoot as ItemsStackPanel;
             if (panel == null)
             {
@@ -438,46 +434,40 @@ namespace Unigram.Controls.Chats
 
             if (direction != SelectionDirection.None)
             {
-                var contains = ViewModel.SelectedItems.ContainsKey(message.Id);
-
-                if (direction == _direction)
+                var begin = Items.IndexOf(_firstItem);
+                if (begin < 0)
                 {
-                    if (_operation && !contains)
+                    return;
+                }
+
+                var index = IndexFromContainer(item);
+                var first = Math.Min(begin, index);
+                var last = Math.Max(begin, index);
+
+                for (int i = first; i <= last; i++)
+                {
+                    var current = Items[i] as MessageViewModel;
+
+                    if (_operation)
                     {
-                        ViewModel.Select(message);
-                        ViewModel.Select(_lastItem);
+                        ViewModel.Select(current);
                     }
-                    else if (!_operation && contains)
+                    else if (!_operation)
                     {
-                        ViewModel.Unselect(message.Id);
+                        ViewModel.Unselect(current.Id);
+                    }
+                }
+
+                if (direction != _direction)
+                {
+                    if (_operation)
+                    {
                         ViewModel.Unselect(_lastItem.Id);
                     }
-                }
-                else if (direction != _direction)
-                {
-                    System.Diagnostics.Debug.WriteLine(" - Opposite direction");
-
-                    if (!_operation && !contains)
+                    else if (!_operation)
                     {
-                        ViewModel.Select(message);
                         ViewModel.Select(_lastItem);
                     }
-                    else if (_operation && contains)
-                    {
-                        ViewModel.Unselect(message.Id);
-                        ViewModel.Unselect(_lastItem.Id);
-                    }
-                }
-
-                var last = ContainerFromItem(_lastItem) as SelectorItem;
-                if (last?.ContentTemplateRoot is MessageSelector lastSelector)
-                {
-                    lastSelector.UpdateMessage(_lastItem);
-                }
-
-                if (item.ContentTemplateRoot is MessageSelector selector)
-                {
-                    selector.UpdateMessage(message);
                 }
             }
 
@@ -538,7 +528,6 @@ namespace Unigram.Controls.Chats
                     if (item.ContentTemplateRoot is MessageSelector selector)
                     {
                         selector.ReleasePointerCapture(e.Pointer);
-                        selector.UpdateMessage(message);
                     }
                 }
                 else
@@ -554,11 +543,6 @@ namespace Unigram.Controls.Chats
 
                     _direction = SelectionDirection.None;
                     _lastItem = message;
-
-                    if (item.ContentTemplateRoot is MessageSelector selector)
-                    {
-                        selector.UpdateMessage(message);
-                    }
                 }
             }
         }

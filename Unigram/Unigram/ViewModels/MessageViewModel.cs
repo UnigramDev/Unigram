@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services;
@@ -11,11 +12,33 @@ namespace Unigram.ViewModels
         private readonly IPlaybackService _playbackService;
         private readonly IMessageDelegate _delegate;
 
+        private WeakAction _updateSelection;
+
         public MessageViewModel(IProtoService protoService, IPlaybackService playbackService, IMessageDelegate delegato, Message message)
             : base(protoService, message)
         {
             _playbackService = playbackService;
             _delegate = delegato;
+        }
+
+        public void SelectionChanged()
+        {
+            if (_updateSelection != null
+                && _updateSelection.IsAlive
+                && _updateSelection.Target != null)
+            {
+                _updateSelection.Execute();
+            }
+        }
+
+        public void UpdateSelectionCallback(object target, Action action)
+        {
+            if (_updateSelection != null)
+            {
+                _updateSelection.MarkForDeletion();
+            }
+
+            _updateSelection = new WeakAction(target, action);
         }
 
         public IPlaybackService PlaybackService => _playbackService;

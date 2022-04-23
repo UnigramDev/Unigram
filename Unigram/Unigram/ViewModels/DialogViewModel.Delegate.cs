@@ -569,7 +569,8 @@ namespace Unigram.ViewModels
 
         public void Select(MessageViewModel message)
         {
-            SelectedItems[message.Id] = message;
+            _selectedItems[message.Id] = message;
+            message.SelectionChanged();
 
             MessagesForwardCommand.RaiseCanExecuteChanged();
             MessagesDeleteCommand.RaiseCanExecuteChanged();
@@ -581,7 +582,10 @@ namespace Unigram.ViewModels
 
         public void Unselect(long messageId)
         {
-            SelectedItems.Remove(messageId);
+            if (_selectedItems.TryRemove(messageId, out MessageViewModel message))
+            {
+                message.SelectionChanged();
+            }
 
             MessagesForwardCommand.RaiseCanExecuteChanged();
             MessagesDeleteCommand.RaiseCanExecuteChanged();
