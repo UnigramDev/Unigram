@@ -851,6 +851,8 @@ namespace Unigram.ViewModels
                                 {
                                     _viewModel.Delegate?.SetSelectedItems(_viewModel.SelectedItems);
                                 }
+
+                                IsEmpty = Count == 0;
                             });
                         }
                         else if (lastMessage)
