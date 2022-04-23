@@ -77,32 +77,32 @@ namespace Unigram.Assets.Icons
         internal static readonly Color c_themeColor_FFFFFF = Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF);
 
         CompositionPropertySet _themeProperties;
-        Color _themeColor_FF0000 = c_themeColor_FF0000;
-        Color _themeColor_FFFFFF = c_themeColor_FFFFFF;
+        Color _themeColor_Background = c_themeColor_FF0000;
+        Color _themeColor_Foreground = c_themeColor_FFFFFF;
 
         // Theme properties.
-        public Color Color_FF0000
+        public Color Background
         {
-            get => _themeColor_FF0000;
+            get => _themeColor_Background;
             set
             {
-                _themeColor_FF0000 = value;
+                _themeColor_Background = value;
                 if (_themeProperties != null)
                 {
-                    _themeProperties.InsertVector4("Color_FF0000", ColorAsVector4((Color)_themeColor_FF0000));
+                    _themeProperties.InsertVector4("Color_FF0000", ColorAsVector4((Color)_themeColor_Background));
                 }
             }
         }
 
-        public Color Color_FFFFFF
+        public Color Foreground
         {
-            get => _themeColor_FFFFFF;
+            get => _themeColor_Foreground;
             set
             {
-                _themeColor_FFFFFF = value;
+                _themeColor_Foreground = value;
                 if (_themeProperties != null)
                 {
-                    _themeProperties.InsertVector4("Color_FFFFFF", ColorAsVector4((Color)_themeColor_FFFFFF));
+                    _themeProperties.InsertVector4("Color_FFFFFF", ColorAsVector4((Color)_themeColor_Foreground));
                 }
             }
         }
@@ -114,8 +114,8 @@ namespace Unigram.Assets.Icons
             if (_themeProperties == null)
             {
                 _themeProperties = compositor.CreatePropertySet();
-                _themeProperties.InsertVector4("Color_FF0000", ColorAsVector4((Color)Color_FF0000));
-                _themeProperties.InsertVector4("Color_FFFFFF", ColorAsVector4((Color)Color_FFFFFF));
+                _themeProperties.InsertVector4("Color_FF0000", ColorAsVector4((Color)Background));
+                _themeProperties.InsertVector4("Color_FFFFFF", ColorAsVector4((Color)Foreground));
             }
             return _themeProperties;
         }
@@ -189,11 +189,11 @@ namespace Unigram.Assets.Icons
         {
             if (propertyName == "Color_FF0000")
             {
-                _themeColor_FF0000 = value;
+                _themeColor_Background = value;
             }
             else if (propertyName == "Color_FFFFFF")
             {
-                _themeColor_FFFFFF = value;
+                _themeColor_Foreground = value;
             }
             else
             {

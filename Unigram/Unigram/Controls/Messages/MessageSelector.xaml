@@ -10,6 +10,8 @@
                     d:DesignWidth="400">
 
     <Style TargetType="local:MessageSelector">
+        <Setter Property="Background"
+                Value="{ThemeResource AccentFillColorDefaultBrush}" />
         <Setter Property="HorizontalAlignment"
                 Value="Stretch" />
         <Setter Property="VerticalAlignment"

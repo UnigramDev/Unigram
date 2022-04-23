@@ -8,6 +8,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Messages
 {
@@ -24,6 +25,29 @@ namespace Unigram.Controls.Messages
         public MessageSelector()
         {
             DefaultStyleKey = typeof(MessageSelector);
+        }
+
+        private void CreateIcon()
+        {
+            if (Icon != null || !_isSelectionEnabled)
+            {
+                return;
+            }
+
+            Icon = GetTemplateChild(nameof(Icon)) as AnimatedIcon;
+            ElementCompositionPreview.SetIsTranslationEnabled(Icon, true);
+
+            RegisterPropertyChangedCallback(BackgroundProperty, OnBackgroundChanged);
+            OnBackgroundChanged(this, BackgroundProperty);
+        }
+
+        private void OnBackgroundChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            var icon = Icon?.Source as Assets.Icons.Select;
+            if (icon != null && Background is SolidColorBrush background)
+            {
+                icon.Background = background.Color;
+            }
         }
 
         protected override void OnApplyTemplate()
@@ -43,11 +67,7 @@ namespace Unigram.Controls.Messages
             {
                 base.OnToggle();
 
-                if (Icon == null)
-                {
-                    Icon = GetTemplateChild(nameof(Icon)) as AnimatedIcon;
-                    ElementCompositionPreview.SetIsTranslationEnabled(Icon, true);
-                }
+                CreateIcon();
 
                 if (IsChecked is true)
                 {
@@ -170,11 +190,7 @@ namespace Unigram.Controls.Messages
                 IsChecked = _isSelectionEnabled && message.Delegate.SelectedItems.ContainsKey(message.Id);
                 Presenter.IsHitTestVisible = !_isSelectionEnabled;
 
-                if (_isSelectionEnabled && Icon == null)
-                {
-                    Icon = GetTemplateChild(nameof(Icon)) as AnimatedIcon;
-                    ElementCompositionPreview.SetIsTranslationEnabled(Icon, true);
-                }
+                CreateIcon();
 
                 if (Icon != null)
                 {
@@ -255,11 +271,7 @@ namespace Unigram.Controls.Messages
                 IsChecked = value && message.Delegate.SelectedItems.ContainsKey(message.Id);
                 Presenter.IsHitTestVisible = !value;
 
-                if (value && Icon == null)
-                {
-                    Icon = GetTemplateChild(nameof(Icon)) as AnimatedIcon;
-                    ElementCompositionPreview.SetIsTranslationEnabled(Icon, true);
-                }
+                CreateIcon();
 
                 var presenter = ElementCompositionPreview.GetElementVisual(Presenter);
                 var incoming = message.IsChannelPost || !message.IsOutgoing;
@@ -311,11 +323,7 @@ namespace Unigram.Controls.Messages
                 IsChecked = _isSelectionEnabled && message.Delegate.SelectedItems.ContainsKey(message.Id);
                 Presenter.IsHitTestVisible = !_isSelectionEnabled;
 
-                if (_isSelectionEnabled && Icon == null)
-                {
-                    Icon = GetTemplateChild(nameof(Icon)) as AnimatedIcon;
-                    ElementCompositionPreview.SetIsTranslationEnabled(Icon, true);
-                }
+                CreateIcon();
 
                 if (Icon != null)
                 {
