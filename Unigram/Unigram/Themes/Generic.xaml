@@ -6055,7 +6055,6 @@
                           Background="{TemplateBinding Background}"
                           BorderBrush="{TemplateBinding BorderBrush}"
                           BorderThickness="{TemplateBinding BorderThickness}"
-                          CornerRadius="{TemplateBinding CornerRadius}"
                           RenderTransformOrigin="0.5,0.5">
 
                         <Grid.RenderTransform>
@@ -6453,6 +6452,8 @@
 
                         </VisualStateManager.VisualStateGroups>
                         <Rectangle x:Name="BorderBackground"
+                                   RadiusX="4"
+                                   RadiusY="4"
                                    IsHitTestVisible="False"
                                    Fill="{ThemeResource SystemControlHighlightListAccentLowBrush}"
                                    Opacity="0"
