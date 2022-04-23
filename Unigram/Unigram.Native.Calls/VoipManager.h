@@ -2,6 +2,7 @@
 
 #include "VoipManager.g.h"
 #include "VoipVideoCapture.h"
+#include "VoipScreenCapture.h"
 #include "Instance.h"
 #include "InstanceImpl.h"
 #include "v2/InstanceV2Impl.h"
