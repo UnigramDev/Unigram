@@ -158,9 +158,12 @@
     <ClInclude Include="..\Libraries\tgcalls\tgcalls\group\AVIOContextImpl.h" />
     <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\ContentNegotiation.h" />
     <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\InstanceV2Impl.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\InstanceV2ReferenceImpl.h" />
     <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\NativeNetworkingImpl.h" />
     <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\Signaling.h" />
     <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\SignalingEncryption.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2_4_0_0\InstanceV2_4_0_0Impl.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2_4_0_0\Signaling_4_0_0.h" />
     <ClInclude Include="BroadcastTimeRequestedEventArgs.h">
       <DependentUpon>BroadcastTimeRequestedEventArgs.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -278,6 +281,9 @@
     <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2\InstanceV2Impl.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2\InstanceV2ReferenceImpl.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2\NativeNetworkingImpl.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -285,6 +291,12 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2\SignalingEncryption.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2_4_0_0\InstanceV2_4_0_0Impl.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2_4_0_0\Signaling_4_0_0.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="BroadcastTimeRequestedEventArgs.cpp">

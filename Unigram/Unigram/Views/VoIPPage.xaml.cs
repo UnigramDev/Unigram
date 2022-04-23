@@ -344,7 +344,7 @@ namespace Unigram.Views
 
         private bool _capturerWasNull = true;
 
-        public void Connect(IVoipVideoCapture capturer)
+        public void Connect(VoipVideoCapture capturer)
         {
             if (_disposed)
             {

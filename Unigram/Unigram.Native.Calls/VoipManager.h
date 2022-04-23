@@ -5,6 +5,8 @@
 #include "Instance.h"
 #include "InstanceImpl.h"
 #include "v2/InstanceV2Impl.h"
+#include "v2/InstanceV2ReferenceImpl.h"
+#include "v2_4_0_0/InstanceV2_4_0_0Impl.h"
 #include "VideoCaptureInterface.h"
 #include "SignalingDataEmittedEventArgs.h"
 #include "RemoteMediaStateUpdatedEventArgs.h"
@@ -19,7 +21,9 @@ using namespace winrt::Telegram::Td::Api;
 namespace winrt::Unigram::Native::Calls::implementation
 {
 	const auto RegisterTag = tgcalls::Register<tgcalls::InstanceImpl>();
-	const auto RegisterTagV2 = tgcalls::Register<tgcalls::InstanceV2Impl>();
+	const auto RegisterTagV2_4_0_0 = tgcalls::Register<tgcalls::InstanceV2_4_0_0Impl>();
+	const auto RegisterTagV2_4_0_1 = tgcalls::Register<tgcalls::InstanceV2Impl>();
+	const auto RegisterTagV2_4_1_2 = tgcalls::Register<tgcalls::InstanceV2ReferenceImpl>();
 
 	struct VoipManager : VoipManagerT<VoipManager>
 	{
@@ -81,7 +85,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 
 		void ReceiveSignalingData(IVector<uint8_t> const data);
 		//virtual void setVideoCapture(std::shared_ptr<VideoCaptureInterface> videoCapture) = 0;
-		void SetVideoCapture(Unigram::Native::Calls::IVoipVideoCapture videoCapture);
+		void SetVideoCapture(Unigram::Native::Calls::VoipVideoCapture videoCapture);
 		void SetRequestedVideoAspect(float aspect);
 
 		//void stop(std::function<void(FinalState)> completion);

@@ -147,6 +147,15 @@
     <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2\SignalingEncryption.cpp">
       <Filter>tgcalls\v2</Filter>
     </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2_4_0_0\InstanceV2_4_0_0Impl.cpp">
+      <Filter>tgcalls\v2_4_0_0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2_4_0_0\Signaling_4_0_0.cpp">
+      <Filter>tgcalls\v2_4_0_0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2\InstanceV2ReferenceImpl.cpp">
+      <Filter>tgcalls\v2</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -332,6 +341,15 @@
     <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\SignalingEncryption.h">
       <Filter>tgcalls\v2</Filter>
     </ClInclude>
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2_4_0_0\InstanceV2_4_0_0Impl.h">
+      <Filter>tgcalls\v2_4_0_0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2_4_0_0\Signaling_4_0_0.h">
+      <Filter>tgcalls\v2_4_0_0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\InstanceV2ReferenceImpl.h">
+      <Filter>tgcalls\v2</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="VoipManager.rc" />
@@ -387,6 +405,9 @@
     </Filter>
     <Filter Include="tgcalls\v2">
       <UniqueIdentifier>{e945ae12-e8e5-4df7-997e-8af91cd5e70f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tgcalls\v2_4_0_0">
+      <UniqueIdentifier>{8fe4c556-271d-41ba-b65a-116fc80b1ed8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

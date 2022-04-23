@@ -2,21 +2,16 @@ import "Unigram.Native.Calls.idl";
 
 namespace Unigram.Native.Calls
 {
-    [version(1)]
-    [uuid(62c4e4f2-dee1-4770-9847-f1d728b9fc8e)]
-    interface IVoipVideoCapture requires Windows.Foundation.IClosable
-    {
-        void SetState(VoipVideoState state);
-        void SetOutput(Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas);
-        void SetOutput(Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas, Boolean enableBlur);
-    }
-
     [default_interface]
-    runtimeclass VoipVideoCapture : IVoipVideoCapture
+    unsealed runtimeclass VoipVideoCapture : Windows.Foundation.IClosable
     {
         VoipVideoCapture(String id);
 
         void SwitchToDevice(String deviceId);
         void SetPreferredAspectRatio(Single aspectRatio);
+
+        void SetState(VoipVideoState state);
+        void SetOutput(Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas);
+        void SetOutput(Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas, Boolean enableBlur);
     }
 } // namespace Unigram.Native.Calls

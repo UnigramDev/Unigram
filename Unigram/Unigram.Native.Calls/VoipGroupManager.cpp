@@ -45,9 +45,15 @@ namespace winrt::Unigram::Native::Calls::implementation
 		impl.initialEnableNoiseSuppression = descriptor.IsNoiseSuppressionEnabled();
 		impl.videoContentType = (tgcalls::VideoContentType)descriptor.VideoContentType();
 
-		if (descriptor.VideoCapture()) {
-			impl.videoCapture = winrt::get_self<VoipVideoCapture>(descriptor.VideoCapture()
-				.as<winrt::default_interface<VoipVideoCapture>>())->m_impl;
+		if (auto videoCapture = descriptor.VideoCapture()) {
+			if (auto screen = videoCapture.try_as<winrt::default_interface<VoipScreenCapture>>()) {
+				auto implementation = winrt::get_self<VoipScreenCapture>(screen);
+				impl.videoCapture = implementation->m_impl;
+			}
+			else if (auto video = videoCapture.try_as<winrt::default_interface<VoipVideoCapture>>()) {
+				auto implementation = winrt::get_self<VoipVideoCapture>(video);
+				impl.videoCapture = implementation->m_impl;
+			}
 		}
 
 		impl.requestCurrentTime = [this](std::function<void(int64_t)> done) {
@@ -206,13 +212,17 @@ namespace winrt::Unigram::Native::Calls::implementation
 		}
 	}
 
-	void VoipGroupManager::SetVideoCapture(Unigram::Native::Calls::IVoipVideoCapture videoCapture) {
+	void VoipGroupManager::SetVideoCapture(Unigram::Native::Calls::VoipVideoCapture videoCapture) {
 		if (m_impl) {
 			if (videoCapture) {
-				auto implementation = winrt::get_self<VoipVideoCapture>(videoCapture
-					.as<winrt::default_interface<VoipVideoCapture>>());
-
-				m_capturer = implementation->m_impl;
+				if (auto screen = videoCapture.try_as<winrt::default_interface<VoipScreenCapture>>()) {
+					auto implementation = winrt::get_self<VoipScreenCapture>(screen);
+					m_capturer = implementation->m_impl;
+				}
+				else if (auto video = videoCapture.try_as<winrt::default_interface<VoipVideoCapture>>()) {
+					auto implementation = winrt::get_self<VoipVideoCapture>(video);
+					m_capturer = implementation->m_impl;
+				}
 			}
 			else {
 				m_capturer = nullptr;

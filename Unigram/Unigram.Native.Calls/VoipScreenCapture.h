@@ -10,7 +10,7 @@ using namespace winrt::Windows::Graphics::Capture;
 
 namespace winrt::Unigram::Native::Calls::implementation
 {
-	struct VoipScreenCapture : VoipScreenCaptureT<VoipScreenCapture>
+	struct VoipScreenCapture : VoipScreenCaptureT<VoipScreenCapture, winrt::Unigram::Native::Calls::VoipVideoCapture>
 	{
 		VoipScreenCapture(GraphicsCaptureItem item);
 		~VoipScreenCapture();

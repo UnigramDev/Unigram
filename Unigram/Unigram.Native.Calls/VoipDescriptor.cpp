@@ -88,11 +88,11 @@ namespace winrt::Unigram::Native::Calls::implementation
 		m_audioOutputId = value;
 	}
 
-	IVoipVideoCapture VoipDescriptor::VideoCapture() {
+	VoipVideoCapture VoipDescriptor::VideoCapture() {
 		return m_videoCapture;
 	}
 
-	void VoipDescriptor::VideoCapture(IVoipVideoCapture value) {
+	void VoipDescriptor::VideoCapture(VoipVideoCapture value) {
 		m_videoCapture = value;
 	}
 

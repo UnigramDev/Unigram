@@ -33,7 +33,7 @@ namespace Unigram.Services
 
 #if ENABLE_CALLS
         VoipManager Manager { get; }
-        IVoipVideoCapture Capturer { get; set; }
+        VoipVideoCapture Capturer { get; set; }
 
         CallProtocol Protocol { get; }
 #endif
@@ -47,7 +47,7 @@ namespace Unigram.Services
 
 #if ENABLE_CALLS
         VoipCaptureType CaptureType { get; }
-        Task<IVoipVideoCapture> ToggleCapturingAsync(VoipCaptureType type);
+        Task<VoipVideoCapture> ToggleCapturingAsync(VoipCaptureType type);
 #endif
     }
 
@@ -67,7 +67,7 @@ namespace Unigram.Services
 
 #if ENABLE_CALLS
         private VoipManager _manager;
-        private IVoipVideoCapture _capturer;
+        private VoipVideoCapture _capturer;
 
         private VoIPPage _callPage;
 #endif
@@ -98,7 +98,7 @@ namespace Unigram.Services
             }
         }
 
-        public async Task<IVoipVideoCapture> ToggleCapturingAsync(VoipCaptureType type)
+        public async Task<VoipVideoCapture> ToggleCapturingAsync(VoipCaptureType type)
         {
             void Disable()
             {
@@ -153,7 +153,7 @@ namespace Unigram.Services
         }
 
         public VoipManager Manager => _manager;
-        public IVoipVideoCapture Capturer
+        public VoipVideoCapture Capturer
         {
             get => _capturer;
             set => _capturer = value;
@@ -505,7 +505,7 @@ namespace Unigram.Services
             }
         }
 
-        private async Task ShowAsync(Call call, VoipManager controller, IVoipVideoCapture capturer, DateTime started)
+        private async Task ShowAsync(Call call, VoipManager controller, VoipVideoCapture capturer, DateTime started)
         {
             if (_callPage == null)
             {
