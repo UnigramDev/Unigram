@@ -215,7 +215,7 @@ namespace Unigram.Controls
                 shouldPlay = true;
             }
 
-            _interval = TimeSpan.FromMilliseconds(1000d / Math.Min(30, animation.FrameRate));
+            _interval = TimeSpan.FromMilliseconds(1000d / Math.Min(_isCachingEnabled ? 30 : 60, animation.FrameRate));
             _animation = animation;
             _hideThumbnail = null;
 
