@@ -9,7 +9,7 @@
 //           LottieGen -GenerateColorBindings -Language CSharp -MinimumUapVersion 8 -Public -WinUIVersion 2.7 -InputFile select.json
 //       
 //       Input file:
-//           select.json (4666 bytes created 10:36+02:00 Apr 21 2022)
+//           select.json (4668 bytes created 16:34+02:00 Apr 23 2022)
 //       
 //       LottieGen source:
 //           http://aka.ms/Lottie
@@ -68,7 +68,7 @@ namespace Unigram.Assets.Icons
         , Microsoft.UI.Xaml.Controls.IAnimatedVisualSource2
     {
         // Animation duration: 0.333 seconds.
-        internal const long c_durationTicks = 3333333;
+        internal const long c_durationTicks = 2500000;
 
         // Theme property: Color_FF0000.
         internal static readonly Color c_themeColor_FF0000 = Color.FromArgb(0xFF, 0xFF, 0x00, 0x00);
@@ -133,13 +133,13 @@ namespace Unigram.Assets.Icons
 
             if (Select_AnimatedVisual.IsRuntimeCompatible())
             {
-                var res =
+                var res = 
                     new Select_AnimatedVisual(
                         compositor,
                         _themeProperties
                         );
-                res.CreateAnimations();
-                return res;
+                    res.CreateAnimations();
+                    return res;
             }
 
             return null;
@@ -216,15 +216,14 @@ namespace Unigram.Assets.Icons
 
         sealed class Select_AnimatedVisual : Microsoft.UI.Xaml.Controls.IAnimatedVisual
         {
-            const long c_durationTicks = 3333333;
+            const long c_durationTicks = 2500000;
             readonly Compositor _c;
             readonly ExpressionAnimation _reusableExpressionAnimation;
             readonly CompositionPropertySet _themeProperties;
             CompositionColorBrush _themeColor_Color_FF0000;
             CompositionColorBrush _themeColor_Color_FFFFFF;
-            CompositionPathGeometry _pathGeometry_0;
             CompositionPathGeometry _pathGeometry_1;
-            CompositionSpriteShape _spriteShape_2;
+            CompositionSpriteShape _spriteShape_1;
             ContainerVisual _root;
             CubicBezierEasingFunction _cubicBezierEasingFunction_0;
             ExpressionAnimation _rootProgress;
@@ -281,8 +280,8 @@ namespace Unigram.Assets.Icons
 
             CompositionSpriteShape CreateSpriteShape(CompositionGeometry geometry, Matrix3x2 transformMatrix, CompositionBrush fillBrush)
             {
-                if (_spriteShape_2 != null) { return _spriteShape_2; }
-                var result = _spriteShape_2 = _c.CreateSpriteShape(geometry);
+                if (_spriteShape_1 != null) { return _spriteShape_1; }
+                var result = _spriteShape_1 = _c.CreateSpriteShape(geometry);
                 result.TransformMatrix = transformMatrix;
                 result.FillBrush = fillBrush;
                 return result;
@@ -430,11 +429,11 @@ namespace Unigram.Assets.Icons
                 return result;
             }
 
-            CompositionPathGeometry PathGeometry_0()
+            CompositionEllipseGeometry PathGeometry_0()
             {
-                return (_pathGeometry_0 == null)
-                    ? _pathGeometry_0 = _c.CreatePathGeometry(new CompositionPath(Geometry_0()))
-                    : _pathGeometry_0;
+                var result = _c.CreateEllipseGeometry();
+                result.Radius = new Vector2(9.5F, 9.5F);
+                return result;
             }
 
             // - Layer aggregator
@@ -473,7 +472,7 @@ namespace Unigram.Assets.Icons
             CompositionSpriteShape SpriteShape_0()
             {
                 // Offset:<12, 12>
-                var result = CreateSpriteShape(PathGeometry_0(), new Matrix3x2(1F, 0F, 0F, 1F, 12F, 12F)); ;
+                var result = CreateSpriteShape(PathGeometry_0(), new Matrix3x2(1F, 0F, 0F, 1F, 12F, 12F));;
                 result.StrokeBrush = RadialGradientBrush();
                 result.StrokeMiterLimit = 2F;
                 result.StrokeThickness = 5F;
@@ -481,24 +480,25 @@ namespace Unigram.Assets.Icons
             }
 
             // Layer aggregator
-            // Path 1
+            // Ellipse Path 1
             CompositionSpriteShape SpriteShape_1()
             {
                 // Offset:<12, 12>
-                var result = CreateSpriteShape(PathGeometry_0(), new Matrix3x2(1F, 0F, 0F, 1F, 12F, 12F)); ;
-                result.StrokeBrush = ThemeColor_Color_FFFFFF();
-                result.StrokeMiterLimit = 2F;
+                var geometry = Ellipse_9();
+                if (_spriteShape_1 != null) { return _spriteShape_1; }
+                var result = _spriteShape_1 = CreateSpriteShape(geometry, new Matrix3x2(1F, 0F, 0F, 1F, 12F, 12F), ThemeColor_Color_FF0000());;
                 return result;
             }
 
             // Layer aggregator
-            // Ellipse Path 1
+            // Path 1
             CompositionSpriteShape SpriteShape_2()
             {
                 // Offset:<12, 12>
-                var geometry = Ellipse_9();
-                if (_spriteShape_2 != null) { return _spriteShape_2; }
-                var result = _spriteShape_2 = CreateSpriteShape(geometry, new Matrix3x2(1F, 0F, 0F, 1F, 12F, 12F), ThemeColor_Color_FF0000()); ;
+                var result = CreateSpriteShape(PathGeometry_0(), new Matrix3x2(1F, 0F, 0F, 1F, 12F, 12F));;
+                result.StrokeBrush = ThemeColor_Color_FFFFFF();
+                result.StrokeMiterLimit = 2F;
+                result.StrokeThickness = 1.5F;
                 return result;
             }
 
@@ -507,7 +507,7 @@ namespace Unigram.Assets.Icons
             CompositionSpriteShape SpriteShape_3()
             {
                 // Offset:<12, 12>
-                var result = CreateSpriteShape(PathGeometry_1(), new Matrix3x2(1F, 0F, 0F, 1F, 12F, 12F)); ;
+                var result = CreateSpriteShape(PathGeometry_1(), new Matrix3x2(1F, 0F, 0F, 1F, 12F, 12F));;
                 result.StrokeBrush = ThemeColor_Color_FFFFFF();
                 result.StrokeDashCap = CompositionStrokeCap.Round;
                 result.StrokeStartCap = CompositionStrokeCap.Round;
@@ -625,13 +625,13 @@ namespace Unigram.Assets.Icons
             public void CreateAnimations()
             {
                 StartProgressBoundAnimation(_pathGeometry_1, "TrimStart", TrimStartScalarAnimation_1_to_0(), RootProgress());
-                StartProgressBoundAnimation(_spriteShape_2, "Scale", ScaleVector2Animation(), RootProgress());
+                StartProgressBoundAnimation(_spriteShape_1, "Scale", ScaleVector2Animation(), RootProgress());
             }
 
             public void DestroyAnimations()
             {
                 _pathGeometry_1.StopAnimation("TrimStart");
-                _spriteShape_2.StopAnimation("Scale");
+                _spriteShape_1.StopAnimation("Scale");
             }
 
             internal static bool IsRuntimeCompatible()

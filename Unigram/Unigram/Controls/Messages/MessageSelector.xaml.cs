@@ -201,7 +201,7 @@ namespace Unigram.Controls.Messages
                 }
 
                 var presenter = ElementCompositionPreview.GetElementVisual(Presenter);
-                presenter.Properties.InsertVector3("Translation", new Vector3(_isSelectionEnabled && message.IsChannelPost || !message.IsOutgoing ? 36 : 0, 0, 0));
+                presenter.Properties.InsertVector3("Translation", new Vector3(_isSelectionEnabled && (message.IsChannelPost || !message.IsOutgoing) ? 36 : 0, 0, 0));
 
                 var action = message.IsSaved() || message.IsShareable();
 

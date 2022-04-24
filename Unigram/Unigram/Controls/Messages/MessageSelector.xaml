@@ -59,14 +59,15 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="36" />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
                         <muxc:AnimatedIcon x:Name="Icon"
                                            x:Load="False"
                                            muxc:AnimatedIcon.State="Normal"
                                            AutomationProperties.AccessibilityView="Raw"
-                                           Margin="12,0,0,0"
+                                           VerticalAlignment="Bottom"
+                                           Margin="12,0,0,3"
                                            Width="24"
                                            Height="24">
                             <icons:Select />
