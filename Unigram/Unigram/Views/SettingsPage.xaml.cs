@@ -212,6 +212,10 @@ namespace Unigram.Views
         {
             Photo.SetUser(ViewModel.ProtoService, user, 48);
             Title.Text = user.GetFullName();
+
+            Premium.Visibility = user.IsPremium
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
 
         public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret, bool accessToken)

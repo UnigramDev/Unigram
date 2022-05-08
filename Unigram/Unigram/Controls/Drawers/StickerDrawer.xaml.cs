@@ -103,23 +103,23 @@ namespace Unigram.Controls.Drawers
 
         private async void UpdateSticker(object target, File file)
         {
-            var content = target as Border;
+            var content = target as Grid;
             if (content == null)
             {
                 return;
             }
 
-            if (content.Child is Border border && border.Child is Image photo)
+            if (content.Children[0] is Border border && border.Child is Image photo)
             {
                 photo.Source = await PlaceholderHelper.GetWebPFrameAsync(file.Local.Path, 68);
-                ElementCompositionPreview.SetElementChildVisual(content.Child, null);
+                ElementCompositionPreview.SetElementChildVisual(content.Children[0], null);
             }
-            else if (content.Child is LottieView lottie)
+            else if (content.Children[0] is LottieView lottie)
             {
                 lottie.Source = UriEx.ToLocal(file.Local.Path);
                 _handler.ThrottleVisibleItems();
             }
-            else if (content.Child is AnimationView video)
+            else if (content.Children[0] is AnimationView video)
             {
                 video.Source = new LocalVideoSource(file);
                 _handler.ThrottleVisibleItems();
@@ -238,7 +238,7 @@ namespace Unigram.Controls.Drawers
                             continue;
                         }
 
-                        UpdateContainerContent(sticker, container.ContentTemplateRoot as Border);
+                        UpdateContainerContent(sticker, container.ContentTemplateRoot as Grid);
                     }
                 }
             }
@@ -308,20 +308,20 @@ namespace Unigram.Controls.Drawers
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
-            var content = args.ItemContainer.ContentTemplateRoot as Border;
+            var content = args.ItemContainer.ContentTemplateRoot as Grid;
             var sticker = args.Item as StickerViewModel;
 
             if (args.InRecycleQueue)
             {
-                if (content.Child is Border border && border.Child is Image photo)
+                if (content.Children[0] is Border border && border.Child is Image photo)
                 {
                     photo.Source = null;
                 }
-                else if (content.Child is LottieView lottie)
+                else if (content.Children[0] is LottieView lottie)
                 {
                     lottie.Source = null;
                 }
-                else if (content.Child is AnimationView video)
+                else if (content.Children[0] is AnimationView video)
                 {
                     video.Source = null;
                 }
@@ -335,7 +335,7 @@ namespace Unigram.Controls.Drawers
             args.Handled = true;
         }
 
-        private async void UpdateContainerContent(StickerViewModel sticker, Border content)
+        private async void UpdateContainerContent(StickerViewModel sticker, Grid content)
         {
             var file = sticker.StickerValue;
             if (file == null)
@@ -343,18 +343,25 @@ namespace Unigram.Controls.Drawers
                 return;
             }
 
+            if (content.Children.Count > 1)
+            {
+                content.Children[1].Visibility = sticker.PremiumAnimation != null && !ViewModel.CacheService.IsPremium
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            }
+
             if (file.Local.IsDownloadingCompleted)
             {
-                if (content.Child is Border border && border.Child is Image photo)
+                if (content.Children[0] is Border border && border.Child is Image photo)
                 {
                     photo.Source = await PlaceholderHelper.GetWebPFrameAsync(file.Local.Path, 68);
-                    ElementCompositionPreview.SetElementChildVisual(content.Child, null);
+                    ElementCompositionPreview.SetElementChildVisual(content.Children[0], null);
                 }
-                else if (content.Child is LottieView lottie)
+                else if (content.Children[0] is LottieView lottie)
                 {
                     lottie.Source = UriEx.ToLocal(file.Local.Path);
                 }
-                else if (content.Child is AnimationView video)
+                else if (content.Children[0] is AnimationView video)
                 {
                     video.Source = new LocalVideoSource(file);
                 }
@@ -363,15 +370,15 @@ namespace Unigram.Controls.Drawers
             }
             else
             {
-                if (content.Child is Border border && border.Child is Image photo)
+                if (content.Children[0] is Border border && border.Child is Image photo)
                 {
                     photo.Source = null;
                 }
-                else if (content.Child is LottieView lottie)
+                else if (content.Children[0] is LottieView lottie)
                 {
                     lottie.Source = null;
                 }
-                else if (content.Child is AnimationView video)
+                else if (content.Children[0] is AnimationView video)
                 {
                     video.Source = null;
                 }
@@ -379,7 +386,7 @@ namespace Unigram.Controls.Drawers
                 content.Tag = sticker;
 
                 CompositionPathParser.ParseThumbnail(sticker, out ShapeVisual visual, false);
-                ElementCompositionPreview.SetElementChildVisual(content.Child, visual);
+                ElementCompositionPreview.SetElementChildVisual(content.Children[0], visual);
 
                 UpdateManager.Subscribe(content, ViewModel.ProtoService, file, UpdateSticker, true);
 

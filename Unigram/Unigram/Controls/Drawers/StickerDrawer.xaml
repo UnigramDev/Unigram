@@ -20,26 +20,29 @@
                               IsSourceGrouped="True" />
 
         <DataTemplate x:Key="AnimatedItemTemplate">
-            <Border Margin="2">
+            <Grid Margin="2">
                 <controls:LottieView30Fps x:Name="Player"
                                           AutoPlay="False" />
-            </Border>
+
+                <controls:PremiumLock HorizontalAlignment="Center"
+                                      VerticalAlignment="Bottom" />
+            </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="VideoItemTemplate">
-            <Border Margin="2">
+            <Grid Margin="2">
                 <controls:AnimationView30Fps x:Name="Player"
                                              AutoPlay="False"
                                              IsCachingEnabled="True" />
-            </Border>
+            </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="ItemTemplate">
-            <Border Margin="2">
+            <Grid Margin="2">
                 <Border>
                     <Image />
                 </Border>
-            </Border>
+            </Grid>
         </DataTemplate>
     </UserControl.Resources>
 

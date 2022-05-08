@@ -133,12 +133,12 @@ namespace Unigram.ViewModels.Drawers
             {
                 for (int i = 0; i < destination.Count; i++)
                 {
-                    var user = destination[i];
+                    var sticker = destination[i];
                     var index = -1;
 
                     for (int j = 0; j < origin.Count; j++)
                     {
-                        if (origin[j].SetId == user.SetId && origin[j].StickerValue.Id == user.StickerValue.Id)
+                        if (origin[j].SetId == sticker.SetId && origin[j].StickerValue.Id == sticker.StickerValue.Id)
                         {
                             index = j;
                             break;
@@ -147,21 +147,21 @@ namespace Unigram.ViewModels.Drawers
 
                     if (index == -1)
                     {
-                        destination.Remove(user);
+                        destination.Remove(sticker);
                         i--;
                     }
                 }
 
                 for (int i = 0; i < origin.Count; i++)
                 {
-                    var filter = origin[i];
+                    var sticker = origin[i];
                     var index = -1;
 
                     for (int j = 0; j < destination.Count; j++)
                     {
-                        if (destination[j].SetId == filter.SetId && destination[j].StickerValue.Id == filter.StickerValue.Id)
+                        if (destination[j].SetId == sticker.SetId && destination[j].StickerValue.Id == sticker.StickerValue.Id)
                         {
-                            destination[j].Update(filter);
+                            destination[j].Update(sticker);
 
                             index = j;
                             break;
@@ -171,11 +171,11 @@ namespace Unigram.ViewModels.Drawers
                     if (index > -1 && index != i)
                     {
                         destination.RemoveAt(index);
-                        destination.Insert(Math.Min(i, destination.Count), new StickerViewModel(ProtoService, Aggregator, filter));
+                        destination.Insert(Math.Min(i, destination.Count), new StickerViewModel(ProtoService, Aggregator, sticker));
                     }
                     else if (index == -1)
                     {
-                        destination.Insert(Math.Min(i, destination.Count), new StickerViewModel(ProtoService, Aggregator, filter));
+                        destination.Insert(Math.Min(i, destination.Count), new StickerViewModel(ProtoService, Aggregator, sticker));
                     }
                 }
             }
@@ -292,7 +292,7 @@ namespace Unigram.ViewModels.Drawers
         //    SavedStickers.Remove(_groupSet);
         //}
 
-        public void Update(Chat chat)
+        public async void Update(Chat chat)
         {
             if (_updated)
             {
@@ -302,85 +302,79 @@ namespace Unigram.ViewModels.Drawers
             _updated = true;
             _updating = true;
 
-            ProtoService.Send(new GetFavoriteStickers(), result1 =>
+            var result1 = await ProtoService.SendAsync(new GetFavoriteStickers());
+            var result2 = await ProtoService.SendAsync(new GetRecentStickers());
+            var result3 = await ProtoService.SendAsync(new GetInstalledStickerSets(false));
+
+            if (result1 is Stickers favorite && result2 is Stickers recent && result3 is StickerSets sets)
             {
-                ProtoService.Send(new GetRecentStickers(), result2 =>
+                for (int i = 0; i < favorite.StickersValue.Count; i++)
                 {
-                    ProtoService.Send(new GetInstalledStickerSets(false), result3 =>
+                    var favSticker = favorite.StickersValue[i];
+                    for (int j = 0; j < recent.StickersValue.Count; j++)
                     {
-                        if (result1 is Stickers favorite && result2 is Stickers recent && result3 is StickerSets sets)
+                        var recSticker = recent.StickersValue[j];
+                        if (recSticker.StickerValue.Id == favSticker.StickerValue.Id)
                         {
-                            for (int i = 0; i < favorite.StickersValue.Count; i++)
-                            {
-                                var favSticker = favorite.StickersValue[i];
-                                for (int j = 0; j < recent.StickersValue.Count; j++)
-                                {
-                                    var recSticker = recent.StickersValue[j];
-                                    if (recSticker.StickerValue.Id == favSticker.StickerValue.Id)
-                                    {
-                                        recent.StickersValue.Remove(recSticker);
-                                        break;
-                                    }
-                                }
-                            }
-
-                            for (int i = 20; i < recent.StickersValue.Count; i++)
-                            {
-                                recent.StickersValue.RemoveAt(20);
-                                i--;
-                            }
-
-                            _favoriteSet.Update(favorite);
-                            _recentSet.Update(recent);
-
-                            var stickers = new List<StickerSetViewModel>();
-                            if (_favoriteSet.Stickers.Count > 0)
-                            {
-                                stickers.Add(_favoriteSet);
-                            }
-                            if (_recentSet.Stickers.Count > 0)
-                            {
-                                stickers.Add(_recentSet);
-                            }
-                            if (_groupSet.Stickers.Count > 0 && _groupSet.ChatId == chat?.Id)
-                            {
-                                stickers.Add(_groupSet);
-                            }
-
-                            long hash = 0;
-                            foreach (var elem in sets.Sets)
-                            {
-                                hash = ((hash * 20261) + 0x80000000L + elem.Id) % 0x80000000L;
-                            }
-
-                            _updatedHash = hash;
-
-                            if (sets.Sets.Count > 0)
-                            {
-                                ProtoService.Send(new GetStickerSet(sets.Sets[0].Id), result4 =>
-                                {
-                                    _updating = false;
-
-                                    if (result4 is StickerSet set)
-                                    {
-                                        stickers.Add(new StickerSetViewModel(ProtoService, Aggregator, sets.Sets[0], set));
-                                        BeginOnUIThread(() => SavedStickers.ReplaceWith(stickers.Union(sets.Sets.Skip(1).Select(x => new StickerSetViewModel(ProtoService, Aggregator, x)))));
-                                    }
-                                    else
-                                    {
-                                        BeginOnUIThread(() => SavedStickers.ReplaceWith(stickers.Union(sets.Sets.Select(x => new StickerSetViewModel(ProtoService, Aggregator, x)))));
-                                    }
-                                });
-                            }
-                            else
-                            {
-                                _updating = false;
-                                BeginOnUIThread(() => SavedStickers.ReplaceWith(stickers.Union(sets.Sets.Select(x => new StickerSetViewModel(ProtoService, Aggregator, x)))));
-                            }
+                            recent.StickersValue.Remove(recSticker);
+                            break;
                         }
-                    });
-                });
-            });
+                    }
+                }
+
+                for (int i = 20; i < recent.StickersValue.Count; i++)
+                {
+                    recent.StickersValue.RemoveAt(20);
+                    i--;
+                }
+
+                _favoriteSet.Update(favorite);
+                _recentSet.Update(recent);
+
+                var stickers = new List<StickerSetViewModel>();
+                if (_favoriteSet.Stickers.Count > 0)
+                {
+                    stickers.Add(_favoriteSet);
+                }
+                if (_recentSet.Stickers.Count > 0)
+                {
+                    stickers.Add(_recentSet);
+                }
+                if (_groupSet.Stickers.Count > 0 && _groupSet.ChatId == chat?.Id)
+                {
+                    stickers.Add(_groupSet);
+                }
+
+                long hash = 0;
+                foreach (var elem in sets.Sets)
+                {
+                    hash = ((hash * 20261) + 0x80000000L + elem.Id) % 0x80000000L;
+                }
+
+                _updatedHash = hash;
+
+                if (sets.Sets.Count > 0)
+                {
+                    var result4 = await ProtoService.SendAsync(new GetStickerSet(sets.Sets[0].Id));
+
+                    _updating = false;
+
+                    if (result4 is StickerSet set)
+                    {
+                        stickers.Add(new StickerSetViewModel(ProtoService, Aggregator, sets.Sets[0], set));
+                        SavedStickers.ReplaceWith(stickers.Union(sets.Sets.Skip(1).Select(x => new StickerSetViewModel(ProtoService, Aggregator, x))));
+                    }
+                    else
+                    {
+                        SavedStickers.ReplaceWith(stickers.Union(sets.Sets.Select(x => new StickerSetViewModel(ProtoService, Aggregator, x))));
+                    }
+                }
+                else
+                {
+                    _updating = false;
+                    SavedStickers.ReplaceWith(stickers.Union(sets.Sets.Select(x => new StickerSetViewModel(ProtoService, Aggregator, x))));
+                }
+            }
         }
 
         private int _featuredUnreadCount;
@@ -555,6 +549,7 @@ namespace Unigram.ViewModels.Drawers
         }
 
         public File StickerValue => _sticker?.StickerValue;
+        public File PremiumAnimation => _sticker?.PremiumAnimation;
         public IList<ClosedVectorPath> Outline => _sticker?.Outline;
         public StickerType Type => _sticker?.Type ?? _type;
         public string Emoji => _sticker?.Emoji;

@@ -44,34 +44,24 @@ namespace Unigram.Views
                 if (sharedCount[0] > 0)
                 {
                     MediaFrame.Navigate(typeof(ChatSharedMediaPage), null, new SuppressNavigationTransitionInfo());
-                    return;
                 }
-
-                if (sharedCount[1] > 0)
+                else if (sharedCount[1] > 0)
                 {
                     MediaFrame.Navigate(typeof(ChatSharedFilesPage), null, new SuppressNavigationTransitionInfo());
-                    return;
                 }
-
                 else if (sharedCount[2] > 0)
                 {
                     MediaFrame.Navigate(typeof(ChatSharedLinksPage), null, new SuppressNavigationTransitionInfo());
-                    return;
                 }
-
                 else if (sharedCount[3] > 0)
                 {
                     MediaFrame.Navigate(typeof(ChatSharedMusicPage), null, new SuppressNavigationTransitionInfo());
-                    return;
                 }
-
                 else if (sharedCount[4] > 0)
                 {
                     MediaFrame.Navigate(typeof(ChatSharedVoicePage), null, new SuppressNavigationTransitionInfo());
-                    return;
                 }
-
-                if (ViewModel.HasSharedGroups)
+                else if (ViewModel.HasSharedGroups)
                 {
                     MediaFrame.Navigate(typeof(UserCommonChatsPage), null, new SuppressNavigationTransitionInfo());
                 }

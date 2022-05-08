@@ -19,6 +19,9 @@
             <Grid Margin="2">
                 <controls:LottieView30Fps x:Name="Player"
                                           AutoPlay="False" />
+
+                <controls:PremiumLock HorizontalAlignment="Center"
+                                      VerticalAlignment="Bottom" />
             </Grid>
         </DataTemplate>
 

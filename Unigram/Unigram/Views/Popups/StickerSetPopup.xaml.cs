@@ -223,6 +223,13 @@ namespace Unigram.Views.Popups
             var content = args.ItemContainer.ContentTemplateRoot as Grid;
             var sticker = args.Item as Sticker;
 
+            if (content.Children.Count > 1)
+            {
+                content.Children[1].Visibility = sticker.PremiumAnimation != null && !ViewModel.CacheService.IsPremium
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            }
+
             var file = sticker.StickerValue;
             if (file.Local.IsDownloadingCompleted)
             {

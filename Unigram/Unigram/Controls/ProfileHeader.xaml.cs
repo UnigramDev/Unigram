@@ -192,6 +192,7 @@ namespace Unigram.Controls
         {
             Subtitle.Text = LastSeenConverter.GetLabel(user, true);
 
+            Premium.Visibility = user.IsPremium ? Visibility.Visible : Visibility.Collapsed;
             Verified.Visibility = user.IsVerified ? Visibility.Visible : Visibility.Collapsed;
 
             UserPhone.Badge = PhoneNumber.Format(user.PhoneNumber);
@@ -281,6 +282,7 @@ namespace Unigram.Controls
 
             Description.Content = Strings.Resources.DescriptionPlaceholder;
 
+            Premium.Visibility = Visibility.Collapsed;
             Verified.Visibility = Visibility.Collapsed;
             UserPhone.Visibility = Visibility.Collapsed;
             Location.Visibility = Visibility.Collapsed;
@@ -353,6 +355,7 @@ namespace Unigram.Controls
 
             Description.Content = Strings.Resources.DescriptionPlaceholder;
 
+            Premium.Visibility = Visibility.Collapsed;
             Verified.Visibility = group.IsVerified ? Visibility.Visible : Visibility.Collapsed;
 
             Username.Badge = $"{group.Username}";

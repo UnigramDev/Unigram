@@ -1,15 +1,14 @@
-<navigation:BootStrapper
-    x:Class="Unigram.App"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
-    xmlns:media="using:Microsoft.UI.Xaml.Media"
-    xmlns:navigation="using:Unigram.Navigation"
-    xmlns:themes="using:Unigram.Themes"
-    xmlns:common="using:Unigram.Common"
-    xmlns:views="using:Unigram.Views"
-    xmlns:converters="using:Unigram.Converters"
-    xmlns:local="using:Unigram">
+<navigation:BootStrapper x:Class="Unigram.App"
+                         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                         xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+                         xmlns:media="using:Microsoft.UI.Xaml.Media"
+                         xmlns:navigation="using:Unigram.Navigation"
+                         xmlns:themes="using:Unigram.Themes"
+                         xmlns:common="using:Unigram.Common"
+                         xmlns:views="using:Unigram.Views"
+                         xmlns:converters="using:Unigram.Converters"
+                         xmlns:local="using:Unigram">
 
     <Application.Resources>
         <ResourceDictionary>
@@ -17,15 +16,21 @@
                 <ResourceDictionary x:Key="Default">
                     <Color x:Key="SystemChromeMediumHighColor">#FF323232</Color>
 
-                    <SolidColorBrush x:Key="TelegramSeparatorBrush" Color="Transparent"/>
+                    <SolidColorBrush x:Key="TelegramSeparatorBrush"
+                                     Color="Transparent" />
                     <!--<StaticResource x:Key="TelegramSeparatorBrush" ResourceKey="SystemControlForegroundBaseLowBrush"/>-->
 
-                    <StaticResource x:Key="SettingsItemBorderBrush" ResourceKey="{ThemeResource CardStrokeColorDefaultBrush}" />
+                    <StaticResource x:Key="SettingsItemBorderBrush"
+                                    ResourceKey="{ThemeResource CardStrokeColorDefaultBrush}" />
 
-                    <StaticResource x:Key="SettingsItemBackground" ResourceKey="CardBackgroundFillColorDefaultBrush" />
-                    <StaticResource x:Key="SettingsItemBackgroundPointerOver" ResourceKey="ControlFillColorSecondaryBrush" />
-                    <StaticResource x:Key="SettingsItemBackgroundPressed" ResourceKey="ControlFillColorTertiaryBrush" />
-                    <StaticResource x:Key="SettingsPageBackground" ResourceKey="SystemControlTransparentBrush" />
+                    <StaticResource x:Key="SettingsItemBackground"
+                                    ResourceKey="CardBackgroundFillColorDefaultBrush" />
+                    <StaticResource x:Key="SettingsItemBackgroundPointerOver"
+                                    ResourceKey="ControlFillColorSecondaryBrush" />
+                    <StaticResource x:Key="SettingsItemBackgroundPressed"
+                                    ResourceKey="ControlFillColorTertiaryBrush" />
+                    <StaticResource x:Key="SettingsPageBackground"
+                                    ResourceKey="SystemControlTransparentBrush" />
 
                     <AcrylicBrush x:Key="PageSubHeaderBackgroundBrush2"
                                   TintColor="#2C2C2C"
@@ -34,20 +39,27 @@
                                   FallbackColor="#2C2C2C"
                                   BackgroundSource="Backdrop" />
 
-                    <StaticResource x:Key="UndoViewBackgroundBrush" ResourceKey="SystemControlChromeMediumAcrylicElementMediumBrush"/>
+                    <StaticResource x:Key="UndoViewBackgroundBrush"
+                                    ResourceKey="SystemControlChromeMediumAcrylicElementMediumBrush" />
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Light">
                     <Color x:Key="SystemChromeMediumHighColor">#FFE6E6E6</Color>
 
-                    <SolidColorBrush x:Key="TelegramSeparatorBrush" Color="Transparent"/>
+                    <SolidColorBrush x:Key="TelegramSeparatorBrush"
+                                     Color="Transparent" />
                     <!--<StaticResource x:Key="TelegramSeparatorBrush" ResourceKey="SystemControlForegroundBaseLowBrush"/>-->
 
-                    <StaticResource x:Key="SettingsItemBorderBrush" ResourceKey="{ThemeResource CardStrokeColorDefaultBrush}" />
-                    
-                    <StaticResource x:Key="SettingsItemBackground" ResourceKey="CardBackgroundFillColorDefaultBrush" />
-                    <StaticResource x:Key="SettingsItemBackgroundPointerOver" ResourceKey="ControlFillColorSecondaryBrush" />
-                    <StaticResource x:Key="SettingsItemBackgroundPressed" ResourceKey="ControlFillColorTertiaryBrush" />
-                    <StaticResource x:Key="SettingsPageBackground" ResourceKey="SystemControlTransparentBrush" />
+                    <StaticResource x:Key="SettingsItemBorderBrush"
+                                    ResourceKey="{ThemeResource CardStrokeColorDefaultBrush}" />
+
+                    <StaticResource x:Key="SettingsItemBackground"
+                                    ResourceKey="CardBackgroundFillColorDefaultBrush" />
+                    <StaticResource x:Key="SettingsItemBackgroundPointerOver"
+                                    ResourceKey="ControlFillColorSecondaryBrush" />
+                    <StaticResource x:Key="SettingsItemBackgroundPressed"
+                                    ResourceKey="ControlFillColorTertiaryBrush" />
+                    <StaticResource x:Key="SettingsPageBackground"
+                                    ResourceKey="SystemControlTransparentBrush" />
 
                     <AcrylicBrush x:Key="PageSubHeaderBackgroundBrush2"
                                   TintColor="#FCFCFC"
@@ -56,7 +68,8 @@
                                   FallbackColor="#F9F9F9"
                                   BackgroundSource="Backdrop" />
 
-                    <StaticResource x:Key="UndoViewBackgroundBrush" ResourceKey="SystemControlChromeMediumAcrylicElementMediumBrush"/>
+                    <StaticResource x:Key="UndoViewBackgroundBrush"
+                                    ResourceKey="SystemControlChromeMediumAcrylicElementMediumBrush" />
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
 
@@ -68,10 +81,17 @@
             <!-- WinUI bug: https://github.com/microsoft/microsoft-ui-xaml/issues/2623 -->
             <!--<muxc:StackLayout x:Name="ThreadStackLayout"/>-->
 
-            <media:RadialGradientBrush x:Key="VideoChatPurpleBrush" GradientOrigin="1,-1" Center="1,-1" RadiusX="1.5" RadiusY="2.5">
-                <GradientStop Color="#57A4FE" Offset="0"/>
-                <GradientStop Color="#F05459" Offset="0.5"/>
-                <GradientStop Color="#766EE9" Offset="1"/>
+            <media:RadialGradientBrush x:Key="VideoChatPurpleBrush"
+                                       GradientOrigin="1,-1"
+                                       Center="1,-1"
+                                       RadiusX="1.5"
+                                       RadiusY="2.5">
+                <GradientStop Color="#57A4FE"
+                              Offset="0" />
+                <GradientStop Color="#F05459"
+                              Offset="0.5" />
+                <GradientStop Color="#766EE9"
+                              Offset="1" />
             </media:RadialGradientBrush>
 
             <x:Double x:Key="ChatPhotoSize">36</x:Double>
@@ -83,39 +103,56 @@
             <x:Double x:Key="GlyphLargeFontSize">24</x:Double>
             <Thickness x:Key="GlyphButtonPadding">4</Thickness>
             <CornerRadius x:Key="GlyphButtonCornerRadius">4</CornerRadius>
-            
-            <Style x:Key="DefaultListViewItemStyle" TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
-                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                <Setter Property="Padding" Value="0"/>
+
+            <Style x:Key="DefaultListViewItemStyle"
+                   TargetType="ListViewItem"
+                   BasedOn="{StaticResource DefaultListViewItemStyle}">
+                <Setter Property="HorizontalContentAlignment"
+                        Value="Stretch" />
+                <Setter Property="Padding"
+                        Value="0" />
             </Style>
 
-            <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}"/>
+            <Style TargetType="ListViewItem"
+                   BasedOn="{StaticResource DefaultListViewItemStyle}" />
 
-            <SolidColorBrush x:Key="GridViewItemCheckBrush" Color="White"/>
+            <SolidColorBrush x:Key="GridViewItemCheckBrush"
+                             Color="White" />
 
             <x:Double x:Key="PaneToggleButtonSize">48</x:Double>
             <Thickness x:Key="NavigationViewToggleBorderThickness">1</Thickness>
             <Thickness x:Key="NavigationViewItemBorderThickness">2,1</Thickness>
 
-            <Style x:Key="BaseTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
-                <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
+            <Style x:Key="BaseTextBlockStyle"
+                   TargetType="TextBlock"
+                   BasedOn="{StaticResource BaseTextBlockStyle}">
+                <Setter Property="Foreground"
+                        Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
             </Style>
 
-            <Style x:Key="BodyTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource BodyTextBlockStyle}">
-                <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
+            <Style x:Key="BodyTextBlockStyle"
+                   TargetType="TextBlock"
+                   BasedOn="{StaticResource BodyTextBlockStyle}">
+                <Setter Property="Foreground"
+                        Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
             </Style>
 
             <!--<Style x:Key="CaptionTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
                 <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
             </Style>-->
 
-            <Style x:Key="CaptionRichTextBlockStyle" TargetType="RichTextBlock" BasedOn="{StaticResource BaseRichTextBlockStyle}">
-                <Setter Property="FontSize" Value="12" />
-                <Setter Property="FontWeight" Value="Normal" />
+            <Style x:Key="CaptionRichTextBlockStyle"
+                   TargetType="RichTextBlock"
+                   BasedOn="{StaticResource BaseRichTextBlockStyle}">
+                <Setter Property="FontSize"
+                        Value="12" />
+                <Setter Property="FontWeight"
+                        Value="Normal" />
             </Style>
 
             <Style TargetType="PivotItem">
-                <Setter Property="Margin" Value="0" />
+                <Setter Property="Margin"
+                        Value="0" />
             </Style>
 
             <FontFamily x:Key="TelegramThemeFontFamily">ms-appx:///Assets/Fonts/Telegram.ttf#Telegram</FontFamily>
@@ -139,70 +176,133 @@
             <x:Int32 x:Key="UserFirstNameMaxLength">255</x:Int32>
             <x:Int32 x:Key="UserLastNameMaxLength">255</x:Int32>
 
-            <converters:FileTypeToStringConverter x:Key="FileTypeToStringConverter"/>
-            <converters:ChatTtlConverter x:Key="ChatTtlConverter"/>
-            <converters:MessageTtlConverter x:Key="MessageTtlConverter"/>
-            <converters:BooleanNegationConverter x:Key="BooleanNegationConverter"/>
+            <converters:FileTypeToStringConverter x:Key="FileTypeToStringConverter" />
+            <converters:ChatTtlConverter x:Key="ChatTtlConverter" />
+            <converters:MessageTtlConverter x:Key="MessageTtlConverter" />
+            <converters:BooleanNegationConverter x:Key="BooleanNegationConverter" />
             <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
-            <converters:FileSizeConverter x:Key="FileSizeConverter"/>
+            <converters:FileSizeConverter x:Key="FileSizeConverter" />
 
-            <SolidColorBrush x:Key="Placeholder0Brush" Color="#E56555"/>
-            <SolidColorBrush x:Key="Placeholder1Brush" Color="#F28C48"/>
-            <SolidColorBrush x:Key="Placeholder2Brush" Color="#8E85EE"/>
-            <SolidColorBrush x:Key="Placeholder3Brush" Color="#76C84D"/>
-            <SolidColorBrush x:Key="Placeholder4Brush" Color="#5FBED5"/>
-            <SolidColorBrush x:Key="Placeholder5Brush" Color="#549CDD"/>
-            <SolidColorBrush x:Key="Placeholder6Brush" Color="#F2749A"/>
+            <SolidColorBrush x:Key="Placeholder0Brush"
+                             Color="#E56555" />
+            <SolidColorBrush x:Key="Placeholder1Brush"
+                             Color="#F28C48" />
+            <SolidColorBrush x:Key="Placeholder2Brush"
+                             Color="#8E85EE" />
+            <SolidColorBrush x:Key="Placeholder3Brush"
+                             Color="#76C84D" />
+            <SolidColorBrush x:Key="Placeholder4Brush"
+                             Color="#5FBED5" />
+            <SolidColorBrush x:Key="Placeholder5Brush"
+                             Color="#549CDD" />
+            <SolidColorBrush x:Key="Placeholder6Brush"
+                             Color="#F2749A" />
 
-            <Style x:Key="ReplyBaseTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
-                <Setter Property="TextWrapping" Value="NoWrap"/>
-                <Setter Property="MaxLines" Value="1"/>
-                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-                <Setter Property="FontWeight" Value="SemiBold"/>
+            <Style x:Key="ReplyBaseTextBlockStyle"
+                   TargetType="TextBlock"
+                   BasedOn="{StaticResource CaptionTextBlockStyle}">
+                <Setter Property="TextWrapping"
+                        Value="NoWrap" />
+                <Setter Property="MaxLines"
+                        Value="1" />
+                <Setter Property="TextTrimming"
+                        Value="CharacterEllipsis" />
+                <Setter Property="FontWeight"
+                        Value="SemiBold" />
             </Style>
 
-            <Style x:Key="ReplyBodyTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
-                <Setter Property="TextWrapping" Value="NoWrap"/>
-                <Setter Property="MaxLines" Value="1"/>
-                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+            <Style x:Key="ReplyBodyTextBlockStyle"
+                   TargetType="TextBlock"
+                   BasedOn="{StaticResource CaptionTextBlockStyle}">
+                <Setter Property="TextWrapping"
+                        Value="NoWrap" />
+                <Setter Property="MaxLines"
+                        Value="1" />
+                <Setter Property="TextTrimming"
+                        Value="CharacterEllipsis" />
             </Style>
 
-            <Style x:Key="DisabledBodyTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource BodyTextBlockStyle}">
-                <Setter Property="TextWrapping" Value="NoWrap"/>
-                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-                <Setter Property="Foreground" Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
+            <Style x:Key="DisabledBodyTextBlockStyle"
+                   TargetType="TextBlock"
+                   BasedOn="{StaticResource BodyTextBlockStyle}">
+                <Setter Property="TextWrapping"
+                        Value="NoWrap" />
+                <Setter Property="TextTrimming"
+                        Value="CharacterEllipsis" />
+                <Setter Property="Foreground"
+                        Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
             </Style>
 
-            <Style x:Key="DisabledCaptionTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
-                <Setter Property="TextWrapping" Value="NoWrap"/>
-                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-                <Setter Property="Foreground" Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
+            <Style x:Key="DisabledCaptionTextBlockStyle"
+                   TargetType="TextBlock"
+                   BasedOn="{StaticResource CaptionTextBlockStyle}">
+                <Setter Property="TextWrapping"
+                        Value="NoWrap" />
+                <Setter Property="TextTrimming"
+                        Value="CharacterEllipsis" />
+                <Setter Property="Foreground"
+                        Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
             </Style>
 
-            <Style x:Key="SecretBodyTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource BodyTextBlockStyle}">
-                <Setter Property="Foreground" Value="{ThemeResource TelegramSecretChatForegroundBrush}"/>
+            <Style x:Key="SecretBodyTextBlockStyle"
+                   TargetType="TextBlock"
+                   BasedOn="{StaticResource BodyTextBlockStyle}">
+                <Setter Property="Foreground"
+                        Value="{ThemeResource TelegramSecretChatForegroundBrush}" />
             </Style>
 
-            <Style x:Key="InfoBodyTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource BodyTextBlockStyle}">
-                <Setter Property="Foreground" Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
+            <Style x:Key="InfoBodyTextBlockStyle"
+                   TargetType="TextBlock"
+                   BasedOn="{StaticResource BodyTextBlockStyle}">
+                <Setter Property="Foreground"
+                        Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
             </Style>
 
-            <Style x:Key="InfoCaptionTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
-                <Setter Property="Foreground" Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
+            <Style x:Key="InfoCaptionTextBlockStyle"
+                   TargetType="TextBlock"
+                   BasedOn="{StaticResource CaptionTextBlockStyle}">
+                <Setter Property="Foreground"
+                        Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
             </Style>
 
-            <Style x:Key="SiteNameTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
-                <Setter Property="MaxLines" Value="1"/>
+            <Style x:Key="SiteNameTextBlockStyle"
+                   TargetType="TextBlock"
+                   BasedOn="{StaticResource BaseTextBlockStyle}">
+                <Setter Property="MaxLines"
+                        Value="1" />
             </Style>
 
-            <Style x:Key="EmojiRichTextBlockStyle" TargetType="RichTextBlock" BasedOn="{StaticResource BodyRichTextBlockStyle}">
-                <Setter Property="FontFamily" Value="{ThemeResource EmojiThemeFontFamily}"/>
+            <Style x:Key="EmojiRichTextBlockStyle"
+                   TargetType="RichTextBlock"
+                   BasedOn="{StaticResource BodyRichTextBlockStyle}">
+                <Setter Property="FontFamily"
+                        Value="{ThemeResource EmojiThemeFontFamily}" />
             </Style>
 
-            <Style x:Key="DefaultFontIconStyle" TargetType="FontIcon">
-                <Setter Property="FontFamily" Value="{StaticResource SymbolThemeFontFamily}"/>
-                <Setter Property="FontSize" Value="{StaticResource GlyphMediumFontSize}"/>
+            <Style x:Key="DefaultFontIconStyle"
+                   TargetType="FontIcon">
+                <Setter Property="FontFamily"
+                        Value="{StaticResource SymbolThemeFontFamily}" />
+                <Setter Property="FontSize"
+                        Value="{StaticResource GlyphMediumFontSize}" />
+            </Style>
+
+            <Style x:Name="PremiumStar"
+                   TargetType="Path">
+                <Setter Property="Fill">
+                    <Setter.Value>
+                        <LinearGradientBrush StartPoint="0,1"
+                                             EndPoint="0.7,0.3">
+                            <GradientStop Color="#1991FF"
+                                          Offset="0" />
+                            <GradientStop Color="#F379D3"
+                                          Offset="1" />
+                        </LinearGradientBrush>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="StrokeThickness"
+                        Value="0" />
             </Style>
 
             <ResourceDictionary.MergedDictionaries>
@@ -217,7 +317,7 @@
                 <ResourceDictionary Source="ms-appx:///Themes/RadioButton_themeresources.xaml" />
                 <ResourceDictionary Source="ms-appx:///Themes/ScrollBar_themeresources.xaml" />
                 <ResourceDictionary Source="ms-appx:///Themes/BadgeButton_themeresources.xaml" />
-                <themes:Messages/>
+                <themes:Messages />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
