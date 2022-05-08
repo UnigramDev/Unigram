@@ -95,6 +95,27 @@ namespace Unigram.Common
             await _viewService.OpenAsync(parameters);
         }
 
+        public async void NavigateToInvoice(InputInvoice inputInvoice)
+        {
+            var parameters = new ViewServiceParams
+            {
+                Title = Strings.Resources.PaymentCheckout,
+                Width = 380,
+                Height = 580,
+                PersistentId = "Payments",
+                Content = control =>
+                {
+                    var nav = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, BootStrapper.ExistingContent.Exclude, SessionId, "Payments" + Guid.NewGuid(), false);
+                    nav.Navigate(typeof(PaymentFormPage), state: Navigation.Services.NavigationState.GetInvoice(inputInvoice));
+
+                    return BootStrapper.Current.CreateRootElement(nav);
+
+                }
+            };
+
+            await _viewService.OpenAsync(parameters);
+        }
+
         public async void NavigateToSender(MessageSender sender)
         {
             if (sender is MessageSenderUser user)

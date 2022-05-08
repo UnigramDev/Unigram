@@ -28,49 +28,49 @@ namespace Unigram.ViewModels.Payments
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            state.TryGet("chatId", out long chatId);
-            state.TryGet("messageId", out long messageId);
+            if (state.TryGet("chatId", out long chatId)
+                && state.TryGet("messageId", out long messageId))
+            {
+                var message = await ProtoService.SendAsync(new GetMessage(chatId, messageId)) as Message;
+                if (message?.Content is MessageInvoice invoice)
+                {
+                    if (invoice.ReceiptMessageId == 0)
+                    {
+                        await InitializeForm(new InputInvoiceMessage(chatId, messageId));
+                    }
+                    else
+                    {
+                        await InitializeReceipt(message, invoice.ReceiptMessageId);
+                    }
+                }
+                else if (message?.Content is MessagePaymentSuccessful)
+                {
+                    await InitializeReceipt(message, message.Id);
+                }
 
-            var message = await ProtoService.SendAsync(new GetMessage(chatId, messageId)) as Message;
-            if (message?.Content is MessageInvoice invoice)
-            {
-                if (invoice.ReceiptMessageId == 0)
-                {
-                    await InitializeForm(message);
-                }
-                else
-                {
-                    await InitializeReceipt(message, invoice.ReceiptMessageId);
-                }
             }
-            else if (message?.Content is MessagePaymentSuccessful)
+            else if (state.TryGet("name", out string name))
             {
-                await InitializeReceipt(message, message.Id);
+                await InitializeForm(new InputInvoiceName(name));
             }
         }
 
-        private async Task InitializeForm(Message message)
+        private async Task InitializeForm(InputInvoice invoice)
         {
             IsReceipt = false;
 
-            var invoice = message.Content as MessageInvoice;
-            if (invoice == null)
-            {
-                return;
-            }
-
-            var paymentForm = await ProtoService.SendAsync(new GetPaymentForm(message.ChatId, message.Id, new ThemeParameters())) as PaymentForm;
+            var paymentForm = await ProtoService.SendAsync(new GetPaymentForm(invoice, new ThemeParameters())) as PaymentForm;
             if (paymentForm == null)
             {
                 return;
             }
 
-            Message = message;
+            InputInvoice = invoice;
             PaymentForm = paymentForm;
 
-            Photo = invoice.Photo;
-            Title = invoice.Title;
-            Description = invoice.Description;
+            Photo = paymentForm.ProductPhoto;
+            Title = paymentForm.ProductTitle;
+            Description = paymentForm.ProductDescription;
 
             Invoice = paymentForm.Invoice;
             Bot = CacheService.GetUser(paymentForm.SellerBotUserId);
@@ -82,7 +82,7 @@ namespace Unigram.ViewModels.Payments
 
             if (paymentForm.SavedOrderInfo != null)
             {
-                var response = await ProtoService.SendAsync(new ValidateOrderInfo(message.ChatId, message.Id, paymentForm.SavedOrderInfo, false));
+                var response = await ProtoService.SendAsync(new ValidateOrderInfo(invoice, paymentForm.SavedOrderInfo, false));
                 if (response is ValidatedOrderInfo validated)
                 {
                     ValidatedInfo = validated;
@@ -99,8 +99,6 @@ namespace Unigram.ViewModels.Payments
             {
                 return;
             }
-
-            Message = message;
 
             Photo = paymentReceipt.Photo;
             Title = paymentReceipt.Title;
@@ -123,11 +121,11 @@ namespace Unigram.ViewModels.Payments
             set => Set(ref _bot, value);
         }
 
-        protected Message _message;
-        public Message Message
+        protected InputInvoice _inputInvoice;
+        public InputInvoice InputInvoice
         {
-            get => _message;
-            set => Set(ref _message, value);
+            get => _inputInvoice;
+            set => Set(ref _inputInvoice, value);
         }
 
         private bool _isReceipt;
@@ -294,7 +292,7 @@ namespace Unigram.ViewModels.Payments
                 return;
             }
 
-            var popup = new PaymentAddressPopup(_message.ChatId, _message.Id, _paymentForm.Invoice, _info);
+            var popup = new PaymentAddressPopup(_inputInvoice, _paymentForm.Invoice, _info);
 
             var confirm = await popup.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary && popup.ValidatedInfo != null)
@@ -412,7 +410,7 @@ namespace Unigram.ViewModels.Payments
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new SendPaymentForm(_message.ChatId, _message.Id, formId, infoId, shippingId, credentials, 0));
+            var response = await ProtoService.SendAsync(new SendPaymentForm(_inputInvoice, formId, infoId, shippingId, credentials, 0));
             if (response is PaymentResult result)
             {
                 if (Uri.TryCreate(result.VerificationUrl, UriKind.Absolute, out Uri uri))

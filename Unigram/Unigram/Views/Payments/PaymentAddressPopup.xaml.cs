@@ -12,7 +12,7 @@ namespace Unigram.Views.Payments
 
         public ValidatedOrderInfo ValidatedInfo { get; private set; }
 
-        public PaymentAddressPopup(long chatId, long messageId, Invoice invoice, OrderInfo info)
+        public PaymentAddressPopup(InputInvoice inputInvoice, Invoice invoice, OrderInfo info)
         {
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<PaymentAddressViewModel>();
@@ -21,7 +21,7 @@ namespace Unigram.Views.Payments
             PrimaryButtonText = Strings.Resources.OK;
             SecondaryButtonText = Strings.Resources.Cancel;
 
-            ViewModel.Initialize(chatId, messageId, invoice, info);
+            ViewModel.Initialize(inputInvoice, invoice, info);
         }
 
         private void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)

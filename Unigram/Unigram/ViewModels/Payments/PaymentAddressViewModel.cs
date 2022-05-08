@@ -9,18 +9,16 @@ namespace Unigram.ViewModels.Payments
 {
     public class PaymentAddressViewModel : TLViewModelBase
     {
-        private long _chatId;
-        private long _messageId;
+        private InputInvoice _inputInvoice;
 
         public PaymentAddressViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
         }
 
-        public void Initialize(long chatId, long messageId, Invoice invoice, OrderInfo info)
+        public void Initialize(InputInvoice inputInvoice, Invoice invoice, OrderInfo info)
         {
-            _chatId = chatId;
-            _messageId = messageId;
+            _inputInvoice = inputInvoice;
 
             info ??= new OrderInfo();
             info.ShippingAddress ??= new Address();
@@ -91,7 +89,7 @@ namespace Unigram.ViewModels.Payments
                 info.ShippingAddress.CountryCode = _selectedCountry?.Code ?? string.Empty;
             }
 
-            var response = await ProtoService.SendAsync(new ValidateOrderInfo(_chatId, _messageId, info, save));
+            var response = await ProtoService.SendAsync(new ValidateOrderInfo(_inputInvoice, info, save));
             if (response is ValidatedOrderInfo validated)
             {
                 IsLoading = false;

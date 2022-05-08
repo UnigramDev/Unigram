@@ -9,6 +9,7 @@ using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views;
+using Unigram.Views.Folders;
 using Unigram.Views.Host;
 using Unigram.Views.Popups;
 using Unigram.Views.Settings;
@@ -177,7 +178,7 @@ namespace Unigram.Common
             var response = await protoService.SendAsync(new GetInternalLinkType(url));
             if (response is InternalLinkTypeActiveSessions)
             {
-
+                navigation.Navigate(typeof(SettingsSessionsPage));
             }
             else if (response is InternalLinkTypeAuthenticationCode)
             {
@@ -197,7 +198,7 @@ namespace Unigram.Common
             }
             else if (response is InternalLinkTypeChangePhoneNumber)
             {
-
+                navigation.Navigate(typeof(SettingsProfilePage));
             }
             else if (response is InternalLinkTypeChatInvite)
             {
@@ -205,11 +206,15 @@ namespace Unigram.Common
             }
             else if (response is InternalLinkTypeFilterSettings)
             {
-
+                navigation.Navigate(typeof(FoldersPage));
             }
             else if (response is InternalLinkTypeGame game)
             {
                 NavigateToUsername(protoService, navigation, game.BotUsername, null, null, null, null, game.GameShortName);
+            }
+            else if (response is InternalLinkTypeInvoice invoice)
+            {
+                NavigateToInvoice(navigation, invoice.InvoiceName);
             }
             else if (response is InternalLinkTypeLanguagePack languagePack)
             {
@@ -226,6 +231,10 @@ namespace Unigram.Common
             else if (response is InternalLinkTypePassportDataRequest)
             {
 
+            }
+            else if (response is InternalLinkTypePrivacyAndSecuritySettings)
+            {
+                navigation.Navigate(typeof(SettingsPrivacyAndSecurityPage));
             }
             else if (response is InternalLinkTypePhoneNumberConfirmation phoneNumberConfirmation)
             {
@@ -257,7 +266,7 @@ namespace Unigram.Common
             }
             else if (response is InternalLinkTypeThemeSettings)
             {
-
+                navigation.Navigate(typeof(SettingsAppearancePage));
             }
             else if (response is InternalLinkTypeUnknownDeepLink)
             {
@@ -327,6 +336,11 @@ namespace Unigram.Common
         private static async void NavigateToTheme(IProtoService protoService, string slug)
         {
             await MessagePopup.ShowAsync(Strings.Resources.ThemeNotSupported, Strings.Resources.Theme, Strings.Resources.OK);
+        }
+
+        private static void NavigateToInvoice(INavigationService navigation, string invoiceName)
+        {
+            navigation.NavigateToInvoice(new InputInvoiceName(invoiceName));
         }
 
         public static async void NavigateToLanguage(IProtoService protoService, INavigationService navigation, string languagePackId)

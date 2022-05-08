@@ -122,6 +122,14 @@ namespace Unigram.Common
             }
         }
 
+        public static void NavigateToInvoice(this INavigationService service, InputInvoice inputInvoice)
+        {
+            if (service is TLNavigationService serviceEx)
+            {
+                serviceEx.NavigateToInvoice(inputInvoice);
+            }
+        }
+
         public static void NavigateToSender(this INavigationService service, MessageSender sender)
         {
             if (service is TLNavigationService serviceEx)
