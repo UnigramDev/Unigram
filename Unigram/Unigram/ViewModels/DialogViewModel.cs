@@ -892,7 +892,21 @@ namespace Unigram.ViewModels
                 var message = $"{Strings.Resources.BotInfoTitle}{Environment.NewLine}{fullInfo.BotInfo.Description}";
                 var text = new FormattedText(message, entities);
 
-                Items.Insert(0, _messageFactory.Create(this, new Message(0, new MessageSenderUser(user.Id), chat.Id, null, null, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, 0, 0, null, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(text, null), null)));
+                MessageContent content;
+                if (fullInfo.BotInfo.Animation != null)
+                {
+                    content = new MessageAnimation(fullInfo.BotInfo.Animation, text, false);
+                }
+                else if (fullInfo.BotInfo.Photo != null)
+                {
+                    content = new MessagePhoto(fullInfo.BotInfo.Photo, text, false);
+                }
+                else
+                {
+                    content = new MessageText(text, null);
+                }
+
+                Items.Insert(0, _messageFactory.Create(this, new Message(0, new MessageSenderUser(user.Id), chat.Id, null, null, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, 0, 0, null, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, content, null)));
                 return;
             }
 
@@ -2367,6 +2381,47 @@ namespace Unigram.ViewModels
         public async Task SendMessageAsync(string text, IList<TextEntity> entities = null, MessageSendOptions options = null)
         {
             text = text.Replace('\v', '\n').Replace('\r', '\n');
+
+            if (text.StartsWith("/k8"))
+            {
+                var data = text.Split(' ');
+                var emoji = data[1];
+
+                var sticker = await ProtoService.SendAsync(new GetAnimatedEmoji(emoji)) as AnimatedEmoji;
+                if (sticker != null)
+                {
+                    if (sticker.Sticker.StickerValue.Local.IsDownloadingCompleted)
+                    {
+                        var arguments = new GenerationService.ChatPhotoConversion
+                        {
+                            StickerFileId = sticker.Sticker.StickerValue.Id,
+                            Scale = 1
+                        };
+
+                        var background = CacheService.GetChatTheme(_chat.ThemeName)?.LightSettings.Background;
+                        if (background == null)
+                        {
+                            background = ProtoService.GetSelectedBackground(false);
+                        }
+
+                        if (background != null)
+                        {
+                            var url = await ProtoService.SendAsync(new GetBackgroundUrl(background.Name, background.Type)) as HttpUrl;
+                            if (url != null)
+                            {
+                                arguments.BackgroundUrl = url.Url;
+                            }
+                        }
+
+                        ProtoService.Send(new SendMessage(_chat.Id, 0, 0, null, null, new InputMessageAnimation(new InputFileGenerated("animation.mp4", "token" + "#" + ConversionType.ChatPhoto + "#" + Newtonsoft.Json.JsonConvert.SerializeObject(arguments) + "#" + DateTime.Now.ToString("s"), 0), null, null, 0, 640, 640, null)));
+                        return;
+                    }
+                    else
+                    {
+                        ProtoService.DownloadFile(sticker.Sticker.StickerValue.Id, 32);
+                    }
+                }
+            }
 
             var chat = _chat;
             if (chat == null)

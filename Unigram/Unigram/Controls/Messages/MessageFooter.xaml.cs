@@ -130,9 +130,13 @@ namespace Unigram.Controls.Messages
 
                 DateLabel.Text = string.Format("{0}, {1} {2} {3}", date, time, "Imported", Converter.Date(message.Date));
             }
-            else
+            else if (message.Date > 0)
             {
                 DateLabel.Text = Converter.Date(message.Date);
+            }
+            else
+            {
+                DateLabel.Text = string.Empty;
             }
         }
 

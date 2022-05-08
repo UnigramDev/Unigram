@@ -95,6 +95,7 @@ namespace Unigram.Views
             var minItem = true;
             var minDate = true;
             var minDateIndex = panel.FirstVisibleIndex;
+            var minDateValue = 0L;
 
             var messages = new List<long>(panel.LastVisibleIndex - panel.FirstVisibleIndex);
             var animations = new List<(SelectorItem, MessageViewModel)>(panel.LastVisibleIndex - panel.FirstVisibleIndex);
@@ -130,6 +131,7 @@ namespace Unigram.Views
                     if (point.Y + container.ActualHeight >= 0)
                     {
                         minItem = false;
+                        minDateValue = Math.Max(message.Id, message.Date);
 
                         if (message.SchedulingState is MessageSchedulingStateSendAtDate sendAtDate)
                         {
@@ -141,7 +143,7 @@ namespace Unigram.Views
                             DateHeader.CommandParameter = null;
                             DateHeaderLabel.Text = Strings.Resources.MessageScheduledUntilOnline;
                         }
-                        else
+                        else if (message.Date > 0)
                         {
                             DateHeader.CommandParameter = message.Date;
                             DateHeaderLabel.Text = Converter.DayGrouping(Utils.UnixTimestampToDateTime(message.Date));
@@ -236,7 +238,7 @@ namespace Unigram.Views
 
             _dateHeaderTimer.Stop();
             _dateHeaderTimer.Start();
-            ShowHideDateHeader(minDateIndex > 0, minDateIndex is > 0 and < int.MaxValue);
+            ShowHideDateHeader(minDateValue > 0 && minDateIndex > 0, minDateValue > 0 && minDateIndex is > 0 and < int.MaxValue);
 
             // Read and play messages logic:
             if (messages.Count > 0 && !Messages.IsProgrammaticScrolling && _windowContext.ActivationMode == CoreWindowActivationMode.ActivatedInForeground)
@@ -311,6 +313,7 @@ namespace Unigram.Views
 
             if (!animate)
             {
+                _dateHeaderPanel.Opacity = show ? 1 : 0;
                 DateHeaderPanel.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
                 return;
             }
