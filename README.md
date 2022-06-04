@@ -1,32 +1,19 @@
 <p align="center">
-  <a href="https://www.microsoft.com/store/apps/9n97zckpd60q">
-    <img src="/Unigram/Unigram/Assets/Logos/StoreLogo.scale-200.png" width=80 height=80>
+  <a href="https://github.com/UnigramDev/Unigram">
+    <img src="https://raw.githubusercontent.com/UnigramDev/Unigram/develop/Unigram/UnigramBridge/Resources/Default.ico" width=84 height=84>
   </a>
 
-  <h3 align="center">Unigram</h3>
+  <h1 align="center">Unigram</h1>
 
   <p align="center">
-    Telegram for Windows
-    <br>
-    <br>
-    <a href="https://www.microsoft.com/store/apps/9n97zckpd60q">Download</a>
-    &middot;
-    <a href="https://t.me/unigraminsiders">Insiders Group</a>
+    <a href="https://www.microsoft.com/store/apps/9n97zckpd60q">
+      <img src="https://img.shields.io/badge/Microsoft%20Store-Download-yellow">
+    </a>
+    <a href="[https://www.microsoft.com/store/apps/9n97zckpd60q](https://t.me/unigraminsiders)">
+      <img src="https://img.shields.io/badge/Telegram%20Insiders-Join%20in-blue">
+    </a>
   </p>
 </p>
-
-<br>
-
-## Table of contents
-- [Features](#features)
-- [Contributing](#contributing)
-- [Changelog](#changelog)
-- [Screenshots](#screenshots)
-- [Download without Microsoft Store](#alternativedownload)
-- [Windows 10 N](#windows10n)
-- [Translations](#translations)
-- [Documentation](#doc)
-- [Privacy policy](#privacy)
 
 <a name="features"></a>
 ## Features
@@ -52,6 +39,10 @@
 - Full support of Windows notifications and Action Centre (reply to a message or mark it as read without opening the app)
 - Accessibility for visually impaired people
 
+<a name="screenshots"></a>
+## Screenshots
+![1](https://github.com/UnigramDev/Unigram/blob/develop/Screenshots/Screen1.PNG)
+![2](https://raw.githubusercontent.com/UnigramDev/Unigram/develop/Screenshots/Screen2.PNG)
 
 <a name="contributing"></a>
 ## Contributing
@@ -60,11 +51,6 @@ Before reporting bugs, doing features requests or embarking pull requests, be su
 <a name="changelog"></a>
 ## Changelog
 Changelogs are provided both in [Releases section of our GitHub project](https://github.com/UnigramDev/Unigram/releases) and [Unigram News channel](https://t.me/unigram).
-
-<a name="screenshots"></a>
-## Screenshots
-![1](https://github.com/UnigramDev/Unigram/blob/develop/Screenshots/Screen1.PNG)
-![2](https://raw.githubusercontent.com/UnigramDev/Unigram/develop/Screenshots/Screen2.PNG)
 
 <a name="alternativedownload"></a>
 ## Download without the store
