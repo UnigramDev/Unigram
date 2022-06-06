@@ -61,7 +61,7 @@ namespace Unigram.Views.Settings
             return Visibility.Visible;
         }
 
-        private string ConvertAutoDownload(AutoDownloadType type, AutoDownloadMode mode, int limit)
+        private string ConvertAutoDownload(AutoDownloadType type, AutoDownloadMode mode, long limit)
         {
             int count = 0;
             var builder = new StringBuilder();

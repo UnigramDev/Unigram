@@ -21,7 +21,7 @@ namespace Unigram.Views.Settings.Popups
 
         private const long MAX_FILE_SIZE = 1024L * 1024L * 2000L;
 
-        private double ConvertLimit(int size)
+        private double ConvertLimit(long size)
         {
             var progress = 0.0d;
             size -= 500 * 1024;
@@ -98,7 +98,7 @@ namespace Unigram.Views.Settings.Popups
             ViewModel.Limit = size;
         }
 
-        private string ConvertUpTo(int limit)
+        private string ConvertUpTo(long limit)
         {
             return FileSizeConverter.Convert(limit, true);
         }
