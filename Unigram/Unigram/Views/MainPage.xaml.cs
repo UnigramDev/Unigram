@@ -3035,15 +3035,17 @@ namespace Unigram.Views
                 return;
             }
 
-            if (e.Items.Count > 1 || e.Items[0] is ChatFilterViewModel filter && filter.ChatList is ChatListMain)
+            if (e.Items.Count > 1 || (e.Items[0] is ChatFilterViewModel filter && filter.ChatList is ChatListMain && !_protoService.IsPremium))
             {
                 list.CanReorderItems = false;
                 e.Cancel = true;
             }
             else
             {
+                var minimum = _protoService.IsPremium ? 2 : 3;
+
                 var items = ViewModel?.Filters;
-                if (items == null || items.Count < 3)
+                if (items == null || items.Count < minimum)
                 {
                     list.CanReorderItems = false;
                     e.Cancel = true;
@@ -3065,18 +3067,21 @@ namespace Unigram.Views
                 var index = items.IndexOf(filter);
 
                 var compare = items[index > 0 ? index - 1 : index + 1];
-                if (compare.ChatList is ChatListMain && index > 0)
+                if (compare.ChatList is ChatListMain && index > 0 && !_protoService.IsPremium)
                 {
                     compare = items[index + 1];
                 }
 
-                if (compare.ChatList is ChatListFilter)
+                if (compare.ChatList is ChatListMain && !_protoService.IsPremium)
                 {
-                    ViewModel.ProtoService.Send(new ReorderChatFilters(items.Where(x => x.ChatList is ChatListFilter).Select(x => x.ChatFilterId).ToArray()));
+                    ViewModel.Handle(new UpdateChatFilters(ViewModel.CacheService.ChatFilters, 0));
                 }
                 else
                 {
-                    ViewModel.Handle(new UpdateChatFilters(ViewModel.CacheService.ChatFilters));
+                    var filters = items.Where(x => x.ChatList is ChatListFilter).Select(x => x.ChatFilterId).ToArray();
+                    var main = _protoService.IsPremium ? items.IndexOf(items.FirstOrDefault(x => x.ChatList is ChatListMain)) : 0;
+
+                    ViewModel.ProtoService.Send(new ReorderChatFilters(filters, main));
                 }
             }
         }

@@ -46,12 +46,15 @@ namespace Unigram.Services
 
     public interface ICacheService
     {
+        bool IsPremium { get; }
+
         IDictionary<string, Reaction> Reactions { get; }
 
         IOptionsService Options { get; }
         JsonValueObject Config { get; }
 
         IList<ChatFilterInfo> ChatFilters { get; }
+        int MainChatListPosition { get; }
 
         IList<string> AnimationSearchEmojis { get; }
         string AnimationSearchProvider { get; }
@@ -184,6 +187,7 @@ namespace Unigram.Services
         private IList<long> _installedMaskSets;
 
         private IList<ChatFilterInfo> _chatFilters = new ChatFilterInfo[0];
+        private int _mainChatListPosition = 0;
 
         private IDictionary<string, Reaction> _reactions = new Dictionary<string, Reaction>();
 
@@ -195,6 +199,8 @@ namespace Unigram.Services
         private ConnectionState _connectionState;
 
         private JsonValueObject _config;
+
+        private bool _isPremium;
 
         private Background _selectedBackground;
         private Background _selectedBackgroundDark;
@@ -832,11 +838,15 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             return _connectionState;
         }
 
+        public bool IsPremium => _isPremium;
+
         public IOptionsService Options => _options;
 
         public JsonValueObject Config => _config;
 
         public IList<ChatFilterInfo> ChatFilters => _chatFilters;
+
+        public int MainChatListPosition => _mainChatListPosition;
 
         public IDictionary<string, Reaction> Reactions => _reactions;
 
@@ -1528,6 +1538,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             else if (update is UpdateChatFilters updateChatFilters)
             {
                 _chatFilters = updateChatFilters.ChatFilters.ToList();
+                _mainChatListPosition = updateChatFilters.MainChatListPosition;
             }
             else if (update is UpdateChatHasScheduledMessages updateChatHasScheduledMessages)
             {
@@ -1868,6 +1879,11 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             else if (update is UpdateUser updateUser)
             {
                 _users[updateUser.User.Id] = updateUser.User;
+
+                if (updateUser.User.Id == _options.MyId)
+                {
+                    _isPremium = updateUser.User.IsPremium;
+                }
             }
             else if (update is UpdateUserFullInfo updateUserFullInfo)
             {

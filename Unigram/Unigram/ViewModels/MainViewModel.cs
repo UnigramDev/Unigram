@@ -225,17 +225,21 @@ namespace Unigram.ViewModels
 
         public void Handle(UpdateChatFilters update)
         {
-            BeginOnUIThread(() => UpdateChatFilters(update.ChatFilters));
+            BeginOnUIThread(() => UpdateChatFilters(update.ChatFilters, update.MainChatListPosition));
         }
 
-        private void UpdateChatFilters(IList<ChatFilterInfo> chatFilters)
+        private void UpdateChatFilters(IList<ChatFilterInfo> chatFilters, int mainChatListPosition)
         {
             if (chatFilters.Count > 0)
             {
                 var selected = SelectedFilter?.ChatFilterId ?? Constants.ChatListMain;
-                //var origin = chatFilters.Select(x => Filters.FirstOrDefault(y => y.ChatFilterId == x.ChatFilterId));
 
-                Merge(Filters, new[] { new ChatFilterInfo { Id = Constants.ChatListMain, Title = Strings.Resources.FilterAllChats, IconName = "All" } }.Union(chatFilters).ToArray());
+                var filters = chatFilters.ToList();
+                var index = Math.Min(mainChatListPosition, filters.Count);
+                
+                filters.Insert(index, new ChatFilterInfo { Id = Constants.ChatListMain, Title = Strings.Resources.FilterAllChats, IconName = "All" });
+
+                Merge(Filters, filters);
 
                 if (Chats.Items.ChatList is ChatListFilter already && already.ChatFilterId != selected)
                 {
@@ -346,7 +350,7 @@ namespace Unigram.ViewModels
                     return _filters.FirstOrDefault(x => x.ChatFilterId == filter.ChatFilterId);
                 }
 
-                return _filters?.FirstOrDefault();
+                return _filters?.FirstOrDefault(x => x.ChatList is ChatListMain);
             }
             set
             {
@@ -369,7 +373,7 @@ namespace Unigram.ViewModels
             //Dispatch(() => Contacts.GetSelfAsync());
 
             UpdateAppVersion(_cloudUpdateService.NextUpdate);
-            UpdateChatFilters(CacheService.ChatFilters);
+            UpdateChatFilters(CacheService.ChatFilters, CacheService.MainChatListPosition);
 
             var unreadCount = CacheService.GetUnreadCount(new ChatListMain());
             UnreadCount = unreadCount.UnreadMessageCount.UnreadCount;
