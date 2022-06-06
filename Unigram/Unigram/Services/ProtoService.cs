@@ -200,8 +200,6 @@ namespace Unigram.Services
 
         private JsonValueObject _config;
 
-        private bool _isPremium;
-
         private Background _selectedBackground;
         private Background _selectedBackgroundDark;
 
@@ -838,7 +836,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             return _connectionState;
         }
 
-        public bool IsPremium => _isPremium;
+        public bool IsPremium => _options.IsPremium;
 
         public IOptionsService Options => _options;
 
@@ -1879,11 +1877,6 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             else if (update is UpdateUser updateUser)
             {
                 _users[updateUser.User.Id] = updateUser.User;
-
-                if (updateUser.User.Id == _options.MyId)
-                {
-                    _isPremium = updateUser.User.IsPremium;
-                }
             }
             else if (update is UpdateUserFullInfo updateUserFullInfo)
             {

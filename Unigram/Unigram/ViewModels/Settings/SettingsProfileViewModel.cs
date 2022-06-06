@@ -62,6 +62,8 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
+        public int BioLengthMax => (int)CacheService.Options.BioLengthMax;
+
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             Aggregator.Subscribe(this);
@@ -165,7 +167,7 @@ namespace Unigram.ViewModels.Settings
             return _firstName.Length > 0
                 && _firstName.Length <= 64
                 && _lastName.Length <= 64
-                && _bio.Length <= 70;
+                && _bio.Length <= CacheService.Options.BioLengthMax;
         }
 
         public async Task EditPhotoAsync(StorageMedia file)

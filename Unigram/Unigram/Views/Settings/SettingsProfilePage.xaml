@@ -76,7 +76,9 @@
                 </controls:HeaderedControl>-->
 
                 <TextBox Text="{x:Bind ViewModel.Bio, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         MaxLength="{x:Bind ViewModel.BioLengthMax}"
                          PlaceholderText="{CustomResource UserBio}"
+                         AcceptsReturn="True"
                          HorizontalAlignment="Left"
                          Margin="24,24,0,0"
                          Width="280" />
@@ -99,7 +101,8 @@
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl>
-                    <controls:BadgeButton Click="LogOut_Click" Content="{CustomResource LogOutTitle}"
+                    <controls:BadgeButton Click="LogOut_Click"
+                                          Content="{CustomResource LogOutTitle}"
                                           Foreground="{ThemeResource DangerButtonBackground}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Glyph="&#xF3B1;" />

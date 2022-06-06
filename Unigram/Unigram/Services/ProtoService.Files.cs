@@ -112,6 +112,17 @@ namespace Unigram.Services
                     ProcessFiles(basicGroupFullInfo.Photo);
                 }
             }
+            else if (target is BotInfo botInfo)
+            {
+                if (botInfo.Animation != null)
+                {
+                    ProcessFiles(botInfo.Animation);
+                }
+                if (botInfo.Photo != null)
+                {
+                    ProcessFiles(botInfo.Photo);
+                }
+            }
             else if (target is Chat chat)
             {
                 if (chat.LastMessage != null)
@@ -196,6 +207,10 @@ namespace Unigram.Services
             }
             else if (target is ChatPhoto chatPhoto)
             {
+                if (chatPhoto.SmallAnimation != null)
+                {
+                    ProcessFiles(chatPhoto.SmallAnimation);
+                }
                 if (chatPhoto.Animation != null)
                 {
                     ProcessFiles(chatPhoto.Animation);
@@ -994,6 +1009,13 @@ namespace Unigram.Services
                     ProcessFiles(passportElementUtilityBill.UtilityBill);
                 }
             }
+            else if (target is PaymentForm paymentForm)
+            {
+                if (paymentForm.ProductPhoto != null)
+                {
+                    ProcessFiles(paymentForm.ProductPhoto);
+                }
+            }
             else if (target is PaymentReceipt paymentReceipt)
             {
                 if (paymentReceipt.Photo != null)
@@ -1024,6 +1046,20 @@ namespace Unigram.Services
                 if (photoSize.Photo != null)
                 {
                     photoSize.Photo = ProcessFile(photoSize.Photo);
+                }
+            }
+            else if (target is PremiumFeaturePromotionVideo premiumFeaturePromotionVideo)
+            {
+                if (premiumFeaturePromotionVideo.Video != null)
+                {
+                    ProcessFiles(premiumFeaturePromotionVideo.Video);
+                }
+            }
+            else if (target is PremiumState premiumState)
+            {
+                foreach (var item in premiumState.Videos)
+                {
+                    ProcessFiles(item);
                 }
             }
             else if (target is ProfilePhoto profilePhoto)
@@ -1245,6 +1281,10 @@ namespace Unigram.Services
                 if (sticker.StickerValue != null)
                 {
                     sticker.StickerValue = ProcessFile(sticker.StickerValue);
+                }
+                if (sticker.PremiumAnimation != null)
+                {
+                    sticker.PremiumAnimation = ProcessFile(sticker.PremiumAnimation);
                 }
                 if (sticker.Thumbnail != null)
                 {
@@ -1506,6 +1546,10 @@ namespace Unigram.Services
             }
             else if (target is UserFullInfo userFullInfo)
             {
+                if (userFullInfo.BotInfo != null)
+                {
+                    ProcessFiles(userFullInfo.BotInfo);
+                }
                 if (userFullInfo.Photo != null)
                 {
                     ProcessFiles(userFullInfo.Photo);
