@@ -72,15 +72,6 @@ namespace Unigram.ViewModels.Supergroups
                     basicDelegate.UpdateBasicGroup(chat, item);
                 }
 
-                ChatMembersFilter filter = _filter switch
-                {
-                    SupergroupMembersFilterAdministrators => new ChatMembersFilterAdministrators(),
-                    SupergroupMembersFilterBanned => new ChatMembersFilterBanned(),
-                    SupergroupMembersFilterBots => new ChatMembersFilterBots(),
-                    SupergroupMembersFilterRestricted => new ChatMembersFilterRestricted(),
-                    _ => null
-                };
-
                 Members.SetQuery(string.Empty);
             }
 

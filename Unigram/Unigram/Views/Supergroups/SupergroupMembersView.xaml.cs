@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using Telegram.Td.Api;
+﻿using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
@@ -12,7 +11,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Unigram.Views.Supergroups
 {
-    public sealed partial class SupergroupMembersPage : HostedPage, IBasicAndSupergroupDelegate, INavigablePage, ISearchablePage
+    public sealed partial class SupergroupMembersPage : HostedPage, IBasicAndSupergroupDelegate, ISearchablePage
     {
         public SupergroupMembersViewModel ViewModel => DataContext as SupergroupMembersViewModel;
 
@@ -20,23 +19,11 @@ namespace Unigram.Views.Supergroups
         {
             InitializeComponent();
             Title = Strings.Resources.ChannelSubscribers;
-
-            var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
-            debouncer.Invoked += (s, args) =>
-            {
-                if (string.IsNullOrWhiteSpace(SearchField.Text))
-                {
-                    ViewModel.Search?.Clear();
-                }
-                else
-                {
-                    ViewModel.Find(SearchField.Text);
-                }
-            };
         }
 
         public void Search()
         {
+            SearchField.StartBringIntoView();
             SearchField.Focus(FocusState.Keyboard);
         }
 
@@ -62,15 +49,6 @@ namespace Unigram.Views.Supergroups
             if (embedded)
             {
                 Footer.Visibility = Visibility.Collapsed;
-            }
-        }
-
-        public void OnBackRequested(HandledEventArgs args)
-        {
-            if (ContentPanel.Visibility == Visibility.Collapsed)
-            {
-                SearchField.Text = string.Empty;
-                args.Handled = true;
             }
         }
 
@@ -276,18 +254,6 @@ namespace Unigram.Views.Supergroups
         }
 
         #endregion
-
-        private void Search_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (string.IsNullOrEmpty(SearchField.Text))
-            {
-                ContentPanel.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                ContentPanel.Visibility = Visibility.Collapsed;
-            }
-        }
 
         #region Delegate
 

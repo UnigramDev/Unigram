@@ -63,91 +63,68 @@
         </DataTemplate>
     </UserControl.Resources>
 
-    <local:HostedPage.Header>
-        <controls:ContentPageHeader x:Name="Header">
-            <TextBox x:Name="SearchField"
-                     PlaceholderText="{CustomResource ChannelSubscribers}"
-                     Background="{ThemeResource PageBackgroundDarkBrush}"
-                     BorderBrush="{ThemeResource PageBackgroundDarkBrush}"
-                     PreventKeyboardDisplayOnProgrammaticFocus="True"
-                     TextChanged="Search_TextChanged"
-                     Margin="12,8" />
-        </controls:ContentPageHeader>
-    </local:HostedPage.Header>
-
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
-        <controls:TableListView ItemsSource="{x:Bind ViewModel.Search, Mode=OneWay}"
-                                ItemTemplate="{StaticResource MemberTemplate}"
+    <Grid Background="{ThemeResource SettingsPageBackground}">
+        <controls:TableListView x:Name="ScrollingHost"
+                                ItemsSource="{x:Bind ViewModel.Members, Mode=OneWay}"
                                 ItemClick="ListView_ItemClick"
                                 IsItemClickEnabled="True"
                                 ChoosingItemContainer="OnChoosingItemContainer"
                                 ContainerContentChanging="OnContainerContentChanging"
-                                SelectionMode="None">
+                                SelectionMode="None"
+                                Grid.Row="1">
+            <ListView.Header>
+                <StackPanel x:Name="ListHeader"
+                            Margin="0,0,0,16">
+                    <TextBox x:Name="SearchField"
+                             Text="{x:Bind ViewModel.Members.Query, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             PlaceholderText="{CustomResource Search}"
+                             PreventKeyboardDisplayOnProgrammaticFocus="True"
+                             HorizontalAlignment="Left"
+                             Width="280"
+                             Margin="24,0" />
+
+                    <controls:HeaderedControl x:Name="AddNewPanel"
+                                              Visibility="Collapsed">
+                        <controls:BadgeButton x:Name="AddNew"
+                                              Content="{CustomResource AddSubscriber}"
+                                              Command="{x:Bind ViewModel.AddCommand}"
+                                              Style="{StaticResource GlyphBadgeButtonStyle}"
+                                              Glyph="&#xE8FA;" />
+                    </controls:HeaderedControl>
+                </StackPanel>
+            </ListView.Header>
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem"
                        BasedOn="{StaticResource DefaultListViewItemStyle}">
                     <Setter Property="HorizontalContentAlignment"
                             Value="Stretch" />
+                    <Setter Property="MinHeight"
+                            Value="0" />
                 </Style>
             </ListView.ItemContainerStyle>
+            <ListView.ItemTemplateSelector>
+                <selectors:MemberTemplateSelector ItemTemplate="{StaticResource MemberTemplate}">
+                    <selectors:MemberTemplateSelector.GroupTemplate>
+                        <DataTemplate x:DataType="x:String">
+                            <Border Margin="-12,0"
+                                    Background="{ThemeResource PageSubHeaderBackgroundBrush}">
+                                <TextBlock Text="{x:Bind}"
+                                           Padding="12,0,0,0"
+                                           Style="{StaticResource SettingsGroupTextBlockStyle}" />
+                            </Border>
+                        </DataTemplate>
+                    </selectors:MemberTemplateSelector.GroupTemplate>
+                </selectors:MemberTemplateSelector>
+            </ListView.ItemTemplateSelector>
+            <ListView.Footer>
+                <Border MaxWidth="640">
+                    <TextBlock x:Name="Footer"
+                               Text="{CustomResource ChannelMembersInfo}"
+                               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                               Style="{StaticResource CaptionTextBlockStyle}"
+                               Margin="12,8,12,32" />
+                </Border>
+            </ListView.Footer>
         </controls:TableListView>
-
-        <Grid x:Name="ContentPanel"
-              Background="{ThemeResource PageBackgroundDarkBrush}">
-            <controls:TableListView x:Name="ScrollingHost"
-                                    ItemsSource="{x:Bind ViewModel.Members, Mode=OneWay}"
-                                    ItemClick="ListView_ItemClick"
-                                    IsItemClickEnabled="True"
-                                    ChoosingItemContainer="OnChoosingItemContainer"
-                                    ContainerContentChanging="OnContainerContentChanging"
-                                    SelectionMode="None"
-                                    Grid.Row="1">
-                <ListView.Header>
-                    <Border x:Name="ListHeader">
-                        <controls:HeaderedControl x:Name="AddNewPanel"
-                                                  Visibility="Collapsed"
-                                                  Margin="0,0,0,16">
-                            <controls:BadgeButton x:Name="AddNew"
-                                                  Content="{CustomResource AddSubscriber}"
-                                                  Command="{x:Bind ViewModel.AddCommand}"
-                                                  Style="{StaticResource GlyphBadgeButtonStyle}"
-                                                  Glyph="&#xE8FA;" />
-                        </controls:HeaderedControl>
-                    </Border>
-                </ListView.Header>
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem"
-                           BasedOn="{StaticResource DefaultListViewItemStyle}">
-                        <Setter Property="HorizontalContentAlignment"
-                                Value="Stretch" />
-                        <Setter Property="MinHeight"
-                                Value="0" />
-                    </Style>
-                </ListView.ItemContainerStyle>
-                <ListView.ItemTemplateSelector>
-                    <selectors:MemberTemplateSelector ItemTemplate="{StaticResource MemberTemplate}">
-                        <selectors:MemberTemplateSelector.GroupTemplate>
-                            <DataTemplate x:DataType="x:String">
-                                <Border Margin="-12,0"
-                                        Background="{ThemeResource PageSubHeaderBackgroundBrush}">
-                                    <TextBlock Text="{x:Bind}"
-                                               Padding="12,0,0,0"
-                                               Style="{StaticResource SettingsGroupTextBlockStyle}" />
-                                </Border>
-                            </DataTemplate>
-                        </selectors:MemberTemplateSelector.GroupTemplate>
-                    </selectors:MemberTemplateSelector>
-                </ListView.ItemTemplateSelector>
-                <ListView.Footer>
-                    <Border MaxWidth="640">
-                        <TextBlock x:Name="Footer"
-                                   Text="{CustomResource ChannelMembersInfo}"
-                                   Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                   Style="{StaticResource CaptionTextBlockStyle}"
-                                   Margin="12,8,12,32" />
-                    </Border>
-                </ListView.Footer>
-            </controls:TableListView>
-        </Grid>
     </Grid>
 </local:HostedPage>
