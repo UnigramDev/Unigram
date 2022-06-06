@@ -1,13 +1,13 @@
 namespace Unigram.Native
 {
 	interface IVideoAnimationSource {
-		void SeekCallback(Int32 offset);
-		void ReadCallback(Int32 count);
+		void SeekCallback(Int64 offset);
+		void ReadCallback(Int64 count);
 
 		String FilePath{ get; };
-		Int32 FileSize{ get; };
+		Int64 FileSize{ get; };
 
-		Int32 Offset{ get; };
+		Int64 Offset{ get; };
 
 		Int32 Id{ get; };
 	};

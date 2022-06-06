@@ -98,8 +98,8 @@ namespace Unigram.ViewModels.Settings
             set => Set(ref _channels, value);
         }
 
-        private int _limit;
-        public int Limit
+        private long _limit;
+        public long Limit
         {
             get => _limit;
             set => Set(ref _limit, value);

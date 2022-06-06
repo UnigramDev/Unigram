@@ -402,6 +402,23 @@ namespace Unigram.Common
             return defaultValue;
         }
 
+        public static long GetInt64(this ApplicationDataContainer container, string key, long defaultValue)
+        {
+            if (container.Values.TryGetValue(key, out object value))
+            {
+                if (value is long result64)
+                {
+                    return result64;
+                }
+                else if (value is int result32)
+                {
+                    return result32;
+                }
+            }
+
+            return defaultValue;
+        }
+
         public static bool GetBoolean(this ApplicationDataCompositeValue container, string key, bool defaultValue)
         {
             if (container.TryGetValue(key, out object value) && value is bool result)

@@ -122,10 +122,10 @@ namespace Unigram.Common
 
         private bool _canceled;
 
-        private int _offset;
-        private int _next;
+        private long _offset;
+        private long _next;
 
-        private int _bufferSize = 256 * 1024;
+        private long _bufferSize = 256 * 1024;
 
         public RemoteVideoSource(IProtoService protoService, File file, int duration)
         {
@@ -142,12 +142,12 @@ namespace Unigram.Common
             }
         }
 
-        public void SeekCallback(int offset)
+        public void SeekCallback(long offset)
         {
             _offset = offset;
         }
 
-        public void ReadCallback(int count)
+        public void ReadCallback(long count)
         {
             lock (_readLock)
             {
@@ -185,9 +185,9 @@ namespace Unigram.Common
         }
 
         public string FilePath => _file.Local.Path;
-        public int FileSize => _file.Size;
+        public long FileSize => _file.Size;
 
-        public int Offset => _offset;
+        public long Offset => _offset;
 
         public int Id => _file.Id;
 
@@ -218,7 +218,7 @@ namespace Unigram.Common
     {
         private readonly File _file;
 
-        private int _offset;
+        private long _offset;
 
         public LocalVideoSource(File file)
         {
@@ -226,18 +226,18 @@ namespace Unigram.Common
         }
 
         public string FilePath => _file.Local.Path;
-        public int FileSize => _file.Size;
+        public long FileSize => _file.Size;
 
-        public int Offset => _offset;
+        public long Offset => _offset;
 
         public int Id => _file.Id;
 
-        public void SeekCallback(int offset)
+        public void SeekCallback(long offset)
         {
             _offset = offset;
         }
 
-        public void ReadCallback(int count)
+        public void ReadCallback(long count)
         {
             // Nothing
         }

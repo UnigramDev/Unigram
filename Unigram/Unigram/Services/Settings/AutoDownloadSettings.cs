@@ -56,9 +56,9 @@ namespace Unigram.Services.Settings
             _disabled = container.GetBoolean("disabled", false);
             _photos = (AutoDownloadMode)container.GetInt32("photos", (int)AutoDownloadMode.All);
             _videos = (AutoDownloadMode)container.GetInt32("videos", (int)AutoDownloadMode.All);
-            _maximumVideoSize = container.GetInt32("maxVideoSize", 10 * 1024 * 1024);
+            _maximumVideoSize = container.GetInt64("maxVideoSize", 10 * 1024 * 1024);
             _documents = (AutoDownloadMode)container.GetInt32("documents", (int)AutoDownloadMode.All);
-            _maximumDocumentSize = container.GetInt32("maxDocumentSize", 3 * 1024 * 1024);
+            _maximumDocumentSize = container.GetInt64("maxDocumentSize", 3 * 1024 * 1024);
         }
 
         public void Save(ApplicationDataContainer container)
@@ -112,14 +112,14 @@ namespace Unigram.Services.Settings
         private AutoDownloadMode _videos;
         public AutoDownloadMode Videos => _videos;
 
-        private int _maximumVideoSize;
-        public int MaximumVideoSize => _maximumVideoSize;
+        private long _maximumVideoSize;
+        public long MaximumVideoSize => _maximumVideoSize;
 
         private AutoDownloadMode _documents;
         public AutoDownloadMode Documents => _documents;
 
-        private int _maximumDocumentSize;
-        public int MaximumDocumentSize => _maximumDocumentSize;
+        private long _maximumDocumentSize;
+        public long MaximumDocumentSize => _maximumDocumentSize;
 
         public AutoDownloadSettings UpdateDisabled(bool disabled)
         {
@@ -144,7 +144,7 @@ namespace Unigram.Services.Settings
             return preferences;
         }
 
-        public AutoDownloadSettings UpdateVideosMode(AutoDownloadMode mode, int maximumSize)
+        public AutoDownloadSettings UpdateVideosMode(AutoDownloadMode mode, long maximumSize)
         {
             var preferences = new AutoDownloadSettings();
             preferences._photos = _photos;
@@ -155,7 +155,7 @@ namespace Unigram.Services.Settings
             return preferences;
         }
 
-        public AutoDownloadSettings UpdateDocumentsMode(AutoDownloadMode mode, int maximumSize)
+        public AutoDownloadSettings UpdateDocumentsMode(AutoDownloadMode mode, long maximumSize)
         {
             var preferences = new AutoDownloadSettings();
             preferences._photos = _photos;
@@ -241,7 +241,7 @@ namespace Unigram.Services.Settings
             return ShouldDownload(_photos, chat, networkType);
         }
 
-        public bool ShouldDownloadVideo(AutoDownloadChat chat, int size, NetworkType networkType = null)
+        public bool ShouldDownloadVideo(AutoDownloadChat chat, long size, NetworkType networkType = null)
         {
             if (_disabled)
             {
@@ -256,7 +256,7 @@ namespace Unigram.Services.Settings
             return ShouldDownload(_videos, chat, networkType);
         }
 
-        public bool ShouldDownloadDocument(AutoDownloadChat chat, int size, NetworkType networkType = null)
+        public bool ShouldDownloadDocument(AutoDownloadChat chat, long size, NetworkType networkType = null)
         {
             if (_disabled)
             {
