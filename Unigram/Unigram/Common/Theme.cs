@@ -95,6 +95,8 @@ namespace Unigram.Common
             Update(ThemeCustomInfo.FromFile(path));
         }
 
+        public ThemeParameters Parameters { get; private set; }
+
         private int? _lastAccent;
         private long? _lastBackground;
 
@@ -258,6 +260,26 @@ namespace Unigram.Common
                         }
                     }
                 }
+
+                int GetColor(string key)
+                {
+                    if (target.TryGet(key, out SolidColorBrush brush))
+                    {
+                        return brush.Color.ToValue();
+                    }
+
+                    return 0;
+                }
+
+                Parameters = new ThemeParameters
+                {
+                    BackgroundColor = GetColor("ContentDialogBackground"),
+                    TextColor = GetColor("ContentDialogForeground"),
+                    ButtonColor = GetColor("ButtonBackground"),
+                    ButtonTextColor = GetColor("ButtonForeground"),
+                    HintColor = GetColor("SystemControlDisabledChromeDisabledLowBrush"),
+                    LinkColor = GetColor("HyperlinkForeground")
+                };
             }
             catch { }
         }
