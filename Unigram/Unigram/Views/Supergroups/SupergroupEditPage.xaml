@@ -109,7 +109,7 @@
                                           Footer="{CustomResource ChannelSignMessagesInfo}">
                     <CheckBox IsChecked="{x:Bind ViewModel.IsSignatures, Mode=TwoWay}"
                               Content="{CustomResource ChannelSignMessages}"
-                              Margin="12,6,12,0" />
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl x:Name="GroupMembersPanel">

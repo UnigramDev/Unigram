@@ -74,16 +74,27 @@ namespace Unigram.Views.Supergroups
                     TextBlockHelper.SetMarkdown(Headline, string.Format(Strings.Resources.DiscussionGroupHelp, linkedChat.Title));
                     LayoutRoot.Footer = Strings.Resources.DiscussionChannelHelp2;
                 }
+
+                JoinToSendMessages.Visibility = group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
             }
             else
             {
-
+                JoinToSendMessages.Visibility = Visibility.Collapsed;
             }
         }
 
         public void UpdateChat(Chat chat) { }
         public void UpdateChatTitle(Chat chat) { }
         public void UpdateChatPhoto(Chat chat) { }
+
+        #endregion
+
+        #region Binding
+
+        private string ConvertJoinToSendMessages(bool joinToSendMessages)
+        {
+            return joinToSendMessages ? Strings.Resources.ChannelSettingsJoinRequestInfo : Strings.Resources.ChannelSettingsJoinToSendInfo;
+        }
 
         #endregion
     }

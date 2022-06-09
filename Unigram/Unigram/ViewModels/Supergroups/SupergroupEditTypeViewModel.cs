@@ -13,6 +13,20 @@ namespace Unigram.ViewModels.Supergroups
         {
         }
 
+        private bool _joinToSendMessages;
+        public bool JoinToSendMessages
+        {
+            get => _joinToSendMessages;
+            set => Set(ref _joinToSendMessages, value);
+        }
+
+        private bool _joinByRequest;
+        public bool JoinByRequest
+        {
+            get => _joinByRequest;
+            set => Set(ref _joinByRequest, value);
+        }
+
         private bool _hasProtectedContent;
         public bool HasProtectedContent
         {
@@ -24,6 +38,12 @@ namespace Unigram.ViewModels.Supergroups
         {
             await base.OnNavigatedToAsync(parameter, mode, state);
             HasProtectedContent = Chat?.HasProtectedContent ?? false;
+
+            if (CacheService.TryGetSupergroup(Chat, out Supergroup supergroup))
+            {
+                JoinToSendMessages = supergroup.JoinToSendMessages;
+                JoinByRequest = supergroup.JoinByRequest;
+            }
         }
 
         protected override async void SendExecute()
@@ -61,6 +81,16 @@ namespace Unigram.ViewModels.Supergroups
                 if (item == null || cache == null)
                 {
                     return;
+                }
+
+                if (item.JoinToSendMessages != _joinToSendMessages)
+                {
+                    ProtoService.Send(new ToggleSupergroupJoinToSendMessages(item.Id, _joinToSendMessages));
+                }
+
+                if (item.JoinByRequest != _joinByRequest)
+                {
+                    ProtoService.Send(new ToggleSupergroupJoinByRequest(item.Id, _joinByRequest));
                 }
 
                 if (!string.Equals(username, item.Username))

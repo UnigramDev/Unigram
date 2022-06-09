@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
@@ -34,6 +33,20 @@ namespace Unigram.ViewModels.Supergroups
         {
             get => _chat;
             set => Set(ref _chat, value);
+        }
+
+        private bool _joinToSendMessages;
+        public bool JoinToSendMessages
+        {
+            get => _joinToSendMessages;
+            set => Set(ref _joinToSendMessages, value);
+        }
+
+        private bool _joinByRequest;
+        public bool JoinByRequest
+        {
+            get => _joinByRequest;
+            set => Set(ref _joinByRequest, value);
         }
 
         public MvxObservableCollection<Chat> Items { get; private set; }
@@ -121,6 +134,12 @@ namespace Unigram.ViewModels.Supergroups
                 var linkedChat = CacheService.GetChat(fullInfo.LinkedChatId);
                 if (linkedChat != null)
                 {
+                    if (CacheService.TryGetSupergroup(linkedChat, out Supergroup linkedSupergroup))
+                    {
+                        JoinToSendMessages = linkedSupergroup.JoinToSendMessages;
+                        JoinByRequest = linkedSupergroup.JoinByRequest;
+                    }
+
                     Items.ReplaceWith(new[] { linkedChat });
                 }
                 else

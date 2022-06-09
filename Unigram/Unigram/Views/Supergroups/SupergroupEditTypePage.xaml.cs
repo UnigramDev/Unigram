@@ -162,6 +162,11 @@ namespace Unigram.Views.Supergroups
             return pubblico ? Strings.Resources.MegaPublicInfo : Strings.Resources.MegaPrivateInfo;
         }
 
+        private string ConvertJoinToSendMessages(bool joinToSendMessages)
+        {
+            return joinToSendMessages ? Strings.Resources.ChannelSettingsJoinRequestInfo : Strings.Resources.ChannelSettingsJoinToSendInfo;
+        }
+
         #endregion
 
     }
