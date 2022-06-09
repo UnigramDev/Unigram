@@ -1,0 +1,73 @@
+﻿<controls:ContentPopup x:Class="Unigram.Views.Premium.Popups.LimitsPopup"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:local="using:Unigram.Views.Premium.Popups"
+                       xmlns:controls="using:Unigram.Controls"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       mc:Ignorable="d"
+                       Title="TITLE"
+                       PrimaryButtonText="Button1"
+                       SecondaryButtonText="Button2"
+                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+
+    <Grid>
+        <ListView x:Name="ScrollingHost"
+                  ContainerContentChanging="OnContainerContentChanging"
+                  SelectionMode="None"
+                  IsItemClickEnabled="False"
+                  Margin="-24,0">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="24,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <TextBlock x:Name="Title"
+                                   Style="{StaticResource BaseTextBlockStyle}" />
+                        <TextBlock x:Name="Subtitle"
+                                   Style="{StaticResource BodyTextBlockStyle}"
+                                   Grid.Row="1" />
+
+                        <Grid Margin="0,8,0,24"
+                              Grid.Row="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Grid Background="{ThemeResource ControlFillColorDefaultBrush}"
+                                  CornerRadius="4,0,0,4"
+                                  Padding="8,4">
+                                <TextBlock Text="{CustomResource LimitFree}"
+                                           FontWeight="SemiBold" />
+
+                                <TextBlock x:Name="PrevLimit"
+                                           FontWeight="SemiBold"
+                                           Text="50"
+                                           TextAlignment="Right" />
+                            </Grid>
+                            <Grid x:Name="NextPanel"
+                                  Background="LightBlue"
+                                  CornerRadius="0,4,4,0"
+                                  Padding="8,4"
+                                  Grid.Column="1">
+                                <TextBlock Text="{CustomResource LimitPremium}"
+                                           Foreground="#FFFFFF"
+                                           FontWeight="SemiBold" />
+
+                                <TextBlock x:Name="NextLimit"
+                                           Foreground="#FFFFFF"
+                                           FontWeight="SemiBold"
+                                           Text="100"
+                                           TextAlignment="Right" />
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</controls:ContentPopup>

@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 04/10/2022 19:50:06
+// 	Generated: 06/10/2022 15:36:03
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -76,6 +76,39 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AbortPasswordMenu");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "While the free version of Telegram already gives its users more than any other messaging application, **Telegram Premium** pushes its capabilities even further."
+        /// </summary>
+        public static string AboutPremiumDescription
+        {
+            get
+            {
+                return resourceLoader.GetString("AboutPremiumDescription");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "**Telegram Premium** is a paid option, because most Premium Features require additional expenses from Telegram to third parties such as data center providers and server manufacturers. Contributions from **Telegram Premium** users allow us to cover such costs and also help Telegram stay free for everyone."
+        /// </summary>
+        public static string AboutPremiumDescription2
+        {
+            get
+            {
+                return resourceLoader.GetString("AboutPremiumDescription2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "About Telegram Premium"
+        /// </summary>
+        public static string AboutPremiumTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("AboutPremiumTitle");
             }
         }
         
@@ -7710,6 +7743,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Add more symbols and use links in your bio."
+        /// </summary>
+        public static string BioLimitSubtitle
+        {
+            get
+            {
+                return resourceLoader.GetString("BioLimitSubtitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Bio"
+        /// </summary>
+        public static string BioLimitTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("BioLimitTitle");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Black"
         /// </summary>
         public static string Black
@@ -9527,6 +9582,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Use longer descriptions for your photos and videos"
+        /// </summary>
+        public static string CaptionsLimitSubtitle
+        {
+            get
+            {
+                return resourceLoader.GetString("CaptionsLimitSubtitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Captions"
+        /// </summary>
+        public static string CaptionsLimitTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("CaptionsLimitTitle");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Card number copied to clipboard"
         /// </summary>
         public static string CardNumberCopied
@@ -10851,6 +10928,61 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Approve new members"
+        /// </summary>
+        public static string ChannelSettingsJoinRequest
+        {
+            get
+            {
+                return resourceLoader.GetString("ChannelSettingsJoinRequest");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Turn this on if you want users to join the group only after they are approved by an admin."
+        /// </summary>
+        public static string ChannelSettingsJoinRequestInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("ChannelSettingsJoinRequestInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Who can send new messages?"
+        /// </summary>
+        public static string ChannelSettingsJoinTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("ChannelSettingsJoinTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Only members"
+        /// </summary>
+        public static string ChannelSettingsJoinToSend
+        {
+            get
+            {
+                return resourceLoader.GetString("ChannelSettingsJoinToSend");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Turn this on if you expect users to join your group before being able to send messages."
+        /// </summary>
+        public static string ChannelSettingsJoinToSendInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("ChannelSettingsJoinToSendInfo");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Channel Settings"
         /// </summary>
         public static string ChannelSettingsTitle
@@ -11468,6 +11600,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ChatNoTheme");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add up to {0} chats into each of your folders"
+        /// </summary>
+        public static string ChatPerFolderLimitSubtitle
+        {
+            get
+            {
+                return resourceLoader.GetString("ChatPerFolderLimitSubtitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Chats per Folder"
+        /// </summary>
+        public static string ChatPerFolderLimitTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("ChatPerFolderLimitTitle");
             }
         }
         
@@ -13494,6 +13648,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Connected");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Connect {0} accounts with different mobile numbers"
+        /// </summary>
+        public static string ConnectedAccountsLimitSubtitle
+        {
+            get
+            {
+                return resourceLoader.GetString("ConnectedAccountsLimitSubtitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Connected Accounts"
+        /// </summary>
+        public static string ConnectedAccountsLimitTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("ConnectedAccountsLimitTitle");
             }
         }
         
@@ -16942,6 +17118,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Doubled Limits"
+        /// </summary>
+        public static string DoubledLimits
+        {
+            get
+            {
+                return resourceLoader.GetString("DoubledLimits");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Downloaded files"
         /// </summary>
         public static string DownloadedFiles
@@ -20131,6 +20318,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Save up to {0} stickers in your Favorite stickers"
+        /// </summary>
+        public static string FavoriteStickersLimitSubtitle
+        {
+            get
+            {
+                return resourceLoader.GetString("FavoriteStickersLimitSubtitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Favorite Stickers"
+        /// </summary>
+        public static string FavoriteStickersLimitTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("FavoriteStickersLimitTitle");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Favorites"
         /// </summary>
         public static string FavoriteStickersShort
@@ -21348,6 +21557,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Folder");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Organize your chats into {0} folders"
+        /// </summary>
+        public static string FoldersLimitSubtitle
+        {
+            get
+            {
+                return resourceLoader.GetString("FoldersLimitSubtitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Folders"
+        /// </summary>
+        public static string FoldersLimitTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("FoldersLimitTitle");
             }
         }
         
@@ -23732,6 +23963,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("GroupsAndChannelsHelp");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Join up to {0} channels and large groups"
+        /// </summary>
+        public static string GroupsAndChannelsLimitSubtitle
+        {
+            get
+            {
+                return resourceLoader.GetString("GroupsAndChannelsLimitSubtitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Groups and Channels"
+        /// </summary>
+        public static string GroupsAndChannelsLimitTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("GroupsAndChannelsLimitTitle");
             }
         }
         
@@ -26815,6 +27068,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Free"
+        /// </summary>
+        public static string LimitFree
+        {
+            get
+            {
+                return resourceLoader.GetString("LimitFree");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Limit number of uses"
         /// </summary>
         public static string LimitNumberOfUses
@@ -26826,6 +27090,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Premium"
+        /// </summary>
+        public static string LimitPremium
+        {
+            get
+            {
+                return resourceLoader.GetString("LimitPremium");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Limit Reached"
         /// </summary>
         public static string LimitReached
@@ -26833,6 +27108,63 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("LimitReached");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't add more than **{0}** chats to a folder. You can increase this limit to **{1}** by upgrading to **Telegram Premium**."
+        /// </summary>
+        public static string LimitReachedChatInFolders
+        {
+            get
+            {
+                return resourceLoader.GetString("LimitReachedChatInFolders");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You are a member of **{0}** groups and channels. Please leave some before joining a new one — or upgrade to **Telegram Premium** to double the limit to **{0}** groups and channels."
+        /// </summary>
+        public static string LimitReachedCommunities
+        {
+            get
+            {
+                return resourceLoader.GetString("LimitReachedCommunities");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You have reached the limit of **{0}** folders. You can double the limit to **{1}** folders by subscribing to **Telegram Premium**."
+        /// </summary>
+        public static string LimitReachedFolders
+        {
+            get
+            {
+                return resourceLoader.GetString("LimitReachedFolders");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't pin more than {0} chats to the top.
+        ///	
+        ///Unpin some of the currently pinned ones or subscribe to **Telegram Premium** to double the limit to **{1}** chats."
+        /// </summary>
+        public static string LimitReachedPinDialogs
+        {
+            get
+            {
+                return resourceLoader.GetString("LimitReachedPinDialogs");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You have reserved too many public links. Try revoking the link from an older group or channel, or upgrade to **Telegram Premium** to double the limit to **{0}** public links."
+        /// </summary>
+        public static string LimitReachedPublicLinks
+        {
+            get
+            {
+                return resourceLoader.GetString("LimitReachedPublicLinks");
             }
         }
         
@@ -39365,6 +39697,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Pin up to {0} chats in your main chat list"
+        /// </summary>
+        public static string PinChatsLimitSubtitle
+        {
+            get
+            {
+                return resourceLoader.GetString("PinChatsLimitSubtitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Pinned Chats"
+        /// </summary>
+        public static string PinChatsLimitTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("PinChatsLimitTitle");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Sorry, you can't pin any more chats to the top."
         /// </summary>
         public static string PinFolderLimitReached
@@ -40109,6 +40463,281 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("PostingMembers");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Advanced Chat Management"
+        /// </summary>
+        public static string PremiumPreviewAdvancedChatManagement
+        {
+            get
+            {
+                return resourceLoader.GetString("PremiumPreviewAdvancedChatManagement");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Tools to set default folder, auto-archive and hide new chats from non-contacts."
+        /// </summary>
+        public static string PremiumPreviewAdvancedChatManagementDescription
+        {
+            get
+            {
+                return resourceLoader.GetString("PremiumPreviewAdvancedChatManagementDescription");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Animated Profile Pictures"
+        /// </summary>
+        public static string PremiumPreviewAnimatedProfiles
+        {
+            get
+            {
+                return resourceLoader.GetString("PremiumPreviewAnimatedProfiles");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Video avatars animated in chat lists and chats to allow for additional self-expression."
+        /// </summary>
+        public static string PremiumPreviewAnimatedProfilesDescription
+        {
+            get
+            {
+                return resourceLoader.GetString("PremiumPreviewAnimatedProfilesDescription");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Premium App Icon"
+        /// </summary>
+        public static string PremiumPreviewAppIcon
+        {
+            get
+            {
+                return resourceLoader.GetString("PremiumPreviewAppIcon");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Choose from a selection of Telegram app icons for your homescreen."
+        /// </summary>
+        public static string PremiumPreviewAppIconDescription
+        {
+            get
+            {
+                return resourceLoader.GetString("PremiumPreviewAppIconDescription");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Faster Download Speed"
+        /// </summary>
+        public static string PremiumPreviewDownloadSpeed
+        {
+            get
+            {
+                return resourceLoader.GetString("PremiumPreviewDownloadSpeed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No more limits on the speed with which media and documents are downloaded."
+        /// </summary>
+        public static string PremiumPreviewDownloadSpeedDescription
+        {
+            get
+            {
+                return resourceLoader.GetString("PremiumPreviewDownloadSpeedDescription");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Doubled limits"
+        /// </summary>
+        public static string PremiumPreviewLimits
+        {
+            get
+            {
+                return resourceLoader.GetString("PremiumPreviewLimits");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Up to {0} channels, {1} folders, {2} pins, {3} public links, {4} accounts and more."
+        /// </summary>
+        public static string PremiumPreviewLimitsDescription
+        {
+            get
+            {
+                return resourceLoader.GetString("PremiumPreviewLimitsDescription");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No Ads"
+        /// </summary>
+        public static string PremiumPreviewNoAds
+        {
+            get
+            {
+                return resourceLoader.GetString("PremiumPreviewNoAds");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No more ads in public channels where Telegram sometimes shows ads."
+        /// </summary>
+        public static string PremiumPreviewNoAdsDescription
+        {
+            get
+            {
+                return resourceLoader.GetString("PremiumPreviewNoAdsDescription");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Profile Badge"
+        /// </summary>
+        public static string PremiumPreviewProfileBadge
+        {
+            get
+            {
+                return resourceLoader.GetString("PremiumPreviewProfileBadge");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "A badge next to your name showing that you are helping support Telegram."
+        /// </summary>
+        public static string PremiumPreviewProfileBadgeDescription
+        {
+            get
+            {
+                return resourceLoader.GetString("PremiumPreviewProfileBadgeDescription");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unique Reactions"
+        /// </summary>
+        public static string PremiumPreviewReactions
+        {
+            get
+            {
+                return resourceLoader.GetString("PremiumPreviewReactions");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Additional animated reactions on messages, available only to the Premium subscribers."
+        /// </summary>
+        public static string PremiumPreviewReactionsDescription
+        {
+            get
+            {
+                return resourceLoader.GetString("PremiumPreviewReactionsDescription");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Premium Stickers"
+        /// </summary>
+        public static string PremiumPreviewStickers
+        {
+            get
+            {
+                return resourceLoader.GetString("PremiumPreviewStickers");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Exclusive enlarged stickers featuring additional effects, updated monthly."
+        /// </summary>
+        public static string PremiumPreviewStickersDescription
+        {
+            get
+            {
+                return resourceLoader.GetString("PremiumPreviewStickersDescription");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "4Gb Upload Size"
+        /// </summary>
+        public static string PremiumPreviewUploads
+        {
+            get
+            {
+                return resourceLoader.GetString("PremiumPreviewUploads");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Increased upload size from 2Gb to 4Gb per document, unlimited storage overall."
+        /// </summary>
+        public static string PremiumPreviewUploadsDescription
+        {
+            get
+            {
+                return resourceLoader.GetString("PremiumPreviewUploadsDescription");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Voice-to-Text Conversion"
+        /// </summary>
+        public static string PremiumPreviewVoiceToText
+        {
+            get
+            {
+                return resourceLoader.GetString("PremiumPreviewVoiceToText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Ability to read the transcript of any incoming voice message."
+        /// </summary>
+        public static string PremiumPreviewVoiceToTextDescription
+        {
+            get
+            {
+                return resourceLoader.GetString("PremiumPreviewVoiceToTextDescription");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This pack contains premium stickers like this one."
+        /// </summary>
+        public static string PremiumStickerTooltip
+        {
+            get
+            {
+                return resourceLoader.GetString("PremiumStickerTooltip");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Premuim Stickers"
+        /// </summary>
+        public static string PremiumStickers
+        {
+            get
+            {
+                return resourceLoader.GetString("PremiumStickers");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Premium"
+        /// </summary>
+        public static string PremiumStickersShort
+        {
+            get
+            {
+                return resourceLoader.GetString("PremiumStickersShort");
             }
         }
         
@@ -41792,6 +42421,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("PublicLink");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Reserve up to {0} t.me/name links"
+        /// </summary>
+        public static string PublicLinksLimitSubtitle
+        {
+            get
+            {
+                return resourceLoader.GetString("PublicLinksLimitSubtitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Public Links"
+        /// </summary>
+        public static string PublicLinksLimitTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("PublicLinksLimitTitle");
             }
         }
         
@@ -45050,6 +45701,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("SaveToMusic");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Save up to {0} GIFs in your Favorite GIFs"
+        /// </summary>
+        public static string SavedGifsLimitSubtitle
+        {
+            get
+            {
+                return resourceLoader.GetString("SavedGifsLimitSubtitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Saved GIFs"
+        /// </summary>
+        public static string SavedGifsLimitTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("SavedGifsLimitTitle");
             }
         }
         
@@ -49732,6 +50405,39 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Subscribe for {0} per month"
+        /// </summary>
+        public static string SubscribeToPremium
+        {
+            get
+            {
+                return resourceLoader.GetString("SubscribeToPremium");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Subscribe"
+        /// </summary>
+        public static string SubscribeToPremiumNoPrice
+        {
+            get
+            {
+                return resourceLoader.GetString("SubscribeToPremiumNoPrice");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Subscription not available"
+        /// </summary>
+        public static string SubscribeToPremiumNotAvailable
+        {
+            get
+            {
+                return resourceLoader.GetString("SubscribeToPremiumNotAvailable");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to ""
         /// </summary>
         public static string Subscribers_few
@@ -50634,6 +51340,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("TelegramPassportDeleteTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Telegram Premium"
+        /// </summary>
+        public static string TelegramPremium
+        {
+            get
+            {
+                return resourceLoader.GetString("TelegramPremium");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Go **beyond the limits**, get exclusive features and support us by subscribing to **Telegram Premium**."
+        /// </summary>
+        public static string TelegramPremiumSubtitle
+        {
+            get
+            {
+                return resourceLoader.GetString("TelegramPremiumSubtitle");
             }
         }
         

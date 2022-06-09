@@ -176,107 +176,115 @@ namespace Unigram.Common
             }
 
             var response = await protoService.SendAsync(new GetInternalLinkType(url));
-            if (response is InternalLinkTypeActiveSessions)
+            if (response is InternalLinkType internalLink)
+            {
+                OpenTelegramUrl(protoService, navigation, internalLink);
+            }
+        }
+
+        public static void OpenTelegramUrl(IProtoService protoService, INavigationService navigation, InternalLinkType internalLink)
+        {
+            if (internalLink is InternalLinkTypeActiveSessions)
             {
                 navigation.Navigate(typeof(SettingsSessionsPage));
             }
-            else if (response is InternalLinkTypeAuthenticationCode)
+            else if (internalLink is InternalLinkTypeAuthenticationCode)
             {
 
             }
-            else if (response is InternalLinkTypeBackground background)
+            else if (internalLink is InternalLinkTypeBackground background)
             {
                 NavigateToBackground(protoService, navigation, background.BackgroundName);
             }
-            else if (response is InternalLinkTypeBotStart botStart)
+            else if (internalLink is InternalLinkTypeBotStart botStart)
             {
                 NavigateToUsername(protoService, navigation, botStart.BotUsername, botStart.StartParameter, null, null, null, null);
             }
-            else if (response is InternalLinkTypeBotStartInGroup botStartInGroup)
+            else if (internalLink is InternalLinkTypeBotStartInGroup botStartInGroup)
             {
                 NavigateToUsername(protoService, navigation, botStartInGroup.BotUsername, botStartInGroup.StartParameter, null, null, null, null, PageKind.Search);
             }
-            else if (response is InternalLinkTypeChangePhoneNumber)
+            else if (internalLink is InternalLinkTypeChangePhoneNumber)
             {
                 navigation.Navigate(typeof(SettingsProfilePage));
             }
-            else if (response is InternalLinkTypeChatInvite)
+            else if (internalLink is InternalLinkTypeChatInvite chatInvite)
             {
-                NavigateToInviteLink(protoService, navigation, uri.ToString());
+                NavigateToInviteLink(protoService, navigation, chatInvite.InviteLink);
             }
-            else if (response is InternalLinkTypeFilterSettings)
+            else if (internalLink is InternalLinkTypeFilterSettings)
             {
                 navigation.Navigate(typeof(FoldersPage));
             }
-            else if (response is InternalLinkTypeGame game)
+            else if (internalLink is InternalLinkTypeGame game)
             {
                 NavigateToUsername(protoService, navigation, game.BotUsername, null, null, null, null, game.GameShortName);
             }
-            else if (response is InternalLinkTypeInvoice invoice)
+            else if (internalLink is InternalLinkTypeInvoice invoice)
             {
                 NavigateToInvoice(navigation, invoice.InvoiceName);
             }
-            else if (response is InternalLinkTypeLanguagePack languagePack)
+            else if (internalLink is InternalLinkTypeLanguagePack languagePack)
             {
                 NavigateToLanguage(protoService, navigation, languagePack.LanguagePackId);
             }
-            else if (response is InternalLinkTypeMessage message)
+            else if (internalLink is InternalLinkTypeMessage message)
             {
                 NavigateToMessage(protoService, navigation, message.Url);
             }
-            else if (response is InternalLinkTypeMessageDraft messageDraft)
+            else if (internalLink is InternalLinkTypeMessageDraft messageDraft)
             {
                 NavigateToShare(messageDraft.Text, messageDraft.ContainsLink);
             }
-            else if (response is InternalLinkTypePassportDataRequest)
+            else if (internalLink is InternalLinkTypePassportDataRequest)
             {
 
             }
-            else if (response is InternalLinkTypePrivacyAndSecuritySettings)
+            else if (internalLink is InternalLinkTypePrivacyAndSecuritySettings)
             {
                 navigation.Navigate(typeof(SettingsPrivacyAndSecurityPage));
             }
-            else if (response is InternalLinkTypePhoneNumberConfirmation phoneNumberConfirmation)
+            else if (internalLink is InternalLinkTypePhoneNumberConfirmation phoneNumberConfirmation)
             {
                 NavigateToConfirmPhone(protoService, phoneNumberConfirmation.PhoneNumber, phoneNumberConfirmation.Hash);
             }
-            else if (response is InternalLinkTypeProxy proxy)
+            else if (internalLink is InternalLinkTypeProxy proxy)
             {
                 NavigateToProxy(protoService, proxy.Server, proxy.Port, proxy.Type);
             }
-            else if (response is InternalLinkTypePublicChat publicChat)
+            else if (internalLink is InternalLinkTypePublicChat publicChat)
             {
                 NavigateToUsername(protoService, navigation, publicChat.ChatUsername, null, null, null, null, null);
             }
-            else if (response is InternalLinkTypeQrCodeAuthentication)
+            else if (internalLink is InternalLinkTypeQrCodeAuthentication)
             {
 
             }
-            else if (response is InternalLinkTypeSettings)
+            else if (internalLink is InternalLinkTypeSettings)
             {
 
             }
-            else if (response is InternalLinkTypeStickerSet stickerSet)
+            else if (internalLink is InternalLinkTypeStickerSet stickerSet)
             {
                 NavigateToStickerSet(stickerSet.StickerSetName);
             }
-            else if (response is InternalLinkTypeTheme theme)
+            else if (internalLink is InternalLinkTypeTheme theme)
             {
                 NavigateToTheme(protoService, theme.ThemeName);
             }
-            else if (response is InternalLinkTypeThemeSettings)
+            else if (internalLink is InternalLinkTypeThemeSettings)
             {
                 navigation.Navigate(typeof(SettingsAppearancePage));
             }
-            else if (response is InternalLinkTypeUnknownDeepLink)
+            else if (internalLink is InternalLinkTypeUnknownDeepLink unknownDeepLink)
             {
-                NavigateToUnknownDeepLink(protoService, uri.ToString());
+                NavigateToUnknownDeepLink(protoService, unknownDeepLink.Link);
             }
-            else if (response is InternalLinkTypeUserPhoneNumber phoneNumber)
+            else if (internalLink is InternalLinkTypeUserPhoneNumber phoneNumber)
             {
                 NavigateToPhoneNumber(protoService, navigation, phoneNumber.PhoneNumber);
             }
-            else if (response is InternalLinkTypeVideoChat videoChat)
+            else if (internalLink is InternalLinkTypeVideoChat videoChat)
             {
                 NavigateToUsername(protoService, navigation, videoChat.ChatUsername, null, videoChat.InviteHash, null, null, null);
             }

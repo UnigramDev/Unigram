@@ -225,6 +225,22 @@
                     </controls:BadgeButton>
                 </controls:TopNavView>
 
+                <Rectangle x:Name="PremiumLine"
+                           x:Load="{x:Bind ViewModel.IsPremiumAvailable, Mode=OneWay}"
+                           Fill="{ThemeResource NavigationViewItemSeparatorForeground}"
+                           Margin="12,2"
+                           Height="1" />
+
+                <controls:BadgeButton x:Name="Premiumd"
+                                      x:Load="{x:Bind ViewModel.IsPremiumAvailable, Mode=OneWay}"
+                                      Click="Premium_Click"
+                                      Content="{CustomResource TelegramPremium}"
+                                      Style="{StaticResource IconBadgeButtonStyle}">
+                    <controls:BadgeButton.IconSource>
+                        <icons:AskQ />
+                    </controls:BadgeButton.IconSource>
+                </controls:BadgeButton>
+
                 <Rectangle Fill="{ThemeResource NavigationViewItemSeparatorForeground}"
                            Margin="12,2"
                            Height="1" />

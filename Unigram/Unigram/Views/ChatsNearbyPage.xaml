@@ -31,8 +31,7 @@
                                VerticalAlignment="Bottom"
                                Grid.Column="1" />
                     <TextBlock VerticalAlignment="Top"
-                               Style="{StaticResource CaptionTextBlockStyle}"
-                               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                               Style="{StaticResource InfoCaptionTextBlockStyle}"
                                TextTrimming="CharacterEllipsis"
                                TextWrapping="NoWrap"
                                Grid.Column="1"

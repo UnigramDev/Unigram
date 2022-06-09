@@ -70,6 +70,15 @@
   <data name="AbortPasswordMenu" xml:space="preserve">
     <value>Abort setup</value>
   </data>
+  <data name="AboutPremiumDescription" xml:space="preserve">
+    <value>While the free version of Telegram already gives its users more than any other messaging application, **Telegram Premium** pushes its capabilities even further.</value>
+  </data>
+  <data name="AboutPremiumDescription2" xml:space="preserve">
+    <value>**Telegram Premium** is a paid option, because most Premium Features require additional expenses from Telegram to third parties such as data center providers and server manufacturers. Contributions from **Telegram Premium** users allow us to cover such costs and also help Telegram stay free for everyone.</value>
+  </data>
+  <data name="AboutPremiumTitle" xml:space="preserve">
+    <value>About Telegram Premium</value>
+  </data>
   <data name="AccActionCancelDownload" xml:space="preserve">
     <value>Cancel download</value>
   </data>
@@ -2164,6 +2173,12 @@ Sunrise: {1}</value>
   <data name="BioCopied" xml:space="preserve">
     <value>Bio copied to clipboard.</value>
   </data>
+  <data name="BioLimitSubtitle" xml:space="preserve">
+    <value>Add more symbols and use links in your bio.</value>
+  </data>
+  <data name="BioLimitTitle" xml:space="preserve">
+    <value>Bio</value>
+  </data>
   <data name="Black" xml:space="preserve">
     <value>Black</value>
   </data>
@@ -2677,6 +2692,12 @@ If this wasn't you, please enter the code we've just sent you via SMS. You can a
   <data name="Caption" xml:space="preserve">
     <value>Caption</value>
   </data>
+  <data name="CaptionsLimitSubtitle" xml:space="preserve">
+    <value>Use longer descriptions for your photos and videos</value>
+  </data>
+  <data name="CaptionsLimitTitle" xml:space="preserve">
+    <value>Captions</value>
+  </data>
   <data name="CardNumberCopied" xml:space="preserve">
     <value>Card number copied to clipboard</value>
   </data>
@@ -3041,6 +3062,21 @@ If you're not interested, we suggest creating a private channel instead.</value>
   <data name="ChannelSettingsChangedAlert" xml:space="preserve">
     <value>You have changed some settings in this channel. Apply changes?</value>
   </data>
+  <data name="ChannelSettingsJoinRequest" xml:space="preserve">
+    <value>Approve new members</value>
+  </data>
+  <data name="ChannelSettingsJoinRequestInfo" xml:space="preserve">
+    <value>Turn this on if you want users to join the group only after they are approved by an admin.</value>
+  </data>
+  <data name="ChannelSettingsJoinTitle" xml:space="preserve">
+    <value>Who can send new messages?</value>
+  </data>
+  <data name="ChannelSettingsJoinToSend" xml:space="preserve">
+    <value>Only members</value>
+  </data>
+  <data name="ChannelSettingsJoinToSendInfo" xml:space="preserve">
+    <value>Turn this on if you expect users to join your group before being able to send messages.</value>
+  </data>
   <data name="ChannelSettingsTitle" xml:space="preserve">
     <value>Channel Settings</value>
   </data>
@@ -3213,6 +3249,12 @@ Minimum length is 5 characters.</value>
   </data>
   <data name="ChatNoTheme" xml:space="preserve">
     <value>No Theme</value>
+  </data>
+  <data name="ChatPerFolderLimitSubtitle" xml:space="preserve">
+    <value>Add up to {0} chats into each of your folders</value>
+  </data>
+  <data name="ChatPerFolderLimitTitle" xml:space="preserve">
+    <value>Chats per Folder</value>
   </data>
   <data name="ChatResetTheme" xml:space="preserve">
     <value>Reset Theme</value>
@@ -3767,6 +3809,12 @@ Once {1} updates Telegram, photos with timers for 1 minute or less will start wo
   </data>
   <data name="Connected" xml:space="preserve">
     <value>Connected</value>
+  </data>
+  <data name="ConnectedAccountsLimitSubtitle" xml:space="preserve">
+    <value>Connect {0} accounts with different mobile numbers</value>
+  </data>
+  <data name="ConnectedAccountsLimitTitle" xml:space="preserve">
+    <value>Connected Accounts</value>
   </data>
   <data name="Connecting" xml:space="preserve">
     <value>Connecting...</value>
@@ -4724,6 +4772,9 @@ Anyone from the channel will be able to see messages in this group.</value>
   <data name="DoubleTapSetting" xml:space="preserve">
     <value>Quick Reaction</value>
   </data>
+  <data name="DoubledLimits" xml:space="preserve">
+    <value>Doubled Limits</value>
+  </data>
   <data name="DownloadedFiles" xml:space="preserve">
     <value>Downloaded files</value>
   </data>
@@ -5617,6 +5668,12 @@ Duration: {1}</value>
   <data name="FavoriteStickers" xml:space="preserve">
     <value>Favorites</value>
   </data>
+  <data name="FavoriteStickersLimitSubtitle" xml:space="preserve">
+    <value>Save up to {0} stickers in your Favorite stickers</value>
+  </data>
+  <data name="FavoriteStickersLimitTitle" xml:space="preserve">
+    <value>Favorite Stickers</value>
+  </data>
   <data name="FavoriteStickersShort" xml:space="preserve">
     <value>Favorites</value>
   </data>
@@ -5949,6 +6006,12 @@ Duration: {1}</value>
   </data>
   <data name="Folder" xml:space="preserve">
     <value>Folder</value>
+  </data>
+  <data name="FoldersLimitSubtitle" xml:space="preserve">
+    <value>Organize your chats into {0} folders</value>
+  </data>
+  <data name="FoldersLimitTitle" xml:space="preserve">
+    <value>Folders</value>
   </data>
   <data name="FollowersChartTitle" xml:space="preserve">
     <value>Followers</value>
@@ -6605,6 +6668,12 @@ about Telegram?</value>
   </data>
   <data name="GroupsAndChannelsHelp" xml:space="preserve">
     <value>Change who can add you to groups and channels.</value>
+  </data>
+  <data name="GroupsAndChannelsLimitSubtitle" xml:space="preserve">
+    <value>Join up to {0} channels and large groups</value>
+  </data>
+  <data name="GroupsAndChannelsLimitTitle" xml:space="preserve">
+    <value>Groups and Channels</value>
   </data>
   <data name="GroupSettingsChangedAlert" xml:space="preserve">
     <value>You have changed some settings in this group. Apply changes?</value>
@@ -7461,11 +7530,34 @@ You can change your language back at any time in Settings.</value>
   <data name="LimitByPeriod" xml:space="preserve">
     <value>Limit by time period</value>
   </data>
+  <data name="LimitFree" xml:space="preserve">
+    <value>Free</value>
+  </data>
   <data name="LimitNumberOfUses" xml:space="preserve">
     <value>Limit number of uses</value>
   </data>
+  <data name="LimitPremium" xml:space="preserve">
+    <value>Premium</value>
+  </data>
   <data name="LimitReached" xml:space="preserve">
     <value>Limit Reached</value>
+  </data>
+  <data name="LimitReachedChatInFolders" xml:space="preserve">
+    <value>Sorry, you can't add more than **{0}** chats to a folder. You can increase this limit to **{1}** by upgrading to **Telegram Premium**.</value>
+  </data>
+  <data name="LimitReachedCommunities" xml:space="preserve">
+    <value>You are a member of **{0}** groups and channels. Please leave some before joining a new one — or upgrade to **Telegram Premium** to double the limit to **{0}** groups and channels.</value>
+  </data>
+  <data name="LimitReachedFolders" xml:space="preserve">
+    <value>You have reached the limit of **{0}** folders. You can double the limit to **{1}** folders by subscribing to **Telegram Premium**.</value>
+  </data>
+  <data name="LimitReachedPinDialogs" xml:space="preserve">
+    <value>Sorry, you can't pin more than {0} chats to the top.
+	
+Unpin some of the currently pinned ones or subscribe to **Telegram Premium** to double the limit to **{1}** chats.</value>
+  </data>
+  <data name="LimitReachedPublicLinks" xml:space="preserve">
+    <value>You have reserved too many public links. Try revoking the link from an older group or channel, or upgrade to **Telegram Premium** to double the limit to **{0}** public links.</value>
   </data>
   <data name="LinkActionCopy" xml:space="preserve">
     <value>Copy</value>
@@ -10923,6 +11015,12 @@ We will access your location only for the duration you choose, and you can stop 
   <data name="PinAlsoFor" xml:space="preserve">
     <value>Also pin for {0}</value>
   </data>
+  <data name="PinChatsLimitSubtitle" xml:space="preserve">
+    <value>Pin up to {0} chats in your main chat list</value>
+  </data>
+  <data name="PinChatsLimitTitle" xml:space="preserve">
+    <value>Pinned Chats</value>
+  </data>
   <data name="PinFolderLimitReached" xml:space="preserve">
     <value>Sorry, you can't pin any more chats to the top.</value>
   </data>
@@ -11126,6 +11224,81 @@ We will access your location only for the duration you choose, and you can stop 
   </data>
   <data name="PostingMembers" xml:space="preserve">
     <value>Posting Members</value>
+  </data>
+  <data name="PremiumPreviewAdvancedChatManagement" xml:space="preserve">
+    <value>Advanced Chat Management</value>
+  </data>
+  <data name="PremiumPreviewAdvancedChatManagementDescription" xml:space="preserve">
+    <value>Tools to set default folder, auto-archive and hide new chats from non-contacts.</value>
+  </data>
+  <data name="PremiumPreviewAnimatedProfiles" xml:space="preserve">
+    <value>Animated Profile Pictures</value>
+  </data>
+  <data name="PremiumPreviewAnimatedProfilesDescription" xml:space="preserve">
+    <value>Video avatars animated in chat lists and chats to allow for additional self-expression.</value>
+  </data>
+  <data name="PremiumPreviewAppIcon" xml:space="preserve">
+    <value>Premium App Icon</value>
+  </data>
+  <data name="PremiumPreviewAppIconDescription" xml:space="preserve">
+    <value>Choose from a selection of Telegram app icons for your homescreen.</value>
+  </data>
+  <data name="PremiumPreviewDownloadSpeed" xml:space="preserve">
+    <value>Faster Download Speed</value>
+  </data>
+  <data name="PremiumPreviewDownloadSpeedDescription" xml:space="preserve">
+    <value>No more limits on the speed with which media and documents are downloaded.</value>
+  </data>
+  <data name="PremiumPreviewLimits" xml:space="preserve">
+    <value>Doubled limits</value>
+  </data>
+  <data name="PremiumPreviewLimitsDescription" xml:space="preserve">
+    <value>Up to {0} channels, {1} folders, {2} pins, {3} public links, {4} accounts and more.</value>
+  </data>
+  <data name="PremiumPreviewNoAds" xml:space="preserve">
+    <value>No Ads</value>
+  </data>
+  <data name="PremiumPreviewNoAdsDescription" xml:space="preserve">
+    <value>No more ads in public channels where Telegram sometimes shows ads.</value>
+  </data>
+  <data name="PremiumPreviewProfileBadge" xml:space="preserve">
+    <value>Profile Badge</value>
+  </data>
+  <data name="PremiumPreviewProfileBadgeDescription" xml:space="preserve">
+    <value>A badge next to your name showing that you are helping support Telegram.</value>
+  </data>
+  <data name="PremiumPreviewReactions" xml:space="preserve">
+    <value>Unique Reactions</value>
+  </data>
+  <data name="PremiumPreviewReactionsDescription" xml:space="preserve">
+    <value>Additional animated reactions on messages, available only to the Premium subscribers.</value>
+  </data>
+  <data name="PremiumPreviewStickers" xml:space="preserve">
+    <value>Premium Stickers</value>
+  </data>
+  <data name="PremiumPreviewStickersDescription" xml:space="preserve">
+    <value>Exclusive enlarged stickers featuring additional effects, updated monthly.</value>
+  </data>
+  <data name="PremiumPreviewUploads" xml:space="preserve">
+    <value>4Gb Upload Size</value>
+  </data>
+  <data name="PremiumPreviewUploadsDescription" xml:space="preserve">
+    <value>Increased upload size from 2Gb to 4Gb per document, unlimited storage overall.</value>
+  </data>
+  <data name="PremiumPreviewVoiceToText" xml:space="preserve">
+    <value>Voice-to-Text Conversion</value>
+  </data>
+  <data name="PremiumPreviewVoiceToTextDescription" xml:space="preserve">
+    <value>Ability to read the transcript of any incoming voice message.</value>
+  </data>
+  <data name="PremiumStickerTooltip" xml:space="preserve">
+    <value>This pack contains premium stickers like this one.</value>
+  </data>
+  <data name="PremiumStickers" xml:space="preserve">
+    <value>Premuim Stickers</value>
+  </data>
+  <data name="PremiumStickersShort" xml:space="preserve">
+    <value>Premium</value>
   </data>
   <data name="PreviewFeedback" xml:space="preserve">
     <value>Report a bug with this preview</value>
@@ -11585,6 +11758,12 @@ We will access your location only for the duration you choose, and you can stop 
   </data>
   <data name="PublicLink" xml:space="preserve">
     <value>Public link</value>
+  </data>
+  <data name="PublicLinksLimitSubtitle" xml:space="preserve">
+    <value>Reserve up to {0} t.me/name links</value>
+  </data>
+  <data name="PublicLinksLimitTitle" xml:space="preserve">
+    <value>Public Links</value>
   </data>
   <data name="PublicPoll" xml:space="preserve">
     <value>Poll</value>
@@ -12483,6 +12662,12 @@ The channel "**{1}**" will become private.</value>
   </data>
   <data name="SaveToMusic" xml:space="preserve">
     <value>Save to music</value>
+  </data>
+  <data name="SavedGifsLimitSubtitle" xml:space="preserve">
+    <value>Save up to {0} GIFs in your Favorite GIFs</value>
+  </data>
+  <data name="SavedGifsLimitTitle" xml:space="preserve">
+    <value>Saved GIFs</value>
   </data>
   <data name="SavingContentTitle" xml:space="preserve">
     <value>Saving content</value>
@@ -13770,6 +13955,15 @@ Online ads should no longer be synonymous with abuse of user privacy. Let us red
   <data name="SubscribeRequests" xml:space="preserve">
     <value>Join Requests</value>
   </data>
+  <data name="SubscribeToPremium" xml:space="preserve">
+    <value>Subscribe for {0} per month</value>
+  </data>
+  <data name="SubscribeToPremiumNoPrice" xml:space="preserve">
+    <value>Subscribe</value>
+  </data>
+  <data name="SubscribeToPremiumNotAvailable" xml:space="preserve">
+    <value>Subscription not available</value>
+  </data>
   <data name="Subscribers_few" xml:space="preserve">
     <value />
   </data>
@@ -14019,6 +14213,12 @@ This password will also be required whenever you log in to Telegram on a new dev
   </data>
   <data name="TelegramPassportDeleteTitle" xml:space="preserve">
     <value>Delete Telegram passport</value>
+  </data>
+  <data name="TelegramPremium" xml:space="preserve">
+    <value>Telegram Premium</value>
+  </data>
+  <data name="TelegramPremiumSubtitle" xml:space="preserve">
+    <value>Go **beyond the limits**, get exclusive features and support us by subscribing to **Telegram Premium**.</value>
   </data>
   <data name="TelegramTones" xml:space="preserve">
     <value>Telegram tones</value>

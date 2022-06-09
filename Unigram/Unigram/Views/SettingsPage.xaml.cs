@@ -8,6 +8,7 @@ using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Users;
 using Unigram.Views.Folders;
+using Unigram.Views.Premium;
 using Unigram.Views.Settings;
 using Windows.ApplicationModel;
 using Windows.UI.Xaml;
@@ -176,6 +177,12 @@ namespace Unigram.Views
         private void PrivacyPolicy_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.NavigateToInstant(Strings.Resources.PrivacyPolicyUrl);
+            MasterDetail.NavigationService.GoBackAt(0, false);
+        }
+
+        private void Premium_Click(object sender, RoutedEventArgs e)
+        {
+            MasterDetail.NavigationService.Navigate(typeof(PremiumPage));
             MasterDetail.NavigationService.GoBackAt(0, false);
         }
 

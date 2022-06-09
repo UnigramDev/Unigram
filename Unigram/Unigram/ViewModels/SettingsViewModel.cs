@@ -23,7 +23,8 @@ namespace Unigram.ViewModels
         IChildViewModel,
         IDelegable<ISettingsDelegate>,
         IHandle<UpdateUser>,
-        IHandle<UpdateUserFullInfo>
+        IHandle<UpdateUserFullInfo>,
+        IHandle<UpdateOption>
     {
         private readonly ISettingsSearchService _searchService;
         private readonly IStorageService _storageService;
@@ -51,6 +52,8 @@ namespace Unigram.ViewModels
             get => _chat;
             set => Set(ref _chat, value);
         }
+
+        public bool IsPremiumAvailable => CacheService.IsPremiumAvailable;
 
         public MvxObservableCollection<SettingsSearchEntry> Results { get; private set; }
 
@@ -122,6 +125,14 @@ namespace Unigram.ViewModels
             if (chat.Type is ChatTypePrivate privata && privata.UserId == update.UserId)
             {
                 BeginOnUIThread(() => Delegate?.UpdateUserFullInfo(chat, ProtoService.GetUser(update.UserId), update.UserFullInfo, false, false));
+            }
+        }
+
+        public void Handle(UpdateOption update)
+        {
+            if (update.Name == "is_premium_available" || update.Name == "is_premium")
+            {
+                BeginOnUIThread(() => RaisePropertyChanged(nameof(IsPremiumAvailable)));
             }
         }
 
