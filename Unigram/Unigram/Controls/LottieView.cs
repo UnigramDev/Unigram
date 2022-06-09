@@ -119,15 +119,35 @@ namespace Unigram.Controls
                 args.Transform = Matrix3x2.CreateScale(-1, 1, sender.Size.ToVector2() / 2);
             }
 
+            double width = _bitmap.Size.Width;
+            double height = _bitmap.Size.Height;
+
+            double ratioX = (double)sender.Size.Width / width;
+            double ratioY = (double)sender.Size.Height / height;
+
+            if (ratioX > ratioY)
+            {
+                width = sender.Size.Width;
+                height *= ratioX;
+            }
+            else
+            {
+                width *= ratioY;
+                height = sender.Size.Height;
+            }
+
+            var y = (sender.Size.Height - height) / 2;
+            var x = (sender.Size.Width - width) / 2;
+
             if (sender.Size.Width >= _logicalSize.Width || sender.Size.Height >= _logicalSize.Height)
             {
                 args.DrawImage(_bitmap,
-                    new Rect(0, 0, sender.Size.Width, sender.Size.Height));
+                    new Rect(x, y, width, height));
             }
             else
             {
                 args.DrawImage(_bitmap,
-                    new Rect(0, 0, sender.Size.Width, sender.Size.Height),
+                    new Rect(x, y, width, height),
                     new Rect(0, 0, _bitmap.Size.Width, _bitmap.Size.Height), 1,
                     CanvasImageInterpolation.MultiSampleLinear);
             }
