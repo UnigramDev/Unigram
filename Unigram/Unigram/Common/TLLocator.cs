@@ -1092,6 +1092,14 @@
                     _settingsService,
                     _eventAggregator);
             }
+            else if (type == typeof(Unigram.ViewModels.Premium.PremiumViewModel))
+            {
+                return (T)(object)new Unigram.ViewModels.Premium.PremiumViewModel(
+                    _protoService,
+                    _cacheService,
+                    _settingsService,
+                    _eventAggregator);
+            }
             else if (type == typeof(Unigram.Services.IDeviceInfoService))
             {
                 return (T)_deviceInfoService;

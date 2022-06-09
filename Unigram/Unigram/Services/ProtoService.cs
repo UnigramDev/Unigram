@@ -47,6 +47,7 @@ namespace Unigram.Services
     public interface ICacheService
     {
         bool IsPremium { get; }
+        bool IsPremiumAvailable { get; }
 
         IDictionary<string, Reaction> Reactions { get; }
 
@@ -838,6 +839,8 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 
         public bool IsPremium => _options.IsPremium;
 
+        public bool IsPremiumAvailable => _options.IsPremium || _options.IsPremiumAvailable;
+
         public IOptionsService Options => _options;
 
         public JsonValueObject Config => _config;
@@ -931,7 +934,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             var response = await SendAsync(new GetMessageAvailableReactions(message.ChatId, message.Id));
             if (response is AvailableReactions available)
             {
-                return available.Reactions.Join(_reactions.Values, x => x, y => y.ReactionValue, (x, y) => y).ToArray();
+                return available.Reactions.Join(_reactions.Values, x => x.Reaction, y => y.ReactionValue, (x, y) => y).ToArray();
             }
 
             return Array.Empty<Reaction>();

@@ -1048,16 +1048,16 @@ namespace Unigram.Services
                     photoSize.Photo = ProcessFile(photoSize.Photo);
                 }
             }
-            else if (target is PremiumFeaturePromotionVideo premiumFeaturePromotionVideo)
+            else if (target is PremiumFeaturePromotionAnimation premiumFeaturePromotionAnimation)
             {
-                if (premiumFeaturePromotionVideo.Video != null)
+                if (premiumFeaturePromotionAnimation.Animation != null)
                 {
-                    ProcessFiles(premiumFeaturePromotionVideo.Video);
+                    ProcessFiles(premiumFeaturePromotionAnimation.Animation);
                 }
             }
             else if (target is PremiumState premiumState)
             {
-                foreach (var item in premiumState.Videos)
+                foreach (var item in premiumState.Animations)
                 {
                     ProcessFiles(item);
                 }

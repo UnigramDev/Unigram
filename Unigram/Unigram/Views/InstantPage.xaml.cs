@@ -38,6 +38,10 @@ namespace Unigram.Views
 
         public IEventAggregator Aggregator => throw new NotImplementedException();
 
+        public IDictionary<long, MessageViewModel> SelectedItems => throw new NotImplementedException();
+
+        public bool IsSelectionEnabled => throw new NotImplementedException();
+
         private readonly string _injectedJs;
         private readonly ScrollViewer _scrollingHost;
 
@@ -1666,6 +1670,16 @@ namespace Unigram.Views
         }
 
         public void OpenThread(MessageViewModel message)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Select(MessageViewModel message)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Unselect(long messageId)
         {
             throw new NotImplementedException();
         }
