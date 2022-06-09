@@ -1,6 +1,5 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using System;
-using System.Collections.Generic;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -13,7 +12,7 @@ using Windows.UI.Xaml.Hosting;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed class DiceContent : HyperlinkButton, IContentWithFile, IContentWithPlayback
+    public sealed class DiceContent : HyperlinkButton, IContentWithFile, IPlayerView
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
@@ -65,8 +64,8 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            Width = Player.Width = 200 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
-            Height = Player.Height = 200 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
+            Width = Player.Width = 180 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
+            Height = Player.Height = 180 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
 
             var state = dice.GetState();
             if (state is DiceStickersRegular regular)
@@ -211,11 +210,6 @@ namespace Unigram.Controls.Messages.Content
             return false;
         }
 
-        public IPlayerView GetPlaybackElement()
-        {
-            return Player;
-        }
-
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             var dice = _message?.Content as MessageDice;
@@ -241,5 +235,26 @@ namespace Unigram.Controls.Messages.Content
             var formatted = Client.Execute(new ParseMarkdown(new FormattedText(text, new TextEntity[0]))) as FormattedText;
             Window.Current.ShowTeachingTip(this, formatted, _message.IsOutgoing && !_message.IsChannelPost ? TeachingTipPlacementMode.TopLeft : TeachingTipPlacementMode.TopRight);
         }
+
+        #region IPlaybackView
+
+        public bool IsLoopingEnabled => Player.IsLoopingEnabled;
+
+        public bool Play()
+        {
+            return Player.Play();
+        }
+
+        public void Pause()
+        {
+            Player.Pause();
+        }
+
+        public void Unload()
+        {
+            Player.Unload();
+        }
+
+        #endregion
     }
 }

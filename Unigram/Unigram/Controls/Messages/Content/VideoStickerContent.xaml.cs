@@ -10,7 +10,7 @@ using Windows.UI.Xaml.Hosting;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed class VideoStickerContent : HyperlinkButton, IContent, IContentWithPlayback
+    public sealed class VideoStickerContent : HyperlinkButton, IContent, IPlayerView
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
@@ -144,11 +144,6 @@ namespace Unigram.Controls.Messages.Content
             return null;
         }
 
-        public IPlayerView GetPlaybackElement()
-        {
-            return Player;
-        }
-
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             var sticker = GetContent(_message);
@@ -159,5 +154,26 @@ namespace Unigram.Controls.Messages.Content
 
             _message.Delegate.OpenSticker(sticker);
         }
+
+        #region IPlaybackView
+
+        public bool IsLoopingEnabled => Player.IsLoopingEnabled;
+
+        public bool Play()
+        {
+            return Player.Play();
+        }
+
+        public void Pause()
+        {
+            Player.Pause();
+        }
+
+        public void Unload()
+        {
+            Player.Unload();
+        }
+
+        #endregion
     }
 }

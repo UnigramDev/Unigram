@@ -9,7 +9,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed class VideoContent : Control, IContentWithFile, IContentWithPlayback
+    public sealed class VideoContent : Control, IContentWithFile, IPlayerView
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
@@ -339,11 +339,6 @@ namespace Unigram.Controls.Messages.Content
             return null;
         }
 
-        public IPlayerView GetPlaybackElement()
-        {
-            return Player;
-        }
-
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             if (_message.IsSecret())
@@ -436,5 +431,26 @@ namespace Unigram.Controls.Messages.Content
                 }
             }
         }
+
+        #region IPlaybackView
+
+        public bool IsLoopingEnabled => Player.IsLoopingEnabled;
+
+        public bool Play()
+        {
+            return Player.Play();
+        }
+
+        public void Pause()
+        {
+            Player.Pause();
+        }
+
+        public void Unload()
+        {
+            Player.Unload();
+        }
+
+        #endregion
     }
 }

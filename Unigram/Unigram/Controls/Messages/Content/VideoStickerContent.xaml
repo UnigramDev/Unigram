@@ -8,9 +8,9 @@
 
     <Style TargetType="local:VideoStickerContent">
         <Setter Property="MaxWidth"
-                Value="200" />
+                Value="180" />
         <Setter Property="MaxHeight"
-                Value="200" />
+                Value="180" />
         <Setter Property="Padding"
                 Value="0" />
         <Setter Property="HorizontalContentAlignment"

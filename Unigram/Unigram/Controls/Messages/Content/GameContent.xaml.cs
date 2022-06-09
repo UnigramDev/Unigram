@@ -107,6 +107,10 @@ namespace Unigram.Controls.Messages.Content
             {
                 return content.GetPlaybackElement();
             }
+            else if (Media?.Child is IPlayerView playback)
+            {
+                return playback;
+            }
 
             return null;
         }

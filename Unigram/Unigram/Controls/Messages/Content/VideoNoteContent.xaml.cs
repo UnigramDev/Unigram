@@ -10,7 +10,7 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed class VideoNoteContent : Control, IContentWithFile, IContentWithMask, IContentWithPlayback
+    public sealed class VideoNoteContent : Control, IContentWithFile, IContentWithMask, IPlayerView
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
@@ -249,11 +249,6 @@ namespace Unigram.Controls.Messages.Content
             return null;
         }
 
-        public IPlayerView GetPlaybackElement()
-        {
-            return Player;
-        }
-
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             var videoNote = GetContent(_message.Content);
@@ -287,5 +282,26 @@ namespace Unigram.Controls.Messages.Content
                 _message.Delegate.OpenMedia(_message, this);
             }
         }
+
+        #region IPlaybackView
+
+        public bool IsLoopingEnabled => Player.IsLoopingEnabled;
+
+        public bool Play()
+        {
+            return Player.Play();
+        }
+
+        public void Pause()
+        {
+            Player.Pause();
+        }
+
+        public void Unload()
+        {
+            Player.Unload();
+        }
+
+        #endregion
     }
 }

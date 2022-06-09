@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Hosting;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed class AnimatedStickerContent : HyperlinkButton, IContent, IContentWithPlayback
+    public sealed class AnimatedStickerContent : HyperlinkButton, IContent, IPlayerView
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
@@ -66,8 +66,8 @@ namespace Unigram.Controls.Messages.Content
 
             if (message.Content is MessageAnimatedEmoji animatedEmoji)
             {
-                Width = Player.Width = 200 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
-                Height = Player.Height = 200 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
+                Width = Player.Width = 180 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
+                Height = Player.Height = 180 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
                 Player.FitzModifier = (FitzModifier)animatedEmoji.AnimatedEmoji.FitzpatrickType;
 
                 var sound = animatedEmoji.AnimatedEmoji.Sound;
@@ -78,9 +78,10 @@ namespace Unigram.Controls.Messages.Content
             }
             else
             {
-                Width = Player.Width = 200;
-                Height = Player.Height = 200;
+                Width = Player.Width = sticker.PremiumAnimation != null ? 240 : 180;
+                Height = Player.Height = 180;
                 Player.ColorReplacements = null;
+                Player.IsFlipped = sticker.PremiumAnimation != null && !message.IsOutgoing;
             }
 
             if (!sticker.StickerValue.Local.IsDownloadingCompleted)
@@ -111,6 +112,10 @@ namespace Unigram.Controls.Messages.Content
                 {
                     PlayInteraction(message, message.Interaction);
                 }
+                else if (sticker.PremiumAnimation?.Id == file.Id && file.Local.IsDownloadingCompleted)
+                {
+                    PlayPremium(message, sticker);
+                }
 
                 return;
             }
@@ -139,6 +144,12 @@ namespace Unigram.Controls.Messages.Content
         {
             _thumbnailShimmer = null;
             ElementCompositionPreview.SetElementChildVisual(Player, null);
+
+            var sticker = _message?.Content as MessageSticker;
+            if (sticker?.Sticker.PremiumAnimation != null)
+            {
+                PlayPremium(_message, sticker.Sticker);
+            }
         }
 
         public bool IsValid(MessageContent content, bool primary)
@@ -168,11 +179,6 @@ namespace Unigram.Controls.Messages.Content
             }
 
             return null;
-        }
-
-        public IPlayerView GetPlaybackElement()
-        {
-            return Player;
         }
 
         private async void Button_Click(object sender, RoutedEventArgs e)
@@ -223,13 +229,13 @@ namespace Unigram.Controls.Messages.Content
                 var dispatcher = DispatcherQueue.GetForCurrentThread();
 
                 var player = new LottieView();
-                player.Width = Player.Width * 3;
+                player.Width = Player.Height * 3;
                 player.Height = Player.Height * 3;
                 player.IsFlipped = !message.IsOutgoing;
                 player.IsLoopingEnabled = false;
                 player.IsHitTestVisible = false;
                 player.FrameSize = new Size(512, 512);
-                player.Source = UriEx.ToLocal(interaction.StickerValue.Local.Path);
+                player.Source = UriEx.ToLocal(file.Local.Path);
                 player.PositionChanged += (s, args) =>
                 {
                     if (args == 1)
@@ -249,7 +255,7 @@ namespace Unigram.Controls.Messages.Content
                 };
 
                 var random = new Random();
-                var x = Player.Width * (0.08 - (0.16 * random.NextDouble()));
+                var x = Player.Height * (0.08 - (0.16 * random.NextDouble()));
                 var y = Player.Height * (0.08 - (0.16 * random.NextDouble()));
                 var shift = Player.Width * 0.075;
 
@@ -278,5 +284,83 @@ namespace Unigram.Controls.Messages.Content
                 UpdateManager.Subscribe(this, message, file, ref _interactionToken, UpdateFile, true);
             }
         }
+
+        public void PlayPremium(MessageViewModel message, Sticker sticker)
+        {
+            if (Interactions == null)
+            {
+                InteractionsPopup = GetTemplateChild(nameof(InteractionsPopup)) as Popup;
+                Interactions = GetTemplateChild(nameof(Interactions)) as Grid;
+            }
+
+            var file = sticker.PremiumAnimation;
+            if (file.Local.IsDownloadingCompleted && Interactions.Children.Count < 1)
+            {
+                var dispatcher = DispatcherQueue.GetForCurrentThread();
+
+                var player = new LottieView();
+                player.Width = 360;
+                player.Height = 360;
+                player.IsFlipped = !message.IsOutgoing;
+                player.IsLoopingEnabled = false;
+                player.IsHitTestVisible = false;
+                player.FrameSize = new Size(512, 512);
+                player.Source = UriEx.ToLocal(file.Local.Path);
+                player.PositionChanged += (s, args) =>
+                {
+                    if (args == 1)
+                    {
+                        dispatcher.TryEnqueue(() =>
+                        {
+                            Interactions.Children.Remove(player);
+                            InteractionsPopup.IsOpen = false;
+                        });
+                    }
+                };
+
+                var left = 100;
+                var right = 20;
+                var top = 90;
+                var bottom = 90;
+
+                if (message.IsOutgoing)
+                {
+                    player.Margin = new Thickness(-left, -top, -right, -bottom);
+                }
+                else
+                {
+                    player.Margin = new Thickness(-right, -top, -left, -bottom);
+                }
+
+                Interactions.Children.Add(player);
+                InteractionsPopup.IsOpen = true;
+            }
+            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+            {
+                message.Delegate.DownloadFile(message, file);
+                UpdateManager.Subscribe(this, message, file, ref _interactionToken, UpdateFile, true);
+            }
+        }
+
+        #region IPlaybackView
+
+        public bool IsLoopingEnabled => Player.IsLoopingEnabled;
+
+        public bool Play()
+        {
+            return Player.Play();
+        }
+
+        public void Pause()
+        {
+            Player.Pause();
+        }
+
+        public void Unload()
+        {
+            Player.Unload();
+        }
+
+        #endregion
     }
 }

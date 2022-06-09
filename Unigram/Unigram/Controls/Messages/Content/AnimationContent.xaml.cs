@@ -8,7 +8,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed class AnimationContent : Control, IContent, IContentWithPlayback
+    public sealed class AnimationContent : Control, IContent, IPlayerView
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
@@ -272,5 +272,26 @@ namespace Unigram.Controls.Messages.Content
                 _message.Delegate.OpenMedia(_message, this);
             }
         }
+
+        #region IPlaybackView
+
+        public bool IsLoopingEnabled => Player.IsLoopingEnabled;
+
+        public bool Play()
+        {
+            return Player.Play();
+        }
+
+        public void Pause()
+        {
+            Player.Pause();
+        }
+
+        public void Unload()
+        {
+            Player.Unload();
+        }
+
+        #endregion
     }
 }
