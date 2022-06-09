@@ -11,6 +11,7 @@ namespace Unigram.Selectors
         public DataTemplate RecentsTemplate { get; set; }
         public DataTemplate TrendingTemplate { get; set; }
         public DataTemplate FavedTemplate { get; set; }
+        public DataTemplate PremiumTemplate { get; set; }
         public DataTemplate ItemTemplate { get; set; }
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
@@ -28,6 +29,10 @@ namespace Unigram.Selectors
                 else if (string.Equals(stickerSet.Name, "tg/groupStickers", StringComparison.OrdinalIgnoreCase))
                 {
                     return GroupTemplate ?? ItemTemplate;
+                }
+                else if (string.Equals(stickerSet.Name, "tg/premiumStickers", StringComparison.OrdinalIgnoreCase))
+                {
+                    return PremiumTemplate ?? ItemTemplate;
                 }
             }
             else if (item is AnimationsCollection animations)

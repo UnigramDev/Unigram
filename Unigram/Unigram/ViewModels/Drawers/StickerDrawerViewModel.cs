@@ -23,6 +23,7 @@ namespace Unigram.ViewModels.Drawers
 
         private readonly StickerSetViewModel _recentSet;
         private readonly StickerSetViewModel _favoriteSet;
+        private readonly StickerSetViewModel _premiumSet;
         private readonly SupergroupStickerSetViewModel _groupSet;
 
         private long _groupSetId;
@@ -35,6 +36,12 @@ namespace Unigram.ViewModels.Drawers
         public StickerDrawerViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
+            _premiumSet = new StickerSetViewModel(ProtoService, Aggregator, new StickerSetInfo
+            {
+                Title = Strings.Resources.PremiumStickers,
+                Name = "tg/premiumStickers"
+            });
+
             _favoriteSet = new StickerSetViewModel(ProtoService, Aggregator, new StickerSetInfo
             {
                 Title = Strings.Resources.FavoriteStickers,
@@ -345,6 +352,20 @@ namespace Unigram.ViewModels.Drawers
                     stickers.Add(_groupSet);
                 }
 
+                if (CacheService.IsPremium)
+                {
+                    var result4 = await ProtoService.SendAsync(new GetPremiumStickers());
+                    if (result4 is Stickers premium)
+                    {
+                        _premiumSet.Update(premium);
+
+                        if (_premiumSet.Stickers.Count > 0)
+                        {
+                            stickers.Add(_premiumSet);
+                        }
+                    }
+                }
+
                 long hash = 0;
                 foreach (var elem in sets.Sets)
                 {
@@ -564,14 +585,16 @@ namespace Unigram.ViewModels.Drawers
         {
             { "tg/favedStickers", 0 },
             { "tg/recentlyUsed", 1 },
-            { "tg/groupStickers", 2 }
+            { "tg/premiumStickers", 2 },
+            { "tg/groupStickers", 3 }
         };
 
         private readonly Dictionary<int, string> _mapper = new Dictionary<int, string>
         {
             { 0, "tg/favedStickers" },
             { 1, "tg/recentlyUsed" },
-            { 2, "tg/groupStickers" }
+            { 2, "tg/premiumStickers" },
+            { 3, "tg/groupStickers" }
         };
 
         protected override void InsertItem(int index, StickerSetViewModel item)
