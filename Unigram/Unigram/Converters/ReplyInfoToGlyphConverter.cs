@@ -42,6 +42,9 @@ namespace Unigram.Converters
 
         public const string Translate = "\uE97D";
 
+        public const string Payment16 = "\uE9AB";
+        public const string Window16 = "\uE9AA";
+
         public const string TextBold = "\uE8DD";
         public const string TextItalic = "\uE8DB";
         public const string TextUnderline = "\uE8DC";
@@ -204,6 +207,17 @@ namespace Unigram.Converters
         public const string PaintBrush = "\uE90E";
 
         public const string Seen = "\uE96B";
+
+        public const string Multiplier2xFilled = "\uE9AC";
+        public const string PlayCircleFilled = "\uE9AD";
+        public const string ChatFilled = "\uE9AE";
+        public const string StickerFilled = "\uE9AF";
+        public const string HeartFilled = "\uE9B0";
+        public const string MegaphoneFilled = "\uE9B1";
+        public const string MicFilled = "\uE9B2";
+        public const string TopSpeedFilled = "\uE9B3";
+        public const string DocumentFilled = "\uE9B4";
+
 
         public static readonly ChatFilterIcon[] Filters = new ChatFilterIcon[]
         {

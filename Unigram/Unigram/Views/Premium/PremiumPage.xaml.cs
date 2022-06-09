@@ -1,5 +1,6 @@
 ﻿using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Converters;
 using Unigram.ViewModels.Premium;
 using Windows.UI;
 using Windows.UI.Xaml.Controls;
@@ -52,16 +53,19 @@ namespace Unigram.Views.Premium
             var feature = args.Item as PremiumFeature;
             var content = args.ItemContainer.ContentTemplateRoot as Grid;
 
+            var iconValue = string.Empty;
             var titleValue = string.Empty;
             var subtitleValue = string.Empty;
 
             switch (feature)
             {
                 case PremiumFeatureAdvancedChatManagement:
+                    iconValue = Icons.ChatFilled;
                     titleValue = Strings.Resources.PremiumPreviewAdvancedChatManagement;
                     subtitleValue = Strings.Resources.PremiumPreviewAdvancedChatManagementDescription;
                     break;
                 case PremiumFeatureAnimatedProfilePhoto:
+                    iconValue = Icons.PlayCircleFilled;
                     titleValue = Strings.Resources.PremiumPreviewAnimatedProfiles;
                     subtitleValue = Strings.Resources.PremiumPreviewAnimatedProfilesDescription;
                     break;
@@ -70,18 +74,22 @@ namespace Unigram.Views.Premium
                     subtitleValue = Strings.Resources.PremiumPreviewAppIconDescription;
                     break;
                 case PremiumFeatureDisabledAds:
+                    iconValue = Icons.MegaphoneFilled;
                     titleValue = Strings.Resources.PremiumPreviewNoAds;
                     subtitleValue = Strings.Resources.PremiumPreviewNoAdsDescription;
                     break;
                 case PremiumFeatureImprovedDownloadSpeed:
+                    iconValue = Icons.TopSpeedFilled;
                     titleValue = Strings.Resources.PremiumPreviewDownloadSpeed;
                     subtitleValue = Strings.Resources.PremiumPreviewDownloadSpeedDescription;
                     break;
                 case PremiumFeatureIncreasedLimits:
+                    iconValue = Icons.Multiplier2xFilled;
                     titleValue = Strings.Resources.PremiumPreviewLimits;
                     subtitleValue = ViewModel.PremiumPreviewLimitsDescription;
                     break;
                 case PremiumFeatureIncreasedUploadFileSize:
+                    iconValue = Icons.DocumentFilled;
                     titleValue = Strings.Resources.PremiumPreviewUploads;
                     subtitleValue = Strings.Resources.PremiumPreviewUploadsDescription;
                     break;
@@ -90,14 +98,17 @@ namespace Unigram.Views.Premium
                     subtitleValue = Strings.Resources.PremiumPreviewProfileBadgeDescription;
                     break;
                 case PremiumFeatureUniqueReactions:
+                    iconValue = Icons.HeartFilled;
                     titleValue = Strings.Resources.PremiumPreviewReactions;
                     subtitleValue = Strings.Resources.PremiumPreviewReactionsDescription;
                     break;
                 case PremiumFeatureUniqueStickers:
+                    iconValue = Icons.StickerFilled;
                     titleValue = Strings.Resources.PremiumPreviewStickers;
                     subtitleValue = Strings.Resources.PremiumPreviewStickersDescription;
                     break;
                 case PremiumFeatureVoiceRecognition:
+                    iconValue = Icons.MicFilled;
                     titleValue = Strings.Resources.PremiumPreviewVoiceToText;
                     subtitleValue = Strings.Resources.PremiumPreviewVoiceToTextDescription;
                     break;
@@ -105,11 +116,13 @@ namespace Unigram.Views.Premium
 
             var title = content.FindName("Title") as TextBlock;
             var subtitle = content.FindName("Subtitle") as TextBlock;
-            var icon = content.FindName("Icon") as Border;
+            var icon = content.FindName("Icon") as TextBlock;
+            var iconPanel = content.FindName("IconPanel") as Border;
 
             title.Text = titleValue;
             subtitle.Text = subtitleValue;
-            icon.Background = new SolidColorBrush(_gradient[args.ItemIndex]);
+            icon.Text = iconValue;
+            iconPanel.Background = new SolidColorBrush(_gradient[args.ItemIndex]);
         }
 
         public string ConvertPurchase(long amount, string currency)
