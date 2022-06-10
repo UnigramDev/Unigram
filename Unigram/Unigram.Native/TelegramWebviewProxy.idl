@@ -1,0 +1,13 @@
+namespace Unigram.Native
+{
+    delegate void TelegramWebviewProxyDelegate(String eventName, String eventData);
+
+    [allowforweb]
+    [default_interface]
+    runtimeclass TelegramWebviewProxy
+    {
+        TelegramWebviewProxy(TelegramWebviewProxyDelegate delegato);
+
+        void PostEvent(String eventName, String eventData);
+    }
+} // namespace Unigram.Native

@@ -703,5 +703,6 @@
     <Midl Include="LanguageIdentification.idl" />
     <Midl Include="QrBuffer.idl" />
     <Midl Include="CachedVideoAnimation.idl" />
+    <Midl Include="TelegramWebviewProxy.idl" />
   </ItemGroup>
 </Project>
