@@ -30,6 +30,10 @@
 
 		<Type Name="Unigram.ViewModels.Drawers.SupergroupStickerSetViewModel" Dynamic="Required All"/>
 
+		<Type Name="Unigram.Controls.Messages.MessageSelector">
+			<Method Name="UpdateSelection" Dynamic="Required"/>
+		</Type>
+
 		<Type Name="Unigram.Common.RemoteVideoSource">
 			<Method Name="UpdateFile" Dynamic="Required"/>
 		</Type>
