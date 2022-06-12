@@ -6,6 +6,7 @@ using Unigram.ViewModels;
 using Windows.Media.Playback;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Unigram.Controls.Messages.Content
 {
@@ -48,6 +49,8 @@ namespace Unigram.Controls.Messages.Content
         private FileButton Button;
         private ProgressVoice Progress;
         private TextBlock Subtitle;
+        private ToggleButton Recognize;
+        private TextBlock RecognizedText;
         private bool _templateApplied;
 
         protected override void OnApplyTemplate()
@@ -83,6 +86,46 @@ namespace Unigram.Controls.Messages.Content
             message.PlaybackService.PropertyChanged += OnCurrentItemChanged;
 
             Progress.UpdateWaveform(voiceNote);
+
+            if (message.ProtoService.IsPremium && message.SchedulingState == null)
+            {
+                if (Recognize == null)
+                {
+                    Recognize = GetTemplateChild(nameof(Recognize)) as ToggleButton;
+                    Recognize.Click += Recognize_Click;
+                }
+
+                Recognize.Visibility = Visibility.Visible;
+            }
+            else if (Recognize != null)
+            {
+                Recognize.Visibility = Visibility.Collapsed;
+            }
+
+            if (voiceNote.IsRecognized)
+            {
+                if (RecognizedText == null)
+                {
+                    RecognizedText = GetTemplateChild(nameof(RecognizedText)) as TextBlock;
+                }
+
+                if (string.IsNullOrEmpty(voiceNote.RecognizedText))
+                {
+                    RecognizedText.Style = App.Current.Resources["InfoCaptionTextBlockStyle"] as Style;
+                    RecognizedText.Text = "No ciccio cicciato";
+                }
+                else
+                {
+                    RecognizedText.Style = App.Current.Resources["BodyTextBlockStyle"] as Style;
+                    RecognizedText.Text = voiceNote.RecognizedText;
+                }
+
+                RecognizedText.Visibility = Visibility.Visible;
+            }
+            else if (RecognizedText != null)
+            {
+                RecognizedText.Visibility = Visibility.Collapsed;
+            }
 
             UpdateManager.Subscribe(this, message, voiceNote.Voice, ref _fileToken, UpdateFile);
             UpdateFile(message, voiceNote.Voice);
@@ -338,6 +381,29 @@ namespace Unigram.Controls.Messages.Content
                 {
                     _message.Delegate.PlayMessage(_message);
                 }
+            }
+        }
+
+        private void Recognize_Click(object sender, RoutedEventArgs e)
+        {
+            if (Recognize.IsChecked == true)
+            {
+                var voiceNote = GetContent(_message?.Content);
+                if (voiceNote == null)
+                {
+                    return;
+                }
+
+                _message.ProtoService.Send(new RecognizeSpeech(_message.ChatId, _message.Id));
+
+                if (RecognizedText != null)
+                {
+                    RecognizedText.Visibility = Visibility.Visible;
+                }
+            }
+            else
+            {
+                RecognizedText.Visibility = Visibility.Collapsed;
             }
         }
     }

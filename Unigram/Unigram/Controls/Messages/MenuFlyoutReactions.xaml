@@ -13,7 +13,6 @@
              d:DesignWidth="400">
 
     <UserControl.Resources>
-
         <Style x:Key="ReactionsMenuButtonStyle"
                TargetType="ToggleButton">
             <Setter Property="Background"

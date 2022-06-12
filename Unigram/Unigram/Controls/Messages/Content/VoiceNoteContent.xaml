@@ -2,11 +2,142 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="using:Unigram.Controls.Messages.Content"
                     xmlns:controls="using:Unigram.Controls"
+                    xmlns:icons="using:Unigram.Assets.Icons"
+                    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                    mc:Ignorable="d"
-                    d:DesignHeight="300"
-                    d:DesignWidth="400">
+                    mc:Ignorable="d">
+
+    <Style x:Key="RecognizeButtonStyle"
+           TargetType="ToggleButton">
+        <Setter Property="Background"
+                Value="{ThemeResource ToggleButtonBackgroundChecked}" />
+        <Setter Property="BackgroundSizing"
+                Value="OuterBorderEdge" />
+        <Setter Property="Foreground"
+                Value="{ThemeResource SystemColorControlAccentBrush}" />
+        <Setter Property="BorderBrush"
+                Value="{ThemeResource ToggleButtonBorderBrushChecked}" />
+        <Setter Property="Padding"
+                Value="0,0,0,0" />
+        <Setter Property="HorizontalAlignment"
+                Value="Left" />
+        <Setter Property="VerticalAlignment"
+                Value="Center" />
+        <Setter Property="FontFamily"
+                Value="{ThemeResource ContentControlThemeFontFamily}" />
+        <Setter Property="FontWeight"
+                Value="Normal" />
+        <Setter Property="FontSize"
+                Value="{ThemeResource ControlContentThemeFontSize}" />
+        <Setter Property="UseSystemFocusVisuals"
+                Value="{StaticResource UseSystemFocusVisuals}" />
+        <Setter Property="FocusVisualMargin"
+                Value="-3" />
+        <Setter Property="CornerRadius"
+                Value="8" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Grid CornerRadius="{TemplateBinding CornerRadius}"
+                          Margin="{TemplateBinding Padding}"
+                          AutomationProperties.AccessibilityView="Raw">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="ContentPresenter"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         Duration="0"
+                                                         To="0.4" />
+                                    </Storyboard>
+                                    <VisualState.Setters>
+                                        <Setter Target="Icon.(muxc:AnimatedIcon.State)"
+                                                Value="Normal" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="ContentPresenter"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         Duration="0"
+                                                         To="0.6" />
+                                    </Storyboard>
+                                    <VisualState.Setters>
+                                        <Setter Target="Icon.(muxc:AnimatedIcon.State)"
+                                                Value="Normal" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
+                                                                       Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource ToggleButtonBackgroundDisabled}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Checked">
+                                    <VisualState.Setters>
+                                        <Setter Target="Icon.(muxc:AnimatedIcon.State)"
+                                                Value="Checked" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="CheckedPointerOver">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="ContentPresenter"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         Duration="0"
+                                                         To="0.4" />
+                                    </Storyboard>
+                                    <VisualState.Setters>
+                                        <Setter Target="Icon.(muxc:AnimatedIcon.State)"
+                                                Value="Checked" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="CheckedPressed">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="ContentPresenter"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         Duration="0"
+                                                         To="0.6" />
+                                    </Storyboard>
+                                    <VisualState.Setters>
+                                        <Setter Target="Icon.(muxc:AnimatedIcon.State)"
+                                                Value="Checked" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="CheckedDisabled">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
+                                                                       Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource ToggleButtonBackgroundCheckedDisabled}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+
+                        <Border x:Name="ContentPresenter"
+                                Background="{ThemeResource SystemColorControlAccentBrush}"
+                                Opacity="0.2" />
+
+                        <muxc:AnimatedIcon x:Name="Icon"
+                                           muxc:AnimatedIcon.State="Normal"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           AutomationProperties.AccessibilityView="Raw"
+                                           Width="30"
+                                           Height="30">
+                            <icons:VoiceRecognition />
+                        </muxc:AnimatedIcon>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
     <Style TargetType="controls:ProgressVoice">
         <Setter Property="Foreground"
@@ -62,7 +193,12 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
                         <Border Width="48"
                                 Height="48"
                                 CornerRadius="24"
@@ -76,12 +212,26 @@
                                     Grid.Column="1">
                             <!--<TextBlock x:Name="Title" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>-->
                             <controls:ProgressVoice x:Name="Progress"
- AutomationProperties.AccessibilityView="Raw"
+                                                    AutomationProperties.AccessibilityView="Raw"
                                                     HorizontalAlignment="Left" />
 
                             <TextBlock x:Name="Subtitle"
                                        Style="{StaticResource DisabledCaptionTextBlockStyle}" />
                         </StackPanel>
+
+                        <ToggleButton x:Name="Recognize"
+                                      Style="{StaticResource RecognizeButtonStyle}"
+                                      VerticalAlignment="Top"
+                                      Margin="8,0,0,0"
+                                      Width="28"
+                                      Height="28"
+                                      Grid.Column="2" />
+
+                        <TextBlock x:Name="RecognizedText"
+                                   x:Load="False"
+                                   Grid.ColumnSpan="3"
+                                   Grid.Row="1" />
+
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

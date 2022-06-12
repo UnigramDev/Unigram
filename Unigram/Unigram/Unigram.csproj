@@ -144,6 +144,7 @@
     <Compile Include="Assets\Icons\Stickers.cs" />
     <Compile Include="Assets\Icons\Username.cs" />
     <Compile Include="Assets\Icons\Profile.cs" />
+    <Compile Include="Assets\Icons\VoiceRecognition.cs" />
     <Compile Include="Charts\Animator.cs" />
     <Compile Include="Charts\BarChartView.cs" />
     <Compile Include="Charts\BaseChartView.cs" />
