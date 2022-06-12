@@ -548,16 +548,28 @@ namespace Unigram.Controls.Cells
             TypeIcon.Visibility = type == null ? Visibility.Collapsed : Visibility.Visible;
 
             var verified = false;
-            if (chat.Type is ChatTypePrivate privata)
+            var premium = false;
+
+            if (_protoService.TryGetUser(chat, out User user))
             {
-                verified = _protoService.GetUser(privata.UserId)?.IsVerified ?? false;
+                verified = user.IsVerified;
+                premium = user.IsPremium && _protoService.IsPremiumAvailable && user.Id != _protoService.Options.MyId;
             }
-            else if (chat.Type is ChatTypeSupergroup super)
+            else if (_protoService.TryGetSupergroup(chat, out Supergroup supergroup))
             {
-                verified = _protoService.GetSupergroup(super.SupergroupId)?.IsVerified ?? false;
+                verified = supergroup.IsVerified;
+                premium = false;
             }
 
-            VerifiedIcon.Visibility = verified ? Visibility.Visible : Visibility.Collapsed;
+            if (premium || verified)
+            {
+                VerifiedIcon.Glyph = premium ? Icons.Premium16 : Icons.Verified16;
+                VerifiedIcon.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                VerifiedIcon.Visibility = Visibility.Collapsed;
+            }
         }
 
         public void UpdateChatVideoChat(Chat chat)
@@ -2023,13 +2035,13 @@ namespace Unigram.Controls.Cells
             TitleLabel.Arrange(rect);
 
             rect.X = min + TypeIcon.DesiredSize.Width + titleWidth;
-            rect.Y = 13;
+            rect.Y = 14;
             rect.Width = VerifiedIcon.DesiredSize.Width;
             rect.Height = VerifiedIcon.DesiredSize.Height;
             VerifiedIcon.Arrange(rect);
 
             rect.X = min + TypeIcon.DesiredSize.Width + titleWidth + VerifiedIcon.DesiredSize.Width;
-            rect.Y = 13;
+            rect.Y = 14;
             rect.Width = MutedIcon.DesiredSize.Width;
             rect.Height = MutedIcon.DesiredSize.Height;
             MutedIcon.Arrange(rect);

@@ -208,15 +208,19 @@ namespace Unigram.Converters
 
         public const string Seen = "\uE96B";
 
-        public const string Multiplier2xFilled = "\uE9AC";
-        public const string PlayCircleFilled = "\uE9AD";
-        public const string ChatFilled = "\uE9AE";
-        public const string StickerFilled = "\uE9AF";
-        public const string HeartFilled = "\uE9B0";
-        public const string MegaphoneFilled = "\uE9B1";
-        public const string MicFilled = "\uE9B2";
-        public const string TopSpeedFilled = "\uE9B3";
-        public const string DocumentFilled = "\uE9B4";
+        public const string Multiplier2xFilled24 = "\uE9AC";
+        public const string PlayCircleFilled24 = "\uE9AD";
+        public const string ChatFilled24 = "\uE9AE";
+        public const string StickerFilled24 = "\uE9AF";
+        public const string HeartFilled24 = "\uE9B0";
+        public const string MegaphoneFilled24 = "\uE9B1";
+        public const string MicFilled24 = "\uE9B2";
+        public const string TopSpeedFilled24 = "\uE9B3";
+        public const string DocumentFilled24 = "\uE9B4";
+        public const string PremiumFilled24 = "\uE9B6";
+
+        public const string Premium16 = "\uE9B5";
+        public const string Verified16 = "\uE97A";
 
 
         public static readonly ChatFilterIcon[] Filters = new ChatFilterIcon[]

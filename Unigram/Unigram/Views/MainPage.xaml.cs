@@ -2219,8 +2219,8 @@ namespace Unigram.Views
             if (args.ItemContainer == null)
             {
                 args.ItemContainer = new TextListViewItem();
-                args.ItemContainer.Style = UsersListView.ItemContainerStyle;
-                args.ItemContainer.ContentTemplate = UsersListView.ItemTemplate;
+                args.ItemContainer.Style = sender.ItemContainerStyle;
+                args.ItemContainer.ContentTemplate = sender.ItemTemplate;
             }
 
             args.IsContainerPrepared = true;
@@ -2236,32 +2236,10 @@ namespace Unigram.Views
                 return;
             }
 
-            var content = args.ItemContainer.ContentTemplateRoot as Grid;
+            var content = args.ItemContainer.ContentTemplateRoot as UserCell;
             var user = args.Item as User;
 
-            if (args.Phase == 0)
-            {
-                var title = content.Children[1] as TextBlock;
-                title.Text = user.GetFullName();
-            }
-            else if (args.Phase == 1)
-            {
-                var subtitle = content.Children[2] as TextBlock;
-                subtitle.Text = LastSeenConverter.GetLabel(user, false);
-                subtitle.Foreground = BootStrapper.Current.Resources[user.Status is UserStatusOnline ? "SystemControlForegroundAccentBrush" : "SystemControlDisabledChromeDisabledLowBrush"] as Brush;
-            }
-            else if (args.Phase == 2)
-            {
-                var photo = content.Children[0] as ProfilePicture;
-                photo.SetUser(ViewModel.ProtoService, user, 36);
-            }
-
-            if (args.Phase < 2)
-            {
-                args.RegisterUpdateCallback(UsersListView_ContainerContentChanging);
-            }
-
-            args.Handled = true;
+            content.UpdateUser(ViewModel.ProtoService, user, args, UsersListView_ContainerContentChanging);
         }
 
         private void Settings_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)

@@ -442,14 +442,30 @@
                                        FontSize="16"
                                        Margin="0,0,4,1" />
 
-                            <TextBlock x:Name="Title"
-                                       Foreground="{ThemeResource PageHeaderForegroundBrush}"
-                                       Style="{StaticResource BaseTextBlockStyle}"
-                                       FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                       TextWrapping="NoWrap"
-                                       TextTrimming="CharacterEllipsis"
-                                       MaxLines="1"
-                                       Grid.Column="1" />
+                            <Grid HorizontalAlignment="Left"
+                                  Grid.Column="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock x:Name="Title"
+                                           Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                                           Style="{StaticResource BaseTextBlockStyle}"
+                                           FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                           TextWrapping="NoWrap"
+                                           TextTrimming="CharacterEllipsis"
+                                           MaxLines="1" />
+
+                                <FontIcon x:Name="Verified"
+                                          Glyph="&#xE97A;"
+                                          FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                          Foreground="{ThemeResource ChatVerifiedBadgeBrush}"
+                                          VerticalAlignment="Bottom"
+                                          Visibility="Collapsed"
+                                          FontSize="16"
+                                          Margin="4,0,0,2"
+                                          Grid.Column="1" />
+                            </Grid>
 
                             <Grid Visibility="{x:Bind ViewModel.LastSeen, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                                   Grid.ColumnSpan="2"

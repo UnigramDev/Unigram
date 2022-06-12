@@ -60,12 +60,12 @@ namespace Unigram.Views.Premium
             switch (feature)
             {
                 case PremiumFeatureAdvancedChatManagement:
-                    iconValue = Icons.ChatFilled;
+                    iconValue = Icons.ChatFilled24;
                     titleValue = Strings.Resources.PremiumPreviewAdvancedChatManagement;
                     subtitleValue = Strings.Resources.PremiumPreviewAdvancedChatManagementDescription;
                     break;
                 case PremiumFeatureAnimatedProfilePhoto:
-                    iconValue = Icons.PlayCircleFilled;
+                    iconValue = Icons.PlayCircleFilled24;
                     titleValue = Strings.Resources.PremiumPreviewAnimatedProfiles;
                     subtitleValue = Strings.Resources.PremiumPreviewAnimatedProfilesDescription;
                     break;
@@ -74,41 +74,42 @@ namespace Unigram.Views.Premium
                     subtitleValue = Strings.Resources.PremiumPreviewAppIconDescription;
                     break;
                 case PremiumFeatureDisabledAds:
-                    iconValue = Icons.MegaphoneFilled;
+                    iconValue = Icons.MegaphoneFilled24;
                     titleValue = Strings.Resources.PremiumPreviewNoAds;
                     subtitleValue = Strings.Resources.PremiumPreviewNoAdsDescription;
                     break;
                 case PremiumFeatureImprovedDownloadSpeed:
-                    iconValue = Icons.TopSpeedFilled;
+                    iconValue = Icons.TopSpeedFilled24;
                     titleValue = Strings.Resources.PremiumPreviewDownloadSpeed;
                     subtitleValue = Strings.Resources.PremiumPreviewDownloadSpeedDescription;
                     break;
                 case PremiumFeatureIncreasedLimits:
-                    iconValue = Icons.Multiplier2xFilled;
+                    iconValue = Icons.Multiplier2xFilled24;
                     titleValue = Strings.Resources.PremiumPreviewLimits;
                     subtitleValue = ViewModel.PremiumPreviewLimitsDescription;
                     break;
                 case PremiumFeatureIncreasedUploadFileSize:
-                    iconValue = Icons.DocumentFilled;
+                    iconValue = Icons.DocumentFilled24;
                     titleValue = Strings.Resources.PremiumPreviewUploads;
                     subtitleValue = Strings.Resources.PremiumPreviewUploadsDescription;
                     break;
                 case PremiumFeatureProfileBadge:
+                    iconValue = Icons.PremiumFilled24;
                     titleValue = Strings.Resources.PremiumPreviewProfileBadge;
                     subtitleValue = Strings.Resources.PremiumPreviewProfileBadgeDescription;
                     break;
                 case PremiumFeatureUniqueReactions:
-                    iconValue = Icons.HeartFilled;
+                    iconValue = Icons.HeartFilled24;
                     titleValue = Strings.Resources.PremiumPreviewReactions;
                     subtitleValue = Strings.Resources.PremiumPreviewReactionsDescription;
                     break;
                 case PremiumFeatureUniqueStickers:
-                    iconValue = Icons.StickerFilled;
+                    iconValue = Icons.StickerFilled24;
                     titleValue = Strings.Resources.PremiumPreviewStickers;
                     subtitleValue = Strings.Resources.PremiumPreviewStickersDescription;
                     break;
                 case PremiumFeatureVoiceRecognition:
-                    iconValue = Icons.MicFilled;
+                    iconValue = Icons.MicFilled24;
                     titleValue = Strings.Resources.PremiumPreviewVoiceToText;
                     subtitleValue = Strings.Resources.PremiumPreviewVoiceToTextDescription;
                     break;
