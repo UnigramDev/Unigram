@@ -9,51 +9,43 @@ namespace Unigram.ViewModels.Payments
     public class PaymentCredentialsViewModel : TLViewModelBase
     {
         private PaymentForm _paymentForm;
-        private string _publishableKey;
 
         public PaymentCredentialsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
         }
 
-        public bool Initialize(PaymentForm paymentForm)
+        public string Initialize(PaymentForm paymentForm)
         {
-            //using (var from = TLObjectSerializer.CreateReader(buffer.AsBuffer()))
-            //{
-            //    var tuple = new TLTuple<TLMessage, TLPaymentsPaymentForm, TLPaymentRequestedInfo, TLPaymentsValidatedRequestedInfo, TLShippingOption>(from);
-
-            //    Message = tuple.Item1;
-            //    Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
-            //    PaymentForm = tuple.Item2;
-
-            //    _info = tuple.Item3;
-            //    _requestedInfo = tuple.Item4;
-            //    _shipping = tuple.Item5;
-
             _paymentForm = paymentForm;
 
             CanSaveCredentials = _paymentForm.CanSaveCredentials;
 
-            if (paymentForm.PaymentsProvider != null)
+            if (paymentForm.PaymentProvider is PaymentProviderOther other)
+            {
+                IsWebUsed = true;
+                return other.Url;
+            }
+            else if (paymentForm.PaymentProvider is PaymentProviderStripe stripe)
             {
                 IsNativeUsed = true;
                 SelectedCountry = null;
 
-                NeedCountry = paymentForm.PaymentsProvider.NeedCountry;
-                NeedZip = paymentForm.PaymentsProvider.NeedPostalCode;
-                NeedCardholderName = paymentForm.PaymentsProvider.NeedCardholderName;
-
-                _publishableKey = paymentForm.PaymentsProvider.PublishableKey;
-
-                return false;
+                NeedCountry = stripe.NeedCountry;
+                NeedZip = stripe.NeedPostalCode;
+                NeedCardholderName = stripe.NeedCardholderName;
             }
-            else
+            else if (paymentForm.PaymentProvider is PaymentProviderSmartGlocal smartGlocal)
             {
-                IsWebUsed = true;
-                RaisePropertyChanged("Navigate");
+                IsNativeUsed = true;
+                SelectedCountry = null;
 
-                return true;
+                NeedCountry = false;
+                NeedZip = false;
+                NeedCardholderName = false;
             }
+
+            return null;
         }
 
         public bool IsNativeUsed { get; private set; }
@@ -196,19 +188,42 @@ namespace Unigram.ViewModels.Payments
 
             IsLoading = true;
 
-            using (var stripe = new StripeClient(_publishableKey))
+            var title = card.GetBrand() + " *" + card.GetLast4();
+            var credentials = await GetCredentialsJson(card);
+            if (credentials != null)
             {
-                var token = await stripe.CreateTokenAsync(card);
-                if (token != null)
-                {
-                    var title = card.GetBrand() + " *" + card.GetLast4();
-                    var credentials = string.Format("{{\"type\":\"{0}\", \"id\":\"{1}\"}}", token.Type, token.Id);
+                return new SavedCredentials(credentials, title);
+            }
+            else
+            {
+                IsLoading = false;
+            }
 
-                    return new SavedCredentials(credentials, title);
-                }
-                else
+            return null;
+        }
+
+        private async Task<string> GetCredentialsJson(Card card)
+        {
+            if (_paymentForm.PaymentProvider is PaymentProviderStripe stripe)
+            {
+                using (var client = new StripeClient(stripe.PublishableKey))
                 {
-                    IsLoading = false;
+                    var token = await client.CreateTokenAsync(card);
+                    if (token != null)
+                    {
+                        return string.Format("{{\"type\":\"{0}\", \"id\":\"{1}\"}}", token.Type, token.Id);
+                    }
+                }
+            }
+            else if (_paymentForm.PaymentProvider is PaymentProviderSmartGlocal smartGlocal)
+            {
+                using (var client = new SmartGlocalClient(smartGlocal.PublicToken))
+                {
+                    var token = await client.CreateTokenAsync(card, _paymentForm.Invoice.IsTest);
+                    if (token != null)
+                    {
+                        return string.Format("{{\"type\":\"{0}\", \"token\":\"{1}\"}}", "card", token);
+                    }
                 }
             }
 

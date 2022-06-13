@@ -22,10 +22,11 @@ namespace Unigram.Views.Payments
             Title = Strings.Resources.PaymentCardInfo;
             SecondaryButtonText = Strings.Resources.Cancel;
 
-            if (ViewModel.Initialize(paymentForm))
+            var url = ViewModel.Initialize(paymentForm);
+            if (url != null)
             {
                 FindName(nameof(WebPanel));
-                View.Navigate(new Uri(paymentForm.Url));
+                View.Navigate(new Uri(url));
             }
             else
             {

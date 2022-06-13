@@ -376,7 +376,7 @@ namespace Unigram.ViewModels.Payments
             }
 
             var bot = CacheService.GetUser(_paymentForm.SellerBotUserId);
-            var provider = CacheService.GetUser(_paymentForm.PaymentsProviderUserId);
+            var provider = CacheService.GetUser(_paymentForm.PaymentProviderUserId);
 
             var disclaimer = await MessagePopup.ShowAsync(string.Format(Strings.Resources.PaymentWarningText, bot.FirstName, provider.FirstName), Strings.Resources.PaymentWarning, Strings.Resources.OK);
 
