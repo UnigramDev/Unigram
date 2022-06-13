@@ -98,11 +98,14 @@
             </ListView.Footer>
         </controls:TableListView>
 
-        <Grid VerticalAlignment="Bottom"
+        <Grid x:Name="PurchasePanel"
+              x:Load="{x:Bind ViewModel.CanPurchase, Mode=OneWay}"
+              VerticalAlignment="Bottom"
               HorizontalAlignment="Center"
               Margin="12"
               Grid.Row="1">
             <Rectangle x:Name="PurchaseShadow"
+                       Loaded="PurchaseShadow_Loaded"
                        HorizontalAlignment="Stretch"
                        VerticalAlignment="Stretch"
                        Fill="{ThemeResource StartButtonBackground}"

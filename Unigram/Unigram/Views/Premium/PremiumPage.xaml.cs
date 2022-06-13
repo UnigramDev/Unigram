@@ -17,7 +17,6 @@ namespace Unigram.Views.Premium
             InitializeComponent();
 
             Title = Strings.Resources.TelegramPremium;
-            DropShadowEx.Attach(PurchaseShadow);
         }
 
         private void OnItemClick(object sender, ItemClickEventArgs e)
@@ -129,6 +128,11 @@ namespace Unigram.Views.Premium
         public string ConvertPurchase(long amount, string currency)
         {
             return string.Format(Strings.Resources.SubscribeToPremium, Locale.FormatCurrency(amount, currency));
+        }
+
+        private void PurchaseShadow_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            DropShadowEx.Attach(PurchaseShadow);
         }
     }
 }
