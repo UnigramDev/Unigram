@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
@@ -30,6 +32,8 @@ namespace Unigram.ViewModels.Premium
 
         public MvxObservableCollection<PremiumFeature> Features { get; private set; }
 
+        public Dictionary<Type, Animation> Animations { get; private set; }
+
         private long _monthlyAmount;
         public long MonthlyAmount
         {
@@ -51,41 +55,49 @@ namespace Unigram.ViewModels.Premium
             set => Set(ref _state, value);
         }
 
+        private bool _canPurchase;
+        public bool CanPurchase
+        {
+            get => _canPurchase;
+            set => Set(ref _canPurchase, value);
+        }
+
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState _)
         {
             var features = await ProtoService.SendAsync(new GetPremiumFeatures(new PremiumSourceSettings())) as PremiumFeatures;
             var state = await ProtoService.SendAsync(new GetPremiumState()) as PremiumState;
-
-            //await new LimitsPopup(features.Limits).ShowAsync();
 
             if (features == null || state == null)
             {
                 return;
             }
 
-            // TEST:
-            features.Features.AddRange(new PremiumFeature[]
+            var appIcons = features.Features.FirstOrDefault(x => x is PremiumFeatureAppIcons);
+            if (appIcons != null)
             {
-                new PremiumFeatureIncreasedLimits(),
-                new PremiumFeatureIncreasedUploadFileSize(),
-                new PremiumFeatureImprovedDownloadSpeed(),
-                new PremiumFeatureVoiceRecognition(),
-                new PremiumFeatureDisabledAds(),
-                new PremiumFeatureUniqueReactions(),
-                new PremiumFeatureUniqueStickers(),
-                new PremiumFeatureAdvancedChatManagement(),
-                new PremiumFeatureProfileBadge(),
-                new PremiumFeatureAnimatedProfilePhoto(),
-                new PremiumFeatureAppIcons()
-            });
+                features.Features.Remove(appIcons);
+            }
+
+            var archivedChats = features.Limits.FirstOrDefault(x => x.Type is PremiumLimitTypePinnedArchivedChatCount);
+            if (archivedChats != null)
+            {
+                features.Limits.Remove(archivedChats);
+            }
+
+            features.Limits.Add(new PremiumLimit(new PremiumLimitTypeConnectedAccounts(), 3, 4));
 
             PaymentLink = features.PaymentLink;
             Limits.ReplaceWith(features.Limits);
             Features.ReplaceWith(features.Features);
 
+            Animations = state.Animations.ToDictionary(x => x.Feature.GetType(), y => y.Animation);
+
             MonthlyAmount = state.MonthlyAmount;
             Currency = state.Currency;
             State = state.State;
+
+            CanPurchase = features.PaymentLink != null
+                && ProtoService.IsPremiumAvailable;
         }
 
         public string PremiumPreviewLimitsDescription
@@ -107,6 +119,10 @@ namespace Unigram.ViewModels.Premium
             if (feature is PremiumFeatureIncreasedLimits)
             {
                 await new LimitsPopup(Limits).ShowQueuedAsync();
+            }
+            else
+            {
+                await new FeaturesPopup(ProtoService, Features, Animations, feature).ShowQueuedAsync();
             }
         }
 

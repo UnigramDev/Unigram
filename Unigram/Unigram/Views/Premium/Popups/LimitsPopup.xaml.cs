@@ -95,6 +95,10 @@ namespace Unigram.Views.Premium.Popups
                     titleValue = Strings.Resources.GroupsAndChannelsLimitTitle;
                     subtitleValue = Strings.Resources.GroupsAndChannelsLimitSubtitle;
                     break;
+                case PremiumLimitTypeConnectedAccounts:
+                    titleValue = Strings.Resources.ConnectedAccountsLimitTitle;
+                    subtitleValue = Strings.Resources.ConnectedAccountsLimitSubtitle;
+                    break;
             }
 
             var title = content.FindName("Title") as TextBlock;

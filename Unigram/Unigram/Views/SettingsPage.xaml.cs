@@ -181,10 +181,9 @@ namespace Unigram.Views
             MasterDetail.NavigationService.GoBackAt(0, false);
         }
 
-        private void Premium_Click(object sender, RoutedEventArgs e)
+        private async void Premium_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(PremiumPage));
-            MasterDetail.NavigationService.GoBackAt(0, false);
+            await MasterDetail.NavigationService.ShowAsync(typeof(PremiumPage));
         }
 
         private async void Photo_Click(object sender, RoutedEventArgs e)

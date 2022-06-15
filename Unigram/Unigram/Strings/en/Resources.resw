@@ -7542,22 +7542,83 @@ You can change your language back at any time in Settings.</value>
   <data name="LimitReached" xml:space="preserve">
     <value>Limit Reached</value>
   </data>
+  <data name="LimitReachedAccounts" xml:space="preserve">
+    <value>Sorry, you can't add more than **{0}** accounts. You can increase this limit to **{1}** by upgrading to **Telegram Premium**.</value>
+  </data>
+  <data name="LimitReachedAccountsPremium" xml:space="preserve">
+    <value>Sorry, you can't add more than **{0}** accounts.</value>
+  </data>
   <data name="LimitReachedChatInFolders" xml:space="preserve">
     <value>Sorry, you can't add more than **{0}** chats to a folder. You can increase this limit to **{1}** by upgrading to **Telegram Premium**.</value>
   </data>
+  <data name="LimitReachedChatInFoldersLocked" xml:space="preserve">
+    <value>Sorry, you can't add more than **{0}** chats to a folder. Please create a new one. We are working to let you increase this limit in the future.</value>
+  </data>
+  <data name="LimitReachedChatInFoldersPremium" xml:space="preserve">
+    <value>Sorry, you can't add more than **{0}** chats to a folder. Please create a new one.</value>
+  </data>
   <data name="LimitReachedCommunities" xml:space="preserve">
-    <value>You are a member of **{0}** groups and channels. Please leave some before joining a new one — or upgrade to **Telegram Premium** to double the limit to **{0}** groups and channels.</value>
+    <value>You are a member of **{0}** groups and channels. Please leave some before joining a new one — or upgrade to **Telegram Premium** to double the limit to **{1}** groups and channels.</value>
+  </data>
+  <data name="LimitReachedCommunitiesLocked" xml:space="preserve">
+    <value>You are a member of **{0}** groups and channels. Please leave some before joining a new one. We are working to let you increase this limit in the future.</value>
+  </data>
+  <data name="LimitReachedCommunitiesPremium" xml:space="preserve">
+    <value>You are a member of **{0}** groups and channels. Please leave some before joining a new one.</value>
+  </data>
+  <data name="LimitReachedFavoriteGifs" xml:space="preserve">
+    <value>Limit of %d GIFs Reached</value>
+  </data>
+  <data name="LimitReachedFavoriteGifsSubtitle" xml:space="preserve">
+    <value>An older GIF was replaced with this one. You can **increase the limit** to %d GIFs</value>
+  </data>
+  <data name="LimitReachedFavoriteGifsSubtitlePremium" xml:space="preserve">
+    <value>An older GIF was replaced with this one.</value>
+  </data>
+  <data name="LimitReachedFavoriteStickers" xml:space="preserve">
+    <value>Limit of %d Stickers Reached</value>
+  </data>
+  <data name="LimitReachedFavoriteStickersSubtitle" xml:space="preserve">
+    <value>An older sticker was replaced with this one. You can **increase the limit** to %d stickers</value>
+  </data>
+  <data name="LimitReachedFavoriteStickersSubtitlePremium" xml:space="preserve">
+    <value>An older sticker was replaced with this one.</value>
+  </data>
+  <data name="LimitReachedFileSize" xml:space="preserve">
+    <value>The document cant’t be sent, because it is larger than **%1$s**. You can double this limit to **%2$s** per document by subscribing to **Telegram Premium**.</value>
+  </data>
+  <data name="LimitReachedFileSizeLocked" xml:space="preserve">
+    <value>The document cant’t be sent, because it is larger than **%1$s**. We are working to let you increase this limit in the future.</value>
+  </data>
+  <data name="LimitReachedFileSizePremium" xml:space="preserve">
+    <value>The document cant’t be sent, because it is larger than **%1$s**.</value>
   </data>
   <data name="LimitReachedFolders" xml:space="preserve">
     <value>You have reached the limit of **{0}** folders. You can double the limit to **{1}** folders by subscribing to **Telegram Premium**.</value>
   </data>
+  <data name="LimitReachedFoldersLocked" xml:space="preserve">
+    <value>You have reached the limit of **{0}** folders for this account. We are working to let you increase this limit in the future.</value>
+  </data>
+  <data name="LimitReachedFoldersPremium" xml:space="preserve">
+    <value>You have reached the limit of **{0}** folders for this account.</value>
+  </data>
   <data name="LimitReachedPinDialogs" xml:space="preserve">
-    <value>Sorry, you can't pin more than {0} chats to the top.
-	
-Unpin some of the currently pinned ones or subscribe to **Telegram Premium** to double the limit to **{1}** chats.</value>
+    <value>Sorry, you can\'t pin more than {0} chats to the top. Unpin some of the currently pinned ones or subscribe to **Telegram Premium** to double the limit to **{1}** chats.</value>
+  </data>
+  <data name="LimitReachedPinDialogsLocked" xml:space="preserve">
+    <value>Sorry, you can\'t pin more than {0} chats to the top. Unpin some of the currently pinned ones. We are working to let you increase this limit in the future.</value>
+  </data>
+  <data name="LimitReachedPinDialogsPremium" xml:space="preserve">
+    <value>Sorry, you can\'t pin more than {0} chats to the top. Unpin some of the currently pinned ones.</value>
   </data>
   <data name="LimitReachedPublicLinks" xml:space="preserve">
-    <value>You have reserved too many public links. Try revoking the link from an older group or channel, or upgrade to **Telegram Premium** to double the limit to **{0}** public links.</value>
+    <value>You have reserved too many public links. Try revoking the link from an older group or channel, or upgrade to **Telegram Premium** to double the limit to **{1}** public links.</value>
+  </data>
+  <data name="LimitReachedPublicLinksLocked" xml:space="preserve">
+    <value>You have reserved too many public links. Try revoking the link from an older group or channel. We are working to let you increase this limit in the future.</value>
+  </data>
+  <data name="LimitReachedPublicLinksPremium" xml:space="preserve">
+    <value>You have reserved too many public links. Try revoking the link from an older group or channel.</value>
   </data>
   <data name="LinkActionCopy" xml:space="preserve">
     <value>Copy</value>

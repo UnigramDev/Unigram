@@ -59,6 +59,7 @@ namespace Unigram.Controls
         {
             _limitFps = limitFps ?? !Windows.UI.Composition.CompositionCapabilities.GetForCurrentView().AreEffectsFast();
             _currentDpi = DisplayInformation.GetForCurrentView().LogicalDpi;
+            _visible = Window.Current.CoreWindow.ActivationMode == CoreWindowActivationMode.ActivatedInForeground;
 
             SizeChanged += OnSizeChanged;
         }
@@ -471,7 +472,7 @@ namespace Unigram.Controls
             {
                 if (Dispatcher.HasThreadAccess)
                 {
-                    if (subscribe)
+                    if (subscribe && _visible)
                     {
                         _unsubscribe = false;
                         _timer ??= ThreadPoolTimer.CreatePeriodicTimer(PrepareNextFrame, _interval);
@@ -490,7 +491,7 @@ namespace Unigram.Controls
                         CompositionTarget.Rendering -= OnRendering;
                     }
 
-                    _subscribed = subscribe;
+                    _subscribed = subscribe && _visible;
                 }
                 else
                 {

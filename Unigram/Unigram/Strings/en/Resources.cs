@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 06/10/2022 15:36:03
+// 	Generated: 06/14/2022 14:40:01
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -27112,6 +27112,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Sorry, you can't add more than **{0}** accounts. You can increase this limit to **{1}** by upgrading to **Telegram Premium**."
+        /// </summary>
+        public static string LimitReachedAccounts
+        {
+            get
+            {
+                return resourceLoader.GetString("LimitReachedAccounts");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't add more than **{0}** accounts."
+        /// </summary>
+        public static string LimitReachedAccountsPremium
+        {
+            get
+            {
+                return resourceLoader.GetString("LimitReachedAccountsPremium");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Sorry, you can't add more than **{0}** chats to a folder. You can increase this limit to **{1}** by upgrading to **Telegram Premium**."
         /// </summary>
         public static string LimitReachedChatInFolders
@@ -27123,13 +27145,156 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "You are a member of **{0}** groups and channels. Please leave some before joining a new one — or upgrade to **Telegram Premium** to double the limit to **{0}** groups and channels."
+        /// Localized resource similar to "Sorry, you can't add more than **{0}** chats to a folder. Please create a new one. We are working to let you increase this limit in the future."
+        /// </summary>
+        public static string LimitReachedChatInFoldersLocked
+        {
+            get
+            {
+                return resourceLoader.GetString("LimitReachedChatInFoldersLocked");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't add more than **{0}** chats to a folder. Please create a new one."
+        /// </summary>
+        public static string LimitReachedChatInFoldersPremium
+        {
+            get
+            {
+                return resourceLoader.GetString("LimitReachedChatInFoldersPremium");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You are a member of **{0}** groups and channels. Please leave some before joining a new one — or upgrade to **Telegram Premium** to double the limit to **{1}** groups and channels."
         /// </summary>
         public static string LimitReachedCommunities
         {
             get
             {
                 return resourceLoader.GetString("LimitReachedCommunities");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You are a member of **{0}** groups and channels. Please leave some before joining a new one. We are working to let you increase this limit in the future."
+        /// </summary>
+        public static string LimitReachedCommunitiesLocked
+        {
+            get
+            {
+                return resourceLoader.GetString("LimitReachedCommunitiesLocked");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You are a member of **{0}** groups and channels. Please leave some before joining a new one."
+        /// </summary>
+        public static string LimitReachedCommunitiesPremium
+        {
+            get
+            {
+                return resourceLoader.GetString("LimitReachedCommunitiesPremium");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Limit of %d GIFs Reached"
+        /// </summary>
+        public static string LimitReachedFavoriteGifs
+        {
+            get
+            {
+                return resourceLoader.GetString("LimitReachedFavoriteGifs");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "An older GIF was replaced with this one. You can **increase the limit** to %d GIFs"
+        /// </summary>
+        public static string LimitReachedFavoriteGifsSubtitle
+        {
+            get
+            {
+                return resourceLoader.GetString("LimitReachedFavoriteGifsSubtitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "An older GIF was replaced with this one."
+        /// </summary>
+        public static string LimitReachedFavoriteGifsSubtitlePremium
+        {
+            get
+            {
+                return resourceLoader.GetString("LimitReachedFavoriteGifsSubtitlePremium");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Limit of %d Stickers Reached"
+        /// </summary>
+        public static string LimitReachedFavoriteStickers
+        {
+            get
+            {
+                return resourceLoader.GetString("LimitReachedFavoriteStickers");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "An older sticker was replaced with this one. You can **increase the limit** to %d stickers"
+        /// </summary>
+        public static string LimitReachedFavoriteStickersSubtitle
+        {
+            get
+            {
+                return resourceLoader.GetString("LimitReachedFavoriteStickersSubtitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "An older sticker was replaced with this one."
+        /// </summary>
+        public static string LimitReachedFavoriteStickersSubtitlePremium
+        {
+            get
+            {
+                return resourceLoader.GetString("LimitReachedFavoriteStickersSubtitlePremium");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The document cant’t be sent, because it is larger than **%1$s**. You can double this limit to **%2$s** per document by subscribing to **Telegram Premium**."
+        /// </summary>
+        public static string LimitReachedFileSize
+        {
+            get
+            {
+                return resourceLoader.GetString("LimitReachedFileSize");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The document cant’t be sent, because it is larger than **%1$s**. We are working to let you increase this limit in the future."
+        /// </summary>
+        public static string LimitReachedFileSizeLocked
+        {
+            get
+            {
+                return resourceLoader.GetString("LimitReachedFileSizeLocked");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The document cant’t be sent, because it is larger than **%1$s**."
+        /// </summary>
+        public static string LimitReachedFileSizePremium
+        {
+            get
+            {
+                return resourceLoader.GetString("LimitReachedFileSizePremium");
             }
         }
         
@@ -27145,9 +27310,29 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Sorry, you can't pin more than {0} chats to the top.
-        ///	
-        ///Unpin some of the currently pinned ones or subscribe to **Telegram Premium** to double the limit to **{1}** chats."
+        /// Localized resource similar to "You have reached the limit of **{0}** folders for this account. We are working to let you increase this limit in the future."
+        /// </summary>
+        public static string LimitReachedFoldersLocked
+        {
+            get
+            {
+                return resourceLoader.GetString("LimitReachedFoldersLocked");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You have reached the limit of **{0}** folders for this account."
+        /// </summary>
+        public static string LimitReachedFoldersPremium
+        {
+            get
+            {
+                return resourceLoader.GetString("LimitReachedFoldersPremium");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can\'t pin more than {0} chats to the top. Unpin some of the currently pinned ones or subscribe to **Telegram Premium** to double the limit to **{1}** chats."
         /// </summary>
         public static string LimitReachedPinDialogs
         {
@@ -27158,13 +27343,57 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "You have reserved too many public links. Try revoking the link from an older group or channel, or upgrade to **Telegram Premium** to double the limit to **{0}** public links."
+        /// Localized resource similar to "Sorry, you can\'t pin more than {0} chats to the top. Unpin some of the currently pinned ones. We are working to let you increase this limit in the future."
+        /// </summary>
+        public static string LimitReachedPinDialogsLocked
+        {
+            get
+            {
+                return resourceLoader.GetString("LimitReachedPinDialogsLocked");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can\'t pin more than {0} chats to the top. Unpin some of the currently pinned ones."
+        /// </summary>
+        public static string LimitReachedPinDialogsPremium
+        {
+            get
+            {
+                return resourceLoader.GetString("LimitReachedPinDialogsPremium");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You have reserved too many public links. Try revoking the link from an older group or channel, or upgrade to **Telegram Premium** to double the limit to **{1}** public links."
         /// </summary>
         public static string LimitReachedPublicLinks
         {
             get
             {
                 return resourceLoader.GetString("LimitReachedPublicLinks");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You have reserved too many public links. Try revoking the link from an older group or channel. We are working to let you increase this limit in the future."
+        /// </summary>
+        public static string LimitReachedPublicLinksLocked
+        {
+            get
+            {
+                return resourceLoader.GetString("LimitReachedPublicLinksLocked");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You have reserved too many public links. Try revoking the link from an older group or channel."
+        /// </summary>
+        public static string LimitReachedPublicLinksPremium
+        {
+            get
+            {
+                return resourceLoader.GetString("LimitReachedPublicLinksPremium");
             }
         }
         

@@ -1,5 +1,6 @@
 ﻿using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.ViewModels.Premium;
 using Windows.UI;
@@ -8,7 +9,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Unigram.Views.Premium
 {
-    public sealed partial class PremiumPage : HostedPage
+    public sealed partial class PremiumPage : ContentPopup
     {
         public PremiumViewModel ViewModel => DataContext as PremiumViewModel;
 

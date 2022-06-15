@@ -1,0 +1,107 @@
+﻿<controls:ContentPopup x:Class="Unigram.Views.Popups.FencePopup"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:local="using:Unigram.Views.Popups"
+                       xmlns:controls="using:Unigram.Controls"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       mc:Ignorable="d"
+                       Title="TITLE"
+                       PrimaryButtonText="Button1"
+                       SecondaryButtonText="Button2"
+                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid x:Name="LimitHeader"
+              HorizontalAlignment="Center">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid x:Name="LimitBubble"
+                  Background="Red"
+                  Padding="8,4"
+                  CornerRadius="14"
+                  MinWidth="50">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="Icon"
+                           Foreground="#FFFFFF"
+                           FontFamily="{StaticResource SymbolThemeFontFamily}"
+                           FontSize="20" />
+
+                <TextBlock x:Name="Limit"
+                           Margin="8,-1,8,1"
+                           FontSize="16"
+                           FontWeight="SemiBold"
+                           Foreground="#FFFFFF"
+                           Grid.Column="1" />
+            </Grid>
+
+            <Path x:Name="NextArrow"
+                  Data="M43.9999 0H29.5146C31.1059 0 32.632 0.6321 33.7573 1.7574L38.8786 6.8787C40.7685 8.7686 43.9999 7.4301 43.9999 4.7574V0Z"
+                  Fill="Red"
+                  HorizontalAlignment="Right"
+                  VerticalAlignment="Top"
+                  Height="5"
+                  Stretch="Uniform"
+                  Grid.Row="1" />
+            <Path x:Name="PrevArrow"
+                  Data="M36.9852 0H8.01465C9.60595 0 11.132 0.6321 12.2573 1.7574L19.6715 9.1716C21.2336 10.7337 23.7662 10.7337 25.3283 9.1716L32.7425 1.7574C33.8678 0.6321 35.3939 0 36.9852 0Z"
+                  Fill="Red"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Top"
+                  Height="5"
+                  Stretch="Uniform"
+                  Grid.Row="1" />
+        </Grid>
+
+        <Grid x:Name="LimitPanel"
+              Margin="0,4,0,24"
+              Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid Background="{ThemeResource ControlFillColorDefaultBrush}"
+                  CornerRadius="4,0,0,4"
+                  Padding="8,4">
+                <TextBlock Text="{CustomResource LimitFree}"
+                           FontWeight="SemiBold" />
+
+                <TextBlock x:Name="PrevLimit"
+                           FontWeight="SemiBold"
+                           Text="50"
+                           TextAlignment="Right" />
+            </Grid>
+            <Grid x:Name="NextPanel"
+                  Background="#FF5BA0FE"
+                  CornerRadius="0,4,4,0"
+                  Padding="8,4"
+                  Grid.Column="1">
+                <TextBlock Text="{CustomResource LimitPremium}"
+                           Foreground="#FFFFFF"
+                           FontWeight="SemiBold" />
+
+                <TextBlock x:Name="NextLimit"
+                           Foreground="#FFFFFF"
+                           FontWeight="SemiBold"
+                           Text="100"
+                           TextAlignment="Right" />
+            </Grid>
+        </Grid>
+
+        <TextBlock x:Name="Subtitle"
+                   Style="{StaticResource BodyTextBlockStyle}"
+                   Grid.Row="2" />
+    </Grid>
+</controls:ContentPopup>

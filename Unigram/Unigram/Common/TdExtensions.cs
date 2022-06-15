@@ -1013,6 +1013,7 @@ namespace Unigram.Common
                 case MessageVideoChatScheduled:
                 case MessageVideoChatStarted:
                 case MessageWebsiteConnected:
+                case MessageWebAppDataSent:
                     return true;
                 case MessageExpiredPhoto:
                 case MessageExpiredVideo:
@@ -1088,10 +1089,10 @@ namespace Unigram.Common
 
                 if (stickerSet.Thumbnail.Format is ThumbnailFormatTgs)
                 {
-                    return new Sticker(stickerSet.Id, 512, 512, "\U0001F4A9", type, stickerSet.ThumbnailOutline, stickerSet.Thumbnail, stickerSet.Thumbnail.File);
+                    return new Sticker(stickerSet.Id, 512, 512, "\U0001F4A9", type, stickerSet.ThumbnailOutline, stickerSet.Thumbnail, null, stickerSet.Thumbnail.File);
                 }
 
-                return new Sticker(stickerSet.Id, stickerSet.Thumbnail.Width, stickerSet.Thumbnail.Height, "\U0001F4A9", type, stickerSet.ThumbnailOutline, stickerSet.Thumbnail, stickerSet.Thumbnail.File);
+                return new Sticker(stickerSet.Id, stickerSet.Thumbnail.Width, stickerSet.Thumbnail.Height, "\U0001F4A9", type, stickerSet.ThumbnailOutline, stickerSet.Thumbnail, null, stickerSet.Thumbnail.File);
             }
 
             var cover = stickerSet.Covers.FirstOrDefault();
@@ -2097,6 +2098,14 @@ namespace Telegram.Td.Api
     }
 
     public class MessageHeaderUnread : MessageContent
+    {
+        public NativeObject ToUnmanaged()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class PremiumLimitTypeConnectedAccounts : PremiumLimitType
     {
         public NativeObject ToUnmanaged()
         {

@@ -96,6 +96,14 @@ namespace winrt::Unigram::Native::implementation
 		return info.as<winrt::Unigram::Native::CachedVideoAnimation>();
 	}
 
+	void CachedVideoAnimation::Stop() {
+		if (m_animation != nullptr) {
+			m_animation->SeekToMilliseconds(0, false);
+		}
+
+		m_frameIndex = 0;
+	}
+
 	void CachedVideoAnimation::RenderSync(CanvasBitmap bitmap, int32_t& seconds)
 	{
 		auto size = bitmap.SizeInPixels();

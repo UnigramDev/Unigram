@@ -182,6 +182,7 @@ namespace Unigram.Converters
         public const string Emoji = "\uE76E";
         public const string ChevronUp = "\uE0E4";
         public const string ChevronDown = "\uE0E5";
+        public const string ChevronRight = "\uE0E3";
         public const string ShieldCheckmark = "\uEA1A";
         public const string Bug = "\uE825";
         public const string Bookmark = "\uE907";
@@ -222,6 +223,12 @@ namespace Unigram.Converters
         public const string Premium16 = "\uE9B5";
         public const string Verified16 = "\uE97A";
 
+        public const string PersonFilled = "\uE9B8";
+        public const string PeopleFilled = "\uE9B9";
+        public const string ChatFilled = "\uE9BA";
+        public const string PinFilled = "\uE9BB";
+        public const string LinkFilled = "\uE9BC";
+        public const string FolderFilled = "\uE9BD";
 
         public static readonly ChatFilterIcon[] Filters = new ChatFilterIcon[]
         {

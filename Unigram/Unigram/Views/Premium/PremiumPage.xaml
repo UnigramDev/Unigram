@@ -1,19 +1,20 @@
-﻿<local:HostedPage x:Class="Unigram.Views.Premium.PremiumPage"
-                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                  xmlns:local="using:Unigram.Views"
-                  xmlns:common="using:Unigram.Common"
-                  xmlns:controls="using:Unigram.Controls"
-                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                  mc:Ignorable="d">
+﻿<controls:ContentPopup x:Class="Unigram.Views.Premium.PremiumPage"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:local="using:Unigram.Views"
+                       xmlns:common="using:Unigram.Common"
+                       xmlns:controls="using:Unigram.Controls"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       mc:Ignorable="d">
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
-        <controls:TableListView ItemsSource="{x:Bind ViewModel.Features}"
+        <ListView ItemsSource="{x:Bind ViewModel.Features}"
                                 ItemClick="OnItemClick"
                                 IsItemClickEnabled="True"
                                 ContainerContentChanging="OnContainerContentChanging"
-                                SelectionMode="None">
+                                SelectionMode="None"
+                                Margin="-24,0,-24,-24">
             <ListView.Header>
                 <Grid Margin="24,0">
                     <Grid.ColumnDefinitions>
@@ -40,9 +41,7 @@
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Grid Background="{ThemeResource SettingsItemBackground}"
-                          BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                          Padding="12,8,12,12">
+                    <Grid Padding="0,8,0,16">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
@@ -67,6 +66,8 @@
                         </Border>
 
                         <TextBlock x:Name="Title"
+                                   VerticalAlignment="Top"
+                                   Margin="0,-2,0,0"
                                    Grid.Column="1" />
 
                         <TextBlock x:Name="Subtitle"
@@ -96,13 +97,13 @@
                     </controls:HeaderedControl>
                 </StackPanel>
             </ListView.Footer>
-        </controls:TableListView>
+        </ListView>
 
         <Grid x:Name="PurchasePanel"
               x:Load="{x:Bind ViewModel.CanPurchase, Mode=OneWay}"
               VerticalAlignment="Bottom"
               HorizontalAlignment="Center"
-              Margin="12"
+              Margin="12,12,12,-12"
               Grid.Row="1">
             <Rectangle x:Name="PurchaseShadow"
                        Loaded="PurchaseShadow_Loaded"
@@ -123,4 +124,4 @@
                                   Height="36" />
         </Grid>
     </Grid>
-</local:HostedPage>
+</controls:ContentPopup>

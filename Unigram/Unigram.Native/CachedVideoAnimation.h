@@ -43,6 +43,8 @@ namespace winrt::Unigram::Native::implementation
 
 
 		void RenderSync(CanvasBitmap bitmap, int32_t& seconds);
+		void Stop();
+
 		double FrameRate();
 
 		int32_t TotalFrame();

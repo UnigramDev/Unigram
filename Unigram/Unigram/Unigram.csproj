@@ -121,11 +121,13 @@
     <Compile Include="Assets\Icons\ActionTyping.cs" />
     <Compile Include="Assets\Icons\ActionVideo.cs" />
     <Compile Include="Assets\Icons\ActionVoice.cs" />
+    <Compile Include="Assets\Icons\Addone.cs" />
     <Compile Include="Assets\Icons\Advanced.cs" />
     <Compile Include="Assets\Icons\Appearance.cs" />
     <Compile Include="Assets\Icons\AskQ.cs" />
     <Compile Include="Assets\Icons\Data.cs" />
     <Compile Include="Assets\Icons\Devices.cs" />
+    <Compile Include="Assets\Icons\Double.cs" />
     <Compile Include="Assets\Icons\Downloading.cs" />
     <Compile Include="Assets\Icons\FAQ.cs" />
     <Compile Include="Assets\Icons\Folders.cs" />
@@ -142,6 +144,7 @@
     <Compile Include="Assets\Icons\ReactionsMore.cs" />
     <Compile Include="Assets\Icons\Select.cs" />
     <Compile Include="Assets\Icons\Stickers.cs" />
+    <Compile Include="Assets\Icons\Unlock.cs" />
     <Compile Include="Assets\Icons\Username.cs" />
     <Compile Include="Assets\Icons\Profile.cs" />
     <Compile Include="Assets\Icons\VoiceRecognition.cs" />
@@ -279,6 +282,15 @@
     </Compile>
     <Compile Include="Controls\Cells\GroupCallParticipantGridCell.xaml.cs">
       <DependentUpon>GroupCallParticipantGridCell.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Cells\Premium\PremiumFeatureCell.xaml.cs">
+      <DependentUpon>PremiumFeatureCell.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Cells\Premium\PremiumFeatureUniqueReactionsCell.xaml.cs">
+      <DependentUpon>PremiumFeatureUniqueReactionsCell.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Cells\Premium\PremiumFeatureUniqueStickersCell.xaml.cs">
+      <DependentUpon>PremiumFeatureUniqueStickersCell.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Cells\SessionCell.xaml.cs">
       <DependentUpon>SessionCell.xaml</DependentUpon>
@@ -550,16 +562,19 @@
     <Compile Include="Navigation\Services\NavigationServiceList.cs" />
     <Compile Include="Selectors\ChatStatisticsOverviewTemplateSelector.cs" />
     <Compile Include="Selectors\InviteLinkTemplateSelector.cs" />
+    <Compile Include="Selectors\PremiumFeatureTemplateSelector.cs" />
     <Compile Include="Services\CallsService.cs" />
     <Compile Include="Services\GroupCallService.cs" />
     <Compile Include="Services\ProtoService.ChatList.cs" />
     <Compile Include="Services\ProtoService.Files.cs" />
     <Compile Include="Services\StorageService.cs" />
+    <Compile Include="Services\Stripe\SmartGlocalClient.cs" />
     <Compile Include="Services\Theme\ThemeAccentInfo.cs" />
     <Compile Include="Services\Theme\ThemeBundledInfo.cs" />
     <Compile Include="Services\Theme\ThemeCustomInfo.cs" />
     <Compile Include="Services\ThemeService.Defaults.cs" />
     <Compile Include="Services\TranslateService.cs" />
+    <Compile Include="Services\Updates\UpdatePremiumState.cs" />
     <Compile Include="Strings\en\Resources.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -1010,6 +1025,9 @@
     </Compile>
     <Compile Include="Views\Popups\ThemePreviewPopup.xaml.cs">
       <DependentUpon>ThemePreviewPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Premium\Popups\FeaturesPopup.xaml.cs">
+      <DependentUpon>FeaturesPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Premium\Popups\LimitsPopup.xaml.cs">
       <DependentUpon>LimitsPopup.xaml</DependentUpon>
@@ -1552,6 +1570,18 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Cells\GroupCallParticipantGridCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Cells\Premium\PremiumFeatureCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Cells\Premium\PremiumFeatureUniqueReactionsCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Cells\Premium\PremiumFeatureUniqueStickersCell.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -2138,6 +2168,10 @@
     <Page Include="Views\Popups\ThemePreviewPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Premium\Popups\FeaturesPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Premium\Popups\LimitsPopup.xaml">
       <SubType>Designer</SubType>

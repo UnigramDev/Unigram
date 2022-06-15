@@ -33,6 +33,7 @@ namespace Unigram.Controls
         private int _nextSeconds;
 
         private bool _isCachingEnabled;
+        private bool _shouldStopNextFrame;
 
         public AnimationView()
             : this(null)
@@ -171,6 +172,12 @@ namespace Unigram.Controls
                 return;
             }
 
+            if (_shouldStopNextFrame)
+            {
+                _shouldStopNextFrame = false;
+                animation.Stop();
+            }
+
             animation.RenderSync(_bitmap, out _nextSeconds);
 
             if (_hideThumbnail == null)
@@ -220,6 +227,12 @@ namespace Unigram.Controls
             _hideThumbnail = null;
 
             OnSourceChanged();
+        }
+
+        public void Stop()
+        {
+            _shouldStopNextFrame = true;
+            Pause();
         }
 
         public event EventHandler<int> PositionChanged;
