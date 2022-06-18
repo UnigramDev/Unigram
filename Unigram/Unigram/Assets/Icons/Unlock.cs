@@ -70,7 +70,7 @@ namespace Unigram.Assets.Icons
         internal const long c_durationTicks = 20000000;
 
         // Theme property: Color_000000.
-        internal static readonly Color c_themeColor_000000 = Color.FromArgb(0xFF, 0x00, 0x00, 0x00);
+        internal static readonly Color c_themeColor_000000 = Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF);
 
         CompositionPropertySet _themeProperties;
         Color _themeColor_000000 = c_themeColor_000000;
@@ -156,6 +156,8 @@ namespace Unigram.Assets.Icons
         public IReadOnlyDictionary<string, double> Markers =>
             new Dictionary<string, double>
             {
+                { "NormalToPointerOver_Start", 0.0 },
+                { "NormalToPointerOver_End", 1 },
             };
 
         /// <summary>

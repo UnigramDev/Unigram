@@ -9,14 +9,13 @@
                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        mc:Ignorable="d"
-                       PrimaryButtonText="Button1"
-                       SecondaryButtonText="Button2"
                        PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
                        SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
 
-    <Grid Margin="-24,-24,-24,-12">
+    <Grid Margin="-24">
         <Grid.RowDefinitions>
             <RowDefinition Height="440" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid VerticalAlignment="Top"
@@ -60,5 +59,33 @@
                         SelectedPageIndex="{x:Bind ScrollingHost.SelectedIndex, Mode=TwoWay}"
                         HorizontalAlignment="Center"
                         Grid.Row="1" />
+
+        <Grid x:Name="PurchasePanel"
+              VerticalAlignment="Bottom"
+              HorizontalAlignment="Stretch"
+              Margin="24,12,24,24"
+              Grid.Row="2">
+            <Rectangle x:Name="PurchaseShadow"
+                       Loaded="PurchaseShadow_Loaded"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch"
+                       Fill="White"
+                       Margin="0"
+                       RadiusX="4"
+                       RadiusY="4">
+            </Rectangle>
+            <Border Background="{StaticResource PremiumLinearGradientBrush}"
+                    CornerRadius="4"
+                    Height="36" />
+            <controls:BadgeButton x:Name="BuyCommand"
+                                  Style="{StaticResource StartButtonStyle}"
+                                  HorizontalAlignment="Stretch"
+                                  HorizontalContentAlignment="Center"
+                                  FontWeight="SemiBold"
+                                  Padding="16,3,16,5"
+                                  CornerRadius="4"
+                                  Margin="0"
+                                  Height="36" />
+        </Grid>
     </Grid>
 </controls:ContentPopup>

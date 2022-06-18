@@ -884,7 +884,7 @@
                         <TextBlock x:Name="Chevron"
                                    x:Load="False"
                                    Visibility="Collapsed"
-                                   Text="&#xE0E3;"
+                                   Text="{TemplateBinding ChevronGlyph}"
                                    FontSize="20"
                                    HorizontalAlignment="Right"
                                    VerticalAlignment="Center"

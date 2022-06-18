@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Telegram.Td.Api;
+using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Cells.Premium;
 using Unigram.Services;
@@ -16,7 +17,7 @@ namespace Unigram.Views.Premium.Popups
         private readonly IProtoService _protoService;
         private readonly IDictionary<Type, Animation> _animations;
 
-        public FeaturesPopup(IProtoService protoService, IList<PremiumFeature> features, IDictionary<Type, Animation> animations, PremiumFeature selectedFeature)
+        public FeaturesPopup(IProtoService protoService, PremiumState state, IList<PremiumFeature> features, IDictionary<Type, Animation> animations, PremiumFeature selectedFeature)
         {
             InitializeComponent();
 
@@ -29,6 +30,8 @@ namespace Unigram.Views.Premium.Popups
 
             ScrollingHost.ItemsSource = items;
             ScrollingHost.SelectedItem = selectedFeature;
+
+            BuyCommand.Content = string.Format(Strings.Resources.SubscribeToPremium, Locale.FormatCurrency(state.MonthlyAmount, state.Currency));
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -74,6 +77,11 @@ namespace Unigram.Views.Premium.Popups
             {
                 uniqueReactionsCell.UpdateFeature(_protoService);
             }
+        }
+
+        private void PurchaseShadow_Loaded(object sender, RoutedEventArgs e)
+        {
+            DropShadowEx.Attach(PurchaseShadow);
         }
     }
 }

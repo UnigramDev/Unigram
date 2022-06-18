@@ -1068,11 +1068,16 @@
     </Style>
 
     <SolidColorBrush x:Key="StartButtonBackground"
-                     Color="#2ca5e0" />
-    <SolidColorBrush x:Key="StartButtonBackgroundPointerOver"
+                     Color="Transparent" />
+    <!--<SolidColorBrush x:Key="StartButtonBackgroundPointerOver"
                      Color="#2ca5e0" />
     <SolidColorBrush x:Key="StartButtonBackgroundPressed"
-                     Color="#227eab" />
+                     Color="#227eab" />-->
+    <StaticResource x:Key="StartButtonBackgroundPointerOver"
+                    ResourceKey="CardBackgroundFillColorDefaultBrush" />
+    <StaticResource x:Key="StartButtonBackgroundPressed"
+                    ResourceKey="ControlFillColorSecondaryBrush" />
+
     <StaticResource x:Key="StartButtonBackgroundDisabled"
                     ResourceKey="SystemControlBackgroundBaseLowBrush" />
     <StaticResource x:Key="StartButtonForeground"

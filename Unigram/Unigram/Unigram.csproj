@@ -672,7 +672,7 @@
     <Compile Include="Views\Popups\DownloadsPopup.xaml.cs">
       <DependentUpon>DownloadsPopup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Popups\FencePopup.xaml.cs">
+    <Compile Include="Views\Premium\Popups\FencePopup.xaml.cs">
       <DependentUpon>FencePopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\IdenticonPopup.xaml.cs">
@@ -1410,6 +1410,9 @@
     <Content Include="Assets\Animations\BlockedChats.tgs" />
     <Content Include="Assets\Animations\EmptyFolder.tgs" />
     <Content Include="Assets\Animations\Premium.tgs" />
+    <Content Include="Assets\Animations\AddOne.json" />
+    <Content Include="Assets\Animations\Double.json" />
+    <Content Include="Assets\Animations\Unlock.json" />
     <None Include="Assets\i420.hlsl" />
     <Content Include="Assets\Images\BoxArt.png" />
     <Content Include="Assets\Images\Reply.scale-100.png" />
@@ -1941,7 +1944,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Popups\FencePopup.xaml">
+    <Page Include="Views\Premium\Popups\FencePopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

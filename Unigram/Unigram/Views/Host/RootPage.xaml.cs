@@ -15,6 +15,7 @@ using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Services.Settings;
 using Unigram.ViewModels;
+using Unigram.Views.Popups;
 using Unigram.Views.SignIn;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
@@ -94,8 +95,37 @@ namespace Unigram.Views.Host
             Switch(_lifetime.ActiveItem);
         }
 
-        public void Create()
+        public async void Create()
         {
+            var premium = false;
+            var count = 0;
+
+            foreach (var session in TLContainer.Current.Lifetime.Items)
+            {
+                if (session.Settings.UseTestDC)
+                {
+                    continue;
+                }
+
+                if (session.ProtoService.Options.IsPremium)
+                {
+                    premium = true;
+                }
+
+                count++;
+            }
+
+            if (count > 3 && premium)
+            {
+                // Should never happen
+                return;
+            }
+            else if (count > 2)
+            {
+                await new FencePopup(_lifetime.ActiveItem.ProtoService, new PremiumLimitTypeConnectedAccounts()).ShowQueuedAsync();
+                return;
+            }
+
             Switch(_lifetime.Create());
         }
 
@@ -301,7 +331,7 @@ namespace Unigram.Views.Host
             {
                 _navigationViewItems.Insert(0, RootDestination.Separator);
 
-                if (items.Count < 3)
+                if (items.Count < 4)
                 {
                     _navigationViewItems.Insert(0, RootDestination.AddAccount);
                 }
@@ -499,7 +529,7 @@ namespace Unigram.Views.Host
             {
                 if (destination == RootDestination.AddAccount)
                 {
-                    Switch(_lifetime.Create());
+                    Create();
                 }
                 else if (_navigationService?.Frame?.Content is IRootContentPage content)
                 {

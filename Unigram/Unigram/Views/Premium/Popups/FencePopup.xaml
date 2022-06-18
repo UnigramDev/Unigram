@@ -3,17 +3,18 @@
                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                        xmlns:local="using:Unigram.Views.Popups"
                        xmlns:controls="using:Unigram.Controls"
+                       xmlns:icons="using:Unigram.Assets.Icons"
+                       xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        mc:Ignorable="d"
                        Title="TITLE"
-                       PrimaryButtonText="Button1"
-                       SecondaryButtonText="Button2"
                        PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
                        SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
 
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -103,5 +104,54 @@
         <TextBlock x:Name="Subtitle"
                    Style="{StaticResource BodyTextBlockStyle}"
                    Grid.Row="2" />
+
+        <Grid x:Name="PurchasePanel"
+              VerticalAlignment="Bottom"
+              HorizontalAlignment="Stretch"
+              Margin="0,24,0,0"
+              Grid.Row="3">
+            <Rectangle x:Name="PurchaseShadow"
+                       Loaded="PurchaseShadow_Loaded"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch"
+                       Fill="White"
+                       Margin="0"
+                       RadiusX="4"
+                       RadiusY="4">
+            </Rectangle>
+            <Border Background="{StaticResource PremiumLinearGradientBrush}"
+                    CornerRadius="4"
+                    Height="36" />
+            <controls:BadgeButton x:Name="BuyCommand"
+                                  Style="{StaticResource StartButtonStyle}"
+                                  HorizontalAlignment="Stretch"
+                                  HorizontalContentAlignment="Center"
+                                  FontWeight="SemiBold"
+                                  Padding="16,3,16,5"
+                                  CornerRadius="4"
+                                  Margin="0"
+                                  Height="36">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="Increase Limit"
+                               VerticalAlignment="Center"
+                               Margin="0,0,0,2" />
+
+                    <controls:LottieView x:Name="BuyIcon"
+                                         Width="26"
+                                         Height="26"
+                                         IsLoopingEnabled="True"
+                                         IsCachingEnabled="False"
+                                         FrameSize="26,26"
+                                         DecodeFrameType="Logical"
+                                         Margin="8,0,-4,0"
+                                         Grid.Column="1" />
+                </Grid>
+            </controls:BadgeButton>
+        </Grid>
     </Grid>
 </controls:ContentPopup>

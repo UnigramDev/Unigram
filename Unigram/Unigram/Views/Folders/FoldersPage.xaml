@@ -52,7 +52,7 @@
                         </muxc:ItemsRepeater>
                         <controls:BadgeButton Content="{CustomResource CreateNewFilter}"
                                               Command="{x:Bind ViewModel.CreateCommand}"
-                                              Visibility="{x:Bind ConvertCreate(ViewModel.Items.Count), Mode=OneWay}"
+                                              Visibility="{x:Bind ViewModel.CanCreateNew, Mode=OneWay}"
                                               Style="{StaticResource GlyphBadgeButtonStyle}"
                                               IsChevronVisible="True"
                                               Glyph="&#xE98A;" />

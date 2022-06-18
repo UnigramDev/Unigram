@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Telegram.Td.Api;
+using Unigram.Common;
 using Unigram.Controls;
 using Windows.UI;
 using Windows.UI.Xaml.Controls;
@@ -23,13 +24,15 @@ namespace Unigram.Views.Premium.Popups
             Color.FromArgb(0xFF, 0xF2, 0x82, 0x2A)
         };
 
-        public LimitsPopup(IList<PremiumLimit> limits)
+        public LimitsPopup(PremiumState state, IList<PremiumLimit> limits)
         {
             InitializeComponent();
 
             Title = Strings.Resources.DoubledLimits;
 
             ScrollingHost.ItemsSource = limits;
+
+            BuyCommand.Content = string.Format(Strings.Resources.SubscribeToPremium, Locale.FormatCurrency(state.MonthlyAmount, state.Currency));
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -112,6 +115,11 @@ namespace Unigram.Views.Premium.Popups
             prevLimit.Text = limit.DefaultValue.ToString();
             nextLimit.Text = limit.PremiumValue.ToString();
             nextPanel.Background = new SolidColorBrush(_gradient[args.ItemIndex]);
+        }
+
+        private void PurchaseShadow_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            DropShadowEx.Attach(PurchaseShadow);
         }
     }
 }

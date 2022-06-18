@@ -81,16 +81,15 @@ namespace Unigram.Views
             set
             {
                 _masterDetail = value;
-                _masterDetail.NavigationService.Frame.Navigated += OnNavigated;
                 ViewModel.NavigationService = value.NavigationService;
             }
         }
 
-        private void OnNavigated(object sender, NavigationEventArgs e)
+        private void UpdateSelection()
         {
             object FindRoot()
             {
-                if (_settings.TryGetValue(e.SourcePageType, out object item))
+                if (_settings.TryGetValue(_masterDetail.NavigationService.CurrentPageType, out object item))
                 {
                     return item;
                 }
@@ -106,79 +105,80 @@ namespace Unigram.Views
                 return null;
             }
 
+            MasterDetail.NavigationService.GoBackAt(0, false);
             Navigation.SelectedItem = FindRoot();
         }
 
         private void Profile_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(SettingsProfilePage));
-            MasterDetail.NavigationService.GoBackAt(0, false);
+            UpdateSelection();
         }
 
         private void Privacy_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(SettingsPrivacyAndSecurityPage));
-            MasterDetail.NavigationService.GoBackAt(0, false);
+            UpdateSelection();
         }
 
         private void Stickers_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(SettingsStickersPage));
-            MasterDetail.NavigationService.GoBackAt(0, false);
+            UpdateSelection();
         }
 
         private void Data_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(SettingsDataAndStoragePage));
-            MasterDetail.NavigationService.GoBackAt(0, false);
+            UpdateSelection();
         }
 
         private void Folders_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(FoldersPage));
-            MasterDetail.NavigationService.GoBackAt(0, false);
+            UpdateSelection();
         }
 
         private void Notifications_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(SettingsNotificationsPage));
-            MasterDetail.NavigationService.GoBackAt(0, false);
+            UpdateSelection();
         }
 
         private void Appearance_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(SettingsAppearancePage));
-            MasterDetail.NavigationService.GoBackAt(0, false);
+            UpdateSelection();
         }
 
         private void Sessions_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(SettingsSessionsPage));
-            MasterDetail.NavigationService.GoBackAt(0, false);
+            UpdateSelection();
         }
 
         private void Language_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(SettingsLanguagePage));
-            MasterDetail.NavigationService.GoBackAt(0, false);
+            UpdateSelection();
         }
 
         private void Advanced_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(SettingsAdvancedPage));
-            MasterDetail.NavigationService.GoBackAt(0, false);
+            UpdateSelection();
         }
 
         private void Questions_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.NavigateToInstant(Strings.Resources.TelegramFaqUrl);
-            MasterDetail.NavigationService.GoBackAt(0, false);
+            UpdateSelection();
         }
 
         private void PrivacyPolicy_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.NavigateToInstant(Strings.Resources.PrivacyPolicyUrl);
-            MasterDetail.NavigationService.GoBackAt(0, false);
+            UpdateSelection();
         }
 
         private async void Premium_Click(object sender, RoutedEventArgs e)

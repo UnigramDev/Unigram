@@ -34,22 +34,8 @@ namespace Unigram.ViewModels.Premium
 
         public Dictionary<Type, Animation> Animations { get; private set; }
 
-        private long _monthlyAmount;
-        public long MonthlyAmount
-        {
-            get => _monthlyAmount;
-            set => Set(ref _monthlyAmount, value);
-        }
-
-        private string _currency;
-        public string Currency
-        {
-            get => _currency;
-            set => Set(ref _currency, value);
-        }
-
-        private FormattedText _state;
-        public FormattedText State
+        private PremiumState _state;
+        public PremiumState State
         {
             get => _state;
             set => Set(ref _state, value);
@@ -92,9 +78,7 @@ namespace Unigram.ViewModels.Premium
 
             Animations = state.Animations.ToDictionary(x => x.Feature.GetType(), y => y.Animation);
 
-            MonthlyAmount = state.MonthlyAmount;
-            Currency = state.Currency;
-            State = state.State;
+            State = state;
 
             CanPurchase = features.PaymentLink != null
                 && ProtoService.IsPremiumAvailable;
@@ -118,11 +102,11 @@ namespace Unigram.ViewModels.Premium
         {
             if (feature is PremiumFeatureIncreasedLimits)
             {
-                await new LimitsPopup(Limits).ShowQueuedAsync();
+                await new LimitsPopup(State, Limits).ShowQueuedAsync();
             }
             else
             {
-                await new FeaturesPopup(ProtoService, Features, Animations, feature).ShowQueuedAsync();
+                await new FeaturesPopup(ProtoService, State, Features, Animations, feature).ShowQueuedAsync();
             }
         }
 

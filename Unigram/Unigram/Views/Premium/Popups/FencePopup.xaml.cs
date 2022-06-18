@@ -1,4 +1,7 @@
-﻿using Telegram.Td.Api;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
@@ -20,13 +23,15 @@ namespace Unigram.Views.Popups
 
         private async void InitializeLimit(IProtoService protoService, PremiumLimitType type)
         {
-            var limit = await protoService.SendAsync(new GetPremiumLimit(type)) as PremiumLimit;
+            var limit = await GetPremiumLimitAsync(protoService, type) as PremiumLimit;
             if (limit != null)
             {
                 var iconValue = string.Empty;
                 var freeValue = string.Empty;
                 var lockedValue = string.Empty;
                 var premiumValue = string.Empty;
+
+                var animatedValue = new Uri("ms-appx:///Assets/Animations/Double.json");
 
                 switch (type)
                 {
@@ -66,6 +71,8 @@ namespace Unigram.Views.Popups
                         freeValue = Strings.Resources.LimitReachedAccounts;
                         lockedValue = Strings.Resources.LimitReachedAccountsPremium;
                         premiumValue = Strings.Resources.LimitReachedAccountsPremium;
+
+                        animatedValue = new Uri("ms-appx:///Assets/Animations/AddOne.json");
                         break;
                 }
 
@@ -82,6 +89,13 @@ namespace Unigram.Views.Popups
 
                     PrevLimit.Text = limit.DefaultValue.ToString();
                     NextLimit.Text = string.Empty;
+
+                    BuyIcon.ColorReplacements = new Dictionary<int, int>
+                    {
+                        { 0x000000, 0xffffff }
+                    };
+
+                    BuyIcon.Source = animatedValue;
                 }
                 else if (protoService.IsPremiumAvailable)
                 {
@@ -96,6 +110,13 @@ namespace Unigram.Views.Popups
 
                     PrevLimit.Text = string.Empty;
                     NextLimit.Text = limit.PremiumValue.ToString();
+
+                    BuyIcon.ColorReplacements = new Dictionary<int, int>
+                    {
+                        { 0x000000, 0xffffff }
+                    };
+
+                    BuyIcon.Source = animatedValue;
                 }
                 else
                 {
@@ -103,8 +124,20 @@ namespace Unigram.Views.Popups
 
                     LimitHeader.Visibility = Visibility.Collapsed;
                     LimitPanel.Visibility = Visibility.Collapsed;
+
+                    BuyIcon.Visibility = Visibility.Collapsed;
                 }
             }
+        }
+
+        private Task<BaseObject> GetPremiumLimitAsync(IProtoService protoService, PremiumLimitType type)
+        {
+            if (type is PremiumLimitTypeConnectedAccounts)
+            {
+                return Task.FromResult<BaseObject>(new PremiumLimit(type, 3, 4));
+            }
+
+            return protoService.SendAsync(new GetPremiumLimit(type));
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -113,6 +146,11 @@ namespace Unigram.Views.Popups
 
         private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
+        }
+
+        private void PurchaseShadow_Loaded(object sender, RoutedEventArgs e)
+        {
+            DropShadowEx.Attach(PurchaseShadow);
         }
     }
 }

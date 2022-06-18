@@ -135,6 +135,19 @@ namespace Unigram.Controls
 
         #endregion
 
+        #region ChevronGlyph
+
+        public string ChevronGlyph
+        {
+            get { return (string)GetValue(ChevronGlyphProperty); }
+            set { SetValue(ChevronGlyphProperty, value); }
+        }
+
+        public static readonly DependencyProperty ChevronGlyphProperty =
+            DependencyProperty.Register("ChevronGlyph", typeof(string), typeof(BadgeButton), new PropertyMetadata("\uE0E3"));
+
+        #endregion
+
         protected override AutomationPeer OnCreateAutomationPeer()
         {
             return _peer ??= new BadgeButtonAutomationPeer(this);

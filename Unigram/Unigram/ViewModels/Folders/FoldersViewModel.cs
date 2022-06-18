@@ -7,6 +7,7 @@ using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Services.Updates;
 using Unigram.Views.Folders;
+using Unigram.Views.Popups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -33,11 +34,29 @@ namespace Unigram.ViewModels.Folders
         public MvxObservableCollection<ChatFilterInfo> Items { get; private set; }
         public MvxObservableCollection<RecommendedChatFilter> Recommended { get; private set; }
 
+        private bool _canCreateNew;
+        public bool CanCreateNew
+        {
+            get => _canCreateNew;
+            set => Set(ref _canCreateNew, value);
+        }
+
+        private int _defaultLimit;
+        private int _premiumLimit;
+
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             Items.ReplaceWith(CacheService.ChatFilters);
 
-            if (Items.Count < 10)
+            var limit = await ProtoService.SendAsync(new GetPremiumLimit(new PremiumLimitTypeChatFilterCount())) as PremiumLimit;
+            var maximum = ProtoService.IsPremiumAvailable ? limit.PremiumValue : limit.DefaultValue;
+
+            _defaultLimit = limit.DefaultValue;
+            _premiumLimit = limit.PremiumValue;
+
+            CanCreateNew = Items.Count < maximum;
+
+            if (CacheService.Options.ChatFilterCountMax > Items.Count)
             {
                 var response = await ProtoService.SendAsync(new GetRecommendedChatFilters());
                 if (response is RecommendedChatFilters filters)
@@ -113,9 +132,17 @@ namespace Unigram.ViewModels.Folders
         }
 
         public RelayCommand<ChatFilterInfo> EditCommand { get; }
-        private void EditExecute(ChatFilterInfo filter)
+        private async void EditExecute(ChatFilterInfo filter)
         {
-            NavigationService.Navigate(typeof(FolderPage), filter.Id);
+            var index = Items.IndexOf(filter);
+            if (index < CacheService.Options.ChatFilterCountMax)
+            {
+                NavigationService.Navigate(typeof(FolderPage), filter.Id);
+            }
+            else
+            {
+                await new FencePopup(ProtoService, new PremiumLimitTypeChatFilterCount()).ShowQueuedAsync();
+            }
         }
 
         public RelayCommand<ChatFilterInfo> DeleteCommand { get; }
@@ -131,9 +158,16 @@ namespace Unigram.ViewModels.Folders
         }
 
         public RelayCommand CreateCommand { get; }
-        private void CreateExecute()
+        private async void CreateExecute()
         {
-            NavigationService.Navigate(typeof(FolderPage));
+            if (Items.Count < CacheService.Options.ChatFilterCountMax)
+            {
+                NavigationService.Navigate(typeof(FolderPage));
+            }
+            else
+            {
+                await new FencePopup(ProtoService, new PremiumLimitTypeChatFilterCount()).ShowQueuedAsync();
+            }
         }
     }
 }
