@@ -246,6 +246,9 @@ namespace Unigram.Controls
             BackgroundPart.Visibility = _backgroundCollapsed ? Visibility.Collapsed : Visibility.Visible;
             BorderPart.Visibility = _backgroundCollapsed ? Visibility.Collapsed : Visibility.Visible;
 
+            var detailVisual = ElementCompositionPreview.GetElementVisual(DetailPresenter);
+            detailVisual.Clip = Window.Current.Compositor.CreateInsetClip(0, -40, 0, 0);
+
             if (DetailFrame != null)
             {
                 var parent = VisualTreeHelper.GetParent(DetailFrame) as UIElement;
