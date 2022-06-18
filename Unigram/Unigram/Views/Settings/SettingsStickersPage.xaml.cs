@@ -71,6 +71,11 @@ namespace Unigram.Views.Settings
             Frame.Navigate(typeof(SettingsStickersPage), (int)StickersType.Masks, new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
         }
 
+        private void Reaction_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(SettingsQuickReactionPage), null, infoOverride: new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
+        }
+
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
             ViewModel.StickerSetOpenCommand.Execute(e.ClickedItem);
@@ -291,6 +296,5 @@ namespace Unigram.Views.Settings
         }
 
         #endregion
-
     }
 }

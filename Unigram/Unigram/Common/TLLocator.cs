@@ -739,6 +739,14 @@
                     _eventAggregator,
                     _networkService);
             }
+            else if (type == typeof(Unigram.ViewModels.Settings.SettingsQuickReactionViewModel))
+            {
+                return (T)(object)new Unigram.ViewModels.Settings.SettingsQuickReactionViewModel(
+                    _protoService,
+                    _cacheService,
+                    _settingsService,
+                    _eventAggregator);
+            }
             else if (type == typeof(Unigram.ViewModels.Settings.SettingsPrivacyAndSecurityViewModel))
             {
                 return (T)(object)new Unigram.ViewModels.Settings.SettingsPrivacyAndSecurityViewModel(

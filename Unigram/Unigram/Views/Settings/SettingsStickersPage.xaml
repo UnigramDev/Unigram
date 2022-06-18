@@ -170,6 +170,12 @@
                                                   Style="{StaticResource GlyphBadgeButtonStyle}"
                                                   IsChevronVisible="True"
                                                   Glyph="&#xE997;" />
+
+                            <controls:BadgeButton Content="{CustomResource DoubleTapSetting}"
+                                                  Click="Reaction_Click"
+                                                  Style="{StaticResource GlyphBadgeButtonStyle}"
+                                                  IsChevronVisible="True"
+                                                  Glyph="&#xE987;" />
                         </controls:HeaderedControl>
                     </StackPanel>
 

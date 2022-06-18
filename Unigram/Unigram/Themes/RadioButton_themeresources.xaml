@@ -338,7 +338,7 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <Grid VerticalAlignment="Top"
+                        <Grid VerticalAlignment="Center"
                               Height="32">
                             <Ellipse x:Name="OuterEllipse"
                                      Width="20"

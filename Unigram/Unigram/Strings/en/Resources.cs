@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 06/14/2022 14:40:01
+// 	Generated: 06/18/2022 11:24:02
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -714,6 +714,61 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AccDescrMyLocation");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} people reacted with {1}"
+        /// </summary>
+        public static string AccDescrNumberOfPeopleReactions_few
+        {
+            get
+            {
+                return resourceLoader.GetString("AccDescrNumberOfPeopleReactions_few");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} people reacted with {1}"
+        /// </summary>
+        public static string AccDescrNumberOfPeopleReactions_many
+        {
+            get
+            {
+                return resourceLoader.GetString("AccDescrNumberOfPeopleReactions_many");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} person reacted with {1}"
+        /// </summary>
+        public static string AccDescrNumberOfPeopleReactions_one
+        {
+            get
+            {
+                return resourceLoader.GetString("AccDescrNumberOfPeopleReactions_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} people reacted with {1}"
+        /// </summary>
+        public static string AccDescrNumberOfPeopleReactions_other
+        {
+            get
+            {
+                return resourceLoader.GetString("AccDescrNumberOfPeopleReactions_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} people reacted with {1}"
+        /// </summary>
+        public static string AccDescrNumberOfPeopleReactions_two
+        {
+            get
+            {
+                return resourceLoader.GetString("AccDescrNumberOfPeopleReactions_two");
             }
         }
         

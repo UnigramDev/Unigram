@@ -244,6 +244,21 @@
   <data name="AccDescrMyLocation" xml:space="preserve">
     <value>My location</value>
   </data>
+  <data name="AccDescrNumberOfPeopleReactions_few" xml:space="preserve">
+    <value>{0} people reacted with {1}</value>
+  </data>
+  <data name="AccDescrNumberOfPeopleReactions_many" xml:space="preserve">
+    <value>{0} people reacted with {1}</value>
+  </data>
+  <data name="AccDescrNumberOfPeopleReactions_one" xml:space="preserve">
+    <value>{0} person reacted with {1}</value>
+  </data>
+  <data name="AccDescrNumberOfPeopleReactions_other" xml:space="preserve">
+    <value>{0} people reacted with {1}</value>
+  </data>
+  <data name="AccDescrNumberOfPeopleReactions_two" xml:space="preserve">
+    <value>{0} people reacted with {1}</value>
+  </data>
   <data name="AccDescrNumberOfViews_few" xml:space="preserve">
     <value />
   </data>

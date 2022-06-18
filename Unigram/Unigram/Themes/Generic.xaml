@@ -416,6 +416,8 @@
                                                 Foreground="{ThemeResource MessageReactionForegroundBrush}"
                                                 TextStyle="{StaticResource CountTextBlockStyle}"
                                                 VerticalAlignment="Center"
+                                                AutomationProperties.AccessibilityView="Raw"
+                                                IsTabStop="False"
                                                 Margin="0,0,8,2"
                                                 Grid.Column="1" />
 
@@ -424,6 +426,8 @@
                                                BorderBrush="{ThemeResource MessageReactionBackgroundBrush}"
                                                ItemSize="20"
                                                Margin="-4,0,0,0"
+                                               AutomationProperties.AccessibilityView="Raw"
+                                               IsTabStop="False"
                                                Grid.Column="1" />
                     </Grid>
                 </ControlTemplate>
@@ -6606,7 +6610,9 @@
 
                         <TextBlock x:Name="BeforePart"
                                    Visibility="{TemplateBinding OverflowVisibility}" />
-                        <Grid x:Name="LayoutRoot"
+                        <Grid x:Name="PrevRoot"
+                              Grid.Column="1" />
+                        <Grid x:Name="NextRoot"
                               Grid.Column="1" />
                         <TextBlock x:Name="AfterPart"
                                    Visibility="{TemplateBinding OverflowVisibility}"

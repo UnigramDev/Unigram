@@ -551,6 +551,13 @@ namespace Unigram.Services.Settings
                 AddOrUpdateValue("BubbleRadius", value);
             }
         }
+
+        private bool? _isQuickReplySelected;
+        public bool IsQuickReplySelected
+        {
+            get => _isQuickReplySelected ??= GetValueOrDefault("IsQuickReplySelected", true);
+            set => AddOrUpdateValue(ref _isQuickReplySelected, "IsQuickReplySelected", value);
+        }
     }
 
     public class ThemeTypeSettingsBase : SettingsServiceBase

@@ -546,6 +546,7 @@ namespace Unigram
                 Unigram.Views.Settings.SettingsSessionsPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.SettingsSessionsViewModel>(sessionId),
                 Unigram.Views.Settings.SettingsStoragePage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.SettingsStorageViewModel>(sessionId),
                 Unigram.Views.Settings.SettingsProfilePage settingsProfilePage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.SettingsProfileViewModel, Unigram.ViewModels.Delegates.IUserDelegate>(settingsProfilePage, sessionId),
+                Unigram.Views.Settings.SettingsQuickReactionPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.SettingsQuickReactionViewModel>(sessionId),
                 Unigram.Views.Settings.Privacy.SettingsPrivacyAllowCallsPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyAllowCallsViewModel>(sessionId),
                 Unigram.Views.Settings.Privacy.SettingsPrivacyAllowChatInvitesPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyAllowChatInvitesViewModel>(sessionId),
                 Unigram.Views.Settings.Privacy.SettingsPrivacyAllowP2PCallsPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyAllowP2PCallsViewModel>(sessionId),
@@ -559,6 +560,7 @@ namespace Unigram
                 Unigram.Views.Settings.Password.SettingsPasswordEmailPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.Password.SettingsPasswordEmailViewModel>(sessionId),
                 Unigram.Views.Settings.Password.SettingsPasswordHintPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.Password.SettingsPasswordHintViewModel>(sessionId),
                 Unigram.Views.Settings.Password.SettingsPasswordIntroPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.Password.SettingsPasswordIntroViewModel>(sessionId),
+
                 Unigram.Views.Payments.PaymentFormPage => TLContainer.Current.Resolve<Unigram.ViewModels.Payments.PaymentFormViewModel>(sessionId),
                 Unigram.Views.Chats.MessageStatisticsPage => TLContainer.Current.Resolve<Unigram.ViewModels.Chats.MessageStatisticsViewModel>(sessionId),
                 Unigram.Views.Chats.ChatInviteLinkPage => TLContainer.Current.Resolve<Unigram.ViewModels.Chats.ChatInviteLinkViewModel>(sessionId),

@@ -12,6 +12,7 @@ using Unigram.ViewModels.Chats;
 using Unigram.ViewModels.Drawers;
 using Unigram.ViewModels.Folders;
 using Unigram.ViewModels.Payments;
+using Unigram.ViewModels.Premium;
 using Unigram.ViewModels.Settings;
 using Unigram.ViewModels.Settings.Password;
 using Unigram.ViewModels.Settings.Privacy;
@@ -127,6 +128,7 @@ namespace Unigram
                 typeof(SettingsDataAndStorageViewModel),
                 typeof(SettingsDataAutoViewModel),
                 typeof(SettingsProxiesViewModel),
+                typeof(SettingsQuickReactionViewModel),
                 typeof(SettingsPrivacyAndSecurityViewModel),
                 typeof(SettingsPrivacyAllowCallsViewModel),
                 typeof(SettingsPrivacyAllowP2PCallsViewModel),
@@ -165,6 +167,7 @@ namespace Unigram
                 typeof(FolderViewModel),
                 typeof(DownloadsViewModel),
                 typeof(ChooseSoundViewModel),
+                typeof(PremiumViewModel)
             };
 
             // Preprocess: find out lazy singletons used by singletons to promote
@@ -324,7 +327,6 @@ namespace Unigram
             builder.AppendLine("}");
 
             var test = builder.ToString();
-            File.WriteAllText(Path.Combine(ApplicationData.Current.LocalFolder.Path, "TLLocator.cs"), builder.ToString());
         }
 
         private static string GenerateConstructor(Type type, int depth)

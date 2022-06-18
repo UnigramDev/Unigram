@@ -109,7 +109,14 @@ namespace Unigram.ViewModels
 
         public void ReplyToMessage(MessageViewModel message)
         {
-            MessageReplyCommand.Execute(message);
+            if (Settings.Appearance.IsQuickReplySelected)
+            {
+                MessageReplyCommand.Execute(message);
+            }
+            else
+            {
+                ProtoService.SendAsync(new SetMessageReaction(message.ChatId, message.Id, CacheService.Options.DefaultReaction, false));
+            }
         }
 
         public async void OpenReply(MessageViewModel message)
