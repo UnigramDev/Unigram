@@ -95,7 +95,7 @@ namespace Unigram.Common
             }
             else
             {
-                return string.Format(LocaleService.Current.GetString(key, _currentRules.QuantityForNumber(count)), string.Empty).Trim();
+                return LocaleService.Current.GetString(key, _currentRules.QuantityForNumber(count));
             }
         }
 

@@ -7,6 +7,7 @@ using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Graphics.Display;
 using Windows.System;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Media;
@@ -71,6 +72,7 @@ namespace Unigram.Controls.Messages
             _reaction = value;
 
             IsChecked = interaction.IsChosen;
+            AutomationProperties.SetName(this, string.Format(Locale.Declension("AccDescrNumberOfPeopleReactions", interaction.TotalCount, false), interaction.TotalCount, interaction.Reaction));
 
             if (interaction.TotalCount > interaction.RecentSenderIds.Count)
             {
