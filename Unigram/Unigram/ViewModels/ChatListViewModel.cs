@@ -126,7 +126,7 @@ namespace Unigram.ViewModels
         #region Pin
 
         public RelayCommand<Chat> ChatPinCommand { get; }
-        private void ChatPinExecute(Chat chat)
+        private async void ChatPinExecute(Chat chat)
         {
             var position = chat.GetPosition(Items.ChatList);
             if (position == null)
@@ -134,7 +134,12 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            ProtoService.Send(new ToggleChatIsPinned(Items.ChatList, chat.Id, !position.IsPinned));
+            var response = await ProtoService.SendAsync(new ToggleChatIsPinned(Items.ChatList, chat.Id, !position.IsPinned));
+            if (response is Error error && error.Code == 400)
+            {
+                // This is not the right way
+                NavigationService.ShowFence(new PremiumLimitTypePinnedChatCount());
+            }
         }
 
         #endregion

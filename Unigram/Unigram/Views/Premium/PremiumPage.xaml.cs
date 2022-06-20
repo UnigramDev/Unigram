@@ -1,4 +1,5 @@
-﻿using Telegram.Td.Api;
+﻿using System;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
@@ -20,11 +21,16 @@ namespace Unigram.Views.Premium
             Title = Strings.Resources.TelegramPremium;
         }
 
-        private void OnItemClick(object sender, ItemClickEventArgs e)
+        private async void OnItemClick(object sender, ItemClickEventArgs e)
         {
             if (e.ClickedItem is PremiumFeature feature)
             {
-                ViewModel.Open(feature);
+                Hide();
+
+                if (await ViewModel.OpenAsync(feature))
+                {
+                    await ShowAsync();
+                }
             }
         }
 
@@ -126,14 +132,35 @@ namespace Unigram.Views.Premium
             iconPanel.Background = new SolidColorBrush(_gradient[args.ItemIndex]);
         }
 
-        public string ConvertPurchase(long amount, string currency)
+        public string ConvertTitle(bool premium, bool title)
         {
+            if (title)
+            {
+                return premium ? Strings.Resources.TelegramPremiumSubscribedTitle : Strings.Resources.TelegramPremium;
+            }
+
+            return premium ? Strings.Resources.TelegramPremiumSubscribedSubtitle : Strings.Resources.TelegramPremiumSubtitle;
+        }
+
+        public string ConvertPurchase(bool premium, long amount, string currency)
+        {
+            if (premium)
+            {
+                return Strings.Resources.OK;
+            }
+
             return string.Format(Strings.Resources.SubscribeToPremium, Locale.FormatCurrency(amount, currency));
         }
 
         private void PurchaseShadow_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
             DropShadowEx.Attach(PurchaseShadow);
+        }
+
+        private void Purchase_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            Hide();
+            ViewModel.Purchase();
         }
     }
 }

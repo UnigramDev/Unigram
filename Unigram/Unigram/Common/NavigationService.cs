@@ -194,6 +194,14 @@ namespace Unigram.Common
             }
         }
 
+        public static void ShowFence(this INavigationService service, PremiumLimitType limit)
+        {
+            if (service is TLNavigationService serviceEx)
+            {
+                serviceEx.ShowFence(limit);
+            }
+        }
+
         public static void RemovePeerFromStack(this INavigationService service, long target)
         {
             long peer;

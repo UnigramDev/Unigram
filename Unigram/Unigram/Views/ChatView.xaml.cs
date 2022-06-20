@@ -3701,7 +3701,7 @@ namespace Unigram.Views
 
             if (message?.ReplyMarkup is ReplyMarkupForceReply forceReply && forceReply.IsPersonal)
             {
-                ViewModel.ReplyToMessage(message);
+                ViewModel.MessageReplyCommand.Execute(message);
 
                 if (forceReply.InputFieldPlaceholder.Length > 0)
                 {
@@ -4202,7 +4202,7 @@ namespace Unigram.Views
             btnSendMessage.SlowModeDelay = 0;
             btnSendMessage.SlowModeDelayExpiresIn = 0;
 
-            if (user.IsVerified || user.IsPremium)
+            if (user.IsVerified || (user.IsPremium && ViewModel.ProtoService.IsPremiumAvailable))
             {
                 Verified.Glyph = user.IsPremium ? Icons.Premium16 : Icons.Verified16;
                 Verified.Visibility = Visibility.Visible;

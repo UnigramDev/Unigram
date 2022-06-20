@@ -12,6 +12,7 @@ using Unigram.ViewModels;
 using Unigram.ViewModels.Settings;
 using Unigram.Views;
 using Unigram.Views.Payments;
+using Unigram.Views.Popups;
 using Unigram.Views.Settings;
 using Unigram.Views.Settings.Popups;
 using Windows.ApplicationModel.DataTransfer;
@@ -72,6 +73,11 @@ namespace Unigram.Common
             {
                 Navigate(typeof(InstantPage), url);
             }
+        }
+
+        public async void ShowFence(PremiumLimitType type)
+        {
+            await new FencePopup(this, _protoService, type).ShowQueuedAsync();
         }
 
         public async void NavigateToInvoice(MessageViewModel message)

@@ -6,7 +6,8 @@
                        xmlns:controls="using:Unigram.Controls"
                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                       mc:Ignorable="d">
+                       mc:Ignorable="d"
+                       Title="{x:Bind ConvertTitle(ViewModel.IsPremium, x:True), Mode=OneWay}">
 
     <Grid Margin="0,0,0,-20">
         <ListView x:Name="ScrollingHost"
@@ -34,7 +35,7 @@
                                          Width="140"
                                          Height="140"
                                          Margin="0,16,0,0" />
-                    <TextBlock common:TextBlockHelper.Markdown="{CustomResource TelegramPremiumSubtitle}"
+                    <TextBlock common:TextBlockHelper.Markdown="{x:Bind ConvertTitle(ViewModel.IsPremium, x:False), Mode=OneWay}"
                                Style="{StaticResource InfoCaptionTextBlockStyle}"
                                TextAlignment="Center"
                                Margin="12,8,12,24"
@@ -122,9 +123,9 @@
             <Border Background="{StaticResource PremiumLinearGradientBrush}"
                     CornerRadius="4"
                     Height="36" />
-            <controls:BadgeButton x:Name="BuyCommand"
-                                  Click="{x:Bind ViewModel.Purchase}"
-                                  Content="{x:Bind ConvertPurchase(ViewModel.State.MonthlyAmount, ViewModel.State.Currency), Mode=OneWay, FallbackValue=Empty}"
+            <controls:BadgeButton x:Name="PurchaseCommand"
+                                  Click="Purchase_Click"
+                                  Content="{x:Bind ConvertPurchase(ViewModel.IsPremium, ViewModel.State.MonthlyAmount, ViewModel.State.Currency), Mode=OneWay, FallbackValue=Empty}"
                                   Style="{StaticResource StartButtonStyle}"
                                   HorizontalAlignment="Stretch"
                                   HorizontalContentAlignment="Center"

@@ -71,6 +71,7 @@
 
                                             <controls:BadgeButton Content="{CustomResource Add}"
                                                                   Style="{StaticResource StartButtonStyle}"
+                                                                  Background="#2ca5e0"
                                                                   HorizontalAlignment="Right"
                                                                   VerticalAlignment="Center"
                                                                   Margin="0,0,12,0" />

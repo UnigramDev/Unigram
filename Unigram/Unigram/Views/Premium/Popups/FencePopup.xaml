@@ -8,9 +8,7 @@
                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        mc:Ignorable="d"
-                       Title="TITLE"
-                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+                       Title="TITLE">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -27,7 +25,7 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid x:Name="LimitBubble"
-                  Background="Red"
+                  Background="{StaticResource PremiumLinearGradientBrush}"
                   Padding="8,4"
                   CornerRadius="14"
                   MinWidth="50">
@@ -50,7 +48,7 @@
 
             <Path x:Name="NextArrow"
                   Data="M43.9999 0H29.5146C31.1059 0 32.632 0.6321 33.7573 1.7574L38.8786 6.8787C40.7685 8.7686 43.9999 7.4301 43.9999 4.7574V0Z"
-                  Fill="Red"
+                  Fill="#E46ACE"
                   HorizontalAlignment="Right"
                   VerticalAlignment="Top"
                   Height="5"
@@ -58,7 +56,7 @@
                   Grid.Row="1" />
             <Path x:Name="PrevArrow"
                   Data="M36.9852 0H8.01465C9.60595 0 11.132 0.6321 12.2573 1.7574L19.6715 9.1716C21.2336 10.7337 23.7662 10.7337 25.3283 9.1716L32.7425 1.7574C33.8678 0.6321 35.3939 0 36.9852 0Z"
-                  Fill="Red"
+                  Fill="#976FFF"
                   HorizontalAlignment="Center"
                   VerticalAlignment="Top"
                   Height="5"
@@ -74,6 +72,8 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <Grid Background="{ThemeResource ControlFillColorDefaultBrush}"
+                  BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                  BorderThickness="1,1,0,1"
                   CornerRadius="4,0,0,4"
                   Padding="8,4">
                 <TextBlock Text="{CustomResource LimitFree}"
@@ -85,7 +85,7 @@
                            TextAlignment="Right" />
             </Grid>
             <Grid x:Name="NextPanel"
-                  Background="#FF5BA0FE"
+                  Background="{StaticResource PremiumLinearGradientBrush}"
                   CornerRadius="0,4,4,0"
                   Padding="8,4"
                   Grid.Column="1">
@@ -123,6 +123,7 @@
                     CornerRadius="4"
                     Height="36" />
             <controls:BadgeButton x:Name="BuyCommand"
+                                  Click="Purchase_Click"
                                   Style="{StaticResource StartButtonStyle}"
                                   HorizontalAlignment="Stretch"
                                   HorizontalContentAlignment="Center"
@@ -137,7 +138,7 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Text="Increase Limit"
+                    <TextBlock x:Name="BuyLabel"
                                VerticalAlignment="Center"
                                Margin="0,0,0,2" />
 

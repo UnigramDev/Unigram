@@ -41,6 +41,13 @@ namespace Unigram.ViewModels.Premium
             set => Set(ref _state, value);
         }
 
+        private bool _isPremium;
+        public bool IsPremium
+        {
+            get => _isPremium;
+            set => Set(ref _isPremium, value);
+        }
+
         private bool _canPurchase;
         public bool CanPurchase
         {
@@ -50,7 +57,9 @@ namespace Unigram.ViewModels.Premium
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState _)
         {
-            var features = await ProtoService.SendAsync(new GetPremiumFeatures(new PremiumSourceSettings())) as PremiumFeatures;
+            PremiumSource premiumSource = parameter is PremiumSource source ? source : new PremiumSourceSettings();
+
+            var features = await ProtoService.SendAsync(new GetPremiumFeatures(premiumSource)) as PremiumFeatures;
             var state = await ProtoService.SendAsync(new GetPremiumState()) as PremiumState;
 
             if (features == null || state == null)
@@ -71,6 +80,8 @@ namespace Unigram.ViewModels.Premium
             }
 
             features.Limits.Add(new PremiumLimit(new PremiumLimitTypeConnectedAccounts(), 3, 4));
+
+            IsPremium = ProtoService.IsPremium;
 
             PaymentLink = features.PaymentLink;
             Limits.ReplaceWith(features.Limits);
@@ -98,21 +109,39 @@ namespace Unigram.ViewModels.Premium
             }
         }
 
-        public async void Open(PremiumFeature feature)
+        public async Task<bool> OpenAsync(PremiumFeature feature)
         {
             if (feature is PremiumFeatureIncreasedLimits)
             {
-                await new LimitsPopup(State, Limits).ShowQueuedAsync();
+                var dialog = new LimitsPopup(ProtoService, State, Limits);
+                await dialog.ShowQueuedAsync();
+
+                if (dialog.ShouldPurchase && !ProtoService.IsPremium)
+                {
+                    Purchase();
+                    return false;
+                }
+
+                return true;
             }
             else
             {
-                await new FeaturesPopup(ProtoService, State, Features, Animations, feature).ShowQueuedAsync();
+                var dialog = new FeaturesPopup(ProtoService, State, Features, Animations, feature);
+                await dialog.ShowQueuedAsync();
+
+                if (dialog.ShouldPurchase && !ProtoService.IsPremium)
+                {
+                    Purchase();
+                    return false;
+                }
+
+                return true;
             }
         }
 
         public async void Purchase()
         {
-            if (PaymentLink != null)
+            if (PaymentLink != null && !ProtoService.IsPremium)
             {
                 MessageHelper.OpenTelegramUrl(ProtoService, NavigationService, PaymentLink);
 

@@ -2,7 +2,6 @@
 using Unigram.Common;
 using Unigram.ViewModels;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Controls.Messages.Content
@@ -23,8 +22,8 @@ namespace Unigram.Controls.Messages.Content
 
         #region InitializeComponent
 
-        private Run Title;
-        private Run Description;
+        private TextBlock Title;
+        private TextBlock Description;
         private InvoiceFooter Footer;
         private AspectView Photo;
         private Image Texture;
@@ -32,8 +31,8 @@ namespace Unigram.Controls.Messages.Content
 
         protected override void OnApplyTemplate()
         {
-            Title = GetTemplateChild(nameof(Title)) as Run;
-            Description = GetTemplateChild(nameof(Description)) as Run;
+            Title = GetTemplateChild(nameof(Title)) as TextBlock;
+            Description = GetTemplateChild(nameof(Description)) as TextBlock;
             Footer = GetTemplateChild(nameof(Footer)) as InvoiceFooter;
             Photo = GetTemplateChild(nameof(Photo)) as AspectView;
             Texture = GetTemplateChild(nameof(Texture)) as Image;
@@ -59,7 +58,7 @@ namespace Unigram.Controls.Messages.Content
             }
 
             Title.Text = invoice.Title;
-            Description.Text = invoice.Description;
+            TextBlockHelper.SetFormattedText(Description, invoice.Description);
 
             Photo.Constraint = invoice.Photo;
             Texture.Source = null;

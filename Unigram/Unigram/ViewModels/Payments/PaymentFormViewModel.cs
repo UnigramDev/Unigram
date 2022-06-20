@@ -149,8 +149,8 @@ namespace Unigram.ViewModels.Payments
             set => Set(ref _title, value);
         }
 
-        private string _description;
-        public string Description
+        private FormattedText _description;
+        public FormattedText Description
         {
             get => _description;
             set => Set(ref _description, value);

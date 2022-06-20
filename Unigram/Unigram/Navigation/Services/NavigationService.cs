@@ -333,6 +333,8 @@ namespace Unigram.Navigation.Services
                 var viewModel = BootStrapper.Current.ViewModelForPage(popup, SessionId);
                 if (viewModel != null)
                 {
+                    viewModel.NavigationService = this;
+
                     void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
                     {
                         popup.Opened -= OnOpened;

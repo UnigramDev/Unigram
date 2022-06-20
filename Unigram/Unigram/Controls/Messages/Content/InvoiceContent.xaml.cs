@@ -1,7 +1,7 @@
 ﻿using Telegram.Td.Api;
+using Unigram.Common;
 using Unigram.ViewModels;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Documents;
 
 namespace Unigram.Controls.Messages.Content
 {
@@ -19,15 +19,15 @@ namespace Unigram.Controls.Messages.Content
 
         #region InitializeComponent
 
-        private Run Title;
-        private Run Description;
+        private TextBlock Title;
+        private TextBlock Description;
         private InvoiceFooter Footer;
         private bool _templateApplied;
 
         protected override void OnApplyTemplate()
         {
-            Title = GetTemplateChild(nameof(Title)) as Run;
-            Description = GetTemplateChild(nameof(Description)) as Run;
+            Title = GetTemplateChild(nameof(Title)) as TextBlock;
+            Description = GetTemplateChild(nameof(Description)) as TextBlock;
             Footer = GetTemplateChild(nameof(Footer)) as InvoiceFooter;
 
             _templateApplied = true;
@@ -51,7 +51,7 @@ namespace Unigram.Controls.Messages.Content
             }
 
             Title.Text = invoice.Title;
-            Description.Text = invoice.Description;
+            TextBlockHelper.SetFormattedText(Description, invoice.Description);
 
             Footer.UpdateMessage(message);
         }

@@ -48,6 +48,7 @@
                                               Visibility="{x:Bind ConvertFilesReset(ViewModel.FilesDirectory), Mode=OneWay}"
                                               Content="{CustomResource Reset}"
                                               Style="{StaticResource StartButtonStyle}"
+                                              Background="#2ca5e0"
                                               HorizontalAlignment="Right"
                                               VerticalAlignment="Center"
                                               Margin="0,0,12,0">

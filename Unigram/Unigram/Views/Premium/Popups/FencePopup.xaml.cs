@@ -5,7 +5,9 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
+using Unigram.Navigation.Services;
 using Unigram.Services;
+using Unigram.Views.Premium;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -13,8 +15,14 @@ namespace Unigram.Views.Popups
 {
     public sealed partial class FencePopup : ContentPopup
     {
-        public FencePopup(IProtoService protoService, PremiumLimitType type)
+        private readonly INavigationService _navigationService;
+        private readonly IProtoService _protoService;
+
+        public FencePopup(INavigationService navigationService, IProtoService protoService, PremiumLimitType type)
         {
+            _navigationService = navigationService;
+            _protoService = protoService;
+
             InitializeComponent();
             InitializeLimit(protoService, type);
 
@@ -96,6 +104,7 @@ namespace Unigram.Views.Popups
                     };
 
                     BuyIcon.Source = animatedValue;
+                    BuyLabel.Text = Strings.Resources.IncreaseLimit;
                 }
                 else if (protoService.IsPremiumAvailable)
                 {
@@ -117,6 +126,7 @@ namespace Unigram.Views.Popups
                     };
 
                     BuyIcon.Source = animatedValue;
+                    BuyLabel.Text = Strings.Resources.IncreaseLimit;
                 }
                 else
                 {
@@ -125,7 +135,9 @@ namespace Unigram.Views.Popups
                     LimitHeader.Visibility = Visibility.Collapsed;
                     LimitPanel.Visibility = Visibility.Collapsed;
 
+                    BuyCommand.Style = App.Current.Resources["AccentButtonStyle"] as Style;
                     BuyIcon.Visibility = Visibility.Collapsed;
+                    BuyLabel.Text = Strings.Resources.OK;
                 }
             }
         }
@@ -137,7 +149,35 @@ namespace Unigram.Views.Popups
                 return Task.FromResult<BaseObject>(new PremiumLimit(type, 3, 4));
             }
 
-            return protoService.SendAsync(new GetPremiumLimit(type));
+            if (protoService.IsPremiumAvailable)
+            {
+                return protoService.SendAsync(new GetPremiumLimit(type));
+            }
+
+            static Task<BaseObject> CreateLimit(PremiumLimitType type, long value)
+            {
+                return Task.FromResult<BaseObject>(new PremiumLimit(type, (int)value, (int)value));
+            }
+
+            switch (type)
+            {
+                case PremiumLimitTypeChatFilterChosenChatCount:
+                    return CreateLimit(type, protoService.Options.ChatFilterChosenChatCountMax);
+                case PremiumLimitTypeChatFilterCount:
+                    return CreateLimit(type, protoService.Options.ChatFilterCountMax);
+                case PremiumLimitTypeCreatedPublicChatCount:
+                    return CreateLimit(type, 500);
+                case PremiumLimitTypePinnedArchivedChatCount:
+                    return CreateLimit(type, protoService.Options.PinnedArchivedChatCountMax);
+                case PremiumLimitTypePinnedChatCount:
+                    return CreateLimit(type, protoService.Options.PinnedChatCountMax);
+                case PremiumLimitTypeSupergroupCount:
+                    return CreateLimit(type, 10);
+                case PremiumLimitTypeConnectedAccounts:
+                    return CreateLimit(type, 4);
+            }
+
+            return null;
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -151,6 +191,16 @@ namespace Unigram.Views.Popups
         private void PurchaseShadow_Loaded(object sender, RoutedEventArgs e)
         {
             DropShadowEx.Attach(PurchaseShadow);
+        }
+
+        private async void Purchase_Click(object sender, RoutedEventArgs e)
+        {
+            Hide();
+
+            if (_protoService.IsPremiumAvailable && !_protoService.IsPremium)
+            {
+                await _navigationService.ShowAsync(typeof(PremiumPage), new PremiumSourceLimitExceeded());
+            }
         }
     }
 }

@@ -15,7 +15,6 @@ using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Services.Settings;
 using Unigram.ViewModels;
-using Unigram.Views.Popups;
 using Unigram.Views.SignIn;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
@@ -111,7 +110,7 @@ namespace Unigram.Views.Host
             Switch(_lifetime.ActiveItem);
         }
 
-        public async void Create()
+        public void Create()
         {
             var premium = false;
             var count = 0;
@@ -138,7 +137,7 @@ namespace Unigram.Views.Host
             }
             else if (count > 2)
             {
-                await new FencePopup(_lifetime.ActiveItem.ProtoService, new PremiumLimitTypeConnectedAccounts()).ShowQueuedAsync();
+                _navigationService.ShowFence(new PremiumLimitTypeConnectedAccounts());
                 return;
             }
 

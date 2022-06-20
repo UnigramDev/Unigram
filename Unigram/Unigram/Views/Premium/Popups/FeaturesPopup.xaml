@@ -8,9 +8,7 @@
                        xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                       mc:Ignorable="d"
-                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+                       mc:Ignorable="d">
 
     <Grid Margin="-24">
         <Grid.RowDefinitions>
@@ -77,7 +75,8 @@
             <Border Background="{StaticResource PremiumLinearGradientBrush}"
                     CornerRadius="4"
                     Height="36" />
-            <controls:BadgeButton x:Name="BuyCommand"
+            <controls:BadgeButton x:Name="PurchaseCommand"
+                                  Click="Purchase_Click"
                                   Style="{StaticResource StartButtonStyle}"
                                   HorizontalAlignment="Stretch"
                                   HorizontalContentAlignment="Center"

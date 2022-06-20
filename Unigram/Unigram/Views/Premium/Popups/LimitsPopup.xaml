@@ -6,9 +6,7 @@
                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        mc:Ignorable="d"
-                       Title="TITLE"
-                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+                       Title="TITLE">
 
     <Grid Margin="0,0,0,-20">
         <ListView x:Name="ScrollingHost"
@@ -38,6 +36,8 @@
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
                             <Grid Background="{ThemeResource ControlFillColorDefaultBrush}"
+                                  BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                                  BorderThickness="1,1,0,1"
                                   CornerRadius="4,0,0,4"
                                   Padding="8,4">
                                 <TextBlock Text="{CustomResource LimitFree}"
@@ -89,7 +89,8 @@
             <Border Background="{StaticResource PremiumLinearGradientBrush}"
                     CornerRadius="4"
                     Height="36" />
-            <controls:BadgeButton x:Name="BuyCommand"
+            <controls:BadgeButton x:Name="PurchaseCommand"
+                                  Click="Purchase_Click"
                                   Style="{StaticResource StartButtonStyle}"
                                   HorizontalAlignment="Stretch"
                                   HorizontalContentAlignment="Center"

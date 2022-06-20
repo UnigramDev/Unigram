@@ -2,6 +2,7 @@
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Services;
 using Windows.UI;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -24,7 +25,7 @@ namespace Unigram.Views.Premium.Popups
             Color.FromArgb(0xFF, 0xF2, 0x82, 0x2A)
         };
 
-        public LimitsPopup(PremiumState state, IList<PremiumLimit> limits)
+        public LimitsPopup(IProtoService protoService, PremiumState state, IList<PremiumLimit> limits)
         {
             InitializeComponent();
 
@@ -32,15 +33,17 @@ namespace Unigram.Views.Premium.Popups
 
             ScrollingHost.ItemsSource = limits;
 
-            BuyCommand.Content = string.Format(Strings.Resources.SubscribeToPremium, Locale.FormatCurrency(state.MonthlyAmount, state.Currency));
+            PurchaseCommand.Content = protoService.IsPremium
+                ? Strings.Resources.OK
+                : string.Format(Strings.Resources.SubscribeToPremium, Locale.FormatCurrency(state.MonthlyAmount, state.Currency));
         }
 
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-        }
+        public bool ShouldPurchase { get; private set; }
 
-        private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void Purchase_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
+            ShouldPurchase = true;
+            Hide();
         }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)

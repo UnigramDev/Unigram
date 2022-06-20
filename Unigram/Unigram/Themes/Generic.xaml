@@ -2553,6 +2553,7 @@
                                                        Command="{TemplateBinding ButtonCommand}"
                                                        Visibility="{TemplateBinding ButtonVisibility}"
                                                        Style="{StaticResource StartButtonStyle}"
+                                                       Background="#2ca5e0"
                                                        Margin="0" />
 
                                     <Border Child="{TemplateBinding Footer}" />

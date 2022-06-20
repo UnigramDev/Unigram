@@ -31,15 +31,17 @@ namespace Unigram.Views.Premium.Popups
             ScrollingHost.ItemsSource = items;
             ScrollingHost.SelectedItem = selectedFeature;
 
-            BuyCommand.Content = string.Format(Strings.Resources.SubscribeToPremium, Locale.FormatCurrency(state.MonthlyAmount, state.Currency));
+            PurchaseCommand.Content = protoService.IsPremium
+                ? Strings.Resources.OK
+                : string.Format(Strings.Resources.SubscribeToPremium, Locale.FormatCurrency(state.MonthlyAmount, state.Currency));
         }
 
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-        }
+        public bool ShouldPurchase { get; private set; }
 
-        private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void Purchase_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
+            ShouldPurchase = true;
+            Hide();
         }
 
         private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
