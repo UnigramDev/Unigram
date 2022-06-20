@@ -194,19 +194,19 @@ namespace Unigram.Common
             }
         }
 
-        public static void ShowFence(this INavigationService service, PremiumLimitType limit)
+        public static void ShowLimitReached(this INavigationService service, PremiumLimitType limit)
         {
             if (service is TLNavigationService serviceEx)
             {
-                serviceEx.ShowFence(limit);
+                serviceEx.ShowLimitReached(limit);
             }
         }
 
-        public static void ShowPremium(this INavigationService service, PremiumSource source)
+        public static void ShowPromo(this INavigationService service, PremiumSource source)
         {
             if (service is TLNavigationService serviceEx)
             {
-                serviceEx.ShowPremium(source);
+                serviceEx.ShowPromo(source);
             }
         }
 

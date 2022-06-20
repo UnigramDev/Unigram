@@ -137,7 +137,7 @@ namespace Unigram.Views.Host
             }
             else if (count > 2)
             {
-                _navigationService.ShowFence(new PremiumLimitTypeConnectedAccounts());
+                _navigationService.ShowLimitReached(new PremiumLimitTypeConnectedAccounts());
                 return;
             }
 

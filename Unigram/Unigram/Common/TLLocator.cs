@@ -1100,9 +1100,9 @@
                     _settingsService,
                     _eventAggregator);
             }
-            else if (type == typeof(Unigram.ViewModels.Premium.PremiumViewModel))
+            else if (type == typeof(Unigram.ViewModels.Premium.PromoViewModel))
             {
-                return (T)(object)new Unigram.ViewModels.Premium.PremiumViewModel(
+                return (T)(object)new Unigram.ViewModels.Premium.PromoViewModel(
                     _protoService,
                     _cacheService,
                     _settingsService,

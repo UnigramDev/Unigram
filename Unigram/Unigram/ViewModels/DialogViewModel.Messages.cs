@@ -1058,6 +1058,20 @@ namespace Unigram.ViewModels
                         NavigationService.Navigate(typeof(GamePage), bundle);
                     }
                 }
+                else if (inline.Type is InlineKeyboardButtonTypeWebApp webApp)
+                {
+                    var bot = message.GetViaBotUser();
+                    if (bot == null)
+                    {
+                        return;
+                    }
+
+                    var response = await ProtoService.SendAsync(new OpenWebApp(chat.Id, bot.Id, webApp.Url, Theme.Current.Parameters, 0));
+                    if (response is WebAppInfo webAppInfo)
+                    {
+                        await new WebBotPopup(SessionId, webAppInfo, inline.Text).ShowQueuedAsync();
+                    }
+                }
             }
             else if (button is KeyboardButton keyboardButton)
             {
@@ -1103,6 +1117,20 @@ namespace Unigram.ViewModels
                     var input = new InputMessageText(new FormattedText(keyboardButton.Text, null), false, true);
                     await SendMessageAsync(chat, chat.Type is ChatTypeSupergroup or ChatTypeBasicGroup ? message.Id : 0, input, null);
                 }
+            }
+        }
+
+        public async void OpenWebView()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            if (ContentDialogResult.Primary != await MessagePopup.ShowAsync(string.Format(Strings.Resources.BotOpenPageMessage, chat.Title), Strings.Resources.BotOpenPageTitle, Strings.Resources.OK, Strings.Resources.Cancel))
+            {
+                return;
             }
         }
 

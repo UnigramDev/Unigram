@@ -12,9 +12,9 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Premium
 {
-    public class PremiumViewModel : TLViewModelBase
+    public class PromoViewModel : TLViewModelBase
     {
-        public PremiumViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+        public PromoViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             Limits = new MvxObservableCollection<PremiumLimit>();

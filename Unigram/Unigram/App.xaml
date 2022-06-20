@@ -161,8 +161,8 @@
             <FontFamily x:Key="LegacyThemeFontFamily">Segoe MDL2 Assets</FontFamily>
             <FontFamily x:Key="MonospaceDigitsFontFamily">Segoe UI</FontFamily>
 
-            <x:Double x:Key="TelegramLightMediaMaxWidth">200</x:Double>
-            <x:Double x:Key="TelegramLightMediaMaxHeight">200</x:Double>
+            <x:Double x:Key="TelegramLightMediaMaxWidth">180</x:Double>
+            <x:Double x:Key="TelegramLightMediaMaxHeight">180</x:Double>
 
             <x:Double x:Key="TelegramMediaMaxWidth">420</x:Double>
             <x:Double x:Key="TelegramMediaMaxHeight">420</x:Double>
@@ -266,6 +266,13 @@
                         Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
             </Style>
 
+            <Style x:Key="AccentCaptionTextBlockStyle"
+                   TargetType="TextBlock"
+                   BasedOn="{StaticResource CaptionTextBlockStyle}">
+                <Setter Property="Foreground"
+                        Value="{ThemeResource SystemControlForegroundAccentBrush}" />
+            </Style>
+
             <Style x:Key="SiteNameTextBlockStyle"
                    TargetType="TextBlock"
                    BasedOn="{StaticResource BaseTextBlockStyle}">
@@ -304,6 +311,17 @@
                 <Setter Property="StrokeThickness"
                         Value="0" />
             </Style>
+
+            <LinearGradientBrush x:Key="PremiumLinearGradientBrush"
+                                 StartPoint="0,0"
+                                 EndPoint="1,0">
+                <GradientStop Color="#6B93FF"
+                              Offset="0.0064" />
+                <GradientStop Color="#976FFF"
+                              Offset="0.5333" />
+                <GradientStop Color="#E46ACE"
+                              Offset="1.2065" />
+            </LinearGradientBrush>
 
             <ResourceDictionary.MergedDictionaries>
                 <muxc:XamlControlsResources />

@@ -565,12 +565,12 @@ namespace Unigram
                 Unigram.Views.Chats.MessageStatisticsPage => TLContainer.Current.Resolve<Unigram.ViewModels.Chats.MessageStatisticsViewModel>(sessionId),
                 Unigram.Views.Chats.ChatInviteLinkPage => TLContainer.Current.Resolve<Unigram.ViewModels.Chats.ChatInviteLinkViewModel>(sessionId),
                 Unigram.Views.Chats.ChatStatisticsPage => TLContainer.Current.Resolve<Unigram.ViewModels.Chats.ChatStatisticsViewModel>(sessionId),
-                Unigram.Views.Premium.PremiumPage => TLContainer.Current.Resolve<Unigram.ViewModels.Premium.PremiumViewModel>(sessionId),
 
                 // Popups
                 Unigram.Views.Settings.Popups.SettingsUsernamePopup => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.SettingsUsernameViewModel>(sessionId),
                 Unigram.Views.Settings.Popups.SettingsDataAutoPopup => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.SettingsDataAutoViewModel>(sessionId),
                 Unigram.Views.Popups.ChooseSoundPopup => TLContainer.Current.Resolve<Unigram.ViewModels.ChooseSoundViewModel>(sessionId),
+                Unigram.Views.Premium.Popups.PromoPopup => TLContainer.Current.Resolve<Unigram.ViewModels.Premium.PromoViewModel>(sessionId),
                 _ => null
             };
         }

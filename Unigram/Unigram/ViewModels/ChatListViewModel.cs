@@ -138,7 +138,7 @@ namespace Unigram.ViewModels
             if (response is Error error && error.Code == 400)
             {
                 // This is not the right way
-                NavigationService.ShowFence(new PremiumLimitTypePinnedChatCount());
+                NavigationService.ShowLimitReached(new PremiumLimitTypePinnedChatCount());
             }
         }
 

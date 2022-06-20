@@ -592,7 +592,7 @@
     <Compile Include="ViewModels\Payments\PaymentAddressViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentCredentialsViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentFormViewModel.cs" />
-    <Compile Include="ViewModels\Premium\PremiumViewModel.cs" />
+    <Compile Include="ViewModels\Premium\PromoViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsBlockedChatsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsProfileViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsQuickReactionViewModel.cs" />
@@ -671,9 +671,6 @@
     </Compile>
     <Compile Include="Views\Popups\DownloadsPopup.xaml.cs">
       <DependentUpon>DownloadsPopup.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Premium\Popups\FencePopup.xaml.cs">
-      <DependentUpon>FencePopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\IdenticonPopup.xaml.cs">
       <DependentUpon>IdenticonPopup.xaml</DependentUpon>
@@ -1030,11 +1027,14 @@
     <Compile Include="Views\Premium\Popups\FeaturesPopup.xaml.cs">
       <DependentUpon>FeaturesPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Premium\Popups\LimitReachedPopup.xaml.cs">
+      <DependentUpon>LimitReachedPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Premium\Popups\LimitsPopup.xaml.cs">
       <DependentUpon>LimitsPopup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Premium\PremiumPage.xaml.cs">
-      <DependentUpon>PremiumPage.xaml</DependentUpon>
+    <Compile Include="Views\Premium\Popups\PromoPopup.xaml.cs">
+      <DependentUpon>PromoPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ProfilePage.xaml.cs">
       <DependentUpon>ProfilePage.xaml</DependentUpon>
@@ -1948,10 +1948,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Premium\Popups\FencePopup.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\Popups\IdenticonPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2184,13 +2180,17 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Premium\Popups\LimitReachedPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Premium\Popups\LimitsPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Premium\PremiumPage.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="Views\Premium\Popups\PromoPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\ProfilePage.xaml">
       <Generator>MSBuild:Compile</Generator>

@@ -240,6 +240,10 @@ namespace Unigram.Common
             {
 
             }
+            else if (internalLink is InternalLinkTypePremiumFeatures premiumFeatures)
+            {
+                navigation.ShowPromo(new PremiumSourceLink(premiumFeatures.Referrer));
+            }
             else if (internalLink is InternalLinkTypePrivacyAndSecuritySettings)
             {
                 navigation.Navigate(typeof(SettingsPrivacyAndSecurityPage));

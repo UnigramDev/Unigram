@@ -8,13 +8,13 @@ using Windows.UI;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Views.Premium
+namespace Unigram.Views.Premium.Popups
 {
-    public sealed partial class PremiumPage : ContentPopup
+    public sealed partial class PromoPopup : ContentPopup
     {
-        public PremiumViewModel ViewModel => DataContext as PremiumViewModel;
+        public PromoViewModel ViewModel => DataContext as PromoViewModel;
 
-        public PremiumPage()
+        public PromoPopup()
         {
             InitializeComponent();
 

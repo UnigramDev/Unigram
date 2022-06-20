@@ -183,7 +183,7 @@ namespace Unigram.Views
 
         private void Premium_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.ShowPremium(new PremiumSourceSettings());
+            MasterDetail.NavigationService.ShowPromo(new PremiumSourceSettings());
         }
 
         private async void Photo_Click(object sender, RoutedEventArgs e)

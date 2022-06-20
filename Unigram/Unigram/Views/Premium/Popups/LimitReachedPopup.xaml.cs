@@ -10,14 +10,14 @@ using Unigram.Services;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Views.Popups
+namespace Unigram.Views.Premium.Popups
 {
-    public sealed partial class FencePopup : ContentPopup
+    public sealed partial class LimitReachedPopup : ContentPopup
     {
         private readonly INavigationService _navigationService;
         private readonly IProtoService _protoService;
 
-        public FencePopup(INavigationService navigationService, IProtoService protoService, PremiumLimitType type)
+        public LimitReachedPopup(INavigationService navigationService, IProtoService protoService, PremiumLimitType type)
         {
             _navigationService = navigationService;
             _protoService = protoService;
@@ -198,7 +198,7 @@ namespace Unigram.Views.Popups
 
             if (_protoService.IsPremiumAvailable && !_protoService.IsPremium)
             {
-                _navigationService.ShowPremium(new PremiumSourceLimitExceeded());
+                _navigationService.ShowPromo(new PremiumSourceLimitExceeded());
             }
         }
     }

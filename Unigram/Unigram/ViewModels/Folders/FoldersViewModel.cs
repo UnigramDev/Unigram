@@ -7,7 +7,6 @@ using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Services.Updates;
 using Unigram.Views.Folders;
-using Unigram.Views.Popups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -41,20 +40,19 @@ namespace Unigram.ViewModels.Folders
             set => Set(ref _canCreateNew, value);
         }
 
-        private int _defaultLimit;
-        private int _premiumLimit;
-
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             Items.ReplaceWith(CacheService.ChatFilters);
 
-            var limit = await ProtoService.SendAsync(new GetPremiumLimit(new PremiumLimitTypeChatFilterCount())) as PremiumLimit;
-            var maximum = ProtoService.IsPremiumAvailable ? limit.PremiumValue : limit.DefaultValue;
-
-            _defaultLimit = limit.DefaultValue;
-            _premiumLimit = limit.PremiumValue;
-
-            CanCreateNew = Items.Count < maximum;
+            if (CacheService.IsPremiumAvailable)
+            {
+                var limit = await ProtoService.SendAsync(new GetPremiumLimit(new PremiumLimitTypeChatFilterCount())) as PremiumLimit;
+                CanCreateNew = Items.Count < limit.PremiumValue;
+            }
+            else
+            {
+                CanCreateNew = Items.Count < CacheService.Options.ChatFilterCountMax;
+            }
 
             if (CacheService.Options.ChatFilterCountMax > Items.Count)
             {
@@ -132,7 +130,7 @@ namespace Unigram.ViewModels.Folders
         }
 
         public RelayCommand<ChatFilterInfo> EditCommand { get; }
-        private async void EditExecute(ChatFilterInfo filter)
+        private void EditExecute(ChatFilterInfo filter)
         {
             var index = Items.IndexOf(filter);
             if (index < CacheService.Options.ChatFilterCountMax)
@@ -141,7 +139,7 @@ namespace Unigram.ViewModels.Folders
             }
             else
             {
-                await new FencePopup(ProtoService, new PremiumLimitTypeChatFilterCount()).ShowQueuedAsync();
+                NavigationService.ShowLimitReached(new PremiumLimitTypeChatFilterCount());
             }
         }
 
@@ -158,7 +156,7 @@ namespace Unigram.ViewModels.Folders
         }
 
         public RelayCommand CreateCommand { get; }
-        private async void CreateExecute()
+        private void CreateExecute()
         {
             if (Items.Count < CacheService.Options.ChatFilterCountMax)
             {
@@ -166,7 +164,7 @@ namespace Unigram.ViewModels.Folders
             }
             else
             {
-                await new FencePopup(ProtoService, new PremiumLimitTypeChatFilterCount()).ShowQueuedAsync();
+                NavigationService.ShowLimitReached(new PremiumLimitTypeChatFilterCount());
             }
         }
     }
