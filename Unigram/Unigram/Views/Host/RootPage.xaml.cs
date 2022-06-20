@@ -80,6 +80,22 @@ namespace Unigram.Views.Host
             DropShadowEx.Attach(ThemeShadow);
         }
 
+        public void PopupOpened()
+        {
+            if (_navigationService.Frame.Content is IRootContentPage content)
+            {
+                content.PopupOpened();
+            }
+        }
+
+        public void PopupClosed()
+        {
+            if (_navigationService.Frame.Content is IRootContentPage content)
+            {
+                content.PopupClosed();
+            }
+        }
+
         public void UpdateComponent()
         {
             _contentLoaded = false;
@@ -887,6 +903,9 @@ namespace Unigram.Views.Host
         void BackRequested();
 
         void Dispose();
+
+        void PopupOpened();
+        void PopupClosed();
     }
 
     public enum RootDestination

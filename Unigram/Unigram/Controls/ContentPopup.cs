@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Navigation;
 using Unigram.Services;
+using Unigram.Views.Host;
 using Windows.UI.Core;
 using Windows.UI.Input;
 using Windows.UI.ViewManagement;
@@ -39,6 +40,25 @@ namespace Unigram.Controls
 
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
+
+            Opened += OnOpened;
+            Closed += OnClosed;
+        }
+
+        private void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
+        {
+            if (Window.Current.Content is RootPage root)
+            {
+                root.PopupOpened();
+            }
+        }
+
+        private void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
+        {
+            if (Window.Current.Content is RootPage root)
+            {
+                root.PopupClosed();
+            }
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)

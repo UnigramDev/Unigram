@@ -3065,6 +3065,16 @@ namespace Unigram.Views
             args.IsContainerPrepared = true;
         }
 
+        public void PopupOpened()
+        {
+            Window.Current.SetTitleBar(null);
+        }
+
+        public void PopupClosed()
+        {
+            Window.Current.SetTitleBar(TitleBarrr);
+        }
+
         #region Context menu
 
         private async void Chat_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
