@@ -231,20 +231,63 @@ namespace Unigram.Services
 
 #region App version
 
-        public const ulong CurrentVersion = (8UL << 48) | (6UL << 32) | (0UL << 16);
-        public const string CurrentChangelog = @"Download Manager, Live Streams with other apps and More
+        public const ulong CurrentVersion = (8UL << 48) | (8UL << 32) | (0UL << 16);
+        public const string CurrentChangelog = @"700 MILLION USERS AND TELEGRAM PREMIUM
 
-**Download Manager**
-• Check the status of media and file downloads by tapping the new icon in the Search bar. 
-• View recently downloaded files from the new ‘Downloads’ tab in Search.
-• Pause and resume unfinished downloads.
+Telegram now has over 700 million active users. To celebrate, we're launching Telegram Premium. This subscription helps support Telegram and gives you access to exclusive additional features. All existing Telegram features remain free for everyone.
 
-**Live Streams with other apps **
-• Manage Live Streams in your groups and channels using external software such as OBS Studio or XSplit Broadcaster.
+**NEW PREMIUM FEATURES**
 
-**Phone Number Links**
-• Share a direct t.me link to your phone number that instantly opens a chat with you.
-• Use the full number in international format, like t.me/+123456789";
+**Premium: 4 GB Uploads**
+• Send media and files each up to 4 GB in size.
+
+**Premium: Faster Downloads**
+• Download media and files at the fastest possible speed, with no limits.
+
+**Premium: Doubled Limits**
+• Follow up to 1000 channels.
+• Connect 4 accounts in any app.
+• Organize your chats into 20 folders, holding 200 chats each.
+• Pin 10 chats in your main list.
+• Reserve up to 20 public t.me links.
+• Save 400 favorite GIFs and 10 favorite stickers.
+• Write a longer bio for your profile and include links.
+• Include longer captions for photos and videos.
+
+**Premium: Voice-to-Text**
+• Get a new button next to any voice message to generate a transcript of its audio.
+
+**Premium: Unique Reactions and Stickers**
+• React with even more emoji, including 🤡 and 😍
+• Send unique stickers with additional effects, updated monthly.
+
+**Premium: Chat Management**
+• Set a default chat folder or enable tools to auto-archive and hide new chats.
+
+**Premium: Badges and Animated Profile Pictures**
+• Subscribers have a badge next to their name, showing they help support Telegram.
+• Show off your profile video that will be animated for everyone in chats and the chat list.
+
+**Premium: No Ads**
+• Sponsored Messages that are sometimes shown in public channels will no longer appear.
+
+To subscribe and get access to these features, go to Settings > Telegram Premium.
+
+**NEW FREE FEATURES**
+
+This update also includes many changes for all users – just like every future update will.
+
+**Join Requests for Public Groups**
+• Enable join requests for your public groups – no invite links required.
+• Users who open the group will see an 'Apply to Join Group' button.
+• Once approved by an admin, users will be able to participate in the chat.
+
+**Verification Badges in Chats**
+• Verified groups and channels now also show their badge at the top of the chat.
+
+**Better Bots**
+• Include a photo or video in the ""What can this bot do?"" section of your bot.
+• Bots that are integrated into the attachment menu can be programmed to work in groups and channels.";
 
         public int Session => _session;
 
