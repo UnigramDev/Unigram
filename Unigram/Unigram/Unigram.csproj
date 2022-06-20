@@ -1502,6 +1502,10 @@
     <Content Include="Assets\Animations\VoiceUnmuteToRaiseHand.tgs" />
     <Content Include="Assets\i420.bin" />
     <None Include=".editorconfig" />
+    <PRIResource Include="Strings\sk\Resources.resw" />
+    <PRIResource Include="Strings\hu\Resources.resw" />
+    <PRIResource Include="Strings\fi\Resources.resw" />
+    <PRIResource Include="Strings\cs\Resources.resw" />
     <None Include="Unigram_StoreKey.pfx" />
     <None Include="Unigram_TemporaryKey.pfx" />
   </ItemGroup>
