@@ -77,7 +77,7 @@ namespace Unigram.ViewModels.Settings
 
                 if (CacheService.TryGetUserFull(user.Id, out UserFullInfo userFull))
                 {
-                    Bio = userFull.Bio;
+                    Bio = userFull.Bio.Text;
 
                     Delegate?.UpdateUserFullInfo(null, user, userFull, false, false);
                 }
@@ -116,7 +116,7 @@ namespace Unigram.ViewModels.Settings
             {
                 BeginOnUIThread(() =>
                 {
-                    Bio = update.UserFullInfo.Bio;
+                    Bio = update.UserFullInfo.Bio.Text;
 
                     Delegate?.UpdateUserFullInfo(null, user, update.UserFullInfo, false, false);
                 });

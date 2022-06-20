@@ -585,7 +585,7 @@ namespace Unigram.ViewModels
                 }
 
                 var dataPackage = new DataPackage();
-                dataPackage.SetText(user.Bio);
+                dataPackage.SetText(user.Bio.Text);
                 ClipboardEx.TrySetContent(dataPackage);
             }
         }

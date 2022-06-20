@@ -192,8 +192,15 @@ namespace Unigram.Controls
         {
             Subtitle.Text = LastSeenConverter.GetLabel(user, true);
 
-            Premium.Visibility = user.IsPremium ? Visibility.Visible : Visibility.Collapsed;
-            Verified.Visibility = user.IsVerified ? Visibility.Visible : Visibility.Collapsed;
+            if (user.IsVerified || (user.IsPremium && ViewModel.ProtoService.IsPremiumAvailable))
+            {
+                Verified.Glyph = user.IsPremium ? Icons.Premium16 : Icons.Verified16;
+                Verified.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                Verified.Visibility = Visibility.Collapsed;
+            }
 
             UserPhone.Badge = PhoneNumber.Format(user.PhoneNumber);
             UserPhone.Visibility = string.IsNullOrEmpty(user.PhoneNumber) ? Visibility.Collapsed : Visibility.Visible;
@@ -233,8 +240,8 @@ namespace Unigram.Controls
             }
             else
             {
-                GetEntities(fullInfo.Bio);
-                Description.Visibility = string.IsNullOrEmpty(fullInfo.Bio) ? Visibility.Collapsed : Visibility.Visible;
+                ReplaceEntities(fullInfo.Bio);
+                Description.Visibility = string.IsNullOrEmpty(fullInfo.Bio.Text) ? Visibility.Collapsed : Visibility.Visible;
             }
 
             //UserCommonChats.Badge = fullInfo.GroupInCommonCount;
@@ -282,7 +289,6 @@ namespace Unigram.Controls
 
             Description.Content = Strings.Resources.DescriptionPlaceholder;
 
-            Premium.Visibility = Visibility.Collapsed;
             Verified.Visibility = Visibility.Collapsed;
             UserPhone.Visibility = Visibility.Collapsed;
             Location.Visibility = Visibility.Collapsed;
@@ -355,7 +361,7 @@ namespace Unigram.Controls
 
             Description.Content = Strings.Resources.DescriptionPlaceholder;
 
-            Premium.Visibility = Visibility.Collapsed;
+            Verified.Glyph = Icons.Verified16;
             Verified.Visibility = group.IsVerified ? Visibility.Visible : Visibility.Collapsed;
 
             Username.Badge = $"{group.Username}";
@@ -682,6 +688,14 @@ namespace Unigram.Controls
             {
                 DescriptionSpan.Inlines.Add(new Run { Text = text });
             }
+        }
+
+        private void ReplaceEntities(FormattedText text)
+        {
+            DescriptionSpan.Inlines.Clear();
+            Description.BadgeLabel = text.Text;
+
+            ReplaceEntities(DescriptionSpan, text.Text, text.Entities);
         }
 
         private void ReplaceEntities(Span span, string text, IList<TextEntity> entities)

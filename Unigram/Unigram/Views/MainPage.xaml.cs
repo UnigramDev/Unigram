@@ -2079,125 +2079,14 @@ namespace Unigram.Views
         {
             if (args.Item is SearchResult result)
             {
-                args.ItemContainer.Tag = result.Chat;
-
-                var content = args.ItemContainer.ContentTemplateRoot as Grid;
+                var content = args.ItemContainer.ContentTemplateRoot as UserCell;
                 if (content == null)
                 {
                     return;
                 }
 
-                if (args.Phase == 0)
-                {
-                    var grid = content.Children[1] as Grid;
-
-                    var title = grid.Children[0] as TextBlock;
-                    title.Style = BootStrapper.Current.Resources[result?.Chat?.Type is ChatTypeSecret ? "SecretBodyTextBlockStyle" : "BodyTextBlockStyle"] as Style;
-
-                    if (result.Chat != null)
-                    {
-                        title.Text = ViewModel.ProtoService.GetTitle(result.Chat);
-                    }
-                    else if (result.User != null)
-                    {
-                        title.Text = result.User.GetFullName();
-                    }
-
-                    var verified = grid.Children[1] as FrameworkElement;
-
-                    if (result.User != null || result.Chat.Type is ChatTypePrivate || result.Chat.Type is ChatTypeSecret)
-                    {
-                        var user = result.User ?? ViewModel.ProtoService.GetUser(result.Chat);
-                        verified.Visibility = user != null && user.IsVerified ? Visibility.Visible : Visibility.Collapsed;
-                    }
-                    else if (result.Chat != null && result.Chat.Type is ChatTypeSupergroup supergroup)
-                    {
-                        var group = ViewModel.ProtoService.GetSupergroup(supergroup.SupergroupId);
-                        verified.Visibility = group != null && group.IsVerified ? Visibility.Visible : Visibility.Collapsed;
-                    }
-                    else
-                    {
-                        verified.Visibility = Visibility.Collapsed;
-                    }
-                }
-                else if (args.Phase == 1)
-                {
-                    var subtitle = content.Children[2] as TextBlock;
-                    if (result.User != null || (result.Chat != null && (result.Chat.Type is ChatTypePrivate privata || result.Chat.Type is ChatTypeSecret)))
-                    {
-                        var user = result.User ?? ViewModel.CacheService.GetUser(result.Chat);
-                        if (result.IsPublic)
-                        {
-                            subtitle.Text = $"@{user.Username}";
-                        }
-                        else if (ViewModel.CacheService.IsSavedMessages(user))
-                        {
-                            subtitle.Text = Strings.Resources.ThisIsYou;
-                        }
-                        else
-                        {
-                            subtitle.Text = LastSeenConverter.GetLabel(user, true);
-                        }
-                    }
-                    else if (result.Chat != null && result.Chat.Type is ChatTypeSupergroup super)
-                    {
-                        var supergroup = ViewModel.ProtoService.GetSupergroup(super.SupergroupId);
-                        if (result.IsPublic)
-                        {
-                            if (supergroup.MemberCount > 0)
-                            {
-                                subtitle.Text = string.Format("@{0}, {1}", supergroup.Username, Locale.Declension(supergroup.IsChannel ? "Subscribers" : "Members", supergroup.MemberCount));
-                            }
-                            else
-                            {
-                                subtitle.Text = $"@{supergroup.Username}";
-                            }
-                        }
-                        else if (supergroup.MemberCount > 0)
-                        {
-                            subtitle.Text = Locale.Declension(supergroup.IsChannel ? "Subscribers" : "Members", supergroup.MemberCount);
-                        }
-                        else
-                        {
-                            subtitle.Text = string.Empty;
-                        }
-                    }
-                    else
-                    {
-                        subtitle.Text = string.Empty;
-                    }
-
-                    if (subtitle.Text.StartsWith($"@{result.Query}", StringComparison.OrdinalIgnoreCase))
-                    {
-                        var highligher = new TextHighlighter();
-                        highligher.Foreground = new SolidColorBrush(Colors.Red);
-                        highligher.Background = new SolidColorBrush(Colors.Transparent);
-                        highligher.Ranges.Add(new TextRange { StartIndex = 1, Length = result.Query.Length });
-
-                        subtitle.TextHighlighters.Add(highligher);
-                    }
-                    else
-                    {
-                        subtitle.TextHighlighters.Clear();
-                    }
-                }
-                else if (args.Phase == 2)
-                {
-                    var photo = content.Children[0] as ProfilePicture;
-                    if (result.Chat != null)
-                    {
-                        photo.SetChat(ViewModel.ProtoService, result.Chat, 36);
-                    }
-                    else if (result.User != null)
-                    {
-                        photo.SetUser(ViewModel.ProtoService, result.User, 36);
-                    }
-                }
-
-                if (args.Phase < 2)
-                {
-                    args.RegisterUpdateCallback(DialogsSearchListView_ContainerContentChanging);
-                }
+                args.ItemContainer.Tag = result.Chat;
+                content.UpdateSearchResult(_protoService, args, DialogsSearchListView_ContainerContentChanging);
             }
             else if (args.Item is Message message)
             {

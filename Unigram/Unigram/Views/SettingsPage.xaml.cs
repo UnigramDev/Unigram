@@ -220,7 +220,7 @@ namespace Unigram.Views
             Photo.SetUser(ViewModel.ProtoService, user, 48);
             Title.Text = user.GetFullName();
 
-            if (user.IsVerified || user.IsPremium)
+            if (user.IsVerified || (user.IsPremium && ViewModel.ProtoService.IsPremiumAvailable))
             {
                 Verified.Glyph = user.IsPremium ? Icons.Premium16 : Icons.Verified16;
                 Verified.Visibility = Visibility.Visible;
