@@ -38,6 +38,10 @@
 			<Method Name="UpdateFile" Dynamic="Required"/>
 		</Type>
 
+		<Type Name="Unigram.Controls.Cells.Premium.PremiumFeatureUniqueReactionsCell">
+			<Method Name="UpdateFile" Dynamic="Required"/>
+		</Type>
+
 		<Type Name="Unigram.Controls.Cells.SharedAudioCell">
 			<Method Name="UpdateFile" Dynamic="Required"/>
 		</Type>
@@ -140,10 +144,6 @@
 			<Method Name="UpdateFile" Dynamic="Required"/>
 		</Type>
 
-		<Type Name="Unigram.Controls.Messages.MessageBubble">
-			<Method Name="UpdateReaction" Dynamic="Required"/>
-		</Type>
-
 		<Type Name="Unigram.Controls.Messages.ReactionButton">
 			<Method Name="UpdateFile" Dynamic="Required"/>
 		</Type>
@@ -151,6 +151,10 @@
 		<Type Name="Unigram.Controls.ProfilePicture" Dynamic="Required All"/>
 
 		<Type Name="Unigram.Services.CloudUpdateService">
+			<Method Name="UpdateFile" Dynamic="Required"/>
+		</Type>
+
+		<Type Name="Unigram.ViewModels.ChooseSoundViewModel">
 			<Method Name="UpdateFile" Dynamic="Required"/>
 		</Type>
 
@@ -182,6 +186,10 @@
 		</Type>
 
 		<Type Name="Unigram.Views.Settings.SettingsBackgroundsPage">
+			<Method Name="UpdateFile" Dynamic="Required"/>
+		</Type>
+
+		<Type Name="Unigram.Views.Settings.SettingsQuickReactionPage">
 			<Method Name="UpdateFile" Dynamic="Required"/>
 		</Type>
 
