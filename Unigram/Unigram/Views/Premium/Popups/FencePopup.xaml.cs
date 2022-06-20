@@ -7,7 +7,6 @@ using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Navigation.Services;
 using Unigram.Services;
-using Unigram.Views.Premium;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -193,13 +192,13 @@ namespace Unigram.Views.Popups
             DropShadowEx.Attach(PurchaseShadow);
         }
 
-        private async void Purchase_Click(object sender, RoutedEventArgs e)
+        private void Purchase_Click(object sender, RoutedEventArgs e)
         {
             Hide();
 
             if (_protoService.IsPremiumAvailable && !_protoService.IsPremium)
             {
-                await _navigationService.ShowAsync(typeof(PremiumPage), new PremiumSourceLimitExceeded());
+                _navigationService.ShowPremium(new PremiumSourceLimitExceeded());
             }
         }
     }

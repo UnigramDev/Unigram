@@ -202,6 +202,14 @@ namespace Unigram.Common
             }
         }
 
+        public static void ShowPremium(this INavigationService service, PremiumSource source)
+        {
+            if (service is TLNavigationService serviceEx)
+            {
+                serviceEx.ShowPremium(source);
+            }
+        }
+
         public static void RemovePeerFromStack(this INavigationService service, long target)
         {
             long peer;
