@@ -6,7 +6,6 @@ using Unigram.Common;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Services;
-using Unigram.ViewModels.Delegates;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
@@ -35,7 +34,15 @@ namespace Unigram.ViewModels.Settings
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            Items.ReplaceWith(CacheService.Reactions.Where(x => x.Value.IsActive).Select(x => new SettingsReactionOption(this, x.Value, x.Key == ProtoService.Options.DefaultReaction && !IsQuickReplySelected)));
+            if (ProtoService.IsPremium)
+            {
+                Items.ReplaceWith(CacheService.Reactions.Where(x => x.Value.IsActive).Select(x => new SettingsReactionOption(this, x.Value, x.Key == ProtoService.Options.DefaultReaction && !IsQuickReplySelected)));
+            }
+            else
+            {
+                Items.ReplaceWith(CacheService.Reactions.Where(x => x.Value.IsActive && !x.Value.IsPremium).Select(x => new SettingsReactionOption(this, x.Value, x.Key == ProtoService.Options.DefaultReaction && !IsQuickReplySelected)));
+            }
+
             return Task.CompletedTask;
         }
 
