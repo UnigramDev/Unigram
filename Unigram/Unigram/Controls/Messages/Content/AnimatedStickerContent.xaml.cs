@@ -146,8 +146,9 @@ namespace Unigram.Controls.Messages.Content
             ElementCompositionPreview.SetElementChildVisual(Player, null);
 
             var sticker = _message?.Content as MessageSticker;
-            if (sticker?.Sticker.PremiumAnimation != null)
+            if (sticker?.Sticker.PremiumAnimation != null && _message.GeneratedContentUnread)
             {
+                _message.GeneratedContentUnread = false;
                 PlayPremium(_message, sticker.Sticker);
             }
         }

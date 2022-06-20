@@ -1540,6 +1540,10 @@ namespace Unigram.ViewModels
                         message.GeneratedContentUnread = dice.IsInitialState();
                     }
                 }
+                else if (message.Id > chat.LastReadInboxMessageId)
+                {
+                    message.GeneratedContentUnread = true;
+                }
             }
 
             return Task.CompletedTask;
@@ -1558,7 +1562,7 @@ namespace Unigram.ViewModels
                 }
                 else if (message.Content is MessageAnimatedEmoji animatedEmoji)
                 {
-                    message.GeneratedContent = new MessageSticker(animatedEmoji.AnimatedEmoji.Sticker);
+                    message.GeneratedContent = new MessageSticker(animatedEmoji.AnimatedEmoji.Sticker, false);
                 }
             }
         }
