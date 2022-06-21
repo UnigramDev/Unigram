@@ -6611,9 +6611,7 @@
 
                         <TextBlock x:Name="BeforePart"
                                    Visibility="{TemplateBinding OverflowVisibility}" />
-                        <Grid x:Name="PrevRoot"
-                              Grid.Column="1" />
-                        <Grid x:Name="NextRoot"
+                        <Grid x:Name="LayoutRoot"
                               Grid.Column="1" />
                         <TextBlock x:Name="AfterPart"
                                    Visibility="{TemplateBinding OverflowVisibility}"
