@@ -2,7 +2,10 @@
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Td;
+using Telegram.Td.Api;
 using Windows.Data.Json;
+using JsonValue = Windows.Data.Json.JsonValue;
 
 namespace Unigram.Services.Stripe
 {
@@ -34,8 +37,8 @@ namespace Unigram.Services.Stripe
                             "card", new JsonObject
                             {
                                 { "number", JsonValue.CreateStringValue(card.Number) },
-                                { "expiration_month", JsonValue.CreateStringValue(card.ExpiryMonth.ToString()) },
-                                { "expiration_year", JsonValue.CreateStringValue(card.ExpiryYear.ToString()) },
+                                { "expiration_month", JsonValue.CreateStringValue(card.ExpiryMonth.ToString("D2")) },
+                                { "expiration_year", JsonValue.CreateStringValue(card.ExpiryYear.ToString("D2")) },
                                 { "security_code", JsonValue.CreateStringValue(card.CVC) }
                             }
                         }
@@ -57,20 +60,23 @@ namespace Unigram.Services.Stripe
                     var resultData = json.GetNamedObject("data", null);
                     if (resultData == null)
                     {
+                        Client.Execute(new AddLogMessage(5, $"Failed to process payment using Smart Glocal: {content}"));
                         return null;
                     }
 
                     var token = resultData.GetNamedString("token", string.Empty);
                     if (token == null)
                     {
+                        Client.Execute(new AddLogMessage(5, $"Failed to process payment using Smart Glocal: {content}"));
                         return null;
                     }
 
                     return token;
                 }
-                catch
+                catch (Exception ex)
                 {
-
+                    Client.Execute(new AddLogMessage(5, $"Failed to process payment using Smart Glocal: {ex}"));
+                    return null;
                 }
             }
 
