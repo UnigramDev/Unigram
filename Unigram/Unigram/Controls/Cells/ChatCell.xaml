@@ -43,19 +43,8 @@
                                 </VisualState>
                             </VisualStateGroup>
                             <VisualStateGroup>
-                                <VisualState x:Name="UnreadUnmuted" />
-                                <VisualState x:Name="MarkedAsUnreadUnmuted">
-                                    <VisualState.Setters>
-                                        <Setter Target="UnreadBadge.Padding"
-                                                Value="0,4,0,2" />
-                                        <Setter Target="UnreadBadge.IconSource">
-                                            <Setter.Value>
-                                                <muxc:FontIconSource Glyph="&#xEA38;" />
-                                            </Setter.Value>
-                                        </Setter>
-                                    </VisualState.Setters>
-                                </VisualState>
-                                <VisualState x:Name="UnreadMuted">
+                                <VisualState x:Name="Unmuted" />
+                                <VisualState x:Name="Muted">
                                     <VisualState.Setters>
                                         <Setter Target="UnreadBadge.Background"
                                                 Value="{ThemeResource ChatUnreadBadgeMutedBrush}" />
@@ -63,36 +52,12 @@
                                                 Value="{ThemeResource ChatUnreadLabelMutedBrush}" />
                                     </VisualState.Setters>
                                 </VisualState>
-                                <VisualState x:Name="MarkedAsUnreadMuted">
-                                    <VisualState.Setters>
-                                        <Setter Target="UnreadBadge.Background"
-                                                Value="{ThemeResource ChatUnreadBadgeMutedBrush}" />
-                                        <Setter Target="UnreadBadge.Foreground"
-                                                Value="{ThemeResource ChatUnreadLabelMutedBrush}" />
-                                        <Setter Target="UnreadBadge.Padding"
-                                                Value="0,4,0,2" />
-                                        <Setter Target="UnreadBadge.IconSource">
-                                            <Setter.Value>
-                                                <muxc:FontIconSource Glyph="&#xEA38;" />
-                                            </Setter.Value>
-                                        </Setter>
-                                    </VisualState.Setters>
-                                </VisualState>
-                                <VisualState x:Name="Failed">
-                                    <VisualState.Setters>
-                                        <Setter Target="UnreadBadge.Background"
-                                                Value="{ThemeResource ChatFailedBadgeBrush}" />
-                                        <Setter Target="UnreadBadge.Foreground"
-                                                Value="{ThemeResource ChatFailedLabelBrush}" />
-                                        <Setter Target="UnreadBadge.Padding"
-                                                Value="0,4,0,2" />
-                                        <Setter Target="UnreadBadge.IconSource">
-                                            <Setter.Value>
-                                                <muxc:FontIconSource Glyph="&#xE10A;" />
-                                            </Setter.Value>
-                                        </Setter>
-                                    </VisualState.Setters>
-                                </VisualState>
+                                <!--<VisualState x:Name="Failed">
+                    <VisualState.Setters>
+                        <Setter Target="UnreadBadge.Background" Value="{ThemeResource ChatFailedBadgeBrush}"/>
+                        <Setter Target="UnreadLabel.Foreground" Value="{ThemeResource ChatFailedLabelBrush}"/>
+                    </VisualState.Setters>
+                </VisualState>-->
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
 
@@ -262,6 +227,27 @@
                                         Visibility="Collapsed"
                                         Grid.Column="5"
                                         Grid.Row="1" />
+
+
+                        <Border x:Name="FailedBadge"
+                                Background="{ThemeResource ChatFailedBadgeBrush}"
+                                MinWidth="20"
+                                Height="20"
+                                CornerRadius="10"
+                                VerticalAlignment="Bottom"
+                                HorizontalAlignment="Right"
+                                Margin="8,0,0,0"
+                                Visibility="Collapsed"
+                                Grid.Column="5"
+                                Grid.Row="1">
+                            <TextBlock x:Name="FailedLabel"
+                                       Text="&#xE171;"
+                                       FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                       Style="{StaticResource CaptionTextBlockStyle}"
+                                       Foreground="{ThemeResource ChatFailedLabelBrush}"
+                                       VerticalAlignment="Center"
+                                       TextAlignment="Center" />
+                        </Border>
 
                         <Rectangle x:Name="DropVisual"
                                    x:Load="False"

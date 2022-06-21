@@ -37,13 +37,6 @@ namespace Unigram.Controls.Cells
         Read
     }
 
-    public enum InfoBadgeState
-    {
-        Unread,
-        MarkedAsUnread,
-        Failed
-    }
-
     public sealed class ChatCell : Control, IMultipleElement
     {
         private Chat _chat;
@@ -64,9 +57,6 @@ namespace Unigram.Controls.Cells
         private CompositionAnimation _offset3;
 
         private MessageTicksState _ticksState;
-
-        private InfoBadgeState _badgeState;
-        private bool _badgeMuted;
 
         public ChatCell()
         {
@@ -120,6 +110,7 @@ namespace Unigram.Controls.Cells
         private Border PinnedIcon;
         private Border UnreadMentionsBadge;
         private InfoBadge UnreadBadge;
+        private Border FailedBadge;
         private Rectangle DropVisual;
         private TextBlock FailedLabel;
         private TextBlock UnreadMentionsLabel;
@@ -149,6 +140,7 @@ namespace Unigram.Controls.Cells
             PinnedIcon = GetTemplateChild(nameof(PinnedIcon)) as Border;
             UnreadMentionsBadge = GetTemplateChild(nameof(UnreadMentionsBadge)) as Border;
             UnreadBadge = GetTemplateChild(nameof(UnreadBadge)) as InfoBadge;
+            FailedBadge = GetTemplateChild(nameof(FailedBadge)) as Border;
             DropVisual = GetTemplateChild(nameof(DropVisual)) as Rectangle;
             FailedLabel = GetTemplateChild(nameof(FailedLabel)) as TextBlock;
             UnreadMentionsLabel = GetTemplateChild(nameof(UnreadMentionsLabel)) as TextBlock;
@@ -258,6 +250,7 @@ namespace Unigram.Controls.Cells
                 DraftLabel.Text = string.Empty;
                 TimeLabel.Text = string.Empty;
                 StateIcon.Glyph = string.Empty;
+                FailedBadge.Visibility = Visibility.Collapsed;
 
                 MutedIcon.Visibility = Visibility.Collapsed;
 
@@ -440,11 +433,7 @@ namespace Unigram.Controls.Cells
             BriefLabel.Text = UpdateBriefLabel(chat, position);
             TimeLabel.Text = UpdateTimeLabel(chat, position);
             StateIcon.Glyph = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, chat.DraftMessage, chat.LastMessage, chat.LastMessage?.SendingState);
-
-            if (chat.LastMessage?.SendingState is MessageSendingStateFailed && _badgeState != InfoBadgeState.Failed)
-            {
-                GoToState(_badgeState = InfoBadgeState.Failed, _badgeMuted);
-            }
+            FailedBadge.Visibility = chat.LastMessage?.SendingState is MessageSendingStateFailed ? Visibility.Visible : Visibility.Collapsed;
 
             UpdateMinithumbnail(chat, chat.DraftMessage == null ? chat.LastMessage : null);
         }
@@ -462,27 +451,8 @@ namespace Unigram.Controls.Cells
             }
 
             PinnedIcon.Visibility = chat.UnreadCount == 0 && !chat.IsMarkedAsUnread && (position?.IsPinned ?? false) ? Visibility.Visible : Visibility.Collapsed;
-            UnreadBadge.Visibility = chat.LastMessage?.SendingState is MessageSendingStateFailed ? Visibility.Visible : (chat.UnreadCount > 0 || chat.IsMarkedAsUnread) ? chat.UnreadMentionCount == 1 && chat.UnreadCount == 1 ? Visibility.Collapsed : Visibility.Visible : Visibility.Collapsed;
-            UnreadBadge.Value = chat.LastMessage?.SendingState is MessageSendingStateFailed ? -1 : chat.UnreadCount > 0 ? chat.UnreadCount : -1;
-
-            if (chat.LastMessage?.SendingState is MessageSendingStateFailed)
-            {
-                if (_badgeState != InfoBadgeState.Failed)
-                {
-                    GoToState(_badgeState = InfoBadgeState.Failed, _badgeMuted);
-                }
-            }
-            else if (chat.IsMarkedAsUnread)
-            {
-                if (_badgeState != InfoBadgeState.MarkedAsUnread)
-                {
-                    GoToState(_badgeState = InfoBadgeState.MarkedAsUnread, _badgeMuted);
-                }
-            }
-            else if (_badgeState != InfoBadgeState.Unread)
-            {
-                GoToState(_badgeState = InfoBadgeState.Unread, _badgeMuted);
-            }
+            UnreadBadge.Visibility = (chat.UnreadCount > 0 || chat.IsMarkedAsUnread) ? chat.UnreadMentionCount == 1 && chat.UnreadCount == 1 ? Visibility.Collapsed : Visibility.Visible : Visibility.Collapsed;
+            UnreadBadge.Value = chat.UnreadCount;
 
             //UpdateAutomation(_protoService, chat, chat.LastMessage);
         }
@@ -522,35 +492,8 @@ namespace Unigram.Controls.Cells
             }
 
             var muted = _protoService.Notifications.GetMutedFor(chat) > 0;
-            if (muted != _badgeMuted)
-            {
-                GoToState(_badgeState, _badgeMuted = muted);
-            }
-
+            VisualStateManager.GoToState(this, muted ? "Muted" : "Unmuted", false);
             MutedIcon.Visibility = muted ? Visibility.Visible : Visibility.Collapsed;
-        }
-
-        private void GoToState(InfoBadgeState state, bool muted)
-        {
-            VisualStateManager.GoToState(this, GetStateName(state, muted), false);
-        }
-
-        private string GetStateName(InfoBadgeState state, bool muted)
-        {
-            var stateValue = state switch
-            {
-                InfoBadgeState.Unread => "Unread",
-                InfoBadgeState.MarkedAsUnread => "MarkedAsUnread",
-                InfoBadgeState.Failed => "Failed",
-                _ => string.Empty
-            };
-
-            if (state == InfoBadgeState.Failed)
-            {
-                return stateValue;
-            }
-
-            return stateValue + (muted ? "Muted" : "Unmuted");
         }
 
         public void UpdateChatTitle(Chat chat)
@@ -1979,6 +1922,7 @@ namespace Unigram.Controls.Cells
             var PinnedIcon = Children[11];
             var UnreadMentionsBadge = Children[12];
             var UnreadBadge = Children[13];
+            var FailedBadge = Children[14];
 
             PhotoPanel.Measure(availableSize);
 
@@ -2002,8 +1946,9 @@ namespace Unigram.Controls.Cells
             PinnedIcon.Measure(availableSize);
             UnreadBadge.Measure(availableSize);
             UnreadMentionsBadge.Measure(availableSize);
+            FailedBadge.Measure(availableSize);
 
-            var line2RightPadding = Math.Max(PinnedIcon.DesiredSize.Width, UnreadBadge.DesiredSize.Width);
+            var line2RightPadding = Math.Max(Math.Max(PinnedIcon.DesiredSize.Width, UnreadBadge.DesiredSize.Width), FailedBadge.DesiredSize.Width);
 
             var line2Left = 8 + PhotoPanel.DesiredSize.Width + 12 + MinithumbnailPanel.DesiredSize.Width;
             var line2Right = availableSize.Width - 8 - line2RightPadding - UnreadMentionsBadge.DesiredSize.Width;
@@ -2041,6 +1986,7 @@ namespace Unigram.Controls.Cells
             var PinnedIcon = Children[11];
             var UnreadMentionsBadge = Children[12];
             var UnreadBadge = Children[13];
+            var FailedBadge = Children[14];
 
             var rect = new Rect();
             var min = 8 + PhotoPanel.DesiredSize.Width + 12;
@@ -2126,7 +2072,13 @@ namespace Unigram.Controls.Cells
             rect.Height = UnreadMentionsBadge.DesiredSize.Height;
             UnreadMentionsBadge.Arrange(rect);
 
-            var line2RightPadding = Math.Max(PinnedIcon.DesiredSize.Width, UnreadBadge.DesiredSize.Width);
+            rect.X = Math.Max(min, finalSize.Width - 8 - FailedBadge.DesiredSize.Width);
+            rect.Y = 36;
+            rect.Width = FailedBadge.DesiredSize.Width;
+            rect.Height = FailedBadge.DesiredSize.Height;
+            FailedBadge.Arrange(rect);
+
+            var line2RightPadding = Math.Max(Math.Max(PinnedIcon.DesiredSize.Width, UnreadBadge.DesiredSize.Width), FailedBadge.DesiredSize.Width);
 
             var line2Left = min + MinithumbnailPanel.DesiredSize.Width;
             var line2Right = finalSize.Width - 8 - line2RightPadding - UnreadMentionsBadge.DesiredSize.Width;
