@@ -686,43 +686,6 @@ namespace Unigram.Views
                     }
                 }
 
-                var action = grid.FindName("Action") as Border;
-                if (action != null)
-                {
-                    var button = action.Child as GlyphButton;
-                    button.Tag = message;
-
-                    if (message.ChatId == ViewModel.CacheService.Options.RepliesBotChatId)
-                    {
-                        action.Visibility = Visibility.Collapsed;
-                    }
-                    else if (message.IsSaved())
-                    {
-                        if (message.ForwardInfo?.Origin is MessageForwardOriginMessageImport or MessageForwardOriginHiddenUser)
-                        {
-                            action.Visibility = Visibility.Collapsed;
-                        }
-                        else
-                        {
-                            button.Glyph = Icons.ArrowRight;
-                            action.Visibility = Visibility.Visible;
-
-                            Automation.SetToolTip(button, Strings.Resources.AccDescrOpenChat);
-                        }
-                    }
-                    else if (message.IsShareable())
-                    {
-                        button.Glyph = Icons.Share;
-                        action.Visibility = Visibility.Visible;
-
-                        Automation.SetToolTip(button, Strings.Resources.ShareFile);
-                    }
-                    else
-                    {
-                        action.Visibility = Visibility.Collapsed;
-                    }
-                }
-
                 content = grid.FindName("Bubble") as FrameworkElement;
             }
             else if (content is StackPanel panel)

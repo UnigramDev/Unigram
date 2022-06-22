@@ -18,7 +18,16 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:MessageBubble">
-                    <StackPanel>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup>
                                 <VisualState x:Name="Normal" />
@@ -266,12 +275,31 @@
                         </Grid>
 
                         <controls:ReplyMarkupPanel x:Name="Markup"
-                                                   x:Load="False" />
+                                                   x:Load="False"
+                                                   Grid.Row="1" />
 
                         <local:ReactionsPanel x:Name="MediaReactions"
                                               HorizontalAlignment="Stretch"
-                                              Padding="0,2,0,0" />
-                    </StackPanel>
+                                              Padding="0,2,0,0"
+                                              Grid.Row="2" />
+
+                        <Border x:Name="Action"
+                                x:Load="False"
+                                Background="{ThemeResource MessageServiceBackgroundBrush}"
+                                VerticalAlignment="Bottom"
+                                CornerRadius="15"
+                                Margin="8,0,0,0"
+                                Grid.Column="1">
+                            <controls:GlyphButton x:Name="ActionButton"
+                                                  Foreground="{ThemeResource MessageServiceForegroundBrush}"
+                                                  Style="{StaticResource RoundGlyphButtonStyle}"
+                                                  FontSize="{StaticResource GlyphSmallFontSize}"
+                                                  Width="30"
+                                                  Height="30"
+                                                  CornerRadius="15" />
+                        </Border>
+
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

@@ -94,6 +94,9 @@ namespace Unigram.Controls.Messages
         private ReactionsPanel MediaReactions;
         private ReplyMarkupPanel Markup;
 
+        private Border Action;
+        private GlyphButton ActionButton;
+
         private bool _templateApplied;
 
         protected override void OnApplyTemplate()
@@ -388,6 +391,115 @@ namespace Unigram.Controls.Messages
             }
 
             Margin = new Thickness(0, message.IsFirst ? 4 : 2, 0, 0);
+        }
+
+        private void UpdateAction(MessageViewModel message)
+        {
+            var chat = message?.GetChat();
+            if (chat == null)
+            {
+                return;
+            }
+
+            var content = message.GeneratedContent ?? message.Content;
+            var light = content is MessageSticker or MessageDice or MessageVideoNote or MessageBigEmoji;
+
+            var info = message.InteractionInfo?.ReplyInfo;
+            if (info != null && light && message.IsChannelPost && message.CanGetMessageThread)
+            {
+                if (Action == null)
+                {
+                    Action = GetTemplateChild(nameof(Action)) as Border;
+                    ActionButton = GetTemplateChild(nameof(ActionButton)) as GlyphButton;
+
+                    ActionButton.Click += Action_Click;
+                }
+
+                ActionButton.Glyph = Icons.Comment;
+                Action.Visibility = Visibility.Visible;
+
+                Automation.SetToolTip(ActionButton, info.ReplyCount > 0
+                    ? Locale.Declension("Comments", info.ReplyCount)
+                    : Strings.Resources.LeaveAComment);
+            }
+            else if (message.ChatId == message.ProtoService.Options.RepliesBotChatId && Action != null)
+            {
+                Action.Visibility = Visibility.Collapsed;
+            }
+            else if (message.IsSaved())
+            {
+                if (message.ForwardInfo?.Origin is MessageForwardOriginMessageImport or MessageForwardOriginHiddenUser && Action != null)
+                {
+                    Action.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    if (Action == null)
+                    {
+                        Action = GetTemplateChild(nameof(Action)) as Border;
+                        ActionButton = GetTemplateChild(nameof(ActionButton)) as GlyphButton;
+
+                        ActionButton.Click += Action_Click;
+                    }
+
+                    ActionButton.Glyph = Icons.ArrowRight;
+                    Action.Visibility = Visibility.Visible;
+
+                    Automation.SetToolTip(ActionButton, Strings.Resources.AccDescrOpenChat);
+                }
+            }
+            else if (message.IsShareable())
+            {
+                if (Action == null)
+                {
+                    Action = GetTemplateChild(nameof(Action)) as Border;
+                    ActionButton = GetTemplateChild(nameof(ActionButton)) as GlyphButton;
+
+                    ActionButton.Click += Action_Click;
+                }
+
+                ActionButton.Glyph = Icons.Share;
+                Action.Visibility = Visibility.Visible;
+
+                Automation.SetToolTip(ActionButton, Strings.Resources.ShareFile);
+            }
+            else if (Action != null)
+            {
+                Action.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void Action_Click(object sender, RoutedEventArgs e)
+        {
+            var message = _message;
+            if (message == null)
+            {
+                return;
+            }
+
+            var content = message.GeneratedContent ?? message.Content;
+            var light = content is MessageSticker or MessageDice or MessageVideoNote or MessageBigEmoji;
+
+            var info = message.InteractionInfo?.ReplyInfo;
+            if (info != null && light && message.IsChannelPost && message.CanGetMessageThread)
+            {
+                message.Delegate.OpenThread(message);
+            }
+            else if (message.IsSaved())
+            {
+                if (message.ForwardInfo?.Origin is MessageForwardOriginUser or MessageForwardOriginChat)
+                {
+                    message.Delegate.OpenChat(message.ForwardInfo.FromChatId, message.ForwardInfo.FromMessageId);
+                }
+                else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel)
+                {
+                    message.Delegate.OpenChat(fromChannel.ChatId, fromChannel.MessageId);
+                }
+            }
+            else
+            {
+                message.Delegate.ForwardMessage(message);
+            }
         }
 
         public void UpdateMessageReply(MessageViewModel message)
@@ -807,6 +919,23 @@ namespace Unigram.Controls.Messages
                 return;
             }
 
+
+            Footer.UpdateMessageInteractionInfo(message);
+            UpdateMessageReactions(message, false);
+
+            UpdateAction(message);
+
+            var content = message.GeneratedContent ?? message.Content;
+            if (content is MessageSticker or MessageDice or MessageVideoNote or MessageBigEmoji)
+            {
+                if (Thread != null)
+                {
+                    Thread.Visibility = Visibility.Collapsed;
+                }
+
+                return;
+            }
+
             var info = message.InteractionInfo?.ReplyInfo;
             if (info == null || !message.IsChannelPost || !message.CanGetMessageThread)
             {
@@ -888,9 +1017,6 @@ namespace Unigram.Controls.Messages
 
                 Thread.Visibility = Visibility.Visible;
             }
-
-            Footer.UpdateMessageInteractionInfo(message);
-            UpdateMessageReactions(message, false);
         }
 
         public void UpdateMessageReactions(MessageViewModel message, bool? animate)
