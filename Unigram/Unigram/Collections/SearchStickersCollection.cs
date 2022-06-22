@@ -19,7 +19,7 @@ namespace Unigram.Collections
         private bool _first = true;
         private bool _hasMore = true;
 
-        private readonly List<int> _ids;
+        private readonly HashSet<int> _ids;
 
         public SearchStickersCollection(IProtoService protoService, ISettingsService settings, string query)
         {
@@ -27,7 +27,7 @@ namespace Unigram.Collections
             _settings = settings;
             _query = query;
 
-            _ids = new List<int>();
+            _ids = new HashSet<int>();
         }
 
         public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
