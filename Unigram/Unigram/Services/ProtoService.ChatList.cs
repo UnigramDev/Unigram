@@ -50,6 +50,9 @@ namespace Unigram.Services
             var count = offset + limit;
             var sorted = _chatList[index];
 
+#if MOCKUP
+            _haveFullChatList[index] = true;
+#else
             if (!_haveFullChatList[index] && count > sorted.Count)
             {
                 Monitor.Exit(_chatList);
@@ -68,6 +71,7 @@ namespace Unigram.Services
 
                 return null;
             }
+#endif
 
             // have enough chats in the chat list to answer request
             var result = new long[Math.Max(0, Math.Min(limit, sorted.Count - offset))];
