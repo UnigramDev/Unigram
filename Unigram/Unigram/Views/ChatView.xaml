@@ -269,26 +269,12 @@
 
         <DataTemplate x:Key="ChatFriendMessageTemplate">
             <messages:MessageSelector>
-                <Grid HorizontalAlignment="Left">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="38" />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    <controls:ProfilePicture x:Name="Photo"
-                                             Click="Participant_Click"
-                                             IsTabStop="False"
-                                             HorizontalAlignment="Left"
-                                             VerticalAlignment="Bottom"
-                                             Margin="0,0,0,0"
-                                             Width="30"
-                                             Height="30" />
-                    <messages:MessageBubble x:Name="Bubble"
-                                            Grid.Column="1">
-                        <FrameworkElement.Resources>
-                            <common:ThemeIncoming />
-                        </FrameworkElement.Resources>
-                    </messages:MessageBubble>
-                </Grid>
+                <messages:MessageBubble x:Name="Bubble"
+                                        HorizontalAlignment="Left">
+                    <FrameworkElement.Resources>
+                        <common:ThemeIncoming />
+                    </FrameworkElement.Resources>
+                </messages:MessageBubble>
             </messages:MessageSelector>
         </DataTemplate>
     </UserControl.Resources>
@@ -385,81 +371,81 @@
                 <HyperlinkButton x:Name="Profile"
                                  Click="Profile_Click"
                                  Style="{StaticResource EmptyHyperlinkButtonStyle}"
+                                 HorizontalContentAlignment="Stretch"
                                  Grid.Column="1">
-                    <HyperlinkButton.Content>
-                        <Grid VerticalAlignment="Center"
-                              Margin="0,-2,0,2"
-                              Grid.Column="1">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock x:Name="TypeIcon"
-                                       Text="&#xE716;"
-                                       FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                                       VerticalAlignment="Bottom"
-                                       FontSize="16"
-                                       Margin="0,0,4,1" />
+                    <Grid Background="Transparent"
+                          VerticalAlignment="Center"
+                          Margin="0,-2,0,2"
+                          Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock x:Name="TypeIcon"
+                                   Text="&#xE716;"
+                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                   Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                                   VerticalAlignment="Bottom"
+                                   FontSize="16"
+                                   Margin="0,0,4,1" />
 
-                            <Grid HorizontalAlignment="Left"
-                                  Grid.Column="1">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock x:Name="Title"
-                                           Foreground="{ThemeResource PageHeaderForegroundBrush}"
-                                           Style="{StaticResource BaseTextBlockStyle}"
-                                           FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                        <Grid HorizontalAlignment="Left"
+                              Grid.Column="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock x:Name="Title"
+                                       Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                                       Style="{StaticResource BaseTextBlockStyle}"
+                                       FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                       TextWrapping="NoWrap"
+                                       TextTrimming="CharacterEllipsis"
+                                       MaxLines="1" />
+
+                            <FontIcon x:Name="Verified"
+                                      Glyph="&#xE97A;"
+                                      FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                      Foreground="{ThemeResource ChatVerifiedBadgeBrush}"
+                                      VerticalAlignment="Bottom"
+                                      Visibility="Collapsed"
+                                      FontSize="16"
+                                      Margin="4,0,0,2"
+                                      Grid.Column="1" />
+                        </Grid>
+
+                        <Grid Visibility="{x:Bind ViewModel.LastSeen, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                              Grid.ColumnSpan="2"
+                              Grid.Row="1">
+                            <TextBlock x:Name="Subtitle"
+                                       Text="{x:Bind ViewModel.Subtitle, Mode=OneWay}"
+                                       Foreground="{ThemeResource PageHeaderDisabledBrush}"
+                                       Style="{StaticResource CaptionTextBlockStyle}"
+                                       TextWrapping="NoWrap"
+                                       TextTrimming="CharacterEllipsis" />
+                            <StackPanel x:Name="ChatActionPanel"
+                                        Orientation="Horizontal"
+                                        Visibility="Collapsed">
+                                <chats:ChatActionIndicator x:Name="ChatActionIndicator"
+                                                           Fill="{ThemeResource PageHeaderHighlightBrush}"
+                                                           VerticalAlignment="Bottom"
+                                                           Width="20"
+                                                           Height="20"
+                                                           Margin="0,-2,4,-2" />
+                                <TextBlock x:Name="ChatActionLabel"
                                            TextWrapping="NoWrap"
                                            TextTrimming="CharacterEllipsis"
-                                           MaxLines="1" />
-
-                                <FontIcon x:Name="Verified"
-                                          Glyph="&#xE97A;"
-                                          FontFamily="{StaticResource TelegramThemeFontFamily}"
-                                          Foreground="{ThemeResource ChatVerifiedBadgeBrush}"
-                                          VerticalAlignment="Bottom"
-                                          Visibility="Collapsed"
-                                          FontSize="16"
-                                          Margin="4,0,0,2"
-                                          Grid.Column="1" />
-                            </Grid>
-
-                            <Grid Visibility="{x:Bind ViewModel.LastSeen, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
-                                  Grid.ColumnSpan="2"
-                                  Grid.Row="1">
-                                <TextBlock x:Name="Subtitle"
-                                           Text="{x:Bind ViewModel.Subtitle, Mode=OneWay}"
-                                           Foreground="{ThemeResource PageHeaderDisabledBrush}"
+                                           Foreground="{ThemeResource PageHeaderHighlightBrush}"
+                                           FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                            Style="{StaticResource CaptionTextBlockStyle}"
-                                           TextWrapping="NoWrap"
-                                           TextTrimming="CharacterEllipsis" />
-                                <StackPanel x:Name="ChatActionPanel"
-                                            Orientation="Horizontal"
-                                            Visibility="Collapsed">
-                                    <chats:ChatActionIndicator x:Name="ChatActionIndicator"
-                                                               Fill="{ThemeResource PageHeaderHighlightBrush}"
-                                                               VerticalAlignment="Bottom"
-                                                               Width="20"
-                                                               Height="20"
-                                                               Margin="0,-2,4,-2" />
-                                    <TextBlock x:Name="ChatActionLabel"
-                                               TextWrapping="NoWrap"
-                                               TextTrimming="CharacterEllipsis"
-                                               Foreground="{ThemeResource PageHeaderHighlightBrush}"
-                                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                               Style="{StaticResource CaptionTextBlockStyle}"
-                                               VerticalAlignment="Top" />
-                                </StackPanel>
-                            </Grid>
+                                           VerticalAlignment="Top" />
+                            </StackPanel>
                         </Grid>
-                    </HyperlinkButton.Content>
+                    </Grid>
                 </HyperlinkButton>
 
                 <Grid x:Name="Options"

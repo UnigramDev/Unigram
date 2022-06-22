@@ -635,57 +635,6 @@ namespace Unigram.Views
 
             if (content is Grid grid)
             {
-                var photo = grid.FindName("Photo") as ProfilePicture;
-                if (photo != null)
-                {
-                    photo.Visibility = message.IsLast ? Visibility.Visible : Visibility.Collapsed;
-                    photo.Tag = message;
-
-                    if (message.IsSaved())
-                    {
-                        if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
-                        {
-                            var user = message.ProtoService.GetUser(fromUser.SenderUserId);
-                            if (user != null)
-                            {
-                                photo.SetUser(ViewModel.ProtoService, user, 30);
-                            }
-                        }
-                        else if (message.ForwardInfo?.Origin is MessageForwardOriginChat fromChat)
-                        {
-                            var chat = message.ProtoService.GetChat(fromChat.SenderChatId);
-                            if (chat != null)
-                            {
-                                photo.SetChat(ViewModel.ProtoService, chat, 30);
-                            }
-                        }
-                        else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel)
-                        {
-                            var chat = message.ProtoService.GetChat(fromChannel.ChatId);
-                            if (chat != null)
-                            {
-                                photo.SetChat(ViewModel.ProtoService, chat, 30);
-                            }
-                        }
-                        else if (message.ForwardInfo?.Origin is MessageForwardOriginMessageImport fromImport)
-                        {
-                            photo.Source = PlaceholderHelper.GetNameForUser(fromImport.SenderName, 30);
-                        }
-                        else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser fromHiddenUser)
-                        {
-                            photo.Source = PlaceholderHelper.GetNameForUser(fromHiddenUser.SenderName, 30);
-                        }
-                    }
-                    else if (message.ProtoService.TryGetUser(message.SenderId, out User senderUser))
-                    {
-                        photo.SetUser(ViewModel.ProtoService, senderUser, 30);
-                    }
-                    else if (message.ProtoService.TryGetChat(message.SenderId, out Chat senderChat))
-                    {
-                        photo.SetChat(ViewModel.ProtoService, senderChat, 30);
-                    }
-                }
-
                 content = grid.FindName("Bubble") as FrameworkElement;
             }
             else if (content is StackPanel panel)
@@ -846,7 +795,7 @@ namespace Unigram.Views
             {
                 return "FriendMessageTemplate";
             }
-            else if (message.IsSaved())
+            else if (message.IsSaved)
             {
                 return "ChatFriendMessageTemplate";
             }

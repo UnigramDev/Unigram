@@ -11,8 +11,6 @@
     <Style TargetType="local:MessageBubble">
         <Setter Property="Margin"
                 Value="{StaticResource MessageContentMargin}" />
-        <Setter Property="MaxWidth"
-                Value="{StaticResource MessageMaxWidth}" />
         <Setter Property="IsTabStop"
                 Value="False" />
         <Setter Property="Template">
@@ -25,6 +23,8 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition x:Name="PhotoColumn"
+                                              Width="Auto" />
                             <ColumnDefinition />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
@@ -135,10 +135,20 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
+                        <controls:ProfilePicture x:Name="Photo"
+                                                 x:Load="False"
+                                                 IsTabStop="False"
+                                                 HorizontalAlignment="Left"
+                                                 VerticalAlignment="Bottom"
+                                                 Width="30"
+                                                 Height="30" />
+
                         <Grid x:Name="ContentPanel"
                               Background="{ThemeResource MessageBackgroundBrush}"
+                              MaxWidth="{StaticResource MessageMaxWidth}"
                               MinHeight="30"
-                              Padding="0,4,0,0">
+                              Padding="0,4,0,0"
+                              Grid.Column="1">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition />
@@ -276,11 +286,13 @@
 
                         <controls:ReplyMarkupPanel x:Name="Markup"
                                                    x:Load="False"
+                                                   Grid.Column="1"
                                                    Grid.Row="1" />
 
                         <local:ReactionsPanel x:Name="MediaReactions"
                                               HorizontalAlignment="Stretch"
                                               Padding="0,2,0,0"
+                                              Grid.Column="1"
                                               Grid.Row="2" />
 
                         <Border x:Name="Action"
@@ -289,7 +301,7 @@
                                 VerticalAlignment="Bottom"
                                 CornerRadius="15"
                                 Margin="8,0,0,0"
-                                Grid.Column="1">
+                                Grid.Column="2">
                             <controls:GlyphButton x:Name="ActionButton"
                                                   Foreground="{ThemeResource MessageServiceForegroundBrush}"
                                                   Style="{StaticResource RoundGlyphButtonStyle}"

@@ -22,6 +22,7 @@ using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
+using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Messages
@@ -31,6 +32,7 @@ namespace Unigram.Controls.Messages
         private MessageViewModel _message;
 
         private string _query;
+        private long? _photoId;
 
         private bool _ignoreSizeChanged = true;
 
@@ -67,6 +69,8 @@ namespace Unigram.Controls.Messages
 
         #region InitializeComponent
 
+        private ColumnDefinition PhotoColumn;
+
         private Grid ContentPanel;
         private Grid Header;
         private TextBlock HeaderLabel;
@@ -79,6 +83,8 @@ namespace Unigram.Controls.Messages
         private ReactionsPanel Reactions;
 
         // Lazy loaded
+        private ProfilePicture Photo;
+
         private Border BackgroundPanel;
         private Border CrossPanel;
 
@@ -101,6 +107,7 @@ namespace Unigram.Controls.Messages
 
         protected override void OnApplyTemplate()
         {
+            PhotoColumn = GetTemplateChild(nameof(PhotoColumn)) as ColumnDefinition;
             ContentPanel = GetTemplateChild(nameof(ContentPanel)) as Grid;
             Header = GetTemplateChild(nameof(Header)) as Grid;
             HeaderLabel = GetTemplateChild(nameof(HeaderLabel)) as TextBlock;
@@ -161,6 +168,15 @@ namespace Unigram.Controls.Messages
                 UpdateMessageReplyMarkup(message);
 
                 UpdateAttach(message);
+
+                if (PhotoColumn.Width.IsAuto && message.HasSenderPhoto)
+                {
+                    PhotoColumn.Width = new GridLength(38, GridUnitType.Pixel);
+                }
+                else if (PhotoColumn.Width.IsAbsolute && !message.HasSenderPhoto)
+                {
+                    PhotoColumn.Width = new GridLength(0, GridUnitType.Auto);
+                }
             }
             else
             {
@@ -192,7 +208,7 @@ namespace Unigram.Controls.Messages
             var title = string.Empty;
             var senderBot = false;
 
-            if (message.IsSaved())
+            if (message.IsSaved)
             {
                 title = message.ProtoService.GetTitle(message.ForwardInfo);
             }
@@ -391,6 +407,121 @@ namespace Unigram.Controls.Messages
             }
 
             Margin = new Thickness(0, message.IsFirst ? 4 : 2, 0, 0);
+
+            UpdatePhoto(message);
+        }
+
+        private void UpdatePhoto(MessageViewModel message)
+        {
+            if (message.HasSenderPhoto)
+            {
+                if (message.IsLast)
+                {
+                    if (message.Id != _photoId || Photo == null || Photo.Visibility == Visibility.Collapsed)
+                    {
+                        if (Photo == null)
+                        {
+                            Photo = GetTemplateChild(nameof(Photo)) as ProfilePicture;
+                            Photo.Click += Photo_Click;
+                        }
+
+                        if (message.IsSaved)
+                        {
+                            if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser && message.ProtoService.TryGetUser(fromUser.SenderUserId, out User fromUserUser))
+                            {
+                                Photo.SetUser(message.ProtoService, fromUserUser, 30);
+                            }
+                            else if (message.ForwardInfo?.Origin is MessageForwardOriginChat fromChat && message.ProtoService.TryGetChat(fromChat.SenderChatId, out Chat fromChatChat))
+                            {
+                                Photo.SetChat(message.ProtoService, fromChatChat, 30);
+                            }
+                            else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel && message.ProtoService.TryGetChat(fromChannel.ChatId, out Chat fromChannelChat))
+                            {
+                                Photo.SetChat(message.ProtoService, fromChannelChat, 30);
+                            }
+                            else if (message.ForwardInfo?.Origin is MessageForwardOriginMessageImport fromImport)
+                            {
+                                Photo.Source = PlaceholderHelper.GetNameForUser(fromImport.SenderName, 30);
+                            }
+                            else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser fromHiddenUser)
+                            {
+                                Photo.Source = PlaceholderHelper.GetNameForUser(fromHiddenUser.SenderName, 30);
+                            }
+                        }
+                        else if (message.ProtoService.TryGetUser(message.SenderId, out User senderUser))
+                        {
+                            Photo.SetUser(message.ProtoService, senderUser, 30);
+                        }
+                        else if (message.ProtoService.TryGetChat(message.SenderId, out Chat senderChat))
+                        {
+                            Photo.SetChat(message.ProtoService, senderChat, 30);
+                        }
+
+                        _photoId = message.Id;
+                        Photo.Visibility = Visibility.Visible;
+                    }
+                }
+                else if (Photo != null)
+                {
+                    _photoId = null;
+
+                    Photo.Visibility = Visibility.Collapsed;
+                    Photo.Clear();
+                }
+            }
+            else if (Photo != null)
+            {
+                _photoId = null;
+
+                XamlMarkupHelper.UnloadObject(Photo);
+                Photo = null;
+            }
+        }
+
+        private void Photo_Click(object sender, RoutedEventArgs e)
+        {
+            var message = _message;
+            if (message == null)
+            {
+                return;
+            }
+
+            if (message.IsSaved)
+            {
+                if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
+                {
+                    message.Delegate.OpenUser(fromUser.SenderUserId);
+                }
+                else if (message.ForwardInfo?.Origin is MessageForwardOriginChat fromChat)
+                {
+                    message.Delegate.OpenChat(fromChat.SenderChatId, true);
+                }
+                else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel)
+                {
+                    // TODO: verify if this is sufficient
+                    message.Delegate.OpenChat(fromChannel.ChatId);
+                }
+                else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser)
+                {
+                    Window.Current.ShowTeachingTip(sender as FrameworkElement, Strings.Resources.HidAccount);
+                    //await MessagePopup.ShowAsync(Strings.Resources.HidAccount, Strings.Resources.AppName, Strings.Resources.OK);
+                }
+            }
+            else if (message.ProtoService.TryGetChat(message.SenderId, out Chat senderChat))
+            {
+                if (senderChat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
+                {
+                    message.Delegate.OpenChat(senderChat.Id);
+                }
+                else
+                {
+                    message.Delegate.OpenChat(senderChat.Id, true);
+                }
+            }
+            else if (message.SenderId is MessageSenderUser senderUser)
+            {
+                message.Delegate.OpenUser(senderUser.UserId);
+            }
         }
 
         private void UpdateAction(MessageViewModel message)
@@ -426,7 +557,7 @@ namespace Unigram.Controls.Messages
             {
                 Action.Visibility = Visibility.Collapsed;
             }
-            else if (message.IsSaved())
+            else if (message.IsSaved)
             {
                 if (message.ForwardInfo?.Origin is MessageForwardOriginMessageImport or MessageForwardOriginHiddenUser && Action != null)
                 {
@@ -448,7 +579,7 @@ namespace Unigram.Controls.Messages
                     Automation.SetToolTip(ActionButton, Strings.Resources.AccDescrOpenChat);
                 }
             }
-            else if (message.IsShareable())
+            else if (message.IsShareable)
             {
                 if (Action == null)
                 {
@@ -485,7 +616,7 @@ namespace Unigram.Controls.Messages
             {
                 message.Delegate.OpenThread(message);
             }
-            else if (message.IsSaved())
+            else if (message.IsSaved)
             {
                 if (message.ForwardInfo?.Origin is MessageForwardOriginUser or MessageForwardOriginChat)
                 {
@@ -547,7 +678,7 @@ namespace Unigram.Controls.Messages
 
             if (!light && message.IsFirst && !message.IsOutgoing && !message.IsChannelPost && (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup))
             {
-                if (message.IsSaved())
+                if (message.IsSaved)
                 {
                     var title = string.Empty;
                     var foreground = default(SolidColorBrush);
@@ -621,7 +752,7 @@ namespace Unigram.Controls.Messages
                 paragraph.Inlines.Add(hyperlink);
                 shown = false;
             }
-            else if (!light && message.IsFirst && message.IsSaved())
+            else if (!light && message.IsFirst && message.IsSaved)
             {
                 var title = string.Empty;
                 var foreground = default(SolidColorBrush);
@@ -680,7 +811,7 @@ namespace Unigram.Controls.Messages
 
             var forward = false;
 
-            if (message.ForwardInfo != null && !message.IsSaved())
+            if (message.ForwardInfo != null && !message.IsSaved)
             {
                 if (paragraph.Inlines.Count > 0)
                 {
@@ -1079,11 +1210,11 @@ namespace Unigram.Controls.Messages
                 {
                     top = 4;
                 }
-                if (message.IsFirst && message.IsSaved())
+                if (message.IsFirst && message.IsSaved)
                 {
                     top = 4;
                 }
-                if ((message.ForwardInfo != null && !message.IsSaved()) || message.ViaBotUserId != 0 || (message.ReplyToMessageId != 0 && message.ReplyToMessageState != ReplyToMessageState.Hidden) || message.IsChannelPost)
+                if ((message.ForwardInfo != null && !message.IsSaved) || message.ViaBotUserId != 0 || (message.ReplyToMessageId != 0 && message.ReplyToMessageState != ReplyToMessageState.Hidden) || message.IsChannelPost)
                 {
                     top = 4;
                 }
@@ -2675,19 +2806,31 @@ namespace Unigram.Controls.Messages
                 Footer.Measure(availableSize);
             }
 
+            var additional = 0d;
+
+            if (PhotoColumn.Width.IsAbsolute)
+            {
+                additional += 38;
+            }
+
+            if (Action != null)
+            {
+                additional += 38;
+            }
+
             width = Math.Max(Footer.DesiredSize.Width + /*margin left*/ 8 + /*padding right*/ 6 + /*margin right*/ 6, Math.Max(width, 96));
 
-            if (width > availableWidth || height > availableHeight)
+            if (width > availableWidth + additional || height > availableHeight)
             {
                 var ratioX = availableWidth / width;
                 var ratioY = availableHeight / height;
                 var ratio = Math.Min(ratioX, ratioY);
 
-                return base.MeasureOverride(new Size(Math.Max(96, width * ratio), availableSize.Height));
+                return base.MeasureOverride(new Size(Math.Max(96, width * ratio) + additional, availableSize.Height));
             }
             else
             {
-                return base.MeasureOverride(new Size(Math.Max(96, width), availableSize.Height));
+                return base.MeasureOverride(new Size(Math.Max(96, width) + additional, availableSize.Height));
             }
         }
 

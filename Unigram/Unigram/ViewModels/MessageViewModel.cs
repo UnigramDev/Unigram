@@ -56,7 +56,10 @@ namespace Unigram.ViewModels
         public Photo GetPhoto() => _message.GetPhoto();
 
         public bool IsService() => _message.IsService();
-        public bool IsSaved() => _message.IsSaved(_protoService.Options.MyId);
+
+        private bool? _isSaved;
+        public bool IsSaved => _isSaved ??= _message.IsSaved(_protoService.Options.MyId);
+
         public bool IsSecret() => _message.IsSecret();
 
         public MessageViewModel ReplyToMessage { get; set; }
@@ -107,7 +110,10 @@ namespace Unigram.ViewModels
             _message = message;
         }
 
-        public bool IsShareable()
+        private bool? _isShareable;
+        public bool IsShareable => _isShareable ??= GetIsShareable();
+
+        private bool GetIsShareable()
         {
             if (SchedulingState != null)
             {
@@ -117,7 +123,7 @@ namespace Unigram.ViewModels
             //{
             //    return false;
             //}
-            else if (IsSaved())
+            else if (IsSaved)
             {
                 return true;
             }
@@ -167,6 +173,39 @@ namespace Unigram.ViewModels
 
             return false;
         }
+
+        private bool? _hasSenderPhoto;
+        public bool HasSenderPhoto => _hasSenderPhoto ??= GetHasSenderPhoto();
+
+        private bool GetHasSenderPhoto()
+        {
+            if (IsService())
+            {
+                return false;
+            }
+
+            if (IsChannelPost)
+            {
+                return false;
+            }
+            else if (IsSaved)
+            {
+                return true;
+            }
+            else if (IsOutgoing)
+            {
+                return false;
+            }
+
+            var chat = GetChat();
+            if (chat != null && (chat.Type is ChatTypeSupergroup || chat.Type is ChatTypeBasicGroup))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
 
         public int AnimationHash()
         {

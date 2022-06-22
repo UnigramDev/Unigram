@@ -238,7 +238,7 @@ namespace Unigram.Controls.Messages
 
         private string UpdateStateIcon(MessageViewModel message)
         {
-            if (message.IsOutgoing && !message.IsChannelPost && !message.IsSaved())
+            if (message.IsOutgoing && !message.IsChannelPost && !message.IsSaved)
             {
                 var maxId = 0L;
                 var messageHash = message.ChatId ^ message.Id;
