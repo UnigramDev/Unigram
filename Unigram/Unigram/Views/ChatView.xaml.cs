@@ -2025,14 +2025,14 @@ namespace Unigram.Views
                 flyout.Items.RemoveAt(flyout.Items.Count - 1);
             }
 
-            if (element is MessageBubble bubble && selected.Count == 0 && args.TryGetPosition(Window.Current.Content, out Point absolute))
+            if (element is MessageBubble bubble && selected.Count == 0)
             {
                 flyout.Opened += async (s, args) =>
                 {
                     var response = await message.ProtoService.GetAvailableReactionsAsync(message.Get());
                     if (response.Count > 0 && flyout.IsOpen)
                     {
-                        MenuFlyoutReactions.ShowAt(response, message, bubble, flyout, absolute);
+                        MenuFlyoutReactions.ShowAt(response, message, bubble, flyout);
                     }
                 };
             }

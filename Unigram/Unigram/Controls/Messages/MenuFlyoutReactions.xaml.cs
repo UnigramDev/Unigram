@@ -24,6 +24,7 @@ namespace Unigram.Controls.Messages
     public sealed partial class MenuFlyoutReactions : UserControl
     {
         private readonly IList<Reaction> _reactions;
+        private readonly bool _canUnlockMore;
 
         private readonly MessageViewModel _message;
         private readonly MessageBubble _bubble;
@@ -34,14 +35,15 @@ namespace Unigram.Controls.Messages
 
         private bool _expanded;
 
-        public static MenuFlyoutReactions ShowAt(IList<Reaction> reactions, MessageViewModel message, MessageBubble bubble, MenuFlyout flyout, Point absolute)
+        public static MenuFlyoutReactions ShowAt(IList<Reaction> reactions, MessageViewModel message, MessageBubble bubble, MenuFlyout flyout)
         {
-            return new MenuFlyoutReactions(reactions, message, bubble, flyout, absolute);
+            return new MenuFlyoutReactions(reactions, message, bubble, flyout);
         }
 
-        private MenuFlyoutReactions(IList<Reaction> reactions, MessageViewModel message, MessageBubble bubble, MenuFlyout flyout, Point absolute)
+        private MenuFlyoutReactions(IList<Reaction> reactions, MessageViewModel message, MessageBubble bubble, MenuFlyout flyout)
         {
-            _reactions = reactions;
+            _reactions = message.ProtoService.IsPremium ? reactions : reactions.Where(x => !x.IsPremium).ToList();
+            _canUnlockMore = message.ProtoService.IsPremiumAvailable && !message.ProtoService.IsPremium && reactions.Any(x => x.IsPremium);
             _message = message;
             _bubble = bubble;
             _flyout = flyout;
@@ -57,14 +59,14 @@ namespace Unigram.Controls.Messages
             var transform = presenter.TransformToVisual(Window.Current.Content);
             var position = transform.TransformPoint(new Point());
 
-            var relativeFirst = Math.Abs(absolute.Y - position.Y);
-            var relativeLast = Math.Abs(absolute.Y - (position.Y + presenter.ActualHeight));
+            //var relativeFirst = Math.Abs(absolute.Y - position.Y);
+            //var relativeLast = Math.Abs(absolute.Y - (position.Y + presenter.ActualHeight));
             var upsideDown = false; //relativeLast < relativeFirst;
 
-            var count = Math.Min(reactions.Count, 6);
+            var count = Math.Min(_reactions.Count, 6);
 
             var actualWidth = presenter.ActualSize.X + 18 + 12 + 18;
-            var width = 8 + count * 34 - (reactions.Count > 6 ? 6 : 2);
+            var width = 8 + count * 34 - (_reactions.Count > 6 ? 6 : 2);
 
             var padding = actualWidth - width;
 
@@ -72,7 +74,7 @@ namespace Unigram.Controls.Messages
             Pill.Width = width;
             ScrollingHost.Width = width;
 
-            Expand.Visibility = reactions.Count > 6 ? Visibility.Visible : Visibility.Collapsed;
+            Expand.Visibility = _reactions.Count > 6 ? Visibility.Visible : Visibility.Collapsed;
 
             BubbleMedium.VerticalAlignment = upsideDown ? VerticalAlignment.Top : VerticalAlignment.Bottom;
             BubbleMedium.Margin = new Thickness(0, upsideDown ? -6 : 0, 18, upsideDown ? 0 : -6);
@@ -83,7 +85,7 @@ namespace Unigram.Controls.Messages
             LayoutRoot.Padding = new Thickness(16, upsideDown ? 32 : 16, 16, upsideDown ? 16 : 32);
 
             var offset = 0;
-            var visible = reactions.Count > 6 ? 5 : 6; //Math.Ceiling((width - 8) / 34);
+            var visible = _reactions.Count > 6 ? 5 : 6; //Math.Ceiling((width - 8) / 34);
 
             static void DownloadFile(MessageViewModel message, File file)
             {
@@ -93,7 +95,7 @@ namespace Unigram.Controls.Messages
                 }
             }
 
-            foreach (var item in reactions)
+            foreach (var item in _reactions)
             {
                 // Pre-download additional assets
                 DownloadFile(message, item.CenterAnimation?.StickerValue);
