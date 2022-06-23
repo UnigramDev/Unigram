@@ -180,10 +180,11 @@ namespace Unigram.Entities
 
             foreach (StorageFile file in items.OfType<StorageFile>())
             {
-                if (file.ContentType.Equals("image/jpeg", StringComparison.OrdinalIgnoreCase) ||
-                    file.ContentType.Equals("image/png", StringComparison.OrdinalIgnoreCase) ||
-                    file.ContentType.Equals("image/bmp", StringComparison.OrdinalIgnoreCase) ||
-                    file.ContentType.Equals("image/gif", StringComparison.OrdinalIgnoreCase))
+                if (file.FileType.Equals(".jpeg", StringComparison.OrdinalIgnoreCase) ||
+                    file.FileType.Equals(".jpg", StringComparison.OrdinalIgnoreCase) ||
+                    file.FileType.Equals(".png", StringComparison.OrdinalIgnoreCase) ||
+                    file.FileType.Equals(".bmp", StringComparison.OrdinalIgnoreCase) ||
+                    file.FileType.Equals(".gif", StringComparison.OrdinalIgnoreCase))
                 {
                     var photo = await StoragePhoto.CreateAsync(file);
                     if (photo != null)
@@ -195,7 +196,7 @@ namespace Unigram.Entities
                         results.Add(new StorageDocument(file, await file.GetBasicPropertiesAsync()));
                     }
                 }
-                else if (file.ContentType == "video/mp4")
+                else if (file.FileType.Equals(".mp4", StringComparison.OrdinalIgnoreCase))
                 {
                     var video = await StorageVideo.CreateAsync(file);
                     if (video != null)
