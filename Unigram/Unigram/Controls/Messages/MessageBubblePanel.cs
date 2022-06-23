@@ -143,7 +143,7 @@ namespace Unigram.Controls.Messages
                     }
                     else
                     {
-                        marginBottom = footer.DesiredSize.Height;
+                        marginBottom = 18;
                     }
                 }
             }

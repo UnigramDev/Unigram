@@ -222,11 +222,7 @@
                                                OpticalMarginAlignment="None"
                                                Margin="10,0,10,6"
                                                Grid.Column="1"
-                                               Grid.Row="2">
-                                    <Paragraph>
-                                        <Span x:Name="Span" />
-                                    </Paragraph>
-                                </RichTextBlock>
+                                               Grid.Row="2" />
 
                                 <Border x:Name="Media"
                                         Grid.Column="1"
