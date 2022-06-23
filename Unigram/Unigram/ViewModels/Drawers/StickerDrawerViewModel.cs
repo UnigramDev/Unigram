@@ -212,7 +212,7 @@ namespace Unigram.ViewModels.Drawers
             }
 
             _updated = false;
-            Update(null);
+            BeginOnUIThread(() => Update(null));
         }
 
         public StickerSetCollection SavedStickers { get; private set; }
@@ -335,8 +335,8 @@ namespace Unigram.ViewModels.Drawers
                     i--;
                 }
 
-                _favoriteSet.Update(favorite);
-                _recentSet.Update(recent);
+                _favoriteSet.Update(favorite.StickersValue);
+                _recentSet.Update(recent.StickersValue);
 
                 var stickers = new List<StickerSetViewModel>();
                 if (_favoriteSet.Stickers.Count > 0)
@@ -350,20 +350,6 @@ namespace Unigram.ViewModels.Drawers
                 if (_groupSet.Stickers.Count > 0 && _groupSet.ChatId == chat?.Id)
                 {
                     stickers.Add(_groupSet);
-                }
-
-                if (CacheService.IsPremium)
-                {
-                    var result4 = await ProtoService.SendAsync(new GetPremiumStickers());
-                    if (result4 is Stickers premium)
-                    {
-                        _premiumSet.Update(premium);
-
-                        if (_premiumSet.Stickers.Count > 0)
-                        {
-                            stickers.Add(_premiumSet);
-                        }
-                    }
                 }
 
                 long hash = 0;
@@ -430,7 +416,7 @@ namespace Unigram.ViewModels.Drawers
 
         public override void Update(StickerSet set, bool reset = false) { }
 
-        public override void Update(Stickers stickers, bool raise = false) { }
+        public override void Update(IEnumerable<Sticker> stickers, bool raise = false) { }
 
         public long ChatId { get; private set; }
     }
@@ -494,15 +480,15 @@ namespace Unigram.ViewModels.Drawers
             }
         }
 
-        public virtual void Update(Stickers stickers, bool raise = false)
+        public virtual void Update(IEnumerable<Sticker> stickers, bool raise = false)
         {
             if (raise)
             {
-                Stickers.ReplaceWith(stickers.StickersValue.Select(x => new StickerViewModel(_protoService, _aggregator, x)));
+                Stickers.ReplaceWith(stickers.Select(x => new StickerViewModel(_protoService, _aggregator, x)));
             }
             else
             {
-                Stickers = new MvxObservableCollection<StickerViewModel>(stickers.StickersValue.Select(x => new StickerViewModel(_protoService, _aggregator, x)));
+                Stickers = new MvxObservableCollection<StickerViewModel>(stickers.Select(x => new StickerViewModel(_protoService, _aggregator, x)));
             }
         }
 
