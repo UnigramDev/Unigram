@@ -660,7 +660,15 @@ namespace Unigram.ViewModels
         Study,
         Trade,
         Travel,
-        Work
+        Work,
+        Book,
+        Money,
+        Light,
+        Like,
+        Note,
+        Palette,
+        Airplane,
+        Setup
     }
 
     public class ChatFilterCollection : ObservableCollection<ChatFilterViewModel>, IKeyIndexMapping

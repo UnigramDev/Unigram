@@ -667,12 +667,20 @@
     {
       "selection": [
         {
+          "order": 646,
+          "id": 194,
+          "name": "ic_fluent_chat_20_regular",
+          "prevSize": 32,
+          "code": 59839,
+          "tempChar": ""
+        },
+        {
           "order": 624,
           "id": 193,
           "name": "ic_fluent_person_20_filled",
           "prevSize": 32,
           "code": 59832,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 625,
@@ -680,7 +688,7 @@
           "name": "ic_fluent_people_20_filled",
           "prevSize": 32,
           "code": 59833,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 626,
@@ -688,7 +696,7 @@
           "name": "ic_fluent_chat_20_filled1",
           "prevSize": 32,
           "code": 59834,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 627,
@@ -696,7 +704,7 @@
           "name": "ic_fluent_pin_20_filled",
           "prevSize": 32,
           "code": 59835,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 628,
@@ -704,7 +712,7 @@
           "name": "ic_fluent_link_20_filled",
           "prevSize": 32,
           "code": 59836,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 629,
@@ -712,7 +720,7 @@
           "name": "ic_fluent_folder_20_filled",
           "prevSize": 32,
           "code": 59837,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 609,
@@ -720,7 +728,7 @@
           "name": "ic_fluent_person_available_20_regular",
           "prevSize": 32,
           "code": 59816,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 608,
@@ -728,7 +736,7 @@
           "name": "ic_fluent_person_circle_20_regular",
           "prevSize": 32,
           "code": 59817,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 607,
@@ -736,7 +744,7 @@
           "name": "ic_fluent_eye_off_20_regular",
           "prevSize": 32,
           "code": 59814,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 606,
@@ -744,7 +752,7 @@
           "name": "ic_fluent_eye_20_regular",
           "prevSize": 32,
           "code": 59815,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 605,
@@ -752,7 +760,7 @@
           "name": "ic_fluent_speaker_off_20_regular",
           "prevSize": 32,
           "code": 59813,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 604,
@@ -760,7 +768,7 @@
           "name": "ic_fluent_alert_on_20_regular",
           "prevSize": 32,
           "code": 59812,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 598,
@@ -768,7 +776,7 @@
           "name": "ic_fluent_alert_snooze_20_regular",
           "prevSize": 32,
           "code": 59804,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 597,
@@ -776,7 +784,7 @@
           "name": "ic_fluent_music_note_2_20_regular",
           "prevSize": 32,
           "code": 59805,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 596,
@@ -784,7 +792,7 @@
           "name": "ic_fluent_music_note_off_2_20_regular",
           "prevSize": 32,
           "code": 59806,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 594,
@@ -792,7 +800,7 @@
           "name": "ic_fluent_arrow_exit_20_regular",
           "prevSize": 32,
           "code": 59801,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 595,
@@ -800,7 +808,7 @@
           "name": "ic_fluent_arrow_enter_20_regular",
           "prevSize": 32,
           "code": 59803,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 593,
@@ -808,7 +816,7 @@
           "name": "ic_fluent_heart_12_filled",
           "prevSize": 32,
           "code": 59800,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 588,
@@ -816,7 +824,7 @@
           "name": "ic_fluent_compose_20_regular",
           "prevSize": 32,
           "code": 59796,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 587,
@@ -824,7 +832,7 @@
           "name": "ic_fluent_chat_multiple_20_regular",
           "prevSize": 32,
           "code": 59794,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 534,
@@ -832,7 +840,7 @@
           "name": "ic_fluent_live_20_regular",
           "prevSize": 32,
           "code": 59789,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 533,
@@ -840,7 +848,7 @@
           "name": "ic_fluent_dialpad_20_regular",
           "prevSize": 32,
           "code": 59788,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 532,
@@ -848,7 +856,7 @@
           "name": "ic_fluent_hand_right_20_regular",
           "prevSize": 32,
           "code": 59787,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 531,
@@ -856,7 +864,7 @@
           "name": "ic_fluent_folder_add_20_regular",
           "prevSize": 32,
           "code": 59786,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 530,
@@ -864,7 +872,7 @@
           "name": "ic_fluent_arrow_trending_20_regular",
           "prevSize": 32,
           "code": 59785,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 529,
@@ -872,7 +880,7 @@
           "name": "ic_fluent_subtract_circle_20_filled",
           "prevSize": 32,
           "code": 59784,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 528,
@@ -880,7 +888,7 @@
           "name": "ic_fluent_heart_20_regular1",
           "prevSize": 32,
           "code": 59783,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 526,
@@ -888,7 +896,7 @@
           "name": "ic_fluent_heart_16_filled",
           "prevSize": 32,
           "code": 59781,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 527,
@@ -896,7 +904,7 @@
           "name": "ic_fluent_mention_16_regular",
           "prevSize": 32,
           "code": 59782,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 522,
@@ -904,7 +912,7 @@
           "name": "ic_fluent_bot_20_filled1",
           "prevSize": 32,
           "code": 59777,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 523,
@@ -912,7 +920,7 @@
           "name": "ic_fluent_megaphone_16_filled",
           "prevSize": 32,
           "code": 59778,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 524,
@@ -920,7 +928,7 @@
           "name": "ic_fluent_people_16_filled",
           "prevSize": 32,
           "code": 59779,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 525,
@@ -928,7 +936,7 @@
           "name": "ic_fluent_lock_closed_16_filled",
           "prevSize": 32,
           "code": 59780,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 520,
@@ -936,7 +944,7 @@
           "name": "ic_fluent_window_new_20_regular",
           "prevSize": 32,
           "code": 59775,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 519,
@@ -944,7 +952,7 @@
           "name": "ic_fluent_checkmark_circle_20_regular",
           "prevSize": 32,
           "code": 59774,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 517,
@@ -952,7 +960,7 @@
           "name": "ic_fluent_tab_in_private_20_regular",
           "prevSize": 32,
           "code": 59772,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 518,
@@ -960,7 +968,7 @@
           "name": "ic_fluent_translate_20_regular",
           "prevSize": 32,
           "code": 59773,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 516,
@@ -968,7 +976,7 @@
           "name": "Pin",
           "prevSize": 32,
           "code": 59771,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 515,
@@ -976,7 +984,7 @@
           "name": "Verified",
           "prevSize": 32,
           "code": 59770,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 514,
@@ -984,7 +992,7 @@
           "name": "Speaker-Mute",
           "prevSize": 32,
           "code": 59769,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 0,
@@ -1000,7 +1008,7 @@
           "name": "ic_fluent_paint_brush_20_regular",
           "prevSize": 32,
           "code": 59662,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 495,
@@ -1008,7 +1016,7 @@
           "name": "ic_fluent_top_speed_20_regular",
           "prevSize": 32,
           "code": 59661,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 490,
@@ -1016,7 +1024,7 @@
           "name": "ic_fluent_checkmark_20_regular",
           "prevSize": 32,
           "code": 59643,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 488,
@@ -1024,7 +1032,7 @@
           "name": "ic_fluent_zoom_out_20_regular",
           "prevSize": 32,
           "code": 59754,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 487,
@@ -1032,7 +1040,7 @@
           "name": "ic_fluent_zoom_in_20_regular",
           "prevSize": 32,
           "code": 59753,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 486,
@@ -1040,7 +1048,7 @@
           "name": "ic_fluent_stack_20_regular",
           "prevSize": 32,
           "code": 59660,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 482,
@@ -1048,7 +1056,7 @@
           "name": "ic_fluent_dock_panel_right_20_filled",
           "prevSize": 32,
           "code": 59751,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 483,
@@ -1056,7 +1064,7 @@
           "name": "ic_fluent_dock_panel_right_20_regular",
           "prevSize": 32,
           "code": 59752,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 481,
@@ -1064,7 +1072,7 @@
           "name": "ic_fluent_arrow_clockwise_20_regular",
           "prevSize": 32,
           "code": 59180,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 477,
@@ -1072,7 +1080,7 @@
           "name": "ic_fluent_arrow_minimize_20_regular",
           "prevSize": 32,
           "code": 59749,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 478,
@@ -1080,7 +1088,7 @@
           "name": "ic_fluent_arrow_maximize_20_regular",
           "prevSize": 32,
           "code": 59750,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 476,
@@ -1088,7 +1096,7 @@
           "name": "ic_fluent_video_off_20_filled",
           "prevSize": 32,
           "code": 59747,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 475,
@@ -1096,7 +1104,7 @@
           "name": "ic_fluent_video_20_filled",
           "prevSize": 32,
           "code": 59748,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 473,
@@ -1104,7 +1112,7 @@
           "name": "ic_fluent_share_screen_stop_20_filled",
           "prevSize": 32,
           "code": 59733,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 474,
@@ -1112,7 +1120,7 @@
           "name": "ic_fluent_share_screen_start_20_filled",
           "prevSize": 32,
           "code": 59734,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 417,
@@ -1120,7 +1128,7 @@
           "name": "uniE930",
           "prevSize": 32,
           "code": 59696,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 416,
@@ -1128,7 +1136,7 @@
           "name": "uniE92E",
           "prevSize": 32,
           "code": 59694,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 415,
@@ -1136,7 +1144,7 @@
           "name": "uniE92F",
           "prevSize": 32,
           "code": 59695,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 412,
@@ -1144,7 +1152,7 @@
           "name": "uniE910",
           "prevSize": 32,
           "code": 59664,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 411,
@@ -1152,7 +1160,7 @@
           "name": "uniE915",
           "prevSize": 32,
           "code": 59669,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 408,
@@ -1160,7 +1168,7 @@
           "name": "uniE90F",
           "prevSize": 32,
           "code": 59663,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 407,
@@ -1168,7 +1176,7 @@
           "name": "uniE905",
           "prevSize": 32,
           "code": 59653,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 406,
@@ -1176,7 +1184,7 @@
           "name": "uniE904",
           "prevSize": 32,
           "code": 59652,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 405,
@@ -1184,7 +1192,7 @@
           "name": "uniE903",
           "prevSize": 32,
           "code": 59651,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 404,
@@ -1192,7 +1200,7 @@
           "name": "uniE901",
           "prevSize": 32,
           "code": 59649,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 400,
@@ -1200,7 +1208,7 @@
           "name": "uniE99A",
           "prevSize": 32,
           "code": 59802,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 401,
@@ -1208,7 +1216,7 @@
           "name": "uniE783",
           "prevSize": 32,
           "code": 59267,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 399,
@@ -1216,7 +1224,7 @@
           "name": "uniE919",
           "prevSize": 32,
           "code": 59673,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 398,
@@ -1224,7 +1232,7 @@
           "name": "uniF12E",
           "prevSize": 32,
           "code": 61742,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 390,
@@ -1232,7 +1240,7 @@
           "name": "uniF122",
           "prevSize": 32,
           "code": 61730,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 385,
@@ -1240,7 +1248,7 @@
           "name": "uniE74F",
           "prevSize": 32,
           "code": 59215,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 386,
@@ -1248,7 +1256,7 @@
           "name": "uniE993",
           "prevSize": 32,
           "code": 59795,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 387,
@@ -1256,7 +1264,7 @@
           "name": "uniE995",
           "prevSize": 32,
           "code": 59797,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 382,
@@ -1264,7 +1272,7 @@
           "name": "uniEC42",
           "prevSize": 32,
           "code": 60482,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 383,
@@ -1272,7 +1280,7 @@
           "name": "uniF164",
           "prevSize": 32,
           "code": 61796,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 384,
@@ -1280,7 +1288,7 @@
           "name": "uniF166",
           "prevSize": 32,
           "code": 61798,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 378,
@@ -1288,7 +1296,7 @@
           "name": "uniE72A",
           "prevSize": 32,
           "code": 59178,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 377,
@@ -1296,7 +1304,7 @@
           "name": "uniE897",
           "prevSize": 32,
           "code": 59543,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 372,
@@ -1304,7 +1312,7 @@
           "name": "uniE7AC",
           "prevSize": 32,
           "code": 59308,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 373,
@@ -1312,7 +1320,7 @@
           "name": "uniE91D",
           "prevSize": 32,
           "code": 59677,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 374,
@@ -1320,7 +1328,7 @@
           "name": "uniE93D",
           "prevSize": 32,
           "code": 59709,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 371,
@@ -1328,7 +1336,7 @@
           "name": "uniEA1A",
           "prevSize": 32,
           "code": 59930,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 264,
@@ -1336,7 +1344,7 @@
           "name": "uniE0E2",
           "prevSize": 32,
           "code": 57570,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 265,
@@ -1344,7 +1352,7 @@
           "name": "uniE0E3",
           "prevSize": 32,
           "code": 57571,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 266,
@@ -1352,7 +1360,7 @@
           "name": "uniE0E4",
           "prevSize": 32,
           "code": 57572,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 267,
@@ -1360,7 +1368,7 @@
           "name": "uniE0E5",
           "prevSize": 32,
           "code": 57573,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 268,
@@ -1368,7 +1376,7 @@
           "name": "uniE001",
           "prevSize": 32,
           "code": 57345,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 269,
@@ -1376,7 +1384,7 @@
           "name": "uniE1C4",
           "prevSize": 32,
           "code": 57796,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 270,
@@ -1384,7 +1392,7 @@
           "name": "uniE2B1",
           "prevSize": 32,
           "code": 58033,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 271,
@@ -1392,7 +1400,7 @@
           "name": "uniE7A6",
           "prevSize": 32,
           "code": 59302,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 272,
@@ -1400,7 +1408,7 @@
           "name": "uniE7A7",
           "prevSize": 32,
           "code": 59303,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 273,
@@ -1408,7 +1416,7 @@
           "name": "uniE7A8",
           "prevSize": 32,
           "code": 59304,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 274,
@@ -1416,7 +1424,7 @@
           "name": "uniE7B8",
           "prevSize": 32,
           "code": 59320,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 275,
@@ -1424,7 +1432,7 @@
           "name": "uniE7C3",
           "prevSize": 32,
           "code": 59331,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 276,
@@ -1432,7 +1440,7 @@
           "name": "uniE7ED",
           "prevSize": 32,
           "code": 59373,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 277,
@@ -1440,7 +1448,7 @@
           "name": "uniE8BD",
           "prevSize": 32,
           "code": 59581,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 278,
@@ -1448,7 +1456,7 @@
           "name": "uniE8C6",
           "prevSize": 32,
           "code": 59590,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 279,
@@ -1456,7 +1464,7 @@
           "name": "uniE8C8",
           "prevSize": 32,
           "code": 59592,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 280,
@@ -1464,7 +1472,7 @@
           "name": "uniE8CB",
           "prevSize": 32,
           "code": 59595,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 281,
@@ -1472,7 +1480,7 @@
           "name": "uniE8D2",
           "prevSize": 32,
           "code": 59602,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 282,
@@ -1480,7 +1488,7 @@
           "name": "uniE8D6",
           "prevSize": 32,
           "code": 59606,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 283,
@@ -1488,7 +1496,7 @@
           "name": "uniE8D9",
           "prevSize": 32,
           "code": 59609,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 284,
@@ -1496,7 +1504,7 @@
           "name": "uniE8DB",
           "prevSize": 32,
           "code": 59611,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 285,
@@ -1504,7 +1512,7 @@
           "name": "uniE8DC",
           "prevSize": 32,
           "code": 59612,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 286,
@@ -1512,7 +1520,7 @@
           "name": "uniE8DD",
           "prevSize": 32,
           "code": 59613,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 287,
@@ -1520,7 +1528,7 @@
           "name": "uniE8DE",
           "prevSize": 32,
           "code": 59614,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 288,
@@ -1528,7 +1536,7 @@
           "name": "uniE8FA",
           "prevSize": 32,
           "code": 59642,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 289,
@@ -1536,7 +1544,7 @@
           "name": "uniE9CE",
           "prevSize": 32,
           "code": 59854,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 290,
@@ -1544,7 +1552,7 @@
           "name": "uniE9D9",
           "prevSize": 32,
           "code": 59865,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 291,
@@ -1552,7 +1560,7 @@
           "name": "uniE9E9",
           "prevSize": 32,
           "code": 59881,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 292,
@@ -1560,7 +1568,7 @@
           "name": "uniE10B",
           "prevSize": 32,
           "code": 57611,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 511,
@@ -1568,7 +1576,7 @@
           "name": "uniE10C",
           "prevSize": 32,
           "code": 57612,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 294,
@@ -1576,7 +1584,7 @@
           "name": "uniE71B",
           "prevSize": 32,
           "code": 59163,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 295,
@@ -1584,7 +1592,7 @@
           "name": "uniE71F",
           "prevSize": 32,
           "code": 59167,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 296,
@@ -1592,7 +1600,7 @@
           "name": "uniE72B",
           "prevSize": 32,
           "code": 59179,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 297,
@@ -1600,7 +1608,7 @@
           "name": "uniE72D",
           "prevSize": 32,
           "code": 59181,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 298,
@@ -1608,7 +1616,7 @@
           "name": "uniE72E",
           "prevSize": 32,
           "code": 59182,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 299,
@@ -1616,7 +1624,7 @@
           "name": "uniE73E",
           "prevSize": 32,
           "code": 59198,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 300,
@@ -1624,7 +1632,7 @@
           "name": "uniE74B",
           "prevSize": 32,
           "code": 59211,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 301,
@@ -1632,7 +1640,7 @@
           "name": "uniE74D",
           "prevSize": 32,
           "code": 59213,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 302,
@@ -1640,7 +1648,7 @@
           "name": "uniE75C",
           "prevSize": 32,
           "code": 59228,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 303,
@@ -1648,7 +1656,7 @@
           "name": "uniE76E",
           "prevSize": 32,
           "code": 59246,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 304,
@@ -1656,7 +1664,7 @@
           "name": "uniE77A",
           "prevSize": 32,
           "code": 59258,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 305,
@@ -1664,7 +1672,7 @@
           "name": "uniE77B",
           "prevSize": 32,
           "code": 59259,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 306,
@@ -1672,7 +1680,7 @@
           "name": "uniE77F",
           "prevSize": 32,
           "code": 59263,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 307,
@@ -1680,7 +1688,7 @@
           "name": "uniE81C",
           "prevSize": 32,
           "code": 59420,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 308,
@@ -1688,7 +1696,10 @@
           "name": "uniE91C",
           "prevSize": 32,
           "code": 59676,
-          "tempChar": ""
+          "tempChar": "",
+          "codes": [
+            59676
+          ]
         },
         {
           "order": 309,
@@ -1696,7 +1707,7 @@
           "name": "uniE91F",
           "prevSize": 32,
           "code": 59679,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 310,
@@ -1704,7 +1715,7 @@
           "name": "uniE92B",
           "prevSize": 32,
           "code": 59691,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 311,
@@ -1712,7 +1723,7 @@
           "name": "uniE104",
           "prevSize": 32,
           "code": 57604,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 312,
@@ -1720,7 +1731,7 @@
           "name": "uniE118",
           "prevSize": 32,
           "code": 57624,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 313,
@@ -1728,7 +1739,7 @@
           "name": "uniE168",
           "prevSize": 32,
           "code": 57704,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 314,
@@ -1736,7 +1747,7 @@
           "name": "uniE192",
           "prevSize": 32,
           "code": 57746,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 315,
@@ -1744,7 +1755,7 @@
           "name": "uniE248",
           "prevSize": 32,
           "code": 57928,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 316,
@@ -1752,7 +1763,7 @@
           "name": "uniE610",
           "prevSize": 32,
           "code": 58896,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 317,
@@ -1760,7 +1771,7 @@
           "name": "uniE700",
           "prevSize": 32,
           "code": 59136,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 318,
@@ -1768,7 +1779,7 @@
           "name": "uniE710",
           "prevSize": 32,
           "code": 59152,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 319,
@@ -1776,7 +1787,7 @@
           "name": "uniE711",
           "prevSize": 32,
           "code": 59153,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 320,
@@ -1784,7 +1795,7 @@
           "name": "uniE713",
           "prevSize": 32,
           "code": 59155,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 321,
@@ -1792,7 +1803,7 @@
           "name": "uniE714",
           "prevSize": 32,
           "code": 59156,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 322,
@@ -1800,7 +1811,7 @@
           "name": "uniE716",
           "prevSize": 32,
           "code": 59158,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 323,
@@ -1808,7 +1819,7 @@
           "name": "uniE717",
           "prevSize": 32,
           "code": 59159,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 324,
@@ -1816,7 +1827,7 @@
           "name": "uniE720",
           "prevSize": 32,
           "code": 59168,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 325,
@@ -1824,7 +1835,7 @@
           "name": "uniE721",
           "prevSize": 32,
           "code": 59169,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 326,
@@ -1832,7 +1843,7 @@
           "name": "uniE722",
           "prevSize": 32,
           "code": 59170,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 327,
@@ -1840,7 +1851,7 @@
           "name": "uniE730",
           "prevSize": 32,
           "code": 59184,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 328,
@@ -1848,7 +1859,7 @@
           "name": "uniE734",
           "prevSize": 32,
           "code": 59188,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 329,
@@ -1856,7 +1867,7 @@
           "name": "uniE735",
           "prevSize": 32,
           "code": 59189,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 330,
@@ -1864,7 +1875,7 @@
           "name": "uniE762",
           "prevSize": 32,
           "code": 59234,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 0,
@@ -1888,7 +1899,7 @@
           "name": "uniE774",
           "prevSize": 32,
           "code": 59252,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 334,
@@ -1896,7 +1907,7 @@
           "name": "uniE785",
           "prevSize": 32,
           "code": 59269,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 335,
@@ -1904,7 +1915,7 @@
           "name": "uniE787",
           "prevSize": 32,
           "code": 59271,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 336,
@@ -1912,7 +1923,7 @@
           "name": "uniE789",
           "prevSize": 32,
           "code": 59273,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 337,
@@ -1920,7 +1931,7 @@
           "name": "uniE792",
           "prevSize": 32,
           "code": 59282,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 338,
@@ -1928,7 +1939,7 @@
           "name": "uniE825",
           "prevSize": 32,
           "code": 59429,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 339,
@@ -1936,7 +1947,7 @@
           "name": "uniE838",
           "prevSize": 32,
           "code": 59448,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 340,
@@ -1944,7 +1955,7 @@
           "name": "uniE840",
           "prevSize": 32,
           "code": 59456,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 341,
@@ -1952,7 +1963,7 @@
           "name": "uniE892",
           "prevSize": 32,
           "code": 59538,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 342,
@@ -1960,7 +1971,7 @@
           "name": "uniE893",
           "prevSize": 32,
           "code": 59539,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 343,
@@ -1968,7 +1979,7 @@
           "name": "uniE902",
           "prevSize": 32,
           "code": 59650,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 344,
@@ -1976,7 +1987,7 @@
           "name": "uniE907",
           "prevSize": 32,
           "code": 59655,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 345,
@@ -1984,7 +1995,7 @@
           "name": "uniE909",
           "prevSize": 32,
           "code": 59657,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 346,
@@ -1992,7 +2003,7 @@
           "name": "uniEA19",
           "prevSize": 32,
           "code": 59929,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 347,
@@ -2000,7 +2011,7 @@
           "name": "uniE916",
           "prevSize": 32,
           "code": 59670,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 348,
@@ -2008,7 +2019,7 @@
           "name": "uniE917",
           "prevSize": 32,
           "code": 59671,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 349,
@@ -2016,7 +2027,7 @@
           "name": "uniE918",
           "prevSize": 32,
           "code": 59672,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 350,
@@ -2024,7 +2035,7 @@
           "name": "uniE929",
           "prevSize": 32,
           "code": 59689,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 351,
@@ -2032,7 +2043,7 @@
           "name": "uniE932",
           "prevSize": 32,
           "code": 59698,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 352,
@@ -2040,7 +2051,7 @@
           "name": "uniE943",
           "prevSize": 32,
           "code": 59715,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 353,
@@ -2048,7 +2059,7 @@
           "name": "uniE946",
           "prevSize": 32,
           "code": 59718,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 354,
@@ -2056,7 +2067,7 @@
           "name": "uniE975",
           "prevSize": 32,
           "code": 59765,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 355,
@@ -2064,7 +2075,7 @@
           "name": "uniEA8F",
           "prevSize": 32,
           "code": 60047,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 356,
@@ -2072,7 +2083,7 @@
           "name": "uniEA37",
           "prevSize": 32,
           "code": 59959,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 357,
@@ -2080,7 +2091,7 @@
           "name": "uniEA80",
           "prevSize": 32,
           "code": 60032,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 358,
@@ -2088,7 +2099,7 @@
           "name": "uniEA99",
           "prevSize": 32,
           "code": 60057,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 359,
@@ -2096,7 +2107,7 @@
           "name": "uniEB05",
           "prevSize": 32,
           "code": 60165,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 360,
@@ -2104,7 +2115,7 @@
           "name": "uniEB9F",
           "prevSize": 32,
           "code": 60319,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 361,
@@ -2112,7 +2123,7 @@
           "name": "uniEC61",
           "prevSize": 32,
           "code": 60513,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 362,
@@ -2120,7 +2131,7 @@
           "name": "uniED15",
           "prevSize": 32,
           "code": 60693,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 363,
@@ -2128,7 +2139,7 @@
           "name": "uniEE56",
           "prevSize": 32,
           "code": 61014,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 364,
@@ -2136,7 +2147,7 @@
           "name": "uniF0E3",
           "prevSize": 32,
           "code": 61667,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 365,
@@ -2144,7 +2155,7 @@
           "name": "uniF3B1",
           "prevSize": 32,
           "code": 62385,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 366,
@@ -2152,7 +2163,7 @@
           "name": "uniF4A9",
           "prevSize": 32,
           "code": 62633,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 367,
@@ -2160,7 +2171,7 @@
           "name": "uniF4AA",
           "prevSize": 32,
           "code": 62634,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 368,
@@ -2168,7 +2179,7 @@
           "name": "uniF12B",
           "prevSize": 32,
           "code": 61739,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 369,
@@ -2176,7 +2187,7 @@
           "name": "uniF61B",
           "prevSize": 32,
           "code": 63003,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 370,
@@ -2184,7 +2195,7 @@
           "name": "uniF140",
           "prevSize": 32,
           "code": 61760,
-          "tempChar": ""
+          "tempChar": ""
         }
       ],
       "id": 4,
@@ -2198,6 +2209,26 @@
       "height": 1024,
       "prevSize": 32,
       "icons": [
+        {
+          "id": 194,
+          "paths": [
+            "M512 102.4c226.217 0 409.6 183.384 409.6 409.6 0 226.217-183.383 409.6-409.6 409.6-65.188 0-128.209-15.268-185.001-44.068l-6.179-3.292-186.619 46.597c-15.863 3.963-30.457-7.588-31.733-22.595l-0.009-4.168 0.706-4.285 46.596-186.557-3.241-6.129c-23.301-45.911-37.753-95.903-42.442-147.814l-1.299-19.558-0.378-17.731c0-226.216 183.384-409.6 409.6-409.6zM512 153.6c-197.939 0-358.4 160.461-358.4 358.4 0 62.31 15.9 122.255 45.748 175.355 2.403 4.275 3.511 9.119 3.246 13.947l-0.726 4.808-38.694 154.665 154.831-38.589c3.169-0.788 6.43-0.957 9.61-0.532l4.688 1.085 4.44 1.966c53.074 29.814 112.983 45.696 175.257 45.696 197.939 0 358.4-160.461 358.4-358.4s-160.461-358.4-358.4-358.4zM537.6 563.2c14.136 0 25.6 11.464 25.6 25.6 0 12.57-9.057 23.020-20.997 25.185l-4.603 0.415h-153.6c-14.138 0-25.6-11.464-25.6-25.6 0-12.57 9.056-23.020 20.998-25.185l4.602-0.415h153.6zM640 409.6c14.136 0 25.6 11.462 25.6 25.6 0 12.568-9.057 23.020-20.997 25.187l-4.603 0.413h-256c-14.138 0-25.6-11.462-25.6-25.6 0-12.568 9.056-23.020 20.998-25.187l4.602-0.413h256z"
+          ],
+          "attrs": [
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 0,
+          "tags": [
+            "ic_fluent_chat_20_regular"
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
+        },
         {
           "id": 193,
           "paths": [
@@ -2213,6 +2244,9 @@
             "ic_fluent_person_20_filled"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -2233,6 +2267,9 @@
             "ic_fluent_people_20_filled"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -2253,6 +2290,9 @@
             "ic_fluent_chat_20_filled"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -2273,6 +2313,9 @@
             "ic_fluent_pin_20_filled"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -2293,6 +2336,9 @@
             "ic_fluent_link_20_filled"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -2313,6 +2359,9 @@
             "ic_fluent_folder_20_filled"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -2333,6 +2382,9 @@
             "ic_fluent_person_available_20_regular"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -2353,6 +2405,9 @@
             "ic_fluent_person_circle_20_regular"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -2373,6 +2428,9 @@
             "ic_fluent_eye_off_20_regular"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -2393,6 +2451,9 @@
             "ic_fluent_eye_20_regular"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -2413,6 +2474,9 @@
             "ic_fluent_speaker_off_20_regular"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -2433,6 +2497,9 @@
             "ic_fluent_alert_on_20_regular"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -2453,6 +2520,9 @@
             "ic_fluent_alert_snooze_20_regular"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -2473,6 +2543,9 @@
             "ic_fluent_music_note_2_20_regular"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -2493,6 +2566,9 @@
             "ic_fluent_music_note_off_2_20_regular"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -2513,6 +2589,9 @@
             "ic_fluent_arrow_exit_20_regular"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -2533,6 +2612,9 @@
             "ic_fluent_arrow_enter_20_regular"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -2553,6 +2635,9 @@
             "ic_fluent_heart_12_filled"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -2573,6 +2658,9 @@
             "ic_fluent_compose_20_regular"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -2593,6 +2681,9 @@
             "ic_fluent_chat_multiple_20_regular"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -2613,6 +2704,9 @@
             "ic_fluent_live_20_regular"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -2633,6 +2727,9 @@
             "ic_fluent_dialpad_20_regular"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -2653,6 +2750,9 @@
             "ic_fluent_hand_right_20_regular"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -2673,6 +2773,9 @@
             "ic_fluent_folder_add_20_regular"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -2693,6 +2796,9 @@
             "ic_fluent_arrow_trending_20_regular"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -2713,6 +2819,9 @@
             "ic_fluent_subtract_circle_20_filled"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -2733,6 +2842,9 @@
             "ic_fluent_heart_20_regular"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -2753,6 +2865,9 @@
             "ic_fluent_heart_16_filled"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -2773,6 +2888,9 @@
             "ic_fluent_mention_16_regular"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -2793,6 +2911,9 @@
             "ic_fluent_bot_20_filled"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -2813,6 +2934,9 @@
             "ic_fluent_megaphone_16_filled"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -2833,6 +2957,9 @@
             "ic_fluent_people_16_filled"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -2853,6 +2980,9 @@
             "ic_fluent_lock_closed_16_filled"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -2875,6 +3005,10 @@
             "ic_fluent_window_new_20_regular"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {}
@@ -2896,6 +3030,9 @@
             "ic_fluent_checkmark_circle_20_regular"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -2916,6 +3053,9 @@
             "ic_fluent_tab_in_private_20_regular"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -2938,6 +3078,10 @@
             "ic_fluent_translate_20_regular"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {}
@@ -2961,6 +3105,9 @@
             "Pin"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -2981,6 +3128,9 @@
             "Verified"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -3003,6 +3153,9 @@
             "Speaker Mute"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -3027,6 +3180,11 @@
             "ic_fluent_more_vertical_20_regular"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {},
@@ -3049,6 +3207,9 @@
             "ic_fluent_paint_brush_20_regular"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -3069,6 +3230,9 @@
             "ic_fluent_top_speed_20_regular"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -3089,6 +3253,9 @@
             "ic_fluent_checkmark_20_regular"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -3111,6 +3278,10 @@
             "ic_fluent_zoom_out_20_regular"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {}
@@ -3134,6 +3305,10 @@
             "ic_fluent_zoom_in_20_regular"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {}
@@ -3155,6 +3330,9 @@
             "ic_fluent_stack_20_regular"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -3175,6 +3353,9 @@
             "ic_fluent_dock_panel_right_20_filled"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -3195,6 +3376,9 @@
             "ic_fluent_dock_panel_right_20_regular"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -3215,6 +3399,9 @@
             "ic_fluent_arrow_clockwise_20_regular"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -3235,6 +3422,9 @@
             "ic_fluent_arrow_minimize_20_regular"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -3255,6 +3445,9 @@
             "ic_fluent_arrow_maximize_20_regular"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -3279,6 +3472,11 @@
             "ic_fluent_video_off_20_filled"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {},
@@ -3303,6 +3501,10 @@
             "ic_fluent_video_20_filled"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {}
@@ -3324,6 +3526,9 @@
             "ic_fluent_share_screen_stop_20_filled"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -3344,6 +3549,9 @@
             "ic_fluent_share_screen_start_20_filled"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -3368,6 +3576,11 @@
             "ic_fluent_more_vertical_20_regular"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {},
@@ -3392,6 +3605,10 @@
             "ic_fluent_share_screen_stop_20_regular"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {}
@@ -3415,6 +3632,10 @@
             "ic_fluent_share_screen_start_20_regular"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {}
@@ -3436,6 +3657,9 @@
             "Screencast"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -3458,6 +3682,10 @@
             "ic_fluent_video_16_filled"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {}
@@ -3479,6 +3707,9 @@
             "ic_fluent_chat_settings_20_regular"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -3501,6 +3732,10 @@
             "ic_fluent_payment_20_regular"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {}
@@ -3522,6 +3757,9 @@
             "ic_fluent_fingerprint_24_regular"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -3544,6 +3782,10 @@
             "ic_fluent_record_20_regular"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {}
@@ -3565,6 +3807,9 @@
             "ic_fluent_emoji_hand_20_regular"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -3591,6 +3836,12 @@
             "uniE99A"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {},
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {},
@@ -3620,6 +3871,12 @@
             "uniE783"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {},
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {},
@@ -3643,6 +3900,9 @@
             "uniE919"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -3665,6 +3925,10 @@
             "uniF12E"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {}
@@ -3694,6 +3958,13 @@
             "uniF122"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {},
+              {},
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {},
@@ -3718,6 +3989,9 @@
             "uniE74F"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -3740,6 +4014,10 @@
             "uniE993"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {}
@@ -3761,6 +4039,9 @@
             "uniE995"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -3787,6 +4068,12 @@
             "uniEC42"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {},
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {},
@@ -3810,6 +4097,9 @@
             "uniF164"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -3830,6 +4120,9 @@
             "uniF166"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -3850,6 +4143,9 @@
             "uniE72A"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -3874,6 +4170,11 @@
             "uniE897"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {},
@@ -3896,6 +4197,9 @@
             "uniE7AC"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -3904,22 +4208,16 @@
         {
           "id": 111,
           "paths": [
-            "M536.622 708.726h251.858c45.885 0 81.92-36.531 81.92-80.174v-343.582c0-43.64-36.035-80.17-81.92-80.17h-552.96c-45.884 0-81.92 36.53-81.92 80.17v343.582c0 43.643 36.036 80.174 81.92 80.174h81.873l0.047 161.674 0.177-0.015 0.080-0.046 218.925-161.613zM348.106 911.534c-22.644 16.712-54.73 12.145-71.667-10.199-6.621-8.74-10.2-19.354-10.2-30.254l-0.032-111.155h-30.688c-73.52 0-133.12-58.819-133.12-131.374v-343.582c0-72.553 59.6-131.37 133.12-131.37h552.96c73.518 0 133.12 58.817 133.12 131.37v343.582c0 72.556-59.602 131.374-133.12 131.374h-235.008l-205.366 151.608z"
+            "M512 102.4c226.217 0 409.6 183.384 409.6 409.6 0 226.217-183.383 409.6-409.6 409.6-65.188 0-128.209-15.268-185.001-44.068l-6.179-3.292-186.619 46.597c-15.863 3.963-30.457-7.588-31.733-22.595l-0.009-4.168 0.706-4.285 46.596-186.557-3.241-6.129c-23.301-45.911-37.753-95.903-42.442-147.814l-1.299-19.558-0.378-17.731c0-226.216 183.384-409.6 409.6-409.6zM512 153.6c-197.939 0-358.4 160.461-358.4 358.4 0 62.31 15.9 122.255 45.748 175.355 2.403 4.275 3.511 9.119 3.246 13.947l-0.726 4.808-38.694 154.665 154.831-38.589c3.169-0.788 6.43-0.957 9.61-0.532l4.688 1.085 4.44 1.966c53.074 29.814 112.983 45.696 175.257 45.696 197.939 0 358.4-160.461 358.4-358.4s-160.461-358.4-358.4-358.4zM537.6 563.2c14.136 0 25.6 11.464 25.6 25.6 0 12.57-9.057 23.020-20.997 25.185l-4.603 0.415h-153.6c-14.138 0-25.6-11.464-25.6-25.6 0-12.57 9.056-23.020 20.998-25.185l4.602-0.415h153.6zM640 409.6c14.136 0 25.6 11.462 25.6 25.6 0 12.568-9.057 23.020-20.997 25.187l-4.603 0.413h-256c-14.138 0-25.6-11.462-25.6-25.6 0-12.568 9.056-23.020 20.998-25.187l4.602-0.413h256z"
           ],
-          "attrs": [
-            {}
-          ],
-          "isMulticolor": false,
-          "isMulticolor2": false,
+          "attrs": [],
           "grid": 0,
           "tags": [
             "uniE91D"
           ],
-          "colorPermutations": {
-            "2552552551951831": [
-              {}
-            ]
-          }
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "colorPermutations": {}
         },
         {
           "id": 110,
@@ -3936,6 +4234,9 @@
             "uniE93D"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -3958,6 +4259,10 @@
             "uniEA1A"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {}
@@ -3979,6 +4284,9 @@
             "uniE0E2"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -3999,6 +4307,9 @@
             "uniE0E3"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -4019,6 +4330,9 @@
             "uniE0E4"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -4039,6 +4353,9 @@
             "uniE0E5"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -4059,6 +4376,9 @@
             "uniE001"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -4081,6 +4401,10 @@
             "uniE1C4"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {}
@@ -4102,6 +4426,9 @@
             "uniE2B1"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -4122,6 +4449,9 @@
             "uniE7A6"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -4142,6 +4472,9 @@
             "uniE7A7"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -4164,6 +4497,10 @@
             "uniE7A8"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {}
@@ -4185,6 +4522,9 @@
             "uniE7B8"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -4205,6 +4545,9 @@
             "uniE7C3"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -4227,6 +4570,10 @@
             "uniE7ED"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {}
@@ -4248,6 +4595,9 @@
             "uniE8BD"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -4268,6 +4618,9 @@
             "uniE8C6"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -4290,6 +4643,10 @@
             "uniE8C8"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {}
@@ -4311,6 +4668,9 @@
             "uniE8CB"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -4331,6 +4691,9 @@
             "uniE8D2"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -4351,6 +4714,9 @@
             "uniE8D6"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -4373,6 +4739,10 @@
             "uniE8D9"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {}
@@ -4394,6 +4764,9 @@
             "uniE8DB"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -4414,6 +4787,9 @@
             "uniE8DC"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -4434,6 +4810,9 @@
             "uniE8DD"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -4454,6 +4833,9 @@
             "uniE8DE"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -4474,6 +4856,9 @@
             "uniE8FA"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -4494,6 +4879,9 @@
             "uniE9CE"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -4520,6 +4908,12 @@
             "uniE9D9"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {},
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {},
@@ -4545,6 +4939,10 @@
             "uniE9E9"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {}
@@ -4566,6 +4964,9 @@
             "uniE10B"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -4590,6 +4991,11 @@
             "uniE10C"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {},
@@ -4612,6 +5018,9 @@
             "uniE71B"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -4632,6 +5041,9 @@
             "uniE71F"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -4652,6 +5064,9 @@
             "uniE72B"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -4672,6 +5087,9 @@
             "uniE72D"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -4692,6 +5110,9 @@
             "uniE72E"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -4712,6 +5133,9 @@
             "uniE73E"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -4732,6 +5156,9 @@
             "uniE74B"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -4752,6 +5179,9 @@
             "uniE74D"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -4772,6 +5202,9 @@
             "uniE75C"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -4792,6 +5225,9 @@
             "uniE76E"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -4814,6 +5250,10 @@
             "uniE77A"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {}
@@ -4835,6 +5275,9 @@
             "uniE77B"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -4855,6 +5298,9 @@
             "uniE77F"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -4877,6 +5323,10 @@
             "uniE81C"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {}
@@ -4886,24 +5336,18 @@
         {
           "id": 62,
           "paths": [
-            "M972.8 332.8c0 155.524-126.075 281.6-281.6 281.6s-281.6-126.076-281.6-281.6c0-155.524 126.075-281.6 281.6-281.6s281.6 126.076 281.6 281.6zM537.6 307.2c-14.136 0-25.6 11.462-25.6 25.6s11.464 25.6 25.6 25.6h245.396l-84.301 84.298c-9.994 9.997-9.994 26.206 0 36.204 9.999 9.997 26.209 9.998 36.209 0l128-128c9.994-9.997 9.994-26.206 0-36.204l-128-128c-9.999-9.998-26.209-9.998-36.209 0-9.994 9.997-9.994 26.206 0 36.204l84.301 84.298h-245.396z",
-            "M870.4 628.552v-15.268c18.381-11.766 35.523-25.293 51.2-40.335v55.603c0 72.556-59.602 131.374-133.12 131.374h-235.008l-205.366 151.608c-22.644 16.712-54.73 12.145-71.667-10.199-6.621-8.74-10.2-19.354-10.2-30.254l-0.032-111.155h-30.688c-73.52 0-133.12-58.819-133.12-131.374v-343.582c0-72.553 59.6-131.37 133.12-131.37h175.197c-10.35 16.166-19.341 33.287-26.811 51.2h-148.386c-45.884 0-81.92 36.53-81.92 80.17v343.582c0 43.643 36.036 80.174 81.92 80.174h81.873l0.047 161.674 0.177-0.015 0.080-0.046 218.925-161.613h251.858c45.885 0 81.92-36.531 81.92-80.174z"
+            "M512 153.6c-199.68 0-358.4 158.72-358.4 358.4 0 61.44 15.36 122.88 46.080 174.080 5.12 5.12 5.12 10.24 0 20.48l-40.96 153.6 153.6-40.96c5.12 0 15.36 0 20.48 0 46.080 25.6 97.28 40.96 153.6 46.080 10.24 20.48 20.48 35.84 35.84 51.2-5.12 0-10.24 0-15.36 0-66.56 0-133.12-15.36-189.44-46.080l-184.32 51.2c-10.24 0-20.48 0-25.6-5.12-5.12-10.24-5.12-20.48-5.12-25.6l46.080-184.32c-30.72-61.44-46.080-128-46.080-194.56 0-225.28 184.32-409.6 409.6-409.6s409.6 184.32 409.6 409.6c0 5.12 0 10.24 0 15.36-15.36-15.36-30.72-25.6-51.2-35.84-10.24-189.44-168.96-337.92-358.4-337.92z",
+            "M972.8 742.4c0 127.246-103.154 230.4-230.4 230.4s-230.4-103.154-230.4-230.4c0-127.246 103.154-230.4 230.4-230.4s230.4 103.154 230.4 230.4z"
           ],
-          "attrs": [
-            {},
-            {}
-          ],
-          "isMulticolor": false,
-          "isMulticolor2": false,
+          "attrs": [],
           "grid": 0,
           "tags": [
             "uniE91C"
           ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
           "colorPermutations": {
-            "2552552551951831": [
-              {},
-              {}
-            ]
+            "13333331": []
           }
         },
         {
@@ -4925,6 +5369,11 @@
             "uniE91F"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {},
@@ -4947,6 +5396,9 @@
             "uniE92B"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -4967,6 +5419,9 @@
             "uniE104"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -4987,6 +5442,9 @@
             "uniE118"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -5007,6 +5465,9 @@
             "uniE168"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -5029,6 +5490,10 @@
             "uniE192"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {}
@@ -5050,6 +5515,9 @@
             "uniE248"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -5074,6 +5542,11 @@
             "uniE610"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {},
@@ -5096,6 +5569,9 @@
             "uniE700"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -5116,6 +5592,9 @@
             "uniE710"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -5136,6 +5615,9 @@
             "uniE711"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -5156,6 +5638,9 @@
             "uniE713"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -5176,6 +5661,9 @@
             "uniE714"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -5196,6 +5684,9 @@
             "uniE716"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -5216,6 +5707,9 @@
             "uniE717"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -5238,6 +5732,10 @@
             "uniE720"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {}
@@ -5259,6 +5757,9 @@
             "uniE721"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -5279,6 +5780,9 @@
             "uniE722"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -5303,6 +5807,11 @@
             "uniE730"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {},
@@ -5325,6 +5834,9 @@
             "uniE734"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -5345,6 +5857,9 @@
             "uniE735"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -5373,6 +5888,13 @@
             "uniE762"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {},
+              {},
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {},
@@ -5397,6 +5919,9 @@
             "uniE768"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -5417,6 +5942,9 @@
             "uniE769"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -5437,6 +5965,9 @@
             "uniE774"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -5457,6 +5988,9 @@
             "uniE785"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -5477,6 +6011,9 @@
             "uniE787"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -5497,6 +6034,9 @@
             "uniE789"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -5519,6 +6059,10 @@
             "uniE792"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {}
@@ -5540,6 +6084,9 @@
             "uniE825"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -5560,6 +6107,9 @@
             "uniE838"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -5580,6 +6130,9 @@
             "uniE840"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -5602,6 +6155,10 @@
             "uniE892"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {}
@@ -5625,6 +6182,10 @@
             "uniE893"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {}
@@ -5656,6 +6217,14 @@
             "uniE902"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {},
+              {},
+              {},
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {},
@@ -5681,6 +6250,9 @@
             "uniE907"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -5703,6 +6275,10 @@
             "uniE909"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {}
@@ -5728,6 +6304,11 @@
             "uniE915"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {},
@@ -5756,6 +6337,12 @@
             "uniE916"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {},
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {},
@@ -5779,6 +6366,9 @@
             "uniE917"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -5803,6 +6393,11 @@
             "uniE918"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {},
@@ -5825,6 +6420,9 @@
             "uniE929"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -5847,6 +6445,10 @@
             "uniE932"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {}
@@ -5868,6 +6470,9 @@
             "uniE943"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -5888,6 +6493,9 @@
             "uniE946"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -5912,6 +6520,11 @@
             "uniE975"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {},
@@ -5934,6 +6547,9 @@
             "uniEA8F"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -5954,6 +6570,9 @@
             "uniEA37"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -5974,6 +6593,9 @@
             "uniEA80"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -5994,6 +6616,9 @@
             "uniEA99"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -6014,6 +6639,9 @@
             "uniEB05"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -6034,6 +6662,9 @@
             "uniEB9F"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -6054,6 +6685,9 @@
             "uniEC61"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -6074,6 +6708,9 @@
             "uniED15"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -6096,6 +6733,10 @@
             "uniEE56"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {}
@@ -6117,6 +6758,9 @@
             "uniF0E3"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -6143,6 +6787,12 @@
             "uniF3B1"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {},
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {},
@@ -6166,6 +6816,9 @@
             "uniF4A9"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -6186,6 +6839,9 @@
             "uniF4AA"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -6206,6 +6862,9 @@
             "uniF12B"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -6228,6 +6887,10 @@
             "uniF61B"
           ],
           "colorPermutations": {
+            "13333331": [
+              {},
+              {}
+            ],
             "2552552551951831": [
               {},
               {}
@@ -6249,6 +6912,9 @@
             "uniF140"
           ],
           "colorPermutations": {
+            "13333331": [
+              {}
+            ],
             "2552552551951831": [
               {}
             ]
@@ -6270,19 +6936,175 @@
             255,
             1
           ]
+        ],
+        [
+          [
+            0,
+            0,
+            0,
+            1
+          ],
+          [
+            33,
+            33,
+            33,
+            1
+          ]
         ]
       ],
-      "colorThemeIdx": 0
+      "colorThemeIdx": 1
     },
     {
       "selection": [
+        {
+          "order": 649,
+          "id": 116,
+          "name": "AirplaneFilled24",
+          "prevSize": 32,
+          "code": 59857,
+          "tempChar": ""
+        },
+        {
+          "order": 647,
+          "id": 115,
+          "name": "ic_fluent_clipboard_text_ltr_24_filled",
+          "prevSize": 32,
+          "code": 59855,
+          "tempChar": ""
+        },
+        {
+          "order": 648,
+          "id": 114,
+          "name": "ic_fluent_clipboard_text_ltr_24_regular",
+          "prevSize": 32,
+          "code": 59856,
+          "tempChar": ""
+        },
+        {
+          "order": 644,
+          "id": 112,
+          "name": "ChatUnreadFilled24",
+          "prevSize": 32,
+          "code": 59840,
+          "codes": [
+            59840
+          ],
+          "tempChar": ""
+        },
+        {
+          "order": 645,
+          "id": 113,
+          "name": "ChatUnread24",
+          "prevSize": 32,
+          "code": 59841,
+          "codes": [
+            59841
+          ],
+          "tempChar": ""
+        },
+        {
+          "order": 642,
+          "id": 111,
+          "name": "ic_fluent_paint_brush_24_filled",
+          "prevSize": 32,
+          "code": 59842,
+          "tempChar": ""
+        },
+        {
+          "order": 643,
+          "id": 110,
+          "name": "ic_fluent_paint_brush_24_regular",
+          "prevSize": 32,
+          "code": 59843,
+          "tempChar": ""
+        },
+        {
+          "order": 640,
+          "id": 109,
+          "name": "ic_fluent_music_note_1_24_filled",
+          "prevSize": 32,
+          "code": 59844,
+          "tempChar": ""
+        },
+        {
+          "order": 641,
+          "id": 108,
+          "name": "ic_fluent_music_note_1_24_regular",
+          "prevSize": 32,
+          "code": 59845,
+          "tempChar": ""
+        },
+        {
+          "order": 638,
+          "id": 107,
+          "name": "ic_fluent_thumb_like_24_filled",
+          "prevSize": 32,
+          "code": 59846,
+          "tempChar": ""
+        },
+        {
+          "order": 639,
+          "id": 106,
+          "name": "ic_fluent_thumb_like_24_regular",
+          "prevSize": 32,
+          "code": 59847,
+          "tempChar": ""
+        },
+        {
+          "order": 636,
+          "id": 105,
+          "name": "ic_fluent_lightbulb_24_filled",
+          "prevSize": 32,
+          "code": 59848,
+          "tempChar": ""
+        },
+        {
+          "order": 637,
+          "id": 104,
+          "name": "ic_fluent_lightbulb_24_regular",
+          "prevSize": 32,
+          "code": 59849,
+          "tempChar": ""
+        },
+        {
+          "order": 634,
+          "id": 103,
+          "name": "ic_fluent_money_24_filled",
+          "prevSize": 32,
+          "code": 59850,
+          "tempChar": ""
+        },
+        {
+          "order": 635,
+          "id": 102,
+          "name": "ic_fluent_money_24_regular",
+          "prevSize": 32,
+          "code": 59851,
+          "tempChar": ""
+        },
+        {
+          "order": 632,
+          "id": 101,
+          "name": "ic_fluent_book_open_24_filled",
+          "prevSize": 32,
+          "code": 59852,
+          "tempChar": ""
+        },
+        {
+          "order": 633,
+          "id": 100,
+          "name": "ic_fluent_book_open_24_regular",
+          "prevSize": 32,
+          "code": 59853,
+          "tempChar": ""
+        },
         {
           "order": 589,
           "id": 99,
           "name": "mask_filled_1",
           "prevSize": 32,
           "code": 59716,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 590,
@@ -6290,7 +7112,7 @@
           "name": "mask_outline_1",
           "prevSize": 32,
           "code": 59717,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 583,
@@ -6298,7 +7120,7 @@
           "name": "ic_fluent_folder_24_filled",
           "prevSize": 32,
           "code": 59745,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 584,
@@ -6306,7 +7128,7 @@
           "name": "ic_fluent_folder_24_regular",
           "prevSize": 32,
           "code": 59746,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 581,
@@ -6314,7 +7136,7 @@
           "name": "ic_fluent_person_24_filled",
           "prevSize": 32,
           "code": 59743,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 582,
@@ -6322,7 +7144,7 @@
           "name": "ic_fluent_person_24_regular",
           "prevSize": 32,
           "code": 59744,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 579,
@@ -6330,7 +7152,7 @@
           "name": "ic_fluent_people_24_filled",
           "prevSize": 32,
           "code": 59741,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 580,
@@ -6338,7 +7160,7 @@
           "name": "ic_fluent_people_24_regular",
           "prevSize": 32,
           "code": 59742,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 577,
@@ -6346,7 +7168,7 @@
           "name": "ic_fluent_megaphone_24_filled",
           "prevSize": 32,
           "code": 59739,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 578,
@@ -6354,7 +7176,7 @@
           "name": "ic_fluent_megaphone_24_regular",
           "prevSize": 32,
           "code": 59740,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 575,
@@ -6362,7 +7184,7 @@
           "name": "ic_fluent_bot_24_filled",
           "prevSize": 32,
           "code": 59737,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 576,
@@ -6370,7 +7192,7 @@
           "name": "ic_fluent_bot_24_regular",
           "prevSize": 32,
           "code": 59738,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 573,
@@ -6378,7 +7200,7 @@
           "name": "ic_fluent_alert_24_filled",
           "prevSize": 32,
           "code": 59735,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 574,
@@ -6386,7 +7208,7 @@
           "name": "ic_fluent_alert_24_regular",
           "prevSize": 32,
           "code": 59736,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 571,
@@ -6394,7 +7216,7 @@
           "name": "ic_fluent_chat_multiple_24_filled",
           "prevSize": 32,
           "code": 59731,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 572,
@@ -6402,7 +7224,7 @@
           "name": "ic_fluent_chat_multiple_24_regular",
           "prevSize": 32,
           "code": 59732,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 569,
@@ -6410,7 +7232,7 @@
           "name": "ic_fluent_briefcase_24_filled",
           "prevSize": 32,
           "code": 59729,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 570,
@@ -6418,7 +7240,7 @@
           "name": "ic_fluent_briefcase_24_regular",
           "prevSize": 32,
           "code": 59730,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 567,
@@ -6426,7 +7248,7 @@
           "name": "ic_fluent_airplane_24_filled",
           "prevSize": 32,
           "code": 59727,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 568,
@@ -6434,7 +7256,7 @@
           "name": "ic_fluent_airplane_24_regular",
           "prevSize": 32,
           "code": 59728,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 565,
@@ -6442,7 +7264,7 @@
           "name": "ic_fluent_arrow_trending_lines_24_filled",
           "prevSize": 32,
           "code": 59725,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 566,
@@ -6450,7 +7272,7 @@
           "name": "ic_fluent_arrow_trending_lines_24_regular",
           "prevSize": 32,
           "code": 59726,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 563,
@@ -6458,7 +7280,7 @@
           "name": "ic_fluent_hat_graduation_24_filled",
           "prevSize": 32,
           "code": 59723,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 564,
@@ -6466,7 +7288,7 @@
           "name": "ic_fluent_hat_graduation_24_regular",
           "prevSize": 32,
           "code": 59724,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 561,
@@ -6474,7 +7296,7 @@
           "name": "ic_fluent_sport_soccer_24_filled",
           "prevSize": 32,
           "code": 59721,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 562,
@@ -6482,7 +7304,7 @@
           "name": "ic_fluent_sport_soccer_24_regular",
           "prevSize": 32,
           "code": 59722,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 559,
@@ -6490,7 +7312,7 @@
           "name": "ic_fluent_drink_wine_24_filled",
           "prevSize": 32,
           "code": 59719,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 560,
@@ -6498,7 +7320,7 @@
           "name": "ic_fluent_drink_wine_24_regular",
           "prevSize": 32,
           "code": 59720,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 555,
@@ -6506,7 +7328,7 @@
           "name": "ic_fluent_heart_24_filled",
           "prevSize": 32,
           "code": 59713,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 556,
@@ -6514,7 +7336,7 @@
           "name": "ic_fluent_heart_24_regular",
           "prevSize": 32,
           "code": 59714,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 553,
@@ -6522,7 +7344,7 @@
           "name": "ic_fluent_home_24_filled",
           "prevSize": 32,
           "code": 59708,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 554,
@@ -6530,7 +7352,7 @@
           "name": "ic_fluent_home_24_regular",
           "prevSize": 32,
           "code": 59712,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 551,
@@ -6538,7 +7360,7 @@
           "name": "ic_fluent_games_24_filled",
           "prevSize": 32,
           "code": 59706,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 552,
@@ -6546,7 +7368,7 @@
           "name": "ic_fluent_games_24_regular",
           "prevSize": 32,
           "code": 59707,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 549,
@@ -6554,7 +7376,7 @@
           "name": "ic_fluent_leaf_one_24_filled",
           "prevSize": 32,
           "code": 59704,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 550,
@@ -6562,7 +7384,7 @@
           "name": "ic_fluent_leaf_one_24_regular",
           "prevSize": 32,
           "code": 59705,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 547,
@@ -6570,7 +7392,7 @@
           "name": "ic_fluent_star_24_filled",
           "prevSize": 32,
           "code": 59702,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 548,
@@ -6578,7 +7400,7 @@
           "name": "ic_fluent_star_24_regular",
           "prevSize": 32,
           "code": 59703,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 545,
@@ -6586,7 +7408,7 @@
           "name": "ic_fluent_trophy_24_filled",
           "prevSize": 32,
           "code": 59700,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 546,
@@ -6594,7 +7416,7 @@
           "name": "ic_fluent_trophy_24_regular",
           "prevSize": 32,
           "code": 59701,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 543,
@@ -6602,7 +7424,7 @@
           "name": "ic_fluent_animal_cat_24_filled",
           "prevSize": 32,
           "code": 59697,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 544,
@@ -6610,7 +7432,7 @@
           "name": "ic_fluent_animal_cat_24_regular",
           "prevSize": 32,
           "code": 59699,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 541,
@@ -6618,7 +7440,7 @@
           "name": "ic_fluent_call_24_filled",
           "prevSize": 32,
           "code": 59792,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 542,
@@ -6626,7 +7448,7 @@
           "name": "ic_fluent_call_24_regular",
           "prevSize": 32,
           "code": 59793,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 539,
@@ -6634,7 +7456,7 @@
           "name": "ic_fluent_settings_24_filled",
           "prevSize": 32,
           "code": 59790,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 540,
@@ -6642,7 +7464,7 @@
           "name": "ic_fluent_settings_24_regular",
           "prevSize": 32,
           "code": 59791,
-          "tempChar": ""
+          "tempChar": ""
         }
       ],
       "id": 5,
@@ -6657,6 +7479,336 @@
       "prevSize": 32,
       "icons": [
         {
+          "id": 116,
+          "paths": [
+            "M145.067 460.8c226.133-98.133 379.733-162.133 456.533-196.267 217.6-89.6 264.533-106.667 294.4-106.667 8.533 0 21.333 0 29.867 8.533s8.533 17.067 12.8 21.333c0 4.267 4.267 21.333 0 29.867-12.8 123.733-64 426.667-89.6 563.2-12.8 59.733-34.133 76.8-55.467 81.067-46.933 4.267-81.067-29.867-123.733-59.733-68.267-46.933-106.667-72.533-174.933-119.467-76.8-51.2-25.6-81.067 17.067-123.733 12.8-12.8 213.333-196.267 217.6-213.333 0 0 0-8.533-4.267-12.8s-12.8-4.267-17.067 0c-8.533 0-119.467 72.533-332.8 217.6-29.867 21.333-59.733 34.133-85.333 29.867-29.867 0-81.067-17.067-123.733-29.867-51.2-17.067-89.6-25.6-85.333-51.2 4.267-8.533 25.6-21.333 64-38.4z"
+          ],
+          "attrs": [
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 0,
+          "tags": [
+            "AirplaneFilled24"
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
+        },
+        {
+          "id": 115,
+          "paths": [
+            "M586.667 149.333h-149.333c-17.673 0-32 14.327-32 32s14.327 32 32 32h149.333c17.673 0 32-14.327 32-32s-14.327-32-32-32zM586.667 85.333c48.602 0 88.768 36.116 95.125 82.973l0.576 5.773-0.29-3.437 75.255 0.024c53.018 0 96 42.981 96 96v576c0 53.018-42.982 96-96 96h-490.667c-53.019 0-96-42.982-96-96v-576c0-53.019 42.981-96 96-96l75.255-0.024-0.332 3.437 0.62-5.773c6.357-46.858 46.522-82.973 95.124-82.973h149.333zM597.333 725.333h-256c-17.673 0-32 14.327-32 32s14.327 32 32 32h256c17.673 0 32-14.327 32-32s-14.327-32-32-32zM512 554.667h-170.667c-17.673 0-32 14.327-32 32s14.327 32 32 32h170.667c17.673 0 32-14.327 32-32s-14.327-32-32-32zM682.667 384h-341.333c-17.673 0-32 14.327-32 32s14.327 32 32 32h341.333c17.673 0 32-14.327 32-32s-14.327-32-32-32z"
+          ],
+          "attrs": [
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 0,
+          "tags": [
+            "ic_fluent_clipboard_text_ltr_24_filled"
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
+        },
+        {
+          "id": 114,
+          "paths": [
+            "M586.667 85.333c50.812 0 92.399 39.473 95.778 89.427l0.222 6.573c0-3.613-0.201-7.181-0.589-10.691l75.255 0.024c53.018 0 96 42.981 96 96v576c0 53.018-42.982 96-96 96h-490.667c-53.019 0-96-42.982-96-96v-576c0-53.019 42.981-96 96-96l75.255-0.024c-0.276 2.487-0.456 5.004-0.538 7.544l-0.051 3.146c0-53.019 42.981-96 96-96h149.333zM586.667 277.333h-149.333c-33.879 0-63.66-17.55-80.746-44.055l0.918 1.397-90.838-0.009c-17.673 0-32 14.327-32 32v576c0 17.673 14.327 32 32 32h490.667c17.673 0 32-14.327 32-32v-576c0-17.673-14.327-32-32-32l-90.837 0.009 0.917-1.397c-17.088 26.505-46.865 44.055-80.747 44.055zM586.667 149.333h-149.333c-17.673 0-32 14.327-32 32s14.327 32 32 32h149.333c17.673 0 32-14.327 32-32s-14.327-32-32-32zM341.333 618.667h170.667c17.673 0 32-14.327 32-32s-14.327-32-32-32h-170.667c-17.673 0-32 14.327-32 32s14.327 32 32 32zM341.333 448h341.333c17.673 0 32-14.327 32-32s-14.327-32-32-32h-341.333c-17.673 0-32 14.327-32 32s14.327 32 32 32zM341.333 789.333h256c17.673 0 32-14.327 32-32s-14.327-32-32-32h-256c-17.673 0-32 14.327-32 32s14.327 32 32 32z"
+          ],
+          "attrs": [
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 0,
+          "tags": [
+            "ic_fluent_clipboard_text_ltr_24_regular"
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
+        },
+        {
+          "id": 112,
+          "paths": [
+            "M512 85.333c234.667 0 426.667 192 426.667 426.667 0 12.8 0 21.333 0 34.133-51.2-46.933-115.2-76.8-192-76.8-153.6 0-277.333 123.733-277.333 277.333 0 72.533 29.867 140.8 76.8 192-12.8 0-21.333 0-34.133 0-68.267 0-136.533-17.067-196.267-46.933l-183.467 46.933c-21.333 4.267-38.4-8.533-42.667-25.6 0-4.267 0-12.8 0-17.067l46.933-183.467c-34.133-64-51.2-132.267-51.2-200.533 0-234.667 192-426.667 426.667-426.667z",
+            "M960 746.667c0 117.821-95.513 213.333-213.333 213.333s-213.333-95.513-213.333-213.333c0-117.821 95.513-213.333 213.333-213.333s213.333 95.513 213.333 213.333z"
+          ],
+          "attrs": [],
+          "grid": 0,
+          "tags": [
+            "ChatUnreadFilled24"
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "colorPermutations": {
+            "13333331": []
+          }
+        },
+        {
+          "id": 113,
+          "paths": [
+            "M938.667 512c0-234.667-192-426.667-426.667-426.667s-426.667 192-426.667 426.667c0 68.267 17.067 136.533 46.933 196.267l-46.933 162.133c0 8.533 0 21.333 0 29.867 8.533 29.867 38.4 46.933 64 38.4l162.133-46.933c59.733 29.867 128 46.933 196.267 46.933 12.8 0 21.333 0 34.133 0-17.067-17.067-34.133-38.4-46.933-64-59.733 0-115.2-17.067-166.4-46.933l-12.8-8.533-170.667 46.933 46.933-170.667-8.533-12.8c-29.867-55.467-46.933-115.2-46.933-174.933 0-200.533 162.133-362.667 362.667-362.667 196.267 0 358.4 157.867 362.667 349.867 21.333 12.8 42.667 25.6 64 46.933 12.8-8.533 12.8-17.067 12.8-29.867z",
+            "M960 746.667c0 117.821-95.513 213.333-213.333 213.333s-213.333-95.513-213.333-213.333c0-117.821 95.513-213.333 213.333-213.333s213.333 95.513 213.333 213.333z"
+          ],
+          "attrs": [],
+          "grid": 0,
+          "tags": [
+            "ChatUnread24"
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "colorPermutations": {
+            "13333331": []
+          }
+        },
+        {
+          "id": 111,
+          "paths": [
+            "M533.333 85.333v138.732c0 17.673 14.327 32 32 32s32-14.327 32-32v-138.732h42.667v181.381c0 17.673 14.327 32 32 32s32-14.327 32-32v-181.381h74.675c17.677 0 32 14.327 32 32v352h-597.332v-352c0-17.673 14.327-32 32-32h287.99zM213.344 533.333v74.756c0 53.018 42.981 96 96 96h117.319v149.244c0 47.13 38.203 85.333 85.333 85.333s85.333-38.204 85.333-85.333v-149.244h117.346c53.022 0 96-42.982 96-96v-74.756h-597.332z"
+          ],
+          "attrs": [
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 0,
+          "tags": [
+            "ic_fluent_paint_brush_24_filled"
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
+        },
+        {
+          "id": 110,
+          "paths": [
+            "M245.333 85.333c-17.673 0-32 14.327-32 32v490.688c0 53.022 42.981 96 96 96h95.99v127.979c0 58.91 47.754 106.667 106.668 106.667 58.91 0 106.667-47.757 106.667-106.667v-127.979h96.009c53.018 0 96-42.978 96-96v-490.688c0-17.673-14.327-32-32-32h-533.333zM277.333 469.346v-320.013h255.991v74.732c0 17.673 14.323 32 32 32 17.673 0 32-14.327 32-32v-74.732h42.667v117.381c0 17.673 14.323 32 32 32 17.673 0 32-14.327 32-32v-117.381h42.675v320.013h-469.333zM277.333 608.021v-74.675h469.333v74.675c0 17.673-14.327 32-32 32h-128.009c-17.677 0-32 14.327-32 32v159.979c0 23.565-19.106 42.667-42.667 42.667-23.565 0-42.667-19.102-42.667-42.667v-159.979c0-17.673-14.327-32-32-32h-127.991c-17.673 0-32-14.327-32-32z"
+          ],
+          "attrs": [
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 0,
+          "tags": [
+            "ic_fluent_paint_brush_24_regular"
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
+        },
+        {
+          "id": 109,
+          "paths": [
+            "M491.234 87.371c-9.826-3.685-20.834-2.317-29.461 3.661s-13.773 15.806-13.773 26.301v517.431c-29.218-23.42-66.306-37.431-106.667-37.431-94.257 0-170.667 76.412-170.667 170.667s76.41 170.667 170.667 170.667c87.949 0 160.358-66.522 169.655-151.996 0.661-2.56 1.011-5.239 1.011-8.004v-401.824l298.099 111.789c9.826 3.682 20.834 2.317 29.461-3.665 8.627-5.978 13.773-15.804 13.773-26.3v-139.413c0-57.803-35.857-109.542-89.975-129.838l-272.124-102.045z"
+          ],
+          "attrs": [
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 0,
+          "tags": [
+            "ic_fluent_music_note_1_24_filled"
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
+        },
+        {
+          "id": 108,
+          "paths": [
+            "M491.234 87.371c-9.826-3.685-20.834-2.317-29.461 3.661s-13.773 15.806-13.773 26.301v517.431c-29.218-23.42-66.306-37.431-106.667-37.431-94.257 0-170.667 76.412-170.667 170.667s76.41 170.667 170.667 170.667c87.949 0 160.358-66.522 169.655-151.996 0.661-2.56 1.011-5.239 1.011-8.004v-401.824l298.099 111.789c9.826 3.682 20.834 2.317 29.461-3.665 8.627-5.978 13.773-15.804 13.773-26.3v-139.413c0-57.803-35.857-109.542-89.975-129.838l-272.124-102.045zM448 768c0 58.91-47.756 106.667-106.667 106.667s-106.667-47.757-106.667-106.667c0-58.91 47.756-106.667 106.667-106.667s106.667 47.757 106.667 106.667zM789.333 412.491l-277.333-104v-144.981l228.885 85.832c29.141 10.929 48.448 38.788 48.448 69.913v93.237z"
+          ],
+          "attrs": [
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 0,
+          "tags": [
+            "ic_fluent_music_note_1_24_regular"
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
+        },
+        {
+          "id": 107,
+          "paths": [
+            "M642.372 384.154c19.661-60.886 29.589-114.184 29.589-160.14 0-102.343-40.068-181.223-106.667-181.223-36.13 0-47.313 21.514-61.303 74.531 0.734-2.77-6.95 27.049-9.195 35.038-4.309 15.306-11.81 41.365-22.49 78.123-0.286 0.985-0.704 1.913-1.254 2.769l-122.313 191.388c-28.93 45.268-71.617 80.062-121.788 99.271l-53.642 20.54c-33.85 12.958-53.504 48.358-46.604 83.942l29.276 150.985c7.131 36.779 35.006 66.048 71.392 74.965l351.979 86.268c107.998 26.47 217.156-39.019 244.629-146.769l67.153-263.364c16.009-62.793-21.918-126.677-84.706-142.687-9.476-2.416-19.213-3.638-28.992-3.638h-135.066z"
+          ],
+          "attrs": [
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 0,
+          "tags": [
+            "ic_fluent_thumb_like_24_filled"
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
+        },
+        {
+          "id": 106,
+          "paths": [
+            "M703.983 221.977c0-104.189-48.644-179.144-128.273-179.144-43.785 0-58.807 25.658-74.505 85.315-3.204 12.324-4.779 18.325-6.443 24.239-4.309 15.306-11.81 41.365-22.485 78.123-0.286 0.985-0.708 1.913-1.254 2.769l-122.316 191.388c-28.93 45.267-71.617 80.062-121.788 99.27l-20.193 7.731c-53.194 20.369-84.077 75.994-73.234 131.913l17.258 89.007c10.301 53.124 50.564 95.403 103.121 108.284l325.449 79.765c107.998 26.47 217.156-39.019 244.629-146.765l60.369-236.766c18.923-74.21-25.899-149.707-100.109-168.628-11.196-2.855-22.703-4.299-34.261-4.299h-77.794c21.167-69.67 31.829-123.421 31.829-162.203zM196.321 651.401c-4.928-25.417 9.109-50.705 33.289-59.959l20.193-7.735c62.959-24.102 116.527-67.767 152.832-124.574l122.315-191.387c3.84-6.011 6.801-12.542 8.789-19.393 10.722-36.907 18.261-63.104 22.63-78.63 1.839-6.539 3.584-13.171 6.729-25.287 8.102-30.793 12.087-37.601 12.612-37.601 37.022 0 64.273 41.987 64.273 115.144 0 37.738-13.901 99.645-41.975 184.11-6.886 20.716 8.533 42.092 30.366 42.092h121.574c6.225 0 12.42 0.777 18.449 2.317 39.962 10.189 64.094 50.842 53.905 90.799l-60.369 236.762c-18.799 73.724-93.483 118.532-167.377 100.42l-325.449-79.765c-28.3-6.938-49.98-29.7-55.527-58.308l-17.259-89.003z"
+          ],
+          "attrs": [
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 0,
+          "tags": [
+            "ic_fluent_thumb_like_24_regular"
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
+        },
+        {
+          "id": 105,
+          "paths": [
+            "M662.955 810.624l-12.403 53.696c-9.523 41.101-44.629 70.865-86.135 74.048l-7.386 0.282h-90.099c-42.216 0-79.155-27.516-91.602-67.26l-1.938-7.138-12.388-53.628h301.952zM512 85.375c170.842 0 309.333 138.493 309.333 309.333 0 91.158-39.919 174.648-117.99 249.204-1.506 1.438-2.556 3.285-3.025 5.312l-22.515 97.399h-331.605l-22.442-97.391c-0.469-2.031-1.522-3.878-3.029-5.321-78.116-74.556-118.059-158.046-118.059-249.204 0-170.84 138.493-309.333 309.333-309.333z"
+          ],
+          "attrs": [
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 0,
+          "tags": [
+            "ic_fluent_lightbulb_24_filled"
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
+        },
+        {
+          "id": 104,
+          "paths": [
+            "M512 85.375c170.842 0 309.333 138.493 309.333 309.333 0 89.43-38.43 171.508-113.626 244.989-3.281 3.209-5.824 7.070-7.471 11.319l-1.34 4.365-48.26 208.879c-9.502 41.126-44.621 70.921-86.148 74.108l-7.39 0.282h-90.185c-42.221 0-79.163-27.524-91.606-67.277l-1.937-7.138-48.195-208.845c-1.377-5.969-4.439-11.418-8.822-15.697-71.655-69.982-109.943-147.759-113.426-232.259l-0.262-12.725 0.166-10.211c5.387-166.114 141.744-299.122 309.168-299.122zM602.24 789.291h-180.523l14.016 60.553c3.012 13.069 13.79 22.707 26.778 24.503l4.403 0.303h90.185c13.41 0 25.22-8.329 29.897-20.574l1.284-4.224 13.961-60.561zM512 149.375c-132.343 0-240.211 104.79-245.156 235.923l-0.177 9.411 0.287 11.819c3.249 66.701 34.155 128.815 94.118 187.38 11.27 11.008 19.628 24.589 24.388 39.522l2.077 7.573 19.417 84.288h210.048l19.537-84.318c3.541-15.334 10.79-29.521 21.056-41.34l5.385-5.709c59.93-58.564 90.82-120.683 94.067-187.395l0.286-11.821-0.179-9.411c-4.945-131.133-112.811-235.923-245.154-235.923z"
+          ],
+          "attrs": [
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 0,
+          "tags": [
+            "ic_fluent_lightbulb_24_regular"
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
+        },
+        {
+          "id": 103,
+          "paths": [
+            "M85.333 288c0-41.237 33.429-74.667 74.667-74.667h576c41.237 0 74.667 33.429 74.667 74.667v362.667c0 41.237-33.429 74.667-74.667 74.667h-576c-41.237 0-74.667-33.429-74.667-74.667v-362.667zM213.333 266.667v42.667c0 17.673-14.327 32-32 32h-42.667v64h42.667c53.019 0 96-42.981 96-96v-42.667h-64zM448 576c53.018 0 96-42.982 96-96s-42.982-96-96-96c-53.019 0-96 42.982-96 96s42.981 96 96 96zM138.667 597.333h42.667c17.673 0 32 14.327 32 32v42.667h64v-42.667c0-53.018-42.981-96-96-96h-42.667v64zM682.667 629.333c0-17.673 14.327-32 32-32h42.667v-64h-42.667c-53.018 0-96 42.982-96 96v42.667h64v-42.667zM682.667 309.333v-42.667h-64v42.667c0 53.019 42.982 96 96 96h42.667v-64h-42.667c-17.673 0-32-14.327-32-32zM187.791 789.333c22.132 38.259 63.498 64 110.876 64h437.333c111.932 0 202.667-90.735 202.667-202.667v-224c0-47.378-25.741-88.744-64-110.876v334.876c0 76.582-62.084 138.667-138.667 138.667h-548.209z"
+          ],
+          "attrs": [
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 0,
+          "tags": [
+            "ic_fluent_money_24_filled"
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
+        },
+        {
+          "id": 102,
+          "paths": [
+            "M448 341.333c-70.692 0-128 57.308-128 128 0 70.694 57.308 128 128 128 70.694 0 128-57.306 128-128 0-70.692-57.306-128-128-128zM384 469.333c0-35.345 28.654-64 64-64 35.345 0 64 28.655 64 64s-28.655 64-64 64c-35.346 0-64-28.655-64-64zM85.333 309.333c0-53.019 42.981-96 96-96h533.333c53.018 0 96 42.981 96 96v320c0 53.018-42.982 96-96 96h-533.333c-53.019 0-96-42.982-96-96v-320zM181.333 277.333c-17.673 0-32 14.327-32 32v32h32c17.673 0 32-14.327 32-32v-32h-32zM149.333 533.333h32c53.019 0 96 42.982 96 96v32h341.333v-32c0-53.018 42.982-96 96-96h32v-128h-32c-53.018 0-96-42.981-96-96v-32h-341.333v32c0 53.019-42.981 96-96 96h-32v128zM746.667 341.333v-32c0-17.673-14.327-32-32-32h-32v32c0 17.673 14.327 32 32 32h32zM746.667 597.333h-32c-17.673 0-32 14.327-32 32v32h32c17.673 0 32-14.327 32-32v-32zM149.333 629.333c0 17.673 14.327 32 32 32h32v-32c0-17.673-14.327-32-32-32h-32v32zM187.792 789.333c22.132 38.259 63.498 64 110.876 64h437.332c111.932 0 202.667-90.735 202.667-202.667v-224c0-47.377-25.741-88.743-64-110.875v334.875c0 76.582-62.084 138.667-138.667 138.667h-548.208z"
+          ],
+          "attrs": [
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 0,
+          "tags": [
+            "ic_fluent_money_24_regular"
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
+        },
+        {
+          "id": 101,
+          "paths": [
+            "M277.333 85.333c-58.91 0-106.667 47.756-106.667 106.667v640c0 58.91 47.756 106.667 106.667 106.667h565.333c17.673 0 32-14.327 32-32s-14.327-32-32-32h-565.333c-23.564 0-42.667-19.102-42.667-42.667h608c17.673 0 32-14.327 32-32v-608c0-58.91-47.757-106.667-106.667-106.667h-490.667zM341.333 213.333h341.333c23.565 0 42.667 19.103 42.667 42.667v42.667c0 23.564-19.102 42.667-42.667 42.667h-341.333c-23.564 0-42.667-19.103-42.667-42.667v-42.667c0-23.564 19.103-42.667 42.667-42.667z"
+          ],
+          "attrs": [],
+          "grid": 0,
+          "tags": [
+            "ic_fluent_book_open_24_filled"
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "colorPermutations": {
+            "13333331": []
+          }
+        },
+        {
+          "id": 100,
+          "paths": [
+            "M298.667 256c0-23.564 19.103-42.667 42.667-42.667h341.333c23.565 0 42.667 19.103 42.667 42.667v85.333c0 23.564-19.102 42.667-42.667 42.667h-341.333c-23.564 0-42.667-19.103-42.667-42.667v-85.333zM362.667 320h298.667v-42.667h-298.667v42.667zM170.667 192c0-58.91 47.756-106.667 106.667-106.667h490.667c58.91 0 106.667 47.756 106.667 106.667v608c0 17.673-14.327 32-32 32h-608c0 23.565 19.103 42.667 42.667 42.667h565.333c17.673 0 32 14.327 32 32s-14.327 32-32 32h-565.333c-58.91 0-106.667-47.757-106.667-106.667v-640zM234.667 768h576v-576c0-23.564-19.102-42.667-42.667-42.667h-490.667c-23.564 0-42.667 19.103-42.667 42.667v576z"
+          ],
+          "attrs": [
+            {}
+          ],
+          "grid": 0,
+          "tags": [
+            "ic_fluent_book_open_24_regular"
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
+        },
+        {
           "id": 99,
           "paths": [
             "M966.151 260.478c10.122 13.975 15.183 43.276 15.183 87.903l-0.368 10.052c-0.368 5.525-1.012 11.776-1.931 18.65l-2.207 14.55c-0.429 2.553-0.889 5.169-1.38 7.842l-3.311 16.704c-0.613 2.89-1.257 5.83-1.931 8.817l-4.415 18.449c-0.797 3.158-1.625 6.355-2.483 9.587l-5.518 19.786c-0.981 3.358-1.993 6.744-3.035 10.153l-6.622 20.714c-40.774 122.154-119.104 264.315-234.989 264.315-46.997 0-98.627-19.641-154.89-58.922-28.422-19.876-64.083-19.876-92.538-0.060-56.231 39.341-107.861 58.982-154.858 58.982-115.885 0-194.214-142.162-234.989-264.315l-6.622-20.714c-1.042-3.41-2.054-6.795-3.035-10.153l-5.518-19.786-4.783-18.94c-0.736-3.076-1.441-6.109-2.115-9.096l-3.679-17.331c-0.552-2.785-1.073-5.516-1.564-8.189l-2.575-15.313c-2.207-14.557-3.311-26.757-3.311-35.781 0-44.627 5.061-73.928 15.183-87.903 3.397-4.543 9.063-5.827 13.627-2.937l56.361 34.136c17.5 10.599 36.821 16.613 56.579 17.61l100.812 5.088c44.417 2.243 88.289 10.788 130.296 25.392 43.943 15.267 76.102 22.9 96.477 22.9s52.534-7.633 96.477-22.9c42.007-14.604 85.879-23.149 130.296-25.392l100.812-5.088c19.757-0.997 39.078-7.011 56.579-17.61l56.361-34.136c4.564-2.89 10.23-1.606 13.627 2.937zM825.948 437.464c-57.847 9.377-104.27 14.068-139.271 14.068-57.591 0-104.277 33.867-104.277 84.668 0 33.867 44.69 93.134 119.174 93.134 54.625 0 98.818-54.552 132.578-163.655l3.695-12.352c1.884-6.382-1.205-13.267-6.901-15.378-1.61-0.597-3.321-0.763-4.999-0.485zM195.527 437.379l-2.474 0.57c-4.882 1.81-7.849 7.126-7.411 12.627l0.51 2.75 3.695 12.352c33.76 109.103 77.953 163.655 132.578 163.655 74.484 0 119.174-59.267 119.174-93.134 0-50.801-46.687-84.668-104.277-84.668-35.001 0-81.424-4.691-139.271-14.068z"
@@ -6669,7 +7821,12 @@
           "grid": 0,
           "tags": [
             "mask_filled_(1)"
-          ]
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 98,
@@ -6684,7 +7841,12 @@
           "grid": 0,
           "tags": [
             "mask_outline_(1)"
-          ]
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 97,
@@ -6699,7 +7861,12 @@
           "grid": 0,
           "tags": [
             "ic_fluent_folder_24_filled"
-          ]
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 96,
@@ -6714,7 +7881,12 @@
           "grid": 0,
           "tags": [
             "ic_fluent_folder_24_regular"
-          ]
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 95,
@@ -6729,7 +7901,12 @@
           "grid": 0,
           "tags": [
             "ic_fluent_person_24_filled"
-          ]
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 94,
@@ -6744,7 +7921,12 @@
           "grid": 0,
           "tags": [
             "ic_fluent_person_24_regular"
-          ]
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 93,
@@ -6759,7 +7941,12 @@
           "grid": 0,
           "tags": [
             "ic_fluent_people_24_filled"
-          ]
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 92,
@@ -6774,7 +7961,12 @@
           "grid": 0,
           "tags": [
             "ic_fluent_people_24_regular"
-          ]
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 91,
@@ -6789,7 +7981,12 @@
           "grid": 0,
           "tags": [
             "ic_fluent_megaphone_24_filled"
-          ]
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 90,
@@ -6804,7 +8001,12 @@
           "grid": 0,
           "tags": [
             "ic_fluent_megaphone_24_regular"
-          ]
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 89,
@@ -6819,7 +8021,12 @@
           "grid": 0,
           "tags": [
             "ic_fluent_bot_24_filled"
-          ]
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 88,
@@ -6834,7 +8041,12 @@
           "grid": 0,
           "tags": [
             "ic_fluent_bot_24_regular"
-          ]
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 87,
@@ -6849,7 +8061,12 @@
           "grid": 0,
           "tags": [
             "ic_fluent_alert_24_filled"
-          ]
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 86,
@@ -6864,7 +8081,12 @@
           "grid": 0,
           "tags": [
             "ic_fluent_alert_24_regular"
-          ]
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 85,
@@ -6879,7 +8101,12 @@
           "grid": 0,
           "tags": [
             "ic_fluent_chat_multiple_24_filled"
-          ]
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 84,
@@ -6894,7 +8121,12 @@
           "grid": 0,
           "tags": [
             "ic_fluent_chat_multiple_24_regular"
-          ]
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 83,
@@ -6909,7 +8141,12 @@
           "grid": 0,
           "tags": [
             "ic_fluent_briefcase_24_filled"
-          ]
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 82,
@@ -6924,37 +8161,52 @@
           "grid": 0,
           "tags": [
             "ic_fluent_briefcase_24_regular"
-          ]
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 81,
           "paths": [
-            "M938.193 509.709c0 46.925-38.037 84.962-84.962 84.962-0.828 0-1.655-0.013-2.483-0.038l-202.189-5.952-147.341 304.751c-11.853 24.516-36.685 40.090-63.915 40.090-21.819 0-39.508-17.69-39.508-39.509 0-1.57 0.094-3.14 0.281-4.702l36.786-306.889-160.663-4.689-20.908 57.203c-7.929 21.687-28.563 36.113-51.657 36.113-21.237 0-38.453-17.216-38.453-38.451l0.030-63.006-34.592-7.202c-24.945-5.205-42.818-27.196-42.818-52.681 0-25.476 17.881-47.458 42.825-52.646l34.585-7.198-0.030-63.041c0-19.603 14.669-35.781 33.629-38.153l4.823-0.3c23.093 0 43.727 14.426 51.657 36.115l20.954 57.191 160.066-4.693-36.236-302.27c-0.093-0.78-0.164-1.563-0.211-2.348l-0.070-2.356c0-21.821 17.689-39.51 39.508-39.51 24.964 0 47.906 13.088 60.685 34.153l3.23 5.939 145.178 300.184 204.352-5.981c46.899-1.377 86.033 35.523 87.411 82.422l0.034 2.492z"
+            "M529.067 337.067l-81.067-64c-12.8-12.8-29.867-17.067-46.933-17.067-59.733 0-98.133 64-68.267 115.2l17.067 29.867 149.333-29.867c4.267 0 8.533-4.267 12.8-8.533 0-8.533 8.533-17.067 17.067-25.6zM917.333 375.467c-38.4-46.933-110.933-106.667-209.067-98.133-38.4 4.267-76.8 21.333-102.4 46.933-29.867 21.333-51.2 46.933-68.267 68.267-8.533 12.8-21.333 21.333-38.4 25.6l-200.533 42.667-42.667-76.8c-4.267-29.867-29.867-42.667-55.467-42.667-38.4 0-72.533 34.133-72.533 72.533v157.867c0 59.733 55.467 106.667 115.2 98.133l140.8-29.867-21.333 51.2c-21.333 59.733 17.067 119.467 81.067 119.467 25.6 0 51.2-12.8 68.267-34.133l136.533-183.467 230.4-81.067c25.6-8.533 46.933-29.867 55.467-55.467s4.267-55.467-17.067-81.067z"
           ],
           "attrs": [
             {}
           ],
-          "isMulticolor": false,
-          "isMulticolor2": false,
           "grid": 0,
           "tags": [
             "ic_fluent_airplane_24_filled"
-          ]
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 80,
           "paths": [
-            "M404.020 411.447l-29.876-250.657-0.079-3.14c0-37.914 30.736-68.65 68.65-68.65 34.253 0 65.95 17.905 84.412 48.401l3.682 6.855 125.649 259.799 168.836-4.942c61.171-1.796 112.213 46.335 114.018 107.971l0.038 2.786c0 61.197-49.613 110.81-111.748 110.797l-169.139-4.954-127.65 264.034c-16.337 33.792-50.564 55.258-88.098 55.258-37.914 0-68.65-30.733-68.636-69.602l0.278-5.035 30.16-252.083-90.969-2.658-11.473 31.39c-11.969 32.738-43.114 54.515-77.972 54.515-37.373 0-67.67-30.298-67.67-67.686l0.015-32.41-6.615-1.378c-37.973-7.923-65.181-41.399-65.181-80.188 0-38.797 27.228-72.269 65.204-80.166l6.592-1.37-0.015-32.458c0-34.22 25.52-62.927 61.212-67.331l6.458-0.34c31.784 0 60.709 18.141 75.284 48.087l2.68 6.406 11.504 31.398 90.45-2.651zM442.714 153c-2.569 0-4.651 2.082-4.663 3.696l37.82 316.674-206.527 6.054-26.769-73.187-1.389-3.374c-3.173-6.498-9.804-10.657-15.1-10.718l-2.484 0.092c-1.775 0.222-3.169 1.791-3.169 3.625l0.040 84.514-57.58 11.989c-8.294 1.724-14.24 9.033-14.24 17.506 0 8.482 5.952 15.808 14.241 17.536l57.579 11.985-0.040 84.467c0 2.031 1.643 3.674 3.67 3.674 7.985 0 15.121-4.992 17.862-12.489l27.317-74.735 207.101 6.046-38.268 318.771-0.051 1.233c0 2.569 2.082 4.646 4.651 4.646 12.983 0 24.823-7.424 30.477-19.115l145.702-301.363 209.647 6.153c25.852 0 46.814-20.958 46.814-46.34l-0.026-1.847c-0.755-25.835-22.319-46.165-48.158-45.406l-210.283 6.153-143.006-295.771-2.236-4.19c-6.114-10.082-17.084-16.279-28.932-16.279z"
+            "M354.133 443.733l-34.133-46.933c-38.4-59.733 4.267-140.8 76.8-140.8 21.333 0 38.4 8.533 55.467 21.333l110.933 89.6c12.8-12.8 29.867-29.867 46.933-42.667 29.867-21.333 64-42.667 102.4-46.933 93.867-8.533 166.4 51.2 209.067 98.133 21.333 25.6 25.6 55.467 17.067 81.067s-29.867 46.933-55.467 55.467l-230.4 81.067-140.8 179.2c-17.067 25.6-42.667 38.4-72.533 38.4-59.733 0-106.667-55.467-93.867-115.2l8.533-55.467-106.667 21.333c-64 17.067-119.467-29.867-119.467-89.6v-157.867c0-38.4 34.133-72.533 72.533-72.533 25.6 0 51.2 12.8 64 38.4l42.667 76.8 46.933-12.8zM375.467 358.4l46.933 68.267 81.067-17.067c4.267 0 8.533 0 12.8-4.267l-102.4-85.333c-8.533 0-12.8 0-17.067 0-21.333 0-34.133 21.333-21.333 38.4zM716.8 341.333c-21.333 0-46.933 12.8-68.267 29.867s-42.667 38.4-59.733 55.467c-17.067 21.333-42.667 38.4-72.533 46.933l-221.867 46.933c-12.8 4.267-29.867-4.267-34.133-17.067l-51.2-93.867c0-4.267-4.267-4.267-8.533-4.267s-8.533 4.267-8.533 8.533v157.867c0 21.333 21.333 38.4 38.4 34.133l153.6-34.133c8.533-4.267 21.333 0 29.867 8.533 12.8 4.267 12.8 17.067 12.8 25.6l-21.333 102.4c-4.267 21.333 12.8 38.4 29.867 38.4 8.533 0 21.333-4.267 25.6-12.8l140.8-187.733c4.267-4.267 8.533-8.533 17.067-12.8l238.933-81.067c8.533-4.267 17.067-8.533 17.067-17.067 0-4.267 0-12.8-4.267-17.067-34.133-42.667-89.6-81.067-153.6-76.8z"
           ],
           "attrs": [
             {}
           ],
-          "isMulticolor": false,
-          "isMulticolor2": false,
           "grid": 0,
           "tags": [
             "ic_fluent_airplane_24_regular"
-          ]
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 79,
@@ -6969,7 +8221,12 @@
           "grid": 0,
           "tags": [
             "ic_fluent_arrow_trending_lines_24_filled"
-          ]
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 78,
@@ -6984,7 +8241,12 @@
           "grid": 0,
           "tags": [
             "ic_fluent_arrow_trending_lines_24_regular"
-          ]
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 77,
@@ -6999,7 +8261,12 @@
           "grid": 0,
           "tags": [
             "ic_fluent_hat_graduation_24_filled"
-          ]
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 76,
@@ -7014,7 +8281,12 @@
           "grid": 0,
           "tags": [
             "ic_fluent_hat_graduation_24_regular"
-          ]
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 75,
@@ -7029,7 +8301,12 @@
           "grid": 0,
           "tags": [
             "ic_fluent_sport_soccer_24_filled"
-          ]
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 74,
@@ -7044,7 +8321,12 @@
           "grid": 0,
           "tags": [
             "ic_fluent_sport_soccer_24_regular"
-          ]
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 73,
@@ -7059,7 +8341,12 @@
           "grid": 0,
           "tags": [
             "ic_fluent_drink_wine_24_filled"
-          ]
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 72,
@@ -7074,7 +8361,12 @@
           "grid": 0,
           "tags": [
             "ic_fluent_drink_wine_24_regular"
-          ]
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 69,
@@ -7089,7 +8381,12 @@
           "grid": 0,
           "tags": [
             "ic_fluent_heart_24_filled"
-          ]
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 68,
@@ -7104,7 +8401,12 @@
           "grid": 0,
           "tags": [
             "ic_fluent_heart_24_regular"
-          ]
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 67,
@@ -7119,7 +8421,12 @@
           "grid": 0,
           "tags": [
             "ic_fluent_home_24_filled"
-          ]
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 66,
@@ -7134,7 +8441,12 @@
           "grid": 0,
           "tags": [
             "ic_fluent_home_24_regular"
-          ]
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 65,
@@ -7149,7 +8461,12 @@
           "grid": 0,
           "tags": [
             "ic_fluent_games_24_filled"
-          ]
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 64,
@@ -7164,7 +8481,12 @@
           "grid": 0,
           "tags": [
             "ic_fluent_games_24_regular"
-          ]
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 63,
@@ -7179,7 +8501,12 @@
           "grid": 0,
           "tags": [
             "ic_fluent_leaf_one_24_filled"
-          ]
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 62,
@@ -7194,7 +8521,12 @@
           "grid": 0,
           "tags": [
             "ic_fluent_leaf_one_24_regular"
-          ]
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 61,
@@ -7209,7 +8541,12 @@
           "grid": 0,
           "tags": [
             "ic_fluent_star_24_filled"
-          ]
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 60,
@@ -7224,7 +8561,12 @@
           "grid": 0,
           "tags": [
             "ic_fluent_star_24_regular"
-          ]
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 59,
@@ -7239,7 +8581,12 @@
           "grid": 0,
           "tags": [
             "ic_fluent_trophy_24_filled"
-          ]
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 58,
@@ -7254,7 +8601,12 @@
           "grid": 0,
           "tags": [
             "ic_fluent_trophy_24_regular"
-          ]
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 57,
@@ -7269,7 +8621,12 @@
           "grid": 0,
           "tags": [
             "ic_fluent_animal_cat_24_filled"
-          ]
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 56,
@@ -7284,7 +8641,12 @@
           "grid": 0,
           "tags": [
             "ic_fluent_animal_cat_24_regular"
-          ]
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 55,
@@ -7299,7 +8661,12 @@
           "grid": 0,
           "tags": [
             "ic_fluent_call_24_filled"
-          ]
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 54,
@@ -7314,7 +8681,12 @@
           "grid": 0,
           "tags": [
             "ic_fluent_call_24_regular"
-          ]
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 53,
@@ -7329,7 +8701,12 @@
           "grid": 0,
           "tags": [
             "ic_fluent_settings_24_filled"
-          ]
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         },
         {
           "id": 52,
@@ -7344,11 +8721,32 @@
           "grid": 0,
           "tags": [
             "ic_fluent_settings_24_regular"
-          ]
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
         }
       ],
       "invisible": false,
-      "colorThemes": []
+      "colorThemes": [
+        [
+          [
+            0,
+            0,
+            0,
+            1
+          ],
+          [
+            33,
+            33,
+            33,
+            1
+          ]
+        ]
+      ],
+      "colorThemeIdx": 0
     },
     {
       "selection": [
@@ -7358,7 +8756,7 @@
           "name": "ic_fluent_clock_20_regular",
           "prevSize": 32,
           "code": 59665,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 423,
@@ -7366,7 +8764,7 @@
           "name": "ic_fluent_emoji_20_regular",
           "prevSize": 32,
           "code": 59680,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 424,
@@ -7374,7 +8772,7 @@
           "name": "ic_fluent_animal_cat_20_regular",
           "prevSize": 32,
           "code": 59681,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 421,
@@ -7382,7 +8780,7 @@
           "name": "ic_fluent_food_pizza_20_regular",
           "prevSize": 32,
           "code": 59682,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 420,
@@ -7390,7 +8788,7 @@
           "name": "ic_fluent_sport_soccer_20_regular",
           "prevSize": 32,
           "code": 59683,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 425,
@@ -7398,7 +8796,7 @@
           "name": "ic_fluent_vehicle_car_20_regular",
           "prevSize": 32,
           "code": 59684,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 419,
@@ -7406,7 +8804,7 @@
           "name": "ic_fluent_lightbulb_filament_20_regular",
           "prevSize": 32,
           "code": 59685,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 418,
@@ -7414,7 +8812,7 @@
           "name": "ic_fluent_symbols_20_regular",
           "prevSize": 32,
           "code": 59686,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 422,
@@ -7422,7 +8820,7 @@
           "name": "ic_fluent_flag_20_regular",
           "prevSize": 32,
           "code": 59687,
-          "tempChar": ""
+          "tempChar": ""
         }
       ],
       "id": 3,
@@ -7589,7 +8987,7 @@
           "name": "Circle",
           "prevSize": 32,
           "code": 59963,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 621,
@@ -7597,7 +8995,7 @@
           "name": "Premium",
           "prevSize": 32,
           "code": 59829,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 603,
@@ -7605,7 +9003,7 @@
           "name": "ic_fluent_clock_alarm_hour_20_regular",
           "prevSize": 32,
           "code": 59811,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 601,
@@ -7613,7 +9011,7 @@
           "name": "never",
           "prevSize": 32,
           "code": 59807,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 599,
@@ -7621,7 +9019,7 @@
           "name": "day",
           "prevSize": 32,
           "code": 59808,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 602,
@@ -7629,7 +9027,7 @@
           "name": "week",
           "prevSize": 32,
           "code": 59809,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 600,
@@ -7637,7 +9035,7 @@
           "name": "month",
           "prevSize": 32,
           "code": 59810,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 592,
@@ -7645,7 +9043,7 @@
           "name": "mask_outline_2",
           "prevSize": 32,
           "code": 59799,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 521,
@@ -7653,7 +9051,7 @@
           "name": "Reactions",
           "prevSize": 32,
           "code": 59776,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 513,
@@ -7661,7 +9059,7 @@
           "name": "ic_fluent_dismiss_24_regular",
           "prevSize": 32,
           "code": 59768,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 497,
@@ -7669,7 +9067,7 @@
           "name": "Seen",
           "prevSize": 32,
           "code": 59755,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 494,
@@ -7677,7 +9075,7 @@
           "name": "ArrowDownSmall",
           "prevSize": 32,
           "code": 60892,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 492,
@@ -7685,7 +9083,7 @@
           "name": "ArrowLeftSmall",
           "prevSize": 32,
           "code": 60889,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 491,
@@ -7693,7 +9091,7 @@
           "name": "ArrowRightSmall",
           "prevSize": 32,
           "code": 60890,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 493,
@@ -7701,7 +9099,7 @@
           "name": "ArrowUpSmall",
           "prevSize": 32,
           "code": 60891,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 489,
@@ -7709,7 +9107,7 @@
           "name": "DismissSmall",
           "prevSize": 32,
           "code": 57610,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 403,
@@ -7717,7 +9115,7 @@
           "name": "VoiceChat",
           "prevSize": 32,
           "code": 59648,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 397,
@@ -7725,7 +9123,7 @@
           "name": "uniE768",
           "prevSize": 32,
           "code": 59240,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 394,
@@ -7733,7 +9131,7 @@
           "name": "uniE769",
           "prevSize": 32,
           "code": 59241,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 393,
@@ -7741,7 +9139,7 @@
           "name": "uniEC57",
           "prevSize": 32,
           "code": 60503,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 392,
@@ -7749,7 +9147,7 @@
           "name": "uniEC58",
           "prevSize": 32,
           "code": 60504,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 391,
@@ -7757,7 +9155,7 @@
           "name": "uniE8ED",
           "prevSize": 32,
           "code": 59629,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 262,
@@ -7765,7 +9163,7 @@
           "name": "Compact",
           "prevSize": 32,
           "code": 59692,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 263,
@@ -7773,7 +9171,7 @@
           "name": "CompactFull",
           "prevSize": 32,
           "code": 59693,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 261,
@@ -7781,7 +9179,7 @@
           "name": "Pinned",
           "prevSize": 32,
           "code": 59711,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 259,
@@ -7789,7 +9187,7 @@
           "name": "Replies",
           "prevSize": 32,
           "code": 59710,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 0,
@@ -7821,7 +9219,7 @@
           "name": "CancelSmall",
           "prevSize": 32,
           "code": 59688,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 237,
@@ -7829,7 +9227,7 @@
           "name": "DownloadSmall",
           "prevSize": 32,
           "code": 59690,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 0,
@@ -7909,7 +9307,7 @@
           "prevSize": 32,
           "code": 58880,
           "name": "uniE600",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 9,
@@ -7918,7 +9316,7 @@
           "prevSize": 32,
           "code": 58881,
           "name": "uniE601",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 10,
@@ -7927,7 +9325,7 @@
           "prevSize": 32,
           "code": 58882,
           "name": "uniE602",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 11,
@@ -7936,7 +9334,7 @@
           "prevSize": 32,
           "code": 58883,
           "name": "uniE603",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 12,
@@ -7945,7 +9343,7 @@
           "prevSize": 32,
           "code": 58885,
           "name": "uniE605",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 13,
@@ -7954,7 +9352,7 @@
           "prevSize": 32,
           "code": 58887,
           "name": "uniE607",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 14,
@@ -7963,7 +9361,7 @@
           "prevSize": 32,
           "code": 58888,
           "name": "uniE608",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 15,
@@ -7972,7 +9370,7 @@
           "prevSize": 32,
           "code": 58891,
           "name": "uniE60B",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 16,
@@ -7981,7 +9379,7 @@
           "prevSize": 32,
           "code": 58892,
           "name": "uniE60C",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 235,
@@ -7989,7 +9387,7 @@
           "name": "Trending",
           "prevSize": 32,
           "code": 58893,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 18,
@@ -7998,7 +9396,7 @@
           "prevSize": 32,
           "code": 58894,
           "name": "uniE60E",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 19,
@@ -8007,7 +9405,7 @@
           "prevSize": 32,
           "code": 58895,
           "name": "uniE60F",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 20,
@@ -8033,7 +9431,7 @@
           "prevSize": 32,
           "code": 58897,
           "name": "uniE611",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 23,
@@ -8042,7 +9440,7 @@
           "prevSize": 32,
           "code": 58898,
           "name": "uniE612",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 381,
@@ -8050,7 +9448,7 @@
           "name": "BotCommands",
           "prevSize": 32,
           "code": 58899,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 24,
@@ -8068,7 +9466,7 @@
           "prevSize": 32,
           "code": 58900,
           "name": "uniE614",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 26,
@@ -8140,7 +9538,7 @@
           "prevSize": 32,
           "code": 59654,
           "name": "uniE906",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 34,
@@ -8158,7 +9556,7 @@
           "prevSize": 32,
           "code": 59656,
           "name": "uniE908",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 36,
@@ -8176,7 +9574,7 @@
           "prevSize": 32,
           "code": 59658,
           "name": "uniE90A",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 38,
@@ -8185,7 +9583,7 @@
           "prevSize": 32,
           "code": 59659,
           "name": "uniE90B",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 39,
@@ -8248,7 +9646,7 @@
           "prevSize": 32,
           "code": 59666,
           "name": "uniE912",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 46,
@@ -8257,7 +9655,7 @@
           "prevSize": 32,
           "code": 59667,
           "name": "uniE913",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 47,
@@ -8266,7 +9664,7 @@
           "prevSize": 32,
           "code": 59668,
           "name": "uniE914",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 48,
@@ -8320,7 +9718,7 @@
           "prevSize": 32,
           "code": 59674,
           "name": "uniE91A",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 54,
@@ -8329,7 +9727,7 @@
           "prevSize": 32,
           "code": 59675,
           "name": "uniE91B",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 55,
@@ -8356,7 +9754,7 @@
           "prevSize": 32,
           "code": 59678,
           "name": "uniE91E",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 58,
@@ -8374,7 +9772,7 @@
           "prevSize": 32,
           "code": 942080,
           "name": "uE6000",
-          "tempChar": ""
+          "tempChar": ""
         }
       ],
       "id": 2,
@@ -10200,7 +11598,7 @@
       "metadata": {
         "fontFamily": "Telegram",
         "majorVersion": 2,
-        "minorVersion": 46
+        "minorVersion": 47
       },
       "metrics": {
         "emSize": 1024,
