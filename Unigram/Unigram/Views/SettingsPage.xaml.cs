@@ -9,7 +9,6 @@ using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Users;
 using Unigram.Views.Folders;
-using Unigram.Views.Premium;
 using Unigram.Views.Settings;
 using Windows.ApplicationModel;
 using Windows.UI.Xaml;
@@ -81,11 +80,17 @@ namespace Unigram.Views
             set
             {
                 _masterDetail = value;
+                _masterDetail.NavigationService.Frame.Navigated += OnNavigated;
                 ViewModel.NavigationService = value.NavigationService;
             }
         }
 
-        private void UpdateSelection()
+        private void OnNavigated(object sender, NavigationEventArgs e)
+        {
+            UpdateSelection(false);
+        }
+
+        private void UpdateSelection(bool clearBackStack = true)
         {
             object FindRoot()
             {
@@ -105,7 +110,11 @@ namespace Unigram.Views
                 return null;
             }
 
-            MasterDetail.NavigationService.GoBackAt(0, false);
+            if (clearBackStack)
+            {
+                MasterDetail.NavigationService.GoBackAt(0, false);
+            }
+
             Navigation.SelectedItem = FindRoot();
         }
 
