@@ -78,7 +78,7 @@ namespace Unigram.Controls.Messages.Content
             }
             else
             {
-                Width = Player.Width = sticker.PremiumAnimation != null ? 240 : 180;
+                Width = Player.Width = sticker.PremiumAnimation != null ? 180 : 180;
                 Height = Player.Height = 180;
                 Player.ColorReplacements = null;
                 Player.IsFlipped = sticker.PremiumAnimation != null && !message.IsOutgoing;
@@ -146,7 +146,7 @@ namespace Unigram.Controls.Messages.Content
             ElementCompositionPreview.SetElementChildVisual(Player, null);
 
             var sticker = _message?.Content as MessageSticker;
-            if (sticker?.Sticker.PremiumAnimation != null && _message.GeneratedContentUnread)
+            if (sticker?.Sticker.PremiumAnimation != null && _message.GeneratedContentUnread && IsLoaded)
             {
                 _message.GeneratedContentUnread = false;
                 PlayPremium(_message, sticker.Sticker);
@@ -210,7 +210,21 @@ namespace Unigram.Controls.Messages.Content
             }
             else
             {
-                _message.Delegate.OpenSticker(sticker);
+                if (sticker.PremiumAnimation != null)
+                {
+                    if (Interactions?.Children.Count > 0)
+                    {
+                        _message.Delegate.OpenSticker(sticker);
+                    }
+                    else
+                    {
+                        PlayPremium(_message, sticker);
+                    }
+                }
+                else
+                {
+                    _message.Delegate.OpenSticker(sticker);
+                }
             }
         }
 
@@ -300,12 +314,12 @@ namespace Unigram.Controls.Messages.Content
                 var dispatcher = DispatcherQueue.GetForCurrentThread();
 
                 var player = new LottieView();
-                player.Width = 360;
-                player.Height = 360;
+                player.Width = 270;
+                player.Height = 270;
                 player.IsFlipped = !message.IsOutgoing;
                 player.IsLoopingEnabled = false;
                 player.IsHitTestVisible = false;
-                player.FrameSize = new Size(512, 512);
+                player.FrameSize = new Size(270 * 2, 270 * 2);
                 player.Source = UriEx.ToLocal(file.Local.Path);
                 player.PositionChanged += (s, args) =>
                 {
@@ -319,10 +333,10 @@ namespace Unigram.Controls.Messages.Content
                     }
                 };
 
-                var left = 100;
-                var right = 20;
-                var top = 90;
-                var bottom = 90;
+                var left = 75;
+                var right = 15;
+                var top = 45;
+                var bottom = 45;
 
                 if (message.IsOutgoing)
                 {
