@@ -1,5 +1,6 @@
 ﻿using Microsoft.Graphics.Canvas.Effects;
 using Windows.Graphics.Effects;
+using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
@@ -11,6 +12,8 @@ namespace Unigram.Controls.Media
         public LoadedImageSurface Surface { get; set; }
 
         public bool IsInverted { get; set; }
+
+        public double Intensity { get; set; }
 
         protected override void OnConnected()
         {
@@ -27,7 +30,7 @@ namespace Unigram.Controls.Media
 
                 var borderEffect = new BorderEffect()
                 {
-                    Source = new CompositionEffectSourceParameter("source"),
+                    Source = new CompositionEffectSourceParameter("Source"),
                     ExtendX = Microsoft.Graphics.Canvas.CanvasEdgeBehavior.Wrap,
                     ExtendY = Microsoft.Graphics.Canvas.CanvasEdgeBehavior.Wrap
                 };
@@ -61,16 +64,31 @@ namespace Unigram.Controls.Media
                 }
                 else
                 {
-                    effect = _tintEffect = new TintEffect
+                    var tintEffect = _tintEffect = new TintEffect
                     {
+                        Name = "Tint",
                         Source = borderEffect,
-                        Color = FallbackColor
+                        Color = Color.FromArgb((byte)(Intensity * 255), 0, 0, 0)
+                    };
+
+                    effect = new BlendEffect
+                    {
+                        Background = tintEffect,
+                        Foreground = new CompositionEffectSourceParameter("Backdrop"),
+                        Mode = BlendEffectMode.Overlay
                     };
                 }
 
-                var borderEffectFactory = Window.Current.Compositor.CreateEffectFactory(effect);
+                var backdrop = Window.Current.Compositor.CreateBackdropBrush();
+
+                var borderEffectFactory = Window.Current.Compositor.CreateEffectFactory(effect, new[] { "Tint.Color" });
                 var borderEffectBrush = borderEffectFactory.CreateBrush();
-                borderEffectBrush.SetSourceParameter("source", surfaceBrush);
+                borderEffectBrush.SetSourceParameter("Source", surfaceBrush);
+
+                if (_tintEffect != null)
+                {
+                    borderEffectBrush.SetSourceParameter("Backdrop", backdrop);
+                }
 
                 CompositionBrush = borderEffectBrush;
             }
@@ -116,12 +134,8 @@ namespace Unigram.Controls.Media
 
                 if (CompositionBrush is CompositionEffectBrush effectBrush)
                 {
-                    effectBrush.SetSourceParameter("source", surfaceBrush);
-                }
-
-                if (_tintEffect != null)
-                {
-                    _tintEffect.Color = FallbackColor;
+                    effectBrush.SetSourceParameter("Source", surfaceBrush);
+                    effectBrush.Properties.InsertColor("Tint.Color", Color.FromArgb((byte)(Intensity * 255), 0, 0, 0));
                 }
             }
         }

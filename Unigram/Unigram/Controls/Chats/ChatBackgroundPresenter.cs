@@ -204,7 +204,7 @@ namespace Unigram.Controls.Chats
                 }
                 else
                 {
-                    _imageBackground.Opacity = typePattern.Intensity / 100d;
+                    _imageBackground.Opacity = 1;
                     _colorBackground.Opacity = 1;
 
                     Background = null;
@@ -263,8 +263,8 @@ namespace Unigram.Controls.Chats
             if (_imageBackground.Fill is TiledBrush brush)
             {
                 brush.Surface = await PlaceholderHelper.GetPatternSurfaceAsync(null, file);
-                brush.FallbackColor = typePattern.GetForeground();
                 brush.IsInverted = typePattern.IsInverted;
+                brush.Intensity = typePattern.Intensity / 100d;
                 brush.Update();
             }
             else
@@ -272,8 +272,8 @@ namespace Unigram.Controls.Chats
                 _imageBackground.Fill = new TiledBrush
                 {
                     Surface = await PlaceholderHelper.GetPatternSurfaceAsync(null, file),
-                    FallbackColor = typePattern.GetForeground(),
                     IsInverted = typePattern.IsInverted,
+                    Intensity = typePattern.Intensity / 100d
                 };
             }
         }
