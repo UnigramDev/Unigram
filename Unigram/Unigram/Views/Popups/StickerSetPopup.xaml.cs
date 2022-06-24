@@ -223,11 +223,18 @@ namespace Unigram.Views.Popups
             var content = args.ItemContainer.ContentTemplateRoot as Grid;
             var sticker = args.Item as Sticker;
 
-            if (content.Children.Count > 1)
+            if (content.Children.Count > 1 && content.Children[1] is Border panel && panel.Child is TextBlock premium)
             {
-                content.Children[1].Visibility = sticker.PremiumAnimation != null && !ViewModel.CacheService.IsPremium
-                    ? Visibility.Visible
-                    : Visibility.Collapsed;
+                if (sticker.PremiumAnimation != null && ViewModel.CacheService.IsPremiumAvailable)
+                {
+                    premium.Text = ViewModel.CacheService.IsPremium ? Icons.Premium16 : Icons.LockClosed16;
+                    panel.HorizontalAlignment = ViewModel.CacheService.IsPremium ? HorizontalAlignment.Right : HorizontalAlignment.Center;
+                    panel.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    panel.Visibility = Visibility.Collapsed;
+                }
             }
 
             var file = sticker.StickerValue;

@@ -312,6 +312,15 @@
                         Value="0" />
             </Style>
 
+            <LinearGradientBrush x:Key="PremiumObliqueGradientBrush"
+                                 StartPoint="0,1"
+                                 EndPoint="0.7,0.3">
+                <GradientStop Color="#1991FF"
+                              Offset="0" />
+                <GradientStop Color="#F379D3"
+                              Offset="1" />
+            </LinearGradientBrush>
+
             <LinearGradientBrush x:Key="PremiumLinearGradientBrush"
                                  StartPoint="0,0"
                                  EndPoint="1,0">

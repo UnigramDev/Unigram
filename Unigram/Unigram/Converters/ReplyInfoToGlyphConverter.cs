@@ -221,6 +221,7 @@ namespace Unigram.Converters
         public const string PremiumFilled24 = "\uE9B6";
 
         public const string Premium16 = "\uE9B5";
+        public const string LockClosed16 = "\uE9BE";
         public const string Verified16 = "\uE97A";
 
         public const string PersonFilled = "\uE9B8";

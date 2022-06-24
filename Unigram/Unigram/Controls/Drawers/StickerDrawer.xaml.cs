@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Converters;
 using Unigram.ViewModels.Drawers;
 using Windows.Foundation;
 using Windows.UI.Composition;
@@ -343,11 +344,18 @@ namespace Unigram.Controls.Drawers
                 return;
             }
 
-            if (content.Children.Count > 1)
+            if (content.Children.Count > 1 && content.Children[1] is Border panel && panel.Child is TextBlock premium)
             {
-                content.Children[1].Visibility = sticker.PremiumAnimation != null && !ViewModel.CacheService.IsPremium
-                    ? Visibility.Visible
-                    : Visibility.Collapsed;
+                if (sticker.PremiumAnimation != null && ViewModel.CacheService.IsPremiumAvailable)
+                {
+                    premium.Text = ViewModel.CacheService.IsPremium ? Icons.Premium16 : Icons.LockClosed16;
+                    panel.HorizontalAlignment = ViewModel.CacheService.IsPremium ? HorizontalAlignment.Right : HorizontalAlignment.Center;
+                    panel.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    panel.Visibility = Visibility.Collapsed;
+                }
             }
 
             if (file.Local.IsDownloadingCompleted)
