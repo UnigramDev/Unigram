@@ -177,11 +177,6 @@ namespace Unigram.Controls.Cells
 
         #endregion
 
-        public void UpdateService(IProtoService protoService)
-        {
-            _protoService = protoService;
-        }
-
         public void UpdateChat(IProtoService protoService, Chat chat, ChatList chatList)
         {
             _protoService = protoService;
