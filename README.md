@@ -63,8 +63,8 @@ Changelogs are provided both in [Releases section of our GitHub project](https:/
 
 <a name="screenshots"></a>
 ## Screenshots
-![1](https://github.com/UnigramDev/Unigram/blob/develop/Screenshots/Screen1.PNG)
-![2](https://raw.githubusercontent.com/UnigramDev/Unigram/develop/Screenshots/Screen2.PNG)
+![1](/Screenshots/Screen1.PNG)
+![2](/Screenshots/Screen3.PNG)
 
 <a name="alternativedownload"></a>
 ## Download without the store
