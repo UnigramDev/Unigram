@@ -262,5 +262,69 @@ namespace Unigram.Controls.Cells
             args.Handled = true;
         }
 
+        public void UpdateChatSharedMembers(IProtoService protoService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        {
+            var member = args.Item as ChatMember;
+            if (member == null)
+            {
+                return;
+            }
+
+            args.ItemContainer.Tag = args.Item;
+            Tag = args.Item;
+
+            var user = protoService.GetMessageSender(member.MemberId) as User;
+            if (user == null)
+            {
+                return;
+            }
+
+            if (args.Phase == 0)
+            {
+                TitleLabel.Text = user.GetFullName();
+                Premium.Visibility = user.IsPremium && protoService.IsPremiumAvailable
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            }
+            else if (args.Phase == 1)
+            {
+                SubtitleLabel.Text = LastSeenConverter.GetLabel(user, false);
+
+                if (member.Status is ChatMemberStatusAdministrator administrator)
+                {
+                    if (InfoLabel == null)
+                    {
+                        FindName(nameof(InfoLabel));
+                    }
+
+                    InfoLabel.Text = string.IsNullOrEmpty(administrator.CustomTitle) ? Strings.Resources.ChannelAdmin : administrator.CustomTitle;
+                }
+                else if (member.Status is ChatMemberStatusCreator creator)
+                {
+                    if (InfoLabel == null)
+                    {
+                        FindName(nameof(InfoLabel));
+                    }
+
+                    InfoLabel.Text = string.IsNullOrEmpty(creator.CustomTitle) ? Strings.Resources.ChannelCreator : creator.CustomTitle;
+                }
+                else if (InfoLabel != null)
+                {
+                    InfoLabel.Text = string.Empty;
+                }
+            }
+            else if (args.Phase == 2)
+            {
+                Photo.SetUser(protoService, user, 36);
+            }
+
+            if (args.Phase < 2)
+            {
+                args.RegisterUpdateCallback(callback);
+            }
+
+            args.Handled = true;
+        }
+
     }
 }

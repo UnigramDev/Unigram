@@ -17,6 +17,7 @@
     <Grid.ColumnDefinitions>
         <ColumnDefinition Width="Auto" />
         <ColumnDefinition />
+        <ColumnDefinition Width="Auto" />
     </Grid.ColumnDefinitions>
     <controls:ProfilePicture x:Name="Photo"
                              IsEnabled="False"
@@ -43,7 +44,7 @@
                   VerticalAlignment="Bottom"
                   Visibility="Collapsed"
                   FontSize="16"
-                  Margin="4,0,0,0"
+                  Margin="4,0,0,2"
                   Grid.Column="1" />
     </Grid>
     <TextBlock x:Name="SubtitleLabel"
@@ -53,5 +54,15 @@
                TextWrapping="NoWrap"
                Grid.Column="1"
                Grid.Row="1"
+               MaxLines="1" />
+
+    <TextBlock x:Name="InfoLabel"
+               x:Load="False"
+               Style="{StaticResource InfoCaptionTextBlockStyle}"
+               VerticalAlignment="Center"
+               TextTrimming="CharacterEllipsis"
+               TextWrapping="NoWrap"
+               Grid.Column="2"
+               Grid.RowSpan="2"
                MaxLines="1" />
 </Grid>

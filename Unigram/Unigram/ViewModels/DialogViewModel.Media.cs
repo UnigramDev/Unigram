@@ -11,6 +11,7 @@ using Unigram.Entities;
 using Unigram.Services;
 using Unigram.Services.Factories;
 using Unigram.Views.Popups;
+using Unigram.Views.Premium.Popups;
 using Windows.ApplicationModel.Contacts;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Graphics.Imaging;
@@ -42,6 +43,12 @@ namespace Unigram.ViewModels
             var chat = _chat;
             if (chat == null)
             {
+                return;
+            }
+
+            if (sticker.PremiumAnimation != null && ProtoService.IsPremiumAvailable && !ProtoService.IsPremium)
+            {
+                await new UniqueStickersPopup(ProtoService, sticker).ShowQueuedAsync();
                 return;
             }
 

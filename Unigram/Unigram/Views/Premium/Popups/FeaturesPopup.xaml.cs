@@ -16,13 +16,15 @@ namespace Unigram.Views.Premium.Popups
     {
         private readonly IProtoService _protoService;
         private readonly IDictionary<Type, Animation> _animations;
+        private readonly Stickers _stickers;
 
-        public FeaturesPopup(IProtoService protoService, PremiumState state, IList<PremiumFeature> features, IDictionary<Type, Animation> animations, PremiumFeature selectedFeature)
+        public FeaturesPopup(IProtoService protoService, PremiumState state, IList<PremiumFeature> features, IDictionary<Type, Animation> animations, Stickers stickers, PremiumFeature selectedFeature)
         {
             InitializeComponent();
 
             _protoService = protoService;
             _animations = animations;
+            _stickers = stickers;
 
             var items = features.Where(x => x is not PremiumFeatureIncreasedLimits).ToArray();
 
@@ -78,6 +80,10 @@ namespace Unigram.Views.Premium.Popups
             else if (sender is PremiumFeatureUniqueReactionsCell uniqueReactionsCell)
             {
                 uniqueReactionsCell.UpdateFeature(_protoService);
+            }
+            else if (sender is PremiumFeatureUniqueStickersCell uniqueStickersCell)
+            {
+                uniqueStickersCell.UpdateFature(_protoService, _stickers?.StickersValue);
             }
         }
 

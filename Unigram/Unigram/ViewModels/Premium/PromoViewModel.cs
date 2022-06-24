@@ -32,7 +32,9 @@ namespace Unigram.ViewModels.Premium
 
         public MvxObservableCollection<PremiumFeature> Features { get; private set; }
 
-        public Dictionary<Type, Animation> Animations { get; private set; }
+        private Dictionary<Type, Animation> _animations;
+
+        private Stickers _stickers;
 
         private PremiumState _state;
         public PremiumState State
@@ -87,12 +89,14 @@ namespace Unigram.ViewModels.Premium
             Limits.ReplaceWith(features.Limits);
             Features.ReplaceWith(features.Features);
 
-            Animations = state.Animations.ToDictionary(x => x.Feature.GetType(), y => y.Animation);
-
             State = state;
 
             CanPurchase = features.PaymentLink != null
                 && ProtoService.IsPremiumAvailable;
+
+            _animations = state.Animations.ToDictionary(x => x.Feature.GetType(), y => y.Animation);
+
+            _stickers = await ProtoService.SendAsync(new GetPremiumStickers()) as Stickers;
         }
 
         public string PremiumPreviewLimitsDescription
@@ -126,7 +130,7 @@ namespace Unigram.ViewModels.Premium
             }
             else
             {
-                var dialog = new FeaturesPopup(ProtoService, State, Features, Animations, feature);
+                var dialog = new FeaturesPopup(ProtoService, State, Features, _animations, _stickers, feature);
                 await dialog.ShowQueuedAsync();
 
                 if (dialog.ShouldPurchase && !ProtoService.IsPremium)

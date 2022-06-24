@@ -1022,8 +1022,7 @@
                                     <Rectangle x:Name="UpdateShadow"
                                                HorizontalAlignment="Stretch"
                                                VerticalAlignment="Stretch"
-                                               Fill="{ThemeResource StartButtonBackground}"
-                                               Margin="2"
+                                               Fill="#2ca5e0"
                                                RadiusX="18"
                                                RadiusY="18" />
                                     <controls:BadgeButton x:Name="UpdateCloud"

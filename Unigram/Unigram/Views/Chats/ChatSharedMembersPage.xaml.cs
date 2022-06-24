@@ -1,6 +1,7 @@
 ﻿using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Controls.Cells;
 using Unigram.Converters;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -152,60 +153,11 @@ namespace Unigram.Views.Chats
                 return;
             }
 
-            var content = args.ItemContainer.ContentTemplateRoot as Grid;
-
-            var member = args.Item as ChatMember;
-            if (member == null)
+            var content = args.ItemContainer.ContentTemplateRoot as UserCell;
+            if (content != null)
             {
-                return;
+                content.UpdateChatSharedMembers(ViewModel.ProtoService, args, OnContainerContentChanging);
             }
-
-            args.ItemContainer.Tag = args.Item;
-            content.Tag = args.Item;
-
-            var user = ViewModel.ProtoService.GetMessageSender(member.MemberId) as User;
-            if (user == null)
-            {
-                return;
-            }
-
-            if (args.Phase == 0)
-            {
-                var title = content.Children[1] as TextBlock;
-                title.Text = user.GetFullName();
-            }
-            else if (args.Phase == 1)
-            {
-                var subtitle = content.Children[2] as TextBlock;
-                var label = content.Children[3] as TextBlock;
-
-                subtitle.Text = LastSeenConverter.GetLabel(user, false);
-
-                if (member.Status is ChatMemberStatusAdministrator administrator)
-                {
-                    label.Text = string.IsNullOrEmpty(administrator.CustomTitle) ? Strings.Resources.ChannelAdmin : administrator.CustomTitle;
-                }
-                else if (member.Status is ChatMemberStatusCreator creator)
-                {
-                    label.Text = string.IsNullOrEmpty(creator.CustomTitle) ? Strings.Resources.ChannelCreator : creator.CustomTitle;
-                }
-                else
-                {
-                    label.Text = string.Empty;
-                }
-            }
-            else if (args.Phase == 2)
-            {
-                var photo = content.Children[0] as ProfilePicture;
-                photo.SetUser(ViewModel.ProtoService, user, 36);
-            }
-
-            if (args.Phase < 2)
-            {
-                args.RegisterUpdateCallback(OnContainerContentChanging);
-            }
-
-            args.Handled = true;
         }
 
         #endregion

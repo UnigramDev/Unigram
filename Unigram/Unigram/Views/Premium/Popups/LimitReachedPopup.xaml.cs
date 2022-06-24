@@ -97,13 +97,13 @@ namespace Unigram.Views.Premium.Popups
                     PrevLimit.Text = limit.DefaultValue.ToString();
                     NextLimit.Text = string.Empty;
 
-                    BuyIcon.ColorReplacements = new Dictionary<int, int>
+                    PurchaseIcon.ColorReplacements = new Dictionary<int, int>
                     {
                         { 0x000000, 0xffffff }
                     };
 
-                    BuyIcon.Source = animatedValue;
-                    BuyLabel.Text = Strings.Resources.IncreaseLimit;
+                    PurchaseIcon.Source = animatedValue;
+                    PurchaseLabel.Text = Strings.Resources.IncreaseLimit;
                 }
                 else if (protoService.IsPremiumAvailable)
                 {
@@ -119,13 +119,13 @@ namespace Unigram.Views.Premium.Popups
                     PrevLimit.Text = string.Empty;
                     NextLimit.Text = limit.PremiumValue.ToString();
 
-                    BuyIcon.ColorReplacements = new Dictionary<int, int>
+                    PurchaseIcon.ColorReplacements = new Dictionary<int, int>
                     {
                         { 0x000000, 0xffffff }
                     };
 
-                    BuyIcon.Source = animatedValue;
-                    BuyLabel.Text = Strings.Resources.IncreaseLimit;
+                    PurchaseIcon.Source = animatedValue;
+                    PurchaseLabel.Text = Strings.Resources.IncreaseLimit;
                 }
                 else
                 {
@@ -134,9 +134,9 @@ namespace Unigram.Views.Premium.Popups
                     LimitHeader.Visibility = Visibility.Collapsed;
                     LimitPanel.Visibility = Visibility.Collapsed;
 
-                    BuyCommand.Style = App.Current.Resources["AccentButtonStyle"] as Style;
-                    BuyIcon.Visibility = Visibility.Collapsed;
-                    BuyLabel.Text = Strings.Resources.OK;
+                    PurchaseCommand.Style = App.Current.Resources["AccentButtonStyle"] as Style;
+                    PurchaseIcon.Visibility = Visibility.Collapsed;
+                    PurchaseLabel.Text = Strings.Resources.OK;
                 }
             }
         }
