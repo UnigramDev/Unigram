@@ -1,22 +1,22 @@
-﻿<Page
-    x:Class="Unigram.Views.Host.StandalonePage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Unigram.Views.Host"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-    Loaded="OnLoaded"
-    Unloaded="OnUnloaded">
+﻿<Page x:Class="Unigram.Views.Host.StandalonePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="using:Unigram.Views.Host"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+      muxc:BackdropMaterial.ApplyToRootOrPageBackground="True"
+      mc:Ignorable="d"
+      Loaded="OnLoaded"
+      Unloaded="OnUnloaded">
 
     <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
-            <RowDefinition Height="32"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition/>
+            <RowDefinition Height="32" />
+            <RowDefinition Height="40" />
+            <RowDefinition />
         </Grid.RowDefinitions>
-        <Grid x:Name="Navigation" Background="{ThemeResource PageTitleBackgroundBrush}">
+        <Grid x:Name="Navigation">
             <TextBlock x:Name="StatusLabel"
                        VerticalAlignment="Center"
                        TextLineBounds="TrimToCapHeight"
@@ -24,12 +24,11 @@
                        AutomationProperties.LiveSetting="Assertive"
                        Foreground="{ThemeResource PageHeaderForegroundBrush}"
                        Style="{StaticResource CaptionTextBlockStyle}"
-                       Grid.Column="1"/>
+                       Grid.Column="1" />
         </Grid>
-        <ContentControl
-            x:Name="PageHeader"
-            HorizontalContentAlignment="Stretch"
-            VerticalContentAlignment="Stretch"
-            Grid.Row="1"/>
+        <ContentControl x:Name="PageHeader"
+                        HorizontalContentAlignment="Stretch"
+                        VerticalContentAlignment="Stretch"
+                        Grid.Row="1" />
     </Grid>
 </Page>
