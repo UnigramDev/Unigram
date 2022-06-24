@@ -115,6 +115,8 @@ namespace Unigram.ViewModels.Premium
 
         public async Task<bool> OpenAsync(PremiumFeature feature)
         {
+            ProtoService.Send(new ViewPremiumFeature(feature));
+
             if (feature is PremiumFeatureIncreasedLimits)
             {
                 var dialog = new LimitsPopup(ProtoService, State, Limits);
@@ -147,6 +149,8 @@ namespace Unigram.ViewModels.Premium
         {
             if (PaymentLink != null && !ProtoService.IsPremium)
             {
+                ProtoService.Send(new ClickPremiumSubscriptionButton());
+
                 MessageHelper.OpenTelegramUrl(ProtoService, NavigationService, PaymentLink);
 
                 if (PaymentLink is InternalLinkTypeBotStart botStart)

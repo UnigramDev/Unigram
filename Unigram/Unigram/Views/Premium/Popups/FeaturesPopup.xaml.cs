@@ -57,6 +57,8 @@ namespace Unigram.Views.Premium.Popups
                 {
                     content.PlayAnimation();
                 }
+
+                _protoService.Send(new ViewPremiumFeature(e.AddedItems[0] as PremiumFeature));
             }
 
             if (e.RemovedItems?.Count > 0)
