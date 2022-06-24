@@ -10,6 +10,7 @@ using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views.Popups;
+using Windows.Foundation.Collections;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -37,6 +38,11 @@ namespace Unigram.ViewModels.Settings
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
+            if (App.Connection != null)
+            {
+                await App.Connection.SendMessageAsync(new ValueSet { { "LoopbackExempt", true } });
+            }
+
             var systemId = await _networkService.GetSystemProxyId();
 
             var response = await ProtoService.SendAsync(new GetProxies());

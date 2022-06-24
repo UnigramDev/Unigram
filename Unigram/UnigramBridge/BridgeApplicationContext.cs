@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -185,6 +186,10 @@ namespace UnigramBridge
                     }
                 }
             }
+            else if (args.Request.Message.TryGetValue("LoopbackExempt", out object loopbackExempt))
+            {
+                AddLocalhostExemption();
+            }
             else if (args.Request.Message.TryGetValue("Exit", out object exit))
             {
                 _connection.ServiceClosed -= Connection_ServiceClosed;
@@ -205,6 +210,30 @@ namespace UnigramBridge
             Connect();
 
             //MessageBox.Show(args.Status.ToString());
+        }
+
+        private static void AddLocalhostExemption()
+        {
+            var packageId = Package.Current.Id.FamilyName;
+            var info = new ProcessStartInfo
+            {
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                RedirectStandardInput = true,
+                CreateNoWindow = true,
+                UseShellExecute = false,
+                FileName = "CheckNetIsolation.exe",
+                WindowStyle = ProcessWindowStyle.Hidden,
+                Arguments = "loopbackexempt -a -p=" + packageId
+            };
+
+            try
+            {
+                Process process = Process.Start(info);
+                process.WaitForExit();
+                process.Dispose();
+            }
+            catch { }
         }
     }
 }
