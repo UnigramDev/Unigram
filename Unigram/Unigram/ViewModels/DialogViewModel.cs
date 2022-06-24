@@ -207,6 +207,7 @@ namespace Unigram.ViewModels
             StickerViewCommand = new RelayCommand<Sticker>(StickerViewExecute);
             StickerFaveCommand = new RelayCommand<Sticker>(StickerFaveExecute);
             StickerUnfaveCommand = new RelayCommand<Sticker>(StickerUnfaveExecute);
+            StickerDeleteCommand = new RelayCommand<Sticker>(StickerDeleteExecute);
 
             AnimationSendCommand = new RelayCommand<Animation>(AnimationSendExecute);
             AnimationDeleteCommand = new RelayCommand<Animation>(AnimationDeleteExecute);

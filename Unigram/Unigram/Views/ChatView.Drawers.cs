@@ -31,6 +31,11 @@ namespace Unigram.Views
                 flyout.CreateFlyoutItem(ViewModel.StickerFaveCommand, sticker, Strings.Resources.AddToFavorites, new FontIcon { Glyph = Icons.Star });
             }
 
+            if (ViewModel.ProtoService.IsStickerRecent(sticker.StickerValue.Id))
+            {
+                flyout.CreateFlyoutItem(ViewModel.StickerDeleteCommand, sticker, Strings.Resources.DeleteFromRecent, new FontIcon { Glyph = Icons.Delete });
+            }
+
             if (ViewModel.Type == ViewModels.DialogType.History)
             {
                 var chat = ViewModel.Chat;

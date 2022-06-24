@@ -90,6 +90,12 @@ namespace Unigram.ViewModels
             ProtoService.Send(new RemoveFavoriteSticker(new InputFileId(sticker.StickerValue.Id)));
         }
 
+        public RelayCommand<Sticker> StickerDeleteCommand { get; }
+        private void StickerDeleteExecute(Sticker sticker)
+        {
+            ProtoService.Send(new RemoveRecentSticker(false, new InputFileId(sticker.StickerValue.Id)));
+        }
+
         #endregion
 
         #region Animations
