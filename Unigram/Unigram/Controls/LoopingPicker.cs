@@ -55,7 +55,11 @@ namespace Unigram.Controls
 
         protected void OnValueChanged(int oldValue, int newValue)
         {
-            ValueText.Text = newValue.ToString($"D{_digits}");
+            if (ValueText != null)
+            {
+                ValueText.Text = newValue.ToString($"D{_digits}");
+            }
+
             ValueChanged?.Invoke(this, new LoopingPickerValueChangedEventArgs(oldValue, newValue));
         }
 

@@ -401,7 +401,7 @@ namespace Unigram.Controls.Messages.Content
                     RecognizedText.Visibility = Visibility.Visible;
                 }
             }
-            else
+            else if (RecognizedText != null)
             {
                 RecognizedText.Visibility = Visibility.Collapsed;
             }

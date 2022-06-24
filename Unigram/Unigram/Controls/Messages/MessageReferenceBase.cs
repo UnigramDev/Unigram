@@ -307,6 +307,7 @@ namespace Unigram.Controls.Messages
                 case MessageVideoChatScheduled:
                 case MessageVideoChatStarted:
                 case MessageWebsiteConnected:
+                case MessageWebAppDataSent:
                     return SetServiceTextTemplate(message, title);
                 case MessageExpiredPhoto:
                 case MessageExpiredVideo:

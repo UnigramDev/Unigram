@@ -104,6 +104,8 @@ namespace Unigram.Controls.Messages
                     return UpdateVideoChatStarted(message, videoChatStarted, active);
                 case MessageWebsiteConnected websiteConnected:
                     return UpdateWebsiteConnected(message, websiteConnected, active);
+                case MessageWebAppDataSent webAppDataSent:
+                    return UpdateWebAppDataSent(message, webAppDataSent, active);
                 case MessageExpiredPhoto expiredPhoto:
                     return UpdateExpiredPhoto(message, expiredPhoto, active);
                 case MessageExpiredVideo expiredVideo:
@@ -1508,6 +1510,14 @@ namespace Unigram.Controls.Messages
             {
                 entities.Add(new TextEntity(start, websiteConnected.DomainName.Length, new TextEntityTypeUrl()));
             }
+
+            return (content, entities);
+        }
+
+        private static (string Text, IList<TextEntity> Entities) UpdateWebAppDataSent(MessageViewModel message, MessageWebAppDataSent webAppDataSent, bool active)
+        {
+            var content = string.Format(Strings.Resources.ActionBotWebViewData, webAppDataSent.ButtonText);
+            var entities = active ? new List<TextEntity>() : null;
 
             return (content, entities);
         }

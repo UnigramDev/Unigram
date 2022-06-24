@@ -220,6 +220,7 @@
                         </StackPanel>
 
                         <ToggleButton x:Name="Recognize"
+                                      x:Load="False"
                                       Style="{StaticResource RecognizeButtonStyle}"
                                       VerticalAlignment="Top"
                                       Margin="8,0,0,0"

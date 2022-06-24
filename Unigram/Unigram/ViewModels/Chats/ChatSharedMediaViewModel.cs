@@ -510,6 +510,10 @@ namespace Unigram.ViewModels.Chats
         {
         }
 
+        public void ForwardMessage(MessageViewModel message)
+        {
+        }
+
         public void ViewVisibleMessages(bool intermediate)
         {
 

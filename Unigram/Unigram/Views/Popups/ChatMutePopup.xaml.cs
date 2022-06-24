@@ -18,10 +18,10 @@ namespace Unigram.Views.Popups
             var duration = TimeSpan.FromSeconds(mutedFor);
 
             DaysPicker.Value = duration.Days;
-            DaysPicker.Header = Locale.Declension("Days", duration.Days, false);
+            DaysPicker.Header = string.Format(Locale.Declension("Days", duration.Days, false), string.Empty).Trim();
 
             HoursPicker.Value = duration.Hours;
-            HoursPicker.Header = Locale.Declension("Hours", duration.Hours, false);
+            HoursPicker.Header = string.Format(Locale.Declension("Hours", duration.Hours, false), string.Empty).Trim();
         }
 
         public int Value { get; set; }
@@ -38,12 +38,12 @@ namespace Unigram.Views.Popups
 
         private void DaysPicker_ValueChanged(LoopingPicker sender, LoopingPickerValueChangedEventArgs args)
         {
-            DaysPicker.Header = Locale.Declension("Days", args.NewValue, false);
+            DaysPicker.Header = string.Format(Locale.Declension("Days", args.NewValue, false), string.Empty).Trim();
         }
 
         private void HoursPicker_ValueChanged(LoopingPicker sender, LoopingPickerValueChangedEventArgs args)
         {
-            HoursPicker.Header = Locale.Declension("Hours", args.NewValue, false);
+            HoursPicker.Header = string.Format(Locale.Declension("Hours", args.NewValue, false), string.Empty).Trim();
         }
     }
 }

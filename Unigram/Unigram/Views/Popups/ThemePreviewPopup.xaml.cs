@@ -65,7 +65,7 @@ namespace Unigram.Views.Popups
                 0, 0, 163, 198, 43, 17, 250, 248, 127, 155, 85, 58, 159, 230, 164, 212, 185, 247, 73, 42,
                 173, 66, 165, 69, 41, 251, 255, 242, 127, 223, 113, 133, 237, 148, 243, 30, 127, 184, 206, 183, 234,
                 108, 175, 168, 250, 207, 114, 229, 233, 154, 35, 254, 21, 66, 99, 134, 141, 92, 159, 2
-            }, "audio/ogg", null), new FormattedText(), true), true, DateTime.Now.AddSeconds(-25), false, true);
+            }, "audio/ogg", false, string.Empty, null), new FormattedText(), true), true, DateTime.Now.AddSeconds(-25), false, true);
             Message4.Mockup(Strings.Resources.ThemePreviewLine3, Strings.Resources.ThemePreviewLine3Reply, Strings.Resources.ThemePreviewLine1, false, DateTime.Now.AddSeconds(-25), true, false);
             Message5.Mockup(new MessageAudio(new Audio(4 * 60 + 3, Strings.Resources.ThemePreviewSongTitle, Strings.Resources.ThemePreviewSongPerformer, "preview.mp3", "audio/mp3", null, null, null), new FormattedText()), false, DateTime.Now, false, true);
             Message6.Mockup(Strings.Resources.ThemePreviewLine2, true, DateTime.Now, true, true);

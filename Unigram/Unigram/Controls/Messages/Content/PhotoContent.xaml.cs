@@ -85,7 +85,7 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            if (!big.Photo.Local.IsDownloadingCompleted && !message.IsSecret())
+            if (!big.Photo.Local.IsDownloadingCompleted || message.IsSecret())
             {
                 UpdateThumbnail(message, small, photo.Minithumbnail, true);
             }

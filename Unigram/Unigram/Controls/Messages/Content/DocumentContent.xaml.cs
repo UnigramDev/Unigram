@@ -156,7 +156,7 @@ namespace Unigram.Controls.Messages.Content
 
         private void UpdateThumbnail(MessageViewModel message, Thumbnail thumbnail, File file)
         {
-            if (thumbnail.File.Id != file.Id)
+            if (thumbnail == null || thumbnail.File.Id != file.Id)
             {
                 return;
             }

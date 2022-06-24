@@ -252,7 +252,7 @@ namespace Unigram.Controls
             lock (_recreateLock)
             {
                 //_canvas.Source = new BitmapImage();
-                _layoutRoot.Children.Remove(_canvas);
+                _layoutRoot?.Children.Remove(_canvas);
                 _canvas = null;
 
                 _surface?.Device.Trim();

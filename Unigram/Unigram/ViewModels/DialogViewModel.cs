@@ -2267,7 +2267,7 @@ namespace Unigram.ViewModels
             ProtoService.Send(new SetChatDraftMessage(_chat.Id, _threadId, draft));
         }
 
-        #region Reply 
+#region Reply 
 
         private MessageComposerHeader _composerHeader;
         public MessageComposerHeader ComposerHeader
@@ -2368,7 +2368,7 @@ namespace Unigram.ViewModels
             return embedded.ReplyToMessage.Id;
         }
 
-        #endregion
+#endregion
 
         public RelayCommand<string> SendCommand { get; }
         private async void SendMessage(string args)
@@ -2569,7 +2569,7 @@ namespace Unigram.ViewModels
 
         public RelayCommand<long> OpenUserCommand { get; }
 
-        #region Set default message sender
+#region Set default message sender
 
         public RelayCommand<MessageSender> SetSenderCommand;
         public void SetSenderExecute(MessageSender messageSender)
@@ -2583,9 +2583,9 @@ namespace Unigram.ViewModels
             ProtoService.Send(new SetChatMessageSender(chat.Id, messageSender));
         }
 
-        #endregion
+#endregion
 
-        #region Join channel
+#region Join channel
 
         public RelayCommand JoinChannelCommand { get; }
         private async void JoinChannelExecute()
@@ -2603,9 +2603,9 @@ namespace Unigram.ViewModels
             }
         }
 
-        #endregion
+#endregion
 
-        #region Toggle mute
+#region Toggle mute
 
         public RelayCommand MuteCommand { get; }
         public RelayCommand UnmuteCommand { get; }
@@ -2622,9 +2622,9 @@ namespace Unigram.ViewModels
             _pushService.SetMuteFor(chat, unmute ? 0 : 632053052);
         }
 
-        #endregion
+#endregion
 
-        #region Toggle silent
+#region Toggle silent
 
         public RelayCommand ToggleSilentCommand { get; }
         private void ToggleSilentExecute()
@@ -2638,9 +2638,9 @@ namespace Unigram.ViewModels
             ProtoService.Send(new ToggleChatDefaultDisableNotification(chat.Id, !chat.DefaultDisableNotification));
         }
 
-        #endregion
+#endregion
 
-        #region Report Spam
+#region Report Spam
 
         public RelayCommand RemoveActionBarCommand { get; }
         private void RemoveActionBarExecute()
@@ -2716,9 +2716,9 @@ namespace Unigram.ViewModels
             ProtoService.Send(new DeleteChatHistory(chat.Id, true, false));
         }
 
-        #endregion
+#endregion
 
-        #region Stickers
+#region Stickers
 
         public RelayCommand OpenStickersCommand { get; }
         private void OpenStickersExecute()
@@ -2727,9 +2727,9 @@ namespace Unigram.ViewModels
             _animations.Update();
         }
 
-        #endregion
+#endregion
 
-        #region Delete and Exit
+#region Delete and Exit
 
         public RelayCommand ChatDeleteCommand { get; }
         private async void ChatDeleteExecute()
@@ -2774,9 +2774,9 @@ namespace Unigram.ViewModels
             }
         }
 
-        #endregion
+#endregion
 
-        #region Clear history
+#region Clear history
 
         public RelayCommand ChatClearCommand { get; }
         private async void ChatClearExecute()
@@ -2797,9 +2797,9 @@ namespace Unigram.ViewModels
             }
         }
 
-        #endregion
+#endregion
 
-        #region Call
+#region Call
 
         public RelayCommand<bool> CallCommand { get; }
         private async void CallExecute(bool video)
@@ -2820,9 +2820,9 @@ namespace Unigram.ViewModels
             }
         }
 
-        #endregion
+#endregion
 
-        #region Unpin message
+#region Unpin message
 
         public RelayCommand PinnedHideCommand { get; }
         private async void PinnedHideExecute()
@@ -2888,9 +2888,9 @@ namespace Unigram.ViewModels
             NavigationService.Navigate(typeof(ChatPinnedPage), chat.Id);
         }
 
-        #endregion
+#endregion
 
-        #region Unblock
+#region Unblock
 
         public RelayCommand UnblockCommand { get; }
         private async void UnblockExecute()
@@ -2925,9 +2925,9 @@ namespace Unigram.ViewModels
             }
         }
 
-        #endregion
+#endregion
 
-        #region Switch
+#region Switch
 
         public RelayCommand<string> SwitchCommand { get; }
         private async void SwitchExecute(string start)
@@ -2945,9 +2945,9 @@ namespace Unigram.ViewModels
             }
         }
 
-        #endregion
+#endregion
 
-        #region Share my contact
+#region Share my contact
 
         public RelayCommand ShareContactCommand { get; }
         private void ShareContactExecute()
@@ -2967,9 +2967,9 @@ namespace Unigram.ViewModels
             ProtoService.Send(new SharePhoneNumber(user.Id));
         }
 
-        #endregion
+#endregion
 
-        #region Unarchive
+#region Unarchive
 
         public RelayCommand UnarchiveCommand { get; }
         private void UnarchiveExecute()
@@ -2991,9 +2991,9 @@ namespace Unigram.ViewModels
             }));
         }
 
-        #endregion
+#endregion
 
-        #region Invite
+#region Invite
 
         public RelayCommand InviteCommand { get; }
         private async void InviteExecute()
@@ -3032,9 +3032,9 @@ namespace Unigram.ViewModels
             }
         }
 
-        #endregion
+#endregion
 
-        #region Add contact
+#region Add contact
 
         public RelayCommand AddContactCommand { get; }
         private async void AddContactExecute()
@@ -3067,9 +3067,9 @@ namespace Unigram.ViewModels
             }
         }
 
-        #endregion
+#endregion
 
-        #region Start
+#region Start
 
         public RelayCommand StartCommand { get; }
         private void StartExecute()
@@ -3121,9 +3121,9 @@ namespace Unigram.ViewModels
             return null;
         }
 
-        #endregion
+#endregion
 
-        #region Search
+#region Search
 
         public RelayCommand SearchCommand { get; }
         private void SearchExecute()
@@ -3138,9 +3138,9 @@ namespace Unigram.ViewModels
             }
         }
 
-        #endregion
+#endregion
 
-        #region Jump to date
+#region Jump to date
 
         public RelayCommand JumpDateCommand { get; }
         private async void JumpDateExecute()
@@ -3159,9 +3159,9 @@ namespace Unigram.ViewModels
             }
         }
 
-        #endregion
+#endregion
 
-        #region Group stickers
+#region Group stickers
 
         public RelayCommand GroupStickersCommand { get; }
         private void GroupStickersExecute()
@@ -3188,9 +3188,9 @@ namespace Unigram.ViewModels
             //}
         }
 
-        #endregion
+#endregion
 
-        #region Read mentions
+#region Read mentions
 
         public RelayCommand ReadMentionsCommand { get; }
         private void ReadMentionsExecute()
@@ -3204,9 +3204,9 @@ namespace Unigram.ViewModels
             ProtoService.Send(new ReadAllChatMentions(chat.Id));
         }
 
-        #endregion
+#endregion
 
-        #region Mute for
+#region Mute for
 
         public RelayCommand<int?> MuteForCommand { get; }
         private async void MuteForExecute(int? value)
@@ -3239,9 +3239,9 @@ namespace Unigram.ViewModels
             }
         }
 
-        #endregion
+#endregion
 
-        #region Report Chat
+#region Report Chat
 
         public RelayCommand ReportCommand { get; }
         private async void ReportExecute()
@@ -3308,9 +3308,9 @@ namespace Unigram.ViewModels
             ProtoService.Send(new ReportChat(chat.Id, messages, reason, text));
         }
 
-        #endregion
+#endregion
 
-        #region Set timer
+#region Set timer
 
         public RelayCommand<int?> SetTimerCommand { get; }
         private async void SetTimerExecute(int? ttl)
@@ -3340,9 +3340,9 @@ namespace Unigram.ViewModels
             }
         }
 
-        #endregion
+#endregion
 
-        #region Set theme
+#region Set theme
 
         public RelayCommand SetThemeCommand { get; }
         private async void SetThemeExecute()
@@ -3362,9 +3362,9 @@ namespace Unigram.ViewModels
             }
         }
 
-        #endregion
+#endregion
 
-        #region Scheduled messages
+#region Scheduled messages
 
         public RelayCommand ScheduledCommand { get; }
         private void ScheduledExecute()
@@ -3378,9 +3378,9 @@ namespace Unigram.ViewModels
             NavigationService.NavigateToChat(chat, scheduled: true);
         }
 
-        #endregion
+#endregion
 
-        #region Action
+#region Action
 
         protected virtual void FilterExecute()
         {
@@ -3497,9 +3497,9 @@ namespace Unigram.ViewModels
             }
         }
 
-        #endregion
+#endregion
 
-        #region Join requests
+#region Join requests
 
         public RelayCommand JoinRequestsCommand { get; }
         private async void JoinRequestsExecute()
@@ -3508,9 +3508,9 @@ namespace Unigram.ViewModels
             var confirm = await popup.ShowQueuedAsync();
         }
 
-        #endregion
+#endregion
 
-        #region Open message
+#region Open message
 
         public RelayCommand<Message> OpenMessageCommand { get; }
         private void OpenMessageExecute(Message message)
@@ -3523,9 +3523,9 @@ namespace Unigram.ViewModels
             }
         }
 
-        #endregion
+#endregion
 
-        #region Group calls
+#region Group calls
 
         public RelayCommand GroupCallJoinCommand { get; }
         private async void GroupCallJoinExecute()
@@ -3539,7 +3539,7 @@ namespace Unigram.ViewModels
             await _groupCallService.JoinAsync(chat.Id);
         }
 
-        #endregion
+#endregion
     }
 
     public class UserCommand
@@ -3779,8 +3779,8 @@ namespace Unigram.ViewModels
                 return false;
             }
 
-            var saved1 = message1.IsSaved();
-            var saved2 = message2.IsSaved();
+            var saved1 = message1.IsSaved;
+            var saved2 = message2.IsSaved;
 
             if (saved1 && saved2)
             {

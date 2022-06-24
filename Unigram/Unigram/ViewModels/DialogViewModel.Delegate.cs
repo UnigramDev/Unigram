@@ -119,6 +119,11 @@ namespace Unigram.ViewModels
             }
         }
 
+        public void ForwardMessage(MessageViewModel message)
+        {
+            MessageForwardCommand.Execute(message);
+        }
+
         public async void OpenReply(MessageViewModel message)
         {
             if (message.ReplyToMessageState == ReplyToMessageState.None)

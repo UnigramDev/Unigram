@@ -237,7 +237,7 @@ namespace Unigram.Controls
 
         public int Index => _index == int.MaxValue ? 0 : _index;
 
-        public double Offset => _index == int.MaxValue ? 0 : (double)_index / (_animation.TotalFrame - 1);
+        public double Offset => _index == int.MaxValue || _animation == null ? 0 : (double)_index / (_animation.TotalFrame - 1);
 
         private void OnSourceChanged(Uri newValue, Uri oldValue)
         {

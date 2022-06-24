@@ -1551,6 +1551,10 @@ namespace Unigram.Views
         {
         }
 
+        public void ForwardMessage(MessageViewModel message)
+        {
+        }
+
         public void OpenReply(MessageViewModel message)
         {
         }

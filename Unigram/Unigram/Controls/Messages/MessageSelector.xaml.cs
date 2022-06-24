@@ -203,15 +203,15 @@ namespace Unigram.Controls.Messages
                 var presenter = ElementCompositionPreview.GetElementVisual(Presenter);
                 presenter.Properties.InsertVector3("Translation", new Vector3(_isSelectionEnabled && (message.IsChannelPost || !message.IsOutgoing) ? 36 : 0, 0, 0));
 
-                var action = message.IsSaved() || message.IsShareable();
+                var action = message.IsSaved || message.IsShareable;
 
                 if (message.IsService())
                 {
                     Padding = new Thickness(12, 0, 12, 0);
                 }
-                else if (message.IsSaved() || (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup) && !message.IsChannelPost)
+                else if (message.IsSaved || (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup) && !message.IsChannelPost)
                 {
-                    if (message.IsOutgoing && !message.IsSaved())
+                    if (message.IsOutgoing && !message.IsSaved)
                     {
                         if (message.Content is MessageSticker or MessageVideoNote)
                         {

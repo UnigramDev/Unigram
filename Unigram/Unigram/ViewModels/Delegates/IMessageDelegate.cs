@@ -22,6 +22,7 @@ namespace Unigram.ViewModels.Delegates
         void DownloadFile(MessageViewModel message, File file);
 
         void ReplyToMessage(MessageViewModel message);
+        void ForwardMessage(MessageViewModel message);
 
         void OpenReply(MessageViewModel message);
         void OpenThread(MessageViewModel message);

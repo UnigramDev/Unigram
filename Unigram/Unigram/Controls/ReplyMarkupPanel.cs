@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Telegram.Td.Api;
+using Unigram.Converters;
 using Unigram.Navigation;
 using Unigram.ViewModels;
 using Windows.Foundation;
@@ -135,20 +136,29 @@ namespace Unigram.Controls
 
                             if (inlineButton.Type is InlineKeyboardButtonTypeUrl typeUrl)
                             {
-                                button.Glyph = "\uE143";
+                                button.Glyph = "\uE9B7";
                                 ToolTipService.SetToolTip(button, typeUrl.Url);
                             }
                             else if (inlineButton.Type is InlineKeyboardButtonTypeLoginUrl loginUrl)
                             {
-                                button.Glyph = "\uE143";
+                                button.Glyph = "\uE9B7";
                             }
                             else if (inlineButton.Type is InlineKeyboardButtonTypeSwitchInline)
                             {
                                 button.Glyph = "\uEE35";
                             }
-                            else if (inlineButton.Type is InlineKeyboardButtonTypeBuy && receipt)
+                            else if (inlineButton.Type is InlineKeyboardButtonTypeBuy)
                             {
-                                button.Content = Strings.Resources.PaymentReceipt;
+                                button.Glyph = Icons.Payment16;
+
+                                if (receipt)
+                                {
+                                    button.Content = Strings.Resources.PaymentReceipt;
+                                }
+                            }
+                            else if (inlineButton.Type is InlineKeyboardButtonTypeWebApp)
+                            {
+                                button.Glyph = Icons.Window16;
                             }
                         }
                         else if (row[i] is KeyboardButton keyboardButton)

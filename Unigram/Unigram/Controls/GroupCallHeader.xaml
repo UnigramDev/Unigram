@@ -68,6 +68,7 @@
         <controls:BadgeButton x:Name="JoinButton"
                               Content="{CustomResource VoipChatJoin}"
                               Style="{StaticResource StartButtonStyle}"
+                              Background="#2ca5e0"
                               FontWeight="SemiBold"
                               HorizontalAlignment="Right"
                               VerticalAlignment="Center"

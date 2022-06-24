@@ -19,6 +19,20 @@ namespace Unigram.Controls
             DefaultStyleKey = typeof(ProfilePicture);
         }
 
+        public void Clear()
+        {
+            if (_fileToken is string fileToken)
+            {
+                _fileToken = null;
+                EventAggregator.Default.Unregister<File>(this, fileToken);
+            }
+
+            _fileId = null;
+            _referenceId = null;
+
+            Source = null;
+        }
+
         #region Source
 
         public ImageSource Source
@@ -67,6 +81,7 @@ namespace Unigram.Controls
             {
                 _referenceId = chat.Id;
                 _fileId = file?.Id;
+
                 Source = GetChat(protoService, chat, file, side, download);
             }
         }
@@ -132,6 +147,7 @@ namespace Unigram.Controls
             {
                 _referenceId = user.Id;
                 _fileId = file?.Id;
+
                 Source = GetUser(protoService, user, file, side, download);
             }
         }

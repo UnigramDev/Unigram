@@ -425,6 +425,7 @@ namespace Unigram.Services
 
             value = value.Replace("%%", "%");
             value = value.Replace("%s", "{0}");
+            value = value.Replace("%d", "{0}");
 
             return _stringFormat.Replace(value, match =>
             {
