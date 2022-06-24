@@ -6,6 +6,7 @@ using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Controls.Messages.Content
 {
@@ -250,7 +251,7 @@ namespace Unigram.Controls.Messages.Content
             {
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    Texture.Source = PlaceholderHelper.GetBlurred(file.Local.Path);
+                    Texture.Source = new BitmapImage(UriEx.ToLocal(file.Local.Path));
                 }
                 else if (download)
                 {
