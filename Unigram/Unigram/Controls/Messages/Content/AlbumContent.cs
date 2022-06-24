@@ -5,6 +5,7 @@ using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Navigation;
+using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.UI;
@@ -366,14 +367,14 @@ namespace Unigram.Controls.Messages.Content
                 span.Inlines.Add(new Run { Text = text.Substring(previous) });
             }
 
-            if (ApiInfo.FlowDirection == FlowDirection.LeftToRight && MessageHelper.IsAnyCharacterRightToLeft(text))
+            if (LocaleService.Current.FlowDirection == FlowDirection.LeftToRight && MessageHelper.IsAnyCharacterRightToLeft(text))
             {
                 //Footer.HorizontalAlignment = HorizontalAlignment.Left;
                 //span.Inlines.Add(new LineBreak());
                 rich.FlowDirection = FlowDirection.RightToLeft;
                 adjust = true;
             }
-            else if (ApiInfo.FlowDirection == FlowDirection.RightToLeft && !MessageHelper.IsAnyCharacterRightToLeft(text))
+            else if (LocaleService.Current.FlowDirection == FlowDirection.RightToLeft && !MessageHelper.IsAnyCharacterRightToLeft(text))
             {
                 //Footer.HorizontalAlignment = HorizontalAlignment.Left;
                 //span.Inlines.Add(new LineBreak());
@@ -383,7 +384,7 @@ namespace Unigram.Controls.Messages.Content
             else
             {
                 //Footer.HorizontalAlignment = HorizontalAlignment.Right;
-                rich.FlowDirection = ApiInfo.FlowDirection;
+                rich.FlowDirection = LocaleService.Current.FlowDirection;
                 adjust = false;
             }
 

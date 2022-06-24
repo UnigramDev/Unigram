@@ -1,7 +1,6 @@
 ﻿using Unigram.Native;
 using Windows.ApplicationModel;
 using Windows.System.Profile;
-using Windows.UI.Xaml;
 
 namespace Unigram.Common
 {
@@ -31,21 +30,6 @@ namespace Unigram.Common
             }
 
             return _build >= compare;
-        }
-
-
-
-        private static FlowDirection? _flowDirection;
-        public static FlowDirection FlowDirection => _flowDirection ??= LoadFlowDirection();
-
-        private static FlowDirection LoadFlowDirection()
-        {
-#if DEBUG
-            var flowDirectionSetting = Windows.ApplicationModel.Resources.Core.ResourceContext.GetForCurrentView().QualifierValues["LayoutDirection"];
-            return flowDirectionSetting == "RTL" ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
-#else
-            return FlowDirection.LeftToRight;
-#endif
         }
     }
 }

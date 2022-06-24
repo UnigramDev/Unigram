@@ -1765,7 +1765,7 @@ namespace Unigram.Controls.Messages
                 previous = entity.Offset + entity.Length;
             }
 
-            MaxWidth = preformatted ? double.PositiveInfinity : 432;
+            ContentPanel.MaxWidth = preformatted ? double.PositiveInfinity : 432;
 
             if (text.Length > previous)
             {
@@ -1807,19 +1807,19 @@ namespace Unigram.Controls.Messages
             textBlock.Blocks.Clear();
             textBlock.Blocks.Add(direct.GetObject(paragraph) as Paragraph);
 
-            if (ApiInfo.FlowDirection == FlowDirection.LeftToRight && MessageHelper.IsAnyCharacterRightToLeft(text))
+            if (LocaleService.Current.FlowDirection == FlowDirection.LeftToRight && MessageHelper.IsAnyCharacterRightToLeft(text))
             {
                 Message.FlowDirection = FlowDirection.RightToLeft;
                 adjust = true;
             }
-            else if (ApiInfo.FlowDirection == FlowDirection.RightToLeft && !MessageHelper.IsAnyCharacterRightToLeft(text))
+            else if (LocaleService.Current.FlowDirection == FlowDirection.RightToLeft && !MessageHelper.IsAnyCharacterRightToLeft(text))
             {
                 Message.FlowDirection = FlowDirection.LeftToRight;
                 adjust = true;
             }
             else
             {
-                Message.FlowDirection = ApiInfo.FlowDirection;
+                Message.FlowDirection = LocaleService.Current.FlowDirection;
                 adjust = false;
             }
 
@@ -2405,11 +2405,11 @@ namespace Unigram.Controls.Messages
             Message.Blocks.Clear();
             Message.Blocks.Add(paragraph);
 
-            if (ApiInfo.FlowDirection == FlowDirection.LeftToRight && MessageHelper.IsAnyCharacterRightToLeft(message))
+            if (LocaleService.Current.FlowDirection == FlowDirection.LeftToRight && MessageHelper.IsAnyCharacterRightToLeft(message))
             {
                 paragraph.Inlines.Add(new LineBreak());
             }
-            else if (ApiInfo.FlowDirection == FlowDirection.RightToLeft && !MessageHelper.IsAnyCharacterRightToLeft(message))
+            else if (LocaleService.Current.FlowDirection == FlowDirection.RightToLeft && !MessageHelper.IsAnyCharacterRightToLeft(message))
             {
                 paragraph.Inlines.Add(new LineBreak());
             }
@@ -2450,11 +2450,11 @@ namespace Unigram.Controls.Messages
             Message.Blocks.Clear();
             Message.Blocks.Add(paragraph);
 
-            if (ApiInfo.FlowDirection == FlowDirection.LeftToRight && MessageHelper.IsAnyCharacterRightToLeft(message))
+            if (LocaleService.Current.FlowDirection == FlowDirection.LeftToRight && MessageHelper.IsAnyCharacterRightToLeft(message))
             {
                 paragraph.Inlines.Add(new LineBreak());
             }
-            else if (ApiInfo.FlowDirection == FlowDirection.RightToLeft && !MessageHelper.IsAnyCharacterRightToLeft(message))
+            else if (LocaleService.Current.FlowDirection == FlowDirection.RightToLeft && !MessageHelper.IsAnyCharacterRightToLeft(message))
             {
                 paragraph.Inlines.Add(new LineBreak());
             }
@@ -2529,11 +2529,11 @@ namespace Unigram.Controls.Messages
             Message.Blocks.Clear();
             Message.Blocks.Add(paragraph);
 
-            if (ApiInfo.FlowDirection == FlowDirection.LeftToRight && MessageHelper.IsAnyCharacterRightToLeft(message))
+            if (LocaleService.Current.FlowDirection == FlowDirection.LeftToRight && MessageHelper.IsAnyCharacterRightToLeft(message))
             {
                 paragraph.Inlines.Add(new LineBreak());
             }
-            else if (ApiInfo.FlowDirection == FlowDirection.RightToLeft && !MessageHelper.IsAnyCharacterRightToLeft(message))
+            else if (LocaleService.Current.FlowDirection == FlowDirection.RightToLeft && !MessageHelper.IsAnyCharacterRightToLeft(message))
             {
                 paragraph.Inlines.Add(new LineBreak());
             }
@@ -2648,11 +2648,11 @@ namespace Unigram.Controls.Messages
             Message.Blocks.Clear();
             Message.Blocks.Add(paragraph);
 
-            if (ApiInfo.FlowDirection == FlowDirection.LeftToRight && MessageHelper.IsAnyCharacterRightToLeft(caption))
+            if (LocaleService.Current.FlowDirection == FlowDirection.LeftToRight && MessageHelper.IsAnyCharacterRightToLeft(caption))
             {
                 paragraph.Inlines.Add(new LineBreak());
             }
-            else if (ApiInfo.FlowDirection == FlowDirection.RightToLeft && !MessageHelper.IsAnyCharacterRightToLeft(caption))
+            else if (LocaleService.Current.FlowDirection == FlowDirection.RightToLeft && !MessageHelper.IsAnyCharacterRightToLeft(caption))
             {
                 paragraph.Inlines.Add(new LineBreak());
             }

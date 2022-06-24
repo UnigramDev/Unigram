@@ -142,12 +142,10 @@ namespace Unigram
         protected override void OnWindowCreated(WindowCreatedEventArgs args)
         {
             args.Window.Activated += Window_Activated;
+            //args.Window.CoreWindow.FlowDirection = LocaleService.Current.FlowDirection == FlowDirection.RightToLeft
+            //    ? CoreWindowFlowDirection.RightToLeft
+            //    : CoreWindowFlowDirection.LeftToRight;
 
-            //var flowDirectionSetting = Windows.ApplicationModel.Resources.Core.ResourceContext.GetForCurrentView().QualifierValues["LayoutDirection"];
-
-            //args.Window.CoreWindow.FlowDirection = flowDirectionSetting == "RTL" ? CoreWindowFlowDirection.RightToLeft : CoreWindowFlowDirection.LeftToRight;
-
-            //Theme.Current.Initialize();
             CustomXamlResourceLoader.Current = new XamlResourceLoader();
             base.OnWindowCreated(args);
         }
@@ -350,7 +348,7 @@ namespace Unigram
 
             if (e is ContactPanelActivatedEventArgs /*|| (e is ProtocolActivatedEventArgs protocol && protocol.Uri.PathAndQuery.Contains("domain=telegrampassport", StringComparison.OrdinalIgnoreCase))*/)
             {
-                var navigationFrame = new Frame { FlowDirection = ApiInfo.FlowDirection };
+                var navigationFrame = new Frame { FlowDirection = LocaleService.Current.FlowDirection };
                 var navigationService = NavigationServiceFactory(BackButton.Ignore, ExistingContent.Include, navigationFrame, sessionId, $"Main{sessionId}", false) as NavigationService;
 
                 return navigationFrame;
@@ -360,13 +358,13 @@ namespace Unigram
                 var navigationFrame = new Frame();
                 var navigationService = NavigationServiceFactory(BackButton.Ignore, ExistingContent.Include, navigationFrame, sessionId, $"{sessionId}", true) as NavigationService;
 
-                return new RootPage(navigationService) { FlowDirection = ApiInfo.FlowDirection };
+                return new RootPage(navigationService) { FlowDirection = LocaleService.Current.FlowDirection };
             }
         }
 
         public override UIElement CreateRootElement(INavigationService navigationService)
         {
-            return new StandalonePage(navigationService) { FlowDirection = ApiInfo.FlowDirection };
+            return new StandalonePage(navigationService) { FlowDirection = LocaleService.Current.FlowDirection };
         }
 
         protected override INavigationService CreateNavigationService(Frame frame, int session, string id, bool root)

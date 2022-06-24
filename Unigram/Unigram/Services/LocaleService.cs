@@ -13,6 +13,7 @@ using Unigram.Common;
 using Unigram.Views;
 using Windows.ApplicationModel.Resources;
 using Windows.Storage;
+using Windows.UI.Xaml;
 
 namespace Unigram.Services
 {
@@ -21,6 +22,8 @@ namespace Unigram.Services
         Task<BaseObject> SetLanguageAsync(LanguagePackInfo info, bool refresh);
 
         CultureInfo CurrentCulture { get; }
+
+        FlowDirection FlowDirection { get; }
 
         string GetString(string key);
         string GetString(string key, int quantity);
@@ -58,6 +61,11 @@ namespace Unigram.Services
             _languageBase = SettingsService.Current.LanguageBaseId;
             _languagePlural = SettingsService.Current.LanguagePluralId;
 
+            LoadCurrentCulture();
+        }
+
+        private void LoadCurrentCulture()
+        {
             string[] args;
             if (!string.IsNullOrEmpty(_languagePlural))
             {
@@ -89,16 +97,21 @@ namespace Unigram.Services
 
         public CultureInfo CurrentCulture => _currentCulture;
 
+        public FlowDirection FlowDirection => _currentCulture.TextInfo.IsRightToLeft && SettingsService.Current.Diagnostics.AllowRightToLeft
+            ? FlowDirection.RightToLeft
+            : FlowDirection.LeftToRight;
+
         public async Task<BaseObject> SetLanguageAsync(LanguagePackInfo info, bool refresh)
         {
             _languageCode = info.Id;
+            _languageBase = info.BaseLanguagePackId;
             _languagePlural = info.PluralCode;
 
             SettingsService.Current.LanguagePackId = info.Id;
             SettingsService.Current.LanguageBaseId = info.BaseLanguagePackId;
             SettingsService.Current.LanguagePluralId = info.PluralCode;
 
-            Locale.SetRules(info.PluralCode);
+            LoadCurrentCulture();
 
             foreach (var protoService in TLContainer.Current.ResolveAll<IProtoService>())
             {
@@ -434,7 +447,7 @@ namespace Unigram.Services
             });
         }
 
-        #region Handle
+#region Handle
 
         public void Handle(UpdateLanguagePackStrings update)
         {
@@ -462,7 +475,7 @@ namespace Unigram.Services
             }
         }
 
-        #endregion
+#endregion
 
         private ConcurrentDictionary<string, string> GetLanguagePack(string key)
         {

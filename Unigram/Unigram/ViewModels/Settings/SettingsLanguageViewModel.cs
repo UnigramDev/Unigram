@@ -13,6 +13,7 @@ using Unigram.Views.Host;
 using Unigram.Views.Popups;
 using Windows.ApplicationModel.Resources.Core;
 using Windows.Globalization;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -156,12 +157,18 @@ namespace Unigram.ViewModels.Settings
                         ResourceContext.GetForCurrentView().Reset();
                         ResourceContext.GetForViewIndependentUse().Reset();
 
+                        if (window.Content is FrameworkElement frameworkElement)
+                        {
+                            //window.CoreWindow.FlowDirection = _localeService.FlowDirection == FlowDirection.RightToLeft
+                            //    ? CoreWindowFlowDirection.RightToLeft
+                            //    : CoreWindowFlowDirection.LeftToRight;
+
+                            frameworkElement.FlowDirection = _localeService.FlowDirection;
+                        }
+
                         if (window.Content is RootPage root)
                         {
-                            window.Dispatcher.Dispatch(() =>
-                            {
-                                root.UpdateComponent();
-                            });
+                            root.UpdateComponent();
                         }
                     });
                 }

@@ -27,6 +27,10 @@
                     <CheckBox IsChecked="{x:Bind ViewModel.CopyFormattedCode, Mode=TwoWay}"
                               Content="Copy formatted code"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                    <CheckBox IsChecked="{x:Bind ViewModel.AllowRightToLeft, Mode=TwoWay}"
+                              Content="Allow right to left"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="Calls Logs">

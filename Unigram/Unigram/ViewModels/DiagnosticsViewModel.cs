@@ -146,6 +146,16 @@ namespace Unigram.ViewModels
             }
         }
 
+        public bool AllowRightToLeft
+        {
+            get => SettingsService.Current.Diagnostics.AllowRightToLeft;
+            set
+            {
+                SettingsService.Current.Diagnostics.AllowRightToLeft = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public bool CanUseTestDC => ProtoService.AuthorizationState is not AuthorizationStateReady;
 
         public bool DisableDatabase => Settings.Diagnostics.DisableDatabase;

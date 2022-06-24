@@ -1,4 +1,6 @@
-﻿namespace Unigram.Services.Settings
+﻿using Unigram.Common;
+
+namespace Unigram.Services.Settings
 {
     public class DiagnosticsSettings : SettingsServiceBase
     {
@@ -26,6 +28,13 @@
         {
             get => _minithumbnails ??= GetValueOrDefault("Minithumbnails", true);
             set => AddOrUpdateValue(ref _minithumbnails, "Minithumbnails", value);
+        }
+
+        private bool? _allowRightToLeft;
+        public bool AllowRightToLeft
+        {
+            get => _allowRightToLeft ??= GetValueOrDefault("AllowRightToLeft", ApiInfo.IsPackagedRelease);
+            set => AddOrUpdateValue(ref _allowRightToLeft, "AllowRightToLeft", value);
         }
 
         private string _lastErrorMessage;
