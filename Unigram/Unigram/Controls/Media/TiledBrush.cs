@@ -1,4 +1,5 @@
 ﻿using Microsoft.Graphics.Canvas.Effects;
+using System.Collections.Generic;
 using Windows.Graphics.Effects;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -36,6 +37,7 @@ namespace Unigram.Controls.Media
                 };
 
                 IGraphicsEffect effect;
+                IEnumerable<string> animatableProperties;
                 if (IsInverted)
                 {
                     //var matrix = new ColorMatrixEffect
@@ -52,6 +54,7 @@ namespace Unigram.Controls.Media
                     //};
                     _tintEffect = null;
 
+                    animatableProperties = new string[0];
                     effect = new GammaTransferEffect()
                     {
                         AlphaAmplitude = -1,
@@ -71,6 +74,7 @@ namespace Unigram.Controls.Media
                         Color = Color.FromArgb((byte)(Intensity * 255), 0, 0, 0)
                     };
 
+                    animatableProperties = new[] { "Tint.Color" };
                     effect = new BlendEffect
                     {
                         Background = tintEffect,
@@ -81,7 +85,7 @@ namespace Unigram.Controls.Media
 
                 var backdrop = Window.Current.Compositor.CreateBackdropBrush();
 
-                var borderEffectFactory = Window.Current.Compositor.CreateEffectFactory(effect, new[] { "Tint.Color" });
+                var borderEffectFactory = Window.Current.Compositor.CreateEffectFactory(effect, animatableProperties);
                 var borderEffectBrush = borderEffectFactory.CreateBrush();
                 borderEffectBrush.SetSourceParameter("Source", surfaceBrush);
 
