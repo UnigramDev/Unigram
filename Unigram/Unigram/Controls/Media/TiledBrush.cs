@@ -139,7 +139,11 @@ namespace Unigram.Controls.Media
                 if (CompositionBrush is CompositionEffectBrush effectBrush)
                 {
                     effectBrush.SetSourceParameter("Source", surfaceBrush);
-                    effectBrush.Properties.InsertColor("Tint.Color", Color.FromArgb((byte)(Intensity * 255), 0, 0, 0));
+
+                    if (_tintEffect != null)
+                    {
+                        effectBrush.Properties.InsertColor("Tint.Color", Color.FromArgb((byte)(Intensity * 255), 0, 0, 0));
+                    }
                 }
             }
         }
