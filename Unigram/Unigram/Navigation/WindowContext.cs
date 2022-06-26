@@ -70,10 +70,37 @@ namespace Unigram.Navigation
             };
 
             window.Dispatcher.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
+
+            window.CoreWindow.ResizeStarted += OnResizeStarted;
+            window.CoreWindow.ResizeCompleted += OnResizeCompleted;
+        }
+
+        private void OnResizeStarted(CoreWindow sender, object args)
+        {
+            if (Window.Content is FrameworkElement element)
+            {
+                element.Width = sender.Bounds.Width;
+                element.Height = sender.Bounds.Height;
+                element.HorizontalAlignment = HorizontalAlignment.Left;
+                element.VerticalAlignment = VerticalAlignment.Top;
+            }
+        }
+
+        private void OnResizeCompleted(CoreWindow sender, object args)
+        {
+            if (Window.Content is FrameworkElement element)
+            {
+                element.Width = double.NaN;
+                element.Height = double.NaN;
+                element.HorizontalAlignment = HorizontalAlignment.Stretch;
+                element.VerticalAlignment = VerticalAlignment.Stretch;
+            }
         }
 
         public void Close() { Window.Close(); }
         public Window Window { get; }
+
+        public CoreWindow CoreWindow => Window.CoreWindow;
         public DispatcherContext Dispatcher { get; }
         public NavigationServiceList NavigationServices { get; } = new NavigationServiceList();
 
