@@ -88,12 +88,12 @@ namespace Unigram.Controls.Messages
             else if (embedded.EditingMessage != null)
             {
                 MessageId = embedded.EditingMessage.Id;
-                GetMessageTemplate(embedded.EditingMessage, Strings.Resources.Edit);
+                GetMessageTemplate(embedded.EditingMessage, Strings.Resources.Edit, true);
             }
             else if (embedded.ReplyToMessage != null)
             {
                 MessageId = embedded.ReplyToMessage.Id;
-                GetMessageTemplate(embedded.ReplyToMessage, null);
+                GetMessageTemplate(embedded.ReplyToMessage, null, true);
             }
         }
 
@@ -112,21 +112,26 @@ namespace Unigram.Controls.Messages
                 return;
             }
 
+            var outgoing = message.IsOutgoing && !message.IsChannelPost;
+            outgoing &= !message.IsChannelPost;
+            
+            // TODO: chat type
+
             if (message.ReplyToMessageState == ReplyToMessageState.Hidden || message.ReplyToMessageId == 0)
             {
                 Visibility = Visibility.Collapsed;
             }
             else if (message.ReplyToMessage != null)
             {
-                GetMessageTemplate(message.ReplyToMessage, null);
+                GetMessageTemplate(message.ReplyToMessage, null, outgoing);
             }
             else if (message.ReplyToMessageState == ReplyToMessageState.Loading)
             {
-                SetLoadingTemplate(null, null);
+                SetLoadingTemplate(null, null, outgoing);
             }
             else if (message.ReplyToMessageState == ReplyToMessageState.Deleted)
             {
-                SetEmptyTemplate(null, null);
+                SetEmptyTemplate();
             }
         }
 
@@ -142,12 +147,12 @@ namespace Unigram.Controls.Messages
 
             if (loading)
             {
-                SetLoadingTemplate(null, title);
+                SetLoadingTemplate(null, title, true);
             }
             else
             {
                 MessageId = message.Id;
-                GetMessageTemplate(message, title);
+                GetMessageTemplate(message, title, true);
             }
         }
 
@@ -239,48 +244,48 @@ namespace Unigram.Controls.Messages
 
         #region Reply
 
-        private bool GetMessageTemplate(MessageViewModel message, string title)
+        private bool GetMessageTemplate(MessageViewModel message, string title, bool outgoing)
         {
             switch (message.Content)
             {
                 case MessageText text:
-                    return SetTextTemplate(message, text, title);
+                    return SetTextTemplate(message, text, title, outgoing);
                 case MessageAnimatedEmoji animatedEmoji:
-                    return SetAnimatedEmojiTemplate(message, animatedEmoji, title);
+                    return SetAnimatedEmojiTemplate(message, animatedEmoji, title, outgoing);
                 case MessageAnimation animation:
-                    return SetAnimationTemplate(message, animation, title);
+                    return SetAnimationTemplate(message, animation, title, outgoing);
                 case MessageAudio audio:
-                    return SetAudioTemplate(message, audio, title);
+                    return SetAudioTemplate(message, audio, title, outgoing);
                 case MessageCall call:
-                    return SetCallTemplate(message, call, title);
+                    return SetCallTemplate(message, call, title, outgoing);
                 case MessageContact contact:
-                    return SetContactTemplate(message, contact, title);
+                    return SetContactTemplate(message, contact, title, outgoing);
                 case MessageDice dice:
-                    return SetDiceTemplate(message, dice, title);
+                    return SetDiceTemplate(message, dice, title, outgoing);
                 case MessageDocument document:
-                    return SetDocumentTemplate(message, document, title);
+                    return SetDocumentTemplate(message, document, title, outgoing);
                 case MessageGame game:
-                    return SetGameTemplate(message, game, title);
+                    return SetGameTemplate(message, game, title, outgoing);
                 case MessageInvoice invoice:
-                    return SetInvoiceTemplate(message, invoice, title);
+                    return SetInvoiceTemplate(message, invoice, title, outgoing);
                 case MessageLocation location:
-                    return SetLocationTemplate(message, location, title);
+                    return SetLocationTemplate(message, location, title, outgoing);
                 case MessagePhoto photo:
-                    return SetPhotoTemplate(message, photo, title);
+                    return SetPhotoTemplate(message, photo, title, outgoing);
                 case MessagePoll poll:
-                    return SetPollTemplate(message, poll, title);
+                    return SetPollTemplate(message, poll, title, outgoing);
                 case MessageSticker sticker:
-                    return SetStickerTemplate(message, sticker, title);
+                    return SetStickerTemplate(message, sticker, title, outgoing);
                 case MessageUnsupported:
-                    return SetUnsupportedMediaTemplate(message, title);
+                    return SetUnsupportedMediaTemplate(message, title, outgoing);
                 case MessageVenue venue:
-                    return SetVenueTemplate(message, venue, title);
+                    return SetVenueTemplate(message, venue, title, outgoing);
                 case MessageVideo video:
-                    return SetVideoTemplate(message, video, title);
+                    return SetVideoTemplate(message, video, title, outgoing);
                 case MessageVideoNote videoNote:
-                    return SetVideoNoteTemplate(message, videoNote, title);
+                    return SetVideoNoteTemplate(message, videoNote, title, outgoing);
                 case MessageVoiceNote voiceNote:
-                    return SetVoiceNoteTemplate(message, voiceNote, title);
+                    return SetVoiceNoteTemplate(message, voiceNote, title, outgoing);
 
                 case MessageBasicGroupChatCreate:
                 case MessageChatAddMembers:
@@ -309,23 +314,23 @@ namespace Unigram.Controls.Messages
                 case MessageVideoChatStarted:
                 case MessageWebsiteConnected:
                 case MessageWebAppDataSent:
-                    return SetServiceTextTemplate(message, title);
+                    return SetServiceTextTemplate(message, title, outgoing);
                 case MessageExpiredPhoto:
                 case MessageExpiredVideo:
-                    return SetServiceTextTemplate(message, title);
+                    return SetServiceTextTemplate(message, title, outgoing);
             }
 
             Visibility = Visibility.Collapsed;
             return false;
         }
 
-        private bool SetTextTemplate(MessageViewModel message, MessageText text, string title)
+        private bool SetTextTemplate(MessageViewModel message, MessageText text, string title, bool outgoing)
         {
             Visibility = Visibility.Visible;
 
             HideThumbnail();
 
-            SetText(message.SenderId,
+            SetText(outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
                 string.Empty,
                 text.Text);
@@ -333,13 +338,13 @@ namespace Unigram.Controls.Messages
             return true;
         }
 
-        private bool SetDiceTemplate(MessageViewModel message, MessageDice dice, string title)
+        private bool SetDiceTemplate(MessageViewModel message, MessageDice dice, string title, bool outgoing)
         {
             Visibility = Visibility.Visible;
 
             HideThumbnail();
 
-            SetText(message.SenderId,
+            SetText(outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
                 dice.Emoji,
                 null);
@@ -347,13 +352,13 @@ namespace Unigram.Controls.Messages
             return true;
         }
 
-        private bool SetPhotoTemplate(MessageViewModel message, MessagePhoto photo, string title)
+        private bool SetPhotoTemplate(MessageViewModel message, MessagePhoto photo, string title, bool outgoing)
         {
             Visibility = Visibility.Visible;
 
             // 🖼
 
-            SetText(message.SenderId,
+            SetText(outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
                 Strings.Resources.AttachPhoto,
                 photo.Caption);
@@ -370,13 +375,13 @@ namespace Unigram.Controls.Messages
             return true;
         }
 
-        private bool SetInvoiceTemplate(MessageViewModel message, MessageInvoice invoice, string title)
+        private bool SetInvoiceTemplate(MessageViewModel message, MessageInvoice invoice, string title, bool outgoing)
         {
             Visibility = Visibility.Visible;
 
             HideThumbnail();
 
-            SetText(message.SenderId,
+            SetText(outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
                 invoice.Title,
                 null);
@@ -384,13 +389,13 @@ namespace Unigram.Controls.Messages
             return true;
         }
 
-        private bool SetLocationTemplate(MessageViewModel message, MessageLocation location, string title)
+        private bool SetLocationTemplate(MessageViewModel message, MessageLocation location, string title, bool outgoing)
         {
             Visibility = Visibility.Visible;
 
             HideThumbnail();
 
-            SetText(message.SenderId,
+            SetText(outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
                 location.LivePeriod > 0 ? Strings.Resources.AttachLiveLocation : Strings.Resources.AttachLocation,
                 null);
@@ -398,13 +403,13 @@ namespace Unigram.Controls.Messages
             return true;
         }
 
-        private bool SetVenueTemplate(MessageViewModel message, MessageVenue venue, string title)
+        private bool SetVenueTemplate(MessageViewModel message, MessageVenue venue, string title, bool outgoing)
         {
             Visibility = Visibility.Visible;
 
             HideThumbnail();
 
-            SetText(message.SenderId,
+            SetText(outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
                 Strings.Resources.AttachLocation + ", " + venue.Venue.Title.Replace('\n', ' '),
                 null);
@@ -412,13 +417,13 @@ namespace Unigram.Controls.Messages
             return true;
         }
 
-        private bool SetCallTemplate(MessageViewModel message, MessageCall call, string title)
+        private bool SetCallTemplate(MessageViewModel message, MessageCall call, string title, bool outgoing)
         {
             Visibility = Visibility.Visible;
 
             HideThumbnail();
 
-            SetText(message.SenderId,
+            SetText(outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
                 call.ToOutcomeText(message.IsOutgoing),
                 null);
@@ -426,11 +431,11 @@ namespace Unigram.Controls.Messages
             return true;
         }
 
-        private bool SetGameTemplate(MessageViewModel message, MessageGame game, string title)
+        private bool SetGameTemplate(MessageViewModel message, MessageGame game, string title, bool outgoing)
         {
             Visibility = Visibility.Visible;
 
-            SetText(message.SenderId,
+            SetText(outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
                 $"\uD83C\uDFAE {game.Game.Title}",
                 null);
@@ -440,13 +445,13 @@ namespace Unigram.Controls.Messages
             return true;
         }
 
-        private bool SetContactTemplate(MessageViewModel message, MessageContact contact, string title)
+        private bool SetContactTemplate(MessageViewModel message, MessageContact contact, string title, bool outgoing)
         {
             Visibility = Visibility.Visible;
 
             HideThumbnail();
 
-            SetText(message.SenderId,
+            SetText(outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
                 Strings.Resources.AttachContact,
                 null);
@@ -454,7 +459,7 @@ namespace Unigram.Controls.Messages
             return true;
         }
 
-        private bool SetAudioTemplate(MessageViewModel message, MessageAudio audio, string title)
+        private bool SetAudioTemplate(MessageViewModel message, MessageAudio audio, string title, bool outgoing)
         {
             Visibility = Visibility.Visible;
 
@@ -473,7 +478,7 @@ namespace Unigram.Controls.Messages
                 service = $"\uD83C\uDFB5 {performer} - {audioTitle}";
             }
 
-            SetText(message.SenderId,
+            SetText(outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
                 service,
                 audio.Caption);
@@ -481,13 +486,13 @@ namespace Unigram.Controls.Messages
             return true;
         }
 
-        private bool SetPollTemplate(MessageViewModel message, MessagePoll poll, string title)
+        private bool SetPollTemplate(MessageViewModel message, MessagePoll poll, string title, bool outgoing)
         {
             Visibility = Visibility.Visible;
 
             HideThumbnail();
 
-            SetText(message.SenderId,
+            SetText(outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
                 $"\uD83D\uDCCA {poll.Poll.Question.Replace('\n', ' ')}",
                 null);
@@ -495,13 +500,13 @@ namespace Unigram.Controls.Messages
             return true;
         }
 
-        private bool SetVoiceNoteTemplate(MessageViewModel message, MessageVoiceNote voiceNote, string title)
+        private bool SetVoiceNoteTemplate(MessageViewModel message, MessageVoiceNote voiceNote, string title, bool outgoing)
         {
             Visibility = Visibility.Visible;
 
             HideThumbnail();
 
-            SetText(message.SenderId,
+            SetText(outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
                 Strings.Resources.AttachAudio,
                 voiceNote.Caption);
@@ -509,11 +514,11 @@ namespace Unigram.Controls.Messages
             return true;
         }
 
-        private bool SetVideoTemplate(MessageViewModel message, MessageVideo video, string title)
+        private bool SetVideoTemplate(MessageViewModel message, MessageVideo video, string title, bool outgoing)
         {
             Visibility = Visibility.Visible;
 
-            SetText(message.SenderId,
+            SetText(outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
                 Strings.Resources.AttachVideo,
                 video.Caption);
@@ -530,11 +535,11 @@ namespace Unigram.Controls.Messages
             return true;
         }
 
-        private bool SetVideoNoteTemplate(MessageViewModel message, MessageVideoNote videoNote, string title)
+        private bool SetVideoNoteTemplate(MessageViewModel message, MessageVideoNote videoNote, string title, bool outgoing)
         {
             Visibility = Visibility.Visible;
 
-            SetText(message.SenderId,
+            SetText(outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
                 Strings.Resources.AttachRound,
                 null);
@@ -544,11 +549,11 @@ namespace Unigram.Controls.Messages
             return true;
         }
 
-        private bool SetAnimatedEmojiTemplate(MessageViewModel message, MessageAnimatedEmoji animatedEmoji, string title)
+        private bool SetAnimatedEmojiTemplate(MessageViewModel message, MessageAnimatedEmoji animatedEmoji, string title, bool outgoing)
         {
             Visibility = Visibility.Visible;
 
-            SetText(message.SenderId,
+            SetText(outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
                 animatedEmoji.Emoji,
                 null);
@@ -558,11 +563,11 @@ namespace Unigram.Controls.Messages
             return true;
         }
 
-        private bool SetAnimationTemplate(MessageViewModel message, MessageAnimation animation, string title)
+        private bool SetAnimationTemplate(MessageViewModel message, MessageAnimation animation, string title, bool outgoing)
         {
             Visibility = Visibility.Visible;
 
-            SetText(message.SenderId,
+            SetText(outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
                 Strings.Resources.AttachGif,
                 animation.Caption);
@@ -572,13 +577,13 @@ namespace Unigram.Controls.Messages
             return true;
         }
 
-        private bool SetStickerTemplate(MessageViewModel message, MessageSticker sticker, string title)
+        private bool SetStickerTemplate(MessageViewModel message, MessageSticker sticker, string title, bool outgoing)
         {
             Visibility = Visibility.Visible;
 
             HideThumbnail();
 
-            SetText(message.SenderId,
+            SetText(outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
                 string.IsNullOrEmpty(sticker.Sticker.Emoji) ? Strings.Resources.AttachSticker : $"{sticker.Sticker.Emoji} {Strings.Resources.AttachSticker}",
                 null);
@@ -586,13 +591,13 @@ namespace Unigram.Controls.Messages
             return true;
         }
 
-        private bool SetDocumentTemplate(MessageViewModel message, MessageDocument document, string title)
+        private bool SetDocumentTemplate(MessageViewModel message, MessageDocument document, string title, bool outgoing)
         {
             Visibility = Visibility.Visible;
 
             HideThumbnail();
 
-            SetText(message.SenderId,
+            SetText(outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
                 document.Document.FileName,
                 document.Caption);
@@ -600,13 +605,13 @@ namespace Unigram.Controls.Messages
             return true;
         }
 
-        private bool SetServiceTextTemplate(MessageViewModel message, string title)
+        private bool SetServiceTextTemplate(MessageViewModel message, string title, bool outgoing)
         {
             Visibility = Visibility.Visible;
 
             HideThumbnail();
 
-            SetText(message.SenderId,
+            SetText(outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
                 MessageService.GetText(message),
                 null);
@@ -614,41 +619,41 @@ namespace Unigram.Controls.Messages
             return true;
         }
 
-        private bool SetLoadingTemplate(MessageViewModel message, string title)
+        private bool SetLoadingTemplate(MessageViewModel message, string title, bool outgoing)
         {
             Visibility = Visibility.Visible;
 
             HideThumbnail();
 
-            SetText(message?.SenderId,
-                string.Empty,
+            SetText(outgoing ? null : message?.SenderId,
+                title,
                 Strings.Resources.Loading,
                 null);
 
             return true;
         }
 
-        private bool SetEmptyTemplate(Message message, string title)
+        private bool SetEmptyTemplate()
         {
             Visibility = Visibility.Visible;
 
             HideThumbnail();
 
-            SetText(message?.SenderId,
+            SetText(null,
                 string.Empty,
-                message == null ? Strings.Resources.lng_deleted_message : string.Empty,
+                Strings.Resources.lng_deleted_message,
                 null);
 
             return true;
         }
 
-        private bool SetUnsupportedMediaTemplate(MessageViewModel message, string title)
+        private bool SetUnsupportedMediaTemplate(MessageViewModel message, string title, bool outgoing)
         {
             Visibility = Visibility.Visible;
 
             HideThumbnail();
 
-            SetText(message.SenderId,
+            SetText(outgoing ? null : message.SenderId,
                 GetFromLabel(message, title),
                 Strings.Resources.UnsupportedAttachment,
                 null);
