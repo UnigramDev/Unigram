@@ -640,7 +640,7 @@ namespace Unigram.Controls.Messages
             HideThumbnail();
 
             SetText(null,
-                string.Empty,
+                null,
                 Strings.Resources.lng_deleted_message,
                 null);
 

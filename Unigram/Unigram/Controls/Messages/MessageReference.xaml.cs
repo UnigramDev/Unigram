@@ -109,8 +109,8 @@ namespace Unigram.Controls.Messages
         {
             if (TitleLabel != null)
             {
-                TitleLabel.Text = title;
-                ServiceLabel.Text = service;
+                TitleLabel.Text = title ?? string.Empty;
+                ServiceLabel.Text = service ?? string.Empty;
                 MessageLabel.Text = message?.ReplaceSpoilers() ?? string.Empty;
 
                 if (!string.IsNullOrEmpty(message?.Text) && !string.IsNullOrEmpty(service))
