@@ -80,7 +80,8 @@ namespace Unigram.Controls.Messages
                     message = embedded.WebPagePreview.Url;
                 }
 
-                SetText(embedded.WebPagePreview.SiteName,
+                SetText(null,
+                    embedded.WebPagePreview.SiteName,
                     string.Empty,
                     new FormattedText { Text = message });
             }
@@ -100,7 +101,7 @@ namespace Unigram.Controls.Messages
 
         public void Mockup(string sender, string message)
         {
-            SetText(sender, string.Empty, new FormattedText { Text = message });
+            SetText(null, sender, string.Empty, new FormattedText { Text = message });
         }
 
         public void UpdateMessageReply(MessageViewModel message)
@@ -324,7 +325,8 @@ namespace Unigram.Controls.Messages
 
             HideThumbnail();
 
-            SetText(GetFromLabel(message, title),
+            SetText(message.SenderId,
+                GetFromLabel(message, title),
                 string.Empty,
                 text.Text);
 
@@ -337,7 +339,8 @@ namespace Unigram.Controls.Messages
 
             HideThumbnail();
 
-            SetText(GetFromLabel(message, title),
+            SetText(message.SenderId,
+                GetFromLabel(message, title),
                 dice.Emoji,
                 null);
 
@@ -350,7 +353,8 @@ namespace Unigram.Controls.Messages
 
             // 🖼
 
-            SetText(GetFromLabel(message, title),
+            SetText(message.SenderId,
+                GetFromLabel(message, title),
                 Strings.Resources.AttachPhoto,
                 photo.Caption);
 
@@ -372,7 +376,8 @@ namespace Unigram.Controls.Messages
 
             HideThumbnail();
 
-            SetText(GetFromLabel(message, title),
+            SetText(message.SenderId,
+                GetFromLabel(message, title),
                 invoice.Title,
                 null);
 
@@ -385,7 +390,8 @@ namespace Unigram.Controls.Messages
 
             HideThumbnail();
 
-            SetText(GetFromLabel(message, title),
+            SetText(message.SenderId,
+                GetFromLabel(message, title),
                 location.LivePeriod > 0 ? Strings.Resources.AttachLiveLocation : Strings.Resources.AttachLocation,
                 null);
 
@@ -398,7 +404,8 @@ namespace Unigram.Controls.Messages
 
             HideThumbnail();
 
-            SetText(GetFromLabel(message, title),
+            SetText(message.SenderId,
+                GetFromLabel(message, title),
                 Strings.Resources.AttachLocation + ", " + venue.Venue.Title.Replace('\n', ' '),
                 null);
 
@@ -411,7 +418,8 @@ namespace Unigram.Controls.Messages
 
             HideThumbnail();
 
-            SetText(GetFromLabel(message, title),
+            SetText(message.SenderId,
+                GetFromLabel(message, title),
                 call.ToOutcomeText(message.IsOutgoing),
                 null);
 
@@ -422,7 +430,8 @@ namespace Unigram.Controls.Messages
         {
             Visibility = Visibility.Visible;
 
-            SetText(GetFromLabel(message, title),
+            SetText(message.SenderId,
+                GetFromLabel(message, title),
                 $"\uD83C\uDFAE {game.Game.Title}",
                 null);
 
@@ -437,7 +446,8 @@ namespace Unigram.Controls.Messages
 
             HideThumbnail();
 
-            SetText(GetFromLabel(message, title),
+            SetText(message.SenderId,
+                GetFromLabel(message, title),
                 Strings.Resources.AttachContact,
                 null);
 
@@ -463,7 +473,8 @@ namespace Unigram.Controls.Messages
                 service = $"\uD83C\uDFB5 {performer} - {audioTitle}";
             }
 
-            SetText(GetFromLabel(message, title),
+            SetText(message.SenderId,
+                GetFromLabel(message, title),
                 service,
                 audio.Caption);
 
@@ -476,7 +487,8 @@ namespace Unigram.Controls.Messages
 
             HideThumbnail();
 
-            SetText(GetFromLabel(message, title),
+            SetText(message.SenderId,
+                GetFromLabel(message, title),
                 $"\uD83D\uDCCA {poll.Poll.Question.Replace('\n', ' ')}",
                 null);
 
@@ -489,7 +501,8 @@ namespace Unigram.Controls.Messages
 
             HideThumbnail();
 
-            SetText(GetFromLabel(message, title),
+            SetText(message.SenderId,
+                GetFromLabel(message, title),
                 Strings.Resources.AttachAudio,
                 voiceNote.Caption);
 
@@ -500,7 +513,8 @@ namespace Unigram.Controls.Messages
         {
             Visibility = Visibility.Visible;
 
-            SetText(GetFromLabel(message, title),
+            SetText(message.SenderId,
+                GetFromLabel(message, title),
                 Strings.Resources.AttachVideo,
                 video.Caption);
 
@@ -520,7 +534,8 @@ namespace Unigram.Controls.Messages
         {
             Visibility = Visibility.Visible;
 
-            SetText(GetFromLabel(message, title),
+            SetText(message.SenderId,
+                GetFromLabel(message, title),
                 Strings.Resources.AttachRound,
                 null);
 
@@ -533,7 +548,8 @@ namespace Unigram.Controls.Messages
         {
             Visibility = Visibility.Visible;
 
-            SetText(GetFromLabel(message, title),
+            SetText(message.SenderId,
+                GetFromLabel(message, title),
                 animatedEmoji.Emoji,
                 null);
 
@@ -546,7 +562,8 @@ namespace Unigram.Controls.Messages
         {
             Visibility = Visibility.Visible;
 
-            SetText(GetFromLabel(message, title),
+            SetText(message.SenderId,
+                GetFromLabel(message, title),
                 Strings.Resources.AttachGif,
                 animation.Caption);
 
@@ -561,7 +578,8 @@ namespace Unigram.Controls.Messages
 
             HideThumbnail();
 
-            SetText(GetFromLabel(message, title),
+            SetText(message.SenderId,
+                GetFromLabel(message, title),
                 string.IsNullOrEmpty(sticker.Sticker.Emoji) ? Strings.Resources.AttachSticker : $"{sticker.Sticker.Emoji} {Strings.Resources.AttachSticker}",
                 null);
 
@@ -574,7 +592,8 @@ namespace Unigram.Controls.Messages
 
             HideThumbnail();
 
-            SetText(GetFromLabel(message, title),
+            SetText(message.SenderId,
+                GetFromLabel(message, title),
                 document.Document.FileName,
                 document.Caption);
 
@@ -587,7 +606,8 @@ namespace Unigram.Controls.Messages
 
             HideThumbnail();
 
-            SetText(GetFromLabel(message, title),
+            SetText(message.SenderId,
+                GetFromLabel(message, title),
                 MessageService.GetText(message),
                 null);
 
@@ -600,7 +620,8 @@ namespace Unigram.Controls.Messages
 
             HideThumbnail();
 
-            SetText(string.Empty,
+            SetText(message?.SenderId,
+                string.Empty,
                 Strings.Resources.Loading,
                 null);
 
@@ -613,7 +634,8 @@ namespace Unigram.Controls.Messages
 
             HideThumbnail();
 
-            SetText(string.Empty,
+            SetText(message?.SenderId,
+                string.Empty,
                 message == null ? Strings.Resources.lng_deleted_message : string.Empty,
                 null);
 
@@ -626,7 +648,8 @@ namespace Unigram.Controls.Messages
 
             HideThumbnail();
 
-            SetText(GetFromLabel(message, title),
+            SetText(message.SenderId,
+                GetFromLabel(message, title),
                 Strings.Resources.UnsupportedAttachment,
                 null);
 
@@ -643,7 +666,7 @@ namespace Unigram.Controls.Messages
         protected abstract void ShowThumbnail(CornerRadius radius = default);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected abstract void SetText(string title, string service, FormattedText message);
+        protected abstract void SetText(MessageSender sender, string title, string service, FormattedText message);
 
         #endregion
 

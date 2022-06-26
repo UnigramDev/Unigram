@@ -105,7 +105,7 @@ namespace Unigram.Controls.Messages
             }
         }
 
-        protected override void SetText(string title, string service, FormattedText message)
+        protected override void SetText(MessageSender sender, string title, string service, FormattedText message)
         {
             if (TitleLabel != null)
             {
@@ -116,6 +116,22 @@ namespace Unigram.Controls.Messages
                 if (!string.IsNullOrEmpty(message?.Text) && !string.IsNullOrEmpty(service))
                 {
                     ServiceLabel.Text += ", ";
+                }
+
+                if (sender is MessageSenderUser user)
+                {
+                    BorderBrush = PlaceholderHelper.GetBrush(user.UserId);
+                    TitleLabel.Foreground = PlaceholderHelper.GetBrush(user.UserId);
+                }
+                else if (sender is MessageSenderChat chat)
+                {
+                    BorderBrush = PlaceholderHelper.GetBrush(chat.ChatId);
+                    TitleLabel.Foreground = PlaceholderHelper.GetBrush(chat.ChatId);
+                }
+                else
+                {
+                    ClearValue(BorderBrushProperty);
+                    TitleLabel.ClearValue(TextElement.ForegroundProperty);
                 }
             }
         }
