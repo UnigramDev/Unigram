@@ -610,6 +610,8 @@
                                         Value="Local" />
                                 <Setter Property="IsHoldingEnabled"
                                         Value="True" />
+                                <Setter Property="IsTabStop"
+                                        Value="False" />
                                 <Setter Property="Padding"
                                         Value="0,0,0,0" />
                                 <Setter Property="HorizontalContentAlignment"
@@ -697,6 +699,8 @@
                                         Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
                                 <Setter Property="TabNavigation"
                                         Value="Local" />
+                                <Setter Property="IsTabStop"
+                                        Value="False" />
                                 <Setter Property="IsHoldingEnabled"
                                         Value="True" />
                                 <Setter Property="Padding"
