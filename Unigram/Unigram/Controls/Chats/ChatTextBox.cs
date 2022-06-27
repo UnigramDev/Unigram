@@ -246,10 +246,14 @@ namespace Unigram.Controls.Chats
             _ = SendAsync();
         }
 
+        private DateTime _lastKeystroke;
+
         private void OnTextChanged(object sender, RoutedEventArgs e)
         {
-            if (_wasEmpty && !IsEmpty)
+            var diff = DateTime.Now - _lastKeystroke;
+            if (diff.TotalSeconds > 4 || (_wasEmpty && !IsEmpty))
             {
+                _lastKeystroke = DateTime.Now;
                 ViewModel.ChatActionManager.SetTyping(new ChatActionTyping());
             }
         }
