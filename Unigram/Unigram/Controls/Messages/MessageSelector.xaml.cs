@@ -3,8 +3,11 @@ using Microsoft.UI.Xaml.Controls;
 using System.Linq;
 using System.Numerics;
 using Telegram.Td.Api;
+using Unigram.Common;
+using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
@@ -330,6 +333,48 @@ namespace Unigram.Controls.Messages
                     AnimatedIcon.SetState(Icon, IsChecked is true ? "Checked" : "Normal");
                 }
             }
+        }
+
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new MessageSelectorAutomationPeer(this);
+        }
+    }
+
+    public class MessageSelectorAutomationPeer : CheckBoxAutomationPeer
+    {
+        private readonly MessageSelector _owner;
+        private readonly IProtoService _protoService;
+
+        public MessageSelectorAutomationPeer(MessageSelector owner)
+            : base(owner)
+        {
+            _owner = owner;
+        }
+
+        public MessageSelectorAutomationPeer(MessageSelector owner, IProtoService protoService)
+            : base(owner)
+        {
+            _owner = owner;
+            _protoService = protoService;
+        }
+
+        protected override string GetNameCore()
+        {
+            if (_owner.Content is MessageBubble bubble)
+            {
+                return bubble.GetAutomationName() ?? base.GetNameCore();
+            }
+            else if (_owner.ContentTemplateRoot is MessageBubble child)
+            {
+                return child.GetAutomationName() ?? base.GetNameCore();
+            }
+            else if (_owner.Content is Message message && _protoService != null)
+            {
+                return Automation.GetDescription(_protoService, message);
+            }
+
+            return base.GetNameCore();
         }
     }
 }

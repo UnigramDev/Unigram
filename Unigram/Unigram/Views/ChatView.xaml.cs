@@ -1010,7 +1010,7 @@ namespace Unigram.Views
                 }
 
                 var focused = FocusManager.GetFocusedElement();
-                if (focused is Selector or SelectorItem or Microsoft.UI.Xaml.Controls.ItemsRepeater or ChatCell or PlaybackSlider)
+                if (focused is Selector or SelectorItem or MessageSelector or Microsoft.UI.Xaml.Controls.ItemsRepeater or ChatCell or PlaybackSlider)
                 {
                     return;
                 }
@@ -1053,7 +1053,7 @@ namespace Unigram.Views
                 }
 
                 var focused = FocusManager.GetFocusedElement();
-                if (focused is Selector or SelectorItem or Microsoft.UI.Xaml.Controls.ItemsRepeater or ChatCell or PlaybackSlider)
+                if (focused is Selector or SelectorItem or MessageSelector or Microsoft.UI.Xaml.Controls.ItemsRepeater or ChatCell or PlaybackSlider)
                 {
                     return;
                 }
