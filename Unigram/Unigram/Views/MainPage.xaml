@@ -253,7 +253,7 @@
                                  DragItemsCompleted="ChatFilters_DragItemsCompleted"
                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                  ScrollViewer.HorizontalScrollMode="Disabled"
-                                 ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                 ScrollViewer.VerticalScrollBarVisibility="Hidden"
                                  ScrollViewer.VerticalScrollMode="Auto"
                                  Height="Auto"
                                  Width="68">
