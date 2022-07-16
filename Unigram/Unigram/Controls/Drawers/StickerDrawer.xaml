@@ -58,7 +58,8 @@
         </DataTemplate>
     </UserControl.Resources>
 
-    <Grid x:Name="StickersRoot">
+    <Grid x:Name="StickersRoot"
+          Background="Transparent">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -184,7 +185,6 @@
             <GridView x:Name="Toolbar"
                       ItemsSource="{x:Bind ViewModel.SavedStickers}"
                       Height="{ThemeResource AppBarThemeCompactHeight}"
-                      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                       IsItemClickEnabled="True"
                       ItemClick="Toolbar_ItemClick"
                       ContainerContentChanging="Toolbar_ContainerContentChanging"

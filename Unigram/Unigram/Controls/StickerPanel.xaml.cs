@@ -33,8 +33,10 @@ namespace Unigram.Controls
             InitializeComponent();
             DataContext = new object();
 
-            DropShadowEx.Attach(HeaderSeparator);
-            DropShadowEx.Attach(ShadowElement);
+            var header = DropShadowEx.Attach(HeaderSeparator);
+            var shadow = DropShadowEx.Attach(ShadowElement);
+
+            header.Clip = header.Compositor.CreateInsetClip(0, -48, 0, 48);
 
             switch (SettingsService.Current.Stickers.SelectedTab)
             {

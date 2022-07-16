@@ -63,7 +63,8 @@ namespace Unigram.Controls.Drawers
 
             ElementCompositionPreview.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
 
-            DropShadowEx.Attach(Separator);
+            var header = DropShadowEx.Attach(Separator);
+            header.Clip = header.Compositor.CreateInsetClip(0, 48, 0, -48);
 
             var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => FieldAnimations.TextChanged += new TextChangedEventHandler(handler));
             debouncer.Invoked += (s, args) =>

@@ -13,7 +13,8 @@
              d:DesignHeight="300"
              d:DesignWidth="400">
 
-    <Grid x:Name="AnimationsRoot">
+    <Grid x:Name="AnimationsRoot"
+          Background="Transparent">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -91,7 +92,6 @@
                       ItemsSource="{x:Bind ViewModel.Sets}"
                       SelectedItem="{x:Bind ViewModel.SelectedSet, Mode=TwoWay}"
                       Height="{ThemeResource AppBarThemeCompactHeight}"
-                      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                       IsItemClickEnabled="True"
                       ScrollViewer.HorizontalScrollBarVisibility="Auto"
                       ScrollViewer.HorizontalScrollMode="Auto"

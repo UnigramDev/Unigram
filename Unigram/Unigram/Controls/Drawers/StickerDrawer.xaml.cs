@@ -61,7 +61,8 @@ namespace Unigram.Controls.Drawers
 
             //_toolbarHandler = new AnimatedStickerHandler<StickerSetViewModel>(Toolbar);
 
-            DropShadowEx.Attach(Separator);
+            var header = DropShadowEx.Attach(Separator);
+            header.Clip = header.Compositor.CreateInsetClip(0, 48, 0, -48);
 
             var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => FieldStickers.TextChanged += new TextChangedEventHandler(handler));
             debouncer.Invoked += async (s, args) =>

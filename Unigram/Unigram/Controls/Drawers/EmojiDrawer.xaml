@@ -121,7 +121,7 @@
 
     </UserControl.Resources>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="Transparent">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -223,8 +223,7 @@
 
         <Grid x:Name="ToolbarContainer">
             <Border x:Name="Separator" />
-            <ScrollViewer Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                          VerticalScrollBarVisibility="Disabled"
+            <ScrollViewer VerticalScrollBarVisibility="Disabled"
                           VerticalScrollMode="Disabled"
                           HorizontalScrollBarVisibility="Hidden"
                           HorizontalScrollMode="Auto"
