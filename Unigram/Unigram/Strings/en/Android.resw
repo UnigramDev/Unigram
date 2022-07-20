@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -85,6 +85,12 @@
   <data name="AccActionCancelDownload" xml:space="preserve">
     <value>Cancel download</value>
   </data>
+  <data name="AccActionChatPreview" xml:space="preserve">
+    <value>Chat Preview</value>
+  </data>
+  <data name="AccActionCloseTranscription" xml:space="preserve">
+    <value>Close Transcription</value>
+  </data>
   <data name="AccActionDownload" xml:space="preserve">
     <value>Download</value>
   </data>
@@ -96,6 +102,12 @@
   </data>
   <data name="AccActionOpenFile" xml:space="preserve">
     <value>Open file</value>
+  </data>
+  <data name="AccActionOpenForwardedOrigin" xml:space="preserve">
+    <value>Forwarded origin</value>
+  </data>
+  <data name="AccActionOpenTranscription" xml:space="preserve">
+    <value>Open Voice Transcription</value>
   </data>
   <data name="AccActionPause" xml:space="preserve">
     <value>Pause</value>
@@ -796,6 +808,21 @@
   <data name="ActionForwardsRestrictedGroup" xml:space="preserve">
     <value>un1 restricted forwarding from this group</value>
   </data>
+  <data name="ActionGiftInbound" xml:space="preserve">
+    <value>un1 sent you a gift for **un2**</value>
+  </data>
+  <data name="ActionGiftOutbound" xml:space="preserve">
+    <value>You have sent a gift for **un2**</value>
+  </data>
+  <data name="ActionGiftPremiumSubtitle" xml:space="preserve">
+    <value>for {0}</value>
+  </data>
+  <data name="ActionGiftPremiumTitle" xml:space="preserve">
+    <value>Telegram Premium</value>
+  </data>
+  <data name="ActionGiftPremiumView" xml:space="preserve">
+    <value>View</value>
+  </data>
   <data name="ActionGroupCallEnded" xml:space="preserve">
     <value>Video chat ended ({0})</value>
   </data>
@@ -1074,11 +1101,23 @@ to: {1}</value>
   <data name="AddContactTitle" xml:space="preserve">
     <value>Add Contact</value>
   </data>
+  <data name="Added" xml:space="preserve">
+    <value>Added</value>
+  </data>
   <data name="AddedBy" xml:space="preserve">
     <value>added by {0} {1}</value>
   </data>
   <data name="AddedToFavorites" xml:space="preserve">
     <value>Sticker added to Favorites.</value>
+  </data>
+  <data name="AddEmojiInstalled" xml:space="preserve">
+    <value>Emoji added.</value>
+  </data>
+  <data name="AddEmojiInstalledInfo" xml:space="preserve">
+    <value>{0} has been added to your emoji packs.</value>
+  </data>
+  <data name="AddEmojiNotFound" xml:space="preserve">
+    <value>Emoji pack not found.</value>
   </data>
   <data name="AddExceptions" xml:space="preserve">
     <value>Add exceptions</value>
@@ -1217,6 +1256,15 @@ to: {1}</value>
   </data>
   <data name="AllMedia" xml:space="preserve">
     <value>All media</value>
+  </data>
+  <data name="AllNMedia_few" xml:space="preserve">
+    <value>All {0} media</value>
+  </data>
+  <data name="AllNMedia_many" xml:space="preserve">
+    <value>All {0} media</value>
+  </data>
+  <data name="AllNMedia_other" xml:space="preserve">
+    <value>All {0} media</value>
   </data>
   <data name="AllNPhotos_few" xml:space="preserve">
     <value/>
@@ -1489,6 +1537,12 @@ to: {1}</value>
   </data>
   <data name="ArchivedChats" xml:space="preserve">
     <value>Archived Chats</value>
+  </data>
+  <data name="ArchivedEmojiPacks" xml:space="preserve">
+    <value>Archived Emoji Packs</value>
+  </data>
+  <data name="ArchivedEmojiPacksEmpty" xml:space="preserve">
+    <value>No archived emoji packs</value>
   </data>
   <data name="ArchivedMasks" xml:space="preserve">
     <value>Archived Masks</value>
@@ -2552,6 +2606,12 @@ It will be able to access your **IP address** and basic device info.</value>
   <data name="BotUnblock" xml:space="preserve">
     <value>RESTART</value>
   </data>
+  <data name="BotWebViewChangesMayNotBeSaved" xml:space="preserve">
+    <value>Changes that you made may not be saved.</value>
+  </data>
+  <data name="BotWebViewCloseAnyway" xml:space="preserve">
+    <value>Close anyway</value>
+  </data>
   <data name="BotWebViewDeleteBot" xml:space="preserve">
     <value>Remove from Menu</value>
   </data>
@@ -2941,6 +3001,9 @@ Note: if you forget your passcode, you&apos;ll need to log out or reinstall the 
   </data>
   <data name="ChangePhoneNumberOccupied" xml:space="preserve">
     <value>The number {0} is already connected to a Telegram account. Please delete that account before using this number.</value>
+  </data>
+  <data name="ChangePhoneNumberSuccess" xml:space="preserve">
+    <value>Your phone number has been successfully changed.</value>
   </data>
   <data name="ChangePublicLimitReached" xml:space="preserve">
     <value>You have reserved too many public links. Try revoking the link from an older group or channel, or create a private one instead.</value>
@@ -3726,6 +3789,9 @@ Minimum length is 5 characters.</value>
   <data name="ChooseRecordVideo" xml:space="preserve">
     <value>Record video</value>
   </data>
+  <data name="ChooseStickerMyEmojiPacks" xml:space="preserve">
+    <value>My emoji packs</value>
+  </data>
   <data name="ChooseStickerMyStickerSets" xml:space="preserve">
     <value>My sticker sets</value>
   </data>
@@ -3833,6 +3899,12 @@ Minimum length is 5 characters.</value>
   </data>
   <data name="ClearRecentEmoji" xml:space="preserve">
     <value>Clear recent emoji?</value>
+  </data>
+  <data name="ClearRecentEmojiText" xml:space="preserve">
+    <value>Do you want to clear all your recent emoji?</value>
+  </data>
+  <data name="ClearRecentEmojiTitle" xml:space="preserve">
+    <value>Clear recent emoji</value>
   </data>
   <data name="ClearRecentHistory" xml:space="preserve">
     <value>Clear History</value>
@@ -5288,11 +5360,77 @@ If nobody is selected, your most frequent contacts will be shown in this widget.
   <data name="Emoji8" xml:space="preserve">
     <value>Flags</value>
   </data>
+  <data name="EmojiArchived" xml:space="preserve">
+    <value>Emoji archived.</value>
+  </data>
+  <data name="EmojiArchivedInfo" xml:space="preserve">
+    <value>{0} has been moved to your archive.</value>
+  </data>
   <data name="EmojiBigSize" xml:space="preserve">
     <value>Draw single big emoji</value>
   </data>
+  <data name="EmojiCount_few" xml:space="preserve">
+    <value>{0} emoji</value>
+  </data>
+  <data name="EmojiCount_many" xml:space="preserve">
+    <value>{0} emoji</value>
+  </data>
+  <data name="EmojiCount_one" xml:space="preserve">
+    <value>{0} emoji</value>
+  </data>
+  <data name="EmojiCount_other" xml:space="preserve">
+    <value>{0} emoji</value>
+  </data>
+  <data name="EmojiCount_two" xml:space="preserve">
+    <value>{0} emoji</value>
+  </data>
+  <data name="EmojiCount_zero" xml:space="preserve">
+    <value>{0} emoji</value>
+  </data>
+  <data name="EmojiCountButton_few" xml:space="preserve">
+    <value>{0} Emoji</value>
+  </data>
+  <data name="EmojiCountButton_many" xml:space="preserve">
+    <value>{0} Emoji</value>
+  </data>
+  <data name="EmojiCountButton_one" xml:space="preserve">
+    <value>{0} Emoji</value>
+  </data>
+  <data name="EmojiCountButton_other" xml:space="preserve">
+    <value>{0} Emoji</value>
+  </data>
+  <data name="EmojiCountButton_two" xml:space="preserve">
+    <value>{0} Emoji</value>
+  </data>
+  <data name="EmojiCountButton_zero" xml:space="preserve">
+    <value>{0} Emoji</value>
+  </data>
   <data name="EmojiInteractionTapHint" xml:space="preserve">
     <value>If **{0}** had this chat open right now, they would also see the animation.</value>
+  </data>
+  <data name="EmojiPackCount_few" xml:space="preserve">
+    <value>{0} Emoji Packs</value>
+  </data>
+  <data name="EmojiPackCount_many" xml:space="preserve">
+    <value>{0} Emoji Packs</value>
+  </data>
+  <data name="EmojiPackCount_one" xml:space="preserve">
+    <value>{0} Emoji Pack</value>
+  </data>
+  <data name="EmojiPackCount_other" xml:space="preserve">
+    <value>{0} Emoji Packs</value>
+  </data>
+  <data name="EmojiPackCount_two" xml:space="preserve">
+    <value>{0} Emoji Packs</value>
+  </data>
+  <data name="EmojiPackCount_zero" xml:space="preserve">
+    <value>{0} Emoji Pack</value>
+  </data>
+  <data name="EmojiRemoved" xml:space="preserve">
+    <value>Emoji removed.</value>
+  </data>
+  <data name="EmojiRemovedInfo" xml:space="preserve">
+    <value>{0} is no longer in your emoji packs.</value>
   </data>
   <data name="EmojiSuggestions" xml:space="preserve">
     <value>Emoji suggestions</value>
@@ -5471,6 +5609,12 @@ Please enter theme name:</value>
   </data>
   <data name="ErrorSendRestrictedPollsAll" xml:space="preserve">
     <value>Sorry, sending polls is not allowed in this group.</value>
+  </data>
+  <data name="ErrorSendRestrictedPrivacyVideoMessages" xml:space="preserve">
+    <value>Sorry, you can&apos;t send video messages to this user because of their privacy settings.</value>
+  </data>
+  <data name="ErrorSendRestrictedPrivacyVoiceMessages" xml:space="preserve">
+    <value>Sorry, you can&apos;t send voice messages to this user because of their privacy settings.</value>
   </data>
   <data name="ErrorSendRestrictedStickers" xml:space="preserve">
     <value>The admins of this group have restricted your ability to send stickers.</value>
@@ -5942,6 +6086,9 @@ Duration: {1}</value>
   <data name="FavoriteStickersShort" xml:space="preserve">
     <value>Favorites</value>
   </data>
+  <data name="FeaturedEmojiPacks" xml:space="preserve">
+    <value>Trending Emoji Packs</value>
+  </data>
   <data name="FeaturedGifs" xml:space="preserve">
     <value>Trending GIFs</value>
   </data>
@@ -5950,6 +6097,9 @@ Duration: {1}</value>
   </data>
   <data name="FeaturedStickersInfo" xml:space="preserve">
     <value>These stickers are currently trending on Telegram. You can add custom stickers via the @stickers bot.</value>
+  </data>
+  <data name="FeaturedStickersPremium" xml:space="preserve">
+    <value>Trending Premium Stickers</value>
   </data>
   <data name="FeaturedStickersShort" xml:space="preserve">
     <value>Trending</value>
@@ -6679,6 +6829,9 @@ All secret chats will be lost.</value>
   <data name="FreeOfTotal" xml:space="preserve">
     <value>Free {0} of {1}</value>
   </data>
+  <data name="FreshChangePhoneForbidden" xml:space="preserve">
+    <value>For security reasons, you can&apos;t change phone number from a device that you&apos;ve just connected. Please use an earlier connection or wait for a few hours.</value>
+  </data>
   <data name="From" xml:space="preserve">
     <value>From</value>
   </data>
@@ -6789,6 +6942,24 @@ All secret chats will be lost.</value>
   </data>
   <data name="GifsTab2" xml:space="preserve">
     <value>GIFs</value>
+  </data>
+  <data name="GiftPremium" xml:space="preserve">
+    <value>Gift Premium</value>
+  </data>
+  <data name="GiftPremiumListFeaturesAndTerms" xml:space="preserve">
+    <value>You can review the list of features and terms of use for Telegram Premium *here*.</value>
+  </data>
+  <data name="GiftPremiumOptionDiscount" xml:space="preserve">
+    <value>-{0}%</value>
+  </data>
+  <data name="GiftSubscriptionFor" xml:space="preserve">
+    <value>Gift Subscription for {0}</value>
+  </data>
+  <data name="GiftTelegramPremiumDescription" xml:space="preserve">
+    <value>Let **{0}** enjoy exclusive features of Telegram with **Telegram Premium**.</value>
+  </data>
+  <data name="GiftTelegramPremiumTitle" xml:space="preserve">
+    <value>Gift Telegram Premium</value>
   </data>
   <data name="GigagroupAlertLearnMore" xml:space="preserve">
     <value>LEARN MORE</value>
@@ -8246,6 +8417,12 @@ Your phone number will remain hidden.</value>
   <data name="MakeMyselfVisibleTitle" xml:space="preserve">
     <value>Show Your Profile?</value>
   </data>
+  <data name="ManageAllFilesRational" xml:space="preserve">
+    <value>Please allow **Telegram** to manage all files to open in-app file browser</value>
+  </data>
+  <data name="ManageAllFilesRational2" xml:space="preserve">
+    <value>Telegram needs permission to manage all files to migrate old cache files to Scoped Storage</value>
+  </data>
   <data name="ManageChannel" xml:space="preserve">
     <value>Manage Channel</value>
   </data>
@@ -8543,6 +8720,21 @@ Minimum length is 5 characters.</value>
   <data name="Message" xml:space="preserve">
     <value>Message</value>
   </data>
+  <data name="MessageContainsEmojiPack" xml:space="preserve">
+    <value>This message contains emoji from {0} pack.</value>
+  </data>
+  <data name="MessageContainsEmojiPacks_few" xml:space="preserve">
+    <value>This message contains emoji from **{0} Packs**.</value>
+  </data>
+  <data name="MessageContainsEmojiPacks_many" xml:space="preserve">
+    <value>This message contains emoji from **{0} Packs**.</value>
+  </data>
+  <data name="MessageContainsEmojiPacks_other" xml:space="preserve">
+    <value>This message contains emoji from **{0} Packs**.</value>
+  </data>
+  <data name="MessageContainsEmojiPacks_two" xml:space="preserve">
+    <value>This message contains emoji from **{0} Packs**.</value>
+  </data>
   <data name="MessageCopied" xml:space="preserve">
     <value>Message copied to clipboard.</value>
   </data>
@@ -8785,6 +8977,9 @@ Minimum length is 5 characters.</value>
   </data>
   <data name="Mi" xml:space="preserve">
     <value>mi</value>
+  </data>
+  <data name="MigrateOldFolder" xml:space="preserve">
+    <value>Migrate old folder to Scoped Storage</value>
   </data>
   <data name="MigrateOldFolderButton" xml:space="preserve">
     <value>Move Files Now</value>
@@ -11632,6 +11827,9 @@ We will access your location only for the duration you choose, and you can stop 
   <data name="PostingMembers" xml:space="preserve">
     <value>Posting Members</value>
   </data>
+  <data name="PremiumMore" xml:space="preserve">
+    <value>More</value>
+  </data>
   <data name="PremiumPreviewAdvancedChatManagement" xml:space="preserve">
     <value>Advanced Chat Management</value>
   </data>
@@ -11661,6 +11859,15 @@ We will access your location only for the duration you choose, and you can stop 
   </data>
   <data name="PremiumPreviewDownloadSpeedDescription" xml:space="preserve">
     <value>No more limits on the speed with which media and documents are downloaded.</value>
+  </data>
+  <data name="PremiumPreviewEmoji" xml:space="preserve">
+    <value>Animated Emoji</value>
+  </data>
+  <data name="PremiumPreviewEmojiDescription" xml:space="preserve">
+    <value>Include animated emoji from different emoji sets in any message you send.</value>
+  </data>
+  <data name="PremiumPreviewEmojiPack" xml:space="preserve">
+    <value>This emoji pack is available only to subscribers of **Telegram Premium.**</value>
   </data>
   <data name="PremiumPreviewLimits" xml:space="preserve">
     <value>Doubled Limits</value>
@@ -11926,6 +12133,9 @@ We will access your location only for the duration you choose, and you can stop 
   <data name="PreviousPinnedMessage" xml:space="preserve">
     <value>Previous Message</value>
   </data>
+  <data name="PricePerMonth" xml:space="preserve">
+    <value>{0} / month</value>
+  </data>
   <data name="PrimaryLinkHelp" xml:space="preserve">
     <value>Anyone on Telegram will be able to join your group by following this link.</value>
   </data>
@@ -12081,6 +12291,21 @@ We will access your location only for the duration you choose, and you can stop 
   </data>
   <data name="PrivacyTitle" xml:space="preserve">
     <value>Privacy</value>
+  </data>
+  <data name="PrivacyVoiceMessages" xml:space="preserve">
+    <value>Voice Messages</value>
+  </data>
+  <data name="PrivacyVoiceMessagesInfo" xml:space="preserve">
+    <value>You can restrict who can send you voice messages with granular precision.</value>
+  </data>
+  <data name="PrivacyVoiceMessagesInfo2" xml:space="preserve">
+    <value>You can add users or entire groups as exceptions that will override the settings above.</value>
+  </data>
+  <data name="PrivacyVoiceMessagesPremiumOnly" xml:space="preserve">
+    <value>Only subscribers of *Telegram Premium* can restrict receiving voice messages.</value>
+  </data>
+  <data name="PrivacyVoiceMessagesTitle" xml:space="preserve">
+    <value>Who can send me voice messages?</value>
   </data>
   <data name="PrivateShares" xml:space="preserve">
     <value>Private Shares</value>
@@ -12420,6 +12645,9 @@ We will access your location only for the duration you choose, and you can stop 
   </data>
   <data name="Reactions" xml:space="preserve">
     <value>Reactions</value>
+  </data>
+  <data name="ReactionsCount" xml:space="preserve">
+    <value>{0}/{1}</value>
   </data>
   <data name="ReactionsCount_few" xml:space="preserve">
     <value/>
@@ -12917,6 +13145,9 @@ You can cancel this process anytime.</value>
   </data>
   <data name="ResetStatisticsAlertTitle" xml:space="preserve">
     <value>Reset statistics</value>
+  </data>
+  <data name="Restore" xml:space="preserve">
+    <value>Restore</value>
   </data>
   <data name="RestoreEmailNoAccess" xml:space="preserve">
     <value>Unable to access {0}?</value>
@@ -13983,6 +14214,9 @@ Please enter the correct number including your country code.</value>
   <data name="ShowMore" xml:space="preserve">
     <value>Show more</value>
   </data>
+  <data name="ShowMoreEmojiPacks" xml:space="preserve">
+    <value>Show More Emoji</value>
+  </data>
   <data name="ShowMoreStickers" xml:space="preserve">
     <value>Show More Stickers</value>
   </data>
@@ -14723,6 +14957,18 @@ Here’s what is now unlocked.</value>
   <data name="TelegramPremiumUserDialogTitle" xml:space="preserve">
     <value>**{0}** is a subscriber of Telegram Premium.</value>
   </data>
+  <data name="TelegramPremiumUserGiftedPremiumDialogSubtitle" xml:space="preserve">
+    <value>You now have access to additional features.</value>
+  </data>
+  <data name="TelegramPremiumUserGiftedPremiumDialogTitle" xml:space="preserve">
+    <value>**{0}** has gifted you a {1}-month subscription for Telegram Premium.</value>
+  </data>
+  <data name="TelegramPremiumUserGiftedPremiumOutboundDialogSubtitle" xml:space="preserve">
+    <value>**{0}** now have access to additional features.</value>
+  </data>
+  <data name="TelegramPremiumUserGiftedPremiumOutboundDialogTitle" xml:space="preserve">
+    <value>You gifted **{0}** a {1}-month subscription for Telegram Premium.</value>
+  </data>
   <data name="TelegramTones" xml:space="preserve">
     <value>Telegram tones</value>
   </data>
@@ -15180,6 +15426,9 @@ If you are not comfortable with Telegram&apos;s modest needs, it won&apos;t be p
   <data name="Typing" xml:space="preserve">
     <value>typing...</value>
   </data>
+  <data name="UnableForward" xml:space="preserve">
+    <value>Unable to forward</value>
+  </data>
   <data name="Unarchive" xml:space="preserve">
     <value>Unarchive</value>
   </data>
@@ -15213,8 +15462,20 @@ If you are not comfortable with Telegram&apos;s modest needs, it won&apos;t be p
   <data name="UnknownError" xml:space="preserve">
     <value>Unknown error</value>
   </data>
+  <data name="Unlock" xml:space="preserve">
+    <value>Unlock</value>
+  </data>
   <data name="UnlockFingerprint" xml:space="preserve">
     <value>Unlock with Fingerprint</value>
+  </data>
+  <data name="UnlockPremiumEmoji" xml:space="preserve">
+    <value>Unlock Premium Emoji</value>
+  </data>
+  <data name="UnlockPremiumEmojiHint" xml:space="preserve">
+    <value>Subscribe to **Telegram Premium** to unlock this emoji.</value>
+  </data>
+  <data name="UnlockPremiumEmojiPack" xml:space="preserve">
+    <value>Unlock {0}</value>
   </data>
   <data name="UnlockPremiumIcons" xml:space="preserve">
     <value>Unlock Premium Icons</value>
@@ -15711,6 +15972,9 @@ You can use **a–z**, **0–9** and underscores. Minimum length is **5** charac
   <data name="VideoMessagesAutodownload" xml:space="preserve">
     <value>Video messages</value>
   </data>
+  <data name="VideoMessagesRestrictedByPrivacy" xml:space="preserve">
+    <value>**{0}** doesn&apos;t accept video messages.</value>
+  </data>
   <data name="VideoPreview" xml:space="preserve">
     <value>Video Preview</value>
   </data>
@@ -15902,6 +16166,9 @@ You can use **a–z**, **0–9** and underscores. Minimum length is **5** charac
   </data>
   <data name="Voice_zero" xml:space="preserve">
     <value/>
+  </data>
+  <data name="VoiceMessagesRestrictedByPrivacy" xml:space="preserve">
+    <value>**{0}** doesn&apos;t accept voice messages.</value>
   </data>
   <data name="VoipAddBio" xml:space="preserve">
     <value>Add Bio</value>

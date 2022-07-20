@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 06/20/2022 10:46:43
+// 	Generated: 07/21/2022 12:30:26
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -45,7 +45,7 @@ namespace Unigram.Strings
                 return resourceLoader.GetString("Abort");
             }
         }
-
+        
         /// <summary>
         /// Localized resource similar to "Abort Recovery Email Setup"
         /// </summary>
@@ -135,6 +135,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Chat Preview"
+        /// </summary>
+        public static string AccActionChatPreview
+        {
+            get
+            {
+                return resourceLoader.GetString("AccActionChatPreview");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Close Transcription"
+        /// </summary>
+        public static string AccActionCloseTranscription
+        {
+            get
+            {
+                return resourceLoader.GetString("AccActionCloseTranscription");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Download"
         /// </summary>
         public static string AccActionDownload
@@ -175,6 +197,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AccActionOpenFile");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Forwarded origin"
+        /// </summary>
+        public static string AccActionOpenForwardedOrigin
+        {
+            get
+            {
+                return resourceLoader.GetString("AccActionOpenForwardedOrigin");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Open Voice Transcription"
+        /// </summary>
+        public static string AccActionOpenTranscription
+        {
+            get
+            {
+                return resourceLoader.GetString("AccActionOpenTranscription");
             }
         }
         
@@ -2742,6 +2786,61 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "un1 sent you a gift for **un2**"
+        /// </summary>
+        public static string ActionGiftInbound
+        {
+            get
+            {
+                return resourceLoader.GetString("ActionGiftInbound");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You have sent a gift for **un2**"
+        /// </summary>
+        public static string ActionGiftOutbound
+        {
+            get
+            {
+                return resourceLoader.GetString("ActionGiftOutbound");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "for {0}"
+        /// </summary>
+        public static string ActionGiftPremiumSubtitle
+        {
+            get
+            {
+                return resourceLoader.GetString("ActionGiftPremiumSubtitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Telegram Premium"
+        /// </summary>
+        public static string ActionGiftPremiumTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("ActionGiftPremiumTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "View"
+        /// </summary>
+        public static string ActionGiftPremiumView
+        {
+            get
+            {
+                return resourceLoader.GetString("ActionGiftPremiumView");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Video chat ended ({0})"
         /// </summary>
         public static string ActionGroupCallEnded
@@ -3756,6 +3855,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Added"
+        /// </summary>
+        public static string Added
+        {
+            get
+            {
+                return resourceLoader.GetString("Added");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "added by {0} {1}"
         /// </summary>
         public static string AddedBy
@@ -3774,6 +3884,39 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AddedToFavorites");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Emoji added."
+        /// </summary>
+        public static string AddEmojiInstalled
+        {
+            get
+            {
+                return resourceLoader.GetString("AddEmojiInstalled");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} has been added to your emoji packs."
+        /// </summary>
+        public static string AddEmojiInstalledInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("AddEmojiInstalledInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Emoji pack not found."
+        /// </summary>
+        public static string AddEmojiNotFound
+        {
+            get
+            {
+                return resourceLoader.GetString("AddEmojiNotFound");
             }
         }
         
@@ -4280,6 +4423,39 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AllMedia");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "All {0} media"
+        /// </summary>
+        public static string AllNMedia_few
+        {
+            get
+            {
+                return resourceLoader.GetString("AllNMedia_few");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "All {0} media"
+        /// </summary>
+        public static string AllNMedia_many
+        {
+            get
+            {
+                return resourceLoader.GetString("AllNMedia_many");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "All {0} media"
+        /// </summary>
+        public static string AllNMedia_other
+        {
+            get
+            {
+                return resourceLoader.GetString("AllNMedia_other");
             }
         }
         
@@ -5272,6 +5448,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ArchivedChats");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Archived Emoji Packs"
+        /// </summary>
+        public static string ArchivedEmojiPacks
+        {
+            get
+            {
+                return resourceLoader.GetString("ArchivedEmojiPacks");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No archived emoji packs"
+        /// </summary>
+        public static string ArchivedEmojiPacksEmpty
+        {
+            get
+            {
+                return resourceLoader.GetString("ArchivedEmojiPacksEmpty");
             }
         }
         
@@ -9122,6 +9320,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Changes that you made may not be saved."
+        /// </summary>
+        public static string BotWebViewChangesMayNotBeSaved
+        {
+            get
+            {
+                return resourceLoader.GetString("BotWebViewChangesMayNotBeSaved");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Close anyway"
+        /// </summary>
+        public static string BotWebViewCloseAnyway
+        {
+            get
+            {
+                return resourceLoader.GetString("BotWebViewCloseAnyway");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Remove from Menu"
         /// </summary>
         public static string BotWebViewDeleteBot
@@ -10484,6 +10704,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ChangePhoneNumberOccupied");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Your phone number has been successfully changed."
+        /// </summary>
+        public static string ChangePhoneNumberSuccess
+        {
+            get
+            {
+                return resourceLoader.GetString("ChangePhoneNumberSuccess");
             }
         }
         
@@ -13344,6 +13575,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "My emoji packs"
+        /// </summary>
+        public static string ChooseStickerMyEmojiPacks
+        {
+            get
+            {
+                return resourceLoader.GetString("ChooseStickerMyEmojiPacks");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "My sticker sets"
         /// </summary>
         public static string ChooseStickerMyStickerSets
@@ -13736,6 +13978,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ClearRecentEmoji");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to clear all your recent emoji?"
+        /// </summary>
+        public static string ClearRecentEmojiText
+        {
+            get
+            {
+                return resourceLoader.GetString("ClearRecentEmojiText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Clear recent emoji"
+        /// </summary>
+        public static string ClearRecentEmojiTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("ClearRecentEmojiTitle");
             }
         }
         
@@ -18970,6 +19234,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Emoji archived."
+        /// </summary>
+        public static string EmojiArchived
+        {
+            get
+            {
+                return resourceLoader.GetString("EmojiArchived");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} has been moved to your archive."
+        /// </summary>
+        public static string EmojiArchivedInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("EmojiArchivedInfo");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Draw single big emoji"
         /// </summary>
         public static string EmojiBigSize
@@ -18981,6 +19267,138 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{0} emoji"
+        /// </summary>
+        public static string EmojiCount_few
+        {
+            get
+            {
+                return resourceLoader.GetString("EmojiCount_few");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} emoji"
+        /// </summary>
+        public static string EmojiCount_many
+        {
+            get
+            {
+                return resourceLoader.GetString("EmojiCount_many");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} emoji"
+        /// </summary>
+        public static string EmojiCount_one
+        {
+            get
+            {
+                return resourceLoader.GetString("EmojiCount_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} emoji"
+        /// </summary>
+        public static string EmojiCount_other
+        {
+            get
+            {
+                return resourceLoader.GetString("EmojiCount_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} emoji"
+        /// </summary>
+        public static string EmojiCount_two
+        {
+            get
+            {
+                return resourceLoader.GetString("EmojiCount_two");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} emoji"
+        /// </summary>
+        public static string EmojiCount_zero
+        {
+            get
+            {
+                return resourceLoader.GetString("EmojiCount_zero");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} Emoji"
+        /// </summary>
+        public static string EmojiCountButton_few
+        {
+            get
+            {
+                return resourceLoader.GetString("EmojiCountButton_few");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} Emoji"
+        /// </summary>
+        public static string EmojiCountButton_many
+        {
+            get
+            {
+                return resourceLoader.GetString("EmojiCountButton_many");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} Emoji"
+        /// </summary>
+        public static string EmojiCountButton_one
+        {
+            get
+            {
+                return resourceLoader.GetString("EmojiCountButton_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} Emoji"
+        /// </summary>
+        public static string EmojiCountButton_other
+        {
+            get
+            {
+                return resourceLoader.GetString("EmojiCountButton_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} Emoji"
+        /// </summary>
+        public static string EmojiCountButton_two
+        {
+            get
+            {
+                return resourceLoader.GetString("EmojiCountButton_two");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} Emoji"
+        /// </summary>
+        public static string EmojiCountButton_zero
+        {
+            get
+            {
+                return resourceLoader.GetString("EmojiCountButton_zero");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "If **{0}** had this chat open right now, they would also see the animation."
         /// </summary>
         public static string EmojiInteractionTapHint
@@ -18988,6 +19406,94 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("EmojiInteractionTapHint");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} Emoji Packs"
+        /// </summary>
+        public static string EmojiPackCount_few
+        {
+            get
+            {
+                return resourceLoader.GetString("EmojiPackCount_few");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} Emoji Packs"
+        /// </summary>
+        public static string EmojiPackCount_many
+        {
+            get
+            {
+                return resourceLoader.GetString("EmojiPackCount_many");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} Emoji Pack"
+        /// </summary>
+        public static string EmojiPackCount_one
+        {
+            get
+            {
+                return resourceLoader.GetString("EmojiPackCount_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} Emoji Packs"
+        /// </summary>
+        public static string EmojiPackCount_other
+        {
+            get
+            {
+                return resourceLoader.GetString("EmojiPackCount_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} Emoji Packs"
+        /// </summary>
+        public static string EmojiPackCount_two
+        {
+            get
+            {
+                return resourceLoader.GetString("EmojiPackCount_two");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} Emoji Pack"
+        /// </summary>
+        public static string EmojiPackCount_zero
+        {
+            get
+            {
+                return resourceLoader.GetString("EmojiPackCount_zero");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Emoji removed."
+        /// </summary>
+        public static string EmojiRemoved
+        {
+            get
+            {
+                return resourceLoader.GetString("EmojiRemoved");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} is no longer in your emoji packs."
+        /// </summary>
+        public static string EmojiRemovedInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("EmojiRemovedInfo");
             }
         }
         
@@ -19622,6 +20128,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ErrorSendRestrictedPollsAll");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't send video messages to this user because of their privacy settings."
+        /// </summary>
+        public static string ErrorSendRestrictedPrivacyVideoMessages
+        {
+            get
+            {
+                return resourceLoader.GetString("ErrorSendRestrictedPrivacyVideoMessages");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't send voice messages to this user because of their privacy settings."
+        /// </summary>
+        public static string ErrorSendRestrictedPrivacyVoiceMessages
+        {
+            get
+            {
+                return resourceLoader.GetString("ErrorSendRestrictedPrivacyVoiceMessages");
             }
         }
         
@@ -21320,6 +21848,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Trending Emoji Packs"
+        /// </summary>
+        public static string FeaturedEmojiPacks
+        {
+            get
+            {
+                return resourceLoader.GetString("FeaturedEmojiPacks");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Trending GIFs"
         /// </summary>
         public static string FeaturedGifs
@@ -21349,6 +21888,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("FeaturedStickersInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Trending Premium Stickers"
+        /// </summary>
+        public static string FeaturedStickersPremium
+        {
+            get
+            {
+                return resourceLoader.GetString("FeaturedStickersPremium");
             }
         }
         
@@ -24017,6 +24567,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "For security reasons, you can't change phone number from a device that you've just connected. Please use an earlier connection or wait for a few hours."
+        /// </summary>
+        public static string FreshChangePhoneForbidden
+        {
+            get
+            {
+                return resourceLoader.GetString("FreshChangePhoneForbidden");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "From"
         /// </summary>
         public static string From
@@ -24420,6 +24981,72 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("GifsTab2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Gift Premium"
+        /// </summary>
+        public static string GiftPremium
+        {
+            get
+            {
+                return resourceLoader.GetString("GiftPremium");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can review the list of features and terms of use for Telegram Premium *here*."
+        /// </summary>
+        public static string GiftPremiumListFeaturesAndTerms
+        {
+            get
+            {
+                return resourceLoader.GetString("GiftPremiumListFeaturesAndTerms");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "-{0}%"
+        /// </summary>
+        public static string GiftPremiumOptionDiscount
+        {
+            get
+            {
+                return resourceLoader.GetString("GiftPremiumOptionDiscount");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Gift Subscription for {0}"
+        /// </summary>
+        public static string GiftSubscriptionFor
+        {
+            get
+            {
+                return resourceLoader.GetString("GiftSubscriptionFor");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Let **{0}** enjoy exclusive features of Telegram with **Telegram Premium**."
+        /// </summary>
+        public static string GiftTelegramPremiumDescription
+        {
+            get
+            {
+                return resourceLoader.GetString("GiftTelegramPremiumDescription");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Gift Telegram Premium"
+        /// </summary>
+        public static string GiftTelegramPremiumTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("GiftTelegramPremiumTitle");
             }
         }
         
@@ -29680,6 +30307,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Please allow **Telegram** to manage all files to open in-app file browser"
+        /// </summary>
+        public static string ManageAllFilesRational
+        {
+            get
+            {
+                return resourceLoader.GetString("ManageAllFilesRational");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Telegram needs permission to manage all files to migrate old cache files to Scoped Storage"
+        /// </summary>
+        public static string ManageAllFilesRational2
+        {
+            get
+            {
+                return resourceLoader.GetString("ManageAllFilesRational2");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Manage Channel"
         /// </summary>
         public static string ManageChannel
@@ -30761,6 +31410,61 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "This message contains emoji from {0} pack."
+        /// </summary>
+        public static string MessageContainsEmojiPack
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageContainsEmojiPack");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This message contains emoji from **{0} Packs**."
+        /// </summary>
+        public static string MessageContainsEmojiPacks_few
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageContainsEmojiPacks_few");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This message contains emoji from **{0} Packs**."
+        /// </summary>
+        public static string MessageContainsEmojiPacks_many
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageContainsEmojiPacks_many");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This message contains emoji from **{0} Packs**."
+        /// </summary>
+        public static string MessageContainsEmojiPacks_other
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageContainsEmojiPacks_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This message contains emoji from **{0} Packs**."
+        /// </summary>
+        public static string MessageContainsEmojiPacks_two
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageContainsEmojiPacks_two");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Message copied to clipboard."
         /// </summary>
         public static string MessageCopied
@@ -31648,6 +32352,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Mi");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Migrate old folder to Scoped Storage"
+        /// </summary>
+        public static string MigrateOldFolder
+        {
+            get
+            {
+                return resourceLoader.GetString("MigrateOldFolder");
             }
         }
         
@@ -41970,6 +42685,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "More"
+        /// </summary>
+        public static string PremiumMore
+        {
+            get
+            {
+                return resourceLoader.GetString("PremiumMore");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Advanced Chat Management"
         /// </summary>
         public static string PremiumPreviewAdvancedChatManagement
@@ -42076,6 +42802,39 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("PremiumPreviewDownloadSpeedDescription");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Animated Emoji"
+        /// </summary>
+        public static string PremiumPreviewEmoji
+        {
+            get
+            {
+                return resourceLoader.GetString("PremiumPreviewEmoji");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Include animated emoji from different emoji sets in any message you send."
+        /// </summary>
+        public static string PremiumPreviewEmojiDescription
+        {
+            get
+            {
+                return resourceLoader.GetString("PremiumPreviewEmojiDescription");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This emoji pack is available only to subscribers of **Telegram Premium.**"
+        /// </summary>
+        public static string PremiumPreviewEmojiPack
+        {
+            get
+            {
+                return resourceLoader.GetString("PremiumPreviewEmojiPack");
             }
         }
         
@@ -43048,6 +43807,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{0} / month"
+        /// </summary>
+        public static string PricePerMonth
+        {
+            get
+            {
+                return resourceLoader.GetString("PricePerMonth");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Anyone on Telegram will be able to join your group by following this link."
         /// </summary>
         public static string PrimaryLinkHelp
@@ -43616,6 +44386,61 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("PrivacyTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Voice Messages"
+        /// </summary>
+        public static string PrivacyVoiceMessages
+        {
+            get
+            {
+                return resourceLoader.GetString("PrivacyVoiceMessages");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can restrict who can send you voice messages with granular precision."
+        /// </summary>
+        public static string PrivacyVoiceMessagesInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("PrivacyVoiceMessagesInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can add users or entire groups as exceptions that will override the settings above."
+        /// </summary>
+        public static string PrivacyVoiceMessagesInfo2
+        {
+            get
+            {
+                return resourceLoader.GetString("PrivacyVoiceMessagesInfo2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Only subscribers of *Telegram Premium* can restrict receiving voice messages."
+        /// </summary>
+        public static string PrivacyVoiceMessagesPremiumOnly
+        {
+            get
+            {
+                return resourceLoader.GetString("PrivacyVoiceMessagesPremiumOnly");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Who can send me voice messages?"
+        /// </summary>
+        public static string PrivacyVoiceMessagesTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("PrivacyVoiceMessagesTitle");
             }
         }
         
@@ -44859,6 +45684,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Reactions");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0}/{1}"
+        /// </summary>
+        public static string ReactionsCount
+        {
+            get
+            {
+                return resourceLoader.GetString("ReactionsCount");
             }
         }
         
@@ -46668,6 +47504,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ResetStatisticsAlertTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Restore"
+        /// </summary>
+        public static string Restore
+        {
+            get
+            {
+                return resourceLoader.GetString("Restore");
             }
         }
         
@@ -50529,6 +51376,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Show More Emoji"
+        /// </summary>
+        public static string ShowMoreEmojiPacks
+        {
+            get
+            {
+                return resourceLoader.GetString("ShowMoreEmojiPacks");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Show More Stickers"
         /// </summary>
         public static string ShowMoreStickers
@@ -53205,6 +54063,50 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "You now have access to additional features."
+        /// </summary>
+        public static string TelegramPremiumUserGiftedPremiumDialogSubtitle
+        {
+            get
+            {
+                return resourceLoader.GetString("TelegramPremiumUserGiftedPremiumDialogSubtitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "**{0}** has gifted you a {1}-month subscription for Telegram Premium."
+        /// </summary>
+        public static string TelegramPremiumUserGiftedPremiumDialogTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("TelegramPremiumUserGiftedPremiumDialogTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "**{0}** now have access to additional features."
+        /// </summary>
+        public static string TelegramPremiumUserGiftedPremiumOutboundDialogSubtitle
+        {
+            get
+            {
+                return resourceLoader.GetString("TelegramPremiumUserGiftedPremiumOutboundDialogSubtitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You gifted **{0}** a {1}-month subscription for Telegram Premium."
+        /// </summary>
+        public static string TelegramPremiumUserGiftedPremiumOutboundDialogTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("TelegramPremiumUserGiftedPremiumOutboundDialogTitle");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Telegram tones"
         /// </summary>
         public static string TelegramTones
@@ -54838,6 +55740,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Unable to forward"
+        /// </summary>
+        public static string UnableForward
+        {
+            get
+            {
+                return resourceLoader.GetString("UnableForward");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Unarchive"
         /// </summary>
         public static string Unarchive
@@ -54959,6 +55872,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Unlock"
+        /// </summary>
+        public static string Unlock
+        {
+            get
+            {
+                return resourceLoader.GetString("Unlock");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Unlock with Fingerprint"
         /// </summary>
         public static string UnlockFingerprint
@@ -54966,6 +55890,39 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("UnlockFingerprint");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unlock Premium Emoji"
+        /// </summary>
+        public static string UnlockPremiumEmoji
+        {
+            get
+            {
+                return resourceLoader.GetString("UnlockPremiumEmoji");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Subscribe to **Telegram Premium** to unlock this emoji."
+        /// </summary>
+        public static string UnlockPremiumEmojiHint
+        {
+            get
+            {
+                return resourceLoader.GetString("UnlockPremiumEmojiHint");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unlock {0}"
+        /// </summary>
+        public static string UnlockPremiumEmojiPack
+        {
+            get
+            {
+                return resourceLoader.GetString("UnlockPremiumEmojiPack");
             }
         }
         
@@ -56777,6 +57734,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "**{0}** doesn't accept video messages."
+        /// </summary>
+        public static string VideoMessagesRestrictedByPrivacy
+        {
+            get
+            {
+                return resourceLoader.GetString("VideoMessagesRestrictedByPrivacy");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Video Preview"
         /// </summary>
         public static string VideoPreview
@@ -57477,6 +58445,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Voice_zero");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "**{0}** doesn't accept voice messages."
+        /// </summary>
+        public static string VoiceMessagesRestrictedByPrivacy
+        {
+            get
+            {
+                return resourceLoader.GetString("VoiceMessagesRestrictedByPrivacy");
             }
         }
         
@@ -61472,6 +62451,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("cloud_lng_forwarded_psa_covid");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send a ?? emoji to any chat to get a random number from Telegram."
+        /// </summary>
+        public static string lng_about_dice
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_about_dice");
             }
         }
         
@@ -69771,17 +70761,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "More"
-        /// </summary>
-        public static string lng_group_call_more
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_group_call_more");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "muted by me"
         /// </summary>
         public static string lng_group_call_muted_by_me_status
@@ -76104,17 +77083,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Restore"
-        /// </summary>
-        public static string lng_proxy_menu_restore
-        {
-            get
-            {
-                return resourceLoader.GetString("lng_proxy_menu_restore");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Proxy settings"
         /// </summary>
         public static string lng_proxy_settings
@@ -79736,6 +80704,19 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("lng_sponsored_info_description1");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sponsored Messages are currently in test mode. Once they are fully launched and allow Telegram to cover its basic costs, we will start sharing ad revenue with the owners of public channels in which sponsored messages are displayed.
+        ///
+        ///Online ads should no longer be synonymous with abuse of user privacy. Let us redefine how a tech company should operate – together."
+        /// </summary>
+        public static string lng_sponsored_info_description2
+        {
+            get
+            {
+                return resourceLoader.GetString("lng_sponsored_info_description2");
             }
         }
         
