@@ -81,6 +81,16 @@
                                           Click="ChatInvite_Click"
                                           IsChevronVisible="True"
                                           Glyph="&#xE716;" />
+
+                    <controls:BadgeButton x:Name="PrivacyVoiceMessages"
+                                          x:Load="{x:Bind ViewModel.IsPremiumAvailable, Mode=OneWay}"
+                                          Content="{CustomResource PrivacyVoiceMessages}"
+                                          Badge="{x:Bind ViewModel.AllowPrivateVoiceAndVideoNoteMessages.Badge, Mode=OneWay}"
+                                          ChevronGlyph="{x:Bind ConvertVoiceMessagesChevron(ViewModel.IsPremium), Mode=OneWay}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Click="VoiceMessages_Click"
+                                          IsChevronVisible="True"
+                                          Glyph="&#xE720;" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="{CustomResource NewChatsFromNonContacts}"

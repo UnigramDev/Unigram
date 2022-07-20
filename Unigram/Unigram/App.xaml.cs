@@ -559,6 +559,7 @@ namespace Unigram
                 Unigram.Views.Settings.Privacy.SettingsPrivacyAllowCallsPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyAllowCallsViewModel>(sessionId),
                 Unigram.Views.Settings.Privacy.SettingsPrivacyAllowChatInvitesPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyAllowChatInvitesViewModel>(sessionId),
                 Unigram.Views.Settings.Privacy.SettingsPrivacyAllowP2PCallsPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyAllowP2PCallsViewModel>(sessionId),
+                Unigram.Views.Settings.Privacy.SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesViewModel>(sessionId),
                 Unigram.Views.Settings.Privacy.SettingsPrivacyShowForwardedPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyShowForwardedViewModel>(sessionId),
                 Unigram.Views.Settings.Privacy.SettingsPrivacyPhonePage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyPhoneViewModel>(sessionId),
                 Unigram.Views.Settings.Privacy.SettingsPrivacyShowPhotoPage => TLContainer.Current.Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyShowPhotoViewModel>(sessionId),

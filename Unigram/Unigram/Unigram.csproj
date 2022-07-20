@@ -593,6 +593,7 @@
     <Compile Include="ViewModels\Payments\PaymentCredentialsViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentFormViewModel.cs" />
     <Compile Include="ViewModels\Premium\PromoViewModel.cs" />
+    <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsBlockedChatsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsProfileViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsQuickReactionViewModel.cs" />
@@ -1089,6 +1090,9 @@
     </Compile>
     <Compile Include="Views\Settings\Privacy\SettingsPrivacyAllowCallsPage.xaml.cs">
       <DependentUpon>SettingsPrivacyAllowCallsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\Privacy\SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesPage.xaml.cs">
+      <DependentUpon>SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\Privacy\SettingsPrivacyAllowChatInvitesPage.xaml.cs">
       <DependentUpon>SettingsPrivacyAllowChatInvitesPage.xaml</DependentUpon>
@@ -2264,6 +2268,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Settings\Privacy\SettingsPrivacyAllowCallsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\Privacy\SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

@@ -1,4 +1,8 @@
-﻿using Unigram.Common;
+﻿using Telegram.Td.Api;
+using Unigram.Common;
+using Unigram.Controls;
+using Unigram.Converters;
+using Unigram.Navigation.Services;
 using Unigram.ViewModels.Settings;
 using Unigram.Views.Settings.Privacy;
 using Windows.UI.Xaml;
@@ -65,7 +69,28 @@ namespace Unigram.Views.Settings
             Frame.Navigate(typeof(SettingsPrivacyAllowChatInvitesPage));
         }
 
+        private async void VoiceMessages_Click(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel.ProtoService.IsPremium)
+            {
+                Frame.Navigate(typeof(SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesPage));
+            }
+            else if (ViewModel.ProtoService.IsPremiumAvailable)
+            {
+                var confirm = await MessagePopup.ShowAsync(Strings.Resources.PrivacyVoiceMessagesPremiumOnly, Strings.Resources.PrivacyVoiceMessages, Strings.Resources.OK, Strings.Resources.Cancel);
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    ViewModel.NavigationService.ShowPromo(/*new PremiumSourceFeature(new PremiumFeaturePrivateVoiceAndVideoMessages)*/);
+                }
+            }
+        }
+
         #region Binding
+
+        private string ConvertVoiceMessagesChevron(bool premium)
+        {
+            return premium ? Icons.ChevronRight : Icons.LockClosed;
+        }
 
         private string ConvertOnOff(bool value)
         {

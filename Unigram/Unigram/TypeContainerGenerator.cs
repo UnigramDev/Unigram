@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Unigram.Services;
 using Unigram.Services.Factories;
@@ -19,7 +18,6 @@ using Unigram.ViewModels.Settings.Privacy;
 using Unigram.ViewModels.SignIn;
 using Unigram.ViewModels.Supergroups;
 using Unigram.ViewModels.Users;
-using Windows.Storage;
 
 namespace Unigram
 {
@@ -137,6 +135,7 @@ namespace Unigram
                 typeof(SettingsPrivacyPhoneViewModel),
                 typeof(SettingsPrivacyShowPhoneViewModel),
                 typeof(SettingsPrivacyAllowFindingByPhoneNumberViewModel),
+                typeof(SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesViewModel),
                 typeof(SettingsPrivacyShowPhotoViewModel),
                 typeof(SettingsPrivacyShowStatusViewModel),
                 typeof(SettingsProfileViewModel),
@@ -167,7 +166,7 @@ namespace Unigram
                 typeof(FolderViewModel),
                 typeof(DownloadsViewModel),
                 typeof(ChooseSoundViewModel),
-                typeof(PremiumViewModel)
+                typeof(PromoViewModel)
             };
 
             // Preprocess: find out lazy singletons used by singletons to promote

@@ -765,7 +765,8 @@
                     Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyShowPhotoViewModel>(),
                     Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyShowStatusViewModel>(),
                     Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyAllowCallsViewModel>(),
-                    Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyAllowChatInvitesViewModel>());
+                    Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyAllowChatInvitesViewModel>(),
+                    Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesViewModel>());
             }
             else if (type == typeof(Unigram.ViewModels.Settings.Privacy.SettingsPrivacyAllowCallsViewModel))
             {
@@ -821,6 +822,14 @@
             else if (type == typeof(Unigram.ViewModels.Settings.Privacy.SettingsPrivacyAllowFindingByPhoneNumberViewModel))
             {
                 return (T)(object)new Unigram.ViewModels.Settings.Privacy.SettingsPrivacyAllowFindingByPhoneNumberViewModel(
+                    _protoService,
+                    _cacheService,
+                    _settingsService,
+                    _eventAggregator);
+            }
+            else if (type == typeof(Unigram.ViewModels.Settings.Privacy.SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesViewModel))
+            {
+                return (T)(object)new Unigram.ViewModels.Settings.Privacy.SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesViewModel(
                     _protoService,
                     _cacheService,
                     _settingsService,

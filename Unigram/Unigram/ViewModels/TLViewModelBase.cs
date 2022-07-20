@@ -28,6 +28,10 @@ namespace Unigram.ViewModels
 
         public int SessionId => _protoService.SessionId;
 
+        public bool IsPremium => _protoService.IsPremium;
+        public bool IsPremiumAvailable => _protoService.IsPremiumAvailable;
+
+
         private bool _isLoading;
         public virtual bool IsLoading
         {

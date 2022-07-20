@@ -202,7 +202,7 @@ namespace Unigram.Common
             }
         }
 
-        public static void ShowPromo(this INavigationService service, PremiumSource source)
+        public static void ShowPromo(this INavigationService service, PremiumSource source = null)
         {
             if (service is TLNavigationService serviceEx)
             {

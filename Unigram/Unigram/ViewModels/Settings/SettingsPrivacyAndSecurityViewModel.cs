@@ -28,8 +28,9 @@ namespace Unigram.ViewModels.Settings
         private readonly SettingsPrivacyShowStatusViewModel _showStatusRules;
         private readonly SettingsPrivacyAllowCallsViewModel _allowCallsRules;
         private readonly SettingsPrivacyAllowChatInvitesViewModel _allowChatInvitesRules;
+        private readonly SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesViewModel _allowPrivateVoiceAndVideoNoteMessages;
 
-        public SettingsPrivacyAndSecurityViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IContactsService contactsService, IPasscodeService passcodeService, SettingsPrivacyShowForwardedViewModel showForwarded, SettingsPrivacyShowPhoneViewModel showPhone, SettingsPrivacyShowPhotoViewModel showPhoto, SettingsPrivacyShowStatusViewModel statusTimestamp, SettingsPrivacyAllowCallsViewModel phoneCall, SettingsPrivacyAllowChatInvitesViewModel chatInvite)
+        public SettingsPrivacyAndSecurityViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IContactsService contactsService, IPasscodeService passcodeService, SettingsPrivacyShowForwardedViewModel showForwarded, SettingsPrivacyShowPhoneViewModel showPhone, SettingsPrivacyShowPhotoViewModel showPhoto, SettingsPrivacyShowStatusViewModel statusTimestamp, SettingsPrivacyAllowCallsViewModel phoneCall, SettingsPrivacyAllowChatInvitesViewModel chatInvite, SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesViewModel privateVoiceAndVideoNoteMessages)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _contactsService = contactsService;
@@ -41,6 +42,7 @@ namespace Unigram.ViewModels.Settings
             _showStatusRules = statusTimestamp;
             _allowCallsRules = phoneCall;
             _allowChatInvitesRules = chatInvite;
+            _allowPrivateVoiceAndVideoNoteMessages = privateVoiceAndVideoNoteMessages;
 
             PasscodeCommand = new RelayCommand(PasscodeExecute);
             PasswordCommand = new RelayCommand(PasswordExecute);
@@ -54,6 +56,7 @@ namespace Unigram.ViewModels.Settings
             Children.Add(_showStatusRules);
             Children.Add(_allowCallsRules);
             Children.Add(_allowChatInvitesRules);
+            Children.Add(_allowPrivateVoiceAndVideoNoteMessages);
 
             aggregator.Subscribe(this);
         }
@@ -129,6 +132,7 @@ namespace Unigram.ViewModels.Settings
         public SettingsPrivacyShowStatusViewModel ShowStatusRules => _showStatusRules;
         public SettingsPrivacyAllowCallsViewModel AllowCallsRules => _allowCallsRules;
         public SettingsPrivacyAllowChatInvitesViewModel AllowChatInvitesRules => _allowChatInvitesRules;
+        public SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesViewModel AllowPrivateVoiceAndVideoNoteMessages => _allowPrivateVoiceAndVideoNoteMessages;
 
         private int _accountTtl;
         public int AccountTtl

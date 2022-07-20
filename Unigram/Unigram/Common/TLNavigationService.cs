@@ -80,7 +80,7 @@ namespace Unigram.Common
             await new LimitReachedPopup(this, _protoService, type).ShowQueuedAsync();
         }
 
-        public async void ShowPromo(PremiumSource source)
+        public async void ShowPromo(PremiumSource source = null)
         {
             await ShowAsync(typeof(PromoPopup), source);
         }
