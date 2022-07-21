@@ -24,7 +24,8 @@ namespace Unigram.ViewModels.Settings
         Archived,
         Trending,
         Masks,
-        MasksArchived
+        MasksArchived,
+        Emoji
     }
 
     public class SettingsStickersViewModel : TLViewModelBase, IHandle<UpdateInstalledStickerSets>, IHandle<UpdateTrendingStickerSets>, IHandle<UpdateRecentStickers>
@@ -72,6 +73,14 @@ namespace Unigram.ViewModels.Settings
             _ => Strings.Resources.StickersName
         };
 
+        public StickerType StickerType => _type switch
+        {
+            StickersType.Masks => new StickerTypeMask(),
+            StickersType.MasksArchived => new StickerTypeMask(),
+            StickersType.Emoji => new StickerTypeCustomEmoji(),
+            _ => new StickerTypeRegular()
+        };
+
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             if (parameter is int flags)
@@ -81,9 +90,9 @@ namespace Unigram.ViewModels.Settings
 
             if (_type is StickersType.Installed or StickersType.Masks)
             {
-                Items = new ItemsCollection(ProtoService, _type == StickersType.Masks);
+                Items = new ItemsCollection(ProtoService, StickerType);
 
-                ProtoService.Send(new GetArchivedStickerSets(_type == StickersType.Masks, 0, 1), result =>
+                ProtoService.Send(new GetArchivedStickerSets(StickerType, 0, 1), result =>
                 {
                     if (result is StickerSets stickerSets)
                     {
@@ -101,11 +110,11 @@ namespace Unigram.ViewModels.Settings
             }
             else if (_type is StickersType.Archived or StickersType.MasksArchived)
             {
-                Items = new ArchivedCollection(ProtoService, _type == StickersType.MasksArchived);
+                Items = new ArchivedCollection(ProtoService, StickerType);
             }
             else if (_type == StickersType.Trending)
             {
-                Items = new TrendingCollection(ProtoService);
+                Items = new TrendingCollection(ProtoService, StickerType);
             }
 
             Aggregator.Subscribe(this);
@@ -119,7 +128,7 @@ namespace Unigram.ViewModels.Settings
                 if (_needReorder && _newOrder.Count > 0)
                 {
                     _needReorder = false;
-                    ProtoService.Send(new ReorderInstalledStickerSets(_type == StickersType.Masks, _newOrder));
+                    ProtoService.Send(new ReorderInstalledStickerSets(StickerType, _newOrder));
                 }
             }
 
@@ -134,18 +143,18 @@ namespace Unigram.ViewModels.Settings
                 return;
             }
 
-            if (update.IsMasks != (_type == StickersType.Masks))
+            if (StickerType.GetType() != update.StickerType.GetType())
             {
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new GetInstalledStickerSets(_type == StickersType.Masks));
+            var response = await ProtoService.SendAsync(new GetInstalledStickerSets(StickerType));
             if (response is StickerSets stickerSets)
             {
                 var union = await ProtoService.SendAsync(new GetRecentStickers(_type == StickersType.Masks));
                 if (union is Stickers recents && recents.StickersValue.Count > 0)
                 {
-                    BeginOnUIThread(() => Items.ReplaceDiff(new[] { new StickerSetInfo(0, Strings.Resources.RecentStickers, "tg/recentlyUsed", null, new ClosedVectorPath[0], false, false, false, null, false, recents.StickersValue.Count, recents.StickersValue) }.Union(stickerSets.Sets)));
+                    BeginOnUIThread(() => Items.ReplaceDiff(new[] { new StickerSetInfo(0, Strings.Resources.RecentStickers, "tg/recentlyUsed", null, new ClosedVectorPath[0], false, false, false, null, StickerType, false, recents.StickersValue.Count, recents.StickersValue) }.Union(stickerSets.Sets)));
                 }
                 else
                 {
@@ -176,7 +185,7 @@ namespace Unigram.ViewModels.Settings
                 return;
             }
 
-            ProtoService.Send(new GetInstalledStickerSets(_type == StickersType.Masks), result =>
+            ProtoService.Send(new GetInstalledStickerSets(StickerType), result =>
             {
                 if (result is StickerSets stickerSets)
                 {
@@ -184,7 +193,7 @@ namespace Unigram.ViewModels.Settings
                     {
                         if (resultRecent is Stickers recents && recents.StickersValue.Count > 0)
                         {
-                            BeginOnUIThread(() => Items.ReplaceDiff(new[] { new StickerSetInfo(0, Strings.Resources.RecentStickers, "tg/recentlyUsed", null, new ClosedVectorPath[0], false, false, false, null, false, recents.StickersValue.Count, recents.StickersValue) }.Union(stickerSets.Sets)));
+                            BeginOnUIThread(() => Items.ReplaceDiff(new[] { new StickerSetInfo(0, Strings.Resources.RecentStickers, "tg/recentlyUsed", null, new ClosedVectorPath[0], false, false, false, null, StickerType, false, recents.StickersValue.Count, recents.StickersValue) }.Union(stickerSets.Sets)));
                         }
                         else
                         {
@@ -281,7 +290,7 @@ namespace Unigram.ViewModels.Settings
         private async void StickerSetHideExecute(StickerSetInfo stickerSet)
         {
             await ProtoService.SendAsync(new ChangeStickerSet(stickerSet.Id, false, true));
-            ProtoService.Send(new GetArchivedStickerSets(_type == StickersType.Masks, 0, 1), result =>
+            ProtoService.Send(new GetArchivedStickerSets(StickerType, 0, 1), result =>
             {
                 if (result is StickerSets stickerSets)
                 {
@@ -301,28 +310,28 @@ namespace Unigram.ViewModels.Settings
         public class ItemsCollection : DiffObservableCollection<StickerSetInfo>, ISupportIncrementalLoading
         {
             private readonly IProtoService _protoService;
-            private readonly bool _masks;
+            private readonly StickerType _type;
 
             private bool _hasMoreItems = true;
 
-            public ItemsCollection(IProtoService protoService, bool masks)
+            public ItemsCollection(IProtoService protoService, StickerType type)
                 : base(new StickerSetInfoDiffHandler())
             {
                 _protoService = protoService;
-                _masks = masks;
+                _type = type;
             }
 
             public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
             {
                 return AsyncInfo.Run(async token =>
                 {
-                    var recentResponse = await _protoService.SendAsync(new GetRecentStickers(_masks));
+                    var recentResponse = await _protoService.SendAsync(new GetRecentStickers(_type is StickerTypeMask));
                     if (recentResponse is Stickers stickers && stickers.StickersValue.Count > 0)
                     {
-                        Add(new StickerSetInfo(0, Strings.Resources.RecentStickers, "tg/recentlyUsed", null, new ClosedVectorPath[0], false, false, false, null, false, stickers.StickersValue.Count, stickers.StickersValue));
+                        Add(new StickerSetInfo(0, Strings.Resources.RecentStickers, "tg/recentlyUsed", null, new ClosedVectorPath[0], false, false, false, null, _type, false, stickers.StickersValue.Count, stickers.StickersValue));
                     }
 
-                    var response = await _protoService.SendAsync(new GetInstalledStickerSets(_masks));
+                    var response = await _protoService.SendAsync(new GetInstalledStickerSets(_type));
                     if (response is StickerSets stickerSets)
                     {
                         foreach (var set in stickerSets.Sets)
@@ -345,15 +354,15 @@ namespace Unigram.ViewModels.Settings
         public class ArchivedCollection : DiffObservableCollection<StickerSetInfo>, ISupportIncrementalLoading
         {
             private readonly IProtoService _protoService;
-            private readonly bool _masks;
+            private readonly StickerType _type;
 
             private bool _hasMoreItems = true;
 
-            public ArchivedCollection(IProtoService protoService, bool masks)
+            public ArchivedCollection(IProtoService protoService, StickerType type)
                 : base(new StickerSetInfoDiffHandler())
             {
                 _protoService = protoService;
-                _masks = masks;
+                _type = type;
             }
 
             public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
@@ -368,7 +377,7 @@ namespace Unigram.ViewModels.Settings
                         offset = last.Id;
                     }
 
-                    var response = await _protoService.SendAsync(new GetArchivedStickerSets(_masks, offset, 20));
+                    var response = await _protoService.SendAsync(new GetArchivedStickerSets(_type, offset, 20));
                     if (response is StickerSets stickerSets)
                     {
                         foreach (var set in stickerSets.Sets)
@@ -391,19 +400,22 @@ namespace Unigram.ViewModels.Settings
         public class TrendingCollection : DiffObservableCollection<StickerSetInfo>, ISupportIncrementalLoading
         {
             private readonly IProtoService _protoService;
+            private readonly StickerType _type;
+
             private bool _hasMoreItems = true;
 
-            public TrendingCollection(IProtoService protoService)
+            public TrendingCollection(IProtoService protoService, StickerType type)
                 : base(new StickerSetInfoDiffHandler())
             {
                 _protoService = protoService;
+                _type = type;
             }
 
             public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
             {
                 return AsyncInfo.Run(async token =>
                 {
-                    var response = await _protoService.SendAsync(new GetTrendingStickerSets(Count, 20));
+                    var response = await _protoService.SendAsync(new GetTrendingStickerSets(_type, Count, 20));
                     if (response is StickerSets stickerSets)
                     {
                         foreach (var set in stickerSets.Sets)

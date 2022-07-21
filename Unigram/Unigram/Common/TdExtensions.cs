@@ -642,7 +642,7 @@ namespace Unigram.Common
                 case MessageAnimation animation:
                     return animation.Animation.AnimationValue.Local.IsFileExisting();
                 case MessageSticker sticker:
-                    return sticker.Sticker.Type is StickerTypeAnimated or StickerTypeVideo && sticker.Sticker.StickerValue.Local.IsFileExisting();
+                    return sticker.Sticker.Format is StickerFormatTgs or StickerFormatWebm && sticker.Sticker.StickerValue.Local.IsFileExisting();
                 case MessageVideoNote videoNote:
                     return videoNote.VideoNote.Video.Local.IsFileExisting();
                 case MessageGame game:
@@ -658,7 +658,7 @@ namespace Unigram.Common
                     }
                     else if (text.WebPage?.Sticker != null)
                     {
-                        return text.WebPage.Sticker.Type is StickerTypeAnimated or StickerTypeVideo && text.WebPage.Sticker.StickerValue.Local.IsFileExisting();
+                        return text.WebPage.Sticker.Format is StickerFormatTgs or StickerFormatWebm && text.WebPage.Sticker.StickerValue.Local.IsFileExisting();
                     }
                     else if (text.WebPage?.VideoNote != null)
                     {
@@ -1080,20 +1080,20 @@ namespace Unigram.Common
         {
             if (stickerSet.Thumbnail != null)
             {
-                StickerType type = stickerSet.Thumbnail.Format switch
+                StickerFormat format = stickerSet.Thumbnail.Format switch
                 {
-                    ThumbnailFormatWebp => new StickerTypeStatic(),
-                    ThumbnailFormatWebm => new StickerTypeVideo(),
-                    ThumbnailFormatTgs => new StickerTypeAnimated(),
+                    ThumbnailFormatWebp => new StickerFormatWebp(),
+                    ThumbnailFormatWebm => new StickerFormatWebm(),
+                    ThumbnailFormatTgs => new StickerFormatTgs(),
                     _ => default
                 };
 
                 if (stickerSet.Thumbnail.Format is ThumbnailFormatTgs)
                 {
-                    return new Sticker(stickerSet.Id, 512, 512, "\U0001F4A9", type, stickerSet.ThumbnailOutline, stickerSet.Thumbnail, null, stickerSet.Thumbnail.File);
+                    return new Sticker(stickerSet.Id, 512, 512, "\U0001F4A9", format, null, null, 0, stickerSet.ThumbnailOutline, stickerSet.Thumbnail, false, null, stickerSet.Thumbnail.File);
                 }
 
-                return new Sticker(stickerSet.Id, stickerSet.Thumbnail.Width, stickerSet.Thumbnail.Height, "\U0001F4A9", type, stickerSet.ThumbnailOutline, stickerSet.Thumbnail, null, stickerSet.Thumbnail.File);
+                return new Sticker(stickerSet.Id, stickerSet.Thumbnail.Width, stickerSet.Thumbnail.Height, "\U0001F4A9", format, null, null, 0, stickerSet.ThumbnailOutline, stickerSet.Thumbnail, false, null, stickerSet.Thumbnail.File);
             }
 
             var cover = stickerSet.Covers.FirstOrDefault();

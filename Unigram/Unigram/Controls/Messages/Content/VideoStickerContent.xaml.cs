@@ -119,11 +119,11 @@ namespace Unigram.Controls.Messages.Content
         {
             if (content is MessageSticker sticker)
             {
-                return sticker.Sticker.Type is StickerTypeVideo;
+                return sticker.Sticker.Format is StickerFormatWebm;
             }
             else if (content is MessageText text && text.WebPage != null && !primary)
             {
-                return text.WebPage.Sticker != null && text.WebPage.Sticker.Type is StickerTypeVideo;
+                return text.WebPage.Sticker != null && text.WebPage.Sticker.Format is StickerFormatWebm;
             }
 
             return false;

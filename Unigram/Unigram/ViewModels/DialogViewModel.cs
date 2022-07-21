@@ -2323,7 +2323,7 @@ namespace Unigram.ViewModels
                 {
                     if (container.EditingMessageFileId is int fileId)
                     {
-                        ProtoService.Send(new CancelUploadFile(fileId));
+                        ProtoService.Send(new CancelPreliminaryUploadFile(fileId));
                     }
 
                     var chat = _chat;
@@ -2462,7 +2462,7 @@ namespace Unigram.ViewModels
                 var factory = header.EditingMessageMedia;
                 if (factory != null)
                 {
-                    var response = await ProtoService.SendAsync(new UploadFile(factory.InputFile, factory.Type, 32));
+                    var response = await ProtoService.SendAsync(new PreliminaryUploadFile(factory.InputFile, factory.Type, 32));
                     if (response is File file)
                     {
                         if (file.Remote.IsUploadingCompleted)

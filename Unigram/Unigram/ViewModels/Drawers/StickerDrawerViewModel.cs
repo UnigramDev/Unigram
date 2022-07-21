@@ -195,7 +195,7 @@ namespace Unigram.ViewModels.Drawers
 
         public void Handle(UpdateInstalledStickerSets update)
         {
-            if (update.IsMasks || _updating || !_updated)
+            if (update.StickerType is not StickerTypeRegular || _updating || !_updated)
             {
                 return;
             }
@@ -238,7 +238,7 @@ namespace Unigram.ViewModels.Drawers
             }
             else
             {
-                var items = SearchStickers = new SearchStickerSetsCollection(ProtoService, Aggregator, false, query, CoreTextServicesManager.GetForCurrentView().InputLanguage.LanguageTag);
+                var items = SearchStickers = new SearchStickerSetsCollection(ProtoService, Aggregator, new StickerTypeRegular(), query, CoreTextServicesManager.GetForCurrentView().InputLanguage.LanguageTag);
                 await items.LoadMoreItemsAsync(0);
             }
         }
@@ -311,7 +311,7 @@ namespace Unigram.ViewModels.Drawers
 
             var result1 = await ProtoService.SendAsync(new GetFavoriteStickers());
             var result2 = await ProtoService.SendAsync(new GetRecentStickers());
-            var result3 = await ProtoService.SendAsync(new GetInstalledStickerSets(false));
+            var result3 = await ProtoService.SendAsync(new GetInstalledStickerSets(new StickerTypeRegular()));
 
             if (result1 is Stickers favorite && result2 is Stickers recent && result3 is StickerSets sets)
             {
@@ -439,7 +439,7 @@ namespace Unigram.ViewModels.Drawers
             var placeholders = new List<StickerViewModel>();
             for (int i = 0; i < (info.IsInstalled ? info.Size : info.Covers?.Count ?? 0); i++)
             {
-                placeholders.Add(new StickerViewModel(_protoService, _aggregator, info.Id, info.StickerType));
+                placeholders.Add(new StickerViewModel(_protoService, _aggregator, info.Id, info.StickerFormat));
             }
 
             Stickers = new MvxObservableCollection<StickerViewModel>(placeholders);
@@ -498,6 +498,7 @@ namespace Unigram.ViewModels.Drawers
 
         public bool IsViewed => _set?.IsViewed ?? _info.IsViewed;
         public StickerType StickerType => _set?.StickerType ?? _info.StickerType;
+        public StickerFormat StickerFormat => _set?.StickerFormat ?? _info.StickerFormat;
         public bool IsOfficial => _set?.IsOfficial ?? _info.IsOfficial;
         public bool IsArchived => _set?.IsArchived ?? _info.IsArchived;
         public bool IsInstalled => _set?.IsInstalled ?? _info.IsInstalled;
@@ -519,18 +520,18 @@ namespace Unigram.ViewModels.Drawers
     {
         private Sticker _sticker;
         private readonly long _setId;
-        private readonly StickerType _type;
+        private readonly StickerFormat _format;
 
         private readonly IProtoService _protoService;
         private readonly IEventAggregator _aggregator;
 
-        public StickerViewModel(IProtoService protoService, IEventAggregator aggregator, long setId, StickerType type)
+        public StickerViewModel(IProtoService protoService, IEventAggregator aggregator, long setId, StickerFormat format)
         {
             _protoService = protoService;
             _aggregator = aggregator;
 
             _setId = setId;
-            _type = type;
+            _format = format;
         }
 
         public StickerViewModel(IProtoService protoService, IEventAggregator aggregator, Sticker sticker)
@@ -539,7 +540,7 @@ namespace Unigram.ViewModels.Drawers
             _aggregator = aggregator;
 
             _sticker = sticker;
-            _type = sticker.Type;
+            _format = sticker.Format;
         }
 
         public void Update(Sticker sticker)
@@ -558,7 +559,8 @@ namespace Unigram.ViewModels.Drawers
         public File StickerValue => _sticker?.StickerValue;
         public File PremiumAnimation => _sticker?.PremiumAnimation;
         public IList<ClosedVectorPath> Outline => _sticker?.Outline;
-        public StickerType Type => _sticker?.Type ?? _type;
+        public StickerType Type => _sticker?.Type;
+        public StickerFormat Format => _sticker?.Format ?? _format;
         public string Emoji => _sticker?.Emoji;
         public int Height => _sticker?.Height ?? 0;
         public int Width => _sticker?.Width ?? 0;
@@ -623,15 +625,15 @@ namespace Unigram.ViewModels.Drawers
     {
         private readonly IProtoService _protoService;
         private readonly IEventAggregator _aggregator;
-        private readonly bool _masks;
+        private readonly StickerType _type;
         private readonly string _query;
         private readonly string _inputLanguage;
 
-        public SearchStickerSetsCollection(IProtoService protoService, IEventAggregator aggregator, bool masks, string query, string inputLanguage)
+        public SearchStickerSetsCollection(IProtoService protoService, IEventAggregator aggregator, StickerType type, string query, string inputLanguage)
         {
             _protoService = protoService;
             _aggregator = aggregator;
-            _masks = masks;
+            _type = type;
             _query = query;
             _inputLanguage = inputLanguage;
         }
@@ -644,7 +646,7 @@ namespace Unigram.ViewModels.Drawers
             {
                 if (phase == 0)
                 {
-                    var response = await _protoService.SendAsync(new SearchInstalledStickerSets(_masks, _query, 100));
+                    var response = await _protoService.SendAsync(new SearchInstalledStickerSets(_type, _query, 100));
                     if (response is StickerSets sets)
                     {
                         foreach (var item in sets.Sets.Select(x => new StickerSetViewModel(_protoService, _aggregator, x)))
@@ -663,8 +665,8 @@ namespace Unigram.ViewModels.Drawers
                         if (response is Stickers stickers && stickers.StickersValue.Count > 0)
                         {
                             Add(new StickerSetViewModel(_protoService, _aggregator,
-                                new StickerSetInfo(0, _query, "emoji", null, new ClosedVectorPath[0], false, false, false, new StickerTypeStatic(), false, stickers.StickersValue.Count, stickers.StickersValue),
-                                new StickerSet(0, _query, "emoji", null, new ClosedVectorPath[0], false, false, false, new StickerTypeStatic(), false, stickers.StickersValue, new Emojis[0])));
+                                new StickerSetInfo(0, _query, "emoji", null, new ClosedVectorPath[0], false, false, false, new StickerFormatWebp(), _type, false, stickers.StickersValue.Count, stickers.StickersValue),
+                                new StickerSet(0, _query, "emoji", null, new ClosedVectorPath[0], false, false, false, new StickerFormatWebp(), _type, false, stickers.StickersValue, new Emojis[0])));
                         }
                     }
                     else
@@ -678,8 +680,8 @@ namespace Unigram.ViewModels.Drawers
                                 if (response is Stickers stickers && stickers.StickersValue.Count > 0)
                                 {
                                     Add(new StickerSetViewModel(_protoService, _aggregator,
-                                        new StickerSetInfo(0, emojis.EmojisValue[i], "emoji", null, new ClosedVectorPath[0], false, false, false, new StickerTypeStatic(), false, stickers.StickersValue.Count, stickers.StickersValue),
-                                        new StickerSet(0, emojis.EmojisValue[i], "emoji", null, new ClosedVectorPath[0], false, false, false, new StickerTypeStatic(), false, stickers.StickersValue, new Emojis[0])));
+                                        new StickerSetInfo(0, emojis.EmojisValue[i], "emoji", null, new ClosedVectorPath[0], false, false, false, new StickerFormatWebp(), _type, false, stickers.StickersValue.Count, stickers.StickersValue),
+                                        new StickerSet(0, emojis.EmojisValue[i], "emoji", null, new ClosedVectorPath[0], false, false, false, new StickerFormatWebp(), _type, false, stickers.StickersValue, new Emojis[0])));
                                 }
                             }
                         }

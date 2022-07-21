@@ -189,6 +189,7 @@ namespace Unigram.Services
         private IList<int> _favoriteStickers;
         private IList<long> _installedStickerSets;
         private IList<long> _installedMaskSets;
+        private IList<long> _installedEmojiSets;
 
         private IList<ChatFilterInfo> _chatFilters = new ChatFilterInfo[0];
         private int _mainChatListPosition = 0;
@@ -596,6 +597,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             _favoriteStickers = null;
             _installedStickerSets = null;
             _installedMaskSets = null;
+            _installedEmojiSets = null;
 
             _chatFilters = new ChatFilterInfo[0];
 
@@ -1784,13 +1786,17 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             }
             else if (update is UpdateInstalledStickerSets updateInstalledStickerSets)
             {
-                if (updateInstalledStickerSets.IsMasks)
+                switch (updateInstalledStickerSets.StickerType)
                 {
-                    _installedMaskSets = updateInstalledStickerSets.StickerSetIds;
-                }
-                else
-                {
-                    _installedStickerSets = updateInstalledStickerSets.StickerSetIds;
+                    case StickerTypeRegular:
+                        _installedStickerSets = updateInstalledStickerSets.StickerSetIds;
+                        break;
+                    case StickerTypeMask:
+                        _installedMaskSets = updateInstalledStickerSets.StickerSetIds;
+                        break;
+                    case StickerTypeCustomEmoji:
+                        _installedEmojiSets = updateInstalledStickerSets.StickerSetIds;
+                        break;
                 }
             }
             else if (update is UpdateLanguagePackStrings updateLanguagePackStrings)

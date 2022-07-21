@@ -90,7 +90,7 @@ namespace Unigram.ViewModels.Supergroups
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            ProtoService.Send(new GetInstalledStickerSets(false), result =>
+            ProtoService.Send(new GetInstalledStickerSets(new StickerTypeRegular()), result =>
             {
                 if (result is StickerSets sets)
                 {
@@ -159,7 +159,7 @@ namespace Unigram.ViewModels.Supergroups
                 var response = await ProtoService.SendAsync(new GetStickerSet(fullInfo.StickerSetId));
                 if (response is StickerSet set)
                 {
-                    SelectedItem = new StickerSetInfo(set.Id, set.Title, set.Name, set.Thumbnail, set.ThumbnailOutline, set.IsInstalled, set.IsArchived, set.IsOfficial, set.StickerType, set.IsViewed, set.Stickers.Count, set.Stickers);
+                    SelectedItem = new StickerSetInfo(set.Id, set.Title, set.Name, set.Thumbnail, set.ThumbnailOutline, set.IsInstalled, set.IsArchived, set.IsOfficial, set.StickerFormat, set.StickerType, set.IsViewed, set.Stickers.Count, set.Stickers);
                     ShortName = set.Name;
                 }
             }
@@ -216,7 +216,7 @@ namespace Unigram.ViewModels.Supergroups
             {
                 IsLoading = false;
                 IsAvailable = true;
-                SelectedItem = new StickerSetInfo(stickerSet.Id, stickerSet.Title, stickerSet.Name, stickerSet.Thumbnail, stickerSet.ThumbnailOutline, stickerSet.IsInstalled, stickerSet.IsArchived, stickerSet.IsOfficial, stickerSet.StickerType, stickerSet.IsViewed, stickerSet.Stickers.Count, stickerSet.Stickers);
+                SelectedItem = new StickerSetInfo(stickerSet.Id, stickerSet.Title, stickerSet.Name, stickerSet.Thumbnail, stickerSet.ThumbnailOutline, stickerSet.IsInstalled, stickerSet.IsArchived, stickerSet.IsOfficial, stickerSet.StickerFormat, stickerSet.StickerType, stickerSet.IsViewed, stickerSet.Stickers.Count, stickerSet.Stickers);
                 ShortName = stickerSet.Name;
             }
             else

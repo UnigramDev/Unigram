@@ -505,10 +505,10 @@ namespace Unigram.Controls
         {
             if (item is InlineQueryResultSticker sticker)
             {
-                return sticker.Sticker.Type switch
+                return sticker.Sticker.Format switch
                 {
-                    StickerTypeAnimated => AnimatedStickerTemplate,
-                    StickerTypeVideo => VideoStickerTemplate,
+                    StickerFormatTgs => AnimatedStickerTemplate,
+                    StickerFormatWebm => VideoStickerTemplate,
                     _ => StickerTemplate
                 };
             }

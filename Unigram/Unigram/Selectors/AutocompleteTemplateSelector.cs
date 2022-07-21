@@ -30,19 +30,19 @@ namespace Unigram.Selectors
             }
             else if (item is Sticker sticker)
             {
-                return sticker.Type switch
+                return sticker.Format switch
                 {
-                    StickerTypeAnimated => AnimatedStickerTemplate,
-                    StickerTypeVideo => VideoStickerTemplate,
+                    StickerFormatTgs => AnimatedStickerTemplate,
+                    StickerFormatWebm => VideoStickerTemplate,
                     _ => StickerTemplate
                 };
             }
             else if (item is StickerViewModel stickerViewModel)
             {
-                return stickerViewModel.Type switch
+                return stickerViewModel.Format switch
                 {
-                    StickerTypeAnimated => AnimatedStickerTemplate,
-                    StickerTypeVideo => VideoStickerTemplate,
+                    StickerFormatTgs => AnimatedStickerTemplate,
+                    StickerFormatWebm => VideoStickerTemplate,
                     _ => StickerTemplate
                 };
             }

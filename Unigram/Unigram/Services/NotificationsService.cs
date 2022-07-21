@@ -125,7 +125,7 @@ namespace Unigram.Services
                         return;
                     }
 
-                    _protoService.Send(new DeleteAccount("Decline ToS update"));
+                    _protoService.Send(new DeleteAccount("Decline ToS update", string.Empty));
                 }
 
                 await Task.Delay(2000);

@@ -153,10 +153,10 @@ namespace Unigram.Views.Popups
 
         private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
         {
-            var typeName = args.Item is Sticker sticker ? sticker.Type switch
+            var typeName = args.Item is Sticker sticker ? sticker.Format switch
             {
-                StickerTypeAnimated => "AnimatedItemTemplate",
-                StickerTypeVideo => "VideoItemTemplate",
+                StickerFormatTgs => "AnimatedItemTemplate",
+                StickerFormatWebm => "VideoItemTemplate",
                 _ => "ItemTemplate"
             } : "ItemTemplate";
             var relevantHashSet = _typeToItemHashSetMapping[typeName];

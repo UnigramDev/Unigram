@@ -157,11 +157,11 @@ namespace Unigram.Controls.Messages.Content
         {
             if (content is MessageSticker sticker)
             {
-                return sticker.Sticker.Type is StickerTypeAnimated;
+                return sticker.Sticker.Format is StickerFormatTgs;
             }
             else if (content is MessageText text && text.WebPage != null && !primary)
             {
-                return text.WebPage.Sticker != null && text.WebPage.Sticker.Type is StickerTypeAnimated;
+                return text.WebPage.Sticker != null && text.WebPage.Sticker.Format is StickerFormatTgs;
             }
 
             return false;

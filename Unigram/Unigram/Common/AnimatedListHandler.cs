@@ -147,19 +147,19 @@ namespace Unigram.Common
                 File file = null;
 
                 var item = _listView.ItemFromContainer(container);
-                if (item is StickerViewModel viewModel && viewModel.Type is StickerTypeAnimated or StickerTypeVideo)
+                if (item is StickerViewModel viewModel && viewModel.Format is StickerFormatTgs or StickerFormatWebm)
                 {
                     file = viewModel.StickerValue;
                 }
-                else if (item is StickerSetViewModel setViewModel && setViewModel.StickerType is StickerTypeAnimated or StickerTypeVideo)
+                else if (item is StickerSetViewModel setViewModel && setViewModel.StickerFormat is StickerFormatTgs or StickerFormatWebm)
                 {
                     file = setViewModel.Thumbnail?.File ?? setViewModel.Covers.FirstOrDefault()?.Thumbnail?.File;
                 }
-                else if (item is Sticker sticker && sticker.Type is StickerTypeAnimated or StickerTypeVideo)
+                else if (item is Sticker sticker && sticker.Format is StickerFormatTgs or StickerFormatWebm)
                 {
                     file = sticker.StickerValue;
                 }
-                else if (item is StickerSetInfo set && set.StickerType is StickerTypeAnimated or StickerTypeVideo)
+                else if (item is StickerSetInfo set && set.StickerFormat is StickerFormatTgs or StickerFormatWebm)
                 {
                     file = set.Thumbnail?.File ?? set.Covers.FirstOrDefault()?.Thumbnail?.File;
                 }
@@ -171,7 +171,7 @@ namespace Unigram.Common
                 {
                     file = inlineQueryResultAnimation.Animation.AnimationValue;
                 }
-                else if (item is InlineQueryResultSticker inlineQueryResultSticker && inlineQueryResultSticker.Sticker.Type is StickerTypeAnimated or StickerTypeVideo)
+                else if (item is InlineQueryResultSticker inlineQueryResultSticker && inlineQueryResultSticker.Sticker.Format is StickerFormatTgs or StickerFormatWebm)
                 {
                     file = inlineQueryResultSticker.Sticker.StickerValue;
                 }

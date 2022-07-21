@@ -89,11 +89,11 @@ namespace Unigram.Controls.Messages.Content
         {
             if (content is MessageSticker sticker)
             {
-                return sticker.Sticker.Type is StickerTypeStatic or StickerTypeMask;
+                return sticker.Sticker.Format is StickerFormatWebp;
             }
             else if (content is MessageText text && text.WebPage != null && !primary)
             {
-                return text.WebPage.Sticker != null && text.WebPage.Sticker.Type is StickerTypeStatic or StickerTypeMask;
+                return text.WebPage.Sticker != null && text.WebPage.Sticker.Format is StickerFormatWebp;
             }
 
             return false;

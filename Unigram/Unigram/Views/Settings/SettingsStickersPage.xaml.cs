@@ -96,10 +96,10 @@ namespace Unigram.Views.Settings
             var stickerSet = args.Item as StickerSetInfo;
             var cover = stickerSet.GetThumbnail();
 
-            var typeName = cover?.Type switch
+            var typeName = cover?.Format switch
             {
-                StickerTypeAnimated => "AnimatedItemTemplate",
-                StickerTypeVideo => "VideoItemTemplate",
+                StickerFormatTgs => "AnimatedItemTemplate",
+                StickerFormatWebm => "VideoItemTemplate",
                 _ => "ItemTemplate"
             };
             var relevantHashSet = _typeToItemHashSetMapping[typeName];
