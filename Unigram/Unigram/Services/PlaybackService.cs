@@ -272,7 +272,7 @@ namespace Unigram.Services
                 catch { }
             }
 
-            if (item.File.Local.IsDownloadingCompleted)
+            if (item.File.Local.IsFileExisting())
             {
                 try
                 {

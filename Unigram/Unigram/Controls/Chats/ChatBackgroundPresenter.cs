@@ -211,7 +211,7 @@ namespace Unigram.Controls.Chats
                 }
 
                 var file = background.Document.DocumentValue;
-                if (file.Local.IsDownloadingCompleted)
+                if (file.Local.IsFileExisting())
                 {
                     if (string.Equals(background.Document.MimeType, "application/x-tgwallpattern", StringComparison.OrdinalIgnoreCase))
                     {
@@ -240,7 +240,7 @@ namespace Unigram.Controls.Chats
                 _imageBackground.Opacity = 1;
 
                 var file = background.Document.DocumentValue;
-                if (file.Local.IsDownloadingCompleted)
+                if (file.Local.IsFileExisting())
                 {
                     _imageBackground.Fill = new ImageBrush { ImageSource = new BitmapImage(UriEx.ToLocal(file.Local.Path)), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
                 }

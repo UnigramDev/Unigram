@@ -309,7 +309,7 @@ namespace Unigram.Services
                     contact = new Contact();
                 }
 
-                if (user.ProfilePhoto != null && user.ProfilePhoto.Small.Local.IsDownloadingCompleted)
+                if (user.ProfilePhoto != null && Telegram.Td.Api.Extensions.IsFileExisting(user.ProfilePhoto.Small.Local))
                 {
                     contact.SourceDisplayPicture = await StorageFile.GetFileFromPathAsync(user.ProfilePhoto.Small.Local.Path);
                 }

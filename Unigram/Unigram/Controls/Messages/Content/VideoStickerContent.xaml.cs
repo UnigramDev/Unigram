@@ -62,7 +62,7 @@ namespace Unigram.Controls.Messages.Content
 
             LayoutRoot.Constraint = message;
 
-            if (!sticker.StickerValue.Local.IsDownloadingCompleted)
+            if (!sticker.StickerValue.Local.IsFileExisting())
             {
                 UpdateThumbnail(message, sticker);
             }
@@ -89,7 +89,7 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            if (file.Local.IsDownloadingCompleted)
+            if (file.Local.IsFileExisting())
             {
                 Player.IsLoopingEnabled = SettingsService.Current.Stickers.IsLoopingEnabled;
                 Player.Source = new LocalVideoSource(file);

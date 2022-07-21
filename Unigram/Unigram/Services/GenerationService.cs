@@ -461,7 +461,7 @@ namespace Unigram.Services
                 var conversion = JsonConvert.DeserializeObject<ChatPhotoConversion>(args[2]);
 
                 var sticker = await _protoService.SendAsync(new GetFile(conversion.StickerFileId)) as Telegram.Td.Api.File;
-                if (sticker == null || !sticker.Local.IsDownloadingCompleted)
+                if (sticker == null || !sticker.Local.IsFileExisting())
                 {
                     _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID No sticker found")));
                     return;
@@ -482,7 +482,7 @@ namespace Unigram.Services
                         new BackgroundTypePattern(new BackgroundFillFreeformGradient(freeform), 50, false, false));
                 }
 
-                if (background == null || (background.Document != null && !background.Document.DocumentValue.Local.IsDownloadingCompleted))
+                if (background == null || (background.Document != null && !background.Document.DocumentValue.Local.IsFileExisting()))
                 {
                     _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID No background found")));
                     return;

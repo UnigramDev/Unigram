@@ -99,7 +99,7 @@ namespace Unigram.Controls
 
             if (file != null)
             {
-                if (file.Local.IsDownloadingCompleted)
+                if (file.Local.IsFileExisting())
                 {
                     return UriEx.ToBitmap(file.Local.Path, side, side);
                 }
@@ -156,7 +156,7 @@ namespace Unigram.Controls
         {
             if (file != null)
             {
-                if (file.Local.IsDownloadingCompleted)
+                if (file.Local.IsFileExisting())
                 {
                     return UriEx.ToBitmap(file.Local.Path, side, side);
                 }
@@ -208,7 +208,7 @@ namespace Unigram.Controls
         {
             if (file != null)
             {
-                if (file.Local.IsDownloadingCompleted)
+                if (file.Local.IsFileExisting())
                 {
                     return UriEx.ToBitmap(file.Local.Path, side, side);
                 }

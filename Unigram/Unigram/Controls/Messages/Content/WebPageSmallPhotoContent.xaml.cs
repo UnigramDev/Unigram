@@ -121,7 +121,7 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            if (file.Local.IsDownloadingCompleted)
+            if (file.Local.IsFileExisting())
             {
                 double ratioX = (double)48 / small.Width;
                 double ratioY = (double)48 / small.Height;

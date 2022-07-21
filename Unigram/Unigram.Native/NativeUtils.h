@@ -14,6 +14,8 @@ namespace winrt::Unigram::Native::implementation
 	struct NativeUtils : NativeUtilsT<NativeUtils>
 	{
 	public:
+		static bool FileExists(hstring path);
+
 		static int64_t GetDirectorySize(hstring path);
 		static int64_t GetDirectorySize(hstring path, hstring filter);
 		static void CleanDirectory(hstring path, int days);

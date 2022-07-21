@@ -359,7 +359,7 @@ namespace Unigram.Controls.Drawers
                 }
             }
 
-            if (file.Local.IsDownloadingCompleted)
+            if (file.Local.IsFileExisting())
             {
                 if (content.Children[0] is Border border && border.Child is Image photo)
                 {
@@ -451,7 +451,7 @@ namespace Unigram.Controls.Drawers
                 }
 
                 var file = cover.File;
-                if (file.Local.IsDownloadingCompleted)
+                if (file.Local.IsFileExisting())
                 {
                     if (cover.Format is ThumbnailFormatTgs)
                     {

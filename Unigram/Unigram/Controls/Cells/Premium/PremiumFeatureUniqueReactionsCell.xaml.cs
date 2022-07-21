@@ -53,7 +53,7 @@ namespace Unigram.Controls.Cells.Premium
                             protoService.DownloadFile(item.AroundAnimation.StickerValue.Id, 32);
 
                             var file = item.CenterAnimation.StickerValue;
-                            if (file.Local.IsDownloadingCompleted)
+                            if (file.Local.IsFileExisting())
                             {
                                 view2.Source = UriEx.ToLocal(file.Local.Path);
                             }
@@ -113,7 +113,7 @@ namespace Unigram.Controls.Cells.Premium
                 var center = reaction.CenterAnimation.StickerValue;
                 var around = reaction.AroundAnimation.StickerValue;
 
-                if (center.Local.IsDownloadingCompleted && around.Local.IsDownloadingCompleted)
+                if (center.Local.IsFileExisting() && around.Local.IsFileExisting())
                 {
                     var transform = button.TransformToVisual(this);
                     var point = transform.TransformPoint(new Windows.Foundation.Point());

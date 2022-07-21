@@ -1,8 +1,10 @@
 namespace Unigram.Native
 {
     [default_interface]
-    runtimeclass NativeUtils
-    {
+	runtimeclass NativeUtils
+	{
+		static Boolean FileExists(String path);
+
 		static Int64 GetDirectorySize(String path);
 		static Int64 GetDirectorySize(String path, String filter);
 		static void CleanDirectory(String path, Int32 days);

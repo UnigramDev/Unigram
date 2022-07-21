@@ -114,7 +114,7 @@ namespace Unigram.Controls.Messages.Content
 
                 Subtitle.Text = string.Format("{0} / {1}", FileSizeConverter.Convert(file.Remote.UploadedSize, size), FileSizeConverter.Convert(size));
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
+            else if (file.Local.CanBeDownloaded && !file.Local.IsFileExisting())
             {
                 Button.SetGlyph(file.Id, MessageContentState.Download);
                 Button.Progress = 0;
@@ -161,7 +161,7 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            if (file.Local.IsDownloadingCompleted)
+            if (file.Local.IsFileExisting())
             {
                 double ratioX = (double)48 / thumbnail.Width;
                 double ratioY = (double)48 / thumbnail.Height;
@@ -235,7 +235,7 @@ namespace Unigram.Controls.Messages.Content
             {
                 _message.ProtoService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
+            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsFileExisting())
             {
                 if (_message.Content is not MessageDocument)
                 {
@@ -261,7 +261,7 @@ namespace Unigram.Controls.Messages.Content
             }
 
             var file = document.DocumentValue;
-            if (file.Local.IsDownloadingCompleted)
+            if (file.Local.IsFileExisting())
             {
                 var item = await StorageFile.GetFileFromPathAsync(file.Local.Path);
 

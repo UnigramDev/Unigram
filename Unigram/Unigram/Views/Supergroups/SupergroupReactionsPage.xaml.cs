@@ -36,7 +36,7 @@ namespace Unigram.Views.Supergroups
                 player.FrameSize = new Size(48, 48);
 
                 var file = reaction.Reaction.CenterAnimation.StickerValue;
-                if (file.Local.IsDownloadingCompleted)
+                if (file.Local.IsFileExisting())
                 {
                     player.Source = UriEx.ToLocal(file.Local.Path);
                 }

@@ -231,7 +231,7 @@ namespace Unigram.Common
                     result += video.Video.GetDuration() + ", ";
                 }
 
-                if (details && !video.Video.VideoValue.Local.IsDownloadingCompleted)
+                if (details && !video.Video.VideoValue.Local.IsFileExisting())
                 {
                     result += FileSizeConverter.Convert(video.Video.VideoValue.Size) + ", ";
                 }
@@ -268,7 +268,7 @@ namespace Unigram.Common
                     result += audio.Audio.GetDuration() + ", ";
                 }
 
-                if (details && !audio.Audio.AudioValue.Local.IsDownloadingCompleted)
+                if (details && !audio.Audio.AudioValue.Local.IsFileExisting())
                 {
                     result += FileSizeConverter.Convert(audio.Audio.AudioValue.Size) + ", ";
                 }

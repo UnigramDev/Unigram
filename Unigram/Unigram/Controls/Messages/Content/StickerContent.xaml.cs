@@ -58,7 +58,7 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            if (file.Local.IsDownloadingCompleted)
+            if (file.Local.IsFileExisting())
             {
                 Source = await PlaceholderHelper.GetWebPFrameAsync(file.Local.Path);
                 ElementCompositionPreview.SetElementChildVisual(this, null);

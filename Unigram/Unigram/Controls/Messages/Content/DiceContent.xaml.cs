@@ -70,7 +70,7 @@ namespace Unigram.Controls.Messages.Content
             var state = dice.GetState();
             if (state is DiceStickersRegular regular)
             {
-                if (!regular.Sticker.StickerValue.Local.IsDownloadingCompleted)
+                if (!regular.Sticker.StickerValue.Local.IsFileExisting())
                 {
                     UpdateThumbnail(message, regular.Sticker);
                 }
@@ -113,7 +113,7 @@ namespace Unigram.Controls.Messages.Content
                 //}
             }
 
-            if (state.IsDownloadingCompleted())
+            if (state.IsFileExisting())
             {
                 Player.IsContentUnread = message.GeneratedContentUnread;
                 Player.SetValue(state, state == dice.FinalState ? dice.Value : 0);

@@ -65,7 +65,7 @@ namespace Unigram.Controls.Gallery
             UpdateManager.Subscribe(this, delegato.ProtoService, file, ref _fileToken, UpdateFile);
             UpdateFile(item, file);
 
-            if (thumbnail != null && (item.IsVideo || (item.IsPhoto && !file.Local.IsDownloadingCompleted)))
+            if (thumbnail != null && (item.IsVideo || (item.IsPhoto && !file.Local.IsFileExisting())))
             {
                 UpdateThumbnail(item, thumbnail, true);
             }
@@ -97,7 +97,7 @@ namespace Unigram.Controls.Gallery
                 Button.Progress = (double)file.Remote.UploadedSize / size;
                 Button.Opacity = 1;
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
+            else if (file.Local.CanBeDownloaded && !file.Local.IsFileExisting())
             {
                 Button.SetGlyph(file.Id, MessageContentState.Download);
                 Button.Progress = 0;
@@ -149,7 +149,7 @@ namespace Unigram.Controls.Gallery
 
         private void UpdateThumbnail(GalleryContent item, File file, bool download)
         {
-            if (file.Local.IsDownloadingCompleted)
+            if (file.Local.IsFileExisting())
             {
                 //Texture.Source = new BitmapImage(UriEx.GetLocal(file.Local.Path));
                 Panel.Background = new ImageBrush { ImageSource = PlaceholderHelper.GetBlurred(file.Local.Path), Stretch = Stretch.UniformToFill };
@@ -183,7 +183,7 @@ namespace Unigram.Controls.Gallery
             {
                 item.ProtoService.Send(new CancelDownloadFile(file.Id, false));
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
+            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsFileExisting())
             {
                 if (SettingsService.Current.IsStreamingEnabled && item.IsVideo && item.IsStreamable)
                 {

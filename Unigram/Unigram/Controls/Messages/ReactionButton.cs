@@ -111,7 +111,7 @@ namespace Unigram.Controls.Messages
             }
 
             var around = value.AroundAnimation.StickerValue;
-            if (around.Local.CanBeDownloaded && !around.Local.IsDownloadingActive && !around.Local.IsDownloadingCompleted)
+            if (around.Local.CanBeDownloaded && !around.Local.IsDownloadingActive && !around.Local.IsFileExisting())
             {
                 _message.ProtoService.DownloadFile(around.Id, 32);
             }
@@ -124,7 +124,7 @@ namespace Unigram.Controls.Messages
 
             _presenterId = center.Id;
 
-            if (center.Local.IsDownloadingCompleted)
+            if (center.Local.IsFileExisting())
             {
                 Presenter.Source = await GetLottieFrame(center.Local.Path, 0, 32, 32);
             }
@@ -241,7 +241,7 @@ namespace Unigram.Controls.Messages
             var center = reaction.CenterAnimation.StickerValue;
             var around = reaction.AroundAnimation.StickerValue;
 
-            if (center.Local.IsDownloadingCompleted && around.Local.IsDownloadingCompleted)
+            if (center.Local.IsFileExisting() && around.Local.IsFileExisting())
             {
                 var presenter = Presenter;
                 var popup = Overlay;

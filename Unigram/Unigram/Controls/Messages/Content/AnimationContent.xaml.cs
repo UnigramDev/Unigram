@@ -114,7 +114,7 @@ namespace Unigram.Controls.Messages.Content
 
                 Player.Source = null;
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
+            else if (file.Local.CanBeDownloaded && !file.Local.IsFileExisting())
             {
                 //Button.Glyph = Icons.Download;
                 Button.SetGlyph(file.Id, MessageContentState.Download);
@@ -176,7 +176,7 @@ namespace Unigram.Controls.Messages.Content
 
             if (thumbnail != null && thumbnail.Format is ThumbnailFormatJpeg)
             {
-                if (file.Local.IsDownloadingCompleted)
+                if (file.Local.IsFileExisting())
                 {
                     Texture.Source = PlaceholderHelper.GetBlurred(file.Local.Path);
                 }
@@ -263,7 +263,7 @@ namespace Unigram.Controls.Messages.Content
             {
                 _message.ProtoService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
+            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsFileExisting())
             {
                 _message.ProtoService.DownloadFile(file.Id, 30);
             }

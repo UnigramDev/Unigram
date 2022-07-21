@@ -27,7 +27,7 @@ namespace Unigram.Services
 
         public async Task SaveAsAsync(File file)
         {
-            if (file == null || !file.Local.IsDownloadingCompleted)
+            if (file == null || !file.Local.IsFileExisting())
             {
                 return;
             }
@@ -68,7 +68,7 @@ namespace Unigram.Services
 
         public async Task OpenWithAsync(File file)
         {
-            if (file == null || !file.Local.IsDownloadingCompleted)
+            if (file == null || !file.Local.IsFileExisting())
             {
                 return;
             }
@@ -91,7 +91,7 @@ namespace Unigram.Services
 
         public async Task OpenFolderAsync(File file)
         {
-            if (file == null || !file.Local.IsDownloadingCompleted)
+            if (file == null || !file.Local.IsFileExisting())
             {
                 return;
             }

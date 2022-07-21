@@ -92,12 +92,12 @@ namespace Unigram.Services
                 if (sets.TryGetValue(item.Id, out var installed) && item.Version > installed.Max())
                 {
                     // There's a new version for the current font
-                    if (item.Document.Local.CanBeDownloaded && !item.Document.Local.IsDownloadingActive && !item.Document.Local.IsDownloadingCompleted)
+                    if (item.Document.Local.CanBeDownloaded && !item.Document.Local.IsDownloadingActive && !item.Document.Local.IsFileExisting())
                     {
                         _protoService.DownloadFile(item.Document.Id, 16);
                     }
 
-                    if (item.Thumbnail.Local.CanBeDownloaded && !item.Thumbnail.Local.IsDownloadingActive && !item.Thumbnail.Local.IsDownloadingCompleted)
+                    if (item.Thumbnail.Local.CanBeDownloaded && !item.Thumbnail.Local.IsDownloadingActive && !item.Thumbnail.Local.IsFileExisting())
                     {
                         _protoService.DownloadFile(item.Thumbnail.Id, 16);
                     }
@@ -121,7 +121,7 @@ namespace Unigram.Services
                     return;
                 }
 
-                if (file.Local.IsDownloadingCompleted)
+                if (file.Local.IsFileExisting())
                 {
                     var folder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("emoji", CreationCollisionOption.OpenIfExists);
                     await TryCopyPartLocally(folder, file.Local.Path, emojiSet.Id, emojiSet.Version, file.Id == emojiSet.Document.Id);
@@ -265,12 +265,12 @@ namespace Unigram.Services
                 {
                     if (set.Version == latest)
                     {
-                        if (set.Thumbnail.Local.IsDownloadingCompleted)
+                        if (set.Thumbnail.Local.IsFileExisting())
                         {
                             await TryCopyPartLocally(folder, set.Thumbnail.Local.Path, set.Id, 0, false);
                         }
 
-                        if (set.Document.Local.IsDownloadingCompleted)
+                        if (set.Document.Local.IsFileExisting())
                         {
                             await TryCopyPartLocally(folder, set.Document.Local.Path, set.Id, set.Version, true);
                         }

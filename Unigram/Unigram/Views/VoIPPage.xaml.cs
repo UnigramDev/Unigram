@@ -430,7 +430,7 @@ namespace Unigram.Views
                 //if (user.ProfilePhoto != null)
                 //{
                 //    var file = user.ProfilePhoto.Big;
-                //    if (file.Local.IsDownloadingCompleted)
+                //    if (file.Local.IsFileExisting())
                 //    {
                 //        Image.Source = new BitmapImage(UriEx.GetLocal(file.Local.Path));
                 //        BackgroundPanel.Background = new SolidColorBrush(Colors.Transparent);

@@ -14,6 +14,12 @@ using namespace winrt::Windows::UI::Notifications;
 
 namespace winrt::Unigram::Native::implementation
 {
+	bool NativeUtils::FileExists(hstring path)
+	{
+		WIN32_FILE_ATTRIBUTE_DATA fileInfo;
+		return GetFileAttributesExFromAppW(path.data(), GetFileExInfoStandard, (void*)&fileInfo);
+	}
+
 	int64_t NativeUtils::GetDirectorySize(hstring path)
 	{
 		return GetDirectorySize(path, L"\\*");

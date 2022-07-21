@@ -95,7 +95,7 @@ namespace Unigram.Controls.Messages.Content
 
         private void UpdateThumbnail(MessageViewModel message, File file)
         {
-            if (file.Local.IsDownloadingCompleted)
+            if (file.Local.IsFileExisting())
             {
                 Texture.Source = new BitmapImage(UriEx.ToLocal(file.Local.Path));
             }

@@ -427,7 +427,7 @@ namespace Unigram.Services
             //if (soundId != 0)
             //{
             //    var response = await _protoService.SendAsync(new GetSavedNotificationSound(soundId));
-            //    if (response is NotificationSound notificationSound && notificationSound.Sound.Local.IsDownloadingCompleted)
+            //    if (response is NotificationSound notificationSound && notificationSound.Sound.Local.IsFileExisting())
             //    {
             //        sound = "ms-appdata:///local/" + Path.GetRelativePath(ApplicationData.Current.LocalFolder.Path, notificationSound.Sound.Local.Path);
             //    }
@@ -472,7 +472,7 @@ namespace Unigram.Services
             //if (soundId != 0)
             //{
             //    var response = await _protoService.SendAsync(new GetSavedNotificationSound(soundId));
-            //    if (response is NotificationSound notificationSound && notificationSound.Sound.Local.IsDownloadingCompleted)
+            //    if (response is NotificationSound notificationSound && notificationSound.Sound.Local.IsFileExisting())
             //    {
             //        sound = "ms-appdata:///local/" + Path.GetRelativePath(ApplicationData.Current.LocalFolder.Path, notificationSound.Sound.Local.Path);
             //    }
@@ -901,7 +901,7 @@ namespace Unigram.Services
 
         private string GetPhoto(Chat chat)
         {
-            if (chat.Photo != null && chat.Photo.Small.Local.IsDownloadingCompleted)
+            if (chat.Photo != null && chat.Photo.Small.Local.IsFileExisting())
             {
                 return "ms-appdata:///local/0/profile_photos/" + Path.GetFileName(chat.Photo.Small.Local.Path);
             }

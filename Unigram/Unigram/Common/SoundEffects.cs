@@ -55,7 +55,7 @@ namespace Unigram.Common
 
         public static async void Play(File file)
         {
-            if (file.Local.IsDownloadingCompleted)
+            if (file.Local.IsFileExisting())
             {
                 await Play(await StorageFile.GetFileFromPathAsync(file.Local.Path), tag: 1);
             }

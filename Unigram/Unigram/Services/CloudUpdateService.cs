@@ -101,7 +101,7 @@ namespace Unigram.Services
                 _nextUpdate = cloud;
 
                 // There's a new version for the current font
-                if (cloud.Document.Local.IsDownloadingCompleted || cloud.File != null)
+                if (cloud.Document.Local.IsFileExisting() || cloud.File != null)
                 {
                     _aggregator.Publish(new UpdateAppVersion(cloud));
                 }
@@ -132,7 +132,7 @@ namespace Unigram.Services
                 return;
             }
 
-            if (file.Local.IsDownloadingCompleted)
+            if (file.Local.IsFileExisting())
             {
                 var folder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("updates", CreationCollisionOption.OpenIfExists);
                 var result = await TryCopyPartLocally(folder, file.Local.Path, cloud.Version);
@@ -225,7 +225,7 @@ namespace Unigram.Services
 
                     if (set.Version > current)
                     {
-                        if (set.Document.Local.IsDownloadingCompleted)
+                        if (set.Document.Local.IsFileExisting())
                         {
                             set.File = await TryCopyPartLocally(folder, set.Document.Local.Path, set.Version);
                         }

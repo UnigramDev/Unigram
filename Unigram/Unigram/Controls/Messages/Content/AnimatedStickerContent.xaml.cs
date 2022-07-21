@@ -84,7 +84,7 @@ namespace Unigram.Controls.Messages.Content
                 Player.IsFlipped = sticker.PremiumAnimation != null && !message.IsOutgoing;
             }
 
-            if (!sticker.StickerValue.Local.IsDownloadingCompleted)
+            if (!sticker.StickerValue.Local.IsFileExisting())
             {
                 UpdateThumbnail(message, sticker);
             }
@@ -108,11 +108,11 @@ namespace Unigram.Controls.Messages.Content
 
             if (sticker.StickerValue.Id != file.Id)
             {
-                if (message.Interaction?.StickerValue.Id == file.Id && file.Local.IsDownloadingCompleted)
+                if (message.Interaction?.StickerValue.Id == file.Id && file.Local.IsFileExisting())
                 {
                     PlayInteraction(message, message.Interaction);
                 }
-                else if (sticker.PremiumAnimation?.Id == file.Id && file.Local.IsDownloadingCompleted)
+                else if (sticker.PremiumAnimation?.Id == file.Id && file.Local.IsFileExisting())
                 {
                     PlayPremium(message, sticker);
                 }
@@ -120,7 +120,7 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            if (file.Local.IsDownloadingCompleted)
+            if (file.Local.IsFileExisting())
             {
                 Player.IsLoopingEnabled = message.Content is MessageSticker && SettingsService.Current.Stickers.IsLoopingEnabled;
                 Player.Source = UriEx.ToLocal(file.Local.Path);
@@ -196,7 +196,7 @@ namespace Unigram.Controls.Messages.Content
                 if (started)
                 {
                     var sound = animatedEmoji.AnimatedEmoji.Sound;
-                    if (sound != null && sound.Local.IsDownloadingCompleted)
+                    if (sound != null && sound.Local.IsFileExisting())
                     {
                         SoundEffects.Play(sound);
                     }
@@ -239,7 +239,7 @@ namespace Unigram.Controls.Messages.Content
             message.Interaction = null;
 
             var file = interaction.StickerValue;
-            if (file.Local.IsDownloadingCompleted && Interactions.Children.Count < 4)
+            if (file.Local.IsFileExisting() && Interactions.Children.Count < 4)
             {
                 var dispatcher = DispatcherQueue.GetForCurrentThread();
 
@@ -309,7 +309,7 @@ namespace Unigram.Controls.Messages.Content
             }
 
             var file = sticker.PremiumAnimation;
-            if (file.Local.IsDownloadingCompleted && Interactions.Children.Count < 1)
+            if (file.Local.IsFileExisting() && Interactions.Children.Count < 1)
             {
                 var dispatcher = DispatcherQueue.GetForCurrentThread();
 

@@ -176,7 +176,7 @@ namespace Unigram.Common
                     file = inlineQueryResultSticker.Sticker.StickerValue;
                 }
 
-                if (file == null || !file.Local.IsDownloadingCompleted)
+                if (file == null || !file.Local.IsFileExisting())
                 {
                     continue;
                 }

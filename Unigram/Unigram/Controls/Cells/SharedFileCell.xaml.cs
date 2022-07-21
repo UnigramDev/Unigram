@@ -121,7 +121,7 @@ namespace Unigram.Controls.Cells
 
                 Subtitle.Text = string.Format("{0} / {1}", FileSizeConverter.Convert(file.Remote.UploadedSize, size), FileSizeConverter.Convert(size));
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
+            else if (file.Local.CanBeDownloaded && !file.Local.IsFileExisting())
             {
                 //Button.Glyph = Icons.Download;
                 Button.SetGlyph(file.Id, MessageContentState.Download);
@@ -141,7 +141,7 @@ namespace Unigram.Controls.Cells
 
         private void UpdateThumbnail(MessageWithOwner message, Thumbnail thumbnail, File file)
         {
-            if (file.Local.IsDownloadingCompleted)
+            if (file.Local.IsFileExisting())
             {
                 double ratioX = (double)48 / thumbnail.Width;
                 double ratioY = (double)48 / thumbnail.Height;
@@ -251,7 +251,7 @@ namespace Unigram.Controls.Cells
                     _message.ProtoService.Send(new ToggleDownloadIsPaused(file.Id, true));
                 }
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
+            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsFileExisting())
             {
                 if (_delegate != null)
                 {

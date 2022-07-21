@@ -87,7 +87,7 @@ namespace Unigram.Views.Settings
                 }
 
                 var file = small.File;
-                if (file.Local.IsDownloadingCompleted)
+                if (file.Local.IsFileExisting())
                 {
                     content.Source = UriEx.ToBitmap(file.Local.Path, wallpaper.Document.Thumbnail.Width, wallpaper.Document.Thumbnail.Height);
                 }

@@ -997,7 +997,7 @@ namespace Unigram.ViewModels
             }
 
             var file = header.EditingMessage.GetFile();
-            if (file == null || !file.Local.IsDownloadingCompleted)
+            if (file == null || !file.Local.IsFileExisting())
             {
                 return;
             }

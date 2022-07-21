@@ -136,7 +136,7 @@ namespace Unigram.Common
             _file = file;
             _chunk = (int)(file.Size / (duration / 10d));
 
-            if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
+            if (file.Local.CanBeDownloaded && !file.Local.IsFileExisting())
             {
                 UpdateManager.Subscribe(this, protoService, file, UpdateFile);
             }
@@ -165,7 +165,7 @@ namespace Unigram.Common
                     return;
                 }
 
-                if (_file.Local.Path.Length > 0 && (inBegin && inEnd) || _file.Local.IsDownloadingCompleted)
+                if (_file.Local.Path.Length > 0 && (inBegin && inEnd) || _file.Local.IsFileExisting())
                 {
                     if (difference < _chunk / 3 * 2 && _offset > _next)
                     {
@@ -201,7 +201,7 @@ namespace Unigram.Common
             var enough = file.Local.DownloadedPrefixSize >= _bufferSize;
             var end = file.Local.DownloadOffset + file.Local.DownloadedPrefixSize == file.Size;
 
-            if (file.Local.Path.Length > 0 && file.Local.DownloadOffset == _offset && (enough || end || file.Local.IsDownloadingCompleted))
+            if (file.Local.Path.Length > 0 && file.Local.DownloadOffset == _offset && (enough || end || file.Local.IsFileExisting()))
             {
                 _event.Set();
             }
