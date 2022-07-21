@@ -393,6 +393,24 @@ namespace Unigram.Controls
                 var visual = ElementCompositionPreview.GetElementVisual(_layoutRoot);
                 visual.StartAnimation("Translation", offset);
             }
+            else if (HorizontalAlignment == HorizontalAlignment.Right)
+            {
+                // Not needed in templated control
+                ElementCompositionPreview.SetIsTranslationEnabled(_layoutRoot, true);
+
+                var maxWidth = ((_itemSize + 4) * _maxCount) - (_itemOverlap * (_maxCount - 1));
+
+                var count = Math.Min(_maxCount, Math.Max(1, _items.Count));
+                var diff = maxWidth - (count * (float)(_itemSize + 4) - ((count - 1) * _itemOverlap));
+
+                var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                offset.InsertKeyFrame(0, new Vector3(-diff, 0, 0));
+                offset.InsertKeyFrame(1, new Vector3());
+                //offset.Duration = TimeSpan.FromSeconds(10);
+
+                var visual = ElementCompositionPreview.GetElementVisual(_layoutRoot);
+                //visual.StartAnimation("Translation", offset);
+            }
         }
 
         protected override Size MeasureOverride(Size availableSize)

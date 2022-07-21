@@ -1,14 +1,23 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Effects;
+using Newtonsoft.Json;
+using RLottie;
 using System;
+using System.Buffers;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Numerics;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls.Chats;
 using Unigram.Entities;
 using Windows.Foundation;
+using Windows.Graphics.DirectX;
 using Windows.Graphics.Imaging;
+using Windows.Media.Editing;
 using Windows.Media.Effects;
 using Windows.Media.MediaProperties;
 using Windows.Media.Transcoding;
@@ -16,6 +25,7 @@ using Windows.Storage;
 using Windows.Storage.AccessCache;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
+using Windows.UI;
 
 namespace Unigram.Services
 {
@@ -31,6 +41,7 @@ namespace Unigram.Services
         Transcode,
         TranscodeThumbnail,
         DocumentThumbnail,
+        ChatPhoto,
         // TDLib
         Url
     }
@@ -79,11 +90,19 @@ namespace Unigram.Services
                 {
                     await ThumbnailDocumentAsync(update, args);
                 }
+                else if (conversion == ConversionType.ChatPhoto)
+                {
+                    await ChatPhotoAsync(update, args);
+                }
                 // TDLib
                 else if (conversion == ConversionType.Url)
                 {
                     await DownloadAsync(update);
                 }
+            }
+            else
+            {
+                _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID Unknown conversion type")));
             }
         }
 
@@ -435,6 +454,153 @@ namespace Unigram.Services
             }
         }
 
+        private async Task ChatPhotoAsync(UpdateFileGenerationStart update, string[] args)
+        {
+            try
+            {
+                var conversion = JsonConvert.DeserializeObject<ChatPhotoConversion>(args[2]);
+
+                var sticker = await _protoService.SendAsync(new GetFile(conversion.StickerFileId)) as Telegram.Td.Api.File;
+                if (sticker == null || !sticker.Local.IsDownloadingCompleted)
+                {
+                    _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID No sticker found")));
+                    return;
+                }
+
+                Background background = null;
+
+                var backgroundLink = await _protoService.SendAsync(new GetInternalLinkType(conversion.BackgroundUrl ?? string.Empty)) as InternalLinkTypeBackground;
+                if (backgroundLink != null)
+                {
+                    background = await _protoService.SendAsync(new SearchBackground(backgroundLink.BackgroundName)) as Background;
+                }
+                else
+                {
+                    var freeform = new[] { 0xDBDDBB, 0x6BA587, 0xD5D88D, 0x88B884 };
+                    background = new Background(0, true, false, string.Empty,
+                        new Document(string.Empty, "application/x-tgwallpattern", null, null, TdExtensions.GetLocalFile("Assets\\Background.tgv", "Background")),
+                        new BackgroundTypePattern(new BackgroundFillFreeformGradient(freeform), 50, false, false));
+                }
+
+                if (background == null || (background.Document != null && !background.Document.DocumentValue.Local.IsDownloadingCompleted))
+                {
+                    _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID No background found")));
+                    return;
+                }
+
+                var device = CanvasDevice.GetSharedDevice();
+                var bitmaps = new List<CanvasBitmap>();
+
+                var sfondo = new CanvasRenderTarget(device, 640, 640, 96, DirectXPixelFormat.B8G8R8A8UIntNormalized, CanvasAlphaMode.Premultiplied);
+
+                using (var session = sfondo.CreateDrawingSession())
+                {
+                    if (background.Type is BackgroundTypePattern pattern)
+                    {
+                        if (pattern.Fill is BackgroundFillFreeformGradient freeform)
+                        {
+                            var colors = freeform.GetColors();
+                            var positions = new Vector2[]
+                            {
+                                new Vector2(0.80f, 0.10f),
+                                new Vector2(0.35f, 0.25f),
+                                new Vector2(0.20f, 0.90f),
+                                new Vector2(0.65f, 0.75f),
+                            };
+
+                            using (var gradient = CanvasBitmap.CreateFromBytes(device, ChatBackgroundFreeform.GenerateGradientData(50, 50, colors, positions), 50, 50, DirectXPixelFormat.B8G8R8A8UIntNormalized))
+                            using (var cache = await PlaceholderHelper.GetPatternBitmapAsync(device, null, background.Document.DocumentValue))
+                            {
+                                using (var scale = new ScaleEffect { Source = gradient, BorderMode = EffectBorderMode.Hard, Scale = new Vector2(640f / 50f, 640f / 50f) })
+                                using (var colorize = new TintEffect { Source = cache, Color = Color.FromArgb(0x76, 00, 00, 00) })
+                                using (var tile = new BorderEffect { Source = colorize, ExtendX = CanvasEdgeBehavior.Wrap, ExtendY = CanvasEdgeBehavior.Wrap })
+                                using (var effect = new BlendEffect { Foreground = tile, Background = scale, Mode = BlendEffectMode.Overlay })
+                                {
+                                    session.DrawImage(effect, new Rect(0, 0, 640, 640), new Rect(0, 0, 640, 640));
+                                }
+                            }
+                        }
+                    }
+                }
+
+                bitmaps.Add(sfondo);
+
+                var width = (int)(512d * conversion.Scale);
+                var height = (int)(512d * conversion.Scale);
+
+                var animation = await Task.Run(() => LottieAnimation.LoadFromFile(sticker.Local.Path, new Windows.Graphics.SizeInt32 { Width = width, Height = height }, false, null));
+                if (animation == null)
+                {
+                    _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID Can't load Lottie animation")));
+                    return;
+                }
+
+                var composition = new MediaComposition();
+                var layer = new MediaOverlayLayer();
+
+                var buffer = ArrayPool<byte>.Shared.Rent(width * height * 4);
+
+                var framesPerUpdate = animation.FrameRate < 60 ? 1 : 2;
+                var duration = TimeSpan.Zero;
+
+                for (int i = 0; i < animation.TotalFrame; i += framesPerUpdate)
+                {
+                    var bitmap = CanvasBitmap.CreateFromBytes(device, buffer, width, height, DirectXPixelFormat.B8G8R8A8UIntNormalized);
+                    animation.RenderSync(bitmap, i);
+
+                    var clip = MediaClip.CreateFromSurface(bitmap, TimeSpan.FromMilliseconds(1000d / 30d));
+                    var overlay = new MediaOverlay(clip, new Rect(320 - (width / 2d), 320 - (height / 2d), width, height), 1);
+
+                    overlay.Delay = duration;
+
+                    layer.Overlays.Add(overlay);
+                    duration += clip.OriginalDuration;
+
+                    bitmaps.Add(bitmap);
+                }
+
+                composition.OverlayLayers.Add(layer);
+                composition.Clips.Add(MediaClip.CreateFromSurface(sfondo, duration));
+
+                var temp = await _protoService.GetFileAsync(update.DestinationPath);
+
+                var profile = MediaEncodingProfile.CreateMp4(VideoEncodingQuality.Auto);
+                profile.Audio = null;
+                profile.Video.Bitrate = 1800000;
+                profile.Video.Width = 640;
+                profile.Video.Height = 640;
+                profile.Video.FrameRate.Numerator = 30;
+                profile.Video.FrameRate.Denominator = 1;
+
+                var progress = composition.RenderToFileAsync(temp, MediaTrimmingPreference.Precise, profile);
+                progress.Progress = (result, delta) =>
+                {
+                    _protoService.Send(new SetFileGenerationProgress(update.GenerationId, 100, (int)delta));
+                };
+
+                var result = await progress;
+                if (result == TranscodeFailureReason.None)
+                {
+                    _protoService.Send(new FinishFileGeneration(update.GenerationId, null));
+                }
+                else
+                {
+                    _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, result.ToString())));
+                }
+
+                ArrayPool<byte>.Shared.Return(buffer);
+
+                foreach (var bitmap in bitmaps)
+                {
+                    bitmap.Dispose();
+                }
+            }
+            catch (Exception ex)
+            {
+                _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID " + ex.ToString())));
+            }
+        }
+
         public class VideoConversion
         {
             public bool Transcode { get; set; }
@@ -452,6 +618,15 @@ namespace Unigram.Services
             public Size OutputSize { get; set; }
             public MediaMirroringOptions Mirror { get; set; }
             public Rect CropRectangle { get; set; }
+        }
+
+        public class ChatPhotoConversion
+        {
+            public int StickerFileId { get; set; }
+
+            public string BackgroundUrl { get; set; }
+
+            public double Scale { get; set; }
         }
     }
 }

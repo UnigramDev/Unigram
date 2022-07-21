@@ -128,11 +128,11 @@ namespace Unigram.Controls.Messages
                     BorderBrush = PlaceholderHelper.GetBrush(chat.ChatId);
                     TitleLabel.Foreground = PlaceholderHelper.GetBrush(chat.ChatId);
                 }
-                else
-                {
-                    ClearValue(BorderBrushProperty);
-                    TitleLabel.ClearValue(TextElement.ForegroundProperty);
-                }
+                //else
+                //{
+                //    ClearValue(BorderBrushProperty);
+                //    TitleLabel.ClearValue(TextElement.ForegroundProperty);
+                //}
             }
         }
 

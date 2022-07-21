@@ -610,5 +610,68 @@ namespace Unigram.Controls.Chats
 
             return context;
         }
+
+        public static unsafe byte[] GenerateGradientData(int width, int height, Color[] colors, Vector2[] positions)
+        {
+            var imageData = new byte[width * height * 4];
+
+            fixed (byte* imageBytes = imageData)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    var directPixelY = y / (float)height;
+                    var centerDistanceY = directPixelY - 0.5f;
+                    var centerDistanceY2 = centerDistanceY * centerDistanceY;
+
+                    var lineBytes = imageBytes + width * 4 * y;
+                    for (int x = 0; x < width; x++)
+                    {
+                        var directPixelX = x / (float)width;
+
+                        var centerDistanceX = directPixelX - 0.5f;
+                        var centerDistance = MathF.Sqrt(centerDistanceX * centerDistanceX + centerDistanceY2);
+
+                        var swirlFactor = 0.35f * centerDistance;
+                        var theta = swirlFactor * swirlFactor * 0.8f * 8.0f;
+                        var sinTheta = MathF.Sin(theta);
+                        var cosTheta = MathF.Cos(theta);
+
+                        var pixelX = MathF.Max(0.0f, MathF.Min(1.0f, 0.5f + centerDistanceX * cosTheta - centerDistanceY * sinTheta));
+                        var pixelY = MathF.Max(0.0f, MathF.Min(1.0f, 0.5f + centerDistanceX * sinTheta + centerDistanceY * cosTheta));
+
+                        var distanceSum = 0.0f;
+
+                        var r = 0.0f;
+                        var g = 0.0f;
+                        var b = 0.0f;
+
+                        for (int i = 0; i < colors.Length; i++)
+                        {
+                            var colorX = positions[i].X;
+                            var colorY = positions[i].Y;
+
+                            var distanceX = pixelX - colorX;
+                            var distanceY = pixelY - colorY;
+
+                            var distance = MathF.Max(0.0f, 0.9f - MathF.Sqrt(distanceX * distanceX + distanceY * distanceY));
+                            distance = distance * distance * distance * distance;
+                            distanceSum += distance;
+
+                            r += distance * colors[i].R / 255f;
+                            g += distance * colors[i].G / 255f;
+                            b += distance * colors[i].B / 255f;
+                        }
+
+                        var pixelBytes = lineBytes + x * 4;
+                        pixelBytes[0] = (byte)(b / distanceSum * 255.0f);
+                        pixelBytes[1] = (byte)(g / distanceSum * 255.0f);
+                        pixelBytes[2] = (byte)(r / distanceSum * 255.0f);
+                        pixelBytes[3] = 0xff;
+                    }
+                }
+            }
+
+            return imageData;
+        }
     }
 }

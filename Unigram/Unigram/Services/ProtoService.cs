@@ -9,6 +9,7 @@ using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Entities;
+using Unigram.Services.Updates;
 using Windows.Storage;
 using Windows.Storage.AccessCache;
 using Windows.System.Profile;
@@ -132,6 +133,7 @@ namespace Unigram.Services
         bool TryGetSupergroupFull(Chat chat, out SupergroupFullInfo value);
 
         bool IsAnimationSaved(int id);
+        bool IsStickerRecent(int id);
         bool IsStickerFavorite(int id);
         bool IsStickerSetInstalled(long id);
 
@@ -183,6 +185,7 @@ namespace Unigram.Services
         private IList<string> _diceEmojis;
 
         private IList<int> _savedAnimations;
+        private IList<int> _recentStickers;
         private IList<int> _favoriteStickers;
         private IList<long> _installedStickerSets;
         private IList<long> _installedMaskSets;
@@ -441,6 +444,8 @@ namespace Unigram.Services
             Send(new LoadChats(new ChatListMain(), 20));
 
             UpdateVersion();
+
+            //InitializeStickers();
         }
 
         private void InitializeFlush()
@@ -461,6 +466,22 @@ namespace Unigram.Services
                     if (diff.TotalDays >= 3)
                     {
                         System.IO.File.Delete(file);
+                    }
+                }
+            });
+        }
+
+        private void InitializeStickers()
+        {
+            Task.Factory.StartNew(async () =>
+            {
+                var response = await SendAsync(new GetInstalledStickerSets());
+                if (response is StickerSets stickerSets)
+                {
+                    foreach (var set in stickerSets.Sets)
+                    {
+                        await SendAsync(new GetStickerSet(set.Id));
+                        await Task.Delay(200);
                     }
                 }
             });
@@ -782,7 +803,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 
         public Client Client => _client;
 
-        #region Cache
+#region Cache
 
         public ChatListUnreadCount GetUnreadCount(ChatList chatList)
         {
@@ -1387,6 +1408,16 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 
 
 
+        public bool IsStickerRecent(int id)
+        {
+            if (_recentStickers != null)
+            {
+                return _recentStickers.Contains(id);
+            }
+
+            return false;
+        }
+
         public bool IsStickerFavorite(int id)
         {
             if (_favoriteStickers != null)
@@ -1452,7 +1483,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             return _diceEmojis.Contains(text);
         }
 
-        #endregion
+#endregion
 
 
 
@@ -1829,6 +1860,10 @@ Read more about how to update your device [here](https://support.microsoft.com/h
                     Microsoft.AppCenter.AppCenter.SetUserId($"uid={myId.Value}");
 #endif
                 }
+                else if (updateOption.Name == "is_premium" || updateOption.Name == "is_premium_available")
+                {
+                    _aggregator.Publish(new UpdatePremiumState(IsPremium, IsPremiumAvailable));
+                }
             }
             else if (update is UpdateReactions updateReactions)
             {
@@ -1836,7 +1871,14 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             }
             else if (update is UpdateRecentStickers updateRecentStickers)
             {
+                if (updateRecentStickers.IsAttached)
+                {
 
+                }
+                else
+                {
+                    _recentStickers = updateRecentStickers.StickerIds;
+                }
             }
             else if (update is UpdateSavedAnimations updateSavedAnimations)
             {

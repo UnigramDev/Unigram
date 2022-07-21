@@ -1023,7 +1023,7 @@
 
         <controls:StickerPanel x:Name="StickersPanel"
                                Visibility="Collapsed"
-                               Margin="0,48,0,56"
+                               Margin="0,56,0,48"
                                MaxWidth="664"
                                Canvas.ZIndex="3"
                                Grid.Row="2"
@@ -1070,9 +1070,9 @@
                                                Click="Reply_Click"
                                                VerticalAlignment="Stretch"
                                                VerticalContentAlignment="Center"
-                                               Margin="-10,0,0,0"
+                                               Margin="-8,0,0,0"
                                                Padding="0"
-                                               BorderBrush="Transparent"
+                                               BorderThickness="0"
                                                Grid.Column="1" />
                     <FontIcon x:Name="ComposerHeaderGlyph"
                               Foreground="{ThemeResource MessageHeaderBorderBrush}"

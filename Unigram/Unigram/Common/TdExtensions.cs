@@ -1751,6 +1751,19 @@ namespace Unigram.Common
             file.Remote = update.Remote;
         }
 
+        public static bool IsFileExisting(this LocalFile localFile)
+        {
+            if (localFile.IsDownloadingCompleted)
+            {
+                localFile.IsDownloadingCompleted = localFile.Path.Length > 0
+                    && System.IO.File.Exists(localFile.Path);
+
+                return localFile.IsDownloadingCompleted;
+            }
+
+            return false;
+        }
+
         public static File GetLocalFile(string path, string uniqueId = "")
         {
             return new File(0, 0, 0, new LocalFile(System.IO.Path.Combine(Windows.ApplicationModel.Package.Current.InstalledLocation.Path, path), false, false, false, true, 0, 0, 0), new RemoteFile(string.Empty, uniqueId, false, false, 0));

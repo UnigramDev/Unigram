@@ -1,4 +1,5 @@
-﻿using RLottie;
+﻿using Microsoft.Graphics.Canvas;
+using RLottie;
 using System;
 using System.Collections.Generic;
 using System.IO.Compression;
@@ -298,6 +299,56 @@ namespace Unigram.Common
 
             return null;
         }
+
+        public static async Task<CanvasBitmap> GetPatternBitmapAsync(ICanvasResourceCreator resourceCreator, IProtoService protoService, File file)
+        {
+            using var locked = await _patternSurfaceLock.WaitAsync();
+
+            if (file.Local.IsDownloadingCompleted)
+            {
+                var bitmap = default(CanvasBitmap);
+
+                var cache = $"{file.Remote.UniqueId}.cache.png";
+                var relative = System.IO.Path.Combine("wallpapers", cache);
+
+                var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(relative) as StorageFile;
+                if (item == null)
+                {
+                    item = await ApplicationData.Current.LocalFolder.CreateFileAsync(relative, CreationCollisionOption.ReplaceExisting);
+
+                    using (var stream = await item.OpenAsync(FileAccessMode.ReadWrite))
+                    {
+                        try
+                        {
+                            var text = await GetSvgXml(file);
+                            await PlaceholderImageHelper.Current.DrawSvgAsync(text, Colors.White, stream);
+                        }
+                        catch { }
+                    }
+                }
+
+                if (item != null)
+                {
+                    using (var stream = await item.OpenReadAsync())
+                    {
+                        try
+                        {
+                            bitmap = await CanvasBitmap.LoadAsync(resourceCreator, stream);
+                        }
+                        catch { }
+                    }
+                }
+
+                return bitmap;
+            }
+            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && protoService != null)
+            {
+                protoService.DownloadFile(file.Id, 1);
+            }
+
+            return null;
+        }
+
 
         private static async Task<string> GetSvgXml(File file)
         {
