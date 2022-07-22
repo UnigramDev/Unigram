@@ -79,6 +79,11 @@ namespace Unigram.Views.Premium.Popups
                     titleValue = Strings.Resources.PremiumPreviewAppIcon;
                     subtitleValue = Strings.Resources.PremiumPreviewAppIconDescription;
                     break;
+                case PremiumFeatureCustomEmoji:
+                    iconValue = Icons.EmojiFilled24;
+                    titleValue = Strings.Resources.PremiumPreviewEmoji;
+                    subtitleValue = Strings.Resources.PremiumPreviewEmojiDescription;
+                    break;
                 case PremiumFeatureDisabledAds:
                     iconValue = Icons.MegaphoneFilled24;
                     titleValue = Strings.Resources.PremiumPreviewNoAds;

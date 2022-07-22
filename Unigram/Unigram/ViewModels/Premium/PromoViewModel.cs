@@ -43,13 +43,6 @@ namespace Unigram.ViewModels.Premium
             set => Set(ref _state, value);
         }
 
-        private bool _isPremium;
-        public bool IsPremium
-        {
-            get => _isPremium;
-            set => Set(ref _isPremium, value);
-        }
-
         private bool _canPurchase;
         public bool CanPurchase
         {
@@ -82,8 +75,6 @@ namespace Unigram.ViewModels.Premium
             }
 
             features.Limits.Add(new PremiumLimit(new PremiumLimitTypeConnectedAccounts(), 3, 4));
-
-            IsPremium = ProtoService.IsPremium;
 
             PaymentLink = features.PaymentLink;
             Limits.ReplaceWith(features.Limits);

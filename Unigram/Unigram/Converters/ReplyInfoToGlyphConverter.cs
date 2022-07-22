@@ -219,6 +219,7 @@ namespace Unigram.Converters
         public const string TopSpeedFilled24 = "\uE9B3";
         public const string DocumentFilled24 = "\uE9B4";
         public const string PremiumFilled24 = "\uE9B6";
+        public const string EmojiFilled24 = "\uE9D2";
 
         public const string Premium16 = "\uE9B5";
         public const string LockClosed16 = "\uE9BE";
