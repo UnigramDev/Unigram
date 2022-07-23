@@ -44,6 +44,8 @@ namespace Unigram.Controls.Chats
         public bool IsRecording => _recordingAudioVideo;
         public bool IsLocked => _recordingLocked;
 
+        public bool IsRestricted { get; set; }
+
         public ChatRecordMode Mode
         {
             get => IsChecked.HasValue && IsChecked.Value ? ChatRecordMode.Video : ChatRecordMode.Voice;
@@ -242,7 +244,17 @@ namespace Unigram.Controls.Chats
         private async void OnClick(object sender, RoutedEventArgs e)
         {
             if (ClickMode == ClickMode.Press)
-            {
+            {   
+                if (IsRestricted)
+                {
+                    var message = Mode == ChatRecordMode.Video
+                        ? Strings.Resources.VideoMessagesRestrictedByPrivacy
+                        : Strings.Resources.VoiceMessagesRestrictedByPrivacy;
+
+                    await MessagePopup.ShowAsync(string.Format(message, ViewModel.Chat.Title), Strings.Resources.AppName, Strings.Resources.OK);
+                    return;
+                }
+
                 var permissions = await CheckAccessAsync(Mode);
                 if (permissions == false)
                 {
