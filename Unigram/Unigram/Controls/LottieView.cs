@@ -12,7 +12,6 @@ using Unigram.Common;
 using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.Graphics;
-using Windows.Graphics.DirectX;
 using Windows.Graphics.Display;
 using Windows.Storage;
 using Windows.UI.Xaml;
@@ -43,9 +42,11 @@ namespace Unigram.Controls
     }
 
     [TemplatePart(Name = "Canvas", Type = typeof(CanvasControl))]
-    public class LottieView : AnimatedControl<string, LottieAnimation>, IPlayerView
+    public class LottieView : AnimatedControl<LottieAnimation>
     {
         private bool? _hideThumbnail;
+
+        private string _source;
 
         private double _animationFrameRate;
         private int _animationTotalFrame;
@@ -97,11 +98,7 @@ namespace Unigram.Controls
 
             if (needsCreate)
             {
-                var buffer = ArrayPool<byte>.Shared.Rent(_frameSize.Width * _frameSize.Height * 4);
-                var bitmap = CanvasBitmap.CreateFromBytes(sender, buffer, _frameSize.Width, _frameSize.Height, DirectXPixelFormat.B8G8R8A8UIntNormalized);
-                ArrayPool<byte>.Shared.Return(buffer);
-
-                return bitmap;
+                return CreateBitmap(sender, _frameSize.Width, _frameSize.Height);
             }
 
             return _bitmap;
@@ -266,8 +263,6 @@ namespace Unigram.Controls
 
             _source = newValue;
 
-            var shouldPlay = _shouldPlay;
-
             var animation = await Task.Run(() => LottieAnimation.LoadFromFile(newValue, _frameSize, _isCachingEnabled, ColorReplacements, FitzModifier));
             if (animation == null || !string.Equals(newValue, _source, StringComparison.OrdinalIgnoreCase))
             {
@@ -275,12 +270,9 @@ namespace Unigram.Controls
                 return;
             }
 
-            if (_shouldPlay)
-            {
-                shouldPlay = true;
-            }
+            var frameRate = Math.Clamp(animation.FrameRate, 30, _limitFps ? 30 : 60);
 
-            _interval = TimeSpan.FromMilliseconds(Math.Floor(1000 / (_limitFps ? 30 : animation.FrameRate)));
+            _interval = TimeSpan.FromMilliseconds(Math.Floor(1000 / frameRate));
             _animation = animation;
             _hideThumbnail = null;
 
@@ -318,25 +310,22 @@ namespace Unigram.Controls
         {
             Load();
 
-            var canvas = _canvas;
-            if (canvas == null)
+            _playing = true;
+
+            if (_canvas == null)
             {
-                _shouldPlay = true;
                 return false;
             }
 
             var animation = _animation;
             if (animation == null)
             {
-                _shouldPlay = true;
                 return false;
             }
 
-            _shouldPlay = false;
             _backward = backward;
 
-            //canvas.Paused = false;
-            if (_subscribed)
+            if (_subscribed || !_active)
             {
                 return false;
             }
@@ -346,9 +335,13 @@ namespace Unigram.Controls
                 _index = 0;
             }
 
-            Subscribe(true);
+            if (_layoutRoot.IsLoaded)
+            {
+                OnPlay();
+                Subscribe(true);
+            }
+
             return true;
-            //OnInvalidate();
         }
 
         private string UriToPath(Uri uri)

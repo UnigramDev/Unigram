@@ -1,7 +1,6 @@
 ﻿using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
-using System.Buffers;
 using System.Threading.Tasks;
 using Telegram.Td;
 using Telegram.Td.Api;
@@ -24,7 +23,7 @@ namespace Unigram.Controls
     }
 
     [TemplatePart(Name = "Thumbnail", Type = typeof(ImageBrush))]
-    public class AnimationView : AnimatedControl<IVideoAnimationSource, CachedVideoAnimation>, IPlayerView
+    public class AnimationView : AnimatedControl<CachedVideoAnimation>
     {
         private ImageBrush _thumbnail;
         private bool? _hideThumbnail;
@@ -34,6 +33,8 @@ namespace Unigram.Controls
 
         private bool _isCachingEnabled;
         private bool _shouldStopNextFrame;
+
+        private IVideoAnimationSource _source;
 
         public AnimationView()
             : this(null)
@@ -84,11 +85,7 @@ namespace Unigram.Controls
 
             if (needsCreate && _animation != null)
             {
-                var buffer = ArrayPool<byte>.Shared.Rent(_animation.PixelWidth * _animation.PixelHeight * 4);
-                var bitmap = CanvasBitmap.CreateFromBytes(sender, buffer, _animation.PixelWidth, _animation.PixelHeight, DirectXPixelFormat.R8G8B8A8UIntNormalized);
-                ArrayPool<byte>.Shared.Return(buffer);
-
-                return bitmap;
+                return CreateBitmap(sender, _animation.PixelWidth, _animation.PixelHeight, DirectXPixelFormat.R8G8B8A8UIntNormalized);
             }
 
             return needsCreate ? null : _bitmap;
@@ -207,8 +204,6 @@ namespace Unigram.Controls
 
             _source = newValue;
 
-            var shouldPlay = _shouldPlay;
-
             var animation = await Task.Run(() => CachedVideoAnimation.LoadFromFile(newValue, _isCachingEnabled));
             if (animation == null || newValue?.Id != _source?.Id)
             {
@@ -217,12 +212,9 @@ namespace Unigram.Controls
                 return;
             }
 
-            if (_shouldPlay)
-            {
-                shouldPlay = true;
-            }
+            var frameRate = Math.Clamp(animation.FrameRate, 1, _isCachingEnabled ? 30 : 60);
 
-            _interval = TimeSpan.FromMilliseconds(1000d / Math.Min(_isCachingEnabled ? 30 : 60, animation.FrameRate));
+            _interval = TimeSpan.FromMilliseconds(1000d / frameRate);
             _animation = animation;
             _hideThumbnail = null;
 
