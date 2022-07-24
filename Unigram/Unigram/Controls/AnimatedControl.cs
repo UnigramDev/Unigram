@@ -386,20 +386,20 @@ namespace Unigram.Controls
 
         private void PrepareNextFrame(ThreadPoolTimer timer)
         {
-            _nextFrameLock.Wait();
+            if (_nextFrameLock.Wait(0))
             {
                 NextFrame();
+                _nextFrameLock.Release();
             }
-            _nextFrameLock.Release();
         }
 
         private void PrepareNextFrame()
         {
-            _nextFrameLock.Wait();
+            if (_nextFrameLock.Wait(0))
             {
                 NextFrame();
+                _nextFrameLock.Release();
             }
-            _nextFrameLock.Release();
         }
 
         protected abstract void NextFrame();
