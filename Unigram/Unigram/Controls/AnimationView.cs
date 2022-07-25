@@ -23,7 +23,7 @@ namespace Unigram.Controls
     }
 
     [TemplatePart(Name = "Thumbnail", Type = typeof(ImageBrush))]
-    public class AnimationView : AnimatedControl<CachedVideoAnimation>
+    public class AnimationView : IndividualAnimatedControl<CachedVideoAnimation>
     {
         private ImageBrush _thumbnail;
         private bool? _hideThumbnail;

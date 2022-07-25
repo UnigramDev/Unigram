@@ -25,6 +25,7 @@ namespace Unigram.Controls
         protected Vector2 _currentSize;
         protected float _currentDpi;
         protected bool _active = true;
+        protected bool _visible = true;
 
         protected CanvasImageSource _surface;
         protected CanvasBitmap _bitmap;
@@ -48,8 +49,6 @@ namespace Unigram.Controls
         protected readonly object _drawFrameLock = new();
         protected readonly SemaphoreSlim _nextFrameLock = new(1, 1);
 
-        private ThreadPoolTimer _timer;
-
         protected TimeSpan _interval;
         protected TimeSpan _elapsed;
 
@@ -61,6 +60,7 @@ namespace Unigram.Controls
             _limitFps = limitFps ?? !Windows.UI.Composition.CompositionCapabilities.GetForCurrentView().AreEffectsFast();
             _currentDpi = DisplayInformation.GetForCurrentView().LogicalDpi;
             _active = Window.Current.CoreWindow.ActivationMode == CoreWindowActivationMode.ActivatedInForeground;
+            _visible = Window.Current.CoreWindow.Visible;
 
             SizeChanged += OnSizeChanged;
         }
@@ -94,6 +94,7 @@ namespace Unigram.Controls
         {
             DisplayInformation.GetForCurrentView().DpiChanged += OnDpiChanged;
             Window.Current.Activated += OnActivated;
+            Window.Current.VisibilityChanged += OnVisibilityChanged;
             CompositionTarget.SurfaceContentsLost += OnSurfaceContentsLost;
         }
 
@@ -101,6 +102,7 @@ namespace Unigram.Controls
         {
             DisplayInformation.GetForCurrentView().DpiChanged -= OnDpiChanged;
             Window.Current.Activated -= OnActivated;
+            Window.Current.VisibilityChanged -= OnVisibilityChanged;
             CompositionTarget.SurfaceContentsLost -= OnSurfaceContentsLost;
         }
 
@@ -160,6 +162,24 @@ namespace Unigram.Controls
             }
         }
 
+        private void OnVisibilityChanged(object sender, VisibilityChangedEventArgs e)
+        {
+            lock (_drawFrameLock)
+            {
+                if (_visible == e.Visible)
+                {
+                    return;
+                }
+
+                _visible = e.Visible;
+
+                if (e.Visible == false)
+                {
+                    Subscribe(false);
+                }
+            }
+        }
+
         private void Changed(bool force = false)
         {
             if (_canvas == null)
@@ -179,7 +199,7 @@ namespace Unigram.Controls
                 needsCreate |= (_surface?.Size.Width != newSize.X || _surface?.Size.Height != newSize.Y);
                 needsCreate |= force;
 
-                if (needsCreate && newSize.X > 0 && newSize.Y > 0)
+                if (needsCreate && newSize.X > 0 && newSize.Y > 0 && _visible)
                 {
                     try
                     {
@@ -309,7 +329,7 @@ namespace Unigram.Controls
 
         public void DrawFrame()
         {
-            if (_surface == null)
+            if (_surface == null || !_visible)
             {
                 return;
             }
@@ -384,15 +404,6 @@ namespace Unigram.Controls
 
         protected abstract void DrawFrame(CanvasImageSource sender, CanvasDrawingSession args);
 
-        private void PrepareNextFrame(ThreadPoolTimer timer)
-        {
-            if (_nextFrameLock.Wait(0))
-            {
-                NextFrame();
-                _nextFrameLock.Release();
-            }
-        }
-
         private void PrepareNextFrame()
         {
             if (_nextFrameLock.Wait(0))
@@ -426,6 +437,8 @@ namespace Unigram.Controls
                     CreateBitmap();
 
                     // Invalidate to render the first frame
+                    // Would be nice to move this to IndividualAnimatedControl
+                    // but this isn't currently possible
                     await Task.Run(PrepareNextFrame);
                     DrawFrame();
                 }
@@ -434,26 +447,15 @@ namespace Unigram.Controls
 
         public bool Play()
         {
+            _playing = true;
             Load();
 
-            _playing = true;
-
-            if (_canvas == null)
+            if (_canvas == null || _animation == null || _subscribed || !_active)
             {
                 return false;
             }
 
-            if (_animation == null)
-            {
-                return false;
-            }
-
-            if (_subscribed || !_active)
-            {
-                return false;
-            }
-
-            if (_layoutRoot.IsLoaded)
+            if (_canvas.IsLoaded || _layoutRoot.IsLoaded)
             {
                 OnPlay();
                 Subscribe(true);
@@ -496,18 +498,14 @@ namespace Unigram.Controls
                     if (subscribe && _active)
                     {
                         _unsubscribe = false;
-                        _timer ??= ThreadPoolTimer.CreatePeriodicTimer(PrepareNextFrame, _interval);
+                        OnSubscribe(subscribe);
 
                         CompositionTarget.Rendering -= OnRendering;
                         CompositionTarget.Rendering += OnRendering;
                     }
                     else
                     {
-                        if (_timer != null)
-                        {
-                            _timer.Cancel();
-                            _timer = null;
-                        }
+                        OnSubscribe(subscribe);
 
                         CompositionTarget.Rendering -= OnRendering;
                     }
@@ -523,16 +521,13 @@ namespace Unigram.Controls
                         return;
                     }
 
-                    if (_timer != null)
-                    {
-                        _timer.Cancel();
-                        _timer = null;
-                    }
-
                     _unsubscribe = true;
+                    OnSubscribe(subscribe);
                 }
             }
         }
+
+        protected abstract void OnSubscribe(bool subscribe);
 
         #region IsLoopingEnabled
 
@@ -583,5 +578,40 @@ namespace Unigram.Controls
         }
 
         #endregion
+    }
+
+    public abstract class IndividualAnimatedControl<TAnimation> : AnimatedControl<TAnimation>
+    {
+        private ThreadPoolTimer _timer;
+
+        protected IndividualAnimatedControl(bool? limitFps)
+            : base(limitFps)
+        {
+        }
+
+        protected override void OnSubscribe(bool subscribe)
+        {
+            if (subscribe)
+            {
+                _timer ??= ThreadPoolTimer.CreatePeriodicTimer(PrepareNextFrame, _interval);
+            }
+            else
+            {
+                if (_timer != null)
+                {
+                    _timer.Cancel();
+                    _timer = null;
+                }
+            }
+        }
+
+        private void PrepareNextFrame(ThreadPoolTimer timer)
+        {
+            if (_nextFrameLock.Wait(0))
+            {
+                NextFrame();
+                _nextFrameLock.Release();
+            }
+        }
     }
 }

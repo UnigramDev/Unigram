@@ -31,7 +31,7 @@ namespace Unigram.Common
             _debouncer.Tick += (s, args) =>
             {
                 _debouncer.Stop();
-                LoadVisibleItems(/*e.IsIntermediate*/ false);
+                LoadVisibleItems(false);
             };
         }
 
@@ -153,7 +153,11 @@ namespace Unigram.Common
                 }
                 else if (item is StickerSetViewModel setViewModel && setViewModel.StickerFormat is StickerFormatTgs or StickerFormatWebm)
                 {
-                    file = setViewModel.Thumbnail?.File ?? setViewModel.Covers.FirstOrDefault()?.Thumbnail?.File;
+                    var cover = setViewModel.GetThumbnail();
+                    if (cover != null)
+                    {
+                        file = cover.StickerValue;
+                    }
                 }
                 else if (item is Sticker sticker && sticker.Format is StickerFormatTgs or StickerFormatWebm)
                 {
@@ -161,7 +165,11 @@ namespace Unigram.Common
                 }
                 else if (item is StickerSetInfo set && set.StickerFormat is StickerFormatTgs or StickerFormatWebm)
                 {
-                    file = set.Thumbnail?.File ?? set.Covers.FirstOrDefault()?.Thumbnail?.File;
+                    var cover = set.GetThumbnail();
+                    if (cover != null)
+                    {
+                        file = cover.StickerValue;
+                    }
                 }
                 else if (item is Animation animation)
                 {

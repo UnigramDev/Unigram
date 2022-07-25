@@ -42,7 +42,7 @@ namespace Unigram.Controls
     }
 
     [TemplatePart(Name = "Canvas", Type = typeof(CanvasControl))]
-    public class LottieView : AnimatedControl<LottieAnimation>
+    public class LottieView : IndividualAnimatedControl<LottieAnimation>
     {
         private bool? _hideThumbnail;
 
